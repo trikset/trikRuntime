@@ -12,19 +12,19 @@ using namespace scriptRunner;
 
 Runner::Runner()
 {
-	mEngineWorker.moveToThread(&mRunnerThread);
+	mEngineWorker.moveToThread(&mWorkerThread);
 
 	connect(this, SIGNAL(threadRun(QString const &)), &mEngineWorker, SLOT(run(QString const &)));
 	connect(this, SIGNAL(threadDelete()), &mEngineWorker, SLOT(deleteWorker()));
 
-	mRunnerThread.start();
+	mWorkerThread.start();
 }
 
 Runner::~Runner()
 {
 	mEngineWorker.abort();
 	emit threadDelete();
-	mRunnerThread.wait(1000);
+	mWorkerThread.wait(1000);
 }
 
 void Runner::run(QString const &script)

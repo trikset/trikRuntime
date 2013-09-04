@@ -10,7 +10,6 @@ int const bufferSize = 1000;
 
 QRealCommunicator::QRealCommunicator()
 		: mConnection(new QTcpSocket())
-		, mReadingDone(false)
 {
 }
 
@@ -24,7 +23,7 @@ QString QRealCommunicator::readFromFile(QString const &fileName)
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 	if (!file.isOpen()) {
-		return "";
+		throw "Reading failed";
 	}
 
 	QTextStream input;
@@ -58,25 +57,17 @@ void QRealCommunicator::listen(int const &port)
 void QRealCommunicator::onNewConnection()
 {
 	qDebug() << "New connection";
+
 	delete mConnection;
 	mConnection = mServer.nextPendingConnection();
 	connect(mConnection, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
 	connect(mConnection, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-
-	// HACK: since QScriptEngine too infrequently calls ProcessEvents, it is possible that
-	// connection will be closed before communicator will be able to read from a socket.
-	// So we will not give up control until data will be read.
-	while (!mReadingDone) {
-		SleeperThread::msleep(5);
-		QCoreApplication::processEvents();
-	}
-
-	mReadingDone = false;
 }
 
 void QRealCommunicator::onDisconnected()
 {
 	qDebug() << "Disconnected";
+
 	mConnection->disconnectFromHost();
 }
 
@@ -86,15 +77,13 @@ void QRealCommunicator::onReadyRead()
 		return;
 	}
 
-	QByteArray data = mConnection->readAll();
+	QByteArray const &data = mConnection->readAll();
 	QString command(data);
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
 		qDebug() << "Command: " << command;
 	}
-
-	mReadingDone = true;
 
 	if (command.startsWith("file")) {
 		command.remove(0, QString("file:").length());
@@ -121,6 +110,4 @@ void QRealCommunicator::onReadyRead()
 		command.remove(0, QString("direct:").length());
 		mRunner.run(command);
 	}
-
-
 }

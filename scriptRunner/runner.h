@@ -37,7 +37,7 @@ signals:
 
 private:
 	ScriptEngineWorker mEngineWorker;  // Has ownership.
-	QThread mRunnerThread;  // Has ownership.
+	QThread mWorkerThread;  // Has ownership.
 };
 
 }
