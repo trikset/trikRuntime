@@ -6,8 +6,19 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+*.dll
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+
+# Qt specific
+*.autosave
+*.moc
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+Makefile*
+*.pro.user*
+bin/*

@@ -1,43 +1,52 @@
+TRIKCONTROL_DIR = ../trikControl/
+
 TEMPLATE = app
 QT += script network
 CONFIG += console
 
-CONFIGURATION = debug
+CONFIG(debug, debug | release) {
+	CONFIGURATION = debug
+	CONFIGURATION_SUFFIX = d
+} else {
+	CONFIGURATION = release
+	CONFIGURATION_SUFFIX =
+}
 
-CONFIG -= debug release
-CONFIG += $$CONFIGURATION
+DESTDIR = ../bin/$$CONFIGURATION/
 
-DESTDIR = $$CONFIGURATION/bin
+INCLUDEPATH = \
+	$$PWD \
+	$$TRIKCONTROL_DIR/include \
 
-INCLUDEPATH = ../trikControl/include
+LIBS += -L$$TRIKCONTROL_DIR/bin/$$CONFIGURATION -ltrikControl$$CONFIGURATION_SUFFIX
 
-LIBS += -L../trikControl/$$CONFIGURATION/bin -ltrikControl
-
-OBJECTS_DIR = $$CONFIGURATION/.obj
-MOC_DIR = $$CONFIGURATION/.moc
-RCC_DIR = $$CONFIGURATION/.moc
+OBJECTS_DIR = .obj/$$CONFIGURATION
+MOC_DIR = .moc/$$CONFIGURATION
+RCC_DIR = .rcc/$$CONFIGURATION
+UI_DIR = .ui/$$CONFIGURATION
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
 }
 
 HEADERS += \
-	qRealCommunicator.h \
-	runner.h \
-	scriptableParts.h \
-	scriptEngineWorker.h \
+	$$PWD/qRealCommunicator.h \
+	$$PWD/runner.h \
+	$$PWD/scriptableParts.h \
+	$$PWD/scriptEngineWorker.h \
 
 SOURCES += \
-	main.cpp \
-	qRealCommunicator.cpp \
-	runner.cpp \
-	scriptableParts.cpp \
-	scriptEngineWorker.cpp \
+	$$PWD/main.cpp \
+	$$PWD/qRealCommunicator.cpp \
+	$$PWD/runner.cpp \
+	$$PWD/scriptableParts.cpp \
+	$$PWD/scriptEngineWorker.cpp \
 
 win32 {
-	QMAKE_POST_LINK = "xcopy ..\\trikControl\\$$CONFIGURATION\\bin $$CONFIGURATION\\bin /s /e /q /y /i && \
-	xcopy ..\\media $$CONFIGURATION\\bin\\media /s /e /q /y /i"
-}
-else {
-	QMAKE_POST_LINK = "cp -r ../trikControl/$$CONFIGURATION/bin/* $$CONFIGURATION/bin"
+	QMAKE_POST_LINK = "xcopy ..\\trikControl\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
+	&& xcopy ..\\media $$replace(DESTDIR, /, \\)media /s /e /q /y /i \
+	&& xcopy test.qts $$replace(DESTDIR, /, \\) /q /y \
+	"
+} else {
+	QMAKE_POST_LINK = "cp -r ../trikControl/bin/$$CONFIGURATION/* $$DESTDIR"
 }

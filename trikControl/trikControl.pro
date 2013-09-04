@@ -2,28 +2,36 @@ TEMPLATE = lib
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-CONFIGURATION = debug
+CONFIG(debug, debug | release) {
+	CONFIGURATION = debug
+	CONFIGURATION_SUFFIX = d
+} else {
+	CONFIGURATION = release
+	CONFIGURATION_SUFFIX =
+}
 
-CONFIG -= debug release
-CONFIG += $$CONFIGURATION
+TARGET = trikControl$$CONFIGURATION_SUFFIX
 
-DESTDIR = $$CONFIGURATION/bin
+DESTDIR = bin/$$CONFIGURATION/
 
-OBJECTS_DIR = $$CONFIGURATION/.obj
-MOC_DIR = $$CONFIGURATION/.moc
-RCC_DIR = $$CONFIGURATION/.moc
+OBJECTS_DIR = .obj/$$CONFIGURATION
+MOC_DIR = .moc/$$CONFIGURATION
+RCC_DIR = .rcc/$$CONFIGURATION
+UI_DIR = .ui/$$CONFIGURATION
 
-INCLUDEPATH = include/trikControl
+INCLUDEPATH = \
+	$$PWD \
+	$$PWD/include/trikControl \
 
 HEADERS += \
-	include/trikControl/brick.h \
-	include/trikControl/servoMotor.h \
-	include/trikControl/powerMotor.h \
-	include/trikControl/sensor.h \
-	include/trikControl/declSpec.h \
+	$$PWD/include/trikControl/brick.h \
+	$$PWD/include/trikControl/servoMotor.h \
+	$$PWD/include/trikControl/powerMotor.h \
+	$$PWD/include/trikControl/sensor.h \
+	$$PWD/include/trikControl/declSpec.h \
 
 SOURCES += \
-	src/brick.cpp \
-	src/servoMotor.cpp \
-	src/powerMotor.cpp \
-	src/sensor.cpp \
+	$$PWD/src/brick.cpp \
+	$$PWD/src/servoMotor.cpp \
+	$$PWD/src/powerMotor.cpp \
+	$$PWD/src/sensor.cpp \
