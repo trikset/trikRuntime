@@ -17,6 +17,8 @@ class QRealCommunicator : public QObject
 public:
 	QRealCommunicator();
 
+	~QRealCommunicator();
+
 	/// Starts listening given port on all network interfaces.
 	void listen(int const &port);
 
@@ -26,9 +28,19 @@ private slots:
 	void onReadyRead();
 
 private:
+	class SleeperThread : public QThread
+	{
+	public:
+		static void msleep(unsigned long msecs)
+		{
+			QThread::msleep(msecs);
+		}
+	};
+
 	QTcpServer mServer;
 	QTcpSocket* mConnection;  // Has ownership.
 	Runner mRunner;
+	bool mReadingDone;
 
 	static QString readFromFile(QString const &fileName);
 	static void writeToFile(QString const &fileName, QString const &contents);

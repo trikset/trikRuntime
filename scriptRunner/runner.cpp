@@ -9,36 +9,30 @@
 #include "scriptableParts.h"
 
 using namespace scriptRunner;
-using namespace trikControl;
-
-Q_DECLARE_METATYPE(ServoMotor*)
-Q_DECLARE_METATYPE(PowerMotor*)
-Q_DECLARE_METATYPE(Sensor*)
 
 Runner::Runner()
 {
-	mEngine.setProcessEventsInterval(1);
+	mEngineWorker.moveToThread(&mRunnerThread);
 
-	qScriptRegisterMetaType(&mEngine, motorToScriptValue, motorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
+	connect(this, SIGNAL(threadRun(QString const &)), &mEngineWorker, SLOT(run(QString const &)));
+	connect(this, SIGNAL(threadDelete()), &mEngineWorker, SLOT(deleteWorker()));
 
-	QScriptValue brickProxy = mEngine.newQObject(&mBrick);
-	mEngine.globalObject().setProperty("brick", brickProxy);
+	mRunnerThread.start();
+}
+
+Runner::~Runner()
+{
+	mEngineWorker.abort();
+	emit threadDelete();
+	mRunnerThread.wait(1000);
 }
 
 void Runner::run(QString const &script)
 {
-	QScriptValue const result = mEngine.evaluate(script);
-
-	if (mEngine.hasUncaughtException()) {
-		int const line = mEngine.uncaughtExceptionLineNumber();
-
-		qDebug() << "uncaught script exception at line" << line << ":" << result.toString();
-	}
+	emit threadRun(script);
 }
 
 void Runner::abort()
 {
-	mEngine.abortEvaluation();
+	mEngineWorker.abort();
 }

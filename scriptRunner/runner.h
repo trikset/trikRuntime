@@ -7,6 +7,8 @@
 
 #include <trikControl/brick.h>
 
+#include "scriptEngineWorker.h"
+
 namespace scriptRunner {
 
 /// Executes scripts in Qt Scripting Engine.
@@ -15,8 +17,9 @@ class Runner : public QObject
 	Q_OBJECT
 
 public:
-	/// Constructor.
 	Runner();
+
+	~Runner();
 
 	/// Executes given script.
 	/// @param script Script in Qt Script language to be executed.
@@ -25,9 +28,16 @@ public:
 	/// Aborts script execution.
 	void abort();
 
+signals:
+	/// Signal for script runner thread to begin execution.
+	void threadRun(QString const &script);
+
+	/// Signal for script runner thread to delete itself when possible.
+	void threadDelete();
+
 private:
-	QScriptEngine mEngine;  // Has ownership.
-	trikControl::Brick mBrick;
+	ScriptEngineWorker mEngineWorker;  // Has ownership.
+	QThread mRunnerThread;  // Has ownership.
 };
 
 }

@@ -4,6 +4,7 @@
 #include <QtCore/QStringList>
 
 #include "runner.h"
+#include "scriptEngineWorker.h"
 #include "qRealCommunicator.h"
 
 using namespace scriptRunner;
@@ -40,8 +41,8 @@ int main(int argc, char *argv[])
 	QString const script = input.readAll();
 	file.close();
 
-	Runner runner;
-	runner.run(script);
+	ScriptEngineWorker engineWorker;
+	engineWorker.run(script);
 
 	return 0;
 }
