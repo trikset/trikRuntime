@@ -1,0 +1,5 @@
+print("Kill all humans!")
+brick.playSound("123")
+brick.stop()
+brick.motor(1)
+brick.motor(1).setPower(100)
