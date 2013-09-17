@@ -27,22 +27,22 @@ config.ini - файл с локальными настройками мотор�
 Любую секцию в конфиге, а также любой параметр можно пропустить, при этом будут использоваться значения по умолчанию. Текущие значения по умолчанию можно посмотреть в исходных кодах, https://github.com/trikset/trikRuntime/blob/master/trikControl/src/brick.cpp
 
 Пример конфигурационного файла:
-[Motor1]
-ValueMin=1500000
-ValueMax=1800000
-DeviceFile=/sys/class/pwm/ecap.0/duty_ns
-
-[Motor2]
-ValueMin=1500000
-ValueMax=1800000
-DeviceFile=/sys/class/pwm/ecap.1/duty_ns
-
-[Sensor1]
-Min=30000
-Max=350000
-DeviceFile=/sys/devices/platform/da850_trik/sensor_d1
-
-[Sensor2]
-Min=30000
-Max=350000
-DeviceFile=/sys/devices/platform/da850_trik/sensor_d2
+    [Motor1]
+    ValueMin=1500000
+    ValueMax=1800000
+    DeviceFile=/sys/class/pwm/ecap.0/duty_ns
+    
+    [Motor2]
+    ValueMin=1500000
+    ValueMax=1800000
+    DeviceFile=/sys/class/pwm/ecap.1/duty_ns
+    
+    [Sensor1]
+    Min=30000
+    Max=350000
+    DeviceFile=/sys/devices/platform/da850_trik/sensor_d1
+    
+    [Sensor2]
+    Min=30000
+    Max=350000
+    DeviceFile=/sys/devices/platform/da850_trik/sensor_d2
