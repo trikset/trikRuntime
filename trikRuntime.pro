@@ -1,7 +1,15 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-	scriptRunner \
 	trikControl \
+	trikScriptRunner \
+	trikCommunicator \
+	trikRun \
+	trikServer \
+	trikGui \	
 
-scriptRunner.depends = trikControl
+trikScriptRunner.depends = trikControl
+trikCommunicator.depends = trikScriptRunner
+trikRun.depends = trikScriptRunner
+trikServer.depends = trikCommunicator
+trikGui.depends = trikCommunicator trikScriptRunner
