@@ -5,8 +5,6 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
-#include <trikControl/brick.h>
-
 namespace trikScriptRunner {
 
 class ScriptEngineWorker;

@@ -1,24 +1,28 @@
-#include "qRealCommunicator.h"
+#include "trikCommunicator.h"
 
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 
-using namespace scriptRunner;
+#include <trikScriptRunner/trikScriptRunner.h>
+
+using namespace trikCommunicator;
 
 int const bufferSize = 1000;
 
-QRealCommunicator::QRealCommunicator()
-		: mConnection(new QTcpSocket())
+TrikCommunicator::TrikCommunicator()
+	: mConnection(new QTcpSocket())
+	, mRunner(new trikScriptRunner::TrikScriptRunner())
 {
 }
 
-QRealCommunicator::~QRealCommunicator()
+TrikCommunicator::~TrikCommunicator()
 {
 	delete mConnection;
+	delete mRunner;
 }
 
-QString QRealCommunicator::readFromFile(QString const &fileName)
+QString TrikCommunicator::readFromFile(QString const &fileName)
 {
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -34,7 +38,7 @@ QString QRealCommunicator::readFromFile(QString const &fileName)
 	return result;
 }
 
-void QRealCommunicator::writeToFile(QString const &fileName, QString const &contents)
+void TrikCommunicator::writeToFile(QString const &fileName, QString const &contents)
 {
 	QFile file(fileName);
 	file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -48,13 +52,13 @@ void QRealCommunicator::writeToFile(QString const &fileName, QString const &cont
 	file.close();
 }
 
-void QRealCommunicator::listen(int const &port)
+void TrikCommunicator::listen(int const &port)
 {
 	connect(&mServer, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
 	mServer.listen(QHostAddress::Any, port);
 }
 
-void QRealCommunicator::onNewConnection()
+void TrikCommunicator::onNewConnection()
 {
 	qDebug() << "New connection";
 
@@ -64,14 +68,14 @@ void QRealCommunicator::onNewConnection()
 	connect(mConnection, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 }
 
-void QRealCommunicator::onDisconnected()
+void TrikCommunicator::onDisconnected()
 {
 	qDebug() << "Disconnected";
 
 	mConnection->disconnectFromHost();
 }
 
-void QRealCommunicator::onReadyRead()
+void TrikCommunicator::onReadyRead()
 {
 	if (!mConnection->isValid()) {
 		return;
@@ -102,12 +106,12 @@ void QRealCommunicator::onReadyRead()
 	} else if (command.startsWith("run")) {
 		command.remove(0, QString("run:").length());
 		QString const fileContents = readFromFile(command);
-		mRunner.run(fileContents);
+		mRunner->run(fileContents);
 	} else if (command == "stop") {
-		mRunner.abort();
-		mRunner.run("brick.stop()");
+		mRunner->abort();
+		mRunner->run("brick.stop()");
 	} else if (command.startsWith("direct")) {
 		command.remove(0, QString("direct:").length());
-		mRunner.run(command);
+		mRunner->run(command);
 	}
 }

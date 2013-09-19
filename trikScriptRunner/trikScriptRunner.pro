@@ -1,13 +1,3 @@
-HEADERS += \
-	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
-	$$PWD/src/scriptableParts.h \
-	$$PWD/src/scriptEngineWorker.h \
-
-SOURCES += \
-	$$PWD/src/trikScriptRunner.cpp \
-	$$PWD/src/scriptableParts.cpp \
-	$$PWD/src/scriptEngineWorker.cpp \
-
 TRIKCONTROL_DIR = ../trikControl/
 
 TEMPLATE = lib
@@ -41,6 +31,16 @@ LIBS += -L$$TRIKCONTROL_DIR/bin/$$CONFIGURATION -ltrikControl$$CONFIGURATION_SUF
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
 }
+
+HEADERS += \
+	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+	$$PWD/src/scriptableParts.h \
+	$$PWD/src/scriptEngineWorker.h \
+
+SOURCES += \
+	$$PWD/src/trikScriptRunner.cpp \
+	$$PWD/src/scriptableParts.cpp \
+	$$PWD/src/scriptEngineWorker.cpp \
 
 win32 {
 	QMAKE_POST_LINK = "xcopy \"$$replace(TRIKCONTROL_DIR, /, \\)bin\\$$CONFIGURATION\" \"$$replace(DESTDIR, /, \\)\" /s /e /q /y /i \

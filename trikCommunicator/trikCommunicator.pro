@@ -1,9 +1,3 @@
-HEADERS += \
-	$$PWD/include/trikCommunicator/trikCommunicator.h \
-
-SOURCES += \
-	$$PWD/src/trikCommunicator.cpp \
-
 TRIKCONTROL_DIR = ../trikControl/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 
@@ -34,8 +28,15 @@ INCLUDEPATH = \
 	$$PWD \
 	$$PWD/include/trikCommunicator \
 	$$TRIKSCRIPTRUNNER_DIR/include \
+	$$TRIKCONTROL_DIR/include \
 
-LIBS += -L$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION -ltrikCommunicator$$CONFIGURATION_SUFFIX
+LIBS += -L$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+
+HEADERS += \
+	$$PWD/include/trikCommunicator/trikCommunicator.h \
+
+SOURCES += \
+	$$PWD/src/trikCommunicator.cpp \
 
 win32 {
 	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \

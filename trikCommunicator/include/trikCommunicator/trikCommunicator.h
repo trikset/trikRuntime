@@ -4,9 +4,11 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 
-#include "runner.h"
-
 namespace trikScriptRunner {
+class TrikScriptRunner;
+}
+
+namespace trikCommunicator {
 
 /// Class that keeps connection with a client running on computer (TrikLab or remote control).
 /// Accepts commands:
@@ -15,14 +17,14 @@ namespace trikScriptRunner {
 /// - stop
 /// - direct:<command>
 /// - keepalive
-class QRealCommunicator : public QObject
+class TrikCommunicator : public QObject
 {
 	Q_OBJECT
 
 public:
-	QRealCommunicator();
+	TrikCommunicator();
 
-	~QRealCommunicator();
+	~TrikCommunicator();
 
 	/// Starts listening given port on all network interfaces.
 	void listen(int const &port);
@@ -33,18 +35,9 @@ private slots:
 	void onReadyRead();
 
 private:
-	class SleeperThread : public QThread
-	{
-	public:
-		static void msleep(unsigned long msecs)
-		{
-			QThread::msleep(msecs);
-		}
-	};
-
 	QTcpServer mServer;
 	QTcpSocket* mConnection;  // Has ownership.
-	Runner mRunner;
+	trikScriptRunner::TrikScriptRunner *mRunner;  // Has ownership.
 
 	static QString readFromFile(QString const &fileName);
 	static void writeToFile(QString const &fileName, QString const &contents);
