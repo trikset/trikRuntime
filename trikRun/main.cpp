@@ -8,7 +8,7 @@
 int main(int argc, char *argv[])
 {
 	QCoreApplication app(argc, argv);
-	QStringList args = app.arguments();
+	QStringList const args = app.arguments();
 
 	if (args.count() != 2) {
 		qDebug() << "Usage: trikRun <QtScript file name>";
