@@ -4,7 +4,7 @@ HEADERS += \
 	$$PWD/src/scriptEngineWorker.h \
 
 SOURCES += \
-	$$PWD/src/runner.cpp \
+	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 
@@ -22,6 +22,8 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION = release
 	CONFIGURATION_SUFFIX =
 }
+
+TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
 
 DESTDIR = bin/$$CONFIGURATION/
 
@@ -41,7 +43,7 @@ LIBS += -L$$TRIKCONTROL_DIR/bin/$$CONFIGURATION -ltrikControl$$CONFIGURATION_SUF
 }
 
 win32 {
-	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
+	QMAKE_POST_LINK = "xcopy \"$$replace(TRIKCONTROL_DIR, /, \\)bin\\$$CONFIGURATION\" \"$$replace(DESTDIR, /, \\)\" /s /e /q /y /i \
 			"
 } else {
 	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR"

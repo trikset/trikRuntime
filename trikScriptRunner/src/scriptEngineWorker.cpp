@@ -8,7 +8,7 @@
 
 #include "scriptableParts.h"
 
-using namespace scriptRunner;
+using namespace trikScriptRunner;
 using namespace trikControl;
 
 Q_DECLARE_METATYPE(ServoMotor*)

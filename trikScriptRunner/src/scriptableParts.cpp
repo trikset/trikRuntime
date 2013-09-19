@@ -2,35 +2,35 @@
 
 #include <QtCore/QMetaType>
 
-using namespace scriptRunner;
+using namespace trikScriptRunner;
 using namespace trikControl;
 
-QScriptValue scriptRunner::motorToScriptValue(QScriptEngine *engine, ServoMotor* const &in)
+QScriptValue trikScriptRunner::motorToScriptValue(QScriptEngine *engine, ServoMotor* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void scriptRunner::motorFromScriptValue(QScriptValue const &object, ServoMotor *&out)
+void trikScriptRunner::motorFromScriptValue(QScriptValue const &object, ServoMotor *&out)
 {
 	out = qobject_cast<ServoMotor*>(object.toQObject());
 }
 
-QScriptValue scriptRunner::powerMotorToScriptValue(QScriptEngine *engine, PowerMotor* const &in)
+QScriptValue trikScriptRunner::powerMotorToScriptValue(QScriptEngine *engine, PowerMotor* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void scriptRunner::powerMotorFromScriptValue(QScriptValue const &object, PowerMotor* &out)
+void trikScriptRunner::powerMotorFromScriptValue(QScriptValue const &object, PowerMotor* &out)
 {
 	out = qobject_cast<PowerMotor*>(object.toQObject());
 }
 
-QScriptValue scriptRunner::sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in)
+QScriptValue trikScriptRunner::sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void scriptRunner::sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out)
+void trikScriptRunner::sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out)
 {
 	out = qobject_cast<Sensor*>(object.toQObject());
 }

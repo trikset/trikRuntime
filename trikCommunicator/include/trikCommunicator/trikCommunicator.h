@@ -6,7 +6,7 @@
 
 #include "runner.h"
 
-namespace scriptRunner {
+namespace trikScriptRunner {
 
 /// Class that keeps connection with a client running on computer (TrikLab or remote control).
 /// Accepts commands:

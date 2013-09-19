@@ -6,7 +6,7 @@
 
 #include <trikControl/brick.h>
 
-namespace scriptRunner
+namespace trikScriptRunner
 {
 
 /// Worker object to be run in a separate thread for Qt Script execution. QScriptEngine calls ProcessEvents too

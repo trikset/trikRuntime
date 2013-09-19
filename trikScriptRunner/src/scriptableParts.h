@@ -7,7 +7,7 @@
 #include <trikControl/powerMotor.h>
 #include <trikControl/sensor.h>
 
-namespace scriptRunner {
+namespace trikScriptRunner {
 
 QScriptValue motorToScriptValue(QScriptEngine *engine, trikControl::ServoMotor* const &in);
 void motorFromScriptValue(QScriptValue const &object, trikControl::ServoMotor* &out);

@@ -1,38 +1,38 @@
-#include "runner.h"
+#include "include/trikScriptRunner/trikScriptRunner.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 
-#include <trikControl/servoMotor.h>
-#include <trikControl/sensor.h>
-
 #include "scriptableParts.h"
+#include "scriptEngineWorker.h"
 
-using namespace scriptRunner;
+using namespace trikScriptRunner;
 
-Runner::Runner()
+TrikScriptRunner::TrikScriptRunner()
 {
-	mEngineWorker.moveToThread(&mWorkerThread);
+	mEngineWorker = new ScriptEngineWorker();
 
-	connect(this, SIGNAL(threadRun(QString const &)), &mEngineWorker, SLOT(run(QString const &)));
-	connect(this, SIGNAL(threadDelete()), &mEngineWorker, SLOT(deleteWorker()));
+	mEngineWorker->moveToThread(&mWorkerThread);
+
+	connect(this, SIGNAL(threadRun(QString const &)), mEngineWorker, SLOT(run(QString const &)));
+	connect(this, SIGNAL(threadDelete()), mEngineWorker, SLOT(deleteWorker()));
 
 	mWorkerThread.start();
 }
 
-Runner::~Runner()
+TrikScriptRunner::~TrikScriptRunner()
 {
-	mEngineWorker.abort();
+	mEngineWorker->abort();
 	emit threadDelete();
 	mWorkerThread.wait(1000);
 }
 
-void Runner::run(QString const &script)
+void TrikScriptRunner::run(QString const &script)
 {
 	emit threadRun(script);
 }
 
-void Runner::abort()
+void TrikScriptRunner::abort()
 {
-	mEngineWorker.abort();
+	mEngineWorker->abort();
 }

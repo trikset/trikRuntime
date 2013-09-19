@@ -7,19 +7,19 @@
 
 #include <trikControl/brick.h>
 
-#include "scriptEngineWorker.h"
+namespace trikScriptRunner {
 
-namespace scriptRunner {
+class ScriptEngineWorker;
 
 /// Executes scripts in Qt Scripting Engine.
-class Runner : public QObject
+class TrikScriptRunner : public QObject
 {
 	Q_OBJECT
 
 public:
-	Runner();
+	TrikScriptRunner();
 
-	~Runner();
+	~TrikScriptRunner();
 
 	/// Executes given script.
 	/// @param script Script in Qt Script language to be executed.
@@ -36,7 +36,7 @@ signals:
 	void threadDelete();
 
 private:
-	ScriptEngineWorker mEngineWorker;  // Has ownership.
+	ScriptEngineWorker *mEngineWorker;  // Has ownership.
 	QThread mWorkerThread;  // Has ownership.
 };
 
