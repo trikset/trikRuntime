@@ -3,9 +3,17 @@ TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 
 HEADERS += \
+	$$PWD/fileManagerWidget.h \
+	$$PWD/showNetConfigWidget.h \
+	$$PWD/startWidget.h \
+	$$PWD/trikGuiApplication.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
+	$$PWD/fileManagerWidget.cpp \
+	$$PWD/showNetConfigWidget.cpp \
+	$$PWD/startWidget.cpp \
+	$$PWD/trikGuiApplication.cpp \
 
 TEMPLATE = app
 QT += widgets

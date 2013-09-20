@@ -1,36 +1,36 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 #pragma once
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QListView>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QList>
-#include <QString>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QListView>
+#include <QtGui/QStandardItem>
+#include <QtGui/QStandardItemModel>
+#include <QtCore/QList>
+#include <QtCore/QString>
+
+namespace trikGui {
 
 class StartWidget : public QWidget
 {
-    Q_OBJECT
-    
+	Q_OBJECT
+
 public:
-    StartWidget(QWidget *parent = 0);
-    ~StartWidget();
-
-private:
-    QString exitItemTitle;
-    QVBoxLayout layout;
-    QLabel titleLabel;
-    QListView menuView;
-    QStandardItemModel menuModel;
-    QList<QStandardItem *> menuItems;
-
-    void launch();
+	explicit StartWidget(QWidget *parent = 0);
+	~StartWidget();
 
 protected:
-    void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+
+private:
+	void launch();
+
+	QString mExitItemTitle;
+	QVBoxLayout mLayout;
+	QLabel mTitleLabel;
+	QListView mMenuView;
+	QStandardItemModel mMenuModel;
+	QList<QStandardItem *> mMenuItems;
 };
+
+}

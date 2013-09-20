@@ -1,8 +1,15 @@
 #include <QtCore/QCoreApplication>
 
+#include "trikGuiApplication.h"
+#include "startWidget.h"
+
+using namespace trikGui;
+
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+	TrikGuiApplication a(argc, argv);
+	StartWidget w;
+	w.show();
 
-	return 0;
+	return a.exec();
 }

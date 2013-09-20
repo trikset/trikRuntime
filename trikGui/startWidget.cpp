@@ -1,34 +1,33 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 #include "startWidget.h"
-#include <QKeyEvent>
-#include <QCoreApplication>
-#include "fileManagerWidget.h"
-#include "showNetConfigWidget.h"
+
+#include <QtGui/QKeyEvent>
+
+//#include "fileManagerWidget.h"
+//#include "showNetConfigWidget.h"
+
+using namespace trikGui;
 
 StartWidget::StartWidget(QWidget *parent)
-    : QWidget(parent)
+	: QWidget(parent)
 {
-    exitItemTitle = "Exit";
+	mExitItemTitle = "Exit";
 
-    setWindowState(Qt::WindowFullScreen);
+	setWindowState(Qt::WindowFullScreen);
 
-    titleLabel.setText("TrikDE");
+	mTitleLabel.setText("TRIK");
 
-    menuItems.append(new QStandardItem(FileManagerWidget::getTitle()));
-    menuItems.append(new QStandardItem(ShowNetConfigWidget::getTitle()));
-    menuItems.append(new QStandardItem(exitItemTitle));
+//	mMenuItems.append(new QStandardItem(FileManagerWidget::getTitle()));
+//	mMenuItems.append(new QStandardItem(ShowNetConfigWidget::getTitle()));
+	mMenuItems.append(new QStandardItem(mExitItemTitle));
 
-    menuModel.appendColumn(menuItems);
+	mMenuModel.appendColumn(mMenuItems);
 
-    menuView.setModel(&menuModel);
+	mMenuView.setModel(&mMenuModel);
 
-    layout.addWidget(&titleLabel);
-    layout.addWidget(&menuView);
+	mLayout.addWidget(&mTitleLabel);
+	mLayout.addWidget(&mMenuView);
 
-    setLayout(&layout);
+	setLayout(&mLayout);
 }
 
 StartWidget::~StartWidget()
@@ -37,38 +36,32 @@ StartWidget::~StartWidget()
 
 void StartWidget::launch()
 {
-    const QString &currentItemText = menuModel.itemFromIndex(menuView.currentIndex())->text();
-    if (currentItemText == FileManagerWidget::getTitle())
-    {
-        FileManagerWidget *fileManagerWidget = new FileManagerWidget;
-        fileManagerWidget->show();
-    }
-    else if (currentItemText == ShowNetConfigWidget::getTitle())
-    {
-        ShowNetConfigWidget *showNetConfigWidget = new ShowNetConfigWidget;
-        showNetConfigWidget->show();
-    }
-    else if (currentItemText == exitItemTitle)
-        close();
+	QString const &currentItemText = mMenuModel.itemFromIndex(mMenuView.currentIndex())->text();
+//	if (currentItemText == FileManagerWidget::getTitle()) {
+//		FileManagerWidget *fileManagerWidget = new FileManagerWidget;
+//		fileManagerWidget->show();
+//	}
+//	else if (currentItemText == ShowNetConfigWidget::getTitle()) {
+//		ShowNetConfigWidget *showNetConfigWidget = new ShowNetConfigWidget;
+//		showNetConfigWidget->show();
+//	} else
+		if (currentItemText == mExitItemTitle)
+			close();
 }
 
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key())
-    {
-        case Qt::Key_Meta:
-        {
-            break;
-        }
-        case Qt::Key_Enter:
-        {
-            launch();
-            break;
-        }
-        default:
-        {
-            QWidget::keyPressEvent(event);
-            break;
-        }
-    }
+	switch (event->key()) {
+		case Qt::Key_Meta: {
+			break;
+		}
+		case Qt::Key_Enter: {
+			launch();
+			break;
+		}
+		default: {
+			QWidget::keyPressEvent(event);
+			break;
+		}
+	}
 }
