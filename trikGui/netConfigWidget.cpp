@@ -9,7 +9,7 @@
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QAbstractSocket>
 #include <QtGui/QKeyEvent>
-#include <QtWidgets/QScrollBar>
+#include <QtGui/QScrollBar>
 
 using namespace trikGui;
 

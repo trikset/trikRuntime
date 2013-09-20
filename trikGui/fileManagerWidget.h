@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QListView>
-#include <QtWidgets/QFileSystemModel>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QListView>
+#include <QtGui/QFileSystemModel>
 #include <QtCore/QString>
 
 #include "controller.h"

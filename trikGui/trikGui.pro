@@ -22,7 +22,7 @@ SOURCES += \
 	$$PWD/controller.cpp \
 
 TEMPLATE = app
-QT += widgets network
+QT += network
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
@@ -48,6 +48,8 @@ UI_DIR = .ui/$$CONFIGURATION
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION
 }
 
 win32 {

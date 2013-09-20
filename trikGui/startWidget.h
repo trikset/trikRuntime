@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <QtWidgets/QWidget>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QListView>
+#include <QtGui/QWidget>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QListView>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 #include <QtCore/QList>

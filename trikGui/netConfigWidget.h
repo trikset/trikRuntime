@@ -7,10 +7,10 @@
 #include <QtCore/QList>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QTextEdit>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QListView>
+#include <QtGui/QLabel>
+#include <QtGui/QTextEdit>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QListView>
 
 namespace trikGui {
 

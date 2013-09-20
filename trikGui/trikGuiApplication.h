@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <QtWidgets/QApplication>
+#include <QtGui/QApplication>
 
 namespace trikGui {
 

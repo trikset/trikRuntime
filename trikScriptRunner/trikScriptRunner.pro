@@ -33,7 +33,8 @@ INCLUDEPATH = \
 LIBS += -L$$TRIKCONTROL_DIR/bin/$$CONFIGURATION -ltrikControl$$CONFIGURATION_SUFFIX
 
 !macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$PWD
+	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$DESTDIR
 }
 
 HEADERS += \
@@ -47,8 +48,8 @@ SOURCES += \
 	$$PWD/src/scriptEngineWorker.cpp \
 
 win32 {
-	QMAKE_POST_LINK = "xcopy \"$$replace(TRIKCONTROL_DIR, /, \\)bin\\$$CONFIGURATION\" \"$$replace(DESTDIR, /, \\)\" /s /e /q /y /i \
+	QMAKE_PRE_LINK = "xcopy \"$$replace(TRIKCONTROL_DIR, /, \\)bin\\$$CONFIGURATION\" \"$$replace(DESTDIR, /, \\)\" /s /e /q /y /i \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR"
+	QMAKE_PRE_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR"
 }

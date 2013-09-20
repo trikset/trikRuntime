@@ -34,6 +34,7 @@ UI_DIR = .ui/$$CONFIGURATION
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION
 }
 
 win32 {
@@ -42,5 +43,6 @@ win32 {
 			"
 } else {
 	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
+			&& cp -r $$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
 			"
 }
