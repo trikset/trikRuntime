@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #pragma once
 
 #include <QtWidgets/QWidget>
@@ -8,6 +12,8 @@
 #include <QtGui/QStandardItemModel>
 #include <QtCore/QList>
 #include <QtCore/QString>
+
+#include "controller.h"
 
 namespace trikGui {
 
@@ -31,6 +37,7 @@ private:
 	QListView mMenuView;
 	QStandardItemModel mMenuModel;
 	QList<QStandardItem *> mMenuItems;
+	Controller mController;
 };
 
 }

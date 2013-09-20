@@ -1,22 +1,28 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 TRIKCONTROL_DIR = ../trikControl/
 TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
-	$$PWD/showNetConfigWidget.h \
+	$$PWD/netConfigWidget.h \
 	$$PWD/startWidget.h \
 	$$PWD/trikGuiApplication.h \
+	$$PWD/controller.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
 	$$PWD/fileManagerWidget.cpp \
-	$$PWD/showNetConfigWidget.cpp \
+	$$PWD/netConfigWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
+	$$PWD/controller.cpp \
 
 TEMPLATE = app
-QT += widgets
+QT += widgets network
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug

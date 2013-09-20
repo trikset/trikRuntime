@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #pragma once
 
 #include <QtCore/QString>
@@ -22,7 +26,11 @@ class TrikCommunicator : public QObject
 	Q_OBJECT
 
 public:
+	/// Constructor that creates its own instance of a script runner.
 	TrikCommunicator();
+
+	/// Constructor that accepts external script runner and issues commands to it. Takes ownership of a runner.
+	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
 
 	~TrikCommunicator();
 
@@ -37,7 +45,8 @@ private slots:
 private:
 	QTcpServer mServer;
 	QTcpSocket* mConnection;  // Has ownership.
-	trikScriptRunner::TrikScriptRunner *mRunner;  // Has ownership.
+	trikScriptRunner::TrikScriptRunner *mRunner;  // Has or doesn't have ownership, depending on mOwnsRunner.
+	bool const mOwnsRunner;
 
 	static QString readFromFile(QString const &fileName);
 	static void writeToFile(QString const &fileName, QString const &contents);

@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #pragma once
 
 #include <QtCore/QString>
@@ -20,8 +24,14 @@ public:
 	~TrikScriptRunner();
 
 	/// Executes given script.
-	/// @param script Script in Qt Script language to be executed.
+	/// @param script - script in Qt Script language to be executed.
 	void run(QString const &script);
+
+	/// Reads a script from given file and executes it.
+	/// @param fileName - name of a file with script.
+	/// @param synchronous - true, if this method shall not return until script execution is finished. Dangerous
+	///   because scripts may contain infinite loops.
+	void runFromFile(QString const &fileName, bool synchronous = false);
 
 	/// Aborts script execution.
 	void abort();

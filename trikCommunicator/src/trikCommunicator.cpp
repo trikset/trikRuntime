@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #include "trikCommunicator.h"
 
 #include <QtCore/QFile>
@@ -8,11 +12,18 @@
 
 using namespace trikCommunicator;
 
-int const bufferSize = 1000;
-
 TrikCommunicator::TrikCommunicator()
 	: mConnection(new QTcpSocket())
 	, mRunner(new trikScriptRunner::TrikScriptRunner())
+	, mOwnsRunner(true)
+{
+}
+
+
+TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
+	: mConnection(new QTcpSocket())
+	, mRunner(&runner)
+	, mOwnsRunner(false)
 {
 }
 

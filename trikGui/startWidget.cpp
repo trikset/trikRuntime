@@ -1,9 +1,13 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 #include "startWidget.h"
 
 #include <QtGui/QKeyEvent>
 
-//#include "fileManagerWidget.h"
-//#include "showNetConfigWidget.h"
+#include "fileManagerWidget.h"
+#include "netConfigWidget.h"
 
 using namespace trikGui;
 
@@ -16,8 +20,8 @@ StartWidget::StartWidget(QWidget *parent)
 
 	mTitleLabel.setText("TRIK");
 
-//	mMenuItems.append(new QStandardItem(FileManagerWidget::getTitle()));
-//	mMenuItems.append(new QStandardItem(ShowNetConfigWidget::getTitle()));
+	mMenuItems.append(new QStandardItem(FileManagerWidget::menuEntry()));
+	mMenuItems.append(new QStandardItem(NetConfigWidget::menuEntry()));
 	mMenuItems.append(new QStandardItem(mExitItemTitle));
 
 	mMenuModel.appendColumn(mMenuItems);
@@ -37,16 +41,15 @@ StartWidget::~StartWidget()
 void StartWidget::launch()
 {
 	QString const &currentItemText = mMenuModel.itemFromIndex(mMenuView.currentIndex())->text();
-//	if (currentItemText == FileManagerWidget::getTitle()) {
-//		FileManagerWidget *fileManagerWidget = new FileManagerWidget;
-//		fileManagerWidget->show();
-//	}
-//	else if (currentItemText == ShowNetConfigWidget::getTitle()) {
-//		ShowNetConfigWidget *showNetConfigWidget = new ShowNetConfigWidget;
-//		showNetConfigWidget->show();
-//	} else
-		if (currentItemText == mExitItemTitle)
-			close();
+	if (currentItemText == FileManagerWidget::menuEntry()) {
+		FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
+		fileManagerWidget->show();
+	} else if (currentItemText == NetConfigWidget::menuEntry()) {
+		NetConfigWidget *netConfigWidget = new NetConfigWidget();
+		netConfigWidget->show();
+	} else if (currentItemText == mExitItemTitle) {
+		close();
+	}
 }
 
 void StartWidget::keyPressEvent(QKeyEvent *event)
