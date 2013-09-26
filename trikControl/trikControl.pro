@@ -28,7 +28,7 @@ CONFIG(debug, debug | release) {
 
 TARGET = trikControl$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION/
+DESTDIR = bin/$$CONFIGURATION
 
 OBJECTS_DIR = .obj/$$CONFIGURATION
 MOC_DIR = .moc/$$CONFIGURATION
@@ -53,3 +53,11 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/sensor.cpp \
 	$$PWD/src/configurer.cpp \
+
+win32 {
+	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
+			"
+} else {
+	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
+			"
+}

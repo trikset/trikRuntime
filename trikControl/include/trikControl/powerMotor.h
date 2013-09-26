@@ -28,8 +28,7 @@ class TRIKCONTROL_EXPORT PowerMotor : public QObject
 	Q_OBJECT
 
 public:
-	/// Initializes motor.
-	void init(int engine);
+	PowerMotor(QString const &command, QString const &stop, bool invert);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -44,9 +43,10 @@ public slots:
 	void powerOff();
 
 private:
-	int mEngine;
+	QString mCommand;
+	QString mStopCommand;
+	bool mInvert;
 	int mPower;
-	QString mName;
 };
 
 }

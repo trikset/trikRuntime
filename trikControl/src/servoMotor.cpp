@@ -18,7 +18,7 @@
 
 using namespace trikControl;
 
-void ServoMotor::init(int powerMin, int powerMax, QString const& controlFile)
+ServoMotor::ServoMotor(int powerMin, int powerMax, QString const& controlFile, bool invert)
 {
 	mControlFile.setFileName(controlFile);
 	mPowerMax = powerMax;

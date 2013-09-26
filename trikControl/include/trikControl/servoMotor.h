@@ -28,9 +28,8 @@ class TRIKCONTROL_EXPORT ServoMotor : public QObject
 	Q_OBJECT
 
 public:
-	/// Initializes motor.
 	/// @param controlFile Device file for this motor.
-	void init(int powerMin, int powerMax, QString const& controlFile);
+	ServoMotor(int powerMin, int powerMax, QString const& controlFile, bool invert);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.

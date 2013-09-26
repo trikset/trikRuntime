@@ -20,17 +20,11 @@
 
 using namespace trikControl;
 
-Sensor::Sensor()
-	: mMin(0)
-	, mMax(0)
+Sensor::Sensor(int min, int max, QString const &controlFile)
+	: mMin(min)
+	, mMax(max)
+	, mControlFile(controlFile)
 {
-}
-
-void Sensor::init(int min, int max, QString const &controlFile)
-{
-	mMin = min;
-	mMax = max;
-	mControlFile.setFileName(controlFile);
 }
 
 int Sensor::read()

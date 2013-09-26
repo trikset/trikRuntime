@@ -15,58 +15,66 @@
 #include "brick.h"
 
 #include <QtCore/QSettings>
-
 #include <QtCore/QDebug>
+
+#include "configurer.h"
 
 using namespace trikControl;
 
 Brick::Brick()
+	: mConfigurer(new Configurer())
 {
-	QSettings settings("./config.ini", QSettings::IniFormat);
+	system(mConfigurer->initScript().toStdString().c_str());
 
-	settings.beginGroup("Motor1");
-	mMotor1.init(
-			settings.value("ValueMin", 1500000).toInt()
-			, settings.value("ValueMax", 1800000).toInt()
-			, settings.value("DeviceFile", "/sys/class/pwm/ecap.0/duty_ns").toString()
-			);
-	settings.endGroup();
+	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
+		QString const motorType = mConfigurer->servoMotorDefaultType(port);
 
-	settings.beginGroup("Motor2");
-	mMotor2.init(
-			settings.value("ValueMin", 1500000).toInt()
-			, settings.value("ValueMax", 1800000).toInt()
-			, settings.value("DeviceFile", "/sys/class/pwm/ecap.1/duty_ns").toString()
-			);
-	settings.endGroup();
+		ServoMotor *servoMotor = new ServoMotor(
+				mConfigurer->motorTypeMin(motorType)
+				, mConfigurer->motorTypeMax(motorType)
+				, mConfigurer->servoMotorDeviceFile(port)
+				, mConfigurer->servoMotorInvert(port)
+				);
 
-	settings.beginGroup("Sensor1");
-	mSensor1.init(
-			settings.value("Min", 30000).toInt()
-			, settings.value("Max", 350000).toInt()
-			, settings.value("DeviceFile", "/sys/devices/platform/da850_trik/sensor_d1").toString()
-			);
-	settings.endGroup();
+		mServoMotors.insert(port, servoMotor);
+	}
 
-	settings.beginGroup("Sensor2");
-	mSensor2.init(
-			settings.value("Min", 30000).toInt()
-			, settings.value("Max", 350000).toInt()
-			, settings.value("DeviceFile", "/sys/devices/platform/da850_trik/sensor_d2").toString()
-			);
-	settings.endGroup();
+	foreach (QString const &port, mConfigurer->powerMotorPorts()) {
+		PowerMotor *powerMotor = new PowerMotor(
+				mConfigurer->powerMotorCommand(port)
+				, mConfigurer->powerMotorStop(port)
+				, mConfigurer->powerMotorInvert(port)
+				);
 
-	mPowerMotor1.init(1);
-	mPowerMotor2.init(2);
-	mPowerMotor3.init(3);
-	mPowerMotor4.init(4);
+		mPowerMotors.insert(port, powerMotor);
+	}
+
+	foreach (QString const &port, mConfigurer->sensorPorts()) {
+		QString const sensorType = mConfigurer->sensorDefaultType(port);
+
+		Sensor *sensor = new Sensor(
+				mConfigurer->sensorTypeMin(sensorType)
+				, mConfigurer->sensorTypeMax(sensorType)
+				, mConfigurer->sensorDeviceFile(port)
+				);
+
+		mSensors.insert(port, sensor);
+	}
+}
+
+Brick::~Brick()
+{
+	delete mConfigurer;
+	qDeleteAll(mServoMotors);
+	qDeleteAll(mPowerMotors);
+	qDeleteAll(mSensors);
 }
 
 void Brick::playSound(QString const &soundFileName)
 {
 	qDebug() << "playSound, file: " << soundFileName;
 
-	QString const command = "aplay --quiet " + soundFileName + " &";
+	QString const command = mConfigurer->playSoundCommand().arg(soundFileName);
 	system(command.toStdString().c_str());
 }
 
@@ -74,59 +82,46 @@ void Brick::stop()
 {
 	qDebug() << "stop";
 
-	mMotor1.powerOff();
-	mMotor2.powerOff();
-	mPowerMotor1.powerOff();
-	mPowerMotor2.powerOff();
-	mPowerMotor3.powerOff();
-	mPowerMotor4.powerOff();
+	foreach (ServoMotor * const servoMotor, mServoMotors.values()) {
+		servoMotor->powerOff();
+	}
+
+	foreach (PowerMotor * const powerMotor, mPowerMotors.values()) {
+		powerMotor->powerOff();
+	}
 }
 
-ServoMotor *Brick::motor(int const &port)
+ServoMotor *Brick::servoMotor(QString const &port)
 {
 	qDebug() << "motor, port: " << port;
 
-	switch (port) {
-	case 1:
-		return &mMotor1;
-	case 2:
-		return &mMotor2;
-	default:
-		return &mMotor1;
+	if (mServoMotors.contains(port)) {
+		return mServoMotors.value(port);
 	}
+
+	return NULL;
 }
 
-PowerMotor *Brick::powerMotor(int const &port)
+PowerMotor *Brick::powerMotor(QString const &port)
 {
 	qDebug() << "Power motor, port: " << port;
 
-	switch (port) {
-	case 1:
-		return &mPowerMotor1;
-	case 2:
-		return &mPowerMotor2;
-	case 3:
-		return &mPowerMotor3;
-	case 4:
-		return &mPowerMotor4;
-	default:
-		return &mPowerMotor1;
+	if (mPowerMotors.contains(port)) {
+		return mPowerMotors.value(port);
 	}
 
+	return NULL;
 }
 
-Sensor *Brick::sensor(int const &port)
+Sensor *Brick::sensor(QString const &port)
 {
 	qDebug() << "sensor, port: " << port;
 
-	switch (port) {
-	case 1:
-		return &mSensor1;
-	case 2:
-		return &mSensor2;
-	default:
-		return &mSensor1;
+	if (mSensors.contains(port)) {
+		return mSensors.value(port);
 	}
+
+	return NULL;
 }
 
 void Brick::wait(int const &milliseconds) const

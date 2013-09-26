@@ -18,12 +18,12 @@
 
 using namespace trikControl;
 
-void PowerMotor::init(int engine)
+PowerMotor::PowerMotor(QString const &command, QString const &stop, bool invert)
+	: mCommand(command)
+	, mStopCommand(stop)
+	, mInvert(invert)
 {
-	mEngine = engine;
-	mPower = 0;
 }
-
 
 void PowerMotor::setPower(int power)
 {
@@ -35,9 +35,13 @@ void PowerMotor::setPower(int power)
 
 	mPower = power;
 
+	if (mInvert) {
+		power = -power;
+	}
+
 	char command[100] = {0};
 
-	sprintf(command, "i2cset -y 2 0x48 0x1%d 0x%x w", mEngine, static_cast<unsigned char>(power));
+	sprintf(command, mCommand.toStdString().c_str(), static_cast<unsigned char>(power));
 
 	qDebug() << QString(command);
 
@@ -49,8 +53,7 @@ int PowerMotor::power() const
 	return mPower;
 }
 
-
 void PowerMotor::powerOff()
 {
-	setPower(0);
+	system(mStopCommand.toStdString().c_str());
 }

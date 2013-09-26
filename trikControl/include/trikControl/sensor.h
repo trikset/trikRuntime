@@ -28,20 +28,17 @@ class TRIKCONTROL_EXPORT Sensor : public QObject
 	Q_OBJECT
 
 public:
-	Sensor();
-
-	/// Initializes sensor.
 	/// @param controlFile Device file for this sensor.
-	void init(int min, int max, QString const &controlFile);
+	Sensor(int min, int max, QString const &controlFile);
 
 public slots:
 	/// Returns current raw reading of a sensor.
 	int read();
 
 private:
-	QFile mControlFile;
 	int mMin;
 	int mMax;
+	QFile mControlFile;
 };
 
 }
