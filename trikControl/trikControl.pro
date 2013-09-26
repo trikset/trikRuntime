@@ -16,6 +16,8 @@ TEMPLATE = lib
 
 DEFINES += TRIKCONTROL_LIBRARY
 
+QT += xml
+
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
 	CONFIGURATION_SUFFIX = d
@@ -43,9 +45,11 @@ HEADERS += \
 	$$PWD/include/trikControl/powerMotor.h \
 	$$PWD/include/trikControl/sensor.h \
 	$$PWD/include/trikControl/declSpec.h \
+	$$PWD/src/configurer.h \
 
 SOURCES += \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/sensor.cpp \
+	$$PWD/src/configurer.cpp \
