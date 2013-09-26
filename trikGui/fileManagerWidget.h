@@ -17,10 +17,20 @@
 
 #pragma once
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QListView>
-#include <QtGui/QFileSystemModel>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QLabel>
+	#include <QtGui/QListView>
+	#include <QtGui/QFileSystemModel>
+#else
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QListView>
+	#include <QtWidgets/QFileSystemModel>
+#endif
+
 #include <QtCore/QString>
 
 #include "controller.h"

@@ -17,10 +17,22 @@
 
 #pragma once
 
-#include <QtGui/QWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QListView>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QLabel>
+	#include <QtGui/QListView>
+	#include <QtGui/QStandardItem>
+	#include <QtGui/QStandardItemModel>
+#else
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QListView>
+#endif
+
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 #include <QtCore/QList>

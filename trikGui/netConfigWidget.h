@@ -17,13 +17,23 @@
 
 #pragma once
 
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QLabel>
+	#include <QtGui/QTextEdit>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QListView>
+#else
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QTextEdit>
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QListView>
+#endif
+
 #include <QtCore/QList>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
-#include <QtGui/QLabel>
-#include <QtGui/QTextEdit>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QListView>
 
 namespace trikGui {
 

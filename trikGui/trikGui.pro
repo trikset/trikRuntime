@@ -32,7 +32,12 @@ SOURCES += \
 	$$PWD/controller.cpp \
 
 TEMPLATE = app
+
 QT += network
+
+if (equals(QT_MAJOR_VERSION, 5)) {
+	QT += widgets
+}
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug

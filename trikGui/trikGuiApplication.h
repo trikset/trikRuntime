@@ -10,14 +10,20 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. */
-
-/* This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
+ * limitations under the License.
+ *
+ * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
 
 #pragma once
 
-#include <QtGui/QApplication>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
 
 namespace trikGui {
 
