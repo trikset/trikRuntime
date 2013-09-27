@@ -20,18 +20,31 @@
 namespace trikGui
 {
 
+class RunningWidget;
+
 /// Provides backend features like Qt Script runner for frontend.
-class Controller
+class Controller : public QObject
 {
+	Q_OBJECT
+
 public:
 	Controller();
+	~Controller();
 
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.
 	void runFile(QString const &filePath);
 
+	/// Cancels execution of current program.
+	void abortExecution();
+
+private slots:
+	void scriptExecutionCompleted();
+
 private:
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
+
+	RunningWidget * mRunningWidget;  // Has ownership.
 };
 
 }

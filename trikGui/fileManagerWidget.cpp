@@ -63,7 +63,7 @@ void FileManagerWidget::open()
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: {
+		case Qt::Key_Left: {
 			close();
 			break;
 		}

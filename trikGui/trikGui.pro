@@ -18,6 +18,7 @@ TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
+	$$PWD/runningWidget.h \
 	$$PWD/netConfigWidget.h \
 	$$PWD/startWidget.h \
 	$$PWD/trikGuiApplication.h \
@@ -26,6 +27,7 @@ HEADERS += \
 SOURCES += \
 	$$PWD/main.cpp \
 	$$PWD/fileManagerWidget.cpp \
+	$$PWD/runningWidget.cpp \
 	$$PWD/netConfigWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \

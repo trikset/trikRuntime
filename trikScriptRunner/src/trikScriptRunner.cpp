@@ -30,6 +30,7 @@ TrikScriptRunner::TrikScriptRunner()
 
 	connect(this, SIGNAL(threadRun(QString const &)), mEngineWorker, SLOT(run(QString const &)));
 	connect(this, SIGNAL(threadDelete()), mEngineWorker, SLOT(deleteWorker()));
+	connect(mEngineWorker, SIGNAL(completed()), this, SIGNAL(completed()));
 
 	mWorkerThread.start();
 }

@@ -56,11 +56,14 @@ void ScriptEngineWorker::run(QString const &script)
 
 		qDebug() << "uncaught exception at line" << line << ":" << result.toString();
 	}
+
+	emit completed();
 }
 
 void ScriptEngineWorker::abort()
 {
 	mEngine.abortEvaluation();
+	emit completed();
 }
 
 void ScriptEngineWorker::deleteWorker()

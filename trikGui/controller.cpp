@@ -17,22 +17,46 @@
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
 
+#include "runningWidget.h"
+
 using namespace trikGui;
 
 int const communicatorPort = 8888;
 
 Controller::Controller()
 	: mCommunicator(mScriptRunner)
+	, mRunningWidget(NULL)
 {
+	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
 	mCommunicator.listen(communicatorPort);
+}
+
+Controller::~Controller()
+{
+	delete mRunningWidget;
 }
 
 void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts") {
+		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
+		mRunningWidget->show();
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
+	}
+}
+
+void Controller::abortExecution()
+{
+	mScriptRunner.abort();
+}
+
+void Controller::scriptExecutionCompleted()
+{
+	if (mRunningWidget) {
+		mRunningWidget->close();
+		delete mRunningWidget;
 	}
 }

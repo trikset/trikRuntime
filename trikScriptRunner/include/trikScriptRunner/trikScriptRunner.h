@@ -50,6 +50,9 @@ public:
 	void abort();
 
 signals:
+	/// Fired when current script completes execution.
+	void completed();
+
 	/// Signal for script runner thread to begin execution.
 	void threadRun(QString const &script);
 

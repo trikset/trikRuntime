@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov
+/* Copyright 2013 Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,10 +10,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
- * project. See git revision history for detailed changes. */
+ * limitations under the License. */
 
 #pragma once
 
@@ -23,16 +20,12 @@
 	#include <QtGui/QWidget>
 	#include <QtGui/QVBoxLayout>
 	#include <QtGui/QLabel>
-	#include <QtGui/QListView>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QVBoxLayout>
 	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QListView>
+	#include <QtWidgets/QVBoxLayout>
 #endif
 
-#include <QtGui/QStandardItem>
-#include <QtGui/QStandardItemModel>
 #include <QtCore/QList>
 #include <QtCore/QString>
 
@@ -40,27 +33,21 @@
 
 namespace trikGui {
 
-class StartWidget : public QWidget
+class RunningWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit StartWidget(QWidget *parent = 0);
-	~StartWidget();
+	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
-	void launch();
-
-	QString mExitItemTitle;
 	QVBoxLayout mLayout;
-	QLabel mTitleLabel;
-	QListView mMenuView;
-	QStandardItemModel mMenuModel;
-	QList<QStandardItem *> mMenuItems;
-	Controller mController;
+	QLabel mProgramNameLabel;
+	QLabel mAbortLabel;
+	Controller &mController;
 };
 
 }

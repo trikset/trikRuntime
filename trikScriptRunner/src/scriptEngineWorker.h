@@ -40,6 +40,10 @@ public:
 	/// Aborts script execution.
 	void abort();
 
+signals:
+	/// Fired when current script execution completed.
+	void completed();
+
 public slots:
 	/// Executes given script.
 	void run(QString const &script);

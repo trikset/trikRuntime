@@ -18,6 +18,7 @@
 #include "trikGuiApplication.h"
 
 #include <QtGui/QKeyEvent>
+#include <QtCore/QDebug>
 
 using namespace trikGui;
 
@@ -31,6 +32,8 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 	if (event->type() == QEvent::KeyPress) {
 		QKeyEvent * const keyEvent = dynamic_cast<QKeyEvent *>(event);
 		if (keyEvent != NULL) {
+			qDebug() << "Key event, key: " << keyEvent->key();
+
 			switch (keyEvent->key()) {
 				case Qt::Key_F2: {
 					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Meta, Qt::NoModifier);
