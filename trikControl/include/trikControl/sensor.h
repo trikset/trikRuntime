@@ -28,7 +28,7 @@ class TRIKCONTROL_EXPORT Sensor : public QObject
 	Q_OBJECT
 
 public:
-	/// @param controlFile Device file for this sensor.
+	/// @param controlFile - device file for this sensor.
 	Sensor(int min, int max, QString const &controlFile);
 
 public slots:

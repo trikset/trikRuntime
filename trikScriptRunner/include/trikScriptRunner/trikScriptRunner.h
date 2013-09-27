@@ -37,11 +37,14 @@ public:
 	/// @param script - script in Qt Script language to be executed.
 	void run(QString const &script);
 
-	/// Reads a script from given file and executes it.
+	/// Reads a script from given file and asynchronously executes it.
 	/// @param fileName - name of a file with script.
-	/// @param synchronous - true, if this method shall not return until script execution is finished. Dangerous
-	///   because scripts may contain infinite loops.
-	void runFromFile(QString const &fileName, bool synchronous = false);
+	void runFromFile(QString const &fileName);
+
+	/// Reads a script from given file and synchronously executes it. Dangerous because scripts may contain
+	/// infinite loops.
+	/// @param fileName - name of a file with script.
+	static void runFromFileSynchronous(QString const &fileName);
 
 	/// Aborts script execution.
 	void abort();
@@ -54,6 +57,8 @@ signals:
 	void threadDelete();
 
 private:
+	static QString readFromFile(QString const &fileName);
+
 	ScriptEngineWorker *mEngineWorker;  // Has ownership.
 	QThread mWorkerThread;  // Has ownership.
 };

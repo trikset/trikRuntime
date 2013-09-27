@@ -32,6 +32,8 @@ Brick::Brick()
 		ServoMotor *servoMotor = new ServoMotor(
 				mConfigurer->motorTypeMin(motorType)
 				, mConfigurer->motorTypeMax(motorType)
+				, mConfigurer->motorTypeZero(motorType)
+				, mConfigurer->motorTypeStop(motorType)
 				, mConfigurer->servoMotorDeviceFile(port)
 				, mConfigurer->servoMotorInvert(port)
 				);

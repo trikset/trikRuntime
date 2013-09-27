@@ -46,7 +46,23 @@ void TrikScriptRunner::run(QString const &script)
 	emit threadRun(script);
 }
 
-void TrikScriptRunner::runFromFile(QString const &fileName, bool synchronous)
+void TrikScriptRunner::runFromFile(QString const &fileName)
+{
+	emit threadRun(readFromFile(fileName));
+}
+
+void TrikScriptRunner::runFromFileSynchronous(QString const &fileName)
+{
+	ScriptEngineWorker temporaryWorker;
+	temporaryWorker.run(readFromFile(fileName));
+}
+
+void TrikScriptRunner::abort()
+{
+	mEngineWorker->abort();
+}
+
+QString TrikScriptRunner::readFromFile(QString const &fileName)
 {
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -57,18 +73,7 @@ void TrikScriptRunner::runFromFile(QString const &fileName, bool synchronous)
 	QTextStream input;
 	input.setDevice(&file);
 	input.setCodec("UTF-8");
-	QString const script = input.readAll();
+	QString const result = input.readAll();
 	file.close();
-
-	if (!synchronous) {
-		emit threadRun(script);
-	} else {
-		ScriptEngineWorker temporaryWorker;
-		temporaryWorker.run(script);
-	}
-}
-
-void TrikScriptRunner::abort()
-{
-	mEngineWorker->abort();
+	return result;
 }

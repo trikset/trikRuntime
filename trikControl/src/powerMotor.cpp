@@ -35,9 +35,7 @@ void PowerMotor::setPower(int power)
 
 	mPower = power;
 
-	if (mInvert) {
-		power = -power;
-	}
+	power = mInvert ? -power : power;
 
 	char command[100] = {0};
 

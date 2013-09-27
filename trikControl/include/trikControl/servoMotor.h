@@ -29,7 +29,7 @@ class TRIKCONTROL_EXPORT ServoMotor : public QObject
 
 public:
 	/// @param controlFile Device file for this motor.
-	ServoMotor(int powerMin, int powerMax, QString const& controlFile, bool invert);
+	ServoMotor(int min, int max, int zero, int stop, QString const& deviceFile, bool invert);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -45,9 +45,12 @@ public slots:
 
 private:
 	QFile mControlFile;
-	int mPowerMax;
-	int mPowerMin;
-	int mPower;
+	int mMin;
+	int mMax;
+	int mZero;
+	int mStop;
+	bool mInvert;
+	int mCurrentPower;
 };
 
 }

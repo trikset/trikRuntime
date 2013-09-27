@@ -18,23 +18,20 @@
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(int powerMin, int powerMax, QString const& controlFile, bool invert)
+ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const& deviceFile, bool invert)
+	: mControlFile(deviceFile)
+	, mMin(min)
+	, mMax(max)
+	, mZero(zero)
+	, mStop(stop)
+	, mInvert(invert)
+	, mCurrentPower(0)
 {
-	mControlFile.setFileName(controlFile);
-	mPowerMax = powerMax;
-	mPowerMin = powerMin;
-	mPower = 0;
 }
 
 void ServoMotor::setPower(int power)
 {
 	qDebug() << "Executing setPower command with power = " << power;
-
-	if (power == 0) {
-		// Quick hack for motors not stopping properly on middle power value
-		powerOff();
-		return;
-	}
 
 	if (!mControlFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		qDebug() << "Can't open motor control file " << mControlFile.fileName();
@@ -47,14 +44,15 @@ void ServoMotor::setPower(int power)
 		power = -100;
 	}
 
-	mPower = power;
+	mCurrentPower = power;
 
-	QString command;
+	power = mInvert ? -power : power;
 
-	qreal const powerFactor = static_cast<qreal>(mPowerMax - mPowerMin) / 100;
-	command.sprintf("%d\n", static_cast<int>(power * powerFactor + mPowerMin));
+	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
+	qreal const powerFactor = static_cast<qreal>(range) / 100;
+	QString const command = QString::number(static_cast<int>(mZero + power * powerFactor));
 
-	qDebug() << "executing: " << command;
+	qDebug() << "writing to " << mControlFile.fileName() << " value: " << command;
 
 	mControlFile.write(command.toLatin1());
 	mControlFile.close();
@@ -62,9 +60,8 @@ void ServoMotor::setPower(int power)
 
 int ServoMotor::power() const
 {
-	return mPower;
+	return mCurrentPower;
 }
-
 
 void ServoMotor::powerOff()
 {
@@ -75,8 +72,10 @@ void ServoMotor::powerOff()
 		return;
 	}
 
-	mControlFile.write("0");
+	qDebug() << "writing to " << mControlFile.fileName() << " value: " << mStop;
+
+	mControlFile.write(QString::number(mStop).toLatin1());
 	mControlFile.close();
 
-	mPower = 0;
+	mCurrentPower = 0;
 }

@@ -30,8 +30,7 @@ int main(int argc, char *argv[])
 
 	QString const scriptFileName = args[1];
 
-	trikScriptRunner::TrikScriptRunner runner;
-	runner.runFromFile(scriptFileName, true);
+	trikScriptRunner::TrikScriptRunner::runFromFileSynchronous(scriptFileName);
 
 	return 0;
 }
