@@ -16,6 +16,7 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
+#include <time.h>
 
 #include "configurer.h"
 
@@ -129,4 +130,9 @@ Sensor *Brick::sensor(QString const &port)
 void Brick::wait(int const &milliseconds) const
 {
 	SleeperThread::msleep(milliseconds);
+}
+
+int Brick::time() const
+{
+	return ::time(NULL);
 }
