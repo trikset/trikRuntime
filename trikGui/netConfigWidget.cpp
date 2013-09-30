@@ -63,7 +63,9 @@ void NetConfigWidget::generateNetConfigList()
 	foreach (QNetworkInterface const &interface, QNetworkInterface::allInterfaces()) {
 		mConfigItems.append(new QStandardItem(interface.name()));
 		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
-			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol) {
+			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol
+					&& entry.ip() != QHostAddress::LocalHost)
+			{
 				mConfigItems.append(new QStandardItem(QString("IP address: ")));
 				mConfigItems.append(new QStandardItem(entry.ip().toString()));
 //				mConfigItems.append(new QStandardItem(QString("Netmask: ")));
