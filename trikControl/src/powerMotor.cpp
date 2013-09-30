@@ -22,6 +22,7 @@ PowerMotor::PowerMotor(QString const &command, QString const &stop, bool invert)
 	: mCommand(command)
 	, mStopCommand(stop)
 	, mInvert(invert)
+	, mCurrentPower(0)
 {
 }
 
@@ -33,7 +34,7 @@ void PowerMotor::setPower(int power)
 		power = -100;
 	}
 
-	mPower = power;
+	mCurrentPower = power;
 
 	power = mInvert ? -power : power;
 
@@ -48,10 +49,11 @@ void PowerMotor::setPower(int power)
 
 int PowerMotor::power() const
 {
-	return mPower;
+	return mCurrentPower;
 }
 
 void PowerMotor::powerOff()
 {
 	system(mStopCommand.toStdString().c_str());
+	mCurrentPower = 0;
 }

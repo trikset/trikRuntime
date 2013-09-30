@@ -63,7 +63,6 @@ void ScriptEngineWorker::run(QString const &script)
 void ScriptEngineWorker::abort()
 {
 	mEngine.abortEvaluation();
-	emit completed();
 }
 
 void ScriptEngineWorker::deleteWorker()

@@ -51,7 +51,7 @@ private:
 	QString mCommand;
 	QString mStopCommand;
 	bool mInvert;
-	int mPower;
+	int mCurrentPower;
 };
 
 }

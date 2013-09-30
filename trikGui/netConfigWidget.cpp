@@ -37,7 +37,7 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
-	mTitleLabel.setText("Network Configuration");
+	mTitleLabel.setText("Network Config");
 
 	generateNetConfigList();
 	mConfigModel.appendColumn(mConfigItems);
@@ -55,16 +55,19 @@ NetConfigWidget::~NetConfigWidget()
 
 QString NetConfigWidget::menuEntry()
 {
-	return "Show network configuration";
+	return "See network config";
 }
 
 void NetConfigWidget::generateNetConfigList()
 {
 	foreach (QNetworkInterface const &interface, QNetworkInterface::allInterfaces()) {
+		if (interface.flags() & QNetworkInterface::IsLoopBack) {
+			continue;
+		}
+
 		mConfigItems.append(new QStandardItem(interface.name()));
 		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
-			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol
-					&& entry.ip() != QHostAddress::LocalHost)
+			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
 			{
 				mConfigItems.append(new QStandardItem(QString("IP address: ")));
 				mConfigItems.append(new QStandardItem(entry.ip().toString()));

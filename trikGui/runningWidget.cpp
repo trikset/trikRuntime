@@ -38,6 +38,7 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_Enter: {
 			mController.abortExecution();
+			close();
 			break;
 		}
 		default: {
