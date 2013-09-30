@@ -38,8 +38,8 @@ Configurer::Configurer()
 
 	QDomElement const root = config.documentElement();
 
-	if (root.elementsByTagName("init").isEmpty()) {
-		qDebug() << "config.xml does not have <init> tag";
+	if (root.elementsByTagName("initScript").isEmpty()) {
+		qDebug() << "config.xml does not have <initScript> tag";
 		throw "config.xml parsing failed";
 	}
 
