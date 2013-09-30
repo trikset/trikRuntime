@@ -28,7 +28,15 @@ class TRIKCONTROL_EXPORT ServoMotor : public QObject
 	Q_OBJECT
 
 public:
-	/// @param controlFile Device file for this motor.
+	/// Constructor.
+	/// @param controlFile - device file for this motor.
+	/// @param min - value of duty_ns corresponding to full reverse of a motor. Used to calculate actual values from
+	///        values in range [-100..100] from client program.
+	/// @param max - value of duty_ns corresponding to full forward of a motor. Used to calculate actual values from
+	///        values in range [-100..100] from client program.
+	/// @param zero - value of duty_ns corresponding to full stop of a motor.
+	/// @param deviceFile - device file for this motor.
+	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
 	ServoMotor(int min, int max, int zero, int stop, QString const& deviceFile, bool invert);
 
 public slots:

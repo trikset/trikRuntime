@@ -16,7 +16,7 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QDebug>
-#include <time.h>
+#include <QtCore/QDateTime>
 
 #include "configurer.h"
 
@@ -132,7 +132,7 @@ void Brick::wait(int const &milliseconds) const
 	SleeperThread::msleep(milliseconds);
 }
 
-int Brick::time() const
+qint64 Brick::time() const
 {
-	return ::time(NULL);
+	return QDateTime::currentMSecsSinceEpoch();
 }

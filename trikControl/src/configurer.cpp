@@ -43,7 +43,7 @@ Configurer::Configurer()
 		throw "config.xml parsing failed";
 	}
 
-	QDomElement const init = root.elementsByTagName("init").at(0).toElement();
+	QDomElement const init = root.elementsByTagName("initScript").at(0).toElement();
 	mInitScript = init.text();
 
 	if (root.elementsByTagName("servoMotors").isEmpty()) {

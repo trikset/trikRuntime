@@ -28,8 +28,11 @@ class TRIKCONTROL_EXPORT Sensor : public QObject
 	Q_OBJECT
 
 public:
-	/// @param controlFile - device file for this sensor.
-	Sensor(int min, int max, QString const &controlFile);
+	/// Constructor.
+	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
+	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
+	/// @param deviceFile - device file for this sensor.
+	Sensor(int min, int max, QString const &deviceFile);
 
 public slots:
 	/// Returns current raw reading of a sensor.
@@ -38,7 +41,7 @@ public slots:
 private:
 	int mMin;
 	int mMax;
-	QFile mControlFile;
+	QFile mDeviceFile;
 };
 
 }

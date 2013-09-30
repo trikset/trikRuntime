@@ -28,6 +28,11 @@ class TRIKCONTROL_EXPORT PowerMotor : public QObject
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param command - format of command to set motor power, shall have format conforming to sprintf format string
+	///        specification. Shall contain one %d format specifier - power of a motor.
+	/// @param stop - command to turn off the motor.
+	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
 	PowerMotor(QString const &command, QString const &stop, bool invert);
 
 public slots:

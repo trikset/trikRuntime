@@ -20,10 +20,10 @@
 
 using namespace trikControl;
 
-Sensor::Sensor(int min, int max, QString const &controlFile)
+Sensor::Sensor(int min, int max, QString const &deviceFile)
 	: mMin(min)
 	, mMax(max)
-	, mControlFile(controlFile)
+	, mDeviceFile(deviceFile)
 {
 }
 
@@ -33,11 +33,11 @@ int Sensor::read()
 		return mMin;
 	}
 
-	if (mControlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QTextStream stream(&mControlFile);
+	if (mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream stream(&mDeviceFile);
 		int value = 0;
 		stream >> value;
-		mControlFile.close();
+		mDeviceFile.close();
 
 		qDebug() << "read, raw reading: " << value;
 
@@ -55,7 +55,7 @@ int Sensor::read()
 		return value;
 	}
 
-	qDebug() << "read, reading failed, file name: " << mControlFile.fileName();
+	qDebug() << "read, reading failed, file name: " << mDeviceFile.fileName();
 
 	return 0;
 }

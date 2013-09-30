@@ -57,8 +57,8 @@ public slots:
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
-	/// Returns current unix timestamp.
-	int time() const;
+	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
+	qint64 time() const;
 
 private:
 	class SleeperThread : public QThread
