@@ -19,6 +19,6 @@ float Battery::readVoltage()
     int parrot = mCommunicator.read(command);
 
     float res = ((float) parrot / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
-    qDebug("battery V: %f", res);
+//    qDebug("battery V: %f", res);
     return res;
 }

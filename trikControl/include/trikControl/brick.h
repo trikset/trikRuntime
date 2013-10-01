@@ -24,9 +24,9 @@
 #include "powerMotor.h"
 #include "sensor.h"
 
-#include <battery.h>
-#include <device.h>
-#include <encoder.h>
+#include "battery.h"
+#include "device.h"
+#include "encoder.h"
 
 namespace trikControl {
 
