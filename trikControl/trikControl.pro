@@ -46,6 +46,7 @@ HEADERS += \
 	$$PWD/include/trikControl/sensor.h \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/src/configurer.h \
+	$$PWD/src/i2cCommunicator.h \
 
 SOURCES += \
 	$$PWD/src/brick.cpp \
@@ -53,6 +54,16 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/sensor.cpp \
 	$$PWD/src/configurer.cpp \
+
+win32 {
+	SOURCES += \
+		$$PWD/src/i2cCommunicatorWindows.cpp \
+
+} else {
+	SOURCES += \
+		$$PWD/src/i2cCommunicatorLinux.cpp \
+
+}
 
 win32 {
 	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
