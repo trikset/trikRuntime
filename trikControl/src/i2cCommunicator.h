@@ -27,6 +27,7 @@ public:
 	void connect();
 	void send(QByteArray const &data);
 	void disconnect();
+    int read(QByteArray const &data);
 
 private:
 	QString const mDevicePath;
