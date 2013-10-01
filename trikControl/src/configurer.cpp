@@ -97,8 +97,7 @@ Configurer::Configurer()
 
 		PowerMotorMapping mapping;
 		mapping.port = childElement.attribute("port");
-		mapping.command = childElement.attribute("command");
-		mapping.stopCommand = childElement.attribute("stop");
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
 		mapping.invert = childElement.attribute("invert") == "true";
 
 		mPowerMotorMappings.insert(mapping.port, mapping);
@@ -188,6 +187,9 @@ Configurer::Configurer()
 	}
 
 	mPlaySoundCommand = root.elementsByTagName("playSound").at(0).toElement().attribute("command");
+
+	mI2cPath = root.elementsByTagName("i2c").at(0).toElement().attribute("path");
+	mI2cDeviceId = root.elementsByTagName("i2c").at(0).toElement().attribute("deviceId").toInt(NULL, 0);
 }
 
 QString Configurer::initScript() const
@@ -260,14 +262,9 @@ QStringList Configurer::powerMotorPorts() const
 	return mPowerMotorMappings.keys();
 }
 
-QString Configurer::powerMotorCommand(QString const &port) const
+int Configurer::powerMotorI2cCommandNumber(QString const &port) const
 {
-	return mPowerMotorMappings[port].command;
-}
-
-QString Configurer::powerMotorStop(QString const &port) const
-{
-	return mPowerMotorMappings[port].stopCommand;
+	return mPowerMotorMappings[port].i2cCommandNumber;
 }
 
 bool Configurer::powerMotorInvert(QString const &port) const
@@ -293,4 +290,14 @@ QString Configurer::sensorDefaultType(QString const &port) const
 QString Configurer::playSoundCommand() const
 {
 	return mPlaySoundCommand;
+}
+
+QString Configurer::i2cPath() const
+{
+	return mI2cPath;
+}
+
+int Configurer::i2cDeviceId() const
+{
+	return mI2cDeviceId;
 }

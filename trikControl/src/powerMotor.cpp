@@ -16,11 +16,13 @@
 
 #include <QtCore/QDebug>
 
+#include "i2cCommunicator.h"
+
 using namespace trikControl;
 
-PowerMotor::PowerMotor(QString const &command, QString const &stop, bool invert)
-	: mCommand(command)
-	, mStopCommand(stop)
+PowerMotor::PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert)
+	: mCommunicator(communicator)
+	, mI2cCommandNumber(i2cCommandNumber)
 	, mInvert(invert)
 	, mCurrentPower(0)
 {
@@ -38,11 +40,11 @@ void PowerMotor::setPower(int power)
 
 	power = mInvert ? -power : power;
 
-	char command[100] = {0};
+	QByteArray command(2, '\0');
+	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+	command[1] = static_cast<char>(power & 0xFF);
 
-	sprintf(command, mCommand.toStdString().c_str(), static_cast<unsigned char>(power));
-
-	system(command);
+	mCommunicator.send(command);
 }
 
 int PowerMotor::power() const
@@ -52,6 +54,5 @@ int PowerMotor::power() const
 
 void PowerMotor::powerOff()
 {
-	system(mStopCommand.toStdString().c_str());
-	mCurrentPower = 0;
+	setPower(0);
 }
