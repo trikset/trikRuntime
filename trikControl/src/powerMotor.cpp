@@ -42,8 +42,6 @@ void PowerMotor::setPower(int power)
 
 	sprintf(command, mCommand.toStdString().c_str(), static_cast<unsigned char>(power));
 
-	qDebug() << QString(command);
-
 	system(command);
 }
 

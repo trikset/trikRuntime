@@ -14,8 +14,6 @@
 
 #include "sensor.h"
 
-#include <QtCore/QTextStream>
-
 #include <QtCore/QDebug>
 
 using namespace trikControl;
@@ -25,6 +23,12 @@ Sensor::Sensor(int min, int max, QString const &deviceFile)
 	, mMax(max)
 	, mDeviceFile(deviceFile)
 {
+	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qDebug() << "File " << deviceFile << " failed to open for reading";
+		throw "Sensor configuration error";
+	}
+
+	mStream.setDevice(&mDeviceFile);
 }
 
 int Sensor::read()
@@ -33,29 +37,15 @@ int Sensor::read()
 		return mMin;
 	}
 
-	if (mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QTextStream stream(&mDeviceFile);
-		int value = 0;
-		stream >> value;
-		mDeviceFile.close();
+	int value = 0;
+	mStream >> value;
 
-		qDebug() << "read, raw reading: " << value;
+	value = qMin(value, mMax);
+	value = qMax(value, mMin);
 
-		value = qMin(value, mMax);
-		value = qMax(value, mMin);
+	double const scale = 100.0 / (static_cast<double>(mMax - mMin));
 
-		double const scale = 100.0 / (static_cast<double>(mMax) - static_cast<double>(mMin));
+	value = (value - mMin) * scale;
 
-		qDebug() << "read, scale: " << scale << "mMin" << mMin << "mMax" << mMax;
-
-		value = (value - mMin) * scale;
-
-		qDebug() << "read, normalized reading: " << value;
-
-		return value;
-	}
-
-	qDebug() << "read, reading failed, file name: " << mDeviceFile.fileName();
-
-	return 0;
+	return value;
 }

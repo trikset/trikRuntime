@@ -75,16 +75,12 @@ Brick::~Brick()
 
 void Brick::playSound(QString const &soundFileName)
 {
-	qDebug() << "playSound, file: " << soundFileName;
-
 	QString const command = mConfigurer->playSoundCommand().arg(soundFileName);
 	system(command.toStdString().c_str());
 }
 
 void Brick::stop()
 {
-	qDebug() << "stop";
-
 	foreach (ServoMotor * const servoMotor, mServoMotors.values()) {
 		servoMotor->powerOff();
 	}
@@ -96,8 +92,6 @@ void Brick::stop()
 
 ServoMotor *Brick::servoMotor(QString const &port)
 {
-	qDebug() << "motor, port: " << port;
-
 	if (mServoMotors.contains(port)) {
 		return mServoMotors.value(port);
 	}
@@ -107,8 +101,6 @@ ServoMotor *Brick::servoMotor(QString const &port)
 
 PowerMotor *Brick::powerMotor(QString const &port)
 {
-	qDebug() << "Power motor, port: " << port;
-
 	if (mPowerMotors.contains(port)) {
 		return mPowerMotors.value(port);
 	}
@@ -118,8 +110,6 @@ PowerMotor *Brick::powerMotor(QString const &port)
 
 Sensor *Brick::sensor(QString const &port)
 {
-	qDebug() << "sensor, port: " << port;
-
 	if (mSensors.contains(port)) {
 		return mSensors.value(port);
 	}

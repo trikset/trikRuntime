@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 #include "declSpec.h"
 
@@ -42,6 +43,7 @@ private:
 	int mMin;
 	int mMax;
 	QFile mDeviceFile;
+	QTextStream mStream;
 };
 
 }

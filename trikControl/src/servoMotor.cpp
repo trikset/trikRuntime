@@ -31,8 +31,6 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const& devi
 
 void ServoMotor::setPower(int power)
 {
-	qDebug() << "Executing setPower command with power = " << power;
-
 	if (!mControlFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		qDebug() << "Can't open motor control file " << mControlFile.fileName();
 		return;
@@ -52,8 +50,6 @@ void ServoMotor::setPower(int power)
 	qreal const powerFactor = static_cast<qreal>(range) / 100;
 	QString const command = QString::number(static_cast<int>(mZero + power * powerFactor));
 
-	qDebug() << "writing to " << mControlFile.fileName() << " value: " << command;
-
 	mControlFile.write(command.toLatin1());
 	mControlFile.close();
 }
@@ -65,14 +61,10 @@ int ServoMotor::power() const
 
 void ServoMotor::powerOff()
 {
-	qDebug() << "Executing powerOff command";
-
 	if (!mControlFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		qDebug() << "Can't open motor control file " << mControlFile.fileName();
 		return;
 	}
-
-	qDebug() << "writing to " << mControlFile.fileName() << " value: " << mStop;
 
 	mControlFile.write(QString::number(mStop).toLatin1());
 	mControlFile.close();
