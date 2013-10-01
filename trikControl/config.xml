@@ -1,0 +1,59 @@
+<config>
+	<!-- Initialization sh script, will be executed on program startup -->
+	<initScript>
+		echo 1 > /sys/class/gpio/gpio62/value
+
+		i2cset -y 2 0x48 0x10 0x1000 w
+		i2cset -y 2 0x48 0x11 0x1000 w
+		i2cset -y 2 0x48 0x12 0x1000 w
+		i2cset -y 2 0x48 0x13 0x1000 w
+
+		echo 1 > /sys/class/pwm/ecap.0/request
+		echo 1 > /sys/class/pwm/ecap.0/run
+		echo 20000000 > /sys/class/pwm/ecap.0/period_ns
+
+		echo 1 > /sys/class/pwm/ecap.1/request
+		echo 1 > /sys/class/pwm/ecap.1/run
+		echo 20000000 > /sys/class/pwm/ecap.1/period_ns
+	</initScript>
+	
+	<!-- Servomotors configuration, maps logical port to device file and type of motor on that port.
+		 Motor type parameters like calibration curve are described separately, in "motorTypes" section. -->
+	<servoMotors>
+		<motor port="1" deviceFile="/sys/class/pwm/ecap.0/duty_ns" defaultType="defaultServo" invert="false" />
+		<motor port="2" deviceFile="/sys/class/pwm/ecap.1/duty_ns" defaultType="defaultServo" invert="false" />
+	</servoMotors>
+
+	<!-- Power motors configuration, maps logical port to sh command format. 
+		 Format will be used as format string for sprintf function that will supply actual power. -->
+	<powerMotors>
+		<motor port="1" command="i2cset -y 2 0x48 0x14 0x%x w" stop="i2cset -y 2 0x48 0x14 0x0 w" invert="false" />
+		<motor port="2" command="i2cset -y 2 0x48 0x15 0x%x w" stop="i2cset -y 2 0x48 0x15 0x0 w" invert="false" />
+		<motor port="3" command="i2cset -y 2 0x48 0x16 0x%x w" stop="i2cset -y 2 0x48 0x16 0x0 w" invert="false" />
+		<motor port="4" command="i2cset -y 2 0x48 0x17 0x%x w" stop="i2cset -y 2 0x48 0x17 0x0 w" invert="false" />
+	</powerMotors>
+	
+	<!-- Description of motor types used in motors mapping. Supplied values correspond to 
+		 full reverse (for "min" parameter), full forward ("max" parameter),
+		 non-breaking stop ("zero" parameter), breaking stop ("stop" parameter) -->
+	<motorTypes>
+		<defaultServo min="1500000" max="1800000" zero="1600000" stop="0" />
+	</motorTypes>
+
+	<!-- Sensors configuration, maps logical port to sensor device file and sensor type used by default 
+		 (if not configured programmatically) -->
+	<sensors>
+		<sensor port="1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
+		<sensor port="2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" />
+	</sensors>
+	
+	<!-- Description of sensor types used in sensor mappings. Provides minimal reading value 
+		(which will be 0 in client program) and maximal reading value (which will be 100) -->
+	<sensorTypes>
+		<lightSensor min="30000" max="350000" />
+	</sensorTypes>
+	
+	<!-- Format for playSound command. %1 designates file name to be played. -->
+	<playSound command="aplay --quiet %1 &amp;" />
+	
+</config>

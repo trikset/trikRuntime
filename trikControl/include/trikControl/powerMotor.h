@@ -1,3 +1,17 @@
+/* Copyright 2013 Yurii Litvinov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QObject>
@@ -14,8 +28,12 @@ class TRIKCONTROL_EXPORT PowerMotor : public QObject
 	Q_OBJECT
 
 public:
-	/// Initializes motor.
-	void init(int engine);
+	/// Constructor.
+	/// @param command - format of command to set motor power, shall have format conforming to sprintf format string
+	///        specification. Shall contain one %d format specifier - power of a motor.
+	/// @param stop - command to turn off the motor.
+	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
+	PowerMotor(QString const &command, QString const &stop, bool invert);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -30,9 +48,10 @@ public slots:
 	void powerOff();
 
 private:
-	int mEngine;
-	int mPower;
-	QString mName;
+	QString mCommand;
+	QString mStopCommand;
+	bool mInvert;
+	int mCurrentPower;
 };
 
 }

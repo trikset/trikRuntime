@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TRIKCONTROL_DIR = ../trikControl/
+TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
+
 TEMPLATE = lib
 
-DEFINES += TRIKCONTROL_LIBRARY
+QT += network
 
-QT += xml
+DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
@@ -26,9 +29,9 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX =
 }
 
-TARGET = trikControl$$CONFIGURATION_SUFFIX
+TARGET = trikCommunicator$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION
+DESTDIR = bin/$$CONFIGURATION/
 
 OBJECTS_DIR = .obj/$$CONFIGURATION
 MOC_DIR = .moc/$$CONFIGURATION
@@ -37,27 +40,24 @@ UI_DIR = .ui/$$CONFIGURATION
 
 INCLUDEPATH = \
 	$$PWD \
-	$$PWD/include/trikControl \
+	$$PWD/include/trikCommunicator \
+	$$TRIKSCRIPTRUNNER_DIR/include \
+	$$TRIKCONTROL_DIR/include \
+
+LIBS += -L$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION -ltrikScriptRunner$$CONFIGURATION_SUFFIX
 
 HEADERS += \
-	$$PWD/include/trikControl/brick.h \
-	$$PWD/include/trikControl/servoMotor.h \
-	$$PWD/include/trikControl/powerMotor.h \
-	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/src/configurer.h \
+	$$PWD/include/trikCommunicator/trikCommunicator.h \
 
 SOURCES += \
-	$$PWD/src/brick.cpp \
-	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/powerMotor.cpp \
-	$$PWD/src/sensor.cpp \
-	$$PWD/src/configurer.cpp \
+	$$PWD/src/trikCommunicator.cpp \
 
 win32 {
-	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
+	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
+			&& xcopy $$replace(TRIKSCRIPTRUNNER_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
+	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
+			&& cp -r $$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
 			"
 }

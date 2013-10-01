@@ -12,14 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
+#include <QtCore/QStringList>
 
-#include <QtCore/qglobal.h>
+#include <trikScriptRunner/trikScriptRunner.h>
 
-#ifndef TRIKCONTROL_EXPORT
-#  if defined(TRIKCONTROL_LIBRARY)
-#    define TRIKCONTROL_EXPORT Q_DECL_EXPORT
-#  else
-#    define TRIKCONTROL_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
+int main(int argc, char *argv[])
+{
+	QCoreApplication app(argc, argv);
+	QStringList const args = app.arguments();
+
+	if (args.count() != 2) {
+		qDebug() << "Usage: trikRun <QtScript file name>";
+		return 1;
+	}
+
+	QString const scriptFileName = args[1];
+
+	trikScriptRunner::TrikScriptRunner::runFromFileSynchronous(scriptFileName);
+
+	return 0;
+}

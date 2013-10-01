@@ -1,3 +1,17 @@
+/* Copyright 2013 Yurii Litvinov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "sensor.h"
 
 #include <QtCore/QTextStream>
@@ -6,17 +20,11 @@
 
 using namespace trikControl;
 
-Sensor::Sensor()
-	: mMin(0)
-	, mMax(0)
+Sensor::Sensor(int min, int max, QString const &deviceFile)
+	: mMin(min)
+	, mMax(max)
+	, mDeviceFile(deviceFile)
 {
-}
-
-void Sensor::init(int min, int max, QString const &controlFile)
-{
-	mMin = min;
-	mMax = max;
-	mControlFile.setFileName(controlFile);
 }
 
 int Sensor::read()
@@ -25,11 +33,11 @@ int Sensor::read()
 		return mMin;
 	}
 
-	if (mControlFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QTextStream stream(&mControlFile);
+	if (mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QTextStream stream(&mDeviceFile);
 		int value = 0;
 		stream >> value;
-		mControlFile.close();
+		mDeviceFile.close();
 
 		qDebug() << "read, raw reading: " << value;
 
@@ -47,7 +55,7 @@ int Sensor::read()
 		return value;
 	}
 
-	qDebug() << "read, reading failed, file name: " << mControlFile.fileName();
+	qDebug() << "read, reading failed, file name: " << mDeviceFile.fileName();
 
 	return 0;
 }

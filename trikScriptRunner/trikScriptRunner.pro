@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TRIKCONTROL_DIR = ../trikControl/
+
 TEMPLATE = lib
+QT += script
 
-DEFINES += TRIKCONTROL_LIBRARY
-
-QT += xml
+DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
@@ -26,9 +27,9 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX =
 }
 
-TARGET = trikControl$$CONFIGURATION_SUFFIX
+TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION
+DESTDIR = bin/$$CONFIGURATION/
 
 OBJECTS_DIR = .obj/$$CONFIGURATION
 MOC_DIR = .moc/$$CONFIGURATION
@@ -37,27 +38,28 @@ UI_DIR = .ui/$$CONFIGURATION
 
 INCLUDEPATH = \
 	$$PWD \
-	$$PWD/include/trikControl \
+	$$TRIKCONTROL_DIR/include \
+
+LIBS += -L$$TRIKCONTROL_DIR/bin/$$CONFIGURATION -ltrikControl$$CONFIGURATION_SUFFIX
+
+!macx {
+	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$PWD
+	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$DESTDIR
+}
 
 HEADERS += \
-	$$PWD/include/trikControl/brick.h \
-	$$PWD/include/trikControl/servoMotor.h \
-	$$PWD/include/trikControl/powerMotor.h \
-	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/src/configurer.h \
+	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+	$$PWD/src/scriptableParts.h \
+	$$PWD/src/scriptEngineWorker.h \
 
 SOURCES += \
-	$$PWD/src/brick.cpp \
-	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/powerMotor.cpp \
-	$$PWD/src/sensor.cpp \
-	$$PWD/src/configurer.cpp \
+	$$PWD/src/trikScriptRunner.cpp \
+	$$PWD/src/scriptableParts.cpp \
+	$$PWD/src/scriptEngineWorker.cpp \
 
 win32 {
-	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
+	QMAKE_PRE_LINK = "xcopy \"$$replace(TRIKCONTROL_DIR, /, \\)bin\\$$CONFIGURATION\" \"$$replace(DESTDIR, /, \\)\" /s /e /q /y /i \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
-			"
+	QMAKE_PRE_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR"
 }

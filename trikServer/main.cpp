@@ -12,14 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
 
-#include <QtCore/qglobal.h>
+#include <trikCommunicator/trikCommunicator.h>
 
-#ifndef TRIKCONTROL_EXPORT
-#  if defined(TRIKCONTROL_LIBRARY)
-#    define TRIKCONTROL_EXPORT Q_DECL_EXPORT
-#  else
-#    define TRIKCONTROL_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
+int main(int argc, char *argv[])
+{
+	int const port = 8888;
+
+	QCoreApplication app(argc, argv);
+
+	qDebug() << "Running TrikServer on port" << port;
+
+	trikCommunicator::TrikCommunicator communicator;
+	communicator.listen(port);
+
+	return app.exec();
+}

@@ -16,10 +16,38 @@
 
 #include <QtCore/qglobal.h>
 
-#ifndef TRIKCONTROL_EXPORT
-#  if defined(TRIKCONTROL_LIBRARY)
-#    define TRIKCONTROL_EXPORT Q_DECL_EXPORT
-#  else
-#    define TRIKCONTROL_EXPORT Q_DECL_IMPORT
-#  endif
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QLabel>
+#else
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QVBoxLayout>
 #endif
+
+#include <QtCore/QList>
+#include <QtCore/QString>
+
+#include "controller.h"
+
+namespace trikGui {
+
+class RunningWidget : public QWidget
+{
+	Q_OBJECT
+
+public:
+	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
+
+protected:
+	void keyPressEvent(QKeyEvent *event);
+
+private:
+	QVBoxLayout mLayout;
+	QLabel mProgramNameLabel;
+	QLabel mAbortLabel;
+	Controller &mController;
+};
+
+}

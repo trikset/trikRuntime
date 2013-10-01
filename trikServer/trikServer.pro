@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = lib
+SOURCES += \
+	$$PWD/main.cpp \
 
-DEFINES += TRIKCONTROL_LIBRARY
+TRIKCONTROL_DIR = ../trikControl/
+TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 
-QT += xml
+TEMPLATE = app
+CONFIG += console
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
@@ -26,38 +29,30 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX =
 }
 
-TARGET = trikControl$$CONFIGURATION_SUFFIX
+DESTDIR = ../bin/$$CONFIGURATION/
 
-DESTDIR = bin/$$CONFIGURATION
+INCLUDEPATH = \
+	$$PWD \
+	$$TRIKCOMMUNICATOR_DIR/include \
+
+LIBS += -L$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION -ltrikCommunicator$$CONFIGURATION_SUFFIX
 
 OBJECTS_DIR = .obj/$$CONFIGURATION
 MOC_DIR = .moc/$$CONFIGURATION
 RCC_DIR = .rcc/$$CONFIGURATION
 UI_DIR = .ui/$$CONFIGURATION
 
-INCLUDEPATH = \
-	$$PWD \
-	$$PWD/include/trikControl \
-
-HEADERS += \
-	$$PWD/include/trikControl/brick.h \
-	$$PWD/include/trikControl/servoMotor.h \
-	$$PWD/include/trikControl/powerMotor.h \
-	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/src/configurer.h \
-
-SOURCES += \
-	$$PWD/src/brick.cpp \
-	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/powerMotor.cpp \
-	$$PWD/src/sensor.cpp \
-	$$PWD/src/configurer.cpp \
+!macx {
+	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION
+}
 
 win32 {
-	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
+	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
+			&& xcopy $$replace(TRIKCOMMUNICATOR_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
+	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
+			&& cp -r $$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
 			"
 }
