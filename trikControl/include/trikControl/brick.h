@@ -27,6 +27,7 @@
 namespace trikControl {
 
 class Configurer;
+class I2cCommunicator;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -74,6 +75,7 @@ private:
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
 	QHash<QString, Sensor *> mSensors;  // Has ownership.
 	Configurer const * const mConfigurer;  // Has ownership.
+	I2cCommunicator *mI2cCommunicator;  // Has ownership.
 };
 
 }

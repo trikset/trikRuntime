@@ -31,6 +31,7 @@ public:
 private:
 	QString const mDevicePath;
 	int const mDeviceId;
+	int mDeviceFileDescriptor;
 };
 
 }

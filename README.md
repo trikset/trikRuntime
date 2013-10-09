@@ -10,3 +10,7 @@ Consists of following subprojects:
 - trikRun: command-line utility to execute Qt Script files.
 - trikServer: command-line server for network communications, uses trikCommunicator library.
 - trikGui: user interface that can show various settings (like IP address), file system, run scripts, act as a server with trikCommunicator and so on.
+
+Special thanks to:
+- Nikita Batov (https://github.com/Batov) for I2C direct access example.
+- Roman Kurbatov (https://github.com/romankurbatov) for his desktop environment code used in trikGui.

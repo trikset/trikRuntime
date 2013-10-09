@@ -22,6 +22,8 @@
 
 namespace trikControl {
 
+class I2cCommunicator;
+
 /// TRIK power motor.
 class TRIKCONTROL_EXPORT PowerMotor : public QObject
 {
@@ -29,11 +31,8 @@ class TRIKCONTROL_EXPORT PowerMotor : public QObject
 
 public:
 	/// Constructor.
-	/// @param command - format of command to set motor power, shall have format conforming to sprintf format string
-	///        specification. Shall contain one %d format specifier - power of a motor.
-	/// @param stop - command to turn off the motor.
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	PowerMotor(QString const &command, QString const &stop, bool invert);
+	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -48,9 +47,9 @@ public slots:
 	void powerOff();
 
 private:
-	QString mCommand;
-	QString mStopCommand;
-	bool mInvert;
+	I2cCommunicator &mCommunicator;
+	int const mI2cCommandNumber;
+	bool const mInvert;
 	int mCurrentPower;
 };
 

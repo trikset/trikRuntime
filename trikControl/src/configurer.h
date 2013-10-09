@@ -62,9 +62,7 @@ public:
 
 	QStringList powerMotorPorts() const;
 
-	QString powerMotorCommand(QString const &port) const;
-
-	QString powerMotorStop(QString const &port) const;
+	int powerMotorI2cCommandNumber(QString const &port) const;
 
 	bool powerMotorInvert(QString const &port) const;
 
@@ -75,6 +73,10 @@ public:
 	QString sensorDefaultType(QString const &port) const;
 
 	QString playSoundCommand() const;
+
+	QString i2cPath() const;
+
+	int i2cDeviceId() const;
 
 private:
 	struct MotorType {
@@ -98,8 +100,7 @@ private:
 
 	struct PowerMotorMapping {
 		QString port;
-		QString command;
-		QString stopCommand;
+		int i2cCommandNumber;
 		bool invert;
 	};
 
@@ -117,6 +118,8 @@ private:
 
 	QString mInitScript;
 	QString mPlaySoundCommand;
+	QString mI2cPath;
+	int mI2cDeviceId;
 };
 
 }

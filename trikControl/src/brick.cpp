@@ -19,13 +19,18 @@
 #include <QtCore/QDateTime>
 
 #include "configurer.h"
+#include "i2cCommunicator.h"
 
 using namespace trikControl;
 
 Brick::Brick()
 	: mConfigurer(new Configurer())
+	, mI2cCommunicator(NULL)
 {
 	system(mConfigurer->initScript().toStdString().c_str());
+
+	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
+	mI2cCommunicator->connect();
 
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
 		QString const motorType = mConfigurer->servoMotorDefaultType(port);
@@ -44,8 +49,8 @@ Brick::Brick()
 
 	foreach (QString const &port, mConfigurer->powerMotorPorts()) {
 		PowerMotor *powerMotor = new PowerMotor(
-				mConfigurer->powerMotorCommand(port)
-				, mConfigurer->powerMotorStop(port)
+				*mI2cCommunicator
+				, mConfigurer->powerMotorI2cCommandNumber(port)
 				, mConfigurer->powerMotorInvert(port)
 				);
 
@@ -71,6 +76,8 @@ Brick::~Brick()
 	qDeleteAll(mServoMotors);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mSensors);
+	mI2cCommunicator->disconnect();
+	delete mI2cCommunicator;
 }
 
 void Brick::playSound(QString const &soundFileName)
