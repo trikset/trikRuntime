@@ -27,10 +27,10 @@
 	<!-- Power motors configuration, maps logical port to sh command format. 
 		 Format will be used as format string for sprintf function that will supply actual power. -->
 	<powerMotors>
-		<motor port="1" command="i2cset -y 2 0x48 0x14 0x%x w" stop="i2cset -y 2 0x48 0x14 0x0 w" invert="false" />
-		<motor port="2" command="i2cset -y 2 0x48 0x15 0x%x w" stop="i2cset -y 2 0x48 0x15 0x0 w" invert="false" />
-		<motor port="3" command="i2cset -y 2 0x48 0x16 0x%x w" stop="i2cset -y 2 0x48 0x16 0x0 w" invert="false" />
-		<motor port="4" command="i2cset -y 2 0x48 0x17 0x%x w" stop="i2cset -y 2 0x48 0x17 0x0 w" invert="false" />
+		<motor port="1" i2cCommandNumber="0x14" invert="false" />
+		<motor port="2" i2cCommandNumber="0x15" invert="false" />
+		<motor port="3" i2cCommandNumber="0x16" invert="false" />
+		<motor port="4" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
 	
 	<!-- Description of motor types used in motors mapping. Supplied values correspond to 
@@ -55,5 +55,7 @@
 	
 	<!-- Format for playSound command. %1 designates file name to be played. -->
 	<playSound command="aplay --quiet %1 &amp;" />
+	
+	<i2c path="/dev/i2c-2" deviceId="0x48" />
 	
 </config>
