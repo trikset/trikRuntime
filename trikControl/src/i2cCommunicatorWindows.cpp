@@ -24,6 +24,10 @@ I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
 {
 }
 
+I2cCommunicator::~I2cCommunicator()
+{
+}
+
 void I2cCommunicator::connect()
 {
 }

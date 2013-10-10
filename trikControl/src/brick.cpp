@@ -30,7 +30,6 @@ Brick::Brick()
 	system(mConfigurer->initScript().toStdString().c_str());
 
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
-	mI2cCommunicator->connect();
 
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
 		QString const motorType = mConfigurer->servoMotorDefaultType(port);
@@ -76,7 +75,6 @@ Brick::~Brick()
 	qDeleteAll(mServoMotors);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mSensors);
-	mI2cCommunicator->disconnect();
 	delete mI2cCommunicator;
 }
 

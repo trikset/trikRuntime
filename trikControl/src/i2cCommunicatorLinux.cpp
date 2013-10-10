@@ -54,6 +54,12 @@ I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
 	: mDevicePath(devicePath)
 	, mDeviceId(deviceId)
 {
+	connect();
+}
+
+I2cCommunicator::~I2cCommunicator()
+{
+	disconnect();
 }
 
 void I2cCommunicator::connect()
