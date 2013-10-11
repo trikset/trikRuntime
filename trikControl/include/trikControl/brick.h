@@ -23,6 +23,7 @@
 #include "servoMotor.h"
 #include "powerMotor.h"
 #include "sensor.h"
+#include "display.h"
 
 namespace trikControl {
 
@@ -61,6 +62,8 @@ public slots:
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
 
+	Display *display();
+
 private:
 	class SleeperThread : public QThread
 	{
@@ -76,6 +79,7 @@ private:
 	QHash<QString, Sensor *> mSensors;  // Has ownership.
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator;  // Has ownership.
+	Display mDisplay;
 };
 
 }

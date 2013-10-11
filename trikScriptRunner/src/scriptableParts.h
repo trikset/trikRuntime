@@ -20,6 +20,7 @@
 #include <trikControl/servoMotor.h>
 #include <trikControl/powerMotor.h>
 #include <trikControl/sensor.h>
+#include <trikControl/display.h>
 
 namespace trikScriptRunner {
 
@@ -31,5 +32,8 @@ void powerMotorFromScriptValue(QScriptValue const &object, trikControl::PowerMot
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
+
+QScriptValue displayToScriptValue(QScriptEngine *engine, trikControl::Display* const &in);
+void displayFromScriptValue(QScriptValue const &object, trikControl::Display* &out);
 
 }

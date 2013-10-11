@@ -31,12 +31,12 @@ CONFIG(debug, debug | release) {
 
 TARGET = trikCommunicator$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION/
+DESTDIR = ../bin/$$CONFIGURATION/
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
@@ -44,20 +44,10 @@ INCLUDEPATH = \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 	$$TRIKCONTROL_DIR/include \
 
-LIBS += -L$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX
 
 HEADERS += \
 	$$PWD/include/trikCommunicator/trikCommunicator.h \
 
 SOURCES += \
 	$$PWD/src/trikCommunicator.cpp \
-
-win32 {
-	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			&& xcopy $$replace(TRIKSCRIPTRUNNER_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
-			&& cp -r $$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
-			"
-}

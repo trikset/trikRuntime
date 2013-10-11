@@ -12,32 +12,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#pragma once
+
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
+	#include <QtGui/QWidget>
 #else
-	#include <QtWidgets/QApplication>
+	#include <QtWidgets/QWidget>
 #endif
 
-#include <QtCore/QDebug>
-#include <QtCore/QStringList>
+#include <QtGui/QPixmap>
 
-#include <trikScriptRunner/trikScriptRunner.h>
+#include "declSpec.h"
 
-int main(int argc, char *argv[])
+namespace trikControl {
+
+class TRIKCONTROL_EXPORT Display : public QObject
 {
-	QApplication app(argc, argv);
-	QStringList const args = app.arguments();
+	Q_OBJECT
 
-	if (args.count() != 2) {
-		qDebug() << "Usage: trikRun <QtScript file name>";
-		return 1;
-	}
+public:
+	Display();
+	~Display();
 
-	QString const scriptFileName = args[1];
+public slots:
+	void showImage(QString const &fileName);
 
-	trikScriptRunner::TrikScriptRunner::runFromFileSynchronous(scriptFileName);
+private:
+	QWidget mImageWidget;
+	QPixmap mImage;
+};
 
-	return 0;
 }

@@ -48,3 +48,13 @@ void trikScriptRunner::sensorFromScriptValue(QScriptValue const &object, trikCon
 {
 	out = qobject_cast<Sensor*>(object.toQObject());
 }
+
+QScriptValue trikScriptRunner::displayToScriptValue(QScriptEngine *engine, trikControl::Display* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::displayFromScriptValue(QScriptValue const &object, trikControl::Display* &out)
+{
+	out = qobject_cast<Display*>(object.toQObject());
+}

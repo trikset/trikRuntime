@@ -56,26 +56,22 @@ INCLUDEPATH = \
 	$$TRIKCOMMUNICATOR_DIR/include \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 
-LIBS += -L$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION -ltrikCommunicator$$CONFIGURATION_SUFFIX -L$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX -ltrikScriptRunner$$CONFIGURATION_SUFFIX
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
 
 win32 {
-	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			&& xcopy ..\\media $$replace(DESTDIR, /, \\)media /s /e /q /y /i \
-			&& xcopy $$replace(TRIKCOMMUNICATOR_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			&& xcopy $$replace(TRIKSCRIPTRUNNER_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
+	QMAKE_POST_LINK = "xcopy ..\\media $$replace(DESTDIR, /, \\)media /s /e /q /y /i \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -r ../trikControl/bin/$$CONFIGURATION/* $$DESTDIR \
+	QMAKE_POST_LINK = "cp -rf ../media/* $$DESTDIR/media \
 			"
 }

@@ -131,3 +131,8 @@ qint64 Brick::time() const
 {
 	return QDateTime::currentMSecsSinceEpoch();
 }
+
+Display *Brick::display()
+{
+	return &mDisplay;
+}

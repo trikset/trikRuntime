@@ -28,12 +28,14 @@ using namespace trikControl;
 Q_DECLARE_METATYPE(ServoMotor*)
 Q_DECLARE_METATYPE(PowerMotor*)
 Q_DECLARE_METATYPE(Sensor*)
+Q_DECLARE_METATYPE(Display*)
 
 ScriptEngineWorker::ScriptEngineWorker()
 {
 	qScriptRegisterMetaType(&mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
 
 	QScriptValue brickProxy = mEngine.newQObject(&mBrick);
 	mEngine.globalObject().setProperty("brick", brickProxy);

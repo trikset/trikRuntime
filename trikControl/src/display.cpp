@@ -12,32 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/qglobal.h>
+#include "display.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
+	#include <QtGui/QStackedLayout>
+	#include <QtGui/QLabel>
 #else
-	#include <QtWidgets/QApplication>
+	#include <QtWidgets/QStackedLayout>
+	#include <QtWidgets/QLabel>
 #endif
 
-#include <QtCore/QDebug>
-#include <QtCore/QStringList>
+using namespace trikControl;
 
-#include <trikScriptRunner/trikScriptRunner.h>
-
-int main(int argc, char *argv[])
+Display::Display()
 {
-	QApplication app(argc, argv);
-	QStringList const args = app.arguments();
+	mImageWidget.setWindowState(Qt::WindowFullScreen);
+	QStackedLayout * const layout = new QStackedLayout();
+	QLabel * const label = new QLabel();
+	label->setPixmap(mImage);
+	layout->addWidget(label);
+	mImageWidget.setLayout(layout);
+}
 
-	if (args.count() != 2) {
-		qDebug() << "Usage: trikRun <QtScript file name>";
-		return 1;
-	}
+Display::~Display()
+{
+}
 
-	QString const scriptFileName = args[1];
-
-	trikScriptRunner::TrikScriptRunner::runFromFileSynchronous(scriptFileName);
-
-	return 0;
+void Display::showImage(QString const &fileName)
+{
+	mImage.load(fileName);
+	mImageWidget.show();
 }

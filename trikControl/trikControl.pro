@@ -16,7 +16,11 @@ TEMPLATE = lib
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-QT += xml
+QT += xml gui
+
+if (equals(QT_MAJOR_VERSION, 5)) {
+	QT += widgets
+}
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
@@ -28,12 +32,12 @@ CONFIG(debug, debug | release) {
 
 TARGET = trikControl$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION
+DESTDIR = ../bin/$$CONFIGURATION
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
@@ -44,6 +48,7 @@ HEADERS += \
 	$$PWD/include/trikControl/servoMotor.h \
 	$$PWD/include/trikControl/powerMotor.h \
 	$$PWD/include/trikControl/sensor.h \
+	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
@@ -54,6 +59,7 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/sensor.cpp \
 	$$PWD/src/configurer.cpp \
+	$$PWD/src/display.cpp \
 
 win32 {
 	SOURCES += \
