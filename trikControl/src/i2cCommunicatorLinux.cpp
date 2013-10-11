@@ -67,12 +67,12 @@ void I2cCommunicator::connect()
 	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
 		qDebug() << "Failed to open I2C device file " << mDevicePath;
-		throw "I2C error";
+		return;
 	}
 
 	if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId)) {
 		qDebug() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
-		throw "I2C error";
+		return;
 	}
 }
 

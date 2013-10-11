@@ -40,7 +40,9 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
 TrikCommunicator::~TrikCommunicator()
 {
 	delete mConnection;
-	delete mRunner;
+	if (mOwnsRunner) {
+		delete mRunner;
+	}
 }
 
 QString TrikCommunicator::readFromFile(QString const &fileName)

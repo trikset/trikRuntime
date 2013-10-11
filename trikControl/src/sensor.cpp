@@ -25,7 +25,7 @@ Sensor::Sensor(int min, int max, QString const &deviceFile)
 {
 	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qDebug() << "File " << deviceFile << " failed to open for reading";
-		throw "Sensor configuration error";
+		return;
 	}
 
 	mStream.setDevice(&mDeviceFile);
