@@ -15,6 +15,9 @@
 #include "scriptEngineWorker.h"
 
 #include <QtCore/QDebug>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QHBoxLayout>
 
 #include <trikControl/powerMotor.h>
 #include <trikControl/servoMotor.h>

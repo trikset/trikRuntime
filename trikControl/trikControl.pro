@@ -52,6 +52,7 @@ HEADERS += \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/guiWorker.h \
 
 SOURCES += \
 	$$PWD/src/brick.cpp \
@@ -60,6 +61,7 @@ SOURCES += \
 	$$PWD/src/sensor.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/display.cpp \
+	$$PWD/src/guiWorker.cpp \
 
 win32 {
 	SOURCES += \

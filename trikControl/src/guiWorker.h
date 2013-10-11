@@ -14,32 +14,34 @@
 
 #pragma once
 
-#include <QtCore/QThread>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+#else
+	#include <QtWidgets/QWidget>
+#endif
+
+#include <QtGui/QPixmap>
 
 #include "declSpec.h"
 
 namespace trikControl {
 
-class GuiWorker;
-
-class TRIKCONTROL_EXPORT Display : public QObject
+class GuiWorker : public QObject
 {
 	Q_OBJECT
 
 public:
-	Display();
-	~Display();
 
 public slots:
 	void showImage(QString const &fileName);
-
-signals:
-	void threadShowImage(QString const &fileName);
-	void threadDelete();
+	void deleteWorker();
 
 private:
-	QThread mGuiThread;
-	GuiWorker *mGuiWorker;  // Has ownership.
+	QWidget *window;
+//	QWidget mImageWidget;
+//	QPixmap mImage;
 };
 
 }
