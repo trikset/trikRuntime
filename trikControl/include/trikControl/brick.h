@@ -20,13 +20,14 @@
 #include <QtCore/QHash>
 
 #include "declSpec.h"
+
 #include "servoMotor.h"
 #include "powerMotor.h"
 #include "sensor.h"
-
 #include "battery.h"
 #include "device.h"
 #include "encoder.h"
+#include "keys.h"
 
 namespace trikControl {
 
@@ -63,7 +64,7 @@ public slots:
     Device *gyro();
     Encoder *encoder(int const &port);
     Battery *battery();
-
+    Keys* keys();
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
@@ -82,6 +83,7 @@ private:
 
     Device mAccel;
     Device mGyro;
+    Keys   mKeys;
     Encoder *mEncoder1;
     Encoder *mEncoder2;
     Encoder *mEncoder3;

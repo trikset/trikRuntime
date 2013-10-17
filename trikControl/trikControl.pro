@@ -49,7 +49,8 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
         $$PWD/include/trikControl/battery.h \
         $$PWD/include/trikControl/device.h \
-        $$PWD/include/trikControl/encoder.h
+        $$PWD/include/trikControl/encoder.h \
+        $$PWD/include/trikControl/keys.h
 
 SOURCES += \
 	$$PWD/src/brick.cpp \
@@ -59,7 +60,8 @@ SOURCES += \
 	$$PWD/src/configurer.cpp \
         $$PWD/src/battery.cpp \
         $$PWD/src/device.cpp \
-        $$PWD/src/encoder.cpp
+        $$PWD/src/encoder.cpp \
+        $$PWD/src/keys.cpp
 
 win32 {
 	SOURCES += \

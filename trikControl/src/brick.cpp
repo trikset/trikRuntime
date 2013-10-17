@@ -78,7 +78,7 @@ Brick::Brick()
 
     mAccel.init(-32767, 32767, "/dev/input/event1");
     mGyro.init(-32768, 32767, "/dev/input/event2");
-
+    mKeys.init("/dev/input/event0");
 }
 
 Brick::~Brick()
@@ -166,6 +166,11 @@ Device *Brick::accel()
 Device *Brick::gyro()
 {
     return &mGyro;
+}
+
+Keys* Brick::keys()
+{
+    return &mKeys;
 }
 
 void Brick::wait(int const &milliseconds) const
