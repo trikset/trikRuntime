@@ -36,6 +36,36 @@ static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command
 	return ioctl(file, I2C_SMBUS, &args);
 }
 
+static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
+{
+    union i2c_smbus_data data;
+    if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
+                         I2C_SMBUS_WORD_DATA,&data))
+        return -1;
+    else
+        return 0x0FFFF & data.word;
+}
+
+static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command,
+                                                  __u8 length, __u8 *values)
+{
+        union i2c_smbus_data data;
+        int i;
+
+        if (length > 32)
+                length = 32;
+        data.block[0] = length;
+        if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
+                             length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN :
+                              I2C_SMBUS_I2C_BLOCK_DATA,&data))
+                return -1;
+        else {
+                for (i = 1; i <= data.block[0]; i++)
+                        values[i-1] = data.block[i];
+                return data.block[0];
+        }
+}
+
 static inline __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value)
 {
 	union i2c_smbus_data data;
@@ -83,6 +113,21 @@ void I2cCommunicator::send(QByteArray const &data)
 	} else {
 		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
 	}
+}
+
+//todo: rewrite it
+int I2cCommunicator::read(QByteArray const &data)
+{
+    if (data.size() == 1)
+    {
+        return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+    } else
+    {
+        __u8 buffer[4] = {0};
+        int size = i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
+        int x = (buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0]);
+        return x;
+    }
 }
 
 void I2cCommunicator::disconnect()

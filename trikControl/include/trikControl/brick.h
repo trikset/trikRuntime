@@ -25,6 +25,10 @@
 #include "sensor.h"
 #include "display.h"
 
+#include "battery.h"
+#include "device.h"
+#include "encoder.h"
+
 namespace trikControl {
 
 class Configurer;
@@ -56,6 +60,11 @@ public slots:
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
 
+    Device *accel();
+    Device *gyro();
+    Encoder *encoder(int const &port);
+    Battery *battery();
+
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
@@ -73,6 +82,14 @@ private:
 			QThread::msleep(msecs);
 		}
 	};
+
+    Device mAccel;
+    Device mGyro;
+    Encoder *mEncoder1;
+    Encoder *mEncoder2;
+    Encoder *mEncoder3;
+    Encoder *mEncoder4;
+    Battery *mBattery;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.

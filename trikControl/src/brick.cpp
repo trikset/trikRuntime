@@ -67,6 +67,17 @@ Brick::Brick()
 
 		mSensors.insert(port, sensor);
 	}
+
+    mEncoder1 = new Encoder(*mI2cCommunicator, 1);
+    mEncoder2 = new Encoder(*mI2cCommunicator, 2);
+    mEncoder3 = new Encoder(*mI2cCommunicator, 3);
+    mEncoder4 = new Encoder(*mI2cCommunicator, 4);
+
+    mBattery = new Battery(*mI2cCommunicator);
+
+    mAccel.init(-32767, 32767, "/dev/input/event1");
+    mGyro.init(-32768, 32767, "/dev/input/event2");
+
 }
 
 Brick::~Brick()
@@ -120,6 +131,39 @@ Sensor *Brick::sensor(QString const &port)
 	}
 
 	return NULL;
+}
+
+
+Encoder *Brick::encoder(int const &port)
+{
+    switch (port) {
+    case 1:
+        return mEncoder1;
+    case 2:
+        return mEncoder2;
+    case 3:
+        return mEncoder3;
+    case 4:
+        return mEncoder4;
+    default:
+        return mEncoder1;
+    }
+
+}
+
+Battery *Brick::battery()
+{
+    return mBattery;
+}
+
+Device *Brick::accel()
+{
+    return &mAccel;
+}
+
+Device *Brick::gyro()
+{
+    return &mGyro;
 }
 
 void Brick::wait(int const &milliseconds) const

@@ -52,6 +52,9 @@ HEADERS += \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
+	$$PWD/include/trikControl/battery.h \
+	$$PWD/include/trikControl/device.h \
+	$$PWD/include/trikControl/encoder.h \
 	$$PWD/src/guiWorker.h \
 
 SOURCES += \
@@ -60,6 +63,9 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/sensor.cpp \
 	$$PWD/src/configurer.cpp \
+	$$PWD/src/battery.cpp \
+	$$PWD/src/device.cpp \
+	$$PWD/src/encoder.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/guiWorker.cpp \
 

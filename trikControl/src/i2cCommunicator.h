@@ -39,6 +39,7 @@ private:
 
 	/// Disconnect from a device.
 	void disconnect();
+    int read(QByteArray const &data);
 
 	QString const mDevicePath;
 	int const mDeviceId;
