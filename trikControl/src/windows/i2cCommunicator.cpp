@@ -14,7 +14,7 @@
 
 /// @file Stub for I2C communication to make it compilable under Windows. Shall not work here, of course.
 
-#include "i2cCommunicator.h"
+#include "src/i2cCommunicator.h"
 
 using namespace trikControl;
 

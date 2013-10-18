@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "i2cCommunicator.h"
+#include "src/i2cCommunicator.h"
 
 #include <QtCore/QDebug>
 

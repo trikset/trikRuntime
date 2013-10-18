@@ -43,6 +43,12 @@ INCLUDEPATH = \
 	$$PWD \
 	$$PWD/include/trikControl \
 
+win32 {
+	PLATFORM = windows
+} else {
+	PLATFORM = linux
+}
+
 HEADERS += \
 	$$PWD/include/trikControl/brick.h \
 	$$PWD/include/trikControl/servoMotor.h \
@@ -68,16 +74,7 @@ SOURCES += \
 	$$PWD/src/encoder.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/guiWorker.cpp \
-
-win32 {
-	SOURCES += \
-		$$PWD/src/i2cCommunicatorWindows.cpp \
-
-} else {
-	SOURCES += \
-		$$PWD/src/i2cCommunicatorLinux.cpp \
-
-}
+	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 
 win32 {
 	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
