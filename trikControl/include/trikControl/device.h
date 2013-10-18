@@ -15,6 +15,8 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QSocketNotifier>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QVector>
 
 #include "declSpec.h"
@@ -32,6 +34,15 @@ public:
 public slots:
 	QVector<int> readTilts();
 
+private slots:
+	void readFile();
+
+private:
+	QSharedPointer<QSocketNotifier> mSocketNotifier;
+	int mDeviceFd;
+	QVector<int> tilts;
+	int mMax;
+	int mMin;
 };
 
 }
