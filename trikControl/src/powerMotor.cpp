@@ -40,11 +40,10 @@ void PowerMotor::setPower(int power)
 
 	power = mInvert ? -power : power;
 
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	command[1] = static_cast<char>(power & 0xFF);
+	QByteArray command(1, '\0');
+	command[0] = static_cast<char>(power & 0xFF);
 
-	mCommunicator.send(command);
+	mCommunicator.send(command,static_cast<char>(mI2cCommandNumber & 0xFF));
 }
 
 int PowerMotor::power() const

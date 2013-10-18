@@ -29,43 +29,44 @@ Encoder::Encoder(I2cCommunicator &communicator, int jbx)
 
 void Encoder::reset()
 {
-	QByteArray command(2, '\0');
+	QByteArray command(1, '\0');
+	char reg = 0;
 	switch (mJbx)
 	{
 		case 2:
-			command[0] = static_cast<char>(0x31);
+			reg = static_cast<char>(0x31);
 			break;
 		case 3:
-			command[0] = static_cast<char>(0x32);
+			reg = static_cast<char>(0x32);
 			break;
 		case 4:
-			command[0] = static_cast<char>(0x33);
+			reg = static_cast<char>(0x33);
 			break;
 	}
-	command[1] = static_cast<char>(0x00);
+	command[0] = static_cast<char>(0x00);
 
-	mCommunicator.send(command);
+	mCommunicator.send(command,reg);
 }
 
 float Encoder::get()
 {
 	int data = 0;
-	QByteArray command(2, '\0');
-
+	QByteArray command(1, '\0');
+	char reg = 0;
 	switch (mJbx)
 	{
 		case 2:
-			command[0] = static_cast<char>(0x31);
+			reg = static_cast<char>(0x31);
 			break;
 		case 3:
-			command[0] = static_cast<char>(0x32);
+			reg = static_cast<char>(0x32);
 			break;
 		case 4:
-			command[0] = static_cast<char>(0x33);
+			reg = static_cast<char>(0x33);
 			break;
 	}
 
-	data = mCommunicator.read(command);
+	data = mCommunicator.readToInt(reg,2); //register and count of bytes
 	mData = PAR_TO_RAD * data;
 
 	return mData;

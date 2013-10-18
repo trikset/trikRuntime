@@ -31,9 +31,13 @@ public:
 	~I2cCommunicator();
 
 	/// Send data to current device, if it is connected.
-	void send(QByteArray const &data);
+	void send(QByteArray const &data,char reg);
 
-	int read(QByteArray const &data);
+	/// Read data to current device and return Integer. 
+	int readToInt(char reg, int count);
+
+	/// Read data to current device and return QByteArray.
+	QByteArray readToByteArray(char reg, int count);
 
 private:
 	/// Establish connection with current device.

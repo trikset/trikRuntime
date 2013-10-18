@@ -25,10 +25,7 @@ Battery::Battery(I2cCommunicator &communicator)
 
 float Battery::readVoltage()
 {
-	QByteArray command(1, '\0');
-	command[0] = static_cast<char>(0x26);
-
-	int parrot = mCommunicator.read(command);
+	int parrot = mCommunicator.readToInt(0x26,2); // battery register and count of byte 
 
 	float res = ((float) parrot / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
 //    qDebug("battery V: %f", res);
