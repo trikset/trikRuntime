@@ -56,3 +56,9 @@ SOURCES += \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+

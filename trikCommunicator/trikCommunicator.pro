@@ -51,3 +51,9 @@ HEADERS += \
 
 SOURCES += \
 	$$PWD/src/trikCommunicator.cpp \
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+
