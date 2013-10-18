@@ -147,7 +147,7 @@ static inline __s32 i2c_smbus_write_i2c_block_data(int file, __u8 command,
  		}
  		default:
  		{
- 			__u8* cdata = QString(data).toAscii().data();
+ 			__u8* cdata =  reinterpret_cast<unsigned char*>(QString(data).toAscii().data());
  			i2c_smbus_write_i2c_block_data(mDeviceFileDescriptor,reg,count,cdata);
  			break;
  		}
@@ -187,7 +187,7 @@ QByteArray I2cCommunicator::readToByteArray(char reg, int count)
 {
 	__u8 buffer[count*sizeof(__u8)];
 	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, reg, count, buffer);
-	return buffer; // convert it?
+	return (reinterpret_cast<const char*>(buffer)); // convert it?
 }
 
  void I2cCommunicator::disconnect()
