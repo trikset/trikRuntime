@@ -325,8 +325,7 @@ void Configurer::loadSensors(QDomElement const &root)
 
 		QDomElement const childElement = child.toElement();
 		if (childElement.nodeName() != "sensor") {
-			qDebug() << "Malformed <sensors> tag";
-			throw "config.xml parsing failed";
+			continue;
 		}
 
 		SensorMapping mapping;
@@ -416,7 +415,7 @@ Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QStr
 		throw "config.xml parsing failed";
 	}
 
-	OnBoardSensor result = {0};
+	OnBoardSensor result = {0, 0, ""};
 
 	QDomElement const sensor = root.elementsByTagName(tagName).at(0).toElement();
 

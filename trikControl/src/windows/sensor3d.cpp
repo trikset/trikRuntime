@@ -12,22 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "device.h"
+#include "sensor3d.h"
 
 using namespace trikControl;
 
-Device::Device()
-{
-}
-
-void Device::init(int min, int max, QString const &controlFile)
+Sensor3d::Sensor3d(int min, int max, QString const &controlFile)
 {
 	Q_UNUSED(min);
 	Q_UNUSED(max);
 	Q_UNUSED(controlFile);
 }
 
-QVector<int> Device::readTilts()
+QVector<int> Sensor3d::read()
 {
 	return QVector<int>(3);
+}
+
+void Sensor3d::readFile()
+{
 }
