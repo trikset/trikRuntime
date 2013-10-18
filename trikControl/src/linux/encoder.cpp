@@ -16,58 +16,30 @@
 
 #include "src/i2cCommunicator.h"
 
-#define PAR_TO_RAD 0.03272492
+float const parToRad = 0.03272492;
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int jbx)
-	: mCommunicator(communicator),
-	  mJbx(jbx),
-	  mData(0.0)
+Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
+	: mCommunicator(communicator)
+	, mI2cCommandNumber(i2cCommandNumber)
 {
 }
 
 void Encoder::reset()
 {
 	QByteArray command(2, '\0');
-	switch (mJbx)
-	{
-		case 2:
-			command[0] = static_cast<char>(0x31);
-			break;
-		case 3:
-			command[0] = static_cast<char>(0x32);
-			break;
-		case 4:
-			command[0] = static_cast<char>(0x33);
-			break;
-	}
+	command[0] = static_cast<char>(mI2cCommandNumber);
 	command[1] = static_cast<char>(0x00);
 
 	mCommunicator.send(command);
 }
 
-float Encoder::get()
+float Encoder::read()
 {
-	int data = 0;
 	QByteArray command(2, '\0');
+	command[0] = static_cast<char>(mI2cCommandNumber);
+	int data = mCommunicator.read(command);
 
-	switch (mJbx)
-	{
-		case 2:
-			command[0] = static_cast<char>(0x31);
-			break;
-		case 3:
-			command[0] = static_cast<char>(0x32);
-			break;
-		case 4:
-			command[0] = static_cast<char>(0x33);
-			break;
-	}
-
-	data = mCommunicator.read(command);
-	mData = PAR_TO_RAD * data;
-
-	return mData;
+	return parToRad * data;
 }
-

@@ -38,158 +38,19 @@ Configurer::Configurer()
 
 	QDomElement const root = config.documentElement();
 
-	if (root.elementsByTagName("initScript").isEmpty()) {
-		qDebug() << "config.xml does not have <initScript> tag";
-		throw "config.xml parsing failed";
-	}
+	loadInit(root);
+	loadServoMotors(root);
+	loadPowerMotors(root);
+	loadEncoders(root);
+	loadSensors(root);
+	loadMotorTypes(root);
+	loadSensorTypes(root);
+	loadSound(root);
 
-	QDomElement const init = root.elementsByTagName("initScript").at(0).toElement();
-	mInitScript = init.text();
+	mAccelerometer = loadSensor3d(root, "accelerometer");
+	mGyroscope = loadSensor3d(root, "gyroscope");
 
-	if (root.elementsByTagName("servoMotors").isEmpty()) {
-		qDebug() << "config.xml does not have <servoMotors> tag";
-		throw "config.xml parsing failed";
-	}
-
-	QDomElement const servoMotors = root.elementsByTagName("servoMotors").at(0).toElement();
-	for (QDomNode child = servoMotors.firstChild()
-			; !child.isNull()
-			; child = child.nextSibling())
-	{
-		if (!child.isElement()) {
-			continue;
-		}
-
-		QDomElement const childElement = child.toElement();
-		if (childElement.nodeName() != "motor") {
-			qDebug() << "Malformed <servoMotors> tag";
-			throw "config.xml parsing failed";
-		}
-
-		ServoMotorMapping mapping;
-		mapping.port = childElement.attribute("port");
-		mapping.deviceFile = childElement.attribute("deviceFile");
-		mapping.defaultType = childElement.attribute("defaultType");
-		mapping.invert = childElement.attribute("invert") == "true";
-
-		mServoMotorMappings.insert(mapping.port, mapping);
-	}
-
-	if (root.elementsByTagName("powerMotors").isEmpty()) {
-		qDebug() << "config.xml does not have <powerMotors> tag";
-		throw "config.xml parsing failed";
-	}
-
-	QDomElement const powerMotors = root.elementsByTagName("powerMotors").at(0).toElement();
-	for (QDomNode child = powerMotors.firstChild()
-			; !child.isNull()
-			; child = child.nextSibling())
-	{
-		if (!child.isElement()) {
-			continue;
-		}
-
-		QDomElement const childElement = child.toElement();
-		if (childElement.nodeName() != "motor") {
-			qDebug() << "Malformed <powerMotors> tag";
-			throw "config.xml parsing failed";
-		}
-
-		PowerMotorMapping mapping;
-		mapping.port = childElement.attribute("port");
-		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
-		mapping.invert = childElement.attribute("invert") == "true";
-
-		mPowerMotorMappings.insert(mapping.port, mapping);
-	}
-
-	if (root.elementsByTagName("sensors").isEmpty()) {
-		qDebug() << "config.xml does not have <sensors> tag";
-		throw "config.xml parsing failed";
-	}
-
-	QDomElement const sensors = root.elementsByTagName("sensors").at(0).toElement();
-	for (QDomNode child = sensors.firstChild()
-			; !child.isNull()
-			; child = child.nextSibling())
-	{
-		if (!child.isElement()) {
-			continue;
-		}
-
-		QDomElement const childElement = child.toElement();
-		if (childElement.nodeName() != "sensor") {
-			qDebug() << "Malformed <sensors> tag";
-			throw "config.xml parsing failed";
-		}
-
-		SensorMapping mapping;
-		mapping.port = childElement.attribute("port");
-		mapping.deviceFile = childElement.attribute("deviceFile");
-		mapping.defaultType = childElement.attribute("defaultType");
-
-		mSensorMappings.insert(mapping.port, mapping);
-	}
-
-	if (root.elementsByTagName("motorTypes").isEmpty()) {
-		qDebug() << "config.xml does not have <motorTypes> tag";
-		throw "config.xml parsing failed";
-	}
-
-	QDomElement const motorTypes = root.elementsByTagName("motorTypes").at(0).toElement();
-	for (QDomNode child = motorTypes.firstChild()
-			; !child.isNull()
-			; child = child.nextSibling())
-	{
-		if (!child.isElement()) {
-			continue;
-		}
-
-		QDomElement const childElement = child.toElement();
-		QString const typeName = childElement.nodeName();
-
-		MotorType motorType;
-		motorType.min = childElement.attribute("min").toInt();
-		motorType.max = childElement.attribute("max").toInt();
-		motorType.zero = childElement.attribute("zero").toInt();
-		motorType.stop = childElement.attribute("stop").toInt();
-
-		mMotorTypes.insert(typeName, motorType);
-	}
-
-	if (root.elementsByTagName("sensorTypes").isEmpty()) {
-		qDebug() << "config.xml does not have <sensorTypes> tag";
-		throw "config.xml parsing failed";
-	}
-
-	QDomElement const sensorTypes = root.elementsByTagName("sensorTypes").at(0).toElement();
-	for (QDomNode child = sensorTypes.firstChild()
-			; !child.isNull()
-			; child = child.nextSibling())
-	{
-		if (!child.isElement()) {
-			continue;
-		}
-
-		QDomElement const childElement = child.toElement();
-		QString const typeName = childElement.nodeName();
-
-		SensorType sensorType;
-		sensorType.min = childElement.attribute("min").toInt();
-		sensorType.max = childElement.attribute("max").toInt();
-
-		mSensorTypes.insert(typeName, sensorType);
-	}
-
-	if (root.elementsByTagName("playSound").isEmpty()) {
-		qDebug() << "config.xml does not have <playSound> tag";
-		throw "config.xml parsing failed";
-	}
-
-	mPlaySoundCommand = root.elementsByTagName("playSound").at(0).toElement().attribute("command");
-
-	mI2cPath = root.elementsByTagName("i2c").at(0).toElement().attribute("path");
-	mI2cDeviceId = root.elementsByTagName("i2c").at(0).toElement().attribute("deviceId").toInt(NULL, 0);
+	loadI2c(root);
 }
 
 QString Configurer::initScript() const
@@ -272,6 +133,16 @@ bool Configurer::powerMotorInvert(QString const &port) const
 	return mPowerMotorMappings[port].invert;
 }
 
+QStringList Configurer::encoderPorts() const
+{
+	return mEncoderMappings.keys();
+}
+
+int Configurer::encoderI2cCommandNumber(QString const &port) const
+{
+	return mEncoderMappings[port].i2cCommandNumber;
+}
+
 QStringList Configurer::sensorPorts() const
 {
 	return mSensorMappings.keys();
@@ -292,6 +163,36 @@ QString Configurer::playSoundCommand() const
 	return mPlaySoundCommand;
 }
 
+int Configurer::accelerometerMin() const
+{
+	return mAccelerometer.min;
+}
+
+int Configurer::accelerometerMax() const
+{
+	return mAccelerometer.max;
+}
+
+QString Configurer::accelerometerDeviceFile() const
+{
+	return mAccelerometer.deviceFile;
+}
+
+int Configurer::gyroscopeMin() const
+{
+	return mGyroscope.min;
+}
+
+int Configurer::gyroscopeMax() const
+{
+	return mGyroscope.max;
+}
+
+QString Configurer::gyroscopeDeviceFile() const
+{
+	return mGyroscope.deviceFile;
+}
+
 QString Configurer::i2cPath() const
 {
 	return mI2cPath;
@@ -300,4 +201,234 @@ QString Configurer::i2cPath() const
 int Configurer::i2cDeviceId() const
 {
 	return mI2cDeviceId;
+}
+
+void Configurer::loadInit(QDomElement const &root)
+{
+	if (root.elementsByTagName("initScript").isEmpty()) {
+		qDebug() << "config.xml does not have <initScript> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const init = root.elementsByTagName("initScript").at(0).toElement();
+	mInitScript = init.text();
+}
+
+void Configurer::loadServoMotors(QDomElement const &root)
+{
+	if (root.elementsByTagName("servoMotors").isEmpty()) {
+		qDebug() << "config.xml does not have <servoMotors> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const servoMotors = root.elementsByTagName("servoMotors").at(0).toElement();
+	for (QDomNode child = servoMotors.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "motor") {
+			qDebug() << "Malformed <servoMotors> tag";
+			throw "config.xml parsing failed";
+		}
+
+		ServoMotorMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.deviceFile = childElement.attribute("deviceFile");
+		mapping.defaultType = childElement.attribute("defaultType");
+		mapping.invert = childElement.attribute("invert") == "true";
+
+		mServoMotorMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadPowerMotors(QDomElement const &root)
+{
+	if (root.elementsByTagName("powerMotors").isEmpty()) {
+		qDebug() << "config.xml does not have <powerMotors> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const powerMotors = root.elementsByTagName("powerMotors").at(0).toElement();
+	for (QDomNode child = powerMotors.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "motor") {
+			qDebug() << "Malformed <powerMotors> tag";
+			throw "config.xml parsing failed";
+		}
+
+		PowerMotorMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+		mapping.invert = childElement.attribute("invert") == "true";
+
+		mPowerMotorMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadEncoders(QDomElement const &root)
+{
+	if (root.elementsByTagName("encoders").isEmpty()) {
+		qDebug() << "config.xml does not have <encoders> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const encoders = root.elementsByTagName("encoders").at(0).toElement();
+	for (QDomNode child = encoders.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "encoder") {
+			qDebug() << "Malformed <encoders> tag";
+			throw "config.xml parsing failed";
+		}
+
+		EncoderMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+
+		mEncoderMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadSensors(QDomElement const &root)
+{
+	if (root.elementsByTagName("sensors").isEmpty()) {
+		qDebug() << "config.xml does not have <sensors> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const sensors = root.elementsByTagName("sensors").at(0).toElement();
+	for (QDomNode child = sensors.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "sensor") {
+			qDebug() << "Malformed <sensors> tag";
+			throw "config.xml parsing failed";
+		}
+
+		SensorMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.deviceFile = childElement.attribute("deviceFile");
+		mapping.defaultType = childElement.attribute("defaultType");
+
+		mSensorMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadMotorTypes(QDomElement const &root)
+{
+	if (root.elementsByTagName("motorTypes").isEmpty()) {
+		qDebug() << "config.xml does not have <motorTypes> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const motorTypes = root.elementsByTagName("motorTypes").at(0).toElement();
+	for (QDomNode child = motorTypes.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		QString const typeName = childElement.nodeName();
+
+		MotorType motorType;
+		motorType.min = childElement.attribute("min").toInt();
+		motorType.max = childElement.attribute("max").toInt();
+		motorType.zero = childElement.attribute("zero").toInt();
+		motorType.stop = childElement.attribute("stop").toInt();
+
+		mMotorTypes.insert(typeName, motorType);
+	}
+}
+
+void Configurer::loadSensorTypes(QDomElement const &root)
+{
+	if (root.elementsByTagName("sensorTypes").isEmpty()) {
+		qDebug() << "config.xml does not have <sensorTypes> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const sensorTypes = root.elementsByTagName("sensorTypes").at(0).toElement();
+	for (QDomNode child = sensorTypes.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		QString const typeName = childElement.nodeName();
+
+		SensorType sensorType;
+		sensorType.min = childElement.attribute("min").toInt();
+		sensorType.max = childElement.attribute("max").toInt();
+
+		mSensorTypes.insert(typeName, sensorType);
+	}
+}
+
+void Configurer::loadSound(QDomElement const &root)
+{
+	if (root.elementsByTagName("playSound").isEmpty()) {
+		qDebug() << "config.xml does not have <playSound> tag";
+		throw "config.xml parsing failed";
+	}
+
+	mPlaySoundCommand = root.elementsByTagName("playSound").at(0).toElement().attribute("command");
+}
+
+Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QString const &tagName)
+{
+	if (root.elementsByTagName(tagName).isEmpty()) {
+		qDebug() << "config.xml does not have <" << tagName << "> tag";
+		throw "config.xml parsing failed";
+	}
+
+	if (root.elementsByTagName(tagName).count() > 1) {
+		qDebug() << "config.xml has too many <" << tagName << "> tags, there shall be exactly one";
+		throw "config.xml parsing failed";
+	}
+
+	OnBoardSensor result = {0};
+
+	QDomElement const sensor = root.elementsByTagName(tagName).at(0).toElement();
+
+	result.min = sensor.attribute("min").toInt();
+	result.max = sensor.attribute("max").toInt();
+	result.deviceFile = sensor.attribute("deviceFile");
+
+	return result;
+}
+
+void Configurer::loadI2c(QDomElement const &root)
+{
+	mI2cPath = root.elementsByTagName("i2c").at(0).toElement().attribute("path");
+	mI2cDeviceId = root.elementsByTagName("i2c").at(0).toElement().attribute("deviceId").toInt(NULL, 0);
 }

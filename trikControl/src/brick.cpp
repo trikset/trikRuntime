@@ -68,16 +68,23 @@ Brick::Brick()
 		mSensors.insert(port, sensor);
 	}
 
-    mEncoder1 = new Encoder(*mI2cCommunicator, 1);
-    mEncoder2 = new Encoder(*mI2cCommunicator, 2);
-    mEncoder3 = new Encoder(*mI2cCommunicator, 3);
-    mEncoder4 = new Encoder(*mI2cCommunicator, 4);
+	foreach (QString const &port, mConfigurer->encoderPorts()) {
+		Encoder *encoder = new Encoder(*mI2cCommunicator, mConfigurer->encoderI2cCommandNumber(port));
+		mEncoders.insert(port, encoder);
+	}
 
-    mBattery = new Battery(*mI2cCommunicator);
+//	mEncoder1 = new Encoder(*mI2cCommunicator, 1);
+//	mEncoder2 = new Encoder(*mI2cCommunicator, 2);
+//	mEncoder3 = new Encoder(*mI2cCommunicator, 3);
+//	mEncoder4 = new Encoder(*mI2cCommunicator, 4);
 
-    mAccel.init(-32767, 32767, "/dev/input/event1");
-    mGyro.init(-32768, 32767, "/dev/input/event2");
+	mBattery = new Battery(*mI2cCommunicator);
 
+	mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin(), mConfigurer->accelerometerMax(), mConfigurer->accelerometerDeviceFile());
+	// -32767, 32767, "/dev/input/event1"
+
+	mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin(), mConfigurer->gyroscopeMax(), mConfigurer->gyroscopeDeviceFile());
+	// -32768, 32767, "/dev/input/event2"
 }
 
 Brick::~Brick()
@@ -85,7 +92,11 @@ Brick::~Brick()
 	delete mConfigurer;
 	qDeleteAll(mServoMotors);
 	qDeleteAll(mPowerMotors);
+	qDeleteAll(mEncoders);
 	qDeleteAll(mSensors);
+	delete mAccelerometer;
+	delete mGyroscope;
+	delete mBattery;
 	delete mI2cCommunicator;
 }
 
@@ -133,37 +144,44 @@ Sensor *Brick::sensor(QString const &port)
 	return NULL;
 }
 
-
-Encoder *Brick::encoder(int const &port)
+Encoder *Brick::encoder(QString const &port)
 {
-    switch (port) {
-    case 1:
-        return mEncoder1;
-    case 2:
-        return mEncoder2;
-    case 3:
-        return mEncoder3;
-    case 4:
-        return mEncoder4;
-    default:
-        return mEncoder1;
-    }
+	if (mEncoders.contains(port)) {
+		return mEncoders.value(port);
+	}
 
+	return NULL;
 }
+
+//Encoder *Brick::encoder(int const &port)
+//{
+//	switch (port) {
+//	case 1:
+//		return mEncoder1;
+//	case 2:
+//		return mEncoder2;
+//	case 3:
+//		return mEncoder3;
+//	case 4:
+//		return mEncoder4;
+//	default:
+//		return mEncoder1;
+//	}
+//}
 
 Battery *Brick::battery()
 {
-    return mBattery;
+	return mBattery;
 }
 
-Device *Brick::accel()
+Sensor3d *Brick::accelerometer()
 {
-    return &mAccel;
+	return mAccelerometer;
 }
 
-Device *Brick::gyro()
+Sensor3d *Brick::gyroscope()
 {
-    return &mGyro;
+	return mGyroscope;
 }
 
 void Brick::wait(int const &milliseconds) const

@@ -14,11 +14,6 @@
 
 #pragma once
 
-#define I2C_SLAVE	0x0703	/* Use this slave address */
-#define I2C_SLAVE_FORCE	0x0706	/* Use this slave address, even if it */
-#define I2C_SMBUS	0x0720	/* SMBus transfer */
-#define ADDRESS 0x48
-
 #include <QtCore/QObject>
 
 #include "declSpec.h"
@@ -27,23 +22,27 @@ namespace trikControl {
 
 class I2cCommunicator;
 
+/// Encoder of power motor.
 class TRIKCONTROL_EXPORT Encoder : public QObject
 {
 	Q_OBJECT
 
 public:
-	Encoder(I2cCommunicator &communicator, int jbx);
+	/// Constructor.
+	/// @param communicator - I2C communicator.
+	/// @param i2cCommandNumber - number of I2C command to query this encoder.
+	Encoder(I2cCommunicator &communicator, int i2cCommandNumber);
 
 public slots:
-	float get();
-	void reset();
+	/// Returns current encoder reading.
+	float read();
 
-private slots:
+	/// Resets encoder by setting current reading to 0.
+	void reset();
 
 private:
 	I2cCommunicator &mCommunicator;
-	float mData;
-	int mJbx;
+	int mI2cCommandNumber;
 };
 
 }

@@ -23,24 +23,30 @@
 
 namespace trikControl {
 
-class TRIKCONTROL_EXPORT Device : public QObject
+/// Sensor that returns 3d vector.
+class TRIKCONTROL_EXPORT Sensor3d : public QObject
 {
 	Q_OBJECT
 
 public:
-	Device();
-	void init(int min, int max, QString const &controlFile);
+	/// Constructor.
+	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
+	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
+	/// @param deviceFile - device file for this sensor.
+	Sensor3d(int min, int max, QString const &deviceFile);
 
 public slots:
-	QVector<int> readTilts();
+	/// Returns current raw reading of a sensor in a form of vector with 3 coordinates.
+	QVector<int> read();
 
 private slots:
+	/// Updates current reading when new value is ready.
 	void readFile();
 
 private:
 	QSharedPointer<QSocketNotifier> mSocketNotifier;
-	int mDeviceFd;
-	QVector<int> tilts;
+	QVector<int> mReading;
+	int mDeviceFileDescriptor;
 	int mMax;
 	int mMin;
 };
