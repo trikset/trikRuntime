@@ -38,7 +38,7 @@ void Device::init(int min, int max, const QString &controlFile)
 	mMax = max;
 	mMin = min;
 
-	mDeviceFd = open(controlFile.toAscii().data(), O_SYNC, O_RDONLY);
+	mDeviceFd = open(controlFile.toStdString().c_str(), O_SYNC, O_RDONLY);
 	if (mDeviceFd == -1)
 		qDebug() <<"cannot open input file";
 

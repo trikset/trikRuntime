@@ -33,13 +33,14 @@ public:
 	/// Send data to current device, if it is connected.
 	void send(QByteArray const &data);
 
+	int read(QByteArray const &data);
+
 private:
 	/// Establish connection with current device.
 	void connect();
 
 	/// Disconnect from a device.
 	void disconnect();
-    int read(QByteArray const &data);
 
 	QString const mDevicePath;
 	int const mDeviceId;
