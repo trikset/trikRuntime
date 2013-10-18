@@ -60,3 +60,9 @@ win32 {
 	QMAKE_POST_LINK = "cp -f test.qts $$DESTDIR \
 			"
 }
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+

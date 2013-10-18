@@ -83,3 +83,9 @@ win32 {
 	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
 			"
 }
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+

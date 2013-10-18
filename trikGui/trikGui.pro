@@ -75,3 +75,9 @@ win32 {
 	QMAKE_POST_LINK = "cp -rf ../media/ $$DESTDIR/ \
 			"
 }
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+

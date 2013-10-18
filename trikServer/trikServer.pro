@@ -52,3 +52,9 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
 	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+
