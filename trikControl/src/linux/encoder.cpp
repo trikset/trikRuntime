@@ -14,7 +14,7 @@
 
 #include "encoder.h"
 
-#include "i2cCommunicator.h"
+#include "src/i2cCommunicator.h"
 
 #define PAR_TO_RAD 0.03272492
 

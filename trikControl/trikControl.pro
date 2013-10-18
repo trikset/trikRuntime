@@ -70,11 +70,11 @@ SOURCES += \
 	$$PWD/src/sensor.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/battery.cpp \
-	$$PWD/src/device.cpp \
-	$$PWD/src/encoder.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
+	$$PWD/src/$$PLATFORM/encoder.cpp \
+	$$PWD/src/$$PLATFORM/device.cpp \
 
 win32 {
 	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \

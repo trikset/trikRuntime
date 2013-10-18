@@ -12,38 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "device.h"
 
-#define I2C_SLAVE	0x0703	/* Use this slave address */
-#define I2C_SLAVE_FORCE	0x0706	/* Use this slave address, even if it */
-#define I2C_SMBUS	0x0720	/* SMBus transfer */
-#define ADDRESS 0x48
+using namespace trikControl;
 
-#include <QtCore/QObject>
-
-#include "declSpec.h"
-
-namespace trikControl {
-
-class I2cCommunicator;
-
-class TRIKCONTROL_EXPORT Encoder : public QObject
+Device::Device()
 {
-	Q_OBJECT
+}
 
-public:
-	Encoder(I2cCommunicator &communicator, int jbx);
+void Device::init(int min, int max, QString const &controlFile)
+{
+	Q_UNUSED(min);
+	Q_UNUSED(max);
+	Q_UNUSED(controlFile);
+}
 
-public slots:
-	float get();
-	void reset();
-
-private slots:
-
-private:
-	I2cCommunicator &mCommunicator;
-	float mData;
-	int mJbx;
-};
-
+QVector<int> Device::readTilts()
+{
+	return QVector<int>(3);
 }

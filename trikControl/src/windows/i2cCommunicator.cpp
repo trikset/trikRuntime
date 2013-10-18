@@ -40,3 +40,9 @@ void I2cCommunicator::send(QByteArray const &data)
 void I2cCommunicator::disconnect()
 {
 }
+
+int I2cCommunicator::read(QByteArray const &data)
+{
+	Q_UNUSED(data);
+	return 0;
+}
