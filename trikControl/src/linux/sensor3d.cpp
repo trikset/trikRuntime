@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "device.h"
+#include "sensor3d.h"
 
 #include <QtCore/QDebug>
 
@@ -28,53 +28,57 @@
 
 using namespace trikControl;
 
-Device::Device()
+Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
+	: mDeviceFileDescriptor(0)
+	, mMax(max)
+	, mMin(min)
 {
-	tilts << 0 << 0 << 0;
-}
+	mReading << 0 << 0 << 0;
 
-void Device::init(int min, int max, const QString &controlFile)
-{
-	mMax = max;
-	mMin = min;
+	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC, O_RDONLY);
+	if (mDeviceFileDescriptor == -1) {
+		qDebug() << "Cannot open input file";
+		return;
+	}
 
-	mDeviceFd = open(controlFile.toStdString().c_str(), O_SYNC, O_RDONLY);
-	if (mDeviceFd == -1)
-		qDebug() <<"cannot open input file";
+	mSocketNotifier = QSharedPointer<QSocketNotifier>(
+			new QSocketNotifier(mDeviceFileDescriptor, QSocketNotifier::Read, this)
+			);
 
-	mSocketNotifier = QSharedPointer<QSocketNotifier>
-						(new QSocketNotifier(mDeviceFd, QSocketNotifier::Read, this));
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(true);
 }
 
-void Device::readFile()
+void Sensor3d::readFile()
 {
 	struct input_event event;
 
-	if (read(mDeviceFd, reinterpret_cast<char*>(&event), sizeof(event)) != sizeof(event))
-	{
+	if (::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)) != sizeof(event)) {
 		qDebug() << "incomplete data read";
-	} else
-	{
+	} else {
 		switch (event.type)
 		{
 		case EV_ABS:
 			switch (event.code)
 			{
-				case ABS_X: tilts[0] = event.value; break;
-				case ABS_Y: tilts[1] = event.value; break;
-				case ABS_Z: tilts[2] = event.value; break;
+			case ABS_X:
+				mReading[0] = event.value;
+				break;
+			case ABS_Y:
+				mReading[1] = event.value;
+				break;
+			case ABS_Z:
+				mReading[2] = event.value;
+				break;
 			}
 			break;
 		case EV_SYN:
 			return;
-			break;
 		}
 	}
 }
 
-QVector<int> Device::readTilts()
+QVector<int> Sensor3d::read()
 {
-	return tilts;
+	return mReading;
 }

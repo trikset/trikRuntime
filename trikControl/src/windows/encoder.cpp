@@ -12,37 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "encoder.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QSocketNotifier>
-#include <QtCore/QSharedPointer>
-#include <QtCore/QVector>
+#include "src/i2cCommunicator.h"
 
-#include "declSpec.h"
+using namespace trikControl;
 
-namespace trikControl {
-
-class TRIKCONTROL_EXPORT Device : public QObject
+Encoder::Encoder(I2cCommunicator &communicator, int jbx)
+	: mCommunicator(communicator)
+	, mI2cCommandNumber(0)
 {
-	Q_OBJECT
+}
 
-public:
-	Device();
-	void init(int min, int max, QString const &controlFile);
+void Encoder::reset()
+{
+}
 
-public slots:
-	QVector<int> readTilts();
-
-private slots:
-	void readFile();
-
-private:
-	QSharedPointer<QSocketNotifier> mSocketNotifier;
-	int mDeviceFd;
-	QVector<int> tilts;
-	int mMax;
-	int mMin;
-};
-
+float Encoder::read()
+{
+	return 0;
 }

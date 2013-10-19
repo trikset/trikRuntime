@@ -19,6 +19,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QHash>
 
+class QDomElement;
+
 namespace trikControl {
 
 /// Parses config file and holds information about various configuration parameters.
@@ -66,6 +68,10 @@ public:
 
 	bool powerMotorInvert(QString const &port) const;
 
+	QStringList encoderPorts() const;
+
+	int encoderI2cCommandNumber(QString const &port) const;
+
 	QStringList sensorPorts() const;
 
 	QString sensorDeviceFile(QString const &port) const;
@@ -73,6 +79,18 @@ public:
 	QString sensorDefaultType(QString const &port) const;
 
 	QString playSoundCommand() const;
+
+	int accelerometerMin() const;
+
+	int accelerometerMax() const;
+
+	QString accelerometerDeviceFile() const;
+
+	int gyroscopeMin() const;
+
+	int gyroscopeMax() const;
+
+	QString gyroscopeDeviceFile() const;
 
 	QString i2cPath() const;
 
@@ -104,17 +122,43 @@ private:
 		bool invert;
 	};
 
+	struct EncoderMapping {
+		QString port;
+		int i2cCommandNumber;
+	};
+
 	struct SensorMapping {
 		QString port;
 		QString deviceFile;
 		QString defaultType;
 	};
 
+	struct OnBoardSensor {
+		int min;
+		int max;
+		QString deviceFile;
+	};
+
+	void loadInit(QDomElement const &root);
+	void loadServoMotors(QDomElement const &root);
+	void loadPowerMotors(QDomElement const &root);
+	void loadEncoders(QDomElement const &root);
+	void loadSensors(QDomElement const &root);
+	void loadMotorTypes(QDomElement const &root);
+	void loadSensorTypes(QDomElement const &root);
+	void loadSound(QDomElement const &root);
+	OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
+	void loadI2c(QDomElement const &root);
+
 	QHash<QString, MotorType> mMotorTypes;
 	QHash<QString, SensorType> mSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
 	QHash<QString, PowerMotorMapping> mPowerMotorMappings;
+	QHash<QString, EncoderMapping> mEncoderMappings;
 	QHash<QString, SensorMapping> mSensorMappings;
+
+	OnBoardSensor mAccelerometer;
+	OnBoardSensor mGyroscope;
 
 	QString mInitScript;
 	QString mPlaySoundCommand;

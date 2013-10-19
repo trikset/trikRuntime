@@ -34,6 +34,14 @@
 		<motor port="3" i2cCommandNumber="0x16" invert="false" />
 		<motor port="4" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
+
+	<!-- Encoders configuration, maps logical port to I2C command. 
+	     I2C device path and device id are set separately, in "i2c" section. -->
+	<encoders>
+		<encoder port="2" i2cCommandNumber="0x31" />
+		<encoder port="3" i2cCommandNumber="0x32" />
+		<encoder port="4" i2cCommandNumber="0x33" />
+	</encoders>
 	
 	<!-- Description of motor types used in motors mapping. Supplied values correspond to 
 	     full reverse (for "min" parameter), full forward ("max" parameter),
@@ -47,6 +55,8 @@
 	<sensors>
 		<sensor port="1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
 		<sensor port="2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" />
+		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/event1" />
+		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/event2" />
 	</sensors>
 	
 	<!-- Description of sensor types used in sensor mappings. Provides minimal reading value 

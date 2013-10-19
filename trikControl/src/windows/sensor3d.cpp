@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,37 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-/// @file Stub for I2C communication to make it compilable under Windows. Shall not work here, of course.
-
-#include "src/i2cCommunicator.h"
+#include "sensor3d.h"
 
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
-	: mDevicePath(devicePath)
-	, mDeviceId(deviceId)
+Sensor3d::Sensor3d(int min, int max, QString const &controlFile)
 {
+	Q_UNUSED(min);
+	Q_UNUSED(max);
+	Q_UNUSED(controlFile);
 }
 
-I2cCommunicator::~I2cCommunicator()
+QVector<int> Sensor3d::read()
 {
+	return QVector<int>(3);
 }
 
-void I2cCommunicator::connect()
+void Sensor3d::readFile()
 {
-}
-
-void I2cCommunicator::send(QByteArray const &data)
-{
-	Q_UNUSED(data);
-}
-
-void I2cCommunicator::disconnect()
-{
-}
-
-int I2cCommunicator::read(QByteArray const &data)
-{
-	Q_UNUSED(data);
-	return 0;
 }
