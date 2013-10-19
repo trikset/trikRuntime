@@ -66,6 +66,10 @@ public:
 
 	bool powerMotorInvert(QString const &port) const;
 
+	QStringList analogSensorPorts() const;
+
+	int analogSensorI2cCommandNumber(QString const &port) const;
+
 	QStringList sensorPorts() const;
 
 	QString sensorDeviceFile(QString const &port) const;
@@ -104,6 +108,11 @@ private:
 		bool invert;
 	};
 
+	struct AnalogSensorMapping {
+		QString port;
+		int i2cCommandNumber;
+	};
+
 	struct SensorMapping {
 		QString port;
 		QString deviceFile;
@@ -114,6 +123,7 @@ private:
 	QHash<QString, SensorType> mSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
 	QHash<QString, PowerMotorMapping> mPowerMotorMappings;
+	QHash<QString, AnalogSensorMapping> mAnalogSensorMappings;
 	QHash<QString, SensorMapping> mSensorMappings;
 
 	QString mInitScript;

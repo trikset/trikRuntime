@@ -54,6 +54,7 @@ HEADERS += \
 	$$PWD/include/trikControl/servoMotor.h \
 	$$PWD/include/trikControl/powerMotor.h \
 	$$PWD/include/trikControl/sensor.h \
+	$$PWD/include/trikControl/analogSensor.h \
 	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/src/configurer.h \
@@ -68,6 +69,7 @@ SOURCES += \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/sensor.cpp \
+	$$PWD/src/analogSensor.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/device.cpp \

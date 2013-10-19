@@ -131,6 +131,29 @@ Configurer::Configurer()
 		mSensorMappings.insert(mapping.port, mapping);
 	}
 
+	QDomElement const analogSensors = root.elementsByTagName("analogSensors").at(0).toElement();
+	for (QDomNode child = analogSensors.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "analogSensor") {
+			qDebug() << "Malformed <analogSensors> tag";
+			throw "config.xml parsing failed";
+		}
+
+		AnalogSensorMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+
+		mAnalogSensorMappings.insert(mapping.port, mapping);
+	}
+
+
 	if (root.elementsByTagName("motorTypes").isEmpty()) {
 		qDebug() << "config.xml does not have <motorTypes> tag";
 		throw "config.xml parsing failed";
@@ -270,6 +293,16 @@ int Configurer::powerMotorI2cCommandNumber(QString const &port) const
 bool Configurer::powerMotorInvert(QString const &port) const
 {
 	return mPowerMotorMappings[port].invert;
+}
+
+QStringList Configurer::analogSensorPorts() const
+{
+	return mAnalogSensorMappings.keys();
+}
+
+int Configurer::analogSensorI2cCommandNumber(QString const &port) const
+{
+	return mAnalogSensorMappings[port].i2cCommandNumber;
 }
 
 QStringList Configurer::sensorPorts() const
