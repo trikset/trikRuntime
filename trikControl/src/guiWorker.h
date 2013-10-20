@@ -39,9 +39,8 @@ public slots:
 	void deleteWorker();
 
 private:
-	QWidget *window;
-//	QWidget mImageWidget;
-//	QPixmap mImage;
+	QWidget mImageWidget;
+	QPixmap mImage;
 };
 
 }

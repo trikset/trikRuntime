@@ -30,14 +30,8 @@ using namespace trikControl;
 Display::Display(QThread &guiThread)
 	: mGuiThread(guiThread)
 {
-//	mImageWidget.setWindowState(Qt::WindowFullScreen);
-//	QStackedLayout * const layout = new QStackedLayout();
-//	QLabel * const label = new QLabel();
-//	label->setPixmap(mImage);
-//	layout->addWidget(label);
-//	mImageWidget.setLayout(layout);
 	mGuiWorker = new GuiWorker();
-	mGuiWorker->moveToThread(&mGuiThread);
+	mGuiWorker->moveToThread(&guiThread);
 
 	connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
@@ -51,29 +45,5 @@ Display::~Display()
 
 void Display::showImage(QString const &fileName)
 {
-//	mImage.load(fileName);
-//	QHBoxLayout * const layout = new QHBoxLayout();
-//	QLabel* const label = new QLabel("ololo", &mImageWidget);
-//	//label->setPixmap(mImage);
-//	layout->addWidget(label);
-//	mImageWidget.setLayout(layout);
-//	mImageWidget.show();
-
-//	QWidget *window = new QWidget;
-//	QPushButton *button1 = new QPushButton("One");
-//	QPushButton *button2 = new QPushButton("Two");
-//	QPushButton *button3 = new QPushButton("Three");
-//	QPushButton *button4 = new QPushButton("Four");
-//	QPushButton *button5 = new QPushButton("Five");
-
-//	QHBoxLayout *layout = new QHBoxLayout;
-//	layout->addWidget(button1);
-//	layout->addWidget(button2);
-//	layout->addWidget(button3);
-//	layout->addWidget(button4);
-//	layout->addWidget(button5);
-
-//	window->setLayout(layout);
-//	window->show();
 	emit threadShowImage(fileName);
 }
