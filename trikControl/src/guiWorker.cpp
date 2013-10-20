@@ -16,29 +16,32 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QStackedLayout>
-	#include <QtGui/QLabel>
 #else
 	#include <QtWidgets/QStackedLayout>
-	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QPushButton>
 	#include <QtWidgets/QApplication>
 	#include <QtWidgets/QDialog>
 #endif
 
 #include <QtCore/QThread>
+#include <QtGui/QPixmap>
 
 using namespace trikControl;
 
-void GuiWorker::showImage(QString const &fileName)
+GuiWorker::GuiWorker()
 {
-	mImage.load(fileName);
 	QHBoxLayout * const layout = new QHBoxLayout();
-	QLabel* const label = new QLabel(&mImageWidget);
-	label->setScaledContents(true);
-	label->setPixmap(mImage);
-	layout->addWidget(label);
+	mImageLabel.setScaledContents(true);
+	layout->addWidget(&mImageLabel);
 	mImageWidget.setLayout(layout);
 	mImageWidget.setWindowState(Qt::WindowFullScreen);
+}
+
+void GuiWorker::showImage(QString const &fileName)
+{
+	QPixmap pixmap(fileName);
+	pixmap = pixmap.scaled(mImageWidget.size() - QSize(20, 20), Qt::KeepAspectRatio);
+	mImageLabel.setPixmap(pixmap);
 	mImageWidget.show();
 }
 

@@ -78,16 +78,16 @@ SOURCES += \
 
 win32 {
 	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
-            && xcopy ..\\media $$replace(DESTDIR, /, \\)media /s /e /q /y /i \
-            "
+			&& xcopy ..\\media $$replace(DESTDIR, /, \\)\\media /s /e /q /y /i \
+			"
 } else {
 	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
-            && cp -rf ../media/ $$DESTDIR/ \
+			&& cp -rf ../media/ $$DESTDIR/ \
 			"
 }
 
 unix {
-        target.path = $$[INSTALL_ROOT]/
-        INSTALLS +=   target
+	target.path = $$[INSTALL_ROOT]/
+	INSTALLS +=   target
 }
 

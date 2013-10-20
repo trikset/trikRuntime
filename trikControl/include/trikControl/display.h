@@ -22,16 +22,29 @@ namespace trikControl {
 
 class GuiWorker;
 
+/// Provides ability to draw something on robot display.
 class TRIKCONTROL_EXPORT Display : public QObject
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param guiThread - GUI thread of an application.
 	explicit Display(QThread &guiThread);
+
 	~Display();
 
 public slots:
+	/// Shows given image on a display.
+	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
+	/// supported formats, but .jpg, .png, .bmp, .gif are supported.
 	void showImage(QString const &fileName);
+
+	/// Shortcut to showImage, shows happy smile.
+	void smile();
+
+	/// Shortcut to showImage, shows sad smile.
+	void sadSmile();
 
 signals:
 	void threadShowImage(QString const &fileName);

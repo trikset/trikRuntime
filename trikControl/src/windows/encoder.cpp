@@ -18,9 +18,9 @@
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int jbx)
+Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(0)
+	, mI2cCommandNumber(i2cCommandNumber)
 {
 }
 

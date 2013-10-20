@@ -18,11 +18,11 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
+	#include <QtGui/QLabel>
 #else
 	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
 #endif
-
-#include <QtGui/QPixmap>
 
 #include "declSpec.h"
 
@@ -33,6 +33,7 @@ class GuiWorker : public QObject
 	Q_OBJECT
 
 public:
+	GuiWorker();
 
 public slots:
 	void showImage(QString const &fileName);
@@ -40,7 +41,7 @@ public slots:
 
 private:
 	QWidget mImageWidget;
-	QPixmap mImage;
+	QLabel mImageLabel;
 };
 
 }
