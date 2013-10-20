@@ -68,14 +68,6 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
 
-win32 {
-	QMAKE_POST_LINK = "xcopy ..\\media $$replace(DESTDIR, /, \\)media /s /e /q /y /i \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -rf ../media/ $$DESTDIR/ \
-			"
-}
-
 unix {
         target.path = $$[INSTALL_ROOT]/
         INSTALLS +=   target

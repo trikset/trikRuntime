@@ -78,9 +78,11 @@ SOURCES += \
 
 win32 {
 	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
-			"
+            && xcopy ..\\media $$replace(DESTDIR, /, \\)media /s /e /q /y /i \
+            "
 } else {
 	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
+            && cp -rf ../media/ $$DESTDIR/ \
 			"
 }
 

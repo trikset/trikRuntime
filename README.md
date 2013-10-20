@@ -14,3 +14,4 @@ Consists of following subprojects:
 Special thanks to:
 - Nikita Batov (https://github.com/Batov) for I2C direct access example.
 - Roman Kurbatov (https://github.com/romankurbatov) for his desktop environment code used in trikGui.
+- Anna Semakova for various artwork in "media" folder.
