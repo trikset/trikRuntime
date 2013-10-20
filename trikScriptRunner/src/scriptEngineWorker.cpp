@@ -31,6 +31,7 @@ Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Display*)
 
 ScriptEngineWorker::ScriptEngineWorker()
+	: mBrick(*this->thread())
 {
 	qScriptRegisterMetaType(&mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);

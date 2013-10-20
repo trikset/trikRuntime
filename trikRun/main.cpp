@@ -37,7 +37,9 @@ int main(int argc, char *argv[])
 
 	QString const scriptFileName = args[1];
 
-	trikScriptRunner::TrikScriptRunner::runFromFileSynchronous(scriptFileName);
+	trikScriptRunner::TrikScriptRunner runner;
+	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
+	runner.runFromFile(scriptFileName);
 
-	return 0;
+	return app.exec();
 }

@@ -27,7 +27,8 @@
 
 using namespace trikControl;
 
-Display::Display()
+Display::Display(QThread &guiThread)
+	: mGuiThread(guiThread)
 {
 //	mImageWidget.setWindowState(Qt::WindowFullScreen);
 //	QStackedLayout * const layout = new QStackedLayout();
@@ -40,8 +41,6 @@ Display::Display()
 
 	connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
-
-	mGuiThread.start();
 }
 
 Display::~Display()

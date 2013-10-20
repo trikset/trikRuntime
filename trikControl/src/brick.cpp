@@ -23,9 +23,10 @@
 
 using namespace trikControl;
 
-Brick::Brick()
+Brick::Brick(QThread &guiThread)
 	: mConfigurer(new Configurer())
 	, mI2cCommunicator(NULL)
+	, mDisplay(guiThread)
 {
 	system(mConfigurer->initScript().toStdString().c_str());
 
@@ -73,18 +74,17 @@ Brick::Brick()
 		mEncoders.insert(port, encoder);
 	}
 
-//	mEncoder1 = new Encoder(*mI2cCommunicator, 1);
-//	mEncoder2 = new Encoder(*mI2cCommunicator, 2);
-//	mEncoder3 = new Encoder(*mI2cCommunicator, 3);
-//	mEncoder4 = new Encoder(*mI2cCommunicator, 4);
-
 	mBattery = new Battery(*mI2cCommunicator);
 
-	mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin(), mConfigurer->accelerometerMax(), mConfigurer->accelerometerDeviceFile());
-	// -32767, 32767, "/dev/input/event1"
+	mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
+			, mConfigurer->accelerometerMax()
+			, mConfigurer->accelerometerDeviceFile()
+			);
 
-	mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin(), mConfigurer->gyroscopeMax(), mConfigurer->gyroscopeDeviceFile());
-	// -32768, 32767, "/dev/input/event2"
+	mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
+			, mConfigurer->gyroscopeMax()
+			, mConfigurer->gyroscopeDeviceFile()
+			);
 }
 
 Brick::~Brick()

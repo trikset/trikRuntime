@@ -27,7 +27,7 @@ class TRIKCONTROL_EXPORT Display : public QObject
 	Q_OBJECT
 
 public:
-	Display();
+	explicit Display(QThread &guiThread);
 	~Display();
 
 public slots:
@@ -38,7 +38,7 @@ signals:
 	void threadDelete();
 
 private:
-	QThread mGuiThread;
+	QThread &mGuiThread;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

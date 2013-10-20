@@ -41,7 +41,7 @@ class TRIKCONTROL_EXPORT Brick : public QObject
 	Q_OBJECT
 
 public:
-	Brick();
+	explicit Brick(QThread &guiThread);
 	~Brick();
 
 public slots:
