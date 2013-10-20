@@ -124,7 +124,7 @@ int I2cCommunicator::read(QByteArray const &data)
 	} else
 	{
 		__u8 buffer[4] = {0};
-		int size = i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
+		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
 		int x = (buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0]);
 		return x;
 	}

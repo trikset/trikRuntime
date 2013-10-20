@@ -17,6 +17,10 @@
 
 #include <QtCore/QCoreApplication>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWSServer>
+#endif
+
 #include "trikGuiApplication.h"
 #include "startWidget.h"
 
@@ -25,6 +29,14 @@ using namespace trikGui;
 int main(int argc, char *argv[])
 {
 	TrikGuiApplication a(argc, argv);
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	QWSServer * const server = QWSServer::instance();
+	if (server) {
+		server->setCursorVisible(false);
+	}
+#endif
+
 	StartWidget w;
 	w.show();
 

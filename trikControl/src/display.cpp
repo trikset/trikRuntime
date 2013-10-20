@@ -50,10 +50,10 @@ void Display::showImage(QString const &fileName)
 
 void Display::smile()
 {
-	showImage("media\trik_smile_normal.png");
+	showImage("media/trik_smile_normal.png");
 }
 
 void Display::sadSmile()
 {
-	showImage("media\trik_smile_sad.png");
+	showImage("media/trik_smile_sad.png");
 }
