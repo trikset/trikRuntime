@@ -16,27 +16,37 @@
 
 #include <QtCore/QDebug>
 
+#include <trikControl/battery.h>
+#include <trikControl/display.h>
+#include <trikControl/encoder.h>
 #include <trikControl/powerMotor.h>
-#include <trikControl/servoMotor.h>
 #include <trikControl/sensor.h>
+#include <trikControl/sensor3d.h>
+#include <trikControl/servoMotor.h>
 
 #include "scriptableParts.h"
 
 using namespace trikScriptRunner;
 using namespace trikControl;
 
-Q_DECLARE_METATYPE(ServoMotor*)
+Q_DECLARE_METATYPE(Battery*)
+Q_DECLARE_METATYPE(Display*)
+Q_DECLARE_METATYPE(Encoder*)
 Q_DECLARE_METATYPE(PowerMotor*)
 Q_DECLARE_METATYPE(Sensor*)
-Q_DECLARE_METATYPE(Display*)
+Q_DECLARE_METATYPE(Sensor3d*)
+Q_DECLARE_METATYPE(ServoMotor*)
 
 ScriptEngineWorker::ScriptEngineWorker()
 	: mBrick(*this->thread())
 {
-	qScriptRegisterMetaType(&mEngine, motorToScriptValue, motorFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, batteryToScriptValue, batteryFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, encoderToScriptValue, encoderFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);
 
 	QScriptValue brickProxy = mEngine.newQObject(&mBrick);
 	mEngine.globalObject().setProperty("brick", brickProxy);
