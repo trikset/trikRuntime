@@ -69,7 +69,7 @@ void NetConfigWidget::generateNetConfigList()
 		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
 			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
 			{
-				mConfigItems.append(new QStandardItem(QString("IP address: ")));
+				mConfigItems.append(new QStandardItem(QString(tr("IP address: "))));
 				mConfigItems.append(new QStandardItem(entry.ip().toString()));
 			}
 		}

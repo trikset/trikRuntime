@@ -18,6 +18,10 @@
         <source>Network config</source>
         <translation>Сеть</translation>
     </message>
+    <message>
+        <source>IP address: </source>
+        <translation>IP-адрес:</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::RunningWidget</name>
