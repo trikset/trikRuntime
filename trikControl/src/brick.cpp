@@ -59,7 +59,7 @@ Brick::Brick()
 	foreach (QString const &port, mConfigurer->analogSensorPorts()) {
 		AnalogSensor *analogSensor = new AnalogSensor(
 				*mI2cCommunicator
-				, mConfigurer->powerMotorI2cCommandNumber(port)
+				, mConfigurer->analogSensorI2cCommandNumber(port)
 				);
 
 		mAnalogSensors.insert(port, analogSensor);

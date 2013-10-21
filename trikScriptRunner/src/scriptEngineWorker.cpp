@@ -19,6 +19,7 @@
 #include <trikControl/powerMotor.h>
 #include <trikControl/servoMotor.h>
 #include <trikControl/sensor.h>
+#include <trikControl/analogSensor.h>
 
 #include "scriptableParts.h"
 
@@ -27,13 +28,16 @@ using namespace trikControl;
 
 Q_DECLARE_METATYPE(ServoMotor*)
 Q_DECLARE_METATYPE(PowerMotor*)
+Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Display*)
+
 
 ScriptEngineWorker::ScriptEngineWorker()
 {
 	qScriptRegisterMetaType(&mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
 

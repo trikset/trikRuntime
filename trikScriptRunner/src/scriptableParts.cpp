@@ -39,6 +39,17 @@ void trikScriptRunner::powerMotorFromScriptValue(QScriptValue const &object, Pow
 	out = qobject_cast<PowerMotor*>(object.toQObject());
 }
 
+QScriptValue trikScriptRunner::analogSensorToScriptValue(QScriptEngine *engine, AnalogSensor* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::analogSensorFromScriptValue(QScriptValue const &object, AnalogSensor* &out)
+{
+	out = qobject_cast<AnalogSensor*>(object.toQObject());
+}
+
+
 QScriptValue trikScriptRunner::sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in)
 {
 	return engine->newQObject(in);

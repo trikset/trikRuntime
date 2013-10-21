@@ -34,7 +34,7 @@ int AnalogSensor::read()
 {	
 	int value = mCommunicator.readToInt(static_cast<char>(mI2cCommandNumber & 0xFF), 2);
 
-	value = qMin(value, ANALOG_MAX;
+	value = qMin(value, ANALOG_MAX);
 	value = qMax(value, ANALOG_MIN);
 
 	double const scale = 100.0 / (static_cast<double>(ANALOG_MAX - ANALOG_MIN));

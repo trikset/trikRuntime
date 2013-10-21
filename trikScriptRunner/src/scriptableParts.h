@@ -19,6 +19,7 @@
 #include <trikControl/brick.h>
 #include <trikControl/servoMotor.h>
 #include <trikControl/powerMotor.h>
+#include <trikControl/analogSensor.h> 
 #include <trikControl/sensor.h>
 #include <trikControl/display.h>
 
@@ -29,6 +30,9 @@ void motorFromScriptValue(QScriptValue const &object, trikControl::ServoMotor* &
 
 QScriptValue powerMotorToScriptValue(QScriptEngine *engine, trikControl::PowerMotor* const &in);
 void powerMotorFromScriptValue(QScriptValue const &object, trikControl::PowerMotor* &out);
+
+QScriptValue analogSensorToScriptValue(QScriptEngine *engine, trikControl::AnalogSensor* const &in);
+void analogSensorFromScriptValue(QScriptValue const &object, trikControl::AnalogSensor* &out);
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
