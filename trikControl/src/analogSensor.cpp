@@ -14,7 +14,6 @@
 
 #include "analogSensor.h"
 
-
 #include "i2cCommunicator.h"
 
 const int analogMax = 1024;  //for all analog sensors
@@ -30,7 +29,7 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber)
 
 int AnalogSensor::read()
 {
-	QByteArray command(2, '\0');
+	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
 	int value = mCommunicator.read(command);
