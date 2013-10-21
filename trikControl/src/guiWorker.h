@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,24 +12,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "battery.h"
+#pragma once
 
-#include "i2cCommunicator.h"
+#include <QtCore/qglobal.h>
 
-using namespace trikControl;
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+	#include <QtGui/QLabel>
+#else
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
+#endif
 
-Battery::Battery(I2cCommunicator &communicator)
-	: mCommunicator(communicator)
+#include "declSpec.h"
+
+namespace trikControl {
+
+class GuiWorker : public QObject
 {
-}
+	Q_OBJECT
 
-float Battery::readVoltage()
-{
-	QByteArray command(1, '\0');
-	command[0] = static_cast<char>(0x26);
+public:
+	GuiWorker();
 
-	int const parrot = mCommunicator.read(command);
+public slots:
+	void showImage(QString const &fileName);
+	void deleteWorker();
 
-	// TODO: Remove this arcane numbers, or Something may be unexpectedly summoned by them.
-	return (static_cast<float>(parrot) / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
+private:
+	QWidget mImageWidget;
+	QLabel mImageLabel;
+};
+
 }

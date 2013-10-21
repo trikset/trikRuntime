@@ -12,24 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "battery.h"
+#include "encoder.h"
 
-#include "i2cCommunicator.h"
+#include "src/i2cCommunicator.h"
+
+float const parToRad = 0.03272492;
 
 using namespace trikControl;
 
-Battery::Battery(I2cCommunicator &communicator)
+Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
 	: mCommunicator(communicator)
+	, mI2cCommandNumber(i2cCommandNumber)
 {
 }
 
-float Battery::readVoltage()
+void Encoder::reset()
 {
-	QByteArray command(1, '\0');
-	command[0] = static_cast<char>(0x26);
+	QByteArray command(2, '\0');
+	command[0] = static_cast<char>(mI2cCommandNumber);
+	command[1] = static_cast<char>(0x00);
 
-	int const parrot = mCommunicator.read(command);
+	mCommunicator.send(command);
+}
 
-	// TODO: Remove this arcane numbers, or Something may be unexpectedly summoned by them.
-	return (static_cast<float>(parrot) / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
+float Encoder::read()
+{
+	QByteArray command(2, '\0');
+	command[0] = static_cast<char>(mI2cCommandNumber);
+	int data = mCommunicator.read(command);
+
+	return parToRad * data;
 }

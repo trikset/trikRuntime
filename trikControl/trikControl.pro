@@ -16,67 +16,79 @@ TEMPLATE = lib
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-QT += xml
+QT += xml gui
+
+if (equals(QT_MAJOR_VERSION, 5)) {
+        QT += widgets
+}
 
 CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
+        CONFIGURATION = debug
+        CONFIGURATION_SUFFIX = d
 } else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
+        CONFIGURATION = release
+        CONFIGURATION_SUFFIX =
 }
 
 TARGET = trikControl$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION
+DESTDIR = ../bin/$$CONFIGURATION
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
-	$$PWD \
-	$$PWD/include/trikControl \
+        $$PWD \
+        $$PWD/include/trikControl \
+
+win32 {
+        PLATFORM = windows
+} else {
+        PLATFORM = linux
+}
 
 HEADERS += \
-	$$PWD/include/trikControl/brick.h \
-	$$PWD/include/trikControl/servoMotor.h \
-	$$PWD/include/trikControl/powerMotor.h \
-	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/src/configurer.h \
-	$$PWD/src/i2cCommunicator.h \
+        $$PWD/include/trikControl/brick.h \
+        $$PWD/include/trikControl/servoMotor.h \
+        $$PWD/include/trikControl/powerMotor.h \
+        $$PWD/include/trikControl/sensor.h \
+        $$PWD/include/trikControl/display.h \
+        $$PWD/include/trikControl/declSpec.h \
+        $$PWD/src/configurer.h \
+        $$PWD/src/i2cCommunicator.h \
         $$PWD/include/trikControl/battery.h \
-        $$PWD/include/trikControl/device.h \
+        $$PWD/include/trikControl/sensor3d.h \
         $$PWD/include/trikControl/encoder.h \
+        $$PWD/src/guiWorker.h \
         $$PWD/include/trikControl/keys.h
 
 SOURCES += \
-	$$PWD/src/brick.cpp \
-	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/powerMotor.cpp \
-	$$PWD/src/sensor.cpp \
-	$$PWD/src/configurer.cpp \
+        $$PWD/src/brick.cpp \
+        $$PWD/src/servoMotor.cpp \
+        $$PWD/src/powerMotor.cpp \
+        $$PWD/src/sensor.cpp \
+        $$PWD/src/configurer.cpp \
         $$PWD/src/battery.cpp \
-        $$PWD/src/device.cpp \
-        $$PWD/src/encoder.cpp \
-        $$PWD/src/keys.cpp
+        $$PWD/src/display.cpp \
+        $$PWD/src/guiWorker.cpp \
+        $$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
+        $$PWD/src/$$PLATFORM/encoder.cpp \
+        $$PWD/src/$$PLATFORM/sensor3d.cpp \
+        $$PWD/src/linux/keys.cpp
 
 win32 {
-	SOURCES += \
-		$$PWD/src/i2cCommunicatorWindows.cpp \
-
+        QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
+                        && xcopy ..\\media $$replace(DESTDIR, /, \\)\\media /s /e /q /y /i \
+                        "
 } else {
-	SOURCES += \
-		$$PWD/src/i2cCommunicatorLinux.cpp \
-
+        QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
+                        && cp -rf ../media/ $$DESTDIR/ \
+                        "
 }
 
-win32 {
-	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
-			"
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
 }

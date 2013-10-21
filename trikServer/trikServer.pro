@@ -21,6 +21,12 @@ TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 TEMPLATE = app
 CONFIG += console
 
+QT += gui
+
+if (equals(QT_MAJOR_VERSION, 5)) {
+	QT += widgets
+}
+
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
 	CONFIGURATION_SUFFIX = d
@@ -35,24 +41,20 @@ INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCOMMUNICATOR_DIR/include \
 
-LIBS += -L$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION -ltrikCommunicator$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
 
-win32 {
-	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			&& xcopy $$replace(TRIKCOMMUNICATOR_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
-			&& cp -r $$TRIKCOMMUNICATOR_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
-			"
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
 }
+

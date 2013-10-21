@@ -24,8 +24,9 @@
 #include "servoMotor.h"
 #include "powerMotor.h"
 #include "sensor.h"
+#include "display.h"
 #include "battery.h"
-#include "device.h"
+#include "sensor3d.h"
 #include "encoder.h"
 #include "keys.h"
 
@@ -41,7 +42,7 @@ class TRIKCONTROL_EXPORT Brick : public QObject
 	Q_OBJECT
 
 public:
-	Brick();
+	explicit Brick(QThread &guiThread);
 	~Brick();
 
 public slots:
@@ -60,16 +61,28 @@ public slots:
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
 
-    Device *accel();
-    Device *gyro();
-    Encoder *encoder(int const &port);
-    Battery *battery();
-    Keys* keys();
+	/// Returns reference to on-board accelerometer.
+	Sensor3d *accelerometer();
+
+	/// Returns reference to on-board gyroscope.
+	Sensor3d *gyroscope();
+
+	/// Returns reference to encoder on given port.
+	Encoder *encoder(QString const &port);
+
+	/// Returns reference to battery.
+	Battery *battery();
+
+    Keys *keys();
+
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
+
+	/// Returns reference to class that provides drawing on display.
+	Display *display();
 
 private:
 	class SleeperThread : public QThread
@@ -81,20 +94,24 @@ private:
 		}
 	};
 
-    Device mAccel;
-    Device mGyro;
-    Keys   mKeys;
-    Encoder *mEncoder1;
-    Encoder *mEncoder2;
-    Encoder *mEncoder3;
-    Encoder *mEncoder4;
-    Battery *mBattery;
+	Encoder *mEncoder1;
+	Encoder *mEncoder2;
+	Encoder *mEncoder3;
+	Encoder *mEncoder4;
+
+	Sensor3d *mAccelerometer;  // has ownership.
+	Sensor3d *mGyroscope;  // has ownership.
+    Battery *mBattery;  // Has ownership.
+    Keys mKeys;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
+	QHash<QString, Encoder *> mEncoders;  // Has ownership.
 	QHash<QString, Sensor *> mSensors;  // Has ownership.
+
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator;  // Has ownership.
+	Display mDisplay;
 };
 
 }

@@ -17,6 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTimer>
 #include <QtCore/QThread>
+#include <QtCore/QWaitCondition>
 #include <QtScript/QScriptEngine>
 
 namespace trikScriptRunner {
@@ -41,11 +42,6 @@ public:
 	/// @param fileName - name of a file with script.
 	void runFromFile(QString const &fileName);
 
-	/// Reads a script from given file and synchronously executes it. Dangerous because scripts may contain
-	/// infinite loops.
-	/// @param fileName - name of a file with script.
-	static void runFromFileSynchronous(QString const &fileName);
-
 	/// Aborts script execution.
 	void abort();
 
@@ -63,7 +59,7 @@ private:
 	static QString readFromFile(QString const &fileName);
 
 	ScriptEngineWorker *mEngineWorker;  // Has ownership.
-	QThread mWorkerThread;  // Has ownership.
+	QThread mWorkerThread;
 };
 
 }

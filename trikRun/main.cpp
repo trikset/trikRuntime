@@ -12,7 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/QCoreApplication>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 
@@ -20,7 +27,7 @@
 
 int main(int argc, char *argv[])
 {
-	QCoreApplication app(argc, argv);
+	QApplication app(argc, argv);
 	QStringList const args = app.arguments();
 
 	if (args.count() != 2) {
@@ -30,7 +37,9 @@ int main(int argc, char *argv[])
 
 	QString const scriptFileName = args[1];
 
-	trikScriptRunner::TrikScriptRunner::runFromFileSynchronous(scriptFileName);
+	trikScriptRunner::TrikScriptRunner runner;
+	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
+	runner.runFromFile(scriptFileName);
 
-	return 0;
+	return app.exec();
 }
