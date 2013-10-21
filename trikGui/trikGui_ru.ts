@@ -26,12 +26,18 @@
 <context>
     <name>trikGui::RunningWidget</name>
     <message>
-        <source>Running: </source>
+        <source>Press Enter to abort</source>
+        <translation type="obsolete">Нажмите Enter, чтобы прервать</translation>
+    </message>
+    <message>
+        <source>Running:</source>
         <translation>Выполняется:</translation>
     </message>
     <message>
-        <source>Press Enter to abort</source>
-        <translation>Нажмите Enter, чтобы прервать</translation>
+        <source>Press Enter
+ to abort</source>
+        <translation>Нажмите Enter
+ чтобы выйти</translation>
     </message>
 </context>
 <context>
