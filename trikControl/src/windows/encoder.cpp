@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,27 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-/// @file Stub for I2C communication to make it compilable under Windows. Shall not work here, of course.
+#include "encoder.h"
 
-#include "i2cCommunicator.h"
+#include "src/i2cCommunicator.h"
 
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
-	: mDevicePath(devicePath)
-	, mDeviceId(deviceId)
+Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
+	: mCommunicator(communicator)
+	, mI2cCommandNumber(i2cCommandNumber)
 {
 }
 
-void I2cCommunicator::connect()
+void Encoder::reset()
 {
 }
 
-void I2cCommunicator::send(QByteArray const &data)
+float Encoder::read()
 {
-	Q_UNUSED(data);
-}
-
-void I2cCommunicator::disconnect()
-{
+	return 0;
 }

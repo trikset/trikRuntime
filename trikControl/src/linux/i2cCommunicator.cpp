@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "i2cCommunicator.h"
+#include "src/i2cCommunicator.h"
 
 #include <QtCore/QDebug>
 
@@ -38,32 +38,32 @@ static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command
 
 static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
 {
-    union i2c_smbus_data data;
-    if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
-                         I2C_SMBUS_WORD_DATA,&data))
-        return -1;
-    else
-        return 0x0FFFF & data.word;
+	union i2c_smbus_data data;
+	if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
+						 I2C_SMBUS_WORD_DATA,&data))
+		return -1;
+	else
+		return 0x0FFFF & data.word;
 }
 
 static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command,
-                                                  __u8 length, __u8 *values)
+												  __u8 length, __u8 *values)
 {
-        union i2c_smbus_data data;
-        int i;
+		union i2c_smbus_data data;
+		int i;
 
-        if (length > 32)
-                length = 32;
-        data.block[0] = length;
-        if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
-                             length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN :
-                              I2C_SMBUS_I2C_BLOCK_DATA,&data))
-                return -1;
-        else {
-                for (i = 1; i <= data.block[0]; i++)
-                        values[i-1] = data.block[i];
-                return data.block[0];
-        }
+		if (length > 32)
+				length = 32;
+		data.block[0] = length;
+		if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
+							 length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN :
+							  I2C_SMBUS_I2C_BLOCK_DATA,&data))
+				return -1;
+		else {
+				for (i = 1; i <= data.block[0]; i++)
+						values[i-1] = data.block[i];
+				return data.block[0];
+		}
 }
 
 static inline __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value)
@@ -84,6 +84,12 @@ I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
 	: mDevicePath(devicePath)
 	, mDeviceId(deviceId)
 {
+	connect();
+}
+
+I2cCommunicator::~I2cCommunicator()
+{
+	disconnect();
 }
 
 void I2cCommunicator::connect()
@@ -91,12 +97,12 @@ void I2cCommunicator::connect()
 	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
 		qDebug() << "Failed to open I2C device file " << mDevicePath;
-		throw "I2C error";
+		return;
 	}
 
 	if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId)) {
 		qDebug() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
-		throw "I2C error";
+		return;
 	}
 }
 
@@ -112,16 +118,16 @@ void I2cCommunicator::send(QByteArray const &data)
 //todo: rewrite it
 int I2cCommunicator::read(QByteArray const &data)
 {
-    if (data.size() == 1)
-    {
-        return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
-    } else
-    {
-        __u8 buffer[4] = {0};
-        int size = i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
-        int x = (buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0]);
-        return x;
-    }
+	if (data.size() == 1)
+	{
+		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+	} else
+	{
+		__u8 buffer[4] = {0};
+		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
+		int x = (buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0]);
+		return x;
+	}
 }
 
 void I2cCommunicator::disconnect()

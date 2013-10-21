@@ -16,20 +16,35 @@
 
 #include <QtScript/QScriptEngine>
 
-#include <trikControl/brick.h>
-#include <trikControl/servoMotor.h>
+#include <trikControl/battery.h>
+#include <trikControl/display.h>
+#include <trikControl/encoder.h>
 #include <trikControl/powerMotor.h>
 #include <trikControl/sensor.h>
+#include <trikControl/sensor3d.h>
+#include <trikControl/servoMotor.h>
 
 namespace trikScriptRunner {
 
-QScriptValue motorToScriptValue(QScriptEngine *engine, trikControl::ServoMotor* const &in);
-void motorFromScriptValue(QScriptValue const &object, trikControl::ServoMotor* &out);
+QScriptValue batteryToScriptValue(QScriptEngine *engine, trikControl::Battery* const &in);
+void batteryFromScriptValue(QScriptValue const &object, trikControl::Battery* &out);
+
+QScriptValue displayToScriptValue(QScriptEngine *engine, trikControl::Display* const &in);
+void displayFromScriptValue(QScriptValue const &object, trikControl::Display* &out);
+
+QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::Encoder* const &in);
+void encoderFromScriptValue(QScriptValue const &object, trikControl::Encoder* &out);
 
 QScriptValue powerMotorToScriptValue(QScriptEngine *engine, trikControl::PowerMotor* const &in);
 void powerMotorFromScriptValue(QScriptValue const &object, trikControl::PowerMotor* &out);
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
+
+QScriptValue sensor3dToScriptValue(QScriptEngine *engine, trikControl::Sensor3d* const &in);
+void sensor3dFromScriptValue(QScriptValue const &object, trikControl::Sensor3d* &out);
+
+QScriptValue servoMotorToScriptValue(QScriptEngine *engine, trikControl::ServoMotor* const &in);
+void servoMotorFromScriptValue(QScriptValue const &object, trikControl::ServoMotor* &out);
 
 }

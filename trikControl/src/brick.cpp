@@ -23,14 +23,14 @@
 
 using namespace trikControl;
 
-Brick::Brick()
+Brick::Brick(QThread &guiThread)
 	: mConfigurer(new Configurer())
 	, mI2cCommunicator(NULL)
+	, mDisplay(guiThread)
 {
 	system(mConfigurer->initScript().toStdString().c_str());
 
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
-	mI2cCommunicator->connect();
 
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
 		QString const motorType = mConfigurer->servoMotorDefaultType(port);
@@ -69,16 +69,22 @@ Brick::Brick()
 		mSensors.insert(port, sensor);
 	}
 
-    mEncoder1 = new Encoder(*mI2cCommunicator, 1);
-    mEncoder2 = new Encoder(*mI2cCommunicator, 2);
-    mEncoder3 = new Encoder(*mI2cCommunicator, 3);
-    mEncoder4 = new Encoder(*mI2cCommunicator, 4);
+	foreach (QString const &port, mConfigurer->encoderPorts()) {
+		Encoder *encoder = new Encoder(*mI2cCommunicator, mConfigurer->encoderI2cCommandNumber(port));
+		mEncoders.insert(port, encoder);
+	}
 
-    mBattery = new Battery(*mI2cCommunicator);
+	mBattery = new Battery(*mI2cCommunicator);
 
-    mAccel.init(-32767, 32767, "/dev/input/event1");
-    mGyro.init(-32768, 32767, "/dev/input/event2");
+	mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
+			, mConfigurer->accelerometerMax()
+			, mConfigurer->accelerometerDeviceFile()
+			);
 
+	mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
+			, mConfigurer->gyroscopeMax()
+			, mConfigurer->gyroscopeDeviceFile()
+			);
 }
 
 Brick::~Brick()
@@ -86,8 +92,11 @@ Brick::~Brick()
 	delete mConfigurer;
 	qDeleteAll(mServoMotors);
 	qDeleteAll(mPowerMotors);
+	qDeleteAll(mEncoders);
 	qDeleteAll(mSensors);
-	mI2cCommunicator->disconnect();
+	delete mAccelerometer;
+	delete mGyroscope;
+	delete mBattery;
 	delete mI2cCommunicator;
 }
 
@@ -135,37 +144,44 @@ Sensor *Brick::sensor(QString const &port)
 	return NULL;
 }
 
-
-Encoder *Brick::encoder(int const &port)
+Encoder *Brick::encoder(QString const &port)
 {
-    switch (port) {
-    case 1:
-        return mEncoder1;
-    case 2:
-        return mEncoder2;
-    case 3:
-        return mEncoder3;
-    case 4:
-        return mEncoder4;
-    default:
-        return mEncoder1;
-    }
+	if (mEncoders.contains(port)) {
+		return mEncoders.value(port);
+	}
 
+	return NULL;
 }
+
+//Encoder *Brick::encoder(int const &port)
+//{
+//	switch (port) {
+//	case 1:
+//		return mEncoder1;
+//	case 2:
+//		return mEncoder2;
+//	case 3:
+//		return mEncoder3;
+//	case 4:
+//		return mEncoder4;
+//	default:
+//		return mEncoder1;
+//	}
+//}
 
 Battery *Brick::battery()
 {
-    return mBattery;
+	return mBattery;
 }
 
-Device *Brick::accel()
+Sensor3d *Brick::accelerometer()
 {
-    return &mAccel;
+	return mAccelerometer;
 }
 
-Device *Brick::gyro()
+Sensor3d *Brick::gyroscope()
 {
-    return &mGyro;
+	return mGyroscope;
 }
 
 void Brick::wait(int const &milliseconds) const
@@ -176,4 +192,9 @@ void Brick::wait(int const &milliseconds) const
 qint64 Brick::time() const
 {
 	return QDateTime::currentMSecsSinceEpoch();
+}
+
+Display *Brick::display()
+{
+	return &mDisplay;
 }

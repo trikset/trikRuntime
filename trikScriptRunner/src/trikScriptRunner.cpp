@@ -52,12 +52,6 @@ void TrikScriptRunner::runFromFile(QString const &fileName)
 	emit threadRun(readFromFile(fileName));
 }
 
-void TrikScriptRunner::runFromFileSynchronous(QString const &fileName)
-{
-	ScriptEngineWorker temporaryWorker;
-	temporaryWorker.run(readFromFile(fileName));
-}
-
 void TrikScriptRunner::abort()
 {
 	mEngineWorker->abort();

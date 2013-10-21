@@ -23,13 +23,25 @@ namespace trikControl {
 class I2cCommunicator
 {
 public:
+	/// Constructor.
+	/// @param devicePath - path to Linux I2C device file.
+	/// @param deviceId - id of I2C device.
 	I2cCommunicator(QString const &devicePath, int deviceId);
-	void connect();
+
+	~I2cCommunicator();
+
+	/// Send data to current device, if it is connected.
 	void send(QByteArray const &data);
-	void disconnect();
-    int read(QByteArray const &data);
+
+	int read(QByteArray const &data);
 
 private:
+	/// Establish connection with current device.
+	void connect();
+
+	/// Disconnect from a device.
+	void disconnect();
+
 	QString const mDevicePath;
 	int const mDeviceId;
 	int mDeviceFileDescriptor;

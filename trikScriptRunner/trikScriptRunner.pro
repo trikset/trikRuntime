@@ -29,18 +29,18 @@ CONFIG(debug, debug | release) {
 
 TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
 
-DESTDIR = bin/$$CONFIGURATION/
+DESTDIR = ../bin/$$CONFIGURATION/
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCONTROL_DIR/include \
 
-LIBS += -L$$TRIKCONTROL_DIR/bin/$$CONFIGURATION -ltrikControl$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$PWD
@@ -57,9 +57,8 @@ SOURCES += \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 
-win32 {
-	QMAKE_PRE_LINK = "xcopy \"$$replace(TRIKCONTROL_DIR, /, \\)bin\\$$CONFIGURATION\" \"$$replace(DESTDIR, /, \\)\" /s /e /q /y /i \
-			"
-} else {
-	QMAKE_PRE_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR"
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
 }
+

@@ -12,24 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "battery.h"
-
-#include "i2cCommunicator.h"
+#include "sensor3d.h"
 
 using namespace trikControl;
 
-Battery::Battery(I2cCommunicator &communicator)
-	: mCommunicator(communicator)
+Sensor3d::Sensor3d(int min, int max, QString const &controlFile)
 {
+	Q_UNUSED(min);
+	Q_UNUSED(max);
+	Q_UNUSED(controlFile);
 }
 
-float Battery::readVoltage()
+QVector<int> Sensor3d::read()
 {
-	QByteArray command(1, '\0');
-	command[0] = static_cast<char>(0x26);
+	return QVector<int>(3);
+}
 
-	int const parrot = mCommunicator.read(command);
-
-	// TODO: Remove this arcane numbers, or Something may be unexpectedly summoned by them.
-	return (static_cast<float>(parrot) / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
+void Sensor3d::readFile()
+{
 }

@@ -1,9 +1,18 @@
-#pragma once
+/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
 
-#define I2C_SLAVE	0x0703	/* Use this slave address */
-#define I2C_SLAVE_FORCE	0x0706	/* Use this slave address, even if it */
-#define I2C_SMBUS	0x0720	/* SMBus transfer */
-#define ADDRESS 0x48
+#pragma once
 
 #include <QtCore/QObject>
 
@@ -13,21 +22,23 @@ namespace trikControl {
 
 class I2cCommunicator;
 
+/// Provides battery voltage info.
 class TRIKCONTROL_EXPORT Battery : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
+
 public:
-    Battery(I2cCommunicator &communicator);
+	/// Constructor.
+	/// @param communicator - I2C communicator to use to query battery status.
+	Battery(I2cCommunicator &communicator);
 
 public slots:
-    float readVoltage();
 
-private slots:
+	/// Returns current battery voltage in volts.
+	float readVoltage();
 
 private:
-    I2cCommunicator &mCommunicator;
-    int mData;
-
+	I2cCommunicator &mCommunicator;
 };
 
 }

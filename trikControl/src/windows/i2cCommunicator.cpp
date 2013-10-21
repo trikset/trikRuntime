@@ -12,40 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "sensor.h"
+/// @file Stub for I2C communication to make it compilable under Windows. Shall not work here, of course.
 
-#include <QtCore/QDebug>
+#include "src/i2cCommunicator.h"
 
 using namespace trikControl;
 
-Sensor::Sensor(int min, int max, QString const &deviceFile)
-	: mMin(min)
-	, mMax(max)
-	, mDeviceFile(deviceFile)
+I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
+	: mDevicePath(devicePath)
+	, mDeviceId(deviceId)
 {
-	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qDebug() << "File " << deviceFile << " failed to open for reading";
-		return;
-	}
-
-	mStream.setDevice(&mDeviceFile);
 }
 
-int Sensor::read()
+I2cCommunicator::~I2cCommunicator()
 {
-	if (mMax == mMin) {
-		return mMin;
-	}
+}
 
-	int value = 0;
-	mStream >> value;
+void I2cCommunicator::connect()
+{
+}
 
-	value = qMin(value, mMax);
-	value = qMax(value, mMin);
+void I2cCommunicator::send(QByteArray const &data)
+{
+	Q_UNUSED(data);
+}
 
-	double const scale = 100.0 / (static_cast<double>(mMax - mMin));
+void I2cCommunicator::disconnect()
+{
+}
 
-	value = (value - mMin) * scale;
-
-	return value;
+int I2cCommunicator::read(QByteArray const &data)
+{
+	Q_UNUSED(data);
+	return 0;
 }

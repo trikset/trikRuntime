@@ -21,6 +21,12 @@ TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 TEMPLATE = app
 CONFIG += console
 
+QT += gui
+
+if (equals(QT_MAJOR_VERSION, 5)) {
+	QT += widgets
+}
+
 CONFIG(debug, debug | release) {
 	CONFIGURATION = debug
 	CONFIGURATION_SUFFIX = d
@@ -29,32 +35,34 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX =
 }
 
-DESTDIR = ../bin/$$CONFIGURATION/
+DESTDIR = ../bin/$$CONFIGURATION
 
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 
-LIBS += -L$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX
 
-OBJECTS_DIR = .obj/$$CONFIGURATION
-MOC_DIR = .moc/$$CONFIGURATION
-RCC_DIR = .rcc/$$CONFIGURATION
-UI_DIR = .ui/$$CONFIGURATION
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
 
 !macx {
 	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION
+	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
 
 win32 {
-	QMAKE_POST_LINK = "xcopy $$replace(TRIKCONTROL_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			&& xcopy $$replace(TRIKSCRIPTRUNNER_DIR, /, \\)\\bin\\$$CONFIGURATION $$replace(DESTDIR, /, \\) /s /e /q /y /i \
-			&& xcopy test.qts $$replace(DESTDIR, /, \\) /q /y \
+	QMAKE_POST_LINK = "xcopy test.qts $$replace(DESTDIR, /, \\) /q /y \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -r $$TRIKCONTROL_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
-			&& cp -rf $$TRIKSCRIPTRUNNER_DIR/bin/$$CONFIGURATION/* $$DESTDIR \
-			&& cp -f test.qts $$DESTDIR \
+	QMAKE_POST_LINK = "cp -f test.qts $$DESTDIR \
 			"
 }
+
+unix {
+        target.path = $$[INSTALL_ROOT]/
+        INSTALLS +=   target
+}
+
