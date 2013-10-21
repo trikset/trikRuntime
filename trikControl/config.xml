@@ -35,6 +35,15 @@
 		<motor port="4" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
 
+	<!-- Aanalog sensors configuration, maps logical port to I2C command. 
+	     I2C device path and device id are set separately, in "i2c" section. 
+	     Analog sensors do not have a type, because their driver is controlled by high-level 
+	     commands and handles sensor specifics by itself. -->
+	<analogSensors>
+		<analogSensor port="1" i2cCommandNumber="0x24" />
+		<analogSensor port="2" i2cCommandNumber="0x25" />
+	</analogSensors>
+
 	<!-- Encoders configuration, maps logical port to I2C command. 
 	     I2C device path and device id are set separately, in "i2c" section. -->
 	<encoders>

@@ -21,6 +21,7 @@
 #include <trikControl/encoder.h>
 #include <trikControl/powerMotor.h>
 #include <trikControl/sensor.h>
+#include <trikControl/analogSensor.h>
 #include <trikControl/sensor3d.h>
 #include <trikControl/servoMotor.h>
 
@@ -33,6 +34,7 @@ Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
 Q_DECLARE_METATYPE(PowerMotor*)
+Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(ServoMotor*)
@@ -44,6 +46,7 @@ ScriptEngineWorker::ScriptEngineWorker()
 	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, encoderToScriptValue, encoderFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);

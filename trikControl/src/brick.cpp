@@ -57,6 +57,15 @@ Brick::Brick(QThread &guiThread)
 		mPowerMotors.insert(port, powerMotor);
 	}
 
+	foreach (QString const &port, mConfigurer->analogSensorPorts()) {
+		AnalogSensor *analogSensor = new AnalogSensor(
+			*mI2cCommunicator
+			, mConfigurer->analogSensorI2cCommandNumber(port)
+			);
+
+		mAnalogSensors.insert(port, analogSensor);
+	}
+
 	foreach (QString const &port, mConfigurer->sensorPorts()) {
 		QString const sensorType = mConfigurer->sensorDefaultType(port);
 
@@ -130,6 +139,15 @@ PowerMotor *Brick::powerMotor(QString const &port)
 {
 	if (mPowerMotors.contains(port)) {
 		return mPowerMotors.value(port);
+	}
+
+	return NULL;
+}
+
+AnalogSensor *Brick::analogSensor(QString const &port)
+{
+	if (mAnalogSensors.contains(port)) {
+		return mAnalogSensors.value(port);
 	}
 
 	return NULL;

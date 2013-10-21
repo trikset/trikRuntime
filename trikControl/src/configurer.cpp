@@ -41,6 +41,7 @@ Configurer::Configurer()
 	loadInit(root);
 	loadServoMotors(root);
 	loadPowerMotors(root);
+	loadAnalogSensors(root);
 	loadEncoders(root);
 	loadSensors(root);
 	loadMotorTypes(root);
@@ -131,6 +132,16 @@ int Configurer::powerMotorI2cCommandNumber(QString const &port) const
 bool Configurer::powerMotorInvert(QString const &port) const
 {
 	return mPowerMotorMappings[port].invert;
+}
+
+QStringList Configurer::analogSensorPorts() const
+{
+	return mAnalogSensorMappings.keys();
+}
+
+int Configurer::analogSensorI2cCommandNumber(QString const &port) const
+{
+	return mAnalogSensorMappings[port].i2cCommandNumber;
 }
 
 QStringList Configurer::encoderPorts() const
@@ -274,6 +285,36 @@ void Configurer::loadPowerMotors(QDomElement const &root)
 		mapping.invert = childElement.attribute("invert") == "true";
 
 		mPowerMotorMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadAnalogSensors(QDomElement const &root)
+{
+	if (root.elementsByTagName("analogSensors").isEmpty()) {
+		qDebug() << "config.xml does not have <analogSensors> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const analogSensors = root.elementsByTagName("analogSensors").at(0).toElement();
+	for (QDomNode child = analogSensors.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "analogSensor") {
+			qDebug() << "Malformed <analogSensors> tag";
+			throw "config.xml parsing failed";
+		}
+
+		AnalogSensorMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+
+		mAnalogSensorMappings.insert(mapping.port, mapping);
 	}
 }
 

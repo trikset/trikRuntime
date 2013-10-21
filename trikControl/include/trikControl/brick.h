@@ -22,6 +22,7 @@
 #include "declSpec.h"
 #include "servoMotor.h"
 #include "powerMotor.h"
+#include "analogSensor.h"
 #include "sensor.h"
 #include "display.h"
 
@@ -61,6 +62,9 @@ public slots:
 	/// Returns reference to power motor on a given port.
 	PowerMotor *powerMotor(QString const &port);
 
+	/// Returns reference to analog sensor on a given port.
+	AnalogSensor *analogSensor(QString const &port);
+
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
 
@@ -95,17 +99,13 @@ private:
 		}
 	};
 
-	Encoder *mEncoder1;
-	Encoder *mEncoder2;
-	Encoder *mEncoder3;
-	Encoder *mEncoder4;
-
 	Sensor3d *mAccelerometer;  // has ownership.
 	Sensor3d *mGyroscope;  // has ownership.
 	Battery *mBattery;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
+	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
 	QHash<QString, Sensor *> mSensors;  // Has ownership.
 
