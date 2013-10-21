@@ -24,8 +24,8 @@ RunningWidget::RunningWidget(QString const &programName, Controller &controller,
 {
 	setWindowState(Qt::WindowFullScreen);
 
-	mProgramNameLabel.setText("Running: " + programName);
-	mAbortLabel.setText("Press Enter to abort");
+	mProgramNameLabel.setText(tr("Running: ") + programName);
+	mAbortLabel.setText(tr("Press Enter to abort"));
 
 	mLayout.addWidget(&mProgramNameLabel);
 	mLayout.addWidget(&mAbortLabel);

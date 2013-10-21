@@ -27,11 +27,11 @@ using namespace trikGui;
 StartWidget::StartWidget(QWidget *parent)
 	: QWidget(parent)
 {
-	mExitItemTitle = "Exit";
+	mExitItemTitle = tr("Exit");
 
 	setWindowState(Qt::WindowFullScreen);
 
-	mTitleLabel.setText("TRIK");
+	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuItems.append(new QStandardItem(FileManagerWidget::menuEntry()));
 	mMenuItems.append(new QStandardItem(NetConfigWidget::menuEntry()));

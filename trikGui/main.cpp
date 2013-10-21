@@ -15,11 +15,16 @@
  * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
 
-#include <QtCore/QCoreApplication>
+#include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWSServer>
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
 #endif
+
+#include <QtCore/QTranslator>
 
 #include "trikGuiApplication.h"
 #include "startWidget.h"
@@ -28,7 +33,13 @@ using namespace trikGui;
 
 int main(int argc, char *argv[])
 {
-	TrikGuiApplication a(argc, argv);
+	TrikGuiApplication app(argc, argv);
+
+	QTranslator guiTranslator;
+	if (!app.arguments().contains("--no-locale")) {
+		guiTranslator.load(":/trikGui_ru");
+		app.installTranslator(&guiTranslator);
+	}
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	QWSServer * const server = QWSServer::instance();
@@ -40,5 +51,5 @@ int main(int argc, char *argv[])
 	StartWidget w;
 	w.show();
 
-	return a.exec();
+	return app.exec();
 }

@@ -33,6 +33,9 @@ SOURCES += \
 	$$PWD/trikGuiApplication.cpp \
 	$$PWD/controller.cpp \
 
+TRANSLATIONS = trikGui_ru.ts
+RESOURCES = trikGui.qrc
+
 TEMPLATE = app
 
 QT += network

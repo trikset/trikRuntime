@@ -37,7 +37,7 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
-	mTitleLabel.setText("Network Config");
+	mTitleLabel.setText(tr("Network Config"));
 
 	generateNetConfigList();
 	mConfigModel.appendColumn(mConfigItems);
@@ -55,7 +55,7 @@ NetConfigWidget::~NetConfigWidget()
 
 QString NetConfigWidget::menuEntry()
 {
-	return "See network config";
+	return tr("Network config");
 }
 
 void NetConfigWidget::generateNetConfigList()
@@ -71,13 +71,9 @@ void NetConfigWidget::generateNetConfigList()
 			{
 				mConfigItems.append(new QStandardItem(QString("IP address: ")));
 				mConfigItems.append(new QStandardItem(entry.ip().toString()));
-//				mConfigItems.append(new QStandardItem(QString("Netmask: ")));
-//				mConfigItems.append(new QStandardItem(entry.netmask().toString()));
 			}
 		}
 
-//		mConfigItems.append(new QStandardItem(QString("Hardware address: ")));
-//		mConfigItems.append(new QStandardItem(interface.hardwareAddress()));
 		mConfigItems.append(new QStandardItem(QString()));
 	}
 }

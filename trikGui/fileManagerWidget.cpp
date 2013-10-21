@@ -37,6 +37,8 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mLayout.addWidget(&mFileSystemView);
 	setLayout(&mLayout);
 
+	QDir::setCurrent("./scripts");
+
 	showCurrentDir();
 }
 
@@ -46,7 +48,7 @@ FileManagerWidget::~FileManagerWidget()
 
 QString FileManagerWidget::menuEntry()
 {
-	return "File Manager";
+	return tr("File Manager");
 }
 
 void FileManagerWidget::open()

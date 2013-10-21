@@ -41,7 +41,11 @@ class TRIKCONTROL_EXPORT Brick : public QObject
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
+	/// QApplication app; app.thread();
 	explicit Brick(QThread &guiThread);
+
 	~Brick();
 
 public slots:
