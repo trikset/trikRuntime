@@ -23,22 +23,25 @@ Sensor::Sensor(int min, int max, QString const &deviceFile)
 	, mMax(max)
 	, mDeviceFile(deviceFile)
 {
-	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qDebug() << "File " << deviceFile << " failed to open for reading";
-		return;
-	}
-
-	mStream.setDevice(&mDeviceFile);
 }
 
 int Sensor::read()
 {
+	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";
+		return 0;
+	}
+
+	mStream.setDevice(&mDeviceFile);
+
 	if (mMax == mMin) {
 		return mMin;
 	}
 
 	int value = 0;
 	mStream >> value;
+
+	mDeviceFile.close();
 
 	value = qMin(value, mMax);
 	value = qMax(value, mMin);
