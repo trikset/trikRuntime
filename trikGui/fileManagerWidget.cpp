@@ -37,7 +37,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mLayout.addWidget(&mFileSystemView);
 	setLayout(&mLayout);
 
-	QDir::setCurrent("./scripts");
+	mCurrentDir = "./scripts";
 
 	showCurrentDir();
 }
@@ -55,7 +55,7 @@ void FileManagerWidget::open()
 {
 	 QModelIndex const &index = mFileSystemView.currentIndex();
 	 if (mFileSystemModel.isDir(index)) {
-		 QDir::setCurrent(mFileSystemModel.filePath(index));
+		 mCurrentDir = mFileSystemModel.filePath(index);
 		 showCurrentDir();
 	 } else {
 		 mController.runFile(mFileSystemModel.filePath(index));
@@ -82,6 +82,6 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 
 void FileManagerWidget::showCurrentDir()
 {
-	mCurrentPathLabel.setText(QDir::currentPath());
-	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
+	mCurrentPathLabel.setText(QDir(mCurrentDir).path());
+	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir(mCurrentDir).path()));
 }

@@ -34,6 +34,8 @@ Display::Display(QThread &guiThread)
 	mGuiWorker->moveToThread(&guiThread);
 
 	connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
+	connect(this, SIGNAL(threadSetBackground(QString)), mGuiWorker, SLOT(setBackground(QString)));
+	connect(this, SIGNAL(threadHide()), mGuiWorker, SLOT(hide()));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
 }
 
@@ -56,4 +58,14 @@ void Display::smile()
 void Display::sadSmile()
 {
 	showImage("media/trik_smile_sad.png");
+}
+
+void Display::setBackground(QString const &color)
+{
+	emit threadSetBackground(color);
+}
+
+void Display::hide()
+{
+	emit threadHide();
 }

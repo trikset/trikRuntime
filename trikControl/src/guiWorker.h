@@ -38,6 +38,11 @@ public:
 public slots:
 	void showImage(QString const &fileName);
 	void deleteWorker();
+	void hide();
+
+	/// Sets background for a picture.
+	/// @param color - color of a background.
+	void setBackground(QString const &color);
 
 private:
 	QWidget mImageWidget;

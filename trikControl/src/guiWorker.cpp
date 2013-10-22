@@ -23,6 +23,8 @@
 	#include <QtWidgets/QDialog>
 #endif
 
+#include <QtCore/QDebug>
+
 #include <QtCore/QThread>
 #include <QtGui/QPixmap>
 
@@ -35,6 +37,7 @@ GuiWorker::GuiWorker()
 	layout->addWidget(&mImageLabel);
 	mImageWidget.setLayout(layout);
 	mImageWidget.setWindowState(Qt::WindowFullScreen);
+	mImageWidget.setWindowFlags(mImageWidget.windowFlags() | Qt::WindowStaysOnTopHint);
 }
 
 void GuiWorker::showImage(QString const &fileName)
@@ -48,5 +51,56 @@ void GuiWorker::showImage(QString const &fileName)
 void GuiWorker::deleteWorker()
 {
 	deleteLater();
-	thread()->quit();
 }
+
+void GuiWorker::setBackground(QString const &color)
+{
+	QPalette palette = mImageWidget.palette();
+
+	if (color == tr("white")) {
+		palette.setColor(QPalette::Window, Qt::white);
+	} else if (color == tr("black")) {
+		palette.setColor(QPalette::Window, Qt::black);
+	} else if (color == tr("red")) {
+		palette.setColor(QPalette::Window, Qt::red);
+	} else if (color == tr("darkRed")) {
+		palette.setColor(QPalette::Window, Qt::darkRed);
+	} else if (color == tr("green")) {
+		palette.setColor(QPalette::Window, Qt::green);
+	} else if (color == tr("darkGreen")) {
+		palette.setColor(QPalette::Window, Qt::darkGreen);
+	} else if (color == tr("blue")) {
+		palette.setColor(QPalette::Window, Qt::blue);
+	} else if (color == tr("darkBlue")) {
+		palette.setColor(QPalette::Window, Qt::darkBlue);
+	} else if (color == tr("cyan")) {
+		palette.setColor(QPalette::Window, Qt::cyan);
+	} else if (color == tr("darkCyan")) {
+		palette.setColor(QPalette::Window, Qt::darkCyan);
+	} else if (color == tr("magenta")) {
+		palette.setColor(QPalette::Window, Qt::magenta);
+	} else if (color == tr("darkMagenta")) {
+		palette.setColor(QPalette::Window, Qt::darkMagenta);
+	} else if (color == tr("yellow")) {
+		palette.setColor(QPalette::Window, Qt::yellow);
+	} else if (color == tr("darkYellow")) {
+		palette.setColor(QPalette::Window, Qt::darkYellow);
+	} else if (color == tr("gray")) {
+		palette.setColor(QPalette::Window, Qt::gray);
+	} else if (color == tr("darkGray")) {
+		palette.setColor(QPalette::Window, Qt::darkGray);
+	} else if (color == tr("lightGray")) {
+		palette.setColor(QPalette::Window, Qt::lightGray);
+	} else {
+		palette.setColor(QPalette::Window, QColor(color));
+	}
+
+	mImageWidget.setPalette(palette);
+	mImageWidget.show();
+}
+
+void GuiWorker::hide()
+{
+	mImageWidget.hide();
+}
+

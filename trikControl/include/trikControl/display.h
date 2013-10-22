@@ -46,8 +46,16 @@ public slots:
 	/// Shortcut to showImage, shows sad smile.
 	void sadSmile();
 
+	/// Sets background for a picture.
+	/// @param color - color of a background.
+	void setBackground(QString const &color);
+
+	void hide();
+
 signals:
 	void threadShowImage(QString const &fileName);
+	void threadSetBackground(QString const &color);
+	void threadHide();
 	void threadDelete();
 
 private:

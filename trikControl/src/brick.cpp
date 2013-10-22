@@ -132,6 +132,7 @@ void Brick::stop()
 	}
 
 	mLed->red();
+	mDisplay.hide();
 }
 
 ServoMotor *Brick::servoMotor(QString const &port)
