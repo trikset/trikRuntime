@@ -19,6 +19,7 @@
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
+#include <trikControl/led.h>
 #include <trikControl/powerMotor.h>
 #include <trikControl/analogSensor.h>
 #include <trikControl/sensor.h>
@@ -35,6 +36,9 @@ void displayFromScriptValue(QScriptValue const &object, trikControl::Display* &o
 
 QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::Encoder* const &in);
 void encoderFromScriptValue(QScriptValue const &object, trikControl::Encoder* &out);
+
+QScriptValue ledToScriptValue(QScriptEngine *engine, trikControl::Led* const &in);
+void ledFromScriptValue(QScriptValue const &object, trikControl::Led* &out);
 
 QScriptValue powerMotorToScriptValue(QScriptEngine *engine, trikControl::PowerMotor* const &in);
 void powerMotorFromScriptValue(QScriptValue const &object, trikControl::PowerMotor* &out);

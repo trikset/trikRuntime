@@ -43,6 +43,7 @@ void Controller::runFile(QString const &filePath)
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
+		mScriptRunner.run("brick.stop()");
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}
@@ -58,5 +59,6 @@ void Controller::scriptExecutionCompleted()
 	if (mRunningWidget) {
 		mRunningWidget->close();
 		delete mRunningWidget;
+		mRunningWidget = NULL;
 	}
 }

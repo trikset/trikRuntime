@@ -77,6 +77,9 @@
 	<!-- Format for playSound command. %1 designates file name to be played. -->
 	<playSound command="aplay --quiet %1 &amp;" />
 	
+	<!-- Device files and on/off values for LED on a brick. -->
+	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" on="0" off="1" />
+	
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 	

@@ -57,11 +57,12 @@ HEADERS += \
 	$$PWD/include/trikControl/sensor.h \
 	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/src/configurer.h \
-	$$PWD/src/i2cCommunicator.h \
 	$$PWD/include/trikControl/battery.h \
 	$$PWD/include/trikControl/sensor3d.h \
 	$$PWD/include/trikControl/encoder.h \
+	$$PWD/include/trikControl/led.h \
+	$$PWD/src/configurer.h \
+	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/guiWorker.h \
 
 SOURCES += \
@@ -73,6 +74,7 @@ SOURCES += \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/display.cpp \
+	$$PWD/src/led.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/encoder.cpp \

@@ -19,6 +19,12 @@
 
 #include <QtGui/QKeyEvent>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
 #include "fileManagerWidget.h"
 #include "netConfigWidget.h"
 
@@ -61,7 +67,7 @@ void StartWidget::launch()
 		NetConfigWidget *netConfigWidget = new NetConfigWidget();
 		netConfigWidget->show();
 	} else if (currentItemText == mExitItemTitle) {
-		close();
+		QApplication::exit(0);
 	}
 }
 

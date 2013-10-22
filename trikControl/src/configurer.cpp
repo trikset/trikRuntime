@@ -21,6 +21,9 @@
 using namespace trikControl;
 
 Configurer::Configurer()
+	: mI2cDeviceId(0)
+	, mLedOn(0)
+	, mLedOff(0)
 {
 	QDomDocument config("config");
 
@@ -52,6 +55,7 @@ Configurer::Configurer()
 	mGyroscope = loadSensor3d(root, "gyroscope");
 
 	loadI2c(root);
+	loadLed(root);
 }
 
 QString Configurer::initScript() const
@@ -212,6 +216,26 @@ QString Configurer::i2cPath() const
 int Configurer::i2cDeviceId() const
 {
 	return mI2cDeviceId;
+}
+
+QString Configurer::ledRedDeviceFile() const
+{
+	return mLedRedDeviceFile;
+}
+
+QString Configurer::ledGreenDeviceFile() const
+{
+	return mLedGreenDeviceFile;
+}
+
+int Configurer::ledOn() const
+{
+	return mLedOn;
+}
+
+int Configurer::ledOff() const
+{
+	return mLedOff;
 }
 
 void Configurer::loadInit(QDomElement const &root)
@@ -471,4 +495,13 @@ void Configurer::loadI2c(QDomElement const &root)
 {
 	mI2cPath = root.elementsByTagName("i2c").at(0).toElement().attribute("path");
 	mI2cDeviceId = root.elementsByTagName("i2c").at(0).toElement().attribute("deviceId").toInt(NULL, 0);
+}
+
+void Configurer::loadLed(QDomElement const &root)
+{
+	QDomElement led = root.elementsByTagName("led").at(0).toElement();
+	mLedRedDeviceFile = led.attribute("red");
+	mLedGreenDeviceFile = led.attribute("green");
+	mLedOn = led.attribute("on").toInt(NULL, 0);
+	mLedOff = led.attribute("off").toInt(NULL, 0);
 }

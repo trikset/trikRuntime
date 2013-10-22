@@ -14,7 +14,6 @@
 
 #include "brick.h"
 
-#include <QtCore/QSettings>
 #include <QtCore/QDebug>
 #include <QtCore/QDateTime>
 
@@ -94,6 +93,12 @@ Brick::Brick(QThread &guiThread)
 			, mConfigurer->gyroscopeMax()
 			, mConfigurer->gyroscopeDeviceFile()
 			);
+
+	mLed = new Led(mConfigurer->ledRedDeviceFile()
+			, mConfigurer->ledGreenDeviceFile()
+			, mConfigurer->ledOn()
+			, mConfigurer->ledOff()
+			);
 }
 
 Brick::~Brick()
@@ -107,6 +112,7 @@ Brick::~Brick()
 	delete mGyroscope;
 	delete mBattery;
 	delete mI2cCommunicator;
+	delete mLed;
 }
 
 void Brick::playSound(QString const &soundFileName)
@@ -124,6 +130,8 @@ void Brick::stop()
 	foreach (PowerMotor * const powerMotor, mPowerMotors.values()) {
 		powerMotor->powerOff();
 	}
+
+	mLed->red();
 }
 
 ServoMotor *Brick::servoMotor(QString const &port)
@@ -215,4 +223,9 @@ qint64 Brick::time() const
 Display *Brick::display()
 {
 	return &mDisplay;
+}
+
+Led *Brick::led()
+{
+	return mLed;
 }

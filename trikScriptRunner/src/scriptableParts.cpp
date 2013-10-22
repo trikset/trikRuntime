@@ -49,6 +49,16 @@ void trikScriptRunner::encoderFromScriptValue(QScriptValue const &object, trikCo
 	out = qobject_cast<Encoder*>(object.toQObject());
 }
 
+QScriptValue trikScriptRunner::ledToScriptValue(QScriptEngine *engine, trikControl::Led* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::ledFromScriptValue(QScriptValue const &object, trikControl::Led* &out)
+{
+	out = qobject_cast<Led*>(object.toQObject());
+}
+
 QScriptValue trikScriptRunner::powerMotorToScriptValue(QScriptEngine *engine, PowerMotor* const &in)
 {
 	return engine->newQObject(in);

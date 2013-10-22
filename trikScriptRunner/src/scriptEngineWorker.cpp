@@ -33,6 +33,7 @@ using namespace trikControl;
 Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
+Q_DECLARE_METATYPE(Led*)
 Q_DECLARE_METATYPE(PowerMotor*)
 Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Sensor*)
@@ -45,6 +46,7 @@ ScriptEngineWorker::ScriptEngineWorker()
 	qScriptRegisterMetaType(&mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, encoderToScriptValue, encoderFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, ledToScriptValue, ledFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
@@ -79,12 +81,6 @@ void ScriptEngineWorker::run(QString const &script)
 void ScriptEngineWorker::abort()
 {
 	mEngine.abortEvaluation();
-}
-
-void ScriptEngineWorker::deleteWorker()
-{
-	deleteLater();
-	thread()->quit();
 }
 
 bool ScriptEngineWorker::isRunning() const

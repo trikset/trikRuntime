@@ -20,15 +20,16 @@
 #include <QtCore/QHash>
 
 #include "declSpec.h"
-#include "servoMotor.h"
-#include "powerMotor.h"
-#include "analogSensor.h"
-#include "sensor.h"
-#include "display.h"
 
+#include "analogSensor.h"
 #include "battery.h"
-#include "sensor3d.h"
+#include "display.h"
 #include "encoder.h"
+#include "led.h"
+#include "powerMotor.h"
+#include "sensor.h"
+#include "sensor3d.h"
+#include "servoMotor.h"
 
 namespace trikControl {
 
@@ -89,6 +90,9 @@ public slots:
 	/// Returns reference to class that provides drawing on display.
 	Display *display();
 
+	/// Returns reference to LED control class.
+	Led *led();
+
 private:
 	class SleeperThread : public QThread
 	{
@@ -112,6 +116,7 @@ private:
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator;  // Has ownership.
 	Display mDisplay;
+	Led *mLed;  // Has ownership.
 };
 
 }

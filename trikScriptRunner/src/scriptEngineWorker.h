@@ -48,9 +48,6 @@ public slots:
 	/// Executes given script.
 	void run(QString const &script);
 
-	/// Marks worker for deletion and stops worker thread.
-	void deleteWorker();
-
 private:
 	QScriptEngine mEngine;
 	trikControl::Brick mBrick;

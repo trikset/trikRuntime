@@ -100,6 +100,14 @@ public:
 
 	int i2cDeviceId() const;
 
+	QString ledRedDeviceFile() const;
+
+	QString ledGreenDeviceFile() const;
+
+	int ledOn() const;
+
+	int ledOff() const;
+
 private:
 	struct MotorType {
 		int min;
@@ -159,6 +167,7 @@ private:
 	void loadSound(QDomElement const &root);
 	OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
 	void loadI2c(QDomElement const &root);
+	void loadLed(QDomElement const &root);
 
 	QHash<QString, MotorType> mMotorTypes;
 	QHash<QString, SensorType> mSensorTypes;
@@ -175,6 +184,11 @@ private:
 	QString mPlaySoundCommand;
 	QString mI2cPath;
 	int mI2cDeviceId;
+
+	QString mLedRedDeviceFile;
+	QString mLedGreenDeviceFile;
+	int mLedOn;
+	int mLedOff;
 };
 
 }
