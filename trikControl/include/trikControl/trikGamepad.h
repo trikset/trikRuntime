@@ -25,8 +25,8 @@ private slots:
     void parse(QString message);
 
 private:
-    TcpConnector* connector;
-    QThread* networkThread;
+    TcpConnector* listener;
+    QThread networkThread;
 };
 
 }

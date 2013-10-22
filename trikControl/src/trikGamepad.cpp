@@ -6,12 +6,11 @@ using namespace trikControl;
 
 TrikGamepad::TrikGamepad(int port)
 {
-    networkThread = new QThread();
-    connector = new TcpConnector(port);
-    connect(connector, SIGNAL(dataReady(QString)), this, SLOT(parse(QString)));
-    connector->moveToThread(networkThread);
-    connect(networkThread, SIGNAL(started()), connector, SLOT(startServer()));
-    networkThread->start();
+    listener = new TcpConnector(port);
+    connect(listener, SIGNAL(dataReady(QString)), this, SLOT(parse(QString)));
+    connect(&networkThread, SIGNAL(started()), listener, SLOT(startServer()));
+    listener->moveToThread(&networkThread);
+    networkThread.start();
 }
 
 void TrikGamepad::parse(QString message)
@@ -22,7 +21,7 @@ void TrikGamepad::parse(QString message)
     {
         int pad = cmd.at(1).trimmed().toInt();
         if (cmd.at(2).trimmed() == "up")
-            emit trikGamepad_padUp(1);
+            emit trikGamepad_padUp(pad);
         else
         {
             int x = cmd.at(2).trimmed().toInt();

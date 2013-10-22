@@ -11,19 +11,20 @@ TcpConnector::TcpConnector(int port):
 
 void TcpConnector::startServer()
 {
-    if (!mTcpServer.listen(QHostAddress::Any, mPort))
+    mTcpServer = QScopedPointer<QTcpSocket>(new QTcpServer());
+    if (!mTcpServer->listen(QHostAddress::Any, mPort))
     {
-        qDebug()<<": unable to start the server:"<<mTcpServer.errorString();
-        mTcpServer.close();
+        qDebug()<<": unable to start the server:"<<mTcpServer->errorString();
+        mTcpServer->close();
         return;
     }
     qDebug() << "TcpServer starts";
-    connect(&mTcpServer, SIGNAL(newConnection()), this, SLOT(connection()));
+    connect(mTcpServer.data(), SIGNAL(newConnection()), this, SLOT(connection()));
 }
 
 void TcpConnector::connection()
 {
-    mTcpSocket = QSharedPointer<QTcpSocket>(mTcpServer.nextPendingConnection());
+    mTcpSocket = QSharedPointer<QTcpSocket>(mTcpServer->nextPendingConnection());
     mTcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
     qDebug()<<": set new connection";
     connect(mTcpSocket.data(), SIGNAL(disconnected()), this, SLOT(tcpDisconnected()));
