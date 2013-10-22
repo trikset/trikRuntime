@@ -29,6 +29,7 @@
 #include "sensor3d.h"
 #include "encoder.h"
 #include "keys.h"
+#include "trikGamepad.h"
 
 namespace trikControl {
 
@@ -75,6 +76,8 @@ public slots:
 
     Keys *keys();
 
+    TrikGamepad *gamepad();
+
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
@@ -103,6 +106,7 @@ private:
 	Sensor3d *mGyroscope;  // has ownership.
     Battery *mBattery;  // Has ownership.
     Keys mKeys;
+    TrikGamepad trikGamepad;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.

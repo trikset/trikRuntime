@@ -17,6 +17,7 @@ TEMPLATE = lib
 DEFINES += TRIKCONTROL_LIBRARY
 
 QT += xml gui
+QT += network
 
 if (equals(QT_MAJOR_VERSION, 5)) {
         QT += widgets
@@ -62,7 +63,9 @@ HEADERS += \
         $$PWD/include/trikControl/sensor3d.h \
         $$PWD/include/trikControl/encoder.h \
         $$PWD/src/guiWorker.h \
-        $$PWD/include/trikControl/keys.h
+        $$PWD/include/trikControl/keys.h \
+        $$PWD/src/tcpConnector.h \
+        $$PWD/include/trikControl/trikGamepad.h
 
 SOURCES += \
         $$PWD/src/brick.cpp \
@@ -76,7 +79,9 @@ SOURCES += \
         $$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
         $$PWD/src/$$PLATFORM/encoder.cpp \
         $$PWD/src/$$PLATFORM/sensor3d.cpp \
-        $$PWD/src/linux/keys.cpp
+        $$PWD/src/linux/keys.cpp \
+        $$PWD/src/linux/tcpConnector.cpp \
+        $$PWD/src/trikGamepad.cpp
 
 win32 {
         QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \

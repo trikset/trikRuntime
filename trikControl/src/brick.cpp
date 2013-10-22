@@ -26,7 +26,8 @@ using namespace trikControl;
 Brick::Brick(QThread &guiThread)
 	: mConfigurer(new Configurer())
 	, mI2cCommunicator(NULL)
-	, mDisplay(guiThread)
+    , mDisplay(guiThread)
+    , trikGamepad(4444)
 {
 	system(mConfigurer->initScript().toStdString().c_str());
 
@@ -130,6 +131,8 @@ ServoMotor *Brick::servoMotor(QString const &port)
 
 PowerMotor *Brick::powerMotor(QString const &port)
 {
+//    QString port = QString::number(num);
+
 	if (mPowerMotors.contains(port)) {
 		return mPowerMotors.value(port);
 	}
@@ -148,9 +151,9 @@ Sensor *Brick::sensor(QString const &port)
 
 Encoder *Brick::encoder(QString const &port)
 {
-	if (mEncoders.contains(port)) {
+    if (mEncoders.contains(port)) {
 		return mEncoders.value(port);
-	}
+    }
 
 	return NULL;
 }
@@ -189,6 +192,11 @@ Sensor3d *Brick::gyroscope()
 Keys* Brick::keys()
 {
     return &mKeys;
+}
+
+TrikGamepad* Brick::gamepad()
+{
+    return &trikGamepad;
 }
 
 void Brick::wait(int const &milliseconds) const

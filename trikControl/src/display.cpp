@@ -25,7 +25,8 @@
 
 #include "src/guiWorker.h"
 
-using namespace trikControl;
+namespace trikControl
+{
 
 Display::Display(QThread &guiThread)
 	: mGuiThread(guiThread)
@@ -56,4 +57,6 @@ void Display::smile()
 void Display::sadSmile()
 {
 	showImage("media/trik_smile_sad.png");
+}
+
 }
