@@ -11,7 +11,7 @@ TcpConnector::TcpConnector(int port):
 
 void TcpConnector::startServer()
 {
-    mTcpServer = QScopedPointer<QTcpSocket>(new QTcpServer());
+    mTcpServer = new QTcpServer();
     if (!mTcpServer->listen(QHostAddress::Any, mPort))
     {
         qDebug()<<": unable to start the server:"<<mTcpServer->errorString();
@@ -19,7 +19,7 @@ void TcpConnector::startServer()
         return;
     }
     qDebug() << "TcpServer starts";
-    connect(mTcpServer.data(), SIGNAL(newConnection()), this, SLOT(connection()));
+    connect(mTcpServer, SIGNAL(newConnection()), this, SLOT(connection()));
 }
 
 void TcpConnector::connection()

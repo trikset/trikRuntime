@@ -4,7 +4,6 @@
 #include <QTcpSocket>
 #include <QTcpServer>
 #include <QSharedPointer>
-#include <QScopedPointer>
 #include "declSpec.h"
 
 namespace trikControl {
@@ -30,7 +29,7 @@ private:
     int mPort;
     int nextBlockSize;
     QString line;
-    QScopedPointer<QTcpServer> mTcpServer;
+    QTcpServer* mTcpServer;
     QSharedPointer<QTcpSocket> mTcpSocket;
 };
 
