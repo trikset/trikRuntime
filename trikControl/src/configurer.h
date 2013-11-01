@@ -108,6 +108,10 @@ public:
 
 	int ledOff() const;
 
+	QString keysDeviceFile() const;
+
+	int gamepadPort() const;
+
 private:
 	struct MotorType {
 		int min;
@@ -168,6 +172,8 @@ private:
 	OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
 	void loadI2c(QDomElement const &root);
 	void loadLed(QDomElement const &root);
+	void loadKeys(QDomElement const &root);
+	void loadGamepadPort(QDomElement const &root);
 
 	QHash<QString, MotorType> mMotorTypes;
 	QHash<QString, SensorType> mSensorTypes;
@@ -187,8 +193,10 @@ private:
 
 	QString mLedRedDeviceFile;
 	QString mLedGreenDeviceFile;
+	QString mKeysDeviceFile;
 	int mLedOn;
 	int mLedOff;
+	int mGamepadPort;
 };
 
 }

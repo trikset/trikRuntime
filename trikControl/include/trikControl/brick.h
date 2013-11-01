@@ -25,6 +25,8 @@
 #include "battery.h"
 #include "display.h"
 #include "encoder.h"
+#include "gamepad.h"
+#include "keys.h"
 #include "led.h"
 #include "powerMotor.h"
 #include "sensor.h"
@@ -81,6 +83,12 @@ public slots:
 	/// Returns reference to battery.
 	Battery *battery();
 
+	/// Returns reference to keys on a control brick.
+	Keys *keys();
+
+	/// Returns reference to external gamepad connected via TCP.
+	Gamepad *gamepad();
+
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
@@ -106,6 +114,8 @@ private:
 	Sensor3d *mAccelerometer;  // has ownership.
 	Sensor3d *mGyroscope;  // has ownership.
 	Battery *mBattery;  // Has ownership.
+	Keys *mKeys;  // Has ownership.
+	Gamepad *mGamepad;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.

@@ -79,6 +79,9 @@
 	
 	<!-- Device files and on/off values for LED on a brick. -->
 	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" on="0" off="1" />
+
+	<!--Device file for keys on a brick -->
+	<keys deviceFile="/dev/input/event0" />
 	
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />

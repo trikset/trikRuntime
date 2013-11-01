@@ -17,6 +17,7 @@ TEMPLATE = lib
 DEFINES += TRIKCONTROL_LIBRARY
 
 QT += xml gui
+QT += network
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
@@ -50,34 +51,40 @@ win32 {
 }
 
 HEADERS += \
-	$$PWD/include/trikControl/brick.h \
-	$$PWD/include/trikControl/servoMotor.h \
-	$$PWD/include/trikControl/powerMotor.h \
 	$$PWD/include/trikControl/analogSensor.h \
-	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/display.h \
-	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/include/trikControl/battery.h \
-	$$PWD/include/trikControl/sensor3d.h \
+	$$PWD/include/trikControl/brick.h \
+	$$PWD/include/trikControl/declSpec.h \
+	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/encoder.h \
+	$$PWD/include/trikControl/keys.h \
 	$$PWD/include/trikControl/led.h \
+	$$PWD/include/trikControl/powerMotor.h \
+	$$PWD/include/trikControl/sensor.h \
+	$$PWD/include/trikControl/sensor3d.h \
+	$$PWD/include/trikControl/servoMotor.h \
+	$$PWD/include/trikControl/gamepad.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/guiWorker.h \
+	$$PWD/src/tcpConnector.h \
 
 SOURCES += \
-	$$PWD/src/brick.cpp \
-	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/analogSensor.cpp \
-	$$PWD/src/sensor.cpp \
-	$$PWD/src/configurer.cpp \
 	$$PWD/src/battery.cpp \
+	$$PWD/src/brick.cpp \
+	$$PWD/src/configurer.cpp \
 	$$PWD/src/display.cpp \
-	$$PWD/src/led.cpp \
+	$$PWD/src/encoder.cpp \
+	$$PWD/src/gamepad.cpp \
 	$$PWD/src/guiWorker.cpp \
+	$$PWD/src/led.cpp \
+	$$PWD/src/powerMotor.cpp \
+	$$PWD/src/sensor.cpp \
+	$$PWD/src/servoMotor.cpp \
+	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
-	$$PWD/src/$$PLATFORM/encoder.cpp \
+	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
 
 win32 {
@@ -92,6 +99,5 @@ win32 {
 
 unix {
 	target.path = $$[INSTALL_ROOT]/
-	INSTALLS +=   target
+	INSTALLS += target
 }
-

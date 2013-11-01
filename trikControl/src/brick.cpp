@@ -94,11 +94,15 @@ Brick::Brick(QThread &guiThread)
 			, mConfigurer->gyroscopeDeviceFile()
 			);
 
+	mKeys = new Keys(mConfigurer->keysDeviceFile());
+
 	mLed = new Led(mConfigurer->ledRedDeviceFile()
 			, mConfigurer->ledGreenDeviceFile()
 			, mConfigurer->ledOn()
 			, mConfigurer->ledOff()
 			);
+
+	mGamepad = new Gamepad(mConfigurer->gamepadPort());
 }
 
 Brick::~Brick()
@@ -113,6 +117,8 @@ Brick::~Brick()
 	delete mBattery;
 	delete mI2cCommunicator;
 	delete mLed;
+	delete mKeys;
+	delete mGamepad;
 }
 
 void Brick::playSound(QString const &soundFileName)
@@ -209,6 +215,16 @@ Sensor3d *Brick::accelerometer()
 Sensor3d *Brick::gyroscope()
 {
 	return mGyroscope;
+}
+
+Keys* Brick::keys()
+{
+	return mKeys;
+}
+
+Gamepad* Brick::gamepad()
+{
+	return mGamepad;
 }
 
 void Brick::wait(int const &milliseconds) const

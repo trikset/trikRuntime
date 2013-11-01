@@ -24,6 +24,7 @@ Configurer::Configurer()
 	: mI2cDeviceId(0)
 	, mLedOn(0)
 	, mLedOff(0)
+	, mGamepadPort(0)
 {
 	QDomDocument config("config");
 
@@ -56,6 +57,8 @@ Configurer::Configurer()
 
 	loadI2c(root);
 	loadLed(root);
+	loadKeys(root);
+	loadGamepadPort(root);
 }
 
 QString Configurer::initScript() const
@@ -236,6 +239,16 @@ int Configurer::ledOn() const
 int Configurer::ledOff() const
 {
 	return mLedOff;
+}
+
+QString Configurer::keysDeviceFile() const
+{
+	return mKeysDeviceFile;
+}
+
+int Configurer::gamepadPort() const
+{
+	return mGamepadPort;
 }
 
 void Configurer::loadInit(QDomElement const &root)
@@ -504,4 +517,16 @@ void Configurer::loadLed(QDomElement const &root)
 	mLedGreenDeviceFile = led.attribute("green");
 	mLedOn = led.attribute("on").toInt(NULL, 0);
 	mLedOff = led.attribute("off").toInt(NULL, 0);
+}
+
+void Configurer::loadKeys(QDomElement const &root)
+{
+	QDomElement keys = root.elementsByTagName("keys").at(0).toElement();
+	mKeysDeviceFile = keys.attribute("deviceFile");
+}
+
+void Configurer::loadGamepadPort(QDomElement const &root)
+{
+	QDomElement gamepad = root.elementsByTagName("gamepad").at(0).toElement();
+	mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
 }

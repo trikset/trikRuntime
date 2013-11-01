@@ -12,23 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "encoder.h"
-
-#include "src/i2cCommunicator.h"
+#include "keys.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
-	: mCommunicator(communicator)
-	, mI2cCommandNumber(i2cCommandNumber)
+Keys::Keys(const QString &keysPath)
 {
+	Q_UNUSED(keysPath);
 }
 
-void Encoder::reset()
+void Keys::readKeysEvent()
 {
-}
-
-float Encoder::read()
-{
-	return 0;
 }
