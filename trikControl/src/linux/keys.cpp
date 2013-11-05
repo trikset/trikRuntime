@@ -31,14 +31,13 @@ Keys::Keys(const QString &keysPath)
 	: mButtonCode(KEY_RESERVED)
 	, mButtonValue(0)
 {
-	mKeysFileDescriptor = open(keysPath.toAscii().data(), O_SYNC, O_RDONLY);
+	mKeysFileDescriptor = open(keysPath.toStdString().c_str(), O_SYNC, O_RDONLY);
 	if (mKeysFileDescriptor == -1) {
 		qDebug() << "cannot open keys input file";
 		return;
 	}
 
-	mSocketNotifier = QSharedPointer<QSocketNotifier>
-			(new QSocketNotifier(mKeysFileDescriptor, QSocketNotifier::Read, this));
+	mSocketNotifier.reset(new QSocketNotifier(mKeysFileDescriptor, QSocketNotifier::Read, this));
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readKeysEvent()));
 	mSocketNotifier->setEnabled(true);
