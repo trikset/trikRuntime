@@ -61,6 +61,17 @@ void Led::green()
 	mGreenDeviceFile.flush();
 }
 
+void Led::orange()
+{
+	QString const command = QString::number(mOn);
+
+	mRedDeviceFile.write(command.toLatin1());
+	mRedDeviceFile.flush();
+
+	mGreenDeviceFile.write(command.toLatin1());
+	mGreenDeviceFile.flush();
+}
+
 void Led::off()
 {
 	QString const command = QString::number(mOff);
