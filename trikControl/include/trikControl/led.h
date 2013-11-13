@@ -37,6 +37,8 @@ public slots:
 
 	void green();
 
+	void orange();
+
 	void off();
 
 private:

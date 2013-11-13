@@ -40,6 +40,8 @@ Brick::Brick(QThread &guiThread)
 				, mConfigurer->motorTypeZero(motorType)
 				, mConfigurer->motorTypeStop(motorType)
 				, mConfigurer->servoMotorDeviceFile(port)
+				, mConfigurer->servoMotorPeriodFile(port)
+				, mConfigurer->servoMotorPeriod(port)
 				, mConfigurer->servoMotorInvert(port)
 				);
 
