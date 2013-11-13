@@ -32,7 +32,7 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &devi
 	, mCurrentPower(0)
 {
 	if (!mPeriodFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open motor control file " << mPeriodFile.fileName();
+		qDebug() << "Can't open motor period file " << mPeriodFile.fileName();
 		return;
 	}
 
