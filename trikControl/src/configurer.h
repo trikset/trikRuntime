@@ -58,6 +58,10 @@ public:
 
 	QString servoMotorDeviceFile(QString const &port) const;
 
+	QString servoMotorPeriodFile(QString const &port) const;
+
+	int servoMotorPeriod(QString const &port) const;
+
 	QString servoMotorDefaultType(QString const &port) const;
 
 	bool servoMotorInvert(QString const &port) const;
@@ -124,6 +128,8 @@ private:
 	struct ServoMotorMapping {
 		QString port;
 		QString deviceFile;
+		QString periodFile;
+		int period;
 		QString defaultType;
 		bool invert;
 	};

@@ -113,6 +113,16 @@ QString Configurer::servoMotorDeviceFile(QString const &port) const
 	return mServoMotorMappings[port].deviceFile;
 }
 
+QString Configurer::servoMotorPeriodFile(const QString &port) const
+{
+	return mServoMotorMappings[port].periodFile;
+}
+
+int Configurer::servoMotorPeriod(const QString &port) const
+{
+	return mServoMotorMappings[port].period;
+}
+
 QString Configurer::servoMotorDefaultType(QString const &port) const
 {
 	return mServoMotorMappings[port].defaultType;
@@ -274,6 +284,8 @@ void Configurer::loadServoMotors(QDomElement const &root)
 		ServoMotorMapping mapping;
 		mapping.port = childElement.attribute("port");
 		mapping.deviceFile = childElement.attribute("deviceFile");
+		mapping.periodFile = childElement.attribute("periodFile");
+		mapping.period = childElement.attribute("period").toInt();
 		mapping.defaultType = childElement.attribute("defaultType");
 		mapping.invert = childElement.attribute("invert") == "true";
 
