@@ -316,7 +316,7 @@ void Configurer::loadPwmCaptures(QDomElement const &root)
 		throw "config.xml parsing failed";
 	}
 
-	QDomElement const pwmCaptures = root.elementsByTagName("pwmCaotures").at(0).toElement();
+	QDomElement const pwmCaptures = root.elementsByTagName("pwmCaptures").at(0).toElement();
 	for (QDomNode child = pwmCaptures.firstChild()
 			; !child.isNull()
 			; child = child.nextSibling())
