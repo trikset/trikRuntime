@@ -20,6 +20,8 @@
 
 #include "declSpec.h"
 
+namespace trikControl {
+
 class TRIKCONTROL_EXPORT PwmCapture : public QObject
 {
 	Q_OBJECT
@@ -37,3 +39,5 @@ private:
 	QFile mPeriodFile;
 	QFile mDutyFile;
 };
+
+}

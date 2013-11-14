@@ -18,6 +18,8 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
+using namespace trikControl;
+
 PwmCapture::PwmCapture(QString const &periodFile, QString const &dutyFile)
 	: mPeriodFile(periodFile)
 	, mDutyFile(dutyFile)
