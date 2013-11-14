@@ -68,7 +68,7 @@ public:
 
 	QStringList pwmCapturePorts() const;
 
-	QString pwmCapturePeriodFile(QString const &port) const;
+	QString pwmCaptureFrequencyFile(QString const &port) const;
 
 	QString pwmCaptureDutyFile(QString const &port) const;
 
@@ -142,7 +142,7 @@ private:
 
 	struct PwmCaptureMapping {
 		QString port;
-		QString periodFile;
+		QString frequencyFile;
 		QString dutyFile;
 	};
 

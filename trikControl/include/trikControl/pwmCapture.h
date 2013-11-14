@@ -27,16 +27,16 @@ class TRIKCONTROL_EXPORT PwmCapture : public QObject
 	Q_OBJECT
 
 public:
-	PwmCapture(QString const &periodFile, QString const &dutyFile);
+	PwmCapture(QString const &frequencyFile, QString const &dutyFile);
 	~PwmCapture();
 
 public slots:
-	QVector<int> period();
+	QVector<int> frequency();
 
 	int duty();
 
 private:
-	QFile mPeriodFile;
+	QFile mFrequencyFile;
 	QFile mDutyFile;
 };
 

@@ -139,9 +139,9 @@ QStringList Configurer::pwmCapturePorts() const
 	return mPwmCaptureMappings.keys();
 }
 
-QString Configurer::pwmCapturePeriodFile(const QString &port) const
+QString Configurer::pwmCaptureFrequencyFile(const QString &port) const
 {
-	return mPwmCaptureMappings[port].periodFile;
+	return mPwmCaptureMappings[port].frequencyFile;
 }
 
 QString Configurer::pwmCaptureDutyFile(const QString &port) const
@@ -333,7 +333,7 @@ void Configurer::loadPwmCaptures(QDomElement const &root)
 
 		PwmCaptureMapping mapping;
 		mapping.port = childElement.attribute("port");
-		mapping.periodFile = childElement.attribute("periodFile");
+		mapping.frequencyFile = childElement.attribute("frequencyFile");
 		mapping.dutyFile = childElement.attribute("dutyFile");
 
 		mPwmCaptureMappings.insert(mapping.port, mapping);

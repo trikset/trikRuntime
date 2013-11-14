@@ -50,8 +50,8 @@ public slots:
 	/// Returns currently set power of a motor.
 	int power() const;
 
-	/// Returns currently set period of the motor.
-	int period() const;
+	/// Returns currently set frequency of the motor.
+	int frequency() const;
 
 	/// Returns currently set duty of the motor.
 	int duty() const;
@@ -64,7 +64,8 @@ private:
 	QFile mControlFile;
 	QFile mPeriodFile;
 	int mPeriod;
-	int mCurrentDuty;
+	int mFrequency;
+	int mCurrentDutyPercent;
 	int mMin;
 	int mMax;
 	int mZero;

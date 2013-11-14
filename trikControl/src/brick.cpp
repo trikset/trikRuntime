@@ -50,7 +50,7 @@ Brick::Brick(QThread &guiThread)
 
 	foreach (QString const &port, mConfigurer->pwmCapturePorts()) {
 		PwmCapture *pwmCapture = new PwmCapture(
-				mConfigurer->pwmCapturePeriodFile(port)
+				mConfigurer->pwmCaptureFrequencyFile(port)
 				, mConfigurer->pwmCaptureDutyFile(port)
 				);
 

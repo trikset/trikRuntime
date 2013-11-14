@@ -23,7 +23,8 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &devi
 	: mControlFile(deviceFile)
 	, mPeriodFile(periodFile)
 	, mPeriod(period)
-	, mCurrentDuty(stop)
+	, mFrequency(1000000000 / period)
+	, mCurrentDutyPercent(0)
 	, mMin(min)
 	, mMax(max)
 	, mZero(zero)
@@ -61,8 +62,10 @@ void ServoMotor::setPower(int power)
 
 	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
 	qreal const powerFactor = static_cast<qreal>(range) / 100;
-	mCurrentDuty = static_cast<int>(mZero + power * powerFactor);
-	QString const command = QString::number(mCurrentDuty);
+	int duty = static_cast<int>(mZero + power * powerFactor);
+	QString const command = QString::number(duty);
+
+	mCurrentDutyPercent = 100 * duty / mPeriod;
 
 	mControlFile.write(command.toLatin1());
 	mControlFile.close();
@@ -73,14 +76,14 @@ int ServoMotor::power() const
 	return mCurrentPower;
 }
 
-int ServoMotor::period() const
+int ServoMotor::frequency() const
 {
-	return mPeriod;
+	return mFrequency;
 }
 
 int ServoMotor::duty() const
 {
-	return mCurrentDuty;
+	return mCurrentDutyPercent;
 }
 
 void ServoMotor::powerOff()

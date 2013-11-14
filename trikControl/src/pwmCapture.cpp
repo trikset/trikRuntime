@@ -20,12 +20,12 @@
 
 using namespace trikControl;
 
-PwmCapture::PwmCapture(QString const &periodFile, QString const &dutyFile)
-	: mPeriodFile(periodFile)
+PwmCapture::PwmCapture(QString const &frequencyFile, QString const &dutyFile)
+	: mFrequencyFile(frequencyFile)
 	, mDutyFile(dutyFile)
 {
-	if (!mPeriodFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open period capture file " << mPeriodFile.fileName();
+	if (!mFrequencyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		qDebug() << "Can't open period capture file " << mFrequencyFile.fileName();
 	}
 
 	if (!mDutyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
@@ -35,14 +35,14 @@ PwmCapture::PwmCapture(QString const &periodFile, QString const &dutyFile)
 
 PwmCapture::~PwmCapture()
 {
-	mPeriodFile.close();
+	mFrequencyFile.close();
 	mDutyFile.close();
 }
 
-QVector<int> PwmCapture::period()
+QVector<int> PwmCapture::frequency()
 {
-	mPeriodFile.reset();
-	QByteArray dataText = mPeriodFile.readAll();
+	mFrequencyFile.reset();
+	QByteArray dataText = mFrequencyFile.readAll();
 	QTextStream stream(dataText);
 	QVector<int> data(3);
 	char c;
