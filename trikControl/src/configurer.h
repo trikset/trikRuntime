@@ -66,6 +66,12 @@ public:
 
 	bool servoMotorInvert(QString const &port) const;
 
+	QStringList pwmCapturePorts() const;
+
+	QString pwmCapturePeriodFile(QString const &port) const;
+
+	QString pwmCaptureDutyFile(QString const &port) const;
+
 	QStringList powerMotorPorts() const;
 
 	int powerMotorI2cCommandNumber(QString const &port) const;
@@ -134,6 +140,12 @@ private:
 		bool invert;
 	};
 
+	struct PwmCaptureMapping {
+		QString port;
+		QString periodFile;
+		QString dutyFile;
+	};
+
 	struct PowerMotorMapping {
 		QString port;
 		int i2cCommandNumber;
@@ -164,6 +176,7 @@ private:
 
 	void loadInit(QDomElement const &root);
 	void loadServoMotors(QDomElement const &root);
+	void loadPwmCaptures(QDomElement const &root);
 	void loadPowerMotors(QDomElement const &root);
 	void loadAnalogSensors(QDomElement const &root);
 	void loadEncoders(QDomElement const &root);
@@ -178,6 +191,7 @@ private:
 	QHash<QString, MotorType> mMotorTypes;
 	QHash<QString, SensorType> mSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
+	QHash<QString, PwmCaptureMapping> mPwmCaptureMappings;
 	QHash<QString, PowerMotorMapping> mPowerMotorMappings;
 	QHash<QString, AnalogSensorMapping> mAnalogSensorMappings;
 	QHash<QString, EncoderMapping> mEncoderMappings;

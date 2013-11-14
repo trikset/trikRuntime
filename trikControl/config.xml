@@ -16,6 +16,12 @@
 
 		echo 1 > /sys/class/pwm/ehrpwm.0:1/request
 		echo 1 > /sys/class/pwm/ehrpwm.0:1/run
+
+		cat /sys/class/ecap_cap.0/config > /dev/null
+
+		cat /sys/class/ecap_cap.1/config > /dev/null
+
+		cat /sys/class/ecap_cap.2/config > /dev/null
 	</initScript>
 	
 	<!-- Servomotors configuration, maps logical port to device file, file for setting period,
@@ -47,6 +53,24 @@
 			invert="false"
 		/>
 	</servoMotors>
+
+	<pwmCaptures>
+		<capture
+			port="1"
+			periodFile="/sys/class/pwm/ecap_cap.0/period_ns"
+			dutyFile="/sys/class/pwm/ecap_cap.0/duty_ns"
+		/>
+		<capture
+			port="2"
+			periodFile="/sys/class/pwm/ecap_cap.1/period_ns"
+			dutyFile="/sys/class/pwm/ecap_cap.1/duty_ns"
+		/>
+		<capture
+			port="3"
+			periodFile="/sys/class/pwm/ecap_cap.1/period_ns"
+			dutyFile="/sys/class/pwm/ecap_cap.1/duty_ns"
+		/>
+	</pwmCaptures>
 
 	<!-- Power motors configuration, maps logical port to I2C command. 
 	     I2C device path and device id are set separately, in "i2c" section. 

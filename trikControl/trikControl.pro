@@ -64,6 +64,7 @@ HEADERS += \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/guiWorker.h \
+	$$PWD/include/trikControl/pwmCapture.h
 
 SOURCES += \
 	$$PWD/src/brick.cpp \
@@ -79,6 +80,7 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/encoder.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
+	$$PWD/src/pwmCapture.cpp
 
 win32 {
 	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \

@@ -30,6 +30,7 @@
 #include "sensor.h"
 #include "sensor3d.h"
 #include "servoMotor.h"
+#include "pwmCapture.h"
 
 namespace trikControl {
 
@@ -59,6 +60,8 @@ public slots:
 
 	/// Returns reference to motor on a given port.
 	ServoMotor *servoMotor(QString const &port);
+
+	PwmCapture *pwmCapture(QString const &port);
 
 	/// Returns reference to power motor on a given port.
 	PowerMotor *powerMotor(QString const &port);
@@ -108,6 +111,7 @@ private:
 	Battery *mBattery;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
+	QHash<QString, PwmCapture *> mPwmCaptures;
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
 	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
