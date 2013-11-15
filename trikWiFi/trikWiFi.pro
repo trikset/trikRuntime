@@ -35,15 +35,24 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
+	$$PWD/include/trikWiFi \
+
+win32 {
+	PLATFORM = windows
+} else {
+	PLATFORM = linux
+}
+
+PLATFORM = linux
 
 HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
-	$$PWD/include/trikWiFi/trikWiFi_global.h \
-	$$PWD/src/trikWPACtrlIface.h \
+	$$PWD/include/trikWiFi/declSpec.h \
+	$$PWD/src/wpaSupplicantCommunicator.h \
 
 SOURCES += \
-	$$PWD/src/trikWPACtrlIface.cpp \
 	$$PWD/src/trikWiFi.cpp \
+	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
 
 unix {
 	target.path = $$[INSTALL_ROOT]/

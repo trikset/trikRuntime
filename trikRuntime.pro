@@ -28,3 +28,4 @@ trikCommunicator.depends = trikScriptRunner
 trikRun.depends = trikScriptRunner
 trikServer.depends = trikCommunicator
 trikGui.depends = trikCommunicator trikScriptRunner
+#trikGui.depends = trikCommunicator trikScriptRunner trikWiFi

@@ -1,5 +1,4 @@
-/*
- *  Copyright 2013 Roman Kurbatov
+/* Copyright 2013 Roman Kurbatov, Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,10 +10,9 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * limitations under the License. */
 
-#include "trikWPACtrlIface.h"
+#include "src/wpaSupplicantCommunicator.h"
 
 #include <iostream>
 #include <cstdio>
@@ -22,25 +20,34 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <unistd.h>
+
 #include <sys/socket.h>
+#include <sys/un.h>
+
 #include <QtCore/QString>
 #include <QtCore/QDebug>
 
-TrikWPACtrlIface::TrikWPACtrlIface(const QString &interfaceFile, const QString &daemonFile, QObject *parent) :
-	QObject(parent)
+using namespace trikWiFi;
+
+WpaSupplicantCommunicator::WpaSupplicantCommunicator(
+		QString const &interfaceFile
+		, QString const &daemonFile
+		, QObject *parent
+		)
+	: QObject(parent)
+	, mLocal(new sockaddr_un())
+	, mDest(new sockaddr_un())
 {
 	mSocket = socket(PF_UNIX, SOCK_DGRAM, 0);
-	if (mSocket < 0)
-	{
+	if (mSocket < 0) {
 		std::cerr << "Cannot create a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		return;
 	}
 
-	mLocal.sun_family = AF_UNIX;
-	snprintf(mLocal.sun_path, sizeof(mLocal.sun_path), "%s", interfaceFile.toAscii().constData());
-	if (bind(mSocket, reinterpret_cast<sockaddr *>(&mLocal), sizeof(mLocal)) != 0)
-	{
+	mLocal->sun_family = AF_UNIX;
+	snprintf(mLocal->sun_path, sizeof(mLocal->sun_path), "%s", interfaceFile.toStdString().c_str());
+	if (bind(mSocket, reinterpret_cast<sockaddr *>(mLocal.data()), sizeof(*(mLocal.data()))) != 0) {
 		std::cerr << "Cannot bind a name to a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		close(mSocket);
@@ -48,84 +55,85 @@ TrikWPACtrlIface::TrikWPACtrlIface(const QString &interfaceFile, const QString &
 		return;
 	}
 
-	mDest.sun_family = AF_UNIX;
-	snprintf(mDest.sun_path, sizeof(mDest.sun_path), "%s", daemonFile.toAscii().constData());
-	if (::connect(mSocket, reinterpret_cast<sockaddr *>(&mDest), sizeof(mDest)) != 0)
-	{
+	mDest->sun_family = AF_UNIX;
+	snprintf(mDest->sun_path, sizeof(mDest->sun_path), "%s", daemonFile.toStdString().c_str());
+	if (::connect(mSocket, reinterpret_cast<sockaddr *>(mDest.data()), sizeof(*(mDest.data()))) != 0) {
 		std::cerr << "Cannot connect a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
-		unlink(mLocal.sun_path);
+		unlink(mLocal->sun_path);
 		close(mSocket);
 		mSocket = -1;
 		return;
 	}
 
-	int flags = fcntl(mSocket, F_GETFL);
-	if (flags >= 0)
-	{
+	int const flags = fcntl(mSocket, F_GETFL);
+	if (flags >= 0) {
 		flags |= O_NONBLOCK;
 		fcntl(mSocket, F_SETFL, flags);
 	}
 }
 
-TrikWPACtrlIface::~TrikWPACtrlIface()
+WpaSupplicantCommunicator::~WpaSupplicantCommunicator()
 {
-	if (mSocket >= 0)
-	{
-		unlink(mLocal.sun_path);
+	if (mSocket >= 0) {
+		unlink(mLocal->sun_path);
 		close(mSocket);
 	}
 }
 
-int TrikWPACtrlIface::fileDescriptor()
+int WpaSupplicantCommunicator::fileDescriptor()
 {
 	return mSocket;
 }
 
-int TrikWPACtrlIface::attach()
+int WpaSupplicantCommunicator::attach()
 {
-	if (mSocket < 0)
+	if (mSocket < 0) {
 		return -1;
+	}
 
-	QString command = "ATTACH";
+	QString const command = "ATTACH";
 	QString reply;
-	int res = request(command, reply);
-	if (res == 0 && reply == "OK\n")
+	int const result = request(command, reply);
+	if (result == 0 && reply == "OK\n") {
 		return 0;
-	else
+	} else {
 		return -1;
+	}
 }
 
-int TrikWPACtrlIface::detach()
+int WpaSupplicantCommunicator::detach()
 {
-	if (mSocket < 0)
+	if (mSocket < 0) {
 		return -1;
+	}
 
 	QString command = "DETACH";
 	QString reply;
-	int res = request(command, reply);
-	if (res == 0 && reply == "OK\n")
+	int const result = request(command, reply);
+	if (result == 0 && reply == "OK\n") {
 		return 0;
-	else
+	} else {
 		return -1;
+	}
 }
 
-int TrikWPACtrlIface::request(const QString &command, QString &reply)
+int WpaSupplicantCommunicator::request(QString const &command, QString &reply)
 {
-	if (mSocket < 0)
+	if (mSocket < 0) {
 		return -1;
+	}
 
-	const char *commandAscii = command.toAscii().constData();
-	if (send(mSocket, commandAscii, strlen(commandAscii) + 1, 0) < 0)
-	{
+	char const *commandAscii = command.toStdString().c_str();
+	if (send(mSocket, commandAscii, strlen(commandAscii) + 1, 0) < 0) {
 		std::cerr << "Cannot send a message to the daemon:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		return -1;
 	}
+
 	qDebug() << "Command: " << command;
 
-	forever
-	{
+	forever {
 		fd_set rfds;
 		FD_ZERO(&rfds);
 		FD_SET(mSocket, &rfds);
@@ -133,36 +141,30 @@ int TrikWPACtrlIface::request(const QString &command, QString &reply)
 		tv.tv_sec = 10;
 		tv.tv_usec = 0;
 		select(mSocket + 1, &rfds, NULL, NULL, &tv);
-		if (FD_ISSET(mSocket, &rfds))
-		{
-			const int bufferSize = 2048;
+		if (FD_ISSET(mSocket, &rfds)) {
+			int const bufferSize = 2048;
 			char buffer[bufferSize];
-			int replyLen = recv(mSocket, buffer, bufferSize, 0);
-			if (replyLen < 0)
-			{
+			int const replyLen = recv(mSocket, buffer, bufferSize, 0);
+			if (replyLen < 0) {
 				std::cerr << "Cannot receive a reply from the daemon:" << std::endl;
 				std::cerr << strerror(errno) << std::endl;
 				return -1;
-			}
-			else if (buffer[0] == '<') //unsolicited message
+			} else if (buffer[0] == '<') { //unsolicited message
 				continue;
-			else
-			{
+			} else {
 				buffer[replyLen] = '\0';
 				reply = buffer;
 				qDebug() << "Reply: " << reply;
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			std::cerr << "No reply from the daemon" << std::endl;
 			return -1;
 		}
 	}
 }
 
-bool TrikWPACtrlIface::isPending()
+bool WpaSupplicantCommunicator::isPending()
 {
 	struct timeval tv;
 	fd_set rfds;
@@ -174,19 +176,21 @@ bool TrikWPACtrlIface::isPending()
 	return FD_ISSET(mSocket, &rfds);
 }
 
-int TrikWPACtrlIface::receive(QString &message)
+int WpaSupplicantCommunicator::receive(QString &message)
 {
-	int bufferSize = 256;
+	int const bufferSize = 256;
 	char buffer[bufferSize];
-	int messageLen = recv(mSocket, buffer, bufferSize, 0);
-	if (messageLen < 0)
-	{
+	int const messageLen = recv(mSocket, buffer, bufferSize, 0);
+	if (messageLen < 0) {
 		std::cerr << "Cannot receive a message from the daemon:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		return -1;
 	}
+
 	buffer[messageLen] = '\0';
 	message = buffer;
+
 	qDebug() << "Message: " << message;
+
 	return 0;
 }
