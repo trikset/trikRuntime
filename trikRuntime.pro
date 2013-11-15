@@ -15,13 +15,13 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-#	trikControl \
-#	trikScriptRunner \
+	trikControl \
+	trikScriptRunner \
 	trikCommunicator \
-#	trikRun \
-#	trikServer \
-#	trikGui \
-	trikWiFi \
+	trikRun \
+	trikServer \
+	trikGui \
+#	trikWiFi \
 
 trikScriptRunner.depends = trikControl
 trikCommunicator.depends = trikScriptRunner
