@@ -18,8 +18,13 @@
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const& deviceFile, bool invert)
+ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &deviceFile, QString const &periodFile
+		, int period, bool invert)
 	: mControlFile(deviceFile)
+	, mPeriodFile(periodFile)
+	, mPeriod(period)
+	, mFrequency(1000000000 / period)
+	, mCurrentDutyPercent(0)
 	, mMin(min)
 	, mMax(max)
 	, mZero(zero)
@@ -27,6 +32,15 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const& devi
 	, mInvert(invert)
 	, mCurrentPower(0)
 {
+	if (!mPeriodFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		qDebug() << "Can't open motor period file " << mPeriodFile.fileName();
+		return;
+	}
+
+	QString const command = QString::number(mPeriod);
+
+	mPeriodFile.write(command.toLatin1());
+	mPeriodFile.close();
 }
 
 void ServoMotor::setPower(int power)
@@ -48,7 +62,10 @@ void ServoMotor::setPower(int power)
 
 	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
 	qreal const powerFactor = static_cast<qreal>(range) / 100;
-	QString const command = QString::number(static_cast<int>(mZero + power * powerFactor));
+	int duty = static_cast<int>(mZero + power * powerFactor);
+	QString const command = QString::number(duty);
+
+	mCurrentDutyPercent = 100 * duty / mPeriod;
 
 	mControlFile.write(command.toLatin1());
 	mControlFile.close();
@@ -57,6 +74,16 @@ void ServoMotor::setPower(int power)
 int ServoMotor::power() const
 {
 	return mCurrentPower;
+}
+
+int ServoMotor::frequency() const
+{
+	return mFrequency;
+}
+
+int ServoMotor::duty() const
+{
+	return mCurrentDutyPercent;
 }
 
 void ServoMotor::powerOff()

@@ -40,10 +40,21 @@ Brick::Brick(QThread &guiThread)
 				, mConfigurer->motorTypeZero(motorType)
 				, mConfigurer->motorTypeStop(motorType)
 				, mConfigurer->servoMotorDeviceFile(port)
+				, mConfigurer->servoMotorPeriodFile(port)
+				, mConfigurer->servoMotorPeriod(port)
 				, mConfigurer->servoMotorInvert(port)
 				);
 
 		mServoMotors.insert(port, servoMotor);
+	}
+
+	foreach (QString const &port, mConfigurer->pwmCapturePorts()) {
+		PwmCapture *pwmCapture = new PwmCapture(
+				mConfigurer->pwmCaptureFrequencyFile(port)
+				, mConfigurer->pwmCaptureDutyFile(port)
+				);
+
+		mPwmCaptures.insert(port, pwmCapture);
 	}
 
 	foreach (QString const &port, mConfigurer->powerMotorPorts()) {
@@ -109,6 +120,7 @@ Brick::~Brick()
 {
 	delete mConfigurer;
 	qDeleteAll(mServoMotors);
+	qDeleteAll(mPwmCaptures);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mEncoders);
 	qDeleteAll(mSensors);
@@ -145,6 +157,15 @@ ServoMotor *Brick::servoMotor(QString const &port)
 {
 	if (mServoMotors.contains(port)) {
 		return mServoMotors.value(port);
+	}
+
+	return NULL;
+}
+
+PwmCapture *Brick::pwmCapture(QString const &port)
+{
+	if (mPwmCaptures.contains(port)) {
+		return mPwmCaptures.value(port);
 	}
 
 	return NULL;

@@ -58,9 +58,19 @@ public:
 
 	QString servoMotorDeviceFile(QString const &port) const;
 
+	QString servoMotorPeriodFile(QString const &port) const;
+
+	int servoMotorPeriod(QString const &port) const;
+
 	QString servoMotorDefaultType(QString const &port) const;
 
 	bool servoMotorInvert(QString const &port) const;
+
+	QStringList pwmCapturePorts() const;
+
+	QString pwmCaptureFrequencyFile(QString const &port) const;
+
+	QString pwmCaptureDutyFile(QString const &port) const;
 
 	QStringList powerMotorPorts() const;
 
@@ -128,8 +138,16 @@ private:
 	struct ServoMotorMapping {
 		QString port;
 		QString deviceFile;
+		QString periodFile;
+		int period;
 		QString defaultType;
 		bool invert;
+	};
+
+	struct PwmCaptureMapping {
+		QString port;
+		QString frequencyFile;
+		QString dutyFile;
 	};
 
 	struct PowerMotorMapping {
@@ -162,6 +180,7 @@ private:
 
 	void loadInit(QDomElement const &root);
 	void loadServoMotors(QDomElement const &root);
+	void loadPwmCaptures(QDomElement const &root);
 	void loadPowerMotors(QDomElement const &root);
 	void loadAnalogSensors(QDomElement const &root);
 	void loadEncoders(QDomElement const &root);
@@ -178,6 +197,7 @@ private:
 	QHash<QString, MotorType> mMotorTypes;
 	QHash<QString, SensorType> mSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
+	QHash<QString, PwmCaptureMapping> mPwmCaptureMappings;
 	QHash<QString, PowerMotorMapping> mPowerMotorMappings;
 	QHash<QString, AnalogSensorMapping> mAnalogSensorMappings;
 	QHash<QString, EncoderMapping> mEncoderMappings;

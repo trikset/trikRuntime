@@ -44,6 +44,7 @@ Configurer::Configurer()
 
 	loadInit(root);
 	loadServoMotors(root);
+	loadPwmCaptures(root);
 	loadPowerMotors(root);
 	loadAnalogSensors(root);
 	loadEncoders(root);
@@ -116,6 +117,16 @@ QString Configurer::servoMotorDeviceFile(QString const &port) const
 	return mServoMotorMappings[port].deviceFile;
 }
 
+QString Configurer::servoMotorPeriodFile(const QString &port) const
+{
+	return mServoMotorMappings[port].periodFile;
+}
+
+int Configurer::servoMotorPeriod(const QString &port) const
+{
+	return mServoMotorMappings[port].period;
+}
+
 QString Configurer::servoMotorDefaultType(QString const &port) const
 {
 	return mServoMotorMappings[port].defaultType;
@@ -124,6 +135,21 @@ QString Configurer::servoMotorDefaultType(QString const &port) const
 bool Configurer::servoMotorInvert(QString const &port) const
 {
 	return mServoMotorMappings[port].invert;
+}
+
+QStringList Configurer::pwmCapturePorts() const
+{
+	return mPwmCaptureMappings.keys();
+}
+
+QString Configurer::pwmCaptureFrequencyFile(const QString &port) const
+{
+	return mPwmCaptureMappings[port].frequencyFile;
+}
+
+QString Configurer::pwmCaptureDutyFile(const QString &port) const
+{
+	return mPwmCaptureMappings[port].dutyFile;
 }
 
 QStringList Configurer::powerMotorPorts() const
@@ -287,10 +313,43 @@ void Configurer::loadServoMotors(QDomElement const &root)
 		ServoMotorMapping mapping;
 		mapping.port = childElement.attribute("port");
 		mapping.deviceFile = childElement.attribute("deviceFile");
+		mapping.periodFile = childElement.attribute("periodFile");
+		mapping.period = childElement.attribute("period").toInt();
 		mapping.defaultType = childElement.attribute("defaultType");
 		mapping.invert = childElement.attribute("invert") == "true";
 
 		mServoMotorMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadPwmCaptures(QDomElement const &root)
+{
+	if (root.elementsByTagName("pwmCaptures").isEmpty()) {
+		qDebug() << "config.xml does not have <pwmCaptures> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const pwmCaptures = root.elementsByTagName("pwmCaptures").at(0).toElement();
+	for (QDomNode child = pwmCaptures.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "capture") {
+			qDebug() << "Malformed <pwmCaptures> tag";
+			throw "config.xml parsing failed";
+		}
+
+		PwmCaptureMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.frequencyFile = childElement.attribute("frequencyFile");
+		mapping.dutyFile = childElement.attribute("dutyFile");
+
+		mPwmCaptureMappings.insert(mapping.port, mapping);
 	}
 }
 

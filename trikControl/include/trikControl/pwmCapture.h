@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 Roman Kurbatov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,37 +15,29 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QString>
 #include <QtCore/QFile>
+#include <QtCore/QVector>
 
 #include "declSpec.h"
 
 namespace trikControl {
 
-class TRIKCONTROL_EXPORT Led : public QObject
+class TRIKCONTROL_EXPORT PwmCapture : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, int off);
-
-	~Led();
+	PwmCapture(QString const &frequencyFile, QString const &dutyFile);
+	~PwmCapture();
 
 public slots:
-	void red();
+	QVector<int> frequency();
 
-	void green();
-
-	void orange();
-
-	void off();
+	int duty();
 
 private:
-	QFile mRedDeviceFile;
-	QFile mGreenDeviceFile;
-	int mOn;
-	int mOff;
+	QFile mFrequencyFile;
+	QFile mDutyFile;
 };
 
 }
