@@ -1,30 +1,51 @@
-#-------------------------------------------------
+# Copyright 2013 Roman Kurbatov, Yurii Litvinov
 #
-# Project created by QtCreator 2013-10-29T05:05:11
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-#-------------------------------------------------
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-QT       -= gui
-
-TARGET = trikWiFi
 TEMPLATE = lib
 
 DEFINES += TRIKWIFI_LIBRARY
 
-SOURCES += \
-    trikWPACtrlIface.cpp \
-    trikWiFi.cpp
+CONFIG(debug, debug | release) {
+	CONFIGURATION = debug
+	CONFIGURATION_SUFFIX = d
+} else {
+	CONFIGURATION = release
+	CONFIGURATION_SUFFIX =
+}
+
+TARGET = trikWiFi$$CONFIGURATION_SUFFIX
+
+DESTDIR = ../bin/$$CONFIGURATION/
+
+OBJECTS_DIR = .build/$$CONFIGURATION/.obj
+MOC_DIR = .build/$$CONFIGURATION/.moc
+RCC_DIR = .build/$$CONFIGURATION/.rcc
+UI_DIR = .build/$$CONFIGURATION/.ui
+
+INCLUDEPATH = \
+	$$PWD \
 
 HEADERS += \
-    trikWPACtrlIface.h \
-    trikWiFi_global.h \
-    trikWiFi.h
+	$$PWD/include/trikWiFi/trikWiFi.h \
+	$$PWD/include/trikWiFi/trikWiFi_global.h \
+	$$PWD/src/trikWPACtrlIface.h \
 
-unix:!symbian {
-    maemo5 {
-        target.path = /opt/usr/lib
-    } else {
-        target.path = /usr/lib
-    }
-    INSTALLS += target
+SOURCES += \
+	$$PWD/src/trikWPACtrlIface.cpp \
+	$$PWD/src/trikWiFi.cpp \
+
+unix {
+	target.path = $$[INSTALL_ROOT]/
+	INSTALLS += target
 }
