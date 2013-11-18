@@ -66,7 +66,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 		return;
 	}
 
-	int const flags = fcntl(mSocket, F_GETFL);
+	int flags = fcntl(mSocket, F_GETFL);
 	if (flags >= 0) {
 		flags |= O_NONBLOCK;
 		fcntl(mSocket, F_SETFL, flags);

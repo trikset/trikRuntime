@@ -43,8 +43,6 @@ win32 {
 	PLATFORM = linux
 }
 
-PLATFORM = linux
-
 HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
 	$$PWD/include/trikWiFi/declSpec.h \
