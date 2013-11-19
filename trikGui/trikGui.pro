@@ -15,6 +15,7 @@
 TRIKCONTROL_DIR = ../trikControl/
 TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
+TRIKWIFI_DIR = ../trikWiFi/
 
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
@@ -58,8 +59,9 @@ INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCOMMUNICATOR_DIR/include \
 	$$TRIKSCRIPTRUNNER_DIR/include \
+	$$TRIKWIFI_DIR/include \
 
-LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX -ltrikScriptRunner$$CONFIGURATION_SUFFIX -ltrikWiFi$$CONFIGURATION_SUFFIX
 
 OBJECTS_DIR = .build/$$CONFIGURATION/.obj
 MOC_DIR = .build/$$CONFIGURATION/.moc
@@ -72,7 +74,7 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 }
 
 unix {
-        target.path = $$[INSTALL_ROOT]/
-        INSTALLS +=   target
+		target.path = $$[INSTALL_ROOT]/
+		INSTALLS +=   target
 }
 

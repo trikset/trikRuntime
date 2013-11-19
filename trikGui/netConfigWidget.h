@@ -35,30 +35,50 @@
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 
+namespace trikWiFi {
+class TrikWiFi;
+}
+
 namespace trikGui {
 
-/// Widget that shows current network configuration information like IP address.
+/// Widget that shows current IP address and a list of available WiFi networks.
+/// Network is available only when it is listed in networks.cfg file and is physically available.
 class NetConfigWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param parent - parent QObject.
 	explicit NetConfigWidget(QWidget *parent = 0);
+
+	/// Destructor.
 	~NetConfigWidget();
 
+	/// Title for this widget in a main menu.
 	static QString menuEntry();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
+private slots:
+	void scanForAvailableNetworksDone();
+
 private:
 	QLabel mTitleLabel;
-	QListView mConfigView;
-	QList<QStandardItem *> mConfigItems;
-	QStandardItemModel mConfigModel;
-	QVBoxLayout mLayout;
+	QLabel mConnectionIconLabel;
+	QLabel mIpLabel;
+	QLabel mIpValueLabel;
+	QLabel mAvailableNetworksLabel;
+	QListView mAvailableNetworksView;
+	QList<QStandardItem *> mAvailableNetworksItems;
+	QStandardItemModel mAvailableNetworksModel;
+	QVBoxLayout mMainLayout;
+	QHBoxLayout mIpAddressLayout;
 
-	void generateNetConfigList();
+	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
+
+//	void generateNetConfigList();
 };
 
 }

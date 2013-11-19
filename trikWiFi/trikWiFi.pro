@@ -45,11 +45,13 @@ win32 {
 
 HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
+	$$PWD/include/trikWiFi/wiFiUtils.h \
 	$$PWD/include/trikWiFi/declSpec.h \
 	$$PWD/src/wpaSupplicantCommunicator.h \
 
 SOURCES += \
 	$$PWD/src/trikWiFi.cpp \
+	$$PWD/src/wiFiUtils.cpp \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
 
 unix {

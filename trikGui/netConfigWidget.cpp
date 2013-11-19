@@ -29,24 +29,51 @@
 	#include <QtWidgets/QScrollBar>
 #endif
 
+#include <QtCore/QDebug>
+
+#include <trikWiFi/trikWiFi.h>
+
 using namespace trikGui;
+
+using namespace trikWiFi;
 
 NetConfigWidget::NetConfigWidget(QWidget *parent)
 	: QWidget(parent)
+	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
+	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDone()));
+	int const result = mWiFi->scan();
+
+	qDebug() << result;
+
 	mTitleLabel.setText(tr("Network Config"));
 
-	generateNetConfigList();
-	mConfigModel.appendColumn(mConfigItems);
+	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QPixmap pixmap("://resources/connected.png");
+	mConnectionIconLabel.setPixmap(pixmap);
 
-	mConfigView.setModel(&mConfigModel);
+	mIpLabel.setText(tr("IP:"));
+	mIpLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-	mLayout.addWidget(&mTitleLabel);
-	mLayout.addWidget(&mConfigView);
-	setLayout(&mLayout);
+	mIpValueLabel.setText("127.0.0.1");
+
+	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
+	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
+
+//	mConfigView.setModel(&mConfigModel);
+
+	mIpAddressLayout.addWidget(&mConnectionIconLabel);
+	mIpAddressLayout.addWidget(&mIpLabel);
+	mIpAddressLayout.addWidget(&mIpValueLabel);
+
+	mMainLayout.addWidget(&mTitleLabel);
+	mMainLayout.addLayout(&mIpAddressLayout);
+	mMainLayout.addWidget(&mAvailableNetworksLabel);
+	mMainLayout.addWidget(&mAvailableNetworksView);
+	setLayout(&mMainLayout);
 }
 
 NetConfigWidget::~NetConfigWidget()
@@ -58,36 +85,45 @@ QString NetConfigWidget::menuEntry()
 	return tr("Network config");
 }
 
-void NetConfigWidget::generateNetConfigList()
+//void NetConfigWidget::generateNetConfigList()
+//{
+//	foreach (QNetworkInterface const &interface, QNetworkInterface::allInterfaces()) {
+//		if (interface.flags() & QNetworkInterface::IsLoopBack) {
+//			continue;
+//		}
+
+//		mConfigItems.append(new QStandardItem(interface.name()));
+//		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
+//			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
+//			{
+//				mConfigItems.append(new QStandardItem(QString(tr("IP address: "))));
+//				mConfigItems.append(new QStandardItem(entry.ip().toString()));
+//			}
+//		}
+
+//		mConfigItems.append(new QStandardItem(QString()));
+//	}
+//}
+
+void NetConfigWidget::scanForAvailableNetworksDone()
 {
-	foreach (QNetworkInterface const &interface, QNetworkInterface::allInterfaces()) {
-		if (interface.flags() & QNetworkInterface::IsLoopBack) {
-			continue;
-		}
-
-		mConfigItems.append(new QStandardItem(interface.name()));
-		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
-			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
-			{
-				mConfigItems.append(new QStandardItem(QString(tr("IP address: "))));
-				mConfigItems.append(new QStandardItem(entry.ip().toString()));
-			}
-		}
-
-		mConfigItems.append(new QStandardItem(QString()));
+	mAvailableNetworksItems.append(new QStandardItem("Ololo, scan done"));
+	foreach (TrikWiFi::ScanResult const &result, mWiFi->scanResults()) {
+		mAvailableNetworksItems.append(new QStandardItem(result.ssid));
 	}
 }
 
 void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: case Qt::Key_Enter: {
-			close();
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-			break;
-		}
+	case Qt::Key_Meta:
+	case Qt::Key_Enter: {
+		close();
+		break;
+	}
+	default: {
+		QWidget::keyPressEvent(event);
+		break;
+	}
 	}
 }
