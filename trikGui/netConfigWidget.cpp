@@ -60,10 +60,9 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 
 	mIpValueLabel.setText("127.0.0.1");
 
-	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
-	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
+	mAvailableNetworksLabel.setText(tr("Available networks:"));
 
-//	mConfigView.setModel(&mConfigModel);
+	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
 
 	mIpAddressLayout.addWidget(&mConnectionIconLabel);
 	mIpAddressLayout.addWidget(&mIpLabel);
@@ -107,10 +106,12 @@ QString NetConfigWidget::menuEntry()
 
 void NetConfigWidget::scanForAvailableNetworksDone()
 {
-	mAvailableNetworksItems.append(new QStandardItem("Ololo, scan done"));
+	mAvailableNetworksModel.clear();
 	foreach (TrikWiFi::ScanResult const &result, mWiFi->scanResults()) {
 		mAvailableNetworksItems.append(new QStandardItem(result.ssid));
 	}
+
+	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
 }
 
 void NetConfigWidget::keyPressEvent(QKeyEvent *event)

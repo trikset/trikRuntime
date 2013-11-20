@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QSocketNotifier>
+#include <QtCore/QHash>
 
 #include "declSpec.h"
 
@@ -52,6 +53,19 @@ public:
 		QString ssid;
 	};
 
+	/// Contains info about current connection.
+	struct Status
+	{
+		/// True, if there is active WiFi connection. All other fields are meaningless if this field is false.
+		bool connected;
+
+		/// SSID of currently connected network.
+		QString ssid;
+
+		/// Current IP address.
+		QString ipAddress;
+	};
+
 	/// Constructor.
 	/// @param interfaceFilePrefix - path and prefix of file names that are used by this library to communicate
 	///        with wpa_supplicant.
@@ -72,6 +86,9 @@ public:
 	/// Asynchronously scans for available WiFi networks. When done, sends scanFinished signal, then scan results
 	/// can be obtained via scanResults method.
 	int scan();
+
+	/// Returns current connection status.
+	Status status() const;
 
 	/// Returns results of the last scan.
 	QList<ScanResult> scanResults();
@@ -108,7 +125,9 @@ private:
 	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
 	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
 
-	void processMessage(const QString &message);
+	static QHash<QString, QString> parseReply(QString const &reply);
+
+	void processMessage(QString const &message);
 };
 
 }

@@ -15,6 +15,7 @@
 #include "trikWiFi.h"
 
 #include <QtCore/QStringList>
+#include <QtCore/QDebug>
 
 #include "wpaSupplicantCommunicator.h"
 
@@ -79,6 +80,28 @@ int TrikWiFi::scan()
 	}
 }
 
+TrikWiFi::Status TrikWiFi::status() const
+{
+	QString const command = "STATUS";
+	QString reply;
+
+	Status result;
+
+	if (mControlInterface->request(command, reply) < 0) {
+		return result;
+	}
+
+	QHash<QString, QString> parsedReply = parseReply(reply);
+
+	result.connected = parsedReply.contains("ssid") && !parsedReply["ssid"].isEmpty();
+	if (result.connected) {
+		result.ipAddress = parsedReply["ip_address"];
+		result.ssid = parsedReply["ssid"];
+	}
+
+	return result;
+}
+
 QList<TrikWiFi::ScanResult> TrikWiFi::scanResults()
 {
 	int index = 0;
@@ -89,29 +112,23 @@ QList<TrikWiFi::ScanResult> TrikWiFi::scanResults()
 		QString reply;
 
 		if (mControlInterface->request(command, reply) < 0) {
+			qDebug() << "mControlInterface->request(command, reply) < 0";
 			break;
 		}
 
-		if (reply.isEmpty() || reply.startsWith("FAIL")) {
+		QHash<QString, QString> parsedReply = parseReply(reply);
+
+		if (parsedReply.isEmpty()) {
 			break;
 		}
 
 		ScanResult currentResult;
-		currentResult.frequency = -1;
-		QStringList const lines = reply.split('\n');
 
-		foreach (QString const &line, lines) {
-			int const valuePos = line.indexOf('=') + 1;
-			if (valuePos < 1) {
-				continue;
-			}
+		// TODO: Add error processing.
+		currentResult.frequency = parsedReply["freq"].toInt();
+		currentResult.ssid = parsedReply["ssid"];
 
-			if (line.startsWith("ssid=")) {
-				currentResult.ssid = line.mid(valuePos);
-			} else if (line.startsWith("freq=")) {
-				currentResult.frequency = line.mid(valuePos).toInt();
-			}
-		}
+		qDebug() << "Added, ssid = " << currentResult.ssid;
 
 		results.append(currentResult);
 	}
@@ -227,4 +244,30 @@ void TrikWiFi::receiveMessages()
 		mMonitorInterface->receive(message);
 		processMessage(message);
 	}
+}
+
+QHash<QString, QString> parseReply(QString const &reply)
+{
+	QHash<QString, QString> result;
+
+	if (reply.isEmpty() || reply.startsWith("FAIL")) {
+		qDebug() << "reply.isEmpty() || reply.startsWith(\"FAIL\")";
+		return result;
+	}
+
+	QStringList const lines = reply.split('\n');
+
+	foreach (QString const &line, lines) {
+		int const valuePos = line.indexOf('=') + 1;
+		if (valuePos < 1) {
+			continue;
+		}
+
+		QString const key = line.left(valuePos - 1);
+		QString const value = line.mid(valuePos);
+
+		result.insert(key, value);
+	}
+
+	return result;
 }
