@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 		app.installTranslator(&guiTranslator);
 	}
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#ifdef Q_WS_QWS
 	QWSServer * const server = QWSServer::instance();
 	if (server) {
 		server->setCursorVisible(false);
