@@ -29,8 +29,17 @@ class TRIKWIFI_EXPORT WpaSupplicantCommunicator : public QObject
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param interfaceFile - file that is used by this library to communicate with wpa_supplicant.
+	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
+	///        /run/wpa_supplicant/wlan0.
+	/// @param parent - parent QObject.
 	WpaSupplicantCommunicator(QString const &interfaceFile, QString const &daemonFile, QObject *parent = 0);
+
+	/// Destructor.
 	~WpaSupplicantCommunicator();
+
+	/// Handle of a file
 	int fileDescriptor();
 	int attach();
 	int detach();

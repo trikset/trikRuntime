@@ -20,7 +20,6 @@
 #include <QtCore/QSocketNotifier>
 
 #include "declSpec.h"
-//#include "trikWPACtrlIface.h"
 
 namespace trikWiFi {
 

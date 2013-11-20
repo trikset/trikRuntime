@@ -27,7 +27,7 @@
 
 using namespace trikControl;
 
-Display::Display(QThread &guiThread)
+trikControl::Display::Display(QThread &guiThread)
 	: mGuiThread(guiThread)
 {
 	mGuiWorker = new GuiWorker();
@@ -39,33 +39,33 @@ Display::Display(QThread &guiThread)
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
 }
 
-Display::~Display()
+trikControl::Display::~Display()
 {
 	emit threadDelete();
 	mGuiThread.wait(1000);
 }
 
-void Display::showImage(QString const &fileName)
+void trikControl::Display::showImage(QString const &fileName)
 {
 	emit threadShowImage(fileName);
 }
 
-void Display::smile()
+void trikControl::Display::smile()
 {
 	showImage("media/trik_smile_normal.png");
 }
 
-void Display::sadSmile()
+void trikControl::Display::sadSmile()
 {
 	showImage("media/trik_smile_sad.png");
 }
 
-void Display::setBackground(QString const &color)
+void trikControl::Display::setBackground(QString const &color)
 {
 	emit threadSetBackground(color);
 }
 
-void Display::hide()
+void trikControl::Display::hide()
 {
 	emit threadHide();
 }
