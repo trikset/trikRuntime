@@ -73,8 +73,15 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
 
+win32 {
+	QMAKE_POST_LINK = "xcopy wpa-config.xml $$replace(DESTDIR, /, \\) /q /y \
+			"
+} else {
+	QMAKE_POST_LINK = "cp -f wpa-config.xml $$DESTDIR \
+			"
+}
+
 unix {
 		target.path = $$[INSTALL_ROOT]/
 		INSTALLS +=   target
 }
-

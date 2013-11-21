@@ -32,6 +32,7 @@
 #include <QtCore/QDebug>
 
 #include <trikWiFi/trikWiFi.h>
+#include <trikWiFi/wpaConfigurer.h>
 
 using namespace trikGui;
 
@@ -43,6 +44,8 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
+
+	WpaConfigurer::configureWpaSupplicant("wpa-config.xml", *mWiFi);
 
 	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDone()));
 	mWiFi->scan();

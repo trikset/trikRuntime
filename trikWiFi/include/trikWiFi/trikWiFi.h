@@ -59,7 +59,7 @@ struct NetworkConfiguration
 	QString ssid;
 };
 
-/// Class for WiFi control. Allows to connect and disconnect to/from WPA-PSK network (using wpa-supplicant utility),
+/// Class for WiFi management. Allows to connect and disconnect to/from WPA-PSK network (using wpa-supplicant utility),
 /// to scan for available networks and to alter configuration of wpa-supplicant.
 class TRIKWIFI_EXPORT TrikWiFi : public QObject
 {
@@ -105,6 +105,9 @@ public:
 
 	/// Sets PSK key for a network with given id in wpa_supplicant configuration.
 	int setKey(int id, QString const &key);
+
+	/// Sets key management protocol to "none" for a network with given id in wpa_supplicant configuration.
+	int setNoKeyNeeded(int id);
 
 	/// Save current wpa_supplicant configuration in wpa_supplicant config file.
 	int saveConfiguration();

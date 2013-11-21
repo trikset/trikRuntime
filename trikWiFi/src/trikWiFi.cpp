@@ -189,6 +189,17 @@ int TrikWiFi::setKey(int id, QString const &key)
 	}
 }
 
+int TrikWiFi::setNoKeyNeeded(int id)
+{
+	QString reply;
+	int const result = mControlInterface->request("SET_NETWORK " + QString::number(id) + " key_mgmt NONE", reply);
+	if (result == 0 && reply == "OK\n") {
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
 int TrikWiFi::saveConfiguration()
 {
 	QString reply;
