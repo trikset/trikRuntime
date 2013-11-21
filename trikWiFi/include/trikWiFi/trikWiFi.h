@@ -26,6 +26,39 @@ namespace trikWiFi {
 
 class WpaSupplicantCommunicator;
 
+/// Contains info about current connection.
+struct Status
+{
+	/// True, if there is active WiFi connection. All other fields are meaningless if this field is false.
+	bool connected;
+
+	/// SSID of currently connected network.
+	QString ssid;
+
+	/// Current IP address.
+	QString ipAddress;
+};
+
+/// Contains description of a network obtained by scanning.
+struct ScanResult
+{
+	/// SSID of a network.
+	QString ssid;
+
+	/// Channel of a network.
+	int frequency;
+};
+
+/// Contains configuration entry from wpa-supplicant config.
+struct NetworkConfiguration
+{
+	/// Some unique id of a network.
+	int id;
+
+	/// SSID of a network.
+	QString ssid;
+};
+
 /// Class for WiFi control. Allows to connect and disconnect to/from WPA-PSK network (using wpa-supplicant utility),
 /// to scan for available networks and to alter configuration of wpa-supplicant.
 class TRIKWIFI_EXPORT TrikWiFi : public QObject
@@ -33,39 +66,6 @@ class TRIKWIFI_EXPORT TrikWiFi : public QObject
 	Q_OBJECT
 
 public:
-	/// Contains description of a network obtained by scanning.
-	struct ScanResult
-	{
-		/// SSID of a network.
-		QString ssid;
-
-		/// Channel of a network.
-		int frequency;
-	};
-
-	/// Contains configuration entry from wpa-supplicant config.
-	struct NetworkConfiguration
-	{
-		/// Some unique id of a network.
-		int id;
-
-		/// SSID of a network.
-		QString ssid;
-	};
-
-	/// Contains info about current connection.
-	struct Status
-	{
-		/// True, if there is active WiFi connection. All other fields are meaningless if this field is false.
-		bool connected;
-
-		/// SSID of currently connected network.
-		QString ssid;
-
-		/// Current IP address.
-		QString ipAddress;
-	};
-
 	/// Constructor.
 	/// @param interfaceFilePrefix - path and prefix of file names that are used by this library to communicate
 	///        with wpa_supplicant.

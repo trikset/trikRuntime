@@ -3,5 +3,9 @@
         <file>trikGui_ru.qm</file>
         <file>resources/connected.png</file>
         <file>resources/notConnected.png</file>
+        <file>resources/unknownConnectionStatus.png</file>
+        <file>resources/connectedToNetwork.png</file>
+        <file>resources/connectionToNetworkImpossible.png</file>
+        <file>resources/notConnectedToNetwork.png</file>
     </qresource>
 </RCC>

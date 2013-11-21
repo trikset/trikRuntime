@@ -80,7 +80,7 @@ int TrikWiFi::scan()
 	}
 }
 
-TrikWiFi::Status TrikWiFi::status() const
+Status TrikWiFi::status() const
 {
 	QString const command = "STATUS";
 	QString reply;
@@ -102,10 +102,10 @@ TrikWiFi::Status TrikWiFi::status() const
 	return result;
 }
 
-QList<TrikWiFi::ScanResult> TrikWiFi::scanResults()
+QList<ScanResult> TrikWiFi::scanResults()
 {
 	int index = 0;
-	QList<TrikWiFi::ScanResult> results;
+	QList<ScanResult> results;
 
 	forever {
 		QString const command = "BSS " + QString::number(index++);
@@ -200,7 +200,7 @@ int TrikWiFi::saveConfiguration()
 	}
 }
 
-QList<TrikWiFi::NetworkConfiguration> TrikWiFi::listNetworks()
+QList<NetworkConfiguration> TrikWiFi::listNetworks()
 {
 	QString reply;
 	int const result = mControlInterface->request("LIST_NETWORKS", reply);
@@ -246,7 +246,7 @@ void TrikWiFi::receiveMessages()
 	}
 }
 
-QHash<QString, QString> parseReply(QString const &reply)
+QHash<QString, QString> TrikWiFi::parseReply(QString const &reply)
 {
 	QHash<QString, QString> result;
 

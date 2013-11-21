@@ -45,20 +45,12 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	setWindowState(Qt::WindowFullScreen);
 
 	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDone()));
-	int const result = mWiFi->scan();
-
-	qDebug() << result;
-
-	mTitleLabel.setText(tr("Network Config"));
+	mWiFi->scan();
 
 	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	QPixmap pixmap("://resources/connected.png");
-	mConnectionIconLabel.setPixmap(pixmap);
 
 	mIpLabel.setText(tr("IP:"));
 	mIpLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-	mIpValueLabel.setText("127.0.0.1");
 
 	mAvailableNetworksLabel.setText(tr("Available networks:"));
 
@@ -68,11 +60,13 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	mIpAddressLayout.addWidget(&mIpLabel);
 	mIpAddressLayout.addWidget(&mIpValueLabel);
 
-	mMainLayout.addWidget(&mTitleLabel);
 	mMainLayout.addLayout(&mIpAddressLayout);
 	mMainLayout.addWidget(&mAvailableNetworksLabel);
 	mMainLayout.addWidget(&mAvailableNetworksView);
 	setLayout(&mMainLayout);
+
+	Status const connectionStatus = mWiFi->status();
+	setConnectionStatus(connectionStatus);
 }
 
 NetConfigWidget::~NetConfigWidget()
@@ -84,34 +78,14 @@ QString NetConfigWidget::menuEntry()
 	return tr("Network config");
 }
 
-//void NetConfigWidget::generateNetConfigList()
-//{
-//	foreach (QNetworkInterface const &interface, QNetworkInterface::allInterfaces()) {
-//		if (interface.flags() & QNetworkInterface::IsLoopBack) {
-//			continue;
-//		}
-
-//		mConfigItems.append(new QStandardItem(interface.name()));
-//		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
-//			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
-//			{
-//				mConfigItems.append(new QStandardItem(QString(tr("IP address: "))));
-//				mConfigItems.append(new QStandardItem(entry.ip().toString()));
-//			}
-//		}
-
-//		mConfigItems.append(new QStandardItem(QString()));
-//	}
-//}
-
 void NetConfigWidget::scanForAvailableNetworksDone()
 {
-	mAvailableNetworksModel.clear();
-	foreach (TrikWiFi::ScanResult const &result, mWiFi->scanResults()) {
+	mAvailableNetworksItems.clear();
+	foreach (ScanResult const &result, mWiFi->scanResults()) {
 		mAvailableNetworksItems.append(new QStandardItem(result.ssid));
 	}
 
-	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
+	updateConnectionStatusesInNetworkList();
 }
 
 void NetConfigWidget::keyPressEvent(QKeyEvent *event)
@@ -127,4 +101,35 @@ void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	}
 	}
+}
+
+void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
+{
+	if (status.connected) {
+		QPixmap pixmap("://resources/connected.png");
+		mConnectionIconLabel.setPixmap(pixmap);
+		mIpValueLabel.setText(status.ipAddress);
+		mCurrentSsid = status.ssid;
+	} else {
+		QPixmap pixmap("://resources/notConnected.png");
+		mConnectionIconLabel.setPixmap(pixmap);
+		mIpValueLabel.setText(tr("no connection"));
+		mCurrentSsid = "";
+	}
+
+	updateConnectionStatusesInNetworkList();
+}
+
+void NetConfigWidget::updateConnectionStatusesInNetworkList()
+{
+	foreach (QStandardItem * const item, mAvailableNetworksItems) {
+		if (item->text() == mCurrentSsid) {
+			item->setIcon(QIcon("://resources/connectedToNetwork.png"));
+		} else {
+			item->setIcon(QIcon("://resources/notConnectedToNetwork.png"));
+		}
+	}
+
+	mAvailableNetworksModel.clear();
+	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
 }

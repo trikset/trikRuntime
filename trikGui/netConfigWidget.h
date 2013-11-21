@@ -37,6 +37,7 @@
 
 namespace trikWiFi {
 class TrikWiFi;
+struct Status;
 }
 
 namespace trikGui {
@@ -65,7 +66,6 @@ private slots:
 	void scanForAvailableNetworksDone();
 
 private:
-	QLabel mTitleLabel;
 	QLabel mConnectionIconLabel;
 	QLabel mIpLabel;
 	QLabel mIpValueLabel;
@@ -75,10 +75,11 @@ private:
 	QStandardItemModel mAvailableNetworksModel;
 	QVBoxLayout mMainLayout;
 	QHBoxLayout mIpAddressLayout;
-
 	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
+	QString mCurrentSsid;
 
-//	void generateNetConfigList();
+	void setConnectionStatus(trikWiFi::Status const &status);
+	void updateConnectionStatusesInNetworkList();
 };
 
 }
