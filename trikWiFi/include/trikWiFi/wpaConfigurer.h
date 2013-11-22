@@ -32,7 +32,7 @@ struct NetworkInfo;
 /// <WPAConfig>
 ///   <network ssid="[network ssid]" (password="[PSK password]" | noPassword="true") />
 /// </WPAConfig>
-class WpaConfigurer
+class TRIKWIFI_EXPORT WpaConfigurer
 {
 public:
 	/// Reads config file and adds networks from it into wpa_supplicant config using TrikWiFi object.

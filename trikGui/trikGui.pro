@@ -53,7 +53,7 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX =
 }
 
-DESTDIR = ../bin/$$CONFIGURATION/
+DESTDIR = ../bin/$$CONFIGURATION
 
 INCLUDEPATH = \
 	$$PWD \
