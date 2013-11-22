@@ -79,7 +79,10 @@ void WpaConfigurer::mergeNetworkConfigurations(QList<NetworkInfo*> const &networ
 				? networksFromWpaSupplicantHash[networkInfo->ssid]
 				: wiFi.addNetwork();
 
-		wiFi.setSsid(id, networkInfo->ssid);
+		if (!networksFromWpaSupplicantHash.contains(networkInfo->ssid)) {
+			wiFi.setSsid(id, networkInfo->ssid);
+		}
+
 		if (networkInfo->requirePassword) {
 			wiFi.setKey(id, networkInfo->password);
 		} else {

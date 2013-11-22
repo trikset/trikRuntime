@@ -77,6 +77,7 @@ private:
 	QHBoxLayout mIpAddressLayout;
 	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
 	QString mCurrentSsid;
+	QHash<QString, int> mNetworksAvailableForConnection;
 
 	void setConnectionStatus(trikWiFi::Status const &status);
 	void updateConnectionStatusesInNetworkList();

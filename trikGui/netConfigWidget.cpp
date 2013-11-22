@@ -47,6 +47,11 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 
 	WpaConfigurer::configureWpaSupplicant("wpa-config.xml", *mWiFi);
 
+	QList<NetworkConfiguration> const networksFromWpaSupplicant = mWiFi->listNetworks();
+	foreach (NetworkConfiguration const &networkConfiguration, networksFromWpaSupplicant) {
+		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
+	}
+
 	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDone()));
 	mWiFi->scan();
 
@@ -128,8 +133,10 @@ void NetConfigWidget::updateConnectionStatusesInNetworkList()
 	foreach (QStandardItem * const item, mAvailableNetworksItems) {
 		if (item->text() == mCurrentSsid) {
 			item->setIcon(QIcon("://resources/connectedToNetwork.png"));
-		} else {
+		} else if (mNetworksAvailableForConnection.contains(item->text())) {
 			item->setIcon(QIcon("://resources/notConnectedToNetwork.png"));
+		} else {
+			item->setIcon(QIcon("://resources/connectionToNetworkImpossible.png"));
 		}
 	}
 
