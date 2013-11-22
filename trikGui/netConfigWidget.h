@@ -81,6 +81,7 @@ private:
 
 	void setConnectionStatus(trikWiFi::Status const &status);
 	void updateConnectionStatusesInNetworkList();
+	void connectToSelectedNetwork();
 };
 
 }

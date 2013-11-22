@@ -33,30 +33,31 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 		QKeyEvent * const keyEvent = dynamic_cast<QKeyEvent *>(event);
 		if (keyEvent != NULL) {
 			switch (keyEvent->key()) {
-				case Qt::Key_F2: {
-					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Meta, Qt::NoModifier);
-					break;
-				}
-				case Qt::Key_F3: {
-					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
-					break;
-				}
-				case Qt::Key_F4: {
-					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-					break;
-				}
-				case Qt::Key_F5: {
-					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
-					break;
-				}
-				case Qt::Key_F6: {
-					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
-					break;
-				}
-				case Qt::Key_F7: {
-					*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
-					break;
-				}
+			case Qt::Key_F2: {
+				// Not functioning for some reason.
+				*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Meta, Qt::NoModifier);
+				break;
+			}
+			case Qt::Key_F3: {
+				*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
+				break;
+			}
+			case Qt::Key_F4: {
+				*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+				break;
+			}
+			case Qt::Key_F5: {
+				*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+				break;
+			}
+			case Qt::Key_F6: {
+				*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+				break;
+			}
+			case Qt::Key_F7: {
+				*keyEvent = QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier);
+				break;
+			}
 			}
 		}
 	}

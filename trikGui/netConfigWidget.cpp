@@ -63,6 +63,7 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	mAvailableNetworksLabel.setText(tr("Available networks:"));
 
 	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
+	mAvailableNetworksView.setSelectionMode(QAbstractItemView::SingleSelection);
 
 	mIpAddressLayout.addWidget(&mConnectionIconLabel);
 	mIpAddressLayout.addWidget(&mIpLabel);
@@ -100,9 +101,12 @@ void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 	case Qt::Key_Meta:
-	case Qt::Key_Enter: {
+	case Qt::Key_Left: {
 		close();
 		break;
+	}
+	case Qt::Key_Enter: {
+		connectToSelectedNetwork();
 	}
 	default: {
 		QWidget::keyPressEvent(event);
@@ -142,4 +146,25 @@ void NetConfigWidget::updateConnectionStatusesInNetworkList()
 
 	mAvailableNetworksModel.clear();
 	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
+}
+
+void NetConfigWidget::connectToSelectedNetwork()
+{
+	QModelIndexList const selected = mAvailableNetworksView.selectionModel()->selectedIndexes();
+	if (selected.size() != 1) {
+		return;
+	}
+
+	QString const ssid = mAvailableNetworksModel.itemFromIndex(selected[0])->text();
+	if (ssid == mCurrentSsid) {
+		return;
+	}
+
+	if (!mNetworksAvailableForConnection.contains(ssid)) {
+		return;
+	}
+
+	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
+
+	updateConnectionStatusesInNetworkList();
 }
