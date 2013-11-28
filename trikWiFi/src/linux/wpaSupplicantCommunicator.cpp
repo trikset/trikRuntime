@@ -39,6 +39,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	, mDest(new sockaddr_un())
 {
 	mSocket = socket(PF_UNIX, SOCK_DGRAM, 0);
+
 	if (mSocket < 0) {
 		std::cerr << "Cannot create a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
@@ -47,6 +48,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 
 	mLocal->sun_family = AF_UNIX;
 	snprintf(mLocal->sun_path, sizeof(mLocal->sun_path), "%s", interfaceFile.toStdString().c_str());
+	unlink(mLocal->sun_path);
 	if (bind(mSocket, reinterpret_cast<sockaddr *>(mLocal.data()), sizeof(*(mLocal.data()))) != 0) {
 		std::cerr << "Cannot bind a name to a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
@@ -76,8 +78,17 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 WpaSupplicantCommunicator::~WpaSupplicantCommunicator()
 {
 	if (mSocket >= 0) {
-		unlink(mLocal->sun_path);
-		close(mSocket);
+		qDebug() << "Closing socket";
+
+		if (close(mSocket) != 0) {
+			std::cerr << "Cannot close socket:" << std::endl;
+			std::cerr << strerror(errno) << std::endl;
+		}
+
+		if (unlink(mLocal->sun_path) != 0) {
+			std::cerr << "Cannot unlink:" << std::endl;
+			std::cerr << strerror(errno) << std::endl;
+		}
 	}
 }
 

@@ -32,9 +32,10 @@ TrikWiFi::TrikWiFi(QString const &interfaceFilePrefix
 	int const monitorFileDesc = mMonitorInterface->fileDescriptor();
 	if (monitorFileDesc >= 0) {
 		mMonitorFileSocketNotifier.reset(new QSocketNotifier(monitorFileDesc, QSocketNotifier::Read));
+		QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
+	} else {
+		qDebug() << "Can not get monitor file descriptor";
 	}
-
-	QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
 }
 
 TrikWiFi::~TrikWiFi()
