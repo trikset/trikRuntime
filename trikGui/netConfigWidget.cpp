@@ -90,10 +90,12 @@ QString NetConfigWidget::menuEntry()
 void NetConfigWidget::scanForAvailableNetworksDone()
 {
 	mAvailableNetworksItems.clear();
+	mAvailableNetworksModel.clear();
 	foreach (ScanResult const &result, mWiFi->scanResults()) {
 		mAvailableNetworksItems.append(new QStandardItem(result.ssid));
 	}
 
+	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
 	updateConnectionStatusesInNetworkList();
 }
 
@@ -134,7 +136,7 @@ void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
 
 void NetConfigWidget::updateConnectionStatusesInNetworkList()
 {
-	foreach (QStandardItem * const item, mAvailableNetworksItems) {
+	foreach (QStandardItem * const item,  mAvailableNetworksItems) {
 		if (item->text() == mCurrentSsid) {
 			item->setIcon(QIcon("://resources/connectedToNetwork.png"));
 		} else if (mNetworksAvailableForConnection.contains(item->text())) {
@@ -143,9 +145,6 @@ void NetConfigWidget::updateConnectionStatusesInNetworkList()
 			item->setIcon(QIcon("://resources/connectionToNetworkImpossible.png"));
 		}
 	}
-
-	mAvailableNetworksModel.clear();
-	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
 }
 
 void NetConfigWidget::connectToSelectedNetwork()
@@ -165,6 +164,5 @@ void NetConfigWidget::connectToSelectedNetwork()
 	}
 
 	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
-
-	updateConnectionStatusesInNetworkList();
+	// TODO: Connect is asynchronous, so we need to update status later.
 }

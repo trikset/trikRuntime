@@ -78,8 +78,6 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 WpaSupplicantCommunicator::~WpaSupplicantCommunicator()
 {
 	if (mSocket >= 0) {
-		qDebug() << "Closing socket";
-
 		if (close(mSocket) != 0) {
 			std::cerr << "Cannot close socket:" << std::endl;
 			std::cerr << strerror(errno) << std::endl;
@@ -177,8 +175,6 @@ int WpaSupplicantCommunicator::request(QString const &command, QString &reply)
 
 bool WpaSupplicantCommunicator::isPending()
 {
-	qDebug() << "WpaSupplicantCommunicator::isPending";
-
 	struct timeval tv;
 	fd_set rfds;
 	tv.tv_sec = 0;
@@ -191,8 +187,6 @@ bool WpaSupplicantCommunicator::isPending()
 
 int WpaSupplicantCommunicator::receive(QString &message)
 {
-	qDebug() << "WpaSupplicantCommunicator::receive";
-
 	int const bufferSize = 256;
 	char buffer[bufferSize];
 	int const messageLen = recv(mSocket, buffer, bufferSize, 0);

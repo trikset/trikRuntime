@@ -73,6 +73,7 @@ int TrikWiFi::disconnect()
 int TrikWiFi::scan()
 {
 	QString reply;
+
 	int const result = mControlInterface->request("SCAN", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
@@ -113,7 +114,6 @@ QList<ScanResult> TrikWiFi::scanResults()
 		QString reply;
 
 		if (mControlInterface->request(command, reply) < 0) {
-			qDebug() << "mControlInterface->request(command, reply) < 0";
 			break;
 		}
 
@@ -128,8 +128,6 @@ QList<ScanResult> TrikWiFi::scanResults()
 		// TODO: Add error processing.
 		currentResult.frequency = parsedReply["freq"].toInt();
 		currentResult.ssid = parsedReply["ssid"];
-
-		qDebug() << "Added, ssid = " << currentResult.ssid;
 
 		results.append(currentResult);
 	}
@@ -263,7 +261,6 @@ QHash<QString, QString> TrikWiFi::parseReply(QString const &reply)
 	QHash<QString, QString> result;
 
 	if (reply.isEmpty() || reply.startsWith("FAIL")) {
-		qDebug() << "reply.isEmpty() || reply.startsWith(\"FAIL\")";
 		return result;
 	}
 
