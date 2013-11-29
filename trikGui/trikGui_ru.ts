@@ -24,15 +24,19 @@
     </message>
     <message>
         <source>IP:</source>
-        <translation type="unfinished"></translation>
+        <translation>IP:</translation>
     </message>
     <message>
         <source>Available networks:</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступные сети:</translation>
     </message>
     <message>
         <source>no connection</source>
-        <translation type="unfinished"></translation>
+        <translation>нет соединения</translation>
+    </message>
+    <message>
+        <source>connecting...</source>
+        <translation>соединение...</translation>
     </message>
 </context>
 <context>
