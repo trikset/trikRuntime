@@ -15,6 +15,7 @@
 #include "trikWiFi.h"
 
 #include <QtCore/QStringList>
+#include <QtNetwork/QNetworkInterface>
 #include <QtCore/QDebug>
 
 #include "wpaSupplicantCommunicator.h"
@@ -245,6 +246,7 @@ void TrikWiFi::processMessage(QString const &message)
 	if (message.contains("CTRL-EVENT-SCAN-RESULTS")) {
 		emit scanFinished();
 	} else if (message.contains("CTRL-EVENT-CONNECTED")) {
+		system("udhcpc -i wlan0");
 		emit connected();
 	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
 		emit disconnected();

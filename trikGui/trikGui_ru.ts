@@ -12,7 +12,7 @@
     <name>trikGui::NetConfigWidget</name>
     <message>
         <source>Network Config</source>
-        <translation>Сеть</translation>
+        <translation type="obsolete">Сеть</translation>
     </message>
     <message>
         <source>Network config</source>
@@ -20,7 +20,19 @@
     </message>
     <message>
         <source>IP address: </source>
-        <translation>IP-адрес:</translation>
+        <translation type="obsolete">IP-адрес:</translation>
+    </message>
+    <message>
+        <source>IP:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available networks:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>no connection</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
