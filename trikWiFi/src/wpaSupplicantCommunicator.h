@@ -41,10 +41,23 @@ public:
 
 	/// Handle of a file
 	int fileDescriptor();
+
+	/// Attach communicator to wpa_supplicant to be able to receive network events.
 	int attach();
+
+	/// Detach communicator from wpa_supplicant.
 	int detach();
+
+	/// Send a request to wpa_supplicant.
+	/// @param command - command to wpa_supplicant. List of available commands is here:
+	///        http://hostap.epitest.fi/wpa_supplicant/devel/ctrl_iface_page.html
+	/// @param reply - reply from wpa_supplicant.
 	int request(QString const &command, QString &reply);
+
+	/// Returns true if there are unread incoming messages from wpa_supplicant.
 	bool isPending();
+
+	/// Receive next incoming message from wpa_supplicant.
 	int receive(QString &message);
 
 private:
