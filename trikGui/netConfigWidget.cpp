@@ -52,7 +52,10 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
 	}
 
-	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDone()));
+	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDoneSlot()));
+	connect(mWiFi.data(), SIGNAL(connected()), this, SLOT(connectedSlot()));
+	connect(mWiFi.data(), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
+
 	mWiFi->scan();
 
 	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -87,7 +90,7 @@ QString NetConfigWidget::menuEntry()
 	return tr("Network config");
 }
 
-void NetConfigWidget::scanForAvailableNetworksDone()
+void NetConfigWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksItems.clear();
 	mAvailableNetworksModel.clear();
@@ -97,6 +100,19 @@ void NetConfigWidget::scanForAvailableNetworksDone()
 
 	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
 	updateConnectionStatusesInNetworkList();
+}
+
+void NetConfigWidget::connectedSlot()
+{
+	setConnectionStatus(mWiFi->status());
+}
+
+void NetConfigWidget::disconnectedSlot()
+{
+	setConnectionStatus(mWiFi->status());
+
+	// Now to determine reason of disconnect --- maybe the network is out of range now.
+	mWiFi->scan();
 }
 
 void NetConfigWidget::keyPressEvent(QKeyEvent *event)
@@ -137,8 +153,13 @@ void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
 void NetConfigWidget::updateConnectionStatusesInNetworkList()
 {
 	foreach (QStandardItem * const item,  mAvailableNetworksItems) {
+		QFont font = item->font();
+		font.setBold(false);
+		item->setFont(font);
 		if (item->text() == mCurrentSsid) {
 			item->setIcon(QIcon("://resources/connectedToNetwork.png"));
+			font.setBold(true);
+			item->setFont(font);
 		} else if (mNetworksAvailableForConnection.contains(item->text())) {
 			item->setIcon(QIcon("://resources/notConnectedToNetwork.png"));
 		} else {
@@ -164,5 +185,4 @@ void NetConfigWidget::connectToSelectedNetwork()
 	}
 
 	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
-	// TODO: Connect is asynchronous, so we need to update status later.
 }

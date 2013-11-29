@@ -63,7 +63,9 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private slots:
-	void scanForAvailableNetworksDone();
+	void scanForAvailableNetworksDoneSlot();
+	void connectedSlot();
+	void disconnectedSlot();
 
 private:
 	QLabel mConnectionIconLabel;

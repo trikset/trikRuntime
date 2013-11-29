@@ -120,6 +120,12 @@ signals:
 	/// and ready to be obtained by scanResults method.
 	void scanFinished();
 
+	/// Emitted when wpa_supplicant connects to WiFi network. SSID of this network can be retrieved by status() method.
+	void connected();
+
+	/// Emitted when wpa_supplicant disconnects from current network.
+	void disconnected();
+
 private slots:
 	void receiveMessages();
 
