@@ -41,6 +41,7 @@ using namespace trikWiFi;
 NetConfigWidget::NetConfigWidget(QWidget *parent)
 	: QWidget(parent)
 	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
+	, mConnectionState(notConnected)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
@@ -78,6 +79,7 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	setLayout(&mMainLayout);
 
 	Status const connectionStatus = mWiFi->status();
+	mConnectionState = connectionStatus.connected ? connected : notConnected;
 	setConnectionStatus(connectionStatus);
 }
 
@@ -92,23 +94,26 @@ QString NetConfigWidget::menuEntry()
 
 void NetConfigWidget::scanForAvailableNetworksDoneSlot()
 {
-	mAvailableNetworksItems.clear();
 	mAvailableNetworksModel.clear();
 	foreach (ScanResult const &result, mWiFi->scanResults()) {
-		mAvailableNetworksItems.append(new QStandardItem(result.ssid));
+		mAvailableNetworksModel.appendRow(new QStandardItem(result.ssid));
 	}
 
-	mAvailableNetworksModel.appendColumn(mAvailableNetworksItems);
 	updateConnectionStatusesInNetworkList();
 }
 
 void NetConfigWidget::connectedSlot()
 {
+	mConnectionState = connected;
 	setConnectionStatus(mWiFi->status());
 }
 
 void NetConfigWidget::disconnectedSlot()
 {
+	if (mConnectionState != connecting) {
+		mConnectionState = notConnected;
+	}
+
 	setConnectionStatus(mWiFi->status());
 
 	// Now to determine reason of disconnect --- maybe the network is out of range now.
@@ -135,24 +140,33 @@ void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 
 void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
 {
-	if (status.connected) {
-		QPixmap pixmap("://resources/connected.png");
-		mConnectionIconLabel.setPixmap(pixmap);
+	QPixmap pixmap;
+	switch (mConnectionState) {
+	case connected:
+		pixmap.load("://resources/connected.png");
 		mIpValueLabel.setText(status.ipAddress);
 		mCurrentSsid = status.ssid;
-	} else {
-		QPixmap pixmap("://resources/notConnected.png");
-		mConnectionIconLabel.setPixmap(pixmap);
+		break;
+	case connecting:
+		pixmap.load("://resources/unknownConnectionStatus.png");
+		mIpValueLabel.setText(tr("connecting..."));
+		mCurrentSsid = "";
+		break;
+	case notConnected:
+		pixmap.load("://resources/notConnected.png");
 		mIpValueLabel.setText(tr("no connection"));
 		mCurrentSsid = "";
+		break;
 	}
 
+	mConnectionIconLabel.setPixmap(pixmap);
 	updateConnectionStatusesInNetworkList();
 }
 
 void NetConfigWidget::updateConnectionStatusesInNetworkList()
 {
-	foreach (QStandardItem * const item,  mAvailableNetworksItems) {
+	for (int i = 0; i < mAvailableNetworksModel.rowCount(); ++i) {
+		QStandardItem * const item = mAvailableNetworksModel.item(i);
 		QFont font = item->font();
 		font.setBold(false);
 		item->setFont(font);
@@ -166,6 +180,12 @@ void NetConfigWidget::updateConnectionStatusesInNetworkList()
 			item->setIcon(QIcon("://resources/connectionToNetworkImpossible.png"));
 		}
 	}
+
+	mAvailableNetworksView.setFocus();
+	mAvailableNetworksView.selectionModel()->select(
+			mAvailableNetworksModel.index(0, 0)
+			, QItemSelectionModel::ClearAndSelect
+			);
 }
 
 void NetConfigWidget::connectToSelectedNetwork()
@@ -183,6 +203,8 @@ void NetConfigWidget::connectToSelectedNetwork()
 	if (!mNetworksAvailableForConnection.contains(ssid)) {
 		return;
 	}
+
+	mConnectionState = connecting;
 
 	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
 }

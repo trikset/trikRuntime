@@ -68,18 +68,24 @@ private slots:
 	void disconnectedSlot();
 
 private:
+	enum ConnectionState {
+		notConnected
+		, connecting
+		, connected
+	};
+
 	QLabel mConnectionIconLabel;
 	QLabel mIpLabel;
 	QLabel mIpValueLabel;
 	QLabel mAvailableNetworksLabel;
 	QListView mAvailableNetworksView;
-	QList<QStandardItem *> mAvailableNetworksItems;
 	QStandardItemModel mAvailableNetworksModel;
 	QVBoxLayout mMainLayout;
 	QHBoxLayout mIpAddressLayout;
 	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
 	QString mCurrentSsid;
 	QHash<QString, int> mNetworksAvailableForConnection;
+	ConnectionState mConnectionState;
 
 	void setConnectionStatus(trikWiFi::Status const &status);
 	void updateConnectionStatusesInNetworkList();
