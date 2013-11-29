@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QSocketNotifier>
+#include <QtCore/QHash>
 
 #include "declSpec.h"
 
@@ -25,33 +26,46 @@ namespace trikWiFi {
 
 class WpaSupplicantCommunicator;
 
-/// Class for WiFi control. Allows to connect and disconnect to/from WPA-PSK network (using wpa-supplicant utility),
+/// Contains info about current connection.
+struct Status
+{
+	/// True, if there is active WiFi connection. All other fields are meaningless if this field is false.
+	bool connected;
+
+	/// SSID of currently connected network.
+	QString ssid;
+
+	/// Current IP address.
+	QString ipAddress;
+};
+
+/// Contains description of a network obtained by scanning.
+struct ScanResult
+{
+	/// SSID of a network.
+	QString ssid;
+
+	/// Channel of a network.
+	int frequency;
+};
+
+/// Contains configuration entry from wpa-supplicant config.
+struct NetworkConfiguration
+{
+	/// Some unique id of a network.
+	int id;
+
+	/// SSID of a network.
+	QString ssid;
+};
+
+/// Class for WiFi management. Allows to connect and disconnect to/from WPA-PSK network (using wpa-supplicant utility),
 /// to scan for available networks and to alter configuration of wpa-supplicant.
 class TRIKWIFI_EXPORT TrikWiFi : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Contains description of a network obtained by scanning.
-	struct ScanResult
-	{
-		/// SSID of a network.
-		QString ssid;
-
-		/// Channel of a network.
-		int frequency;
-	};
-
-	/// Contains configuration entry from wpa-supplicant config.
-	struct NetworkConfiguration
-	{
-		/// Some unique id of a network.
-		int id;
-
-		/// SSID of a network.
-		QString ssid;
-	};
-
 	/// Constructor.
 	/// @param interfaceFilePrefix - path and prefix of file names that are used by this library to communicate
 	///        with wpa_supplicant.
@@ -73,6 +87,9 @@ public:
 	/// can be obtained via scanResults method.
 	int scan();
 
+	/// Returns current connection status.
+	Status status() const;
+
 	/// Returns results of the last scan.
 	QList<ScanResult> scanResults();
 
@@ -89,6 +106,9 @@ public:
 	/// Sets PSK key for a network with given id in wpa_supplicant configuration.
 	int setKey(int id, QString const &key);
 
+	/// Sets key management protocol to "none" for a network with given id in wpa_supplicant configuration.
+	int setNoKeyNeeded(int id);
+
 	/// Save current wpa_supplicant configuration in wpa_supplicant config file.
 	int saveConfiguration();
 
@@ -100,6 +120,12 @@ signals:
 	/// and ready to be obtained by scanResults method.
 	void scanFinished();
 
+	/// Emitted when wpa_supplicant connects to WiFi network. SSID of this network can be retrieved by status() method.
+	void connected();
+
+	/// Emitted when wpa_supplicant disconnects from current network.
+	void disconnected();
+
 private slots:
 	void receiveMessages();
 
@@ -108,7 +134,9 @@ private:
 	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
 	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
 
-	void processMessage(const QString &message);
+	static QHash<QString, QString> parseReply(QString const &reply);
+
+	void processMessage(QString const &message);
 };
 
 }

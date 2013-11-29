@@ -15,6 +15,7 @@
 TRIKCONTROL_DIR = ../trikControl/
 TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
+TRIKWIFI_DIR = ../trikWiFi/
 
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
@@ -52,14 +53,15 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX =
 }
 
-DESTDIR = ../bin/$$CONFIGURATION/
+DESTDIR = ../bin/$$CONFIGURATION
 
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCOMMUNICATOR_DIR/include \
 	$$TRIKSCRIPTRUNNER_DIR/include \
+	$$TRIKWIFI_DIR/include \
 
-LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX -ltrikScriptRunner$$CONFIGURATION_SUFFIX -ltrikWiFi$$CONFIGURATION_SUFFIX
 
 OBJECTS_DIR = .build/$$CONFIGURATION/.obj
 MOC_DIR = .build/$$CONFIGURATION/.moc
@@ -71,8 +73,15 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 }
 
-unix {
-        target.path = $$[INSTALL_ROOT]/
-        INSTALLS +=   target
+win32 {
+	QMAKE_POST_LINK = "xcopy wpa-config.xml $$replace(DESTDIR, /, \\) /q /y \
+			"
+} else {
+	QMAKE_POST_LINK = "cp -f wpa-config.xml $$DESTDIR \
+			"
 }
 
+unix {
+		target.path = $$[INSTALL_ROOT]/
+		INSTALLS +=   target
+}

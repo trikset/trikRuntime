@@ -35,30 +35,61 @@
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 
+namespace trikWiFi {
+class TrikWiFi;
+struct Status;
+}
+
 namespace trikGui {
 
-/// Widget that shows current network configuration information like IP address.
+/// Widget that shows current IP address and a list of available WiFi networks.
+/// Network is available only when it is listed in networks.cfg file and is physically available.
 class NetConfigWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param parent - parent QObject.
 	explicit NetConfigWidget(QWidget *parent = 0);
+
+	/// Destructor.
 	~NetConfigWidget();
 
+	/// Title for this widget in a main menu.
 	static QString menuEntry();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
-private:
-	QLabel mTitleLabel;
-	QListView mConfigView;
-	QList<QStandardItem *> mConfigItems;
-	QStandardItemModel mConfigModel;
-	QVBoxLayout mLayout;
+private slots:
+	void scanForAvailableNetworksDoneSlot();
+	void connectedSlot();
+	void disconnectedSlot();
 
-	void generateNetConfigList();
+private:
+	enum ConnectionState {
+		notConnected
+		, connecting
+		, connected
+	};
+
+	QLabel mConnectionIconLabel;
+	QLabel mIpLabel;
+	QLabel mIpValueLabel;
+	QLabel mAvailableNetworksLabel;
+	QListView mAvailableNetworksView;
+	QStandardItemModel mAvailableNetworksModel;
+	QVBoxLayout mMainLayout;
+	QHBoxLayout mIpAddressLayout;
+	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
+	QString mCurrentSsid;
+	QHash<QString, int> mNetworksAvailableForConnection;
+	ConnectionState mConnectionState;
+
+	void setConnectionStatus(trikWiFi::Status const &status);
+	void updateConnectionStatusesInNetworkList();
+	void connectToSelectedNetwork();
 };
 
 }

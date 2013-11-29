@@ -27,7 +27,9 @@ Brick::Brick(QThread &guiThread)
 	, mI2cCommunicator(NULL)
 	, mDisplay(guiThread)
 {
-	system(mConfigurer->initScript().toStdString().c_str());
+	if (system(mConfigurer->initScript().toStdString().c_str()) != 0) {
+		qDebug() << "Init script failed";
+	}
 
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
 
@@ -136,7 +138,9 @@ Brick::~Brick()
 void Brick::playSound(QString const &soundFileName)
 {
 	QString const command = mConfigurer->playSoundCommand().arg(soundFileName);
-	system(command.toStdString().c_str());
+	if (system(command.toStdString().c_str()) != 0) {
+		qDebug() << "Play sound failed";
+	}
 }
 
 void Brick::stop()

@@ -15,6 +15,8 @@
 #include "trikWiFi.h"
 
 #include <QtCore/QStringList>
+#include <QtNetwork/QNetworkInterface>
+#include <QtCore/QDebug>
 
 #include "wpaSupplicantCommunicator.h"
 
@@ -31,9 +33,10 @@ TrikWiFi::TrikWiFi(QString const &interfaceFilePrefix
 	int const monitorFileDesc = mMonitorInterface->fileDescriptor();
 	if (monitorFileDesc >= 0) {
 		mMonitorFileSocketNotifier.reset(new QSocketNotifier(monitorFileDesc, QSocketNotifier::Read));
+		QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
+	} else {
+		qDebug() << "Can not get monitor file descriptor";
 	}
-
-	QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
 }
 
 TrikWiFi::~TrikWiFi()
@@ -71,6 +74,7 @@ int TrikWiFi::disconnect()
 int TrikWiFi::scan()
 {
 	QString reply;
+
 	int const result = mControlInterface->request("SCAN", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
@@ -79,10 +83,32 @@ int TrikWiFi::scan()
 	}
 }
 
-QList<TrikWiFi::ScanResult> TrikWiFi::scanResults()
+Status TrikWiFi::status() const
+{
+	QString const command = "STATUS";
+	QString reply;
+
+	Status result;
+
+	if (mControlInterface->request(command, reply) < 0) {
+		return result;
+	}
+
+	QHash<QString, QString> parsedReply = parseReply(reply);
+
+	result.connected = parsedReply.contains("ssid") && !parsedReply["ssid"].isEmpty();
+	if (result.connected) {
+		result.ipAddress = parsedReply["ip_address"];
+		result.ssid = parsedReply["ssid"];
+	}
+
+	return result;
+}
+
+QList<ScanResult> TrikWiFi::scanResults()
 {
 	int index = 0;
-	QList<TrikWiFi::ScanResult> results;
+	QList<ScanResult> results;
 
 	forever {
 		QString const command = "BSS " + QString::number(index++);
@@ -92,26 +118,17 @@ QList<TrikWiFi::ScanResult> TrikWiFi::scanResults()
 			break;
 		}
 
-		if (reply.isEmpty() || reply.startsWith("FAIL")) {
+		QHash<QString, QString> parsedReply = parseReply(reply);
+
+		if (parsedReply.isEmpty()) {
 			break;
 		}
 
 		ScanResult currentResult;
-		currentResult.frequency = -1;
-		QStringList const lines = reply.split('\n');
 
-		foreach (QString const &line, lines) {
-			int const valuePos = line.indexOf('=') + 1;
-			if (valuePos < 1) {
-				continue;
-			}
-
-			if (line.startsWith("ssid=")) {
-				currentResult.ssid = line.mid(valuePos);
-			} else if (line.startsWith("freq=")) {
-				currentResult.frequency = line.mid(valuePos).toInt();
-			}
-		}
+		// TODO: Add error processing.
+		currentResult.frequency = parsedReply["freq"].toInt();
+		currentResult.ssid = parsedReply["ssid"];
 
 		results.append(currentResult);
 	}
@@ -172,6 +189,17 @@ int TrikWiFi::setKey(int id, QString const &key)
 	}
 }
 
+int TrikWiFi::setNoKeyNeeded(int id)
+{
+	QString reply;
+	int const result = mControlInterface->request("SET_NETWORK " + QString::number(id) + " key_mgmt NONE", reply);
+	if (result == 0 && reply == "OK\n") {
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
 int TrikWiFi::saveConfiguration()
 {
 	QString reply;
@@ -183,7 +211,7 @@ int TrikWiFi::saveConfiguration()
 	}
 }
 
-QList<TrikWiFi::NetworkConfiguration> TrikWiFi::listNetworks()
+QList<NetworkConfiguration> TrikWiFi::listNetworks()
 {
 	QString reply;
 	int const result = mControlInterface->request("LIST_NETWORKS", reply);
@@ -217,6 +245,11 @@ void TrikWiFi::processMessage(QString const &message)
 {
 	if (message.contains("CTRL-EVENT-SCAN-RESULTS")) {
 		emit scanFinished();
+	} else if (message.contains("CTRL-EVENT-CONNECTED")) {
+		system("udhcpc -i wlan0");
+		emit connected();
+	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
+		emit disconnected();
 	}
 }
 
@@ -227,4 +260,29 @@ void TrikWiFi::receiveMessages()
 		mMonitorInterface->receive(message);
 		processMessage(message);
 	}
+}
+
+QHash<QString, QString> TrikWiFi::parseReply(QString const &reply)
+{
+	QHash<QString, QString> result;
+
+	if (reply.isEmpty() || reply.startsWith("FAIL")) {
+		return result;
+	}
+
+	QStringList const lines = reply.split('\n');
+
+	foreach (QString const &line, lines) {
+		int const valuePos = line.indexOf('=') + 1;
+		if (valuePos < 1) {
+			continue;
+		}
+
+		QString const key = line.left(valuePos - 1);
+		QString const value = line.mid(valuePos);
+
+		result.insert(key, value);
+	}
+
+	return result;
 }

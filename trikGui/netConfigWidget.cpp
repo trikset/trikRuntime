@@ -29,24 +29,58 @@
 	#include <QtWidgets/QScrollBar>
 #endif
 
+#include <QtCore/QDebug>
+
+#include <trikWiFi/trikWiFi.h>
+#include <trikWiFi/wpaConfigurer.h>
+
 using namespace trikGui;
+
+using namespace trikWiFi;
 
 NetConfigWidget::NetConfigWidget(QWidget *parent)
 	: QWidget(parent)
+	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
+	, mConnectionState(notConnected)
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
-	mTitleLabel.setText(tr("Network Config"));
+	WpaConfigurer::configureWpaSupplicant("wpa-config.xml", *mWiFi);
 
-	generateNetConfigList();
-	mConfigModel.appendColumn(mConfigItems);
+	QList<NetworkConfiguration> const networksFromWpaSupplicant = mWiFi->listNetworks();
+	foreach (NetworkConfiguration const &networkConfiguration, networksFromWpaSupplicant) {
+		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
+	}
 
-	mConfigView.setModel(&mConfigModel);
+	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDoneSlot()));
+	connect(mWiFi.data(), SIGNAL(connected()), this, SLOT(connectedSlot()));
+	connect(mWiFi.data(), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
 
-	mLayout.addWidget(&mTitleLabel);
-	mLayout.addWidget(&mConfigView);
-	setLayout(&mLayout);
+	mWiFi->scan();
+
+	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	mIpLabel.setText(tr("IP:"));
+	mIpLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+	mAvailableNetworksLabel.setText(tr("Available networks:"));
+
+	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
+	mAvailableNetworksView.setSelectionMode(QAbstractItemView::SingleSelection);
+
+	mIpAddressLayout.addWidget(&mConnectionIconLabel);
+	mIpAddressLayout.addWidget(&mIpLabel);
+	mIpAddressLayout.addWidget(&mIpValueLabel);
+
+	mMainLayout.addLayout(&mIpAddressLayout);
+	mMainLayout.addWidget(&mAvailableNetworksLabel);
+	mMainLayout.addWidget(&mAvailableNetworksView);
+	setLayout(&mMainLayout);
+
+	Status const connectionStatus = mWiFi->status();
+	mConnectionState = connectionStatus.connected ? connected : notConnected;
+	setConnectionStatus(connectionStatus);
 }
 
 NetConfigWidget::~NetConfigWidget()
@@ -58,36 +92,119 @@ QString NetConfigWidget::menuEntry()
 	return tr("Network config");
 }
 
-void NetConfigWidget::generateNetConfigList()
+void NetConfigWidget::scanForAvailableNetworksDoneSlot()
 {
-	foreach (QNetworkInterface const &interface, QNetworkInterface::allInterfaces()) {
-		if (interface.flags() & QNetworkInterface::IsLoopBack) {
-			continue;
-		}
-
-		mConfigItems.append(new QStandardItem(interface.name()));
-		foreach (const QNetworkAddressEntry &entry, interface.addressEntries()) {
-			if (entry.ip().protocol() == QAbstractSocket::IPv4Protocol)
-			{
-				mConfigItems.append(new QStandardItem(QString(tr("IP address: "))));
-				mConfigItems.append(new QStandardItem(entry.ip().toString()));
-			}
-		}
-
-		mConfigItems.append(new QStandardItem(QString()));
+	mAvailableNetworksModel.clear();
+	foreach (ScanResult const &result, mWiFi->scanResults()) {
+		mAvailableNetworksModel.appendRow(new QStandardItem(result.ssid));
 	}
+
+	updateConnectionStatusesInNetworkList();
+}
+
+void NetConfigWidget::connectedSlot()
+{
+	mConnectionState = connected;
+	setConnectionStatus(mWiFi->status());
+}
+
+void NetConfigWidget::disconnectedSlot()
+{
+	if (mConnectionState != connecting) {
+		mConnectionState = notConnected;
+	}
+
+	setConnectionStatus(mWiFi->status());
+
+	// Now to determine reason of disconnect --- maybe the network is out of range now.
+	mWiFi->scan();
 }
 
 void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: case Qt::Key_Enter: {
-			close();
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-			break;
+	case Qt::Key_Meta:
+	case Qt::Key_Left: {
+		close();
+		break;
+	}
+	case Qt::Key_Enter: {
+		connectToSelectedNetwork();
+	}
+	default: {
+		QWidget::keyPressEvent(event);
+		break;
+	}
+	}
+}
+
+void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
+{
+	QPixmap pixmap;
+	switch (mConnectionState) {
+	case connected:
+		pixmap.load("://resources/connected.png");
+		mIpValueLabel.setText(status.ipAddress);
+		mCurrentSsid = status.ssid;
+		break;
+	case connecting:
+		pixmap.load("://resources/unknownConnectionStatus.png");
+		mIpValueLabel.setText(tr("connecting..."));
+		mCurrentSsid = "";
+		break;
+	case notConnected:
+		pixmap.load("://resources/notConnected.png");
+		mIpValueLabel.setText(tr("no connection"));
+		mCurrentSsid = "";
+		break;
+	}
+
+	mConnectionIconLabel.setPixmap(pixmap);
+	updateConnectionStatusesInNetworkList();
+}
+
+void NetConfigWidget::updateConnectionStatusesInNetworkList()
+{
+	for (int i = 0; i < mAvailableNetworksModel.rowCount(); ++i) {
+		QStandardItem * const item = mAvailableNetworksModel.item(i);
+		QFont font = item->font();
+		font.setBold(false);
+		item->setFont(font);
+		if (item->text() == mCurrentSsid) {
+			item->setIcon(QIcon("://resources/connectedToNetwork.png"));
+			font.setBold(true);
+			item->setFont(font);
+		} else if (mNetworksAvailableForConnection.contains(item->text())) {
+			item->setIcon(QIcon("://resources/notConnectedToNetwork.png"));
+		} else {
+			item->setIcon(QIcon("://resources/connectionToNetworkImpossible.png"));
 		}
 	}
+
+	mAvailableNetworksView.setFocus();
+	mAvailableNetworksView.selectionModel()->select(
+			mAvailableNetworksModel.index(0, 0)
+			, QItemSelectionModel::ClearAndSelect
+			);
+}
+
+void NetConfigWidget::connectToSelectedNetwork()
+{
+	QModelIndexList const selected = mAvailableNetworksView.selectionModel()->selectedIndexes();
+	if (selected.size() != 1) {
+		return;
+	}
+
+	QString const ssid = mAvailableNetworksModel.itemFromIndex(selected[0])->text();
+	if (ssid == mCurrentSsid) {
+		return;
+	}
+
+	if (!mNetworksAvailableForConnection.contains(ssid)) {
+		return;
+	}
+
+	mConnectionState = connecting;
+
+	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
 }

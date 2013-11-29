@@ -14,6 +14,8 @@
 
 TEMPLATE = lib
 
+QT += xml
+
 DEFINES += TRIKWIFI_LIBRARY
 
 CONFIG(debug, debug | release) {
@@ -45,11 +47,13 @@ win32 {
 
 HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
+	$$PWD/include/trikWiFi/wpaConfigurer.h \
 	$$PWD/include/trikWiFi/declSpec.h \
 	$$PWD/src/wpaSupplicantCommunicator.h \
 
 SOURCES += \
 	$$PWD/src/trikWiFi.cpp \
+	$$PWD/src/wpaConfigurer.cpp \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
 
 unix {
