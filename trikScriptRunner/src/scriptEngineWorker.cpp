@@ -40,8 +40,8 @@ Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(ServoMotor*)
 
-ScriptEngineWorker::ScriptEngineWorker()
-	: mBrick(*this->thread())
+ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
+	: mBrick(*this->thread(), configFilePath)
 {
 	qScriptRegisterMetaType(&mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);

@@ -31,6 +31,18 @@
 
 using namespace trikGui;
 
+void printUsage() {
+	qDebug() << "Usage: ./trikGui [-qws] [-c <full path to config files>]";
+	qDebug() << "Arguments:";
+	qDebug() << "  -qws --- start in Qt for Embedded Linux server mode."
+				<< "Exactly one GUI application needs to be run as server at a time. trikGui generally"
+				<< "shall use this parameter, as in many cases it is the only GUI application on robot.";
+	qDebug() << "  -c --- path to a directory where all configs for TRIK runtime are stored. Config files are"
+				<< "config.xml (configuration of robot hardware for trikControl library) and wpa-config.xml"
+				<< "(configuration of known WiFi networks). Default value for this parameter is current directory."
+				<< "Example: ./trikGui -qws -c /home/root/";
+}
+
 int main(int argc, char *argv[])
 {
 	TrikGuiApplication app(argc, argv);
@@ -41,6 +53,25 @@ int main(int argc, char *argv[])
 		app.installTranslator(&guiTranslator);
 	}
 
+	if (app.arguments().contains("-help")) {
+		printUsage();
+		return 0;
+	}
+
+	QString configPath = "./";
+	if (app.arguments().contains("-c")) {
+		int const index = app.arguments().indexOf("-c");
+		if (app.arguments().count() <= index + 1) {
+			printUsage();
+			return 1;
+		}
+
+		configPath = app.arguments()[index + 1];
+		if (configPath.right(1) != "/") {
+			configPath += "/";
+		}
+	}
+
 #ifdef Q_WS_QWS
 	QWSServer * const server = QWSServer::instance();
 	if (server) {
@@ -48,7 +79,7 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	StartWidget w;
+	StartWidget w(configPath);
 	w.show();
 
 	return app.exec();

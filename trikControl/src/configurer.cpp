@@ -20,7 +20,7 @@
 
 using namespace trikControl;
 
-Configurer::Configurer()
+Configurer::Configurer(QString const &configFilePath)
 	: mI2cDeviceId(0)
 	, mLedOn(0)
 	, mLedOff(0)
@@ -28,7 +28,7 @@ Configurer::Configurer()
 {
 	QDomDocument config("config");
 
-	QFile file("config.xml");
+	QFile file(configFilePath + "config.xml");
 	if (!file.open(QIODevice::ReadOnly)) {
 		qDebug() << "Failed to open config.xml for reading";
 		throw "Failed to open config.xml for reading";

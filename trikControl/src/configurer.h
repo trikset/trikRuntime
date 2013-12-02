@@ -26,7 +26,9 @@ namespace trikControl {
 /// Parses config file and holds information about various configuration parameters.
 class Configurer {
 public:
-	Configurer();
+	/// Constructor
+	/// @param configFilePath - path to config.xml.
+	Configurer(QString const &configFilePath);
 
 	/// Returns sh script that shall be run on program startup.
 	QString initScript() const;

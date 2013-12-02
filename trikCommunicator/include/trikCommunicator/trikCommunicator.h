@@ -37,7 +37,8 @@ class TrikCommunicator : public QObject
 
 public:
 	/// Constructor that creates its own instance of a script runner.
-	TrikCommunicator();
+	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
+	TrikCommunicator(QString const &configFilePath);
 
 	/// Constructor that accepts external script runner and issues commands to it. Takes ownership of a runner.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);

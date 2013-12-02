@@ -28,7 +28,10 @@ class Controller : public QObject
 	Q_OBJECT
 
 public:
-	Controller();
+	/// Constructor.
+	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
+	Controller(QString const &configPath);
+
 	~Controller();
 
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.

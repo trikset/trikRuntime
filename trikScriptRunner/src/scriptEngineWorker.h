@@ -32,7 +32,8 @@ class ScriptEngineWorker : public QObject
 
 public:
 	/// Constructor.
-	ScriptEngineWorker();
+	/// @param configFilePath - path to a config file for trikControl.
+	ScriptEngineWorker(QString const &configFilePath);
 
 	/// Returns true, if script engine is initialized and running.
 	bool isRunning() const;

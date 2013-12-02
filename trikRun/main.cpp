@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
 
 	QString const scriptFileName = args[1];
 
-	trikScriptRunner::TrikScriptRunner runner;
+	// TODO: add the ability to alter config file path.
+	trikScriptRunner::TrikScriptRunner runner("./");
 	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
 	runner.runFromFile(scriptFileName);
 

@@ -22,9 +22,9 @@
 
 using namespace trikCommunicator;
 
-TrikCommunicator::TrikCommunicator()
+TrikCommunicator::TrikCommunicator(QString const &configFilePath)
 	: mConnection(new QTcpSocket())
-	, mRunner(new trikScriptRunner::TrikScriptRunner())
+	, mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath))
 	, mOwnsRunner(true)
 {
 }

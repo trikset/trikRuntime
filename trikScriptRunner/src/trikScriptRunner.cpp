@@ -22,9 +22,9 @@
 
 using namespace trikScriptRunner;
 
-TrikScriptRunner::TrikScriptRunner()
+TrikScriptRunner::TrikScriptRunner(QString const &configFilePath)
 {
-	mEngineWorker = new ScriptEngineWorker();
+	mEngineWorker = new ScriptEngineWorker(configFilePath);
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));

@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
 
 	qDebug() << "Running TrikServer on port" << port;
 
-	trikCommunicator::TrikCommunicator communicator;
+	// TODO: Add the ability to change path to a configuration file.
+	trikCommunicator::TrikCommunicator communicator("./");
 	communicator.listen(port);
 
 	return app.exec();

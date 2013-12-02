@@ -40,18 +40,22 @@
 
 namespace trikGui {
 
+/// Main widget for trikGui application, displays menu which allows to open other widgets.
 class StartWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit StartWidget(QWidget *parent = 0);
+	/// Constructor
+	/// @param configPath - full path to configuration files.
+	/// @param parent - parent of this widget in Qt object hierarchy.
+	explicit StartWidget(QString const &configPath, QWidget *parent = 0);
+
 	~StartWidget();
 
-protected:
-	void keyPressEvent(QKeyEvent *event);
-
 private:
+	virtual void keyPressEvent(QKeyEvent *event);
+
 	void launch();
 
 	QString mExitItemTitle;
@@ -61,6 +65,7 @@ private:
 	QStandardItemModel mMenuModel;
 	QList<QStandardItem *> mMenuItems;
 	Controller mController;
+	QString const mConfigPath;
 };
 
 }

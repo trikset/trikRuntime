@@ -51,7 +51,8 @@ class NetConfigWidget : public QWidget
 public:
 	/// Constructor.
 	/// @param parent - parent QObject.
-	explicit NetConfigWidget(QWidget *parent = 0);
+	/// @param configPath - path to wpa-config.xml.
+	explicit NetConfigWidget(QString const &configPath, QWidget *parent = 0);
 
 	/// Destructor.
 	~NetConfigWidget();

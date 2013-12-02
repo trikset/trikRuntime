@@ -38,7 +38,7 @@ using namespace trikGui;
 
 using namespace trikWiFi;
 
-NetConfigWidget::NetConfigWidget(QWidget *parent)
+NetConfigWidget::NetConfigWidget(QString const &configPath, QWidget *parent)
 	: QWidget(parent)
 	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
 	, mConnectionState(notConnected)
@@ -46,7 +46,7 @@ NetConfigWidget::NetConfigWidget(QWidget *parent)
 	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
-	WpaConfigurer::configureWpaSupplicant("wpa-config.xml", *mWiFi);
+	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
 
 	QList<NetworkConfiguration> const networksFromWpaSupplicant = mWiFi->listNetworks();
 	foreach (NetworkConfiguration const &networkConfiguration, networksFromWpaSupplicant) {

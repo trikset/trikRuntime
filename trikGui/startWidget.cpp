@@ -30,8 +30,10 @@
 
 using namespace trikGui;
 
-StartWidget::StartWidget(QWidget *parent)
+StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	: QWidget(parent)
+	, mController(configPath)
+	, mConfigPath(configPath)
 {
 	mExitItemTitle = tr("Exit");
 
@@ -64,7 +66,7 @@ void StartWidget::launch()
 		FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
 		fileManagerWidget->show();
 	} else if (currentItemText == NetConfigWidget::menuEntry()) {
-		NetConfigWidget *netConfigWidget = new NetConfigWidget();
+		NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
 		netConfigWidget->show();
 	} else if (currentItemText == mExitItemTitle) {
 		QApplication::exit(0);

@@ -22,8 +22,8 @@
 
 using namespace trikControl;
 
-Brick::Brick(QThread &guiThread)
-	: mConfigurer(new Configurer())
+Brick::Brick(QThread &guiThread, QString const &configFilePath)
+	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(NULL)
 	, mDisplay(guiThread)
 {
