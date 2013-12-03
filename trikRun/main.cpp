@@ -25,20 +25,38 @@
 
 #include <trikScriptRunner/trikScriptRunner.h>
 
+void printUsage()
+{
+	qDebug() << "Usage: trikRun <QtScript file name> [-c <config file name]>";
+}
+
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 	QStringList const args = app.arguments();
 
 	if (args.count() != 2) {
-		qDebug() << "Usage: trikRun <QtScript file name>";
+		printUsage();
 		return 1;
 	}
 
 	QString const scriptFileName = args[1];
 
-	// TODO: add the ability to alter config file path.
-	trikScriptRunner::TrikScriptRunner runner("./");
+	QString configPath = "./";
+	if (app.arguments().contains("-c")) {
+		int const index = app.arguments().indexOf("-c");
+		if (app.arguments().count() <= index + 1) {
+			printUsage();
+			return 1;
+		}
+
+		configPath = app.arguments()[index + 1];
+		if (configPath.right(1) != "/") {
+			configPath += "/";
+		}
+	}
+
+	trikScriptRunner::TrikScriptRunner runner(configPath);
 	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
 	runner.runFromFile(scriptFileName);
 

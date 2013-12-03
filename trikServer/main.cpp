@@ -20,6 +20,7 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include <QtCore/QStringList>
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
@@ -30,10 +31,23 @@ int main(int argc, char *argv[])
 
 	QApplication app(argc, argv);
 
+	QString configPath = "./";
+	if (app.arguments().contains("-c")) {
+		int const index = app.arguments().indexOf("-c");
+		if (app.arguments().count() <= index + 1) {
+			qDebug() << "Usage: ./trikServer [-c <config file path>]";
+			return 1;
+		}
+
+		configPath = app.arguments()[index + 1];
+		if (configPath.right(1) != "/") {
+			configPath += "/";
+		}
+	}
+
 	qDebug() << "Running TrikServer on port" << port;
 
-	// TODO: Add the ability to change path to a configuration file.
-	trikCommunicator::TrikCommunicator communicator("./");
+	trikCommunicator::TrikCommunicator communicator(configPath);
 	communicator.listen(port);
 
 	return app.exec();
