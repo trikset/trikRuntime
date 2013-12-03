@@ -27,6 +27,7 @@ Controller::Controller(QString const &configPath)
 	: mScriptRunner(configPath)
 	, mCommunicator(mScriptRunner)
 	, mRunningWidget(NULL)
+	, mExecutionState(idle)
 {
 	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
 	mCommunicator.listen(communicatorPort);
@@ -43,8 +44,8 @@ void Controller::runFile(QString const &filePath)
 	if (fileInfo.suffix() == "qts") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
+		mExecutionState = running;
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
-		mScriptRunner.run("brick.stop()");
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}
@@ -53,13 +54,25 @@ void Controller::runFile(QString const &filePath)
 void Controller::abortExecution()
 {
 	mScriptRunner.abort();
+
+	if (mExecutionState == running) {
+		mExecutionState = stopping;
+		mScriptRunner.run("brick.stop()");
+	}
 }
 
 void Controller::scriptExecutionCompleted()
 {
-	if (mRunningWidget) {
-		mRunningWidget->close();
-		delete mRunningWidget;
-		mRunningWidget = NULL;
+	if (mExecutionState == running) {
+		mExecutionState = stopping;
+		mScriptRunner.run("brick.stop()");
+	} else {
+		mExecutionState = idle;
+
+		if (mRunningWidget) {
+			mRunningWidget->close();
+			delete mRunningWidget;
+			mRunningWidget = NULL;
+		}
 	}
 }

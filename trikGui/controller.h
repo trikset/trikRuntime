@@ -44,10 +44,18 @@ private slots:
 	void scriptExecutionCompleted();
 
 private:
+	enum State {
+		idle
+		, running
+		, stopping
+	};
+
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
 
 	RunningWidget * mRunningWidget;  // Has ownership.
+
+	State mExecutionState;
 };
 
 }

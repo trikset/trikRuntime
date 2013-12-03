@@ -58,6 +58,9 @@ public:
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
 
+	/// Clears event driven mode, returning brick to a state where a script will exit immediately.
+	void resetEventDrivenMode();
+
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).
 	void playSound(QString const &soundFileName);
@@ -112,6 +115,13 @@ public slots:
 	/// Starts event loop for script.
 	void run();
 
+	/// Aborts script execution.
+	void quit();
+
+signals:
+	/// Emitted when script requested system to abort execution.
+	void quitSignal();
+
 private:
 	class SleeperThread : public QThread
 	{
@@ -142,7 +152,7 @@ private:
 
 	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
-	bool mRunning;
+	bool mInEventDrivenMode;
 };
 
 }

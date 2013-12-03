@@ -42,37 +42,32 @@ Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(ServoMotor*)
 
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
-	: mBrick(*this->thread(), configFilePath)
+	: mEngine(NULL)
+	, mBrick(*this->thread(), configFilePath)
 {
-	qScriptRegisterMetaType(&mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, batteryToScriptValue, batteryFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, encoderToScriptValue, encoderFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, keysToScriptValue, keysFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, ledToScriptValue, ledFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);
-
-	QScriptValue brickProxy = mEngine.newQObject(&mBrick);
-	mEngine.globalObject().setProperty("brick", brickProxy);
-
-	mEngine.setProcessEventsInterval(1);
+	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(scriptRequestingToQuitSlot()));
 }
 
 void ScriptEngineWorker::run(QString const &script)
 {
-	if (mEngine.isEvaluating()) {
-		qDebug() << "Script is already running";
+	if (mEngine != NULL) {
+		if (mEngine->isEvaluating()) {
+			mEngine->abortEvaluation();
+		}
 
-		return;
+		// Here we can safely delete mEngine, we're not in its stack. There's no way to call run() from Qt Script.
+		delete mEngine;
 	}
 
-	QScriptValue const result = mEngine.evaluate(script);
+	initScriptEngine();
 
-	if (mEngine.hasUncaughtException()) {
-		int const line = mEngine.uncaughtExceptionLineNumber();
+	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
+	mEngine->globalObject().setProperty("brick", brickProxy);
+
+	QScriptValue const result = mEngine->evaluate(script);
+
+	if (mEngine->hasUncaughtException()) {
+		int const line = mEngine->uncaughtExceptionLineNumber();
 
 		qDebug() << "uncaught exception at line" << line << ":" << result.toString();
 	}
@@ -84,10 +79,46 @@ void ScriptEngineWorker::run(QString const &script)
 
 void ScriptEngineWorker::abort()
 {
-	mEngine.abortEvaluation();
+	mEngine->abortEvaluation();
+
+	// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
+	// right now because we can be in mEngine's call stack.
+	mEngine->deleteLater();
+	mEngine = NULL;
 }
 
 bool ScriptEngineWorker::isRunning() const
 {
-	return mEngine.isEvaluating();
+	return mEngine->isEvaluating();
+}
+
+bool ScriptEngineWorker::isInEventDrivenMode() const
+{
+	return mBrick.isInEventDrivenMode();
+}
+
+void ScriptEngineWorker::scriptRequestingToQuitSlot()
+{
+	abort();
+	emit completed();
+}
+
+void ScriptEngineWorker::initScriptEngine()
+{
+	mEngine = new QScriptEngine();
+
+	mBrick.resetEventDrivenMode();
+
+	qScriptRegisterMetaType(mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
+	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
+	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);
+	qScriptRegisterMetaType(mEngine, keysToScriptValue, keysFromScriptValue);
+	qScriptRegisterMetaType(mEngine, ledToScriptValue, ledFromScriptValue);
+	qScriptRegisterMetaType(mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
+	qScriptRegisterMetaType(mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);
+
+	mEngine->setProcessEventsInterval(1);
 }

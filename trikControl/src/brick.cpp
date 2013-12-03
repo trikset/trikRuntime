@@ -27,7 +27,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(NULL)
 	, mDisplay(guiThread)
-	, mRunning(false)
+	, mInEventDrivenMode(false)
 {
 	if (system(mConfigurer->initScript().toStdString().c_str()) != 0) {
 		qDebug() << "Init script failed";
@@ -213,22 +213,6 @@ Encoder *Brick::encoder(QString const &port)
 	return NULL;
 }
 
-//Encoder *Brick::encoder(int const &port)
-//{
-//	switch (port) {
-//	case 1:
-//		return mEncoder1;
-//	case 2:
-//		return mEncoder2;
-//	case 3:
-//		return mEncoder3;
-//	case 4:
-//		return mEncoder4;
-//	default:
-//		return mEncoder1;
-//	}
-//}
-
 Battery *Brick::battery()
 {
 	return mBattery;
@@ -276,10 +260,21 @@ Led *Brick::led()
 
 void Brick::run()
 {
-	mRunning = true;
+	mInEventDrivenMode = true;
 }
 
 bool Brick::isInEventDrivenMode() const
 {
-	return mRunning;
+	return mInEventDrivenMode;
 }
+
+void Brick::quit()
+{
+	emit quitSignal();
+}
+
+void Brick::resetEventDrivenMode()
+{
+	mInEventDrivenMode = false;
+}
+

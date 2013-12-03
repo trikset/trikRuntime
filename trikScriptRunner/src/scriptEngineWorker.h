@@ -41,6 +41,10 @@ public:
 	/// Aborts script execution.
 	void abort();
 
+	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
+	/// If it is false, script will exit immediately.
+	bool isInEventDrivenMode() const;
+
 signals:
 	/// Fired when current script execution completed.
 	void completed();
@@ -49,8 +53,17 @@ public slots:
 	/// Executes given script.
 	void run(QString const &script);
 
+private slots:
+	/// Abort script execution.
+	void scriptRequestingToQuitSlot();
+
 private:
-	QScriptEngine mEngine;
+	void initScriptEngine();
+
+	// Has ownership. No smart pointers here because we need to do manual memory managment
+	// due to complicated mEngine lifecycle (see .cpp for more details).
+	QScriptEngine *mEngine;
+
 	trikControl::Brick mBrick;
 };
 

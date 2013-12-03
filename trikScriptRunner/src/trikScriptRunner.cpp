@@ -60,6 +60,11 @@ void TrikScriptRunner::abort()
 	mEngineWorker->abort();
 }
 
+bool TrikScriptRunner::isInEventDrivenMode() const
+{
+	return mEngineWorker->isInEventDrivenMode();
+}
+
 QString TrikScriptRunner::readFromFile(QString const &fileName)
 {
 	QFile file(fileName);
