@@ -16,6 +16,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QDateTime>
+#include <QtCore/QCoreApplication>
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -26,6 +27,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(NULL)
 	, mDisplay(guiThread)
+	, mRunning(false)
 {
 	if (system(mConfigurer->initScript().toStdString().c_str()) != 0) {
 		qDebug() << "Init script failed";
@@ -270,4 +272,14 @@ Display *Brick::display()
 Led *Brick::led()
 {
 	return mLed;
+}
+
+void Brick::run()
+{
+	mRunning = true;
+}
+
+bool Brick::isInEventDrivenMode() const
+{
+	return mRunning;
 }

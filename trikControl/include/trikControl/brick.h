@@ -54,6 +54,10 @@ public:
 
 	~Brick();
 
+	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
+	/// If it is false, script will exit immediately.
+	bool isInEventDrivenMode() const;
+
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).
 	void playSound(QString const &soundFileName);
@@ -105,6 +109,9 @@ public slots:
 	/// Returns reference to LED control class.
 	Led *led();
 
+	/// Starts event loop for script.
+	void run();
+
 private:
 	class SleeperThread : public QThread
 	{
@@ -132,6 +139,10 @@ private:
 	I2cCommunicator *mI2cCommunicator;  // Has ownership.
 	Display mDisplay;
 	Led *mLed;  // Has ownership.
+
+	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
+	/// If it is false, script will exit immediately.
+	bool mRunning;
 };
 
 }
