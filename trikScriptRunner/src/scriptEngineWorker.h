@@ -55,7 +55,10 @@ public slots:
 
 private slots:
 	/// Abort script execution.
-	void scriptRequestingToQuitSlot();
+	void onScriptRequestingToQuit();
+
+	/// Do cleanup when script engine finally is deleted.
+	void onScriptEngineDestroyed();
 
 private:
 	void initScriptEngine();

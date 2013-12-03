@@ -45,7 +45,7 @@ ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
 	: mEngine(NULL)
 	, mBrick(*this->thread(), configFilePath)
 {
-	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(scriptRequestingToQuitSlot()));
+	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
 void ScriptEngineWorker::run(QString const &script)
@@ -84,7 +84,6 @@ void ScriptEngineWorker::abort()
 	// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
 	// right now because we can be in mEngine's call stack.
 	mEngine->deleteLater();
-	mEngine = NULL;
 }
 
 bool ScriptEngineWorker::isRunning() const
@@ -97,7 +96,7 @@ bool ScriptEngineWorker::isInEventDrivenMode() const
 	return mBrick.isInEventDrivenMode();
 }
 
-void ScriptEngineWorker::scriptRequestingToQuitSlot()
+void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	abort();
 	emit completed();
@@ -106,6 +105,8 @@ void ScriptEngineWorker::scriptRequestingToQuitSlot()
 void ScriptEngineWorker::initScriptEngine()
 {
 	mEngine = new QScriptEngine();
+
+	connect(mEngine, SIGNAL(destroyed()), this, SLOT(onScriptEngineDestroyed()));
 
 	mBrick.resetEventDrivenMode();
 
@@ -121,4 +122,9 @@ void ScriptEngineWorker::initScriptEngine()
 	qScriptRegisterMetaType(mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);
 
 	mEngine->setProcessEventsInterval(1);
+}
+
+void ScriptEngineWorker::onScriptEngineDestroyed()
+{
+	mEngine = NULL;
 }
