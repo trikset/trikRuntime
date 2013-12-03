@@ -45,17 +45,23 @@ void printUsage() {
 
 int main(int argc, char *argv[])
 {
+	for (int i = 1; i < argc; ++i) {
+		if (QString(argv[i]).contains("-help")) {
+			printUsage();
+			return 0;
+		}
+	}
+
+	if (argc == 1) {
+		printUsage();
+	}
+
 	TrikGuiApplication app(argc, argv);
 
 	QTranslator guiTranslator;
 	if (!app.arguments().contains("--no-locale")) {
 		guiTranslator.load(":/trikGui_ru");
 		app.installTranslator(&guiTranslator);
-	}
-
-	if (app.arguments().contains("-help")) {
-		printUsage();
-		return 0;
 	}
 
 	QString configPath = "./";
