@@ -30,12 +30,13 @@
 using namespace trikScriptRunner;
 using namespace trikControl;
 
+Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
+Q_DECLARE_METATYPE(Keys*)
 Q_DECLARE_METATYPE(Led*)
 Q_DECLARE_METATYPE(PowerMotor*)
-Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(ServoMotor*)
@@ -43,12 +44,13 @@ Q_DECLARE_METATYPE(ServoMotor*)
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
 	: mBrick(*this->thread(), configFilePath)
 {
+	qScriptRegisterMetaType(&mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, encoderToScriptValue, encoderFromScriptValue);
+	qScriptRegisterMetaType(&mEngine, keysToScriptValue, keysFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, ledToScriptValue, ledFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
-	qScriptRegisterMetaType(&mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
 	qScriptRegisterMetaType(&mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);

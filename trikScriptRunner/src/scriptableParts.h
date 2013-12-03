@@ -16,17 +16,21 @@
 
 #include <QtScript/QScriptEngine>
 
+#include <trikControl/analogSensor.h>
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
+#include <trikControl/keys.h>
 #include <trikControl/led.h>
 #include <trikControl/powerMotor.h>
-#include <trikControl/analogSensor.h>
 #include <trikControl/sensor.h>
 #include <trikControl/sensor3d.h>
 #include <trikControl/servoMotor.h>
 
 namespace trikScriptRunner {
+
+QScriptValue analogSensorToScriptValue(QScriptEngine *engine, trikControl::AnalogSensor* const &in);
+void analogSensorFromScriptValue(QScriptValue const &object, trikControl::AnalogSensor* &out);
 
 QScriptValue batteryToScriptValue(QScriptEngine *engine, trikControl::Battery* const &in);
 void batteryFromScriptValue(QScriptValue const &object, trikControl::Battery* &out);
@@ -37,14 +41,14 @@ void displayFromScriptValue(QScriptValue const &object, trikControl::Display* &o
 QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::Encoder* const &in);
 void encoderFromScriptValue(QScriptValue const &object, trikControl::Encoder* &out);
 
+QScriptValue keysToScriptValue(QScriptEngine *engine, trikControl::Keys* const &in);
+void keysFromScriptValue(QScriptValue const &object, trikControl::Keys* &out);
+
 QScriptValue ledToScriptValue(QScriptEngine *engine, trikControl::Led* const &in);
 void ledFromScriptValue(QScriptValue const &object, trikControl::Led* &out);
 
 QScriptValue powerMotorToScriptValue(QScriptEngine *engine, trikControl::PowerMotor* const &in);
 void powerMotorFromScriptValue(QScriptValue const &object, trikControl::PowerMotor* &out);
-
-QScriptValue analogSensorToScriptValue(QScriptEngine *engine, trikControl::AnalogSensor* const &in);
-void analogSensorFromScriptValue(QScriptValue const &object, trikControl::AnalogSensor* &out);
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
