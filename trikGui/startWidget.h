@@ -58,7 +58,6 @@ private:
 
 	void launch();
 
-	QString mExitItemTitle;
 	QVBoxLayout mLayout;
 	QLabel mTitleLabel;
 	QListView mMenuView;

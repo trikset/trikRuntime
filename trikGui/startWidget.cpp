@@ -35,15 +35,12 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	, mController(configPath)
 	, mConfigPath(configPath)
 {
-	mExitItemTitle = tr("Exit");
-
 	setWindowState(Qt::WindowFullScreen);
 
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuItems.append(new QStandardItem(FileManagerWidget::menuEntry()));
 	mMenuItems.append(new QStandardItem(NetConfigWidget::menuEntry()));
-	mMenuItems.append(new QStandardItem(mExitItemTitle));
 
 	mMenuModel.appendColumn(mMenuItems);
 
@@ -68,8 +65,6 @@ void StartWidget::launch()
 	} else if (currentItemText == NetConfigWidget::menuEntry()) {
 		NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
 		netConfigWidget->show();
-	} else if (currentItemText == mExitItemTitle) {
-		QApplication::exit(0);
 	}
 }
 
