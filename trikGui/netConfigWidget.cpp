@@ -206,5 +206,7 @@ void NetConfigWidget::connectToSelectedNetwork()
 
 	mConnectionState = connecting;
 
+	setConnectionStatus(Status());
+
 	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
 }
