@@ -19,6 +19,7 @@
 
 #include "scriptableParts.h"
 #include "scriptEngineWorker.h"
+#include "fileUtils.h"
 
 using namespace trikScriptRunner;
 
@@ -52,7 +53,7 @@ void TrikScriptRunner::run(QString const &script)
 
 void TrikScriptRunner::runFromFile(QString const &fileName)
 {
-	emit threadRun(readFromFile(fileName));
+	emit threadRun(FileUtils::readFromFile(fileName));
 }
 
 void TrikScriptRunner::abort()
@@ -63,20 +64,4 @@ void TrikScriptRunner::abort()
 bool TrikScriptRunner::isInEventDrivenMode() const
 {
 	return mEngineWorker->isInEventDrivenMode();
-}
-
-QString TrikScriptRunner::readFromFile(QString const &fileName)
-{
-	QFile file(fileName);
-	file.open(QIODevice::ReadOnly | QIODevice::Text);
-	if (!file.isOpen()) {
-		throw "Can not open file for reading";
-	}
-
-	QTextStream input;
-	input.setDevice(&file);
-	input.setCodec("UTF-8");
-	QString const result = input.readAll();
-	file.close();
-	return result;
 }

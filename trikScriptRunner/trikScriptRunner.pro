@@ -51,14 +51,23 @@ HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptEngineWorker.h \
+	$$PWD/src/fileUtils.h \
 
 SOURCES += \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
+	$$PWD/src/fileUtils.cpp \
 
 unix {
-        target.path = $$[INSTALL_ROOT]/
-        INSTALLS +=   target
+	target.path = $$[INSTALL_ROOT]/
+	INSTALLS +=   target
 }
 
+win32 {
+	QMAKE_POST_LINK = "xcopy system.js $$replace(DESTDIR, /, \\) /q /y \
+			"
+} else {
+	QMAKE_POST_LINK = "cp -f system.js $$DESTDIR \
+			"
+}

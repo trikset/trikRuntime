@@ -26,6 +26,7 @@
 #include <trikControl/servoMotor.h>
 
 #include "scriptableParts.h"
+#include "fileUtils.h"
 
 using namespace trikScriptRunner;
 using namespace trikControl;
@@ -44,6 +45,7 @@ Q_DECLARE_METATYPE(ServoMotor*)
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
 	: mEngine(NULL)
 	, mBrick(*this->thread(), configFilePath)
+	, mConfigFilePath(configFilePath)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -64,13 +66,11 @@ void ScriptEngineWorker::run(QString const &script)
 	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
-	QScriptValue const result = mEngine->evaluate(script);
-
-	if (mEngine->hasUncaughtException()) {
-		int const line = mEngine->uncaughtExceptionLineNumber();
-
-		qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+	if (FileUtils::fileExists(mConfigFilePath + "system.js")) {
+		runAndReportException(FileUtils::readFromFile(mConfigFilePath + "system.js"));
 	}
+
+	runAndReportException(script);
 
 	if (!mBrick.isInEventDrivenMode()) {
 		emit completed();
@@ -127,4 +127,15 @@ void ScriptEngineWorker::initScriptEngine()
 void ScriptEngineWorker::onScriptEngineDestroyed()
 {
 	mEngine = NULL;
+}
+
+void ScriptEngineWorker::runAndReportException(QString const &script)
+{
+	QScriptValue const result = mEngine->evaluate(script);
+
+	if (mEngine->hasUncaughtException()) {
+		int const line = mEngine->uncaughtExceptionLineNumber();
+
+		qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+	}
 }

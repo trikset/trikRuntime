@@ -61,13 +61,17 @@ private slots:
 	void onScriptEngineDestroyed();
 
 private:
+
 	void initScriptEngine();
+	void runAndReportException(QString const &script);
 
 	// Has ownership. No smart pointers here because we need to do manual memory managment
 	// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 
 	trikControl::Brick mBrick;
+
+	QString mConfigFilePath;
 };
 
 }
