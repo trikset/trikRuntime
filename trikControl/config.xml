@@ -24,6 +24,8 @@
 		cat /sys/class/pwm/ecap_cap.2/config > /dev/null
 
 		echo 1 > /sys/devices/virtual/input/input1/enable_device
+
+		amixer -q set PCM 127
 	</initScript>
 	
 	<!-- Servomotors configuration, maps logical port to device file, file for setting period,
