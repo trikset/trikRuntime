@@ -48,6 +48,11 @@ void Controller::runFile(QString const &filePath)
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
+	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
+		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
+		mRunningWidget->show();
+		mExecutionState = running;
+		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");");
 	}
 }
 

@@ -16,8 +16,7 @@ TEMPLATE = lib
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-QT += xml gui
-QT += network
+QT += xml gui network
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
