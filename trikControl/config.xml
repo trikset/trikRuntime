@@ -32,6 +32,7 @@
 	     initial period value and type of motor on that port.
 	     Motor type parameters like calibration curve are described separately, in "motorTypes" section. -->
 	<servoMotors>
+		<!-- JE1 -->
 		<motor
 			port="1"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
@@ -40,6 +41,7 @@
 			defaultType="defaultServo"
 			invert="false"
 		/>
+		<!-- JE2 -->
 		<motor
 			port="2"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
@@ -48,6 +50,7 @@
 			defaultType="defaultServo"
 			invert="false"
 		/>
+		<!-- JE3 -->
 		<motor
 			port="4"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
@@ -59,16 +62,19 @@
 	</servoMotors>
 
 	<pwmCaptures>
+		<!-- JC1 -->
 		<capture
 			port="1"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
+		<!-- JC2 -->
 		<capture
 			port="2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
 		/>
+		<!-- JC3 -->
 		<capture
 			port="3"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
@@ -81,9 +87,13 @@
 	     Power motors do not have a type, because their driver is controlled by high-level 
 	     commands and handles motor specifics by itself. -->
 	<powerMotors>
+		<!-- JM1 -->
 		<motor port="1" i2cCommandNumber="0x14" invert="false" />
+		<!-- JM2 -->
 		<motor port="2" i2cCommandNumber="0x15" invert="false" />
+		<!--  M1 -->
 		<motor port="3" i2cCommandNumber="0x16" invert="false" />
+		<!-- JM3 -->
 		<motor port="4" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
 
@@ -92,15 +102,28 @@
 	     Analog sensors do not have a type, because their driver is controlled by high-level 
 	     commands and handles sensor specifics by itself. -->
 	<analogSensors>
-		<analogSensor port="1" i2cCommandNumber="0x24" />
-		<analogSensor port="2" i2cCommandNumber="0x25" />
+		<!-- JA1  -->
+		<analogSensor port="1" i2cCommandNumber="0x25" />
+		<!-- JA2  -->
+		<analogSensor port="2" i2cCommandNumber="0x24" />
+		<!-- JA3  -->
+		<analogSensor port="3" i2cCommandNumber="0x23" />
+		<!-- JA4  -->
+		<analogSensor port="4" i2cCommandNumber="0x22" />
+		<!-- JA5  -->
+		<analogSensor port="5" i2cCommandNumber="0x21" />
+		<!-- JA6  -->
+		<analogSensor port="6" i2cCommandNumber="0x20" />
 	</analogSensors>
 
 	<!-- Encoders configuration, maps logical port to I2C command. 
 	     I2C device path and device id are set separately, in "i2c" section. -->
 	<encoders>
+		<!-- JB2 -->
 		<encoder port="2" i2cCommandNumber="0x31" />
+		<!-- JB4 -->
 		<encoder port="3" i2cCommandNumber="0x32" />
+		<!-- JB3 -->
 		<encoder port="4" i2cCommandNumber="0x33" />
 	</encoders>
 	
