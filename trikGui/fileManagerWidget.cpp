@@ -31,11 +31,20 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mFileSystemModel.setRootPath("/");
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::System | QDir::NoDot);
 
+	connect(&mFileSystemModel
+			, SIGNAL(directoryLoaded(QString))
+			, this
+			, SLOT(onDirectoryLoaded(QString))
+			);
+
 	mFileSystemView.setModel(&mFileSystemModel);
 
 	mLayout.addWidget(&mCurrentPathLabel);
 	mLayout.addWidget(&mFileSystemView);
 	setLayout(&mLayout);
+
+	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
+	mFileSystemView.setFocus();
 
 	mCurrentDir = "./scripts";
 
@@ -84,4 +93,28 @@ void FileManagerWidget::showCurrentDir()
 {
 	mCurrentPathLabel.setText(QDir(mCurrentDir).path());
 	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir(mCurrentDir).path()));
+	renewCurrentIndex();
+}
+
+void FileManagerWidget::onDirectoryLoaded(QString const &path)
+{
+	if (QDir(mCurrentDir).absolutePath() != path) {
+		return;
+	}
+
+	renewCurrentIndex();
+}
+
+void FileManagerWidget::renewCurrentIndex()
+{
+	mFileSystemView.setFocus();
+
+	QModelIndex const currentIndex = mFileSystemModel.index(
+			0
+			, 0
+			, mFileSystemModel.index(QDir(mCurrentDir).absolutePath())
+			);
+
+	mFileSystemView.selectionModel()->select(currentIndex, QItemSelectionModel::ClearAndSelect);
+	mFileSystemView.setCurrentIndex(currentIndex);
 }

@@ -22,3 +22,4 @@ qrc_*.cpp
 Makefile*
 *.pro.user*
 bin/*
+/.project

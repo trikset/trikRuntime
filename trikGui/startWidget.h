@@ -62,7 +62,6 @@ private:
 	QLabel mTitleLabel;
 	QListView mMenuView;
 	QStandardItemModel mMenuModel;
-	QList<QStandardItem *> mMenuItems;
 	Controller mController;
 	QString const mConfigPath;
 };

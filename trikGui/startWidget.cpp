@@ -39,12 +39,15 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 
 	mTitleLabel.setText(tr("TRIK"));
 
-	mMenuItems.append(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuItems.append(new QStandardItem(NetConfigWidget::menuEntry()));
-
-	mMenuModel.appendColumn(mMenuItems);
+	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
+	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
+
+	mMenuView.selectionModel()->select(
+			mMenuModel.index(0, 0)
+			, QItemSelectionModel::ClearAndSelect
+			);
 
 	mLayout.addWidget(&mTitleLabel);
 	mLayout.addWidget(&mMenuView);

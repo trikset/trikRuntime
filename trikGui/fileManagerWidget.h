@@ -51,9 +51,13 @@ public:
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
+private slots:
+	void onDirectoryLoaded(QString const &path);
+
 private:
 	void showCurrentDir();
 	void open();
+	void renewCurrentIndex();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
