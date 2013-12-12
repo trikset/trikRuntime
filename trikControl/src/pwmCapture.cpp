@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov
+/* Copyright 2013 Roman Kurbatov, Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ QVector<int> PwmCapture::frequency()
 	QByteArray dataText = mFrequencyFile.readAll();
 	QTextStream stream(dataText);
 	QVector<int> data(3);
-	char c;
+	char c = '\0';
 	stream >> data[0] >> c >> data[1] >> c >> data[2] >> c;
 	return data;
 }
@@ -56,7 +56,7 @@ int PwmCapture::duty()
 	QByteArray dataText = mDutyFile.readAll();
 	QTextStream stream(dataText);
 	int data = 0;
-	char c;
+	char c = '\0';
 	stream >> data >> c;
 	return data;
 }
