@@ -29,7 +29,7 @@ CONFIG(debug, debug | release) {
 
 TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
 
-DESTDIR = ../bin/$$CONFIGURATION/
+DESTDIR = ../bin/$$CONFIGURATION
 
 OBJECTS_DIR = .build/$$CONFIGURATION/.obj
 MOC_DIR = .build/$$CONFIGURATION/.moc
@@ -68,6 +68,6 @@ win32 {
 	QMAKE_POST_LINK = "xcopy system.js $$replace(DESTDIR, /, \\) /q /y \
 			"
 } else {
-	QMAKE_POST_LINK = "cp -f system.js $$DESTDIR \
+	QMAKE_POST_LINK = "cp -f system.js $$DESTDIR/ \
 			"
 }
