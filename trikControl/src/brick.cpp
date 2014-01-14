@@ -17,6 +17,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QProcess>
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -29,7 +30,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	, mDisplay(guiThread)
 	, mInEventDrivenMode(false)
 {
-	if (system(mConfigurer->initScript().toStdString().c_str()) != 0) {
+	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
 		qDebug() << "Init script failed";
 	}
 
@@ -140,7 +141,7 @@ Brick::~Brick()
 void Brick::playSound(QString const &soundFileName)
 {
 	QString const command = mConfigurer->playSoundCommand().arg(soundFileName);
-	if (system(command.toStdString().c_str()) != 0) {
+	if (::system(command.toStdString().c_str()) != 0) {
 		qDebug() << "Play sound failed";
 	}
 }
@@ -271,6 +272,14 @@ bool Brick::isInEventDrivenMode() const
 void Brick::quit()
 {
 	emit quitSignal();
+}
+
+void Brick::system(QString const &command)
+{
+	QStringList args;
+	args << "-c" << command;
+	qDebug() << "Running:" << "sh" << args;
+	QProcess::startDetached("sh", args);
 }
 
 void Brick::resetEventDrivenMode()

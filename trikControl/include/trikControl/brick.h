@@ -50,7 +50,7 @@ public:
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
 	/// @param configFilePath - path to config.xml
-	explicit Brick(QThread &guiThread, QString const &configFilePath);
+	Brick(QThread &guiThread, QString const &configFilePath);
 
 	~Brick();
 
@@ -117,6 +117,9 @@ public slots:
 
 	/// Aborts script execution.
 	void quit();
+
+	/// Asynchronously execute given sh command.
+	void system(QString const &command);
 
 signals:
 	/// Emitted when script requested system to abort execution.

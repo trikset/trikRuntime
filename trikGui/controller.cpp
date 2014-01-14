@@ -53,6 +53,10 @@ void Controller::runFile(QString const &filePath)
 		mRunningWidget->show();
 		mExecutionState = running;
 		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");");
+	} else if (fileInfo.suffix() == "sh") {
+		QStringList args;
+		args << filePath;
+		QProcess::startDetached("sh", args);
 	}
 }
 

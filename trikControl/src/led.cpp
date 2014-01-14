@@ -29,7 +29,7 @@ Led::Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, i
 	}
 
 	if (!mGreenDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open red led control file " << mRedDeviceFile.fileName();
+		qDebug() << "Can't open green led control file " << mGreenDeviceFile.fileName();
 	}
 }
 
