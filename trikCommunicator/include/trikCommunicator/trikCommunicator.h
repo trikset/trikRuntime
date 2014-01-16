@@ -53,14 +53,24 @@ private slots:
 	void onDisconnected();
 	void onReadyRead();
 
+	/// Called when script runner reports that it has finished execution. Used to stop robot.
+	void onScriptExecutionCompleted();
+
 private:
+	enum State {
+		idle
+		, running
+		, stopping
+	};
+
+	static QString readFromFile(QString const &fileName);
+	static void writeToFile(QString const &fileName, QString const &contents);
+
 	QTcpServer mServer;
 	QTcpSocket* mConnection;  // Has ownership.
 	trikScriptRunner::TrikScriptRunner *mRunner;  // Has or doesn't have ownership, depending on mOwnsRunner.
 	bool const mOwnsRunner;
-
-	static QString readFromFile(QString const &fileName);
-	static void writeToFile(QString const &fileName, QString const &contents);
+	State mExecutionState;
 };
 
 }

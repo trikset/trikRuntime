@@ -26,15 +26,18 @@ TrikCommunicator::TrikCommunicator(QString const &configFilePath)
 	: mConnection(new QTcpSocket())
 	, mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath))
 	, mOwnsRunner(true)
+	, mExecutionState(idle)
 {
+	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
 }
-
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
 	: mConnection(new QTcpSocket())
 	, mRunner(&runner)
 	, mOwnsRunner(false)
+	, mExecutionState(idle)
 {
+	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -129,12 +132,25 @@ void TrikCommunicator::onReadyRead()
 	} else if (command.startsWith("run")) {
 		command.remove(0, QString("run:").length());
 		QString const fileContents = readFromFile(command);
+		mExecutionState = running;
 		mRunner->run(fileContents);
 	} else if (command == "stop") {
+		mExecutionState = stopping;
 		mRunner->abort();
 		mRunner->run("brick.stop()");
 	} else if (command.startsWith("direct")) {
 		command.remove(0, QString("direct:").length());
+		mExecutionState = running;
 		mRunner->run(command);
+	}
+}
+
+void TrikCommunicator::onScriptExecutionCompleted()
+{
+	if (mExecutionState == running) {
+		mExecutionState = stopping;
+		mRunner->run("brick.stop()");
+	} else {
+		mExecutionState = idle;
 	}
 }
