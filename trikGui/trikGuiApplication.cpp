@@ -20,6 +20,12 @@
 #include <QtGui/QKeyEvent>
 #include <QtCore/QDebug>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+#else
+	#include <QtWidgets/QWidget>
+#endif
+
 using namespace trikGui;
 
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
@@ -59,6 +65,12 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 				break;
 			}
 			}
+		}
+
+		// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update
+		// all GUI to remove clutter on a screen.
+		foreach (QWidget * const widget, QApplication::allWidgets()) {
+			widget->update();
 		}
 	}
 
