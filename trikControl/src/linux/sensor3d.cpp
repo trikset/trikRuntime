@@ -35,9 +35,9 @@ Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
 {
 	mReading << 0 << 0 << 0;
 
-	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC, O_RDONLY);
+	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 	if (mDeviceFileDescriptor == -1) {
-		qDebug() << "Cannot open input file";
+		qDebug() << "Cannot open input file " << controlFile;
 		return;
 	}
 
@@ -52,33 +52,39 @@ Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
 void Sensor3d::readFile()
 {
 	struct input_event event;
+	int size = 0;
 
-	if (::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)) != sizeof(event)) {
-		qDebug() << "incomplete data read";
-	} else {
-		switch (event.type)
-		{
-		case EV_ABS:
-			switch (event.code)
-			{
-			case ABS_X:
-				mReading[0] = event.value;
+	mSocketNotifier->setEnabled(false);
+
+	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event))) == sizeof(event)) {
+		switch (event.type) {
+			case EV_ABS:
+				switch (event.code) {
+				case ABS_X:
+					mReading[0] = event.value;
+					break;
+				case ABS_Y:
+					mReading[1] = event.value;
+					break;
+				case ABS_Z:
+					mReading[2] = event.value;
+					break;
+				}
 				break;
-			case ABS_Y:
-				mReading[1] = event.value;
+			case EV_SYN:
 				break;
-			case ABS_Z:
-				mReading[2] = event.value;
-				break;
-			}
-			break;
-		case EV_SYN:
-			return;
 		}
 	}
+
+
+	if (0 <= size && size < sizeof(event)) {
+		qDebug() << "incomplete data read";
+	}
+
+	mSocketNotifier->setEnabled(true);
 }
 
-QVector<int> Sensor3d::read()
+QVector<int> const &Sensor3d::read() const
 {
 	return mReading;
 }

@@ -21,11 +21,13 @@ Sensor3d::Sensor3d(int min, int max, QString const &controlFile)
 	Q_UNUSED(min);
 	Q_UNUSED(max);
 	Q_UNUSED(controlFile);
+
+	mReading.resize(3);
 }
 
-QVector<int> Sensor3d::read()
+QVector<int> const &Sensor3d::read() const
 {
-	return QVector<int>(3);
+	return mReading;
 }
 
 void Sensor3d::readFile()

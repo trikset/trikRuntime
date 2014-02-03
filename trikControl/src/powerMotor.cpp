@@ -28,6 +28,11 @@ PowerMotor::PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool
 {
 }
 
+PowerMotor::~PowerMotor()
+{
+	powerOff();
+}
+
 void PowerMotor::setPower(int power)
 {
 	if (power > 100) {

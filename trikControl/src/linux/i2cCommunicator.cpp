@@ -108,6 +108,7 @@ void I2cCommunicator::connect()
 
 void I2cCommunicator::send(QByteArray const &data)
 {
+	QMutexLocker lock(&mLock);
 	if (data.size() == 2) {
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[1]);
 	} else {
@@ -118,6 +119,7 @@ void I2cCommunicator::send(QByteArray const &data)
 //todo: rewrite it
 int I2cCommunicator::read(QByteArray const &data)
 {
+	QMutexLocker lock(&mLock);
 	if (data.size() == 1)
 	{
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
@@ -132,5 +134,6 @@ int I2cCommunicator::read(QByteArray const &data)
 
 void I2cCommunicator::disconnect()
 {
+	QMutexLocker lock(&mLock);
 	close(mDeviceFileDescriptor);
 }

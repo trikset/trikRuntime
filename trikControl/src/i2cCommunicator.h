@@ -16,6 +16,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QByteArray>
+#include <QtCore/QMutex>
 
 namespace trikControl {
 
@@ -45,6 +46,7 @@ private:
 	QString const mDevicePath;
 	int const mDeviceId;
 	int mDeviceFileDescriptor;
+	QMutex mLock;
 };
 
 }
