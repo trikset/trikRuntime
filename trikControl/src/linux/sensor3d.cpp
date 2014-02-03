@@ -56,7 +56,9 @@ void Sensor3d::readFile()
 
 	mSocketNotifier->setEnabled(false);
 
-	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event))) == sizeof(event)) {
+	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
+			== static_cast<int>(sizeof(event)))
+	{
 		switch (event.type) {
 			case EV_ABS:
 				switch (event.code) {
@@ -77,7 +79,7 @@ void Sensor3d::readFile()
 	}
 
 
-	if (0 <= size && size < sizeof(event)) {
+	if (0 <= size && size < static_cast<int>(sizeof(event))) {
 		qDebug() << "incomplete data read";
 	}
 
