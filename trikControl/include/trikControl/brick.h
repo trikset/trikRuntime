@@ -84,19 +84,19 @@ public slots:
 	Sensor *sensor(QString const &port);
 
 	/// Returns list of motor ports
-	QList<QString> const &servoMotorPorts() const;
+	QList<QString> servoMotorPorts() const;
 
 	/// Returns list of PWM capture ports
-	QList<QString> const &pwmCapturePorts() const;
+	QList<QString> pwmCapturePorts() const;
 
 	/// Returns list of power motor ports
-	QList<QString> const &powerMotorPorts() const;
+	QList<QString> powerMotorPorts() const;
 
 	/// Returns list of analog sensor ports
-	QList<QString> const &analogSensorPorts() const;
+	QList<QString> analogSensorPorts() const;
 
 	/// Returns list of sensor ports
-	QList<QString> const &sensorPorts() const;
+	QList<QString> sensorPorts() const;
 
 	/// Returns reference to on-board accelerometer.
 	Sensor3d *accelerometer();
