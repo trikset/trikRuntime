@@ -1,0 +1,164 @@
+<config>
+	<!-- Initialization sh script, will be executed on creation of Brick object. -->
+	<initScript>
+		echo 1 > /sys/class/gpio/gpio62/value
+
+		i2cset -y 2 0x48 0x10 0x1000 w
+		i2cset -y 2 0x48 0x11 0x1000 w
+		i2cset -y 2 0x48 0x12 0x1000 w
+		i2cset -y 2 0x48 0x13 0x1000 w
+
+		echo 1 > /sys/class/pwm/ehrpwm.1:1/request
+		echo 1 > /sys/class/pwm/ehrpwm.1:1/run
+
+		echo 1 > /sys/class/pwm/ehrpwm.1:0/request
+		echo 1 > /sys/class/pwm/ehrpwm.1:0/run
+
+		echo 1 > /sys/class/pwm/ehrpwm.0:1/request
+		echo 1 > /sys/class/pwm/ehrpwm.0:1/run
+
+		cat /sys/class/pwm/ecap_cap.0/config > /dev/null
+
+		cat /sys/class/pwm/ecap_cap.1/config > /dev/null
+
+		cat /sys/class/pwm/ecap_cap.2/config > /dev/null
+
+		echo 1 > /sys/devices/virtual/input/input1/enable_device
+
+		amixer -q set PCM 127
+	</initScript>
+	
+	<!-- Servomotors configuration, maps logical port to device file, file for setting period,
+	     initial period value and type of motor on that port.
+	     Motor type parameters like calibration curve are described separately, in "motorTypes" section. -->
+	<servoMotors>
+		<!-- JE1 -->
+		<motor
+			port="1"
+			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
+			period="20000000"
+			defaultType="defaultServo"
+			invert="false"
+		/>
+		<!-- JE2 -->
+		<motor
+			port="2"
+			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
+			period="20000000"
+			defaultType="defaultServo"
+			invert="false"
+		/>
+		<!-- JE3 -->
+		<motor
+			port="4"
+			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
+			period="20000000"
+			defaultType="defaultServo"
+			invert="false"
+		/>
+	</servoMotors>
+
+	<pwmCaptures>
+		<!-- JC1 -->
+		<capture
+			port="1"
+			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
+		/>
+		<!-- JC2 -->
+		<capture
+			port="2"
+			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
+		/>
+		<!-- JC3 -->
+		<capture
+			port="3"
+			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+		/>
+	</pwmCaptures>
+
+	<!-- Power motors configuration, maps logical port to I2C command. 
+	     I2C device path and device id are set separately, in "i2c" section. 
+	     Power motors do not have a type, because their driver is controlled by high-level 
+	     commands and handles motor specifics by itself. -->
+	<powerMotors>
+		<!-- JM1 -->
+		<motor port="1" i2cCommandNumber="0x14" invert="false" />
+		<!-- JM2 -->
+		<motor port="2" i2cCommandNumber="0x15" invert="false" />
+		<!--  M1 -->
+		<motor port="3" i2cCommandNumber="0x16" invert="false" />
+		<!-- JM3 -->
+		<motor port="4" i2cCommandNumber="0x17" invert="false" />
+	</powerMotors>
+
+	<!-- Aanalog sensors configuration, maps logical port to I2C command. 
+	     I2C device path and device id are set separately, in "i2c" section. 
+	     Analog sensors do not have a type, because their driver is controlled by high-level 
+	     commands and handles sensor specifics by itself. -->
+	<analogSensors>
+		<!-- JA1  -->
+		<analogSensor port="1" i2cCommandNumber="0x25" />
+		<!-- JA2  -->
+		<analogSensor port="2" i2cCommandNumber="0x24" />
+		<!-- JA3  -->
+		<analogSensor port="3" i2cCommandNumber="0x23" />
+		<!-- JA4  -->
+		<analogSensor port="4" i2cCommandNumber="0x22" />
+		<!-- JA5  -->
+		<analogSensor port="5" i2cCommandNumber="0x21" />
+		<!-- JA6  -->
+		<analogSensor port="6" i2cCommandNumber="0x20" />
+	</analogSensors>
+
+	<!-- Encoders configuration, maps logical port to I2C command. 
+	     I2C device path and device id are set separately, in "i2c" section. -->
+	<encoders>
+		<!-- JB2 -->
+		<encoder port="2" i2cCommandNumber="0x31" />
+		<!-- JB4 -->
+		<encoder port="3" i2cCommandNumber="0x32" />
+		<!-- JB3 -->
+		<encoder port="4" i2cCommandNumber="0x33" />
+	</encoders>
+	
+	<!-- Description of motor types used in motors mapping. Supplied values correspond to 
+	     full reverse (for "min" parameter), full forward ("max" parameter),
+	     non-breaking stop ("zero" parameter), breaking stop ("stop" parameter). -->
+	<motorTypes>
+		<defaultServo min="1500000" max="1800000" zero="1600000" stop="0" />
+	</motorTypes>
+
+	<!-- Sensors configuration, maps logical port to sensor device file and sensor type used by default 
+	     (if not configured programmatically). -->
+	<sensors>
+		<sensor port="1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
+		<sensor port="2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" />
+		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" />
+		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
+	</sensors>
+	
+	<!-- Description of sensor types used in sensor mappings. Provides minimal reading value 
+	     (which will be 0 in client program) and maximal reading value (which will be 100). -->
+	<sensorTypes>
+		<lightSensor min="30000" max="350000" />
+	</sensorTypes>
+	
+	<!-- Format for playSound command. %1 designates file name to be played. -->
+	<playSound command="aplay --quiet %1 &amp;" />
+	
+	<!-- Device files and on/off values for LED on a brick. -->
+	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" on="0" off="1" />
+
+	<!--Device file for keys on a brick -->
+	<keys deviceFile="/dev/input/event0" />
+	
+	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
+	<i2c path="/dev/i2c-2" deviceId="0x48" />
+	
+</config>
