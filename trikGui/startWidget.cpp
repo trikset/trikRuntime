@@ -89,7 +89,11 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		case Qt::Key_Left: {
-			mMenuView.setRootIndex(mMenuModel.indexFromItem(mMenuModel.itemFromIndex(mMenuView.rootIndex())->parent()));
+			QStandardItem *rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
+			if (rootItem == NULL) {
+				break;
+			}
+			mMenuView.setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
 			break;
 		}
 		case Qt::Key_Enter: case Qt::Key_Right: {
