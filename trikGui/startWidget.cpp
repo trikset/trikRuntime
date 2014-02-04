@@ -68,7 +68,7 @@ void StartWidget::launch()
 	QModelIndex const &currentIndex = mMenuView.currentIndex();
 	QStandardItem const *const currentItem = mMenuModel.itemFromIndex(currentIndex);
 	if (currentItem->hasChildren()) {
-		mMenuView.setRootIndex(currentIndex);
+		setRootIndex(currentIndex);
 	} else {
 		QString const &currentItemText = currentItem->text();
 		if (currentItemText == FileManagerWidget::menuEntry()) {
@@ -81,11 +81,36 @@ void StartWidget::launch()
 	}
 }
 
+void StartWidget::setRootIndex(QModelIndex const &index)
+{
+	QStandardItem *item = mMenuModel.itemFromIndex(index);
+
+	if (item == NULL) {
+		item = mMenuModel.invisibleRootItem();
+	}
+
+	if (!item->hasChildren()) {
+		return;
+	}
+
+	selectedItemIndexes[mMenuView.rootIndex()] = mMenuView.currentIndex();
+
+	mMenuView.setRootIndex(index);
+
+	QModelIndex selectedItemIndex = selectedItemIndexes.value(index, mMenuModel.indexFromItem(item->child(0)));
+
+	mMenuView.selectionModel()->select(
+			selectedItemIndex
+			, QItemSelectionModel::ClearAndSelect
+			);
+	mMenuView.setCurrentIndex(selectedItemIndex);
+}
+
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Meta: {
-			mMenuView.setRootIndex(QModelIndex());
+			setRootIndex(QModelIndex());
 			break;
 		}
 		case Qt::Key_Left: {
@@ -93,7 +118,7 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			if (rootItem == NULL) {
 				break;
 			}
-			mMenuView.setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
+			setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
 			break;
 		}
 		case Qt::Key_Enter: case Qt::Key_Right: {
