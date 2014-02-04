@@ -205,27 +205,27 @@ Sensor *Brick::sensor(QString const &port)
 	return NULL;
 }
 
-QList<QString> Brick::servoMotorPorts() const
+QStringList Brick::servoMotorPorts() const
 {
 	return mServoMotors.keys();
 }
 
-QList<QString> Brick::pwmCapturePorts() const
+QStringList Brick::pwmCapturePorts() const
 {
 	return mPwmCaptures.keys();
 }
 
-QList<QString> Brick::powerMotorPorts() const
+QStringList Brick::powerMotorPorts() const
 {
 	return mPowerMotors.keys();
 }
 
-QList<QString> Brick::analogSensorPorts() const
+QStringList Brick::analogSensorPorts() const
 {
 	return mAnalogSensors.keys();
 }
 
-QList<QString> Brick::sensorPorts() const
+QStringList Brick::sensorPorts() const
 {
 	return mSensors.keys();
 }
