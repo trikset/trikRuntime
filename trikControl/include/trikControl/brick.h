@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtCore/QHash>
+#include <QtCore/QList>
 
 #include "declSpec.h"
 
@@ -81,6 +82,21 @@ public slots:
 
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
+
+	/// Returns list of motor ports
+	QList<QString> servoMotorPorts();
+
+	/// Returns list of PWM capture ports
+	QList<QString> pwmCapturePorts();
+
+	/// Returns list of power motor ports
+	QList<QString> powerMotorPorts();
+
+	/// Returns list of analog sensor ports
+	QList<QString> analogSensorPorts();
+
+	/// Returns list of sensor ports
+	QList<QString> sensorPorts();
 
 	/// Returns reference to on-board accelerometer.
 	Sensor3d *accelerometer();
