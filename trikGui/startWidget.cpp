@@ -41,6 +41,10 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
 	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
+	QStandardItem *settingsItem = new QStandardItem(tr("Settings"));
+	mMenuModel.appendRow(settingsItem);
+	settingsItem->appendRow(new QStandardItem(tr("Item 1")));
+	settingsItem->appendRow(new QStandardItem(tr("Item 2")));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -61,13 +65,19 @@ StartWidget::~StartWidget()
 
 void StartWidget::launch()
 {
-	QString const &currentItemText = mMenuModel.itemFromIndex(mMenuView.currentIndex())->text();
-	if (currentItemText == FileManagerWidget::menuEntry()) {
-		FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
-		fileManagerWidget->show();
-	} else if (currentItemText == NetConfigWidget::menuEntry()) {
-		NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
-		netConfigWidget->show();
+	QModelIndex const &currentIndex = mMenuView.currentIndex();
+	QStandardItem const *const currentItem = mMenuModel.itemFromIndex(currentIndex);
+	if (currentItem->hasChildren()) {
+		mMenuView.setRootIndex(currentIndex);
+	} else {
+		QString const &currentItemText = currentItem->text();
+		if (currentItemText == FileManagerWidget::menuEntry()) {
+			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
+			fileManagerWidget->show();
+		} else if (currentItemText == NetConfigWidget::menuEntry()) {
+			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
+			netConfigWidget->show();
+		}
 	}
 }
 
@@ -75,9 +85,14 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Meta: {
+			mMenuView.setRootIndex(QModelIndex());
 			break;
 		}
-		case Qt::Key_Enter: {
+		case Qt::Key_Left: {
+			mMenuView.setRootIndex(mMenuModel.indexFromItem(mMenuModel.itemFromIndex(mMenuView.rootIndex())->parent()));
+			break;
+		}
+		case Qt::Key_Enter: case Qt::Key_Right: {
 			launch();
 			break;
 		}
