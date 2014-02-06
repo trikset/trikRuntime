@@ -18,6 +18,7 @@
 #include "startWidget.h"
 
 #include <QtGui/QKeyEvent>
+#include <QtCore/QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
@@ -42,6 +43,11 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
 	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
 
+	QStandardItem *const settingsItem = new QStandardItem(tr("Settings"));
+	mMenuModel.appendRow(settingsItem);
+	settingsItem->appendRow(new QStandardItem("Empty 1"));
+	settingsItem->appendRow(new QStandardItem("Empty 2"));
+
 	mMenuView.setModel(&mMenuModel);
 
 	mMenuView.selectionModel()->select(
@@ -61,23 +67,65 @@ StartWidget::~StartWidget()
 
 void StartWidget::launch()
 {
-	QString const &currentItemText = mMenuModel.itemFromIndex(mMenuView.currentIndex())->text();
-	if (currentItemText == FileManagerWidget::menuEntry()) {
-		FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
-		fileManagerWidget->show();
-	} else if (currentItemText == NetConfigWidget::menuEntry()) {
-		NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
-		netConfigWidget->show();
+	QModelIndex const &currentIndex = mMenuView.currentIndex();
+	QStandardItem const *const currentItem = mMenuModel.itemFromIndex(currentIndex);
+	if (currentItem->hasChildren()) {
+		setRootIndex(currentIndex);
+	} else {
+		QString const &currentItemText = currentItem->text();
+		if (currentItemText == FileManagerWidget::menuEntry()) {
+			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
+			fileManagerWidget->show();
+		} else if (currentItemText == NetConfigWidget::menuEntry()) {
+			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
+			netConfigWidget->show();
+		} else {
+			qDebug() << currentItemText << "clicked";
+		}
 	}
+}
+
+void StartWidget::setRootIndex(QModelIndex const &index)
+{
+	QStandardItem const *item = mMenuModel.itemFromIndex(index);
+
+	if (item == NULL) {
+		item = mMenuModel.invisibleRootItem();
+	}
+
+	if (!item->hasChildren()) {
+		return;
+	}
+
+	mSelections[mMenuView.rootIndex()] = mMenuView.currentIndex();
+
+	mMenuView.setRootIndex(index);
+
+	QModelIndex const &selectedItemIndex = mSelections.value(index, mMenuModel.indexFromItem(item->child(0)));
+
+	mMenuView.selectionModel()->select(
+			selectedItemIndex
+			, QItemSelectionModel::ClearAndSelect
+			);
+	mMenuView.setCurrentIndex(selectedItemIndex);
 }
 
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Meta: {
+			setRootIndex(QModelIndex());
 			break;
 		}
-		case Qt::Key_Enter: {
+		case Qt::Key_Left: {
+			QStandardItem const *const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
+			if (rootItem == NULL) {
+				break;
+			}
+			setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
+			break;
+		}
+		case Qt::Key_Enter: case Qt::Key_Right: {
 			launch();
 			break;
 		}

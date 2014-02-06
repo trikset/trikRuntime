@@ -35,6 +35,7 @@
 #include <QtGui/QStandardItemModel>
 #include <QtCore/QList>
 #include <QtCore/QString>
+#include <QtCore/QMap>
 
 #include "controller.h"
 
@@ -58,12 +59,17 @@ private:
 
 	void launch();
 
+	void setRootIndex(QModelIndex const &index);
+
 	QVBoxLayout mLayout;
 	QLabel mTitleLabel;
 	QListView mMenuView;
 	QStandardItemModel mMenuModel;
 	Controller mController;
 	QString const mConfigPath;
+
+	/// Stores index of item which was selected in a submenu after a last visit.
+	QMap<QModelIndex, QModelIndex> mSelections;
 };
 
 }

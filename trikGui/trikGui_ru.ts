@@ -60,11 +60,15 @@
     <name>trikGui::StartWidget</name>
     <message>
         <source>Exit</source>
-        <translation>Выход</translation>
+        <translation type="obsolete">Выход</translation>
     </message>
     <message>
         <source>TRIK</source>
         <translation>ТРИК</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Настройки</translation>
     </message>
 </context>
 </TS>
