@@ -18,6 +18,7 @@
 #include "startWidget.h"
 
 #include <QtGui/QKeyEvent>
+#include <QtCore/QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
@@ -41,10 +42,11 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
 	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
-	QStandardItem *settingsItem = new QStandardItem(tr("Settings"));
+
+	QStandardItem *const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
-	settingsItem->appendRow(new QStandardItem(tr("Item 1")));
-	settingsItem->appendRow(new QStandardItem(tr("Item 2")));
+	settingsItem->appendRow(new QStandardItem("Empty 1"));
+	settingsItem->appendRow(new QStandardItem("Empty 2"));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -77,13 +79,15 @@ void StartWidget::launch()
 		} else if (currentItemText == NetConfigWidget::menuEntry()) {
 			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
 			netConfigWidget->show();
+		} else {
+			qDebug() << currentItemText << "clicked";
 		}
 	}
 }
 
 void StartWidget::setRootIndex(QModelIndex const &index)
 {
-	QStandardItem *item = mMenuModel.itemFromIndex(index);
+	QStandardItem const *item = mMenuModel.itemFromIndex(index);
 
 	if (item == NULL) {
 		item = mMenuModel.invisibleRootItem();
@@ -93,11 +97,11 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 		return;
 	}
 
-	selectedItemIndexes[mMenuView.rootIndex()] = mMenuView.currentIndex();
+	mSelections[mMenuView.rootIndex()] = mMenuView.currentIndex();
 
 	mMenuView.setRootIndex(index);
 
-	QModelIndex selectedItemIndex = selectedItemIndexes.value(index, mMenuModel.indexFromItem(item->child(0)));
+	QModelIndex const &selectedItemIndex = mSelections.value(index, mMenuModel.indexFromItem(item->child(0)));
 
 	mMenuView.selectionModel()->select(
 			selectedItemIndex
@@ -114,7 +118,7 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		case Qt::Key_Left: {
-			QStandardItem *rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
+			QStandardItem const *const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
 			if (rootItem == NULL) {
 				break;
 			}

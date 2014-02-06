@@ -67,7 +67,9 @@ private:
 	QStandardItemModel mMenuModel;
 	Controller mController;
 	QString const mConfigPath;
-	QMap<QModelIndex, QModelIndex> selectedItemIndexes;
+
+	/// Stores index of item which was selected in a submenu after a last visit.
+	QMap<QModelIndex, QModelIndex> mSelections;
 };
 
 }
