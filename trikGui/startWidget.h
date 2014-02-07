@@ -69,7 +69,7 @@ private:
 	QString const mConfigPath;
 
 	/// Stores index of item which was selected in a submenu after a last visit.
-	QMap<QModelIndex, QModelIndex> mSelections;
+	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;
 };
 
 }

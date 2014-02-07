@@ -43,7 +43,7 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
 	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
 
-	QStandardItem *const settingsItem = new QStandardItem(tr("Settings"));
+	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
 	settingsItem->appendRow(new QStandardItem("Empty 1"));
 	settingsItem->appendRow(new QStandardItem("Empty 2"));
@@ -68,16 +68,17 @@ StartWidget::~StartWidget()
 void StartWidget::launch()
 {
 	QModelIndex const &currentIndex = mMenuView.currentIndex();
-	QStandardItem const *const currentItem = mMenuModel.itemFromIndex(currentIndex);
+	QStandardItem const * const currentItem = mMenuModel.itemFromIndex(currentIndex);
 	if (currentItem->hasChildren()) {
 		setRootIndex(currentIndex);
 	} else {
-		QString const &currentItemText = currentItem->text();
+		QString currentItemText = currentItem->text();
 		if (currentItemText == FileManagerWidget::menuEntry()) {
-			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
+			/// @todo Why widgets are created every time?
+			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController, this);
 			fileManagerWidget->show();
 		} else if (currentItemText == NetConfigWidget::menuEntry()) {
-			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
+			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath, this);
 			netConfigWidget->show();
 		} else {
 			qDebug() << currentItemText << "clicked";
@@ -107,6 +108,7 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 			selectedItemIndex
 			, QItemSelectionModel::ClearAndSelect
 			);
+
 	mMenuView.setCurrentIndex(selectedItemIndex);
 }
 
@@ -118,10 +120,11 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		case Qt::Key_Left: {
-			QStandardItem const *const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
+			QStandardItem const * const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
 			if (rootItem == NULL) {
 				break;
 			}
+
 			setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
 			break;
 		}
