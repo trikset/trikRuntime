@@ -18,6 +18,7 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
+#include <QtCore/QHash>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
@@ -39,6 +40,9 @@ public:
 
 	// Override.
 	bool notify(QObject *receiver, QEvent *event);
+
+private:
+	QHash<int, int> mKeyMappings;
 };
 
 }
