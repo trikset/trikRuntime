@@ -33,7 +33,7 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 {
 	mKeyMappings[Qt::Key_Up] = Qt::Key_Left;
 	mKeyMappings[Qt::Key_Right] = Qt::Key_Up;
-	mKeyMappings[Qt::Key_Down] = Qt::Key_Left;
+	mKeyMappings[Qt::Key_Down] = Qt::Key_Right;
 	mKeyMappings[Qt::Key_Left] = Qt::Key_Down;
 }
 
