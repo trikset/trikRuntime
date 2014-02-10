@@ -128,7 +128,7 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
 			break;
 		}
-		case Qt::Key_Enter: case Qt::Key_Right: {
+		case Qt::Key_Return: case Qt::Key_Right: {
 			launch();
 			break;
 		}
