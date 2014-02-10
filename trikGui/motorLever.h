@@ -51,6 +51,7 @@ private:
 	bool mIsOn;
 	int const mMaxPower;
 	int const mMinPower;
+	int const mPowerStep;
 	int const mPowerState;
 	int mPower;
 
@@ -59,6 +60,9 @@ private:
 	QProgressBar mPowerBar;
 	QLabel mPowerLabel;
 	QLabel mOnOffLabel;
+
+	void setPower(int power);
+	void turnOnOff();
 };
 
 }
