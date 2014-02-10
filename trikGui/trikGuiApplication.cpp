@@ -42,9 +42,9 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 	if (event->type() == QEvent::KeyPress) {
 		QKeyEvent * const keyEvent = dynamic_cast<QKeyEvent *>(event);
 		if (keyEvent != NULL) {
-			int currentKey = keyEvent->key();
+			int const currentKey = keyEvent->key();
 			if (mKeyMappings.contains(currentKey)) {
-				int newKey = mKeyMappings[currentKey];
+				int const newKey = mKeyMappings[currentKey];
 				*keyEvent = QKeyEvent(QEvent::KeyPress, newKey, keyEvent->modifiers());
 			}
 		}
