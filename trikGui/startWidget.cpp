@@ -102,7 +102,12 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 
 	mMenuView.setRootIndex(index);
 
-	QModelIndex const &selectedItemIndex = mSelections.value(index, mMenuModel.indexFromItem(item->child(0)));
+	QModelIndex selectedItemIndex;
+	if (mSelections.contains(index)) {
+		selectedItemIndex = mSelections[index];
+	} else {
+		selectedItemIndex = mMenuModel.indexFromItem(item->child(0));
+	}
 
 	mMenuView.selectionModel()->select(
 			selectedItemIndex
