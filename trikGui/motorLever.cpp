@@ -105,6 +105,10 @@ void MotorLever::paintEvent(QPaintEvent *)
 
 void MotorLever::setPower(int power)
 {
+	if (power > mMaxPower || power < mMinPower) {
+		return;
+	}
+
 	mPower = power;
 	mPowerBar.setValue(power);
 	mPowerLabel.setText(QString::number(power));
