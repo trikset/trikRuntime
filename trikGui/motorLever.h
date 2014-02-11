@@ -36,12 +36,20 @@ namespace trikControl {
 
 namespace trikGui {
 
+/// Widget that allows to set power value of a power motor and turn it on and off.
+/// It is designed to use as a part of MotorsWidget.
 class MotorLever : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param name - name of a port which the power motor is connected to.
+	/// @param powerMotor - pointer to an instance representing the power motor.
+	/// @param parent - pointer to a parent widget.
 	MotorLever(QString const &name, trikControl::PowerMotor *powerMotor, QWidget *parent = 0);
+
+	/// Destructor.
 	~MotorLever();
 
 protected:
