@@ -47,7 +47,9 @@ public:
 	/// @param name - name of a port which the power motor is connected to.
 	/// @param powerMotor - pointer to an instance representing the power motor.
 	/// @param parent - pointer to a parent widget.
-	MotorLever(QString const &name, trikControl::PowerMotor *powerMotor, QWidget *parent = 0);
+	MotorLever(QString const &name
+			, trikControl::PowerMotor *powerMotor // Doesn't take ownership.
+			, QWidget *parent = 0);
 
 	/// Destructor.
 	~MotorLever();
@@ -57,7 +59,7 @@ protected:
 	void paintEvent(QPaintEvent *);
 
 private:
-	trikControl::PowerMotor *mPowerMotor;
+	trikControl::PowerMotor *mPowerMotor; // Doesn't have ownership.
 	bool mIsOn;
 	int const mMaxPower;
 	int const mMinPower;

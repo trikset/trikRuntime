@@ -58,7 +58,7 @@ private:
 	QHBoxLayout mLayout;
 	trikControl::Brick mBrick;
 	QStringList mPorts;
-	QVector<MotorLever *> mLevers;
+	QVector<MotorLever *> mLevers; // Has ownership.
 };
 
 }
