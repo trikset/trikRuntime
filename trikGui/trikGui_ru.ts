@@ -9,6 +9,24 @@
     </message>
 </context>
 <context>
+    <name>trikGui::MotorLever</name>
+    <message>
+        <source>off</source>
+        <translation>выкл</translation>
+    </message>
+    <message>
+        <source>on</source>
+        <translation>вкл</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::MotorsWidget</name>
+    <message>
+        <source>Test power motors</source>
+        <translation>Проверка силовых моторов</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::NetConfigWidget</name>
     <message>
         <source>Network Config</source>
