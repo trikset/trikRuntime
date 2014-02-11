@@ -30,7 +30,9 @@
 
 #include <QtCore/QString>
 
-#include <trikControl/powerMotor.h>
+namespace trikControl {
+	class PowerMotor;
+}
 
 namespace trikGui {
 
@@ -52,7 +54,6 @@ private:
 	int const mMaxPower;
 	int const mMinPower;
 	int const mPowerStep;
-	int const mPowerState;
 	int mPower;
 
 	QVBoxLayout mLayout;

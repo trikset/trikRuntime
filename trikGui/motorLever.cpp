@@ -24,6 +24,10 @@
 	#include <QtWidgets/QStyleOptionFocusRect>
 #endif
 
+#include <QDebug>
+
+#include <trikControl/powerMotor.h>
+
 using namespace trikGui;
 
 MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor, QWidget *parent)
@@ -34,7 +38,7 @@ MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor,
 	, mMinPower(-100)
 	, mPowerStep(10)
 	, mPower(0)
-	, mNameLabel(0)
+	, mNameLabel(name)
 	, mPowerLabel("0")
 	, mOnOffLabel(tr("off"))
 {
@@ -51,7 +55,7 @@ MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor,
 	mOnOffLabel.setAlignment(Qt::AlignCenter);
 
 	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mLevel, 0, Qt::AlignCenter);
+	mLayout.addWidget(&mPowerBar, 0, Qt::AlignCenter);
 	mLayout.addWidget(&mPowerLabel);
 	mLayout.addWidget(&mOnOffLabel);
 	setLayout(&mLayout);
@@ -61,6 +65,7 @@ MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor,
 
 MotorLever::~MotorLever()
 {
+	qDebug() << "Deleteing motor lever";
 	mPowerMotor->powerOff();
 }
 
@@ -72,7 +77,7 @@ void MotorLever::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		case Qt::Key_Down: {
-			setPower(mPower - mPowerState);
+			setPower(mPower - mPowerStep);
 			break;
 		}
 		case Qt::Key_Return: {
