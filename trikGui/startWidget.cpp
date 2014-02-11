@@ -74,10 +74,10 @@ void StartWidget::launch()
 		QString currentItemText = currentItem->text();
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
-			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController, this);
+			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
 			fileManagerWidget->show();
 		} else if (currentItemText == NetConfigWidget::menuEntry()) {
-			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath, this);
+			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
 			netConfigWidget->show();
 		} else if (currentItemText == MotorsWidget::menuEntry()) {
 			MotorsWidget *motorsWidget = new MotorsWidget(mConfigPath);
