@@ -49,7 +49,7 @@ MotorsWidget::~MotorsWidget()
 
 QString MotorsWidget::menuEntry()
 {
-	return tr("Power motors testing");
+	return tr("Test power motors");
 }
 
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
