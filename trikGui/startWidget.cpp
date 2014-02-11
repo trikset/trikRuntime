@@ -47,8 +47,6 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry()));
-	settingsItem->appendRow(new QStandardItem("Empty 1"));
-	settingsItem->appendRow(new QStandardItem("Empty 2"));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -85,8 +83,6 @@ void StartWidget::launch()
 		} else if (currentItemText == MotorsWidget::menuEntry()) {
 			MotorsWidget *motorsWidget = new MotorsWidget(mConfigPath);
 			motorsWidget->show();
-		} else {
-			qDebug() << currentItemText << "clicked";
 		}
 	}
 }

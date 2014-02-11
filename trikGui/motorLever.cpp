@@ -24,8 +24,6 @@
 	#include <QtWidgets/QStyleOptionFocusRect>
 #endif
 
-#include <QDebug>
-
 #include <trikControl/powerMotor.h>
 
 using namespace trikGui;
@@ -65,7 +63,6 @@ MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor,
 
 MotorLever::~MotorLever()
 {
-	qDebug() << "Deleteing motor lever";
 	mPowerMotor->powerOff();
 }
 
