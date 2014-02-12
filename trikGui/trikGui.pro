@@ -24,6 +24,8 @@ HEADERS += \
 	$$PWD/startWidget.h \
 	$$PWD/trikGuiApplication.h \
 	$$PWD/controller.h \
+	$$PWD/motorLever.h \
+	$$PWD/motorsWidget.h
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -33,6 +35,8 @@ SOURCES += \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
 	$$PWD/controller.cpp \
+	$$PWD/motorLever.cpp \
+	$$PWD/motorsWidget.cpp
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
@@ -60,8 +64,14 @@ INCLUDEPATH = \
 	$$TRIKCOMMUNICATOR_DIR/include \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 	$$TRIKWIFI_DIR/include \
+	$$TRIKCONTROL_DIR/include \
 
-LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX -ltrikScriptRunner$$CONFIGURATION_SUFFIX -ltrikWiFi$$CONFIGURATION_SUFFIX
+LIBS += \
+	-L$$DESTDIR \
+	-ltrikCommunicator$$CONFIGURATION_SUFFIX \
+	-ltrikScriptRunner$$CONFIGURATION_SUFFIX \
+	-ltrikWiFi$$CONFIGURATION_SUFFIX \
+	-ltrikControl$$CONFIGURATION_SUFFIX \
 
 OBJECTS_DIR = .build/$$CONFIGURATION/.obj
 MOC_DIR = .build/$$CONFIGURATION/.moc
