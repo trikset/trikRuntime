@@ -71,7 +71,7 @@ LIBS += \
 	-ltrikCommunicator$$CONFIGURATION_SUFFIX \
 	-ltrikScriptRunner$$CONFIGURATION_SUFFIX \
 	-ltrikWiFi$$CONFIGURATION_SUFFIX \
-	-ltrikControl$$CONFIGURATION_SUFFIX
+	-ltrikControl$$CONFIGURATION_SUFFIX \
 
 OBJECTS_DIR = .build/$$CONFIGURATION/.obj
 MOC_DIR = .build/$$CONFIGURATION/.moc

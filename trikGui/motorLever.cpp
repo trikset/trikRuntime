@@ -28,7 +28,7 @@
 
 using namespace trikGui;
 
-MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor, QWidget *parent)
+MotorLever::MotorLever(QString const &name, trikControl::PowerMotor &powerMotor, QWidget *parent)
 	: QWidget(parent)
 	, mPowerMotor(powerMotor)
 	, mIsOn(false)
@@ -40,7 +40,7 @@ MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor,
 	, mPowerLabel("0")
 	, mOnOffLabel(tr("off"))
 {
-	mPowerMotor->powerOff();
+	mPowerMotor.powerOff();
 
 	mPowerBar.setOrientation(Qt::Vertical);
 	mPowerBar.setMinimum(mMinPower);
@@ -63,7 +63,7 @@ MotorLever::MotorLever(QString const &name, trikControl::PowerMotor *powerMotor,
 
 MotorLever::~MotorLever()
 {
-	mPowerMotor->powerOff();
+	mPowerMotor.powerOff();
 }
 
 void MotorLever::keyPressEvent(QKeyEvent *event)
@@ -110,7 +110,7 @@ void MotorLever::setPower(int power)
 	mPowerBar.setValue(power);
 	mPowerLabel.setText(QString::number(power));
 	if (mIsOn) {
-		mPowerMotor->setPower(power);
+		mPowerMotor.setPower(power);
 	}
 }
 
@@ -119,9 +119,9 @@ void MotorLever::turnOnOff()
 	mIsOn = !mIsOn;
 	if (mIsOn) {
 		mOnOffLabel.setText(tr("on"));
-		mPowerMotor->setPower(mPower);
+		mPowerMotor.setPower(mPower);
 	} else {
 		mOnOffLabel.setText(tr("off"));
-		mPowerMotor->powerOff();
+		mPowerMotor.powerOff();
 	}
 }

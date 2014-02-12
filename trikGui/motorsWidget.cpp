@@ -34,9 +34,10 @@ MotorsWidget::MotorsWidget(QString const &configPath, QWidget *parent)
 
 	int i = 0;
 	foreach (QString const &port, mPorts) {
-		MotorLever *lever = new MotorLever("JM" + port, mBrick.powerMotor(port), this);
+		MotorLever *lever = new MotorLever("JM" + port, *mBrick.powerMotor(port), this);
 		mLayout.addWidget(lever);
-		mLevers[i++] = lever;
+		mLevers[i] = lever;
+		++i;
 	}
 
 	setLayout(&mLayout);
