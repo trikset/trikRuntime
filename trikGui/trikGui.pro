@@ -64,6 +64,7 @@ INCLUDEPATH = \
 	$$TRIKCOMMUNICATOR_DIR/include \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 	$$TRIKWIFI_DIR/include \
+	$$TRIKCONTROL_DIR/include \
 
 LIBS += \
 	-L$$DESTDIR \
