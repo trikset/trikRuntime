@@ -25,6 +25,7 @@
 #endif
 
 #include <QtCore/QTranslator>
+#include <QtGui/QFont>
 
 #include "trikGuiApplication.h"
 #include "startWidget.h"
@@ -57,6 +58,10 @@ int main(int argc, char *argv[])
 	}
 
 	TrikGuiApplication app(argc, argv);
+
+	QFont font(app.font());
+	font.setPixelSize(18);
+	app.setFont(font);
 
 	QTranslator guiTranslator;
 	if (!app.arguments().contains("--no-locale")) {
