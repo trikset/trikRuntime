@@ -29,7 +29,6 @@
 #include "fileManagerWidget.h"
 #include "netConfigWidget.h"
 #include "motorsWidget.h"
-#include "servoMotorsWidget.h"
 
 using namespace trikGui;
 
