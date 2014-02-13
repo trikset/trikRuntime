@@ -160,6 +160,21 @@ void Brick::stop()
 	mDisplay.hide();
 }
 
+Motor *Brick::motor(Motor::Type type, const QString &port)
+{
+	switch (type) {
+		case Motor::powerMotor: {
+			return mPowerMotors[port];
+		}
+		case Motor::servoMotor: {
+			return mServoMotors[port];
+		}
+		default: {
+			return NULL;
+		}
+	}
+}
+
 ServoMotor *Brick::servoMotor(QString const &port)
 {
 	if (mServoMotors.contains(port)) {
@@ -203,6 +218,21 @@ Sensor *Brick::sensor(QString const &port)
 	}
 
 	return NULL;
+}
+
+QStringList Brick::motorPorts(Motor::Type type) const
+{
+	switch (type) {
+		case Motor::powerMotor: {
+			return mPowerMotors.keys();
+		}
+		case Motor::servoMotor: {
+			return mServoMotors.keys();
+		}
+		default: {
+			return QStringList();
+		}
+	}
 }
 
 QStringList Brick::servoMotorPorts() const
