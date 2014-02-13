@@ -21,20 +21,22 @@
 
 using namespace trikGui;
 
-MotorsWidget::MotorsWidget(QString const &configPath, QWidget *parent)
+MotorsWidget::MotorsWidget(QString const &configPath
+		, trikControl::Motor::Type type
+		, QWidget *parent
+		)
 	: QWidget(parent)
 	, mBrick(*TrikGuiApplication::instance()->thread(), configPath)
-	, mPorts(mBrick.powerMotorPorts())
+	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {
-	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
 	mPorts.sort();
 
 	int i = 0;
 	foreach (QString const &port, mPorts) {
-		MotorLever *lever = new MotorLever("JM" + port, *mBrick.powerMotor(port), this);
+		MotorLever *lever = new MotorLever(port, *mBrick.motor(type, port), this);
 		mLayout.addWidget(lever);
 		mLevers[i] = lever;
 		++i;
@@ -48,9 +50,13 @@ MotorsWidget::~MotorsWidget()
 	qDeleteAll(mLevers);
 }
 
-QString MotorsWidget::menuEntry()
+QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 {
-	return tr("Test power motors");
+	if (type == trikControl::Motor::powerMotor) {
+		return tr("Test power motors");
+	} else {
+		return tr("Test servo motors");
+	}
 }
 
 void MotorsWidget::exec()

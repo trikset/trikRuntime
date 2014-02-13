@@ -37,14 +37,14 @@ public:
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
-	virtual void setPower(int power);
+	virtual void setPower(int power) = 0;
 
 	/// Returns currently set power of a motor.
-	int power() const;
+	virtual int power() const = 0;
 
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
-	void powerOff();
+	virtual void powerOff() = 0;
 };
 
 }

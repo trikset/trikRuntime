@@ -25,6 +25,10 @@
         <source>Test power motors</source>
         <translation>Проверка силовых моторов</translation>
     </message>
+    <message>
+        <source>Test servo motors</source>
+        <translation>Проверка сервоприводов</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::NetConfigWidget</name>
@@ -72,24 +76,6 @@
  to abort</source>
         <translation>Нажмите Enter
  чтобы выйти</translation>
-    </message>
-</context>
-<context>
-    <name>trikGui::ServoMotorLever</name>
-    <message>
-        <source>off</source>
-        <translation>выкл</translation>
-    </message>
-    <message>
-        <source>on</source>
-        <translation>вкл</translation>
-    </message>
-</context>
-<context>
-    <name>trikGui::ServoMotorsWidget</name>
-    <message>
-        <source>Test servo motors</source>
-        <translation>Проверка сервоприводов</translation>
     </message>
 </context>
 <context>
