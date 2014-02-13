@@ -53,6 +53,12 @@ QString ServoMotorsWidget::menuEntry()
 	return tr("Test servo motors");
 }
 
+void ServoMotorsWidget::exec()
+{
+	show();
+	mEventLoop.exec();
+}
+
 void ServoMotorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
@@ -66,6 +72,7 @@ void ServoMotorsWidget::keyPressEvent(QKeyEvent *event)
 		}
 		case Qt::Key_Meta: case Qt::Key_PowerDown: {
 			close();
+			mEventLoop.quit();
 			break;
 		}
 	}

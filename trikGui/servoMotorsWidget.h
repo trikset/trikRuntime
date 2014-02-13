@@ -27,6 +27,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
+#include <QtCore/QEventLoop>
 
 #include <trikControl/brick.h>
 
@@ -51,6 +52,9 @@ public:
 	/// Title for this widget in a main menu.
 	static QString menuEntry();
 
+	/// Show the widget and wait until it will be closed by user.
+	void exec();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
@@ -59,6 +63,7 @@ private:
 	trikControl::Brick mBrick;
 	QStringList mPorts;
 	QVector<ServoMotorLever *> mLevers; // Has ownership.
+	QEventLoop mEventLoop;
 };
 
 }

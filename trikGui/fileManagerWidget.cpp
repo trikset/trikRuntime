@@ -25,7 +25,6 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: QWidget(parent)
 	, mController(controller)
 {
-	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
 	mFileSystemModel.setRootPath("/");
@@ -60,6 +59,12 @@ QString FileManagerWidget::menuEntry()
 	return tr("File Manager");
 }
 
+void FileManagerWidget::exec()
+{
+	show();
+	mEventLoop.exec();
+}
+
 void FileManagerWidget::open()
 {
 	 QModelIndex const &index = mFileSystemView.currentIndex();
@@ -76,9 +81,10 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_Left: {
 			close();
+			mEventLoop.quit();
 			break;
 		}
-		case Qt::Key_Enter: {
+		case Qt::Key_Return: {
 			open();
 			break;
 		}

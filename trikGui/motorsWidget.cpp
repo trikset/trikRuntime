@@ -53,6 +53,12 @@ QString MotorsWidget::menuEntry()
 	return tr("Test power motors");
 }
 
+void MotorsWidget::exec()
+{
+	show();
+	mEventLoop.exec();
+}
+
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
@@ -66,6 +72,7 @@ void MotorsWidget::keyPressEvent(QKeyEvent *event)
 		}
 		case Qt::Key_Meta: case Qt::Key_PowerDown: {
 			close();
+			mEventLoop.quit();
 			break;
 		}
 	}
