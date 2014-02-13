@@ -28,6 +28,7 @@
 #include "fileManagerWidget.h"
 #include "netConfigWidget.h"
 #include "motorsWidget.h"
+#include "servoMotorsWidget.h"
 
 using namespace trikGui;
 
@@ -46,6 +47,7 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(ServoMotorsWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -82,6 +84,9 @@ void StartWidget::launch()
 		} else if (currentItemText == MotorsWidget::menuEntry()) {
 			MotorsWidget *motorsWidget = new MotorsWidget(mConfigPath);
 			motorsWidget->show();
+		} else if (currentItemText == ServoMotorsWidget::menuEntry()) {
+			ServoMotorsWidget *servoMotorsWidget = new ServoMotorsWidget(mConfigPath);
+			servoMotorsWidget->show();
 		}
 	}
 }

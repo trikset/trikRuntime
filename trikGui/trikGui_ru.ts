@@ -75,6 +75,24 @@
     </message>
 </context>
 <context>
+    <name>trikGui::ServoMotorLever</name>
+    <message>
+        <source>off</source>
+        <translation>выкл</translation>
+    </message>
+    <message>
+        <source>on</source>
+        <translation>вкл</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::ServoMotorsWidget</name>
+    <message>
+        <source>Test servo motors</source>
+        <translation>Проверка сервоприводов</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::StartWidget</name>
     <message>
         <source>Exit</source>
