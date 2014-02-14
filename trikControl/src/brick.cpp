@@ -160,7 +160,7 @@ void Brick::stop()
 	mDisplay.hide();
 }
 
-Motor *Brick::motor(Motor::Type type, const QString &port)
+Motor *Brick::motor(Motor::Type type, QString const &port)
 {
 	switch (type) {
 		case Motor::powerMotor: {
@@ -169,10 +169,9 @@ Motor *Brick::motor(Motor::Type type, const QString &port)
 		case Motor::servoMotor: {
 			return mServoMotors[port];
 		}
-		default: {
-			return NULL;
-		}
 	}
+
+	return NULL;
 }
 
 ServoMotor *Brick::servoMotor(QString const &port)
@@ -229,10 +228,9 @@ QStringList Brick::motorPorts(Motor::Type type) const
 		case Motor::servoMotor: {
 			return mServoMotors.keys();
 		}
-		default: {
-			return QStringList();
-		}
 	}
+
+	return QStringList();
 }
 
 QStringList Brick::servoMotorPorts() const
