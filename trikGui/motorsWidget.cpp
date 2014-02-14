@@ -14,6 +14,7 @@
 
 #include "motorsWidget.h"
 
+#include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 
 #include "motorLever.h"
@@ -36,7 +37,7 @@ MotorsWidget::MotorsWidget(QString const &configPath
 
 	int i = 0;
 	foreach (QString const &port, mPorts) {
-		MotorLever *lever = new MotorLever(port, *mBrick.motor(type, port), this);
+		MotorLever *lever = new MotorLever(port, *mBrick.motor(port), this);
 		mLayout.addWidget(lever);
 		mLevers[i] = lever;
 		++i;
@@ -52,11 +53,18 @@ MotorsWidget::~MotorsWidget()
 
 QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 {
-	if (type == trikControl::Motor::powerMotor) {
-		return tr("Test power motors");
-	} else {
-		return tr("Test servo motors");
+	switch (type) {
+		case trikControl::Motor::powerMotor: {
+			return tr("Test power motors");
+			break;
+		}
+		case trikControl::Motor::servoMotor: {
+			return tr("Test servo motors");
+			break;
+		}
 	}
+
+	return QString();
 }
 
 void MotorsWidget::exec()

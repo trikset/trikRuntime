@@ -160,63 +160,30 @@ void Brick::stop()
 	mDisplay.hide();
 }
 
-Motor *Brick::motor(Motor::Type type, QString const &port)
+Motor *Brick::motor(QString const &port)
 {
-	switch (type) {
-		case Motor::powerMotor: {
-			return mPowerMotors[port];
-		}
-		case Motor::servoMotor: {
-			return mServoMotors[port];
-		}
+	if (mPowerMotors.contains(port)) {
+		return mPowerMotors[port];
+	} else if (mServoMotors.contains(port)) {
+		return mServoMotors[port];
+	} else {
+		return NULL;
 	}
-
-	return NULL;
-}
-
-ServoMotor *Brick::servoMotor(QString const &port)
-{
-	if (mServoMotors.contains(port)) {
-		return mServoMotors.value(port);
-	}
-
-	return NULL;
 }
 
 PwmCapture *Brick::pwmCapture(QString const &port)
 {
-	if (mPwmCaptures.contains(port)) {
-		return mPwmCaptures.value(port);
-	}
-
-	return NULL;
-}
-
-PowerMotor *Brick::powerMotor(QString const &port)
-{
-	if (mPowerMotors.contains(port)) {
-		return mPowerMotors.value(port);
-	}
-
-	return NULL;
+	return mPwmCaptures.value(port, NULL);
 }
 
 AnalogSensor *Brick::analogSensor(QString const &port)
 {
-	if (mAnalogSensors.contains(port)) {
-		return mAnalogSensors.value(port);
-	}
-
-	return NULL;
+	return mAnalogSensors.value(port, NULL);
 }
 
 Sensor *Brick::sensor(QString const &port)
 {
-	if (mSensors.contains(port)) {
-		return mSensors.value(port);
-	}
-
-	return NULL;
+	return mSensors.value(port, NULL);
 }
 
 QStringList Brick::motorPorts(Motor::Type type) const
@@ -233,19 +200,9 @@ QStringList Brick::motorPorts(Motor::Type type) const
 	return QStringList();
 }
 
-QStringList Brick::servoMotorPorts() const
-{
-	return mServoMotors.keys();
-}
-
 QStringList Brick::pwmCapturePorts() const
 {
 	return mPwmCaptures.keys();
-}
-
-QStringList Brick::powerMotorPorts() const
-{
-	return mPowerMotors.keys();
 }
 
 QStringList Brick::analogSensorPorts() const
@@ -260,11 +217,7 @@ QStringList Brick::sensorPorts() const
 
 Encoder *Brick::encoder(QString const &port)
 {
-	if (mEncoders.contains(port)) {
-		return mEncoders.value(port);
-	}
-
-	return NULL;
+	return mEncoders.value(port, NULL);
 }
 
 Battery *Brick::battery()

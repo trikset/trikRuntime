@@ -70,15 +70,9 @@ public slots:
 	void stop();
 
 	/// Returns reference to motor of a given type on a given port
-	Motor *motor(Motor::Type type, QString const &port);
-
-	/// Returns reference to servo motor on a given port.
-	ServoMotor *servoMotor(QString const &port);
+	Motor *motor(QString const &port);
 
 	PwmCapture *pwmCapture(QString const &port);
-
-	/// Returns reference to power motor on a given port.
-	PowerMotor *powerMotor(QString const &port);
 
 	/// Returns reference to analog sensor on a given port.
 	AnalogSensor *analogSensor(QString const &port);
@@ -89,14 +83,8 @@ public slots:
 	/// Retruns list of ports for motors of a given type
 	QStringList motorPorts(Motor::Type type) const;
 
-	/// Returns list of servo motor ports
-	QStringList servoMotorPorts() const;
-
 	/// Returns list of PWM capture ports
 	QStringList pwmCapturePorts() const;
-
-	/// Returns list of power motor ports
-	QStringList powerMotorPorts() const;
 
 	/// Returns list of analog sensor ports
 	QStringList analogSensorPorts() const;
