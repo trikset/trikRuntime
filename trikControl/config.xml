@@ -131,7 +131,7 @@
 	     full reverse (for "min" parameter), full forward ("max" parameter),
 	     non-breaking stop ("zero" parameter), breaking stop ("stop" parameter). -->
 	<motorTypes>
-		<defaultServo min="1500000" max="1800000" zero="1600000" stop="0" />
+		<defaultServo min="1200000" max="1800000" zero="1450000" stop="0" />
 	</motorTypes>
 
 	<!-- Sensors configuration, maps logical port to sensor device file and sensor type used by default 
