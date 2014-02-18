@@ -84,13 +84,13 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	foreach (QString const &port, mConfigurer->sensorPorts()) {
 		QString const sensorType = mConfigurer->sensorDefaultType(port);
 
-		Sensor *sensor = new Sensor(
+		DigitalSensor *digitalSensor = new DigitalSensor(
 				mConfigurer->sensorTypeMin(sensorType)
 				, mConfigurer->sensorTypeMax(sensorType)
 				, mConfigurer->sensorDeviceFile(port)
 				);
 
-		mSensors.insert(port, sensor);
+		mSensors.insert(port, digitalSensor);
 	}
 
 	foreach (QString const &port, mConfigurer->encoderPorts()) {
@@ -176,14 +176,15 @@ PwmCapture *Brick::pwmCapture(QString const &port)
 	return mPwmCaptures.value(port, NULL);
 }
 
-AnalogSensor *Brick::analogSensor(QString const &port)
-{
-	return mAnalogSensors.value(port, NULL);
-}
-
 Sensor *Brick::sensor(QString const &port)
 {
-	return mSensors.value(port, NULL);
+	if (mAnalogSensors.contains(port)) {
+		return mAnalogSensors[port];
+	} else if (mDigitalSensors.contains(port)) {
+		return mDigitalSensors[port];
+	} else {
+		return NULL;
+	}
 }
 
 QStringList Brick::motorPorts(Motor::Type type) const
@@ -205,14 +206,18 @@ QStringList Brick::pwmCapturePorts() const
 	return mPwmCaptures.keys();
 }
 
-QStringList Brick::analogSensorPorts() const
+QStringList Brick::sensorPorts(Sensor::Type type) const
 {
-	return mAnalogSensors.keys();
-}
+	switch (type) {
+		case Sensor::analogSensor: {
+			return mAnalogSensors.keys();
+		}
+		case Sensor::digitalSensor: {
+			return mDigitalSensors.keys();
+		}
+	}
 
-QStringList Brick::sensorPorts() const
-{
-	return mSensors.keys();
+	return QStringList();
 }
 
 Encoder *Brick::encoder(QString const &port)

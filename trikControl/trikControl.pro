@@ -54,6 +54,7 @@ HEADERS += \
 	$$PWD/include/trikControl/battery.h \
 	$$PWD/include/trikControl/brick.h \
 	$$PWD/include/trikControl/declSpec.h \
+	$$PWD/include/trikControl/digitalSensor.h \
 	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/encoder.h \
 	$$PWD/include/trikControl/keys.h \
@@ -75,13 +76,13 @@ SOURCES += \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/configurer.cpp \
+	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \
 	$$PWD/src/gamepad.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/led.cpp \
 	$$PWD/src/powerMotor.cpp \
-	$$PWD/src/sensor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
