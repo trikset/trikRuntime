@@ -25,6 +25,7 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include "trikControl/motor.h"
 #include "fileManagerWidget.h"
 #include "netConfigWidget.h"
 #include "motorsWidget.h"
@@ -45,7 +46,8 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::powerMotor)));
+	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::servoMotor)));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -74,14 +76,17 @@ void StartWidget::launch()
 		QString currentItemText = currentItem->text();
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
-			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
-			fileManagerWidget->show();
+			FileManagerWidget fileManagerWidget(mController);
+			fileManagerWidget.exec();
 		} else if (currentItemText == NetConfigWidget::menuEntry()) {
-			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
-			netConfigWidget->show();
-		} else if (currentItemText == MotorsWidget::menuEntry()) {
-			MotorsWidget *motorsWidget = new MotorsWidget(mConfigPath);
-			motorsWidget->show();
+			NetConfigWidget netConfigWidget(mConfigPath);
+			netConfigWidget.exec();
+		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
+			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
+			motorsWidget.exec();
+		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
+			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::servoMotor);
+			motorsWidget.exec();
 		}
 	}
 }

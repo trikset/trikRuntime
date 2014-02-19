@@ -43,7 +43,6 @@ NetConfigWidget::NetConfigWidget(QString const &configPath, QWidget *parent)
 	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
 	, mConnectionState(notConnected)
 {
-	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
 	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
@@ -92,6 +91,12 @@ QString NetConfigWidget::menuEntry()
 	return tr("Network config");
 }
 
+void NetConfigWidget::exec()
+{
+	show();
+	mEventLoop.exec();
+}
+
 void NetConfigWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
@@ -126,9 +131,10 @@ void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 	case Qt::Key_Meta:
 	case Qt::Key_Left: {
 		close();
+		mEventLoop.quit();
 		break;
 	}
-	case Qt::Key_Enter: {
+	case Qt::Key_Return: {
 		connectToSelectedNetwork();
 	}
 	default: {

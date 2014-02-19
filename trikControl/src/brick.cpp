@@ -160,64 +160,49 @@ void Brick::stop()
 	mDisplay.hide();
 }
 
-ServoMotor *Brick::servoMotor(QString const &port)
+Motor *Brick::motor(QString const &port)
 {
-	if (mServoMotors.contains(port)) {
-		return mServoMotors.value(port);
+	if (mPowerMotors.contains(port)) {
+		return mPowerMotors[port];
+	} else if (mServoMotors.contains(port)) {
+		return mServoMotors[port];
+	} else {
+		return NULL;
 	}
-
-	return NULL;
 }
 
 PwmCapture *Brick::pwmCapture(QString const &port)
 {
-	if (mPwmCaptures.contains(port)) {
-		return mPwmCaptures.value(port);
-	}
-
-	return NULL;
-}
-
-PowerMotor *Brick::powerMotor(QString const &port)
-{
-	if (mPowerMotors.contains(port)) {
-		return mPowerMotors.value(port);
-	}
-
-	return NULL;
+	return mPwmCaptures.value(port, NULL);
 }
 
 AnalogSensor *Brick::analogSensor(QString const &port)
 {
-	if (mAnalogSensors.contains(port)) {
-		return mAnalogSensors.value(port);
-	}
-
-	return NULL;
+	return mAnalogSensors.value(port, NULL);
 }
 
 Sensor *Brick::sensor(QString const &port)
 {
-	if (mSensors.contains(port)) {
-		return mSensors.value(port);
-	}
-
-	return NULL;
+	return mSensors.value(port, NULL);
 }
 
-QStringList Brick::servoMotorPorts() const
+QStringList Brick::motorPorts(Motor::Type type) const
 {
-	return mServoMotors.keys();
+	switch (type) {
+		case Motor::powerMotor: {
+			return mPowerMotors.keys();
+		}
+		case Motor::servoMotor: {
+			return mServoMotors.keys();
+		}
+	}
+
+	return QStringList();
 }
 
 QStringList Brick::pwmCapturePorts() const
 {
 	return mPwmCaptures.keys();
-}
-
-QStringList Brick::powerMotorPorts() const
-{
-	return mPowerMotors.keys();
 }
 
 QStringList Brick::analogSensorPorts() const
@@ -232,11 +217,7 @@ QStringList Brick::sensorPorts() const
 
 Encoder *Brick::encoder(QString const &port)
 {
-	if (mEncoders.contains(port)) {
-		return mEncoders.value(port);
-	}
-
-	return NULL;
+	return mEncoders.value(port, NULL);
 }
 
 Battery *Brick::battery()

@@ -27,6 +27,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
+#include <QtCore/QEventLoop>
 
 #include <trikControl/brick.h>
 
@@ -34,7 +35,7 @@ namespace trikGui {
 
 class MotorLever;
 
-/// Widget that allows to test power motors connected to TRIK controller
+/// Widget that allows to test motors connected to TRIK controller
 class MotorsWidget : public QWidget
 {
 	Q_OBJECT
@@ -43,13 +44,19 @@ public:
 	/// Constructor
 	/// @param configPath - path to config.xml (TrikControl configuration file).
 	/// @param parent - pointer to a parent widget.
-	explicit MotorsWidget(QString const &configPath, QWidget *parent = 0);
+	MotorsWidget(QString const &configPath
+			, trikControl::Motor::Type type
+			, QWidget *parent = 0
+			);
 
 	/// Destructor.
 	~MotorsWidget();
 
 	/// Title for this widget in a main menu.
-	static QString menuEntry();
+	static QString menuEntry(trikControl::Motor::Type type);
+
+	/// Show the widget and wait until it will be closed by user.
+	void exec();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
@@ -59,6 +66,7 @@ private:
 	trikControl::Brick mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.
+	QEventLoop mEventLoop;
 };
 
 }

@@ -32,6 +32,7 @@
 #endif
 
 #include <QtCore/QList>
+#include <QtCore/QEventLoop>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 
@@ -60,6 +61,9 @@ public:
 	/// Title for this widget in a main menu.
 	static QString menuEntry();
 
+	/// Show the widget and wait until it will be closed by user.
+	void exec();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
@@ -87,6 +91,7 @@ private:
 	QString mCurrentSsid;
 	QHash<QString, int> mNetworksAvailableForConnection;
 	ConnectionState mConnectionState;
+	QEventLoop mEventLoop;
 
 	void setConnectionStatus(trikWiFi::Status const &status);
 	void updateConnectionStatusesInNetworkList();

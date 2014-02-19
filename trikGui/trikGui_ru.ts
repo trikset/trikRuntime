@@ -25,6 +25,10 @@
         <source>Test power motors</source>
         <translation>Проверка силовых моторов</translation>
     </message>
+    <message>
+        <source>Test servo motors</source>
+        <translation>Проверка сервоприводов</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::NetConfigWidget</name>

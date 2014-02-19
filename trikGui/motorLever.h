@@ -31,12 +31,12 @@
 #include <QtCore/QString>
 
 namespace trikControl {
-	class PowerMotor;
+	class Motor;
 }
 
 namespace trikGui {
 
-/// Widget that allows to set power value of a power motor and turn it on and off.
+/// Widget that allows to set power value of a motor and turn it on and off.
 /// It is designed to use as a part of MotorsWidget.
 class MotorLever : public QWidget
 {
@@ -44,10 +44,10 @@ class MotorLever : public QWidget
 
 public:
 	/// Constructor.
-	/// @param name - name of a port which the power motor is connected to.
-	/// @param powerMotor - pointer to an instance representing the power motor.
+	/// @param port - name of a port which the motor is connected to.
+	/// @param motor - pointer to an instance representing the motor.
 	/// @param parent - pointer to a parent widget.
-	MotorLever(QString const &name, trikControl::PowerMotor &powerMotor, QWidget *parent = 0);
+	MotorLever(QString const &port, trikControl::Motor &motor, QWidget *parent = 0);
 
 	/// Destructor.
 	~MotorLever();
@@ -60,7 +60,7 @@ private:
 	void setPower(int power);
 	void turnOnOff();
 
-	trikControl::PowerMotor &mPowerMotor;
+	trikControl::Motor &mMotor;
 	bool mIsOn;
 	int const mMaxPower;
 	int const mMinPower;

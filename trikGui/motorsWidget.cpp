@@ -14,6 +14,7 @@
 
 #include "motorsWidget.h"
 
+#include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 
 #include "motorLever.h"
@@ -21,20 +22,22 @@
 
 using namespace trikGui;
 
-MotorsWidget::MotorsWidget(QString const &configPath, QWidget *parent)
+MotorsWidget::MotorsWidget(QString const &configPath
+		, trikControl::Motor::Type type
+		, QWidget *parent
+		)
 	: QWidget(parent)
 	, mBrick(*TrikGuiApplication::instance()->thread(), configPath)
-	, mPorts(mBrick.powerMotorPorts())
+	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {
-	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
 	mPorts.sort();
 
 	int i = 0;
 	foreach (QString const &port, mPorts) {
-		MotorLever *lever = new MotorLever("JM" + port, *mBrick.powerMotor(port), this);
+		MotorLever *lever = new MotorLever(port, *mBrick.motor(port), this);
 		mLayout.addWidget(lever);
 		mLevers[i] = lever;
 		++i;
@@ -48,9 +51,26 @@ MotorsWidget::~MotorsWidget()
 	qDeleteAll(mLevers);
 }
 
-QString MotorsWidget::menuEntry()
+QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 {
-	return tr("Test power motors");
+	switch (type) {
+		case trikControl::Motor::powerMotor: {
+			return tr("Test power motors");
+			break;
+		}
+		case trikControl::Motor::servoMotor: {
+			return tr("Test servo motors");
+			break;
+		}
+	}
+
+	return QString();
+}
+
+void MotorsWidget::exec()
+{
+	show();
+	mEventLoop.exec();
 }
 
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
@@ -66,6 +86,7 @@ void MotorsWidget::keyPressEvent(QKeyEvent *event)
 		}
 		case Qt::Key_Meta: case Qt::Key_PowerDown: {
 			close();
+			mEventLoop.quit();
 			break;
 		}
 	}
