@@ -54,6 +54,10 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
+	void activateItem();
+	void showSensors();
+	void finishTesting();
+
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QListWidget mList;

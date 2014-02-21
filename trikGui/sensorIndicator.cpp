@@ -28,7 +28,7 @@
 
 using namespace trikGui;
 
-SensorIndicator::SensorIndicator(const QString &port
+SensorIndicator::SensorIndicator(QString const &port
 		, trikControl::Sensor &sensor
 		, QWidget *parent)
 	: QWidget(parent)

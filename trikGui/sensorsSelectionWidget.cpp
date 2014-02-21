@@ -42,6 +42,9 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 	item = new QListWidgetItem(tr("Start testing"), &mList);
 	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
 
+	item = new QListWidgetItem(tr("Exit"), &mList);
+	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+
 	mList.setSelectionMode(QAbstractItemView::SingleSelection);
 	mList.setFocusPolicy(Qt::StrongFocus);
 	mList.setFocus();
@@ -75,31 +78,55 @@ QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
 
 void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
-	if (event->key() == Qt::Key_Return) {
-		QListWidgetItem *item = mList.currentItem();
-		if (item->flags() & Qt::ItemIsUserCheckable) {
-			if (item->checkState() == Qt::Checked) {
-				item->setCheckState(Qt::Unchecked);
-			} else {
-				item->setCheckState(Qt::Checked);
-			}
-		} else if (item->text() == tr("Start testing")) {
-			QStringList ports;
-			int const itemsCount = mList.count();
-			for (int i = 0; i < itemsCount; ++i) {
-				QListWidgetItem const &item = *mList.item(i);
-				if ((item.flags() & Qt::ItemIsUserCheckable)
-						&& (item.checkState() == Qt::Checked)) {
-					ports.append(item.text());
-				}
-			}
-
-			SensorsWidget sensorsWidget(mBrick, ports);
-			sensorsWidget.exec();
-			close();
-			mEventLoop.quit();
+	switch (event->key()) {
+		case Qt::Key_Return: case Qt::Key_Right: {
+			activateItem();
+			break;
 		}
-	} else {
-		return QWidget::keyPressEvent(event);
+		case Qt::Key_Meta: case Qt::Key_PowerDown: case Qt::Key_Left: {
+			finishTesting();
+			break;
+		}
+		default: {
+			return QWidget::keyPressEvent(event);
+		}
 	}
+}
+
+void SensorsSelectionWidget::activateItem()
+{
+	QListWidgetItem *item = mList.currentItem();
+	if (item->flags() & Qt::ItemIsUserCheckable) {
+		if (item->checkState() == Qt::Checked) {
+			item->setCheckState(Qt::Unchecked);
+		} else {
+			item->setCheckState(Qt::Checked);
+		}
+	} else if (item->text() == tr("Start testing")) {
+		showSensors();
+	} else if (item->text() == tr("Exit")) {
+		finishTesting();
+	}
+}
+
+void SensorsSelectionWidget::showSensors()
+{
+	QStringList ports;
+	int const itemsCount = mList.count();
+	for (int i = 0; i < itemsCount; ++i) {
+		QListWidgetItem const &item = *mList.item(i);
+		if ((item.flags() & Qt::ItemIsUserCheckable)
+				&& (item.checkState() == Qt::Checked)) {
+			ports.append(item.text());
+		}
+	}
+
+	SensorsWidget sensorsWidget(mBrick, ports);
+	sensorsWidget.exec();
+}
+
+void SensorsSelectionWidget::finishTesting()
+{
+	close();
+	mEventLoop.quit();
 }
