@@ -55,19 +55,6 @@ SensorIndicator::SensorIndicator(const QString &port
 	setFocusPolicy(Qt::StrongFocus);
 }
 
-void SensorIndicator::paintEvent(QPaintEvent *)
-{
-	QStylePainter painter(this);
-
-	if (hasFocus()) {
-		QStyleOptionFocusRect option;
-		option.initFrom(this);
-		option.backgroundColor = palette().color(QPalette::Background);
-
-		painter.drawPrimitive(QStyle::PE_FrameFocusRect, option);
-	}
-}
-
 void SensorIndicator::renew()
 {
 	int const value = mSensor.read();

@@ -41,9 +41,6 @@ class SensorIndicator : public QWidget
 public:
 	SensorIndicator(QString const &port, trikControl::Sensor &sensor, QWidget *parent = 0);
 
-protected:
-	void paintEvent(QPaintEvent *);
-
 private:
 	trikControl::Sensor &mSensor;
 	int const mMaxValue;
