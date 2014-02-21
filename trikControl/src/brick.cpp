@@ -90,7 +90,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 				, mConfigurer->sensorDeviceFile(port)
 				);
 
-		mSensors.insert(port, digitalSensor);
+		mDigitalSensors.insert(port, digitalSensor);
 	}
 
 	foreach (QString const &port, mConfigurer->encoderPorts()) {
@@ -128,7 +128,7 @@ Brick::~Brick()
 	qDeleteAll(mPwmCaptures);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mEncoders);
-	qDeleteAll(mSensors);
+	qDeleteAll(mDigitalSensors);
 	delete mAccelerometer;
 	delete mGyroscope;
 	delete mBattery;

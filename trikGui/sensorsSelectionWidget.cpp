@@ -12,10 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include "sensorsSelectionWidget.h"
+
 #include <QtCore/QStringList>
 
-#include "sensorsSelectionWidget.h"
 #include "trikGuiApplication.h"
+#include "sensorsWidget.h"
 
 using namespace trikGui;
 
@@ -30,7 +32,7 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 
 	QStringList ports = mBrick.sensorPorts(type);
 	foreach (QString const &port, ports) {
-		QListWidgetItem *item = new QListWidgetItem(tr("Sensor on") + " " + port, &mList);
+		QListWidgetItem *item = new QListWidgetItem(port, &mList);
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Checked);
 	}
@@ -82,16 +84,20 @@ void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 				item->setCheckState(Qt::Checked);
 			}
 		} else if (item->text() == tr("Start testing")) {
-			QList<int> ports;
+			QStringList ports;
 			int const itemsCount = mList.count();
 			for (int i = 0; i < itemsCount; ++i) {
-				if ((mList.item(i)->flags() & Qt::ItemIsUserCheckable)
-						&& (mList.item(i)->checkState() == Qt::Checked)) {
-					ports.append(i + 1);
+				QListWidgetItem const &item = *mList.item(i);
+				if ((item.flags() & Qt::ItemIsUserCheckable)
+						&& (item.checkState() == Qt::Checked)) {
+					ports.append(item.text());
 				}
 			}
 
-			// Start testing
+			SensorsWidget sensorsWidget(mBrick, ports);
+			sensorsWidget.exec();
+			close();
+			mEventLoop.quit();
 		}
 	} else {
 		return QWidget::keyPressEvent(event);

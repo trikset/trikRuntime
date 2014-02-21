@@ -48,7 +48,6 @@ private:
 	trikControl::Sensor &mSensor;
 	int const mMaxValue;
 	int const mMinValue;
-	int const mInterval;
 
 	QVBoxLayout mLayout;
 	QLabel mNameLabel;

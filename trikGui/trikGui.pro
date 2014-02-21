@@ -27,7 +27,8 @@ HEADERS += \
 	$$PWD/controller.h \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
-	$$PWD/sensorIndicator.h
+	$$PWD/sensorIndicator.h \
+    sensorsWidget.h
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -40,7 +41,8 @@ SOURCES += \
 	$$PWD/controller.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
-	$$PWD/sensorIndicator.cpp
+	$$PWD/sensorIndicator.cpp \
+    sensorsWidget.cpp
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
