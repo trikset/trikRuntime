@@ -27,34 +27,10 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
-
-DESTDIR = ../bin/$$CONFIGURATION/
+include(../global.pri)
 
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCOMMUNICATOR_DIR/include \
 
 LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
-
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-}
-
-unix {
-        target.path = $$[INSTALL_ROOT]/
-        INSTALLS +=   target
-}
-

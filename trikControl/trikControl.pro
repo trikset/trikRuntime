@@ -22,22 +22,13 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
+FILES_TO_COPY = \
+	$$PWD/config.xml  \
+	$$PWD/../media/ \
+
+include(../global.pri)
 
 TARGET = trikControl$$CONFIGURATION_SUFFIX
-
-DESTDIR = ../bin/$$CONFIGURATION
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
@@ -88,18 +79,3 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
 	$$PWD/src/pwmCapture.cpp \
-
-win32 {
-	QMAKE_POST_LINK = "xcopy config.xml $$replace(DESTDIR, /, \\) /q /y \
-			&& xcopy ..\\media $$replace(DESTDIR, /, \\)\\media /s /e /q /y /i \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -f config.xml $$DESTDIR \
-			&& cp -rf ../media/ $$DESTDIR/ \
-			"
-}
-
-unix {
-	target.path = $$[INSTALL_ROOT]/
-	INSTALLS += target
-}
