@@ -18,6 +18,7 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
+#include <QtCore/QFileInfo>
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -140,8 +141,19 @@ Brick::~Brick()
 
 void Brick::playSound(QString const &soundFileName)
 {
-	QString const command = mConfigurer->playSoundCommand().arg(soundFileName);
-	if (::system(command.toStdString().c_str()) != 0) {
+	qDebug() << soundFileName;
+
+	QFileInfo const fileInfo(soundFileName);
+
+	QString command;
+
+	if (fileInfo.suffix() == "wav") {
+		command = mConfigurer->playWavFileCommand().arg(soundFileName);
+	} else if (fileInfo.suffix() == "mp3") {
+		command = mConfigurer->playMp3FileCommand().arg(soundFileName);
+	}
+
+	if (command.isEmpty() || ::system(command.toStdString().c_str()) != 0) {
 		qDebug() << "Play sound failed";
 	}
 }

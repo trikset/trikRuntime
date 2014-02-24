@@ -130,8 +130,11 @@
 		<lightSensor min="30000" max="350000" />
 	</sensorTypes>
 	
-	<!-- Format for playSound command. %1 designates file name to be played. -->
-	<playSound command="aplay --quiet %1 &amp;" />
+	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
+	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;" />
+	
+	<!-- Format for playSound command, used to play .mp3 files. %1 designates file name to be played. -->
+	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;" />
 	
 	<!-- Device files and on/off values for LED on a brick. -->
 	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" on="0" off="1" />
