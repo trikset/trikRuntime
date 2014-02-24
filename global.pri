@@ -24,7 +24,7 @@ QT_INSTALL_DIR = $$[QT_INSTALL_PREFIX]
 TRIK_SDK_USAGE = $$find(QT_INSTALL_DIR, "trik-sdk")
 
 count(TRIK_SDK_USAGE, 1) {
-	ARCHITECTURE = arm9
+	ARCHITECTURE = arm
 } else {
 	ARCHITECTURE = x86
 }
@@ -34,7 +34,7 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
-	equals(ARCHITECTURE, "arm9") {
+	equals(ARCHITECTURE, "arm") {
 		CONFIGURATION_SUFFIX =
 	} else {
 		CONFIGURATION_SUFFIX = -$$ARCHITECTURE
