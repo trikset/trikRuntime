@@ -246,8 +246,10 @@ void TrikWiFi::processMessage(QString const &message)
 	if (message.contains("CTRL-EVENT-SCAN-RESULTS")) {
 		emit scanFinished();
 	} else if (message.contains("CTRL-EVENT-CONNECTED")) {
-		system("udhcpc -i wlan0");
-		emit connected();
+		int result = system("udhcpc -i wlan0");
+		if (result == 0) {
+			emit connected();
+		}
 	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
 		emit disconnected();
 	}
