@@ -19,11 +19,6 @@
 using namespace trikScriptRunner;
 using namespace trikControl;
 
-void trikScriptRunner::powerMotorFromScriptValue(QScriptValue const &object, PowerMotor* &out)
-{
-	out = qobject_cast<PowerMotor*>(object.toQObject());
-}
-
 QScriptValue trikScriptRunner::analogSensorToScriptValue(QScriptEngine *engine, AnalogSensor* const &in)
 {
 	return engine->newQObject(in);
@@ -79,7 +74,12 @@ void trikScriptRunner::ledFromScriptValue(QScriptValue const &object, trikContro
 	out = qobject_cast<Led*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::powerMotorToScriptValue(QScriptEngine *engine, PowerMotor* const &in)
+void trikScriptRunner::motorFromScriptValue(QScriptValue const &object, Motor* &out)
+{
+	out = qobject_cast<Motor*>(object.toQObject());
+}
+
+QScriptValue trikScriptRunner::motorToScriptValue(QScriptEngine *engine, Motor* const &in)
 {
 	return engine->newQObject(in);
 }
@@ -107,14 +107,4 @@ QScriptValue trikScriptRunner::sensor3dToScriptValue(QScriptEngine *engine, trik
 void trikScriptRunner::sensor3dFromScriptValue(QScriptValue const &object, trikControl::Sensor3d* &out)
 {
 	out = qobject_cast<Sensor3d*>(object.toQObject());
-}
-
-QScriptValue trikScriptRunner::servoMotorToScriptValue(QScriptEngine *engine, ServoMotor* const &in)
-{
-	return engine->newQObject(in);
-}
-
-void trikScriptRunner::servoMotorFromScriptValue(QScriptValue const &object, ServoMotor *&out)
-{
-	out = qobject_cast<ServoMotor*>(object.toQObject());
 }
