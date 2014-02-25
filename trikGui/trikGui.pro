@@ -21,22 +21,28 @@ HEADERS += \
 	$$PWD/fileManagerWidget.h \
 	$$PWD/runningWidget.h \
 	$$PWD/netConfigWidget.h \
+	$$PWD/sensorsSelectionWidget.h \
 	$$PWD/startWidget.h \
 	$$PWD/trikGuiApplication.h \
 	$$PWD/controller.h \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
+	$$PWD/sensorIndicator.h \
+    sensorsWidget.h
 
 SOURCES += \
 	$$PWD/main.cpp \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/runningWidget.cpp \
 	$$PWD/netConfigWidget.cpp \
+	$$PWD/sensorsSelectionWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
 	$$PWD/controller.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
+	$$PWD/sensorIndicator.cpp \
+    sensorsWidget.cpp
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc

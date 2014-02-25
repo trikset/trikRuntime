@@ -29,6 +29,7 @@
 #include "fileManagerWidget.h"
 #include "netConfigWidget.h"
 #include "motorsWidget.h"
+#include "sensorsSelectionWidget.h"
 
 using namespace trikGui;
 
@@ -48,6 +49,8 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	mMenuModel.appendRow(settingsItem);
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::powerMotor)));
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::servoMotor)));
+	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)));
+	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -87,6 +90,12 @@ void StartWidget::launch()
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::servoMotor);
 			motorsWidget.exec();
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
+			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::analogSensor);
+			sensorsSelectionWidget.exec();
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
+			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::digitalSensor);
+			sensorsSelectionWidget.exec();
 		}
 	}
 }
@@ -125,7 +134,7 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: {
+		case Qt::Key_Meta: case Qt::Key_PowerDown: {
 			setRootIndex(QModelIndex());
 			break;
 		}

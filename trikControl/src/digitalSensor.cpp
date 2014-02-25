@@ -12,20 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "sensor.h"
+#include "digitalSensor.h"
 
 #include <QtCore/QDebug>
 
 using namespace trikControl;
 
-Sensor::Sensor(int min, int max, QString const &deviceFile)
+DigitalSensor::DigitalSensor(int min, int max, QString const &deviceFile)
 	: mMin(min)
 	, mMax(max)
 	, mDeviceFile(deviceFile)
 {
 }
 
-int Sensor::read()
+int DigitalSensor::read()
 {
 	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";

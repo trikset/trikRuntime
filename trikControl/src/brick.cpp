@@ -38,13 +38,13 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
 
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
-		QString const motorType = mConfigurer->servoMotorDefaultType(port);
+		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
 		ServoMotor *servoMotor = new ServoMotor(
-				mConfigurer->motorTypeMin(motorType)
-				, mConfigurer->motorTypeMax(motorType)
-				, mConfigurer->motorTypeZero(motorType)
-				, mConfigurer->motorTypeStop(motorType)
+				mConfigurer->servoMotorTypeMin(servoMotorType)
+				, mConfigurer->servoMotorTypeMax(servoMotorType)
+				, mConfigurer->servoMotorTypeZero(servoMotorType)
+				, mConfigurer->servoMotorTypeStop(servoMotorType)
 				, mConfigurer->servoMotorDeviceFile(port)
 				, mConfigurer->servoMotorPeriodFile(port)
 				, mConfigurer->servoMotorPeriod(port)
@@ -82,16 +82,16 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 		mAnalogSensors.insert(port, analogSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->sensorPorts()) {
-		QString const sensorType = mConfigurer->sensorDefaultType(port);
+	foreach (QString const &port, mConfigurer->digitalSensorPorts()) {
+		QString const digitalSensorType = mConfigurer->digitalSensorDefaultType(port);
 
-		Sensor *sensor = new Sensor(
-				mConfigurer->sensorTypeMin(sensorType)
-				, mConfigurer->sensorTypeMax(sensorType)
-				, mConfigurer->sensorDeviceFile(port)
+		DigitalSensor *digitalSensor = new DigitalSensor(
+				mConfigurer->digitalSensorTypeMin(digitalSensorType)
+				, mConfigurer->digitalSensorTypeMax(digitalSensorType)
+				, mConfigurer->digitalSensorDeviceFile(port)
 				);
 
-		mSensors.insert(port, sensor);
+		mDigitalSensors.insert(port, digitalSensor);
 	}
 
 	foreach (QString const &port, mConfigurer->encoderPorts()) {
@@ -129,7 +129,8 @@ Brick::~Brick()
 	qDeleteAll(mPwmCaptures);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mEncoders);
-	qDeleteAll(mSensors);
+	qDeleteAll(mAnalogSensors);
+	qDeleteAll(mDigitalSensors);
 	delete mAccelerometer;
 	delete mGyroscope;
 	delete mBattery;
@@ -188,14 +189,15 @@ PwmCapture *Brick::pwmCapture(QString const &port)
 	return mPwmCaptures.value(port, NULL);
 }
 
-AnalogSensor *Brick::analogSensor(QString const &port)
-{
-	return mAnalogSensors.value(port, NULL);
-}
-
 Sensor *Brick::sensor(QString const &port)
 {
-	return mSensors.value(port, NULL);
+	if (mAnalogSensors.contains(port)) {
+		return mAnalogSensors[port];
+	} else if (mDigitalSensors.contains(port)) {
+		return mDigitalSensors[port];
+	} else {
+		return NULL;
+	}
 }
 
 QStringList Brick::motorPorts(Motor::Type type) const
@@ -217,14 +219,18 @@ QStringList Brick::pwmCapturePorts() const
 	return mPwmCaptures.keys();
 }
 
-QStringList Brick::analogSensorPorts() const
+QStringList Brick::sensorPorts(Sensor::Type type) const
 {
-	return mAnalogSensors.keys();
-}
+	switch (type) {
+		case Sensor::analogSensor: {
+			return mAnalogSensors.keys();
+		}
+		case Sensor::digitalSensor: {
+			return mDigitalSensors.keys();
+		}
+	}
 
-QStringList Brick::sensorPorts() const
-{
-	return mSensors.keys();
+	return QStringList();
 }
 
 Encoder *Brick::encoder(QString const &port)

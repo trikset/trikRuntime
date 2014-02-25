@@ -24,6 +24,7 @@
 
 #include "analogSensor.h"
 #include "battery.h"
+#include "digitalSensor.h"
 #include "display.h"
 #include "encoder.h"
 #include "gamepad.h"
@@ -74,9 +75,6 @@ public slots:
 
 	PwmCapture *pwmCapture(QString const &port);
 
-	/// Returns reference to analog sensor on a given port.
-	AnalogSensor *analogSensor(QString const &port);
-
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
 
@@ -86,11 +84,8 @@ public slots:
 	/// Returns list of PWM capture ports
 	QStringList pwmCapturePorts() const;
 
-	/// Returns list of analog sensor ports
-	QStringList analogSensorPorts() const;
-
-	/// Returns list of sensor ports
-	QStringList sensorPorts() const;
+	/// Returns list of ports for sensors of a given type
+	QStringList sensorPorts(Sensor::Type type) const;
 
 	/// Returns reference to on-board accelerometer.
 	Sensor3d *accelerometer();
@@ -156,7 +151,7 @@ private:
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
 	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
-	QHash<QString, Sensor *> mSensors;  // Has ownership.
+	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
 
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator;  // Has ownership.

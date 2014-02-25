@@ -14,29 +14,45 @@
 
 #pragma once
 
-#include <QtCore/QObject>
+#include <QtCore/qglobal.h>
 
-#include "declSpec.h"
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QLabel>
+	#include <QtGui/QProgressBar>
+#else
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QProgressBar>
+#endif
 
 namespace trikControl {
+	class Sensor;
+}
 
-/// Abstract sensor class. It is inherited by AnalogSensor and DigitalSensor classes.
-class TRIKCONTROL_EXPORT Sensor : public QObject
+namespace trikGui {
+
+class SensorIndicator : public QWidget
 {
 	Q_OBJECT
 
 public:
-	/// Destructor.
-	virtual ~Sensor() {}
+	SensorIndicator(QString const &port, trikControl::Sensor &sensor, QWidget *parent = 0);
 
-	enum Type {
-		analogSensor
-		, digitalSensor
-	};
+private:
+	trikControl::Sensor &mSensor;
+	int const mMaxValue;
+	int const mMinValue;
+
+	QVBoxLayout mLayout;
+	QLabel mNameLabel;
+	QProgressBar mValueBar;
+	QLabel mValueLabel;
 
 public slots:
-	/// Returns current raw reading of a sensor.
-	virtual int read() = 0;
+	void renew();
 };
 
 }

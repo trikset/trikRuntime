@@ -1,4 +1,4 @@
-/* Copyright 2013 Nikita Batov
+/* Copyright 2013 Yurii Litvinov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,35 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 #include "declSpec.h"
 #include "sensor.h"
 
 namespace trikControl {
 
-class I2cCommunicator;
-
-/// Analog TRIK sensor.
-class TRIKCONTROL_EXPORT AnalogSensor : public Sensor
+/// Generic TRIK sensor.
+class TRIKCONTROL_EXPORT DigitalSensor : public Sensor
 {
 	Q_OBJECT
 
 public:
-	AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber);
+	/// Constructor.
+	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
+	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
+	/// @param deviceFile - device file for this sensor.
+	DigitalSensor(int min, int max, QString const &deviceFile);
 
 public slots:
 	/// Returns current raw reading of a sensor.
 	int read();
 
 private:
-	I2cCommunicator &mCommunicator;
-	int const mI2cCommandNumber;
+	int mMin;
+	int mMax;
+	QFile mDeviceFile;
+	QTextStream mStream;
 };
 
 }
