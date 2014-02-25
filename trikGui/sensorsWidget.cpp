@@ -60,7 +60,9 @@ void SensorsWidget::exec()
 void SensorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: case Qt::Key_PowerDown: case Qt::Key_Left: {
+		case Qt::Key_Meta:
+		case Qt::Key_PowerDown:
+		case Qt::Key_Left: {
 			close();
 			mEventLoop.quit();
 			break;

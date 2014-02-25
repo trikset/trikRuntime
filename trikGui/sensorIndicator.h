@@ -41,6 +41,9 @@ class SensorIndicator : public QWidget
 public:
 	SensorIndicator(QString const &port, trikControl::Sensor &sensor, QWidget *parent = 0);
 
+public slots:
+	void renew();
+
 private:
 	trikControl::Sensor &mSensor;
 	int const mMaxValue;
@@ -50,9 +53,6 @@ private:
 	QLabel mNameLabel;
 	QProgressBar mValueBar;
 	QLabel mValueLabel;
-
-public slots:
-	void renew();
 };
 
 }

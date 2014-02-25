@@ -37,9 +37,7 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 		item->setCheckState(Qt::Checked);
 	}
 
-	QListWidgetItem *item = NULL;
-
-	item = new QListWidgetItem(tr("Start testing"), &mList);
+	QListWidgetItem *item = new QListWidgetItem(tr("Start testing"), &mList);
 	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
 
 	item = new QListWidgetItem(tr("Exit"), &mList);
@@ -79,11 +77,14 @@ QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
 void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return: case Qt::Key_Right: {
+		case Qt::Key_Return:
+		case Qt::Key_Right: {
 			activateItem();
 			break;
 		}
-		case Qt::Key_Meta: case Qt::Key_PowerDown: case Qt::Key_Left: {
+		case Qt::Key_Meta:
+		case Qt::Key_PowerDown:
+		case Qt::Key_Left: {
 			exit();
 			break;
 		}
@@ -116,7 +117,8 @@ void SensorsSelectionWidget::startTesting()
 	for (int i = 0; i < itemsCount; ++i) {
 		QListWidgetItem const &item = *mList.item(i);
 		if ((item.flags() & Qt::ItemIsUserCheckable)
-				&& (item.checkState() == Qt::Checked)) {
+				&& (item.checkState() == Qt::Checked))
+		{
 			ports.append(item.text());
 		}
 	}

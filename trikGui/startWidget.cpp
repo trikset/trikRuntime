@@ -134,7 +134,8 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: case Qt::Key_PowerDown: {
+		case Qt::Key_Meta:
+		case Qt::Key_PowerDown: {
 			setRootIndex(QModelIndex());
 			break;
 		}
