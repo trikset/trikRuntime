@@ -19,33 +19,18 @@ QT += script
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
+FILES_TO_COPY = \
+	system.js \
+
+include(../global.pri)
 
 TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
-
-DESTDIR = ../bin/$$CONFIGURATION
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCONTROL_DIR/include \
 
 LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX
-
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$PWD
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,$$DESTDIR
-}
 
 HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
@@ -58,16 +43,3 @@ SOURCES += \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/fileUtils.cpp \
-
-unix {
-	target.path = $$[INSTALL_ROOT]/
-	INSTALLS +=   target
-}
-
-win32 {
-	QMAKE_POST_LINK = "xcopy system.js $$replace(DESTDIR, /, \\) /q /y \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -f system.js $$DESTDIR/ \
-			"
-}

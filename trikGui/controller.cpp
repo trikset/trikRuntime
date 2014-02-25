@@ -16,6 +16,7 @@
 
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
+#include <QtCore/QDebug>
 
 #include "runningWidget.h"
 
@@ -41,14 +42,18 @@ Controller::~Controller()
 void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
+
+	qDebug() << fileInfo.suffix();
+
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
 		mExecutionState = running;
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
-	} else if (fileInfo.isExecutable()) {
-		QProcess::startDetached(filePath);
-	} else if (fileInfo.suffix() == "wav") {
+	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
+
+		qDebug() << fileInfo.canonicalFilePath();
+
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
 		mExecutionState = running;
@@ -57,6 +62,8 @@ void Controller::runFile(QString const &filePath)
 		QStringList args;
 		args << filePath;
 		QProcess::startDetached("sh", args);
+	} else if (fileInfo.isExecutable()) {
+		QProcess::startDetached(filePath);
 	}
 }
 

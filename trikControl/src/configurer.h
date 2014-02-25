@@ -94,7 +94,9 @@ public:
 
 	QString digitalSensorDefaultType(QString const &port) const;
 
-	QString playSoundCommand() const;
+	QString playWavFileCommand() const;
+
+	QString playMp3FileCommand() const;
 
 	int accelerometerMin() const;
 
@@ -209,7 +211,8 @@ private:
 	OnBoardSensor mGyroscope;
 
 	QString mInitScript;
-	QString mPlaySoundCommand;
+	QString mPlayWavFileCommand;
+	QString mPlayMp3FileCommand;
 	QString mI2cPath;
 	int mI2cDeviceId;
 

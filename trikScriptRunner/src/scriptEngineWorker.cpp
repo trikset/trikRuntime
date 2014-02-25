@@ -19,11 +19,10 @@
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
-#include <trikControl/powerMotor.h>
+#include <trikControl/motor.h>
 #include <trikControl/sensor.h>
 #include <trikControl/analogSensor.h>
 #include <trikControl/sensor3d.h>
-#include <trikControl/servoMotor.h>
 
 #include "scriptableParts.h"
 #include "fileUtils.h"
@@ -37,10 +36,9 @@ Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
 Q_DECLARE_METATYPE(Keys*)
 Q_DECLARE_METATYPE(Led*)
-Q_DECLARE_METATYPE(PowerMotor*)
+Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
-Q_DECLARE_METATYPE(ServoMotor*)
 
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
 	: mEngine(NULL)
@@ -116,10 +114,9 @@ void ScriptEngineWorker::initScriptEngine()
 	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);
 	qScriptRegisterMetaType(mEngine, keysToScriptValue, keysFromScriptValue);
 	qScriptRegisterMetaType(mEngine, ledToScriptValue, ledFromScriptValue);
-	qScriptRegisterMetaType(mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
-	qScriptRegisterMetaType(mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);
 
 	mEngine->setProcessEventsInterval(1);
 }

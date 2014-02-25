@@ -45,7 +45,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
-	mCurrentDir = "./scripts";
+	mCurrentDir = QDir().exists("./scripts") ? "./scripts" : ".";
 
 	showCurrentDir();
 }

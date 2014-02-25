@@ -27,42 +27,13 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
+FILES_TO_COPY = \
+	test.qts \
 
-DESTDIR = ../bin/$$CONFIGURATION
+include(../global.pri)
 
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 
 LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
-
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-}
-
-win32 {
-	QMAKE_POST_LINK = "xcopy test.qts $$replace(DESTDIR, /, \\) /q /y \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -f test.qts $$DESTDIR \
-			"
-}
-
-unix {
-        target.path = $$[INSTALL_ROOT]/
-        INSTALLS +=   target
-}
-

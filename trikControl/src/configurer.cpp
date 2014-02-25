@@ -202,9 +202,14 @@ QString Configurer::digitalSensorDefaultType(QString const &port) const
 	return mDigitalSensorMappings[port].defaultType;
 }
 
-QString Configurer::playSoundCommand() const
+QString Configurer::playWavFileCommand() const
 {
-	return mPlaySoundCommand;
+	return mPlayWavFileCommand;
+}
+
+QString Configurer::playMp3FileCommand() const
+{
+	return mPlayMp3FileCommand;
 }
 
 int Configurer::accelerometerMin() const
@@ -532,12 +537,20 @@ void Configurer::loadDigitalSensorTypes(QDomElement const &root)
 
 void Configurer::loadSound(QDomElement const &root)
 {
-	if (root.elementsByTagName("playSound").isEmpty()) {
-		qDebug() << "config.xml does not have <playSound> tag";
+	if (root.elementsByTagName("playWavFile").isEmpty()) {
+		qDebug() << "config.xml does not have <playWavFile> tag";
 		throw "config.xml parsing failed";
 	}
 
-	mPlaySoundCommand = root.elementsByTagName("playSound").at(0).toElement().attribute("command");
+	mPlayWavFileCommand = root.elementsByTagName("playWavFile").at(0).toElement().attribute("command");
+
+	if (root.elementsByTagName("playMp3File").isEmpty()) {
+		qDebug() << "config.xml does not have <playMp3File> tag";
+		throw "config.xml parsing failed";
+	}
+
+	mPlayMp3FileCommand = root.elementsByTagName("playMp3File").at(0).toElement().attribute("command");
+
 }
 
 Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QString const &tagName)

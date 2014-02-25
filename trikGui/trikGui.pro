@@ -55,15 +55,10 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
+FILES_TO_COPY = \
+	wpa-config.xml \
 
-DESTDIR = ../bin/$$CONFIGURATION
+include(../global.pri)
 
 INCLUDEPATH = \
 	$$PWD \
@@ -78,26 +73,3 @@ LIBS += \
 	-ltrikScriptRunner$$CONFIGURATION_SUFFIX \
 	-ltrikWiFi$$CONFIGURATION_SUFFIX \
 	-ltrikControl$$CONFIGURATION_SUFFIX \
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
-
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-}
-
-win32 {
-	QMAKE_POST_LINK = "xcopy wpa-config.xml $$replace(DESTDIR, /, \\) /q /y \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -f wpa-config.xml $$DESTDIR \
-			"
-}
-
-unix {
-		target.path = $$[INSTALL_ROOT]/
-		INSTALLS +=   target
-}

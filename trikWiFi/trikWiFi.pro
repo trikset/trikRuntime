@@ -18,22 +18,9 @@ QT += xml
 
 DEFINES += TRIKWIFI_LIBRARY
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
+include(../global.pri)
 
 TARGET = trikWiFi$$CONFIGURATION_SUFFIX
-
-DESTDIR = ../bin/$$CONFIGURATION/
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
 
 INCLUDEPATH = \
 	$$PWD \
@@ -55,8 +42,3 @@ SOURCES += \
 	$$PWD/src/trikWiFi.cpp \
 	$$PWD/src/wpaConfigurer.cpp \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
-
-unix {
-	target.path = $$[INSTALL_ROOT]/
-	INSTALLS += target
-}

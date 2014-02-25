@@ -22,10 +22,9 @@
 #include <trikControl/encoder.h>
 #include <trikControl/keys.h>
 #include <trikControl/led.h>
-#include <trikControl/powerMotor.h>
 #include <trikControl/sensor.h>
 #include <trikControl/sensor3d.h>
-#include <trikControl/servoMotor.h>
+#include <trikControl/motor.h>
 
 namespace trikScriptRunner {
 
@@ -47,16 +46,13 @@ void keysFromScriptValue(QScriptValue const &object, trikControl::Keys* &out);
 QScriptValue ledToScriptValue(QScriptEngine *engine, trikControl::Led* const &in);
 void ledFromScriptValue(QScriptValue const &object, trikControl::Led* &out);
 
-QScriptValue powerMotorToScriptValue(QScriptEngine *engine, trikControl::PowerMotor* const &in);
-void powerMotorFromScriptValue(QScriptValue const &object, trikControl::PowerMotor* &out);
+QScriptValue motorToScriptValue(QScriptEngine *engine, trikControl::Motor* const &in);
+void motorFromScriptValue(QScriptValue const &object, trikControl::Motor* &out);
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
 
 QScriptValue sensor3dToScriptValue(QScriptEngine *engine, trikControl::Sensor3d* const &in);
 void sensor3dFromScriptValue(QScriptValue const &object, trikControl::Sensor3d* &out);
-
-QScriptValue servoMotorToScriptValue(QScriptEngine *engine, trikControl::ServoMotor* const &in);
-void servoMotorFromScriptValue(QScriptValue const &object, trikControl::ServoMotor* &out);
 
 }
