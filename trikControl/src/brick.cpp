@@ -37,13 +37,13 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
 
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
-		QString const motorType = mConfigurer->servoMotorDefaultType(port);
+		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
 		ServoMotor *servoMotor = new ServoMotor(
-				mConfigurer->motorTypeMin(motorType)
-				, mConfigurer->motorTypeMax(motorType)
-				, mConfigurer->motorTypeZero(motorType)
-				, mConfigurer->motorTypeStop(motorType)
+				mConfigurer->servoMotorTypeMin(servoMotorType)
+				, mConfigurer->servoMotorTypeMax(servoMotorType)
+				, mConfigurer->servoMotorTypeZero(servoMotorType)
+				, mConfigurer->servoMotorTypeStop(servoMotorType)
 				, mConfigurer->servoMotorDeviceFile(port)
 				, mConfigurer->servoMotorPeriodFile(port)
 				, mConfigurer->servoMotorPeriod(port)
@@ -81,13 +81,13 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 		mAnalogSensors.insert(port, analogSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->sensorPorts()) {
-		QString const sensorType = mConfigurer->sensorDefaultType(port);
+	foreach (QString const &port, mConfigurer->digitalSensorPorts()) {
+		QString const digitalSensorType = mConfigurer->digitalSensorDefaultType(port);
 
 		DigitalSensor *digitalSensor = new DigitalSensor(
-				mConfigurer->sensorTypeMin(sensorType)
-				, mConfigurer->sensorTypeMax(sensorType)
-				, mConfigurer->sensorDeviceFile(port)
+				mConfigurer->digitalSensorTypeMin(digitalSensorType)
+				, mConfigurer->digitalSensorTypeMax(digitalSensorType)
+				, mConfigurer->digitalSensorDeviceFile(port)
 				);
 
 		mDigitalSensors.insert(port, digitalSensor);
@@ -128,6 +128,7 @@ Brick::~Brick()
 	qDeleteAll(mPwmCaptures);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mEncoders);
+	qDeleteAll(mAnalogSensors);
 	qDeleteAll(mDigitalSensors);
 	delete mAccelerometer;
 	delete mGyroscope;
