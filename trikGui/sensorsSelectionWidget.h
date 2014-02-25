@@ -55,8 +55,8 @@ protected:
 
 private:
 	void activateItem();
-	void showSensors();
-	void finishTesting();
+	void startTesting();
+	void exit();
 
 	QVBoxLayout mLayout;
 	QLabel mTitle;

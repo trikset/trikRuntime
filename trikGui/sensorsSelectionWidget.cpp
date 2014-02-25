@@ -84,7 +84,7 @@ void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		case Qt::Key_Meta: case Qt::Key_PowerDown: case Qt::Key_Left: {
-			finishTesting();
+			exit();
 			break;
 		}
 		default: {
@@ -103,13 +103,13 @@ void SensorsSelectionWidget::activateItem()
 			item->setCheckState(Qt::Checked);
 		}
 	} else if (item->text() == tr("Start testing")) {
-		showSensors();
+		startTesting();
 	} else if (item->text() == tr("Exit")) {
-		finishTesting();
+		exit();
 	}
 }
 
-void SensorsSelectionWidget::showSensors()
+void SensorsSelectionWidget::startTesting()
 {
 	QStringList ports;
 	int const itemsCount = mList.count();
@@ -125,7 +125,7 @@ void SensorsSelectionWidget::showSensors()
 	sensorsWidget.exec();
 }
 
-void SensorsSelectionWidget::finishTesting()
+void SensorsSelectionWidget::exit()
 {
 	close();
 	mEventLoop.quit();
