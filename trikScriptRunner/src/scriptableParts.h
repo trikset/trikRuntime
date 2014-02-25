@@ -16,7 +16,6 @@
 
 #include <QtScript/QScriptEngine>
 
-#include <trikControl/analogSensor.h>
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
@@ -27,9 +26,6 @@
 #include <trikControl/motor.h>
 
 namespace trikScriptRunner {
-
-QScriptValue analogSensorToScriptValue(QScriptEngine *engine, trikControl::AnalogSensor* const &in);
-void analogSensorFromScriptValue(QScriptValue const &object, trikControl::AnalogSensor* &out);
 
 QScriptValue batteryToScriptValue(QScriptEngine *engine, trikControl::Battery* const &in);
 void batteryFromScriptValue(QScriptValue const &object, trikControl::Battery* &out);

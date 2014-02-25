@@ -108,7 +108,6 @@ void ScriptEngineWorker::initScriptEngine()
 
 	mBrick.resetEventDrivenMode();
 
-	qScriptRegisterMetaType(mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);

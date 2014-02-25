@@ -83,7 +83,7 @@
 	<powerMotors>
 		<powerMotor port="JM1" i2cCommandNumber="0x14" invert="false" />
 		<powerMotor port="JM2" i2cCommandNumber="0x15" invert="false" />
-		<powerMotor port="M1" i2cCommandNumber="0x16" invert="false" />
+		<powerMotor port="M1" i2cCommandNumber="0x16" invert="true" />
 		<powerMotor port="JM3" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
 
