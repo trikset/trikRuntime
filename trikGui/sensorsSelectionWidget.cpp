@@ -88,7 +88,7 @@ void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		default: {
-			return QWidget::keyPressEvent(event);
+			QWidget::keyPressEvent(event);
 		}
 	}
 }

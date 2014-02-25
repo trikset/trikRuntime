@@ -60,17 +60,13 @@ void SensorsWidget::exec()
 void SensorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Left: {
-			focusPreviousChild();
-			break;
-		}
-		case Qt::Key_Right: {
-			focusNextChild();
-			break;
-		}
-		case Qt::Key_Meta: case Qt::Key_PowerDown: {
+		case Qt::Key_Meta: case Qt::Key_PowerDown: case Qt::Key_Left: {
 			close();
 			mEventLoop.quit();
+			break;
+		}
+		default: {
+			QWidget::keyPressEvent(event);
 			break;
 		}
 	}

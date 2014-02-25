@@ -82,7 +82,7 @@
     <name>trikGui::SensorsSelectionWidget</name>
     <message>
         <source>Select sensors for testing:</source>
-        <translation>Выберите датчики для проверки:</translation>
+        <translation>Выберите датч. для проверки:</translation>
     </message>
     <message>
         <source>Start testing</source>
@@ -94,11 +94,11 @@
     </message>
     <message>
         <source>Test analog sensors</source>
-        <translation>Проверка аналоговых датчиков</translation>
+        <translation>Проверка аналог. датчиков</translation>
     </message>
     <message>
         <source>Test digital sensors</source>
-        <translation>Проверка цифровых датчиков</translation>
+        <translation>Проверка цифр. датчиков</translation>
     </message>
 </context>
 <context>

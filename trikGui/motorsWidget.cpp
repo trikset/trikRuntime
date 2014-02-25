@@ -89,5 +89,9 @@ void MotorsWidget::keyPressEvent(QKeyEvent *event)
 			mEventLoop.quit();
 			break;
 		}
+		default: {
+			QWidget::keyPressEvent(event);
+			break;
+		}
 	}
 }
