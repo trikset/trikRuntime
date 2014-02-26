@@ -1,8 +1,8 @@
 <!--
 
-Main variant of TrikControl configuration file.
+Alternative variant of TrikControl configuration file.
 
-Use it if JCx ports are configured to work as PWM signal generators.
+Use it if JCx ports are configured to work as PWM signal capture devices.
 
 -->
 
@@ -64,6 +64,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			defaultType="defaultServo"
 			invert="false"
 		/>
+<!--
 		<servoMotor
 			port="JC1"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
@@ -88,10 +89,10 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			defaultType="defaultServo"
 			invert="false"
 		/>
+-->
 	</servoMotors>
 
 	<pwmCaptures>
-<!--
 		<capture
 			port="JC1"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
@@ -107,7 +108,6 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
--->
 	</pwmCaptures>
 
 	<!-- Power motors configuration, maps logical port to I2C command. 
