@@ -42,18 +42,12 @@ Controller::~Controller()
 void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
-
-	qDebug() << fileInfo.suffix();
-
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
 		mExecutionState = running;
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
-
-		qDebug() << fileInfo.canonicalFilePath();
-
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
 		mExecutionState = running;
