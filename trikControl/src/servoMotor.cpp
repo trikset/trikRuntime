@@ -89,7 +89,7 @@ int ServoMotor::duty() const
 void ServoMotor::powerOff()
 {
 	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
+		qDebug() << "Can't open motor duty file " << mDutyFile.fileName();
 		return;
 	}
 
