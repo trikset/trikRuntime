@@ -73,18 +73,19 @@ public slots:
 	/// Returns reference to motor of a given type on a given port
 	Motor *motor(QString const &port);
 
+	/// Returns reference to PWM signal capture device on a given port.
 	PwmCapture *pwmCapture(QString const &port);
 
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
 
-	/// Retruns list of ports for motors of a given type
+	/// Retruns list of ports for motors of a given type.
 	QStringList motorPorts(Motor::Type type) const;
 
-	/// Returns list of PWM capture ports
+	/// Returns list of PWM signal capture device ports.
 	QStringList pwmCapturePorts() const;
 
-	/// Returns list of ports for sensors of a given type
+	/// Returns list of ports for sensors of a given type.
 	QStringList sensorPorts(Sensor::Type type) const;
 
 	/// Returns reference to on-board accelerometer.
@@ -147,7 +148,7 @@ private:
 	Gamepad *mGamepad;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
-	QHash<QString, PwmCapture *> mPwmCaptures;
+	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
 	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.

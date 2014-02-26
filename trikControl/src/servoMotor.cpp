@@ -18,9 +18,9 @@
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &deviceFile, QString const &periodFile
+ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile
 		, int period, bool invert)
-	: mControlFile(deviceFile)
+	: mDutyFile(dutyFile)
 	, mPeriodFile(periodFile)
 	, mPeriod(period)
 	, mFrequency(1000000000 / period)
@@ -45,8 +45,8 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &devi
 
 void ServoMotor::setPower(int power)
 {
-	if (!mControlFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open motor control file " << mControlFile.fileName();
+	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
 		return;
 	}
 
@@ -67,8 +67,8 @@ void ServoMotor::setPower(int power)
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 
-	mControlFile.write(command.toLatin1());
-	mControlFile.close();
+	mDutyFile.write(command.toLatin1());
+	mDutyFile.close();
 }
 
 int ServoMotor::power() const
@@ -88,13 +88,13 @@ int ServoMotor::duty() const
 
 void ServoMotor::powerOff()
 {
-	if (!mControlFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open motor control file " << mControlFile.fileName();
+	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
 		return;
 	}
 
-	mControlFile.write(QString::number(mStop).toLatin1());
-	mControlFile.close();
+	mDutyFile.write(QString::number(mStop).toLatin1());
+	mDutyFile.close();
 
 	mCurrentPower = 0;
 }

@@ -22,7 +22,7 @@
 
 namespace trikControl {
 
-/// Provides current frequency and duty info for given engine.
+/// Provides characteristics of PWM signal supplied to the port.
 class TRIKCONTROL_EXPORT PwmCapture : public QObject
 {
 	Q_OBJECT
@@ -33,14 +33,15 @@ public:
 	/// @param dutyFile - device file with duty.
 	PwmCapture(QString const &frequencyFile, QString const &dutyFile);
 
+	/// Destructor.
 	~PwmCapture();
 
 public slots:
 
-	// TODO: Document this. What values it will return?
+	/// Returns three readings of PWM signal frequency.
 	QVector<int> frequency();
 
-	// TODO: Document this. What value is this?
+	/// Returns PWM signal duty.
 	int duty();
 
 private:
