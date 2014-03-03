@@ -30,31 +30,30 @@ class TRIKCONTROL_EXPORT ServoMotor : public Motor
 
 public:
 	/// Constructor.
-	/// @param controlFile - device file for this motor.
 	/// @param min - value of duty_ns corresponding to full reverse of a motor. Used to calculate actual values from
 	///        values in range [-100..100] from client program.
 	/// @param max - value of duty_ns corresponding to full forward of a motor. Used to calculate actual values from
 	///        values in range [-100..100] from client program.
 	/// @param zero - value of duty_ns corresponding to full stop of a motor.
-	/// @param deviceFile - device file for this motor.
-	/// @param periodFile - file for setting period of the motor
+	/// @param dutyFile - file for setting duty of PWM signal supplied to this motor.
+	/// @param periodFile - file for setting period of PWM signal supplied to this motor
 	/// @param period - value of period for setting while initialization
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	ServoMotor(int min, int max, int zero, int stop, QString const &deviceFile, QString const &periodFile, int period
+	ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile, int period
 			, bool invert);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
-	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
+	/// @param power Power of the motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
 	void setPower(int power);
 
-	/// Returns currently set power of a motor.
+	/// Returns currently set power of the motor.
 	int power() const;
 
-	/// Returns currently set frequency of the motor.
+	/// Returns currently set frequency of PWM signal supplied to the motor.
 	int frequency() const;
 
-	/// Returns currently set duty of the motor.
+	/// Returns currently set duty of PWM signal supplied to the motor.
 	int duty() const;
 
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
@@ -62,7 +61,7 @@ public slots:
 	void powerOff();
 
 private:
-	QFile mControlFile;
+	QFile mDutyFile;
 	QFile mPeriodFile;
 	int mPeriod;
 	int mFrequency;

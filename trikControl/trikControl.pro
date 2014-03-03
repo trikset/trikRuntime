@@ -24,6 +24,7 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 
 FILES_TO_COPY = \
 	$$PWD/config.xml  \
+	$$PWD/config_capture.xml \
 	$$PWD/../media/ \
 
 include(../global.pri)
