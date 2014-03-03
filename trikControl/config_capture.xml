@@ -25,6 +25,15 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 		echo 1 > /sys/class/pwm/ehrpwm.0:1/request
 		echo 1 > /sys/class/pwm/ehrpwm.0:1/run
 
+		#echo 1 > /sys/class/pwm/ecap.0/request
+		#echo 1 > /sys/class/pwm/ecap.0/run
+
+		#echo 1 > /sys/class/pwm/ecap.1/request
+		#echo 1 > /sys/class/pwm/ecap.1/run
+
+		#echo 1 > /sys/class/pwm/ecap.2/request
+		#echo 1 > /sys/class/pwm/ecap.2/run
+
 		cat /sys/class/pwm/ecap_cap.0/config > /dev/null
 
 		cat /sys/class/pwm/ecap_cap.1/config > /dev/null
