@@ -77,16 +77,22 @@ void ScriptEngineWorker::run(QString const &script)
 
 void ScriptEngineWorker::abort()
 {
-	mEngine->abortEvaluation();
+	if (mEngine != NULL) {
+		mEngine->abortEvaluation();
 
-	// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
-	// right now because we can be in mEngine's call stack.
-	mEngine->deleteLater();
+		// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
+		// right now because we can be in mEngine's call stack.
+		mEngine->deleteLater();
+	}
 }
 
 bool ScriptEngineWorker::isRunning() const
 {
-	return mEngine->isEvaluating();
+	if (mEngine == NULL) {
+		return false;
+	} else {
+		return mEngine->isEvaluating();
+	}
 }
 
 bool ScriptEngineWorker::isInEventDrivenMode() const
