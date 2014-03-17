@@ -37,6 +37,8 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
+#include "netConfigWidget.h"
+
 #include "controller.h"
 
 namespace trikGui {
@@ -67,6 +69,8 @@ private:
 	QStandardItemModel mMenuModel;
 	Controller mController;
 	QString const mConfigPath;
+
+	NetConfigWidget::NetworkMode mNetworkMode;
 
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;

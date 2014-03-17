@@ -37,6 +37,7 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	: QWidget(parent)
 	, mController(configPath)
 	, mConfigPath(configPath)
+	, mNetworkMode(NetConfigWidget::client)
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -82,7 +83,7 @@ void StartWidget::launch()
 			FileManagerWidget fileManagerWidget(mController);
 			fileManagerWidget.exec();
 		} else if (currentItemText == NetConfigWidget::menuEntry()) {
-			NetConfigWidget netConfigWidget(mConfigPath);
+			NetConfigWidget netConfigWidget(mConfigPath, mNetworkMode);
 			netConfigWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);

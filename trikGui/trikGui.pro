@@ -20,7 +20,7 @@ TRIKWIFI_DIR = ../trikWiFi/
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
 	$$PWD/runningWidget.h \
-	$$PWD/netConfigWidget.h \
+	$$PWD/wiFiClientWidget.h \
 	$$PWD/sensorsSelectionWidget.h \
 	$$PWD/startWidget.h \
 	$$PWD/trikGuiApplication.h \
@@ -29,12 +29,13 @@ HEADERS += \
 	$$PWD/motorsWidget.h \
 	$$PWD/sensorIndicator.h \
 	$$PWD/sensorsWidget.h \
+	$$PWD/netConfigWidget.h
 
 SOURCES += \
 	$$PWD/main.cpp \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/runningWidget.cpp \
-	$$PWD/netConfigWidget.cpp \
+	$$PWD/wiFiClientWidget.cpp \
 	$$PWD/sensorsSelectionWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
@@ -43,6 +44,7 @@ SOURCES += \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
 	$$PWD/sensorsWidget.cpp \
+	$$PWD/netConfigWidget.cpp
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc

@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov
+/* Copyright 2014 Roman Kurbatov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,92 +10,59 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. */
-
-/* This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
- * project. See git revision history for detailed changes. */
+ * limitations under the License.
+ */
 
 #pragma once
 
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
 	#include <QtGui/QLabel>
-	#include <QtGui/QTextEdit>
 	#include <QtGui/QVBoxLayout>
-	#include <QtGui/QListView>
+	#include <QtGui/QListWidget>
 #else
+	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QTextEdit>
 	#include <QtWidgets/QVBoxLayout>
-	#include <QtWidgets/QListView>
+	#include <QtWidgets/QListWidget>
 #endif
 
-#include <QtCore/QList>
 #include <QtCore/QEventLoop>
-#include <QtGui/QStandardItem>
-#include <QtGui/QStandardItemModel>
-
-namespace trikWiFi {
-class TrikWiFi;
-struct Status;
-}
+#include <QtCore/QString>
 
 namespace trikGui {
 
-/// Widget that shows current IP address and a list of available WiFi networks.
-/// Network is available only when it is listed in networks.cfg file and is physically available.
 class NetConfigWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param parent - parent QObject.
-	/// @param configPath - path to wpa-config.xml.
-	explicit NetConfigWidget(QString const &configPath, QWidget *parent = 0);
+	enum NetworkMode {
+		client
+		, accessPoint
+	};
 
-	/// Destructor.
-	~NetConfigWidget();
+	NetConfigWidget(QString const &configPath, NetworkMode &currentMode, QWidget *parent = 0);
 
-	/// Title for this widget in a main menu.
-	static QString menuEntry();
-
-	/// Show the widget and wait until it will be closed by user.
 	void exec();
+
+	static QString menuEntry();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
-private slots:
-	void scanForAvailableNetworksDoneSlot();
-	void connectedSlot();
-	void disconnectedSlot();
-
 private:
-	enum ConnectionState {
-		notConnected
-		, connecting
-		, connected
-	};
+	void setClient();
+	void setAccessPoint();
 
-	QLabel mConnectionIconLabel;
-	QLabel mIpLabel;
-	QLabel mIpValueLabel;
-	QLabel mAvailableNetworksLabel;
-	QListView mAvailableNetworksView;
-	QStandardItemModel mAvailableNetworksModel;
-	QVBoxLayout mMainLayout;
-	QHBoxLayout mIpAddressLayout;
-	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
-	QString mCurrentSsid;
-	QHash<QString, int> mNetworksAvailableForConnection;
-	ConnectionState mConnectionState;
+	QString const &mConfigPath;
+	NetworkMode &mMode;
 	QEventLoop mEventLoop;
-
-	void setConnectionStatus(trikWiFi::Status const &status);
-	void updateConnectionStatusesInNetworkList();
-	void connectToSelectedNetwork();
+	QVBoxLayout mLayout;
+	QLabel mTitle;
+	QListWidget mModes;
 };
 
 }
