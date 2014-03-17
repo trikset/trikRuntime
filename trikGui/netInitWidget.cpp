@@ -43,12 +43,14 @@ void NetInitWidget::init(NetConfigWidget::NetworkMode mode)
 			system("ifconfig wlan0 192.168.1.1 netmask 255.255.255.0");
 			system("hostapd -B /etc/hostapd.conf");
 			system("udhcpd");
+			break;
 		}
 		case NetConfigWidget::client: {
 			system("killall udhcpd");
 			system("killall hostapd");
 			system("wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf");
 			system("udhcpc -i wlan0");
+			break;
 		}
 	}
 }
