@@ -16,9 +16,9 @@
 #include "netConfigWidget.h"
 
 #include <QtGui/QKeyEvent>
-#include <cstdlib>
 
 #include "wiFiClientWidget.h"
+#include "netInitWidget.h"
 
 using namespace trikGui;
 
@@ -38,7 +38,7 @@ NetConfigWidget::NetConfigWidget(QString const &configPath, NetConfigWidget::Net
 	setLayout(&mLayout);
 
 	mModes.selectionModel()->select(
-			mMenuModel.index(0, 0)
+			mModes.model()->index(0, 0)
 			, QItemSelectionModel::ClearAndSelect
 			);
 }
@@ -83,10 +83,12 @@ void NetConfigWidget::setClient()
 {
 	if (mMode != client) {
 		mMode = client;
-		system("killall udhcpd");
-		system("killall hostapd");
-		system("wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf");
-		system("udhcpc -i wlan0");
+
+		NetInitWidget netInitWidget;
+		netInitWidget.show();
+		mEventLoop.processEvents();
+		netInitWidget.init(client);
+		netInitWidget.close();
 	}
 
 	WiFiClientWidget wiFiClientWidget(mConfigPath);
@@ -100,12 +102,12 @@ void NetConfigWidget::setAccessPoint()
 {
 	if (mMode != accessPoint) {
 		mMode = accessPoint;
-		system("killall udhcpc");
-		system("killall wpa_supplicant");
-		system("ifconfig wlan0 192.168.1.1 netmask 255.255.255.0");
-		system("ifconfig wlan0 up");
-		system("hostapd -B /etc/hostapd.conf");
-		system("udhcpd");
+
+		NetInitWidget netInitWidget;
+		netInitWidget.show();
+		mEventLoop.processEvents();
+		netInitWidget.init(accessPoint);
+		netInitWidget.close();
 	}
 
 	mEventLoop.quit();
