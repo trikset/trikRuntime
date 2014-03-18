@@ -31,6 +31,7 @@ HEADERS += \
 	$$PWD/sensorsWidget.h \
 	$$PWD/netConfigWidget.h \
 	$$PWD/netInitWidget.h \
+	$$PWD/wiFiAPWidget.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -47,6 +48,7 @@ SOURCES += \
 	$$PWD/sensorsWidget.cpp \
 	$$PWD/netConfigWidget.cpp \
 	$$PWD/netInitWidget.cpp \
+	$$PWD/wiFiAPWidget.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc

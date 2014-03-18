@@ -18,6 +18,7 @@
 #include <QtGui/QKeyEvent>
 
 #include "wiFiClientWidget.h"
+#include "wiFiAPWidget.h"
 #include "netInitWidget.h"
 
 using namespace trikGui;
@@ -109,6 +110,10 @@ void NetConfigWidget::setAccessPoint()
 		netInitWidget.init(accessPoint);
 		netInitWidget.close();
 	}
+
+	WiFiAPWidget wiFiAPWidget;
+
+	wiFiAPWidget.exec();
 
 	mEventLoop.quit();
 }
