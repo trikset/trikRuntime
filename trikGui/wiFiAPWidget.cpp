@@ -25,7 +25,8 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 {
 	setWindowState(Qt::WindowFullScreen);
 
-	mTitle.setAlignment(Qt::AlignCenter);
+	mTitle.setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+	mParametersLayout.setAlignment(Qt::AlignCenter);
 	mNetworkLabel.setAlignment(Qt::AlignCenter);
 	mKeyLabel.setAlignment(Qt::AlignCenter);
 	mIpLabel.setAlignment(Qt::AlignCenter);
@@ -41,11 +42,16 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 		getParameters();
 	}
 
-	mLayout.addWidget(&mTitle);
-	mLayout.addWidget(&mNetworkLabel);
-	mLayout.addWidget(&mKeyLabel);
-	mLayout.addWidget(&mIpLabel);
-	setLayout(&mLayout);
+	mMainLayout.addWidget(&mTitle);
+	mMainLayout.addStretch(2);
+	mMainLayout.addLayout(&mParametersLayout);
+	mMainLayout.addStretch(1);
+
+	mParametersLayout.addWidget(&mNetworkLabel);
+	mParametersLayout.addWidget(&mKeyLabel);
+	mParametersLayout.addWidget(&mIpLabel);
+
+	setLayout(&mMainLayout);
 }
 
 void WiFiAPWidget::exec()
@@ -76,7 +82,7 @@ void WiFiAPWidget::keyPressEvent(QKeyEvent *event)
 void WiFiAPWidget::getParameters()
 {
 	forever {
-		QString const line = mConfigurationFile.readLine();
+		QString line = mConfigurationFile.readLine();
 		if (line.isEmpty()) {
 			break;
 		}

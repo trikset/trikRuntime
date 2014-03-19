@@ -50,7 +50,8 @@ private:
 
 	QFile mConfigurationFile;
 	QEventLoop mEventLoop;
-	QVBoxLayout mLayout;
+	QVBoxLayout mMainLayout;
+	QVBoxLayout mParametersLayout;
 	QLabel mTitle;
 	QLabel mNetworkLabel;
 	QLabel mKeyLabel;
