@@ -34,6 +34,7 @@
 
 namespace trikGui {
 
+/// Widget which allows to set network mode (client or access point) and then opens corresponding configuration widget.
 class NetConfigWidget : public QWidget
 {
 	Q_OBJECT
@@ -44,10 +45,16 @@ public:
 		, accessPoint
 	};
 
+	/// Constructor
+	/// @param configPath - full path to configuration files.
+	/// @param currentMode - current network mode.
+	/// @param parent - parent of this widget in Qt object hierarchy.
 	NetConfigWidget(QString const &configPath, NetworkMode &currentMode, QWidget *parent = 0);
 
+	/// Show the widget and wait until it will finish its work.
 	void exec();
 
+	/// Returns menu entry for this widget.
 	static QString menuEntry();
 
 protected:

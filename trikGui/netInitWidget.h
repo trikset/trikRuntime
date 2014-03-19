@@ -31,13 +31,18 @@
 
 namespace trikGui {
 
+/// Widget for initializing network on the controller.
 class NetInitWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor
+	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit NetInitWidget(QWidget *parent = 0);
 
+	/// Initialize network on the controller.
+	/// @param mode - network mode which we want to initialize.
 	void init(NetConfigWidget::NetworkMode mode);
 
 private:

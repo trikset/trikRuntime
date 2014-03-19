@@ -34,12 +34,17 @@
 
 namespace trikGui {
 
+/// Widget showing parameters of wireless access point on the controller.
 class WiFiAPWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor
+	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit WiFiAPWidget(QWidget *parent = 0);
+
+	/// Show the widget and wait until it will be closed by user.
 	void exec();
 
 protected:
