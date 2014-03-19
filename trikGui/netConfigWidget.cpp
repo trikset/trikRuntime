@@ -23,7 +23,9 @@
 
 using namespace trikGui;
 
-NetConfigWidget::NetConfigWidget(QString const &configPath, NetConfigWidget::NetworkMode &currentMode, QWidget *parent)
+NetConfigWidget::NetConfigWidget(QString const &configPath
+		, NetConfigWidget::NetworkMode &currentMode
+		, QWidget *parent)
 	: QWidget(parent)
 	, mConfigPath(configPath)
 	, mMode(currentMode)
@@ -52,7 +54,7 @@ void NetConfigWidget::exec()
 
 QString NetConfigWidget::menuEntry()
 {
-	return tr("Network config");
+	return tr("Network Config");
 }
 
 void NetConfigWidget::keyPressEvent(QKeyEvent *event)

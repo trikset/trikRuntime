@@ -58,9 +58,6 @@ public:
 	/// Destructor.
 	~WiFiClientWidget();
 
-	/// Title for this widget in a main menu.
-	static QString menuEntry();
-
 	/// Show the widget and wait until it will be closed by user.
 	void exec();
 

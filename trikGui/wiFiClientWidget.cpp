@@ -86,11 +86,6 @@ WiFiClientWidget::~WiFiClientWidget()
 {
 }
 
-QString WiFiClientWidget::menuEntry()
-{
-	return tr("Network config");
-}
-
 void WiFiClientWidget::exec()
 {
 	show();
