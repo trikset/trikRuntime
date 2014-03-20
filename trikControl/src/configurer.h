@@ -126,6 +126,12 @@ public:
 
 	int gamepadPort() const;
 
+	QString roverCvBinary() const;
+
+	QString roverCvInputFile() const;
+
+	QString roverCvOutputFile() const;
+
 private:
 	struct ServoMotorType {
 		int min;
@@ -197,6 +203,7 @@ private:
 	void loadLed(QDomElement const &root);
 	void loadKeys(QDomElement const &root);
 	void loadGamepadPort(QDomElement const &root);
+	void loadCameraLineDetector(QDomElement const &root);
 
 	QHash<QString, ServoMotorType> mServoMotorTypes;
 	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
@@ -222,6 +229,10 @@ private:
 	int mLedOn;
 	int mLedOff;
 	int mGamepadPort;
+
+	QString mRoverCvBinary;
+	QString mRoverCvInputFile;
+	QString mRoverCvOutputFile;
 };
 
 }

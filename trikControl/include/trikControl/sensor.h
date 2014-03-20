@@ -32,6 +32,7 @@ public:
 	enum Type {
 		analogSensor
 		, digitalSensor
+		, specialSensor
 	};
 
 public slots:

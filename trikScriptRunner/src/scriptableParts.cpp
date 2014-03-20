@@ -98,3 +98,15 @@ void trikScriptRunner::sensor3dFromScriptValue(QScriptValue const &object, trikC
 {
 	out = qobject_cast<Sensor3d*>(object.toQObject());
 }
+
+QScriptValue trikScriptRunner::cameraLineDetectorSensorToScriptValue(QScriptEngine *engine
+		, trikControl::CameraLineDetectorSensor* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::cameraLineDetectorSensorFromScriptValue(QScriptValue const &object
+		, trikControl::CameraLineDetectorSensor* &out)
+{
+	out = qobject_cast<CameraLineDetectorSensor*>(object.toQObject());
+}

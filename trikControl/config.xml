@@ -43,6 +43,8 @@ Use it if JCx ports are configured to work as PWM signal generators.
 		echo 1 > /sys/devices/virtual/input/input1/enable_device
 
 		amixer -q set PCM 127
+
+		cd /home/root/dsp-modules &amp;&amp; ./load.sh
 	</initScript>
 	
 	<!-- Servomotors configuration, maps logical port to device file, file for setting period,
@@ -187,5 +189,8 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
+
+	<!-- Settings for virtual camera line sensor provided by rover-cv application. -->
+	<cameraLineDetector roverCv="/home/root/video-module/rover-cv" inputFile="/tmp/dsp-detector.in.fifo" outputFile="/tmp/dsp-detector.out.fifo" />
 	
 </config>

@@ -20,6 +20,9 @@
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
 
+#include "powerMotor.h"
+#include "servoMotor.h"
+
 #include "configurer.h"
 #include "i2cCommunicator.h"
 
@@ -120,6 +123,11 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 			);
 
 	mGamepad = new Gamepad(mConfigurer->gamepadPort());
+
+	mCameraLineDetectorSensor = new CameraLineDetectorSensor(mConfigurer->roverCvBinary()
+			, mConfigurer->roverCvInputFile()
+			, mConfigurer->roverCvOutputFile()
+			);
 }
 
 Brick::~Brick()
@@ -228,6 +236,10 @@ QStringList Brick::sensorPorts(Sensor::Type type) const
 		case Sensor::digitalSensor: {
 			return mDigitalSensors.keys();
 		}
+		case Sensor::specialSensor: {
+			// Special sensors can not be connected to standard ports, they have their own methods to access them.
+			return QStringList();
+		}
 	}
 
 	return QStringList();
@@ -251,6 +263,11 @@ Sensor3d *Brick::accelerometer()
 Sensor3d *Brick::gyroscope()
 {
 	return mGyroscope;
+}
+
+CameraLineDetectorSensor *Brick::cameraLineDetector()
+{
+	return mCameraLineDetectorSensor;
 }
 
 Keys* Brick::keys()
@@ -310,4 +327,3 @@ void Brick::resetEventDrivenMode()
 {
 	mInEventDrivenMode = false;
 }
-

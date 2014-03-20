@@ -60,6 +60,7 @@ Configurer::Configurer(QString const &configFilePath)
 	loadLed(root);
 	loadKeys(root);
 	loadGamepadPort(root);
+	loadCameraLineDetector(root);
 }
 
 QString Configurer::initScript() const
@@ -280,6 +281,22 @@ QString Configurer::keysDeviceFile() const
 int Configurer::gamepadPort() const
 {
 	return mGamepadPort;
+}
+
+
+QString Configurer::roverCvBinary() const
+{
+	return mRoverCvBinary;
+}
+
+QString Configurer::roverCvInputFile() const
+{
+	return mRoverCvInputFile;
+}
+
+QString Configurer::roverCvOutputFile() const
+{
+	return mRoverCvOutputFile;
 }
 
 void Configurer::loadInit(QDomElement const &root)
@@ -601,4 +618,12 @@ void Configurer::loadGamepadPort(QDomElement const &root)
 {
 	QDomElement gamepad = root.elementsByTagName("gamepad").at(0).toElement();
 	mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
+}
+
+void Configurer::loadCameraLineDetector(QDomElement const &root)
+{
+	QDomElement cameraLineDetector = root.elementsByTagName("cameraLineDetector").at(0).toElement();
+	mRoverCvBinary = cameraLineDetector.attribute("roverCv");
+	mRoverCvInputFile = cameraLineDetector.attribute("inputFile");
+	mRoverCvOutputFile = cameraLineDetector.attribute("outputFile");
 }
