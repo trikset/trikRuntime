@@ -21,6 +21,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
+#include <QtCore/QList>
 
 #include "declSpec.h"
 #include "sensor.h"
@@ -34,20 +35,33 @@ class TRIKCONTROL_EXPORT CameraLineDetectorSensorWorker : public Sensor
 public:
 	CameraLineDetectorSensorWorker(QString const &roverCvBinary, QString const &inputFile, QString const &outputFile);
 	~CameraLineDetectorSensorWorker();
+	void moveChildrenToCorrectThread();
 
 public slots:
-	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
-	int read();
+	/// Initializes a camera and begins showing image from it on display.
+	void init();
 
 	/// Detects the color of an object in center of current frame and memorizes it.
 	void detect();
 
+	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
+	/// Can be accessed directly from other thread.
+	int read();
+
 private slots:
+	void onRoverCvError(QProcess::ProcessError error);
+	void onRoverCvReadyReadStandardOutput();
+	void onRoverCvReadyReadStandardError();
+
 	/// Updates current reading when new value is ready.
 	void readFile();
 
 private:
 	void initDetector();
+	void startRoverCv();
+	void openFifos();
+	void tryToExecute();
+	void deinitialize();
 
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
 	int mReading;
@@ -58,6 +72,7 @@ private:
 	QFile mOutputFile;
 	QTextStream mInputStream;
 	bool mReady;
+	QList<QString> mCommandQueue;
 };
 
 }

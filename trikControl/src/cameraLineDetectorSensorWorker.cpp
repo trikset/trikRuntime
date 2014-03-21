@@ -19,15 +19,9 @@
 #include <QtCore/QWaitCondition>
 #include <QtCore/QMutex>
 
-#include <cmath>
 #include <unistd.h>
 #include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
 #include <errno.h>
-#include <linux/ioctl.h>
-#include <linux/input.h>
 
 using namespace trikControl;
 
@@ -42,96 +36,94 @@ CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker(
 	, mOutputFile(outputFile)
 	, mReady(false)
 {
+	qDebug() << "CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker";
+
+	qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
 }
 
 CameraLineDetectorSensorWorker::~CameraLineDetectorSensorWorker()
 {
-	disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFifo()));
-	mSocketNotifier->setEnabled(false);
-	if (::close(mOutputFileDescriptor) != 0) {
-		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
+	deinitialize();
+}
+
+void CameraLineDetectorSensorWorker::moveChildrenToCorrectThread()
+{
+	mRoverCvProcess.moveToThread(this->thread());
+
+	connect(&mRoverCvProcess, SIGNAL(error(QProcess::ProcessError))
+			, this, SLOT(onRoverCvError(QProcess::ProcessError)), Qt::QueuedConnection);
+
+	connect(&mRoverCvProcess, SIGNAL(readyReadStandardError())
+			, this, SLOT(onRoverCvReadyReadStandardError()), Qt::QueuedConnection);
+
+	connect(&mRoverCvProcess, SIGNAL(readyReadStandardOutput())
+			, this, SLOT(onRoverCvReadyReadStandardOutput()), Qt::QueuedConnection);
+}
+
+void CameraLineDetectorSensorWorker::init()
+{
+	qDebug() << "CameraLineDetectorSensorWorker::init()";
+	if (!mReady) {
+		initDetector();
 	}
 }
 
 void CameraLineDetectorSensorWorker::detect()
 {
-	qDebug() << "Detect was called";
-
+	qDebug() << "CameraLineDetectorSensorWorker::detect()";
 	if (!mReady) {
-		initDetector();
+		init();
 	}
 
-	if (!mReady) {
-		return;
-	}
+	mCommandQueue << "detect";
+	tryToExecute();
+}
 
-	qDebug() << "detect";
-
-	mInputStream << "detect\n";
-	mInputStream.flush();
+int CameraLineDetectorSensorWorker::read()
+{
+	return mReading;
 }
 
 void CameraLineDetectorSensorWorker::initDetector()
 {
 	qDebug() << "initDetector()";
 
-	if (!mOutputFile.exists()) {
-		QFileInfo roverCvBinaryFileInfo(mRoverCvBinary);
+	if (!mInputFile.exists() || !mOutputFile.exists()) {
+		startRoverCv();
+	} else {
+		openFifos();
+	}
+}
 
-		qDebug() << "Starting rover-cv";
+void CameraLineDetectorSensorWorker::onRoverCvError(QProcess::ProcessError error)
+{
+	qDebug() << "rover-cv error: " << error;
 
-		mRoverCvProcess.setWorkingDirectory(roverCvBinaryFileInfo.absolutePath());
-		mRoverCvProcess.start(roverCvBinaryFileInfo.filePath());
+	mReady = false;
+	deinitialize();
+}
 
-		mRoverCvProcess.waitForStarted();
+void CameraLineDetectorSensorWorker::onRoverCvReadyReadStandardOutput()
+{
+	qDebug() << "onRoverCvReadyReadStandardOutput";
 
-		qDebug() << "rover-cv started";
-
-		if (mRoverCvProcess.state() != QProcess::Running)
-		{
-			qDebug() << "Cannot launch detector application " << roverCvBinaryFileInfo.filePath() << " in "
-					<< roverCvBinaryFileInfo.absolutePath();
-			return;
+	QString const data = mRoverCvProcess.readAllStandardOutput();
+	QStringList const lines = data.split("\n");
+	foreach (QString const line, lines) {
+		qDebug() << "From rover-cv:" << line;
+		if (line == "Entering video thread loop") {
+			openFifos();
 		}
-
-		// Give rover-cv time to initialize.
-		/// @todo Implement correct reading from process output and parsing of "Entering video thread loop" message.
-		QWaitCondition waitCondition;
-		QMutex mutex;
-		waitCondition.wait(&mutex, 1000);
-
-		qDebug() << "rover-cv initialization timeout";
 	}
+}
 
-	qDebug() << "opening" << mOutputFile.fileName();
-
-	mOutputFileDescriptor = open(mOutputFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
-	if (mOutputFileDescriptor == -1) {
-		qDebug() << "Cannot open sensor output file " << mOutputFile.fileName();
-		return;
+void CameraLineDetectorSensorWorker::onRoverCvReadyReadStandardError()
+{
+	QString const data = mRoverCvProcess.readAllStandardError();
+	QStringList const lines = data.split("\n");
+	foreach (QString const line, lines) {
+		qDebug() << "From rover-cv standard error:" << line;
 	}
-
-	qDebug() << mOutputFileDescriptor;
-
-	mSocketNotifier.reset(new QSocketNotifier(mOutputFileDescriptor, QSocketNotifier::Read));
-
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(true);
-
-	qDebug() << "opening" << mInputFile.fileName();
-
-	if (!mInputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		qDebug() << "Sensor input file" << mInputFile.fileName() << " failed to open";
-		return;
-	}
-
-	mInputStream.setDevice(&mInputFile);
-
-	mReady = true;
-
-	qDebug() << "initialization completed";
-
-	qDebug() << mSocketNotifier->isEnabled();
 }
 
 void CameraLineDetectorSensorWorker::readFile()
@@ -190,7 +182,87 @@ void CameraLineDetectorSensorWorker::readFile()
 	mSocketNotifier->setEnabled(true);
 }
 
-int CameraLineDetectorSensorWorker::read()
+void CameraLineDetectorSensorWorker::startRoverCv()
 {
-	return mReading;
+	QFileInfo roverCvBinaryFileInfo(mRoverCvBinary);
+
+	qDebug() << "Starting rover-cv";
+
+	mRoverCvProcess.setWorkingDirectory(roverCvBinaryFileInfo.absolutePath());
+	mRoverCvProcess.start(roverCvBinaryFileInfo.filePath());
+
+	mRoverCvProcess.waitForStarted();
+
+	if (mRoverCvProcess.state() != QProcess::Running)
+	{
+		qDebug() << "Cannot launch detector application " << roverCvBinaryFileInfo.filePath() << " in "
+				<< roverCvBinaryFileInfo.absolutePath();
+		return;
+	}
+
+	qDebug() << "rover-cv started, waiting for it to initialize...";
+
+	/// @todo Remove this hack! QProcess does not deliver messages from rover-cv during startup.
+	QMutex mutex;
+	QWaitCondition wait;
+	wait.wait(&mutex, 1000);
+
+	openFifos();
+}
+
+void CameraLineDetectorSensorWorker::openFifos()
+{
+	qDebug() << "opening" << mOutputFile.fileName();
+
+	if (!mOutputFileDescriptor) {
+		mOutputFileDescriptor = open(mOutputFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+	}
+
+	if (mOutputFileDescriptor == -1) {
+		qDebug() << "Cannot open sensor output file " << mOutputFile.fileName();
+		return;
+	}
+
+	qDebug() << mOutputFileDescriptor;
+
+	mSocketNotifier.reset(new QSocketNotifier(mOutputFileDescriptor, QSocketNotifier::Read));
+
+	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+	mSocketNotifier->setEnabled(true);
+
+	qDebug() << "opening" << mInputFile.fileName();
+
+	if (!mInputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		qDebug() << "Sensor input file" << mInputFile.fileName() << " failed to open";
+		return;
+	}
+
+	mInputStream.setDevice(&mInputFile);
+
+	mReady = true;
+
+	qDebug() << "initialization completed";
+
+	tryToExecute();
+}
+
+void CameraLineDetectorSensorWorker::tryToExecute()
+{
+	if (mReady) {
+		foreach (QString const &command, mCommandQueue) {
+			mInputStream << command + "\n";
+			mInputStream.flush();
+		}
+
+		mCommandQueue.clear();
+	}
+}
+
+void CameraLineDetectorSensorWorker::deinitialize()
+{
+	disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFifo()));
+	mSocketNotifier->setEnabled(false);
+	if (::close(mOutputFileDescriptor) != 0) {
+		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
+	}
 }

@@ -18,7 +18,6 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "declSpec.h"
 #include "motor.h"
 
 namespace trikControl {
@@ -26,7 +25,7 @@ namespace trikControl {
 class I2cCommunicator;
 
 /// TRIK power motor.
-class TRIKCONTROL_EXPORT PowerMotor : public Motor
+class PowerMotor : public Motor
 {
 	Q_OBJECT
 

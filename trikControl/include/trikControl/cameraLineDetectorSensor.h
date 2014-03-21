@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QThread>
+#include <QtCore/QScopedPointer>
 
 #include "declSpec.h"
 #include "sensor.h"
@@ -35,18 +36,18 @@ public:
 	CameraLineDetectorSensor(QString const &roverCvBinary, QString const &inputFile, QString const &outputFile);
 	~CameraLineDetectorSensor();
 
-signals:
-	void threadDetect();
-
 public slots:
-	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
-	int read();
+	/// Initializes a camera and begins showing image from it on display.
+	void init();
 
 	/// Detects the color of an object in center of current frame and memorizes it.
 	void detect();
 
+	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
+	int read();
+
 private:
-	CameraLineDetectorSensorWorker *mCameraLineDetectorSensorWorker;
+	QScopedPointer<CameraLineDetectorSensorWorker> mCameraLineDetectorSensorWorker;
 
 	QThread mWorkerThread;
 };

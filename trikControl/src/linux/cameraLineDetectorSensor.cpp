@@ -14,9 +14,9 @@
 
 #include "include/trikControl/cameraLineDetectorSensor.h"
 
-#include <QtCore/QDebug>
-
 #include "src/cameraLineDetectorSensorWorker.h"
+
+#include <QtCore/QDebug>
 
 using namespace trikControl;
 
@@ -26,18 +26,28 @@ CameraLineDetectorSensor::CameraLineDetectorSensor(
 		, QString const &outputFile)
 	: mCameraLineDetectorSensorWorker(new CameraLineDetectorSensorWorker(roverCvBinary, inputFile, outputFile))
 {
-	connect(this, SIGNAL(threadDetect()), mCameraLineDetectorSensorWorker, SLOT(detect()));
+	qDebug() << "CameraLineDetectorSensor::CameraLineDetectorSensor";
 	mCameraLineDetectorSensorWorker->moveToThread(&mWorkerThread);
+	mCameraLineDetectorSensorWorker->moveChildrenToCorrectThread();
 	mWorkerThread.start();
 }
 
 CameraLineDetectorSensor::~CameraLineDetectorSensor()
 {
+	mWorkerThread.quit();
+	mWorkerThread.wait();
+}
+
+void CameraLineDetectorSensor::init()
+{
+	qDebug() << "CameraLineDetectorSensor::init()";
+	QMetaObject::invokeMethod(mCameraLineDetectorSensorWorker.data(), "init");
 }
 
 void CameraLineDetectorSensor::detect()
 {
-	emit threadDetect();
+	qDebug() << "CameraLineDetectorSensor::detect()";
+	QMetaObject::invokeMethod(mCameraLineDetectorSensorWorker.data(), "detect");
 }
 
 int CameraLineDetectorSensor::read()

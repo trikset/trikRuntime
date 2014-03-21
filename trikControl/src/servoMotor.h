@@ -18,13 +18,12 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "declSpec.h"
 #include "motor.h"
 
 namespace trikControl {
 
-/// Generic TRIK servomotor.
-class TRIKCONTROL_EXPORT ServoMotor : public Motor
+/// TRIK servomotor.
+class ServoMotor : public Motor
 {
 	Q_OBJECT
 
