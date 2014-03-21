@@ -157,7 +157,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	     full reverse (for "min" parameter), full forward ("max" parameter),
 	     non-breaking stop ("zero" parameter), breaking stop ("stop" parameter). -->
 	<servoMotorTypes>
-		<defaultServo min="1200000" max="1800000" zero="1450000" stop="0" />
+		<defaultServo min="1200000" max="1800000" zero="1500000" stop="0" />
 	</servoMotorTypes>
 
 	<!-- Digital sensors configuration, maps logical port to digital sensor device file and digital sensor type used by default 
