@@ -15,28 +15,25 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QSocketNotifier>
 #include <QtCore/QString>
-#include <QtCore/QThread>
+#include <QtCore/QProcess>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
 
 #include "declSpec.h"
 #include "sensor.h"
 
 namespace trikControl {
 
-class CameraLineDetectorSensorWorker;
-
-/// Uses rover-cv application to detect x coordinate of a center of an object that was in camera's field of view
-/// when "detect" method was called. Used mainly to follow the line.
-class TRIKCONTROL_EXPORT CameraLineDetectorSensor : public Sensor
+class TRIKCONTROL_EXPORT CameraLineDetectorSensorWorker : public Sensor
 {
 	Q_OBJECT
 
 public:
-	CameraLineDetectorSensor(QString const &roverCvBinary, QString const &inputFile, QString const &outputFile);
-	~CameraLineDetectorSensor();
-
-signals:
-	void threadDetect();
+	CameraLineDetectorSensorWorker(QString const &roverCvBinary, QString const &inputFile, QString const &outputFile);
+	~CameraLineDetectorSensorWorker();
 
 public slots:
 	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
@@ -45,10 +42,22 @@ public slots:
 	/// Detects the color of an object in center of current frame and memorizes it.
 	void detect();
 
-private:
-	CameraLineDetectorSensorWorker *mCameraLineDetectorSensorWorker;
+private slots:
+	/// Updates current reading when new value is ready.
+	void readFile();
 
-	QThread mWorkerThread;
+private:
+	void initDetector();
+
+	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	int mReading;
+	QString mRoverCvBinary;
+	int mOutputFileDescriptor;
+	QProcess mRoverCvProcess;
+	QFile mInputFile;
+	QFile mOutputFile;
+	QTextStream mInputStream;
+	bool mReady;
 };
 
 }

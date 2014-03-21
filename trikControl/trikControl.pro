@@ -57,6 +57,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCapture.h \
 	$$PWD/include/trikControl/motor.h \
 	$$PWD/include/trikControl/cameraLineDetectorSensor.h \
+	$$PWD/src/cameraLineDetectorSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/configurer.h \
@@ -79,6 +80,7 @@ SOURCES += \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/pwmCapture.cpp \
+	$$PWD/src/cameraLineDetectorSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
