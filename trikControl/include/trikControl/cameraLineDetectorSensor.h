@@ -48,7 +48,6 @@ public slots:
 
 private:
 	QScopedPointer<CameraLineDetectorSensorWorker> mCameraLineDetectorSensorWorker;
-
 	QThread mWorkerThread;
 };
 

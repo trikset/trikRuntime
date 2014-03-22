@@ -1,7 +1,9 @@
 var KeysEnum = {
-    Left : 61,
-    Up : 62,
-    Down : 63,
-    Enter : 64,
-    Right : 65
+    Left : 103,
+    Up : 106,
+    Down : 105,
+    Enter : 28,
+    Right : 108,
+    Power : 116,
+    Meta : 139
 };

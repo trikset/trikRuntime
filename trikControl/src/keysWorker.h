@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,30 +15,27 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QThread>
+#include <QtCore/QSocketNotifier>
 #include <QtCore/QScopedPointer>
-
-#include "declSpec.h"
+#include <QtCore/QSet>
+#include <QtCore/QReadWriteLock>
 
 namespace trikControl {
 
-class KeysWorker;
-
-/// Class for handling keys on a brick.
-class TRIKCONTROL_EXPORT Keys : public QObject
+class KeysWorker : public QObject
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param keysPath - path to device file that controls brick keys.
-	Keys(QString const &keysPath);
-
-	~Keys();
+	KeysWorker(QString const &keysPath);
 
 public slots:
-	/// Returns true, if button with given code was pressed, and clears "pressed" state for that button.
 	bool wasPressed(int code);
+
+private slots:
+	void readKeysEvent();
 
 signals:
 	/// Triggered when button state changed (pressed or released).
@@ -47,8 +44,12 @@ signals:
 	void buttonPressed(int code, int value);
 
 private:
-	QScopedPointer<KeysWorker> mKeysWorker;
-	QThread mWorkerThread;
+	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	int mKeysFileDescriptor;
+	int mButtonCode;
+	int mButtonValue;
+	QSet<int> mWasPressed;
+	QReadWriteLock mLock;
 };
 
 }

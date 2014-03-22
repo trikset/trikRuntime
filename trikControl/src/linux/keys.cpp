@@ -14,52 +14,25 @@
 
 #include "keys.h"
 
-#include <QtCore/QDebug>
-#include <cmath>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <linux/ioctl.h>
-#include <linux/input.h>
+#include "src/keysWorker.h"
 
 using namespace trikControl;
 
 Keys::Keys(const QString &keysPath)
-	: mButtonCode(KEY_RESERVED)
-	, mButtonValue(0)
+	: mKeysWorker(new KeysWorker(keysPath))
 {
-	mKeysFileDescriptor = open(keysPath.toStdString().c_str(), O_SYNC, O_RDONLY);
-	if (mKeysFileDescriptor == -1) {
-		qDebug() << "cannot open keys input file";
-		return;
-	}
-
-	mSocketNotifier.reset(new QSocketNotifier(mKeysFileDescriptor, QSocketNotifier::Read, this));
-
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readKeysEvent()));
-	mSocketNotifier->setEnabled(true);
+	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int,int)), this, SIGNAL(buttonPressed(int,int)));
+	mKeysWorker->moveToThread(&mWorkerThread);
+	mWorkerThread.start();
 }
 
-void Keys::readKeysEvent()
+Keys::~Keys()
 {
-	struct input_event event;
+	mWorkerThread.quit();
+	mWorkerThread.wait();
+}
 
-	if (read(mKeysFileDescriptor, reinterpret_cast<char*>(&event), sizeof(event)) != sizeof(event)) {
-		qDebug() << "keys: incomplete data read";
-		return;
-	}
-
-	switch (event.type)
-	{
-	case EV_KEY:
-		mButtonCode = static_cast<int>(event.code);
-		mButtonValue = static_cast<int>(event.value);
-		break;
-	case EV_SYN:
-		emit buttonPressed(mButtonCode, mButtonValue);
-		break;
-	}
+bool Keys::wasPressed(int code)
+{
+	return mKeysWorker->wasPressed(code);
 }

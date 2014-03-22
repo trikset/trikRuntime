@@ -26,7 +26,6 @@ CameraLineDetectorSensor::CameraLineDetectorSensor(
 		, QString const &outputFile)
 	: mCameraLineDetectorSensorWorker(new CameraLineDetectorSensorWorker(roverCvBinary, inputFile, outputFile))
 {
-	qDebug() << "CameraLineDetectorSensor::CameraLineDetectorSensor";
 	mCameraLineDetectorSensorWorker->moveToThread(&mWorkerThread);
 	mCameraLineDetectorSensorWorker->moveChildrenToCorrectThread();
 	mWorkerThread.start();
@@ -40,13 +39,11 @@ CameraLineDetectorSensor::~CameraLineDetectorSensor()
 
 void CameraLineDetectorSensor::init()
 {
-	qDebug() << "CameraLineDetectorSensor::init()";
 	QMetaObject::invokeMethod(mCameraLineDetectorSensorWorker.data(), "init");
 }
 
 void CameraLineDetectorSensor::detect()
 {
-	qDebug() << "CameraLineDetectorSensor::detect()";
 	QMetaObject::invokeMethod(mCameraLineDetectorSensorWorker.data(), "detect");
 }
 

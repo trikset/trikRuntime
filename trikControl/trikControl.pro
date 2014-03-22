@@ -64,6 +64,7 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/tcpConnector.h \
+	$$PWD/src/keysWorker.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -81,6 +82,7 @@ SOURCES += \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/cameraLineDetectorSensorWorker.cpp \
+	$$PWD/src/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
