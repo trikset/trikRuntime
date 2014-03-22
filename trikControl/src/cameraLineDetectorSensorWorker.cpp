@@ -36,19 +36,7 @@ CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker(
 	, mOutputFile(outputFile)
 	, mReady(false)
 {
-	qDebug() << "CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker";
-
 	qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
-}
-
-CameraLineDetectorSensorWorker::~CameraLineDetectorSensorWorker()
-{
-	deinitialize();
-}
-
-void CameraLineDetectorSensorWorker::moveChildrenToCorrectThread()
-{
-	mRoverCvProcess.moveToThread(this->thread());
 
 	connect(&mRoverCvProcess, SIGNAL(error(QProcess::ProcessError))
 			, this, SLOT(onRoverCvError(QProcess::ProcessError)), Qt::QueuedConnection);
@@ -60,18 +48,26 @@ void CameraLineDetectorSensorWorker::moveChildrenToCorrectThread()
 			, this, SLOT(onRoverCvReadyReadStandardOutput()), Qt::QueuedConnection);
 }
 
+CameraLineDetectorSensorWorker::~CameraLineDetectorSensorWorker()
+{
+	deinitialize();
+}
+
+void CameraLineDetectorSensorWorker::moveChildrenToCorrectThread()
+{
+	mRoverCvProcess.moveToThread(this->thread());
+}
+
 void CameraLineDetectorSensorWorker::init()
 {
-	qDebug() << "CameraLineDetectorSensorWorker::init()";
-	if (!mReady) {
+	if (!mReady || !mInputFile.exists() || !mOutputFile.exists()) {
 		initDetector();
 	}
 }
 
 void CameraLineDetectorSensorWorker::detect()
 {
-	qDebug() << "CameraLineDetectorSensorWorker::detect()";
-	if (!mReady) {
+	if (!mReady || !mInputFile.exists() || !mOutputFile.exists()) {
 		init();
 	}
 
@@ -86,8 +82,6 @@ int CameraLineDetectorSensorWorker::read()
 
 void CameraLineDetectorSensorWorker::initDetector()
 {
-	qDebug() << "initDetector()";
-
 	if (!mInputFile.exists() || !mOutputFile.exists()) {
 		startRoverCv();
 	} else {
@@ -105,14 +99,16 @@ void CameraLineDetectorSensorWorker::onRoverCvError(QProcess::ProcessError error
 
 void CameraLineDetectorSensorWorker::onRoverCvReadyReadStandardOutput()
 {
-	qDebug() << "onRoverCvReadyReadStandardOutput";
-
 	QString const data = mRoverCvProcess.readAllStandardOutput();
 	QStringList const lines = data.split("\n");
 	foreach (QString const line, lines) {
 		qDebug() << "From rover-cv:" << line;
 		if (line == "Entering video thread loop") {
 			openFifos();
+		}
+		if (line == "Terminating") {
+			mReady = false;
+			deinitialize();
 		}
 	}
 }
@@ -188,8 +184,12 @@ void CameraLineDetectorSensorWorker::startRoverCv()
 
 	qDebug() << "Starting rover-cv";
 
+	if (mRoverCvProcess.state() == QProcess::Running) {
+		mRoverCvProcess.close();
+	}
+
 	mRoverCvProcess.setWorkingDirectory(roverCvBinaryFileInfo.absolutePath());
-	mRoverCvProcess.start(roverCvBinaryFileInfo.filePath());
+	mRoverCvProcess.start(roverCvBinaryFileInfo.filePath(), QIODevice::ReadOnly | QIODevice::Unbuffered);
 
 	mRoverCvProcess.waitForStarted();
 
@@ -228,7 +228,7 @@ void CameraLineDetectorSensorWorker::openFifos()
 	mSocketNotifier.reset(new QSocketNotifier(mOutputFileDescriptor, QSocketNotifier::Read));
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(true);
+	mSocketNotifier->setEnabled(false);
 
 	qDebug() << "opening" << mInputFile.fileName();
 
@@ -260,7 +260,7 @@ void CameraLineDetectorSensorWorker::tryToExecute()
 
 void CameraLineDetectorSensorWorker::deinitialize()
 {
-	disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFifo()));
+	disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(false);
 	if (::close(mOutputFileDescriptor) != 0) {
 		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
