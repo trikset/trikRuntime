@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,6 +132,8 @@ public:
 
 	QString roverCvOutputFile() const;
 
+	double roverCvToleranceFactor() const;
+
 private:
 	struct ServoMotorType {
 		int min;
@@ -233,6 +235,7 @@ private:
 	QString mRoverCvBinary;
 	QString mRoverCvInputFile;
 	QString mRoverCvOutputFile;
+	double mRoverCvToleranceFactor;
 };
 
 }

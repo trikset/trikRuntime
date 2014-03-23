@@ -33,7 +33,15 @@ class TRIKCONTROL_EXPORT CameraLineDetectorSensor : public Sensor
 	Q_OBJECT
 
 public:
-	CameraLineDetectorSensor(QString const &roverCvBinary, QString const &inputFile, QString const &outputFile);
+	/// Constructor.
+	/// @param roverCvBinary - binary file of rover-cv program which is used to work with video
+	/// @param inputFile - rover-cv input fifo. Note that we will write data here, not read it.
+	/// @param outputFile - rover-cv output fifo. Note that we will read sensor data from here.
+	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
+	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
+	CameraLineDetectorSensor(QString const &roverCvBinary, QString const &inputFile
+			, QString const &outputFile, double toleranceFactor);
+
 	~CameraLineDetectorSensor();
 
 public slots:
@@ -47,7 +55,10 @@ public slots:
 	int read();
 
 private:
+	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<CameraLineDetectorSensorWorker> mCameraLineDetectorSensorWorker;
+
+	/// Worker thread.
 	QThread mWorkerThread;
 };
 

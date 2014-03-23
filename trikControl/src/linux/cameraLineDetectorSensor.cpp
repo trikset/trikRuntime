@@ -20,14 +20,15 @@
 
 using namespace trikControl;
 
-CameraLineDetectorSensor::CameraLineDetectorSensor(
-		QString const &roverCvBinary
+CameraLineDetectorSensor::CameraLineDetectorSensor(QString const &roverCvBinary
 		, QString const &inputFile
-		, QString const &outputFile)
-	: mCameraLineDetectorSensorWorker(new CameraLineDetectorSensorWorker(roverCvBinary, inputFile, outputFile))
+		, QString const &outputFile
+		, double toleranceFactor)
+	: mCameraLineDetectorSensorWorker(
+			new CameraLineDetectorSensorWorker(roverCvBinary, inputFile, outputFile, toleranceFactor)
+	)
 {
 	mCameraLineDetectorSensorWorker->moveToThread(&mWorkerThread);
-	mCameraLineDetectorSensorWorker->moveChildrenToCorrectThread();
 	mWorkerThread.start();
 }
 
@@ -49,5 +50,6 @@ void CameraLineDetectorSensor::detect()
 
 int CameraLineDetectorSensor::read()
 {
+	// Read is called synchronously and only takes prepared value from sensor.
 	return mCameraLineDetectorSensorWorker->read();
 }

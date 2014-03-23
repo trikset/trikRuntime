@@ -127,6 +127,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	mCameraLineDetectorSensor = new CameraLineDetectorSensor(mConfigurer->roverCvBinary()
 			, mConfigurer->roverCvInputFile()
 			, mConfigurer->roverCvOutputFile()
+			, mConfigurer->roverCvToleranceFactor()
 			);
 }
 

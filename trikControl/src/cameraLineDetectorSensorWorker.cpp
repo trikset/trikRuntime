@@ -25,16 +25,18 @@
 
 using namespace trikControl;
 
-CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker(
-		QString const &roverCvBinary
+CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker(QString const &roverCvBinary
 		, QString const &inputFile
-		, QString const &outputFile)
+		, QString const &outputFile
+		, double toleranceFactor)
 	: mReading(0)
 	, mRoverCvBinary(roverCvBinary)
-	, mOutputFileDescriptor(0)
+	, mOutputFileDescriptor(-1)
+	, mRoverCvProcess(this)
 	, mInputFile(inputFile)
 	, mOutputFile(outputFile)
 	, mReady(false)
+	, mToleranceFactor(toleranceFactor)
 {
 	qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
 
@@ -53,13 +55,9 @@ CameraLineDetectorSensorWorker::~CameraLineDetectorSensorWorker()
 	deinitialize();
 }
 
-void CameraLineDetectorSensorWorker::moveChildrenToCorrectThread()
-{
-	mRoverCvProcess.moveToThread(this->thread());
-}
-
 void CameraLineDetectorSensorWorker::init()
 {
+	// Since rover-cv can die silently, we need to check not only mReady flag, but also input and output fifos.
 	if (!mReady || !mInputFile.exists() || !mOutputFile.exists()) {
 		initDetector();
 	}
@@ -162,15 +160,16 @@ void CameraLineDetectorSensorWorker::readFile()
 			int const value = parsedLine[5].toInt();
 			int const valueTolerance = parsedLine[6].toInt();
 
-			// These values are not needed in current implementation, but are left here for reference too.
-			Q_UNUSED(hue)
-			Q_UNUSED(hueTolerance)
-			Q_UNUSED(saturation)
-			Q_UNUSED(saturationTolerance)
-			Q_UNUSED(value)
-			Q_UNUSED(valueTolerance)
+			mInputStream
+					<< QString("hsv %0 %1 %2 %3 %4 %5 %6")
+							.arg(hue)
+							.arg(hueTolerance * mToleranceFactor)
+							.arg(saturation)
+							.arg(saturationTolerance * mToleranceFactor)
+							.arg(value)
+							.arg(valueTolerance * mToleranceFactor)
+					<< "\n";
 
-			mInputStream << QString(line).remove(":") << "\n";
 			mInputStream.flush();
 		}
 	}
@@ -214,7 +213,7 @@ void CameraLineDetectorSensorWorker::openFifos()
 {
 	qDebug() << "opening" << mOutputFile.fileName();
 
-	if (!mOutputFileDescriptor) {
+	if (mOutputFileDescriptor == -1) {
 		mOutputFileDescriptor = open(mOutputFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 	}
 
@@ -223,12 +222,10 @@ void CameraLineDetectorSensorWorker::openFifos()
 		return;
 	}
 
-	qDebug() << mOutputFileDescriptor;
-
 	mSocketNotifier.reset(new QSocketNotifier(mOutputFileDescriptor, QSocketNotifier::Read));
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(false);
+	mSocketNotifier->setEnabled(true);
 
 	qDebug() << "opening" << mInputFile.fileName();
 
@@ -260,8 +257,10 @@ void CameraLineDetectorSensorWorker::tryToExecute()
 
 void CameraLineDetectorSensorWorker::deinitialize()
 {
-	disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(false);
+	if (mSocketNotifier) {
+		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+		mSocketNotifier->setEnabled(false);
+	}
 	if (::close(mOutputFileDescriptor) != 0) {
 		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
 	}
