@@ -213,9 +213,11 @@ void CameraLineDetectorSensorWorker::openFifos()
 {
 	qDebug() << "opening" << mOutputFile.fileName();
 
-	if (mOutputFileDescriptor == -1) {
-		mOutputFileDescriptor = open(mOutputFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+	if (mInputFile.isOpen()) {
+		mInputFile.close();
 	}
+
+	mOutputFileDescriptor = open(mOutputFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 
 	if (mOutputFileDescriptor == -1) {
 		qDebug() << "Cannot open sensor output file " << mOutputFile.fileName();
@@ -264,4 +266,7 @@ void CameraLineDetectorSensorWorker::deinitialize()
 	if (::close(mOutputFileDescriptor) != 0) {
 		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
 	}
+
+	mOutputFileDescriptor = -1;
+	mInputFile.close();
 }
