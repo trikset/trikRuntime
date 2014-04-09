@@ -32,6 +32,7 @@ HEADERS += \
 	$$PWD/netConfigWidget.h \
 	$$PWD/netInitWidget.h \
 	$$PWD/wiFiAPWidget.h \
+	$$PWD/rcReader.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -49,6 +50,7 @@ SOURCES += \
 	$$PWD/netConfigWidget.cpp \
 	$$PWD/netInitWidget.cpp \
 	$$PWD/wiFiAPWidget.cpp \
+	$$PWD/rcReader.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
