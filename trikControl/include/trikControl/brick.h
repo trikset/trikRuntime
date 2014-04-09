@@ -30,16 +30,18 @@
 #include "gamepad.h"
 #include "keys.h"
 #include "led.h"
-#include "powerMotor.h"
 #include "sensor.h"
 #include "sensor3d.h"
-#include "servoMotor.h"
 #include "pwmCapture.h"
+#include "motor.h"
+#include "cameraLineDetectorSensor.h"
 
 namespace trikControl {
 
 class Configurer;
 class I2cCommunicator;
+class PowerMotor;
+class ServoMotor;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -94,6 +96,9 @@ public slots:
 	/// Returns reference to on-board gyroscope.
 	Sensor3d *gyroscope();
 
+	/// Returns reference to high-level line detector sensor using USB camera.
+	CameraLineDetectorSensor *cameraLineDetector();
+
 	/// Returns reference to encoder on given port.
 	Encoder *encoder(QString const &port);
 
@@ -143,6 +148,7 @@ private:
 
 	Sensor3d *mAccelerometer;  // has ownership.
 	Sensor3d *mGyroscope;  // has ownership.
+	CameraLineDetectorSensor *mCameraLineDetectorSensor;  // Has ownership.
 	Battery *mBattery;  // Has ownership.
 	Keys *mKeys;  // Has ownership.
 	Gamepad *mGamepad;  // Has ownership.

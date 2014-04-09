@@ -51,17 +51,20 @@ HEADERS += \
 	$$PWD/include/trikControl/encoder.h \
 	$$PWD/include/trikControl/keys.h \
 	$$PWD/include/trikControl/led.h \
-	$$PWD/include/trikControl/powerMotor.h \
 	$$PWD/include/trikControl/sensor.h \
 	$$PWD/include/trikControl/sensor3d.h \
-	$$PWD/include/trikControl/servoMotor.h \
 	$$PWD/include/trikControl/gamepad.h \
+	$$PWD/include/trikControl/pwmCapture.h \
+	$$PWD/include/trikControl/motor.h \
+	$$PWD/include/trikControl/cameraLineDetectorSensor.h \
+	$$PWD/src/cameraLineDetectorSensorWorker.h \
+	$$PWD/src/powerMotor.h \
+	$$PWD/src/servoMotor.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/guiWorker.h \
-	$$PWD/include/trikControl/pwmCapture.h \
 	$$PWD/src/tcpConnector.h \
-	$$PWD/include/trikControl/motor.h \
+	$$PWD/src/keysWorker.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -77,7 +80,10 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
+	$$PWD/src/pwmCapture.cpp \
+	$$PWD/src/cameraLineDetectorSensorWorker.cpp \
+	$$PWD/src/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
-	$$PWD/src/pwmCapture.cpp \
+	$$PWD/src/$$PLATFORM/cameraLineDetectorSensor.cpp \

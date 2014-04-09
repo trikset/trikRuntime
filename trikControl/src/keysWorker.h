@@ -15,39 +15,41 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtNetwork/QTcpSocket>
-#include <QtNetwork/QTcpServer>
+#include <QtCore/QSocketNotifier>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QSet>
+#include <QtCore/QReadWriteLock>
 
 namespace trikControl {
 
-/// TCP server.
-class TcpConnector : public QObject
+class KeysWorker : public QObject
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param port - TCP port of a server.
-	TcpConnector(int port);
-
-signals:
-	/// Emitted when there is incoming TCP message.
-	void dataReady(QString const &message);
+	/// @param keysPath - path to device file that controls brick keys.
+	KeysWorker(QString const &keysPath);
 
 public slots:
-	/// Starts a server and begins listening port for incoming connections.
-	void startServer();
+	bool wasPressed(int code);
 
 private slots:
-	void tcpDisconnected();
-	void connection();
-	void networkRead();
+	void readKeysEvent();
+
+signals:
+	/// Triggered when button state changed (pressed or released).
+	/// @param code - key code.
+	/// @param value - key state.
+	void buttonPressed(int code, int value);
 
 private:
-	int mPort;
-	QScopedPointer<QTcpServer> mTcpServer;
-	QScopedPointer<QTcpSocket> mTcpSocket;
+	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	int mKeysFileDescriptor;
+	int mButtonCode;
+	int mButtonValue;
+	QSet<int> mWasPressed;
+	QReadWriteLock mLock;
 };
 
 }

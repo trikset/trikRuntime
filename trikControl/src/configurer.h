@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +126,14 @@ public:
 
 	int gamepadPort() const;
 
+	QString roverCvBinary() const;
+
+	QString roverCvInputFile() const;
+
+	QString roverCvOutputFile() const;
+
+	double roverCvToleranceFactor() const;
+
 private:
 	struct ServoMotorType {
 		int min;
@@ -197,6 +205,7 @@ private:
 	void loadLed(QDomElement const &root);
 	void loadKeys(QDomElement const &root);
 	void loadGamepadPort(QDomElement const &root);
+	void loadCameraLineDetector(QDomElement const &root);
 
 	QHash<QString, ServoMotorType> mServoMotorTypes;
 	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
@@ -222,6 +231,11 @@ private:
 	int mLedOn;
 	int mLedOff;
 	int mGamepadPort;
+
+	QString mRoverCvBinary;
+	QString mRoverCvInputFile;
+	QString mRoverCvOutputFile;
+	double mRoverCvToleranceFactor;
 };
 
 }

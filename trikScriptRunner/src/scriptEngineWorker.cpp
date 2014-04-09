@@ -23,6 +23,7 @@
 #include <trikControl/sensor.h>
 #include <trikControl/analogSensor.h>
 #include <trikControl/sensor3d.h>
+#include <trikControl/cameraLineDetectorSensor.h>
 
 #include "scriptableParts.h"
 #include "fileUtils.h"
@@ -39,6 +40,7 @@ Q_DECLARE_METATYPE(Led*)
 Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
+Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
 	: mEngine(NULL)
@@ -122,6 +124,7 @@ void ScriptEngineWorker::initScriptEngine()
 	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
+	qScriptRegisterMetaType(mEngine, cameraLineDetectorSensorToScriptValue, cameraLineDetectorSensorFromScriptValue);
 
 	mEngine->setProcessEventsInterval(1);
 }

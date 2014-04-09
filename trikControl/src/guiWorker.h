@@ -24,8 +24,6 @@
 	#include <QtWidgets/QLabel>
 #endif
 
-#include "declSpec.h"
-
 namespace trikControl {
 
 class GuiWorker : public QObject
