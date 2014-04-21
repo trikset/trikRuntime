@@ -53,7 +53,6 @@ protected:
 private:
 	void getParameters();
 
-	QFile mConfigurationFile;
 	QEventLoop mEventLoop;
 	QVBoxLayout mMainLayout;
 	QVBoxLayout mParametersLayout;

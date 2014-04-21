@@ -17,11 +17,12 @@
 
 #include <QtCore/QDebug>
 
+#include "rcReader.h"
+
 using namespace trikGui;
 
 WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 	: QWidget(parent)
-	, mConfigurationFile("/etc/hostapd.conf")
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -32,15 +33,11 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 	mIpLabel.setAlignment(Qt::AlignCenter);
 
 	mTitle.setText(tr("Network parameters"));
-	mNetworkLabel.setText(tr("SSID not found"));
-	mKeyLabel.setText(tr("Key not found"));
+	mNetworkLabel.setText(tr("Name not found"));
+	mKeyLabel.setText(tr("Password not found"));
 	mIpLabel.setText(tr("IP address: ") + QString("192.168.1.1"));
 
-	if (!mConfigurationFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		qDebug() << "Can't open hostapd configuration file";
-	} else {
-		getParameters();
-	}
+	getParameters();
 
 	mMainLayout.addWidget(&mTitle);
 	mMainLayout.addStretch(2);
@@ -81,29 +78,15 @@ void WiFiAPWidget::keyPressEvent(QKeyEvent *event)
 
 void WiFiAPWidget::getParameters()
 {
-	forever {
-		QString line = mConfigurationFile.readLine();
-		if (line.isEmpty()) {
-			break;
-		}
+	RcReader rcReader("/etc/trik/trikrc");
 
-		int const commentStart = line.indexOf('#');
-		if (commentStart >= 0) {
-			line.truncate(commentStart);
-		}
+	QString const ssid = rcReader.value("trik_wifi_ap_ssid");
+	if (!ssid.isEmpty()) {
+		mNetworkLabel.setText(tr("Name: ") + ssid);
+	}
 
-		int const equalsSign = line.indexOf('=');
-		if (equalsSign < 0) {
-			continue;
-		}
-
-		QString const option = line.left(equalsSign);
-		QString const value = line.mid(equalsSign + 1);
-
-		if (option == "ssid") {
-			mNetworkLabel.setText(tr("SSID: ") + value);
-		} else if (option == "wpa_passphrase") {
-			mKeyLabel.setText(tr("Key: ") + value);
-		}
+	QString const passphrase = rcReader.value("trik_wifi_ap_passphrase");
+	if (!passphrase.isEmpty()) {
+		mKeyLabel.setText(tr("Password: ") + passphrase);
 	}
 }

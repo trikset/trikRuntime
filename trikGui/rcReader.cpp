@@ -38,6 +38,10 @@ void RcReader::read()
 			break;
 		}
 
+		if (line[line.size() - 1] == '\n') {
+			line.chop(1);
+		}
+
 		int const commentStart = line.indexOf('#');
 		if (commentStart >= 0) {
 			line.truncate(commentStart);

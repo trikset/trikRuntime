@@ -106,7 +106,7 @@ void WiFiModeWidget::setAccessPoint()
 
 	QString const currentMode = rcReader.value("trik_wifi_mode");
 
-	if (currentMode != "accessPoint") {
+	if (currentMode != "ap") {
 		WiFiInitWidget netInitWidget;
 		netInitWidget.show();
 		mEventLoop.processEvents();
