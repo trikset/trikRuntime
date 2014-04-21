@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#include "netConfigWidget.h"
+#include "wiFiModeWidget.h"
 
 #include <QtGui/QKeyEvent>
 
 #include "wiFiClientWidget.h"
 #include "wiFiAPWidget.h"
-#include "netInitWidget.h"
+#include "wiFiInitWidget.h"
 
 using namespace trikGui;
 
-NetConfigWidget::NetConfigWidget(QString const &configPath
-		, NetConfigWidget::NetworkMode &currentMode
+WiFiModeWidget::WiFiModeWidget(QString const &configPath
+		, WiFiModeWidget::Mode &currentMode
 		, QWidget *parent)
 	: QWidget(parent)
 	, mConfigPath(configPath)
@@ -46,18 +46,18 @@ NetConfigWidget::NetConfigWidget(QString const &configPath
 			);
 }
 
-void NetConfigWidget::exec()
+void WiFiModeWidget::exec()
 {
 	show();
 	mEventLoop.exec();
 }
 
-QString NetConfigWidget::menuEntry()
+QString WiFiModeWidget::menuEntry()
 {
 	return tr("Network Config");
 }
 
-void NetConfigWidget::keyPressEvent(QKeyEvent *event)
+void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Return:
@@ -82,12 +82,12 @@ void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void NetConfigWidget::setClient()
+void WiFiModeWidget::setClient()
 {
 	if (mMode != client) {
 		mMode = client;
 
-		NetInitWidget netInitWidget;
+		WiFiInitWidget netInitWidget;
 		netInitWidget.show();
 		mEventLoop.processEvents();
 		netInitWidget.init(client);
@@ -101,12 +101,12 @@ void NetConfigWidget::setClient()
 	mEventLoop.quit();
 }
 
-void NetConfigWidget::setAccessPoint()
+void WiFiModeWidget::setAccessPoint()
 {
 	if (mMode != accessPoint) {
 		mMode = accessPoint;
 
-		NetInitWidget netInitWidget;
+		WiFiInitWidget netInitWidget;
 		netInitWidget.show();
 		mEventLoop.processEvents();
 		netInitWidget.init(accessPoint);

@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-#include "netInitWidget.h"
+#include "wiFiInitWidget.h"
 
 #include <cstdlib>
 
 using namespace trikGui;
 
-NetInitWidget::NetInitWidget(QWidget *parent)
+WiFiInitWidget::WiFiInitWidget(QWidget *parent)
 	: QWidget(parent)
 	, mInitMessage(tr("Network initialization in process"))
 	, mWaitMessage(tr("Please wait"))
@@ -34,10 +34,10 @@ NetInitWidget::NetInitWidget(QWidget *parent)
 	setLayout(&mLayout);
 }
 
-void NetInitWidget::init(NetConfigWidget::NetworkMode mode)
+void WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 {
 	switch (mode) {
-		case NetConfigWidget::accessPoint: {
+		case WiFiModeWidget::accessPoint: {
 			system("killall udhcpc");
 			system("killall wpa_supplicant");
 			system("ifconfig wlan0 192.168.1.1 netmask 255.255.255.0");
@@ -45,7 +45,7 @@ void NetInitWidget::init(NetConfigWidget::NetworkMode mode)
 			system("udhcpd");
 			break;
 		}
-		case NetConfigWidget::client: {
+		case WiFiModeWidget::client: {
 			system("killall udhcpd");
 			system("killall hostapd");
 			system("wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf");

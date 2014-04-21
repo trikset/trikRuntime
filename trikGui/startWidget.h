@@ -37,7 +37,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
-#include "netConfigWidget.h"
+#include "wiFiModeWidget.h"
 
 #include "controller.h"
 
@@ -70,7 +70,7 @@ private:
 	Controller mController;
 	QString const mConfigPath;
 
-	NetConfigWidget::NetworkMode mNetworkMode;
+	WiFiModeWidget::Mode mNetworkMode;
 
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;

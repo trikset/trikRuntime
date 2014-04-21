@@ -29,8 +29,8 @@ HEADERS += \
 	$$PWD/motorsWidget.h \
 	$$PWD/sensorIndicator.h \
 	$$PWD/sensorsWidget.h \
-	$$PWD/netConfigWidget.h \
-	$$PWD/netInitWidget.h \
+	$$PWD/wiFiModeWidget.h \
+	$$PWD/wiFiInitWidget.h \
 	$$PWD/wiFiAPWidget.h \
 	$$PWD/rcReader.h \
 
@@ -47,8 +47,8 @@ SOURCES += \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
 	$$PWD/sensorsWidget.cpp \
-	$$PWD/netConfigWidget.cpp \
-	$$PWD/netInitWidget.cpp \
+	$$PWD/wiFiModeWidget.cpp \
+	$$PWD/wiFiInitWidget.cpp \
 	$$PWD/wiFiAPWidget.cpp \
 	$$PWD/rcReader.cpp \
 
