@@ -53,6 +53,8 @@ void RcReader::read()
 
 		mVariables[name] = value;
 	}
+
+	mRcFile.close();
 }
 
 QString RcReader::value(const QString &name)

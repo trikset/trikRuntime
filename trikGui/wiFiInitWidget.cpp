@@ -38,18 +38,11 @@ void WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 {
 	switch (mode) {
 		case WiFiModeWidget::accessPoint: {
-			system("killall udhcpc");
-			system("killall wpa_supplicant");
-			system("ifconfig wlan0 192.168.1.1 netmask 255.255.255.0");
-			system("hostapd -B /etc/hostapd.conf");
-			system("udhcpd");
+			system("/etc/trik/set_wifi_mode.sh ap");
 			break;
 		}
 		case WiFiModeWidget::client: {
-			system("killall udhcpd");
-			system("killall hostapd");
-			system("wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf");
-			system("udhcpc -i wlan0");
+			system("/etc/trik/set_wifi_mode.sh client");
 			break;
 		}
 	}

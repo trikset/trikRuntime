@@ -24,11 +24,10 @@
 using namespace trikGui;
 
 WiFiModeWidget::WiFiModeWidget(QString const &configPath
-		, WiFiModeWidget::Mode &currentMode
 		, QWidget *parent)
 	: QWidget(parent)
 	, mConfigPath(configPath)
-	, mMode(currentMode)
+	, rcReader("/etc/trik/trikrc")
 	, mTitle(tr("Choose mode:"))
 {
 	setWindowState(Qt::WindowFullScreen);
@@ -84,9 +83,11 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 
 void WiFiModeWidget::setClient()
 {
-	if (mMode != client) {
-		mMode = client;
+	rcReader.read();
 
+	QString const currentMode = rcReader.value("trik_wifi_mode");
+
+	if (currentMode != "client") {
 		WiFiInitWidget netInitWidget;
 		netInitWidget.show();
 		mEventLoop.processEvents();
@@ -97,15 +98,15 @@ void WiFiModeWidget::setClient()
 	WiFiClientWidget wiFiClientWidget(mConfigPath);
 
 	wiFiClientWidget.exec();
-
-	mEventLoop.quit();
 }
 
 void WiFiModeWidget::setAccessPoint()
 {
-	if (mMode != accessPoint) {
-		mMode = accessPoint;
+	rcReader.read();
 
+	QString const currentMode = rcReader.value("trik_wifi_mode");
+
+	if (currentMode != "accessPoint") {
 		WiFiInitWidget netInitWidget;
 		netInitWidget.show();
 		mEventLoop.processEvents();
@@ -116,6 +117,4 @@ void WiFiModeWidget::setAccessPoint()
 	WiFiAPWidget wiFiAPWidget;
 
 	wiFiAPWidget.exec();
-
-	mEventLoop.quit();
 }

@@ -70,8 +70,6 @@ private:
 	Controller mController;
 	QString const mConfigPath;
 
-	WiFiModeWidget::Mode mNetworkMode;
-
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;
 };

@@ -32,6 +32,8 @@
 #include <QtCore/QEventLoop>
 #include <QtCore/QString>
 
+#include "rcReader.h"
+
 namespace trikGui {
 
 /// Widget which allows to set network mode (client or access point) and then opens corresponding configuration widget.
@@ -41,15 +43,14 @@ class WiFiModeWidget : public QWidget
 
 public:
 	enum Mode {
-		client
-		, accessPoint
+		accessPoint
+		, client
 	};
 
 	/// Constructor
 	/// @param configPath - full path to configuration files.
-	/// @param currentMode - current network mode.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	WiFiModeWidget(QString const &configPath, Mode &currentMode, QWidget *parent = 0);
+	WiFiModeWidget(QString const &configPath, QWidget *parent = 0);
 
 	/// Show the widget and wait until it will finish its work.
 	void exec();
@@ -65,7 +66,7 @@ private:
 	void setAccessPoint();
 
 	QString const &mConfigPath;
-	Mode &mMode;
+	RcReader rcReader;
 	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
 	QLabel mTitle;
