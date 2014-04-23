@@ -31,36 +31,6 @@
     </message>
 </context>
 <context>
-    <name>trikGui::NetConfigWidget</name>
-    <message>
-        <source>Network Config</source>
-        <translation>Сеть</translation>
-    </message>
-    <message>
-        <source>Choose mode:</source>
-        <translation>Выберите режим:</translation>
-    </message>
-    <message>
-        <source>Wi-Fi client</source>
-        <translation>Wi-Fi клиент</translation>
-    </message>
-    <message>
-        <source>Wi-Fi access point</source>
-        <translation>Wi-Fi точка доступа</translation>
-    </message>
-</context>
-<context>
-    <name>trikGui::NetInitWidget</name>
-    <message>
-        <source>Network initialization in process</source>
-        <translation>Идёт инициализация сети</translation>
-    </message>
-    <message>
-        <source>Please wait</source>
-        <translation>Пожалуйста, подождите</translation>
-    </message>
-</context>
-<context>
     <name>trikGui::RunningWidget</name>
     <message>
         <source>Press Enter to abort</source>
@@ -122,24 +92,24 @@
         <translation>Параметры сети</translation>
     </message>
     <message>
-        <source>SSID not found</source>
-        <translation>SSID не найден</translation>
-    </message>
-    <message>
-        <source>Key not found</source>
-        <translation>Ключ не найден</translation>
-    </message>
-    <message>
         <source>IP address: </source>
         <translation>IP-адрес: </translation>
     </message>
     <message>
-        <source>SSID: </source>
-        <translation>SSID: </translation>
+        <source>Name not found</source>
+        <translation>Имя не найдено</translation>
     </message>
     <message>
-        <source>Key: </source>
-        <translation>Ключ: </translation>
+        <source>Password not found</source>
+        <translation>Пароль не найден</translation>
+    </message>
+    <message>
+        <source>Name: </source>
+        <translation>Имя: </translation>
+    </message>
+    <message>
+        <source>Password: </source>
+        <translation>Пароль: </translation>
     </message>
 </context>
 <context>
@@ -159,6 +129,44 @@
     <message>
         <source>no connection</source>
         <translation>нет соединения</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::WiFiInitWidget</name>
+    <message>
+        <source>Network initialization in process</source>
+        <translation>Идёт инициализация сети</translation>
+    </message>
+    <message>
+        <source>Please wait</source>
+        <translation>Пожалуйста, подождите</translation>
+    </message>
+    <message>
+        <source>Press any key for break</source>
+        <translation>Чтобы прервать процесс, нажмите любую кнопку</translation>
+    </message>
+    <message>
+        <source>Network initialization failed</source>
+        <translation>Не удалось произвести инициализацию сети</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::WiFiModeWidget</name>
+    <message>
+        <source>Choose mode:</source>
+        <translation>Выберите режим:</translation>
+    </message>
+    <message>
+        <source>Wi-Fi client</source>
+        <translation>Wi-Fi клиент</translation>
+    </message>
+    <message>
+        <source>Wi-Fi access point</source>
+        <translation>Wi-Fi точка доступа</translation>
+    </message>
+    <message>
+        <source>Network Config</source>
+        <translation>Сеть</translation>
     </message>
 </context>
 </TS>
