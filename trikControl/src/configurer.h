@@ -134,6 +134,8 @@ public:
 
 	double roverCvToleranceFactor() const;
 
+	QString roverCvParams() const;
+
 private:
 	struct ServoMotorType {
 		int min;
@@ -236,6 +238,7 @@ private:
 	QString mRoverCvInputFile;
 	QString mRoverCvOutputFile;
 	double mRoverCvToleranceFactor;
+	QString mRoverCvParams;
 };
 
 }

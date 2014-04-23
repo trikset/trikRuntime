@@ -23,9 +23,10 @@ using namespace trikControl;
 CameraLineDetectorSensor::CameraLineDetectorSensor(QString const &roverCvBinary
 		, QString const &inputFile
 		, QString const &outputFile
-		, double toleranceFactor)
+		, double toleranceFactor
+		, QString const &params)
 	: mCameraLineDetectorSensorWorker(
-			new CameraLineDetectorSensorWorker(roverCvBinary, inputFile, outputFile, toleranceFactor)
+			new CameraLineDetectorSensorWorker(roverCvBinary, inputFile, outputFile, toleranceFactor, params)
 	)
 {
 	mCameraLineDetectorSensorWorker->moveToThread(&mWorkerThread);

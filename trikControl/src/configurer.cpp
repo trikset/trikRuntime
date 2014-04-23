@@ -304,6 +304,11 @@ double Configurer::roverCvToleranceFactor() const
 	return mRoverCvToleranceFactor;
 }
 
+QString Configurer::roverCvParams() const
+{
+	return mRoverCvParams;
+}
+
 void Configurer::loadInit(QDomElement const &root)
 {
 	if (root.elementsByTagName("initScript").isEmpty()) {
@@ -632,4 +637,5 @@ void Configurer::loadCameraLineDetector(QDomElement const &root)
 	mRoverCvInputFile = cameraLineDetector.attribute("inputFile");
 	mRoverCvOutputFile = cameraLineDetector.attribute("outputFile");
 	mRoverCvToleranceFactor = cameraLineDetector.attribute("toleranceFactor").toDouble();
+	mRoverCvParams = cameraLineDetector.attribute("params");
 }

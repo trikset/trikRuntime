@@ -38,7 +38,7 @@ public:
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
 	CameraLineDetectorSensorWorker(QString const &roverCvBinary, QString const &inputFile
-				, QString const &outputFile, double toleranceFactor);
+				, QString const &outputFile, double toleranceFactor, QString const &params);
 
 	/// Destructor.
 	~CameraLineDetectorSensorWorker();
@@ -117,6 +117,9 @@ private:
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
 	double mToleranceFactor;
+
+	/// Command-line parameters for rover-cv
+	QString mParams;
 };
 
 }
