@@ -33,7 +33,7 @@
 
 namespace trikGui {
 
-/// Widget for initializing network on the controller.
+/// Widget for initializing wi-fi on the controller.
 class WiFiInitWidget : public QWidget
 {
 	Q_OBJECT
@@ -48,8 +48,9 @@ public:
 		, fail
 	};
 
-	/// Initialize network on the controller.
-	/// @param mode - network mode which we want to initialize.
+	/// Initialize wi-fi on the controller.
+	/// @param mode - wi-fi mode which we want to initialize.
+	/// @return WiFiInitWidget::success if wi-fi was succesfully initialized and WiFiInitWidget::fail otherwise.
 	Result init(WiFiModeWidget::Mode mode);
 
 protected:

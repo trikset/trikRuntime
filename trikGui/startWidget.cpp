@@ -82,8 +82,8 @@ void StartWidget::launch()
 			FileManagerWidget fileManagerWidget(mController);
 			fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
-			WiFiModeWidget netConfigWidget(mConfigPath);
-			netConfigWidget.exec();
+			WiFiModeWidget wiFiModeWidget(mConfigPath);
+			wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
 			motorsWidget.exec();

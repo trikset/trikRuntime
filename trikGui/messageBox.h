@@ -32,12 +32,18 @@
 
 namespace trikGui {
 
+/// Widget showing some message and waiting until the user will press any key.
 class MessageBox : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit MessageBox(QWidget *parent = 0);
+
+	/// Show widget and wait until the user will press any key.
+	/// @param message - message to show.
 	void exec(QString const &message);
 
 protected:

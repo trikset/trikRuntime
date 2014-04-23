@@ -19,13 +19,23 @@
 #include <QtCore/QHash>
 #include <QtCore/QFile>
 
+/// trikrc file parser.
 class RcReader : public QObject
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param rcFilePath - trikrc file path.
+	/// @param parent - parent of this object in Qt object hierarchy.
 	explicit RcReader(QString const &rcFilePath, QObject *parent = 0);
+
+	/// Clears data from previous trikrc reading and reads it again.
 	void read();
+
+	/// Get value of variable in trikrc.
+	/// @param name - variable name.
+	/// @return value if variable is found and empty string otherwise.
 	QString value(QString const &name);
 
 private:

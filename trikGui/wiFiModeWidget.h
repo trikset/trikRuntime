@@ -35,7 +35,7 @@
 
 namespace trikGui {
 
-/// Widget which allows to set network mode (client or access point) and then opens corresponding configuration widget.
+/// Widget which allows to set wi-fi mode (client or access point) and then opens corresponding configuration widget.
 class WiFiModeWidget : public QWidget
 {
 	Q_OBJECT
