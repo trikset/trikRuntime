@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -10,12 +10,12 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ * limitations under the License. */
 
 #include "wiFiModeWidget.h"
 
 #include <QtGui/QKeyEvent>
+#include <QtCore/QDebug>
 
 #include "wiFiClientWidget.h"
 #include "wiFiAPWidget.h"
@@ -62,9 +62,9 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 		case Qt::Key_Return:
 		case Qt::Key_Right: {
 			if (mModes.currentItem()->text() == tr("Wi-Fi client")) {
-				setClient();
+				setMode(client);
 			} else {
-				setAccessPoint();
+				setMode(accessPoint);
 			}
 			break;
 		}
@@ -81,40 +81,40 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void WiFiModeWidget::setClient()
+void WiFiModeWidget::setMode(Mode mode)
 {
 	rcReader.read();
 
-	QString const currentMode = rcReader.value("trik_wifi_mode");
+	QString const currentModeText = rcReader.value("trik_wifi_mode");
 
-	if (currentMode != "client") {
-		WiFiInitWidget netInitWidget;
-		netInitWidget.show();
-		mEventLoop.processEvents();
-		netInitWidget.init(client);
-		netInitWidget.close();
+	Mode currentMode = unknown;
+	if (currentModeText == "client") {
+		currentMode = client;
+	} else if (currentModeText == "ap") {
+		currentMode = accessPoint;
 	}
 
-	WiFiClientWidget wiFiClientWidget(mConfigPath);
-
-	wiFiClientWidget.exec();
-}
-
-void WiFiModeWidget::setAccessPoint()
-{
-	rcReader.read();
-
-	QString const currentMode = rcReader.value("trik_wifi_mode");
-
-	if (currentMode != "ap") {
-		WiFiInitWidget netInitWidget;
-		netInitWidget.show();
-		mEventLoop.processEvents();
-		netInitWidget.init(accessPoint);
-		netInitWidget.close();
+	if (currentMode != mode) {
+		WiFiInitWidget wiFiInitWidget;
+		if (wiFiInitWidget.init(client) == WiFiInitWidget::fail) {
+			return;
+		}
 	}
 
-	WiFiAPWidget wiFiAPWidget;
-
-	wiFiAPWidget.exec();
+	switch (mode) {
+		case client: {
+			WiFiClientWidget wiFiClientWidget(mConfigPath);
+			wiFiClientWidget.exec();
+			break;
+		}
+		case accessPoint: {
+			WiFiAPWidget wiFiAPWidget;
+			wiFiAPWidget.exec();
+			break;
+		}
+		case unknown: {
+			qDebug() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
+			break;
+		}
+	}
 }

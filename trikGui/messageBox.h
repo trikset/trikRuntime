@@ -26,39 +26,27 @@
 	#include <QtWidgets/QVBoxLayout>
 #endif
 
-#include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QEventLoop>
 #include <QtGui/QKeyEvent>
 
 namespace trikGui {
 
-/// Widget showing parameters of wireless access point on the controller.
-class WiFiAPWidget : public QWidget
+class MessageBox : public QWidget
 {
 	Q_OBJECT
 
 public:
-	/// Constructor
-	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit WiFiAPWidget(QWidget *parent = 0);
-
-	/// Show the widget and wait until it will be closed by user.
-	void exec();
+	explicit MessageBox(QWidget *parent = 0);
+	void exec(QString const &message);
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *);
 
 private:
-	void getParameters();
-
+	QVBoxLayout mLayout;
+	QLabel mMessageLabel;
 	QEventLoop mEventLoop;
-	QVBoxLayout mMainLayout;
-	QVBoxLayout mParametersLayout;
-	QLabel mTitle;
-	QLabel mNetworkLabel;
-	QLabel mKeyLabel;
-	QLabel mIpLabel;
 };
 
 }
