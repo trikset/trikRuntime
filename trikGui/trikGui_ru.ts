@@ -143,7 +143,8 @@
     </message>
     <message>
         <source>Press any key for break</source>
-        <translation>Чтобы прервать процесс, нажмите любую кнопку</translation>
+        <translation>Чтобы прервать процесс,
+нажмите любую кнопку</translation>
     </message>
     <message>
         <source>Network initialization failed</source>

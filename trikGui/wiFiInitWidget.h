@@ -66,6 +66,7 @@ private:
 
 private slots:
 	void onProcessFinished(int, QProcess::ExitStatus exitStatus);
+	void onProcessError(QProcess::ProcessError error);
 };
 
 }

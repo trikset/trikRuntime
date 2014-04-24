@@ -32,18 +32,20 @@ WiFiInitWidget::WiFiInitWidget(QWidget *parent)
 
 	mInitMessage.setAlignment(Qt::AlignCenter);
 	mWaitMessage.setAlignment(Qt::AlignCenter);
+	mBreakMessage.setAlignment(Qt::AlignCenter);
 
 	mLayout.addWidget(&mInitMessage);
 	mLayout.addWidget(&mWaitMessage);
 	mLayout.addWidget(&mBreakMessage);
 	setLayout(&mLayout);
 
-	connect(&mProcess, SIGNAL(finished(int)), SLOT(onProcessFinished(int, QProcess::ExitStatus)));
+	connect(&mProcess, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onProcessFinished(int, QProcess::ExitStatus)));
+	connect(&mProcess, SIGNAL(error(QProcess::ProcessError)), SLOT(onProcessError(QProcess::ProcessError)));
 }
 
 WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 {
-	QString command = "/etc/set_wifi_mode.sh";
+	QString command = "/etc/trik/set_wifi_mode.sh";
 	QStringList arguments;
 
 	switch (mode) {
@@ -65,13 +67,15 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 
 	show();
 
-	if (mEventLoop.exec() == 0) {
-		return success;
-	} else {
+	int const result = mEventLoop.exec();
+
+	close();
+
+	if (result != 0) {
 		return fail;
 	}
 
-	close();
+	return success;
 }
 
 void WiFiInitWidget::keyPressEvent(QKeyEvent *)
@@ -83,6 +87,8 @@ void WiFiInitWidget::keyPressEvent(QKeyEvent *)
 
 void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 {
+	disconnect(&mProcess);
+
 	switch (exitStatus) {
 		case QProcess::NormalExit: {
 			mEventLoop.exit(0);
@@ -96,4 +102,17 @@ void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 			break;
 		}
 	}
+}
+
+void WiFiInitWidget::onProcessError(QProcess::ProcessError error)
+{
+	disconnect(&mProcess);
+
+	qDebug() << "set_wifi_mode.sh process error: " << error;
+
+	if (mProcess.state() != QProcess::NotRunning) {
+		mProcess.kill();
+	}
+
+	mEventLoop.exit(1);
 }

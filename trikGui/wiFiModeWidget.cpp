@@ -96,7 +96,7 @@ void WiFiModeWidget::setMode(Mode mode)
 
 	if (currentMode != mode) {
 		WiFiInitWidget wiFiInitWidget;
-		if (wiFiInitWidget.init(client) == WiFiInitWidget::fail) {
+		if (wiFiInitWidget.init(mode) == WiFiInitWidget::fail) {
 			return;
 		}
 	}
