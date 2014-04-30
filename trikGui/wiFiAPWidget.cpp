@@ -77,7 +77,7 @@ void WiFiAPWidget::keyPressEvent(QKeyEvent *event)
 
 void WiFiAPWidget::getParameters()
 {
-	RcReader rcReader("/etc/trik/trikrc");
+	RcReader const rcReader("/etc/trik/trikrc");
 
 	QString const ssid = rcReader.value("trik_wifi_ap_ssid");
 	if (!ssid.isEmpty()) {

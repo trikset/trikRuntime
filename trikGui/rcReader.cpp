@@ -61,7 +61,7 @@ void RcReader::read()
 	mRcFile.close();
 }
 
-QString RcReader::value(const QString &name)
+QString RcReader::value(QString const &name) const
 {
 	return mVariables.value(name);
 }
