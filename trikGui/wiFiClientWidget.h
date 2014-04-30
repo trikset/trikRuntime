@@ -45,7 +45,7 @@ namespace trikGui {
 
 /// Widget that shows current IP address and a list of available WiFi networks.
 /// Network is available only when it is listed in networks.cfg file and is physically available.
-class NetConfigWidget : public QWidget
+class WiFiClientWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -53,13 +53,10 @@ public:
 	/// Constructor.
 	/// @param parent - parent QObject.
 	/// @param configPath - path to wpa-config.xml.
-	explicit NetConfigWidget(QString const &configPath, QWidget *parent = 0);
+	explicit WiFiClientWidget(QString const &configPath, QWidget *parent = 0);
 
 	/// Destructor.
-	~NetConfigWidget();
-
-	/// Title for this widget in a main menu.
-	static QString menuEntry();
+	~WiFiClientWidget();
 
 	/// Show the widget and wait until it will be closed by user.
 	void exec();

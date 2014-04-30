@@ -27,7 +27,7 @@
 
 #include "trikControl/motor.h"
 #include "fileManagerWidget.h"
-#include "netConfigWidget.h"
+#include "wiFiModeWidget.h"
 #include "motorsWidget.h"
 #include "sensorsSelectionWidget.h"
 
@@ -43,7 +43,7 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
+	mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
@@ -81,9 +81,9 @@ void StartWidget::launch()
 			/// @todo Why widgets are created every time?
 			FileManagerWidget fileManagerWidget(mController);
 			fileManagerWidget.exec();
-		} else if (currentItemText == NetConfigWidget::menuEntry()) {
-			NetConfigWidget netConfigWidget(mConfigPath);
-			netConfigWidget.exec();
+		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
+			WiFiModeWidget wiFiModeWidget(mConfigPath);
+			wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
 			motorsWidget.exec();

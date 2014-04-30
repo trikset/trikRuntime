@@ -37,6 +37,8 @@
 #include <QtCore/QString>
 #include <QtCore/QMap>
 
+#include "wiFiModeWidget.h"
+
 #include "controller.h"
 
 namespace trikGui {
