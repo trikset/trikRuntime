@@ -52,6 +52,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 				, mConfigurer->servoMotorPeriodFile(port)
 				, mConfigurer->servoMotorPeriod(port)
 				, mConfigurer->servoMotorInvert(port)
+				, port
 				);
 
 		mServoMotors.insert(port, servoMotor);
@@ -71,6 +72,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 				*mI2cCommunicator
 				, mConfigurer->powerMotorI2cCommandNumber(port)
 				, mConfigurer->powerMotorInvert(port)
+				, port
 				);
 
 		mPowerMotors.insert(port, powerMotor);
@@ -98,7 +100,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	}
 
 	foreach (QString const &port, mConfigurer->encoderPorts()) {
-		Encoder *encoder = new Encoder(*mI2cCommunicator, mConfigurer->encoderI2cCommandNumber(port));
+		Encoder *encoder = new Encoder(*mI2cCommunicator, mConfigurer->encoderI2cCommandNumber(port), port);
 		mEncoders.insert(port, encoder);
 	}
 

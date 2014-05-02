@@ -20,8 +20,9 @@
 
 using namespace trikControl;
 
-PowerMotor::PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert)
+PowerMotor::PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert, QString const &port)
 	: mCommunicator(communicator)
+	, mPort(port)
 	, mI2cCommandNumber(i2cCommandNumber)
 	, mInvert(invert)
 	, mCurrentPower(0)
@@ -60,4 +61,9 @@ int PowerMotor::power() const
 void PowerMotor::powerOff()
 {
 	setPower(0);
+}
+
+QString PowerMotor::portName() const
+{
+	return mPort;
 }
