@@ -39,7 +39,7 @@ public:
 	/// @param period - value of period for setting while initialization
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
 	ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile, int period
-			, bool invert);
+			, bool invert, QString const &port);
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -59,9 +59,13 @@ public slots:
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
+	/// Returns name of host port
+	QString portName() const;
+
 private:
 	QFile mDutyFile;
 	QFile mPeriodFile;
+	QString mPort;
 	int mPeriod;
 	int mFrequency;
 	int mCurrentDutyPercent;

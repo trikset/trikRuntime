@@ -32,7 +32,7 @@ class PowerMotor : public Motor
 public:
 	/// Constructor.
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
+	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert, QString const &port);
 
 	/// Destructor.
 	~PowerMotor();
@@ -49,8 +49,12 @@ public slots:
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
+	/// Returns name of host port
+	QString portName() const;
+
 private:
 	I2cCommunicator &mCommunicator;
+	QString mPort;
 	int const mI2cCommandNumber;
 	bool const mInvert;
 	int mCurrentPower;

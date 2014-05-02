@@ -45,6 +45,9 @@ public slots:
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
 	virtual void powerOff() = 0;
+
+	/// Returns name of host port
+	virtual QString portName() const = 0;
 };
 
 }

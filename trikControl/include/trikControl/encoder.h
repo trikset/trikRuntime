@@ -31,7 +31,7 @@ public:
 	/// Constructor.
 	/// @param communicator - I2C communicator.
 	/// @param i2cCommandNumber - number of I2C command to query this encoder.
-	Encoder(I2cCommunicator &communicator, int i2cCommandNumber);
+	Encoder(I2cCommunicator &communicator, int i2cCommandNumber, QString const &port);
 
 public slots:
 	/// Returns current encoder reading.
@@ -40,8 +40,12 @@ public slots:
 	/// Resets encoder by setting current reading to 0.
 	void reset();
 
+	/// Returns name of host port
+	QString portName() const;
+
 private:
 	I2cCommunicator &mCommunicator;
+	QString mPort;
 	int mI2cCommandNumber;
 };
 

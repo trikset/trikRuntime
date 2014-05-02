@@ -20,8 +20,9 @@ float const parToRad = 0.03272492;
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
+Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber, QString const &port)
 	: mCommunicator(communicator)
+	, mPort(port)
 	, mI2cCommandNumber(i2cCommandNumber)
 {
 }
@@ -33,6 +34,11 @@ void Encoder::reset()
 	command[1] = static_cast<char>(0x00);
 
 	mCommunicator.send(command);
+}
+
+QString Encoder::portName() const
+{
+	return mPort;
 }
 
 float Encoder::read()

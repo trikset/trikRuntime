@@ -19,9 +19,10 @@
 using namespace trikControl;
 
 ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile
-		, int period, bool invert)
+		, int period, bool invert, QString const &port)
 	: mDutyFile(dutyFile)
 	, mPeriodFile(periodFile)
+	, mPort(port)
 	, mPeriod(period)
 	, mFrequency(1000000000 / period)
 	, mCurrentDutyPercent(0)
@@ -97,4 +98,9 @@ void ServoMotor::powerOff()
 	mDutyFile.close();
 
 	mCurrentPower = 0;
+}
+
+QString ServoMotor::portName() const
+{
+	return mPort;
 }
