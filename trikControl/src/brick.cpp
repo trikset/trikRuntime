@@ -277,6 +277,11 @@ Keys* Brick::keys()
 	return mKeys;
 }
 
+QStringList Brick::encoderPorts() const
+{
+	return mEncoders.keys();
+}
+
 Gamepad* Brick::gamepad()
 {
 	return mGamepad;
