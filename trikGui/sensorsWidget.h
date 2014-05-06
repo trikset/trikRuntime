@@ -18,10 +18,10 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
+	#include <QtGui/QVBoxLayout>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
+	#include <QtWidgets/QVBoxLayout>
 #endif
 
 #include <QtCore/QEventLoop>
@@ -50,7 +50,7 @@ protected:
 
 private:
 	trikControl::Brick &mBrick;
-	QHBoxLayout mLayout;
+	QVBoxLayout mLayout;
 	QVector<SensorIndicator *> mIndicators;
 	QEventLoop mEventLoop;
 	int const mInterval;

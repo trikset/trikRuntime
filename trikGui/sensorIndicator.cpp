@@ -23,6 +23,7 @@
 #endif
 
 #include <QtCore/QString>
+#include <QtCore/QDebug>
 
 #include <trikControl/sensor.h>
 
@@ -38,7 +39,7 @@ SensorIndicator::SensorIndicator(QString const &port
 	, mNameLabel(port)
 	, mValueLabel("0")
 {
-	mValueBar.setOrientation(Qt::Vertical);
+	mValueBar.setOrientation(Qt::Horizontal);
 	mValueBar.setMaximum(mMaxValue);
 	mValueBar.setMinimum(mMinValue);
 	mValueBar.setValue(0);
@@ -46,6 +47,8 @@ SensorIndicator::SensorIndicator(QString const &port
 
 	mNameLabel.setAlignment(Qt::AlignCenter);
 	mValueLabel.setAlignment(Qt::AlignCenter);
+
+	mValueLabel.setFixedWidth(41);
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mValueBar, 0, Qt::AlignCenter);

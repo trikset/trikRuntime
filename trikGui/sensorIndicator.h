@@ -18,12 +18,12 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QHBoxLayout>
 	#include <QtGui/QLabel>
 	#include <QtGui/QProgressBar>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QProgressBar>
 #endif
@@ -49,7 +49,7 @@ private:
 	int const mMaxValue;
 	int const mMinValue;
 
-	QVBoxLayout mLayout;
+	QHBoxLayout mLayout;
 	QLabel mNameLabel;
 	QProgressBar mValueBar;
 	QLabel mValueLabel;
