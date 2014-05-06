@@ -27,7 +27,7 @@ WiFiModeWidget::WiFiModeWidget(QString const &configPath
 		, QWidget *parent)
 	: QWidget(parent)
 	, mConfigPath(configPath)
-	, rcReader("/etc/trik/trikrc")
+	, mRcReader("/etc/trik/trikrc")
 	, mTitle(tr("Choose mode:"))
 {
 	setWindowState(Qt::WindowFullScreen);
@@ -83,9 +83,9 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 
 void WiFiModeWidget::setMode(Mode mode)
 {
-	rcReader.read();
+	mRcReader.read();
 
-	QString const currentModeText = rcReader.value("trik_wifi_mode");
+	QString const currentModeText = mRcReader.value("trik_wifi_mode");
 
 	Mode currentMode = unknown;
 	if (currentModeText == "client") {

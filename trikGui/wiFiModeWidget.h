@@ -65,7 +65,7 @@ private:
 	void setMode(Mode mode);
 
 	QString const &mConfigPath;
-	RcReader rcReader;
+	RcReader mRcReader;
 	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
 	QLabel mTitle;

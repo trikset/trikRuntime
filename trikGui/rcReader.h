@@ -36,7 +36,7 @@ public:
 	/// Get value of variable in trikrc.
 	/// @param name - variable name.
 	/// @return value if variable is found and empty string otherwise.
-	QString value(QString const &name);
+	QString value(QString const &name) const;
 
 private:
 	QHash<QString, QString> mVariables;

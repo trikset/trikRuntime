@@ -163,8 +163,9 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<!-- Digital sensors configuration, maps logical port to digital sensor device file and digital sensor type used by default 
 	     (if not configured programmatically). -->
 	<digitalSensors>
-		<digitalSensor port="JD1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
-		<digitalSensor port="JD2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" />
+<!--		<digitalSensor port="JD1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
+		<digitalSensor port="JD2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" /> -->
+		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" defaultType="volumeSensor" />
 		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" />
 		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
 	</digitalSensors>
@@ -173,6 +174,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	     (which will be 0 in client program) and maximal reading value (which will be 100). -->
 	<digitalSensorTypes>
 		<lightSensor min="30000" max="350000" />
+		<volumeSensor min="0" max="100"/>
 	</digitalSensorTypes>
 	
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
@@ -191,6 +193,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 
 	<!-- Settings for virtual camera line sensor provided by rover-cv application. -->
-	<cameraLineDetector roverCv="/home/root/video-module/rover-cv" inputFile="/tmp/dsp-detector.in.fifo" outputFile="/tmp/dsp-detector.out.fifo" toleranceFactor="5" />
+	<cameraLineDetector roverCv="/home/root/video-module/rover-cv" params="" inputFile="/tmp/dsp-detector.in.fifo" outputFile="/tmp/dsp-detector.out.fifo" toleranceFactor="1" />
 	
 </config>
+

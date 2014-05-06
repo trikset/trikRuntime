@@ -128,6 +128,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 			, mConfigurer->roverCvInputFile()
 			, mConfigurer->roverCvOutputFile()
 			, mConfigurer->roverCvToleranceFactor()
+			, mConfigurer->roverCvParams()
 			);
 }
 

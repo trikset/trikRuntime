@@ -28,7 +28,9 @@ using namespace trikControl;
 CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker(QString const &roverCvBinary
 		, QString const &inputFile
 		, QString const &outputFile
-		, double toleranceFactor)
+		, double toleranceFactor
+		, QString const &params
+		)
 	: mReading(0)
 	, mRoverCvBinary(roverCvBinary)
 	, mOutputFileDescriptor(-1)
@@ -37,6 +39,7 @@ CameraLineDetectorSensorWorker::CameraLineDetectorSensorWorker(QString const &ro
 	, mOutputFile(outputFile)
 	, mReady(false)
 	, mToleranceFactor(toleranceFactor)
+	, mParams(params)
 {
 	qRegisterMetaType<QProcess::ProcessError>("QProcess::ProcessError");
 
@@ -187,8 +190,10 @@ void CameraLineDetectorSensorWorker::startRoverCv()
 		mRoverCvProcess.close();
 	}
 
+	QStringList const params = mParams.split(" ", QString::SkipEmptyParts);
+
 	mRoverCvProcess.setWorkingDirectory(roverCvBinaryFileInfo.absolutePath());
-	mRoverCvProcess.start(roverCvBinaryFileInfo.filePath(), QIODevice::ReadOnly | QIODevice::Unbuffered);
+	mRoverCvProcess.start(roverCvBinaryFileInfo.filePath(), params, QIODevice::ReadOnly | QIODevice::Unbuffered);
 
 	mRoverCvProcess.waitForStarted();
 
