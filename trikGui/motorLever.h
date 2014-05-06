@@ -23,7 +23,7 @@
 	#include <QtGui/QProgressBar>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QProgressBar>
 #endif

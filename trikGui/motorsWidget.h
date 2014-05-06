@@ -21,7 +21,7 @@
 	#include <QtGui/QVBoxLayout>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
+	#include <QtWidgets/QVBoxLayout>
 #endif
 
 #include <QtCore/QString>
