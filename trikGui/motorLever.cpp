@@ -42,18 +42,22 @@ MotorLever::MotorLever(QString const &port, trikControl::Motor &motor, QWidget *
 {
 	mMotor.powerOff();
 
-	mPowerBar.setOrientation(Qt::Vertical);
+	mPowerBar.setOrientation(Qt::Horizontal);
 	mPowerBar.setMinimum(mMinPower);
 	mPowerBar.setMaximum(mMaxPower);
 	mPowerBar.setValue(0);
 	mPowerBar.setTextVisible(false);
 
 	mNameLabel.setAlignment(Qt::AlignCenter);
+	mPowerBar.setAlignment(Qt::AlignCenter);
 	mPowerLabel.setAlignment(Qt::AlignCenter);
 	mOnOffLabel.setAlignment(Qt::AlignCenter);
 
+	mPowerLabel.setFixedWidth(40);
+	mOnOffLabel.setFixedWidth(48);
+
 	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mPowerBar, 0, Qt::AlignCenter);
+	mLayout.addWidget(&mPowerBar);
 	mLayout.addWidget(&mPowerLabel);
 	mLayout.addWidget(&mOnOffLabel);
 	setLayout(&mLayout);
@@ -69,11 +73,11 @@ MotorLever::~MotorLever()
 void MotorLever::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Up: {
+		case Qt::Key_Right: {
 			setPower(mPower + mPowerStep);
 			break;
 		}
-		case Qt::Key_Down: {
+		case Qt::Key_Left: {
 			setPower(mPower - mPowerStep);
 			break;
 		}
