@@ -53,6 +53,10 @@ MotorLever::MotorLever(QString const &port, trikControl::Motor &motor, QWidget *
 	mPowerLabel.setAlignment(Qt::AlignCenter);
 	mOnOffLabel.setAlignment(Qt::AlignCenter);
 
+	// mPowerLabel and mOnOffLabel can change their widths during work. It will cause mPowerBar
+	// width change. To prevent it, we set fixed widths for mPowerLabel and mOnOffLabel.
+	// They are equal to maximum widths of the widgets. For mPowerLabel it is when the label text
+	// is "-100", for mOnOffLabel - "off".
 	mPowerLabel.setFixedWidth(40);
 	mOnOffLabel.setFixedWidth(48);
 

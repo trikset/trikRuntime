@@ -48,6 +48,10 @@ SensorIndicator::SensorIndicator(QString const &port
 	mNameLabel.setAlignment(Qt::AlignCenter);
 	mValueLabel.setAlignment(Qt::AlignCenter);
 
+	// mValueLabel can change its width during work. It will cause mValueBar
+	// width change. To prevent it, we set fixed width for mValueLabel.
+	// It is equal to maximum width of the widget which it achieves
+	// when the label text is set to "100".
 	mValueLabel.setFixedWidth(41);
 
 	mLayout.addWidget(&mNameLabel);
