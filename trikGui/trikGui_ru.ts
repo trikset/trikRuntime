@@ -23,19 +23,15 @@
     <name>trikGui::MotorsWidget</name>
     <message>
         <source>Test power motors</source>
-        <translation>Проверка силовых моторов</translation>
+        <translation>Силовые моторы</translation>
     </message>
     <message>
         <source>Test servo motors</source>
-        <translation>Проверка сервоприводов</translation>
+        <translation>Сервоприводы</translation>
     </message>
 </context>
 <context>
     <name>trikGui::RunningWidget</name>
-    <message>
-        <source>Press Enter to abort</source>
-        <translation type="obsolete">Нажмите Enter, чтобы прервать</translation>
-    </message>
     <message>
         <source>Running:</source>
         <translation>Выполняется:</translation>
@@ -63,11 +59,11 @@
     </message>
     <message>
         <source>Test analog sensors</source>
-        <translation>Проверка аналог. датчиков</translation>
+        <translation>Аналоговые датчики</translation>
     </message>
     <message>
         <source>Test digital sensors</source>
-        <translation>Проверка цифр. датчиков</translation>
+        <translation>Цифровые датчики</translation>
     </message>
 </context>
 <context>
@@ -134,21 +130,30 @@
 <context>
     <name>trikGui::WiFiInitWidget</name>
     <message>
-        <source>Network initialization in process</source>
-        <translation>Идёт инициализация сети</translation>
-    </message>
-    <message>
         <source>Please wait</source>
-        <translation>Пожалуйста, подождите</translation>
+        <translation>Пожалуйста,
+подождите</translation>
     </message>
     <message>
-        <source>Press any key for break</source>
-        <translation>Чтобы прервать процесс,
-нажмите любую кнопку</translation>
+        <source>Network initialization
+in process</source>
+        <translation>Идёт инициализация
+сети</translation>
     </message>
     <message>
-        <source>Network initialization failed</source>
-        <translation>Не удалось произвести инициализацию сети</translation>
+        <source>Press any key
+for break</source>
+        <translation>Чтобы прервать
+процесс, нажмите
+любую кнопку</translation>
+    </message>
+    <message>
+        <source>Network initialization
+failed</source>
+        <translation>Не удалось
+произвести
+инициализацию
+сети</translation>
     </message>
 </context>
 <context>

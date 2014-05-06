@@ -24,9 +24,11 @@ using namespace trikGui;
 
 WiFiInitWidget::WiFiInitWidget(QWidget *parent)
 	: QWidget(parent)
-	, mInitMessage(tr("Network initialization in process"))
+	, mInitMessage(tr("Network initialization" "\n"
+			"in process"))
 	, mWaitMessage(tr("Please wait"))
-	, mBreakMessage(tr("Press any key for break"))
+	, mBreakMessage(tr("Press any key" "\n"
+			"for break"))
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -96,7 +98,8 @@ void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 		}
 		case QProcess::CrashExit: {
 			MessageBox messageBox;
-			messageBox.exec(tr("Network initialization failed"));
+			messageBox.exec(tr("Network initialization" "\n"
+					"failed"));
 
 			mEventLoop.exit(1);
 			break;
