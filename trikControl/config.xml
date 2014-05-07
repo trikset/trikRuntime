@@ -43,8 +43,6 @@ Use it if JCx ports are configured to work as PWM signal generators.
 		echo 1 > /sys/devices/virtual/input/input1/enable_device
 
 		amixer -q set PCM 127
-
-		cd /home/root/dsp-modules &amp;&amp; ./load.sh
 	</initScript>
 	
 	<!-- Servomotors configuration, maps logical port to device file, file for setting period,
