@@ -18,10 +18,10 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
+	#include <QtGui/QVBoxLayout>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
+	#include <QtWidgets/QVBoxLayout>
 #endif
 
 #include <QtCore/QString>
@@ -62,7 +62,7 @@ protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
-	QHBoxLayout mLayout;
+	QVBoxLayout mLayout;
 	trikControl::Brick mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.

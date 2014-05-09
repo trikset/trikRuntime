@@ -23,6 +23,7 @@
 #endif
 
 #include <QtCore/QString>
+#include <QtCore/QDebug>
 
 #include <trikControl/sensor.h>
 
@@ -38,7 +39,7 @@ SensorIndicator::SensorIndicator(QString const &port
 	, mNameLabel(port)
 	, mValueLabel("0")
 {
-	mValueBar.setOrientation(Qt::Vertical);
+	mValueBar.setOrientation(Qt::Horizontal);
 	mValueBar.setMaximum(mMaxValue);
 	mValueBar.setMinimum(mMinValue);
 	mValueBar.setValue(0);
@@ -46,6 +47,12 @@ SensorIndicator::SensorIndicator(QString const &port
 
 	mNameLabel.setAlignment(Qt::AlignCenter);
 	mValueLabel.setAlignment(Qt::AlignCenter);
+
+	// mValueLabel can change its width during work. It will cause mValueBar
+	// width change. To prevent it, we set fixed width for mValueLabel.
+	// It is equal to maximum width of the widget which it achieves
+	// when the label text is set to "100".
+	mValueLabel.setFixedWidth(41);
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mValueBar, 0, Qt::AlignCenter);

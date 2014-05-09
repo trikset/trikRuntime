@@ -40,9 +40,6 @@ public:
 
 	// Override.
 	bool notify(QObject *receiver, QEvent *event);
-
-private:
-	QHash<int, int> mKeyMappings;
 };
 
 }
