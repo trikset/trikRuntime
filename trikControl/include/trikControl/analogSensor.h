@@ -18,13 +18,14 @@
 #include <QtCore/QString>
 
 #include "declSpec.h"
+#include "sensor.h"
 
 namespace trikControl {
 
 class I2cCommunicator;
 
 /// Analog TRIK sensor.
-class TRIKCONTROL_EXPORT AnalogSensor : public QObject
+class TRIKCONTROL_EXPORT AnalogSensor : public Sensor
 {
 	Q_OBJECT
 
@@ -32,6 +33,7 @@ public:
 	AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber);
 
 public slots:
+	/// Returns current raw reading of a sensor.
 	int read();
 
 private:

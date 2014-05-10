@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,27 +34,27 @@ public:
 	QString initScript() const;
 
 	/// Returns a list of motor type names from config.
-	QStringList motorTypes() const;
+	QStringList servoMotorTypes() const;
 
 	/// Returns a list of sensor type names from config.
-	QStringList sensorTypes() const;
+	QStringList digitalSensorTypes() const;
 
-	/// Returns value of duty_ns corresponding to full reverse of a motor for given motor type.
-	int motorTypeMin(QString const &motorType) const;
+	/// Returns value of duty_ns corresponding to full reverse of a servo motor for given servo motor type.
+	int servoMotorTypeMin(QString const &servoMotorType) const;
 
-	/// Returns value of duty_ns corresponding to full forward of a motor for given motor type.
-	int motorTypeMax(QString const &motorType) const;
+	/// Returns value of duty_ns corresponding to full forward of a servo motor for given servo motor type.
+	int servoMotorTypeMax(QString const &servoMotorType) const;
 
-	/// Returns value of duty_ns corresponding to breaking stop of a motor for given motor type.
-	int motorTypeZero(QString const &motorType) const;
+	/// Returns value of duty_ns corresponding to breaking stop of a servo motor for given servo motor type.
+	int servoMotorTypeZero(QString const &servoMotorType) const;
 
-	/// Returns value of duty_ns corresponding to non-breaking stop of a motor for given motor type.
-	int motorTypeStop(QString const &motorType) const;
+	/// Returns value of duty_ns corresponding to non-breaking stop of a servo motor for given servo motor type.
+	int servoMotorTypeStop(QString const &servoMotorType) const;
 
-	/// Returns minimal physical reading value of a sensor (corresponds to 0 in client program).
-	int sensorTypeMin(QString const &sensorType) const;
+	/// Returns minimal physical reading value of a digital sensor (corresponds to 0 in client program).
+	int digitalSensorTypeMin(QString const &digitalSensorType) const;
 
-	int sensorTypeMax(QString const &sensorType) const;
+	int digitalSensorTypeMax(QString const &digitalSensorType) const;
 
 	QStringList servoMotorPorts() const;
 
@@ -88,13 +88,15 @@ public:
 
 	int encoderI2cCommandNumber(QString const &port) const;
 
-	QStringList sensorPorts() const;
+	QStringList digitalSensorPorts() const;
 
-	QString sensorDeviceFile(QString const &port) const;
+	QString digitalSensorDeviceFile(QString const &port) const;
 
-	QString sensorDefaultType(QString const &port) const;
+	QString digitalSensorDefaultType(QString const &port) const;
 
-	QString playSoundCommand() const;
+	QString playWavFileCommand() const;
+
+	QString playMp3FileCommand() const;
 
 	int accelerometerMin() const;
 
@@ -124,15 +126,25 @@ public:
 
 	int gamepadPort() const;
 
+	QString roverCvBinary() const;
+
+	QString roverCvInputFile() const;
+
+	QString roverCvOutputFile() const;
+
+	double roverCvToleranceFactor() const;
+
+	QString roverCvParams() const;
+
 private:
-	struct MotorType {
+	struct ServoMotorType {
 		int min;
 		int max;
 		int zero;
 		int stop;
 	};
 
-	struct SensorType {
+	struct DigitalSensorType {
 		int min;
 		int max;
 	};
@@ -168,7 +180,7 @@ private:
 		int i2cCommandNumber;
 	};
 
-	struct SensorMapping {
+	struct DigitalSensorMapping {
 		QString port;
 		QString deviceFile;
 		QString defaultType;
@@ -186,30 +198,32 @@ private:
 	void loadPowerMotors(QDomElement const &root);
 	void loadAnalogSensors(QDomElement const &root);
 	void loadEncoders(QDomElement const &root);
-	void loadSensors(QDomElement const &root);
-	void loadMotorTypes(QDomElement const &root);
-	void loadSensorTypes(QDomElement const &root);
+	void loadDigitalSensors(QDomElement const &root);
+	void loadServoMotorTypes(QDomElement const &root);
+	void loadDigitalSensorTypes(QDomElement const &root);
 	void loadSound(QDomElement const &root);
 	OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
 	void loadI2c(QDomElement const &root);
 	void loadLed(QDomElement const &root);
 	void loadKeys(QDomElement const &root);
 	void loadGamepadPort(QDomElement const &root);
+	void loadCameraLineDetector(QDomElement const &root);
 
-	QHash<QString, MotorType> mMotorTypes;
-	QHash<QString, SensorType> mSensorTypes;
+	QHash<QString, ServoMotorType> mServoMotorTypes;
+	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
 	QHash<QString, PwmCaptureMapping> mPwmCaptureMappings;
 	QHash<QString, PowerMotorMapping> mPowerMotorMappings;
 	QHash<QString, AnalogSensorMapping> mAnalogSensorMappings;
 	QHash<QString, EncoderMapping> mEncoderMappings;
-	QHash<QString, SensorMapping> mSensorMappings;
+	QHash<QString, DigitalSensorMapping> mDigitalSensorMappings;
 
 	OnBoardSensor mAccelerometer;
 	OnBoardSensor mGyroscope;
 
 	QString mInitScript;
-	QString mPlaySoundCommand;
+	QString mPlayWavFileCommand;
+	QString mPlayMp3FileCommand;
 	QString mI2cPath;
 	int mI2cDeviceId;
 
@@ -219,6 +233,12 @@ private:
 	int mLedOn;
 	int mLedOff;
 	int mGamepadPort;
+
+	QString mRoverCvBinary;
+	QString mRoverCvInputFile;
+	QString mRoverCvOutputFile;
+	double mRoverCvToleranceFactor;
+	QString mRoverCvParams;
 };
 
 }

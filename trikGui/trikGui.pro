@@ -20,27 +20,39 @@ TRIKWIFI_DIR = ../trikWiFi/
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
 	$$PWD/runningWidget.h \
-	$$PWD/netConfigWidget.h \
+	$$PWD/wiFiClientWidget.h \
+	$$PWD/sensorsSelectionWidget.h \
 	$$PWD/startWidget.h \
 	$$PWD/trikGuiApplication.h \
 	$$PWD/controller.h \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
-	$$PWD/servoMotorLever.h \
-	$$PWD/servoMotorsWidget.h \
+	$$PWD/sensorIndicator.h \
+	$$PWD/sensorsWidget.h \
+	$$PWD/wiFiModeWidget.h \
+	$$PWD/wiFiInitWidget.h \
+	$$PWD/wiFiAPWidget.h \
+	$$PWD/rcReader.h \
+	$$PWD/messageBox.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/runningWidget.cpp \
-	$$PWD/netConfigWidget.cpp \
+	$$PWD/wiFiClientWidget.cpp \
+	$$PWD/sensorsSelectionWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
 	$$PWD/controller.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
-	$$PWD/servoMotorLever.cpp \
-	$$PWD/servoMotorsWidget.cpp \
+	$$PWD/sensorIndicator.cpp \
+	$$PWD/sensorsWidget.cpp \
+	$$PWD/wiFiModeWidget.cpp \
+	$$PWD/wiFiInitWidget.cpp \
+	$$PWD/wiFiAPWidget.cpp \
+	$$PWD/rcReader.cpp \
+	$$PWD/messageBox.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
@@ -53,15 +65,10 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-CONFIG(debug, debug | release) {
-	CONFIGURATION = debug
-	CONFIGURATION_SUFFIX = d
-} else {
-	CONFIGURATION = release
-	CONFIGURATION_SUFFIX =
-}
+FILES_TO_COPY = \
+	wpa-config.xml \
 
-DESTDIR = ../bin/$$CONFIGURATION
+include(../global.pri)
 
 INCLUDEPATH = \
 	$$PWD \
@@ -76,26 +83,3 @@ LIBS += \
 	-ltrikScriptRunner$$CONFIGURATION_SUFFIX \
 	-ltrikWiFi$$CONFIGURATION_SUFFIX \
 	-ltrikControl$$CONFIGURATION_SUFFIX \
-
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
-
-!macx {
-	QMAKE_LFLAGS += -Wl,-O1,-rpath,.
-	QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-}
-
-win32 {
-	QMAKE_POST_LINK = "xcopy wpa-config.xml $$replace(DESTDIR, /, \\) /q /y \
-			"
-} else {
-	QMAKE_POST_LINK = "cp -f wpa-config.xml $$DESTDIR \
-			"
-}
-
-unix {
-		target.path = $$[INSTALL_ROOT]/
-		INSTALLS +=   target
-}

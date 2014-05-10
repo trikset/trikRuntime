@@ -31,24 +31,11 @@ using namespace trikGui;
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
-	mKeyMappings[Qt::Key_Up] = Qt::Key_Left;
-	mKeyMappings[Qt::Key_Right] = Qt::Key_Up;
-	mKeyMappings[Qt::Key_Down] = Qt::Key_Right;
-	mKeyMappings[Qt::Key_Left] = Qt::Key_Down;
 }
 
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
-		QKeyEvent * const keyEvent = dynamic_cast<QKeyEvent *>(event);
-		if (keyEvent != NULL) {
-			int const currentKey = keyEvent->key();
-			if (mKeyMappings.contains(currentKey)) {
-				int const newKey = mKeyMappings[currentKey];
-				*keyEvent = QKeyEvent(QEvent::KeyPress, newKey, keyEvent->modifiers());
-			}
-		}
-
 		// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update
 		// all GUI to remove clutter on a screen.
 		foreach (QWidget * const widget, QApplication::allWidgets()) {

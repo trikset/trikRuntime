@@ -48,9 +48,9 @@ Configurer::Configurer(QString const &configFilePath)
 	loadPowerMotors(root);
 	loadAnalogSensors(root);
 	loadEncoders(root);
-	loadSensors(root);
-	loadMotorTypes(root);
-	loadSensorTypes(root);
+	loadDigitalSensors(root);
+	loadServoMotorTypes(root);
+	loadDigitalSensorTypes(root);
 	loadSound(root);
 
 	mAccelerometer = loadSensor3d(root, "accelerometer");
@@ -60,6 +60,7 @@ Configurer::Configurer(QString const &configFilePath)
 	loadLed(root);
 	loadKeys(root);
 	loadGamepadPort(root);
+	loadCameraLineDetector(root);
 }
 
 QString Configurer::initScript() const
@@ -67,44 +68,44 @@ QString Configurer::initScript() const
 	return mInitScript;
 }
 
-QStringList Configurer::motorTypes() const
+QStringList Configurer::servoMotorTypes() const
 {
-	return mMotorTypes.keys();
+	return mServoMotorTypes.keys();
 }
 
-QStringList Configurer::sensorTypes() const
+QStringList Configurer::digitalSensorTypes() const
 {
-	return mSensorTypes.keys();
+	return mDigitalSensorTypes.keys();
 }
 
-int Configurer::motorTypeMin(QString const &motorType) const
+int Configurer::servoMotorTypeMin(QString const &servoMotorType) const
 {
-	return mMotorTypes[motorType].min;
+	return mServoMotorTypes[servoMotorType].min;
 }
 
-int Configurer::motorTypeMax(QString const &motorType) const
+int Configurer::servoMotorTypeMax(QString const &servoMotorType) const
 {
-	return mMotorTypes[motorType].max;
+	return mServoMotorTypes[servoMotorType].max;
 }
 
-int Configurer::motorTypeZero(QString const &motorType) const
+int Configurer::servoMotorTypeZero(QString const &servoMotorType) const
 {
-	return mMotorTypes[motorType].zero;
+	return mServoMotorTypes[servoMotorType].zero;
 }
 
-int Configurer::motorTypeStop(QString const &motorType) const
+int Configurer::servoMotorTypeStop(QString const &servoMotorType) const
 {
-	return mMotorTypes[motorType].stop;
+	return mServoMotorTypes[servoMotorType].stop;
 }
 
-int Configurer::sensorTypeMin(QString const &sensorType) const
+int Configurer::digitalSensorTypeMin(QString const &digitalSensorType) const
 {
-	return mSensorTypes[sensorType].min;
+	return mDigitalSensorTypes[digitalSensorType].min;
 }
 
-int Configurer::sensorTypeMax(QString const &sensorType) const
+int Configurer::digitalSensorTypeMax(QString const &digitalSensorType) const
 {
-	return mSensorTypes[sensorType].max;
+	return mDigitalSensorTypes[digitalSensorType].max;
 }
 
 QStringList Configurer::servoMotorPorts() const
@@ -187,24 +188,29 @@ int Configurer::encoderI2cCommandNumber(QString const &port) const
 	return mEncoderMappings[port].i2cCommandNumber;
 }
 
-QStringList Configurer::sensorPorts() const
+QStringList Configurer::digitalSensorPorts() const
 {
-	return mSensorMappings.keys();
+	return mDigitalSensorMappings.keys();
 }
 
-QString Configurer::sensorDeviceFile(QString const &port) const
+QString Configurer::digitalSensorDeviceFile(QString const &port) const
 {
-	return mSensorMappings[port].deviceFile;
+	return mDigitalSensorMappings[port].deviceFile;
 }
 
-QString Configurer::sensorDefaultType(QString const &port) const
+QString Configurer::digitalSensorDefaultType(QString const &port) const
 {
-	return mSensorMappings[port].defaultType;
+	return mDigitalSensorMappings[port].defaultType;
 }
 
-QString Configurer::playSoundCommand() const
+QString Configurer::playWavFileCommand() const
 {
-	return mPlaySoundCommand;
+	return mPlayWavFileCommand;
+}
+
+QString Configurer::playMp3FileCommand() const
+{
+	return mPlayMp3FileCommand;
 }
 
 int Configurer::accelerometerMin() const
@@ -277,6 +283,32 @@ int Configurer::gamepadPort() const
 	return mGamepadPort;
 }
 
+
+QString Configurer::roverCvBinary() const
+{
+	return mRoverCvBinary;
+}
+
+QString Configurer::roverCvInputFile() const
+{
+	return mRoverCvInputFile;
+}
+
+QString Configurer::roverCvOutputFile() const
+{
+	return mRoverCvOutputFile;
+}
+
+double Configurer::roverCvToleranceFactor() const
+{
+	return mRoverCvToleranceFactor;
+}
+
+QString Configurer::roverCvParams() const
+{
+	return mRoverCvParams;
+}
+
 void Configurer::loadInit(QDomElement const &root)
 {
 	if (root.elementsByTagName("initScript").isEmpty()) {
@@ -305,7 +337,7 @@ void Configurer::loadServoMotors(QDomElement const &root)
 		}
 
 		QDomElement const childElement = child.toElement();
-		if (childElement.nodeName() != "motor") {
+		if (childElement.nodeName() != "servoMotor") {
 			qDebug() << "Malformed <servoMotors> tag";
 			throw "config.xml parsing failed";
 		}
@@ -370,7 +402,7 @@ void Configurer::loadPowerMotors(QDomElement const &root)
 		}
 
 		QDomElement const childElement = child.toElement();
-		if (childElement.nodeName() != "motor") {
+		if (childElement.nodeName() != "powerMotor") {
 			qDebug() << "Malformed <powerMotors> tag";
 			throw "config.xml parsing failed";
 		}
@@ -444,15 +476,15 @@ void Configurer::loadEncoders(QDomElement const &root)
 	}
 }
 
-void Configurer::loadSensors(QDomElement const &root)
+void Configurer::loadDigitalSensors(QDomElement const &root)
 {
-	if (root.elementsByTagName("sensors").isEmpty()) {
-		qDebug() << "config.xml does not have <sensors> tag";
+	if (root.elementsByTagName("digitalSensors").isEmpty()) {
+		qDebug() << "config.xml does not have <digitalSensors> tag";
 		throw "config.xml parsing failed";
 	}
 
-	QDomElement const sensors = root.elementsByTagName("sensors").at(0).toElement();
-	for (QDomNode child = sensors.firstChild()
+	QDomElement const digitalSensors = root.elementsByTagName("digitalSensors").at(0).toElement();
+	for (QDomNode child = digitalSensors.firstChild()
 			; !child.isNull()
 			; child = child.nextSibling())
 	{
@@ -461,28 +493,28 @@ void Configurer::loadSensors(QDomElement const &root)
 		}
 
 		QDomElement const childElement = child.toElement();
-		if (childElement.nodeName() != "sensor") {
+		if (childElement.nodeName() != "digitalSensor") {
 			continue;
 		}
 
-		SensorMapping mapping;
+		DigitalSensorMapping mapping;
 		mapping.port = childElement.attribute("port");
 		mapping.deviceFile = childElement.attribute("deviceFile");
 		mapping.defaultType = childElement.attribute("defaultType");
 
-		mSensorMappings.insert(mapping.port, mapping);
+		mDigitalSensorMappings.insert(mapping.port, mapping);
 	}
 }
 
-void Configurer::loadMotorTypes(QDomElement const &root)
+void Configurer::loadServoMotorTypes(QDomElement const &root)
 {
-	if (root.elementsByTagName("motorTypes").isEmpty()) {
-		qDebug() << "config.xml does not have <motorTypes> tag";
+	if (root.elementsByTagName("servoMotorTypes").isEmpty()) {
+		qDebug() << "config.xml does not have <servoMotorTypes> tag";
 		throw "config.xml parsing failed";
 	}
 
-	QDomElement const motorTypes = root.elementsByTagName("motorTypes").at(0).toElement();
-	for (QDomNode child = motorTypes.firstChild()
+	QDomElement const servoMotorTypes = root.elementsByTagName("servoMotorTypes").at(0).toElement();
+	for (QDomNode child = servoMotorTypes.firstChild()
 			; !child.isNull()
 			; child = child.nextSibling())
 	{
@@ -493,25 +525,25 @@ void Configurer::loadMotorTypes(QDomElement const &root)
 		QDomElement const childElement = child.toElement();
 		QString const typeName = childElement.nodeName();
 
-		MotorType motorType;
-		motorType.min = childElement.attribute("min").toInt();
-		motorType.max = childElement.attribute("max").toInt();
-		motorType.zero = childElement.attribute("zero").toInt();
-		motorType.stop = childElement.attribute("stop").toInt();
+		ServoMotorType servoMotorType;
+		servoMotorType.min = childElement.attribute("min").toInt();
+		servoMotorType.max = childElement.attribute("max").toInt();
+		servoMotorType.zero = childElement.attribute("zero").toInt();
+		servoMotorType.stop = childElement.attribute("stop").toInt();
 
-		mMotorTypes.insert(typeName, motorType);
+		mServoMotorTypes.insert(typeName, servoMotorType);
 	}
 }
 
-void Configurer::loadSensorTypes(QDomElement const &root)
+void Configurer::loadDigitalSensorTypes(QDomElement const &root)
 {
-	if (root.elementsByTagName("sensorTypes").isEmpty()) {
-		qDebug() << "config.xml does not have <sensorTypes> tag";
+	if (root.elementsByTagName("digitalSensorTypes").isEmpty()) {
+		qDebug() << "config.xml does not have <digitalSensorTypes> tag";
 		throw "config.xml parsing failed";
 	}
 
-	QDomElement const sensorTypes = root.elementsByTagName("sensorTypes").at(0).toElement();
-	for (QDomNode child = sensorTypes.firstChild()
+	QDomElement const digitalSensorTypes = root.elementsByTagName("digitalSensorTypes").at(0).toElement();
+	for (QDomNode child = digitalSensorTypes.firstChild()
 			; !child.isNull()
 			; child = child.nextSibling())
 	{
@@ -522,22 +554,30 @@ void Configurer::loadSensorTypes(QDomElement const &root)
 		QDomElement const childElement = child.toElement();
 		QString const typeName = childElement.nodeName();
 
-		SensorType sensorType;
-		sensorType.min = childElement.attribute("min").toInt();
-		sensorType.max = childElement.attribute("max").toInt();
+		DigitalSensorType digitalSensorType;
+		digitalSensorType.min = childElement.attribute("min").toInt();
+		digitalSensorType.max = childElement.attribute("max").toInt();
 
-		mSensorTypes.insert(typeName, sensorType);
+		mDigitalSensorTypes.insert(typeName, digitalSensorType);
 	}
 }
 
 void Configurer::loadSound(QDomElement const &root)
 {
-	if (root.elementsByTagName("playSound").isEmpty()) {
-		qDebug() << "config.xml does not have <playSound> tag";
+	if (root.elementsByTagName("playWavFile").isEmpty()) {
+		qDebug() << "config.xml does not have <playWavFile> tag";
 		throw "config.xml parsing failed";
 	}
 
-	mPlaySoundCommand = root.elementsByTagName("playSound").at(0).toElement().attribute("command");
+	mPlayWavFileCommand = root.elementsByTagName("playWavFile").at(0).toElement().attribute("command");
+
+	if (root.elementsByTagName("playMp3File").isEmpty()) {
+		qDebug() << "config.xml does not have <playMp3File> tag";
+		throw "config.xml parsing failed";
+	}
+
+	mPlayMp3FileCommand = root.elementsByTagName("playMp3File").at(0).toElement().attribute("command");
+
 }
 
 Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QString const &tagName)
@@ -588,4 +628,14 @@ void Configurer::loadGamepadPort(QDomElement const &root)
 {
 	QDomElement gamepad = root.elementsByTagName("gamepad").at(0).toElement();
 	mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
+}
+
+void Configurer::loadCameraLineDetector(QDomElement const &root)
+{
+	QDomElement cameraLineDetector = root.elementsByTagName("cameraLineDetector").at(0).toElement();
+	mRoverCvBinary = cameraLineDetector.attribute("roverCv");
+	mRoverCvInputFile = cameraLineDetector.attribute("inputFile");
+	mRoverCvOutputFile = cameraLineDetector.attribute("outputFile");
+	mRoverCvToleranceFactor = cameraLineDetector.attribute("toleranceFactor").toDouble();
+	mRoverCvParams = cameraLineDetector.attribute("params");
 }

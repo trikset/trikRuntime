@@ -1,5 +1,10 @@
-print("Kill all humans!")
-brick.playSound("123")
-brick.stop()
-brick.motor(1)
-brick.motor(1).setPower(100)
+brick.motor("M1").setPower(100);
+brick.motor("JM3").setPower(100);
+brick.motor("JE1").setPower(100);
+
+for (var i = 0; i < 10; ++i) {
+        printf("JA1: " + brick.sensor("JA1").read());
+        printf("JA3: " + brick.sensor("JA3").read());
+        printf("JA6: " + brick.sensor("JA6").read());
+        brick.wait(100);
+}

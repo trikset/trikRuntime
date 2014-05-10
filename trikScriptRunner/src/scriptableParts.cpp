@@ -19,16 +19,6 @@
 using namespace trikScriptRunner;
 using namespace trikControl;
 
-void trikScriptRunner::powerMotorFromScriptValue(QScriptValue const &object, PowerMotor* &out)
-{
-	out = qobject_cast<PowerMotor*>(object.toQObject());
-}
-
-QScriptValue trikScriptRunner::analogSensorToScriptValue(QScriptEngine *engine, AnalogSensor* const &in)
-{
-	return engine->newQObject(in);
-}
-
 QScriptValue trikScriptRunner::batteryToScriptValue(QScriptEngine *engine, trikControl::Battery* const &in)
 {
 	return engine->newQObject(in);
@@ -79,14 +69,14 @@ void trikScriptRunner::ledFromScriptValue(QScriptValue const &object, trikContro
 	out = qobject_cast<Led*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::powerMotorToScriptValue(QScriptEngine *engine, PowerMotor* const &in)
+void trikScriptRunner::motorFromScriptValue(QScriptValue const &object, Motor* &out)
 {
-	return engine->newQObject(in);
+	out = qobject_cast<Motor*>(object.toQObject());
 }
 
-void trikScriptRunner::analogSensorFromScriptValue(QScriptValue const &object, AnalogSensor* &out)
+QScriptValue trikScriptRunner::motorToScriptValue(QScriptEngine *engine, Motor* const &in)
 {
-	out = qobject_cast<AnalogSensor*>(object.toQObject());
+	return engine->newQObject(in);
 }
 
 QScriptValue trikScriptRunner::sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in)
@@ -109,12 +99,14 @@ void trikScriptRunner::sensor3dFromScriptValue(QScriptValue const &object, trikC
 	out = qobject_cast<Sensor3d*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::servoMotorToScriptValue(QScriptEngine *engine, ServoMotor* const &in)
+QScriptValue trikScriptRunner::cameraLineDetectorSensorToScriptValue(QScriptEngine *engine
+		, trikControl::CameraLineDetectorSensor* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::servoMotorFromScriptValue(QScriptValue const &object, ServoMotor *&out)
+void trikScriptRunner::cameraLineDetectorSensorFromScriptValue(QScriptValue const &object
+		, trikControl::CameraLineDetectorSensor* &out)
 {
-	out = qobject_cast<ServoMotor*>(object.toQObject());
+	out = qobject_cast<CameraLineDetectorSensor*>(object.toQObject());
 }

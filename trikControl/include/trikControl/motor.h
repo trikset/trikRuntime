@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 Roman Kurbatov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,45 +15,36 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QFile>
 
 #include "declSpec.h"
 
 namespace trikControl {
 
-class I2cCommunicator;
-
-/// TRIK power motor.
-class TRIKCONTROL_EXPORT PowerMotor : public QObject
+/// Abstract motor class. It is inherited by PowerMotor and ServoMotor classes.
+class TRIKCONTROL_EXPORT Motor : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
-
 	/// Destructor.
-	~PowerMotor();
+	virtual ~Motor() {}
+
+	enum Type {
+		powerMotor
+		, servoMotor
+	};
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
-	void setPower(int power);
+	virtual void setPower(int power) = 0;
 
 	/// Returns currently set power of a motor.
-	int power() const;
+	virtual int power() const = 0;
 
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
-	void powerOff();
-
-private:
-	I2cCommunicator &mCommunicator;
-	int const mI2cCommandNumber;
-	bool const mInvert;
-	int mCurrentPower;
+	virtual void powerOff() = 0;
 };
 
 }

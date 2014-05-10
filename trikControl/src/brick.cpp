@@ -18,6 +18,10 @@
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
+#include <QtCore/QFileInfo>
+
+#include "powerMotor.h"
+#include "servoMotor.h"
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -37,13 +41,13 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
 
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
-		QString const motorType = mConfigurer->servoMotorDefaultType(port);
+		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
 		ServoMotor *servoMotor = new ServoMotor(
-				mConfigurer->motorTypeMin(motorType)
-				, mConfigurer->motorTypeMax(motorType)
-				, mConfigurer->motorTypeZero(motorType)
-				, mConfigurer->motorTypeStop(motorType)
+				mConfigurer->servoMotorTypeMin(servoMotorType)
+				, mConfigurer->servoMotorTypeMax(servoMotorType)
+				, mConfigurer->servoMotorTypeZero(servoMotorType)
+				, mConfigurer->servoMotorTypeStop(servoMotorType)
 				, mConfigurer->servoMotorDeviceFile(port)
 				, mConfigurer->servoMotorPeriodFile(port)
 				, mConfigurer->servoMotorPeriod(port)
@@ -81,16 +85,16 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 		mAnalogSensors.insert(port, analogSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->sensorPorts()) {
-		QString const sensorType = mConfigurer->sensorDefaultType(port);
+	foreach (QString const &port, mConfigurer->digitalSensorPorts()) {
+		QString const digitalSensorType = mConfigurer->digitalSensorDefaultType(port);
 
-		Sensor *sensor = new Sensor(
-				mConfigurer->sensorTypeMin(sensorType)
-				, mConfigurer->sensorTypeMax(sensorType)
-				, mConfigurer->sensorDeviceFile(port)
+		DigitalSensor *digitalSensor = new DigitalSensor(
+				mConfigurer->digitalSensorTypeMin(digitalSensorType)
+				, mConfigurer->digitalSensorTypeMax(digitalSensorType)
+				, mConfigurer->digitalSensorDeviceFile(port)
 				);
 
-		mSensors.insert(port, sensor);
+		mDigitalSensors.insert(port, digitalSensor);
 	}
 
 	foreach (QString const &port, mConfigurer->encoderPorts()) {
@@ -119,6 +123,13 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 			);
 
 	mGamepad = new Gamepad(mConfigurer->gamepadPort());
+
+	mCameraLineDetectorSensor = new CameraLineDetectorSensor(mConfigurer->roverCvBinary()
+			, mConfigurer->roverCvInputFile()
+			, mConfigurer->roverCvOutputFile()
+			, mConfigurer->roverCvToleranceFactor()
+			, mConfigurer->roverCvParams()
+			);
 }
 
 Brick::~Brick()
@@ -128,7 +139,8 @@ Brick::~Brick()
 	qDeleteAll(mPwmCaptures);
 	qDeleteAll(mPowerMotors);
 	qDeleteAll(mEncoders);
-	qDeleteAll(mSensors);
+	qDeleteAll(mAnalogSensors);
+	qDeleteAll(mDigitalSensors);
 	delete mAccelerometer;
 	delete mGyroscope;
 	delete mBattery;
@@ -140,8 +152,19 @@ Brick::~Brick()
 
 void Brick::playSound(QString const &soundFileName)
 {
-	QString const command = mConfigurer->playSoundCommand().arg(soundFileName);
-	if (::system(command.toStdString().c_str()) != 0) {
+	qDebug() << soundFileName;
+
+	QFileInfo const fileInfo(soundFileName);
+
+	QString command;
+
+	if (fileInfo.suffix() == "wav") {
+		command = mConfigurer->playWavFileCommand().arg(soundFileName);
+	} else if (fileInfo.suffix() == "mp3") {
+		command = mConfigurer->playMp3FileCommand().arg(soundFileName);
+	}
+
+	if (command.isEmpty() || ::system(command.toStdString().c_str()) != 0) {
 		qDebug() << "Play sound failed";
 	}
 }
@@ -160,54 +183,45 @@ void Brick::stop()
 	mDisplay.hide();
 }
 
-ServoMotor *Brick::servoMotor(QString const &port)
+Motor *Brick::motor(QString const &port)
 {
-	if (mServoMotors.contains(port)) {
-		return mServoMotors.value(port);
+	if (mPowerMotors.contains(port)) {
+		return mPowerMotors[port];
+	} else if (mServoMotors.contains(port)) {
+		return mServoMotors[port];
+	} else {
+		return NULL;
 	}
-
-	return NULL;
 }
 
 PwmCapture *Brick::pwmCapture(QString const &port)
 {
-	if (mPwmCaptures.contains(port)) {
-		return mPwmCaptures.value(port);
-	}
-
-	return NULL;
-}
-
-PowerMotor *Brick::powerMotor(QString const &port)
-{
-	if (mPowerMotors.contains(port)) {
-		return mPowerMotors.value(port);
-	}
-
-	return NULL;
-}
-
-AnalogSensor *Brick::analogSensor(QString const &port)
-{
-	if (mAnalogSensors.contains(port)) {
-		return mAnalogSensors.value(port);
-	}
-
-	return NULL;
+	return mPwmCaptures.value(port, NULL);
 }
 
 Sensor *Brick::sensor(QString const &port)
 {
-	if (mSensors.contains(port)) {
-		return mSensors.value(port);
+	if (mAnalogSensors.contains(port)) {
+		return mAnalogSensors[port];
+	} else if (mDigitalSensors.contains(port)) {
+		return mDigitalSensors[port];
+	} else {
+		return NULL;
 	}
-
-	return NULL;
 }
 
-QStringList Brick::servoMotorPorts() const
+QStringList Brick::motorPorts(Motor::Type type) const
 {
-	return mServoMotors.keys();
+	switch (type) {
+		case Motor::powerMotor: {
+			return mPowerMotors.keys();
+		}
+		case Motor::servoMotor: {
+			return mServoMotors.keys();
+		}
+	}
+
+	return QStringList();
 }
 
 QStringList Brick::pwmCapturePorts() const
@@ -215,28 +229,27 @@ QStringList Brick::pwmCapturePorts() const
 	return mPwmCaptures.keys();
 }
 
-QStringList Brick::powerMotorPorts() const
+QStringList Brick::sensorPorts(Sensor::Type type) const
 {
-	return mPowerMotors.keys();
-}
+	switch (type) {
+		case Sensor::analogSensor: {
+			return mAnalogSensors.keys();
+		}
+		case Sensor::digitalSensor: {
+			return mDigitalSensors.keys();
+		}
+		case Sensor::specialSensor: {
+			// Special sensors can not be connected to standard ports, they have their own methods to access them.
+			return QStringList();
+		}
+	}
 
-QStringList Brick::analogSensorPorts() const
-{
-	return mAnalogSensors.keys();
-}
-
-QStringList Brick::sensorPorts() const
-{
-	return mSensors.keys();
+	return QStringList();
 }
 
 Encoder *Brick::encoder(QString const &port)
 {
-	if (mEncoders.contains(port)) {
-		return mEncoders.value(port);
-	}
-
-	return NULL;
+	return mEncoders.value(port, NULL);
 }
 
 Battery *Brick::battery()
@@ -252,6 +265,11 @@ Sensor3d *Brick::accelerometer()
 Sensor3d *Brick::gyroscope()
 {
 	return mGyroscope;
+}
+
+CameraLineDetectorSensor *Brick::cameraLineDetector()
+{
+	return mCameraLineDetectorSensor;
 }
 
 Keys* Brick::keys()
@@ -311,4 +329,3 @@ void Brick::resetEventDrivenMode()
 {
 	mInEventDrivenMode = false;
 }
-

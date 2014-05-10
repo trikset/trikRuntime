@@ -25,7 +25,6 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: QWidget(parent)
 	, mController(controller)
 {
-	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
 	mFileSystemModel.setRootPath("/");
@@ -46,7 +45,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
-	mCurrentDir = "./scripts";
+	mCurrentDir = QDir().exists("./scripts") ? "./scripts" : ".";
 
 	showCurrentDir();
 }
@@ -58,6 +57,12 @@ FileManagerWidget::~FileManagerWidget()
 QString FileManagerWidget::menuEntry()
 {
 	return tr("File Manager");
+}
+
+void FileManagerWidget::exec()
+{
+	show();
+	mEventLoop.exec();
 }
 
 void FileManagerWidget::open()
@@ -76,9 +81,10 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_Left: {
 			close();
+			mEventLoop.quit();
 			break;
 		}
-		case Qt::Key_Enter: {
+		case Qt::Key_Return: {
 			open();
 			break;
 		}

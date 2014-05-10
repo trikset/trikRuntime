@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 Roman Kurbatov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,29 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
 
 #include "declSpec.h"
 
 namespace trikControl {
 
-/// Generic TRIK sensor.
+/// Abstract sensor class. It is inherited by AnalogSensor and DigitalSensor classes.
 class TRIKCONTROL_EXPORT Sensor : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param deviceFile - device file for this sensor.
-	Sensor(int min, int max, QString const &deviceFile);
+	/// Destructor.
+	virtual ~Sensor() {}
+
+	enum Type {
+		analogSensor
+		, digitalSensor
+		, specialSensor
+	};
 
 public slots:
 	/// Returns current raw reading of a sensor.
-	int read();
-
-private:
-	int mMin;
-	int mMax;
-	QFile mDeviceFile;
-	QTextStream mStream;
+	virtual int read() = 0;
 };
 
 }

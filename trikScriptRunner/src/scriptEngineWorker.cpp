@@ -19,11 +19,11 @@
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
-#include <trikControl/powerMotor.h>
+#include <trikControl/motor.h>
 #include <trikControl/sensor.h>
 #include <trikControl/analogSensor.h>
 #include <trikControl/sensor3d.h>
-#include <trikControl/servoMotor.h>
+#include <trikControl/cameraLineDetectorSensor.h>
 
 #include "scriptableParts.h"
 #include "fileUtils.h"
@@ -37,10 +37,10 @@ Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
 Q_DECLARE_METATYPE(Keys*)
 Q_DECLARE_METATYPE(Led*)
-Q_DECLARE_METATYPE(PowerMotor*)
+Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
-Q_DECLARE_METATYPE(ServoMotor*)
+Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
 	: mEngine(NULL)
@@ -79,16 +79,22 @@ void ScriptEngineWorker::run(QString const &script)
 
 void ScriptEngineWorker::abort()
 {
-	mEngine->abortEvaluation();
+	if (mEngine != NULL) {
+		mEngine->abortEvaluation();
 
-	// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
-	// right now because we can be in mEngine's call stack.
-	mEngine->deleteLater();
+		// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
+		// right now because we can be in mEngine's call stack.
+		mEngine->deleteLater();
+	}
 }
 
 bool ScriptEngineWorker::isRunning() const
 {
-	return mEngine->isEvaluating();
+	if (mEngine == NULL) {
+		return false;
+	} else {
+		return mEngine->isEvaluating();
+	}
 }
 
 bool ScriptEngineWorker::isInEventDrivenMode() const
@@ -110,16 +116,15 @@ void ScriptEngineWorker::initScriptEngine()
 
 	mBrick.resetEventDrivenMode();
 
-	qScriptRegisterMetaType(mEngine, analogSensorToScriptValue, analogSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);
 	qScriptRegisterMetaType(mEngine, keysToScriptValue, keysFromScriptValue);
 	qScriptRegisterMetaType(mEngine, ledToScriptValue, ledFromScriptValue);
-	qScriptRegisterMetaType(mEngine, powerMotorToScriptValue, powerMotorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
-	qScriptRegisterMetaType(mEngine, servoMotorToScriptValue, servoMotorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, cameraLineDetectorSensorToScriptValue, cameraLineDetectorSensorFromScriptValue);
 
 	mEngine->setProcessEventsInterval(1);
 }

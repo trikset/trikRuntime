@@ -18,29 +18,24 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "declSpec.h"
+#include "motor.h"
 
 namespace trikControl {
 
-/// Generic TRIK servomotor.
-class TRIKCONTROL_EXPORT ServoMotor : public QObject
+class I2cCommunicator;
+
+/// TRIK power motor.
+class PowerMotor : public Motor
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param controlFile - device file for this motor.
-	/// @param min - value of duty_ns corresponding to full reverse of a motor. Used to calculate actual values from
-	///        values in range [-100..100] from client program.
-	/// @param max - value of duty_ns corresponding to full forward of a motor. Used to calculate actual values from
-	///        values in range [-100..100] from client program.
-	/// @param zero - value of duty_ns corresponding to full stop of a motor.
-	/// @param deviceFile - device file for this motor.
-	/// @param periodFile - file for setting period of the motor
-	/// @param period - value of period for setting while initialization
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	ServoMotor(int min, int max, int zero, int stop, QString const &deviceFile, QString const &periodFile, int period
-			, bool invert);
+	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
+
+	/// Destructor.
+	~PowerMotor();
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -50,27 +45,14 @@ public slots:
 	/// Returns currently set power of a motor.
 	int power() const;
 
-	/// Returns currently set frequency of the motor.
-	int frequency() const;
-
-	/// Returns currently set duty of the motor.
-	int duty() const;
-
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
 private:
-	QFile mControlFile;
-	QFile mPeriodFile;
-	int mPeriod;
-	int mFrequency;
-	int mCurrentDutyPercent;
-	int mMin;
-	int mMax;
-	int mZero;
-	int mStop;
-	bool mInvert;
+	I2cCommunicator &mCommunicator;
+	int const mI2cCommandNumber;
+	bool const mInvert;
 	int mCurrentPower;
 };
 

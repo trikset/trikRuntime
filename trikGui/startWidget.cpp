@@ -25,10 +25,11 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include "trikControl/motor.h"
 #include "fileManagerWidget.h"
-#include "netConfigWidget.h"
+#include "wiFiModeWidget.h"
 #include "motorsWidget.h"
-#include "servoMotorsWidget.h"
+#include "sensorsSelectionWidget.h"
 
 using namespace trikGui;
 
@@ -42,12 +43,14 @@ StartWidget::StartWidget(QString const &configPath, QWidget *parent)
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuModel.appendRow(new QStandardItem(NetConfigWidget::menuEntry()));
+	mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry()));
-	settingsItem->appendRow(new QStandardItem(ServoMotorsWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::powerMotor)));
+	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::servoMotor)));
+	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)));
+	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -76,17 +79,23 @@ void StartWidget::launch()
 		QString currentItemText = currentItem->text();
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
-			FileManagerWidget *fileManagerWidget = new FileManagerWidget(mController);
-			fileManagerWidget->show();
-		} else if (currentItemText == NetConfigWidget::menuEntry()) {
-			NetConfigWidget *netConfigWidget = new NetConfigWidget(mConfigPath);
-			netConfigWidget->show();
-		} else if (currentItemText == MotorsWidget::menuEntry()) {
-			MotorsWidget *motorsWidget = new MotorsWidget(mConfigPath);
-			motorsWidget->show();
-		} else if (currentItemText == ServoMotorsWidget::menuEntry()) {
-			ServoMotorsWidget *servoMotorsWidget = new ServoMotorsWidget(mConfigPath);
-			servoMotorsWidget->show();
+			FileManagerWidget fileManagerWidget(mController);
+			fileManagerWidget.exec();
+		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
+			WiFiModeWidget wiFiModeWidget(mConfigPath);
+			wiFiModeWidget.exec();
+		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
+			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
+			motorsWidget.exec();
+		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
+			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::servoMotor);
+			motorsWidget.exec();
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
+			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::analogSensor);
+			sensorsSelectionWidget.exec();
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
+			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::digitalSensor);
+			sensorsSelectionWidget.exec();
 		}
 	}
 }
@@ -125,7 +134,8 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta: {
+		case Qt::Key_Meta:
+		case Qt::Key_PowerDown: {
 			setRootIndex(QModelIndex());
 			break;
 		}

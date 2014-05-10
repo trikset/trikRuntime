@@ -15,7 +15,7 @@
  * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
 
-#include "netConfigWidget.h"
+#include "wiFiClientWidget.h"
 
 #include <QtNetwork/QNetworkInterface>
 #include <QtNetwork/QNetworkAddressEntry>
@@ -38,12 +38,11 @@ using namespace trikGui;
 
 using namespace trikWiFi;
 
-NetConfigWidget::NetConfigWidget(QString const &configPath, QWidget *parent)
+WiFiClientWidget::WiFiClientWidget(QString const &configPath, QWidget *parent)
 	: QWidget(parent)
 	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
 	, mConnectionState(notConnected)
 {
-	setAttribute(Qt::WA_DeleteOnClose);
 	setWindowState(Qt::WindowFullScreen);
 
 	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
@@ -83,16 +82,17 @@ NetConfigWidget::NetConfigWidget(QString const &configPath, QWidget *parent)
 	setConnectionStatus(connectionStatus);
 }
 
-NetConfigWidget::~NetConfigWidget()
+WiFiClientWidget::~WiFiClientWidget()
 {
 }
 
-QString NetConfigWidget::menuEntry()
+void WiFiClientWidget::exec()
 {
-	return tr("Network config");
+	show();
+	mEventLoop.exec();
 }
 
-void NetConfigWidget::scanForAvailableNetworksDoneSlot()
+void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
 	foreach (ScanResult const &result, mWiFi->scanResults()) {
@@ -102,13 +102,13 @@ void NetConfigWidget::scanForAvailableNetworksDoneSlot()
 	updateConnectionStatusesInNetworkList();
 }
 
-void NetConfigWidget::connectedSlot()
+void WiFiClientWidget::connectedSlot()
 {
 	mConnectionState = connected;
 	setConnectionStatus(mWiFi->status());
 }
 
-void NetConfigWidget::disconnectedSlot()
+void WiFiClientWidget::disconnectedSlot()
 {
 	if (mConnectionState != connecting) {
 		mConnectionState = notConnected;
@@ -120,15 +120,16 @@ void NetConfigWidget::disconnectedSlot()
 	mWiFi->scan();
 }
 
-void NetConfigWidget::keyPressEvent(QKeyEvent *event)
+void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 	case Qt::Key_Meta:
 	case Qt::Key_Left: {
 		close();
+		mEventLoop.quit();
 		break;
 	}
-	case Qt::Key_Enter: {
+	case Qt::Key_Return: {
 		connectToSelectedNetwork();
 	}
 	default: {
@@ -138,7 +139,7 @@ void NetConfigWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
+void WiFiClientWidget::setConnectionStatus(trikWiFi::Status const &status)
 {
 	QPixmap pixmap;
 	switch (mConnectionState) {
@@ -163,7 +164,7 @@ void NetConfigWidget::setConnectionStatus(trikWiFi::Status const &status)
 	updateConnectionStatusesInNetworkList();
 }
 
-void NetConfigWidget::updateConnectionStatusesInNetworkList()
+void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 {
 	for (int i = 0; i < mAvailableNetworksModel.rowCount(); ++i) {
 		QStandardItem * const item = mAvailableNetworksModel.item(i);
@@ -188,7 +189,7 @@ void NetConfigWidget::updateConnectionStatusesInNetworkList()
 			);
 }
 
-void NetConfigWidget::connectToSelectedNetwork()
+void WiFiClientWidget::connectToSelectedNetwork()
 {
 	QModelIndexList const selected = mAvailableNetworksView.selectionModel()->selectedIndexes();
 	if (selected.size() != 1) {

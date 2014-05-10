@@ -24,21 +24,24 @@
 
 #include "analogSensor.h"
 #include "battery.h"
+#include "digitalSensor.h"
 #include "display.h"
 #include "encoder.h"
 #include "gamepad.h"
 #include "keys.h"
 #include "led.h"
-#include "powerMotor.h"
 #include "sensor.h"
 #include "sensor3d.h"
-#include "servoMotor.h"
 #include "pwmCapture.h"
+#include "motor.h"
+#include "cameraLineDetectorSensor.h"
 
 namespace trikControl {
 
 class Configurer;
 class I2cCommunicator;
+class PowerMotor;
+class ServoMotor;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -69,40 +72,32 @@ public slots:
 	/// Stops all motors and shuts down all current activity.
 	void stop();
 
-	/// Returns reference to motor on a given port.
-	ServoMotor *servoMotor(QString const &port);
+	/// Returns reference to motor of a given type on a given port
+	Motor *motor(QString const &port);
 
+	/// Returns reference to PWM signal capture device on a given port.
 	PwmCapture *pwmCapture(QString const &port);
-
-	/// Returns reference to power motor on a given port.
-	PowerMotor *powerMotor(QString const &port);
-
-	/// Returns reference to analog sensor on a given port.
-	AnalogSensor *analogSensor(QString const &port);
 
 	/// Returns reference to sensor on a given port.
 	Sensor *sensor(QString const &port);
 
-	/// Returns list of motor ports
-	QStringList servoMotorPorts() const;
+	/// Retruns list of ports for motors of a given type.
+	QStringList motorPorts(Motor::Type type) const;
 
-	/// Returns list of PWM capture ports
+	/// Returns list of PWM signal capture device ports.
 	QStringList pwmCapturePorts() const;
 
-	/// Returns list of power motor ports
-	QStringList powerMotorPorts() const;
-
-	/// Returns list of analog sensor ports
-	QStringList analogSensorPorts() const;
-
-	/// Returns list of sensor ports
-	QStringList sensorPorts() const;
+	/// Returns list of ports for sensors of a given type.
+	QStringList sensorPorts(Sensor::Type type) const;
 
 	/// Returns reference to on-board accelerometer.
 	Sensor3d *accelerometer();
 
 	/// Returns reference to on-board gyroscope.
 	Sensor3d *gyroscope();
+
+	/// Returns reference to high-level line detector sensor using USB camera.
+	CameraLineDetectorSensor *cameraLineDetector();
 
 	/// Returns reference to encoder on given port.
 	Encoder *encoder(QString const &port);
@@ -153,16 +148,17 @@ private:
 
 	Sensor3d *mAccelerometer;  // has ownership.
 	Sensor3d *mGyroscope;  // has ownership.
+	CameraLineDetectorSensor *mCameraLineDetectorSensor;  // Has ownership.
 	Battery *mBattery;  // Has ownership.
 	Keys *mKeys;  // Has ownership.
 	Gamepad *mGamepad;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
-	QHash<QString, PwmCapture *> mPwmCaptures;
+	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
 	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
-	QHash<QString, Sensor *> mSensors;  // Has ownership.
+	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
 
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator;  // Has ownership.

@@ -15,12 +15,14 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QSocketNotifier>
+#include <QtCore/QThread>
 #include <QtCore/QScopedPointer>
 
 #include "declSpec.h"
 
 namespace trikControl {
+
+class KeysWorker;
 
 /// Class for handling keys on a brick.
 class TRIKCONTROL_EXPORT Keys : public QObject
@@ -32,8 +34,11 @@ public:
 	/// @param keysPath - path to device file that controls brick keys.
 	Keys(QString const &keysPath);
 
-private slots:
-	void readKeysEvent();
+	~Keys();
+
+public slots:
+	/// Returns true, if button with given code was pressed, and clears "pressed" state for that button.
+	bool wasPressed(int code);
 
 signals:
 	/// Triggered when button state changed (pressed or released).
@@ -42,10 +47,8 @@ signals:
 	void buttonPressed(int code, int value);
 
 private:
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
-	int mKeysFileDescriptor;
-	int mButtonCode;
-	int mButtonValue;
+	QScopedPointer<KeysWorker> mKeysWorker;
+	QThread mWorkerThread;
 };
 
 }
