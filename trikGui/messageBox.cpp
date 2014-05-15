@@ -14,6 +14,8 @@
 
 #include "messageBox.h"
 
+#include <QtGui/QKeyEvent>
+
 using namespace trikGui;
 
 MessageBox::MessageBox(QWidget *parent)
@@ -26,15 +28,28 @@ MessageBox::MessageBox(QWidget *parent)
 }
 
 
-void MessageBox::exec(QString const &message)
+int MessageBox::exec(QString const &message)
 {
 	mMessageLabel.setText(message);
 	show();
-	mEventLoop.exec();
-	close();
+	return mEventLoop.exec();
 }
 
-void MessageBox::keyPressEvent(QKeyEvent *)
+void MessageBox::keyPressEvent(QKeyEvent *event)
 {
-	mEventLoop.exit();
+	switch (event->key()) {
+		case Qt::Key_Return:
+		case Qt::Key_Escape: {
+			close();
+			mEventLoop.quit();
+			break;
+		}
+		case Qt::Key_PowerDown: {
+			close();
+			mEventLoop.exit(1);
+		}
+
+	}
+
+
 }

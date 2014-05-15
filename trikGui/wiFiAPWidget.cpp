@@ -50,22 +50,24 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 	setLayout(&mMainLayout);
 }
 
-void WiFiAPWidget::exec()
+int WiFiAPWidget::exec()
 {
 	show();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 void WiFiAPWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Right:
-		case Qt::Key_Return:
-		case Qt::Key_Meta:
-		case Qt::Key_Left:
-		case Qt::Key_PowerDown: {
-			hide();
+		case Qt::Key_Escape:
+		case Qt::Key_Meta: {
+			close();
 			mEventLoop.quit();
+			break;
+		}
+		case Qt::Key_PowerDown: {
+			close();
+			mEventLoop.exit(1);
 			break;
 		}
 		default: {

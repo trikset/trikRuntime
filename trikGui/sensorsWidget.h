@@ -43,7 +43,7 @@ class SensorsWidget : public QWidget
 public:
 	explicit SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent = 0);
 	~SensorsWidget();
-	void exec();
+	int exec();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

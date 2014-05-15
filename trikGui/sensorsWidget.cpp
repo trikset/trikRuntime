@@ -50,21 +50,24 @@ SensorsWidget::~SensorsWidget()
 	qDeleteAll(mIndicators);
 }
 
-void SensorsWidget::exec()
+int SensorsWidget::exec()
 {
 	show();
 	mTimer.start();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 void SensorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta:
-		case Qt::Key_PowerDown:
-		case Qt::Key_Left: {
+		case Qt::Key_Escape: {
 			close();
 			mEventLoop.quit();
+			break;
+		}
+		case Qt::Key_PowerDown: {
+			close();
+			mEventLoop.exit(1);
 			break;
 		}
 		default: {

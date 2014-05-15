@@ -59,10 +59,10 @@ QString FileManagerWidget::menuEntry()
 	return tr("File Manager");
 }
 
-void FileManagerWidget::exec()
+int FileManagerWidget::exec()
 {
 	show();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 void FileManagerWidget::open()
@@ -79,7 +79,12 @@ void FileManagerWidget::open()
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Left: {
+		case Qt::Key_PowerDown: {
+			close();
+			mEventLoop.exit(1);
+			break;
+		}
+		case Qt::Key_Escape: {
 			close();
 			mEventLoop.quit();
 			break;

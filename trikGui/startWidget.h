@@ -63,6 +63,8 @@ private:
 
 	void setRootIndex(QModelIndex const &index);
 
+	void goHome();
+
 	QVBoxLayout mLayout;
 	QLabel mTitleLabel;
 	QListView mMenuView;

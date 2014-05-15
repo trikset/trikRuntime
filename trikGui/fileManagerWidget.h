@@ -50,7 +50,7 @@ public:
 	static QString menuEntry();
 
 	/// Show the widget and wait until it will be closed by user.
-	void exec();
+	int exec();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

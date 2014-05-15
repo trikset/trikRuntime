@@ -44,10 +44,10 @@ public:
 
 	/// Show widget and wait until the user will press any key.
 	/// @param message - message to show.
-	void exec(QString const &message);
+	int exec(QString const &message);
 
 protected:
-	void keyPressEvent(QKeyEvent *);
+	void keyPressEvent(QKeyEvent *event);
 
 private:
 	QVBoxLayout mLayout;

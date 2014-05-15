@@ -53,10 +53,12 @@ public:
 	WiFiModeWidget(QString const &configPath, QWidget *parent = 0);
 
 	/// Show the widget and wait until it will finish its work.
-	void exec();
+	int exec();
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
+
+	void goHome();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

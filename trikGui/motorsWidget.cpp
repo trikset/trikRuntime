@@ -67,10 +67,10 @@ QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 	return QString();
 }
 
-void MotorsWidget::exec()
+int MotorsWidget::exec()
 {
 	show();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
@@ -84,9 +84,14 @@ void MotorsWidget::keyPressEvent(QKeyEvent *event)
 			focusNextChild();
 			break;
 		}
-		case Qt::Key_Meta: case Qt::Key_PowerDown: {
+		case Qt::Key_Escape: {
 			close();
 			mEventLoop.quit();
+			break;
+		}
+		case Qt::Key_PowerDown: {
+			close();
+			mEventLoop.exit(1);
 			break;
 		}
 		default: {

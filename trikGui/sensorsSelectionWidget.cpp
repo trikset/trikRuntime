@@ -40,9 +40,6 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 	QListWidgetItem *item = new QListWidgetItem(tr("Start testing"), &mList);
 	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
 
-	item = new QListWidgetItem(tr("Exit"), &mList);
-	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
-
 	mList.setSelectionMode(QAbstractItemView::SingleSelection);
 	mList.setFocusPolicy(Qt::StrongFocus);
 	mList.setFocus();
@@ -54,10 +51,10 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 	setLayout(&mLayout);
 }
 
-void SensorsSelectionWidget::exec()
+int SensorsSelectionWidget::exec()
 {
 	show();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
@@ -77,15 +74,16 @@ QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
 void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return:
-		case Qt::Key_Right: {
+		case Qt::Key_Return: {
 			activateItem();
 			break;
 		}
-		case Qt::Key_Meta:
-		case Qt::Key_PowerDown:
-		case Qt::Key_Left: {
+		case Qt::Key_Escape: {
 			exit();
+			break;
+		}
+		case Qt::Key_PowerDown: {
+			goHome();
 			break;
 		}
 		default: {
@@ -105,8 +103,6 @@ void SensorsSelectionWidget::activateItem()
 		}
 	} else if (item->text() == tr("Start testing")) {
 		startTesting();
-	} else if (item->text() == tr("Exit")) {
-		exit();
 	}
 }
 
@@ -124,11 +120,19 @@ void SensorsSelectionWidget::startTesting()
 	}
 
 	SensorsWidget sensorsWidget(mBrick, ports);
-	sensorsWidget.exec();
+	if (sensorsWidget.exec() == 1) {
+		goHome();
+	}
 }
 
 void SensorsSelectionWidget::exit()
 {
 	close();
 	mEventLoop.quit();
+}
+
+void SensorsSelectionWidget::goHome()
+{
+	close();
+	mEventLoop.exit(1);
 }

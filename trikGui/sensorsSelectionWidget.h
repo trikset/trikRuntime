@@ -46,7 +46,7 @@ public:
 			, trikControl::Sensor::Type type
 			, QWidget *parent = 0);
 
-	void exec();
+	int exec();
 
 	static QString menuEntry(trikControl::Sensor::Type type);
 
@@ -57,6 +57,7 @@ private:
 	void activateItem();
 	void startTesting();
 	void exit();
+	void goHome();
 
 	QVBoxLayout mLayout;
 	QLabel mTitle;

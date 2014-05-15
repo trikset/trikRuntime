@@ -77,25 +77,32 @@ void StartWidget::launch()
 		setRootIndex(currentIndex);
 	} else {
 		QString currentItemText = currentItem->text();
+
+		int returnCode = 0;
+
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
 			FileManagerWidget fileManagerWidget(mController);
-			fileManagerWidget.exec();
+			returnCode = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
 			WiFiModeWidget wiFiModeWidget(mConfigPath);
-			wiFiModeWidget.exec();
+			returnCode = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
-			motorsWidget.exec();
+			returnCode = motorsWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::servoMotor);
-			motorsWidget.exec();
+			returnCode = motorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
 			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::analogSensor);
-			sensorsSelectionWidget.exec();
+			returnCode = sensorsSelectionWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
 			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::digitalSensor);
-			sensorsSelectionWidget.exec();
+			returnCode = sensorsSelectionWidget.exec();
+		}
+
+		if (returnCode == 1) {
+			goHome();
 		}
 	}
 }
@@ -131,15 +138,19 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 	mMenuView.setCurrentIndex(selectedItemIndex);
 }
 
+void StartWidget::goHome()
+{
+	setRootIndex(QModelIndex());
+}
+
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Meta:
 		case Qt::Key_PowerDown: {
-			setRootIndex(QModelIndex());
+			goHome();
 			break;
 		}
-		case Qt::Key_Left: {
+		case Qt::Key_Escape: {
 			QStandardItem const * const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
 			if (rootItem == NULL) {
 				break;
@@ -148,7 +159,7 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
 			break;
 		}
-		case Qt::Key_Return: case Qt::Key_Right: {
+		case Qt::Key_Return: {
 			launch();
 			break;
 		}

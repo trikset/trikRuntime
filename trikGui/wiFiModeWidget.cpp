@@ -45,10 +45,10 @@ WiFiModeWidget::WiFiModeWidget(QString const &configPath
 			);
 }
 
-void WiFiModeWidget::exec()
+int WiFiModeWidget::exec()
 {
 	show();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 QString WiFiModeWidget::menuEntry()
@@ -56,11 +56,16 @@ QString WiFiModeWidget::menuEntry()
 	return tr("Network Config");
 }
 
+void WiFiModeWidget::goHome()
+{
+	close();
+	mEventLoop.exit(1);
+}
+
 void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return:
-		case Qt::Key_Right: {
+		case Qt::Key_Return: {
 			if (mModes.currentItem()->text() == tr("Wi-Fi client")) {
 				setMode(client);
 			} else {
@@ -68,10 +73,13 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 			}
 			break;
 		}
-		case Qt::Key_Left:
-		case Qt::Key_PowerDown:
-		case Qt::Key_Meta: {
+		case Qt::Key_Escape: {
+			close();
 			mEventLoop.quit();
+			break;
+		}
+		case Qt::Key_PowerDown: {
+			goHome();
 			break;
 		}
 		default: {
@@ -101,20 +109,26 @@ void WiFiModeWidget::setMode(Mode mode)
 		}
 	}
 
+	int returnValue = 0;
+
 	switch (mode) {
 		case client: {
 			WiFiClientWidget wiFiClientWidget(mConfigPath);
-			wiFiClientWidget.exec();
+			returnValue = wiFiClientWidget.exec();
 			break;
 		}
 		case accessPoint: {
 			WiFiAPWidget wiFiAPWidget;
-			wiFiAPWidget.exec();
+			returnValue = wiFiAPWidget.exec();
 			break;
 		}
 		case unknown: {
 			qDebug() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
 			break;
 		}
+	}
+
+	if (returnValue == 1) {
+		goHome();
 	}
 }

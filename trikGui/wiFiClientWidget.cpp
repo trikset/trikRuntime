@@ -86,10 +86,10 @@ WiFiClientWidget::~WiFiClientWidget()
 {
 }
 
-void WiFiClientWidget::exec()
+int WiFiClientWidget::exec()
 {
 	show();
-	mEventLoop.exec();
+	return mEventLoop.exec();
 }
 
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
@@ -123,14 +123,19 @@ void WiFiClientWidget::disconnectedSlot()
 void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-	case Qt::Key_Meta:
-	case Qt::Key_Left: {
+	case Qt::Key_Escape: {
 		close();
 		mEventLoop.quit();
 		break;
 	}
+	case Qt::Key_PowerDown: {
+		close();
+		mEventLoop.exit(1);
+		break;
+	}
 	case Qt::Key_Return: {
 		connectToSelectedNetwork();
+		break;
 	}
 	default: {
 		QWidget::keyPressEvent(event);
