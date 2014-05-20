@@ -24,6 +24,8 @@
 
 #include <QtCore/QEventLoop>
 
+namespace trikGui {
+
 class TrikGuiDialog : public QWidget
 {
 	Q_OBJECT
@@ -50,3 +52,5 @@ protected:
 private:
 	QEventLoop mEventLoop;
 };
+
+}

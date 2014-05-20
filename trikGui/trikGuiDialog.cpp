@@ -16,6 +16,8 @@
 
 #include <QtGui/QKeyEvent>
 
+using namespace trikGui;
+
 TrikGuiDialog::TrikGuiDialog(QWidget *parent)
 	: QWidget(parent)
 {
