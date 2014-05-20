@@ -20,7 +20,7 @@
 
 #include <QtGui/QKeyEvent>
 
-#include "messageBox.h"
+#include "trikGuiMessageBox.h"
 
 using namespace trikGui;
 
