@@ -78,30 +78,30 @@ void StartWidget::launch()
 	} else {
 		QString currentItemText = currentItem->text();
 
-		int returnCode = 0;
+		int result = TrikGuiDialog::normalExit;
 
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
 			FileManagerWidget fileManagerWidget(mController);
-			returnCode = fileManagerWidget.exec();
+			result = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
 			WiFiModeWidget wiFiModeWidget(mConfigPath);
-			returnCode = wiFiModeWidget.exec();
+			result = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
-			returnCode = motorsWidget.exec();
+			result = motorsWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
 			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::servoMotor);
-			returnCode = motorsWidget.exec();
+			result = motorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
 			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::analogSensor);
-			returnCode = sensorsSelectionWidget.exec();
+			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
 			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::digitalSensor);
-			returnCode = sensorsSelectionWidget.exec();
+			result = sensorsSelectionWidget.exec();
 		}
 
-		if (returnCode == 1) {
+		if (result == TrikGuiDialog::goHomeExit) {
 			goHome();
 		}
 	}

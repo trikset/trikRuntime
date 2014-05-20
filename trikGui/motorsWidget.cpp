@@ -26,13 +26,11 @@ MotorsWidget::MotorsWidget(QString const &configPath
 		, trikControl::Motor::Type type
 		, QWidget *parent
 		)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mBrick(*TrikGuiApplication::instance()->thread(), configPath)
 	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mPorts.sort();
 
 	int i = 0;
@@ -67,12 +65,6 @@ QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 	return QString();
 }
 
-int MotorsWidget::exec()
-{
-	show();
-	return mEventLoop.exec();
-}
-
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
@@ -84,18 +76,8 @@ void MotorsWidget::keyPressEvent(QKeyEvent *event)
 			focusNextChild();
 			break;
 		}
-		case Qt::Key_Escape: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
-		case Qt::Key_PowerDown: {
-			close();
-			mEventLoop.exit(1);
-			break;
-		}
 		default: {
-			QWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}

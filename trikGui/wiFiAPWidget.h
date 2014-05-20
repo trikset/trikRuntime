@@ -29,12 +29,13 @@
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QEventLoop>
-#include <QtGui/QKeyEvent>
+
+#include "trikGuiDialog.h"
 
 namespace trikGui {
 
 /// Widget showing parameters of wireless access point on the controller.
-class WiFiAPWidget : public QWidget
+class WiFiAPWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -43,16 +44,9 @@ public:
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit WiFiAPWidget(QWidget *parent = 0);
 
-	/// Show the widget and wait until it will be closed by user.
-	int exec();
-
-protected:
-	void keyPressEvent(QKeyEvent *event);
-
 private:
 	void getParameters();
 
-	QEventLoop mEventLoop;
 	QVBoxLayout mMainLayout;
 	QVBoxLayout mParametersLayout;
 	QLabel mTitle;

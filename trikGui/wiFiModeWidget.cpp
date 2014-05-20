@@ -25,13 +25,11 @@ using namespace trikGui;
 
 WiFiModeWidget::WiFiModeWidget(QString const &configPath
 		, QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mConfigPath(configPath)
 	, mRcReader("/etc/trik/trikrc")
 	, mTitle(tr("Choose mode:"))
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mModes.addItem(tr("Wi-Fi client"));
 	mModes.addItem(tr("Wi-Fi access point"));
 
@@ -45,21 +43,9 @@ WiFiModeWidget::WiFiModeWidget(QString const &configPath
 			);
 }
 
-int WiFiModeWidget::exec()
-{
-	show();
-	return mEventLoop.exec();
-}
-
 QString WiFiModeWidget::menuEntry()
 {
 	return tr("Network Config");
-}
-
-void WiFiModeWidget::goHome()
-{
-	close();
-	mEventLoop.exit(1);
 }
 
 void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
@@ -73,17 +59,8 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 			}
 			break;
 		}
-		case Qt::Key_Escape: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
-		case Qt::Key_PowerDown: {
-			goHome();
-			break;
-		}
 		default: {
-			QWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}

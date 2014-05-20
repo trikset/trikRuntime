@@ -24,12 +24,10 @@ using namespace trikGui;
 SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 		, trikControl::Sensor::Type type
 		, QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mTitle(tr("Select sensors for testing:"))
 	, mBrick(*TrikGuiApplication::instance()->thread(), configPath)
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	QStringList ports = mBrick.sensorPorts(type);
 	foreach (QString const &port, ports) {
 		QListWidgetItem *item = new QListWidgetItem(port, &mList);
@@ -49,12 +47,6 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 	mLayout.addWidget(&mList);
 
 	setLayout(&mLayout);
-}
-
-int SensorsSelectionWidget::exec()
-{
-	show();
-	return mEventLoop.exec();
 }
 
 QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
@@ -78,16 +70,8 @@ void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 			activateItem();
 			break;
 		}
-		case Qt::Key_Escape: {
-			exit();
-			break;
-		}
-		case Qt::Key_PowerDown: {
-			goHome();
-			break;
-		}
 		default: {
-			QWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 		}
 	}
 }
@@ -120,19 +104,7 @@ void SensorsSelectionWidget::startTesting()
 	}
 
 	SensorsWidget sensorsWidget(mBrick, ports);
-	if (sensorsWidget.exec() == 1) {
+	if (sensorsWidget.exec() == TrikGuiDialog::goHomeExit) {
 		goHome();
 	}
-}
-
-void SensorsSelectionWidget::exit()
-{
-	close();
-	mEventLoop.quit();
-}
-
-void SensorsSelectionWidget::goHome()
-{
-	close();
-	mEventLoop.exit(1);
 }

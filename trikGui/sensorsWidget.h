@@ -24,9 +24,10 @@
 	#include <QtWidgets/QVBoxLayout>
 #endif
 
-#include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
 #include <QtCore/QVector>
+
+#include "trikGuiDialog.h"
 
 namespace trikControl {
 	class Brick;
@@ -36,7 +37,7 @@ namespace trikGui {
 
 class SensorIndicator;
 
-class SensorsWidget : public QWidget
+class SensorsWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -46,13 +47,13 @@ public:
 	int exec();
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void exit();
+	void goHome();
 
 private:
 	trikControl::Brick &mBrick;
 	QVBoxLayout mLayout;
 	QVector<SensorIndicator *> mIndicators;
-	QEventLoop mEventLoop;
 	int const mInterval;
 	QTimer mTimer;
 };

@@ -32,9 +32,10 @@
 #endif
 
 #include <QtCore/QList>
-#include <QtCore/QEventLoop>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
+
+#include "trikGuiDialog.h"
 
 namespace trikWiFi {
 class TrikWiFi;
@@ -45,7 +46,7 @@ namespace trikGui {
 
 /// Widget that shows current IP address and a list of available WiFi networks.
 /// Network is available only when it is listed in networks.cfg file and is physically available.
-class WiFiClientWidget : public QWidget
+class WiFiClientWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -57,9 +58,6 @@ public:
 
 	/// Destructor.
 	~WiFiClientWidget();
-
-	/// Show the widget and wait until it will be closed by user.
-	int exec();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
@@ -88,7 +86,6 @@ private:
 	QString mCurrentSsid;
 	QHash<QString, int> mNetworksAvailableForConnection;
 	ConnectionState mConnectionState;
-	QEventLoop mEventLoop;
 
 	void setConnectionStatus(trikWiFi::Status const &status);
 	void updateConnectionStatusesInNetworkList();

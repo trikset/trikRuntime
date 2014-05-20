@@ -21,10 +21,8 @@
 using namespace trikGui;
 
 WiFiAPWidget::WiFiAPWidget(QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mTitle.setAlignment(Qt::AlignHCenter | Qt::AlignTop);
 	mParametersLayout.setAlignment(Qt::AlignCenter);
 	mNetworkLabel.setAlignment(Qt::AlignCenter);
@@ -48,33 +46,6 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 	mParametersLayout.addWidget(&mIpLabel);
 
 	setLayout(&mMainLayout);
-}
-
-int WiFiAPWidget::exec()
-{
-	show();
-	return mEventLoop.exec();
-}
-
-void WiFiAPWidget::keyPressEvent(QKeyEvent *event)
-{
-	switch (event->key()) {
-		case Qt::Key_Escape:
-		case Qt::Key_Meta: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
-		case Qt::Key_PowerDown: {
-			close();
-			mEventLoop.exit(1);
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-			break;
-		}
-	}
 }
 
 void WiFiAPWidget::getParameters()
