@@ -26,11 +26,14 @@
 
 namespace trikGui {
 
+/// Base class for all trikGui dialog widgets.
 class TrikGuiDialog : public QWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor
+	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit TrikGuiDialog(QWidget *parent = 0);
 
 	virtual ~TrikGuiDialog() {}
@@ -40,6 +43,9 @@ public:
 		, goHomeExit
 	};
 
+	/// Show widget and wait until it will be closed.
+	/// @return TrikGuiDialog::goHomeExit if the user wants to go to the home screen,
+	/// and TrikGuiDialog::normalExit otherwise.
 	virtual int exec();
 
 protected:
