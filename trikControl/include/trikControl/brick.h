@@ -90,6 +90,9 @@ public slots:
 	/// Returns list of ports for sensors of a given type.
 	QStringList sensorPorts(Sensor::Type type) const;
 
+	/// Returns list of encoder ports
+	QStringList encoderPorts() const;
+
 	/// Returns reference to on-board accelerometer.
 	Sensor3d *accelerometer();
 
