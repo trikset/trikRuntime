@@ -18,6 +18,7 @@
 #include "fileManagerWidget.h"
 
 #include <QtCore/QDir>
+#include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
@@ -96,7 +97,9 @@ void FileManagerWidget::showCurrentDir()
 
 	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
 
-	renewCurrentIndex();
+	/// @todo Here and several lines down we use QTimer
+	/// to fix a bug with selecting first item. Rewrite it.
+	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 
 void FileManagerWidget::onDirectoryLoaded(QString const &path)
@@ -105,7 +108,7 @@ void FileManagerWidget::onDirectoryLoaded(QString const &path)
 		return;
 	}
 
-	renewCurrentIndex();
+	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 
 void FileManagerWidget::renewCurrentIndex()

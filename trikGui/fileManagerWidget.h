@@ -54,11 +54,11 @@ protected:
 
 private slots:
 	void onDirectoryLoaded(QString const &path);
+	void renewCurrentIndex();
 
 private:
 	void showCurrentDir();
 	void open();
-	void renewCurrentIndex();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
