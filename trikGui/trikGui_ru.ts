@@ -103,6 +103,10 @@
         <source>Password: </source>
         <translation>Пароль: </translation>
     </message>
+    <message>
+        <source>IP address not found</source>
+        <translation>IP-адрес не найден</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::WiFiClientWidget</name>
