@@ -54,7 +54,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
 			period="20000000"
-			defaultType="angularServo"
+			defaultType="steeringAngularServo"
 			invert="false"
 		/>
 		<servoMotor
@@ -62,15 +62,15 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
 			period="20000000"
-			defaultType="defaultServo"
+			defaultType="handRotationServo"
 			invert="false"
 		/>
 		<servoMotor
-			port="JE4"
+			port="JE3"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
 			period="20000000"
-			defaultType="defaultServo"
+			defaultType="handPressServo"
 			invert="false"
 		/>
 		<servoMotor
@@ -156,7 +156,9 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	     non-breaking stop ("zero" parameter), breaking stop ("stop" parameter). -->
 	<servoMotorTypes>
 		<defaultServo min="1200000" max="1800000" zero="1500000" stop="0" />
-		<angularServo min="1400000" max="2100000" zero="1800000" stop="0" />
+		<steeringAngularServo min="1400000" max="2100000" zero="1800000" stop="0" />
+		<handRotationServo min="800000" max="2400000" zero="1500000" stop="0" />
+		<handPressServo min="1950000" max="2500000" zero="1950000" stop="0" />		
 	</servoMotorTypes>
 
 	<!-- Digital sensors configuration, maps logical port to digital sensor device file and digital sensor type used by default 
