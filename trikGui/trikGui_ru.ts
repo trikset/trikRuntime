@@ -37,9 +37,9 @@
         <translation>Выполняется:</translation>
     </message>
     <message>
-        <source>Press Enter
+        <source>Press Power
  to abort</source>
-        <translation>Нажмите Enter
+        <translation>Нажмите Power
  чтобы выйти</translation>
     </message>
 </context>
