@@ -25,7 +25,7 @@ RunningWidget::RunningWidget(QString const &programName, Controller &controller,
 	setWindowState(Qt::WindowFullScreen);
 
 	mProgramNameLabel.setText(tr("Running:") + "\n" + programName);
-	mAbortLabel.setText(tr("Press Enter\n to abort"));
+	mAbortLabel.setText(tr("Press Power\n to abort"));
 
 	mLayout.addWidget(&mProgramNameLabel);
 	mLayout.addWidget(&mAbortLabel);
@@ -36,7 +36,7 @@ RunningWidget::RunningWidget(QString const &programName, Controller &controller,
 void RunningWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Enter: {
+		case Qt::Key_PowerDown: {
 			mController.abortExecution();
 			close();
 			break;
