@@ -17,6 +17,8 @@
 
 #include "fileManagerWidget.h"
 
+#include <QtCore/QDir>
+#include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
@@ -25,8 +27,8 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	mFileSystemModel.setRootPath("/");
-	mFileSystemModel.setFilter(QDir::AllEntries | QDir::System | QDir::NoDot);
+	mFileSystemModel.setRootPath(QDir::rootPath());
+	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
 	connect(&mFileSystemModel
 			, SIGNAL(directoryLoaded(QString))
@@ -43,8 +45,6 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
-	mCurrentDir = QDir().exists("./scripts") ? "./scripts" : ".";
-
 	showCurrentDir();
 }
 
@@ -59,13 +59,14 @@ QString FileManagerWidget::menuEntry()
 
 void FileManagerWidget::open()
 {
-	 QModelIndex const &index = mFileSystemView.currentIndex();
-	 if (mFileSystemModel.isDir(index)) {
-		 mCurrentDir = mFileSystemModel.filePath(index);
-		 showCurrentDir();
-	 } else {
-		 mController.runFile(mFileSystemModel.filePath(index));
-	 }
+	QModelIndex const &index = mFileSystemView.currentIndex();
+	if (mFileSystemModel.isDir(index)) {
+		if (QDir::setCurrent(mFileSystemModel.filePath(index))) {
+			showCurrentDir();
+		}
+	} else {
+		mController.runFile(mFileSystemModel.filePath(index));
+	}
 }
 
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)
@@ -84,18 +85,30 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 
 void FileManagerWidget::showCurrentDir()
 {
-	mCurrentPathLabel.setText(QDir(mCurrentDir).path());
-	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir(mCurrentDir).path()));
-	renewCurrentIndex();
+	mCurrentPathLabel.setText(QDir::currentPath());
+
+	QDir::Filters filters = mFileSystemModel.filter();
+	if (QDir::currentPath() == QDir::rootPath()) {
+		filters |= QDir::NoDotDot;
+	} else {
+		filters &= ~QDir::NoDotDot;
+	}
+	mFileSystemModel.setFilter(filters);
+
+	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
+
+	/// @todo Here and several lines down we use QTimer
+	/// to fix a bug with selecting first item. Rewrite it.
+	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 
 void FileManagerWidget::onDirectoryLoaded(QString const &path)
 {
-	if (QDir(mCurrentDir).absolutePath() != path) {
+	if (QDir::currentPath() != path) {
 		return;
 	}
 
-	renewCurrentIndex();
+	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 
 void FileManagerWidget::renewCurrentIndex()
@@ -105,7 +118,7 @@ void FileManagerWidget::renewCurrentIndex()
 	QModelIndex const currentIndex = mFileSystemModel.index(
 			0
 			, 0
-			, mFileSystemModel.index(QDir(mCurrentDir).absolutePath())
+			, mFileSystemModel.index(QDir::currentPath())
 			);
 
 	mFileSystemView.selectionModel()->select(currentIndex, QItemSelectionModel::ClearAndSelect);

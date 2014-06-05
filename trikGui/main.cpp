@@ -25,6 +25,7 @@
 #endif
 
 #include <QtCore/QTranslator>
+#include <QtCore/QDir>
 #include <QtGui/QFont>
 
 #include "trikGuiApplication.h"
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
 		app.installTranslator(&guiTranslator);
 	}
 
-	QString configPath = "./";
+	QString configPath = QDir::currentPath() + "/";
 	if (app.arguments().contains("-c")) {
 		int const index = app.arguments().indexOf("-c");
 		if (app.arguments().count() <= index + 1) {
@@ -89,6 +90,10 @@ int main(int argc, char *argv[])
 		server->setCursorVisible(false);
 	}
 #endif
+
+	if (QDir::current().exists("scripts")) {
+		QDir::setCurrent("scripts");
+	}
 
 	StartWidget w(configPath);
 	w.show();
