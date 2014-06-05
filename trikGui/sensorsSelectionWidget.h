@@ -28,16 +28,17 @@
 	#include <QtWidgets/QLabel>
 #endif
 
-#include <QtCore/QEventLoop>
 #include <QtCore/QStringList>
 #include <QtGui/QKeyEvent>
 
 #include <trikControl/brick.h>
 #include <trikControl/sensor.h>
 
+#include "trikGuiDialog.h"
+
 namespace trikGui {
 
-class SensorsSelectionWidget : public QWidget
+class SensorsSelectionWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -45,8 +46,6 @@ public:
 	SensorsSelectionWidget(QString const &configPath
 			, trikControl::Sensor::Type type
 			, QWidget *parent = 0);
-
-	void exec();
 
 	static QString menuEntry(trikControl::Sensor::Type type);
 
@@ -56,13 +55,11 @@ protected:
 private:
 	void activateItem();
 	void startTesting();
-	void exit();
 
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QListWidget mList;
 	trikControl::Brick mBrick;
-	QEventLoop mEventLoop;
 };
 
 }

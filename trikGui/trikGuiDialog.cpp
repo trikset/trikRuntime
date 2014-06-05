@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,33 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "runningWidget.h"
+#include "trikGuiDialog.h"
 
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
 
-RunningWidget::RunningWidget(QString const &programName, Controller &controller, QWidget *parent)
+TrikGuiDialog::TrikGuiDialog(QWidget *parent)
 	: QWidget(parent)
-	, mController(controller)
 {
 	setWindowState(Qt::WindowFullScreen);
-
-	mProgramNameLabel.setText(tr("Running:") + "\n" + programName);
-	mAbortLabel.setText(tr("Press Power\n to abort"));
-
-	mLayout.addWidget(&mProgramNameLabel);
-	mLayout.addWidget(&mAbortLabel);
-
-	setLayout(&mLayout);
 }
 
-void RunningWidget::keyPressEvent(QKeyEvent *event)
+int TrikGuiDialog::exec()
+{
+	show();
+	return mEventLoop.exec();
+}
+
+void TrikGuiDialog::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
+		case Qt::Key_Escape: {
+			exit();
+			break;
+		}
 		case Qt::Key_PowerDown: {
-			mController.abortExecution();
-			close();
+			goHome();
 			break;
 		}
 		default: {
@@ -46,4 +46,16 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 	}
+}
+
+void TrikGuiDialog::exit()
+{
+	close();
+	mEventLoop.exit(normalExit);
+}
+
+void TrikGuiDialog::goHome()
+{
+	close();
+	mEventLoop.exit(goHomeExit);
 }

@@ -27,16 +27,17 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
-#include <QtCore/QEventLoop>
 
 #include <trikControl/brick.h>
+
+#include "trikGuiDialog.h"
 
 namespace trikGui {
 
 class MotorLever;
 
 /// Widget that allows to test motors connected to TRIK controller
-class MotorsWidget : public QWidget
+class MotorsWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -55,9 +56,6 @@ public:
 	/// Title for this widget in a main menu.
 	static QString menuEntry(trikControl::Motor::Type type);
 
-	/// Show the widget and wait until it will be closed by user.
-	void exec();
-
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
@@ -66,7 +64,6 @@ private:
 	trikControl::Brick mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.
-	QEventLoop mEventLoop;
 };
 
 }

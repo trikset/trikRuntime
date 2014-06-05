@@ -25,13 +25,11 @@ using namespace trikGui;
 
 WiFiModeWidget::WiFiModeWidget(QString const &configPath
 		, QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mConfigPath(configPath)
 	, mRcReader("/etc/trik/trikrc")
 	, mTitle(tr("Choose mode:"))
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mModes.addItem(tr("Wi-Fi client"));
 	mModes.addItem(tr("Wi-Fi access point"));
 
@@ -45,12 +43,6 @@ WiFiModeWidget::WiFiModeWidget(QString const &configPath
 			);
 }
 
-void WiFiModeWidget::exec()
-{
-	show();
-	mEventLoop.exec();
-}
-
 QString WiFiModeWidget::menuEntry()
 {
 	return tr("Network Config");
@@ -59,8 +51,7 @@ QString WiFiModeWidget::menuEntry()
 void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return:
-		case Qt::Key_Right: {
+		case Qt::Key_Return: {
 			if (mModes.currentItem()->text() == tr("Wi-Fi client")) {
 				setMode(client);
 			} else {
@@ -68,14 +59,8 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 			}
 			break;
 		}
-		case Qt::Key_Left:
-		case Qt::Key_PowerDown:
-		case Qt::Key_Meta: {
-			mEventLoop.quit();
-			break;
-		}
 		default: {
-			QWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}
@@ -101,20 +86,26 @@ void WiFiModeWidget::setMode(Mode mode)
 		}
 	}
 
+	int returnValue = 0;
+
 	switch (mode) {
 		case client: {
 			WiFiClientWidget wiFiClientWidget(mConfigPath);
-			wiFiClientWidget.exec();
+			returnValue = wiFiClientWidget.exec();
 			break;
 		}
 		case accessPoint: {
 			WiFiAPWidget wiFiAPWidget;
-			wiFiAPWidget.exec();
+			returnValue = wiFiAPWidget.exec();
 			break;
 		}
 		case unknown: {
 			qDebug() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
 			break;
 		}
+	}
+
+	if (returnValue == 1) {
+		goHome();
 	}
 }

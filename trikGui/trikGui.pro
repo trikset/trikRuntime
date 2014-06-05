@@ -33,7 +33,8 @@ HEADERS += \
 	$$PWD/wiFiInitWidget.h \
 	$$PWD/wiFiAPWidget.h \
 	$$PWD/rcReader.h \
-	$$PWD/messageBox.h \
+	$$PWD/trikGuiMessageBox.h \
+	$$PWD/trikGuiDialog.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -52,7 +53,8 @@ SOURCES += \
 	$$PWD/wiFiInitWidget.cpp \
 	$$PWD/wiFiAPWidget.cpp \
 	$$PWD/rcReader.cpp \
-	$$PWD/messageBox.cpp \
+	$$PWD/trikGuiMessageBox.cpp \
+	$$PWD/trikGuiDialog.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc

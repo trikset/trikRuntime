@@ -54,7 +54,7 @@ public:
 	Result init(WiFiModeWidget::Mode mode);
 
 protected:
-	void keyPressEvent(QKeyEvent *);
+	void keyPressEvent(QKeyEvent *event);
 
 private:
 	QVBoxLayout mLayout;

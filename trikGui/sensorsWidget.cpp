@@ -23,13 +23,11 @@
 using namespace trikGui;
 
 SensorsWidget::SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mIndicators(ports.size())
 	, mInterval(100)
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mTimer.setInterval(mInterval);
 	mTimer.setSingleShot(false);
 
@@ -50,26 +48,20 @@ SensorsWidget::~SensorsWidget()
 	qDeleteAll(mIndicators);
 }
 
-void SensorsWidget::exec()
+int SensorsWidget::exec()
 {
-	show();
 	mTimer.start();
-	mEventLoop.exec();
+	return TrikGuiDialog::exec();
 }
 
-void SensorsWidget::keyPressEvent(QKeyEvent *event)
+void SensorsWidget::exit()
 {
-	switch (event->key()) {
-		case Qt::Key_Meta:
-		case Qt::Key_PowerDown:
-		case Qt::Key_Left: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-			break;
-		}
-	}
+	mTimer.stop();
+	TrikGuiDialog::exit();
+}
+
+void SensorsWidget::goHome()
+{
+	mTimer.stop();
+	TrikGuiDialog::goHome();
 }

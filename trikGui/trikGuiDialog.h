@@ -18,40 +18,44 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QLabel>
-	#include <QtGui/QVBoxLayout>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QVBoxLayout>
 #endif
 
-#include <QtCore/QString>
 #include <QtCore/QEventLoop>
-#include <QtGui/QKeyEvent>
 
 namespace trikGui {
 
-/// Widget showing some message and waiting until the user will press any key.
-class MessageBox : public QWidget
+/// Base class for all trikGui dialog widgets.
+class TrikGuiDialog : public QWidget
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
+	/// Constructor
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit MessageBox(QWidget *parent = 0);
+	explicit TrikGuiDialog(QWidget *parent = 0);
 
-	/// Show widget and wait until the user will press any key.
-	/// @param message - message to show.
-	void exec(QString const &message);
+	virtual ~TrikGuiDialog() {}
+
+	enum Result {
+		normalExit
+		, goHomeExit
+	};
+
+	/// Show widget and wait until it will be closed.
+	/// @return TrikGuiDialog::goHomeExit if the user wants to go to the home screen,
+	/// and TrikGuiDialog::normalExit otherwise.
+	virtual int exec();
 
 protected:
-	void keyPressEvent(QKeyEvent *);
+	virtual void keyPressEvent(QKeyEvent *event);
+
+	virtual void exit();
+
+	virtual void goHome();
 
 private:
-	QVBoxLayout mLayout;
-	QLabel mMessageLabel;
 	QEventLoop mEventLoop;
 };
 

@@ -18,7 +18,9 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDebug>
 
-#include "messageBox.h"
+#include <QtGui/QKeyEvent>
+
+#include "trikGuiMessageBox.h"
 
 using namespace trikGui;
 
@@ -27,7 +29,7 @@ WiFiInitWidget::WiFiInitWidget(QWidget *parent)
 	, mInitMessage(tr("Network initialization" "\n"
 			"in process"))
 	, mWaitMessage(tr("Please wait"))
-	, mBreakMessage(tr("Press any key" "\n"
+	, mBreakMessage(tr("Press Escape" "\n"
 			"for break"))
 {
 	setWindowState(Qt::WindowFullScreen);
@@ -80,11 +82,15 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 	return success;
 }
 
-void WiFiInitWidget::keyPressEvent(QKeyEvent *)
+void WiFiInitWidget::keyPressEvent(QKeyEvent *event)
 {
-	disconnect(&mProcess);
-	mProcess.kill();
-	mEventLoop.exit(1);
+	if (event->key() == Qt::Key_Escape) {
+		disconnect(&mProcess);
+		mProcess.kill();
+		mEventLoop.exit(1);
+	} else {
+		QWidget::keyPressEvent(event);
+	}
 }
 
 void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)

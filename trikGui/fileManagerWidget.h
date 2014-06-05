@@ -32,14 +32,14 @@
 #endif
 
 #include <QtCore/QString>
-#include <QtCore/QEventLoop>
 
 #include "controller.h"
+#include "trikGuiDialog.h"
 
 namespace trikGui {
 
 /// File system browser able to launch executable files and .qts scripts.
-class FileManagerWidget : public QWidget
+class FileManagerWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -48,9 +48,6 @@ public:
 	~FileManagerWidget();
 
 	static QString menuEntry();
-
-	/// Show the widget and wait until it will be closed by user.
-	void exec();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
@@ -69,7 +66,6 @@ private:
 	QFileSystemModel mFileSystemModel;
 	Controller &mController;
 	QString mCurrentDir;
-	QEventLoop mEventLoop;
 };
 
 }

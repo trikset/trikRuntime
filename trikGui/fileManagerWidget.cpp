@@ -22,11 +22,9 @@
 using namespace trikGui;
 
 FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mFileSystemModel.setRootPath("/");
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::System | QDir::NoDot);
 
@@ -59,12 +57,6 @@ QString FileManagerWidget::menuEntry()
 	return tr("File Manager");
 }
 
-void FileManagerWidget::exec()
-{
-	show();
-	mEventLoop.exec();
-}
-
 void FileManagerWidget::open()
 {
 	 QModelIndex const &index = mFileSystemView.currentIndex();
@@ -79,17 +71,12 @@ void FileManagerWidget::open()
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Left: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
 		case Qt::Key_Return: {
 			open();
 			break;
 		}
 		default: {
-			QWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}

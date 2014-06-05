@@ -39,12 +39,10 @@ using namespace trikGui;
 using namespace trikWiFi;
 
 WiFiClientWidget::WiFiClientWidget(QString const &configPath, QWidget *parent)
-	: QWidget(parent)
+	: TrikGuiDialog(parent)
 	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
 	, mConnectionState(notConnected)
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
 
 	QList<NetworkConfiguration> const networksFromWpaSupplicant = mWiFi->listNetworks();
@@ -86,12 +84,6 @@ WiFiClientWidget::~WiFiClientWidget()
 {
 }
 
-void WiFiClientWidget::exec()
-{
-	show();
-	mEventLoop.exec();
-}
-
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
@@ -123,17 +115,12 @@ void WiFiClientWidget::disconnectedSlot()
 void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-	case Qt::Key_Meta:
-	case Qt::Key_Left: {
-		close();
-		mEventLoop.quit();
-		break;
-	}
 	case Qt::Key_Return: {
 		connectToSelectedNetwork();
+		break;
 	}
 	default: {
-		QWidget::keyPressEvent(event);
+		TrikGuiDialog::keyPressEvent(event);
 		break;
 	}
 	}

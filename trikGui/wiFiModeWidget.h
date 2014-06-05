@@ -28,15 +28,15 @@
 	#include <QtWidgets/QListWidget>
 #endif
 
-#include <QtCore/QEventLoop>
 #include <QtCore/QString>
 
 #include "rcReader.h"
+#include "trikGuiDialog.h"
 
 namespace trikGui {
 
 /// Widget which allows to set wi-fi mode (client or access point) and then opens corresponding configuration widget.
-class WiFiModeWidget : public QWidget
+class WiFiModeWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
@@ -51,9 +51,6 @@ public:
 	/// @param configPath - full path to configuration files.
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	WiFiModeWidget(QString const &configPath, QWidget *parent = 0);
-
-	/// Show the widget and wait until it will finish its work.
-	void exec();
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();

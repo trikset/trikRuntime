@@ -37,9 +37,9 @@
         <translation>Выполняется:</translation>
     </message>
     <message>
-        <source>Press Enter
+        <source>Press Power
  to abort</source>
-        <translation>Нажмите Enter
+        <translation>Нажмите Power
  чтобы выйти</translation>
     </message>
 </context>
@@ -52,10 +52,6 @@
     <message>
         <source>Start testing</source>
         <translation>Начать проверку</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation>Выход</translation>
     </message>
     <message>
         <source>Test analog sensors</source>
@@ -141,19 +137,19 @@ in process</source>
 сети</translation>
     </message>
     <message>
-        <source>Press any key
-for break</source>
-        <translation>Чтобы прервать
-процесс, нажмите
-любую кнопку</translation>
-    </message>
-    <message>
         <source>Network initialization
 failed</source>
         <translation>Не удалось
 произвести
 инициализацию
 сети</translation>
+    </message>
+    <message>
+        <source>Press Escape
+for break</source>
+        <translation>Чтобы прервать
+процесс, нажмите
+Escape</translation>
     </message>
 </context>
 <context>

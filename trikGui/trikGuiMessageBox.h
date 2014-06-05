@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,44 +18,41 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
+	#include <QtGui/QLabel>
 	#include <QtGui/QVBoxLayout>
 #else
 	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QVBoxLayout>
 #endif
 
-#include <QtCore/QTimer>
-#include <QtCore/QVector>
-
-#include "trikGuiDialog.h"
-
-namespace trikControl {
-	class Brick;
-}
+#include <QtCore/QString>
+#include <QtCore/QEventLoop>
+#include <QtGui/QKeyEvent>
 
 namespace trikGui {
 
-class SensorIndicator;
-
-class SensorsWidget : public TrikGuiDialog
+/// Widget showing some message and waiting until the user will press any key.
+class MessageBox : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent = 0);
-	~SensorsWidget();
-	int exec();
+	/// Constructor.
+	/// @param parent - parent of this widget in Qt object hierarchy.
+	explicit MessageBox(QWidget *parent = 0);
+
+	/// Show widget and wait until the user will press any key.
+	/// @param message - message to show.
+	int exec(QString const &message);
 
 protected:
-	void exit();
-	void goHome();
+	void keyPressEvent(QKeyEvent *event);
 
 private:
-	trikControl::Brick &mBrick;
 	QVBoxLayout mLayout;
-	QVector<SensorIndicator *> mIndicators;
-	int const mInterval;
-	QTimer mTimer;
+	QLabel mMessageLabel;
+	QEventLoop mEventLoop;
 };
 
 }
