@@ -71,14 +71,15 @@ void WiFiAPWidget::getParameters()
 	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
 	foreach (QNetworkInterface const &interface, interfaces) {
 		if (interface.name() == "wlan0") {
-			QList<QNetworkAddressEntry> entries = interface.addressEntries();
+			QList<QNetworkAddressEntry> const entries = interface.addressEntries();
 			foreach (QNetworkAddressEntry const &entry, entries) {
-				QHostAddress ip = entry.ip();
+				QHostAddress const ip = entry.ip();
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
 					mIpLabel.setText(tr("IP address: ") + ip.toString());
 					break;
 				}
 			}
+
 			break;
 		}
 	}
