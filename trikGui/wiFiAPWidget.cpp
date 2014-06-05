@@ -15,6 +15,12 @@
 #include "wiFiAPWidget.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QList>
+
+#include <QtNetwork/QNetworkInterface>
+#include <QtNetwork/QNetworkAddressEntry>
+#include <QtNetwork/QHostAddress>
+#include <QtNetwork/QAbstractSocket>
 
 #include "rcReader.h"
 
@@ -32,7 +38,7 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 	mTitle.setText(tr("Network parameters"));
 	mNetworkLabel.setText(tr("Name not found"));
 	mKeyLabel.setText(tr("Password not found"));
-	mIpLabel.setText(tr("IP address: ") + QString("192.168.1.1"));
+	mIpLabel.setText(tr("IP address not found"));
 
 	getParameters();
 
@@ -60,5 +66,20 @@ void WiFiAPWidget::getParameters()
 	QString const passphrase = rcReader.value("trik_wifi_ap_passphrase");
 	if (!passphrase.isEmpty()) {
 		mKeyLabel.setText(tr("Password: ") + passphrase);
+	}
+
+	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+	foreach (QNetworkInterface const &interface, interfaces) {
+		if (interface.name() == "wlan0") {
+			QList<QNetworkAddressEntry> entries = interface.addressEntries();
+			foreach (QNetworkAddressEntry const &entry, entries) {
+				QHostAddress ip = entry.ip();
+				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
+					mIpLabel.setText(tr("IP address: ") + ip.toString());
+					break;
+				}
+			}
+			break;
+		}
 	}
 }
