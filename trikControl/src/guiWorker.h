@@ -15,6 +15,8 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
+#include <QtCore/QHash>
+#include <QtGui/QPixmap>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -45,6 +47,7 @@ public slots:
 private:
 	QWidget mImageWidget;
 	QLabel mImageLabel;
+	QHash<QString, QPixmap> mImagesCache;
 };
 
 }

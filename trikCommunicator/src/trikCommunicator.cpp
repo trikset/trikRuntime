@@ -26,13 +26,13 @@ using namespace trikCommunicator;
 TrikCommunicator::TrikCommunicator(QString const &configFilePath)
 	: mScriptRunnerWrapper(new ScriptRunnerWrapper(configFilePath))
 {
-	qRegisterMetaType<ScriptRunnerWrapper *>("ScriptRunnerWrapper *");
+	init();
 }
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
 	: mScriptRunnerWrapper(new ScriptRunnerWrapper(runner))
 {
-	qRegisterMetaType<ScriptRunnerWrapper *>("ScriptRunnerWrapper *");
+	init();
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -67,6 +67,10 @@ void TrikCommunicator::incomingConnection(int socketDescriptor)
 	connect(connectionThread, SIGNAL(finished()), this, SLOT(onConnectionClosed()));
 
 	Connection * const connectionWorker = new Connection();
+
+	connect(connectionWorker, SIGNAL(startedDirectScript()), this, SIGNAL(startedDirectScript()));
+	connect(connectionWorker, SIGNAL(startedScript(QString)), this, SIGNAL(startedScript(QString)));
+
 	connectionWorker->moveToThread(connectionThread);
 
 	mConnections.insert(connectionThread, connectionWorker);
@@ -85,4 +89,11 @@ void TrikCommunicator::onConnectionClosed()
 	delete mConnections.value(thread);
 
 	mConnections.remove(thread);
+}
+
+void TrikCommunicator::init()
+{
+	qRegisterMetaType<ScriptRunnerWrapper *>("ScriptRunnerWrapper *");
+
+	connect(mScriptRunnerWrapper.data(), SIGNAL(finishedScript()), this, SIGNAL(finishedScript()));
 }

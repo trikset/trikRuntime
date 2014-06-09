@@ -87,3 +87,6 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
 	$$PWD/src/$$PLATFORM/cameraLineDetectorSensor.cpp \
+
+OTHER_FILES += \
+	config.xml \

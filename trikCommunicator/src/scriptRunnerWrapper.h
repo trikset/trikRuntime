@@ -36,6 +36,10 @@ public:
 
 	~ScriptRunnerWrapper();
 
+signals:
+	/// Emitted when script finishes execution and runner returns to "idle" state.
+	void finishedScript();
+
 public slots:
 	/// Execute given script. Note that script is executed in another thread by script engine, so it queues a script
 	/// for execution and returns immediately.

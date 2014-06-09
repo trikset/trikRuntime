@@ -34,13 +34,6 @@ class Connection;
 /// Communication subsystem consists of TrikCommunicator object which runs in main thread and listens for incoming
 /// connections, Connection objects --- one for every connected client, they run in separate threads each, and
 /// ScriptRunnerWrapper object in main thread which processes signals from Connections.
-///
-/// Communicator accepts commands:
-/// - file:<file name>:<file contents> --- save given contents to a file with given name in current directory.
-/// - run:<file name> --- execute a file with given name.
-/// - stop --- stop current script execution and a robot.
-/// - direct:<command> --- execute given script without saving it to a file.
-/// - keepalive --- do nothing, used to check the availability of connection.
 class TrikCommunicator : public QTcpServer
 {
 	Q_OBJECT
@@ -58,6 +51,16 @@ public:
 	/// Starts listening given port on all network interfaces.
 	void startServer(int const &port);
 
+signals:
+	/// Emitted when command to run a script from a file is received.
+	void startedScript(QString const &scriptFileName);
+
+	/// Emitted when command to run script directly is received.
+	void startedDirectScript();
+
+	/// Emitted when script finishes execution.
+	void finishedScript();
+
 protected:
 	void incomingConnection(int socketDescriptor);  // Override.
 
@@ -66,6 +69,9 @@ private slots:
 	void onConnectionClosed();
 
 private:
+	/// Common initialization from constructors.
+	void init();
+
 	/// Script runner object common to all connections.
 	QScopedPointer<ScriptRunnerWrapper> mScriptRunnerWrapper;
 

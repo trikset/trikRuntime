@@ -74,11 +74,13 @@ void Connection::onReadyRead()
 		command.remove(0, QString("run:").length());
 		QString const fileContents = readFromFile(command);
 		QMetaObject::invokeMethod(mScriptRunnerWrapper, "run", Q_ARG(QString, fileContents));
+		emit startedScript(command);
 	} else if (command == "stop") {
 		QMetaObject::invokeMethod(mScriptRunnerWrapper, "stop");
 	} else if (command.startsWith("direct")) {
 		command.remove(0, QString("direct:").length());
 		QMetaObject::invokeMethod(mScriptRunnerWrapper, "run", Q_ARG(QString, command));
+		emit startedDirectScript();
 	}
 }
 

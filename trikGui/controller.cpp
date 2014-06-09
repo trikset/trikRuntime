@@ -31,6 +31,10 @@ Controller::Controller(QString const &configPath)
 	, mExecutionState(idle)
 {
 	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
+
+	connect(&mCommunicator, SIGNAL(startedScript(QString)), this, SLOT(scriptExecutionFromFileStarted(QString)));
+	connect(&mCommunicator, SIGNAL(startedDirectScript()), this, SLOT(directScriptExecutionStarted()));
+
 	mCommunicator.startServer(communicatorPort);
 }
 
@@ -43,9 +47,7 @@ void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
-		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
-		mRunningWidget->show();
-		mExecutionState = running;
+		scriptExecutionFromFileStarted(fileInfo.baseName());
 		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
@@ -74,15 +76,42 @@ void Controller::abortExecution()
 void Controller::scriptExecutionCompleted()
 {
 	if (mExecutionState == running) {
+
+		qDebug() << "Stopping script execution";
+
 		mExecutionState = stopping;
 		mScriptRunner.run("brick.stop()");
 	} else {
 		mExecutionState = idle;
 
+		qDebug() << "Script execution stopped" << mRunningWidget;
+
 		if (mRunningWidget) {
+			qDebug() << "Closing running widget";
 			mRunningWidget->close();
 			delete mRunningWidget;
 			mRunningWidget = NULL;
 		}
 	}
+}
+
+void Controller::scriptExecutionFromFileStarted(QString const &fileName)
+{
+	qDebug() << "Script execution from file started: " << fileName;
+
+	if (mRunningWidget) {
+		mRunningWidget->close();
+		delete mRunningWidget;
+	}
+
+	mRunningWidget = new RunningWidget(fileName, *this);
+	mRunningWidget->show();
+	mExecutionState = running;
+}
+
+void Controller::directScriptExecutionStarted()
+{
+	qDebug() << "Direct script execution started.";
+
+	scriptExecutionFromFileStarted(tr("direct command"));
 }

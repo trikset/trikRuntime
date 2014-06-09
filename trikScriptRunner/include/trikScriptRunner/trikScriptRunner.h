@@ -36,11 +36,12 @@ public:
 
 	~TrikScriptRunner();
 
-	/// Executes given script.
+	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.
 	void run(QString const &script);
 
-	/// Reads a script from given file and asynchronously executes it.
+	/// Reads a script from given file and asynchronously executes it. If some script is already executing, it will be
+	/// aborted.
 	/// @param fileName - name of a file with script.
 	void runFromFile(QString const &fileName);
 

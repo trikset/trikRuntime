@@ -42,9 +42,13 @@ GuiWorker::GuiWorker()
 
 void GuiWorker::showImage(QString const &fileName)
 {
-	QPixmap pixmap(fileName);
-	pixmap = pixmap.scaled(mImageWidget.size() - QSize(20, 20), Qt::KeepAspectRatio);
-	mImageLabel.setPixmap(pixmap);
+	if (!mImagesCache.contains(fileName)) {
+		QPixmap pixmap(fileName);
+		pixmap = pixmap.scaled(mImageWidget.size() - QSize(20, 20), Qt::KeepAspectRatio);
+		mImagesCache.insert(fileName, pixmap);
+	}
+
+	mImageLabel.setPixmap(mImagesCache.value(fileName));
 	mImageWidget.show();
 }
 

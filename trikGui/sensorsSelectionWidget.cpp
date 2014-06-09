@@ -52,12 +52,15 @@ SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
 QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
 {
 	switch (type) {
-		case trikControl::Sensor::analogSensor: {
-			return tr("Test analog sensors");
-		}
-		case trikControl::Sensor::digitalSensor: {
-			return tr("Test digital sensors");
-		}
+	case trikControl::Sensor::analogSensor: {
+		return tr("Test analog sensors");
+	}
+	case trikControl::Sensor::digitalSensor: {
+		return tr("Test digital sensors");
+	}
+	case trikControl::Sensor::specialSensor: {
+		return QString();
+	}
 	}
 
 	return QString();

@@ -43,6 +43,9 @@ public:
 private slots:
 	void scriptExecutionCompleted();
 
+	void scriptExecutionFromFileStarted(QString const &fileName);
+	void directScriptExecutionStarted();
+
 private:
 	enum State {
 		idle

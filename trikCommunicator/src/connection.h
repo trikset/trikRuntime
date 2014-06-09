@@ -24,14 +24,30 @@ class ScriptRunnerWrapper;
 
 /// Class that serves one client of TrikCommunicator. Meant to work in separate thread. Creates its own socket and
 /// handles all incoming messages, calling ScriptRunnerWrapper for brick functionality.
+///
+/// Connection accepts commands:
+/// - file:<file name>:<file contents> --- save given contents to a file with given name in current directory.
+/// - run:<file name> --- execute a file with given name.
+/// - stop --- stop current script execution and a robot.
+/// - direct:<command> --- execute given script without saving it to a file.
+/// - keepalive --- do nothing, used to check the availability of connection.
 class Connection : public QObject {
 	Q_OBJECT
 
 public:
 	Connection();
 
+signals:
+	/// Emitted when command to run a script from a file is received.
+	void startedScript(QString const &scriptFileName);
+
+	/// Emitted when command to run script directly is received.
+	void startedDirectScript();
+
 public slots:
 	/// Creates socket and initializes connection, shall be called when Connection is already in its own thread.
+	/// @param socketDescriptor - native socket descriptor.
+	/// @param scriptRunnerWrapper - instance of script runner object.
 	void init(int socketDescriptor, ScriptRunnerWrapper *scriptRunnerWrapper);
 
 private slots:

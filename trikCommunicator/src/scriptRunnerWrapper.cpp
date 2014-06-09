@@ -61,5 +61,6 @@ void ScriptRunnerWrapper::onScriptExecutionCompleted()
 		mRunner->run("brick.stop()");
 	} else {
 		mExecutionState = idle;
+		emit finishedScript();
 	}
 }

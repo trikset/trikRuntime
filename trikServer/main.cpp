@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	qDebug() << "Running TrikServer on port" << port;
 
 	trikCommunicator::TrikCommunicator communicator(configPath);
-	communicator.listen(port);
+	communicator.startServer(port);
 
 	return app.exec();
 }
