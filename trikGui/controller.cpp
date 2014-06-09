@@ -31,7 +31,7 @@ Controller::Controller(QString const &configPath)
 	, mExecutionState(idle)
 {
 	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
-	mCommunicator.listen(communicatorPort);
+	mCommunicator.startServer(communicatorPort);
 }
 
 Controller::~Controller()

@@ -35,6 +35,10 @@ LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX
 
 HEADERS += \
 	$$PWD/include/trikCommunicator/trikCommunicator.h \
+	$$PWD/src/connection.h \
+	$$PWD/src/scriptRunnerWrapper.h \
 
 SOURCES += \
 	$$PWD/src/trikCommunicator.cpp \
+	$$PWD/src/connection.cpp \
+	$$PWD/src/scriptRunnerWrapper.cpp \

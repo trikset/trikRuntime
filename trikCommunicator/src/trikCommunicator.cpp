@@ -18,155 +18,71 @@
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 
-#include <trikScriptRunner/trikScriptRunner.h>
+#include "src/scriptRunnerWrapper.h"
+#include "src/connection.h"
 
 using namespace trikCommunicator;
 
 TrikCommunicator::TrikCommunicator(QString const &configFilePath)
-	: mConnection(NULL)
-	, mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath))
-	, mOwnsRunner(true)
-	, mExecutionState(idle)
+	: mScriptRunnerWrapper(new ScriptRunnerWrapper(configFilePath))
 {
-	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
+	qRegisterMetaType<ScriptRunnerWrapper *>("ScriptRunnerWrapper *");
 }
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
-	: mConnection(NULL)
-	, mRunner(&runner)
-	, mOwnsRunner(false)
-	, mExecutionState(idle)
+	: mScriptRunnerWrapper(new ScriptRunnerWrapper(runner))
 {
-	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
+	qRegisterMetaType<ScriptRunnerWrapper *>("ScriptRunnerWrapper *");
 }
 
 TrikCommunicator::~TrikCommunicator()
 {
-	delete mConnection;
-	if (mOwnsRunner) {
-		delete mRunner;
-	}
-}
-
-QString TrikCommunicator::readFromFile(QString const &fileName)
-{
-	QFile file(fileName);
-	file.open(QIODevice::ReadOnly | QIODevice::Text);
-	if (!file.isOpen()) {
-		throw "Reading failed";
-	}
-
-	QTextStream input;
-	input.setDevice(&file);
-	input.setCodec("UTF-8");
-	QString const result = input.readAll();
-	file.close();
-	return result;
-}
-
-void TrikCommunicator::writeToFile(QString const &fileName, QString const &contents)
-{
-	QFile file(fileName);
-	file.open(QIODevice::WriteOnly | QIODevice::Text);
-	if (!file.isOpen()) {
-		throw "File open operation failed";
-	}
-
-	QTextStream stream(&file);
-	stream.setCodec("UTF-8");
-	stream << contents;
-	file.close();
-}
-
-void TrikCommunicator::listen(int const &port)
-{
-	connect(&mServer, SIGNAL(newConnection()), this, SLOT(onNewConnection()));
-	mServer.listen(QHostAddress::Any, port);
-}
-
-void TrikCommunicator::onNewConnection()
-{
-
-	if (!mConnection) {
-		qDebug() << "New connection";
-
-		mConnection = mServer.nextPendingConnection();
-
-		if (mConnection) {
-			connect(mConnection, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
-			connect(mConnection, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-
-			if (mConnection->bytesAvailable() > 0) {
-				onReadyRead();
-			}
+	foreach (QThread *thread, mConnections.keys()) {
+		thread->quit();
+		if (!thread->wait(1000)) {
+			qDebug() << "Unable to stop thread" << thread;
 		}
 	}
+
+	qDeleteAll(mConnections);
+	qDeleteAll(mConnections.keys());
 }
 
-void TrikCommunicator::onDisconnected()
+void TrikCommunicator::startServer(int const &port)
 {
-	qDebug() << "Disconnected";
-
-	if (mConnection) {
-		mConnection->deleteLater();
-		mConnection = NULL;
-	}
-
-	if (mServer.hasPendingConnections()) {
-		onNewConnection();
-	}
-}
-
-void TrikCommunicator::onReadyRead()
-{
-	if (!mConnection || !mConnection->isValid()) {
-		return;
-	}
-
-	QByteArray const &data = mConnection->readAll();
-	QString command(data);
-
-	if (!command.startsWith("keepalive")) {
-		// Discard "keepalive" output.
-		qDebug() << "Command: " << command;
-	}
-
-	if (command.startsWith("file")) {
-		command.remove(0, QString("file:").length());
-		int const separatorPosition = command.indexOf(':');
-		if (separatorPosition == -1) {
-			// TODO: Add logging and don't crash server.
-
-			qDebug() << "Malformed 'file' command";
-
-			throw "Malformed command";
-		}
-
-		QString const fileName = command.left(separatorPosition);
-		QString const fileContents = command.mid(separatorPosition + 1);
-		writeToFile(fileName, fileContents);
-	} else if (command.startsWith("run")) {
-		command.remove(0, QString("run:").length());
-		QString const fileContents = readFromFile(command);
-		mExecutionState = running;
-		mRunner->run(fileContents);
-	} else if (command == "stop") {
-		mExecutionState = stopping;
-		mRunner->abort();
-		mRunner->run("brick.stop()");
-	} else if (command.startsWith("direct")) {
-		command.remove(0, QString("direct:").length());
-		mExecutionState = running;
-		mRunner->run(command);
-	}
-}
-
-void TrikCommunicator::onScriptExecutionCompleted()
-{
-	if (mExecutionState == running) {
-		mExecutionState = stopping;
-		mRunner->run("brick.stop()");
+	if (!listen(QHostAddress::Any, port)) {
+		qDebug() << "Can not start TrikCommunicator server";
 	} else {
-		mExecutionState = idle;
+		qDebug() << "TrikCommunicator started";
 	}
+}
+
+void TrikCommunicator::incomingConnection(int socketDescriptor)
+{
+	qDebug() << "New connection, socket descriptor: " << socketDescriptor;
+
+	QThread * const connectionThread = new QThread();
+
+	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
+	connect(connectionThread, SIGNAL(finished()), this, SLOT(onConnectionClosed()));
+
+	Connection * const connectionWorker = new Connection();
+	connectionWorker->moveToThread(connectionThread);
+
+	mConnections.insert(connectionThread, connectionWorker);
+
+	connectionThread->start();
+
+	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor)
+			, Q_ARG(ScriptRunnerWrapper *, mScriptRunnerWrapper.data()));
+}
+
+void TrikCommunicator::onConnectionClosed()
+{
+	QThread * const thread = static_cast<QThread *>(sender());
+
+	// Thread shall already be finished here.
+	delete mConnections.value(thread);
+
+	mConnections.remove(thread);
 }

@@ -15,6 +15,9 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <QtCore/QHash>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QThread>
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 
@@ -24,53 +27,50 @@ class TrikScriptRunner;
 
 namespace trikCommunicator {
 
-/// Class that keeps connection with a client running on computer (TrikLab or remote control).
-/// Accepts commands:
-/// - file:<file name>:<file contents>
-/// - run:<file name>
-/// - stop
-/// - direct:<command>
-/// - keepalive
-class TrikCommunicator : public QObject
+class ScriptRunnerWrapper;
+class Connection;
+
+/// Class that enables connection with a client running on computer (TrikLab or remote control).
+/// Communication subsystem consists of TrikCommunicator object which runs in main thread and listens for incoming
+/// connections, Connection objects --- one for every connected client, they run in separate threads each, and
+/// ScriptRunnerWrapper object in main thread which processes signals from Connections.
+///
+/// Communicator accepts commands:
+/// - file:<file name>:<file contents> --- save given contents to a file with given name in current directory.
+/// - run:<file name> --- execute a file with given name.
+/// - stop --- stop current script execution and a robot.
+/// - direct:<command> --- execute given script without saving it to a file.
+/// - keepalive --- do nothing, used to check the availability of connection.
+class TrikCommunicator : public QTcpServer
 {
 	Q_OBJECT
 
 public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
-	TrikCommunicator(QString const &configFilePath);
+	explicit TrikCommunicator(QString const &configFilePath);
 
-	/// Constructor that accepts external script runner and issues commands to it. Takes ownership of a runner.
+	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
 
 	~TrikCommunicator();
 
 	/// Starts listening given port on all network interfaces.
-	void listen(int const &port);
+	void startServer(int const &port);
+
+protected:
+	void incomingConnection(int socketDescriptor);  // Override.
 
 private slots:
-	void onNewConnection();
-	void onDisconnected();
-	void onReadyRead();
-
-	/// Called when script runner reports that it has finished execution. Used to stop robot.
-	void onScriptExecutionCompleted();
+	/// Called when connection thread finishes.
+	void onConnectionClosed();
 
 private:
-	enum State {
-		idle
-		, running
-		, stopping
-	};
+	/// Script runner object common to all connections.
+	QScopedPointer<ScriptRunnerWrapper> mScriptRunnerWrapper;
 
-	static QString readFromFile(QString const &fileName);
-	static void writeToFile(QString const &fileName, QString const &contents);
-
-	QTcpServer mServer;
-	QTcpSocket* mConnection;  // Has ownership.
-	trikScriptRunner::TrikScriptRunner *mRunner;  // Has or doesn't have ownership, depending on mOwnsRunner.
-	bool const mOwnsRunner;
-	State mExecutionState;
+	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
+	QHash<QThread *, Connection *> mConnections;  // Has ownership on threads and connections.
 };
 
 }
