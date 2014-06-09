@@ -39,8 +39,6 @@ void Connection::init(int socketDescriptor, ScriptRunnerWrapper *scriptRunnerWra
 
 	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(disconnected()));
-
-	qDebug() << socketDescriptor << "connected";
 }
 
 void Connection::onReadyRead()

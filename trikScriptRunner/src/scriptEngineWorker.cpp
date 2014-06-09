@@ -73,7 +73,6 @@ void ScriptEngineWorker::run(QString const &script)
 	runAndReportException(script);
 
 	if (!mBrick.isInEventDrivenMode()) {
-		qDebug() << "Sending completed from ScriptEngineWorker::run: " << script;
 		emit completed();
 	}
 }
@@ -106,7 +105,6 @@ bool ScriptEngineWorker::isInEventDrivenMode() const
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	abort();
-	qDebug() << "Sending completed from ScriptEngineWorker::onScriptRequestingToQuit";
 	emit completed();
 }
 

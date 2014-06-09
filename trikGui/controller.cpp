@@ -76,18 +76,11 @@ void Controller::abortExecution()
 void Controller::scriptExecutionCompleted()
 {
 	if (mExecutionState == running) {
-
-		qDebug() << "Stopping script execution";
-
 		mExecutionState = stopping;
 		mScriptRunner.run("brick.stop()");
 	} else {
 		mExecutionState = idle;
-
-		qDebug() << "Script execution stopped" << mRunningWidget;
-
 		if (mRunningWidget) {
-			qDebug() << "Closing running widget";
 			mRunningWidget->close();
 			delete mRunningWidget;
 			mRunningWidget = NULL;
@@ -97,8 +90,6 @@ void Controller::scriptExecutionCompleted()
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 {
-	qDebug() << "Script execution from file started: " << fileName;
-
 	if (mRunningWidget) {
 		mRunningWidget->close();
 		delete mRunningWidget;
@@ -111,7 +102,5 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 
 void Controller::directScriptExecutionStarted()
 {
-	qDebug() << "Direct script execution started.";
-
 	scriptExecutionFromFileStarted(tr("direct command"));
 }
