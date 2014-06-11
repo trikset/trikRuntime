@@ -34,6 +34,8 @@ trikControl::Display::Display(QThread &guiThread)
 	mGuiWorker->moveToThread(&guiThread);
 
 	connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
+	connect(this, SIGNAL(threadAddLabel(QString, int, int)), mGuiWorker, SLOT(addLabel(QString, int, int)));
+	connect(this, SIGNAL(threadRemoveLabels()), mGuiWorker, SLOT(removeLabels()));
 	connect(this, SIGNAL(threadSetBackground(QString)), mGuiWorker, SLOT(setBackground(QString)));
 	connect(this, SIGNAL(threadHide()), mGuiWorker, SLOT(hide()));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
@@ -48,6 +50,16 @@ trikControl::Display::~Display()
 void trikControl::Display::showImage(QString const &fileName)
 {
 	emit threadShowImage(fileName);
+}
+
+void Display::addLabel(const QString &text, int x, int y)
+{
+	emit threadAddLabel(text, x, y);
+}
+
+void Display::removeLabels()
+{
+	emit threadRemoveLabels();
 }
 
 void trikControl::Display::smile()

@@ -40,6 +40,10 @@ public slots:
 	/// supported formats, but .jpg, .png, .bmp, .gif are supported.
 	void showImage(QString const &fileName);
 
+	void addLabel(QString const &text, int x, int y);
+
+	void removeLabels();
+
 	/// Shortcut to showImage, shows happy smile.
 	void smile();
 
@@ -54,6 +58,8 @@ public slots:
 
 signals:
 	void threadShowImage(QString const &fileName);
+	void threadAddLabel(QString const &text, int x, int y);
+	void threadRemoveLabels();
 	void threadSetBackground(QString const &color);
 	void threadHide();
 	void threadDelete();

@@ -16,6 +16,7 @@
 
 #include <QtCore/qglobal.h>
 #include <QtCore/QHash>
+#include <QtCore/QList>
 #include <QtGui/QPixmap>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -37,6 +38,8 @@ public:
 
 public slots:
 	void showImage(QString const &fileName);
+	void addLabel(QString const &text, int x, int y);
+	void removeLabels();
 	void deleteWorker();
 	void hide();
 
@@ -48,6 +51,7 @@ private:
 	QWidget mImageWidget;
 	QLabel mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
+	QList<QLabel *> mLabels;
 };
 
 }

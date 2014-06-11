@@ -52,6 +52,25 @@ void GuiWorker::showImage(QString const &fileName)
 	mImageWidget.show();
 }
 
+void GuiWorker::addLabel(const QString &text, int x, int y)
+{
+	QLabel *label = new QLabel(&mImageWidget);
+	label->setText(text);
+	label->setGeometry(x, y, label->width(), label->height());
+	label->show();
+	mLabels.append(label);
+	mImageWidget.show();
+}
+
+void GuiWorker::removeLabels()
+{
+	foreach (QLabel *label, mLabels) {
+		label->close();
+		delete label;
+	}
+	mLabels.clear();
+}
+
 void GuiWorker::deleteWorker()
 {
 	deleteLater();
