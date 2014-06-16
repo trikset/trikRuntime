@@ -31,6 +31,8 @@ public:
 	/// @param keysPath - path to device file that controls brick keys.
 	KeysWorker(QString const &keysPath);
 
+	void reset();
+
 public slots:
 	bool wasPressed(int code);
 

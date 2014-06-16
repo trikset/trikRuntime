@@ -35,6 +35,11 @@ KeysWorker::KeysWorker(QString const &keysPath)
 	mSocketNotifier->setEnabled(true);
 }
 
+void KeysWorker::reset()
+{
+	mWasPressed.clear();
+}
+
 bool KeysWorker::wasPressed(int code)
 {
 	mLock.lockForRead();

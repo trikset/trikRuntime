@@ -150,6 +150,13 @@ Brick::~Brick()
 	delete mGamepad;
 }
 
+void Brick::reset()
+{
+	stop();
+	mKeys->reset();
+	// TODO: Clear screen.
+}
+
 void Brick::playSound(QString const &soundFileName)
 {
 	qDebug() << soundFileName;
