@@ -15,7 +15,7 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtCore/QHash>
+#include <QtCore/QMultiHash>
 #include <QtCore/QList>
 #include <QtGui/QPixmap>
 
@@ -29,6 +29,7 @@
 
 namespace trikControl {
 
+/// Works in GUI thread and is responsible for all output to display.
 class GuiWorker : public QObject
 {
 	Q_OBJECT
@@ -37,10 +38,24 @@ public:
 	GuiWorker();
 
 public slots:
+	/// Shows image with given filename on display. Image is scaled to fill the screen and is cached on first read
+	/// for better performance.
 	void showImage(QString const &fileName);
+
+	/// Add a label to the specific position of the screen. If there already is a label in these coordinates, its
+	/// contents will be updated.
+	/// @param text - label text.
+	/// @param x - label x coordinate.
+	/// @param y - label y coordinate.
 	void addLabel(QString const &text, int x, int y);
+
+	/// Remove all labels from the screen.
 	void removeLabels();
+
+	/// Queues worker object for deletion. It is actually deleted when control flow returns to event loop.
 	void deleteWorker();
+
+	/// Hides image widget.
 	void hide();
 
 	/// Sets background for a picture.
@@ -48,10 +63,13 @@ public slots:
 	void setBackground(QString const &color);
 
 private:
+	/// Returns existing label with given coordinates or NULL if no such label exists.
+	QLabel *findLabel(int x, int y) const;
+
 	QWidget mImageWidget;
 	QLabel mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
-	QList<QLabel *> mLabels; // Has ownership.
+	QMultiHash<int, QLabel *> mLabels; // Has ownership.
 };
 
 }

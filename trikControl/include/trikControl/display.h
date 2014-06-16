@@ -40,9 +40,11 @@ public slots:
 	/// supported formats, but .jpg, .png, .bmp, .gif are supported.
 	void showImage(QString const &fileName);
 
-	/// Add a label to the specific position of the screen.
+	/// Add a label to the specific position of the screen. If there already is a label in these coordinates, its
+	/// contents will be updated.
 	/// @param text - label text.
-	/// @param x @param y - label coordinates.
+	/// @param x - label x coordinate.
+	/// @param y - label y coordinate.
 	void addLabel(QString const &text, int x, int y);
 
 	/// Remove all labels from the screen.

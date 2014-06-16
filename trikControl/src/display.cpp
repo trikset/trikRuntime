@@ -52,7 +52,7 @@ void trikControl::Display::showImage(QString const &fileName)
 	emit threadShowImage(fileName);
 }
 
-void Display::addLabel(const QString &text, int x, int y)
+void Display::addLabel(QString const &text, int x, int y)
 {
 	emit threadAddLabel(text, x, y);
 }
