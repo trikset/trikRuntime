@@ -51,7 +51,7 @@ private:
 	QWidget mImageWidget;
 	QLabel mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
-	QList<QLabel *> mLabels;
+	QList<QLabel *> mLabels; // Has ownership.
 };
 
 }
