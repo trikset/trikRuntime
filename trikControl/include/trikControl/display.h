@@ -40,8 +40,12 @@ public slots:
 	/// supported formats, but .jpg, .png, .bmp, .gif are supported.
 	void showImage(QString const &fileName);
 
+	/// Add a label to the specific position of the screen.
+	/// @param text - label text.
+	/// @param x @param y - label coordinates.
 	void addLabel(QString const &text, int x, int y);
 
+	/// Remove all labels from the screen.
 	void removeLabels();
 
 	/// Shortcut to showImage, shows happy smile.
