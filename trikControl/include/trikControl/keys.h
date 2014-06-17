@@ -36,6 +36,7 @@ public:
 
 	~Keys();
 
+	/// Clear data about previous key pressures.
 	void reset();
 
 public slots:

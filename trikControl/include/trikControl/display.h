@@ -62,6 +62,7 @@ public slots:
 
 	void hide();
 
+	/// Clear everything painted with this object.
 	void clear();
 
 signals:

@@ -62,6 +62,7 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	/// Clear everything painted with this object.
 	void clear();
 
 private:
