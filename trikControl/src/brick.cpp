@@ -154,6 +154,7 @@ void Brick::reset()
 {
 	stop();
 	mKeys->reset();
+	mInEventDrivenMode = false;
 	// TODO: Clear screen.
 }
 
@@ -335,9 +336,4 @@ void Brick::system(QString const &command)
 	args << "-c" << command;
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
-}
-
-void Brick::resetEventDrivenMode()
-{
-	mInEventDrivenMode = false;
 }

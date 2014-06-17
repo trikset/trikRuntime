@@ -64,9 +64,6 @@ public:
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
 
-	/// Clears event driven mode, returning brick to a state where a script will exit immediately.
-	void resetEventDrivenMode();
-
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).
 	void playSound(QString const &soundFileName);

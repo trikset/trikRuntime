@@ -115,7 +115,6 @@ void ScriptEngineWorker::initScriptEngine()
 	connect(mEngine, SIGNAL(destroyed()), this, SLOT(onScriptEngineDestroyed()));
 
 	mBrick.reset();
-	mBrick.resetEventDrivenMode(); // move it to Brick::reset()
 
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
