@@ -20,10 +20,9 @@
 # FILES_TO_COPY variable for a list of additional files and directories which needed to be copied after build to
 #		target directory.
 
-QT_INSTALL_DIR = $$[QT_INSTALL_PREFIX]
-TRIK_SDK_USAGE = $$find(QT_INSTALL_DIR, "trik-sdk")
+CROSS_COMPILE = $$(CROSS_COMPILE)
 
-count(TRIK_SDK_USAGE, 1) {
+!isEmpty(CROSS_COMPILE) {
 	ARCHITECTURE = arm
 } else {
 	ARCHITECTURE = x86
