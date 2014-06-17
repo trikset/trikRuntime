@@ -38,6 +38,7 @@ GuiWorker::GuiWorker()
 	mImageWidget.setLayout(layout);
 	mImageWidget.setWindowState(Qt::WindowFullScreen);
 	mImageWidget.setWindowFlags(mImageWidget.windowFlags() | Qt::WindowStaysOnTopHint);
+	resetBackground();
 }
 
 void GuiWorker::showImage(QString const &fileName)
@@ -127,12 +128,19 @@ void GuiWorker::setBackground(QString const &color)
 	mImageWidget.show();
 }
 
+void GuiWorker::resetBackground()
+{
+	QPalette palette = mImageWidget.palette();
+	palette.setColor(QPalette::Window, Qt::lightGray);
+	mImageWidget.setPalette(palette);
+}
+
 void GuiWorker::clear()
 {
-	// TODO: Restore background color.
+	mImageWidget.hide();
 	removeLabels();
 	mImageLabel.setPixmap(QPixmap());
-	mImageWidget.hide();
+	resetBackground();
 }
 
 void GuiWorker::hide()

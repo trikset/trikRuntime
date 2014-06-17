@@ -65,6 +65,8 @@ public slots:
 	void clear();
 
 private:
+	void resetBackground();
+
 	/// Returns existing label with given coordinates or NULL if no such label exists.
 	QLabel *findLabel(int x, int y) const;
 
