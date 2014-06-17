@@ -122,6 +122,14 @@ void GuiWorker::setBackground(QString const &color)
 	mImageWidget.show();
 }
 
+void GuiWorker::clear()
+{
+	// TODO: Restore background color.
+	removeLabels();
+	mImageLabel.setPixmap(QPixmap());
+	mImageWidget.hide();
+}
+
 void GuiWorker::hide()
 {
 	mImageWidget.hide();

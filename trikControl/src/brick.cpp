@@ -154,8 +154,8 @@ void Brick::reset()
 {
 	stop();
 	mKeys->reset();
+	mDisplay.clear();
 	mInEventDrivenMode = false;
-	// TODO: Clear screen.
 }
 
 void Brick::playSound(QString const &soundFileName)

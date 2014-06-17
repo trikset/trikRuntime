@@ -47,6 +47,8 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	void clear();
+
 private:
 	QWidget mImageWidget;
 	QLabel mImageLabel;
