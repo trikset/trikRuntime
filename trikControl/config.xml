@@ -50,7 +50,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	     Motor type parameters like calibration curve are described separately, in "motorTypes" section. -->
 	<servoMotors>
 		<servoMotor
-			port="JE1"
+			port="E1"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
 			period="20000000"
@@ -58,7 +58,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			invert="false"
 		/>
 		<servoMotor
-			port="JE2"
+			port="E2"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
 			period="20000000"
@@ -66,7 +66,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			invert="false"
 		/>
 		<servoMotor
-			port="JE3"
+			port="E3"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
 			period="20000000"
@@ -74,7 +74,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			invert="false"
 		/>
 		<servoMotor
-			port="JC1"
+			port="C1"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 			period="20000000"
@@ -82,7 +82,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			invert="false"
 		/>
 		<servoMotor
-			port="JC2"
+			port="C2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 			period="20000000"
@@ -90,7 +90,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 			invert="false"
 		/>
 		<servoMotor
-			port="JC3"
+			port="C3"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 			period="20000000"
@@ -102,17 +102,17 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<pwmCaptures>
 <!--
 		<capture
-			port="JC1"
+			port="C1"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
 		<capture
-			port="JC2"
+			port="C2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
 		/>
 		<capture
-			port="JC3"
+			port="C3"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
@@ -124,10 +124,10 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	     Power motors do not have a type, because their driver is controlled by high-level 
 	     commands and handles motor specifics by itself. -->
 	<powerMotors>
-		<powerMotor port="JM1" i2cCommandNumber="0x14" invert="false" />
-		<powerMotor port="JM2" i2cCommandNumber="0x15" invert="false" />
-		<powerMotor port="M1" i2cCommandNumber="0x16" invert="true" />
-		<powerMotor port="JM3" i2cCommandNumber="0x17" invert="false" />
+		<powerMotor port="M1" i2cCommandNumber="0x14" invert="false" />
+		<powerMotor port="M2" i2cCommandNumber="0x15" invert="false" />
+		<powerMotor port="M3" i2cCommandNumber="0x16" invert="true" />
+		<powerMotor port="M4" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
 
 	<!-- Aanalog sensors configuration, maps logical port to I2C command. 
@@ -135,20 +135,20 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	     Analog sensors do not have a type, because their driver is controlled by high-level 
 	     commands and handles sensor specifics by itself. -->
 	<analogSensors>
-		<analogSensor port="JA1" i2cCommandNumber="0x25" />
-		<analogSensor port="JA2" i2cCommandNumber="0x24" />
-		<analogSensor port="JA3" i2cCommandNumber="0x23" />
-		<analogSensor port="JA4" i2cCommandNumber="0x22" />
-		<analogSensor port="JA5" i2cCommandNumber="0x21" />
-		<analogSensor port="JA6" i2cCommandNumber="0x20" />
+		<analogSensor port="A1" i2cCommandNumber="0x25" />
+		<analogSensor port="A2" i2cCommandNumber="0x24" />
+		<analogSensor port="A3" i2cCommandNumber="0x23" />
+		<analogSensor port="A4" i2cCommandNumber="0x22" />
+		<analogSensor port="A5" i2cCommandNumber="0x21" />
+		<analogSensor port="A6" i2cCommandNumber="0x20" />
 	</analogSensors>
 
 	<!-- Encoders configuration, maps logical port to I2C command. 
 	     I2C device path and device id are set separately, in "i2c" section. -->
 	<encoders>
-		<encoder port="JB2" i2cCommandNumber="0x31" />
-		<encoder port="JB4" i2cCommandNumber="0x32" />
-		<encoder port="JB3" i2cCommandNumber="0x33" />
+		<encoder port="B2" i2cCommandNumber="0x31" />
+		<encoder port="B4" i2cCommandNumber="0x32" />
+		<encoder port="B3" i2cCommandNumber="0x33" />
 	</encoders>
 	
 	<!-- Description of servo motor types used in servo motors mapping. Supplied values correspond to 
@@ -164,8 +164,8 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<!-- Digital sensors configuration, maps logical port to digital sensor device file and digital sensor type used by default 
 	     (if not configured programmatically). -->
 	<digitalSensors>
-<!--		<digitalSensor port="JD1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
-		<digitalSensor port="JD2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" /> -->
+<!--		<digitalSensor port="D1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
+		<digitalSensor port="D2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" /> -->
 		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" defaultType="volumeSensor" />
 		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" />
 		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
