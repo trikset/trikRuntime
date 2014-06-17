@@ -52,22 +52,27 @@ void GuiWorker::showImage(QString const &fileName)
 	mImageWidget.show();
 }
 
-void GuiWorker::addLabel(const QString &text, int x, int y)
+void GuiWorker::addLabel(QString const &text, int x, int y)
 {
-	QLabel *label = new QLabel(&mImageWidget);
+	QLabel *label = findLabel(x, y);
+	label = label ? label : new QLabel(&mImageWidget);
 	label->setText(text);
 	label->setGeometry(x, y, label->width(), label->height());
 	label->show();
-	mLabels.append(label);
+	if (!mLabels.contains(x ^ y, label)) {
+		mLabels.insertMulti(x ^ y, label);
+	}
+
 	mImageWidget.show();
 }
 
 void GuiWorker::removeLabels()
 {
-	foreach (QLabel *label, mLabels) {
+	foreach (QLabel * const label, mLabels.values()) {
 		label->close();
 		delete label;
 	}
+
 	mLabels.clear();
 }
 
@@ -135,3 +140,13 @@ void GuiWorker::hide()
 	mImageWidget.hide();
 }
 
+QLabel *GuiWorker::findLabel(int x, int y) const
+{
+	foreach (QLabel * const label, mLabels.values(x ^ y)) {
+		if (label->x() == x && label->y() == y) {
+			return label;
+		}
+	}
+
+	return NULL;
+}
