@@ -58,12 +58,13 @@ public:
 
 	~Brick();
 
+	/// Do reset (stop motors, reset keys, clear screen, etc). We should call it before executing any script
+	/// with this Brick instance.
+	void reset();
+
 	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
-
-	/// Clears event driven mode, returning brick to a state where a script will exit immediately.
-	void resetEventDrivenMode();
 
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).

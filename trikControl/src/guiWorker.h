@@ -62,7 +62,12 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	/// Clear everything painted with this object.
+	void clear();
+
 private:
+	void resetBackground();
+
 	/// Returns existing label with given coordinates or NULL if no such label exists.
 	QLabel *findLabel(int x, int y) const;
 

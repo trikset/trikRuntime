@@ -32,6 +32,11 @@ Keys::~Keys()
 	mWorkerThread.wait();
 }
 
+void Keys::reset()
+{
+	mKeysWorker->reset();
+}
+
 bool Keys::wasPressed(int code)
 {
 	return mKeysWorker->wasPressed(code);

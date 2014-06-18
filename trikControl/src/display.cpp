@@ -39,6 +39,7 @@ trikControl::Display::Display(QThread &guiThread)
 	connect(this, SIGNAL(threadSetBackground(QString)), mGuiWorker, SLOT(setBackground(QString)));
 	connect(this, SIGNAL(threadHide()), mGuiWorker, SLOT(hide()));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
+	connect(this, SIGNAL(threadClear()), mGuiWorker, SLOT(clear()));
 }
 
 trikControl::Display::~Display()
@@ -80,4 +81,9 @@ void trikControl::Display::setBackground(QString const &color)
 void trikControl::Display::hide()
 {
 	emit threadHide();
+}
+
+void Display::clear()
+{
+	emit threadClear();
 }
