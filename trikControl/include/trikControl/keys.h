@@ -36,6 +36,9 @@ public:
 
 	~Keys();
 
+	/// Clear data about previous key pressures.
+	void reset();
+
 public slots:
 	/// Returns true, if button with given code was pressed, and clears "pressed" state for that button.
 	bool wasPressed(int code);

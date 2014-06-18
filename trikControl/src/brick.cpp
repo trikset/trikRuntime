@@ -150,6 +150,14 @@ Brick::~Brick()
 	delete mGamepad;
 }
 
+void Brick::reset()
+{
+	stop();
+	mKeys->reset();
+	mDisplay.clear();
+	mInEventDrivenMode = false;
+}
+
 void Brick::playSound(QString const &soundFileName)
 {
 	qDebug() << soundFileName;
@@ -328,9 +336,4 @@ void Brick::system(QString const &command)
 	args << "-c" << command;
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
-}
-
-void Brick::resetEventDrivenMode()
-{
-	mInEventDrivenMode = false;
 }

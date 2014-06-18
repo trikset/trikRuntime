@@ -62,6 +62,9 @@ public slots:
 
 	void hide();
 
+	/// Clear everything painted with this object.
+	void clear();
+
 signals:
 	void threadShowImage(QString const &fileName);
 	void threadAddLabel(QString const &text, int x, int y);
@@ -69,6 +72,7 @@ signals:
 	void threadSetBackground(QString const &color);
 	void threadHide();
 	void threadDelete();
+	void threadClear();
 
 private:
 	QThread &mGuiThread;
