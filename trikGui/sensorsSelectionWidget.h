@@ -59,6 +59,8 @@ private:
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QListWidget mList;
+
+	/// @todo Why it needs its own brick?
 	trikControl::Brick mBrick;
 };
 

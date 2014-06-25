@@ -61,6 +61,8 @@ protected:
 
 private:
 	QVBoxLayout mLayout;
+
+	/// @todo Why does it need its own brick?
 	trikControl::Brick mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.

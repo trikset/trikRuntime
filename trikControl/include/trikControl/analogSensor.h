@@ -30,6 +30,9 @@ class TRIKCONTROL_EXPORT AnalogSensor : public Sensor
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param communicator - I2C communicator to use to query sensor.
+	/// @param i2cCommandNumber - number of i2c command corresponding to that sensor.
 	AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber);
 
 public slots:

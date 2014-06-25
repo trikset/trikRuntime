@@ -37,6 +37,7 @@ namespace trikGui {
 
 class SensorIndicator;
 
+/// Widget that shows current readings of selected sensors.
 class SensorsWidget : public TrikGuiDialog
 {
 	Q_OBJECT
@@ -53,7 +54,7 @@ protected:
 private:
 	trikControl::Brick &mBrick;
 	QVBoxLayout mLayout;
-	QVector<SensorIndicator *> mIndicators;
+	QVector<SensorIndicator *> mIndicators;  // Has ownership.
 	int const mInterval;
 	QTimer mTimer;
 };

@@ -38,7 +38,7 @@ public:
 	virtual ~Gamepad();
 
 signals:
-	// ??!
+	/// @todo ??!
 	void padUp(int pad);
 	void wheel(int percent);
 	void pad(int pad, int x, int y);

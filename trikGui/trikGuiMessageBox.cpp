@@ -18,7 +18,7 @@
 
 using namespace trikGui;
 
-MessageBox::MessageBox(QWidget *parent)
+TrikGuiMessageBox::TrikGuiMessageBox(QWidget *parent)
 	: QWidget(parent)
 {
 	mLayout.addWidget(&mMessageLabel);
@@ -28,14 +28,14 @@ MessageBox::MessageBox(QWidget *parent)
 }
 
 
-int MessageBox::exec(QString const &message)
+int TrikGuiMessageBox::exec(QString const &message)
 {
 	mMessageLabel.setText(message);
 	show();
 	return mEventLoop.exec();
 }
 
-void MessageBox::keyPressEvent(QKeyEvent *event)
+void TrikGuiMessageBox::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Return:
