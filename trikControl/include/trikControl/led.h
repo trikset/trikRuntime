@@ -22,6 +22,7 @@
 
 namespace trikControl {
 
+/// Controls light-emitting diode on control brick.
 class TRIKCONTROL_EXPORT Led : public QObject
 {
 	Q_OBJECT
@@ -33,12 +34,16 @@ public:
 	~Led();
 
 public slots:
+	/// Trun LED on with red color.
 	void red();
 
+	/// Trun LED on with green color.
 	void green();
 
+	/// Trun LED on with orange color.
 	void orange();
 
+	/// Turn LED off.
 	void off();
 
 private:

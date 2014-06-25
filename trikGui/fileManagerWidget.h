@@ -47,6 +47,7 @@ public:
 	explicit FileManagerWidget(Controller &controller, QWidget *parent = 0);
 	~FileManagerWidget();
 
+	/// Returns main menu entry string for this widget.
 	static QString menuEntry();
 
 protected:

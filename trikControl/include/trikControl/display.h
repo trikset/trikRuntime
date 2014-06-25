@@ -60,6 +60,7 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	/// Hides and clears widget on which everything is drawn.
 	void hide();
 
 	/// Clear everything painted with this object.

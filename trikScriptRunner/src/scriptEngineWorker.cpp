@@ -15,6 +15,7 @@
 #include "scriptEngineWorker.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QFile>
 
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
@@ -66,7 +67,7 @@ void ScriptEngineWorker::run(QString const &script)
 	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
-	if (FileUtils::fileExists(mConfigFilePath + "system.js")) {
+	if (QFile::exists(mConfigFilePath + "system.js")) {
 		runAndReportException(FileUtils::readFromFile(mConfigFilePath + "system.js"));
 	}
 

@@ -36,8 +36,3 @@ QString FileUtils::readFromFile(QString const &fileName)
 
 	return result;
 }
-
-bool FileUtils::fileExists(QString const &fileName)
-{
-	return QFile::exists(fileName);
-}

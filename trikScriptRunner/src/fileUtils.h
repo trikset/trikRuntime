@@ -18,11 +18,12 @@
 
 namespace trikScriptRunner {
 
+/// Helper class with file helper functions.
 class FileUtils
 {
 public:
+	/// Reads all file contents and returns it as sting or throws an exception.
 	static QString readFromFile(QString const &fileName);
-	static bool fileExists(QString const &fileName);
 };
 
 }

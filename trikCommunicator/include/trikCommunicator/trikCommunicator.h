@@ -76,7 +76,7 @@ private:
 	QScopedPointer<ScriptRunnerWrapper> mScriptRunnerWrapper;
 
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
-	QHash<QThread *, Connection *> mConnections;  // Has ownership on threads and connections.
+	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.
 };
 
 }
