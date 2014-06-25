@@ -81,6 +81,7 @@ void Controller::scriptExecutionCompleted()
 	} else {
 		mExecutionState = idle;
 		if (mRunningWidget) {
+			mRunningWidget->releaseKeyboard();
 			mRunningWidget->close();
 			delete mRunningWidget;
 			mRunningWidget = NULL;
@@ -97,6 +98,14 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 
 	mRunningWidget = new RunningWidget(fileName, *this);
 	mRunningWidget->show();
+
+	// After executing, a script will can open a widget for painting with trikControl::Display.
+	// This widget will get all keyboard events and we won't be able to abort execution at Power
+	// key press. So, mRunningWidget should grab the keyboard input. Nevertheless, the script
+	// will can get keyboard events using trikControl::Keys class because it works directly
+	// with the keyboard file.
+	mRunningWidget->grabKeyboard();
+
 	mExecutionState = running;
 }
 
