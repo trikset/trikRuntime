@@ -31,6 +31,7 @@
 using namespace trikControl;
 
 GuiWorker::GuiWorker()
+	: mFontMetrics(mImageWidget.font())
 {
 	QHBoxLayout * const layout = new QHBoxLayout();
 	mImageLabel.setScaledContents(true);
@@ -58,7 +59,11 @@ void GuiWorker::addLabel(QString const &text, int x, int y)
 	QLabel *label = findLabel(x, y);
 	label = label ? label : new QLabel(&mImageWidget);
 	label->setText(text);
-	label->setGeometry(x, y, label->width(), label->height());
+
+	// There is no layout for the label, so its size cannot be set automatically. We set
+	// it with QFontMetrics.
+	label->setGeometry(x, y, mFontMetrics.width(text), mFontMetrics.height());
+
 	label->show();
 	if (!mLabels.contains(x ^ y, label)) {
 		mLabels.insertMulti(x ^ y, label);
