@@ -18,6 +18,7 @@
 #include <QtCore/QMultiHash>
 #include <QtCore/QList>
 #include <QtGui/QPixmap>
+#include <QtGui/QFontMetrics>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -75,6 +76,7 @@ private:
 	QLabel mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
 	QMultiHash<int, QLabel *> mLabels; // Has ownership.
+	QFontMetrics mFontMetrics;
 };
 
 }
