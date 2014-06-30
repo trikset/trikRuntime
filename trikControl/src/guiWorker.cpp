@@ -31,6 +31,7 @@
 using namespace trikControl;
 
 GuiWorker::GuiWorker()
+	: mFontMetrics(mImageWidget.font())
 {
 	QHBoxLayout * const layout = new QHBoxLayout();
 	mImageLabel.setScaledContents(true);
@@ -58,13 +59,11 @@ void GuiWorker::addLabel(QString const &text, int x, int y)
 	QLabel *label = findLabel(x, y);
 	label = label ? label : new QLabel(&mImageWidget);
 	label->setText(text);
-	label->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-	label->setWordWrap(true);
 
 	// There is no layout for the label, so its size cannot be set automatically. We set
-	// maximum available size for it here. It will not cause any problems with visibility
-	// of an image and other labels because labels are transparent.
-	label->setGeometry(x, y, mImageWidget.width() - x, mImageWidget.height() - y);
+	// it with QFontMetrics.
+	label->setGeometry(x, y, mFontMetrics.width(text), mFontMetrics.height());
+
 	label->show();
 	if (!mLabels.contains(x ^ y, label)) {
 		mLabels.insertMulti(x ^ y, label);
