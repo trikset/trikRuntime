@@ -48,7 +48,7 @@ void Connection::onReadyRead()
 	}
 
 	QByteArray const &data = mSocket->readAll();
-	QString command(data);
+	QString command = QString::fromUtf8(data.constData());
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
