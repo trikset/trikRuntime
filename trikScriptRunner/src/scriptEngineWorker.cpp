@@ -43,9 +43,9 @@ Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 
-ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath)
+ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, const QString &startDirPath)
 	: mEngine(NULL)
-	, mBrick(*this->thread(), configFilePath)
+	, mBrick(*this->thread(), configFilePath, startDirPath)
 	, mConfigFilePath(configFilePath)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));

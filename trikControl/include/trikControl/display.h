@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QThread>
+#include <QtCore/QString>
 
 #include "declSpec.h"
 
@@ -30,7 +31,8 @@ class TRIKCONTROL_EXPORT Display : public QObject
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	explicit Display(QThread &guiThread);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	explicit Display(QThread &guiThread, QString const &startDirPath);
 
 	~Display();
 
@@ -77,6 +79,7 @@ signals:
 
 private:
 	QThread &mGuiThread;
+	QString const mStartDirPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

@@ -45,7 +45,9 @@ public:
 	/// Constructor
 	/// @param configPath - path to config.xml (TrikControl configuration file).
 	/// @param parent - pointer to a parent widget.
+	/// @param startDirPath - path to the directory from which the application was executed.
 	MotorsWidget(QString const &configPath
+			, QString const &startDirPath
 			, trikControl::Motor::Type type
 			, QWidget *parent = 0
 			);

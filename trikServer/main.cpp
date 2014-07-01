@@ -21,6 +21,7 @@
 #endif
 
 #include <QtCore/QStringList>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
@@ -47,7 +48,7 @@ int main(int argc, char *argv[])
 
 	qDebug() << "Running TrikServer on port" << port;
 
-	trikCommunicator::TrikCommunicator communicator(configPath);
+	trikCommunicator::TrikCommunicator communicator(configPath, QDir::currentPath());
 	communicator.startServer(port);
 
 	return app.exec();

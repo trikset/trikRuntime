@@ -28,10 +28,10 @@
 
 using namespace trikControl;
 
-Brick::Brick(QThread &guiThread, QString const &configFilePath)
+Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &startDirPath)
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(NULL)
-	, mDisplay(guiThread)
+	, mDisplay(guiThread, startDirPath)
 	, mInEventDrivenMode(false)
 {
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
