@@ -67,10 +67,8 @@ void Controller::abortExecution()
 {
 	mScriptRunner.abort();
 
-	if (mExecutionState == running) {
-		mExecutionState = stopping;
-		mScriptRunner.run("brick.stop()");
-	}
+	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
+	// processed as if a script finished by itself.
 }
 
 void Controller::scriptExecutionCompleted()
@@ -99,7 +97,7 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 	mRunningWidget = new RunningWidget(fileName, *this);
 	mRunningWidget->show();
 
-	// After executing, a script will can open a widget for painting with trikControl::Display.
+	// After executing, a script will open a widget for painting with trikControl::Display.
 	// This widget will get all keyboard events and we won't be able to abort execution at Power
 	// key press. So, mRunningWidget should grab the keyboard input. Nevertheless, the script
 	// will can get keyboard events using trikControl::Keys class because it works directly

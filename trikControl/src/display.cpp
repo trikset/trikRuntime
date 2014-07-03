@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
 
 using namespace trikControl;
 
-trikControl::Display::Display(QThread &guiThread, const QString &startDirPath)
+Display::Display(QThread &guiThread, const QString &startDirPath)
 	: mGuiThread(guiThread)
 	, mStartDirPath(startDirPath)
 {
@@ -43,13 +43,13 @@ trikControl::Display::Display(QThread &guiThread, const QString &startDirPath)
 	connect(this, SIGNAL(threadClear()), mGuiWorker, SLOT(clear()));
 }
 
-trikControl::Display::~Display()
+Display::~Display()
 {
 	emit threadDelete();
 	mGuiThread.wait(1000);
 }
 
-void trikControl::Display::showImage(QString const &fileName)
+void Display::showImage(QString const &fileName)
 {
 	emit threadShowImage(fileName);
 }
@@ -64,22 +64,22 @@ void Display::removeLabels()
 	emit threadRemoveLabels();
 }
 
-void trikControl::Display::smile()
+void Display::smile()
 {
 	showImage(mStartDirPath + "/media/trik_smile_normal.png");
 }
 
-void trikControl::Display::sadSmile()
+void Display::sadSmile()
 {
 	showImage(mStartDirPath + "/media/trik_smile_sad.png");
 }
 
-void trikControl::Display::setBackground(QString const &color)
+void Display::setBackground(QString const &color)
 {
 	emit threadSetBackground(color);
 }
 
-void trikControl::Display::hide()
+void Display::hide()
 {
 	emit threadHide();
 }

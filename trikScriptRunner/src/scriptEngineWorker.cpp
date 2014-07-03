@@ -84,8 +84,10 @@ void ScriptEngineWorker::abort()
 		mEngine->abortEvaluation();
 
 		// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
-		// right now because we can be in mEngine's call stack.
-		mEngine->deleteLater();
+		// right now because we can be in mEngine's call stack. Also we can not invoke it directly since we can be in
+		// another thread and deleting it on return to that thread's event loop will surely crash worker, and Qt docs
+		// are not clear whether deleteLater implementation is aware of that problem.
+		QMetaObject::invokeMethod(mEngine, "deleteLater");
 	}
 }
 
@@ -106,6 +108,8 @@ bool ScriptEngineWorker::isInEventDrivenMode() const
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	abort();
+
+	/// @todo Completed will be already sent by run() after abortExecution?
 	emit completed();
 }
 
