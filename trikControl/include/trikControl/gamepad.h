@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 - 2014 Matvey Bryksin, Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
+#include <QtCore/QHash>
+#include <QtCore/QSet>
 
 #include "declSpec.h"
 
@@ -37,6 +39,22 @@ public:
 	/// Destructor declared here for QScopedPointer to be able to clean up forward-declared TcpConnector.
 	virtual ~Gamepad();
 
+public slots:
+	/// Clear data about previous pad events.
+	void reset();
+
+	/// Returns true, if given pad button, and clears "pressed" state for that button.
+	bool buttonWasPressed(int buttonNumber);
+
+	/// Returns current state of the pad, true if pressed.
+	bool isPadPressed(int pad);
+
+	/// Returns current X coordinate of given pad or -1 if this pad is not pressed.
+	int padX(int pad);
+
+	/// Returns current Y coordinate of given pad or -1 if this pad is not pressed.
+	int padY(int pad);
+
 signals:
 	/// @todo ??!
 	void padUp(int pad);
@@ -50,8 +68,17 @@ private slots:
 private:
 	Q_DISABLE_COPY(Gamepad)
 
+	struct PadStatus {
+		int x;
+		int y;
+		bool isPressed;
+	};
+
 	QScopedPointer<TcpConnector> mListener;
 	QThread mNetworkThread;
+
+	QSet<int> mButtonWasPressed;
+	QHash<int, PadStatus> mPads;
 };
 
 }

@@ -20,12 +20,13 @@ using namespace trikControl;
 
 TcpConnector::TcpConnector(int port)
 	: mPort(port)
-	, mTcpServer(new QTcpServer())
 {
 }
 
 void TcpConnector::startServer()
 {
+	mTcpServer.reset(new QTcpServer());
+
 	if (!mTcpServer->listen(QHostAddress::Any, mPort)) {
 		qDebug() << "Unable to start the server:" << mTcpServer->errorString();
 		mTcpServer->close();

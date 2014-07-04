@@ -22,6 +22,7 @@
 
 namespace trikControl {
 
+/// Watches for keys on a brick, intended to work in separate thread.
 class KeysWorker : public QObject
 {
 	Q_OBJECT
