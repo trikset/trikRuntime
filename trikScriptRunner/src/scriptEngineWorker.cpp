@@ -46,7 +46,7 @@ Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, const QString &startDirPath)
 	: mEngine(NULL)
 	, mBrick(*this->thread(), configFilePath, startDirPath)
-	, mConfigFilePath(configFilePath)
+	, mStartDirPath(startDirPath)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -67,8 +67,8 @@ void ScriptEngineWorker::run(QString const &script)
 	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
-	if (QFile::exists(mConfigFilePath + "system.js")) {
-		runAndReportException(FileUtils::readFromFile(mConfigFilePath + "system.js"));
+	if (QFile::exists(mStartDirPath + "/system.js")) {
+		runAndReportException(FileUtils::readFromFile(mStartDirPath + "/system.js"));
 	}
 
 	runAndReportException(script);

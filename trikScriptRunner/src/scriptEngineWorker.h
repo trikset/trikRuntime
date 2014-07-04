@@ -72,7 +72,7 @@ private:
 
 	trikControl::Brick mBrick;
 
-	QString mConfigFilePath;
+	QString const mStartDirPath;
 };
 
 }
