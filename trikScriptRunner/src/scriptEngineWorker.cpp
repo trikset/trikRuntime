@@ -36,6 +36,7 @@ Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
+Q_DECLARE_METATYPE(Gamepad*)
 Q_DECLARE_METATYPE(Keys*)
 Q_DECLARE_METATYPE(Led*)
 Q_DECLARE_METATYPE(Motor*)
@@ -124,6 +125,7 @@ void ScriptEngineWorker::initScriptEngine()
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);
+	qScriptRegisterMetaType(mEngine, gamepadToScriptValue, gamepadFromScriptValue);
 	qScriptRegisterMetaType(mEngine, keysToScriptValue, keysFromScriptValue);
 	qScriptRegisterMetaType(mEngine, ledToScriptValue, ledFromScriptValue);
 	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);

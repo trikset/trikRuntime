@@ -19,6 +19,7 @@
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
+#include <trikControl/gamepad.h>
 #include <trikControl/keys.h>
 #include <trikControl/led.h>
 #include <trikControl/sensor.h>
@@ -36,6 +37,9 @@ void displayFromScriptValue(QScriptValue const &object, trikControl::Display* &o
 
 QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::Encoder* const &in);
 void encoderFromScriptValue(QScriptValue const &object, trikControl::Encoder* &out);
+
+QScriptValue gamepadToScriptValue(QScriptEngine *engine, trikControl::Gamepad* const &in);
+void gamepadFromScriptValue(QScriptValue const &object, trikControl::Gamepad* &out);
 
 QScriptValue keysToScriptValue(QScriptEngine *engine, trikControl::Keys* const &in);
 void keysFromScriptValue(QScriptValue const &object, trikControl::Keys* &out);
