@@ -19,6 +19,12 @@ Gamepad::~Gamepad()
 {
 }
 
+void Gamepad::reset()
+{
+	mButtonWasPressed.clear();
+	mPads.clear();
+}
+
 bool Gamepad::buttonWasPressed(int buttonNumber)
 {
 	return mButtonWasPressed.remove(buttonNumber);
