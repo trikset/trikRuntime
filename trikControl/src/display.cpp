@@ -33,13 +33,23 @@ Display::Display(QThread &guiThread)
 	mGuiWorker = new GuiWorker();
 	mGuiWorker->moveToThread(&guiThread);
 
-	connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
+    connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
 	connect(this, SIGNAL(threadAddLabel(QString, int, int)), mGuiWorker, SLOT(addLabel(QString, int, int)));
 	connect(this, SIGNAL(threadRemoveLabels()), mGuiWorker, SLOT(removeLabels()));
 	connect(this, SIGNAL(threadSetBackground(QString)), mGuiWorker, SLOT(setBackground(QString)));
 	connect(this, SIGNAL(threadHide()), mGuiWorker, SLOT(hide()));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
 	connect(this, SIGNAL(threadClear()), mGuiWorker, SLOT(clear()));
+    connect(this, SIGNAL(threadDrawLine(int,int,int,int)), mGuiWorker, SLOT(drawLine(int,int,int,int)));
+    connect(this, SIGNAL(threadDeleteAllLines()), mGuiWorker, SLOT(deleteAllLines()));
+    connect(this, SIGNAL(threadDrawPoint(int,int)), mGuiWorker, SLOT(drawPoint(int,int)));
+    connect(this, SIGNAL(threadDeleteAllPoints()), mGuiWorker, SLOT(deleteAllPoints()));
+    connect(this, SIGNAL(threadDrawRect(int,int,int,int)), mGuiWorker, SLOT(drawRect(int,int,int,int)));
+    connect(this, SIGNAL(threadDeleteAllRects()), mGuiWorker, SLOT(deleteAllRects()));
+    connect(this, SIGNAL(threadDrawEllipse(int,int,int,int)), mGuiWorker, SLOT(drawEllipse(int,int,int,int)));
+    connect(this, SIGNAL(threadDeleteAllEllipses()), mGuiWorker, SLOT(deleteAllEllipses()));
+    connect(this, SIGNAL(threadDrawArc(int,int,int,int,int,int)), mGuiWorker, SLOT(drawArc(int,int,int,int,int,int)));
+    connect(this, SIGNAL(threadDeleteAllArcs()), mGuiWorker, SLOT(deleteAllArcs()));
 }
 
 Display::~Display()
@@ -87,3 +97,55 @@ void Display::clear()
 {
 	emit threadClear();
 }
+
+void Display::drawLine(int x1, int y1, int x2, int y2)
+{
+    emit threadDrawLine(x1, y1, x2, y2);
+}
+
+void Display::deleteAllLines()
+{
+    emit threadDeleteAllLines();
+}
+
+void Display::drawPoint(int x, int y)
+{
+    emit threadDrawPoint(x, y);
+}
+
+void Display::deleteAllPoints()
+{
+    emit threadDeleteAllPoints();
+}
+
+void Display::drawRect(int x, int y, int width, int height)
+{
+    emit threadDrawRect(x, y, width, height);
+}
+
+void Display::deleteAllRects()
+{
+    emit threadDeleteAllRects();
+}
+
+void Display::drawEllipse(int x, int y, int width, int height)
+{
+    emit threadDrawEllipse(x, y, width, height);
+}
+
+void Display::deleteAllEllipses()
+{
+    emit threadDeleteAllEllipses();
+}
+
+void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
+{
+    emit threadDrawArc(x, y, width, height, startAngle, spanAngle);
+}
+
+void Display::deleteAllArcs()
+{
+    emit threadDeleteAllArcs();
+}
+
+

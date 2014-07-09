@@ -163,3 +163,73 @@ QLabel *GuiWorker::findLabel(int x, int y) const
 
 	return NULL;
 }
+
+void GuiWorker::drawPoint(int x, int y)
+{
+   mImageWidget.drawPoint(x, y);
+   mImageWidget.update();
+   mImageWidget.show();
+}
+
+void GuiWorker::deleteAllPoints()
+{
+    mImageWidget.deleteAllPoints();
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
+{
+   mImageWidget.drawLine(x1, y1, x2, y2);
+   mImageWidget.update();
+   mImageWidget.show();
+}
+
+void GuiWorker::deleteAllLines()
+{
+    mImageWidget.deleteAllLines();
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::drawRect(int x, int y, int width, int height)
+{
+    mImageWidget.drawRect(x, y, width, height);
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::deleteAllRects()
+{
+    mImageWidget.deleteAllRects();
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::drawEllipse(int x, int y, int width, int height)
+{
+    mImageWidget.drawEllipse(x, y, width, height);
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::deleteAllEllipses()
+{
+    mImageWidget.deleteAllEllipses();
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
+{
+    mImageWidget.drawArc(x, y, width, height, startAngle, spanAngle);
+    mImageWidget.update();
+    mImageWidget.show();
+}
+
+void GuiWorker::deleteAllArcs()
+{
+    mImageWidget.deleteAllArcs();
+    mImageWidget.update();
+    mImageWidget.show();
+}

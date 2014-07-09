@@ -65,6 +65,7 @@ HEADERS += \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/tcpConnector.h \
 	$$PWD/src/keysWorker.h \
+    src/graphicsWidget.h
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -87,6 +88,7 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/keys.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
 	$$PWD/src/$$PLATFORM/cameraLineDetectorSensor.cpp \
+    src/graphicsWidget.cpp
 
 OTHER_FILES += \
 	config.xml \

@@ -20,6 +20,8 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QFontMetrics>
 
+#include "graphicsWidget.h"
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
 	#include <QtGui/QLabel>
@@ -66,13 +68,63 @@ public slots:
 	/// Clear everything painted with this object.
 	void clear();
 
+    /// Draw point on the widget.
+    /// @param x - x coordinate.
+    /// @param y - y coordinate.
+    void drawPoint(int x, int y);
+
+    /// Delete all points.
+    void deleteAllPoints();
+
+    /// Draw line on the widget.
+    /// @param x1 - first point's x coordinate.
+    /// @param y1 - first point's y coordinate.
+    /// @param x2 - second point's x coordinate.
+    /// @param y2 - second point's y coordinate.
+    void drawLine(int x1, int y1, int x2, int y2);
+
+    /// Delete all lines from widget.
+    void deleteAllLines();
+
+    /// Draw rect on the widget.
+    /// @param x - x coordinate.
+    /// @param y - y coordinate.
+    /// @param width - rect's width.
+    /// @param height - rect's height.
+    void drawRect(int x, int y, int width, int height);
+
+    /// Delete all rects.
+    void deleteAllRects();
+
+    /// Draw ellipse.
+    /// @param x - x coordinate.
+    /// @param y - y coordinate.
+    /// @param width - width of ellipse.
+    /// @param height - height of ellipse.
+    void drawEllipse(int x, int y, int width, int height);
+
+    /// Delete all ellipses.
+    void deleteAllEllipses();
+
+    /// Draw arc on the widget.
+    /// @param x - x coordinate.
+    /// @param y - y coordinate.
+    /// @param width - width rect forming an arc.
+    /// @param height - height rect forming an arc.
+    /// @param startAngle - start angle.
+    /// @param spanAngle - end andle.
+    void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
+
+    /// Delete all arcs.
+    void deleteAllArcs();
+
 private:
 	void resetBackground();
 
 	/// Returns existing label with given coordinates or NULL if no such label exists.
 	QLabel *findLabel(int x, int y) const;
 
-	QWidget mImageWidget;
+    GraphicsWidget mImageWidget;
 	QLabel mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
 	QMultiHash<int, QLabel *> mLabels; // Has ownership.
