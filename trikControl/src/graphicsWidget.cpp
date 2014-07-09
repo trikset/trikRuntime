@@ -1,4 +1,4 @@
-/* Copyright 2013 Kogutich Denis, Smirnov Mikhail
+/* Copyright 2014 Kogutich Denis, Smirnov Mikhail
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,181 +17,219 @@
 #include "graphicsWidget.h"
 
 GraphicsWidget::GraphicsWidget()
+	: mCurrentPenColor(Qt::black)
 {
-	lines = new QList<LineCoordinates>();
-	points = new QList<PointCoordinates>();
-	rects = new QList<RectCoordinates>();
-	ellipses = new QList<EllipseCoordinates>();
-	arcs = new QList<ArcCoordinates>();
-}
-
-GraphicsWidget::~GraphicsWidget()
-{
-	delete lines;
-	delete points;
-	delete rects;
-	delete ellipses;
-	delete arcs;
 }
 
 void GraphicsWidget::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 
-	for (int i = 0; i < lines->length(); i++)
+	for (int i = 0; i < mLines.length(); i++)
 	{
-		painter.drawLine(lines->at(i).x1, lines->at(i).y1, lines->at(i).x2, lines->at(i).y2);
+		painter.setPen(mLines.at(i).color);
+		painter.drawLine(mLines.at(i).coord1.x(), mLines.at(i).coord1.y()
+						 , mLines.at(i).coord2.x(), mLines.at(i).coord2.y());
 	}
 
-	for (int i = 0; i < points->length(); i++)
+	for (int i = 0; i < mPoints.length(); i++)
 	{
-		painter.drawPoint(points->at(i).x, points->at(i).y);
+		painter.setPen(mPoints.at(i).color);
+		painter.drawPoint(mPoints.at(i).coord.x(), mPoints.at(i).coord.y());
 	}
 
-	for (int i = 0; i < rects->length(); i++)
+	for (int i = 0; i < mRects.length(); i++)
 	{
-		painter.drawRect(rects->at(i).x, rects->at(i).y, rects->at(i).width, rects->at(i).height);
+		painter.setPen(mRects.at(i).color);
+		painter.drawRect(mRects.at(i).rect.x(), mRects.at(i).rect.y()
+						 , mRects.at(i).rect.width(), mRects.at(i).rect.height());
 	}
 
-	for (int i = 0; i < ellipses->length(); i++)
+	for (int i = 0; i < mEllipses.length(); i++)
 	{
-		painter.drawEllipse(ellipses->at(i).x, ellipses->at(i).y, ellipses->at(i).width, ellipses->at(i).height);
+		painter.setPen(mEllipses.at(i).color);
+		painter.drawEllipse(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y()
+							, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
 	}
 
-	for (int i = 0; i < arcs->length(); i++)
+	for (int i = 0; i < mArcs.length(); i++)
 	{
-		painter.drawArc(arcs->at(i).x, arcs->at(i).y, arcs->at(i).width, arcs->at(i).height
-						, arcs->at(i).startAngle, arcs->at(i).spanAngle);
+		painter.setPen(mArcs.at(i).color);
+		painter.drawArc(mArcs.at(i).arc.x(), mArcs.at(i).arc.y()
+						, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
+						, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
+	}
+}
+
+void GraphicsWidget::deleteAllItems()
+{
+	mPoints.clear();
+	mLines.clear();
+	mRects.clear();
+	mEllipses.clear();
+	mArcs.clear();
+}
+
+void GraphicsWidget::setPainterColor(QString const &color)
+{
+	if (color == tr("white")) {
+		mCurrentPenColor = Qt::white;
+	} else if (color == tr("red")) {
+		mCurrentPenColor = Qt::red;
+	} else if (color == tr("darkRed")) {
+		mCurrentPenColor = Qt::darkRed;
+	} else if (color == tr("green")) {
+		mCurrentPenColor = Qt::green;
+	} else if (color == tr("darkGreen")) {
+		mCurrentPenColor = Qt::darkGreen;
+	} else if (color == tr("blue")) {
+		mCurrentPenColor = Qt::blue;
+	} else if (color == tr("darkBlue")) {
+		mCurrentPenColor = Qt::darkBlue;
+	} else if (color == tr("cyan")) {
+		mCurrentPenColor = Qt::cyan;
+	} else if (color == tr("darkCyan")) {
+		mCurrentPenColor = Qt::darkCyan;
+	} else if (color == tr("magenta")) {
+		mCurrentPenColor = Qt::magenta;
+	} else if (color == tr("darkMagenta")) {
+		mCurrentPenColor = Qt::darkMagenta;
+	} else if (color == tr("yellow")) {
+		mCurrentPenColor = Qt::yellow;
+	} else if (color == tr("darkYellow")) {
+		mCurrentPenColor = Qt::darkYellow;
+	} else if (color == tr("gray")) {
+		mCurrentPenColor = Qt::gray;
+	} else if (color == tr("darkGray")) {
+		mCurrentPenColor = Qt::darkGray;
+	} else if (color == tr("lightGray")) {
+		mCurrentPenColor = Qt::lightGray;
+	} else {
+		mCurrentPenColor = Qt::black;
 	}
 }
 
 void GraphicsWidget::drawPoint(int x, int y)
 {
-	PointCoordinates coordinates(x, y);
+	PointCoordinates coordinates(x, y, mCurrentPenColor);
 
-	if (!isPointFind(coordinates)) {
-		points->insert(points->length(), coordinates);
+	if (!containsPoint(coordinates)) {
+		mPoints.insert(mPoints.length(), coordinates);
 	}
 }
 
-void GraphicsWidget::deleteAllPoints()
+bool GraphicsWidget::containsPoint(PointCoordinates const &coordinates)
 {
-	points->clear();
-}
-
-bool GraphicsWidget::isPointFind(PointCoordinates coordinates)
-{
-	for (int i = 0; i < points->length(); i++)
+	for (int i = 0; i < mPoints.length(); i++)
 	{
-		if (points->at(i).x == coordinates.x && points->at(i).y == coordinates.y) {
+		if (mPoints.at(i).coord.x() == coordinates.coord.x()
+			&& mPoints.at(i).coord.y() == coordinates.coord.y())
+		{
 			return true;
 		}
 	}
+
 	return false;
 }
 
 void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 {
-	LineCoordinates coordinates(x1, y1, x2, y2);
+	LineCoordinates coordinates(x1, y1, x2, y2, mCurrentPenColor);
 
-	if (!isLineFind(coordinates)) {
-		lines->insert(lines->length(), coordinates);
+	if (!containsLine(coordinates)) {
+		mLines.insert(mLines.length(), coordinates);
 	}
 }
 
-void GraphicsWidget::deleteAllLines()
+bool GraphicsWidget::containsLine(LineCoordinates const &coordinates)
 {
-	lines->clear();
-}
-
-bool GraphicsWidget::isLineFind(LineCoordinates coordinates)
-{
-	for (int i = 0; i < lines->length(); i++)
+	for (int i = 0; i < mLines.length(); i++)
 	{
-		if (lines->at(i).x1 == coordinates.x1 && lines->at(i).y1 == coordinates.y1
-			&& lines->at(i).x2 == coordinates.x2 && lines->at(i).y2 == coordinates.y2) {
+		if (mLines.at(i).coord1.x() == coordinates.coord1.x()
+			&& mLines.at(i).coord1.y() == coordinates.coord1.y()
+			&& mLines.at(i).coord2.x() == coordinates.coord2.x()
+			&& mLines.at(i).coord2.y() == coordinates.coord2.y())
+		{
 			return true;
 		}
 	}
+
 	return false;
 }
 
 void GraphicsWidget::drawRect(int x, int y, int width, int height)
 {
-	RectCoordinates coordinates(x, y, width, height);
+	RectCoordinates coordinates(x, y, width, height, mCurrentPenColor);
 
-	if (!isRectFind(coordinates)) {
-		rects->insert(rects->length(), coordinates);
+	if (!containsRect(coordinates)) {
+		mRects.insert(mRects.length(), coordinates);
 	}
 }
 
-void GraphicsWidget::deleteAllRects()
+bool GraphicsWidget::containsRect(RectCoordinates const &coordinates)
 {
-	rects->clear();
-}
-
-bool GraphicsWidget::isRectFind(RectCoordinates coordinates)
-{
-	for (int i = 0; i < rects->length(); i++)
+	for (int i = 0; i < mRects.length(); i++)
 	{
-		if (rects->at(i).x == coordinates.x && rects->at(i).y == coordinates.y
-				&& rects->at(i).width == coordinates.width && rects->at(i).height == coordinates.height) {
+		if (mRects.at(i).rect.x() == coordinates.rect.x()
+			&& mRects.at(i).rect.y() == coordinates.rect.y()
+			&& mRects.at(i).rect.width() == coordinates.rect.width()
+			&& mRects.at(i).rect.height() == coordinates.rect.height())
+		{
 			return true;
 		}
 	}
+
 	return false;
 }
 
 void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
 {
-	EllipseCoordinates coordinates(x, y, width, height);
+	EllipseCoordinates coordinates(x, y, width, height, mCurrentPenColor);
 
-	if (!isEllipseFind(coordinates)) {
-		ellipses->insert(ellipses->length(), coordinates);
+	if (!containsEllipse(coordinates)) {
+		mEllipses.insert(mEllipses.length(), coordinates);
 	}
 }
 
-void GraphicsWidget::deleteAllEllipses()
+bool GraphicsWidget::containsEllipse(EllipseCoordinates const &coordinates)
 {
-	ellipses->clear();
-}
-
-bool GraphicsWidget::isEllipseFind(EllipseCoordinates coordinates)
-{
-	for (int i = 0; i < ellipses->length(); i++)
+	for (int i = 0; i < mEllipses.length(); i++)
 	{
-		if (ellipses->at(i).x == coordinates.x && ellipses->at(i).y == coordinates.y
-				&& ellipses->at(i).width == coordinates.width && ellipses->at(i).height == coordinates.height) {
+		if (mEllipses.at(i).ellipse.x() == coordinates.ellipse.x()
+			&& mEllipses.at(i).ellipse.y() == coordinates.ellipse.y()
+			&& mEllipses.at(i).ellipse.width() == coordinates.ellipse.width()
+			&& mEllipses.at(i).ellipse.height() == coordinates.ellipse.height())
+		{
 			return true;
 		}
 	}
+
 	return false;
 }
 
 void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	ArcCoordinates coordinates(x, y, width, height, startAngle, spanAngle);
+	ArcCoordinates coordinates(x, y, width, height, startAngle, spanAngle, mCurrentPenColor);
 
-	if (!isArcFind(coordinates)) {
-		arcs->insert(arcs->length(), coordinates);
+	if (!containsArc(coordinates)) {
+		mArcs.insert(mArcs.length(), coordinates);
 	}
 }
 
-void GraphicsWidget::deleteAllArcs()
+bool GraphicsWidget::containsArc(ArcCoordinates const &coordinates)
 {
-	arcs->clear();
-}
-
-bool GraphicsWidget::isArcFind(ArcCoordinates coordinates)
-{
-	for (int i = 0; i < arcs->length(); i++)
+	for (int i = 0; i < mArcs.length(); i++)
 	{
-		if (arcs->at(i).x == coordinates.x && points->at(i).y == coordinates.y
-			&& arcs->at(i).width == coordinates.width && arcs->at(i).height == coordinates.height
-			&& arcs->at(i).startAngle == coordinates.startAngle
-			&& arcs->at(i).spanAngle == coordinates.spanAngle) {
-		return true;
+		if (mArcs.at(i).arc.x() == coordinates.arc.x()
+			&& mArcs.at(i).arc.y() == coordinates.arc.y()
+			&& mArcs.at(i).arc.width() == coordinates.arc.width()
+			&& mArcs.at(i).arc.height() == coordinates.arc.height()
+			&& mArcs.at(i).startAngle == coordinates.startAngle
+			&& mArcs.at(i).spanAngle == coordinates.spanAngle)
+		{
+			return true;
 		}
 	}
+
 	return false;
 }

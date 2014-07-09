@@ -1,4 +1,4 @@
-/* Copyright 2013 Kogutich Denis, Smirnov Mikhail
+/* Copyright 2014 Kogutich Denis, Smirnov Mikhail
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,9 @@
 
 #pragma once
 #include <QtCore/QList>
+#include <QtCore/QPoint>
+#include <QtCore/QRect>
+#include <QtGui/QColor>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -26,15 +29,17 @@ class GraphicsWidget : public QWidget
 {
 public:
 	GraphicsWidget();
-	~GraphicsWidget();
+
+	/// Set painter color.
+	void setPainterColor(QString const &color);
+
+	/// Delete all items.
+	void deleteAllItems();
 
 	/// Draw point on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	void drawPoint(int x, int y);
-
-	/// Delete all points.
-	void deleteAllPoints();
 
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
@@ -43,9 +48,6 @@ public:
 	/// @param y1 - second point's y coordinate.
 	void drawLine(int x1, int y1, int x2, int y2);
 
-	/// Delete all lines.
-	void deleteAllLines();
-
 	/// Draw rect on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
@@ -53,18 +55,12 @@ public:
 	/// @param height - rect's height.
 	void drawRect(int x, int y, int width, int height);
 
-	/// Delete all rects.
-	void deleteAllRects();
-
 	/// Draw ellipse.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
 	void drawEllipse(int x, int y, int width, int height);
-
-	/// Delete all ellipses.
-	void deleteAllEllipses();
 
 	/// Draw arc on the widget.
 	/// @param x - x coordinate.
@@ -75,88 +71,76 @@ public:
 	/// @param spanAngle - end angle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 
-	/// Delete all arcs.
-	void deleteAllArcs();
-
 private:
 	/// Struct of point coordinates.
 	struct PointCoordinates
 	{
-		PointCoordinates(int x, int y)
+		PointCoordinates(int x, int y, QColor color)
 		{
-			this->x = x;
-			this->y = y;
+			this->coord = QPoint(x, y);
+			this->color = color;
 		}
-		int x;
-		int y;
+
+		QPoint coord;
+		QColor color;
 	};
 
 	/// Struct of rect coordinates.
 	struct RectCoordinates
 	{
-		RectCoordinates(int x, int y, int width, int height)
+		RectCoordinates(int x, int y, int width, int height, QColor color)
 		{
-			this->x = x;
-			this->y = y;
-			this->width = width;
-			this->height = height;
+			this->rect = QRect(x, y, width, height);
+			this->color = color;
 		}
-		int x;
-		int y;
-		int width;
-		int height;
+
+		QRect rect;
+		QColor color;
 	};
 
 	/// Struct of line coordinates.
 	struct LineCoordinates
 	{
-		LineCoordinates(int x1, int y1, int x2, int y2)
+		LineCoordinates(int x1, int y1, int x2, int y2, QColor color)
 		{
-			this->x1 = x1;
-			this->y1 = y1;
-			this->x2 = x2;
-			this->y2 = y2;
+			this->coord1 = QPoint(x1, y1);
+			this->coord2 = QPoint(x2, y2);
+			this->color = color;
 		}
-		int x1;
-		int y1;
-		int x2;
-		int y2;
+
+		QPoint coord1;
+		QPoint coord2;
+		QColor color;
 	};
 
 	/// Struct of ellipse coordinates.
 	struct EllipseCoordinates
 	{
-		EllipseCoordinates(int x, int y, int width, int height)
+		EllipseCoordinates(int x, int y, int width, int height, QColor color)
 		{
-			this->x = x;
-			this->y = y;
-			this->width = width;
-			this->height = height;
+			this->ellipse = QRect(x, y, width, height);
+			this->color = color;
 		}
-		int x;
-		int y;
-		int width;
-		int height;
+
+		QRect ellipse;
+		QColor color;
 	};
 
 	/// Struct of arc coordinates.
 	struct ArcCoordinates
 	{
-		ArcCoordinates(int x, int y, int width, int height, int startAngle, int spanAngle)
+		ArcCoordinates(int x, int y, int width, int height, int startAngle, int spanAngle, QColor color)
 		{
-			this->x = x;
-			this->y = y;
-			this->width = width;
-			this->height = height;
+			this->arc = QRect(x, y, width, height);
 			this->startAngle = startAngle;
 			this->spanAngle = spanAngle;
+			this->color = color;
 		}
-		int x;
-		int y;
-		int width;
-		int height;
+
+		QRect arc;
 		int startAngle;
 		int spanAngle;
+		QColor color;
 	};
 
 	/// Draw all elements.
@@ -165,40 +149,43 @@ private:
 	/// Check list contains point.
 	/// @param coordinates - point that occurence we are looking for.
 	/// @return - true if list contains this point.
-	bool isPointFind(PointCoordinates coordinates);
+	bool containsPoint(PointCoordinates const &coordinates);
 
 	/// Check list contains line.
 	/// @param coordinates - line that occurence we are looking for.
 	/// @return - true if list contains this line.
-	bool isLineFind(LineCoordinates coordinates);
+	bool containsLine(LineCoordinates const &coordinates);
 
 	/// Check list contains rect.
 	/// @param coordinates - rect that occurence we are looking for.
 	/// @return - true if list contains this rect.
-	bool isRectFind(RectCoordinates coordinates);
+	bool containsRect(RectCoordinates const &coordinates);
 
 	/// Check list contains ellipse.
 	/// @param coordinates - ellipse that occurence we are looking for.
 	/// @return - true if list contains this ellipse.
-	bool isEllipseFind(EllipseCoordinates coordinates);
+	bool containsEllipse(EllipseCoordinates const &coordinates);
 
 	/// Check list contains arc.
 	/// @param coordinates - arc that occurence we are looking for.
 	/// @return - true if list contains this arc.
-	bool isArcFind(ArcCoordinates coordinates);
+	bool containsArc(ArcCoordinates const &coordinates);
 
 	/// List of all lines.
-	QList<LineCoordinates> *lines;
+	QList<LineCoordinates> mLines;
 
 	/// List of all points.
-	QList<PointCoordinates> *points;
+	QList<PointCoordinates> mPoints;
 
 	/// List of all rectangles.
-	QList<RectCoordinates> *rects;
+	QList<RectCoordinates> mRects;
 
 	/// List of all ellipses.
-	QList<EllipseCoordinates> *ellipses;
+	QList<EllipseCoordinates> mEllipses;
 
 	/// List of all arcs.
-	QList<ArcCoordinates> *arcs;
+	QList<ArcCoordinates> mArcs;
+
+	/// Current pen color.
+	QColor mCurrentPenColor;
 };

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
+/* Copyright 2013 - 2014 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,9 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	/// Set painter color.
+	void setPainterColor(QString const &color);
+
 	/// Clear everything painted with this object.
 	void clear();
 
@@ -73,18 +76,12 @@ public slots:
 	/// @param y - y coordinate.
 	void drawPoint(int x, int y);
 
-	/// Delete all points.
-	void deleteAllPoints();
-
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
 	/// @param x2 - second point's x coordinate.
 	/// @param y2 - second point's y coordinate.
 	void drawLine(int x1, int y1, int x2, int y2);
-
-	/// Delete all lines from widget.
-	void deleteAllLines();
 
 	/// Draw rect on the widget.
 	/// @param x - x coordinate.
@@ -93,18 +90,12 @@ public slots:
 	/// @param height - rect's height.
 	void drawRect(int x, int y, int width, int height);
 
-	/// Delete all rects.
-	void deleteAllRects();
-
 	/// Draw ellipse.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
 	void drawEllipse(int x, int y, int width, int height);
-
-	/// Delete all ellipses.
-	void deleteAllEllipses();
 
 	/// Draw arc on the widget.
 	/// @param x - x coordinate.
@@ -114,9 +105,6 @@ public slots:
 	/// @param startAngle - start angle.
 	/// @param spanAngle - end andle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
-
-	/// Delete all arcs.
-	void deleteAllArcs();
 
 private:
 	void resetBackground();

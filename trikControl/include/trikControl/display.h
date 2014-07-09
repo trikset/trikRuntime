@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
+/* Copyright 2013 - 2014 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,9 @@ public slots:
 	/// Shortcut to showImage, shows happy smile.
 	void smile();
 
+	/// Set painter color.
+	void setPainterColor(QString const &color);
+
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
@@ -60,16 +63,10 @@ public slots:
 	/// @param y1 - second point's y coordinate.
 	void drawLine(int x1, int y1, int x2, int y2);
 
-	/// Delete all lines.
-	void deleteAllLines();
-
 	/// Draw point on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	void drawPoint(int x, int y);
-
-	/// Delete all points.
-	void deleteAllPoints();
 
 	/// Draw rect on the widget.
 	/// @param x - x coordinate.
@@ -78,18 +75,12 @@ public slots:
 	/// @param height - rect's height.
 	void drawRect(int x, int y, int width, int height);
 
-	/// Delete all rects.
-	void deleteAllRects();
-
 	/// Draw ellipse.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
 	void drawEllipse(int x, int y, int width, int height);
-
-	/// Delete all ellipses.
-	void deleteAllEllipses();
 
 	/// Draw arc on the widget.
 	/// @param x - x coordinate.
@@ -99,9 +90,6 @@ public slots:
 	/// @param startAngle - start angle.
 	/// @param spanAngle - end andle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
-
-	/// Delete all arcs.
-	void deleteAllArcs();
 
 	/// Shortcut to showImage, shows sad smile.
 	void sadSmile();
@@ -125,15 +113,11 @@ signals:
 	void threadDelete();
 	void threadClear();
 	void threadDrawLine(int x1, int y1, int x2, int y2);
-	void threadDeleteAllLines();
 	void threadDrawPoint(int x, int y);
-	void threadDeleteAllPoints();
 	void threadDrawRect(int x, int y, int width, int height);
-	void threadDeleteAllRects();
 	void threadDrawEllipse(int x, int y, int width, int height);
-	void threadDeleteAllEllipses();
 	void threadDrawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
-	void threadDeleteAllArcs();
+	void threadSetPainterColor(QString const &color);
 
 private:
 	QThread &mGuiThread;

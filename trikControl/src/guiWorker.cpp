@@ -139,8 +139,14 @@ void GuiWorker::resetBackground()
 	mImageWidget.setPalette(palette);
 }
 
+void GuiWorker::setPainterColor(QString const &color)
+{
+	mImageWidget.setPainterColor(color);
+}
+
 void GuiWorker::clear()
 {
+	mImageWidget.deleteAllItems();
 	mImageWidget.hide();
 	removeLabels();
 	mImageLabel.setPixmap(QPixmap());
@@ -170,23 +176,9 @@ void GuiWorker::drawPoint(int x, int y)
 	mImageWidget.show();
 }
 
-void GuiWorker::deleteAllPoints()
-{
-	mImageWidget.deleteAllPoints();
-	mImageWidget.update();
-	mImageWidget.show();
-}
-
 void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 {
 	mImageWidget.drawLine(x1, y1, x2, y2);
-	mImageWidget.update();
-	mImageWidget.show();
-}
-
-void GuiWorker::deleteAllLines()
-{
-	mImageWidget.deleteAllLines();
 	mImageWidget.update();
 	mImageWidget.show();
 }
@@ -198,13 +190,6 @@ void GuiWorker::drawRect(int x, int y, int width, int height)
 	mImageWidget.show();
 }
 
-void GuiWorker::deleteAllRects()
-{
-	mImageWidget.deleteAllRects();
-	mImageWidget.update();
-	mImageWidget.show();
-}
-
 void GuiWorker::drawEllipse(int x, int y, int width, int height)
 {
 	mImageWidget.drawEllipse(x, y, width, height);
@@ -212,23 +197,9 @@ void GuiWorker::drawEllipse(int x, int y, int width, int height)
 	mImageWidget.show();
 }
 
-void GuiWorker::deleteAllEllipses()
-{
-	mImageWidget.deleteAllEllipses();
-	mImageWidget.update();
-	mImageWidget.show();
-}
-
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	mImageWidget.drawArc(x, y, width, height, startAngle, spanAngle);
-	mImageWidget.update();
-	mImageWidget.show();
-}
-
-void GuiWorker::deleteAllArcs()
-{
-	mImageWidget.deleteAllArcs();
 	mImageWidget.update();
 	mImageWidget.show();
 }
