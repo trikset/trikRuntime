@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 CyberTech Labs Ltd.
+/* Copyright 2013 - 2014 CyberTech Labs Ltd, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@
 #endif
 
 #include <QtCore/QDebug>
-
 #include <QtCore/QThread>
 #include <QtGui/QPixmap>
 
@@ -166,70 +165,70 @@ QLabel *GuiWorker::findLabel(int x, int y) const
 
 void GuiWorker::drawPoint(int x, int y)
 {
-   mImageWidget.drawPoint(x, y);
-   mImageWidget.update();
-   mImageWidget.show();
+	mImageWidget.drawPoint(x, y);
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::deleteAllPoints()
 {
-    mImageWidget.deleteAllPoints();
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.deleteAllPoints();
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 {
-   mImageWidget.drawLine(x1, y1, x2, y2);
-   mImageWidget.update();
-   mImageWidget.show();
+	mImageWidget.drawLine(x1, y1, x2, y2);
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::deleteAllLines()
 {
-    mImageWidget.deleteAllLines();
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.deleteAllLines();
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::drawRect(int x, int y, int width, int height)
 {
-    mImageWidget.drawRect(x, y, width, height);
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.drawRect(x, y, width, height);
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::deleteAllRects()
 {
-    mImageWidget.deleteAllRects();
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.deleteAllRects();
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::drawEllipse(int x, int y, int width, int height)
 {
-    mImageWidget.drawEllipse(x, y, width, height);
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.drawEllipse(x, y, width, height);
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::deleteAllEllipses()
 {
-    mImageWidget.deleteAllEllipses();
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.deleteAllEllipses();
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-    mImageWidget.drawArc(x, y, width, height, startAngle, spanAngle);
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.drawArc(x, y, width, height, startAngle, spanAngle);
+	mImageWidget.update();
+	mImageWidget.show();
 }
 
 void GuiWorker::deleteAllArcs()
 {
-    mImageWidget.deleteAllArcs();
-    mImageWidget.update();
-    mImageWidget.show();
+	mImageWidget.deleteAllArcs();
+	mImageWidget.update();
+	mImageWidget.show();
 }
