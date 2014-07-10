@@ -33,6 +33,9 @@ public:
 	/// Set painter color.
 	void setPainterColor(QString const &color);
 
+	/// Set painter width.
+	void setPainterWidth(int penWidth);
+
 	/// Delete all items.
 	void deleteAllItems();
 
@@ -75,72 +78,82 @@ private:
 	/// Struct of point coordinates.
 	struct PointCoordinates
 	{
-		PointCoordinates(int x, int y, QColor color)
+		PointCoordinates(int x, int y, QColor color, int penWidth)
 		{
 			this->coord = QPoint(x, y);
 			this->color = color;
+			this->penWidth = penWidth;
 		}
 
 		QPoint coord;
 		QColor color;
+		int penWidth;
 	};
 
 	/// Struct of rect coordinates.
 	struct RectCoordinates
 	{
-		RectCoordinates(int x, int y, int width, int height, QColor color)
+		RectCoordinates(int x, int y, int width, int height, QColor color, int penWidth)
 		{
 			this->rect = QRect(x, y, width, height);
 			this->color = color;
+			this->penWidth = penWidth;
 		}
 
 		QRect rect;
 		QColor color;
+		int penWidth;
 	};
 
 	/// Struct of line coordinates.
 	struct LineCoordinates
 	{
-		LineCoordinates(int x1, int y1, int x2, int y2, QColor color)
+		LineCoordinates(int x1, int y1, int x2, int y2, QColor color, int penWidth)
 		{
 			this->coord1 = QPoint(x1, y1);
 			this->coord2 = QPoint(x2, y2);
 			this->color = color;
+			this->penWidth = penWidth;
 		}
 
 		QPoint coord1;
 		QPoint coord2;
 		QColor color;
+		int penWidth;
 	};
 
 	/// Struct of ellipse coordinates.
 	struct EllipseCoordinates
 	{
-		EllipseCoordinates(int x, int y, int width, int height, QColor color)
+		EllipseCoordinates(int x, int y, int width, int height, QColor color, int penWidth)
 		{
 			this->ellipse = QRect(x, y, width, height);
 			this->color = color;
+			this->penWidth = penWidth;
 		}
 
 		QRect ellipse;
 		QColor color;
+		int penWidth;
 	};
 
 	/// Struct of arc coordinates.
 	struct ArcCoordinates
 	{
-		ArcCoordinates(int x, int y, int width, int height, int startAngle, int spanAngle, QColor color)
+		ArcCoordinates(int x, int y, int width, int height, int startAngle, int spanAngle, QColor color, int penWidth)
 		{
 			this->arc = QRect(x, y, width, height);
 			this->startAngle = startAngle;
 			this->spanAngle = spanAngle;
 			this->color = color;
+			this->penWidth = penWidth;
 		}
 
 		QRect arc;
 		int startAngle;
 		int spanAngle;
 		QColor color;
+		int penWidth;
 	};
 
 	/// Draw all elements.
@@ -188,4 +201,7 @@ private:
 
 	/// Current pen color.
 	QColor mCurrentPenColor;
+
+	/// Current pen width.
+	int mCurrentPenWidth;
 };

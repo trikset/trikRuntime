@@ -65,6 +65,9 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	/// Set painter width.
+	void setPainterWidth(int penWidth);
+
 	/// Set painter color.
 	void setPainterColor(QString const &color);
 

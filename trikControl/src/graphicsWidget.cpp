@@ -13,11 +13,13 @@
  * limitations under the License. */
 
 #include <QtGui/QPainter>
+#include <QtGui/QPen>
 
 #include "graphicsWidget.h"
 
 GraphicsWidget::GraphicsWidget()
 	: mCurrentPenColor(Qt::black)
+	, mCurrentPenWidth(0)
 {
 }
 
@@ -27,34 +29,34 @@ void GraphicsWidget::paintEvent(QPaintEvent *)
 
 	for (int i = 0; i < mLines.length(); i++)
 	{
-		painter.setPen(mLines.at(i).color);
+		painter.setPen(QPen(mLines.at(i).color, mLines.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawLine(mLines.at(i).coord1.x(), mLines.at(i).coord1.y()
 						 , mLines.at(i).coord2.x(), mLines.at(i).coord2.y());
 	}
 
 	for (int i = 0; i < mPoints.length(); i++)
 	{
-		painter.setPen(mPoints.at(i).color);
+		painter.setPen(QPen(mPoints.at(i).color, mPoints.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawPoint(mPoints.at(i).coord.x(), mPoints.at(i).coord.y());
 	}
 
 	for (int i = 0; i < mRects.length(); i++)
 	{
-		painter.setPen(mRects.at(i).color);
+		painter.setPen(QPen(mRects.at(i).color, mRects.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawRect(mRects.at(i).rect.x(), mRects.at(i).rect.y()
 						 , mRects.at(i).rect.width(), mRects.at(i).rect.height());
 	}
 
 	for (int i = 0; i < mEllipses.length(); i++)
 	{
-		painter.setPen(mEllipses.at(i).color);
+		painter.setPen(QPen(mEllipses.at(i).color, mEllipses.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawEllipse(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y()
 							, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
 	}
 
 	for (int i = 0; i < mArcs.length(); i++)
 	{
-		painter.setPen(mArcs.at(i).color);
+		painter.setPen(QPen(mArcs.at(i).color, mArcs.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawArc(mArcs.at(i).arc.x(), mArcs.at(i).arc.y()
 						, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
 						, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
@@ -109,9 +111,14 @@ void GraphicsWidget::setPainterColor(QString const &color)
 	}
 }
 
+void GraphicsWidget::setPainterWidth(int penWidth)
+{
+	mCurrentPenWidth = penWidth;
+}
+
 void GraphicsWidget::drawPoint(int x, int y)
 {
-	PointCoordinates coordinates(x, y, mCurrentPenColor);
+	PointCoordinates coordinates(x, y, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsPoint(coordinates)) {
 		mPoints.insert(mPoints.length(), coordinates);
@@ -134,7 +141,7 @@ bool GraphicsWidget::containsPoint(PointCoordinates const &coordinates)
 
 void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 {
-	LineCoordinates coordinates(x1, y1, x2, y2, mCurrentPenColor);
+	LineCoordinates coordinates(x1, y1, x2, y2, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsLine(coordinates)) {
 		mLines.insert(mLines.length(), coordinates);
@@ -159,7 +166,7 @@ bool GraphicsWidget::containsLine(LineCoordinates const &coordinates)
 
 void GraphicsWidget::drawRect(int x, int y, int width, int height)
 {
-	RectCoordinates coordinates(x, y, width, height, mCurrentPenColor);
+	RectCoordinates coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsRect(coordinates)) {
 		mRects.insert(mRects.length(), coordinates);
@@ -184,7 +191,7 @@ bool GraphicsWidget::containsRect(RectCoordinates const &coordinates)
 
 void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
 {
-	EllipseCoordinates coordinates(x, y, width, height, mCurrentPenColor);
+	EllipseCoordinates coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsEllipse(coordinates)) {
 		mEllipses.insert(mEllipses.length(), coordinates);
@@ -209,7 +216,7 @@ bool GraphicsWidget::containsEllipse(EllipseCoordinates const &coordinates)
 
 void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	ArcCoordinates coordinates(x, y, width, height, startAngle, spanAngle, mCurrentPenColor);
+	ArcCoordinates coordinates(x, y, width, height, startAngle, spanAngle, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsArc(coordinates)) {
 		mArcs.insert(mArcs.length(), coordinates);

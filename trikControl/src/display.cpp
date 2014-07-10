@@ -46,6 +46,7 @@ Display::Display(QThread &guiThread)
 	connect(this, SIGNAL(threadDrawEllipse(int,int,int,int)), mGuiWorker, SLOT(drawEllipse(int,int,int,int)));
 	connect(this, SIGNAL(threadDrawArc(int,int,int,int,int,int)), mGuiWorker, SLOT(drawArc(int,int,int,int,int,int)));
 	connect(this, SIGNAL(threadSetPainterColor(QString)), mGuiWorker, SLOT(setPainterColor(QString)));
+	connect(this, SIGNAL(threadSetPainterWidth(int)), mGuiWorker, SLOT(setPainterWidth(int)));
 }
 
 Display::~Display()
@@ -119,7 +120,12 @@ void Display::drawArc(int x, int y, int width, int height, int startAngle, int s
 	emit threadDrawArc(x, y, width, height, startAngle, spanAngle);
 }
 
-void Display::setPainterColor(const QString &color)
+void Display::setPainterColor(QString const &color)
 {
 	emit threadSetPainterColor(color);
+}
+
+void Display::setPainterWidth(int penWidth)
+{
+	emit threadSetPainterWidth(penWidth);
 }

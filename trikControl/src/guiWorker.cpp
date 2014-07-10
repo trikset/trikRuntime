@@ -144,6 +144,11 @@ void GuiWorker::setPainterColor(QString const &color)
 	mImageWidget.setPainterColor(color);
 }
 
+void GuiWorker::setPainterWidth(int penWidth)
+{
+	mImageWidget.setPainterWidth(penWidth);
+}
+
 void GuiWorker::clear()
 {
 	mImageWidget.deleteAllItems();

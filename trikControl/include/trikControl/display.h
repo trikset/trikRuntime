@@ -56,6 +56,9 @@ public slots:
 	/// Set painter color.
 	void setPainterColor(QString const &color);
 
+	/// Set painter width.
+	void setPainterWidth(int penWidth);
+
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
@@ -118,6 +121,7 @@ signals:
 	void threadDrawEllipse(int x, int y, int width, int height);
 	void threadDrawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 	void threadSetPainterColor(QString const &color);
+	void threadSetPainterWidth(int penWidth);
 
 private:
 	QThread &mGuiThread;
