@@ -37,6 +37,7 @@ StartWidget::StartWidget(QString const &configPath, QString const &startDirPath,
 	: QWidget(parent)
 	, mController(configPath, startDirPath)
 	, mConfigPath(configPath)
+	, mStartDirPath(startDirPath)
 {
 	setWindowState(Qt::WindowFullScreen);
 
