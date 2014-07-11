@@ -30,45 +30,30 @@ using namespace trikControl;
 Display::Display(QThread &guiThread, const QString &startDirPath)
 	: mGuiThread(guiThread)
 	, mStartDirPath(startDirPath)
+	, mGuiWorker(new GuiWorker())
 {
-	mGuiWorker = new GuiWorker();
 	mGuiWorker->moveToThread(&guiThread);
-
-	connect(this, SIGNAL(threadShowImage(QString)), mGuiWorker, SLOT(showImage(QString)));
-	connect(this, SIGNAL(threadAddLabel(QString, int, int)), mGuiWorker, SLOT(addLabel(QString, int, int)));
-	connect(this, SIGNAL(threadRemoveLabels()), mGuiWorker, SLOT(removeLabels()));
-	connect(this, SIGNAL(threadSetBackground(QString)), mGuiWorker, SLOT(setBackground(QString)));
-	connect(this, SIGNAL(threadHide()), mGuiWorker, SLOT(hide()));
-	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
-	connect(this, SIGNAL(threadClear()), mGuiWorker, SLOT(clear()));
-	connect(this, SIGNAL(threadDrawLine(int,int,int,int)), mGuiWorker, SLOT(drawLine(int,int,int,int)));
-	connect(this, SIGNAL(threadDrawPoint(int,int)), mGuiWorker, SLOT(drawPoint(int,int)));
-	connect(this, SIGNAL(threadDrawRect(int,int,int,int)), mGuiWorker, SLOT(drawRect(int,int,int,int)));
-	connect(this, SIGNAL(threadDrawEllipse(int,int,int,int)), mGuiWorker, SLOT(drawEllipse(int,int,int,int)));
-	connect(this, SIGNAL(threadDrawArc(int,int,int,int,int,int)), mGuiWorker, SLOT(drawArc(int,int,int,int,int,int)));
-	connect(this, SIGNAL(threadSetPainterColor(QString)), mGuiWorker, SLOT(setPainterColor(QString)));
-	connect(this, SIGNAL(threadSetPainterWidth(int)), mGuiWorker, SLOT(setPainterWidth(int)));
 }
 
 Display::~Display()
 {
-	emit threadDelete();
+	QMetaObject::invokeMethod(mGuiWorker, "deleteWorker");
 	mGuiThread.wait(1000);
 }
 
 void Display::showImage(QString const &fileName)
 {
-	emit threadShowImage(fileName);
+	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, fileName));
 }
 
 void Display::addLabel(QString const &text, int x, int y)
 {
-	emit threadAddLabel(text, x, y);
+	QMetaObject::invokeMethod(mGuiWorker, "addLabel", Q_ARG(QString, text), Q_ARG(int, x), Q_ARG(int, y));
 }
 
 void Display::removeLabels()
 {
-	emit threadRemoveLabels();
+	QMetaObject::invokeMethod(mGuiWorker, "removeLabels");
 }
 
 void Display::smile()
@@ -83,50 +68,53 @@ void Display::sadSmile()
 
 void Display::setBackground(QString const &color)
 {
-	emit threadSetBackground(color);
+	QMetaObject::invokeMethod(mGuiWorker, "setBackground", Q_ARG(QString, color));
 }
 
 void Display::hide()
 {
-	emit threadHide();
+	QMetaObject::invokeMethod(mGuiWorker, "hide");
 }
 
 void Display::clear()
 {
-	emit threadClear();
+	QMetaObject::invokeMethod(mGuiWorker, "clear");
 }
 
 void Display::drawLine(int x1, int y1, int x2, int y2)
 {
-	emit threadDrawLine(x1, y1, x2, y2);
+	QMetaObject::invokeMethod(mGuiWorker, "drawLine", Q_ARG(int, x1), Q_ARG(int, y1), Q_ARG(int, x2), Q_ARG(int, y2));
 }
 
 void Display::drawPoint(int x, int y)
 {
-	emit threadDrawPoint(x, y);
+	QMetaObject::invokeMethod(mGuiWorker, "drawPoint", Q_ARG(int, x), Q_ARG(int, y));
 }
 
 void Display::drawRect(int x, int y, int width, int height)
 {
-	emit threadDrawRect(x, y, width, height);
+	QMetaObject::invokeMethod(mGuiWorker, "drawRect", Q_ARG(int, x), Q_ARG(int, y)
+			, Q_ARG(int, width), Q_ARG(int, height));
 }
 
 void Display::drawEllipse(int x, int y, int width, int height)
 {
-	emit threadDrawEllipse(x, y, width, height);
+	QMetaObject::invokeMethod(mGuiWorker, "drawEllipse", Q_ARG(int, x), Q_ARG(int, y)
+			, Q_ARG(int, width), Q_ARG(int, height));
 }
 
 void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	emit threadDrawArc(x, y, width, height, startAngle, spanAngle);
+	QMetaObject::invokeMethod(mGuiWorker, "drawArc", Q_ARG(int, x), Q_ARG(int, y)
+			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle));
 }
 
 void Display::setPainterColor(QString const &color)
 {
-	emit threadSetPainterColor(color);
+	QMetaObject::invokeMethod(mGuiWorker, "setPainterColor", Q_ARG(QString, color));
 }
 
 void Display::setPainterWidth(int penWidth)
 {
-	emit threadSetPainterWidth(penWidth);
+	QMetaObject::invokeMethod(mGuiWorker, "setPainterWidth", Q_ARG(int, penWidth));
 }
