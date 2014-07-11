@@ -86,9 +86,9 @@ private:
 		{
 		}
 
-		QPoint const coord;
-		QColor const color;
-		int const penWidth;
+		QPoint coord;
+		QColor color;
+		int penWidth;
 	};
 
 	/// Information about rectangle.
@@ -99,9 +99,9 @@ private:
 		{
 		}
 
-		QRect const rect;
-		QColor const color;
-		int const penWidth;
+		QRect rect;
+		QColor color;
+		int penWidth;
 	};
 
 	/// Information about line.
@@ -112,10 +112,10 @@ private:
 		{
 		}
 
-		QPoint const coord1;
-		QPoint const coord2;
-		QColor const color;
-		int const penWidth;
+		QPoint coord1;
+		QPoint coord2;
+		QColor color;
+		int penWidth;
 	};
 
 	/// Struct of ellipse coordinates.
@@ -126,9 +126,9 @@ private:
 		{
 		}
 
-		QRect const ellipse;
-		QColor const color;
-		int const penWidth;
+		QRect ellipse;
+		QColor color;
+		int penWidth;
 	};
 
 	/// Struct of arc coordinates.
@@ -143,11 +143,11 @@ private:
 		{
 		}
 
-		QRect const arc;
-		int const startAngle;
-		int const spanAngle;
-		QColor const color;
-		int const penWidth;
+		QRect arc;
+		int startAngle;
+		int spanAngle;
+		QColor color;
+		int penWidth;
 	};
 
 	/// Draw all elements.
