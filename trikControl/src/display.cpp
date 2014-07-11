@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 CyberTech Labs Ltd.
+/* Copyright 2013 - 2014 CyberTech Labs Ltd, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,13 @@ Display::Display(QThread &guiThread, const QString &startDirPath)
 	connect(this, SIGNAL(threadHide()), mGuiWorker, SLOT(hide()));
 	connect(this, SIGNAL(threadDelete()), mGuiWorker, SLOT(deleteWorker()));
 	connect(this, SIGNAL(threadClear()), mGuiWorker, SLOT(clear()));
+	connect(this, SIGNAL(threadDrawLine(int,int,int,int)), mGuiWorker, SLOT(drawLine(int,int,int,int)));
+	connect(this, SIGNAL(threadDrawPoint(int,int)), mGuiWorker, SLOT(drawPoint(int,int)));
+	connect(this, SIGNAL(threadDrawRect(int,int,int,int)), mGuiWorker, SLOT(drawRect(int,int,int,int)));
+	connect(this, SIGNAL(threadDrawEllipse(int,int,int,int)), mGuiWorker, SLOT(drawEllipse(int,int,int,int)));
+	connect(this, SIGNAL(threadDrawArc(int,int,int,int,int,int)), mGuiWorker, SLOT(drawArc(int,int,int,int,int,int)));
+	connect(this, SIGNAL(threadSetPainterColor(QString)), mGuiWorker, SLOT(setPainterColor(QString)));
+	connect(this, SIGNAL(threadSetPainterWidth(int)), mGuiWorker, SLOT(setPainterWidth(int)));
 }
 
 Display::~Display()
@@ -87,4 +94,39 @@ void Display::hide()
 void Display::clear()
 {
 	emit threadClear();
+}
+
+void Display::drawLine(int x1, int y1, int x2, int y2)
+{
+	emit threadDrawLine(x1, y1, x2, y2);
+}
+
+void Display::drawPoint(int x, int y)
+{
+	emit threadDrawPoint(x, y);
+}
+
+void Display::drawRect(int x, int y, int width, int height)
+{
+	emit threadDrawRect(x, y, width, height);
+}
+
+void Display::drawEllipse(int x, int y, int width, int height)
+{
+	emit threadDrawEllipse(x, y, width, height);
+}
+
+void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
+{
+	emit threadDrawArc(x, y, width, height, startAngle, spanAngle);
+}
+
+void Display::setPainterColor(QString const &color)
+{
+	emit threadSetPainterColor(color);
+}
+
+void Display::setPainterWidth(int penWidth)
+{
+	emit threadSetPainterWidth(penWidth);
 }
