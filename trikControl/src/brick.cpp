@@ -192,6 +192,11 @@ void Brick::playSound(QString const &soundFileName)
 	}
 }
 
+void Brick::say(QString const &text)
+{
+	this->system("espeak -v russian_test -s 100 \"" + text + "\"");
+}
+
 void Brick::stop()
 {
 	foreach (ServoMotor * const servoMotor, mServoMotors.values()) {

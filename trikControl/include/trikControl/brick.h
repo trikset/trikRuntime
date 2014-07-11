@@ -71,6 +71,9 @@ public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).
 	void playSound(QString const &soundFileName);
 
+	/// Uses text synthesis to say given text on a speaker.
+	void say(QString const &text);
+
 	/// Stops all motors and shuts down all current activity.
 	void stop();
 
