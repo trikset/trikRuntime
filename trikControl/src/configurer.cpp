@@ -98,6 +98,11 @@ int Configurer::servoMotorTypeStop(QString const &servoMotorType) const
 	return mServoMotorTypes[servoMotorType].stop;
 }
 
+bool Configurer::isServoMotorTypeContiniousRotation(QString const &servoMotorType) const
+{
+	return mServoMotorTypes[servoMotorType].type == continiousRotation;
+}
+
 int Configurer::digitalSensorTypeMin(QString const &digitalSensorType) const
 {
 	return mDigitalSensorTypes[digitalSensorType].min;
@@ -530,6 +535,7 @@ void Configurer::loadServoMotorTypes(QDomElement const &root)
 		servoMotorType.max = childElement.attribute("max").toInt();
 		servoMotorType.zero = childElement.attribute("zero").toInt();
 		servoMotorType.stop = childElement.attribute("stop").toInt();
+		servoMotorType.type = childElement.attribute("type") != "angular" ? continiousRotation : angular;
 
 		mServoMotorTypes.insert(typeName, servoMotorType);
 	}

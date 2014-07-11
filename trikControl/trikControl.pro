@@ -60,6 +60,8 @@ HEADERS += \
 	$$PWD/src/cameraLineDetectorSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/servoMotor.h \
+	$$PWD/src/angularServoMotor.h \
+	$$PWD/src/continiousRotationServoMotor.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/guiWorker.h \
@@ -80,6 +82,8 @@ SOURCES += \
 	$$PWD/src/led.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/servoMotor.cpp \
+	$$PWD/src/angularServoMotor.cpp \
+	$$PWD/src/continiousRotationServoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/cameraLineDetectorSensorWorker.cpp \
