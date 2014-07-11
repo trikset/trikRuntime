@@ -22,6 +22,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
+#include <QtCore/QDir>
 
 #include <trikScriptRunner/trikScriptRunner.h>
 
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	trikScriptRunner::TrikScriptRunner runner(configPath);
+	trikScriptRunner::TrikScriptRunner runner(configPath, QDir::currentPath());
 	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
 	runner.runFromFile(scriptFileName);
 

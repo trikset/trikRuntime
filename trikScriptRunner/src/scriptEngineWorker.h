@@ -33,7 +33,8 @@ class ScriptEngineWorker : public QObject
 public:
 	/// Constructor.
 	/// @param configFilePath - path to a config file for trikControl.
-	ScriptEngineWorker(QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath);
 
 	/// Returns true, if script engine is initialized and running.
 	bool isRunning() const;
@@ -71,7 +72,7 @@ private:
 
 	trikControl::Brick mBrick;
 
-	QString mConfigFilePath;
+	QString const mStartDirPath;
 };
 
 }

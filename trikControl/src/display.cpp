@@ -27,8 +27,9 @@
 
 using namespace trikControl;
 
-Display::Display(QThread &guiThread)
+Display::Display(QThread &guiThread, const QString &startDirPath)
 	: mGuiThread(guiThread)
+	, mStartDirPath(startDirPath)
 {
 	mGuiWorker = new GuiWorker();
 	mGuiWorker->moveToThread(&guiThread);
@@ -65,12 +66,12 @@ void Display::removeLabels()
 
 void Display::smile()
 {
-	showImage("media/trik_smile_normal.png");
+	showImage(mStartDirPath + "/media/trik_smile_normal.png");
 }
 
 void Display::sadSmile()
 {
-	showImage("media/trik_smile_sad.png");
+	showImage(mStartDirPath + "/media/trik_smile_sad.png");
 }
 
 void Display::setBackground(QString const &color)

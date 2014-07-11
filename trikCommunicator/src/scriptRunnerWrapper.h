@@ -29,7 +29,8 @@ class ScriptRunnerWrapper : public QObject {
 public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
-	explicit ScriptRunnerWrapper(QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	explicit ScriptRunnerWrapper(QString const &configFilePath, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit ScriptRunnerWrapper(trikScriptRunner::TrikScriptRunner &runner);

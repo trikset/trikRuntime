@@ -91,11 +91,13 @@ int main(int argc, char *argv[])
 	}
 #endif
 
+	QString startDirPath = QDir::currentPath();
+
 	if (QDir::current().exists("scripts")) {
 		QDir::setCurrent("scripts");
 	}
 
-	StartWidget w(configPath);
+	StartWidget w(configPath, startDirPath);
 	w.show();
 
 	return app.exec();

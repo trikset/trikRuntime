@@ -32,7 +32,8 @@ class TrikScriptRunner : public QObject
 public:
 	/// Constructor.
 	/// @param configFilePath - path to config file for trikControl, for example /home/root/trik/
-	TrikScriptRunner(QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	TrikScriptRunner(QString const &configFilePath, QString const &startDirPath);
 
 	~TrikScriptRunner();
 
