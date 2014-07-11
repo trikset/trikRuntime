@@ -66,12 +66,12 @@ void Display::removeLabels()
 
 void Display::smile()
 {
-	showImage(mStartDirPath + "/media/trik_smile_normal.png");
+	showImage(mStartDirPath + "media/trik_smile_normal.png");
 }
 
 void Display::sadSmile()
 {
-	showImage(mStartDirPath + "/media/trik_smile_sad.png");
+	showImage(mStartDirPath + "media/trik_smile_sad.png");
 }
 
 void Display::setBackground(QString const &color)

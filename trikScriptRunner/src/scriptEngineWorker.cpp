@@ -68,8 +68,8 @@ void ScriptEngineWorker::run(QString const &script)
 	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
-	if (QFile::exists(mStartDirPath + "/system.js")) {
-		runAndReportException(FileUtils::readFromFile(mStartDirPath + "/system.js"));
+	if (QFile::exists(mStartDirPath + "system.js")) {
+		runAndReportException(FileUtils::readFromFile(mStartDirPath + "system.js"));
 	}
 
 	runAndReportException(script);
