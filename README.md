@@ -1,4 +1,4 @@
-trikRuntime
+trikRuntime  [![Build Status](https://travis-ci.org/trikset/trikRuntime.svg?branch=master)](https://travis-ci.org/trikset/trikRuntime)
 ===========
 
 Runtime for TRIK controller.
