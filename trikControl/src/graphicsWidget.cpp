@@ -243,5 +243,5 @@ bool GraphicsWidget::containsArc(ArcCoordinates const &coordinates)
 
 QColor GraphicsWidget::currentPenColor()
 {
-    return mCurrentPenColor;
+	return mCurrentPenColor;
 }
