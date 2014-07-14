@@ -74,6 +74,9 @@ public:
 	/// @param spanAngle - end angle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 
+	/// Return current color.
+	QColor returnCurrentColor();
+
 private:
 	/// Struct of point coordinates.
 	struct PointCoordinates

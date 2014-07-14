@@ -59,6 +59,8 @@ void GuiWorker::addLabel(QString const &text, int x, int y)
 	label = label ? label : new QLabel(&mImageWidget);
 	label->setText(text);
 
+	label->setStyleSheet(QString("color: %1").arg(mImageWidget.returnCurrentColor().name()));
+
 	// There is no layout for the label, so its size cannot be set automatically. We set
 	// it with QFontMetrics.
 	label->setGeometry(x, y, mFontMetrics.width(text), mFontMetrics.height());
