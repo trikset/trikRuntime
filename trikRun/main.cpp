@@ -28,6 +28,8 @@
 void printUsage()
 {
 	qDebug() << "Usage: trikRun <QtScript file name> [-c <config file name]>";
+	qDebug() << "Or";
+	qDebug() << "Usage: trikRun -h <your script>";
 }
 
 int main(int argc, char *argv[])
@@ -39,8 +41,6 @@ int main(int argc, char *argv[])
 		printUsage();
 		return 1;
 	}
-
-	QString const scriptFileName = args[1];
 
 	QString configPath = "./";
 	if (app.arguments().contains("-c")) {
@@ -58,7 +58,11 @@ int main(int argc, char *argv[])
 
 	trikScriptRunner::TrikScriptRunner runner(configPath);
 	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
-	runner.runFromFile(scriptFileName);
+	if (args[0] == "-h") {
+		runner.run(args[1]);
+	}	else {
+		runner.runFromFile(args[1]);
+	}
 
 	return app.exec();
 }
