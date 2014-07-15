@@ -44,7 +44,6 @@ void TrikScriptRunner::runFromFile(QString const &fileName)
 
 void TrikScriptRunner::abort()
 {
-	mExecutionState = stopping;
 	mScriptRunnerProxy->abort();
 }
 
