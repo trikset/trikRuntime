@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
 	if (app.arguments().contains("-s")) {
 		runner.run(args[app.arguments().indexOf("-s") + 1]);
-	}	else {
+	} else {
 		args.removeAll("-qws");
 		if (args.contains("-c")) {
 			args.removeAt(args.indexOf("-c") + 1);
