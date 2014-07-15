@@ -25,7 +25,7 @@ namespace trikScriptRunner {
 class ScriptEngineWorker;
 
 /// Executes scripts in Qt Scripting Engine.
-class TrikScriptRunner : public QObject
+class ScriptRunnerProxy : public QObject
 {
 	Q_OBJECT
 
@@ -33,9 +33,9 @@ public:
 	/// Constructor.
 	/// @param configFilePath - path to config file for trikControl, for example /home/root/trik/
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikScriptRunner(QString const &configFilePath, QString const &startDirPath);
+	ScriptRunnerProxy(QString const &configFilePath, QString const &startDirPath);
 
-	~TrikScriptRunner();
+	~ScriptRunnerProxy();
 
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.

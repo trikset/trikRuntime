@@ -14,19 +14,19 @@
 
 #include "src/scriptRunnerWrapper.h"
 
-#include <trikScriptRunner/trikScriptRunner.h>
+#include <trikScriptRunner/scriptRunnerProxy.h>
 
 using namespace trikCommunicator;
 
 ScriptRunnerWrapper::ScriptRunnerWrapper(QString const &configFilePath, QString const &startDirPath)
-	: mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath, startDirPath))
+	: mRunner(new trikScriptRunner::ScriptRunnerProxy(configFilePath, startDirPath))
 	, mOwnsRunner(true)
 	, mExecutionState(idle)
 {
 	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
 }
 
-ScriptRunnerWrapper::ScriptRunnerWrapper(trikScriptRunner::TrikScriptRunner &runner)
+ScriptRunnerWrapper::ScriptRunnerWrapper(trikScriptRunner::ScriptRunnerProxy &runner)
 	: mRunner(&runner)
 	, mOwnsRunner(false)
 	, mExecutionState(idle)

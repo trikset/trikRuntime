@@ -15,7 +15,7 @@
 #pragma once
 
 #include <trikCommunicator/trikCommunicator.h>
-#include <trikScriptRunner/trikScriptRunner.h>
+#include <trikScriptRunner/scriptRunnerProxy.h>
 
 namespace trikGui
 {
@@ -54,7 +54,7 @@ private:
 		, stopping
 	};
 
-	trikScriptRunner::TrikScriptRunner mScriptRunner;
+	trikScriptRunner::ScriptRunnerProxy mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
 
 	RunningWidget * mRunningWidget;  // Has ownership.

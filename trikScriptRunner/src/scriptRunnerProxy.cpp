@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "include/trikScriptRunner/trikScriptRunner.h"
+#include "include/trikScriptRunner/scriptRunnerProxy.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
@@ -23,7 +23,7 @@
 
 using namespace trikScriptRunner;
 
-TrikScriptRunner::TrikScriptRunner(QString const &configFilePath, QString const &startDirPath)
+ScriptRunnerProxy::ScriptRunnerProxy(QString const &configFilePath, QString const &startDirPath)
 {
 	mEngineWorker = new ScriptEngineWorker(configFilePath, startDirPath);
 
@@ -39,29 +39,29 @@ TrikScriptRunner::TrikScriptRunner(QString const &configFilePath, QString const 
 	mWorkerThread.start();
 }
 
-TrikScriptRunner::~TrikScriptRunner()
+ScriptRunnerProxy::~ScriptRunnerProxy()
 {
 	mEngineWorker->abort();
 	emit threadDelete();
 	mWorkerThread.wait(1000);
 }
 
-void TrikScriptRunner::run(QString const &script)
+void ScriptRunnerProxy::run(QString const &script)
 {
 	emit threadRun(script);
 }
 
-void TrikScriptRunner::runFromFile(QString const &fileName)
+void ScriptRunnerProxy::runFromFile(QString const &fileName)
 {
 	emit threadRun(FileUtils::readFromFile(fileName));
 }
 
-void TrikScriptRunner::abort()
+void ScriptRunnerProxy::abort()
 {
 	mEngineWorker->abort();
 }
 
-bool TrikScriptRunner::isInEventDrivenMode() const
+bool ScriptRunnerProxy::isInEventDrivenMode() const
 {
 	return mEngineWorker->isInEventDrivenMode();
 }

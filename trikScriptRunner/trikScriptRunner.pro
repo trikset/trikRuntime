@@ -33,13 +33,13 @@ INCLUDEPATH = \
 LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX
 
 HEADERS += \
-	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+	$$PWD/include/trikScriptRunner/scriptRunnerProxy.h \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/fileUtils.h \
 
 SOURCES += \
-	$$PWD/src/trikScriptRunner.cpp \
+	$$PWD/src/scriptRunnerProxy.cpp \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/fileUtils.cpp \
