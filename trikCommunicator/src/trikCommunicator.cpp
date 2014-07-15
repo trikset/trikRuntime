@@ -29,7 +29,7 @@ TrikCommunicator::TrikCommunicator(QString const &configFilePath, const QString 
 	init();
 }
 
-TrikCommunicator::TrikCommunicator(trikScriptRunner::ScriptRunnerProxy &runner)
+TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
 	: mScriptRunnerWrapper(new ScriptRunnerWrapper(runner))
 {
 	init();

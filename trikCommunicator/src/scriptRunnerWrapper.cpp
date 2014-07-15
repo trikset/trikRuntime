@@ -14,22 +14,20 @@
 
 #include "src/scriptRunnerWrapper.h"
 
-#include <trikScriptRunner/scriptRunnerProxy.h>
+#include <trikScriptRunner/trikScriptRunner.h>
 
 using namespace trikCommunicator;
 
 ScriptRunnerWrapper::ScriptRunnerWrapper(QString const &configFilePath, QString const &startDirPath)
-	: mRunner(new trikScriptRunner::ScriptRunnerProxy(configFilePath, startDirPath))
+	: mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath, startDirPath))
 	, mOwnsRunner(true)
-	, mExecutionState(idle)
 {
 	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
 }
 
-ScriptRunnerWrapper::ScriptRunnerWrapper(trikScriptRunner::ScriptRunnerProxy &runner)
+ScriptRunnerWrapper::ScriptRunnerWrapper(trikScriptRunner::TrikScriptRunner &runner)
 	: mRunner(&runner)
 	, mOwnsRunner(false)
-	, mExecutionState(idle)
 {
 	connect(mRunner, SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
 }
@@ -43,24 +41,15 @@ ScriptRunnerWrapper::~ScriptRunnerWrapper()
 
 void ScriptRunnerWrapper::run(QString const &script)
 {
-	mExecutionState = running;
 	mRunner->run(script);
 }
 
 void ScriptRunnerWrapper::stop()
 {
-	mExecutionState = stopping;
 	mRunner->abort();
-	mRunner->run("brick.stop()");
 }
 
 void ScriptRunnerWrapper::onScriptExecutionCompleted()
 {
-	if (mExecutionState == running) {
-		mExecutionState = stopping;
-		mRunner->run("brick.stop()");
-	} else {
-		mExecutionState = idle;
-		emit finishedScript();
-	}
+	emit finishedScript();
 }

@@ -22,7 +22,7 @@
 #include <QtNetwork/QTcpSocket>
 
 namespace trikScriptRunner {
-class ScriptRunnerProxy;
+class TrikScriptRunner;
 }
 
 namespace trikCommunicator {
@@ -45,7 +45,7 @@ public:
 	explicit TrikCommunicator(QString const &configFilePath, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
-	explicit TrikCommunicator(trikScriptRunner::ScriptRunnerProxy &runner);
+	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
 
 	~TrikCommunicator();
 

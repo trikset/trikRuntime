@@ -41,11 +41,6 @@ public:
 	/// @param script - script in Qt Script language to be executed.
 	void run(QString const &script);
 
-	/// Reads a script from given file and asynchronously executes it. If some script is already executing, it will be
-	/// aborted.
-	/// @param fileName - name of a file with script.
-	void runFromFile(QString const &fileName);
-
 	/// Aborts script execution.
 	void abort();
 
@@ -64,8 +59,6 @@ signals:
 	void threadDelete();
 
 private:
-	static QString readFromFile(QString const &fileName);
-
 	ScriptEngineWorker *mEngineWorker;  // Has ownership.
 	QThread mWorkerThread;
 };

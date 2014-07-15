@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 
 namespace trikScriptRunner {
-class ScriptRunnerProxy;
+class TrikScriptRunner;
 }
 
 namespace trikCommunicator {
@@ -33,7 +33,7 @@ public:
 	explicit ScriptRunnerWrapper(QString const &configFilePath, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
-	explicit ScriptRunnerWrapper(trikScriptRunner::ScriptRunnerProxy &runner);
+	explicit ScriptRunnerWrapper(trikScriptRunner::TrikScriptRunner &runner);
 
 	~ScriptRunnerWrapper();
 
@@ -54,20 +54,11 @@ private slots:
 	void onScriptExecutionCompleted();
 
 private:
-	enum State {
-		idle
-		, running
-		, stopping
-	};
-
 	/// Script runner object.
-	trikScriptRunner::ScriptRunnerProxy *mRunner;  // Has or doesn't have ownership, depending on mOwnsRunner.
+	trikScriptRunner::TrikScriptRunner *mRunner;  // Has or doesn't have ownership, depending on mOwnsRunner.
 
 	/// Flag that is true when wrapper shall delete runner itself.
 	bool const mOwnsRunner;
-
-	/// Execution state of a runner.
-	State mExecutionState;
 };
 
 }

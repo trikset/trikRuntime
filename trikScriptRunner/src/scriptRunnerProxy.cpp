@@ -12,14 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "include/trikScriptRunner/scriptRunnerProxy.h"
+#include "scriptRunnerProxy.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 
-#include "scriptableParts.h"
 #include "scriptEngineWorker.h"
-#include "fileUtils.h"
 
 using namespace trikScriptRunner;
 
@@ -49,11 +47,6 @@ ScriptRunnerProxy::~ScriptRunnerProxy()
 void ScriptRunnerProxy::run(QString const &script)
 {
 	emit threadRun(script);
-}
-
-void ScriptRunnerProxy::runFromFile(QString const &fileName)
-{
-	emit threadRun(FileUtils::readFromFile(fileName));
 }
 
 void ScriptRunnerProxy::abort()

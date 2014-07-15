@@ -15,7 +15,7 @@
 #pragma once
 
 #include <trikCommunicator/trikCommunicator.h>
-#include <trikScriptRunner/scriptRunnerProxy.h>
+#include <trikScriptRunner/trikScriptRunner.h>
 
 namespace trikGui
 {
@@ -48,18 +48,10 @@ private slots:
 	void directScriptExecutionStarted();
 
 private:
-	enum State {
-		idle
-		, running
-		, stopping
-	};
-
-	trikScriptRunner::ScriptRunnerProxy mScriptRunner;
+	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
 
 	RunningWidget * mRunningWidget;  // Has ownership.
-
-	State mExecutionState;
 };
 
 }

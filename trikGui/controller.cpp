@@ -28,7 +28,6 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	: mScriptRunner(configPath, startDirPath)
 	, mCommunicator(mScriptRunner)
 	, mRunningWidget(NULL)
-	, mExecutionState(idle)
 {
 	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
 
@@ -52,7 +51,6 @@ void Controller::runFile(QString const &filePath)
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
-		mExecutionState = running;
 		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");");
 	} else if (fileInfo.suffix() == "sh") {
 		QStringList args;
@@ -73,17 +71,11 @@ void Controller::abortExecution()
 
 void Controller::scriptExecutionCompleted()
 {
-	if (mExecutionState == running) {
-		mExecutionState = stopping;
-		mScriptRunner.run("brick.stop()");
-	} else {
-		mExecutionState = idle;
-		if (mRunningWidget) {
-			mRunningWidget->releaseKeyboard();
-			mRunningWidget->close();
-			delete mRunningWidget;
-			mRunningWidget = NULL;
-		}
+	if (mRunningWidget) {
+		mRunningWidget->releaseKeyboard();
+		mRunningWidget->close();
+		delete mRunningWidget;
+		mRunningWidget = NULL;
 	}
 }
 
@@ -103,8 +95,6 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 	// will can get keyboard events using trikControl::Keys class because it works directly
 	// with the keyboard file.
 	mRunningWidget->grabKeyboard();
-
-	mExecutionState = running;
 }
 
 void Controller::directScriptExecutionStarted()
