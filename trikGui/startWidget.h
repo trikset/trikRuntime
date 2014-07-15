@@ -51,8 +51,9 @@ class StartWidget : public QWidget
 public:
 	/// Constructor
 	/// @param configPath - full path to configuration files.
+	/// @param startDirPath - path to the directory from which the application was executed.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit StartWidget(QString const &configPath, QWidget *parent = 0);
+	explicit StartWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
 
 	~StartWidget();
 
@@ -71,6 +72,7 @@ private:
 	QStandardItemModel mMenuModel;
 	Controller mController;
 	QString const mConfigPath;
+	QString const mStartDirPath;
 
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;

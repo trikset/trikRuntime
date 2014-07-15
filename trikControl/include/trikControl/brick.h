@@ -54,7 +54,8 @@ public:
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
 	/// @param configFilePath - path to config.xml
-	Brick(QThread &guiThread, QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	Brick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
 
 	~Brick();
 
@@ -69,6 +70,9 @@ public:
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).
 	void playSound(QString const &soundFileName);
+
+	/// Uses text synthesis to say given text on a speaker.
+	void say(QString const &text);
 
 	/// Stops all motors and shuts down all current activity.
 	void stop();

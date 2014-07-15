@@ -20,18 +20,19 @@
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
 
+#include "angularServoMotor.h"
+#include "continiousRotationServoMotor.h"
 #include "powerMotor.h"
-#include "servoMotor.h"
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
 
 using namespace trikControl;
 
-Brick::Brick(QThread &guiThread, QString const &configFilePath)
+Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &startDirPath)
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(NULL)
-	, mDisplay(guiThread)
+	, mDisplay(guiThread, startDirPath)
 	, mInEventDrivenMode(false)
 {
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
@@ -43,16 +44,30 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
 		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
-		ServoMotor *servoMotor = new ServoMotor(
-				mConfigurer->servoMotorTypeMin(servoMotorType)
-				, mConfigurer->servoMotorTypeMax(servoMotorType)
-				, mConfigurer->servoMotorTypeZero(servoMotorType)
-				, mConfigurer->servoMotorTypeStop(servoMotorType)
-				, mConfigurer->servoMotorDeviceFile(port)
-				, mConfigurer->servoMotorPeriodFile(port)
-				, mConfigurer->servoMotorPeriod(port)
-				, mConfigurer->servoMotorInvert(port)
-				);
+		ServoMotor *servoMotor = NULL;
+		if (mConfigurer->isServoMotorTypeContiniousRotation(servoMotorType)) {
+			servoMotor = new ContiniousRotationServoMotor(
+					mConfigurer->servoMotorTypeMin(servoMotorType)
+					, mConfigurer->servoMotorTypeMax(servoMotorType)
+					, mConfigurer->servoMotorTypeZero(servoMotorType)
+					, mConfigurer->servoMotorTypeStop(servoMotorType)
+					, mConfigurer->servoMotorDeviceFile(port)
+					, mConfigurer->servoMotorPeriodFile(port)
+					, mConfigurer->servoMotorPeriod(port)
+					, mConfigurer->servoMotorInvert(port)
+					);
+		} else {
+			servoMotor = new AngularServoMotor(
+					mConfigurer->servoMotorTypeMin(servoMotorType)
+					, mConfigurer->servoMotorTypeMax(servoMotorType)
+					, mConfigurer->servoMotorTypeZero(servoMotorType)
+					, mConfigurer->servoMotorTypeStop(servoMotorType)
+					, mConfigurer->servoMotorDeviceFile(port)
+					, mConfigurer->servoMotorPeriodFile(port)
+					, mConfigurer->servoMotorPeriod(port)
+					, mConfigurer->servoMotorInvert(port)
+					);
+		}
 
 		mServoMotors.insert(port, servoMotor);
 	}
@@ -175,6 +190,11 @@ void Brick::playSound(QString const &soundFileName)
 	if (command.isEmpty() || ::system(command.toStdString().c_str()) != 0) {
 		qDebug() << "Play sound failed";
 	}
+}
+
+void Brick::say(QString const &text)
+{
+	this->system("espeak -v russian_test -s 100 \"" + text + "\"");
 }
 
 void Brick::stop()

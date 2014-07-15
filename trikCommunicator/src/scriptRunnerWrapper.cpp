@@ -18,8 +18,8 @@
 
 using namespace trikCommunicator;
 
-ScriptRunnerWrapper::ScriptRunnerWrapper(QString const &configFilePath)
-	: mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath))
+ScriptRunnerWrapper::ScriptRunnerWrapper(QString const &configFilePath, QString const &startDirPath)
+	: mRunner(new trikScriptRunner::TrikScriptRunner(configFilePath, startDirPath))
 	, mOwnsRunner(true)
 	, mExecutionState(idle)
 {

@@ -44,6 +44,7 @@ class SensorsSelectionWidget : public TrikGuiDialog
 
 public:
 	SensorsSelectionWidget(QString const &configPath
+			, QString const &startDirPath
 			, trikControl::Sensor::Type type
 			, QWidget *parent = 0);
 

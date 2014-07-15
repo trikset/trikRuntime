@@ -23,9 +23,9 @@
 
 using namespace trikScriptRunner;
 
-TrikScriptRunner::TrikScriptRunner(QString const &configFilePath)
+TrikScriptRunner::TrikScriptRunner(QString const &configFilePath, QString const &startDirPath)
 {
-	mEngineWorker = new ScriptEngineWorker(configFilePath);
+	mEngineWorker = new ScriptEngineWorker(configFilePath, startDirPath);
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));

@@ -30,7 +30,8 @@ class Controller : public QObject
 public:
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
-	Controller(QString const &configPath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	Controller(QString const &configPath, QString const &startDirPath);
 
 	~Controller();
 
