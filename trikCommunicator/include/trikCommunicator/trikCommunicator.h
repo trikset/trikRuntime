@@ -27,7 +27,6 @@ class TrikScriptRunner;
 
 namespace trikCommunicator {
 
-class ScriptRunnerWrapper;
 class Connection;
 
 /// Class that enables connection with a client running on computer (TrikLab or remote control).
@@ -74,7 +73,12 @@ private:
 	void init();
 
 	/// Script runner object common to all connections.
-	QScopedPointer<ScriptRunnerWrapper> mScriptRunnerWrapper;
+	/// Ownership depends on mHasScriptRunnerOwnership flag, if we received runner belonging to other object or created
+	/// our own.
+	trikScriptRunner::TrikScriptRunner *mTrikScriptRunner;
+
+	/// True, if we created our own script runner, false if we got it from someone.
+	bool const mHasScriptRunnerOwnership;
 
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
 	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.

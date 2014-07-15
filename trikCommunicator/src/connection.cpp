@@ -17,19 +17,20 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QThread>
 
+#include <trikScriptRunner/trikScriptRunner.h>
+
 #include "src/connection.h"
-#include "src/scriptRunnerWrapper.h"
 
 using namespace trikCommunicator;
 
 Connection::Connection()
-	: mScriptRunnerWrapper(NULL)
+	: mTrikScriptRunner(NULL)
 {
 }
 
-void Connection::init(int socketDescriptor, ScriptRunnerWrapper *scriptRunnerWrapper)
+void Connection::init(int socketDescriptor, trikScriptRunner::TrikScriptRunner *trikScriptRunner)
 {
-	mScriptRunnerWrapper = scriptRunnerWrapper;
+	mTrikScriptRunner = trikScriptRunner;
 	mSocket.reset(new QTcpSocket());
 
 	if (!mSocket->setSocketDescriptor(socketDescriptor)) {
@@ -71,13 +72,13 @@ void Connection::onReadyRead()
 	} else if (command.startsWith("run")) {
 		command.remove(0, QString("run:").length());
 		QString const fileContents = readFromFile(command);
-		QMetaObject::invokeMethod(mScriptRunnerWrapper, "run", Q_ARG(QString, fileContents));
+		QMetaObject::invokeMethod(mTrikScriptRunner, "run", Q_ARG(QString, fileContents));
 		emit startedScript(command);
 	} else if (command == "stop") {
-		QMetaObject::invokeMethod(mScriptRunnerWrapper, "stop");
+		QMetaObject::invokeMethod(mTrikScriptRunner, "abort");
 	} else if (command.startsWith("direct")) {
 		command.remove(0, QString("direct:").length());
-		QMetaObject::invokeMethod(mScriptRunnerWrapper, "run", Q_ARG(QString, command));
+		QMetaObject::invokeMethod(mTrikScriptRunner, "run", Q_ARG(QString, command));
 		emit startedDirectScript();
 	}
 }

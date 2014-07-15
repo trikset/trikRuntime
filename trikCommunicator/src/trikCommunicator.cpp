@@ -18,19 +18,22 @@
 #include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 
-#include "src/scriptRunnerWrapper.h"
+#include <trikScriptRunner/trikScriptRunner.h>
+
 #include "src/connection.h"
 
 using namespace trikCommunicator;
 
 TrikCommunicator::TrikCommunicator(QString const &configFilePath, const QString &startDirPath)
-	: mScriptRunnerWrapper(new ScriptRunnerWrapper(configFilePath, startDirPath))
+	: mTrikScriptRunner(new trikScriptRunner::TrikScriptRunner(configFilePath, startDirPath))
+	, mHasScriptRunnerOwnership(true)
 {
 	init();
 }
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
-	: mScriptRunnerWrapper(new ScriptRunnerWrapper(runner))
+	: mTrikScriptRunner(&runner)
+	, mHasScriptRunnerOwnership(false)
 {
 	init();
 }
@@ -46,6 +49,10 @@ TrikCommunicator::~TrikCommunicator()
 
 	qDeleteAll(mConnections);
 	qDeleteAll(mConnections.keys());
+
+	if (mHasScriptRunnerOwnership) {
+		delete mTrikScriptRunner;
+	}
 }
 
 void TrikCommunicator::startServer(int const &port)
@@ -78,7 +85,7 @@ void TrikCommunicator::incomingConnection(int socketDescriptor)
 	connectionThread->start();
 
 	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor)
-			, Q_ARG(ScriptRunnerWrapper *, mScriptRunnerWrapper.data()));
+			, Q_ARG(trikScriptRunner::TrikScriptRunner *, mTrikScriptRunner));
 }
 
 void TrikCommunicator::onConnectionClosed()
@@ -93,7 +100,7 @@ void TrikCommunicator::onConnectionClosed()
 
 void TrikCommunicator::init()
 {
-	qRegisterMetaType<ScriptRunnerWrapper *>("ScriptRunnerWrapper *");
+	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-	connect(mScriptRunnerWrapper.data(), SIGNAL(finishedScript()), this, SIGNAL(finishedScript()));
+	connect(mTrikScriptRunner, SIGNAL(completed()), this, SIGNAL(finishedScript()));
 }

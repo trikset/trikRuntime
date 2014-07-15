@@ -34,6 +34,7 @@ public:
 
 	~TrikScriptRunner();
 
+public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.
 	void run(QString const &script);
