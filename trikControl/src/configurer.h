@@ -51,6 +51,9 @@ public:
 	/// Returns value of duty_ns corresponding to non-breaking stop of a servo motor for given servo motor type.
 	int servoMotorTypeStop(QString const &servoMotorType) const;
 
+	/// Returns true, if it is continious rotation servo, false for angular servos.
+	bool isServoMotorTypeContiniousRotation(QString const &servoMotorType) const;
+
 	/// Returns minimal physical reading value of a digital sensor (corresponds to 0 in client program).
 	int digitalSensorTypeMin(QString const &digitalSensorType) const;
 
@@ -137,11 +140,17 @@ public:
 	QString roverCvParams() const;
 
 private:
+	enum ServoType {
+		angular
+		, continiousRotation
+	};
+
 	struct ServoMotorType {
 		int min;
 		int max;
 		int zero;
 		int stop;
+		ServoType type;
 	};
 
 	struct DigitalSensorType {

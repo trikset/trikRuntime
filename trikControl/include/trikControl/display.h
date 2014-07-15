@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QThread>
+#include <QtCore/QString>
 
 #include "declSpec.h"
 
@@ -30,7 +31,8 @@ class TRIKCONTROL_EXPORT Display : public QObject
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	explicit Display(QThread &guiThread);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	explicit Display(QThread &guiThread, QString const &startDirPath);
 
 	~Display();
 
@@ -107,24 +109,9 @@ public slots:
 	/// Clear everything painted with this object.
 	void clear();
 
-signals:
-	void threadShowImage(QString const &fileName);
-	void threadAddLabel(QString const &text, int x, int y);
-	void threadRemoveLabels();
-	void threadSetBackground(QString const &color);
-	void threadHide();
-	void threadDelete();
-	void threadClear();
-	void threadDrawLine(int x1, int y1, int x2, int y2);
-	void threadDrawPoint(int x, int y);
-	void threadDrawRect(int x, int y, int width, int height);
-	void threadDrawEllipse(int x, int y, int width, int height);
-	void threadDrawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
-	void threadSetPainterColor(QString const &color);
-	void threadSetPainterWidth(int penWidth);
-
 private:
 	QThread &mGuiThread;
+	QString const mStartDirPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

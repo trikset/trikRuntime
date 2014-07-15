@@ -17,21 +17,25 @@
 
 #include "graphicsWidget.h"
 
+using namespace trikControl;
+
 GraphicsWidget::GraphicsWidget()
 	: mCurrentPenColor(Qt::black)
 	, mCurrentPenWidth(0)
 {
 }
 
-void GraphicsWidget::paintEvent(QPaintEvent *)
+void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 {
+	Q_UNUSED(paintEvent)
+
 	QPainter painter(this);
 
 	for (int i = 0; i < mLines.length(); i++)
 	{
 		painter.setPen(QPen(mLines.at(i).color, mLines.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawLine(mLines.at(i).coord1.x(), mLines.at(i).coord1.y()
-						 , mLines.at(i).coord2.x(), mLines.at(i).coord2.y());
+				, mLines.at(i).coord2.x(), mLines.at(i).coord2.y());
 	}
 
 	for (int i = 0; i < mPoints.length(); i++)
@@ -44,22 +48,22 @@ void GraphicsWidget::paintEvent(QPaintEvent *)
 	{
 		painter.setPen(QPen(mRects.at(i).color, mRects.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawRect(mRects.at(i).rect.x(), mRects.at(i).rect.y()
-						 , mRects.at(i).rect.width(), mRects.at(i).rect.height());
+				, mRects.at(i).rect.width(), mRects.at(i).rect.height());
 	}
 
 	for (int i = 0; i < mEllipses.length(); i++)
 	{
 		painter.setPen(QPen(mEllipses.at(i).color, mEllipses.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawEllipse(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y()
-							, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
+				, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
 	}
 
 	for (int i = 0; i < mArcs.length(); i++)
 	{
 		painter.setPen(QPen(mArcs.at(i).color, mArcs.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 		painter.drawArc(mArcs.at(i).arc.x(), mArcs.at(i).arc.y()
-						, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
-						, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
+				, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
+				, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
 	}
 }
 
@@ -118,7 +122,7 @@ void GraphicsWidget::setPainterWidth(int penWidth)
 
 void GraphicsWidget::drawPoint(int x, int y)
 {
-	PointCoordinates coordinates(x, y, mCurrentPenColor, mCurrentPenWidth);
+	PointCoordinates const coordinates(x, y, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsPoint(coordinates)) {
 		mPoints.insert(mPoints.length(), coordinates);
@@ -127,8 +131,7 @@ void GraphicsWidget::drawPoint(int x, int y)
 
 bool GraphicsWidget::containsPoint(PointCoordinates const &coordinates)
 {
-	for (int i = 0; i < mPoints.length(); i++)
-	{
+	for (int i = 0; i < mPoints.length(); ++i) {
 		if (mPoints.at(i).coord.x() == coordinates.coord.x()
 			&& mPoints.at(i).coord.y() == coordinates.coord.y())
 		{
@@ -141,7 +144,7 @@ bool GraphicsWidget::containsPoint(PointCoordinates const &coordinates)
 
 void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 {
-	LineCoordinates coordinates(x1, y1, x2, y2, mCurrentPenColor, mCurrentPenWidth);
+	LineCoordinates const coordinates(x1, y1, x2, y2, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsLine(coordinates)) {
 		mLines.insert(mLines.length(), coordinates);
@@ -150,8 +153,7 @@ void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 
 bool GraphicsWidget::containsLine(LineCoordinates const &coordinates)
 {
-	for (int i = 0; i < mLines.length(); i++)
-	{
+	for (int i = 0; i < mLines.length(); ++i) {
 		if (mLines.at(i).coord1.x() == coordinates.coord1.x()
 			&& mLines.at(i).coord1.y() == coordinates.coord1.y()
 			&& mLines.at(i).coord2.x() == coordinates.coord2.x()
@@ -166,7 +168,7 @@ bool GraphicsWidget::containsLine(LineCoordinates const &coordinates)
 
 void GraphicsWidget::drawRect(int x, int y, int width, int height)
 {
-	RectCoordinates coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
+	RectCoordinates const coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsRect(coordinates)) {
 		mRects.insert(mRects.length(), coordinates);
@@ -175,8 +177,7 @@ void GraphicsWidget::drawRect(int x, int y, int width, int height)
 
 bool GraphicsWidget::containsRect(RectCoordinates const &coordinates)
 {
-	for (int i = 0; i < mRects.length(); i++)
-	{
+	for (int i = 0; i < mRects.length(); ++i) {
 		if (mRects.at(i).rect.x() == coordinates.rect.x()
 			&& mRects.at(i).rect.y() == coordinates.rect.y()
 			&& mRects.at(i).rect.width() == coordinates.rect.width()
@@ -191,7 +192,7 @@ bool GraphicsWidget::containsRect(RectCoordinates const &coordinates)
 
 void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
 {
-	EllipseCoordinates coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
+	EllipseCoordinates const coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsEllipse(coordinates)) {
 		mEllipses.insert(mEllipses.length(), coordinates);
@@ -200,8 +201,7 @@ void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
 
 bool GraphicsWidget::containsEllipse(EllipseCoordinates const &coordinates)
 {
-	for (int i = 0; i < mEllipses.length(); i++)
-	{
+	for (int i = 0; i < mEllipses.length(); i++) {
 		if (mEllipses.at(i).ellipse.x() == coordinates.ellipse.x()
 			&& mEllipses.at(i).ellipse.y() == coordinates.ellipse.y()
 			&& mEllipses.at(i).ellipse.width() == coordinates.ellipse.width()
@@ -216,7 +216,7 @@ bool GraphicsWidget::containsEllipse(EllipseCoordinates const &coordinates)
 
 void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	ArcCoordinates coordinates(x, y, width, height, startAngle, spanAngle, mCurrentPenColor, mCurrentPenWidth);
+	ArcCoordinates const coordinates(x, y, width, height, startAngle, spanAngle, mCurrentPenColor, mCurrentPenWidth);
 
 	if (!containsArc(coordinates)) {
 		mArcs.insert(mArcs.length(), coordinates);
@@ -225,8 +225,7 @@ void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle
 
 bool GraphicsWidget::containsArc(ArcCoordinates const &coordinates)
 {
-	for (int i = 0; i < mArcs.length(); i++)
-	{
+	for (int i = 0; i < mArcs.length(); ++i) {
 		if (mArcs.at(i).arc.x() == coordinates.arc.x()
 			&& mArcs.at(i).arc.y() == coordinates.arc.y()
 			&& mArcs.at(i).arc.width() == coordinates.arc.width()

@@ -1,4 +1,4 @@
-/* Copyright 2014 Kogutich Denis, Smirnov Mikhail
+/* Copyright 2014 Kogutich Denis, Smirnov Mikhail, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * limitations under the License. */
 
 #pragma once
+
 #include <QtCore/QList>
 #include <QtCore/QPoint>
 #include <QtCore/QRect>
@@ -23,6 +24,8 @@
 #else
 	#include <QtWidgets/QWidget>
 #endif
+
+namespace trikControl {
 
 /// Class of graphic widget.
 class GraphicsWidget : public QWidget
@@ -78,14 +81,12 @@ public:
 	QColor currentPenColor();
 
 private:
-	/// Struct of point coordinates.
+	/// Information about point.
 	struct PointCoordinates
 	{
 		PointCoordinates(int x, int y, QColor color, int penWidth)
+				: coord(QPoint(x, y)), color(color), penWidth(penWidth)
 		{
-			this->coord = QPoint(x, y);
-			this->color = color;
-			this->penWidth = penWidth;
 		}
 
 		QPoint coord;
@@ -93,14 +94,12 @@ private:
 		int penWidth;
 	};
 
-	/// Struct of rect coordinates.
+	/// Information about rectangle.
 	struct RectCoordinates
 	{
 		RectCoordinates(int x, int y, int width, int height, QColor color, int penWidth)
+			: rect(QRect(x, y, width, height)), color(color), penWidth(penWidth)
 		{
-			this->rect = QRect(x, y, width, height);
-			this->color = color;
-			this->penWidth = penWidth;
 		}
 
 		QRect rect;
@@ -108,15 +107,12 @@ private:
 		int penWidth;
 	};
 
-	/// Struct of line coordinates.
+	/// Information about line.
 	struct LineCoordinates
 	{
 		LineCoordinates(int x1, int y1, int x2, int y2, QColor color, int penWidth)
+			: coord1(QPoint(x1, y1)), coord2(QPoint(x2, y2)), color(color), penWidth(penWidth)
 		{
-			this->coord1 = QPoint(x1, y1);
-			this->coord2 = QPoint(x2, y2);
-			this->color = color;
-			this->penWidth = penWidth;
 		}
 
 		QPoint coord1;
@@ -129,10 +125,8 @@ private:
 	struct EllipseCoordinates
 	{
 		EllipseCoordinates(int x, int y, int width, int height, QColor color, int penWidth)
+			: ellipse(QRect(x, y, width, height)), color(color), penWidth(penWidth)
 		{
-			this->ellipse = QRect(x, y, width, height);
-			this->color = color;
-			this->penWidth = penWidth;
 		}
 
 		QRect ellipse;
@@ -144,12 +138,12 @@ private:
 	struct ArcCoordinates
 	{
 		ArcCoordinates(int x, int y, int width, int height, int startAngle, int spanAngle, QColor color, int penWidth)
+			: arc(QRect(x, y, width, height))
+			, startAngle(startAngle)
+			, spanAngle(spanAngle)
+			, color(color)
+			, penWidth(penWidth)
 		{
-			this->arc = QRect(x, y, width, height);
-			this->startAngle = startAngle;
-			this->spanAngle = spanAngle;
-			this->color = color;
-			this->penWidth = penWidth;
 		}
 
 		QRect arc;
@@ -160,30 +154,30 @@ private:
 	};
 
 	/// Draw all elements.
-	void paintEvent(QPaintEvent *);
+	virtual void paintEvent(QPaintEvent *paintEvent);
 
 	/// Check list contains point.
-	/// @param coordinates - point that occurence we are looking for.
+	/// @param coordinates - point that we are looking for.
 	/// @return - true if list contains this point.
 	bool containsPoint(PointCoordinates const &coordinates);
 
-	/// Check list contains line.
-	/// @param coordinates - line that occurence we are looking for.
+	/// Check that list contains given line.
+	/// @param coordinates - line that we are looking for.
 	/// @return - true if list contains this line.
 	bool containsLine(LineCoordinates const &coordinates);
 
-	/// Check list contains rect.
-	/// @param coordinates - rect that occurence we are looking for.
+	/// Check that list contains given rect.
+	/// @param coordinates - rect that we are looking for.
 	/// @return - true if list contains this rect.
 	bool containsRect(RectCoordinates const &coordinates);
 
-	/// Check list contains ellipse.
-	/// @param coordinates - ellipse that occurence we are looking for.
+	/// Check that list contains given ellipse.
+	/// @param coordinates - ellipse that we are looking for.
 	/// @return - true if list contains this ellipse.
 	bool containsEllipse(EllipseCoordinates const &coordinates);
 
-	/// Check list contains arc.
-	/// @param coordinates - arc that occurence we are looking for.
+	/// Check that list contains given arc.
+	/// @param coordinates - arc that we are looking for.
 	/// @return - true if list contains this arc.
 	bool containsArc(ArcCoordinates const &coordinates);
 
@@ -208,3 +202,5 @@ private:
 	/// Current pen width.
 	int mCurrentPenWidth;
 };
+
+}

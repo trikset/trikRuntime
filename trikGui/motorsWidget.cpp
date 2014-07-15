@@ -23,11 +23,12 @@
 using namespace trikGui;
 
 MotorsWidget::MotorsWidget(QString const &configPath
+		, QString const &startDirPath
 		, trikControl::Motor::Type type
 		, QWidget *parent
 		)
 	: TrikGuiDialog(parent)
-	, mBrick(*TrikGuiApplication::instance()->thread(), configPath)
+	, mBrick(*TrikGuiApplication::instance()->thread(), startDirPath, configPath)
 	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {

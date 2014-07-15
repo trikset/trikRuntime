@@ -23,8 +23,8 @@
 
 using namespace trikCommunicator;
 
-TrikCommunicator::TrikCommunicator(QString const &configFilePath)
-	: mScriptRunnerWrapper(new ScriptRunnerWrapper(configFilePath))
+TrikCommunicator::TrikCommunicator(QString const &configFilePath, const QString &startDirPath)
+	: mScriptRunnerWrapper(new ScriptRunnerWrapper(configFilePath, startDirPath))
 {
 	init();
 }
