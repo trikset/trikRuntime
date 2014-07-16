@@ -29,20 +29,19 @@
 
 void printUsage()
 {
-	qDebug() << "Usage: trikRun <QtScript file name> [-c <config file name] [-d <working directory name>]";
+	qDebug() << "Usage: trikRun -qws <QtScript file name> [-c <config file name>] [-d <working directory name>]";
+	qDebug() << "Usage: trikRun -qws -s \"<your script>\" [-c <config file name>] [-d <working directory name>]";
 }
 
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
-	QStringList const args = app.arguments();
+	QStringList args = app.arguments();
 
 	if (args.count() < 2) {
 		printUsage();
 		return 1;
 	}
-
-	QString const scriptFileName = args[1];
 
 	QString configPath = "./";
 	if (app.arguments().contains("-c")) {
@@ -82,7 +81,28 @@ int main(int argc, char *argv[])
 
 	trikScriptRunner::TrikScriptRunner runner(configPath, startDirPath);
 	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
-	runner.runFromFile(scriptFileName);
+
+	if (app.arguments().contains("-s")) {
+		runner.run(args[app.arguments().indexOf("-s") + 1]);
+	} else {
+		args.removeAll("-qws");
+		if (args.contains("-c")) {
+			args.removeAt(args.indexOf("-c") + 1);
+			args.removeAll("-c");
+		}
+
+		if (args.contains("-d")) {
+			args.removeAt(args.indexOf("-d") + 1);
+			args.removeAll("-d");
+		}
+
+		if (args.count() != 2) {
+			printUsage();
+			return 1;
+		}
+
+		runner.runFromFile(args[1]);
+	}
 
 	return app.exec();
 }
