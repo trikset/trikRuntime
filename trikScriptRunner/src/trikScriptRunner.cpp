@@ -36,20 +36,14 @@ void TrikScriptRunner::run(QString const &script)
 	mScriptRunnerProxy->run(script);
 }
 
-void TrikScriptRunner::runFromFile(QString const &fileName)
+void TrikScriptRunner::runDirectCommand(QString const &command)
 {
-	mExecutionState = running;
-	mScriptRunnerProxy->run(trikKernel::FileUtils::readFromFile(fileName));
+
 }
 
 void TrikScriptRunner::abort()
 {
-	mScriptRunnerProxy->abort();
-}
-
-bool TrikScriptRunner::isInEventDrivenMode() const
-{
-	return mScriptRunnerProxy->isInEventDrivenMode();
+	mScriptRunnerProxy->reset();
 }
 
 void TrikScriptRunner::onScriptExecutionCompleted()

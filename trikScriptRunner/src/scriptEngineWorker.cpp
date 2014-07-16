@@ -44,66 +44,46 @@ Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 
-ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, const QString &startDirPath)
+ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
 	: mEngine(NULL)
-	, mBrick(*this->thread(), configFilePath, startDirPath)
+	, mConfigFilePath(configFilePath)
 	, mStartDirPath(startDirPath)
+	, mGuiThread(*this->thread())
 {
-	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+}
+
+void ScriptEngineWorker::reset()
+{
+	Q_ASSERT(mEngine);
+
+	mEngine->abortEvaluation();
+
+	// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
+	// right now because we can be in mEngine's call stack. Also we can not invoke it directly since we can be in
+	// another thread and deleting it on return to that thread's event loop will surely crash worker, and Qt docs
+	// are not clear whether deleteLater implementation is aware of that problem.
+	QMetaObject::invokeMethod(mEngine, "deleteLater", Qt::QueuedConnection);
+
+	QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
+}
+
+void ScriptEngineWorker::init()
+{
+	mBrick.reset(new Brick(mGuiThread, mConfigFilePath, mStartDirPath));
+	connect(mBrick.data(), SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+
+	resetScriptEngine();
 }
 
 void ScriptEngineWorker::run(QString const &script)
 {
-	if (mEngine != NULL) {
-		if (mEngine->isEvaluating()) {
-			mEngine->abortEvaluation();
-		}
-
-		// Here we can safely delete mEngine, we're not in its stack. There's no way to call run() from Qt Script.
-		delete mEngine;
-	}
-
-	initScriptEngine();
-
-	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
-	mEngine->globalObject().setProperty("brick", brickProxy);
-
-	if (QFile::exists(mStartDirPath + "system.js")) {
-		runAndReportException(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
-	}
+	Q_ASSERT(mEngine);
 
 	runAndReportException(script);
 
-	if (!mBrick.isInEventDrivenMode()) {
+	if (!mBrick->isInEventDrivenMode()) {
 		emit completed();
 	}
-}
-
-void ScriptEngineWorker::abort()
-{
-	if (mEngine != NULL) {
-		mEngine->abortEvaluation();
-
-		// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
-		// right now because we can be in mEngine's call stack. Also we can not invoke it directly since we can be in
-		// another thread and deleting it on return to that thread's event loop will surely crash worker, and Qt docs
-		// are not clear whether deleteLater implementation is aware of that problem.
-		QMetaObject::invokeMethod(mEngine, "deleteLater");
-	}
-}
-
-bool ScriptEngineWorker::isRunning() const
-{
-	if (mEngine == NULL) {
-		return false;
-	} else {
-		return mEngine->isEvaluating();
-	}
-}
-
-bool ScriptEngineWorker::isInEventDrivenMode() const
-{
-	return mBrick.isInEventDrivenMode();
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
@@ -114,11 +94,9 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 	emit completed();
 }
 
-void ScriptEngineWorker::initScriptEngine()
+void ScriptEngineWorker::resetScriptEngine()
 {
 	mEngine = new QScriptEngine();
-
-	connect(mEngine, SIGNAL(destroyed()), this, SLOT(onScriptEngineDestroyed()));
 
 	mBrick.reset();
 
@@ -133,12 +111,14 @@ void ScriptEngineWorker::initScriptEngine()
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
 	qScriptRegisterMetaType(mEngine, cameraLineDetectorSensorToScriptValue, cameraLineDetectorSensorFromScriptValue);
 
-	mEngine->setProcessEventsInterval(1);
-}
+	QScriptValue brickProxy = mEngine->newQObject(mBrick.data());
+	mEngine->globalObject().setProperty("brick", brickProxy);
 
-void ScriptEngineWorker::onScriptEngineDestroyed()
-{
-	mEngine = NULL;
+	if (QFile::exists(mStartDirPath + "system.js")) {
+		runAndReportException(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+	}
+
+	mEngine->setProcessEventsInterval(1);
 }
 
 void ScriptEngineWorker::runAndReportException(QString const &script)

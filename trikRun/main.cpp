@@ -25,6 +25,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
 
+#include <trikKernel/fileUtils.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
 void printUsage()
@@ -101,7 +102,7 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 
-		runner.runFromFile(args[1]);
+		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
 	}
 
 	return app.exec();

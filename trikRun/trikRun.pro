@@ -15,6 +15,7 @@
 SOURCES += \
 	$$PWD/main.cpp \
 
+TRIKKERNEL_DIR = ../trikKernel/
 TRIKCONTROL_DIR = ../trikControl/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 
@@ -35,5 +36,6 @@ include(../global.pri)
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKSCRIPTRUNNER_DIR/include \
+	$$TRIKKERNEL_DIR/include \
 
-LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX

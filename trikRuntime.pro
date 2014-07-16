@@ -26,6 +26,6 @@ SUBDIRS = \
 
 trikScriptRunner.depends = trikControl trikKernel
 trikCommunicator.depends = trikScriptRunner
-trikRun.depends = trikScriptRunner
+trikRun.depends = trikScriptRunner trikKernel
 trikServer.depends = trikCommunicator
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi
+trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel

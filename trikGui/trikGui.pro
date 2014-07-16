@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TRIKKERNEL_DIR = ../trikKernel/
 TRIKCONTROL_DIR = ../trikControl/
 TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
@@ -74,6 +75,7 @@ include(../global.pri)
 
 INCLUDEPATH = \
 	$$PWD \
+	$$TRIKKERNEL_DIR/include \
 	$$TRIKCOMMUNICATOR_DIR/include \
 	$$TRIKSCRIPTRUNNER_DIR/include \
 	$$TRIKWIFI_DIR/include \
@@ -81,6 +83,7 @@ INCLUDEPATH = \
 
 LIBS += \
 	-L$$DESTDIR \
+	-ltrikKernel$$CONFIGURATION_SUFFIX \
 	-ltrikCommunicator$$CONFIGURATION_SUFFIX \
 	-ltrikScriptRunner$$CONFIGURATION_SUFFIX \
 	-ltrikWiFi$$CONFIGURATION_SUFFIX \
