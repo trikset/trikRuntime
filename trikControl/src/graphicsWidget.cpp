@@ -240,7 +240,7 @@ bool GraphicsWidget::containsArc(ArcCoordinates const &coordinates)
 	return false;
 }
 
-QColor GraphicsWidget::currentPenColor()
+QColor GraphicsWidget::currentPenColor() const
 {
 	return mCurrentPenColor;
 }
