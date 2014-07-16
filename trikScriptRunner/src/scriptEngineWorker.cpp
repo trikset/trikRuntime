@@ -17,6 +17,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 
+#include <trikKernel/fileUtils.h>
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
@@ -27,7 +28,6 @@
 #include <trikControl/cameraLineDetectorSensor.h>
 
 #include "scriptableParts.h"
-#include "fileUtils.h"
 
 using namespace trikScriptRunner;
 using namespace trikControl;
@@ -69,7 +69,7 @@ void ScriptEngineWorker::run(QString const &script)
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
-		runAndReportException(FileUtils::readFromFile(mStartDirPath + "system.js"));
+		runAndReportException(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
 	}
 
 	runAndReportException(script);

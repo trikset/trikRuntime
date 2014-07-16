@@ -17,6 +17,7 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QThread>
 
+#include <trikKernel/fileUtils.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
 #include "src/connection.h"
@@ -68,10 +69,10 @@ void Connection::onReadyRead()
 
 		QString const fileName = command.left(separatorPosition);
 		QString const fileContents = command.mid(separatorPosition + 1);
-		writeToFile(fileName, fileContents);
+		trikKernel::FileUtils::writeToFile(fileName, fileContents);
 	} else if (command.startsWith("run")) {
 		command.remove(0, QString("run:").length());
-		QString const fileContents = readFromFile(command);
+		QString const fileContents = trikKernel::FileUtils::readFromFile(command);
 		QMetaObject::invokeMethod(mTrikScriptRunner, "run", Q_ARG(QString, fileContents));
 		emit startedScript(command);
 	} else if (command == "stop") {
@@ -87,34 +88,4 @@ void Connection::disconnected()
 {
 	qDebug() << "Disconnected.";
 	thread()->quit();
-}
-
-QString Connection::readFromFile(QString const &fileName)
-{
-	QFile file(fileName);
-	file.open(QIODevice::ReadOnly | QIODevice::Text);
-	if (!file.isOpen()) {
-		throw "Reading failed";
-	}
-
-	QTextStream input;
-	input.setDevice(&file);
-	input.setCodec("UTF-8");
-	QString const result = input.readAll();
-	file.close();
-	return result;
-}
-
-void Connection::writeToFile(QString const &fileName, QString const &contents)
-{
-	QFile file(fileName);
-	file.open(QIODevice::WriteOnly | QIODevice::Text);
-	if (!file.isOpen()) {
-		throw "File open operation failed";
-	}
-
-	QTextStream stream(&file);
-	stream.setCodec("UTF-8");
-	stream << contents;
-	file.close();
 }

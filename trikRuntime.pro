@@ -15,6 +15,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+	trikKernel \
 	trikControl \
 	trikScriptRunner \
 	trikCommunicator \
@@ -23,7 +24,7 @@ SUBDIRS = \
 	trikGui \
 	trikWiFi \
 
-trikScriptRunner.depends = trikControl
+trikScriptRunner.depends = trikControl trikKernel
 trikCommunicator.depends = trikScriptRunner
 trikRun.depends = trikScriptRunner
 trikServer.depends = trikCommunicator

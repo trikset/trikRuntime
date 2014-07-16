@@ -13,6 +13,7 @@
 # limitations under the License.
 
 TRIKCONTROL_DIR = ../trikControl/
+TRIKKERNEL_DIR = ../trikKernel/
 
 TEMPLATE = lib
 QT += script
@@ -29,18 +30,17 @@ TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
 INCLUDEPATH = \
 	$$PWD \
 	$$TRIKCONTROL_DIR/include \
+	$$TRIKKERNEL_DIR/include \
 
-LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX
+LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX
 
 HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
-	$$PWD/src/fileUtils.h \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/scriptRunnerProxy.h \
 
 SOURCES += \
-	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/scriptRunnerProxy.cpp \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \

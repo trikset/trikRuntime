@@ -1,4 +1,4 @@
-# Copyright 2013 Yurii Litvinov
+# Copyright 2014 CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,33 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TRIKKERNEL_DIR = ../trikKernel/
-TRIKCONTROL_DIR = ../trikControl/
-TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
-
 TEMPLATE = lib
 
-QT += network
-
-DEFINES += TRIKCOMMUNICATOR_LIBRARY
+DEFINES += TRIKKERNEL_LIBRARY
 
 include(../global.pri)
 
-TARGET = trikCommunicator$$CONFIGURATION_SUFFIX
+TARGET = trikKernel$$CONFIGURATION_SUFFIX
 
 INCLUDEPATH = \
 	$$PWD \
-	$$PWD/include/trikCommunicator \
-	$$TRIKSCRIPTRUNNER_DIR/include \
-	$$TRIKCONTROL_DIR/include \
-	$$TRIKKERNEL_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX
+	$$PWD/include/trikKernel \
 
 HEADERS += \
-	$$PWD/include/trikCommunicator/trikCommunicator.h \
-	$$PWD/src/connection.h \
+	$$PWD/include/trikKernel/fileUtils.h \
 
 SOURCES += \
-	$$PWD/src/trikCommunicator.cpp \
-	$$PWD/src/connection.cpp \
+	$$PWD/src/fileUtils.cpp \

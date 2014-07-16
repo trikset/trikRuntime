@@ -60,9 +60,6 @@ private slots:
 	void disconnected();
 
 private:
-	static QString readFromFile(QString const &fileName);
-	static void writeToFile(QString const &fileName, QString const &contents);
-
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;
 

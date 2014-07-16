@@ -14,8 +14,8 @@
 
 #include "include/trikScriptRunner/trikScriptRunner.h"
 
+#include <trikKernel/fileUtils.h>
 #include "src/scriptRunnerProxy.h"
-#include "src/fileUtils.h"
 
 using namespace trikScriptRunner;
 
@@ -39,7 +39,7 @@ void TrikScriptRunner::run(QString const &script)
 void TrikScriptRunner::runFromFile(QString const &fileName)
 {
 	mExecutionState = running;
-	mScriptRunnerProxy->run(FileUtils::readFromFile(fileName));
+	mScriptRunnerProxy->run(trikKernel::FileUtils::readFromFile(fileName));
 }
 
 void TrikScriptRunner::abort()
