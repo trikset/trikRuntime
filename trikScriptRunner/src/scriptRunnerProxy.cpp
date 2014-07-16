@@ -27,11 +27,9 @@ ScriptRunnerProxy::ScriptRunnerProxy(QString const &configFilePath, QString cons
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
-	connect(this, SIGNAL(threadDelete()), &mWorkerThread, SLOT(quit()));
 
 	mEngineWorker->moveToThread(&mWorkerThread);
 
-	connect(this, SIGNAL(threadRun(QString const &)), mEngineWorker, SLOT(run(QString const &)));
 	connect(mEngineWorker, SIGNAL(completed()), this, SIGNAL(completed()));
 
 	mWorkerThread.start();
@@ -40,13 +38,13 @@ ScriptRunnerProxy::ScriptRunnerProxy(QString const &configFilePath, QString cons
 ScriptRunnerProxy::~ScriptRunnerProxy()
 {
 	mEngineWorker->abort();
-	emit threadDelete();
+	QMetaObject::invokeMethod(&mWorkerThread, "quit");
 	mWorkerThread.wait(1000);
 }
 
 void ScriptRunnerProxy::run(QString const &script)
 {
-	emit threadRun(script);
+	QMetaObject::invokeMethod(mEngineWorker, "run", Q_ARG(QString const &, script));
 }
 
 void ScriptRunnerProxy::abort()
