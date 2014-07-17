@@ -64,17 +64,8 @@ private slots:
 	void onScriptExecutionCompleted();
 
 private:
-	enum State {
-		idle
-		, running
-		, stopping
-	};
-
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;
-
-	/// Execution state of a runner.
-	State mExecutionState;
 };
 
 }

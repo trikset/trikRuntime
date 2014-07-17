@@ -21,9 +21,8 @@ using namespace trikScriptRunner;
 
 TrikScriptRunner::TrikScriptRunner(QString const &configFilePath, QString const &startDirPath)
 	: mScriptRunnerProxy(new ScriptRunnerProxy(configFilePath, startDirPath))
-	, mExecutionState(idle)
 {
-	connect(mScriptRunnerProxy.data(), SIGNAL(completed()), this, SLOT(onScriptExecutionCompleted()));
+	connect(mScriptRunnerProxy.data(), SIGNAL(completed()), this, SIGNAL(completed()));
 }
 
 TrikScriptRunner::~TrikScriptRunner()
@@ -32,27 +31,15 @@ TrikScriptRunner::~TrikScriptRunner()
 
 void TrikScriptRunner::run(QString const &script)
 {
-	mExecutionState = running;
-	mScriptRunnerProxy->run(script);
+	mScriptRunnerProxy->run(script, false);
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)
 {
-
+	mScriptRunnerProxy->run(command, true);
 }
 
 void TrikScriptRunner::abort()
 {
 	mScriptRunnerProxy->reset();
-}
-
-void TrikScriptRunner::onScriptExecutionCompleted()
-{
-	if (mExecutionState == running) {
-		mExecutionState = stopping;
-		mScriptRunnerProxy->run("brick.stop()");
-	} else {
-		mExecutionState = idle;
-		emit completed();
-	}
 }

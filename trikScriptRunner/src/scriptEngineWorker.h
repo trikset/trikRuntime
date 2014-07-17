@@ -49,15 +49,19 @@ public slots:
 	void init();
 
 	/// Executes given script.
-	void run(QString const &script);
+	/// @param script - script to execute.
+	/// @param inEventDrivenMode - shall this script be executed in event-driven mode, i.e. not emit completed() signal
+	///        when it is finished.
+	void run(QString const &script, bool inEventDrivenMode);
 
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
-private:
-
+	/// Kill old script engine, create and reinit a new one.
 	void resetScriptEngine();
+
+private:
 	void runAndReportException(QString const &script);
 
 	// Has ownership. No smart pointers here because we need to do manual memory managment

@@ -39,7 +39,7 @@ public:
 
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.
-	void run(QString const &script);
+	void run(QString const &script, bool inEventDrivenMode);
 
 	/// Aborts script execution.
 	void reset();

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ void ScriptEngineWorker::reset()
 	// are not clear whether deleteLater implementation is aware of that problem.
 	QMetaObject::invokeMethod(mEngine, "deleteLater", Qt::QueuedConnection);
 
-	QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(this, "resetScriptEngine", Qt::QueuedConnection);
 }
 
 void ScriptEngineWorker::init()
@@ -75,22 +75,28 @@ void ScriptEngineWorker::init()
 	resetScriptEngine();
 }
 
-void ScriptEngineWorker::run(QString const &script)
+void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 {
 	Q_ASSERT(mEngine);
+
+	if (inEventDrivenMode) {
+		mBrick->run();
+	}
 
 	runAndReportException(script);
 
 	if (!mBrick->isInEventDrivenMode()) {
+		mBrick->stop();
 		emit completed();
 	}
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	abort();
+	mBrick->stop();
+	reset();
 
-	/// @todo Completed will be already sent by run() after abortExecution?
+	/// @todo Completed will be already sent by run() after abortEvaluation?
 	emit completed();
 }
 
@@ -98,7 +104,7 @@ void ScriptEngineWorker::resetScriptEngine()
 {
 	mEngine = new QScriptEngine();
 
-	mBrick.reset();
+	mBrick->reset();
 
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
