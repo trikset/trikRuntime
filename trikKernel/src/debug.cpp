@@ -24,7 +24,7 @@ Debugger::Debugger(QString const &methodName)
 	QString const indent(mIndent[thread()], ' ');
 	QString const str = QString("%1(Thread %2) Entering %3")
 			.arg(indent)
-			.arg(reinterpret_cast<int>(thread()))
+			.arg(reinterpret_cast<unsigned long>(thread()))
 			.arg(mMethodName);
 
 	qDebug() << str.toStdString().c_str();
@@ -37,7 +37,7 @@ Debugger::~Debugger()
 	QString const indent(mIndent[thread()], ' ');
 	QString const str = QString("%1(Thread %2) Exiting %3")
 			.arg(indent)
-			.arg(reinterpret_cast<int>(thread()))
+			.arg(reinterpret_cast<unsigned long>(thread()))
 			.arg(mMethodName);
 
 	qDebug() << str.toStdString().c_str();
