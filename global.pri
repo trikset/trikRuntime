@@ -60,7 +60,7 @@ unix {
 defineTest(copyToDestdir) {
 	FILES = $$1
 
-	for (FILE, FILES) {
+	for(FILE, FILES) {
 		# This ugly code is needed because xcopy requires to add source directory name to target directory name when copying directories
 		win32:AFTER_SLASH = $$section(FILE, "/", -1, -1)
 		win32:BASE_NAME = $$section(FILE, "/", -2, -2)
@@ -68,9 +68,10 @@ defineTest(copyToDestdir) {
 
 		win32:FILE ~= s,/$,,g
 
-		FILE = $$shell_path($$FILE)
-		DDIR = $$shell_path($$DESTDIR$$DESTDIR_SUFFIX/)
-        
+		win32:FILE ~= s,/,\,g
+		DDIR = $$DESTDIR$$DESTDIR_SUFFIX/
+		win32:DDIR ~= s,/,\,g
+
 		QMAKE_POST_LINK += $(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
 	}
 
