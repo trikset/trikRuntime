@@ -44,16 +44,20 @@ Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 
+#define D qDebug() << Q_FUNC_INFO;
+
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
 	: mEngine(NULL)
 	, mConfigFilePath(configFilePath)
 	, mStartDirPath(startDirPath)
 	, mGuiThread(*this->thread())
 {
+	D
 }
 
 void ScriptEngineWorker::reset()
 {
+	D
 	Q_ASSERT(mEngine);
 
 	mEngine->abortEvaluation();
@@ -69,6 +73,7 @@ void ScriptEngineWorker::reset()
 
 void ScriptEngineWorker::init()
 {
+	D
 	mBrick.reset(new Brick(mGuiThread, mConfigFilePath, mStartDirPath));
 	connect(mBrick.data(), SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 
@@ -77,6 +82,7 @@ void ScriptEngineWorker::init()
 
 void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 {
+	D
 	Q_ASSERT(mEngine);
 
 	if (inEventDrivenMode) {
@@ -93,6 +99,7 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
+	D
 	mBrick->stop();
 	reset();
 
@@ -102,6 +109,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 
 void ScriptEngineWorker::resetScriptEngine()
 {
+	D
 	mEngine = new QScriptEngine();
 
 	mBrick->reset();
@@ -129,6 +137,7 @@ void ScriptEngineWorker::resetScriptEngine()
 
 void ScriptEngineWorker::runAndReportException(QString const &script)
 {
+	D
 	QScriptValue const result = mEngine->evaluate(script);
 
 	if (mEngine->hasUncaughtException()) {

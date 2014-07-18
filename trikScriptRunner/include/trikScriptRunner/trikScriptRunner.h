@@ -59,10 +59,6 @@ signals:
 	/// or was aborted).
 	void completed();
 
-private slots:
-	/// Called when script runner reports that it has finished execution. Used to stop robot.
-	void onScriptExecutionCompleted();
-
 private:
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;

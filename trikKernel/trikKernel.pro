@@ -12,20 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = lib
-
-DEFINES += TRIKKERNEL_LIBRARY
-
 include(../global.pri)
-
-TARGET = trikKernel$$CONFIGURATION_SUFFIX
-
-INCLUDEPATH = \
-	$$PWD \
-	$$PWD/include/trikKernel \
 
 HEADERS += \
 	$$PWD/include/trikKernel/fileUtils.h \
 
 SOURCES += \
 	$$PWD/src/fileUtils.cpp \
+
+TEMPLATE = lib
+
+DEFINES += TRIKKERNEL_LIBRARY
