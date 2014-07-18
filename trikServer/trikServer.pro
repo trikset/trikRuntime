@@ -19,6 +19,10 @@ SOURCES += \
 
 uses(trikControl trikCommunicator)
 
+INCLUDEPATH += \
+	../trikControl/include/ \
+	../trikCommunicator/include/ \
+
 TEMPLATE = app
 CONFIG += console
 

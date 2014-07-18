@@ -1,6 +1,6 @@
 #pragma once
 
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QThread>
+#include <QtCore/QHash>
+#include <QtCore/QDebug>
 
 namespace trikKernel {
 
-/// Helper class with file helper functions.
-class FileUtils
+/// Debug helper that logs function entry and exit.
+class Debugger : public QObject
 {
-public:
-	/// Reads all file contents and returns it as sting or throws an exception.
-	static QString readFromFile(QString const &fileName);
+	Q_OBJECT
 
-	/// Writes given string to given file, throws exception if something went wrong.
-	static void writeToFile(QString const &fileName, QString const &contents);
+public:
+	/// Constructor.
+	/// @param methodName - name of a method to be logged
+	Debugger(QString const &methodName);
+
+	~Debugger();
+
+private:
+	QString const mMethodName;
+	static QHash<QThread *, int> mIndent;
 };
 
 }
+
+/// Macro to log method entry and exit.
+#define L trikKernel::Debugger const debugger(Q_FUNC_INFO)

@@ -16,9 +16,11 @@ include(../global.pri)
 
 HEADERS += \
 	$$PWD/include/trikKernel/fileUtils.h \
+	$$PWD/include/trikKernel/debug.h \
 
 SOURCES += \
 	$$PWD/src/fileUtils.cpp \
+	$$PWD/src/debug.cpp \
 
 TEMPLATE = lib
 

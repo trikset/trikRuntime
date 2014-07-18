@@ -38,4 +38,6 @@ copyToDestdir(system.js)
 
 uses(trikKernel trikControl)
 
-message($$INCLUDEPATH)
+INCLUDEPATH += \
+	$$PWD/../trikKernel/include/ \
+	$$PWD/../trikControl/include/ \

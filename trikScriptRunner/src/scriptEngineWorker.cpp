@@ -18,6 +18,8 @@
 #include <QtCore/QFile>
 
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/debug.h>
+
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
@@ -44,37 +46,31 @@ Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
 
-#define D qDebug() << Q_FUNC_INFO;
-
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
 	: mEngine(NULL)
 	, mConfigFilePath(configFilePath)
 	, mStartDirPath(startDirPath)
-	, mGuiThread(*this->thread())
+	, mGuiThread(this->thread())
 {
-	D
 }
 
 void ScriptEngineWorker::reset()
 {
-	D
 	Q_ASSERT(mEngine);
 
 	mEngine->abortEvaluation();
 
-	// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
-	// right now because we can be in mEngine's call stack. Also we can not invoke it directly since we can be in
-	// another thread and deleting it on return to that thread's event loop will surely crash worker, and Qt docs
-	// are not clear whether deleteLater implementation is aware of that problem.
-	QMetaObject::invokeMethod(mEngine, "deleteLater", Qt::QueuedConnection);
-
 	QMetaObject::invokeMethod(this, "resetScriptEngine", Qt::QueuedConnection);
+
+	if (mBrick->isInEventDrivenMode()) {
+		mBrick->stop();
+		emit completed();
+	}
 }
 
 void ScriptEngineWorker::init()
 {
-	D
-	mBrick.reset(new Brick(mGuiThread, mConfigFilePath, mStartDirPath));
+	mBrick.reset(new Brick(*mGuiThread, mConfigFilePath, mStartDirPath));
 	connect(mBrick.data(), SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 
 	resetScriptEngine();
@@ -82,7 +78,6 @@ void ScriptEngineWorker::init()
 
 void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 {
-	D
 	Q_ASSERT(mEngine);
 
 	if (inEventDrivenMode) {
@@ -93,23 +88,28 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 
 	if (!mBrick->isInEventDrivenMode()) {
 		mBrick->stop();
+		resetScriptEngine();
 		emit completed();
 	}
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	D
-	mBrick->stop();
-	reset();
+	if (!mBrick->isInEventDrivenMode()) {
+		// Somebody erroneously called brick.quit() before entering event loop, so we must force event loop for brick
+		// and only then quit, to send properly completed() signal.
+		mBrick->run();
+	}
 
-	/// @todo Completed will be already sent by run() after abortEvaluation?
-	emit completed();
+	reset();
 }
 
 void ScriptEngineWorker::resetScriptEngine()
 {
-	D
+	if (mEngine) {
+		mEngine->deleteLater();
+	}
+
 	mEngine = new QScriptEngine();
 
 	mBrick->reset();
@@ -137,7 +137,6 @@ void ScriptEngineWorker::resetScriptEngine()
 
 void ScriptEngineWorker::runAndReportException(QString const &script)
 {
-	D
 	QScriptValue const result = mEngine->evaluate(script);
 
 	if (mEngine->hasUncaughtException()) {

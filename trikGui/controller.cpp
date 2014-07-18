@@ -76,7 +76,9 @@ void Controller::scriptExecutionCompleted()
 	if (mRunningWidget) {
 		mRunningWidget->releaseKeyboard();
 		mRunningWidget->close();
-		delete mRunningWidget;
+
+		// Here we can be inside handler of mRunningWidget key press event.
+		mRunningWidget->deleteLater();
 		mRunningWidget = NULL;
 	}
 }

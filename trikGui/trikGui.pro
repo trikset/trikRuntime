@@ -14,12 +14,6 @@
 
 include(../global.pri)
 
-TRIKKERNEL_DIR = ../trikKernel/
-TRIKCONTROL_DIR = ../trikControl/
-TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
-TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
-TRIKWIFI_DIR = ../trikWiFi/
-
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
 	$$PWD/runningWidget.h \
@@ -73,3 +67,10 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 }
 
 uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi)
+
+INCLUDEPATH += \
+	../trikKernel/include/ \
+	../trikControl/include/ \
+	../trikCommunicator/include/ \
+	../trikScriptRunner/include/ \
+	../trikWiFi/include/ \

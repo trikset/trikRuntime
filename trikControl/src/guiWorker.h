@@ -17,6 +17,7 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/QMultiHash>
 #include <QtCore/QList>
+#include <QtCore/QScopedPointer>
 #include <QtGui/QPixmap>
 #include <QtGui/QFontMetrics>
 
@@ -109,17 +110,20 @@ public slots:
 	/// @param spanAngle - end andle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 
+	/// Initializes widget. Shall be called when widget is moved to correct thread. Not supposed to be called from .qts.
+	void init();
+
 private:
 	void resetBackground();
 
 	/// Returns existing label with given coordinates or NULL if no such label exists.
 	QLabel *findLabel(int x, int y) const;
 
-	GraphicsWidget mImageWidget;
-	QLabel mImageLabel;
+	QScopedPointer<GraphicsWidget> mImageWidget;
+	QScopedPointer<QLabel> mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
 	QMultiHash<int, QLabel *> mLabels; // Has ownership.
-	QFontMetrics mFontMetrics;
+	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }

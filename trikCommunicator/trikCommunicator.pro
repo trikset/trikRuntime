@@ -29,3 +29,8 @@ QT += network
 DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
 uses(trikScriptRunner trikControl trikKernel)
+
+INCLUDEPATH += \
+	../trikScriptRunner/include/ \
+	../trikControl/include/ \
+	../trikKernel/include/ \

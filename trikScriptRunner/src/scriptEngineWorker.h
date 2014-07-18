@@ -72,7 +72,7 @@ private:
 
 	QString const mConfigFilePath;
 	QString const mStartDirPath;
-	QThread &mGuiThread;
+	QThread *mGuiThread;  // Does not have ownership.
 };
 
 }

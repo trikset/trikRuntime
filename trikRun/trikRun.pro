@@ -24,6 +24,11 @@ copyToDestdir($$OTHER_FILES)
 
 uses(trikKernel trikControl trikScriptRunner)
 
+INCLUDEPATH += \
+	../trikKernel/include/ \
+	../trikControl/include/ \
+	../trikScriptRunner/include/ \
+
 TEMPLATE = app
 CONFIG += console
 
