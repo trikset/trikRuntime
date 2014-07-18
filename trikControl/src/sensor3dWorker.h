@@ -36,7 +36,7 @@ public:
 
 public slots:
 	/// Returns current raw reading of a sensor in a form of vector with 3 coordinates.
-	QVector<int> const &read() const;
+	QVector<int> read();
 
 private slots:
 	/// Updates current reading when new value is ready.

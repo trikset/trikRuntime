@@ -91,7 +91,7 @@ void Sensor3dWorker::readFile()
 	mSocketNotifier->setEnabled(true);
 }
 
-QVector<int> const &Sensor3dWorker::read() const
+QVector<int> Sensor3dWorker::read()
 {
 	mLock.lockForRead();
 	QVector<int> const result = mReading;
