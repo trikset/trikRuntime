@@ -45,6 +45,7 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/powerMotor.h \
+	$$PWD/src/sensor3dWorker.h \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/tcpConnector.h \
 
@@ -66,12 +67,13 @@ SOURCES += \
 	$$PWD/src/led.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
+	$$PWD/src/sensor3d.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/$$PLATFORM/cameraLineDetectorSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
-	$$PWD/src/$$PLATFORM/sensor3d.cpp \
+	$$PWD/src/$$PLATFORM/sensor3dWorker.cpp \
 
 OTHER_FILES += \
 	config.xml \

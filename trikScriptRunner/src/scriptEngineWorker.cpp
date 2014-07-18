@@ -16,6 +16,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
+#include <QtCore/QVector>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/debug.h>
@@ -45,6 +46,7 @@ Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
+Q_DECLARE_METATYPE(QVector<int>)
 
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
 	: mEngine(NULL)
@@ -124,6 +126,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
 	qScriptRegisterMetaType(mEngine, cameraLineDetectorSensorToScriptValue, cameraLineDetectorSensorFromScriptValue);
+	qScriptRegisterSequenceMetaType<QVector<int> >(mEngine);
 
 	QScriptValue brickProxy = mEngine->newQObject(mBrick.data());
 	mEngine->globalObject().setProperty("brick", brickProxy);

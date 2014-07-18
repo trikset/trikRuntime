@@ -40,7 +40,10 @@ CONFIG(debug, debug | release) {
 
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
-TARGET = $$basename($$_PRO_FILE_)$$CONFIGURATION_SUFFIX
+PROJECT_BASENAME = $$basename(_PRO_FILE_)
+PROJECT_NAME = $$section(PROJECT_BASENAME, ".", 0, 0)
+
+TARGET = $$PROJECT_NAME$$CONFIGURATION_SUFFIX
 
 equals(TEMPLATE, app) {
 	!macx {
@@ -54,10 +57,8 @@ MOC_DIR = .build/$$CONFIGURATION/.moc
 RCC_DIR = .build/$$CONFIGURATION/.rcc
 UI_DIR = .build/$$CONFIGURATION/.ui
 
-PROJECT_BASENAME = $$basename(_PRO_FILE_)
-
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
-	$$_PRO_FILE_PWD_/include/$$section(PROJECT_BASENAME, ".", 0, 0) \
+	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
 
 unix {
 	target.path = $$[INSTALL_ROOT]/
