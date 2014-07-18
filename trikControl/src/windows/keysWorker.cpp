@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,15 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "keys.h"
+#include "src/keysWorker.h"
+
+#include <QtCore/QDebug>
 
 using namespace trikControl;
 
-Keys::Keys(const QString &keysPath)
+KeysWorker::KeysWorker(QString const &keysPath)
 {
-	Q_UNUSED(keysPath);
+	Q_UNUSED(keysPath)
 }
 
-void Keys::readKeysEvent()
+void KeysWorker::reset()
+{
+}
+
+bool KeysWorker::wasPressed(int code)
+{
+	Q_UNUSED(code)
+
+	return false;
+}
+
+void KeysWorker::readKeysEvent()
 {
 }

@@ -12,28 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TRIKCONTROL_DIR = ../trikControl/
-TRIKKERNEL_DIR = ../trikKernel/
-
-TEMPLATE = lib
-QT += script
-
-DEFINES += TRIKSCRIPTRUNNER_LIBRARY
-
-FILES_TO_COPY = \
-	system.js \
-
-include(../global.pri)
-
-TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
-
-INCLUDEPATH = \
-	$$PWD \
-	$$TRIKCONTROL_DIR/include \
-	$$TRIKKERNEL_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX
-
 HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 	$$PWD/src/scriptableParts.h \
@@ -45,3 +23,27 @@ SOURCES += \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
+
+OTHER_FILES += \
+	$$PWD/system.js \
+
+TRIKCONTROL_DIR = ../trikControl/
+TRIKKERNEL_DIR = ../trikKernel/
+
+TEMPLATE = lib
+QT += script
+
+DEFINES += TRIKSCRIPTRUNNER_LIBRARY
+
+include(../global.pri)
+
+copyToDestdir(system.js)
+
+TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
+
+INCLUDEPATH = \
+	$$PWD \
+	$$TRIKCONTROL_DIR/include \
+	$$TRIKKERNEL_DIR/include \
+
+LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX

@@ -15,10 +15,6 @@
 # Build settings common to all projects in TrikRuntime.
 # Provides:
 # CONFIGURATION_SUFFIX variable that shall be consistently used in TARGET and LIBS variables in all projects.
-#
-# Depends on:
-# FILES_TO_COPY variable for a list of additional files and directories which needed to be copied after build to
-#		target directory.
 
 CROSS_COMPILE = $$(CROSS_COMPILE)
 
@@ -59,10 +55,24 @@ unix {
 	INSTALLS += target
 }
 
-!isEmpty(FILES_TO_COPY) {
-	win32 {
-		QMAKE_POST_LINK = "xcopy $$replace(FILES_TO_COPY, /, \\) $$replace(DESTDIR, /, \\) /s /e /q /y /i"
-	} else {
-		QMAKE_POST_LINK = "cp -rf $$FILES_TO_COPY $$DESTDIR"
+# Useful function to copy additional files to destination,
+# from http://stackoverflow.com/questions/3984104/qmake-how-to-copy-a-file-to-the-output
+defineTest(copyToDestdir) {
+	FILES = $$1
+
+	for (FILE, FILES) {
+		# This ugly code is needed because xcopy requires to add source directory name to target directory name when copying directories
+		win32:AFTER_SLASH = $$section(FILE, "/", -1, -1)
+		win32:BASE_NAME = $$section(FILE, "/", -2, -2)
+		win32:equals(AFTER_SLASH, ""):DESTDIR_SUFFIX = /$$BASE_NAME
+
+		win32:FILE ~= s,/$,,g
+
+		FILE = $$shell_path($$FILE)
+		DDIR = $$shell_path($$DESTDIR$$DESTDIR_SUFFIX/)
+        
+		QMAKE_POST_LINK += $(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
 	}
+
+	export(QMAKE_POST_LINK)
 }

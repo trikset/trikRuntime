@@ -15,6 +15,9 @@
 SOURCES += \
 	$$PWD/main.cpp \
 
+OTHER_FILES += \
+	$$PWD/test.qts \
+
 TRIKCONTROL_DIR = ../trikControl/
 TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
 
@@ -27,10 +30,9 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-FILES_TO_COPY = \
-	test.qts \
-
 include(../global.pri)
+
+copyToDestdir(test.qts)
 
 INCLUDEPATH = \
 	$$PWD \
