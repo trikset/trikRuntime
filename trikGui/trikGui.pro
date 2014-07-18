@@ -68,10 +68,9 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-FILES_TO_COPY = \
-	wpa-config.xml \
-
 include(../global.pri)
+
+copyToDestdir(wpa-config.xml)
 
 INCLUDEPATH = \
 	$$PWD \

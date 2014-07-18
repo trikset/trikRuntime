@@ -22,12 +22,13 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-FILES_TO_COPY = \
+include(../global.pri)
+
+copyToDestdir( \
 	$$PWD/config.xml  \
 	$$PWD/config_capture.xml \
 	$$PWD/../media/ \
-
-include(../global.pri)
+)
 
 TARGET = trikControl$$CONFIGURATION_SUFFIX
 
@@ -73,12 +74,14 @@ SOURCES += \
 	$$PWD/src/analogSensor.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/brick.cpp \
+	$$PWD/src/cameraLineDetectorSensor.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \
 	$$PWD/src/gamepad.cpp \
 	$$PWD/src/guiWorker.cpp \
+	$$PWD/src/keys.cpp \
 	$$PWD/src/led.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/servoMotor.cpp \
@@ -86,12 +89,10 @@ SOURCES += \
 	$$PWD/src/continiousRotationServoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/pwmCapture.cpp \
-	$$PWD/src/cameraLineDetectorSensorWorker.cpp \
-	$$PWD/src/keysWorker.cpp \
+	$$PWD/src/$$PLATFORM/cameraLineDetectorSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
-	$$PWD/src/$$PLATFORM/keys.cpp \
+	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/sensor3d.cpp \
-	$$PWD/src/$$PLATFORM/cameraLineDetectorSensor.cpp \
 	$$PWD/src/graphicsWidget.cpp
 
 OTHER_FILES += \
