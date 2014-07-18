@@ -15,6 +15,8 @@
 # Build settings common to all projects in TrikRuntime.
 # Provides:
 # CONFIGURATION_SUFFIX variable that shall be consistently used in TARGET and LIBS variables in all projects.
+# copyToDestdir function to copy arbitrary files and directories to DESTDIR
+# uses function to automatically add a library to INCLUDEPATH and LIBS.
 
 CROSS_COMPILE = $$(CROSS_COMPILE)
 
@@ -38,6 +40,11 @@ CONFIG(debug, debug | release) {
 
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
+PROJECT_BASENAME = $$basename(_PRO_FILE_)
+PROJECT_NAME = $$section(PROJECT_BASENAME, ".", 0, 0)
+
+TARGET = $$PROJECT_NAME$$CONFIGURATION_SUFFIX
+
 equals(TEMPLATE, app) {
 	!macx {
 		QMAKE_LFLAGS += -Wl,-O1,-rpath,.
@@ -50,10 +57,15 @@ MOC_DIR = .build/$$CONFIGURATION/.moc
 RCC_DIR = .build/$$CONFIGURATION/.rcc
 UI_DIR = .build/$$CONFIGURATION/.ui
 
+INCLUDEPATH += $$_PRO_FILE_PWD_ \
+	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
+
 unix {
 	target.path = $$[INSTALL_ROOT]/
 	INSTALLS += target
 }
+
+GLOBAL_PWD = $$PWD
 
 # Useful function to copy additional files to destination,
 # from http://stackoverflow.com/questions/3984104/qmake-how-to-copy-a-file-to-the-output
@@ -76,4 +88,17 @@ defineTest(copyToDestdir) {
 	}
 
 	export(QMAKE_POST_LINK)
+}
+
+defineTest(uses) {
+	LIBS += -L$$DESTDIR
+	PROJECTS = $$1
+
+	for(PROJECT, PROJECTS) {
+		LIBS += -l$$PROJECT$$CONFIGURATION_SUFFIX
+		INCLUDEPATH += $$GLOBAL_PWD/$$PROJECT/include
+	}
+
+	export(LIBS)
+	export(INCLUDEPATH)
 }

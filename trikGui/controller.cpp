@@ -18,6 +18,8 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
+#include <trikKernel/fileUtils.h>
+
 #include "runningWidget.h"
 
 using namespace trikGui;
@@ -47,7 +49,7 @@ void Controller::runFile(QString const &filePath)
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
 		scriptExecutionFromFileStarted(fileInfo.baseName());
-		mScriptRunner.runFromFile(fileInfo.canonicalFilePath());
+		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()));
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		mRunningWidget->show();
@@ -74,7 +76,9 @@ void Controller::scriptExecutionCompleted()
 	if (mRunningWidget) {
 		mRunningWidget->releaseKeyboard();
 		mRunningWidget->close();
-		delete mRunningWidget;
+
+		// Here we can be inside handler of mRunningWidget key press event.
+		mRunningWidget->deleteLater();
 		mRunningWidget = NULL;
 	}
 }

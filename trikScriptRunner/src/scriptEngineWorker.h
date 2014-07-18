@@ -36,43 +36,43 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath);
 
-	/// Returns true, if script engine is initialized and running.
-	bool isRunning() const;
-
-	/// Aborts script execution.
-	void abort();
-
-	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
-	/// If it is false, script will exit immediately.
-	bool isInEventDrivenMode() const;
+	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
+	/// called from another thread.
+	void reset();
 
 signals:
-	/// Fired when current script execution completed.
+	/// Emitted when current script execution is completed or is aborted by reset() call.
 	void completed();
 
 public slots:
+	/// Initializes script engine and creates its own trikControl instance.
+	void init();
+
 	/// Executes given script.
-	void run(QString const &script);
+	/// @param script - script to execute.
+	/// @param inEventDrivenMode - shall this script be executed in event-driven mode, i.e. not emit completed() signal
+	///        when it is finished.
+	void run(QString const &script, bool inEventDrivenMode);
 
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
-	/// Do cleanup when script engine finally is deleted.
-	void onScriptEngineDestroyed();
+	/// Kill old script engine, create and reinit a new one.
+	void resetScriptEngine();
 
 private:
-
-	void initScriptEngine();
 	void runAndReportException(QString const &script);
 
 	// Has ownership. No smart pointers here because we need to do manual memory managment
 	// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 
-	trikControl::Brick mBrick;
+	QScopedPointer<trikControl::Brick> mBrick;
 
+	QString const mConfigFilePath;
 	QString const mStartDirPath;
+	QThread *mGuiThread;  // Does not have ownership.
 };
 
 }

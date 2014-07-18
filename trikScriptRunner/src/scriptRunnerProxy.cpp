@@ -33,26 +33,24 @@ ScriptRunnerProxy::ScriptRunnerProxy(QString const &configFilePath, QString cons
 	connect(mEngineWorker, SIGNAL(completed()), this, SIGNAL(completed()));
 
 	mWorkerThread.start();
+
+	QMetaObject::invokeMethod(mEngineWorker, "init");
 }
 
 ScriptRunnerProxy::~ScriptRunnerProxy()
 {
-	mEngineWorker->abort();
+	/// @todo Do not reset engine here, just shut it down.
+	mEngineWorker->reset();
 	QMetaObject::invokeMethod(&mWorkerThread, "quit");
 	mWorkerThread.wait(1000);
 }
 
-void ScriptRunnerProxy::run(QString const &script)
+void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode)
 {
-	QMetaObject::invokeMethod(mEngineWorker, "run", Q_ARG(QString const &, script));
+	QMetaObject::invokeMethod(mEngineWorker, "run", Q_ARG(QString const &, script), Q_ARG(bool, inEventDrivenMode));
 }
 
-void ScriptRunnerProxy::abort()
+void ScriptRunnerProxy::reset()
 {
-	mEngineWorker->abort();
-}
-
-bool ScriptRunnerProxy::isInEventDrivenMode() const
-{
-	return mEngineWorker->isInEventDrivenMode();
+	mEngineWorker->reset();
 }

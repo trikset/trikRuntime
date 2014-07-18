@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include(../global.pri)
+
 SOURCES += \
 	$$PWD/main.cpp \
 
-TRIKCONTROL_DIR = ../trikControl/
-TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
+uses(trikControl trikCommunicator)
+
+INCLUDEPATH += \
+	../trikControl/include/ \
+	../trikCommunicator/include/ \
 
 TEMPLATE = app
 CONFIG += console
@@ -26,11 +31,3 @@ QT += gui
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
-
-include(../global.pri)
-
-INCLUDEPATH = \
-	$$PWD \
-	$$TRIKCOMMUNICATOR_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikCommunicator$$CONFIGURATION_SUFFIX

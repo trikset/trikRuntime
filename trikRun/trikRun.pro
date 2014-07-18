@@ -12,14 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include(../global.pri)
+
 SOURCES += \
 	$$PWD/main.cpp \
 
 OTHER_FILES += \
 	$$PWD/test.qts \
 
-TRIKCONTROL_DIR = ../trikControl/
-TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
+copyToDestdir($$OTHER_FILES)
+
+uses(trikKernel trikControl trikScriptRunner)
+
+INCLUDEPATH += \
+	../trikKernel/include/ \
+	../trikControl/include/ \
+	../trikScriptRunner/include/ \
 
 TEMPLATE = app
 CONFIG += console
@@ -29,13 +37,3 @@ QT += gui
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
-
-include(../global.pri)
-
-copyToDestdir(test.qts)
-
-INCLUDEPATH = \
-	$$PWD \
-	$$TRIKSCRIPTRUNNER_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX

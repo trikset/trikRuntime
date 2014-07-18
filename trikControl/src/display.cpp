@@ -33,6 +33,7 @@ Display::Display(QThread &guiThread, const QString &startDirPath)
 	, mGuiWorker(new GuiWorker())
 {
 	mGuiWorker->moveToThread(&guiThread);
+	QMetaObject::invokeMethod(mGuiWorker, "init");
 }
 
 Display::~Display()

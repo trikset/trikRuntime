@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,11 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
+#include <QtCore/QVector>
 
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/debug.h>
+
 #include <trikControl/battery.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
@@ -43,84 +46,75 @@ Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
+Q_DECLARE_METATYPE(QVector<int>)
 
-ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, const QString &startDirPath)
+ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
 	: mEngine(NULL)
-	, mBrick(*this->thread(), configFilePath, startDirPath)
+	, mConfigFilePath(configFilePath)
 	, mStartDirPath(startDirPath)
+	, mGuiThread(this->thread())
 {
-	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
-void ScriptEngineWorker::run(QString const &script)
+void ScriptEngineWorker::reset()
 {
-	if (mEngine != NULL) {
-		if (mEngine->isEvaluating()) {
-			mEngine->abortEvaluation();
-		}
+	Q_ASSERT(mEngine);
 
-		// Here we can safely delete mEngine, we're not in its stack. There's no way to call run() from Qt Script.
-		delete mEngine;
-	}
+	mEngine->abortEvaluation();
 
-	initScriptEngine();
+	QMetaObject::invokeMethod(this, "resetScriptEngine", Qt::QueuedConnection);
 
-	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
-	mEngine->globalObject().setProperty("brick", brickProxy);
-
-	if (QFile::exists(mStartDirPath + "system.js")) {
-		runAndReportException(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
-	}
-
-	runAndReportException(script);
-
-	if (!mBrick.isInEventDrivenMode()) {
+	if (mBrick->isInEventDrivenMode()) {
+		mBrick->stop();
 		emit completed();
 	}
 }
 
-void ScriptEngineWorker::abort()
+void ScriptEngineWorker::init()
 {
-	if (mEngine != NULL) {
-		mEngine->abortEvaluation();
+	mBrick.reset(new Brick(*mGuiThread, mConfigFilePath, mStartDirPath));
+	connect(mBrick.data(), SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 
-		// We need to delete script engine to clear possible connections from inside Qt Script, but we can't do that
-		// right now because we can be in mEngine's call stack. Also we can not invoke it directly since we can be in
-		// another thread and deleting it on return to that thread's event loop will surely crash worker, and Qt docs
-		// are not clear whether deleteLater implementation is aware of that problem.
-		QMetaObject::invokeMethod(mEngine, "deleteLater");
-	}
+	resetScriptEngine();
 }
 
-bool ScriptEngineWorker::isRunning() const
+void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 {
-	if (mEngine == NULL) {
-		return false;
-	} else {
-		return mEngine->isEvaluating();
-	}
-}
+	Q_ASSERT(mEngine);
 
-bool ScriptEngineWorker::isInEventDrivenMode() const
-{
-	return mBrick.isInEventDrivenMode();
+	if (inEventDrivenMode) {
+		mBrick->run();
+	}
+
+	runAndReportException(script);
+
+	if (!mBrick->isInEventDrivenMode()) {
+		mBrick->stop();
+		resetScriptEngine();
+		emit completed();
+	}
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	abort();
+	if (!mBrick->isInEventDrivenMode()) {
+		// Somebody erroneously called brick.quit() before entering event loop, so we must force event loop for brick
+		// and only then quit, to send properly completed() signal.
+		mBrick->run();
+	}
 
-	/// @todo Completed will be already sent by run() after abortExecution?
-	emit completed();
+	reset();
 }
 
-void ScriptEngineWorker::initScriptEngine()
+void ScriptEngineWorker::resetScriptEngine()
 {
+	if (mEngine) {
+		mEngine->deleteLater();
+	}
+
 	mEngine = new QScriptEngine();
 
-	connect(mEngine, SIGNAL(destroyed()), this, SLOT(onScriptEngineDestroyed()));
-
-	mBrick.reset();
+	mBrick->reset();
 
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
@@ -132,13 +126,16 @@ void ScriptEngineWorker::initScriptEngine()
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
 	qScriptRegisterMetaType(mEngine, cameraLineDetectorSensorToScriptValue, cameraLineDetectorSensorFromScriptValue);
+	qScriptRegisterSequenceMetaType<QVector<int> >(mEngine);
+
+	QScriptValue brickProxy = mEngine->newQObject(mBrick.data());
+	mEngine->globalObject().setProperty("brick", brickProxy);
+
+	if (QFile::exists(mStartDirPath + "system.js")) {
+		runAndReportException(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+	}
 
 	mEngine->setProcessEventsInterval(1);
-}
-
-void ScriptEngineWorker::onScriptEngineDestroyed()
-{
-	mEngine = NULL;
 }
 
 void ScriptEngineWorker::runAndReportException(QString const &script)

@@ -12,28 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TRIKKERNEL_DIR = ../trikKernel/
-TRIKCONTROL_DIR = ../trikControl/
-TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
-
-TEMPLATE = lib
-
-QT += network
-
-DEFINES += TRIKCOMMUNICATOR_LIBRARY
-
 include(../global.pri)
-
-TARGET = trikCommunicator$$CONFIGURATION_SUFFIX
-
-INCLUDEPATH = \
-	$$PWD \
-	$$PWD/include/trikCommunicator \
-	$$TRIKSCRIPTRUNNER_DIR/include \
-	$$TRIKCONTROL_DIR/include \
-	$$TRIKKERNEL_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikScriptRunner$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX
 
 HEADERS += \
 	$$PWD/include/trikCommunicator/trikCommunicator.h \
@@ -42,3 +21,16 @@ HEADERS += \
 SOURCES += \
 	$$PWD/src/trikCommunicator.cpp \
 	$$PWD/src/connection.cpp \
+
+TEMPLATE = lib
+
+QT += network
+
+DEFINES += TRIKCOMMUNICATOR_LIBRARY
+
+uses(trikScriptRunner trikControl trikKernel)
+
+INCLUDEPATH += \
+	../trikScriptRunner/include/ \
+	../trikControl/include/ \
+	../trikKernel/include/ \

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include(../global.pri)
+
 HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 	$$PWD/src/scriptableParts.h \
@@ -27,23 +29,15 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/system.js \
 
-TRIKCONTROL_DIR = ../trikControl/
-TRIKKERNEL_DIR = ../trikKernel/
-
 TEMPLATE = lib
 QT += script
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
-include(../global.pri)
-
 copyToDestdir(system.js)
 
-TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
+uses(trikKernel trikControl)
 
-INCLUDEPATH = \
-	$$PWD \
-	$$TRIKCONTROL_DIR/include \
-	$$TRIKKERNEL_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX -ltrikKernel$$CONFIGURATION_SUFFIX
+INCLUDEPATH += \
+	$$PWD/../trikKernel/include/ \
+	$$PWD/../trikControl/include/ \

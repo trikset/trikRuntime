@@ -30,14 +30,22 @@
 using namespace trikControl;
 
 GuiWorker::GuiWorker()
-	: mFontMetrics(mImageWidget.font())
 {
+
+}
+
+void GuiWorker::init()
+{
+	mImageLabel.reset(new QLabel());
+	mImageWidget.reset(new GraphicsWidget());
+	mFontMetrics.reset(new QFontMetrics(mImageWidget->font()));
+
 	QHBoxLayout * const layout = new QHBoxLayout();
-	mImageLabel.setScaledContents(true);
-	layout->addWidget(&mImageLabel);
-	mImageWidget.setLayout(layout);
-	mImageWidget.setWindowState(Qt::WindowFullScreen);
-	mImageWidget.setWindowFlags(mImageWidget.windowFlags() | Qt::WindowStaysOnTopHint);
+	mImageLabel->setScaledContents(true);
+	layout->addWidget(mImageLabel.data());
+	mImageWidget->setLayout(layout);
+	mImageWidget->setWindowState(Qt::WindowFullScreen);
+	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
 	resetBackground();
 }
 
@@ -45,31 +53,31 @@ void GuiWorker::showImage(QString const &fileName)
 {
 	if (!mImagesCache.contains(fileName)) {
 		QPixmap pixmap(fileName);
-		pixmap = pixmap.scaled(mImageWidget.size() - QSize(20, 20), Qt::KeepAspectRatio);
+		pixmap = pixmap.scaled(mImageWidget->size() - QSize(20, 20), Qt::KeepAspectRatio);
 		mImagesCache.insert(fileName, pixmap);
 	}
 
-	mImageLabel.setPixmap(mImagesCache.value(fileName));
-	mImageWidget.show();
+	mImageLabel->setPixmap(mImagesCache.value(fileName));
+	mImageWidget->show();
 }
 
 void GuiWorker::addLabel(QString const &text, int x, int y)
 {
 	QLabel *label = findLabel(x, y);
-	label = label ? label : new QLabel(&mImageWidget);
+	label = label ? label : new QLabel(mImageWidget.data());
 	label->setText(text);
-	label->setStyleSheet(QString("color: %1").arg(mImageWidget.currentPenColor().name()));
+	label->setStyleSheet(QString("color: %1").arg(mImageWidget->currentPenColor().name()));
 
 	// There is no layout for the label, so its size cannot be set automatically. We set
 	// it with QFontMetrics.
-	label->setGeometry(x, y, mFontMetrics.width(text), mFontMetrics.height());
+	label->setGeometry(x, y, mFontMetrics->width(text), mFontMetrics->height());
 
 	label->show();
 	if (!mLabels.contains(x ^ y, label)) {
 		mLabels.insertMulti(x ^ y, label);
 	}
 
-	mImageWidget.show();
+	mImageWidget->show();
 }
 
 void GuiWorker::removeLabels()
@@ -89,7 +97,7 @@ void GuiWorker::deleteWorker()
 
 void GuiWorker::setBackground(QString const &color)
 {
-	QPalette palette = mImageWidget.palette();
+	QPalette palette = mImageWidget->palette();
 
 	if (color == tr("white")) {
 		palette.setColor(QPalette::Window, Qt::white);
@@ -129,41 +137,41 @@ void GuiWorker::setBackground(QString const &color)
 		palette.setColor(QPalette::Window, QColor(color));
 	}
 
-	mImageWidget.setPalette(palette);
-	mImageWidget.show();
+	mImageWidget->setPalette(palette);
+	mImageWidget->show();
 }
 
 void GuiWorker::resetBackground()
 {
-	QPalette palette = mImageWidget.palette();
+	QPalette palette = mImageWidget->palette();
 	palette.setColor(QPalette::Window, Qt::lightGray);
-	mImageWidget.setPalette(palette);
+	mImageWidget->setPalette(palette);
 }
 
 void GuiWorker::setPainterColor(QString const &color)
 {
-	mImageWidget.setPainterColor(color);
+	mImageWidget->setPainterColor(color);
 }
 
 void GuiWorker::setPainterWidth(int penWidth)
 {
-	mImageWidget.setPainterWidth(penWidth);
+	mImageWidget->setPainterWidth(penWidth);
 }
 
 void GuiWorker::clear()
 {
-	mImageWidget.deleteAllItems();
-	mImageWidget.setPainterColor("black");
-	mImageWidget.setPainterWidth(0);
-	mImageWidget.hide();
+	mImageWidget->deleteAllItems();
+	mImageWidget->setPainterColor("black");
+	mImageWidget->setPainterWidth(1);
+	mImageWidget->hide();
 	removeLabels();
-	mImageLabel.setPixmap(QPixmap());
+	mImageLabel->setPixmap(QPixmap());
 	resetBackground();
 }
 
 void GuiWorker::hide()
 {
-	mImageWidget.hide();
+	mImageWidget->hide();
 }
 
 QLabel *GuiWorker::findLabel(int x, int y) const
@@ -179,35 +187,35 @@ QLabel *GuiWorker::findLabel(int x, int y) const
 
 void GuiWorker::drawPoint(int x, int y)
 {
-	mImageWidget.drawPoint(x, y);
-	mImageWidget.update();
-	mImageWidget.show();
+	mImageWidget->drawPoint(x, y);
+	mImageWidget->update();
+	mImageWidget->show();
 }
 
 void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 {
-	mImageWidget.drawLine(x1, y1, x2, y2);
-	mImageWidget.update();
-	mImageWidget.show();
+	mImageWidget->drawLine(x1, y1, x2, y2);
+	mImageWidget->update();
+	mImageWidget->show();
 }
 
 void GuiWorker::drawRect(int x, int y, int width, int height)
 {
-	mImageWidget.drawRect(x, y, width, height);
-	mImageWidget.update();
-	mImageWidget.show();
+	mImageWidget->drawRect(x, y, width, height);
+	mImageWidget->update();
+	mImageWidget->show();
 }
 
 void GuiWorker::drawEllipse(int x, int y, int width, int height)
 {
-	mImageWidget.drawEllipse(x, y, width, height);
-	mImageWidget.update();
-	mImageWidget.show();
+	mImageWidget->drawEllipse(x, y, width, height);
+	mImageWidget->update();
+	mImageWidget->show();
 }
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	mImageWidget.drawArc(x, y, width, height, startAngle, spanAngle);
-	mImageWidget.update();
-	mImageWidget.show();
+	mImageWidget->drawArc(x, y, width, height, startAngle, spanAngle);
+	mImageWidget->update();
+	mImageWidget->show();
 }
