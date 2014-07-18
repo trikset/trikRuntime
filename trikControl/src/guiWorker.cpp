@@ -153,6 +153,8 @@ void GuiWorker::setPainterWidth(int penWidth)
 void GuiWorker::clear()
 {
 	mImageWidget.deleteAllItems();
+	mImageWidget.setPainterColor("black");
+	mImageWidget.setPainterWidth(0);
 	mImageWidget.hide();
 	removeLabels();
 	mImageLabel.setPixmap(QPixmap());
