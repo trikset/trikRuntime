@@ -118,3 +118,23 @@ void trikScriptRunner::lineSensorFromScriptValue(QScriptValue const &object, tri
 {
 	out = qobject_cast<LineSensor*>(object.toQObject());
 }
+
+QScriptValue trikScriptRunner::colorSensorToScriptValue(QScriptEngine *engine, trikControl::ColorSensor* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::colorSensorFromScriptValue(QScriptValue const &object, trikControl::ColorSensor* &out)
+{
+	out = qobject_cast<ColorSensor*>(object.toQObject());
+}
+
+QScriptValue trikScriptRunner::objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensor* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::objectSensorFromScriptValue(QScriptValue const &object, trikControl::ObjectSensor* &out)
+{
+	out = qobject_cast<ObjectSensor*>(object.toQObject());
+}

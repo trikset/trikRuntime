@@ -26,6 +26,8 @@
 #include <trikControl/sensor3d.h>
 #include <trikControl/motor.h>
 #include <trikControl/lineSensor.h>
+#include <trikControl/colorSensor.h>
+#include <trikControl/objectSensor.h>
 
 namespace trikScriptRunner {
 
@@ -56,9 +58,14 @@ void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out
 QScriptValue sensor3dToScriptValue(QScriptEngine *engine, trikControl::Sensor3d* const &in);
 void sensor3dFromScriptValue(QScriptValue const &object, trikControl::Sensor3d* &out);
 
-QScriptValue lineSensorToScriptValue(QScriptEngine *engine
-		, trikControl::LineSensor* const &in);
-
+QScriptValue lineSensorToScriptValue(QScriptEngine *engine, trikControl::LineSensor* const &in);
 void lineSensorFromScriptValue(QScriptValue const &object, trikControl::LineSensor* &out);
+
+QScriptValue colorSensorToScriptValue(QScriptEngine *engine, trikControl::ColorSensor* const &in);
+void colorSensorFromScriptValue(QScriptValue const &object, trikControl::ColorSensor* &out);
+
+QScriptValue objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensor* const &in);
+void objectSensorFromScriptValue(QScriptValue const &object, trikControl::ObjectSensor* &out);
+
 
 }
