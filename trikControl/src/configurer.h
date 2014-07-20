@@ -101,11 +101,15 @@ public:
 
 	QString playMp3FileCommand() const;
 
+	bool hasAccelerometer() const;
+
 	int accelerometerMin() const;
 
 	int accelerometerMax() const;
 
 	QString accelerometerDeviceFile() const;
+
+	bool hasGyroscope() const;
 
 	int gyroscopeMin() const;
 
@@ -127,7 +131,11 @@ public:
 
 	QString keysDeviceFile() const;
 
+	bool hasGamepad() const;
+
 	int gamepadPort() const;
+
+	bool hasLineSensor() const;
 
 	QString lineSensorScript() const;
 
@@ -137,6 +145,8 @@ public:
 
 	double lineSensorToleranceFactor() const;
 
+	bool hasObjectSensor() const;
+
 	QString objectSensorScript() const;
 
 	QString objectSensorInFifo() const;
@@ -145,11 +155,17 @@ public:
 
 	double objectSensorToleranceFactor() const;
 
+	bool hasColorSensor() const;
+
 	QString colorSensorScript() const;
 
 	QString colorSensorInFifo() const;
 
 	QString colorSensorOutFifo() const;
+
+	int colorSensorM() const;
+
+	int colorSensorN() const;
 
 private:
 	enum ServoType {
@@ -208,16 +224,18 @@ private:
 	};
 
 	struct OnBoardSensor {
-		int min;
-		int max;
+		int min = 0;
+		int max = 0;
 		QString deviceFile;
+		bool enabled = false;
 	};
 
 	struct VirtualSensor {
 		QString script;
 		QString inFifo;
 		QString outFifo;
-		double toleranceFactor;
+		double toleranceFactor = 1.0;
+		bool enabled = false;
 	};
 
 	void loadInit(QDomElement const &root);
@@ -237,6 +255,8 @@ private:
 	void loadGamepadPort(QDomElement const &root);
 	VirtualSensor loadVirtualSensor(QDomElement const &root, QString const &tagName);
 
+	static bool isEnabled(QDomElement const &root, QString const &tagName);
+
 	QHash<QString, ServoMotorType> mServoMotorTypes;
 	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
@@ -253,18 +273,22 @@ private:
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
 	QString mI2cPath;
-	int mI2cDeviceId;
+	int mI2cDeviceId = 0;
 
 	QString mLedRedDeviceFile;
 	QString mLedGreenDeviceFile;
 	QString mKeysDeviceFile;
-	int mLedOn;
-	int mLedOff;
-	int mGamepadPort;
+	int mLedOn = 0;
+	int mLedOff = 0;
+
+	int mGamepadPort = 0;
+	bool mIsGamepadEnabled = false;
 
 	VirtualSensor mLineSensor;
 	VirtualSensor mObjectSensor;
 	VirtualSensor mMxNColorSensor;
+	int mColorSensorM = 0;
+	int mColorSensorN = 0;
 };
 
 }

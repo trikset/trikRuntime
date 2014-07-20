@@ -220,6 +220,11 @@ QString Configurer::playMp3FileCommand() const
 	return mPlayMp3FileCommand;
 }
 
+bool Configurer::hasAccelerometer() const
+{
+	return mAccelerometer.enabled;
+}
+
 int Configurer::accelerometerMin() const
 {
 	return mAccelerometer.min;
@@ -233,6 +238,11 @@ int Configurer::accelerometerMax() const
 QString Configurer::accelerometerDeviceFile() const
 {
 	return mAccelerometer.deviceFile;
+}
+
+bool Configurer::hasGyroscope() const
+{
+	return mGyroscope.enabled;
 }
 
 int Configurer::gyroscopeMin() const
@@ -285,9 +295,19 @@ QString Configurer::keysDeviceFile() const
 	return mKeysDeviceFile;
 }
 
+bool Configurer::hasGamepad() const
+{
+	return mIsGamepadEnabled;
+}
+
 int Configurer::gamepadPort() const
 {
 	return mGamepadPort;
+}
+
+bool Configurer::hasLineSensor() const
+{
+	return mLineSensor.enabled;
 }
 
 QString Configurer::lineSensorScript() const
@@ -310,6 +330,11 @@ double Configurer::lineSensorToleranceFactor() const
 	return mLineSensor.toleranceFactor;
 }
 
+bool Configurer::hasObjectSensor() const
+{
+	return mObjectSensor.enabled;
+}
+
 QString Configurer::objectSensorScript() const
 {
 	return mObjectSensor.script;
@@ -330,6 +355,11 @@ double Configurer::objectSensorToleranceFactor() const
 	return mObjectSensor.toleranceFactor;
 }
 
+bool Configurer::hasColorSensor() const
+{
+	return mMxNColorSensor.enabled;
+}
+
 QString Configurer::colorSensorScript() const
 {
 	return mMxNColorSensor.script;
@@ -343,6 +373,16 @@ QString Configurer::colorSensorInFifo() const
 QString Configurer::colorSensorOutFifo() const
 {
 	return mMxNColorSensor.outFifo;
+}
+
+int Configurer::colorSensorM() const
+{
+	return mColorSensorM;
+}
+
+int Configurer::colorSensorN() const
+{
+	return mColorSensorN;
 }
 
 void Configurer::loadInit(QDomElement const &root)
@@ -619,23 +659,22 @@ void Configurer::loadSound(QDomElement const &root)
 
 Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QString const &tagName)
 {
-	if (root.elementsByTagName(tagName).isEmpty()) {
-		qDebug() << "config.xml does not have <" << tagName << "> tag";
-		throw "config.xml parsing failed";
+	OnBoardSensor result;
+
+	if (isEnabled(root, tagName)) {
+
+		if (root.elementsByTagName(tagName).count() > 1) {
+			qDebug() << "config.xml has too many <" << tagName << "> tags, there shall be exactly one";
+			throw "config.xml parsing failed";
+		}
+
+		QDomElement const sensor = root.elementsByTagName(tagName).at(0).toElement();
+
+		result.min = sensor.attribute("min").toInt();
+		result.max = sensor.attribute("max").toInt();
+		result.deviceFile = QString(sensor.attribute("deviceFile"));
+		result.enabled = true;
 	}
-
-	if (root.elementsByTagName(tagName).count() > 1) {
-		qDebug() << "config.xml has too many <" << tagName << "> tags, there shall be exactly one";
-		throw "config.xml parsing failed";
-	}
-
-	OnBoardSensor result = {0, 0, ""};
-
-	QDomElement const sensor = root.elementsByTagName(tagName).at(0).toElement();
-
-	result.min = sensor.attribute("min").toInt();
-	result.max = sensor.attribute("max").toInt();
-	result.deviceFile = sensor.attribute("deviceFile");
 
 	return result;
 }
@@ -663,17 +702,35 @@ void Configurer::loadKeys(QDomElement const &root)
 
 void Configurer::loadGamepadPort(QDomElement const &root)
 {
-	QDomElement gamepad = root.elementsByTagName("gamepad").at(0).toElement();
-	mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
+	if (isEnabled(root, "gamepad")) {
+		QDomElement gamepad = root.elementsByTagName("gamepad").at(0).toElement();
+		mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
+		mIsGamepadEnabled = true;
+	}
 }
 
 Configurer::VirtualSensor Configurer::loadVirtualSensor(QDomElement const &root, QString const &tagName)
 {
 	VirtualSensor result;
-	QDomElement sensorElement = root.elementsByTagName(tagName).at(0).toElement();
-	result.script = sensorElement.attribute("script");
-	result.inFifo = sensorElement.attribute("inputFile");
-	result.outFifo = sensorElement.attribute("outputFile");
-	result.toleranceFactor = sensorElement.attribute("toleranceFactor", "1.0").toDouble();
+	if (isEnabled(root, tagName)) {
+		QDomElement sensorElement = root.elementsByTagName(tagName).at(0).toElement();
+		result.script = sensorElement.attribute("script");
+		result.inFifo = sensorElement.attribute("inputFile");
+		result.outFifo = sensorElement.attribute("outputFile");
+		result.toleranceFactor = sensorElement.attribute("toleranceFactor", "1.0").toDouble();
+		result.enabled = true;
+
+		if (tagName == "colorSensor") {
+			mColorSensorM = sensorElement.attribute("m").toInt();
+			mColorSensorN = sensorElement.attribute("n").toInt();
+		}
+	}
+
 	return result;
+}
+
+bool Configurer::isEnabled(QDomElement const &root, QString const &tagName)
+{
+	return root.elementsByTagName(tagName).size() > 0
+			&& root.elementsByTagName(tagName).at(0).toElement().attribute("disabled") != "true";
 }

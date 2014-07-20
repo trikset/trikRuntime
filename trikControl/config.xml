@@ -164,8 +164,8 @@ Use it if JCx ports are configured to work as PWM signal generators.
 <!--		<digitalSensor port="D1" deviceFile="/sys/devices/platform/da850_trik/sensor_d1" defaultType="lightSensor" />
 		<digitalSensor port="D2" deviceFile="/sys/devices/platform/da850_trik/sensor_d2" defaultType="lightSensor" /> -->
 		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" defaultType="volumeSensor" />
-		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" />
-		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
+		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" disabled="false" />
+		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" disabled="false" />
 	</digitalSensors>
 
 	<!-- Description of sensor types used in digital sensor mappings. Provides minimal reading value
@@ -191,14 +191,14 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 
 	<!-- Settings for virtual camera line sensor. -->
-	<lineSensor script="/etc/init.d/line-sensor" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
+	<lineSensor script="/etc/init.d/line-sensor" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
 
 	<!-- Settings for virtual camera object detector sensor. -->
-	<objectSensor script="/etc/init.d/object-sensor" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
+	<objectSensor script="/etc/init.d/object-sensor" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
 
 	<!-- Settings for virtual camera MxN color sensor. It splits field of view of a camera into MxN grid and reports dominant color in each cell of a grid. -->
-	<colorSensor script="/etc/init.d/mxn-sensor" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" />
+	<colorSensor script="/etc/init.d/mxn-sensor" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" disabled="false" />
 
 	<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
-	<gamepad port="4444" />
+	<gamepad port="4444" disabled="false" />
 </config>
