@@ -23,11 +23,13 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QList>
 
+#include "src/abstractVirtualSensorWorker.h"
+
 namespace trikControl {
 
-/// Worker object that processes virtual sensor fifo and updates stored reading. Meant to be executed in separate
+/// Worker object that processes line sensor output and updates stored reading. Meant to be executed in separate
 /// thread.
-class LineSensorWorker : public QObject
+class LineSensorWorker : public AbstractVirtualSensorWorker
 {
 	Q_OBJECT
 
@@ -41,8 +43,7 @@ public:
 	LineSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
 			, double toleranceFactor);
 
-	/// Destructor.
-	~LineSensorWorker();
+	~LineSensorWorker() override;
 
 public slots:
 	/// Initializes a camera.
@@ -56,55 +57,13 @@ public slots:
 	/// Can be accessed directly from other thread.
 	int read();
 
-private slots:
-	/// Updates current reading when new value is ready.
-	void readFile();
-
 private:
-	/// Starts virtual sensor if needed and opens its fifos.
-	void initVirtualSensor();
+	QString sensorName() const override;
 
-	/// Starts virtual sensor process.
-	void startVirtualSensor();
-
-	/// Opens input and output fifos of a sensor.
-	void openFifos();
-
-	/// Puts queued commands to an input fifo and clears queue if sensor is ready, otherwise does nothing.
-	void tryToExecute();
-
-	/// Closes fifos and stops sensor.
-	void deinitialize();
-
-	/// Listener for output fifo.
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	void onNewData(QString const &dataLine) override;
 
 	/// Current stored reading of a sensor.
 	int mReading = 0;
-
-	/// File name (with path) of a script that launches or stops sensor.
-	QString mScript;
-
-	/// File descriptor for output fifo.
-	int mOutputFileDescriptor = -1;
-
-	/// Virtual sensor process.
-	QProcess mSensorProcess;
-
-	/// Input fifo.
-	QFile mInputFile;
-
-	/// Output fifo.
-	QFile mOutputFile;
-
-	/// File stream for command fifo. Despite its name it is used to output commands. It is input for virtual sensor.
-	QTextStream mInputStream;
-
-	/// Flag that sensor is ready and waiting for commands.
-	bool mReady = false;
-
-	/// A queue of commands to be passed to input fifo when it is ready.
-	QList<QString> mCommandQueue;
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
 	double mToleranceFactor = 1.0;

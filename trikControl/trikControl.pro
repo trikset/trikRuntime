@@ -36,6 +36,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCapture.h \
 	$$PWD/include/trikControl/motor.h \
 	$$PWD/include/trikControl/lineSensor.h \
+	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/angularServoMotor.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/continiousRotationServoMotor.h \
@@ -50,6 +51,7 @@ HEADERS += \
 	$$PWD/src/tcpConnector.h \
 
 SOURCES += \
+	$$PWD/src/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/analogSensor.cpp \
 	$$PWD/src/angularServoMotor.cpp \
 	$$PWD/src/battery.cpp \
