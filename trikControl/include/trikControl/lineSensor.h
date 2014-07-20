@@ -24,39 +24,39 @@
 
 namespace trikControl {
 
-class CameraLineDetectorSensorWorker;
+class LineSensorWorker;
 
-/// Uses rover-cv application to detect x coordinate of a center of an object that was in camera's field of view
+/// Uses virtual line sensor to detect x coordinate of a center of an object that was in camera's field of view
 /// when "detect" method was called. Used mainly to follow the line.
-class TRIKCONTROL_EXPORT CameraLineDetectorSensor : public Sensor
+class TRIKCONTROL_EXPORT LineSensor : public Sensor
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param roverCvBinary - binary file of rover-cv program which is used to work with video
-	/// @param inputFile - rover-cv input fifo. Note that we will write data here, not read it.
-	/// @param outputFile - rover-cv output fifo. Note that we will read sensor data from here.
+	/// @param script - file name of a scrit used to start or stop a sensor.
+	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
+	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
-	CameraLineDetectorSensor(QString const &roverCvBinary, QString const &inputFile
-			, QString const &outputFile, double toleranceFactor, QString const &params);
+	LineSensor(QString const &script, QString const &inputFile, QString const &outputFile, double toleranceFactor);
 
-	~CameraLineDetectorSensor();
+	~LineSensor();
 
 public slots:
-	/// Initializes a camera and begins showing image from it on display.
-	void init();
+	/// Initializes a camera.
+	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
+	void init(bool showOnDisplay);
 
 	/// Detects the color of an object in center of current frame and memorizes it.
 	void detect();
 
 	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
-	int read();
+	int read();  // override.
 
 private:
 	/// Worker object that handles sensor in separate thread.
-	QScopedPointer<CameraLineDetectorSensorWorker> mCameraLineDetectorSensorWorker;
+	QScopedPointer<LineSensorWorker> mLineSensorWorker;
 
 	/// Worker thread.
 	QThread mWorkerThread;

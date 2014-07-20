@@ -139,11 +139,10 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 
 	mGamepad = new Gamepad(mConfigurer->gamepadPort());
 
-	mCameraLineDetectorSensor = new CameraLineDetectorSensor(mConfigurer->roverCvBinary()
-			, mConfigurer->roverCvInputFile()
-			, mConfigurer->roverCvOutputFile()
-			, mConfigurer->roverCvToleranceFactor()
-			, mConfigurer->roverCvParams()
+	mLineSensor = new LineSensor(mConfigurer->lineSensorScript()
+			, mConfigurer->lineSensorInFifo()
+			, mConfigurer->lineSensorOutFifo()
+			, mConfigurer->lineSensorToleranceFactor()
 			);
 }
 
@@ -163,6 +162,7 @@ Brick::~Brick()
 	delete mLed;
 	delete mKeys;
 	delete mGamepad;
+	delete mLineSensor;
 }
 
 void Brick::reset()
@@ -295,9 +295,9 @@ Sensor3d *Brick::gyroscope()
 	return mGyroscope;
 }
 
-CameraLineDetectorSensor *Brick::cameraLineDetector()
+LineSensor *Brick::lineSensor()
 {
-	return mCameraLineDetectorSensor;
+	return mLineSensor;
 }
 
 Keys* Brick::keys()

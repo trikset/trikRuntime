@@ -129,15 +129,27 @@ public:
 
 	int gamepadPort() const;
 
-	QString roverCvBinary() const;
+	QString lineSensorScript() const;
 
-	QString roverCvInputFile() const;
+	QString lineSensorInFifo() const;
 
-	QString roverCvOutputFile() const;
+	QString lineSensorOutFifo() const;
 
-	double roverCvToleranceFactor() const;
+	double lineSensorToleranceFactor() const;
 
-	QString roverCvParams() const;
+	QString objectSensorScript() const;
+
+	QString objectSensorInFifo() const;
+
+	QString objectSensorOutFifo() const;
+
+	double objectSensorToleranceFactor() const;
+
+	QString colorSensorScript() const;
+
+	QString colorSensorInFifo() const;
+
+	QString colorSensorOutFifo() const;
 
 private:
 	enum ServoType {
@@ -201,6 +213,13 @@ private:
 		QString deviceFile;
 	};
 
+	struct VirtualSensor {
+		QString script;
+		QString inFifo;
+		QString outFifo;
+		double toleranceFactor;
+	};
+
 	void loadInit(QDomElement const &root);
 	void loadServoMotors(QDomElement const &root);
 	void loadPwmCaptures(QDomElement const &root);
@@ -216,7 +235,7 @@ private:
 	void loadLed(QDomElement const &root);
 	void loadKeys(QDomElement const &root);
 	void loadGamepadPort(QDomElement const &root);
-	void loadCameraLineDetector(QDomElement const &root);
+	VirtualSensor loadVirtualSensor(QDomElement const &root, QString const &tagName);
 
 	QHash<QString, ServoMotorType> mServoMotorTypes;
 	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
@@ -243,11 +262,9 @@ private:
 	int mLedOff;
 	int mGamepadPort;
 
-	QString mRoverCvBinary;
-	QString mRoverCvInputFile;
-	QString mRoverCvOutputFile;
-	double mRoverCvToleranceFactor;
-	QString mRoverCvParams;
+	VirtualSensor mLineSensor;
+	VirtualSensor mObjectSensor;
+	VirtualSensor mMxNColorSensor;
 };
 
 }

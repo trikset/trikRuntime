@@ -25,27 +25,29 @@
 
 namespace trikControl {
 
-/// Worker object that processes rover-cv fifo and updates stored reading.
-class CameraLineDetectorSensorWorker : public QObject
+/// Worker object that processes virtual sensor fifo and updates stored reading. Meant to be executed in separate
+/// thread.
+class LineSensorWorker : public QObject
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param roverCvBinary - binary file of rover-cv program which is used to work with video
-	/// @param inputFile - rover-cv input fifo. Note that we will write data here, not read it.
-	/// @param outputFile - rover-cv output fifo. Note that we will read sensor data from here.
+	/// @param script - file name of a scrit used to start or stop a sensor.
+	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
+	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
-	CameraLineDetectorSensorWorker(QString const &roverCvBinary, QString const &inputFile
-				, QString const &outputFile, double toleranceFactor, QString const &params);
+	LineSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+			, double toleranceFactor);
 
 	/// Destructor.
-	~CameraLineDetectorSensorWorker();
+	~LineSensorWorker();
 
 public slots:
-	/// Initializes a camera and begins showing image from it on display.
-	void init();
+	/// Initializes a camera.
+	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
+	void init(bool showOnDisplay);
 
 	/// Detects the color of an object in center of current frame and memorizes it.
 	void detect();
@@ -55,50 +57,39 @@ public slots:
 	int read();
 
 private slots:
-	/// Called when rover-cv reports error. Note that it can still die silently.
-	void onRoverCvError(QProcess::ProcessError error);
-
-	/// Called when new data is available on stdout of rover-cv. Note that process stdout is buffered, so this method
-	/// can be called much later than expected.
-	void onRoverCvReadyReadStandardOutput();
-
-	/// Called when new data is available on stderr of rover-cv.
-	void onRoverCvReadyReadStandardError();
-
 	/// Updates current reading when new value is ready.
 	void readFile();
 
 private:
-	/// Starts rover-cv if needed and opens its fifos.
-	void initDetector();
+	/// Starts virtual sensor if needed and opens its fifos.
+	void initVirtualSensor();
 
-	/// Starts rover-cv process.
-	void startRoverCv();
+	/// Starts virtual sensor process.
+	void startVirtualSensor();
 
-	/// Opens input and output fifos for rover-cv.
+	/// Opens input and output fifos of a sensor.
 	void openFifos();
 
-	/// Puts queued commands to rover-cv input fifo and clears queue if rover-cv is ready, otherwise does nothing.
-	/// Life without continuations is pain.
+	/// Puts queued commands to an input fifo and clears queue if sensor is ready, otherwise does nothing.
 	void tryToExecute();
 
-	/// Closes fifos. Does not kill rover-cv.
+	/// Closes fifos and stops sensor.
 	void deinitialize();
 
 	/// Listener for output fifo.
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
 
 	/// Current stored reading of a sensor.
-	int mReading;
+	int mReading = 0;
 
-	/// File name (with path) of rover-cv binary.
-	QString mRoverCvBinary;
+	/// File name (with path) of a script that launches or stops sensor.
+	QString mScript;
 
 	/// File descriptor for output fifo.
-	int mOutputFileDescriptor;
+	int mOutputFileDescriptor = -1;
 
-	/// rover-cv process.
-	QProcess mRoverCvProcess;
+	/// Virtual sensor process.
+	QProcess mSensorProcess;
 
 	/// Input fifo.
 	QFile mInputFile;
@@ -106,20 +97,20 @@ private:
 	/// Output fifo.
 	QFile mOutputFile;
 
-	/// File stream for command fifo. Despite its name it is used to output commands. It is input for rover-cv.
+	/// File stream for command fifo. Despite its name it is used to output commands. It is input for virtual sensor.
 	QTextStream mInputStream;
 
 	/// Flag that sensor is ready and waiting for commands.
-	bool mReady;
+	bool mReady = false;
 
 	/// A queue of commands to be passed to input fifo when it is ready.
 	QList<QString> mCommandQueue;
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
-	double mToleranceFactor;
+	double mToleranceFactor = 1.0;
 
-	/// Command-line parameters for rover-cv
-	QString mParams;
+	/// True, if video stream from camera shall be shown on robot display.
+	bool mShowOnDisplay = true;
 };
 
 }

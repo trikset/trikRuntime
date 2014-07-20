@@ -60,7 +60,9 @@ Configurer::Configurer(QString const &configFilePath)
 	loadLed(root);
 	loadKeys(root);
 	loadGamepadPort(root);
-	loadCameraLineDetector(root);
+	mLineSensor = loadVirtualSensor(root, "lineSensor");
+	mObjectSensor = loadVirtualSensor(root, "objectSensor");
+	mMxNColorSensor = loadVirtualSensor(root, "colorSensor");
 }
 
 QString Configurer::initScript() const
@@ -288,30 +290,59 @@ int Configurer::gamepadPort() const
 	return mGamepadPort;
 }
 
-
-QString Configurer::roverCvBinary() const
+QString Configurer::lineSensorScript() const
 {
-	return mRoverCvBinary;
+	return mLineSensor.script;
 }
 
-QString Configurer::roverCvInputFile() const
+QString Configurer::lineSensorInFifo() const
 {
-	return mRoverCvInputFile;
+	return mLineSensor.inFifo;
 }
 
-QString Configurer::roverCvOutputFile() const
+QString Configurer::lineSensorOutFifo() const
 {
-	return mRoverCvOutputFile;
+	return mLineSensor.outFifo;
 }
 
-double Configurer::roverCvToleranceFactor() const
+double Configurer::lineSensorToleranceFactor() const
 {
-	return mRoverCvToleranceFactor;
+	return mLineSensor.toleranceFactor;
 }
 
-QString Configurer::roverCvParams() const
+QString Configurer::objectSensorScript() const
 {
-	return mRoverCvParams;
+	return mObjectSensor.script;
+}
+
+QString Configurer::objectSensorInFifo() const
+{
+	return mObjectSensor.inFifo;
+}
+
+QString Configurer::objectSensorOutFifo() const
+{
+	return mObjectSensor.outFifo;
+}
+
+double Configurer::objectSensorToleranceFactor() const
+{
+	return mObjectSensor.toleranceFactor;
+}
+
+QString Configurer::colorSensorScript() const
+{
+	return mMxNColorSensor.script;
+}
+
+QString Configurer::colorSensorInFifo() const
+{
+	return mMxNColorSensor.inFifo;
+}
+
+QString Configurer::colorSensorOutFifo() const
+{
+	return mMxNColorSensor.outFifo;
 }
 
 void Configurer::loadInit(QDomElement const &root)
@@ -636,12 +667,13 @@ void Configurer::loadGamepadPort(QDomElement const &root)
 	mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
 }
 
-void Configurer::loadCameraLineDetector(QDomElement const &root)
+Configurer::VirtualSensor Configurer::loadVirtualSensor(QDomElement const &root, QString const &tagName)
 {
-	QDomElement cameraLineDetector = root.elementsByTagName("cameraLineDetector").at(0).toElement();
-	mRoverCvBinary = cameraLineDetector.attribute("roverCv");
-	mRoverCvInputFile = cameraLineDetector.attribute("inputFile");
-	mRoverCvOutputFile = cameraLineDetector.attribute("outputFile");
-	mRoverCvToleranceFactor = cameraLineDetector.attribute("toleranceFactor").toDouble();
-	mRoverCvParams = cameraLineDetector.attribute("params");
+	VirtualSensor result;
+	QDomElement sensorElement = root.elementsByTagName(tagName).at(0).toElement();
+	result.script = sensorElement.attribute("script");
+	result.inFifo = sensorElement.attribute("inputFile");
+	result.outFifo = sensorElement.attribute("outputFile");
+	result.toleranceFactor = sensorElement.attribute("toleranceFactor", "1.0").toDouble();
+	return result;
 }
