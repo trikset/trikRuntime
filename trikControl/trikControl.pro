@@ -24,12 +24,14 @@ HEADERS += \
 	$$PWD/include/trikControl/analogSensor.h \
 	$$PWD/include/trikControl/battery.h \
 	$$PWD/include/trikControl/brick.h \
+	$$PWD/include/trikControl/colorSensor.h \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/include/trikControl/digitalSensor.h \
 	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/encoder.h \
 	$$PWD/include/trikControl/keys.h \
 	$$PWD/include/trikControl/led.h \
+	$$PWD/include/trikControl/objectSensor.h \
 	$$PWD/include/trikControl/sensor.h \
 	$$PWD/include/trikControl/sensor3d.h \
 	$$PWD/include/trikControl/gamepad.h \
@@ -38,6 +40,7 @@ HEADERS += \
 	$$PWD/include/trikControl/lineSensor.h \
 	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/angularServoMotor.h \
+	$$PWD/src/colorSensorWorker.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/continiousRotationServoMotor.h \
 	$$PWD/src/graphicsWidget.h \
@@ -45,6 +48,7 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/lineSensorWorker.h \
+	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/sensor3dWorker.h \
 	$$PWD/src/servoMotor.h \
@@ -55,6 +59,8 @@ SOURCES += \
 	$$PWD/src/angularServoMotor.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/brick.cpp \
+	$$PWD/src/colorSensor.cpp \
+	$$PWD/src/colorSensorWorker.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/continiousRotationServoMotor.cpp \
 	$$PWD/src/digitalSensor.cpp \
@@ -67,6 +73,8 @@ SOURCES += \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/lineSensorWorker.cpp \
+	$$PWD/src/objectSensor.cpp \
+	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/sensor3d.cpp \
