@@ -15,13 +15,7 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QScopedPointer>
-#include <QtCore/QSocketNotifier>
 #include <QtCore/QString>
-#include <QtCore/QProcess>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtCore/QList>
 
 #include "src/abstractVirtualSensorWorker.h"
 

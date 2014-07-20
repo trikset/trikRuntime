@@ -15,13 +15,6 @@
 #include "src/lineSensorWorker.h"
 
 #include <QtCore/QDebug>
-#include <QtCore/QFileInfo>
-#include <QtCore/QWaitCondition>
-#include <QtCore/QMutex>
-
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
 
 using namespace trikControl;
 

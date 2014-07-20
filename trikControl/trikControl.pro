@@ -51,7 +51,6 @@ HEADERS += \
 	$$PWD/src/tcpConnector.h \
 
 SOURCES += \
-	$$PWD/src/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/analogSensor.cpp \
 	$$PWD/src/angularServoMotor.cpp \
 	$$PWD/src/battery.cpp \
@@ -67,12 +66,13 @@ SOURCES += \
 	$$PWD/src/keys.cpp \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
+	$$PWD/src/lineSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/sensor3d.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
-	$$PWD/src/$$PLATFORM/lineSensorWorker.cpp \
+	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/sensor3dWorker.cpp \
