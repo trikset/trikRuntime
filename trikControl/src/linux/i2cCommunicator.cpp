@@ -47,23 +47,22 @@ static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
 }
 
 static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command,
-												  __u8 length, __u8 *values)
+		__u8 length, __u8 *values)
 {
-		union i2c_smbus_data data;
-		int i;
+	union i2c_smbus_data data;
 
-		if (length > 32)
-				length = 32;
-		data.block[0] = length;
-		if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
-							 length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN :
-							  I2C_SMBUS_I2C_BLOCK_DATA,&data))
-				return -1;
-		else {
-				for (i = 1; i <= data.block[0]; i++)
-						values[i-1] = data.block[i];
-				return data.block[0];
-		}
+	if (length > 32)
+			length = 32;
+	data.block[0] = length;
+	if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
+						 length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN :
+						  I2C_SMBUS_I2C_BLOCK_DATA,&data))
+			return -1;
+	else {
+			for (int i = 1; i <= data.block[0]; i++)
+					values[i-1] = data.block[i];
+			return data.block[0];
+	}
 }
 
 static inline __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value)

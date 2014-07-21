@@ -248,7 +248,7 @@ private:
 	void loadServoMotorTypes(QDomElement const &root);
 	void loadDigitalSensorTypes(QDomElement const &root);
 	void loadSound(QDomElement const &root);
-	OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
+	static OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
 	void loadI2c(QDomElement const &root);
 	void loadLed(QDomElement const &root);
 	void loadKeys(QDomElement const &root);

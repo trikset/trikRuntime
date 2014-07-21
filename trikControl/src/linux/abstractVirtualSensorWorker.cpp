@@ -56,11 +56,10 @@ void AbstractVirtualSensorWorker::init()
 void AbstractVirtualSensorWorker::readFile()
 {
 	char data[4000] = {0};
-	int size = 0;
 
 	mSocketNotifier->setEnabled(false);
 
-	if ((size = ::read(mOutputFileDescriptor, data, 4000)) < 0) {
+	if (::read(mOutputFileDescriptor, data, 4000) < 0) {
 		qDebug() << mOutputFile.fileName() << ": fifo read failed: " << errno;
 		return;
 	}
