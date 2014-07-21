@@ -41,7 +41,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
 
-	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
+	for (QString const &port : mConfigurer->servoMotorPorts()) {
 		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
 		ServoMotor *servoMotor = NULL;
@@ -72,7 +72,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		mServoMotors.insert(port, servoMotor);
 	}
 
-	foreach (QString const &port, mConfigurer->pwmCapturePorts()) {
+	for (QString const &port : mConfigurer->pwmCapturePorts()) {
 		PwmCapture *pwmCapture = new PwmCapture(
 				mConfigurer->pwmCaptureFrequencyFile(port)
 				, mConfigurer->pwmCaptureDutyFile(port)
@@ -81,7 +81,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		mPwmCaptures.insert(port, pwmCapture);
 	}
 
-	foreach (QString const &port, mConfigurer->powerMotorPorts()) {
+	for (QString const &port : mConfigurer->powerMotorPorts()) {
 		PowerMotor *powerMotor = new PowerMotor(
 				*mI2cCommunicator
 				, mConfigurer->powerMotorI2cCommandNumber(port)
@@ -91,7 +91,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		mPowerMotors.insert(port, powerMotor);
 	}
 
-	foreach (QString const &port, mConfigurer->analogSensorPorts()) {
+	for (QString const &port : mConfigurer->analogSensorPorts()) {
 		AnalogSensor *analogSensor = new AnalogSensor(
 			*mI2cCommunicator
 			, mConfigurer->analogSensorI2cCommandNumber(port)
@@ -100,7 +100,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		mAnalogSensors.insert(port, analogSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->digitalSensorPorts()) {
+	for (QString const &port : mConfigurer->digitalSensorPorts()) {
 		QString const digitalSensorType = mConfigurer->digitalSensorDefaultType(port);
 
 		DigitalSensor *digitalSensor = new DigitalSensor(
@@ -112,22 +112,26 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		mDigitalSensors.insert(port, digitalSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->encoderPorts()) {
+	for (QString const &port : mConfigurer->encoderPorts()) {
 		Encoder *encoder = new Encoder(*mI2cCommunicator, mConfigurer->encoderI2cCommandNumber(port));
 		mEncoders.insert(port, encoder);
 	}
 
 	mBattery = new Battery(*mI2cCommunicator);
 
-	mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
-			, mConfigurer->accelerometerMax()
-			, mConfigurer->accelerometerDeviceFile()
-			);
+	if (mConfigurer->hasAccelerometer()) {
+		mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
+				, mConfigurer->accelerometerMax()
+				, mConfigurer->accelerometerDeviceFile()
+				);
+	}
 
-	mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
-			, mConfigurer->gyroscopeMax()
-			, mConfigurer->gyroscopeDeviceFile()
-			);
+	if (mConfigurer->hasGyroscope()) {
+		mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
+				, mConfigurer->gyroscopeMax()
+				, mConfigurer->gyroscopeDeviceFile()
+				);
+	}
 
 	mKeys = new Keys(mConfigurer->keysDeviceFile());
 
@@ -137,14 +141,34 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 			, mConfigurer->ledOff()
 			);
 
-	mGamepad = new Gamepad(mConfigurer->gamepadPort());
+	if (mConfigurer->hasGamepad()) {
+		mGamepad = new Gamepad(mConfigurer->gamepadPort());
+	}
 
-	mCameraLineDetectorSensor = new CameraLineDetectorSensor(mConfigurer->roverCvBinary()
-			, mConfigurer->roverCvInputFile()
-			, mConfigurer->roverCvOutputFile()
-			, mConfigurer->roverCvToleranceFactor()
-			, mConfigurer->roverCvParams()
-			);
+	if (mConfigurer->hasLineSensor()) {
+		mLineSensor = new LineSensor(mConfigurer->lineSensorScript()
+				, mConfigurer->lineSensorInFifo()
+				, mConfigurer->lineSensorOutFifo()
+				, mConfigurer->lineSensorToleranceFactor()
+				);
+	}
+
+	if (mConfigurer->hasObjectSensor()) {
+		mObjectSensor = new ObjectSensor(mConfigurer->objectSensorScript()
+				, mConfigurer->objectSensorInFifo()
+				, mConfigurer->objectSensorOutFifo()
+				, mConfigurer->objectSensorToleranceFactor()
+				);
+	}
+
+	if (mConfigurer->hasColorSensor()) {
+		mColorSensor = new ColorSensor(mConfigurer->colorSensorScript()
+				, mConfigurer->colorSensorInFifo()
+				, mConfigurer->colorSensorOutFifo()
+				, mConfigurer->colorSensorM()
+				, mConfigurer->colorSensorN()
+				);
+	}
 }
 
 Brick::~Brick()
@@ -163,6 +187,9 @@ Brick::~Brick()
 	delete mLed;
 	delete mKeys;
 	delete mGamepad;
+	delete mLineSensor;
+	delete mColorSensor;
+	delete mObjectSensor;
 }
 
 void Brick::reset()
@@ -199,11 +226,11 @@ void Brick::say(QString const &text)
 
 void Brick::stop()
 {
-	foreach (ServoMotor * const servoMotor, mServoMotors.values()) {
+	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
 	}
 
-	foreach (PowerMotor * const powerMotor, mPowerMotors.values()) {
+	for (PowerMotor * const powerMotor : mPowerMotors.values()) {
 		powerMotor->powerOff();
 	}
 
@@ -295,9 +322,19 @@ Sensor3d *Brick::gyroscope()
 	return mGyroscope;
 }
 
-CameraLineDetectorSensor *Brick::cameraLineDetector()
+LineSensor *Brick::lineSensor()
 {
-	return mCameraLineDetectorSensor;
+	return mLineSensor;
+}
+
+ColorSensor *Brick::colorSensor()
+{
+	return mColorSensor;
+}
+
+ObjectSensor *Brick::objectSensor()
+{
+	return mObjectSensor;
 }
 
 Keys* Brick::keys()
@@ -352,8 +389,7 @@ void Brick::quit()
 
 void Brick::system(QString const &command)
 {
-	QStringList args;
-	args << "-c" << command;
+	QStringList args{"-c", command};
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,24 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "sensor3d.h"
+#include "src/sensor3dWorker.h"
+
+#include <QtCore/QDebug>
 
 using namespace trikControl;
 
-Sensor3d::Sensor3d(int min, int max, QString const &controlFile)
+Sensor3dWorker::Sensor3dWorker(int min, int max, QString const &controlFile)
 {
-	Q_UNUSED(min);
-	Q_UNUSED(max);
-	Q_UNUSED(controlFile);
-
-	mReading.resize(3);
+	Q_UNUSED(min)
+	Q_UNUSED(max)
+	Q_UNUSED(controlFile)
 }
 
-QVector<int> const &Sensor3d::read() const
+void Sensor3dWorker::readFile()
 {
-	return mReading;
 }
 
-void Sensor3d::readFile()
+QVector<int> Sensor3dWorker::read()
 {
+	QVector<int> const result;
+	return result;
 }

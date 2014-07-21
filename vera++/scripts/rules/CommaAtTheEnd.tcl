@@ -1,4 +1,4 @@
-# Copyright 2013-2014 Yurii Litvinov, CyberTech Labs Ltd.
+# Copyright 2013-2014 Vladimir Nazarenko, Cybertech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = subdirs
+proc CheckCommaAtTheEnd { fileName } {
+  set lineCount 1
+  foreach line [getAllLines $fileName] {
+    if { [regexp -nocase {.*,[ \t]*$} $line] && ![regexp {//} $line] && ![regexp {^ *} $line]} {
+      report $fileName $lineCount "Comma at the end of line"
+    }
+    incr lineCount
+  }
+}
 
-SUBDIRS = \
-	trikKernel \
-	trikControl \
-	trikScriptRunner \
-	trikCommunicator \
-	trikRun \
-	trikServer \
-	trikGui \
-	trikWiFi \
-
-trikScriptRunner.depends = trikControl trikKernel
-trikCommunicator.depends = trikScriptRunner
-trikRun.depends = trikScriptRunner trikKernel
-trikServer.depends = trikCommunicator
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel
+foreach fileName [getSourceFileNames] {
+  CheckCommaAtTheEnd $fileName
+}

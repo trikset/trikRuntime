@@ -2,8 +2,8 @@ language: cpp
 compiler: gcc
 
 env:
-  - CONFIG=debug
-  - CONFIG=release
+  - CONFIG=debug     VERA=true
+  - CONFIG=release   VERA=false
 
 install:
   - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
@@ -25,6 +25,8 @@ install:
 script:
   - gcc --version
   - qmake --version
+  - if [ "$VERA" = "true" ]; then tclsh vera++/generatePaths.tcl; fi
+  - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
   - qmake trikRuntime.pro CONFIG+=$CONFIG
   - make -j2
   - cd ./bin

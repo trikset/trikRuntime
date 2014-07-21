@@ -55,11 +55,9 @@ QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 	switch (type) {
 		case trikControl::Motor::powerMotor: {
 			return tr("Test power motors");
-			break;
 		}
 		case trikControl::Motor::servoMotor: {
 			return tr("Test servo motors");
-			break;
 		}
 	}
 

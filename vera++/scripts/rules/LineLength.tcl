@@ -1,4 +1,6 @@
-# Copyright 2013-2014 Yurii Litvinov, CyberTech Labs Ltd.
+#!/usr/bin/tclsh
+
+# Copyright 2013-2014 Vladimir Nazarenko, Cybertech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = subdirs
+# Line cannot be too long
 
-SUBDIRS = \
-	trikKernel \
-	trikControl \
-	trikScriptRunner \
-	trikCommunicator \
-	trikRun \
-	trikServer \
-	trikGui \
-	trikWiFi \
+set maxLength 120
 
-trikScriptRunner.depends = trikControl trikKernel
-trikCommunicator.depends = trikScriptRunner
-trikRun.depends = trikScriptRunner trikKernel
-trikServer.depends = trikCommunicator
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel
+foreach fileName [getSourceFileNames] {
+    set lineNumber 1
+    foreach line [getAllLines $fileName] {
+        if {[string length $line] > $maxLength} {
+            report $fileName $lineNumber "line is longer than $maxLength characters"
+        }
+        incr lineNumber
+    }
+}

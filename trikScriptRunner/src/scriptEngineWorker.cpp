@@ -28,7 +28,9 @@
 #include <trikControl/sensor.h>
 #include <trikControl/analogSensor.h>
 #include <trikControl/sensor3d.h>
-#include <trikControl/cameraLineDetectorSensor.h>
+#include <trikControl/lineSensor.h>
+#include <trikControl/colorSensor.h>
+#include <trikControl/objectSensor.h>
 
 #include "scriptableParts.h"
 
@@ -45,7 +47,9 @@ Q_DECLARE_METATYPE(Led*)
 Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
-Q_DECLARE_METATYPE(CameraLineDetectorSensor*)
+Q_DECLARE_METATYPE(LineSensor*)
+Q_DECLARE_METATYPE(ColorSensor*)
+Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(QVector<int>)
 
 ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
@@ -125,8 +129,10 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
-	qScriptRegisterMetaType(mEngine, cameraLineDetectorSensorToScriptValue, cameraLineDetectorSensorFromScriptValue);
-	qScriptRegisterSequenceMetaType<QVector<int> >(mEngine);
+	qScriptRegisterMetaType(mEngine, lineSensorToScriptValue, lineSensorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, colorSensorToScriptValue, colorSensorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 
 	QScriptValue brickProxy = mEngine->newQObject(mBrick.data());
 	mEngine->globalObject().setProperty("brick", brickProxy);
