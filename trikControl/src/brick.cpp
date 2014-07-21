@@ -92,9 +92,15 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	}
 
 	foreach (QString const &port, mConfigurer->analogSensorPorts()) {
+		QString const analogSensorType = mConfigurer->analogSensorDefaultType(port);
+
 		AnalogSensor *analogSensor = new AnalogSensor(
 			*mI2cCommunicator
 			, mConfigurer->analogSensorI2cCommandNumber(port)
+			, mConfigurer->analogSensorTypeRawValue1(analogSensorType)
+			, mConfigurer->analogSensorTypeRawValue2(analogSensorType)
+			, mConfigurer->analogSensorTypeNormalizedValue1(analogSensorType)
+			, mConfigurer->analogSensorTypeNormalizedValue1(analogSensorType)
 			);
 
 		mAnalogSensors.insert(port, analogSensor);

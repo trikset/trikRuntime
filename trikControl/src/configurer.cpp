@@ -73,6 +73,31 @@ QStringList Configurer::servoMotorTypes() const
 	return mServoMotorTypes.keys();
 }
 
+QStringList Configurer::analogSensorTypes() const
+{
+	return mAnalogSensorTypes.keys();
+}
+
+int Configurer::analogSensorTypeRawValue1(const QString &analogSensorType) const
+{
+	return mAnalogSensorTypes[analogSensorType].rawValue1;
+}
+
+int Configurer::analogSensorTypeRawValue2(const QString &analogSensorType) const
+{
+	return mAnalogSensorTypes[analogSensorType].rawValue2;
+}
+
+int Configurer::analogSensorTypeNormalizedValue1(const QString &analogSensorType) const
+{
+	return mAnalogSensorTypes[analogSensorType].normalizedValue1;
+}
+
+int Configurer::analogSensorTypeNormalizedValue2(const QString &analogSensorType) const
+{
+	return mAnalogSensorTypes[analogSensorType].normalizedValue2;
+}
+
 QStringList Configurer::digitalSensorTypes() const
 {
 	return mDigitalSensorTypes.keys();
@@ -181,6 +206,11 @@ QStringList Configurer::analogSensorPorts() const
 int Configurer::analogSensorI2cCommandNumber(QString const &port) const
 {
 	return mAnalogSensorMappings[port].i2cCommandNumber;
+}
+
+QString Configurer::analogSensorDefaultType(const QString &port) const
+{
+
 }
 
 QStringList Configurer::encoderPorts() const
@@ -446,6 +476,7 @@ void Configurer::loadAnalogSensors(QDomElement const &root)
 		AnalogSensorMapping mapping;
 		mapping.port = childElement.attribute("port");
 		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+		mapping.defaultType = childElement.attribute("defaultType").toInt();
 
 		mAnalogSensorMappings.insert(mapping.port, mapping);
 	}
@@ -538,6 +569,35 @@ void Configurer::loadServoMotorTypes(QDomElement const &root)
 		servoMotorType.type = childElement.attribute("type") != "angular" ? continiousRotation : angular;
 
 		mServoMotorTypes.insert(typeName, servoMotorType);
+	}
+}
+
+void Configurer::loadAnalogSensorTypes(const QDomElement &root)
+{
+	if (root.elementsByTagName("analogSensorTypes").isEmpty()) {
+		qDebug() << "config.xml does not have <analogSensorTypes> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const analogSensorTypes = root.elementsByTagName("analogSensorTypes").at(0).toElement();
+	for (QDomNode child = analogSensorTypes.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		QString const typeName = childElement.nodeName();
+
+		AnalogSensorType analogSensorType;
+		analogSensorType.rawValue1 = childElement.attribute("rawValue1").toInt();
+		analogSensorType.rawValue2 = childElement.attribute("rawValue2").toInt();
+		analogSensorType.normalizedValue1 = childElement.attribute("normalizedValue1").toInt();
+		analogSensorType.normalizedValue2 = childElement.attribute("normalizedValue2").toInt();
+
+		mAnalogSensorTypes.insert(typeName, analogSensorType);
 	}
 }
 
