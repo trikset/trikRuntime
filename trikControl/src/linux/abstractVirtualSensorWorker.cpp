@@ -16,8 +16,6 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
-#include <QtCore/QWaitCondition>
-#include <QtCore/QMutex>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -97,7 +95,17 @@ bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 		return false;
 	}
 
-	/// @todo Wait for a script to finish, maybe?
+	if (!mSensorProcess.waitForFinished()) {
+		qDebug() << sensorName() << "script" << scriptFileInfo.filePath() << " in " << scriptFileInfo.absolutePath()
+				<< "hanged up or finished unexpectedly!";
+		return false;
+	}
+
+	QString const processOutput = mSensorProcess.readAllStandardOutput() + mSensorProcess.readAllStandardError();
+	if (processOutput.contains("error")) {
+		qDebug() << sensorName() << "script reported error:" << processOutput;
+		return false;
+	}
 
 	return true;
 }
@@ -106,12 +114,6 @@ void AbstractVirtualSensorWorker::startVirtualSensor()
 {
 	if (launchSensorScript("start")) {
 		qDebug() << sensorName() << "sensor started, waiting for it to initialize...";
-
-		/// @todo Remove this hack!
-		QMutex mutex;
-		QWaitCondition wait;
-		wait.wait(&mutex, 1000);
-
 		openFifos();
 	}
 }
