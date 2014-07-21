@@ -116,7 +116,7 @@ void I2cCommunicator::send(QByteArray const &data)
 	}
 }
 
-//todo: rewrite it
+/// todo: rewrite it
 int I2cCommunicator::read(QByteArray const &data)
 {
 	QMutexLocker lock(&mLock);

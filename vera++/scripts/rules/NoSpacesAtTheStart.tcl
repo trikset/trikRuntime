@@ -1,4 +1,6 @@
-# Copyright 2013-2014 Yurii Litvinov, CyberTech Labs Ltd.
+#!/usr/bin/tclsh
+
+# Copyright 2013-2014 Vladimir Nazarenko, Cybertech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,20 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = subdirs
+# Checks if lines in the source start with no spaces
 
-SUBDIRS = \
-	trikKernel \
-	trikControl \
-	trikScriptRunner \
-	trikCommunicator \
-	trikRun \
-	trikServer \
-	trikGui \
-	trikWiFi \
+proc checkTabs { fileName } {
+  set lineCount 1
+  foreach line [getAllLines $fileName] {
+    if {![regexp -nocase {^[^ ]+.*[\n\r]*|^$} $line] && ![regexp -nocase {^ \*} $line]} {
+      report $fileName $lineCount "String starts with spaces"
+    }
 
-trikScriptRunner.depends = trikControl trikKernel
-trikCommunicator.depends = trikScriptRunner
-trikRun.depends = trikScriptRunner trikKernel
-trikServer.depends = trikCommunicator
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel
+    incr lineCount
+  }
+}
+
+foreach fileName [getSourceFileNames] {
+  checkTabs $fileName
+}
