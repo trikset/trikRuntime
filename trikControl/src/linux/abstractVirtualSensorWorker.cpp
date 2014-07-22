@@ -34,7 +34,14 @@ AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, 
 
 AbstractVirtualSensorWorker::~AbstractVirtualSensorWorker()
 {
-	deinitialize();
+	stop();
+}
+
+void AbstractVirtualSensorWorker::stop()
+{
+	if (mReady) {
+		deinitialize();
+	}
 }
 
 void AbstractVirtualSensorWorker::init()
@@ -74,7 +81,7 @@ void AbstractVirtualSensorWorker::readFile()
 
 bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 {
-	qDebug() << "Sendig" << command << "command to" << sensorName() << "sensor";
+	qDebug() << "Sending" << command << "command to" << sensorName() << "sensor";
 
 	QFileInfo const scriptFileInfo(mScript);
 
@@ -106,6 +113,8 @@ bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 		qDebug() << sensorName() << "script reported error:" << processOutput;
 		return false;
 	}
+
+	qDebug() << "Sensor process output:" << processOutput;
 
 	return true;
 }
@@ -178,6 +187,8 @@ void AbstractVirtualSensorWorker::deinitialize()
 	if (!launchSensorScript("stop")) {
 		qDebug() << "Failed to stop" << sensorName() << "sensor!";
 	}
+
+	mReady = false;
 }
 
 void AbstractVirtualSensorWorker::sync()

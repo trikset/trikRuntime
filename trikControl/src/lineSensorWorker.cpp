@@ -40,9 +40,12 @@ void LineSensorWorker::detect()
 	sendCommand("detect");
 }
 
-int LineSensorWorker::read()
+QVector<int> LineSensorWorker::read()
 {
-	return mReading;
+	mLock.lockForRead();
+	QVector<int> result = mReading;
+	mLock.unlock();
+	return result;
 }
 
 QString LineSensorWorker::sensorName() const
@@ -54,18 +57,16 @@ void LineSensorWorker::onNewData(QString const &dataLine)
 {
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
-	qDebug() << "parsed: " << parsedLine;
-
 	if (parsedLine[0] == "loc:") {
 		int const x = parsedLine[1].toInt();
-		int const angle = parsedLine[2].toInt();
+		int const crossroadsProbability = parsedLine[2].toInt();
 		int const mass = parsedLine[3].toInt();
 
-		mReading = x;
-
-		// These values are not needed in current implementation, but are left here for reference.
-		Q_UNUSED(angle)
-		Q_UNUSED(mass)
+		mLock.lockForWrite();
+		mReading[0] = x;
+		mReading[1] = crossroadsProbability;
+		mReading[2] = mass;
+		mLock.unlock();
 	}
 
 	if (parsedLine[0] == "hsv:") {

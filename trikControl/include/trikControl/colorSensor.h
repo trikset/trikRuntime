@@ -50,6 +50,9 @@ public slots:
 	/// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale.
 	QVector<int> read(int m, int n);
 
+	/// Stops detection until init() will be called again.
+	void stop();
+
 private:
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<ColorSensorWorker> mColorSensorWorker;

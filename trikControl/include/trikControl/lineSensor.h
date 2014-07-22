@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QVector>
 
 #include "declSpec.h"
 #include "sensor.h"
@@ -28,7 +29,7 @@ class LineSensorWorker;
 
 /// Uses virtual line sensor to detect x coordinate of a center of an object that was in camera's field of view
 /// when "detect" method was called. Used mainly to follow the line.
-class TRIKCONTROL_EXPORT LineSensor : public Sensor
+class TRIKCONTROL_EXPORT LineSensor : public QObject
 {
 	Q_OBJECT
 
@@ -52,7 +53,10 @@ public slots:
 	void detect();
 
 	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
-	int read();  // override.
+	QVector<int> read();
+
+	/// Stops detection until init() will be called again.
+	void stop();
 
 private:
 	/// Worker object that handles sensor in separate thread.

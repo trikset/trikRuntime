@@ -56,6 +56,9 @@ public slots:
 	/// Returns 0 in every field if detect() was not called.
 	QVector<int> read();
 
+	/// Stops detection until init() will be called again.
+	void stop();
+
 private:
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<ObjectSensorWorker> mObjectSensorWorker;

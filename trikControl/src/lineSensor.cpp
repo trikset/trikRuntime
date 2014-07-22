@@ -44,8 +44,13 @@ void LineSensor::detect()
 	QMetaObject::invokeMethod(mLineSensorWorker.data(), "detect");
 }
 
-int LineSensor::read()
+QVector<int> LineSensor::read()
 {
 	// Read is called synchronously and only takes prepared value from sensor.
 	return mLineSensorWorker->read();
+}
+
+void LineSensor::stop()
+{
+	QMetaObject::invokeMethod(mLineSensorWorker.data(), "stop");
 }

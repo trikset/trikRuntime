@@ -64,8 +64,6 @@ void ColorSensorWorker::onNewData(QString const &dataLine)
 {
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
-	qDebug() << "parsed: " << parsedLine;
-
 	if (parsedLine[0] == "color:") {
 		mLock.lockForWrite();
 		for (int i = 0; i < mReading.size(); ++i) {

@@ -42,6 +42,10 @@ public:
 
 	~AbstractVirtualSensorWorker() override;
 
+public slots:
+	/// Stops detection until init() will be called again.
+	virtual void stop();
+
 protected:
 	/// Launch sensor.
 	void init();

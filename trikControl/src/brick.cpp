@@ -236,6 +236,18 @@ void Brick::stop()
 
 	mLed->red();
 	mDisplay.hide();
+
+	if (mLineSensor) {
+		mLineSensor->stop();
+	}
+
+	if (mColorSensor) {
+		mColorSensor->stop();
+	}
+
+	if (mObjectSensor) {
+		mObjectSensor->stop();
+	}
 }
 
 Motor *Brick::motor(QString const &port)

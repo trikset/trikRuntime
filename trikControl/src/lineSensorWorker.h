@@ -16,6 +16,8 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QVector>
 
 #include "src/abstractVirtualSensorWorker.h"
 
@@ -49,7 +51,7 @@ public slots:
 
 	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
 	/// Can be accessed directly from other thread.
-	int read();
+	QVector<int> read();
 
 private:
 	QString sensorName() const override;
@@ -57,13 +59,16 @@ private:
 	void onNewData(QString const &dataLine) override;
 
 	/// Current stored reading of a sensor.
-	int mReading = 0;
+	QVector<int> mReading{0, 0, 0};
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
 	double mToleranceFactor = 1.0;
 
 	/// True, if video stream from camera shall be shown on robot display.
 	bool mShowOnDisplay = true;
+
+	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
+	QReadWriteLock mLock;
 };
 
 }

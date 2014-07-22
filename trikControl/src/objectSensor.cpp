@@ -49,3 +49,8 @@ QVector<int>  ObjectSensor::read()
 	// Read is called synchronously and only takes prepared value from sensor.
 	return mObjectSensorWorker->read();
 }
+
+void ObjectSensor::stop()
+{
+	QMetaObject::invokeMethod(mObjectSensorWorker.data(), "stop");
+}
