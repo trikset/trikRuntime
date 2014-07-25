@@ -29,6 +29,9 @@ ColorSensorWorker::ColorSensorWorker(QString const &script, QString const &input
 	mReading.resize(m);
 	for (int i = 0; i < m; ++i) {
 		mReading[i].resize(n);
+		for (int j = 0; j < n; ++j) {
+			mReading[i][j] = {0, 0, 0};
+		}
 	}
 }
 
@@ -65,6 +68,12 @@ void ColorSensorWorker::onNewData(QString const &dataLine)
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
 	if (parsedLine[0] == "color:") {
+
+		if (parsedLine.size() <= mReading.size() * mReading[0].size()) {
+			// Data is corrupted, for example, by other process that have read part of data from FIFO.
+			return;
+		}
+
 		mLock.lockForWrite();
 		for (int i = 0; i < mReading.size(); ++i) {
 			for (int j = 0; j < mReading[i].size(); ++j) {

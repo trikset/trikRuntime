@@ -194,10 +194,10 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
 
 	<!-- Settings for virtual camera object detector sensor. -->
-	<objectSensor script="/etc/init.d/object-sensor-7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
+	<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
 
 	<!-- Settings for virtual camera MxN color sensor. It splits field of view of a camera into MxN grid and reports dominant color in each cell of a grid. -->
-	<colorSensor script="/etc/init.d/mxn-sensor-7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" disabled="false" />
+	<colorSensor script="/etc/init.d/mxn-sensor-0v7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" disabled="false" />
 
 	<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
 	<gamepad port="4444" disabled="false" />

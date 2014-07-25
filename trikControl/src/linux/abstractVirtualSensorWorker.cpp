@@ -69,11 +69,17 @@ void AbstractVirtualSensorWorker::readFile()
 		return;
 	}
 
-	QString const linesRead(data);
-	QStringList const lines = linesRead.split('\n', QString::SkipEmptyParts);
+	mBuffer += data;
 
-	for (QString const line : lines) {
-		onNewData(line);
+	if (mBuffer.contains("\n")) {
+		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
+
+		mBuffer = lines.last();
+		lines.removeLast();
+
+		for (QString const line : lines) {
+			onNewData(line);
+		}
 	}
 
 	mSocketNotifier->setEnabled(true);

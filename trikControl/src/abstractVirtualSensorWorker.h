@@ -109,6 +109,9 @@ private:
 
 	/// A queue of commands to be passed to input fifo when it is ready.
 	QList<QString> mCommandQueue;
+
+	/// Buffer with current line being read from FIFO.
+	QString mBuffer;
 };
 
 }
