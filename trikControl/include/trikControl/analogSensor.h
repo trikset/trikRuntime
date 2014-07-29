@@ -33,7 +33,12 @@ public:
 	/// Constructor.
 	/// @param communicator - I2C communicator to use to query sensor.
 	/// @param i2cCommandNumber - number of i2c command corresponding to that sensor.
-	AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber);
+	AnalogSensor(I2cCommunicator &communicator
+			, int i2cCommandNumber
+			, int rawValue1
+			, int rawValue2
+			, int normalizedValue1
+			, int mormalizedValue2);
 
 public slots:
 	/// Returns current raw reading of a sensor.

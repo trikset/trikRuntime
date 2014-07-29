@@ -21,7 +21,12 @@ const int analogMin = 0;  //for all analog sensors
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber)
+AnalogSensor::AnalogSensor(I2cCommunicator &communicator
+		, int i2cCommandNumber
+		, int rawValue1
+		, int rawValue2
+		, int normalizedValue1
+		, int mormalizedValue2)
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(i2cCommandNumber)
 {

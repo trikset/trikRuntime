@@ -135,12 +135,12 @@ Use it if JCx ports are configured to work as PWM signal generators.
 		 Analog sensors do not have a type, because their driver is controlled by high-level
 		 commands and handles sensor specifics by itself. -->
 	<analogSensors>
-		<analogSensor port="A1" i2cCommandNumber="0x25" />
-		<analogSensor port="A2" i2cCommandNumber="0x24" />
-		<analogSensor port="A3" i2cCommandNumber="0x23" />
-		<analogSensor port="A4" i2cCommandNumber="0x22" />
-		<analogSensor port="A5" i2cCommandNumber="0x21" />
-		<analogSensor port="A6" i2cCommandNumber="0x20" />
+		<analogSensor port="A1" i2cCommandNumber="0x25" defaultType="defaultSensor" />
+		<analogSensor port="A2" i2cCommandNumber="0x24" defaultType="defaultSensor" />
+		<analogSensor port="A3" i2cCommandNumber="0x23" defaultType="defaultSensor" />
+		<analogSensor port="A4" i2cCommandNumber="0x22" defaultType="defaultSensor" />
+		<analogSensor port="A5" i2cCommandNumber="0x21" defaultType="defaultSensor" />
+		<analogSensor port="A6" i2cCommandNumber="0x20" defaultType="defaultSensor" />
 	</analogSensors>
 
 	<!-- Encoders configuration, maps logical port to I2C command.
@@ -168,8 +168,11 @@ Use it if JCx ports are configured to work as PWM signal generators.
 		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" disabled="false" />
 	</digitalSensors>
 
-	<!-- Description of sensor types used in digital sensor mappings. Provides minimal reading value
-		 (which will be 0 in client program) and maximal reading value (which will be 100). -->
+	<analogSensorTypes>
+		<defaultSensor rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" />
+		<distanceSensor rawValue1="" rawValue2="" normalizedValue1="" normalizedValue2="" />
+	</analogSensorTypes>
+
 	<digitalSensorTypes>
 		<lightSensor min="30000" max="350000" />
 		<volumeSensor min="0" max="100"/>

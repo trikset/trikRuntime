@@ -36,6 +36,16 @@ public:
 	/// Returns a list of motor type names from config.
 	QStringList servoMotorTypes() const;
 
+	QStringList analogSensorTypes() const;
+
+	int analogSensorTypeRawValue1(QString const &analogSensorType) const;
+
+	int analogSensorTypeRawValue2(QString const &analogSensorType) const;
+
+	int analogSensorTypeNormalizedValue1(QString const &analogSensorType) const;
+
+	int analogSensorTypeNormalizedValue2(QString const &analogSensorType) const;
+
 	/// Returns a list of sensor type names from config.
 	QStringList digitalSensorTypes() const;
 
@@ -86,6 +96,8 @@ public:
 	QStringList analogSensorPorts() const;
 
 	int analogSensorI2cCommandNumber(QString const &port) const;
+
+	QString analogSensorDefaultType(QString const &port) const;
 
 	QStringList encoderPorts() const;
 
@@ -181,6 +193,13 @@ private:
 		ServoType type;
 	};
 
+	struct AnalogSensorType {
+		int rawValue1;
+		int rawValue2;
+		int normalizedValue1;
+		int normalizedValue2;
+	};
+
 	struct DigitalSensorType {
 		int min;
 		int max;
@@ -210,6 +229,7 @@ private:
 	struct AnalogSensorMapping {
 		QString port;
 		int i2cCommandNumber;
+		QString defaultType;
 	};
 
 	struct EncoderMapping {
@@ -246,6 +266,7 @@ private:
 	void loadEncoders(QDomElement const &root);
 	void loadDigitalSensors(QDomElement const &root);
 	void loadServoMotorTypes(QDomElement const &root);
+	void loadAnalogSensorTypes(QDomElement const &root);
 	void loadDigitalSensorTypes(QDomElement const &root);
 	void loadSound(QDomElement const &root);
 	static OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
@@ -258,6 +279,7 @@ private:
 	static bool isEnabled(QDomElement const &root, QString const &tagName);
 
 	QHash<QString, ServoMotorType> mServoMotorTypes;
+	QHash<QString, AnalogSensorType> mAnalogSensorTypes;
 	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
 	QHash<QString, PwmCaptureMapping> mPwmCaptureMappings;
