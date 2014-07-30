@@ -14,6 +14,8 @@
 
 #include "analogSensor.h"
 
+#include <QtCore/QDebug>
+
 #include "i2cCommunicator.h"
 
 const int analogMax = 1024;  //for all analog sensors
@@ -26,10 +28,22 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator
 		, int rawValue1
 		, int rawValue2
 		, int normalizedValue1
-		, int mormalizedValue2)
+		, int normalizedValue2)
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(i2cCommandNumber)
 {
+	qDebug() << "rawValue1=" << rawValue1;
+	qDebug() << "rawValue2=" << rawValue2;
+	qDebug() << "normalizedValue1=" << normalizedValue1;
+	qDebug() << "normalizedValue2=" << normalizedValue2;
+	if (rawValue1 == rawValue2) {
+		qDebug() << "Distance sensor error: rawValue1 = rawValue2!";
+		k = 0;
+		b = 0;
+	} else {
+		k = static_cast<double>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
+		b = normalizedValue1 - k * rawValue1;
+	}
 }
 
 int AnalogSensor::read()
@@ -37,14 +51,7 @@ int AnalogSensor::read()
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
-	int value = mCommunicator.read(command);
-
-	value = qMin(value, analogMax);
-	value = qMax(value, analogMin);
-
-	double const scale = 100.0 / (static_cast<double>(analogMax - analogMin));
-
-	value = (value - analogMin) * scale;
+	int value = k * mCommunicator.read(command) + b;
 
 	return value;
 }

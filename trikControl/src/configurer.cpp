@@ -212,7 +212,7 @@ int Configurer::analogSensorI2cCommandNumber(QString const &port) const
 
 QString Configurer::analogSensorDefaultType(const QString &port) const
 {
-
+	return mAnalogSensorMappings[port].defaultType;
 }
 
 QStringList Configurer::encoderPorts() const

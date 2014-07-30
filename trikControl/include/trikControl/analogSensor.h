@@ -38,7 +38,7 @@ public:
 			, int rawValue1
 			, int rawValue2
 			, int normalizedValue1
-			, int mormalizedValue2);
+			, int normalizedValue2);
 
 public slots:
 	/// Returns current raw reading of a sensor.
@@ -47,6 +47,7 @@ public slots:
 private:
 	I2cCommunicator &mCommunicator;
 	int const mI2cCommandNumber;
+	double k, b;
 };
 
 }
