@@ -100,7 +100,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 			, mConfigurer->analogSensorTypeRawValue1(analogSensorType)
 			, mConfigurer->analogSensorTypeRawValue2(analogSensorType)
 			, mConfigurer->analogSensorTypeNormalizedValue1(analogSensorType)
-			, mConfigurer->analogSensorTypeNormalizedValue1(analogSensorType)
+			, mConfigurer->analogSensorTypeNormalizedValue2(analogSensorType)
 			);
 
 		mAnalogSensors.insert(port, analogSensor);

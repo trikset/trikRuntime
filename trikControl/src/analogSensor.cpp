@@ -32,10 +32,10 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(i2cCommandNumber)
 {
-	qDebug() << "rawValue1=" << rawValue1;
-	qDebug() << "rawValue2=" << rawValue2;
-	qDebug() << "normalizedValue1=" << normalizedValue1;
-	qDebug() << "normalizedValue2=" << normalizedValue2;
+	// We use linear subjection to normalize sensor values:
+	// normalizedValue = k * rawValue + b
+	// To calculate k and b we need two raw values and two corresponding them normalized values.
+
 	if (rawValue1 == rawValue2) {
 		qDebug() << "Distance sensor error: rawValue1 = rawValue2!";
 		k = 0;

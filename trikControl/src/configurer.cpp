@@ -50,6 +50,7 @@ Configurer::Configurer(QString const &configFilePath)
 	loadEncoders(root);
 	loadDigitalSensors(root);
 	loadServoMotorTypes(root);
+	loadAnalogSensorTypes(root);
 	loadDigitalSensorTypes(root);
 	loadSound(root);
 
@@ -547,7 +548,7 @@ void Configurer::loadAnalogSensors(QDomElement const &root)
 		AnalogSensorMapping mapping;
 		mapping.port = childElement.attribute("port");
 		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
-		mapping.defaultType = childElement.attribute("defaultType").toInt();
+		mapping.defaultType = childElement.attribute("defaultType");
 
 		mAnalogSensorMappings.insert(mapping.port, mapping);
 	}

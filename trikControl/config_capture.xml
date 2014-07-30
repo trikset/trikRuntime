@@ -47,7 +47,7 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 	
 	<!-- Servomotors configuration, maps logical port to device file, file for setting period,
 	     initial period value and type of motor on that port.
-	     Motor type parameters like calibration curve are described separately, in "motorTypes" section. -->
+	     Motor type parameters like calibration curve are described separately, in "servoMotorTypes" section. -->
 	<servoMotors>
 		<servoMotor
 			port="JE1"
@@ -130,17 +130,16 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 		<powerMotor port="JM3" i2cCommandNumber="0x17" invert="false" />
 	</powerMotors>
 
-	<!-- Aanalog sensors configuration, maps logical port to I2C command. 
+	<!-- Analog sensors configuration, maps logical port to I2C command. 
 	     I2C device path and device id are set separately, in "i2c" section. 
-	     Analog sensors do not have a type, because their driver is controlled by high-level 
-	     commands and handles sensor specifics by itself. -->
+	     Analog sensor type parameters are described separately, in "analogSensorTypes" section. -->
 	<analogSensors>
-		<analogSensor port="JA1" i2cCommandNumber="0x25" />
-		<analogSensor port="JA2" i2cCommandNumber="0x24" />
-		<analogSensor port="JA3" i2cCommandNumber="0x23" />
-		<analogSensor port="JA4" i2cCommandNumber="0x22" />
-		<analogSensor port="JA5" i2cCommandNumber="0x21" />
-		<analogSensor port="JA6" i2cCommandNumber="0x20" />
+		<analogSensor port="JA1" i2cCommandNumber="0x25" defaultType="defaultSensor" />
+		<analogSensor port="JA2" i2cCommandNumber="0x24" defaultType="defaultSensor" />
+		<analogSensor port="JA3" i2cCommandNumber="0x23" defaultType="defaultSensor" />
+		<analogSensor port="JA4" i2cCommandNumber="0x22" defaultType="defaultSensor" />
+		<analogSensor port="JA5" i2cCommandNumber="0x21" defaultType="defaultSensor" />
+		<analogSensor port="JA6" i2cCommandNumber="0x20" defaultType="defaultSensor" />
 	</analogSensors>
 
 	<!-- Encoders configuration, maps logical port to I2C command. 
@@ -167,6 +166,14 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-i2c_davinci.1-event" />
 		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
 	</digitalSensors>
+
+	<!-- Analog sensor types.
+	We use linear subjection to normalize sensor values. To calibrate each type of sensor,
+	we need two raw values and two corresponding normalized values. --> 
+	<analogSensorTypes>
+		<defaultSensor rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" />
+		<distanceSensor rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />
+	</analogSensorTypes>
 	
 	<!-- Description of sensor types used in digital sensor mappings. Provides minimal reading value 
 	     (which will be 0 in client program) and maximal reading value (which will be 100). -->
