@@ -18,9 +18,6 @@
 
 #include "i2cCommunicator.h"
 
-const int analogMax = 1024;  //for all analog sensors
-const int analogMin = 0;  //for all analog sensors
-
 using namespace trikControl;
 
 AnalogSensor::AnalogSensor(I2cCommunicator &communicator
@@ -37,12 +34,12 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
 	if (rawValue1 == rawValue2) {
-		qDebug() << "Distance sensor error: rawValue1 = rawValue2!";
-		k = 0;
-		b = 0;
+		qDebug() << "Sensor calibration error: rawValue1 = rawValue2!";
+		mK = 0;
+		mB = 0;
 	} else {
-		k = static_cast<double>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
-		b = normalizedValue1 - k * rawValue1;
+		mK = static_cast<double>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
+		mB = normalizedValue1 - mK * rawValue1;
 	}
 }
 
@@ -51,7 +48,7 @@ int AnalogSensor::read()
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
-	int value = k * mCommunicator.read(command) + b;
+	int value = mK * mCommunicator.read(command) + mB;
 
 	return value;
 }

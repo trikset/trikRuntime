@@ -168,15 +168,15 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	</digitalSensors>
 
 	<!-- Analog sensor types.
-		We use linear subjection to normalize sensor values. To calibrate each type of sensor,
-		we need two raw values and two corresponding normalized values. --> 
+		 We use linear subjection to normalize sensor values. To calibrate each type of sensor,
+		 we need two raw values and two corresponding normalized values. -->
 	<analogSensorTypes>
 		<defaultSensor rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" />
 		<distanceSensor rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />
 	</analogSensorTypes>
 
 	<!-- Description of sensor types used in digital sensor mappings. Provides minimal reading value
-		(which will be 0 in client program) and maximal reading value (which will be 100). -->
+		 (which will be 0 in client program) and maximal reading value (which will be 100). -->
 	<digitalSensorTypes>
 		<lightSensor min="30000" max="350000" />
 		<volumeSensor min="0" max="100"/>
