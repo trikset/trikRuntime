@@ -146,6 +146,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<!-- Encoders configuration, maps logical port to I2C command. 
 	     I2C device path and device id are set separately, in "i2c" section. -->
 	<encoders>
+		<encoder port="B1" i2cCommandNumber="0x30" />
 		<encoder port="B2" i2cCommandNumber="0x31" />
 		<encoder port="B4" i2cCommandNumber="0x32" />
 		<encoder port="B3" i2cCommandNumber="0x33" />
