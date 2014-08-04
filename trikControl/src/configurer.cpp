@@ -52,6 +52,7 @@ Configurer::Configurer(QString const &configFilePath)
 	loadServoMotorTypes(root);
 	loadAnalogSensorTypes(root);
 	loadDigitalSensorTypes(root);
+	loadEncoderTypes(root);
 	loadSound(root);
 
 	mAccelerometer = loadSensor3d(root, "accelerometer");
@@ -141,6 +142,11 @@ int Configurer::digitalSensorTypeMax(QString const &digitalSensorType) const
 	return mDigitalSensorTypes[digitalSensorType].max;
 }
 
+double Configurer::encoderTypeRawToDegrees(QString const &encoderType) const
+{
+	return mEncoderTypes[encoderType].rawToDegrees;
+}
+
 QStringList Configurer::servoMotorPorts() const
 {
 	return mServoMotorMappings.keys();
@@ -224,6 +230,11 @@ QStringList Configurer::encoderPorts() const
 int Configurer::encoderI2cCommandNumber(QString const &port) const
 {
 	return mEncoderMappings[port].i2cCommandNumber;
+}
+
+QString Configurer::encoderDefaultType(QString const &port) const
+{
+	return mEncoderMappings[port].defaultType;
 }
 
 QStringList Configurer::digitalSensorPorts() const
@@ -579,6 +590,7 @@ void Configurer::loadEncoders(QDomElement const &root)
 		EncoderMapping mapping;
 		mapping.port = childElement.attribute("port");
 		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+		mapping.defaultType = childElement.attribute("defaultType");
 
 		mEncoderMappings.insert(mapping.port, mapping);
 	}
@@ -697,6 +709,31 @@ void Configurer::loadDigitalSensorTypes(QDomElement const &root)
 		digitalSensorType.max = childElement.attribute("max").toInt();
 
 		mDigitalSensorTypes.insert(typeName, digitalSensorType);
+	}
+}
+
+void Configurer::loadEncoderTypes(const QDomElement &root)
+{
+	if (root.elementsByTagName("encoderTypes").isEmpty()) {
+		qDebug() << "config.xml does not have <encoderTypes> tag";
+		throw "config.xml parsing failed";
+	}
+
+	QDomElement const encoderTypes = root.elementsByTagName("encoderTypes").at(0).toElement();
+	for (QDomNode child = encoderTypes.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		QString const typeName = childElement.nodeName();
+
+		EncoderType encoderType;
+		encoderType.rawToDegrees = childElement.attribute("rawToDegrees").toDouble();
+		mEncoderTypes.insert(typeName, encoderType);
 	}
 }
 

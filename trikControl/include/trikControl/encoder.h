@@ -31,11 +31,12 @@ public:
 	/// Constructor.
 	/// @param communicator - I2C communicator.
 	/// @param i2cCommandNumber - number of I2C command to query this encoder.
-	Encoder(I2cCommunicator &communicator, int i2cCommandNumber);
+	/// @param rawToDegrees - coefficient for converting raw encoder readings to degrees.
+	Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double rawToDegrees);
 
 public slots:
-	/// Returns current encoder reading.
-	float read();
+	/// Returns current encoder reading (in degrees).
+	int read();
 
 	/// Resets encoder by setting current reading to 0.
 	void reset();
@@ -43,6 +44,7 @@ public slots:
 private:
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
+	double mRawToDegrees;
 };
 
 }
