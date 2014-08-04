@@ -145,9 +145,9 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 	<!-- Encoders configuration, maps logical port to I2C command.
 		 I2C device path and device id are set separately, in "i2c" section. -->
 	<encoders>
-		<encoder port="B2" i2cCommandNumber="0x31" />
-		<encoder port="B4" i2cCommandNumber="0x32" />
-		<encoder port="B3" i2cCommandNumber="0x33" />
+		<encoder port="B2" i2cCommandNumber="0x31" defaultType="encoder95" />
+		<encoder port="B4" i2cCommandNumber="0x32" defaultType="encoder95" />
+		<encoder port="B3" i2cCommandNumber="0x33" defaultType="encoder95" />
 	</encoders>
 
 	<!-- Description of servo motor types used in servo motors mapping. Supplied values correspond to
@@ -184,7 +184,8 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 
 	<!-- Description of encoder types. Provides a coefficient for converting raw encoder values to degrees. -->
 	<encoderTypes>
-		<defaultEncoder rawToDegrees="0.02304708" />
+		<encoder95 rawToDegrees="0.02304708" />
+		<encoder126 rawToDegrees="0.03033597" />
 	</encoderTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
