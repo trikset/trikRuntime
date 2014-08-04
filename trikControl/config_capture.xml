@@ -182,6 +182,11 @@ Use it if JCx ports are configured to work as PWM signal capture devices.
 		<volumeSensor min="0" max="100"/>
 	</digitalSensorTypes>
 
+	<!-- Description of encoder types. Provides a coefficient for converting raw encoder values to degrees. -->
+	<encoderTypes>
+		<defaultEncoder rawToDegrees="0.02304708" />
+	</encoderTypes>
+
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
 	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;" />
 

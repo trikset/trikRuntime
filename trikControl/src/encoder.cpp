@@ -14,8 +14,6 @@
 
 #include "encoder.h"
 
-#include <QtCore/QDebug>
-
 #include "src/i2cCommunicator.h"
 
 using namespace trikControl;
@@ -25,7 +23,6 @@ Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double raw
 	, mI2cCommandNumber(i2cCommandNumber)
 	, mRawToDegrees(rawToDegrees)
 {
-	qDebug() << "rawToDegrees:" << rawToDegrees;
 }
 
 void Encoder::reset()
@@ -37,7 +34,7 @@ void Encoder::reset()
 	mCommunicator.send(command);
 }
 
-float Encoder::read()
+int Encoder::read()
 {
 	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber);

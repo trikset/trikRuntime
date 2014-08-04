@@ -591,7 +591,6 @@ void Configurer::loadEncoders(QDomElement const &root)
 		mapping.port = childElement.attribute("port");
 		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
 		mapping.defaultType = childElement.attribute("defaultType");
-		qDebug() << "Found encoder with default type:" << mapping.defaultType;
 
 		mEncoderMappings.insert(mapping.port, mapping);
 	}
@@ -732,12 +731,8 @@ void Configurer::loadEncoderTypes(const QDomElement &root)
 		QDomElement const childElement = child.toElement();
 		QString const typeName = childElement.nodeName();
 
-		qDebug() << "Found encoder type:" << typeName;
-
 		EncoderType encoderType;
 		encoderType.rawToDegrees = childElement.attribute("rawToDegrees").toDouble();
-		qDebug() << "rawToDegrees:" << encoderType.rawToDegrees;
-
 		mEncoderTypes.insert(typeName, encoderType);
 	}
 }

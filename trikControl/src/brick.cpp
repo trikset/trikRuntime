@@ -119,10 +119,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	}
 
 	for (QString const &port : mConfigurer->encoderPorts()) {
-		qDebug() << "Encoder port:" << port;
-
 		QString const encoderType = mConfigurer->encoderDefaultType(port);
-		qDebug() << "Type:" << encoderType;
 
 		Encoder *encoder = new Encoder(
 				*mI2cCommunicator

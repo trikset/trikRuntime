@@ -36,7 +36,7 @@ public:
 
 public slots:
 	/// Returns current encoder reading (in degrees).
-	float read();
+	int read();
 
 	/// Resets encoder by setting current reading to 0.
 	void reset();
