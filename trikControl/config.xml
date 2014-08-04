@@ -145,9 +145,9 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<!-- Encoders configuration, maps logical port to I2C command.
 		 I2C device path and device id are set separately, in "i2c" section. -->
 	<encoders>
-		<encoder port="B2" i2cCommandNumber="0x31" />
-		<encoder port="B4" i2cCommandNumber="0x32" />
-		<encoder port="B3" i2cCommandNumber="0x33" />
+		<encoder port="B2" i2cCommandNumber="0x31" defaultType="defaultEncoder"/>
+		<encoder port="B4" i2cCommandNumber="0x32" defaultType="defaultEncoder"/>
+		<encoder port="B3" i2cCommandNumber="0x33" defaultType="defaultEncoder"/>
 	</encoders>
 
 	<!-- Description of servo motor types used in servo motors mapping. Supplied values correspond to
@@ -181,6 +181,10 @@ Use it if JCx ports are configured to work as PWM signal generators.
 		<lightSensor min="30000" max="350000" />
 		<volumeSensor min="0" max="100"/>
 	</digitalSensorTypes>
+
+	<encoderTypes>
+		<defaultEncoder rawToDegrees="1" />
+	</encoderTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
 	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;" />

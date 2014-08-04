@@ -14,16 +14,18 @@
 
 #include "encoder.h"
 
-#include "src/i2cCommunicator.h"
+#include <QtCore/QDebug>
 
-float const parToRad = 0.03272492;
+#include "src/i2cCommunicator.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber)
+Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double rawToDegrees)
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(i2cCommandNumber)
+	, mRawToDegrees(rawToDegrees)
 {
+	qDebug() << "rawToDegrees:" << rawToDegrees;
 }
 
 void Encoder::reset()
@@ -41,5 +43,5 @@ float Encoder::read()
 	command[0] = static_cast<char>(mI2cCommandNumber);
 	int data = mCommunicator.read(command);
 
-	return parToRad * data;
+	return mRawToDegrees * data;
 }

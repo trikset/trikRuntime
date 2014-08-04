@@ -69,6 +69,8 @@ public:
 
 	int digitalSensorTypeMax(QString const &digitalSensorType) const;
 
+	double encoderTypeRawToDegrees(QString const &encoderType) const;
+
 	QStringList servoMotorPorts() const;
 
 	QString servoMotorDeviceFile(QString const &port) const;
@@ -102,6 +104,8 @@ public:
 	QStringList encoderPorts() const;
 
 	int encoderI2cCommandNumber(QString const &port) const;
+
+	QString encoderDefaultType(QString const &port) const;
 
 	QStringList digitalSensorPorts() const;
 
@@ -205,6 +209,10 @@ private:
 		int max;
 	};
 
+	struct EncoderType {
+		double rawToDegrees;
+	};
+
 	struct ServoMotorMapping {
 		QString port;
 		QString deviceFile;
@@ -235,6 +243,7 @@ private:
 	struct EncoderMapping {
 		QString port;
 		int i2cCommandNumber;
+		QString defaultType;
 	};
 
 	struct DigitalSensorMapping {
@@ -268,6 +277,7 @@ private:
 	void loadServoMotorTypes(QDomElement const &root);
 	void loadAnalogSensorTypes(QDomElement const &root);
 	void loadDigitalSensorTypes(QDomElement const &root);
+	void loadEncoderTypes(QDomElement const &root);
 	void loadSound(QDomElement const &root);
 	static OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
 	void loadI2c(QDomElement const &root);
@@ -281,6 +291,7 @@ private:
 	QHash<QString, ServoMotorType> mServoMotorTypes;
 	QHash<QString, AnalogSensorType> mAnalogSensorTypes;
 	QHash<QString, DigitalSensorType> mDigitalSensorTypes;
+	QHash<QString, EncoderType> mEncoderTypes;
 	QHash<QString, ServoMotorMapping> mServoMotorMappings;
 	QHash<QString, PwmCaptureMapping> mPwmCaptureMappings;
 	QHash<QString, PowerMotorMapping> mPowerMotorMappings;
