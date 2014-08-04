@@ -12,34 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TRIKCONTROL_DIR = ../trikControl/
+include(../global.pri)
+
+HEADERS += \
+	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+	$$PWD/src/scriptableParts.h \
+	$$PWD/src/scriptEngineWorker.h \
+	$$PWD/src/scriptRunnerProxy.h \
+
+SOURCES += \
+	$$PWD/src/scriptRunnerProxy.cpp \
+	$$PWD/src/scriptableParts.cpp \
+	$$PWD/src/scriptEngineWorker.cpp \
+	$$PWD/src/trikScriptRunner.cpp \
+
+OTHER_FILES += \
+	$$PWD/system.js \
 
 TEMPLATE = lib
 QT += script
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
-FILES_TO_COPY = \
-	system.js \
+copyToDestdir(system.js)
 
-include(../global.pri)
+uses(trikKernel trikControl)
 
-TARGET = trikScriptRunner$$CONFIGURATION_SUFFIX
-
-INCLUDEPATH = \
-	$$PWD \
-	$$TRIKCONTROL_DIR/include \
-
-LIBS += -L$$DESTDIR -ltrikControl$$CONFIGURATION_SUFFIX
-
-HEADERS += \
-	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
-	$$PWD/src/scriptableParts.h \
-	$$PWD/src/scriptEngineWorker.h \
-	$$PWD/src/fileUtils.h \
-
-SOURCES += \
-	$$PWD/src/trikScriptRunner.cpp \
-	$$PWD/src/scriptableParts.cpp \
-	$$PWD/src/scriptEngineWorker.cpp \
-	$$PWD/src/fileUtils.cpp \
+INCLUDEPATH += \
+	$$PWD/../trikKernel/include/ \
+	$$PWD/../trikControl/include/ \

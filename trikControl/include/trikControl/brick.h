@@ -24,17 +24,19 @@
 
 #include "analogSensor.h"
 #include "battery.h"
+#include "colorSensor.h"
 #include "digitalSensor.h"
 #include "display.h"
 #include "encoder.h"
 #include "gamepad.h"
 #include "keys.h"
 #include "led.h"
+#include "lineSensor.h"
+#include "motor.h"
+#include "objectSensor.h"
+#include "pwmCapture.h"
 #include "sensor.h"
 #include "sensor3d.h"
-#include "pwmCapture.h"
-#include "motor.h"
-#include "cameraLineDetectorSensor.h"
 
 namespace trikControl {
 
@@ -54,7 +56,8 @@ public:
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
 	/// @param configFilePath - path to config.xml
-	Brick(QThread &guiThread, QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	Brick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
 
 	~Brick();
 
@@ -69,6 +72,9 @@ public:
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).
 	void playSound(QString const &soundFileName);
+
+	/// Uses text synthesis to say given text on a speaker.
+	void say(QString const &text);
 
 	/// Stops all motors and shuts down all current activity.
 	void stop();
@@ -100,8 +106,14 @@ public slots:
 	/// Returns reference to on-board gyroscope.
 	Sensor3d *gyroscope();
 
-	/// Returns reference to high-level line detector sensor using USB camera.
-	CameraLineDetectorSensor *cameraLineDetector();
+	/// Returns reference to high-level line detector sensor using camera.
+	LineSensor *lineSensor();
+
+	/// Returns reference to high-level color sensor using camera.
+	ColorSensor *colorSensor();
+
+	/// Returns reference to high-level object detector sensor using USB camera.
+	ObjectSensor *objectSensor();
 
 	/// Returns reference to encoder on given port.
 	Encoder *encoder(QString const &port);
@@ -150,12 +162,14 @@ private:
 		}
 	};
 
-	Sensor3d *mAccelerometer;  // has ownership.
-	Sensor3d *mGyroscope;  // has ownership.
-	CameraLineDetectorSensor *mCameraLineDetectorSensor;  // Has ownership.
-	Battery *mBattery;  // Has ownership.
-	Keys *mKeys;  // Has ownership.
-	Gamepad *mGamepad;  // Has ownership.
+	Sensor3d *mAccelerometer = nullptr;  // has ownership.
+	Sensor3d *mGyroscope = nullptr;  // has ownership.
+	LineSensor *mLineSensor = nullptr;  // Has ownership.
+	ColorSensor *mColorSensor = nullptr;  // Has ownership.
+	ObjectSensor *mObjectSensor = nullptr;  // Has ownership.
+	Battery *mBattery = nullptr;  // Has ownership.
+	Keys *mKeys = nullptr;  // Has ownership.
+	Gamepad *mGamepad = nullptr;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
@@ -165,9 +179,9 @@ private:
 	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
 
 	Configurer const * const mConfigurer;  // Has ownership.
-	I2cCommunicator *mI2cCommunicator;  // Has ownership.
+	I2cCommunicator *mI2cCommunicator = nullptr;  // Has ownership.
 	Display mDisplay;
-	Led *mLed;  // Has ownership.
+	Led *mLed = nullptr;  // Has ownership.
 
 	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.

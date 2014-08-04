@@ -1,4 +1,6 @@
-/* Copyright 2013 Yurii Litvinov
+#pragma once
+
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,17 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
-
-#include <QtCore/QString>
-#include <QtCore/QTimer>
-#include <QtCore/QThread>
-#include <QtCore/QWaitCondition>
-#include <QtScript/QScriptEngine>
+#include <QtCore/QObject>
+#include <QtCore/QScopedPointer>
 
 namespace trikScriptRunner {
 
-class ScriptEngineWorker;
+class ScriptRunnerProxy;
 
 /// Executes scripts in Qt Scripting Engine.
 class TrikScriptRunner : public QObject
@@ -32,41 +29,39 @@ class TrikScriptRunner : public QObject
 public:
 	/// Constructor.
 	/// @param configFilePath - path to config file for trikControl, for example /home/root/trik/
-	TrikScriptRunner(QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	TrikScriptRunner(QString const &configFilePath, QString const &startDirPath);
 
 	~TrikScriptRunner();
 
-	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
+public slots:
+	/// Executes given script asynchronously. If some script is already executing, it will be aborted (but no
+	/// completed() signal will be sent for it). Execution state will be reset (and robot fully stopped) before and
+	/// after script execution. For event-driven mode (where script has brick.run() command) script counts as finished
+	/// when it requests to quit by itself or was aborted. When script is finished, completed() signal will be emitted.
 	/// @param script - script in Qt Script language to be executed.
 	void run(QString const &script);
 
-	/// Reads a script from given file and asynchronously executes it. If some script is already executing, it will be
-	/// aborted.
-	/// @param fileName - name of a file with script.
-	void runFromFile(QString const &fileName);
+	/// Executes given script as direct command, so it will use existing script execution environment (or create one
+	/// if needed) and will not reset execution state before or after execution. Sequence of direct commands counts
+	/// as finished when one of them directly requests to quit (by brick.quit() command), then robot will be stopped,
+	/// execution state will reset and completed() signal will be emitted.
+	/// @param command - script in Qt Script to be executed as direct command.
+	void runDirectCommand(QString const &command);
 
-	/// Aborts script execution.
+	/// Aborts script execution. completed() signal will be emitted when script will be actually aborted, robot will
+	/// be stopped and execution state will be reset. Note that direct commands and scripts in event-driven mode will
+	/// be stopped as well.
 	void abort();
 
-	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
-	/// If it is false, script will exit immediately.
-	bool isInEventDrivenMode() const;
-
 signals:
-	/// Fired when current script completes execution.
+	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
+	/// or was aborted).
 	void completed();
 
-	/// Signal for script runner thread to begin execution.
-	void threadRun(QString const &script);
-
-	/// Signal for script runner thread to delete itself when possible.
-	void threadDelete();
-
 private:
-	static QString readFromFile(QString const &fileName);
-
-	ScriptEngineWorker *mEngineWorker;  // Has ownership.
-	QThread mWorkerThread;
+	/// Proxy for script engine thread.
+	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;
 };
 
 }

@@ -27,7 +27,6 @@ class TrikScriptRunner;
 
 namespace trikCommunicator {
 
-class ScriptRunnerWrapper;
 class Connection;
 
 /// Class that enables connection with a client running on computer (TrikLab or remote control).
@@ -41,7 +40,8 @@ class TrikCommunicator : public QTcpServer
 public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
-	explicit TrikCommunicator(QString const &configFilePath);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	explicit TrikCommunicator(QString const &configFilePath, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
@@ -73,7 +73,12 @@ private:
 	void init();
 
 	/// Script runner object common to all connections.
-	QScopedPointer<ScriptRunnerWrapper> mScriptRunnerWrapper;
+	/// Ownership depends on mHasScriptRunnerOwnership flag, if we received runner belonging to other object or created
+	/// our own.
+	trikScriptRunner::TrikScriptRunner *mTrikScriptRunner;
+
+	/// True, if we created our own script runner, false if we got it from someone.
+	bool const mHasScriptRunnerOwnership;
 
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
 	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.

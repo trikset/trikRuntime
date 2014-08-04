@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QThread>
+#include <QtCore/QString>
 
 #include "declSpec.h"
 
@@ -30,7 +31,8 @@ class TRIKCONTROL_EXPORT Display : public QObject
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	explicit Display(QThread &guiThread);
+	/// @param startDirPath - path to the directory from which the application was executed.
+	explicit Display(QThread &guiThread, QString const &startDirPath);
 
 	~Display();
 
@@ -53,6 +55,47 @@ public slots:
 	/// Shortcut to showImage, shows happy smile.
 	void smile();
 
+	/// Set painter color.
+	void setPainterColor(QString const &color);
+
+	/// Set painter width.
+	void setPainterWidth(int penWidth);
+
+	/// Draw line on the widget.
+	/// @param x1 - first point's x coordinate.
+	/// @param y1 - first point's y coordinate.
+	/// @param x1 - second point's x coordinate.
+	/// @param y1 - second point's y coordinate.
+	void drawLine(int x1, int y1, int x2, int y2);
+
+	/// Draw point on the widget.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	void drawPoint(int x, int y);
+
+	/// Draw rect on the widget.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	/// @param width - rect's width.
+	/// @param height - rect's height.
+	void drawRect(int x, int y, int width, int height);
+
+	/// Draw ellipse.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	/// @param width - width of ellipse.
+	/// @param height - height of ellipse.
+	void drawEllipse(int x, int y, int width, int height);
+
+	/// Draw arc on the widget.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	/// @param width - width rect forming an arc.
+	/// @param height - height rect forming an arc.
+	/// @param startAngle - start angle.
+	/// @param spanAngle - end andle.
+	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
+
 	/// Shortcut to showImage, shows sad smile.
 	void sadSmile();
 
@@ -66,17 +109,9 @@ public slots:
 	/// Clear everything painted with this object.
 	void clear();
 
-signals:
-	void threadShowImage(QString const &fileName);
-	void threadAddLabel(QString const &text, int x, int y);
-	void threadRemoveLabels();
-	void threadSetBackground(QString const &color);
-	void threadHide();
-	void threadDelete();
-	void threadClear();
-
 private:
 	QThread &mGuiThread;
+	QString const mStartDirPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

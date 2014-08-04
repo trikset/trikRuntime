@@ -12,10 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TRIKCONTROL_DIR = ../trikControl/
-TRIKCOMMUNICATOR_DIR = ../trikCommunicator/
-TRIKSCRIPTRUNNER_DIR = ../trikScriptRunner/
-TRIKWIFI_DIR = ../trikWiFi/
+include(../global.pri)
 
 HEADERS += \
 	$$PWD/fileManagerWidget.h \
@@ -59,6 +56,8 @@ SOURCES += \
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
 
+copyToDestdir(wpa-config.xml)
+
 TEMPLATE = app
 
 QT += network
@@ -67,21 +66,11 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-FILES_TO_COPY = \
-	wpa-config.xml \
+uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi)
 
-include(../global.pri)
-
-INCLUDEPATH = \
-	$$PWD \
-	$$TRIKCOMMUNICATOR_DIR/include \
-	$$TRIKSCRIPTRUNNER_DIR/include \
-	$$TRIKWIFI_DIR/include \
-	$$TRIKCONTROL_DIR/include \
-
-LIBS += \
-	-L$$DESTDIR \
-	-ltrikCommunicator$$CONFIGURATION_SUFFIX \
-	-ltrikScriptRunner$$CONFIGURATION_SUFFIX \
-	-ltrikWiFi$$CONFIGURATION_SUFFIX \
-	-ltrikControl$$CONFIGURATION_SUFFIX \
+INCLUDEPATH += \
+	../trikKernel/include/ \
+	../trikControl/include/ \
+	../trikCommunicator/include/ \
+	../trikScriptRunner/include/ \
+	../trikWiFi/include/ \

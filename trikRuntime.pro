@@ -1,4 +1,4 @@
-# Copyright 2013 Yurii Litvinov
+# Copyright 2013-2014 Yurii Litvinov, CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+	trikKernel \
 	trikControl \
 	trikScriptRunner \
 	trikCommunicator \
@@ -23,8 +24,8 @@ SUBDIRS = \
 	trikGui \
 	trikWiFi \
 
-trikScriptRunner.depends = trikControl
+trikScriptRunner.depends = trikControl trikKernel
 trikCommunicator.depends = trikScriptRunner
-trikRun.depends = trikScriptRunner
+trikRun.depends = trikScriptRunner trikKernel
 trikServer.depends = trikCommunicator
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi
+trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel

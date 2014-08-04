@@ -20,18 +20,19 @@
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
 
+#include "angularServoMotor.h"
+#include "continiousRotationServoMotor.h"
 #include "powerMotor.h"
-#include "servoMotor.h"
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
 
 using namespace trikControl;
 
-Brick::Brick(QThread &guiThread, QString const &configFilePath)
+Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &startDirPath)
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(NULL)
-	, mDisplay(guiThread)
+	, mDisplay(guiThread, startDirPath)
 	, mInEventDrivenMode(false)
 {
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
@@ -40,24 +41,38 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
 
-	foreach (QString const &port, mConfigurer->servoMotorPorts()) {
+	for (QString const &port : mConfigurer->servoMotorPorts()) {
 		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
-		ServoMotor *servoMotor = new ServoMotor(
-				mConfigurer->servoMotorTypeMin(servoMotorType)
-				, mConfigurer->servoMotorTypeMax(servoMotorType)
-				, mConfigurer->servoMotorTypeZero(servoMotorType)
-				, mConfigurer->servoMotorTypeStop(servoMotorType)
-				, mConfigurer->servoMotorDeviceFile(port)
-				, mConfigurer->servoMotorPeriodFile(port)
-				, mConfigurer->servoMotorPeriod(port)
-				, mConfigurer->servoMotorInvert(port)
-				);
+		ServoMotor *servoMotor = NULL;
+		if (mConfigurer->isServoMotorTypeContiniousRotation(servoMotorType)) {
+			servoMotor = new ContiniousRotationServoMotor(
+					mConfigurer->servoMotorTypeMin(servoMotorType)
+					, mConfigurer->servoMotorTypeMax(servoMotorType)
+					, mConfigurer->servoMotorTypeZero(servoMotorType)
+					, mConfigurer->servoMotorTypeStop(servoMotorType)
+					, mConfigurer->servoMotorDeviceFile(port)
+					, mConfigurer->servoMotorPeriodFile(port)
+					, mConfigurer->servoMotorPeriod(port)
+					, mConfigurer->servoMotorInvert(port)
+					);
+		} else {
+			servoMotor = new AngularServoMotor(
+					mConfigurer->servoMotorTypeMin(servoMotorType)
+					, mConfigurer->servoMotorTypeMax(servoMotorType)
+					, mConfigurer->servoMotorTypeZero(servoMotorType)
+					, mConfigurer->servoMotorTypeStop(servoMotorType)
+					, mConfigurer->servoMotorDeviceFile(port)
+					, mConfigurer->servoMotorPeriodFile(port)
+					, mConfigurer->servoMotorPeriod(port)
+					, mConfigurer->servoMotorInvert(port)
+					);
+		}
 
 		mServoMotors.insert(port, servoMotor);
 	}
 
-	foreach (QString const &port, mConfigurer->pwmCapturePorts()) {
+	for (QString const &port : mConfigurer->pwmCapturePorts()) {
 		PwmCapture *pwmCapture = new PwmCapture(
 				mConfigurer->pwmCaptureFrequencyFile(port)
 				, mConfigurer->pwmCaptureDutyFile(port)
@@ -66,7 +81,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 		mPwmCaptures.insert(port, pwmCapture);
 	}
 
-	foreach (QString const &port, mConfigurer->powerMotorPorts()) {
+	for (QString const &port : mConfigurer->powerMotorPorts()) {
 		PowerMotor *powerMotor = new PowerMotor(
 				*mI2cCommunicator
 				, mConfigurer->powerMotorI2cCommandNumber(port)
@@ -76,16 +91,22 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 		mPowerMotors.insert(port, powerMotor);
 	}
 
-	foreach (QString const &port, mConfigurer->analogSensorPorts()) {
+	for (QString const &port : mConfigurer->analogSensorPorts()) {
+		QString const analogSensorType = mConfigurer->analogSensorDefaultType(port);
+
 		AnalogSensor *analogSensor = new AnalogSensor(
 			*mI2cCommunicator
 			, mConfigurer->analogSensorI2cCommandNumber(port)
+			, mConfigurer->analogSensorTypeRawValue1(analogSensorType)
+			, mConfigurer->analogSensorTypeRawValue2(analogSensorType)
+			, mConfigurer->analogSensorTypeNormalizedValue1(analogSensorType)
+			, mConfigurer->analogSensorTypeNormalizedValue2(analogSensorType)
 			);
 
 		mAnalogSensors.insert(port, analogSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->digitalSensorPorts()) {
+	for (QString const &port : mConfigurer->digitalSensorPorts()) {
 		QString const digitalSensorType = mConfigurer->digitalSensorDefaultType(port);
 
 		DigitalSensor *digitalSensor = new DigitalSensor(
@@ -97,22 +118,31 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 		mDigitalSensors.insert(port, digitalSensor);
 	}
 
-	foreach (QString const &port, mConfigurer->encoderPorts()) {
-		Encoder *encoder = new Encoder(*mI2cCommunicator, mConfigurer->encoderI2cCommandNumber(port));
+	for (QString const &port : mConfigurer->encoderPorts()) {
+		QString const encoderType = mConfigurer->encoderDefaultType(port);
+
+		Encoder *encoder = new Encoder(
+				*mI2cCommunicator
+				, mConfigurer->encoderI2cCommandNumber(port)
+				, mConfigurer->encoderTypeRawToDegrees(encoderType));
 		mEncoders.insert(port, encoder);
 	}
 
 	mBattery = new Battery(*mI2cCommunicator);
 
-	mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
-			, mConfigurer->accelerometerMax()
-			, mConfigurer->accelerometerDeviceFile()
-			);
+	if (mConfigurer->hasAccelerometer()) {
+		mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
+				, mConfigurer->accelerometerMax()
+				, mConfigurer->accelerometerDeviceFile()
+				);
+	}
 
-	mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
-			, mConfigurer->gyroscopeMax()
-			, mConfigurer->gyroscopeDeviceFile()
-			);
+	if (mConfigurer->hasGyroscope()) {
+		mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
+				, mConfigurer->gyroscopeMax()
+				, mConfigurer->gyroscopeDeviceFile()
+				);
+	}
 
 	mKeys = new Keys(mConfigurer->keysDeviceFile());
 
@@ -122,14 +152,34 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath)
 			, mConfigurer->ledOff()
 			);
 
-	mGamepad = new Gamepad(mConfigurer->gamepadPort());
+	if (mConfigurer->hasGamepad()) {
+		mGamepad = new Gamepad(mConfigurer->gamepadPort());
+	}
 
-	mCameraLineDetectorSensor = new CameraLineDetectorSensor(mConfigurer->roverCvBinary()
-			, mConfigurer->roverCvInputFile()
-			, mConfigurer->roverCvOutputFile()
-			, mConfigurer->roverCvToleranceFactor()
-			, mConfigurer->roverCvParams()
-			);
+	if (mConfigurer->hasLineSensor()) {
+		mLineSensor = new LineSensor(mConfigurer->lineSensorScript()
+				, mConfigurer->lineSensorInFifo()
+				, mConfigurer->lineSensorOutFifo()
+				, mConfigurer->lineSensorToleranceFactor()
+				);
+	}
+
+	if (mConfigurer->hasObjectSensor()) {
+		mObjectSensor = new ObjectSensor(mConfigurer->objectSensorScript()
+				, mConfigurer->objectSensorInFifo()
+				, mConfigurer->objectSensorOutFifo()
+				, mConfigurer->objectSensorToleranceFactor()
+				);
+	}
+
+	if (mConfigurer->hasColorSensor()) {
+		mColorSensor = new ColorSensor(mConfigurer->colorSensorScript()
+				, mConfigurer->colorSensorInFifo()
+				, mConfigurer->colorSensorOutFifo()
+				, mConfigurer->colorSensorM()
+				, mConfigurer->colorSensorN()
+				);
+	}
 }
 
 Brick::~Brick()
@@ -148,6 +198,9 @@ Brick::~Brick()
 	delete mLed;
 	delete mKeys;
 	delete mGamepad;
+	delete mLineSensor;
+	delete mColorSensor;
+	delete mObjectSensor;
 }
 
 void Brick::reset()
@@ -177,18 +230,35 @@ void Brick::playSound(QString const &soundFileName)
 	}
 }
 
+void Brick::say(QString const &text)
+{
+	this->system("espeak -v russian_test -s 100 \"" + text + "\"");
+}
+
 void Brick::stop()
 {
-	foreach (ServoMotor * const servoMotor, mServoMotors.values()) {
+	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
 	}
 
-	foreach (PowerMotor * const powerMotor, mPowerMotors.values()) {
+	for (PowerMotor * const powerMotor : mPowerMotors.values()) {
 		powerMotor->powerOff();
 	}
 
 	mLed->red();
 	mDisplay.hide();
+
+	if (mLineSensor) {
+		mLineSensor->stop();
+	}
+
+	if (mColorSensor) {
+		mColorSensor->stop();
+	}
+
+	if (mObjectSensor) {
+		mObjectSensor->stop();
+	}
 }
 
 Motor *Brick::motor(QString const &port)
@@ -275,9 +345,19 @@ Sensor3d *Brick::gyroscope()
 	return mGyroscope;
 }
 
-CameraLineDetectorSensor *Brick::cameraLineDetector()
+LineSensor *Brick::lineSensor()
 {
-	return mCameraLineDetectorSensor;
+	return mLineSensor;
+}
+
+ColorSensor *Brick::colorSensor()
+{
+	return mColorSensor;
+}
+
+ObjectSensor *Brick::objectSensor()
+{
+	return mObjectSensor;
 }
 
 Keys* Brick::keys()
@@ -332,8 +412,7 @@ void Brick::quit()
 
 void Brick::system(QString const &command)
 {
-	QStringList args;
-	args << "-c" << command;
+	QStringList args{"-c", command};
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
 }

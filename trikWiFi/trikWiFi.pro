@@ -12,19 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include(../global.pri)
+
 TEMPLATE = lib
 
 QT += xml
 
 DEFINES += TRIKWIFI_LIBRARY
-
-include(../global.pri)
-
-TARGET = trikWiFi$$CONFIGURATION_SUFFIX
-
-INCLUDEPATH = \
-	$$PWD \
-	$$PWD/include/trikWiFi \
 
 win32 {
 	PLATFORM = windows

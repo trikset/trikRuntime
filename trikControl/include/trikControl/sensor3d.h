@@ -15,13 +15,15 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QSocketNotifier>
-#include <QtCore/QSharedPointer>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QThread>
 #include <QtCore/QVector>
 
 #include "declSpec.h"
 
 namespace trikControl {
+
+class Sensor3dWorker;
 
 /// Sensor that returns 3d vector.
 class TRIKCONTROL_EXPORT Sensor3d : public QObject
@@ -35,20 +37,15 @@ public:
 	/// @param deviceFile - device file for this sensor.
 	Sensor3d(int min, int max, QString const &deviceFile);
 
+	~Sensor3d();
+
 public slots:
 	/// Returns current raw reading of a sensor in a form of vector with 3 coordinates.
-	QVector<int> const &read() const;
-
-private slots:
-	/// Updates current reading when new value is ready.
-	void readFile();
+	QVector<int> read() const;
 
 private:
-	QSharedPointer<QSocketNotifier> mSocketNotifier;
-	QVector<int> mReading;
-	int mDeviceFileDescriptor;
-	int mMax;
-	int mMin;
+	QScopedPointer<Sensor3dWorker> mSensor3dWorker;
+	QThread mWorkerThread;
 };
 
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "sensor3d.h"
+#include "src/sensor3dWorker.h"
 
 #include <QtCore/QDebug>
 
@@ -28,7 +28,7 @@
 
 using namespace trikControl;
 
-Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
+Sensor3dWorker::Sensor3dWorker(int min, int max, const QString &controlFile)
 	: mDeviceFileDescriptor(0)
 	, mMax(max)
 	, mMin(min)
@@ -41,7 +41,7 @@ Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
 		return;
 	}
 
-	mSocketNotifier = QSharedPointer<QSocketNotifier>(
+	mSocketNotifier.reset(
 			new QSocketNotifier(mDeviceFileDescriptor, QSocketNotifier::Read, this)
 			);
 
@@ -49,7 +49,7 @@ Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
 	mSocketNotifier->setEnabled(true);
 }
 
-void Sensor3d::readFile()
+void Sensor3dWorker::readFile()
 {
 	struct input_event event;
 	int size = 0;
@@ -63,13 +63,19 @@ void Sensor3d::readFile()
 			case EV_ABS:
 				switch (event.code) {
 				case ABS_X:
+					mLock.lockForWrite();
 					mReading[0] = event.value;
+					mLock.unlock();
 					break;
 				case ABS_Y:
+					mLock.lockForWrite();
 					mReading[1] = event.value;
+					mLock.unlock();
 					break;
 				case ABS_Z:
+					mLock.lockForWrite();
 					mReading[2] = event.value;
+					mLock.unlock();
 					break;
 				}
 				break;
@@ -78,7 +84,6 @@ void Sensor3d::readFile()
 		}
 	}
 
-
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {
 		qDebug() << "incomplete data read";
 	}
@@ -86,7 +91,10 @@ void Sensor3d::readFile()
 	mSocketNotifier->setEnabled(true);
 }
 
-QVector<int> const &Sensor3d::read() const
+QVector<int> Sensor3dWorker::read()
 {
-	return mReading;
+	mLock.lockForRead();
+	QVector<int> const result = mReading;
+	mLock.unlock();
+	return result;
 }

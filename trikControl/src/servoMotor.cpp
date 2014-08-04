@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &duty
 	: mDutyFile(dutyFile)
 	, mPeriodFile(periodFile)
 	, mPeriod(period)
-	, mFrequency(1000000000 / period)
 	, mCurrentDutyPercent(0)
 	, mMin(min)
 	, mMax(max)
@@ -43,34 +42,6 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &duty
 	mPeriodFile.close();
 }
 
-void ServoMotor::setPower(int power)
-{
-	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
-		return;
-	}
-
-	if (power > 100) {
-		power = 100;
-	} else if (power < -100) {
-		power = -100;
-	}
-
-	mCurrentPower = power;
-
-	power = mInvert ? -power : power;
-
-	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
-	qreal const powerFactor = static_cast<qreal>(range) / 100;
-	int duty = static_cast<int>(mZero + power * powerFactor);
-	QString const command = QString::number(duty);
-
-	mCurrentDutyPercent = 100 * duty / mPeriod;
-
-	mDutyFile.write(command.toLatin1());
-	mDutyFile.close();
-}
-
 int ServoMotor::power() const
 {
 	return mCurrentPower;
@@ -78,7 +49,7 @@ int ServoMotor::power() const
 
 int ServoMotor::frequency() const
 {
-	return mFrequency;
+	return 1000000000.0 / static_cast<double>(mPeriod);
 }
 
 int ServoMotor::duty() const
@@ -97,4 +68,45 @@ void ServoMotor::powerOff()
 	mDutyFile.close();
 
 	mCurrentPower = 0;
+}
+
+void ServoMotor::setCurrentPower(int currentPower)
+{
+	mCurrentPower = currentPower;
+}
+
+void ServoMotor::setCurrentDuty(int duty)
+{
+	mCurrentDutyPercent = 100 * duty / mPeriod;
+}
+
+void ServoMotor::writeMotorCommand(QString const &command)
+{
+	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
+		return;
+	}
+
+	mDutyFile.write(command.toLatin1());
+	mDutyFile.close();
+}
+
+int ServoMotor::min() const
+{
+	return mMin;
+}
+
+int ServoMotor::max() const
+{
+	return mMax;
+}
+
+int ServoMotor::zero() const
+{
+	return mZero;
+}
+
+bool ServoMotor::invert() const
+{
+	return mInvert;
 }

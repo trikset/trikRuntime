@@ -1,4 +1,6 @@
-/* Copyright 2013 Yurii Litvinov
+#pragma once
+
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,18 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
-
+#include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QThread>
+#include <QtCore/QHash>
+#include <QtCore/QDebug>
 
-namespace trikScriptRunner {
+namespace trikKernel {
 
-/// Helper class with file helper functions.
-class FileUtils
+/// Debug helper that logs function entry and exit.
+class Debugger : public QObject
 {
+	Q_OBJECT
+
 public:
-	/// Reads all file contents and returns it as sting or throws an exception.
-	static QString readFromFile(QString const &fileName);
+	/// Constructor.
+	/// @param methodName - name of a method to be logged
+	Debugger(QString const &methodName);
+
+	~Debugger();
+
+private:
+	QString const mMethodName;
+	static QHash<QThread *, int> mIndent;
 };
 
 }
+
+/// Macro to log method entry and exit.
+#define L trikKernel::Debugger const debugger(Q_FUNC_INFO)

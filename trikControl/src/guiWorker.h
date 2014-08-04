@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/QMultiHash>
 #include <QtCore/QList>
+#include <QtCore/QScopedPointer>
 #include <QtGui/QPixmap>
 #include <QtGui/QFontMetrics>
+
+#include "graphicsWidget.h"
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -63,8 +66,52 @@ public slots:
 	/// @param color - color of a background.
 	void setBackground(QString const &color);
 
+	/// Set painter width.
+	void setPainterWidth(int penWidth);
+
+	/// Set painter color.
+	void setPainterColor(QString const &color);
+
 	/// Clear everything painted with this object.
 	void clear();
+
+	/// Draw point on the widget.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	void drawPoint(int x, int y);
+
+	/// Draw line on the widget.
+	/// @param x1 - first point's x coordinate.
+	/// @param y1 - first point's y coordinate.
+	/// @param x2 - second point's x coordinate.
+	/// @param y2 - second point's y coordinate.
+	void drawLine(int x1, int y1, int x2, int y2);
+
+	/// Draw rect on the widget.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	/// @param width - rect's width.
+	/// @param height - rect's height.
+	void drawRect(int x, int y, int width, int height);
+
+	/// Draw ellipse.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	/// @param width - width of ellipse.
+	/// @param height - height of ellipse.
+	void drawEllipse(int x, int y, int width, int height);
+
+	/// Draw arc on the widget.
+	/// @param x - x coordinate.
+	/// @param y - y coordinate.
+	/// @param width - width rect forming an arc.
+	/// @param height - height rect forming an arc.
+	/// @param startAngle - start angle.
+	/// @param spanAngle - end andle.
+	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
+
+	/// Initializes widget. Shall be called when widget is moved to correct thread. Not supposed to be called from .qts.
+	void init();
 
 private:
 	void resetBackground();
@@ -72,11 +119,11 @@ private:
 	/// Returns existing label with given coordinates or NULL if no such label exists.
 	QLabel *findLabel(int x, int y) const;
 
-	QWidget mImageWidget;
-	QLabel mImageLabel;
+	QScopedPointer<GraphicsWidget> mImageWidget;
+	QScopedPointer<QLabel> mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
 	QMultiHash<int, QLabel *> mLabels; // Has ownership.
-	QFontMetrics mFontMetrics;
+	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }

@@ -14,17 +14,33 @@
 
 #include "analogSensor.h"
 
-#include "i2cCommunicator.h"
+#include <QtCore/QDebug>
 
-const int analogMax = 1024;  //for all analog sensors
-const int analogMin = 0;  //for all analog sensors
+#include "i2cCommunicator.h"
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber)
+AnalogSensor::AnalogSensor(I2cCommunicator &communicator
+		, int i2cCommandNumber
+		, int rawValue1
+		, int rawValue2
+		, int normalizedValue1
+		, int normalizedValue2)
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(i2cCommandNumber)
 {
+	// We use linear subjection to normalize sensor values:
+	// normalizedValue = k * rawValue + b
+	// To calculate k and b we need two raw values and two corresponding them normalized values.
+
+	if (rawValue1 == rawValue2) {
+		qDebug() << "Sensor calibration error: rawValue1 = rawValue2!";
+		mK = 0;
+		mB = 0;
+	} else {
+		mK = static_cast<double>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
+		mB = normalizedValue1 - mK * rawValue1;
+	}
 }
 
 int AnalogSensor::read()
@@ -32,14 +48,7 @@ int AnalogSensor::read()
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
-	int value = mCommunicator.read(command);
-
-	value = qMin(value, analogMax);
-	value = qMax(value, analogMin);
-
-	double const scale = 100.0 / (static_cast<double>(analogMax - analogMin));
-
-	value = (value - analogMin) * scale;
+	int value = mK * mCommunicator.read(command) + mB;
 
 	return value;
 }

@@ -33,7 +33,16 @@ public:
 	/// Constructor.
 	/// @param communicator - I2C communicator to use to query sensor.
 	/// @param i2cCommandNumber - number of i2c command corresponding to that sensor.
-	AnalogSensor(I2cCommunicator &communicator, int i2cCommandNumber);
+	/// @param rawValue1 - raw value (usually minimal) that corresponds to normalizedValue1.
+	/// @param rawValue2 - raw value (usually maximal) that corresponds to normalizedValue2.
+	/// @param normalizedValue1 - normalized value (usually minimal) that corresponds to rawValue1.
+	/// @param normalizedValue2 - normalized value (usually maximal) that corresponds to rawValue2.
+	AnalogSensor(I2cCommunicator &communicator
+			, int i2cCommandNumber
+			, int rawValue1
+			, int rawValue2
+			, int normalizedValue1
+			, int normalizedValue2);
 
 public slots:
 	/// Returns current raw reading of a sensor.
@@ -42,6 +51,12 @@ public slots:
 private:
 	I2cCommunicator &mCommunicator;
 	int const mI2cCommandNumber;
+
+	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
+	double mK;
+
+	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
+	double mB;
 };
 
 }

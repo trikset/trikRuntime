@@ -33,10 +33,11 @@
 
 using namespace trikGui;
 
-StartWidget::StartWidget(QString const &configPath, QWidget *parent)
+StartWidget::StartWidget(QString const &configPath, QString const &startDirPath, QWidget *parent)
 	: QWidget(parent)
-	, mController(configPath)
+	, mController(configPath, startDirPath)
 	, mConfigPath(configPath)
+	, mStartDirPath(startDirPath)
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -88,16 +89,16 @@ void StartWidget::launch()
 			WiFiModeWidget wiFiModeWidget(mConfigPath);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
-			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::powerMotor);
+			MotorsWidget motorsWidget(mConfigPath, mStartDirPath, trikControl::Motor::powerMotor);
 			result = motorsWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
-			MotorsWidget motorsWidget(mConfigPath, trikControl::Motor::servoMotor);
+			MotorsWidget motorsWidget(mConfigPath, mStartDirPath, trikControl::Motor::servoMotor);
 			result = motorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::analogSensor);
+			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, mStartDirPath, trikControl::Sensor::analogSensor);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, trikControl::Sensor::digitalSensor);
+			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, mStartDirPath, trikControl::Sensor::digitalSensor);
 			result = sensorsSelectionWidget.exec();
 		}
 

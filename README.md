@@ -1,4 +1,4 @@
-trikRuntime
+trikRuntime  [![Build Status](https://travis-ci.org/trikset/trikRuntime.svg?branch=master)](https://travis-ci.org/trikset/trikRuntime)
 ===========
 
 Runtime for TRIK controller.
@@ -10,6 +10,7 @@ Consists of following subprojects:
 - trikRun: command-line utility to execute Qt Script files.
 - trikServer: command-line server for network communications, uses trikCommunicator library.
 - trikGui: user interface that can show various settings (like IP address), file system, run scripts, act as a server with trikCommunicator and so on.
+- trikKernel: library with common code for all other projects.
 
 Special thanks to:
 - Nikita Batov (https://github.com/Batov) for I2C direct access example.

@@ -18,9 +18,11 @@
 #include <QtCore/QScopedPointer>
 #include <QtNetwork/QTcpSocket>
 
-namespace trikCommunicator {
+namespace trikScriptRunner {
+class TrikScriptRunner;
+}
 
-class ScriptRunnerWrapper;
+namespace trikCommunicator {
 
 /// Class that serves one client of TrikCommunicator. Meant to work in separate thread. Creates its own socket and
 /// handles all incoming messages, calling ScriptRunnerWrapper for brick functionality.
@@ -48,7 +50,7 @@ public slots:
 	/// Creates socket and initializes connection, shall be called when Connection is already in its own thread.
 	/// @param socketDescriptor - native socket descriptor.
 	/// @param scriptRunnerWrapper - instance of script runner object.
-	void init(int socketDescriptor, ScriptRunnerWrapper *scriptRunnerWrapper);
+	void init(int socketDescriptor, trikScriptRunner::TrikScriptRunner *trikScriptRunner);
 
 private slots:
 	/// New data is ready on a socket.
@@ -58,14 +60,12 @@ private slots:
 	void disconnected();
 
 private:
-	static QString readFromFile(QString const &fileName);
-	static void writeToFile(QString const &fileName, QString const &contents);
-
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;
 
 	/// Common script runner object, located in another thread.
-	ScriptRunnerWrapper *mScriptRunnerWrapper;  // Does not have ownership.
+	/// Does not have ownership.
+	trikScriptRunner::TrikScriptRunner *mTrikScriptRunner;
 };
 
 }
