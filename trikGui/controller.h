@@ -16,6 +16,7 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikControl/brick.h>
 
 namespace trikGui
 {
@@ -41,6 +42,8 @@ public:
 	/// Cancels execution of current program.
 	void abortExecution();
 
+	trikControl::Brick &brick();
+
 private slots:
 	void scriptExecutionCompleted();
 
@@ -50,6 +53,7 @@ private slots:
 private:
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
+	trikControl::Brick mBrick;
 
 	RunningWidget * mRunningWidget;  // Has ownership.
 };

@@ -19,8 +19,8 @@
 
 using namespace trikScriptRunner;
 
-TrikScriptRunner::TrikScriptRunner(QString const &configFilePath, QString const &startDirPath)
-	: mScriptRunnerProxy(new ScriptRunnerProxy(configFilePath, startDirPath))
+TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
+	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
 {
 	connect(mScriptRunnerProxy.data(), SIGNAL(completed()), this, SIGNAL(completed()));
 }

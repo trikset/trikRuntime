@@ -43,14 +43,12 @@ class MotorsWidget : public TrikGuiDialog
 
 public:
 	/// Constructor
-	/// @param configPath - path to config.xml (TrikControl configuration file).
+	/// @param brick - reference to trikControl::Brick instance.
+	/// @param type - type of motors we want to test.
 	/// @param parent - pointer to a parent widget.
-	/// @param startDirPath - path to the directory from which the application was executed.
-	MotorsWidget(QString const &configPath
-			, QString const &startDirPath
-			, trikControl::Motor::Type type
-			, QWidget *parent = 0
-			);
+	MotorsWidget(trikControl::Brick &brick
+				, trikControl::Motor::Type type
+				, QWidget *parent = 0);
 
 	/// Destructor.
 	~MotorsWidget();
@@ -65,7 +63,7 @@ private:
 	QVBoxLayout mLayout;
 
 	/// @todo Why does it need its own brick?
-	trikControl::Brick mBrick;
+	trikControl::Brick &mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.
 };

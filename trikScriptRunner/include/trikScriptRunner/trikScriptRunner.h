@@ -17,6 +17,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
+#include "trikControl/brick.h"
+
 namespace trikScriptRunner {
 
 class ScriptRunnerProxy;
@@ -28,9 +30,9 @@ class TrikScriptRunner : public QObject
 
 public:
 	/// Constructor.
-	/// @param configFilePath - path to config file for trikControl, for example /home/root/trik/
+	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikScriptRunner(QString const &configFilePath, QString const &startDirPath);
+	TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath);
 
 	~TrikScriptRunner();
 

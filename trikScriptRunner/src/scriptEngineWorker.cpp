@@ -52,12 +52,13 @@ Q_DECLARE_METATYPE(ColorSensor*)
 Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(QVector<int>)
 
-ScriptEngineWorker::ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath)
+ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath)
 	: mEngine(NULL)
-	, mConfigFilePath(configFilePath)
+	, mBrick(brick)
 	, mStartDirPath(startDirPath)
 	, mGuiThread(this->thread())
 {
+	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
 void ScriptEngineWorker::reset()
@@ -68,16 +69,14 @@ void ScriptEngineWorker::reset()
 
 	QMetaObject::invokeMethod(this, "resetScriptEngine", Qt::QueuedConnection);
 
-	if (mBrick->isInEventDrivenMode()) {
-		mBrick->stop();
+	if (mBrick.isInEventDrivenMode()) {
+		mBrick.stop();
 		emit completed();
 	}
 }
 
 void ScriptEngineWorker::init()
 {
-	mBrick.reset(new Brick(*mGuiThread, mConfigFilePath, mStartDirPath));
-	connect(mBrick.data(), SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 
 	resetScriptEngine();
 }
@@ -87,13 +86,13 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 	Q_ASSERT(mEngine);
 
 	if (inEventDrivenMode) {
-		mBrick->run();
+		mBrick.run();
 	}
 
 	runAndReportException(script);
 
-	if (!mBrick->isInEventDrivenMode()) {
-		mBrick->stop();
+	if (!mBrick.isInEventDrivenMode()) {
+		mBrick.stop();
 		resetScriptEngine();
 		emit completed();
 	}
@@ -101,10 +100,10 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	if (!mBrick->isInEventDrivenMode()) {
+	if (!mBrick.isInEventDrivenMode()) {
 		// Somebody erroneously called brick.quit() before entering event loop, so we must force event loop for brick
 		// and only then quit, to send properly completed() signal.
-		mBrick->run();
+		mBrick.run();
 	}
 
 	reset();
@@ -118,7 +117,7 @@ void ScriptEngineWorker::resetScriptEngine()
 
 	mEngine = new QScriptEngine();
 
-	mBrick->reset();
+	mBrick.reset();
 
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
@@ -134,7 +133,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 
-	QScriptValue brickProxy = mEngine->newQObject(mBrick.data());
+	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
 	if (QFile::exists(mStartDirPath + "system.js")) {

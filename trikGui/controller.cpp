@@ -27,8 +27,9 @@ using namespace trikGui;
 int const communicatorPort = 8888;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
-	: mScriptRunner(configPath, startDirPath)
+	: mScriptRunner(mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
+	, mBrick(*thread(), configPath, startDirPath)
 	, mRunningWidget(NULL)
 {
 	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
@@ -69,6 +70,11 @@ void Controller::abortExecution()
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
 	// processed as if a script finished by itself.
+}
+
+trikControl::Brick &Controller::brick()
+{
+	return mBrick;
 }
 
 void Controller::scriptExecutionCompleted()

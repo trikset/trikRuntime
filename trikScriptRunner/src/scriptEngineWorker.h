@@ -32,9 +32,9 @@ class ScriptEngineWorker : public QObject
 
 public:
 	/// Constructor.
-	/// @param configFilePath - path to a config file for trikControl.
+	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	ScriptEngineWorker(QString const &configFilePath, QString const &startDirPath);
+	ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath);
 
 	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
 	/// called from another thread.
@@ -68,9 +68,8 @@ private:
 	// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 
-	QScopedPointer<trikControl::Brick> mBrick;
+	trikControl::Brick &mBrick;
 
-	QString const mConfigFilePath;
 	QString const mStartDirPath;
 	QThread *mGuiThread;  // Does not have ownership.
 };

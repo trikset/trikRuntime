@@ -89,16 +89,16 @@ void StartWidget::launch()
 			WiFiModeWidget wiFiModeWidget(mConfigPath);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
-			MotorsWidget motorsWidget(mConfigPath, mStartDirPath, trikControl::Motor::powerMotor);
+			MotorsWidget motorsWidget(mController.brick(), trikControl::Motor::powerMotor);
 			result = motorsWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
-			MotorsWidget motorsWidget(mConfigPath, mStartDirPath, trikControl::Motor::servoMotor);
+			MotorsWidget motorsWidget(mController.brick(), trikControl::Motor::servoMotor);
 			result = motorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, mStartDirPath, trikControl::Sensor::analogSensor);
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::analogSensor);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mConfigPath, mStartDirPath, trikControl::Sensor::digitalSensor);
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::digitalSensor);
 			result = sensorsSelectionWidget.exec();
 		}
 

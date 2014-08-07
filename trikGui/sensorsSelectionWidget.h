@@ -43,8 +43,7 @@ class SensorsSelectionWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
-	SensorsSelectionWidget(QString const &configPath
-			, QString const &startDirPath
+	SensorsSelectionWidget(trikControl::Brick &brick
 			, trikControl::Sensor::Type type
 			, QWidget *parent = 0);
 
@@ -61,8 +60,7 @@ private:
 	QLabel mTitle;
 	QListWidget mList;
 
-	/// @todo Why it needs its own brick?
-	trikControl::Brick mBrick;
+	trikControl::Brick &mBrick;
 };
 
 }

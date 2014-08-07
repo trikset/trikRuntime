@@ -20,6 +20,8 @@
 #include <QtCore/QWaitCondition>
 #include <QtScript/QScriptEngine>
 
+#include "trikControl/brick.h"
+
 namespace trikScriptRunner {
 
 class ScriptEngineWorker;
@@ -31,9 +33,9 @@ class ScriptRunnerProxy : public QObject
 
 public:
 	/// Constructor.
-	/// @param configFilePath - path to config file for trikControl, for example /home/root/trik/
+	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	ScriptRunnerProxy(QString const &configFilePath, QString const &startDirPath);
+	ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath);
 
 	~ScriptRunnerProxy();
 

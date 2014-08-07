@@ -26,6 +26,7 @@
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
+#include <trikControl/brick.h>
 
 void printUsage()
 {
@@ -76,7 +77,9 @@ int main(int argc, char *argv[])
 
 	qDebug() << "Running TrikServer on port" << port;
 
-	trikCommunicator::TrikCommunicator communicator(configPath, startDirPath);
+	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+
+	trikCommunicator::TrikCommunicator communicator(brick, startDirPath);
 	communicator.startServer(port);
 
 	return app.exec();

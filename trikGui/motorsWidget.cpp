@@ -18,17 +18,14 @@
 #include <QtGui/QKeyEvent>
 
 #include "motorLever.h"
-#include "trikGuiApplication.h"
 
 using namespace trikGui;
 
-MotorsWidget::MotorsWidget(QString const &configPath
-		, QString const &startDirPath
+MotorsWidget::MotorsWidget(trikControl::Brick &brick
 		, trikControl::Motor::Type type
-		, QWidget *parent
-		)
+		, QWidget *parent)
 	: TrikGuiDialog(parent)
-	, mBrick(*TrikGuiApplication::instance()->thread(), startDirPath, configPath)
+	, mBrick(brick)
 	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {

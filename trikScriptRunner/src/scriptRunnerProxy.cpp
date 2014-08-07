@@ -21,9 +21,9 @@
 
 using namespace trikScriptRunner;
 
-ScriptRunnerProxy::ScriptRunnerProxy(QString const &configFilePath, QString const &startDirPath)
+ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath)
 {
-	mEngineWorker = new ScriptEngineWorker(configFilePath, startDirPath);
+	mEngineWorker = new ScriptEngineWorker(brick, startDirPath);
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));

@@ -26,6 +26,7 @@
 #include <QtCore/QDir>
 
 #include <trikKernel/fileUtils.h>
+#include <trikControl/brick.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
 void printUsage()
@@ -80,7 +81,9 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	trikScriptRunner::TrikScriptRunner runner(configPath, startDirPath);
+	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+
+	trikScriptRunner::TrikScriptRunner runner(brick, startDirPath);
 	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
 
 	if (app.arguments().contains("-s")) {

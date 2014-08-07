@@ -24,8 +24,8 @@
 
 using namespace trikCommunicator;
 
-TrikCommunicator::TrikCommunicator(QString const &configFilePath, const QString &startDirPath)
-	: mTrikScriptRunner(new trikScriptRunner::TrikScriptRunner(configFilePath, startDirPath))
+TrikCommunicator::TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath)
+	: mTrikScriptRunner(new trikScriptRunner::TrikScriptRunner(brick, startDirPath))
 	, mHasScriptRunnerOwnership(true)
 {
 	init();

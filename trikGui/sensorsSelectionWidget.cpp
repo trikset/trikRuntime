@@ -16,18 +16,16 @@
 
 #include <QtCore/QStringList>
 
-#include "trikGuiApplication.h"
 #include "sensorsWidget.h"
 
 using namespace trikGui;
 
-SensorsSelectionWidget::SensorsSelectionWidget(const QString &configPath
-		, const QString &startDirPath
+SensorsSelectionWidget::SensorsSelectionWidget(trikControl::Brick &brick
 		, trikControl::Sensor::Type type
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("Select sensors for testing:"))
-	, mBrick(*TrikGuiApplication::instance()->thread(), configPath, startDirPath)
+	, mBrick(brick)
 {
 	QStringList ports = mBrick.sensorPorts(type);
 	foreach (QString const &port, ports) {
