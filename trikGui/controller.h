@@ -51,9 +51,9 @@ private slots:
 	void directScriptExecutionStarted();
 
 private:
+	trikControl::Brick mBrick;
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
-	trikControl::Brick mBrick;
 
 	RunningWidget * mRunningWidget;  // Has ownership.
 };

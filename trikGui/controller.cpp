@@ -27,9 +27,9 @@ using namespace trikGui;
 int const communicatorPort = 8888;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
-	: mScriptRunner(mBrick, startDirPath)
+	: mBrick(*thread(), configPath, startDirPath)
+	, mScriptRunner(mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
-	, mBrick(*thread(), configPath, startDirPath)
 	, mRunningWidget(NULL)
 {
 	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
