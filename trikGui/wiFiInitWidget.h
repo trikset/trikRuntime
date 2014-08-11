@@ -30,11 +30,12 @@
 #include <QtCore/QEventLoop>
 
 #include "wiFiModeWidget.h"
+#include "mainWidget.h"
 
 namespace trikGui {
 
 /// Widget for initializing wi-fi on the controller.
-class WiFiInitWidget : public QWidget
+class WiFiInitWidget : public MainWidget
 {
 	Q_OBJECT
 

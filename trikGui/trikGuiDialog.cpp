@@ -19,9 +19,8 @@
 using namespace trikGui;
 
 TrikGuiDialog::TrikGuiDialog(QWidget *parent)
-	: QWidget(parent)
+	: MainWidget(parent)
 {
-	setWindowState(Qt::WindowFullScreen);
 }
 
 int TrikGuiDialog::exec()

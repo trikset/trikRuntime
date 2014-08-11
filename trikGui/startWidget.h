@@ -38,13 +38,13 @@
 #include <QtCore/QMap>
 
 #include "wiFiModeWidget.h"
-
+#include "mainWidget.h"
 #include "controller.h"
 
 namespace trikGui {
 
 /// Main widget for trikGui application, displays menu which allows to open other widgets.
-class StartWidget : public QWidget
+class StartWidget : public MainWidget
 {
 	Q_OBJECT
 
@@ -53,7 +53,7 @@ public:
 	/// @param configPath - full path to configuration files.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit StartWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
+	explicit StartWidget(Controller &controller, QString const &configPath, QWidget *parent = 0);
 
 	~StartWidget();
 
@@ -70,9 +70,8 @@ private:
 	QLabel mTitleLabel;
 	QListView mMenuView;
 	QStandardItemModel mMenuModel;
-	Controller mController;
+	Controller &mController;
 	QString const mConfigPath;
-	QString const mStartDirPath;
 
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;

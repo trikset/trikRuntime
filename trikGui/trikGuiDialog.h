@@ -14,20 +14,14 @@
 
 #pragma once
 
-#include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
-
 #include <QtCore/QEventLoop>
+
+#include "mainWidget.h"
 
 namespace trikGui {
 
 /// Base class for all trikGui dialog widgets.
-class TrikGuiDialog : public QWidget
+class TrikGuiDialog : public MainWidget
 {
 	Q_OBJECT
 

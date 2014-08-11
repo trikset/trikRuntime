@@ -33,14 +33,11 @@
 
 using namespace trikGui;
 
-StartWidget::StartWidget(QString const &configPath, QString const &startDirPath, QWidget *parent)
-	: QWidget(parent)
-	, mController(configPath, startDirPath)
+StartWidget::StartWidget(Controller &controller, QString const &configPath, QWidget *parent)
+	: MainWidget(parent)
+	, mController(controller)
 	, mConfigPath(configPath)
-	, mStartDirPath(startDirPath)
 {
-	setWindowState(Qt::WindowFullScreen);
-
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
@@ -84,21 +81,27 @@ void StartWidget::launch()
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
 			FileManagerWidget fileManagerWidget(mController);
+			emit newWidget(fileManagerWidget);
 			result = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
 			WiFiModeWidget wiFiModeWidget(mConfigPath);
+			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), trikControl::Motor::powerMotor);
+			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), trikControl::Motor::servoMotor);
+			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
 			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::analogSensor);
+			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
 			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::digitalSensor);
+			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		}
 

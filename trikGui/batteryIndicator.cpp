@@ -12,44 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikGuiMessageBox.h"
+#include "batteryIndicator.h"
 
-#include <QtGui/QKeyEvent>
+#include <QtCore/QString>
 
 using namespace trikGui;
 
-TrikGuiMessageBox::TrikGuiMessageBox(QWidget *parent)
-	: MainWidget(parent)
+BatteryIndicator::BatteryIndicator(trikControl::Brick &brick, QWidget *parent)
+	: QWidget(parent)
+	, mBrick(brick)
 {
-	mLayout.addWidget(&mMessageLabel);
+	mLayout.addWidget(&mVoltage);
 	setLayout(&mLayout);
 
-	mMessageLabel.setAlignment(Qt::AlignCenter);
+	renew();
+
+	mRenewTimer.setInterval(mRenewInterval);
+	mRenewTimer.setSingleShot(false);
+	connect(&mRenewTimer, SIGNAL(timeout()), SLOT(renew()));
+	mRenewTimer.start();
 }
 
-
-int TrikGuiMessageBox::exec(QString const &message)
+void BatteryIndicator::renew()
 {
-	mMessageLabel.setText(message);
-	show();
-	return mEventLoop.exec();
-}
-
-void TrikGuiMessageBox::keyPressEvent(QKeyEvent *event)
-{
-	switch (event->key()) {
-		case Qt::Key_Return:
-		case Qt::Key_Escape: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
-		case Qt::Key_PowerDown: {
-			close();
-			mEventLoop.exit(1);
-		}
-
-	}
-
-
+	mVoltage.setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
 }

@@ -18,43 +18,22 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QLabel>
-	#include <QtGui/QVBoxLayout>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QVBoxLayout>
 #endif
-
-#include <QtCore/QString>
-#include <QtCore/QEventLoop>
-#include <QtGui/QKeyEvent>
-
-#include "mainWidget.h"
 
 namespace trikGui {
 
-/// Widget showing some message and waiting until the user will press any key.
-class TrikGuiMessageBox : public MainWidget
+class MainWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit TrikGuiMessageBox(QWidget *parent = 0);
+	MainWidget(QWidget *parent) : QWidget(parent) {}
+	virtual ~MainWidget() {}
 
-	/// Show widget and wait until the user will press any key.
-	/// @param message - message to show.
-	int exec(QString const &message);
-
-protected:
-	void keyPressEvent(QKeyEvent *event);
-
-private:
-	QVBoxLayout mLayout;
-	QLabel mMessageLabel;
-	QEventLoop mEventLoop;
+signals:
+	void newWidget(MainWidget &widget);
 };
 
 }

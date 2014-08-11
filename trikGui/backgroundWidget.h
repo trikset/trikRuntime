@@ -16,45 +16,47 @@
 
 #include <QtCore/qglobal.h>
 
+#include <QtCore/QString>
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QLabel>
 	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QHBoxLayout>
+	#include <QtGui/QStackedLayout>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QHBoxLayout>
+	#include <QtWidgets/QStackedLayout>
 #endif
 
-#include <QtCore/QString>
-#include <QtCore/QEventLoop>
-#include <QtGui/QKeyEvent>
-
 #include "mainWidget.h"
+#include "controller.h"
+#include "batteryIndicator.h"
+#include "startWidget.h"
 
 namespace trikGui {
 
-/// Widget showing some message and waiting until the user will press any key.
-class TrikGuiMessageBox : public MainWidget
+class BackgroundWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit TrikGuiMessageBox(QWidget *parent = 0);
-
-	/// Show widget and wait until the user will press any key.
-	/// @param message - message to show.
-	int exec(QString const &message);
-
-protected:
-	void keyPressEvent(QKeyEvent *event);
+	explicit BackgroundWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
 
 private:
-	QVBoxLayout mLayout;
-	QLabel mMessageLabel;
-	QEventLoop mEventLoop;
+	Controller mController;
+	QVBoxLayout mMainLayout;
+	QHBoxLayout mStatusBarLayout;
+	QStackedLayout mMainWidgetsLayout;
+	BatteryIndicator mBatteryIndicator;
+	StartWidget mStartWidget;
+
+public slots:
+	void addMainWidget(MainWidget &widget);
+
+private slots:
+	void renewFocus();
 };
 
 }

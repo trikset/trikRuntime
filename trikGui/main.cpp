@@ -29,7 +29,7 @@
 #include <QtGui/QFont>
 
 #include "trikGuiApplication.h"
-#include "startWidget.h"
+#include "backgroundWidget.h"
 
 using namespace trikGui;
 
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
 		QDir::setCurrent("scripts");
 	}
 
-	StartWidget w(configPath, startDirPath);
+	BackgroundWidget w(configPath, startDirPath);
 	w.show();
 
 	return app.exec();

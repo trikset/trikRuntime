@@ -81,6 +81,7 @@ void WiFiModeWidget::setMode(Mode mode)
 
 	if (currentMode != mode) {
 		WiFiInitWidget wiFiInitWidget;
+		emit newWidget(wiFiInitWidget);
 		if (wiFiInitWidget.init(mode) == WiFiInitWidget::fail) {
 			return;
 		}
@@ -91,11 +92,13 @@ void WiFiModeWidget::setMode(Mode mode)
 	switch (mode) {
 		case client: {
 			WiFiClientWidget wiFiClientWidget(mConfigPath);
+			emit newWidget(wiFiClientWidget);
 			returnValue = wiFiClientWidget.exec();
 			break;
 		}
 		case accessPoint: {
 			WiFiAPWidget wiFiAPWidget;
+			emit newWidget(wiFiAPWidget);
 			returnValue = wiFiAPWidget.exec();
 			break;
 		}

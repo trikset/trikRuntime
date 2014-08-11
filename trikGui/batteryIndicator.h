@@ -15,46 +15,37 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
+#include <QtCore/QTimer>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QLabel>
 	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QLabel>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QLabel>
 #endif
 
-#include <QtCore/QString>
-#include <QtCore/QEventLoop>
-#include <QtGui/QKeyEvent>
-
-#include "mainWidget.h"
+#include <trikControl/brick.h>
 
 namespace trikGui {
 
-/// Widget showing some message and waiting until the user will press any key.
-class TrikGuiMessageBox : public MainWidget
+class BatteryIndicator : public QWidget
 {
 	Q_OBJECT
-
 public:
-	/// Constructor.
-	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit TrikGuiMessageBox(QWidget *parent = 0);
-
-	/// Show widget and wait until the user will press any key.
-	/// @param message - message to show.
-	int exec(QString const &message);
-
-protected:
-	void keyPressEvent(QKeyEvent *event);
+	explicit BatteryIndicator(trikControl::Brick &brick, QWidget *parent = 0);
 
 private:
+	trikControl::Brick &mBrick;
 	QVBoxLayout mLayout;
-	QLabel mMessageLabel;
-	QEventLoop mEventLoop;
+	QLabel mVoltage;
+	QTimer mRenewTimer;
+	int const mRenewInterval = 1000;
+
+public slots:
+	void renew();
 };
 
 }

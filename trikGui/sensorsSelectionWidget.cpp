@@ -106,6 +106,7 @@ void SensorsSelectionWidget::startTesting()
 	}
 
 	SensorsWidget sensorsWidget(mBrick, ports);
+	emit newWidget(sensorsWidget);
 	if (sensorsWidget.exec() == TrikGuiDialog::goHomeExit) {
 		goHome();
 	}
