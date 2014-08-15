@@ -59,6 +59,8 @@ public:
 	/// Destructor.
 	~WiFiClientWidget();
 
+	void renewFocus();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 

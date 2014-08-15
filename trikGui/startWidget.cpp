@@ -67,6 +67,11 @@ StartWidget::~StartWidget()
 {
 }
 
+void StartWidget::renewFocus()
+{
+	mMenuView.setFocus();
+}
+
 void StartWidget::launch()
 {
 	QModelIndex const &currentIndex = mMenuView.currentIndex();

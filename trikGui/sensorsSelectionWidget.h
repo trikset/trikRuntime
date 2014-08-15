@@ -49,6 +49,8 @@ public:
 
 	static QString menuEntry(trikControl::Sensor::Type type);
 
+	void renewFocus();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 

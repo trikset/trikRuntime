@@ -57,6 +57,8 @@ public:
 
 	~StartWidget();
 
+	void renewFocus();
+
 private:
 	virtual void keyPressEvent(QKeyEvent *event);
 

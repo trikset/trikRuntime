@@ -65,6 +65,11 @@ QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
 	return QString();
 }
 
+void SensorsSelectionWidget::renewFocus()
+{
+	mList.setFocus();
+}
+
 void SensorsSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {

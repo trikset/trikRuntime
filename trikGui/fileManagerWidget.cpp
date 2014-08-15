@@ -57,6 +57,11 @@ QString FileManagerWidget::menuEntry()
 	return tr("File Manager");
 }
 
+void FileManagerWidget::renewFocus()
+{
+	mFileSystemView.setFocus();
+}
+
 void FileManagerWidget::open()
 {
 	QModelIndex const &index = mFileSystemView.currentIndex();

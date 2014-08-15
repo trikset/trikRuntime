@@ -56,6 +56,8 @@ public:
 	/// Title for this widget in a main menu.
 	static QString menuEntry(trikControl::Motor::Type type);
 
+	void renewFocus();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 

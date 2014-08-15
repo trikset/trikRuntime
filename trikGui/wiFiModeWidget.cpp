@@ -48,6 +48,11 @@ QString WiFiModeWidget::menuEntry()
 	return tr("Network Config");
 }
 
+void WiFiModeWidget::renewFocus()
+{
+	mModes.setFocus();
+}
+
 void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {

@@ -82,6 +82,11 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 	return success;
 }
 
+void WiFiInitWidget::renewFocus()
+{
+	setFocus();
+}
+
 void WiFiInitWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {

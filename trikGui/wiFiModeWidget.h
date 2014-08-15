@@ -55,6 +55,8 @@ public:
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
 
+	void renewFocus();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 

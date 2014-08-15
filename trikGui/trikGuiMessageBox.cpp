@@ -35,6 +35,11 @@ int TrikGuiMessageBox::exec(QString const &message)
 	return mEventLoop.exec();
 }
 
+void TrikGuiMessageBox::renewFocus()
+{
+	setFocus();
+}
+
 void TrikGuiMessageBox::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {

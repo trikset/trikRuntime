@@ -31,6 +31,7 @@ class MainWidget : public QWidget
 public:
 	MainWidget(QWidget *parent) : QWidget(parent) {}
 	virtual ~MainWidget() {}
+	virtual void renewFocus() = 0;
 
 signals:
 	void newWidget(MainWidget &widget);

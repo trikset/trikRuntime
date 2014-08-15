@@ -84,6 +84,11 @@ WiFiClientWidget::~WiFiClientWidget()
 {
 }
 
+void WiFiClientWidget::renewFocus()
+{
+	mAvailableNetworksView.setFocus();
+}
+
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();

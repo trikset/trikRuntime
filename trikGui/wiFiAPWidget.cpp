@@ -54,6 +54,11 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
 	setLayout(&mMainLayout);
 }
 
+void WiFiAPWidget::renewFocus()
+{
+	setFocus();
+}
+
 void WiFiAPWidget::getParameters()
 {
 	RcReader const rcReader("/etc/trik/trikrc");

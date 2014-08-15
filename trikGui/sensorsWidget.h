@@ -46,6 +46,7 @@ public:
 	explicit SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent = 0);
 	~SensorsWidget();
 	int exec();
+	void renewFocus();
 
 protected:
 	void exit();

@@ -49,11 +49,9 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 
 void BackgroundWidget::renewFocus()
 {
-	qDebug() << "BackgroundWidget::renewFocus()";
-
-	QWidget *currentWidget = mMainWidgetsLayout.currentWidget();
+	MainWidget *currentWidget = dynamic_cast<MainWidget *>(mMainWidgetsLayout.currentWidget());
 
 	if (currentWidget != NULL) {
-		currentWidget->setFocus();
+		currentWidget->renewFocus();
 	}
 }

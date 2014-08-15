@@ -54,6 +54,8 @@ public:
 	/// @return WiFiInitWidget::success if wi-fi was succesfully initialized and WiFiInitWidget::fail otherwise.
 	Result init(WiFiModeWidget::Mode mode);
 
+	void renewFocus();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 

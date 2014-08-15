@@ -44,6 +44,8 @@ public:
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit WiFiAPWidget(QWidget *parent = 0);
 
+	void renewFocus();
+
 private:
 	void getParameters();
 

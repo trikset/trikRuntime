@@ -54,6 +54,11 @@ int SensorsWidget::exec()
 	return TrikGuiDialog::exec();
 }
 
+void SensorsWidget::renewFocus()
+{
+	setFocus();
+}
+
 void SensorsWidget::exit()
 {
 	mTimer.stop();

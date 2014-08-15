@@ -61,6 +61,13 @@ QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
 	return QString();
 }
 
+void MotorsWidget::renewFocus()
+{
+	if (!mLevers.isEmpty()) {
+		mLevers.first()->setFocus();
+	}
+}
+
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {

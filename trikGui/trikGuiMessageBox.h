@@ -48,6 +48,8 @@ public:
 	/// @param message - message to show.
 	int exec(QString const &message);
 
+	void renewFocus();
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
