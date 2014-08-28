@@ -19,12 +19,9 @@
 using namespace trikGui;
 
 BatteryIndicator::BatteryIndicator(trikControl::Brick &brick, QWidget *parent)
-	: QWidget(parent)
+	: QLabel(parent)
 	, mBrick(brick)
 {
-	mLayout.addWidget(&mVoltage);
-	setLayout(&mLayout);
-
 	renew();
 
 	mRenewTimer.setInterval(mRenewInterval);
@@ -35,5 +32,5 @@ BatteryIndicator::BatteryIndicator(trikControl::Brick &brick, QWidget *parent)
 
 void BatteryIndicator::renew()
 {
-	mVoltage.setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+	setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
 }

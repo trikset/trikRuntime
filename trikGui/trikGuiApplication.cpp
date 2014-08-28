@@ -41,6 +41,7 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 		foreach (QWidget * const widget, QApplication::allWidgets()) {
 			widget->update();
 		}
+	}
 
 	return QApplication::notify(receiver, event);
 }

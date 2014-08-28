@@ -18,12 +18,8 @@
 #include <QtCore/QTimer>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-	#include <QtGui/QVBoxLayout>
 	#include <QtGui/QLabel>
 #else
-	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QVBoxLayout>
 	#include <QtWidgets/QLabel>
 #endif
 
@@ -31,7 +27,7 @@
 
 namespace trikGui {
 
-class BatteryIndicator : public QWidget
+class BatteryIndicator : public QLabel
 {
 	Q_OBJECT
 public:
@@ -39,8 +35,6 @@ public:
 
 private:
 	trikControl::Brick &mBrick;
-	QVBoxLayout mLayout;
-	QLabel mVoltage;
 	QTimer mRenewTimer;
 	int const mRenewInterval = 1000;
 

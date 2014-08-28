@@ -28,6 +28,10 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 {
 	setWindowState(Qt::WindowFullScreen);
 
+	mMainLayout.setSpacing(10);
+
+	mBatteryIndicator.setStyleSheet("font: 12px");
+
 	mStatusBarLayout.addWidget(&mBatteryIndicator);
 	addMainWidget(mStartWidget);
 
@@ -41,6 +45,11 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 
 void BackgroundWidget::addMainWidget(MainWidget &widget)
 {
+	QLayout *layout = widget.layout();
+	if (layout != NULL) {
+		layout->setContentsMargins(0, 0, 0, 0);
+	}
+
 	int const index = mMainWidgetsLayout.addWidget(&widget);
 	mMainWidgetsLayout.setCurrentIndex(index);
 
