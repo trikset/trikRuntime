@@ -27,6 +27,7 @@
 
 namespace trikGui {
 
+/// Label showing battery voltage.
 class BatteryIndicator : public QLabel
 {
 	Q_OBJECT

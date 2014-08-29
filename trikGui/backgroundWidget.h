@@ -37,6 +37,9 @@
 
 namespace trikGui {
 
+/// TrikGui backround widget which is a parent for other trikGui widgets.
+/// It consists of a status bar and a place for one of main widgets which is
+/// used for conversation with user.
 class BackgroundWidget : public QWidget
 {
 	Q_OBJECT
@@ -53,6 +56,8 @@ private:
 	StartWidget mStartWidget;
 
 public slots:
+	/// Add a widget to main widgets layout and show it.
+	/// @param - reference to the widget.
 	void addMainWidget(MainWidget &widget);
 
 private slots:

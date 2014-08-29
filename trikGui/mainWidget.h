@@ -24,6 +24,7 @@
 
 namespace trikGui {
 
+/// Abstract class for widgets which will be used for conversation with user.
 class MainWidget : public QWidget
 {
 	Q_OBJECT
@@ -31,9 +32,12 @@ class MainWidget : public QWidget
 public:
 	MainWidget(QWidget *parent) : QWidget(parent) {}
 	virtual ~MainWidget() {}
+
+	/// Set focus properly on this widget or one of its children.
 	virtual void renewFocus() = 0;
 
 signals:
+	/// Emitted when the widget created a new one and wants it to be shown.
 	void newWidget(MainWidget &widget);
 };
 

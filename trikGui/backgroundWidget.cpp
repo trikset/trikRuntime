@@ -45,6 +45,7 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 
 void BackgroundWidget::addMainWidget(MainWidget &widget)
 {
+	// If the widget has layout, remove its margins because main widgets layout has its own margins.
 	QLayout *layout = widget.layout();
 	if (layout != NULL) {
 		layout->setContentsMargins(0, 0, 0, 0);
@@ -58,6 +59,8 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 
 void BackgroundWidget::renewFocus()
 {
+	// When current widget in main widgets layout changed, we should set focus properly.
+
 	MainWidget *currentWidget = dynamic_cast<MainWidget *>(mMainWidgetsLayout.currentWidget());
 
 	if (currentWidget != NULL) {
