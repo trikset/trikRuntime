@@ -40,21 +40,21 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 
 	setLayout(&mMainLayout);
 
-	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), SLOT(renewFocus()));
+	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
 }
 
 void BackgroundWidget::addMainWidget(MainWidget &widget)
 {
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
 	QLayout *layout = widget.layout();
-	if (layout != NULL) {
+	if (layout != nullptr) {
 		layout->setContentsMargins(0, 0, 0, 0);
 	}
 
 	int const index = mMainWidgetsLayout.addWidget(&widget);
 	mMainWidgetsLayout.setCurrentIndex(index);
 
-	connect(&widget, SIGNAL(newWidget(MainWidget&)), SLOT(addMainWidget(MainWidget&)));
+	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
 }
 
 void BackgroundWidget::renewFocus()
@@ -63,7 +63,7 @@ void BackgroundWidget::renewFocus()
 
 	MainWidget *currentWidget = dynamic_cast<MainWidget *>(mMainWidgetsLayout.currentWidget());
 
-	if (currentWidget != NULL) {
+	if (currentWidget != nullptr) {
 		currentWidget->renewFocus();
 	}
 }

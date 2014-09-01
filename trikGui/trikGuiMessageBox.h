@@ -48,10 +48,10 @@ public:
 	/// @param message - message to show.
 	int exec(QString const &message);
 
-	void renewFocus();
+	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private:
 	QVBoxLayout mLayout;

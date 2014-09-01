@@ -55,10 +55,10 @@ public:
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
 
-	void renewFocus();
+	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private:
 	void setMode(Mode mode);

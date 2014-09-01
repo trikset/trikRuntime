@@ -26,7 +26,7 @@ BatteryIndicator::BatteryIndicator(trikControl::Brick &brick, QWidget *parent)
 
 	mRenewTimer.setInterval(mRenewInterval);
 	mRenewTimer.setSingleShot(false);
-	connect(&mRenewTimer, SIGNAL(timeout()), SLOT(renew()));
+	connect(&mRenewTimer, SIGNAL(timeout()), this, SLOT(renew()));
 	mRenewTimer.start();
 }
 

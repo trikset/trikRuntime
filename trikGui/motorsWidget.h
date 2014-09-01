@@ -56,15 +56,14 @@ public:
 	/// Title for this widget in a main menu.
 	static QString menuEntry(trikControl::Motor::Type type);
 
-	void renewFocus();
+	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private:
 	QVBoxLayout mLayout;
 
-	/// @todo Why does it need its own brick?
 	trikControl::Brick &mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.

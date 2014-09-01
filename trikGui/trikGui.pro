@@ -34,7 +34,7 @@ HEADERS += \
 	$$PWD/trikGuiDialog.h \
 	$$PWD/backgroundWidget.h \
 	$$PWD/mainWidget.h \
-    batteryIndicator.h
+	$$PWD/batteryIndicator.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -56,7 +56,7 @@ SOURCES += \
 	$$PWD/trikGuiMessageBox.cpp \
 	$$PWD/trikGuiDialog.cpp \
 	$$PWD/backgroundWidget.cpp \
-    batteryIndicator.cpp
+	$$PWD/batteryIndicator.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc

@@ -59,10 +59,10 @@ public:
 	/// Destructor.
 	~WiFiClientWidget();
 
-	void renewFocus();
+	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
 	void scanForAvailableNetworksDoneSlot();

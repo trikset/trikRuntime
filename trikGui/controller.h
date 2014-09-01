@@ -42,6 +42,7 @@ public:
 	/// Cancels execution of current program.
 	void abortExecution();
 
+	/// Returns reference to Brick object, which provides access to low-level robot functionality.
 	trikControl::Brick &brick();
 
 private slots:

@@ -50,10 +50,10 @@ public:
 	/// Returns main menu entry string for this widget.
 	static QString menuEntry();
 
-	void renewFocus();
+	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
 	void onDirectoryLoaded(QString const &path);

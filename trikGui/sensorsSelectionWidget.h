@@ -49,10 +49,10 @@ public:
 
 	static QString menuEntry(trikControl::Sensor::Type type);
 
-	void renewFocus();
+	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private:
 	void activateItem();
