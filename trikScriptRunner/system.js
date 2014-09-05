@@ -23,32 +23,12 @@ var KeysEnum = {
 };
 
 // Aliases for passing ports without quotes
-var A1 = "A1";
-var A2 = "A2";
-var A3 = "A3";
-var A4 = "A4";
-var A5 = "A5";
-var A6 = "A6";
-
-var D1 = "D1";
-var D2 = "D2";
-var F1 = "F1";
-
-var M1 = "M1";
-var M2 = "M2";
-var M3 = "M3";
-var M4 = "M4";
-var B1 = "B1";
-var B2 = "B2";
-var B3 = "B3";
-var B4 = "B4";
-
-var E1 = "E1";
-var E2 = "E2";
-var E3 = "E3";
-var C1 = "C1";
-var C2 = "C2";
-var C3 = "C3";
+var aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
+        , "D1", "D2", "F1"
+        , "M1", "M2", "M3", "M4"
+        , "B1", "B2", "B3", "B4"
+        , "E1", "E2", "E3", "E4"];
+aliases.forEach(function(port) { this[port] = port; });
 
 // String.format function implementation.
 // Taken from http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
