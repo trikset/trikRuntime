@@ -32,7 +32,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mCommunicator(mScriptRunner)
 	, mRunningWidget(NULL)
 {
-	connect(&mScriptRunner, SIGNAL(completed()), this, SLOT(scriptExecutionCompleted()));
+	connect(&mScriptRunner, SIGNAL(completed(QString)), this, SLOT(scriptExecutionCompleted(QString)));
 
 	connect(&mCommunicator, SIGNAL(startedScript(QString)), this, SLOT(scriptExecutionFromFileStarted(QString)));
 	connect(&mCommunicator, SIGNAL(startedDirectScript()), this, SLOT(directScriptExecutionStarted()));
@@ -77,15 +77,17 @@ trikControl::Brick &Controller::brick()
 	return mBrick;
 }
 
-void Controller::scriptExecutionCompleted()
+void Controller::scriptExecutionCompleted(QString const &error)
 {
-	if (mRunningWidget) {
+	if (mRunningWidget && error.isEmpty()) {
 		mRunningWidget->releaseKeyboard();
 		mRunningWidget->close();
 
 		// Here we can be inside handler of mRunningWidget key press event.
 		mRunningWidget->deleteLater();
 		mRunningWidget = NULL;
+	} else if (!error.isEmpty()) {
+		mRunningWidget->showError(error);
 	}
 }
 

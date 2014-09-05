@@ -71,13 +71,12 @@ void ScriptEngineWorker::reset()
 
 	if (mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
-		emit completed();
+		onScriptEvaluated();
 	}
 }
 
 void ScriptEngineWorker::init()
 {
-
 	resetScriptEngine();
 }
 
@@ -89,12 +88,12 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 		mBrick.run();
 	}
 
-	runAndReportException(script);
+	mEngine->evaluate(script);
 
 	if (!mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
+		onScriptEvaluated();
 		resetScriptEngine();
-		emit completed();
 	}
 }
 
@@ -137,19 +136,21 @@ void ScriptEngineWorker::resetScriptEngine()
 	mEngine->globalObject().setProperty("brick", brickProxy);
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
-		runAndReportException(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+		mEngine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
 	}
 
 	mEngine->setProcessEventsInterval(1);
 }
 
-void ScriptEngineWorker::runAndReportException(QString const &script)
+void ScriptEngineWorker::onScriptEvaluated()
 {
-	QScriptValue const result = mEngine->evaluate(script);
-
+	QString error;
 	if (mEngine->hasUncaughtException()) {
 		int const line = mEngine->uncaughtExceptionLineNumber();
-
-		qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+		QString const message = mEngine->uncaughtException().toString();
+		error = tr("Line %1: %2").arg(QString::number(line), message);
+		qDebug() << "Uncaught exception at line" << line << ":" << message;
 	}
+
+	emit completed(error);
 }

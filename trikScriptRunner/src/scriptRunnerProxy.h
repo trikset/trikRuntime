@@ -48,7 +48,8 @@ public:
 
 signals:
 	/// Fired when current script completes execution.
-	void completed();
+	/// @param error - localized error message or empty string.
+	void completed(QString const &error);
 
 private:
 	ScriptEngineWorker *mEngineWorker;  // Has ownership.

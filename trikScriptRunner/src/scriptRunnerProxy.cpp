@@ -30,7 +30,7 @@ ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &s
 
 	mEngineWorker->moveToThread(&mWorkerThread);
 
-	connect(mEngineWorker, SIGNAL(completed()), this, SIGNAL(completed()));
+	connect(mEngineWorker, SIGNAL(completed(QString)), this, SIGNAL(completed(QString)));
 
 	mWorkerThread.start();
 

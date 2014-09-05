@@ -29,8 +29,11 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/system.js \
 
+TRANSLATIONS += trikScriptRunner_ru.ts
+
 TEMPLATE = lib
 QT += script
+
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
@@ -41,3 +44,6 @@ uses(trikKernel trikControl)
 INCLUDEPATH += \
 	$$PWD/../trikKernel/include/ \
 	$$PWD/../trikControl/include/ \
+
+RESOURCES += \
+    trikSrciptRunner.qrc
