@@ -46,7 +46,7 @@ public:
 	trikControl::Brick &brick();
 
 private slots:
-	void scriptExecutionCompleted();
+	void scriptExecutionCompleted(QString const &error);
 
 	void scriptExecutionFromFileStarted(QString const &fileName);
 	void directScriptExecutionStarted();
@@ -56,7 +56,7 @@ private:
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
 
-	RunningWidget * mRunningWidget;  // Has ownership.
+	RunningWidget *mRunningWidget;  // Has ownership.
 };
 
 }

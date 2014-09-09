@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
 
 	trikScriptRunner::TrikScriptRunner runner(brick, startDirPath);
-	QObject::connect(&runner, SIGNAL(completed()), &app, SLOT(quit()));
+	QObject::connect(&runner, SIGNAL(completed(QString)), &app, SLOT(quit()));
 
 	if (app.arguments().contains("-s")) {
 		runner.run(args[app.arguments().indexOf("-s") + 1]);

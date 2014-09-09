@@ -40,12 +40,14 @@ class RunningWidget : public QWidget
 public:
 	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
 
+	void showError(QString const &error);
+
 protected:
 	void keyPressEvent(QKeyEvent *event);
 
 private:
 	QVBoxLayout mLayout;
-	QLabel mProgramNameLabel;
+	QLabel mStatusLabel;
 	QLabel mAbortLabel;
 	Controller &mController;
 };

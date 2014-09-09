@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.1" language="ru_RU">
+<context>
+    <name>trikGui::Controller</name>
+    <message>
+        <source>direct command</source>
+        <translation>команда с компьютера</translation>
+    </message>
+</context>
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
@@ -34,13 +41,21 @@
     <name>trikGui::RunningWidget</name>
     <message>
         <source>Running:</source>
-        <translation>Выполняется:</translation>
+        <translation type="vanished">Выполняется:</translation>
     </message>
     <message>
         <source>Press Power
  to abort</source>
-        <translation>Нажмите Power
+        <translation type="vanished">Нажмите Power
  чтобы выйти</translation>
+    </message>
+    <message>
+        <source>Running </source>
+        <translation>Выполняется </translation>
+    </message>
+    <message>
+        <source>Press Power to abort</source>
+        <translation>Нажмите кнопку Питание для выхода</translation>
     </message>
 </context>
 <context>

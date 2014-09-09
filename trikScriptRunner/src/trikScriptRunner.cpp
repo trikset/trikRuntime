@@ -22,7 +22,7 @@ using namespace trikScriptRunner;
 TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
 	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
 {
-	connect(mScriptRunnerProxy.data(), SIGNAL(completed()), this, SIGNAL(completed()));
+	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString)), this, SIGNAL(completed(QString)));
 }
 
 TrikScriptRunner::~TrikScriptRunner()

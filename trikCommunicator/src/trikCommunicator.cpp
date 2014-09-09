@@ -102,5 +102,5 @@ void TrikCommunicator::init()
 {
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-	connect(mTrikScriptRunner, SIGNAL(completed()), this, SIGNAL(finishedScript()));
+	connect(mTrikScriptRunner, SIGNAL(completed(QString)), this, SIGNAL(finishedScript()));
 }

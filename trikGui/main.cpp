@@ -70,9 +70,12 @@ int main(int argc, char *argv[])
 	app.setFont(font);
 
 	QTranslator guiTranslator;
+	QTranslator scriptRunnerTranslator;
 	if (!app.arguments().contains("--no-locale")) {
 		guiTranslator.load(":/trikGui_ru");
+		scriptRunnerTranslator.load(":/trikScriptRunner_ru");
 		app.installTranslator(&guiTranslator);
+		app.installTranslator(&scriptRunnerTranslator);
 	}
 
 	QString configPath = QDir::currentPath() + "/";

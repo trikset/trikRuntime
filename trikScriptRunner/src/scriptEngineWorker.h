@@ -42,7 +42,8 @@ public:
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
-	void completed();
+	/// @param error - localized error message or empty string.
+	void completed(QString const &error);
 
 public slots:
 	/// Initializes script engine and creates its own trikControl instance.
@@ -62,7 +63,7 @@ private slots:
 	void resetScriptEngine();
 
 private:
-	void runAndReportException(QString const &script);
+	void onScriptEvaluated();
 
 	// Has ownership. No smart pointers here because we need to do manual memory managment
 	// due to complicated mEngine lifecycle (see .cpp for more details).

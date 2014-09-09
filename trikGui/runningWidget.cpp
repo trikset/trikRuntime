@@ -24,13 +24,25 @@ RunningWidget::RunningWidget(QString const &programName, Controller &controller,
 {
 	setWindowState(Qt::WindowFullScreen);
 
-	mProgramNameLabel.setText(tr("Running:") + "\n" + programName);
-	mAbortLabel.setText(tr("Press Power\n to abort"));
+	mStatusLabel.setWordWrap(true);
+	mStatusLabel.setAlignment(Qt::AlignCenter);
+	mStatusLabel.setText(tr("Running ") + programName);
 
-	mLayout.addWidget(&mProgramNameLabel);
+	mAbortLabel.setWordWrap(true);
+	mAbortLabel.setAlignment(Qt::AlignCenter);
+	mAbortLabel.setText(tr("Press Power to abort"));
+
+	mLayout.addWidget(&mStatusLabel);
 	mLayout.addWidget(&mAbortLabel);
 
 	setLayout(&mLayout);
+}
+
+void RunningWidget::showError(QString const &error)
+{
+	mStatusLabel.setAlignment(Qt::AlignLeft);
+	mStatusLabel.setText(QString("<font color='red'>%1</font>").arg(error));
+	update();
 }
 
 void RunningWidget::keyPressEvent(QKeyEvent *event)

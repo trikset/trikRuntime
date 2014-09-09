@@ -59,7 +59,9 @@ public slots:
 signals:
 	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
 	/// or was aborted).
-	void completed();
+	/// @param error - localized error message if any error occured during script execution or empty string
+	/// if everything is fine.
+	void completed(QString const &error);
 
 private:
 	/// Proxy for script engine thread.
