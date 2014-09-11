@@ -59,6 +59,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	, mBrick(brick)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
+	, mCloned(false)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -85,6 +86,7 @@ ScriptEngineWorker &ScriptEngineWorker::clone()
 	QScriptValue globalObject = result->mEngine->globalObject();
 	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
 	result->mEngine->setGlobalObject(globalObject);
+	result->mCloned = true;
 	return *result;
 }
 
@@ -106,6 +108,11 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QStr
 
 	if (!mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
+		if (!mCloned) {
+			// Only main thread must wait for others
+			mThreadingVariable.waitForAll();
+		}
+
 		onScriptEvaluated();
 		resetScriptEngine();
 	}

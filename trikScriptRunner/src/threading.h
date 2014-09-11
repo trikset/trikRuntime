@@ -54,6 +54,9 @@ public:
 	/// invoke functions declared in this script.
 	void setCurrentScript(QString const &script);
 
+	/// Blocks current thread untill all threads in thread pool finish their execution.
+	void waitForAll();
+
 private:
 	class ScriptThread : public QRunnable
 	{

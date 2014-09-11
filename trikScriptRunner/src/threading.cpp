@@ -4,9 +4,12 @@
 
 using namespace trikScriptRunner;
 
+int const maxThreadsCount = 10;
+
 Threading::Threading(ScriptEngineWorker &runner)
 	: mRunner(runner)
 {
+	QThreadPool::globalInstance()->setMaxThreadCount(maxThreadsCount);
 }
 
 void Threading::start(QScriptValue const &function)
@@ -34,6 +37,11 @@ QScriptValue Threading::waitForDone(QScriptValue const &timeout)
 void Threading::setCurrentScript(QString const &script)
 {
 	mScript = script;
+}
+
+void Threading::waitForAll()
+{
+	QThreadPool::globalInstance()->waitForDone();
 }
 
 Threading::ScriptThread::ScriptThread(QString const &mainScript, QString const &function, ScriptEngineWorker &runner)

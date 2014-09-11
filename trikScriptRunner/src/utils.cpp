@@ -9,9 +9,8 @@ using namespace trikScriptRunner;
 QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const engine)
 {
 	QScriptValue copy;
-	if (prototype.isObject()) {
-		copy = engine->newObject();
-		copy.setData(prototype.data());
+	if (prototype.isFunction()) {
+		return prototype;
 	} else if (prototype.isArray()) {
 		copy = engine->newArray();
 		copy.setData(prototype.data());
@@ -31,8 +30,9 @@ QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const e
 		copy = engine->newQMetaObject(prototype.toQMetaObject());
 	} else if (prototype.isNull()) {
 		copy = QScriptValue();
-	} else if (prototype.isFunction()) {
-		copy = prototype;
+	} else if (prototype.isObject()) {
+		copy = engine->newObject();
+		copy.setData(prototype.data());
 	} else {
 		copy = prototype;
 	}
@@ -61,7 +61,7 @@ void Utils::copyRecursivelyTo(QScriptValue const &prototype, QScriptValue &targe
 		iterator.next();
 		if (!hasProperty(target, iterator.name())) {
 			QScriptValue const value = clone(iterator.value(), engine);
-			if (value.engine() == target.engine()) {
+			if (value.engine() == engine) {
 				target.setProperty(iterator.name(), value);
 			}
 		}
