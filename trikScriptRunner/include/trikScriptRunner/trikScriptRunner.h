@@ -42,6 +42,12 @@ public slots:
 	/// after script execution. For event-driven mode (where script has brick.run() command) script counts as finished
 	/// when it requests to quit by itself or was aborted. When script is finished, completed() signal will be emitted.
 	/// @param script - script in Qt Script language to be executed.
+	/// @warning: The multithreaded script must not contain useful actions in the global context
+	/// (function calls, variable initializations and so on in the global context is restricted).
+	/// The reason is in non-thread-safety of script engine. We must run scripts by separate script engines
+	/// and thus to have an opportunity to start concrete function from the given file. But QScriptEngine API
+	/// has no such possibility so we should append function call to the end of the script. So if script will
+	/// run some actions in the global context they will be invoked on each thread start.
 	void run(QString const &script);
 
 	/// Executes given script as direct command, so it will use existing script execution environment (or create one

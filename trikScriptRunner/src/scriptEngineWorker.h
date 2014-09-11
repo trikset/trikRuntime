@@ -20,6 +20,8 @@
 
 #include <trikControl/brick.h>
 
+#include "threading.h"
+
 namespace trikScriptRunner
 {
 
@@ -40,20 +42,27 @@ public:
 	/// called from another thread.
 	void reset();
 
+	/// Copies this instance of ScriptEngineWorker and returns a new one. Script engine is copied deeply
+	/// i.e. the current state of the global scripting object is copied recursively.
+	/// Takes ownership via Qt parent-child system.
+	ScriptEngineWorker &clone();
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	void completed(QString const &error);
 
 public slots:
-	/// Initializes script engine and creates its own trikControl instance.
+	/// Initializes new QtScript engine.
 	void init();
 
 	/// Executes given script.
 	/// @param script - script to execute.
 	/// @param inEventDrivenMode - shall this script be executed in event-driven mode, i.e. not emit completed() signal
 	///        when it is finished.
-	void run(QString const &script, bool inEventDrivenMode);
+	/// @param function - the name of the function execution must start with. If empty then the script will be
+	/// evaluated as-is, else function call will be appended to @arg script.
+	void run(QString const &script, bool inEventDrivenMode, QString const &function = "main");
 
 private slots:
 	/// Abort script execution.
@@ -68,11 +77,9 @@ private:
 	// Has ownership. No smart pointers here because we need to do manual memory managment
 	// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
-
 	trikControl::Brick &mBrick;
-
+	Threading mThreadingVariable;
 	QString const mStartDirPath;
-	QThread *mGuiThread;  // Does not have ownership.
 };
 
 }

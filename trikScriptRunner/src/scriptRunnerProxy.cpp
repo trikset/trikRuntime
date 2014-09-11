@@ -45,9 +45,12 @@ ScriptRunnerProxy::~ScriptRunnerProxy()
 	mWorkerThread.wait(1000);
 }
 
-void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode)
+void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode, QString const &function)
 {
-	QMetaObject::invokeMethod(mEngineWorker, "run", Q_ARG(QString const &, script), Q_ARG(bool, inEventDrivenMode));
+	QMetaObject::invokeMethod(mEngineWorker, "run"
+			, Q_ARG(QString const &, script)
+			, Q_ARG(bool, inEventDrivenMode)
+			, Q_ARG(QString const &, function));
 }
 
 void ScriptRunnerProxy::reset()

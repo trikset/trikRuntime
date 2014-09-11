@@ -33,10 +33,12 @@
 #include <trikControl/objectSensor.h>
 
 #include "scriptableParts.h"
+#include "utils.h"
 
 using namespace trikScriptRunner;
 using namespace trikControl;
 
+Q_DECLARE_METATYPE(Threading*)
 Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
@@ -53,10 +55,10 @@ Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(QVector<int>)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath)
-	: mEngine(NULL)
+	: mEngine(nullptr)
 	, mBrick(brick)
+	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
-	, mGuiThread(this->thread())
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -75,12 +77,23 @@ void ScriptEngineWorker::reset()
 	}
 }
 
+ScriptEngineWorker &ScriptEngineWorker::clone()
+{
+	ScriptEngineWorker *result = new ScriptEngineWorker(mBrick, mStartDirPath);
+	result->setParent(this);
+	result->init();
+	QScriptValue globalObject = result->mEngine->globalObject();
+	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
+	result->mEngine->setGlobalObject(globalObject);
+	return *result;
+}
+
 void ScriptEngineWorker::init()
 {
 	resetScriptEngine();
 }
 
-void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
+void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QString const &function)
 {
 	Q_ASSERT(mEngine);
 
@@ -88,7 +101,8 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode)
 		mBrick.run();
 	}
 
-	mEngine->evaluate(script);
+	mThreadingVariable.setCurrentScript(script);
+	mEngine->evaluate(function.isEmpty() ? script : QString("%1\n%2();").arg(script, function));
 
 	if (!mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
@@ -132,8 +146,8 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 
-	QScriptValue brickProxy = mEngine->newQObject(&mBrick);
-	mEngine->globalObject().setProperty("brick", brickProxy);
+	mEngine->globalObject().setProperty("brick", mEngine->newQObject(&mBrick));
+	mEngine->globalObject().setProperty("Threading", mEngine->newQObject(&mThreadingVariable));
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
 		mEngine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
