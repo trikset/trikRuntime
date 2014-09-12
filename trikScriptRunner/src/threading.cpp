@@ -18,7 +18,7 @@
 
 using namespace trikScriptRunner;
 
-int const maxThreadsCount = 10;
+int const maxThreadsCount = 100;
 
 Threading::Threading(ScriptEngineWorker &runner)
 	: mRunner(runner)

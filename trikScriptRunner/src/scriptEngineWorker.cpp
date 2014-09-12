@@ -59,7 +59,6 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	, mBrick(brick)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
-	, mCloned(false)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -86,7 +85,6 @@ ScriptEngineWorker &ScriptEngineWorker::clone()
 	QScriptValue globalObject = result->mEngine->globalObject();
 	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
 	result->mEngine->setGlobalObject(globalObject);
-	result->mCloned = true;
 	return *result;
 }
 
@@ -104,11 +102,15 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QStr
 	}
 
 	mThreadingVariable.setCurrentScript(script);
-	mEngine->evaluate(function.isEmpty() ? script : QString("%1\n%2();").arg(script, function));
+	QRegExp const functionRegexp(QString(
+			"(.*%1\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)").arg(function));
+	bool const needCallFunction = !function.isEmpty() && functionRegexp.exactMatch(script)
+			&& !script.trimmed().endsWith(function + "();");
+	mEngine->evaluate(needCallFunction ? QString("%1\n%2();").arg(script, function) : script);
 
 	if (!mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
-		if (!mCloned) {
+		if (!dynamic_cast<ScriptEngineWorker *>(parent())) {
 			// Only main thread must wait for others
 			mThreadingVariable.waitForAll();
 		}
