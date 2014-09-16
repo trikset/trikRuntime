@@ -29,15 +29,16 @@ HEADERS += \
 	$$PWD/include/trikControl/digitalSensor.h \
 	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/encoder.h \
+	$$PWD/include/trikControl/gamepad.h \
 	$$PWD/include/trikControl/keys.h \
 	$$PWD/include/trikControl/led.h \
+	$$PWD/include/trikControl/lineSensor.h \
+	$$PWD/include/trikControl/mailbox.h \
+	$$PWD/include/trikControl/motor.h \
 	$$PWD/include/trikControl/objectSensor.h \
+	$$PWD/include/trikControl/pwmCapture.h \
 	$$PWD/include/trikControl/sensor.h \
 	$$PWD/include/trikControl/sensor3d.h \
-	$$PWD/include/trikControl/gamepad.h \
-	$$PWD/include/trikControl/pwmCapture.h \
-	$$PWD/include/trikControl/motor.h \
-	$$PWD/include/trikControl/lineSensor.h \
 	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/angularServoMotor.h \
 	$$PWD/src/colorSensorWorker.h \
@@ -73,6 +74,7 @@ SOURCES += \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/lineSensorWorker.cpp \
+	$$PWD/src/mailbox.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
