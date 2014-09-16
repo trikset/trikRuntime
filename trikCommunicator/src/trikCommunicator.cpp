@@ -64,6 +64,13 @@ void TrikCommunicator::startServer(int const &port)
 	}
 }
 
+void TrikCommunicator::sendMessage(QString const &message)
+{
+	for (Connection * const connection : mConnections.values()) {
+		connection->sendMessage(message);
+	}
+}
+
 void TrikCommunicator::incomingConnection(int socketDescriptor)
 {
 	qDebug() << "New connection, socket descriptor: " << socketDescriptor;

@@ -25,8 +25,13 @@
 using namespace trikCommunicator;
 
 Connection::Connection()
-	: mTrikScriptRunner(NULL)
+	: mTrikScriptRunner(nullptr)
 {
+}
+
+void Connection::sendMessage(QString const &message)
+{
+	mSocket->write(message.toLocal8Bit());
 }
 
 void Connection::init(int socketDescriptor, trikScriptRunner::TrikScriptRunner *trikScriptRunner)
