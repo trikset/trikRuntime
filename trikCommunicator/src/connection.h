@@ -39,6 +39,9 @@ class Connection : public QObject {
 public:
 	Connection();
 
+	/// Writes a given message to inner socket.
+	void sendMessage(QString const &message);
+
 signals:
 	/// Emitted when command to run a script from a file is received.
 	void startedScript(QString const &scriptFileName);

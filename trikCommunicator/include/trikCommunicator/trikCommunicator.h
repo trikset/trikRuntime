@@ -55,6 +55,9 @@ public:
 	/// Starts listening given port on all network interfaces.
 	void startServer(int const &port);
 
+	/// Sends message to server if socket is opened; otherwise does nothing.
+	void sendMessage(QString const &message);
+
 signals:
 	/// Emitted when command to run a script from a file is received.
 	void startedScript(QString const &scriptFileName);
