@@ -22,6 +22,9 @@ uses(trikControl trikCommunicator)
 INCLUDEPATH += \
 	../trikControl/include/ \
 	../trikCommunicator/include/ \
+	../trikKernel/include/ \
+
+uses(trikKernel)
 
 TEMPLATE = app
 CONFIG += console

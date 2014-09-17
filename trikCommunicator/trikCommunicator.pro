@@ -31,6 +31,6 @@ DEFINES += TRIKCOMMUNICATOR_LIBRARY
 uses(trikScriptRunner trikControl trikKernel)
 
 INCLUDEPATH += \
-	../trikScriptRunner/include/ \
-	../trikControl/include/ \
-	../trikKernel/include/ \
+	$PWD/../trikScriptRunner/include/ \
+	$PWD/../trikControl/include/ \
+	$PWD/../trikKernel/include/ \

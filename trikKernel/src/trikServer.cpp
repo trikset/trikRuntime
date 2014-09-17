@@ -20,6 +20,11 @@
 
 using namespace trikKernel;
 
+TrikServer::TrikServer(std::function<Connection *()> const &connectionFactory)
+	: mConnectionFactory(connectionFactory)
+{
+}
+
 TrikServer::~TrikServer()
 {
 	for (QThread *thread : mConnections.keys()) {
@@ -46,23 +51,24 @@ void TrikServer::incomingConnection(int socketDescriptor)
 {
 	qDebug() << "New connection, socket descriptor: " << socketDescriptor;
 
+	Connection * const connectionWorker = mConnectionFactory();
+	startConnection(connectionWorker);
+
+	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor));
+}
+
+void TrikServer::startConnection(Connection * const connectionWorker)
+{
 	QThread * const connectionThread = new QThread();
 
 	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
 	connect(connectionThread, SIGNAL(finished()), this, SLOT(onConnectionClosed()));
-
-	Connection * const connectionWorker = mConnectionFactory();
-
-	connect(connectionWorker, SIGNAL(startedDirectScript()), this, SIGNAL(startedDirectScript()));
-	connect(connectionWorker, SIGNAL(startedScript(QString)), this, SIGNAL(startedScript(QString)));
 
 	connectionWorker->moveToThread(connectionThread);
 
 	mConnections.insert(connectionThread, connectionWorker);
 
 	connectionThread->start();
-
-	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor));
 }
 
 void TrikServer::onConnectionClosed()

@@ -34,11 +34,13 @@ namespace trikCommunicator {
 /// - stop --- stop current script execution and a robot.
 /// - direct:<command> --- execute given script without saving it to a file.
 /// - keepalive --- do nothing, used to check the availability of connection.
-class Connection : public QObject {
+class Connection : public trikKernel::Connection {
 	Q_OBJECT
 
 public:
-	Connection();
+	/// Constructor.
+	/// @param trikScriptRunner - instance of script runner object.
+	explicit Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner);
 
 signals:
 	/// Emitted when command to run a script from a file is received.
@@ -47,26 +49,11 @@ signals:
 	/// Emitted when command to run script directly is received.
 	void startedDirectScript();
 
-public slots:
-	/// Creates socket and initializes connection, shall be called when Connection is already in its own thread.
-	/// @param socketDescriptor - native socket descriptor.
-	/// @param scriptRunnerWrapper - instance of script runner object.
-	void init(int socketDescriptor, trikScriptRunner::TrikScriptRunner *trikScriptRunner);
-
-private slots:
-	/// New data is ready on a socket.
-	void onReadyRead();
-
-	/// Socket is closed for some reason.
-	void disconnected();
-
 private:
-	/// Socket for this connection.
-	QScopedPointer<QTcpSocket> mSocket;
+	void processData(QString const &data) override;
 
 	/// Common script runner object, located in another thread.
-	/// Does not have ownership.
-	trikScriptRunner::TrikScriptRunner *mTrikScriptRunner;
+	trikScriptRunner::TrikScriptRunner &mTrikScriptRunner;
 };
 
 }

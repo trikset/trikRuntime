@@ -40,6 +40,9 @@ public:
 protected:
 	void incomingConnection(int socketDescriptor) override;
 
+	/// Launches given connection in a separate thread. Takes ownership over connectionWorker object.
+	void startConnection(Connection * const connectionWorker);
+
 private slots:
 	/// Called when connection thread finishes.
 	void onConnectionClosed();

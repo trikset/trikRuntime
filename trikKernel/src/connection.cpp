@@ -19,6 +19,21 @@
 
 using namespace trikKernel;
 
+void Connection::init(QHostAddress const &ip, int port)
+{
+	mSocket.reset(new QTcpSocket());
+	connectSlots();
+	mSocket->connectToHost(ip, port);
+	socket->waitForConnected();
+}
+
+void Connection::send(QByteArray const &data)
+{
+	mSocket->write(data);
+	mSocket->flush();
+	mSocket->waitForBytesWritten();
+}
+
 void Connection::init(int socketDescriptor)
 {
 	mSocket.reset(new QTcpSocket());
@@ -28,8 +43,7 @@ void Connection::init(int socketDescriptor)
 		return;
 	}
 
-	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(disconnected()));
+	connectSlots();
 }
 
 void Connection::onReadyRead()
@@ -47,4 +61,20 @@ void Connection::disconnected()
 {
 	qDebug() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 	thread()->quit();
+}
+
+void Connection::errored(QAbstractSocket::SocketError error)
+{
+	Q_UNUSED(error)
+
+	qDebug() << "Connection" << mSocket->socketDescriptor() << "errored.";
+	thread()->quit();
+}
+
+void Connection::connectSlots()
+{
+	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(disconnected()));
+	connect(mSocket.data(), SIGNAL(error(QAbstractSocket::SocketError))
+			, this, SLOT(errored(QAbstractSocket::SocketError)));
 }

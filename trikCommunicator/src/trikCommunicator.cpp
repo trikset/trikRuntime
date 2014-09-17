@@ -35,8 +35,8 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
 }
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership)
-	: trikKernel::TrikServer([] () { return new Connection(runner); })
-	, mTrikScriptRunner(*runner)
+	: trikKernel::TrikServer([this] () { return connectionFactory(); })
+	, mTrikScriptRunner(runner)
 	, mHasScriptRunnerOwnership(hasScriptRunnerOwnership)
 {
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
@@ -49,4 +49,14 @@ TrikCommunicator::~TrikCommunicator()
 	if (mHasScriptRunnerOwnership) {
 		delete mTrikScriptRunner;
 	}
+}
+
+Connection *TrikCommunicator::connectionFactory()
+{
+	auto connection = new Connection(*mTrikScriptRunner);
+
+	connect(connection, SIGNAL(startedDirectScript()), this, SIGNAL(startedDirectScript()));
+	connect(connection, SIGNAL(startedScript(QString)), this, SIGNAL(startedScript(QString)));
+
+	return connection;
 }

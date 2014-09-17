@@ -67,6 +67,8 @@ signals:
 private:
 	TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership);
 
+	Connection *connectionFactory();
+
 	/// Script runner object common to all connections.
 	/// Ownership depends on mHasScriptRunnerOwnership flag, if we received runner belonging to other object or created
 	/// our own.

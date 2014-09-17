@@ -49,6 +49,7 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/lineSensorWorker.h \
+	$$PWD/src/mailboxConnection.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/sensor3dWorker.h \
@@ -75,6 +76,7 @@ SOURCES += \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/lineSensorWorker.cpp \
 	$$PWD/src/mailbox.cpp \
+	$$PWD/src/mailboxConnection.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
@@ -99,6 +101,11 @@ QT += xml gui network
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
+
+uses(trikKernel)
+
+INCLUDEPATH += \
+	$$PWD/../trikKernel/include \
 
 copyToDestdir( \
 	$$PWD/config.xml  \

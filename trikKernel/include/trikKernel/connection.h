@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QHostAddress>
 
 namespace trikKernel {
 
@@ -25,8 +26,18 @@ namespace trikKernel {
 class Connection : public QObject {
 	Q_OBJECT
 
+public:
+	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
+	/// thread.
+	/// @param ip - target ip address.
+	/// @param port - target port.
+	void init(QHostAddress const &ip, int port);
+
+	void send(QByteArray const &data);
+
 public slots:
-	/// Creates socket and initializes connection, shall be called when Connection is already in its own thread.
+	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
+	/// thread.
 	/// @param socketDescriptor - native socket descriptor.
 	void init(int socketDescriptor);
 
@@ -37,9 +48,14 @@ private slots:
 	/// Socket is closed for some reason.
 	void disconnected();
 
+	/// Socket is failed to connect or some other error occured.
+	void errored(QAbstractSocket::SocketError error);
+
 private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
 	virtual void processData(QString const &data) = 0;
+
+	void connectSlots();
 
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;

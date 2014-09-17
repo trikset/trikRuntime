@@ -15,15 +15,16 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QHash>
-
+#include <QtCore/QMultiHash>
 #include <QtNetwork/QHostAddress>
+
+#include <trikKernel/trikServer.h>
 
 #include "declSpec.h"
 
 namespace trikControl {
 
-class TRIKCONTROL_EXPORT Mailbox : public QObject
+class TRIKCONTROL_EXPORT Mailbox : public trikKernel::TrikServer
 {
 	Q_OBJECT
 
@@ -31,18 +32,29 @@ public:
 	Mailbox(QString const &ip, int port, int hullNumber);
 	void setHullNumber(int hullNumber);
 
+	void connect(QString const &ip, int port);
+
 public slots:
 //	void send(int hullNumber, QVariant const &message);
 //	bool hasMessages();
 //	QString receive();
 
+private slots:
+	void onNewConnection(QHostAddress const &ip, int port);
+
 private:
+	trikKernel::Connection *connectionFactory();
+
 	int mHullNumber;
 	QHostAddress const mIp;
 	int const mPort;
 
-	QHash<int, QHostAddress> mKnownRobotIps;
-	QHash<int, int> mKnownRobotPorts;
+	struct Endpoint {
+		QHostAddress hostAddress;
+		int port;
+	};
+
+	QMultiHash<int, Endpoint> mKnownRobots;
 };
 
 }
