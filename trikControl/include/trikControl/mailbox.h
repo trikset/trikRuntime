@@ -15,6 +15,9 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QHash>
+
+#include <QtNetwork/QHostAddress>
 
 #include "declSpec.h"
 
@@ -29,14 +32,17 @@ public:
 	void setHullNumber(int hullNumber);
 
 public slots:
-	void send(int hullNumber, QVariant const &message);
-	bool hasMessages();
-	QString receive();
+//	void send(int hullNumber, QVariant const &message);
+//	bool hasMessages();
+//	QString receive();
 
 private:
 	int mHullNumber;
-	QString const mIp;
+	QHostAddress const mIp;
 	int const mPort;
+
+	QHash<int, QHostAddress> mKnownRobotIps;
+	QHash<int, int> mKnownRobotPorts;
 };
 
 }

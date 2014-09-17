@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, Cybertech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 
+#include <trikKernel/trikServer.h>
+
 namespace trikScriptRunner {
 class TrikScriptRunner;
 }
@@ -37,7 +39,7 @@ class Connection;
 /// Communication subsystem consists of TrikCommunicator object which runs in main thread and listens for incoming
 /// connections, Connection objects --- one for every connected client, they run in separate threads each, and
 /// ScriptRunnerWrapper object in main thread which processes signals from Connections.
-class TrikCommunicator : public QTcpServer
+class TrikCommunicator : public trikKernel::TrikServer
 {
 	Q_OBJECT
 
@@ -45,15 +47,12 @@ public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	explicit TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath);
+	TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
 
-	~TrikCommunicator();
-
-	/// Starts listening given port on all network interfaces.
-	void startServer(int const &port);
+	~TrikCommunicator() override;
 
 signals:
 	/// Emitted when command to run a script from a file is received.
@@ -65,16 +64,8 @@ signals:
 	/// Emitted when script finishes execution.
 	void finishedScript();
 
-protected:
-	void incomingConnection(int socketDescriptor);  // Override.
-
-private slots:
-	/// Called when connection thread finishes.
-	void onConnectionClosed();
-
 private:
-	/// Common initialization from constructors.
-	void init();
+	TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership);
 
 	/// Script runner object common to all connections.
 	/// Ownership depends on mHasScriptRunnerOwnership flag, if we received runner belonging to other object or created
@@ -83,9 +74,6 @@ private:
 
 	/// True, if we created our own script runner, false if we got it from someone.
 	bool const mHasScriptRunnerOwnership;
-
-	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
-	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.
 };
 
 }

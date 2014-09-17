@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtNetwork/QTcpSocket>
+#include <trikKernel/connection.h>
 
 namespace trikScriptRunner {
 class TrikScriptRunner;
