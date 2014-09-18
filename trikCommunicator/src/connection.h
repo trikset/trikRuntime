@@ -50,7 +50,7 @@ signals:
 	void startedDirectScript();
 
 private:
-	void processData(QString const &data) override;
+	void processData(QByteArray const &data) override;
 
 	/// Common script runner object, located in another thread.
 	trikScriptRunner::TrikScriptRunner &mTrikScriptRunner;

@@ -29,9 +29,9 @@ Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
 {
 }
 
-void Connection::processData(QString const &data)
+void Connection::processData(QByteArray const &data)
 {
-	QString command = data;
+	QString command(data);
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.

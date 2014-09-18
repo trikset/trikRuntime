@@ -28,16 +28,17 @@ public:
 	MailboxConnection();
 
 signals:
-	void newConnection(QHostAddress const &ip, int port, int hullNumber);
-	void updateConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
-	void newData(QHostAddress const &ip, int port, QByteArray const &newData);
+	void newConnection(QHostAddress const &ip, int clientPort, int serverPort, int hullNumber);
+	void connectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	void newData(QHostAddress const &ip, int port, QByteArray const &data);
 
 public slots:
-	void onConnect(QString const &targetIp, int targetPort, int myHullNumber);
-	void onUpdateConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	void onConnect(QHostAddress const &targetIp, int targetPort, int myServerPort, int myHullNumber);
+	void onConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	void onSelfInfo(int hullNumber);
 
 private:
-	void processData(QString const &data) override;
+	void processData(QByteArray const &data) override;
 };
 
 }

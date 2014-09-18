@@ -34,25 +34,31 @@ public:
 	Mailbox(int port, int hullNumber);
 	void setHullNumber(int hullNumber);
 
-	void connect(QString const &ip, int port);
-
 public slots:
+	void connect(QString const &ip, int port);
 	void send(int hullNumber, QVariant const &message);
 	bool hasMessages();
 	QString receive();
 
 private slots:
-	void onNewConnection(QHostAddress const &ip, int port, int hullNumber);
-	void onUpdateConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	void onNewConnection(QHostAddress const &ip, int clientPort, int serverPort, int hullNumber);
+	void onConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
 	void onNewData(QHostAddress const &ip, int port, QByteArray const &data);
 
 private:
+	trikKernel::Connection *connect(QHostAddress const &ip, int port);
+
 	trikKernel::Connection *connectionFactory();
 
 	void connectConnection(trikKernel::Connection * connection);
 
+	static QHostAddress determineMyIp();
+
+	trikKernel::Connection *prepareConnection(QHostAddress const &ip);
+
 	int mHullNumber;
 	int const mPort;
+	QHostAddress const mMyIp;
 
 	struct Endpoint {
 		QHostAddress ip;
@@ -70,7 +76,8 @@ private:
 	QMultiHash<int, Endpoint> mKnownRobots;
 
 	QQueue<QByteArray> mMessagesQueue;
-	QReadWriteLock mLock;
+	QReadWriteLock mMessagesQueueLock;
+	QReadWriteLock mKnownRobotsLock;
 };
 
 inline bool operator ==(Mailbox::Endpoint const &left, Mailbox::Endpoint const &right)

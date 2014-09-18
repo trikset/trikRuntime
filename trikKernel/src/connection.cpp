@@ -21,29 +21,49 @@ using namespace trikKernel;
 
 QHostAddress Connection::peerAddress() const
 {
+	if (!mSocket) {
+		qDebug() << "Connection::peerAddress() called on empty socket, thread:" << thread();
+	}
+
 	return mSocket->peerAddress();
 }
 
 int Connection::peerPort() const
 {
+	if (!mSocket) {
+		qDebug() << "Connection::peerPort() called on empty socket, thread:" << thread();
+	}
+
 	return mSocket->peerPort();
 }
 
 void Connection::onInit(QHostAddress const &ip, int port)
 {
+	qDebug() << "Connection::onInit(), thread:" << thread();
 	qDebug() << "Connection::onInit(" << ip << ", " << port << ")";
 
+	qDebug() << "Opening socket...";
 	mSocket.reset(new QTcpSocket());
+
 	connectSlots();
+
+	qDebug() << "Connecting...";
+
 	mSocket->connectToHost(ip, port);
+
 	mSocket->waitForConnected();
+
+	qDebug() << "Done!";
 }
 
 void Connection::onSend(QByteArray const &data)
 {
+	qDebug() << "Connection::onSend(), thread:" << thread();
 	qDebug() << "Sending to" << peerAddress() << ":" << peerPort() << ":" << data;
 
-	mSocket->write(data);
+	QByteArray message = QByteArray::number(data.size()) + ':' + data;
+
+	mSocket->write(message);
 	mSocket->flush();
 	mSocket->waitForBytesWritten();
 }
@@ -64,16 +84,55 @@ void Connection::onInit(int socketDescriptor)
 
 void Connection::onReadyRead()
 {
+	qDebug() << "Connection::onReadyRead(), thread:" << thread();
+
 	if (!mSocket || !mSocket->isValid()) {
 		return;
 	}
 
 	QByteArray const &data = mSocket->readAll();
-	QString const stringData = QString::fromUtf8(data.constData());
+	mBuffer.append(data);
 
-	qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << stringData;
+	qDebug() << "Connection::onReadyRead(), after mBuffer.append(data); thread:" << thread();
 
-	processData(stringData);
+	qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
+
+	processBuffer();
+}
+
+void Connection::processBuffer()
+{
+	while (!mBuffer.isEmpty()) {
+		if (mExpectedBytes == 0) {
+			// Determining the length of a message.
+			int const delimiterIndex = mBuffer.indexOf(':');
+			if (delimiterIndex == -1) {
+				// We did not receive full message length yet.
+				return;
+			} else {
+				QByteArray const length = mBuffer.left(delimiterIndex);
+				mBuffer = mBuffer.mid(delimiterIndex + 1);
+				bool ok;
+				mExpectedBytes = length.toInt(&ok);
+				if (!ok) {
+					qDebug() << "Malformed message, can not determine message length from this:" << length;
+					mExpectedBytes = 0;
+				}
+			}
+		} else {
+			if (mBuffer.size() >= mExpectedBytes) {
+				QByteArray const message = mBuffer.left(mExpectedBytes);
+				mBuffer = mBuffer.mid(mExpectedBytes);
+
+				processData(message);
+
+				mExpectedBytes = 0;
+			} else {
+				// We don't have all message yet.
+				return;
+			}
+		}
+	}
 }
 
 void Connection::disconnected()

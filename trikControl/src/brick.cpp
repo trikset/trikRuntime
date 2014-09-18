@@ -182,7 +182,6 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	}
 
 	mMailbox.reset(new Mailbox(8889, 0));
-	mMailbox->connect("192.168.1.1", 8889);
 }
 
 Brick::~Brick()

@@ -58,12 +58,20 @@ private slots:
 
 private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
-	virtual void processData(QString const &data) = 0;
+	virtual void processData(QByteArray const &data) = 0;
 
 	void connectSlots();
 
+	void processBuffer();
+
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;
+
+	/// Buffer to accumulate parts of a message.
+	QByteArray mBuffer;
+
+	/// Declared size of a current message.
+	int mExpectedBytes = 0;
 };
 
 }

@@ -48,6 +48,7 @@ protected:
 	void startConnection(Connection * const connectionWorker);
 
 	Connection *connection(QHostAddress const &ip, int port) const;
+	Connection *connection(QHostAddress const &ip) const;
 
 private slots:
 	/// Called when connection thread finishes.

@@ -59,6 +59,8 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
+	qDebug() << "TrikServer::startConnection";
+
 	QThread * const connectionThread = new QThread();
 
 	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
@@ -75,6 +77,17 @@ Connection *TrikServer::connection(QHostAddress const &ip, int port) const
 {
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip && connection->peerPort() == port) {
+			return connection;
+		}
+	}
+
+	return nullptr;
+}
+
+Connection *TrikServer::connection(QHostAddress const &ip) const
+{
+	for (auto *connection : mConnections.values()) {
+		if (connection->peerAddress() == ip) {
 			return connection;
 		}
 	}
