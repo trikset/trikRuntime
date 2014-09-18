@@ -21,16 +21,17 @@
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/debug.h>
 
+#include <trikControl/analogSensor.h>
 #include <trikControl/battery.h>
+#include <trikControl/colorSensor.h>
 #include <trikControl/display.h>
 #include <trikControl/encoder.h>
-#include <trikControl/motor.h>
-#include <trikControl/sensor.h>
-#include <trikControl/analogSensor.h>
-#include <trikControl/sensor3d.h>
 #include <trikControl/lineSensor.h>
-#include <trikControl/colorSensor.h>
+#include <trikControl/mailbox.h>
+#include <trikControl/motor.h>
 #include <trikControl/objectSensor.h>
+#include <trikControl/sensor.h>
+#include <trikControl/sensor3d.h>
 
 #include "scriptableParts.h"
 #include "utils.h"
@@ -40,18 +41,19 @@ using namespace trikControl;
 
 Q_DECLARE_METATYPE(Threading*)
 Q_DECLARE_METATYPE(AnalogSensor*)
+Q_DECLARE_METATYPE(ColorSensor*)
 Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
 Q_DECLARE_METATYPE(Encoder*)
 Q_DECLARE_METATYPE(Gamepad*)
 Q_DECLARE_METATYPE(Keys*)
 Q_DECLARE_METATYPE(Led*)
+Q_DECLARE_METATYPE(LineSensor*)
+Q_DECLARE_METATYPE(Mailbox*)
 Q_DECLARE_METATYPE(Motor*)
+Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
-Q_DECLARE_METATYPE(LineSensor*)
-Q_DECLARE_METATYPE(ColorSensor*)
-Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(QVector<int>)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath)
@@ -147,6 +149,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, gamepadToScriptValue, gamepadFromScriptValue);
 	qScriptRegisterMetaType(mEngine, keysToScriptValue, keysFromScriptValue);
 	qScriptRegisterMetaType(mEngine, ledToScriptValue, ledFromScriptValue);
+	qScriptRegisterMetaType(mEngine, mailboxToScriptValue, mailboxFromScriptValue);
 	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);

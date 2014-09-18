@@ -27,19 +27,24 @@ class Connection : public QObject {
 	Q_OBJECT
 
 public:
-	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
-	/// thread.
-	/// @param ip - target ip address.
-	/// @param port - target port.
-	void init(QHostAddress const &ip, int port);
-
-	void send(QByteArray const &data);
+	QHostAddress peerAddress() const;
+	int peerPort() const;
 
 public slots:
 	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
 	/// thread.
 	/// @param socketDescriptor - native socket descriptor.
-	void init(int socketDescriptor);
+	void onInit(int socketDescriptor);
+
+	void onSend(QByteArray const &data);
+
+protected:
+	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
+	/// thread.
+	/// @param ip - target ip address.
+	/// @param port - target port.
+	void onInit(QHostAddress const &ip, int port);
+
 
 private slots:
 	/// New data is ready on a socket.

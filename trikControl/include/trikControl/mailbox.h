@@ -16,6 +16,8 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QMultiHash>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QQueue>
 #include <QtNetwork/QHostAddress>
 
 #include <trikKernel/trikServer.h>
@@ -29,32 +31,57 @@ class TRIKCONTROL_EXPORT Mailbox : public trikKernel::TrikServer
 	Q_OBJECT
 
 public:
-	Mailbox(QString const &ip, int port, int hullNumber);
+	Mailbox(int port, int hullNumber);
 	void setHullNumber(int hullNumber);
 
 	void connect(QString const &ip, int port);
 
 public slots:
-//	void send(int hullNumber, QVariant const &message);
-//	bool hasMessages();
-//	QString receive();
+	void send(int hullNumber, QVariant const &message);
+	bool hasMessages();
+	QString receive();
 
 private slots:
-	void onNewConnection(QHostAddress const &ip, int port);
+	void onNewConnection(QHostAddress const &ip, int port, int hullNumber);
+	void onUpdateConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	void onNewData(QHostAddress const &ip, int port, QByteArray const &data);
 
 private:
 	trikKernel::Connection *connectionFactory();
 
+	void connectConnection(trikKernel::Connection * connection);
+
 	int mHullNumber;
-	QHostAddress const mIp;
 	int const mPort;
 
 	struct Endpoint {
-		QHostAddress hostAddress;
+		QHostAddress ip;
 		int port;
 	};
 
+	inline uint qHash(Endpoint const &key)
+	{
+		return ::qHash(key.ip.toString()) ^ key.port;
+	}
+
+	friend bool operator ==(Mailbox::Endpoint const &left, Mailbox::Endpoint const &right);
+	friend inline QDebug operator <<(QDebug dbg, Endpoint const &endpoint);
+
 	QMultiHash<int, Endpoint> mKnownRobots;
+
+	QQueue<QByteArray> mMessagesQueue;
+	QReadWriteLock mLock;
 };
+
+inline bool operator ==(Mailbox::Endpoint const &left, Mailbox::Endpoint const &right)
+{
+	return left.ip == right.ip && left.port == right.port;
+}
+
+inline QDebug operator <<(QDebug dbg, Mailbox::Endpoint const &endpoint)
+{
+	dbg.nospace() << endpoint.ip << ":" << endpoint.port;
+	return dbg.space();
+}
 
 }

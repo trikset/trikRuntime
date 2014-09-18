@@ -20,6 +20,10 @@
 #include <QtCore/QThread>
 #include <QtNetwork/QTcpServer>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	typedef int qintptr;
+#endif
+
 namespace trikKernel {
 
 class Connection;
@@ -38,10 +42,12 @@ public:
 	void startServer(int const &port);
 
 protected:
-	void incomingConnection(int socketDescriptor) override;
+	void incomingConnection(qintptr socketDescriptor) override;
 
 	/// Launches given connection in a separate thread. Takes ownership over connectionWorker object.
 	void startConnection(Connection * const connectionWorker);
+
+	Connection *connection(QHostAddress const &ip, int port) const;
 
 private slots:
 	/// Called when connection thread finishes.

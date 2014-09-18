@@ -47,14 +47,14 @@ void TrikServer::startServer(int const &port)
 	}
 }
 
-void TrikServer::incomingConnection(int socketDescriptor)
+void TrikServer::incomingConnection(qintptr socketDescriptor)
 {
 	qDebug() << "New connection, socket descriptor: " << socketDescriptor;
 
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 
-	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor));
+	QMetaObject::invokeMethod(connectionWorker, "onInit", Q_ARG(int, socketDescriptor));
 }
 
 void TrikServer::startConnection(Connection * const connectionWorker)
@@ -69,6 +69,17 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	mConnections.insert(connectionThread, connectionWorker);
 
 	connectionThread->start();
+}
+
+Connection *TrikServer::connection(QHostAddress const &ip, int port) const
+{
+	for (auto *connection : mConnections.values()) {
+		if (connection->peerAddress() == ip && connection->peerPort() == port) {
+			return connection;
+		}
+	}
+
+	return nullptr;
 }
 
 void TrikServer::onConnectionClosed()

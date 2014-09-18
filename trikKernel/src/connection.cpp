@@ -19,23 +19,39 @@
 
 using namespace trikKernel;
 
-void Connection::init(QHostAddress const &ip, int port)
+QHostAddress Connection::peerAddress() const
 {
+	return mSocket->peerAddress();
+}
+
+int Connection::peerPort() const
+{
+	return mSocket->peerPort();
+}
+
+void Connection::onInit(QHostAddress const &ip, int port)
+{
+	qDebug() << "Connection::onInit(" << ip << ", " << port << ")";
+
 	mSocket.reset(new QTcpSocket());
 	connectSlots();
 	mSocket->connectToHost(ip, port);
-	socket->waitForConnected();
+	mSocket->waitForConnected();
 }
 
-void Connection::send(QByteArray const &data)
+void Connection::onSend(QByteArray const &data)
 {
+	qDebug() << "Sending to" << peerAddress() << ":" << peerPort() << ":" << data;
+
 	mSocket->write(data);
 	mSocket->flush();
 	mSocket->waitForBytesWritten();
 }
 
-void Connection::init(int socketDescriptor)
+void Connection::onInit(int socketDescriptor)
 {
+	qDebug() << "Connection::onInit(" << socketDescriptor << ")";
+
 	mSocket.reset(new QTcpSocket());
 
 	if (!mSocket->setSocketDescriptor(socketDescriptor)) {
@@ -54,12 +70,16 @@ void Connection::onReadyRead()
 
 	QByteArray const &data = mSocket->readAll();
 	QString const stringData = QString::fromUtf8(data.constData());
+
+	qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << stringData;
+
 	processData(stringData);
 }
 
 void Connection::disconnected()
 {
 	qDebug() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
+
 	thread()->quit();
 }
 
@@ -68,6 +88,7 @@ void Connection::errored(QAbstractSocket::SocketError error)
 	Q_UNUSED(error)
 
 	qDebug() << "Connection" << mSocket->socketDescriptor() << "errored.";
+
 	thread()->quit();
 }
 
