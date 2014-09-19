@@ -64,8 +64,8 @@ void Connection::onSend(QByteArray const &data)
 	QByteArray message = QByteArray::number(data.size()) + ':' + data;
 
 	mSocket->write(message);
-	mSocket->flush();
-	mSocket->waitForBytesWritten();
+
+	qDebug() << "Sending done";
 }
 
 void Connection::onInit(int socketDescriptor)

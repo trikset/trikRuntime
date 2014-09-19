@@ -42,7 +42,7 @@ public:
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
 	ObjectSensor(QString const &script, QString const &inputFile, QString const &outputFile, double toleranceFactor);
 
-	~ObjectSensor();
+	~ObjectSensor() override;
 
 public slots:
 	/// Initializes a camera.

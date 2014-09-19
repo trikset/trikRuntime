@@ -50,6 +50,7 @@ HEADERS += \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/lineSensorWorker.h \
 	$$PWD/src/mailboxConnection.h \
+	$$PWD/src/mailboxServer.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/sensor3dWorker.h \
@@ -77,6 +78,7 @@ SOURCES += \
 	$$PWD/src/lineSensorWorker.cpp \
 	$$PWD/src/mailbox.cpp \
 	$$PWD/src/mailboxConnection.cpp \
+	$$PWD/src/mailboxServer.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \

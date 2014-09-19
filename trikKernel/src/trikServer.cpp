@@ -75,6 +75,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 
 Connection *TrikServer::connection(QHostAddress const &ip, int port) const
 {
+	qDebug() << "TrikServer::connection(QHostAddress const &ip, int port)";
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip && connection->peerPort() == port) {
 			return connection;
@@ -86,6 +87,7 @@ Connection *TrikServer::connection(QHostAddress const &ip, int port) const
 
 Connection *TrikServer::connection(QHostAddress const &ip) const
 {
+	qDebug() << "TrikServer::connection(QHostAddress const &ip)";
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip) {
 			return connection;
