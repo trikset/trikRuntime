@@ -40,6 +40,9 @@ public:
 	Q_INVOKABLE bool hasMessages();
 	Q_INVOKABLE QString receive();
 
+signals:
+	void newMessage(QString const &message);
+
 private slots:
 	void onNewConnection(QHostAddress const &ip, int clientPort, int serverPort, int hullNumber);
 	void onConnectionInfo(QHostAddress const &ip, int port, int hullNumber);

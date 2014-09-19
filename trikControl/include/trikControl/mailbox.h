@@ -42,6 +42,9 @@ public slots:
 	bool hasMessages();
 	QString receive();
 
+signals:
+	void newMessage(QString const &message);
+
 private:
 	/// Server that works in separate thread.
 	QScopedPointer<MailboxServer> mWorker;

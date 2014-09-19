@@ -7,6 +7,8 @@ using namespace trikControl;
 Mailbox::Mailbox(int port)
 	: mWorker(new MailboxServer(port, mReceiveWaitCondition))
 {
+	QObject::connect(mWorker.data(), SIGNAL(newMessage(QString)), this, SIGNAL(newMessage(QString)));
+
 	mWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
 }

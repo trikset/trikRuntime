@@ -254,6 +254,8 @@ void MailboxServer::onNewData(QHostAddress const &ip, int port, QByteArray const
 	mMessagesQueueLock.unlock();
 
 	mReceiveWaitCondition.wakeOne();
+
+	emit newMessage(QString(data));
 }
 
 bool MailboxServer::hasMessages()
