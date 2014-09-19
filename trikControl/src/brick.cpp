@@ -181,7 +181,9 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 				);
 	}
 
-	mMailbox.reset(new Mailbox(8889, 0));
+	if (mConfigurer->hasMailbox()) {
+		mMailbox.reset(new Mailbox(mConfigurer->mailboxServerPort()));
+	}
 }
 
 Brick::~Brick()

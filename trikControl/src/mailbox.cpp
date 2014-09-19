@@ -3,14 +3,15 @@
 #include "src/mailboxConnection.h"
 
 #include <QtNetwork/QNetworkInterface>
+#include <QtCore/QSettings>
 
 using namespace trikControl;
 
-Mailbox::Mailbox(int port, int hullNumber)
+Mailbox::Mailbox(int port)
 	: trikKernel::TrikServer([this] () { return connectionFactory(); })
-	, mHullNumber(hullNumber)
-	, mPort(port)
+	, mHullNumber(0)
 	, mMyIp(determineMyIp())
+	, mMyPort(port)
 {
 	qRegisterMetaType<QHostAddress>("QHostAddress");
 
@@ -18,26 +19,38 @@ Mailbox::Mailbox(int port, int hullNumber)
 		qDebug() << "Something is wrong, self IP address is invalid";
 	}
 
+	loadSettings();
+
 	startServer(port);
+
+	if (!mServer.isNull() && mServer != mMyIp) {
+		connect(mServer, mServerPort);
+	}
 }
 
 void Mailbox::setHullNumber(int hullNumber)
 {
 	mHullNumber = hullNumber;
+	saveSettings();
 }
 
 void Mailbox::connect(QString const &ip, int port)
 {
 	qDebug() << "Mailbox::connect, thread" << thread();
 
-	auto const ipAddress = QHostAddress(ip);
+	if (mServer.toString() != ip || mServerPort != port) {
+		mServer = QHostAddress(ip);
+		mServerPort = port;
 
-	if (ipAddress == mMyIp) {
+		saveSettings();
+	}
+
+	if (mServer == mMyIp) {
 		// Do not connect to ourselves.
 		return;
 	}
 
-	connect(ipAddress, port);
+	connect(mServer, mServerPort);
 }
 
 trikKernel::Connection *Mailbox::connect(QHostAddress const &ip, int port)
@@ -51,7 +64,7 @@ trikKernel::Connection *Mailbox::connect(QHostAddress const &ip, int port)
 	QMetaObject::invokeMethod(connection, "onConnect"
 			, Q_ARG(QHostAddress const &, ip)
 			, Q_ARG(int, port)
-			, Q_ARG(int, mPort)
+			, Q_ARG(int, mMyPort)
 			, Q_ARG(int, mHullNumber)
 			);
 
@@ -204,7 +217,10 @@ void Mailbox::onConnectionInfo(QHostAddress const &ip, int port, int hullNumber)
 void Mailbox::send(int hullNumber, QVariant const &message)
 {
 	mKnownRobotsLock.lockForRead();
-	for (auto const &endpoint : mKnownRobots.values(hullNumber)) {
+	auto const endpoints = mKnownRobots.values(hullNumber);
+	mKnownRobotsLock.unlock();
+
+	for (auto const &endpoint : endpoints) {
 		auto const connectionObject = prepareConnection(endpoint.ip);
 		if (connectionObject == nullptr) {
 			/// @todo Connection dead, remove this robot from known.
@@ -217,8 +233,6 @@ void Mailbox::send(int hullNumber, QVariant const &message)
 					);
 		}
 	}
-
-	mKnownRobotsLock.unlock();
 }
 
 void Mailbox::onNewData(QHostAddress const &ip, int port, QByteArray const &data)
@@ -238,6 +252,7 @@ bool Mailbox::hasMessages()
 	mMessagesQueueLock.lockForRead();
 	bool const result = !mMessagesQueue.isEmpty();
 	mMessagesQueueLock.unlock();
+
 	return result;
 }
 
@@ -246,6 +261,22 @@ QString Mailbox::receive()
 	mMessagesQueueLock.lockForWrite();
 	QByteArray const result = mMessagesQueue.dequeue();
 	mMessagesQueueLock.unlock();
+
 	return QString(result);
 }
 
+void Mailbox::loadSettings()
+{
+	QSettings settings("localSettings.ini", QSettings::IniFormat);
+	mHullNumber = settings.value("hullNumber", 0).toInt();
+	mServer = QHostAddress(settings.value("server", mMyIp.toString()).toString());
+	mServerPort = settings.value("serverPort", mMyPort).toInt();
+}
+
+void Mailbox::saveSettings()
+{
+	QSettings settings("localSettings.ini", QSettings::IniFormat);
+	settings.setValue("hullNumber", mHullNumber);
+	settings.setValue("server", mServer.toString());
+	settings.setValue("serverPort", mServerPort);
+}

@@ -31,7 +31,7 @@ class TRIKCONTROL_EXPORT Mailbox : public trikKernel::TrikServer
 	Q_OBJECT
 
 public:
-	Mailbox(int port, int hullNumber);
+	Mailbox(int port);
 	void setHullNumber(int hullNumber);
 
 public slots:
@@ -56,9 +56,14 @@ private:
 
 	trikKernel::Connection *prepareConnection(QHostAddress const &ip);
 
+	void loadSettings();
+	void saveSettings();
+
 	int mHullNumber;
-	int const mPort;
 	QHostAddress const mMyIp;
+	int const mMyPort;
+	QHostAddress mServer;
+	int mServerPort;
 
 	struct Endpoint {
 		QHostAddress ip;

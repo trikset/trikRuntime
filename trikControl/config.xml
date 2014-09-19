@@ -215,4 +215,8 @@ Use it if JCx ports are configured to work as PWM signal generators.
 
 	<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
 	<gamepad port="4444" disabled="false" />
+
+	<!-- Settings for mailbox server (which enables communication between robots) -->
+	<mailbox port="8889" disabled="false" />
+
 </config>
