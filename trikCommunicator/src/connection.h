@@ -42,6 +42,9 @@ public:
 	/// @param trikScriptRunner - instance of script runner object.
 	explicit Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner);
 
+	/// Writes a given message to inner socket.
+	void sendMessage(QString const &message);
+
 signals:
 	/// Emitted when command to run a script from a file is received.
 	void startedScript(QString const &scriptFileName);

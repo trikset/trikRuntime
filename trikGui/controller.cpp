@@ -88,6 +88,7 @@ void Controller::scriptExecutionCompleted(QString const &error)
 		mRunningWidget = NULL;
 	} else if (!error.isEmpty()) {
 		mRunningWidget->showError(error);
+		mCommunicator.sendMessage("error: " + error);
 	}
 }
 

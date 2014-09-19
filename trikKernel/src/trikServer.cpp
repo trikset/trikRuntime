@@ -47,6 +47,13 @@ void TrikServer::startServer(int const &port)
 	}
 }
 
+void TrikServer::sendMessage(QString const &message)
+{
+	for (Connection * const connection : mConnections.values()) {
+		connection->onSend(message.toLocal8Bit());
+	}
+}
+
 void TrikServer::incomingConnection(qintptr socketDescriptor)
 {
 	qDebug() << "New connection, socket descriptor: " << socketDescriptor;

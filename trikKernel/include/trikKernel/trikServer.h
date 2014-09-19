@@ -41,6 +41,9 @@ public:
 	/// Starts listening given port on all network interfaces.
 	void startServer(int const &port);
 
+	/// Broadcasts message across all opened connections.
+	void sendMessage(QString const &message);
+
 protected:
 	void incomingConnection(qintptr socketDescriptor) override;
 
