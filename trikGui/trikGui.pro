@@ -15,26 +15,28 @@
 include(../global.pri)
 
 HEADERS += \
-	$$PWD/fileManagerWidget.h \
-	$$PWD/runningWidget.h \
-	$$PWD/wiFiClientWidget.h \
-	$$PWD/sensorsSelectionWidget.h \
-	$$PWD/startWidget.h \
-	$$PWD/trikGuiApplication.h \
+	$$PWD/backgroundWidget.h \
+	$$PWD/batteryIndicator.h \
 	$$PWD/controller.h \
+	$$PWD/fileManagerWidget.h \
+	$$PWD/mainWidget.h \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
-	$$PWD/sensorIndicator.h \
-	$$PWD/sensorsWidget.h \
-	$$PWD/wiFiModeWidget.h \
-	$$PWD/wiFiInitWidget.h \
-	$$PWD/wiFiAPWidget.h \
+	$$PWD/numberSelectionWidget.h \
 	$$PWD/rcReader.h \
-	$$PWD/trikGuiMessageBox.h \
+	$$PWD/communicationSettingsWidget.h \
+	$$PWD/runningWidget.h \
+	$$PWD/sensorIndicator.h \
+	$$PWD/sensorsSelectionWidget.h \
+	$$PWD/sensorsWidget.h \
+	$$PWD/startWidget.h \
+	$$PWD/trikGuiApplication.h \
 	$$PWD/trikGuiDialog.h \
-	$$PWD/backgroundWidget.h \
-	$$PWD/mainWidget.h \
-	$$PWD/batteryIndicator.h \
+	$$PWD/trikGuiMessageBox.h \
+	$$PWD/wiFiAPWidget.h \
+	$$PWD/wiFiClientWidget.h \
+	$$PWD/wiFiInitWidget.h \
+	$$PWD/wiFiModeWidget.h \
 
 SOURCES += \
 	$$PWD/main.cpp \
@@ -47,12 +49,14 @@ SOURCES += \
 	$$PWD/controller.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
+	$$PWD/numberSelectionWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
 	$$PWD/sensorsWidget.cpp \
 	$$PWD/wiFiModeWidget.cpp \
 	$$PWD/wiFiInitWidget.cpp \
 	$$PWD/wiFiAPWidget.cpp \
 	$$PWD/rcReader.cpp \
+	$$PWD/communicationSettingsWidget.cpp \
 	$$PWD/trikGuiMessageBox.cpp \
 	$$PWD/trikGuiDialog.cpp \
 	$$PWD/backgroundWidget.cpp \

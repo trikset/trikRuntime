@@ -34,8 +34,12 @@ class MailboxServer : public trikKernel::TrikServer
 public:
 	MailboxServer(int port, QWaitCondition &receiveWaitCondition);
 
+	int hullNumber() const;
+	QHostAddress serverIp();
+
 	Q_INVOKABLE void setHullNumber(int hullNumber);
 	Q_INVOKABLE void connect(QString const &ip, int port);
+	Q_INVOKABLE void connect(QString const &ip);
 	Q_INVOKABLE void send(int hullNumber, QVariant const &message);
 	Q_INVOKABLE bool hasMessages();
 	Q_INVOKABLE QString receive();
@@ -86,6 +90,8 @@ private:
 	QQueue<QByteArray> mMessagesQueue;
 	QReadWriteLock mMessagesQueueLock;
 	QReadWriteLock mKnownRobotsLock;
+
+	QReadWriteLock mAuxiliaryInformationLock;
 
 	QWaitCondition &mReceiveWaitCondition;
 };

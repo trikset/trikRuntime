@@ -24,9 +24,24 @@ void Mailbox::setHullNumber(int hullNumber)
 	QMetaObject::invokeMethod(mWorker.data(), "setHullNumber", Q_ARG(int, hullNumber));
 }
 
+int Mailbox::hullNumber() const
+{
+	return mWorker->hullNumber();
+}
+
+QHostAddress Mailbox::serverIp() const
+{
+	return mWorker->serverIp();
+}
+
 void Mailbox::connect(QString const &ip, int port)
 {
 	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString const &, ip), Q_ARG(int, port));
+}
+
+void Mailbox::connect(QString const &ip)
+{
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString const &, ip));
 }
 
 void Mailbox::send(int hullNumber, QVariant const &message)

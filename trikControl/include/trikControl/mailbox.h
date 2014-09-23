@@ -19,6 +19,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QWaitCondition>
 #include <QtCore/QMutex>
+#include <QtNetwork/QHostAddress>
 
 #include "declSpec.h"
 
@@ -35,9 +36,13 @@ public:
 	~Mailbox() override;
 
 	void setHullNumber(int hullNumber);
+	int hullNumber() const;
+
+	QHostAddress serverIp() const;
 
 public slots:
 	void connect(QString const &ip, int port);
+	void connect(QString const &ip);
 	void send(int hullNumber, QVariant const &message);
 	bool hasMessages();
 	QString receive();

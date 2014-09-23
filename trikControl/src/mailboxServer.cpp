@@ -29,6 +29,19 @@ MailboxServer::MailboxServer(int port, QWaitCondition &receiveWaitCondition)
 	}
 }
 
+int MailboxServer::hullNumber() const
+{
+	return mHullNumber;
+}
+
+QHostAddress MailboxServer::serverIp()
+{
+	mAuxiliaryInformationLock.lockForRead();
+	auto const result = mServer;
+	mAuxiliaryInformationLock.unlock();
+	return result;
+}
+
 void MailboxServer::setHullNumber(int hullNumber)
 {
 	mHullNumber = hullNumber;
@@ -39,19 +52,35 @@ void MailboxServer::connect(QString const &ip, int port)
 {
 	qDebug() << "MailboxServer::connect, thread" << thread();
 
-	if (mServer.toString() != ip || mServerPort != port) {
+	mAuxiliaryInformationLock.lockForRead();
+	auto const server = mServer;
+	auto const serverPort = mServerPort;
+	mAuxiliaryInformationLock.unlock();
+
+	if (server.toString() != ip || serverPort != port) {
+		mAuxiliaryInformationLock.lockForWrite();
 		mServer = QHostAddress(ip);
 		mServerPort = port;
+		mAuxiliaryInformationLock.unlock();
 
 		saveSettings();
 	}
 
+	mAuxiliaryInformationLock.lockForRead();
 	if (mServer == mMyIp) {
+		mAuxiliaryInformationLock.unlock();
+
 		// Do not connect to ourselves.
 		return;
 	}
 
 	connect(mServer, mServerPort);
+	mAuxiliaryInformationLock.unlock();
+}
+
+void MailboxServer::connect(QString const &ip)
+{
+	connect(ip, mMyPort);
 }
 
 trikKernel::Connection *MailboxServer::connect(QHostAddress const &ip, int port)
@@ -278,16 +307,20 @@ QString MailboxServer::receive()
 
 void MailboxServer::loadSettings()
 {
+	mAuxiliaryInformationLock.lockForWrite();
 	QSettings settings("localSettings.ini", QSettings::IniFormat);
 	mHullNumber = settings.value("hullNumber", 0).toInt();
 	mServer = QHostAddress(settings.value("server", mMyIp.toString()).toString());
 	mServerPort = settings.value("serverPort", mMyPort).toInt();
+	mAuxiliaryInformationLock.unlock();
 }
 
 void MailboxServer::saveSettings()
 {
+	mAuxiliaryInformationLock.lockForRead();
 	QSettings settings("localSettings.ini", QSettings::IniFormat);
 	settings.setValue("hullNumber", mHullNumber);
 	settings.setValue("server", mServer.toString());
 	settings.setValue("serverPort", mServerPort);
+	mAuxiliaryInformationLock.unlock();
 }
