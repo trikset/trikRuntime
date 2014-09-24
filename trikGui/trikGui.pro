@@ -17,7 +17,9 @@ include(../global.pri)
 HEADERS += \
 	$$PWD/backgroundWidget.h \
 	$$PWD/batteryIndicator.h \
+	$$PWD/connectButton.h \
 	$$PWD/controller.h \
+	$$PWD/digitSelector.h \
 	$$PWD/fileManagerWidget.h \
 	$$PWD/mainWidget.h \
 	$$PWD/motorLever.h \
@@ -39,14 +41,16 @@ HEADERS += \
 	$$PWD/wiFiModeWidget.h \
 
 SOURCES += \
-	$$PWD/main.cpp \
+	$$PWD/digitSelector.cpp \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/runningWidget.cpp \
+	$$PWD/connectButton.cpp \
 	$$PWD/wiFiClientWidget.cpp \
 	$$PWD/sensorsSelectionWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
 	$$PWD/controller.cpp \
+	$$PWD/main.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/numberSelectionWidget.cpp \

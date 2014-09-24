@@ -32,6 +32,7 @@
 
 #include "trikGuiDialog.h"
 #include "numberSelectionWidget.h"
+#include "connectButton.h"
 
 namespace trikGui {
 
@@ -53,24 +54,18 @@ protected:
 private slots:
 	void onConnectButtonClicked();
 	void onHullNumberChanged(int newHullNumber);
+	void focusUp();
+	void focusDown();
 
 private:
-	class SpecialPushButton : public QPushButton
-	{
-	protected:
-		void keyPressEvent(QKeyEvent *event) override
-		{
-			event->ignore();
-		}
-	};
-
 	QVBoxLayout mLayout;
 	QLabel mTitle;
+	QLabel mHelpLabel;
 	QLabel mHullNumberLabel;
 	NumberSelectionWidget mHullNumberSelector;
 	QLabel mServerIpLabel;
 	NumberSelectionWidget mServerIpSelector;
-	SpecialPushButton mConnectButton;
+	ConnectButton mConnectButton;
 
 	trikControl::Brick &mBrick;
 };

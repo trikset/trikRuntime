@@ -15,37 +15,21 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtGui/QKeyEvent>
-#include <QtCore/QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
 	#include <QtGui/QLineEdit>
 #else
-	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QLineEdit>
 #endif
 
-#include "digitSelector.h"
-
 namespace trikGui {
 
-class NumberSelectionWidget : public QWidget
+class DigitSelector : public QLineEdit
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	NumberSelectionWidget(int defaultValue, int digits, int separator, int height, QWidget *parent = 0);
-
-	int value() const;
-	void setValue(int value);
-
-	bool hasFocusInside();
+	DigitSelector(bool &editingMode, int height);
 
 signals:
 	void valueChanged(int newValue);
@@ -54,18 +38,10 @@ signals:
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
-	void focusInEvent(QFocusEvent *event) override;
-
-private slots:
-	void onValueChanged();
+	void paintEvent(QPaintEvent *event) override;
 
 private:
-	QList<DigitSelector *> lineEdits() const;
-
-	QHBoxLayout mLayout;
-	int mCurrentDigit;
-	int mDigits;
-	bool mEditingMode;
+	bool &mEditingMode;
 };
 
 }

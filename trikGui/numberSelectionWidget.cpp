@@ -22,7 +22,7 @@
 
 using namespace trikGui;
 
-NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int separator, QWidget *parent)
+NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int separator, int height, QWidget *parent)
 	: QWidget(parent)
 	, mCurrentDigit(0)
 	, mDigits(digits)
@@ -34,10 +34,14 @@ NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int s
 	int separatorCounter = 1;
 
 	for (int i = 0; i < digits; ++i) {
-		auto digitSelector = new SpecialLineEdit(mEditingMode);
-		digitSelector->setMaximumWidth(18);
-		digitSelector->setReadOnly(true);
+		auto digitSelector = new DigitSelector(mEditingMode, height);
+
 		mLayout.addWidget(digitSelector);
+
+		connect(digitSelector, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged()));
+		connect(digitSelector, SIGNAL(upPressed()), this, SIGNAL(upPressed()));
+		connect(digitSelector, SIGNAL(downPressed()), this, SIGNAL(downPressed()));
+
 		if (separator != 0 && separatorCounter % separator == 0 && i != digits - 1) {
 			mLayout.addWidget(new QLabel("."));
 		}
@@ -50,8 +54,6 @@ NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int s
 	mLayout.addStretch();
 
 	setLayout(&mLayout);
-
-	setStyleSheet("background-color:lightgray");
 }
 
 bool NumberSelectionWidget::hasFocusInside()
@@ -89,8 +91,11 @@ void NumberSelectionWidget::setValue(int value)
 
 void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
+	qDebug() << "NumberSelectionWidget::keyPressEvent" << event->key();
+
 	switch (event->key()) {
 	case Qt::Key_Right: {
+		qDebug() << "Qt::Key_Right";
 		++mCurrentDigit;
 		mCurrentDigit %= mDigits;
 		lineEdits().at(mCurrentDigit)->setFocus();
@@ -98,53 +103,22 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	}
 	case Qt::Key_Left: {
+		qDebug() << "Qt::Key_Left";
 		--mCurrentDigit;
 		mCurrentDigit = (mCurrentDigit + mDigits) % mDigits;
 		lineEdits().at(mCurrentDigit)->setFocus();
 		event->accept();
 		break;
 	}
-	case Qt::Key_Up: {
-		if (!mEditingMode) {
-			event->ignore();
-			break;
-		}
-
-		auto const digitSelector = lineEdits().at(mCurrentDigit);
-		int digit = digitSelector->text().toInt();
-		digit = (digit + 1) % 10;
-		digitSelector->setText(QString::number(digit));
-		emit valueChanged(value());
-		event->accept();
-		break;
-	}
-	case Qt::Key_Down: {
-		if (!mEditingMode) {
-			event->ignore();
-			break;
-		}
-
-		auto const digitSelector = lineEdits().at(mCurrentDigit);
-		int digit = digitSelector->text().toInt();
-		digit = (digit - 1 + 10) % 10;
-		digitSelector->setText(QString::number(digit));
-		emit valueChanged(value());
-		event->accept();
-		break;
-	}
 	case Qt::Key_Return: {
+		qDebug() << "Qt::Key_Return";
 		mEditingMode = !mEditingMode;
-		if (!mEditingMode) {
-			setStyleSheet("background-color:lightgray");
-		} else {
-			setStyleSheet("background-color:palegreen");
-		}
-
 		event->accept();
 		break;
 	}
 	default:
 	{
+		qDebug() << "ignore";
 		event->ignore();
 		break;
 	}
@@ -154,18 +128,23 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 void NumberSelectionWidget::focusInEvent(QFocusEvent *event)
 {
 	Q_UNUSED(event)
-	mLayout.itemAt(mCurrentDigit + 1)->widget()->setFocus();
+	lineEdits().at(mCurrentDigit)->setFocus();
 }
 
-QList<NumberSelectionWidget::SpecialLineEdit *> NumberSelectionWidget::lineEdits() const
+QList<DigitSelector *> NumberSelectionWidget::lineEdits() const
 {
-	QList<NumberSelectionWidget::SpecialLineEdit *> result;
+	QList<DigitSelector *> result;
 	for (int i = 0; i < mLayout.count(); ++i) {
-		auto const digitSelector = dynamic_cast<SpecialLineEdit *>(mLayout.itemAt(i)->widget());
+		auto const digitSelector = dynamic_cast<DigitSelector *>(mLayout.itemAt(i)->widget());
 		if (digitSelector) {
 			result.append(digitSelector);
 		}
 	}
 
 	return result;
+}
+
+void NumberSelectionWidget::onValueChanged()
+{
+	emit valueChanged(value());
 }

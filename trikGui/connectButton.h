@@ -15,57 +15,29 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtGui/QKeyEvent>
-#include <QtCore/QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QLineEdit>
+	#include <QtGui/QPushButton>
 #else
-	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QLineEdit>
+	#include <QtWidgets/QPushButton>
 #endif
-
-#include "digitSelector.h"
 
 namespace trikGui {
 
-class NumberSelectionWidget : public QWidget
+class ConnectButton : public QPushButton
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	NumberSelectionWidget(int defaultValue, int digits, int separator, int height, QWidget *parent = 0);
-
-	int value() const;
-	void setValue(int value);
-
-	bool hasFocusInside();
+	ConnectButton();
 
 signals:
-	void valueChanged(int newValue);
 	void upPressed();
 	void downPressed();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
-	void focusInEvent(QFocusEvent *event) override;
-
-private slots:
-	void onValueChanged();
-
-private:
-	QList<DigitSelector *> lineEdits() const;
-
-	QHBoxLayout mLayout;
-	int mCurrentDigit;
-	int mDigits;
-	bool mEditingMode;
+	void paintEvent(QPaintEvent *event) override;
 };
 
 }

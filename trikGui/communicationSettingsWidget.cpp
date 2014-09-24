@@ -22,10 +22,11 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &bri
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("<b>Comm settings</b>"))
+	, mHelpLabel(tr("Press 'Enter'' to edit"))
 	, mHullNumberLabel(tr("Hull number:"))
-	, mHullNumberSelector(brick.mailbox()->hullNumber(), 2, 0, this)
+	, mHullNumberSelector(brick.mailbox()->hullNumber(), 2, 0, 40, this)
 	, mServerIpLabel(tr("Leader IP:"))
-	, mServerIpSelector(0, 6, 3, this)
+	, mServerIpSelector(0, 6, 3, 30, this)
 	, mBrick(brick)
 {
 	mConnectButton.setText(tr("Connect"));
@@ -33,6 +34,7 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &bri
 	mHullNumberSelector.setFocus();
 
 	mLayout.addWidget(&mTitle);
+	mLayout.addWidget(&mHelpLabel);
 	mLayout.addWidget(&mHullNumberLabel);
 	mLayout.addWidget(&mHullNumberSelector);
 	mLayout.addWidget(&mServerIpLabel);
@@ -48,7 +50,16 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &bri
 	setLayout(&mLayout);
 
 	connect(&mConnectButton, SIGNAL(clicked()), this, SLOT(onConnectButtonClicked()));
+	connect(&mConnectButton, SIGNAL(upPressed()), this, SLOT(focusUp()));
+	connect(&mConnectButton, SIGNAL(downPressed()), this, SLOT(focusDown()));
+
 	connect(&mHullNumberSelector, SIGNAL(valueChanged(int)), this, SLOT(onHullNumberChanged(int)));
+
+	connect(&mHullNumberSelector, SIGNAL(upPressed()), this, SLOT(focusUp()));
+	connect(&mHullNumberSelector, SIGNAL(downPressed()), this, SLOT(focusDown()));
+
+	connect(&mServerIpSelector, SIGNAL(upPressed()), this, SLOT(focusUp()));
+	connect(&mServerIpSelector, SIGNAL(downPressed()), this, SLOT(focusDown()));
 }
 
 QString CommunicationSettingsWidget::menuEntry()
@@ -62,39 +73,30 @@ void CommunicationSettingsWidget::renewFocus()
 
 void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
+	qDebug() << "NumberSelectionWidget::keyPressEvent" << event->key();
 	switch (event->key()) {
 	case Qt::Key_Up: {
-		if (mHullNumberSelector.hasFocusInside()) {
-			mConnectButton.setFocus();
-		} else if (mServerIpSelector.hasFocusInside()) {
-			mHullNumberSelector.setFocus();
-		} else {
-			mServerIpSelector.setFocus();
-		}
-
+		qDebug() << "Qt::Key_Up";
+		focusUp();
 		event->accept();
 		break;
 	}
 	case Qt::Key_Down: {
-		if (mHullNumberSelector.hasFocusInside()) {
-			mServerIpSelector.setFocus();
-		} else if (mServerIpSelector.hasFocusInside()) {
-			mConnectButton.setFocus();
-		} else {
-			mHullNumberSelector.setFocus();
-		}
-
+		qDebug() << "Qt::Key_Down";
+		focusDown();
 		event->accept();
 		break;
 	}
 	case Qt::Key_Return: {
+		qDebug() << "Qt::Key_Return";
 		mConnectButton.animateClick();
 		event->accept();
 		break;
 	}
 	default:
 	{
-		event->accept();
+		qDebug() << "default";
+		TrikGuiDialog::keyPressEvent(event);
 	}
 	}
 }
@@ -113,4 +115,26 @@ void CommunicationSettingsWidget::onConnectButtonClicked()
 void CommunicationSettingsWidget::onHullNumberChanged(int newHullNumber)
 {
 	mBrick.mailbox()->setHullNumber(newHullNumber);
+}
+
+void CommunicationSettingsWidget::focusUp()
+{
+	if (mHullNumberSelector.hasFocusInside()) {
+		mConnectButton.setFocus();
+	} else if (mServerIpSelector.hasFocusInside()) {
+		mHullNumberSelector.setFocus();
+	} else {
+		mServerIpSelector.setFocus();
+	}
+}
+
+void CommunicationSettingsWidget::focusDown()
+{
+	if (mHullNumberSelector.hasFocusInside()) {
+		mServerIpSelector.setFocus();
+	} else if (mServerIpSelector.hasFocusInside()) {
+		mConnectButton.setFocus();
+	} else {
+		mHullNumberSelector.setFocus();
+	}
 }
