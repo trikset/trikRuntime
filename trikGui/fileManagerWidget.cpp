@@ -27,7 +27,12 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	mFileSystemModel.setRootPath(QDir::rootPath());
+    QDir::setCurrent(mController.startDirPath());
+    QDir dir;
+    dir.mkdir("scripts");
+    QDir::setCurrent("scripts");
+
+    mFileSystemModel.setRootPath(QDir::rootPath());
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
 	connect(&mFileSystemModel

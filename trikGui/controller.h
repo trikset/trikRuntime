@@ -45,6 +45,8 @@ public:
 	/// Returns reference to Brick object, which provides access to low-level robot functionality.
 	trikControl::Brick &brick();
 
+    QString startDirPath();
+
 private slots:
 	void scriptExecutionCompleted(QString const &error);
 
@@ -57,6 +59,7 @@ private:
 	trikCommunicator::TrikCommunicator mCommunicator;
 
 	RunningWidget *mRunningWidget;  // Has ownership.
+    QString const &mStartDirPath;
 };
 
 }
