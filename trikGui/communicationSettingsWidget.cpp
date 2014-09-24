@@ -22,7 +22,7 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &bri
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("<b>Comm settings</b>"))
-	, mHelpLabel(tr("Press 'Enter'' to edit"))
+	, mHelpLabel(tr("Press 'Enter' to edit"))
 	, mHullNumberLabel(tr("Hull number:"))
 	, mHullNumberSelector(brick.mailbox()->hullNumber(), 2, 0, 40, this)
 	, mServerIpLabel(tr("Leader IP:"))
