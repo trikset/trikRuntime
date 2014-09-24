@@ -22,7 +22,7 @@
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
-const QString scriptsDirName = "scripts";
+QString const scriptsDirName = "scripts";
 
 FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: TrikGuiDialog(parent)
