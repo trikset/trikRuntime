@@ -31,7 +31,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mScriptRunner(mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
 	, mRunningWidget(NULL)
-    , mStartDirPath(startDirPath)
+	, mStartDirPath(startDirPath)
 {
 	connect(&mScriptRunner, SIGNAL(completed(QString)), this, SLOT(scriptExecutionCompleted(QString)));
 
@@ -80,7 +80,7 @@ trikControl::Brick &Controller::brick()
 
 QString Controller::startDirPath()
 {
-    return mStartDirPath;
+	return mStartDirPath;
 }
 
 void Controller::scriptExecutionCompleted(QString const &error)
