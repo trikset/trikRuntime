@@ -24,16 +24,29 @@
 
 namespace trikGui {
 
+/// Widget that allows to select one digit by Up/Down keys and can switch states between editing and inactive (where
+/// Up and Down keys are ignored).
 class DigitSelector : public QLineEdit
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param editingMode - reference to mode flag. If this flag is true, number is currently edited and shall be
+	///        increased/decreased by up/down buttons.
+	/// @param height - height of a digit.
 	DigitSelector(bool &editingMode, int height);
 
 signals:
+	/// Digit is changed by user.
 	void valueChanged(int newValue);
+
+	/// Widget is not in editing mode and user pressed "up". Event propagation to parent widget does not work for some
+	/// reason in this case.
 	void upPressed();
+
+	/// Widget is not in editing mode and user pressed "down". Event propagation to parent widget does not work for some
+	/// reason in this case.
 	void downPressed();
 
 protected:
@@ -41,6 +54,7 @@ protected:
 	void paintEvent(QPaintEvent *event) override;
 
 private:
+	/// Reference to editing mode flag from parent widget.
 	bool &mEditingMode;
 };
 

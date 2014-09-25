@@ -15,41 +15,53 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtGui/QKeyEvent>
-#include <QtCore/QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
 	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QLineEdit>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QLineEdit>
 #endif
 
 #include "digitSelector.h"
 
 namespace trikGui {
 
+/// Widget that allows to input integer numbers using robot keys.
 class NumberSelectionWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
+	/// @param defaultValue - number that will be shown in this widget initially.
+	/// @param digits - required quantity of selectable digits in a number.
+	/// @param separator - a number of digits that shall be separated by '.'. For example, if "separator" value is 3 and
+	///        "digits" value is 9, number will be shown as "999.999.999".
+	/// @param height - height of digits in pixels.
+	/// @param parent - parent of this widget in terms of Qt widges parent/son relations.
 	NumberSelectionWidget(int defaultValue, int digits, int separator, int height, QWidget *parent = 0);
 
+	/// Returns current entered number.
 	int value() const;
+
+	/// Sets current value. Does not emit valueChanged() signal.
 	void setValue(int value);
 
+	/// True, if widget or one of its children has keyboard input focus.
 	bool hasFocusInside();
 
 signals:
+	/// Emitted when number is changed by user.
 	void valueChanged(int newValue);
+
+	/// Widget is not in editing mode and user pressed "up". Event propagation to parent widget does not work for some
+	/// reason in this case.
 	void upPressed();
+
+	/// Widget is not in editing mode and user pressed "up". Event propagation to parent widget does not work for some
+	/// reason in this case.
 	void downPressed();
 
 protected:

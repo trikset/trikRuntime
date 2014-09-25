@@ -21,40 +21,57 @@
 
 namespace trikKernel {
 
+/// Connection protocol variants.
+enum class Protocol
+{
+	/// Message is in form "<data length in bytes>:<data>".
+	messageLength
+
+	/// Message is in form "<data>\n".
+	, endOfLineSeparator
+};
+
 /// Abstract class that serves one client of TrikServer. Meant to work in separate thread. Creates its own socket and
 /// handles all incoming messages.
-class Connection : public QObject {
+class Connection : public QObject
+{
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param connectionProtocol - protocol used by this connection.
+	explicit Connection(Protocol connectionProtocol);
+
+	/// Returns peer address of a connection, if it is open, or empty QHostAddress if connection is not established yet.
 	QHostAddress peerAddress() const;
+
+	/// Returns peer port of a connection, if it is open, or -1 if connection is not established yet.
 	int peerPort() const;
 
-public slots:
 	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
 	/// thread.
 	/// @param socketDescriptor - native socket descriptor.
-	void onInit(int socketDescriptor);
+	Q_INVOKABLE void init(int socketDescriptor);
 
-	void onSend(QByteArray const &data);
+	/// Sends given byte array to peer.
+	Q_INVOKABLE void send(QByteArray const &data);
 
 protected:
 	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
 	/// thread.
 	/// @param ip - target ip address.
 	/// @param port - target port.
-	void onInit(QHostAddress const &ip, int port);
-
+	void init(QHostAddress const &ip, int port);
 
 private slots:
 	/// New data is ready on a socket.
 	void onReadyRead();
 
 	/// Socket is closed for some reason.
-	void disconnected();
+	void onDisconnect();
 
 	/// Socket is failed to connect or some other error occured.
-	void errored(QAbstractSocket::SocketError error);
+	void onError(QAbstractSocket::SocketError error);
 
 private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
@@ -72,6 +89,8 @@ private:
 
 	/// Declared size of a current message.
 	int mExpectedBytes = 0;
+
+	Protocol mProtocol;
 };
 
 }

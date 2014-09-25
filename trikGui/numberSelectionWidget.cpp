@@ -14,11 +14,13 @@
 
 #include "numberSelectionWidget.h"
 
-#include <QtCore/QString>
-#include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 
-#include <trikControl/sensor.h>
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QLabel>
+#else
+	#include <QtWidgets/QLabel>
+#endif
 
 using namespace trikGui;
 
@@ -91,11 +93,8 @@ void NumberSelectionWidget::setValue(int value)
 
 void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
-	qDebug() << "NumberSelectionWidget::keyPressEvent" << event->key();
-
 	switch (event->key()) {
 	case Qt::Key_Right: {
-		qDebug() << "Qt::Key_Right";
 		++mCurrentDigit;
 		mCurrentDigit %= mDigits;
 		lineEdits().at(mCurrentDigit)->setFocus();
@@ -103,7 +102,6 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	}
 	case Qt::Key_Left: {
-		qDebug() << "Qt::Key_Left";
 		--mCurrentDigit;
 		mCurrentDigit = (mCurrentDigit + mDigits) % mDigits;
 		lineEdits().at(mCurrentDigit)->setFocus();
@@ -111,14 +109,12 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	}
 	case Qt::Key_Return: {
-		qDebug() << "Qt::Key_Return";
 		mEditingMode = !mEditingMode;
 		event->accept();
 		break;
 	}
 	default:
 	{
-		qDebug() << "ignore";
 		event->ignore();
 		break;
 	}

@@ -15,6 +15,7 @@
 #include "communicationSettingsWidget.h"
 
 #include <QtCore/QRegExp>
+#include <QtGui/QKeyEvent>
 
 using namespace trikGui;
 
@@ -22,11 +23,12 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &bri
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("<b>Comm settings</b>"))
-	, mHelpLabel(tr("Press 'Enter' to edit"))
+	, mSelectorsHelpLabel(tr("(Press 'Enter' to edit)"))
 	, mHullNumberLabel(tr("Hull number:"))
-	, mHullNumberSelector(brick.mailbox()->hullNumber(), 2, 0, 40, this)
+	, mHullNumberSelector(brick.mailbox()->myHullNumber(), 2, 0, 35, this)
 	, mServerIpLabel(tr("Leader IP:"))
-	, mServerIpSelector(0, 6, 3, 30, this)
+	, mIpHelpLabel(tr("(last two numbers)"))
+	, mServerIpSelector(0, 6, 3, 25, this)
 	, mBrick(brick)
 {
 	mConnectButton.setText(tr("Connect"));
@@ -34,18 +36,31 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &bri
 	mHullNumberSelector.setFocus();
 
 	mLayout.addWidget(&mTitle);
-	mLayout.addWidget(&mHelpLabel);
+	mLayout.addWidget(&mSelectorsHelpLabel);
 	mLayout.addWidget(&mHullNumberLabel);
 	mLayout.addWidget(&mHullNumberSelector);
 	mLayout.addWidget(&mServerIpLabel);
+	mLayout.addWidget(&mIpHelpLabel);
 	mLayout.addWidget(&mServerIpSelector);
 	mLayout.addWidget(&mConnectButton);
 
+	QFont helpFont = mSelectorsHelpLabel.font();
+	helpFont.setPixelSize(helpFont.pixelSize() - 7);
+	mSelectorsHelpLabel.setFont(helpFont);
+	mIpHelpLabel.setFont(helpFont);
+
+	mSelectorsHelpLabel.setAlignment(Qt::AlignHCenter);
+
 	auto const hostAddressString = brick.mailbox()->serverIp().toString();
-	auto const parsedAddress = hostAddressString.split('.');
-	Q_ASSERT(parsedAddress.size() == 4);
-	auto hostAddress = parsedAddress[2].toInt() * 1000 + parsedAddress[3].toInt();
-	mServerIpSelector.setValue(hostAddress);
+
+	if (hostAddressString == QHostAddress().toString()) {
+		mServerIpSelector.setValue(0);
+	} else {
+		auto const parsedAddress = hostAddressString.split('.');
+		Q_ASSERT(parsedAddress.size() == 4);
+		auto hostAddress = parsedAddress[2].toInt() * 1000 + parsedAddress[3].toInt();
+		mServerIpSelector.setValue(hostAddress);
+	}
 
 	setLayout(&mLayout);
 
@@ -73,29 +88,24 @@ void CommunicationSettingsWidget::renewFocus()
 
 void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
-	qDebug() << "NumberSelectionWidget::keyPressEvent" << event->key();
 	switch (event->key()) {
 	case Qt::Key_Up: {
-		qDebug() << "Qt::Key_Up";
 		focusUp();
 		event->accept();
 		break;
 	}
 	case Qt::Key_Down: {
-		qDebug() << "Qt::Key_Down";
 		focusDown();
 		event->accept();
 		break;
 	}
 	case Qt::Key_Return: {
-		qDebug() << "Qt::Key_Return";
 		mConnectButton.animateClick();
 		event->accept();
 		break;
 	}
 	default:
 	{
-		qDebug() << "default";
 		TrikGuiDialog::keyPressEvent(event);
 	}
 	}
@@ -103,7 +113,12 @@ void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 void CommunicationSettingsWidget::onConnectButtonClicked()
 {
-	QStringList result = mBrick.mailbox()->serverIp().toString().split('.');
+	QStringList result = mBrick.mailbox()->myIp().toString().split('.');
+	if (result.size() != 4) {
+		/// @todo Properly notify user that the robot is not connected.
+		return;
+	}
+
 	QString const ipSelectorValue = QString("%1").arg(mServerIpSelector.value(), 6, 10, QChar('0'));
 	QString const thirdPart = ipSelectorValue.left(3).replace(QRegExp("^0+"), "");
 	QString const fourthPart = ipSelectorValue.mid(3).replace(QRegExp("^0+"), "");

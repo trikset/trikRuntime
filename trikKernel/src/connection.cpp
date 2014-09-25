@@ -19,10 +19,16 @@
 
 using namespace trikKernel;
 
+Connection::Connection(Protocol connectionProtocol)
+	: mProtocol(connectionProtocol)
+{
+}
+
 QHostAddress Connection::peerAddress() const
 {
 	if (!mSocket) {
 		qDebug() << "Connection::peerAddress() called on empty socket, thread:" << thread();
+		Q_ASSERT(false);
 	}
 
 	return mSocket->peerAddress();
@@ -32,46 +38,47 @@ int Connection::peerPort() const
 {
 	if (!mSocket) {
 		qDebug() << "Connection::peerPort() called on empty socket, thread:" << thread();
+		Q_ASSERT(false);
 	}
 
 	return mSocket->peerPort();
 }
 
-void Connection::onInit(QHostAddress const &ip, int port)
+void Connection::init(QHostAddress const &ip, int port)
 {
-	qDebug() << "Connection::onInit(), thread:" << thread();
-	qDebug() << "Connection::onInit(" << ip << ", " << port << ")";
-
-	qDebug() << "Opening socket...";
 	mSocket.reset(new QTcpSocket());
 
 	connectSlots();
 
-	qDebug() << "Connecting...";
-
 	mSocket->connectToHost(ip, port);
 
-	mSocket->waitForConnected();
-
-	qDebug() << "Done!";
+	if (!mSocket->waitForConnected()) {
+		qDebug() << "Connection to" << ip << ":" << port << "failed";
+		thread()->quit();
+	}
 }
 
-void Connection::onSend(QByteArray const &data)
+void Connection::send(QByteArray const &data)
 {
-	qDebug() << "Connection::onSend(), thread:" << thread();
-	qDebug() << "Sending to" << peerAddress() << ":" << peerPort() << ":" << data;
+	if (mSocket->state() != QAbstractSocket::ConnectedState) {
+		qDebug() << "Trying to send through unconnected socket, message is not delivered";
+		return;
+	}
 
-	QByteArray message = QByteArray::number(data.size()) + ':' + data;
+	qDebug() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 
-	mSocket->write(message);
+	QByteArray const message = mProtocol == Protocol::messageLength
+			? QByteArray::number(data.size()) + ':' + data
+			: data + '\n';
 
-	qDebug() << "Sending done";
+	qint64 const sentBytes = mSocket->write(message);
+	if (sentBytes != message.size()) {
+		qDebug() << "Failed to send message" << message << ", " << sentBytes << "sent.";
+	}
 }
 
-void Connection::onInit(int socketDescriptor)
+void Connection::init(int socketDescriptor)
 {
-	qDebug() << "Connection::onInit(" << socketDescriptor << ")";
-
 	mSocket.reset(new QTcpSocket());
 
 	if (!mSocket->setSocketDescriptor(socketDescriptor)) {
@@ -84,16 +91,12 @@ void Connection::onInit(int socketDescriptor)
 
 void Connection::onReadyRead()
 {
-	qDebug() << "Connection::onReadyRead(), thread:" << thread();
-
 	if (!mSocket || !mSocket->isValid()) {
 		return;
 	}
 
 	QByteArray const &data = mSocket->readAll();
 	mBuffer.append(data);
-
-	qDebug() << "Connection::onReadyRead(), after mBuffer.append(data); thread:" << thread();
 
 	qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 
@@ -102,51 +105,71 @@ void Connection::onReadyRead()
 
 void Connection::processBuffer()
 {
-	while (!mBuffer.isEmpty()) {
-		if (mExpectedBytes == 0) {
-			// Determining the length of a message.
-			int const delimiterIndex = mBuffer.indexOf(':');
-			if (delimiterIndex == -1) {
-				// We did not receive full message length yet.
-				return;
-			} else {
-				QByteArray const length = mBuffer.left(delimiterIndex);
-				mBuffer = mBuffer.mid(delimiterIndex + 1);
-				bool ok;
-				mExpectedBytes = length.toInt(&ok);
-				if (!ok) {
-					qDebug() << "Malformed message, can not determine message length from this:" << length;
-					mExpectedBytes = 0;
+	switch (mProtocol) {
+	case Protocol::messageLength:
+	{
+		while (!mBuffer.isEmpty()) {
+			if (mExpectedBytes == 0) {
+				// Determining the length of a message.
+				int const delimiterIndex = mBuffer.indexOf(':');
+				if (delimiterIndex == -1) {
+					// We did not receive full message length yet.
+					return;
+				} else {
+					QByteArray const length = mBuffer.left(delimiterIndex);
+					mBuffer = mBuffer.mid(delimiterIndex + 1);
+					bool ok;
+					mExpectedBytes = length.toInt(&ok);
+					if (!ok) {
+						qDebug() << "Malformed message, can not determine message length from this:" << length;
+						mExpectedBytes = 0;
+					}
 				}
-			}
-		} else {
-			if (mBuffer.size() >= mExpectedBytes) {
-				QByteArray const message = mBuffer.left(mExpectedBytes);
-				mBuffer = mBuffer.mid(mExpectedBytes);
-
-				processData(message);
-
-				mExpectedBytes = 0;
 			} else {
-				// We don't have all message yet.
-				return;
+				if (mBuffer.size() >= mExpectedBytes) {
+					QByteArray const message = mBuffer.left(mExpectedBytes);
+					mBuffer = mBuffer.mid(mExpectedBytes);
+
+					processData(message);
+
+					mExpectedBytes = 0;
+				} else {
+					// We don't have all message yet.
+					return;
+				}
 			}
 		}
 	}
+	case Protocol::endOfLineSeparator:
+	{
+		if (mBuffer.contains('\n')) {
+			auto const messages = mBuffer.split('\n');
+			for (int i = 0; i < messages.size() - 1; ++i) {
+				processData(messages.at(i));
+			}
+
+			mBuffer = messages.last();
+		}
+	}
+	}
 }
 
-void Connection::disconnected()
+void Connection::onDisconnect()
 {
-	qDebug() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
+	qDebug() << "Connection disconnected.";
 
 	thread()->quit();
 }
 
-void Connection::errored(QAbstractSocket::SocketError error)
+void Connection::onError(QAbstractSocket::SocketError error)
 {
 	Q_UNUSED(error)
 
-	qDebug() << "Connection" << mSocket->socketDescriptor() << "errored.";
+	if (error == QAbstractSocket::RemoteHostClosedError) {
+		qDebug() << "Connection" << mSocket->socketDescriptor() << ": remote host closed";
+	} else {
+		qDebug() << "Connection" << mSocket->socketDescriptor() << "errored.";
+	}
 
 	thread()->quit();
 }
@@ -154,7 +177,7 @@ void Connection::errored(QAbstractSocket::SocketError error)
 void Connection::connectSlots()
 {
 	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(disconnected()));
+	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(onDisconnect()));
 	connect(mSocket.data(), SIGNAL(error(QAbstractSocket::SocketError))
-			, this, SLOT(errored(QAbstractSocket::SocketError)));
+			, this, SLOT(onError(QAbstractSocket::SocketError)));
 }

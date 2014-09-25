@@ -43,14 +43,14 @@ void TrikServer::startServer(int const &port)
 	if (!listen(QHostAddress::Any, port)) {
 		qDebug() << "Can not start server on port " << port;
 	} else {
-		qDebug() << "Server on port" << port<< "started";
+		qDebug() << "Server on port" << port << "started";
 	}
 }
 
 void TrikServer::sendMessage(QString const &message)
 {
 	for (Connection * const connection : mConnections.values()) {
-		connection->onSend(message.toLocal8Bit());
+		connection->send(message.toUtf8());
 	}
 }
 
@@ -61,13 +61,11 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 
-	QMetaObject::invokeMethod(connectionWorker, "onInit", Q_ARG(int, socketDescriptor));
+	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor));
 }
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
-	qDebug() << "TrikServer::startConnection";
-
 	QThread * const connectionThread = new QThread();
 
 	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
@@ -82,7 +80,6 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 
 Connection *TrikServer::connection(QHostAddress const &ip, int port) const
 {
-	qDebug() << "TrikServer::connection(QHostAddress const &ip, int port)";
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip && connection->peerPort() == port) {
 			return connection;
@@ -94,7 +91,6 @@ Connection *TrikServer::connection(QHostAddress const &ip, int port) const
 
 Connection *TrikServer::connection(QHostAddress const &ip) const
 {
-	qDebug() << "TrikServer::connection(QHostAddress const &ip)";
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip) {
 			return connection;

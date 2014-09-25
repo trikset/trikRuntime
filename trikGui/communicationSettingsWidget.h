@@ -20,12 +20,10 @@
 	#include <QtGui/QWidget>
 	#include <QtGui/QVBoxLayout>
 	#include <QtGui/QLabel>
-	#include <QtGui/QPushButton>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QVBoxLayout>
 	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QPushButton>
 #endif
 
 #include <trikControl/brick.h>
@@ -36,37 +34,69 @@
 
 namespace trikGui {
 
+/// Widget that is used to configure settings of robot group communication via mailboxes.
 class CommunicationSettingsWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param brick - reference to TRIKControl brick object.
+	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
 	CommunicationSettingsWidget(trikControl::Brick &brick, QWidget *parent = 0);
 
+	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
 
 public slots:
 	void renewFocus() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
+	/// Called when 'Connect' button is pressed, initiates connection to leader robot.
 	void onConnectButtonClicked();
+
+	/// Called when hull number of this robot is changed. Hull number is stored in local settings, but used only after
+	/// reconnect.
 	void onHullNumberChanged(int newHullNumber);
+
+	/// Called by child widgets when they need to move input focus one widget up.
 	void focusUp();
+
+	/// Called by child widgets when they need to move input focus one widget down.
 	void focusDown();
 
 private:
+	/// Main layout of this widget.
 	QVBoxLayout mLayout;
+
+	/// Title label.
 	QLabel mTitle;
-	QLabel mHelpLabel;
+
+	/// Help about widget number selectors.
+	QLabel mSelectorsHelpLabel;
+
+	/// Label for hull number selector.
 	QLabel mHullNumberLabel;
+
+	/// Hull number selector widget.
 	NumberSelectionWidget mHullNumberSelector;
+
+	/// Label for server IP selector.
 	QLabel mServerIpLabel;
+
+	/// Help about server IP selector.
+	QLabel mIpHelpLabel;
+
+	/// Selector that allows to select last 6 digits of lead robot IP.
 	NumberSelectionWidget mServerIpSelector;
+
+	/// Button that initiates connection to lead robot.
 	ConnectButton mConnectButton;
 
+	/// Reference to TRIKControl brick object.
 	trikControl::Brick &mBrick;
 };
 

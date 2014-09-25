@@ -7,7 +7,7 @@ using namespace trikControl;
 Mailbox::Mailbox(int port)
 	: mWorker(new MailboxServer(port, mReceiveWaitCondition))
 {
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(QString)), this, SIGNAL(newMessage(QString)));
+	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
 
 	mWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
@@ -24,7 +24,7 @@ void Mailbox::setHullNumber(int hullNumber)
 	QMetaObject::invokeMethod(mWorker.data(), "setHullNumber", Q_ARG(int, hullNumber));
 }
 
-int Mailbox::hullNumber() const
+int Mailbox::myHullNumber() const
 {
 	return mWorker->hullNumber();
 }
@@ -32,6 +32,11 @@ int Mailbox::hullNumber() const
 QHostAddress Mailbox::serverIp() const
 {
 	return mWorker->serverIp();
+}
+
+QHostAddress Mailbox::myIp() const
+{
+	return mWorker->myIp();
 }
 
 void Mailbox::connect(QString const &ip, int port)
@@ -44,10 +49,14 @@ void Mailbox::connect(QString const &ip)
 	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString const &, ip));
 }
 
-void Mailbox::send(int hullNumber, QVariant const &message)
+void Mailbox::send(int hullNumber, QString const &message)
 {
-	qDebug() << "Mailbox::send";
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(QVariant const &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(QString const &, message));
+}
+
+void Mailbox::send(QString const &message)
+{
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(QString const &, message));
 }
 
 bool Mailbox::hasMessages()
@@ -57,8 +66,9 @@ bool Mailbox::hasMessages()
 
 QString Mailbox::receive()
 {
-	qDebug() << "Mailbox::receive()";
 	QString result;
+
+	/// @todo Do not block thread entirely. It will make impossible to interrupt a program from QReal.
 	mReceiveMutex.lock();
 	if (!mWorker->hasMessages()) {
 		mReceiveWaitCondition.wait(&mReceiveMutex);

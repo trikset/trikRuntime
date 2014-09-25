@@ -14,16 +14,10 @@
 
 #include "connectButton.h"
 
-#include <QtCore/QString>
-#include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPainter>
 
 using namespace trikGui;
-
-ConnectButton::ConnectButton()
-{
-}
 
 void ConnectButton::keyPressEvent(QKeyEvent *event)
 {

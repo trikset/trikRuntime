@@ -34,6 +34,8 @@ class TrikServer : public QTcpServer
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param connectionFactory - function that provides actual connection objects.
 	explicit TrikServer(std::function<Connection *()> const &connectionFactory);
 
 	~TrikServer() override;
@@ -50,7 +52,13 @@ protected:
 	/// Launches given connection in a separate thread. Takes ownership over connectionWorker object.
 	void startConnection(Connection * const connectionWorker);
 
+	/// Searches connection to given IP and port in a list of all open connections. Note that if connection is added
+	/// by startConnection() call but not finished to open yet, it will not be found.
 	Connection *connection(QHostAddress const &ip, int port) const;
+
+	/// Searches connection to given IP and any port in a list of all open connections. Will return arbitrary matching
+	/// connection if there are more than one connection with this IP. Note that if connection is added
+	/// by startConnection() call but not finished to open yet, it will not be found.
 	Connection *connection(QHostAddress const &ip) const;
 
 private slots:
@@ -60,6 +68,8 @@ private slots:
 private:
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
 	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.
+
+	/// Function that provides actual connection objects.
 	std::function<Connection *()> mConnectionFactory;
 };
 

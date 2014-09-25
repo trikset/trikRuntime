@@ -24,15 +24,18 @@
 
 namespace trikGui {
 
+/// Somewhat tuned button for communication settings widget.
 class ConnectButton : public QPushButton
 {
 	Q_OBJECT
 
-public:
-	ConnectButton();
-
 signals:
+	/// Since key presses for Up and Down buttons are not propagated properly to parent widget on robot, we need to
+	/// emulate them by signals.
 	void upPressed();
+
+	/// Since key presses for Up and Down buttons are not propagated properly to parent widget on robot, we need to
+	/// emulate them by signals.
 	void downPressed();
 
 protected:

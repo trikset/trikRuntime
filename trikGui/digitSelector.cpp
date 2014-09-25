@@ -14,8 +14,6 @@
 
 #include "digitSelector.h"
 
-#include <QtCore/QString>
-#include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QPainter>
 
@@ -34,7 +32,6 @@ DigitSelector::DigitSelector(bool &editingMode, int height)
 
 void DigitSelector::keyPressEvent(QKeyEvent *event)
 {
-	qDebug() << "QWidget::keyPressEvent(event);";
 	switch (event->key()) {
 	case Qt::Key_Up: {
 		if (!mEditingMode) {

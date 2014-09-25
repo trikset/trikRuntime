@@ -27,25 +27,58 @@
 
 namespace trikControl {
 
+/// Worker object for mailbox functionality. It is a server that is supposed to be run in a separate thread and
+/// it allows to handle a number of connections, keeping them open if possible or attempting to reestablish them if
+/// they errored.
+///
+/// Uses localSettings.ini settings file, keys:
+/// hullNumber - hull number of this robot.
+/// server - IP of a robot we last connected to.
+/// serverPort - mailbox port of a robot we last connected to.
 class MailboxServer : public trikKernel::TrikServer
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param port - a port for mailbox server.
+	/// @param receiveWaitCondition - reference to a wait condition that is shared with "frontend" mailbox object
+	///        and is used to block script execution on receive() call until new message arrives.
 	MailboxServer(int port, QWaitCondition &receiveWaitCondition);
 
+	/// Returns hull number of this robot.
 	int hullNumber() const;
+
+	/// Returns IP of leader robot to which we connected last.
 	QHostAddress serverIp();
 
+	/// Returns our own IP address or empty QHostAddress if we have none.
+	QHostAddress myIp();
+
+	/// Sets hull number for this robot and notifies all known robots about change.
 	Q_INVOKABLE void setHullNumber(int hullNumber);
+
+	/// Connects to robot by IP and port.
 	Q_INVOKABLE void connect(QString const &ip, int port);
+
+	/// Connects to robot by IP and uses port of local mailbox server as a port on remote robot.
 	Q_INVOKABLE void connect(QString const &ip);
-	Q_INVOKABLE void send(int hullNumber, QVariant const &message);
+
+	/// Sends message to a robot with given hull number.
+	Q_INVOKABLE void send(int hullNumber, QString const &message);
+
+	/// Sends message to all known robots.
+	Q_INVOKABLE void send(QString const &message);
+
+	/// Returns true if there are incoming messages.
 	Q_INVOKABLE bool hasMessages();
+
+	/// Returns one incoming message or empty string if there are none.
 	Q_INVOKABLE QString receive();
 
 signals:
-	void newMessage(QString const &message);
+	/// Emitted when new message was received from a robot with given hull number.
+	void newMessage(int senderHullNumber, QString const &message);
 
 private slots:
 	void onNewConnection(QHostAddress const &ip, int clientPort, int serverPort, int hullNumber);
@@ -66,10 +99,12 @@ private:
 	void loadSettings();
 	void saveSettings();
 
+	void forEveryConnection(std::function<void(trikKernel::Connection *)> method, int hullNumber = -1);
+
 	int mHullNumber;
 	QHostAddress const mMyIp;
 	int const mMyPort;
-	QHostAddress mServer;
+	QHostAddress mServerIp;
 	int mServerPort;
 
 	struct Endpoint {

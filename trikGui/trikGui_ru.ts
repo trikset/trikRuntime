@@ -25,7 +25,15 @@
     </message>
     <message>
         <source>Press &apos;Enter&apos; to edit</source>
-        <translation>&apos;Enter&apos; для изменения</translation>
+        <translation type="obsolete">&apos;Enter&apos; для изменения</translation>
+    </message>
+    <message>
+        <source>(Press &apos;Enter&apos; to edit)</source>
+        <translation>(&apos;Enter&apos; для изменения)</translation>
+    </message>
+    <message>
+        <source>(last two numbers)</source>
+        <translation>(последние два числа)</translation>
     </message>
 </context>
 <context>
@@ -68,12 +76,12 @@
     <name>trikGui::RunningWidget</name>
     <message>
         <source>Running:</source>
-        <translation type="vanished">Выполняется:</translation>
+        <translation type="obsolete">Выполняется:</translation>
     </message>
     <message>
         <source>Press Power
  to abort</source>
-        <translation type="vanished">Нажмите Power
+        <translation type="obsolete">Нажмите Power
  чтобы выйти</translation>
     </message>
     <message>
