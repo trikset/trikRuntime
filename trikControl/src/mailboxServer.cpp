@@ -233,6 +233,7 @@ void MailboxServer::onNewConnection(QHostAddress const &ip, int clientPort, int 
 
 	if (!knownRobot) {
 		mKnownRobotsLock.lockForWrite();
+
 		mKnownRobots.insertMulti(hullNumber, {ip, serverPort});
 		mKnownRobotsLock.unlock();
 	}
@@ -285,7 +286,7 @@ void MailboxServer::onNewData(QHostAddress const &ip, int port, QByteArray const
 	int senderHullNumber = -1;
 	mKnownRobotsLock.lockForRead();
 	for (auto const &endpoint : mKnownRobots.values()) {
-		if (endpoint == Endpoint{ip, port}) {
+		if (endpoint.ip == ip) {
 			senderHullNumber = mKnownRobots.key(endpoint);
 		}
 	}

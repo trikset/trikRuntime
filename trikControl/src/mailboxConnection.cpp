@@ -43,7 +43,7 @@ void MailboxConnection::processData(QByteArray const &rawData)
 			bool serverPortOk = false;
 			int const serverPort = parsedString[1].toInt(&serverPortOk);
 			bool hullNumberOk = false;
-			int const hullNumber = parsedString[1].toInt(&hullNumberOk);
+			int const hullNumber = parsedString[2].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
 				qDebug() << "Malformed data: " << data;
 			} else {
