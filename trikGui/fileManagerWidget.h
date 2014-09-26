@@ -68,6 +68,7 @@ private:
 	QListView mFileSystemView;
 	QFileSystemModel mFileSystemModel;
 	Controller &mController;
+	QString mRootDirPath;
 };
 
 }
