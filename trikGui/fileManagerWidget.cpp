@@ -72,40 +72,41 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		int choice = showOpenOrDelBox();
+		FileState choice = showOpenOrDelBox();
 		switch (choice) {
-			case fileState::Open:
-				mController.runFile(mFileSystemModel.filePath(index));
-				break;
-			case fileState::Delete:
-				mFileSystemModel.remove(index);
-				break;
-			default:
-				break;
+		case FileState::Open:
+			mController.runFile(mFileSystemModel.filePath(index));
+			break;
+		case FileState::Delete:
+			mFileSystemModel.remove(index);
+			break;
+		default:
+			break;
 		}
 	}
 }
 
-FileManagerWidget::fileState FileManagerWidget::showOpenOrDelBox()
+FileManagerWidget::FileState FileManagerWidget::showOpenOrDelBox()
 {
 	QMessageBox box;
 	box.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 	box.setIcon(QMessageBox::Question);
-	box.setText("Open or Delete?");
+	box.setText(tr("Do you want to open or delete the file?"));
 
-	QPushButton* openButton = box.addButton("Open", QMessageBox::AcceptRole);
-	QPushButton* deleteButton = box.addButton("Delete", QMessageBox::DestructiveRole);
+	QPushButton* openButton = box.addButton(tr("Open"), QMessageBox::AcceptRole);
+	QPushButton* deleteButton = box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
 
 	box.setDefaultButton(openButton);
 	box.exec();
 
 	QAbstractButton* button = box.clickedButton();
 	if (button == openButton) {
-		return fileState::Open;
+		return FileState::Open;
 	} else if (button == deleteButton) {
-		return fileState::Delete;
+		return FileState::Delete;
 	}
-	return fileState::None;
+
+	return FileState::None;
 }
 
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)

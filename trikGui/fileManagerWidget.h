@@ -60,7 +60,7 @@ private slots:
 	void renewCurrentIndex();
 
 private:
-	enum fileState {
+	enum class FileState {
 		None,
 		Open,
 		Delete
@@ -68,7 +68,7 @@ private:
 
 	void showCurrentDir();
 	void open();
-	fileState showOpenOrDelBox();
+	FileState showOpenOrDelBox();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
