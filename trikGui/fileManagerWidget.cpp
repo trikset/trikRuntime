@@ -22,12 +22,20 @@
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
+QString const scriptsDirName = "scripts";
 
 FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	mFileSystemModel.setRootPath(QDir::rootPath());
+	mRootDirPath = mController.startDirPath() + scriptsDirName;
+
+	QDir::setCurrent(mController.startDirPath());
+	QDir dir;
+	dir.mkdir(scriptsDirName);
+	QDir::setCurrent(mRootDirPath);
+
+	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
 	connect(&mFileSystemModel
@@ -93,7 +101,7 @@ void FileManagerWidget::showCurrentDir()
 	mCurrentPathLabel.setText(QDir::currentPath());
 
 	QDir::Filters filters = mFileSystemModel.filter();
-	if (QDir::currentPath() == QDir::rootPath()) {
+	if (QDir::currentPath() == mRootDirPath) {
 		filters |= QDir::NoDotDot;
 	} else {
 		filters &= ~QDir::NoDotDot;
