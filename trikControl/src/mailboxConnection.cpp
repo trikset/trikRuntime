@@ -34,54 +34,59 @@ void MailboxConnection::sendSelfInfo(int hullNumber)
 void MailboxConnection::processData(QByteArray const &rawData)
 {
 	QString const data = QString::fromUtf8(rawData);
+	QString const registerCommand = "register:";
+	QString const connectionCommand = "connection:";
+	QString const selfCommand = "self:";
+	QString const dataCommand = "data:";
+	auto const error = [](QString const &data) { qDebug() << "Malformed data: " << data; };
 
-	if (data.startsWith("register:")) {
+	if (data.startsWith(registerCommand)) {
 		QStringList const parsedString = data.split(":");
 		if (parsedString.size() != 3) {
-			qDebug() << "Malformed data: " << data;
+			error(data);
 		} else {
 			bool serverPortOk = false;
 			int const serverPort = parsedString[1].toInt(&serverPortOk);
 			bool hullNumberOk = false;
 			int const hullNumber = parsedString[2].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
-				qDebug() << "Malformed data: " << data;
+				error(data);
 			} else {
 				emit newConnection(peerAddress(), peerPort(), serverPort, hullNumber);
 			}
 		}
-	} else if (data.startsWith("connection:")) {
+	} else if (data.startsWith(connectionCommand)) {
 		QStringList const parsedString = data.split(":");
 		if (parsedString.size() != 4) {
-			qDebug() << "Malformed data: " << data;
+			error(data);
 		} else {
 			bool serverPortOk = false;
 			int const serverPort = parsedString[2].toInt(&serverPortOk);
 			bool hullNumberOk = false;
 			int const hullNumber = parsedString[3].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
-				qDebug() << "Malformed data: " << data;
+				error(data);
 			} else {
 				emit connectionInfo(QHostAddress(parsedString[1]), serverPort, hullNumber);
 			}
 		}
-	} else if (data.startsWith("self:")) {
+	} else if (data.startsWith(selfCommand)) {
 		QStringList const parsedString = data.split(":");
 		if (parsedString.size() != 2) {
-			qDebug() << "Malformed data: " << data;
+			error(data);
 		} else {
 			// Self-info. Host and port is to be determined automatically via socket.
 			bool hullNumberOk = false;
 			int const hullNumber = parsedString[1].toInt(&hullNumberOk);
 			if (!hullNumberOk) {
-				qDebug() << "Malformed data: " << data;
+				error(data);
 			} else {
 				emit connectionInfo(peerAddress(), peerPort(), hullNumber);
 			}
 		}
-	} else if (data.startsWith("data:")) {
+	} else if (data.startsWith(dataCommand)) {
 		QString parsedString = data;
-		parsedString.remove(0, QString("data:").length());
+		parsedString.remove(0, dataCommand.length());
 		emit newData(peerAddress(), peerPort(), parsedString.toUtf8());
 	}
 }

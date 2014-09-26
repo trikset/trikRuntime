@@ -57,8 +57,7 @@ void DigitSelector::keyPressEvent(QKeyEvent *event)
 		emit valueChanged(digit);
 		return;
 	}
-	default:
-	{
+	default: {
 		event->ignore();
 		break;
 	}

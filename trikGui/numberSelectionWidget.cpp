@@ -113,8 +113,7 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 		event->accept();
 		break;
 	}
-	default:
-	{
+	default: {
 		event->ignore();
 		break;
 	}

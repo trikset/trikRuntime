@@ -42,7 +42,7 @@ QHostAddress MailboxServer::serverIp()
 	return result;
 }
 
-QHostAddress MailboxServer::myIp()
+QHostAddress MailboxServer::myIp() const
 {
 	return mMyIp;
 }

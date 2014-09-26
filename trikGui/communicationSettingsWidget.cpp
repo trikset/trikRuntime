@@ -104,8 +104,7 @@ void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
 		event->accept();
 		break;
 	}
-	default:
-	{
+	default: {
 		TrikGuiDialog::keyPressEvent(event);
 	}
 	}

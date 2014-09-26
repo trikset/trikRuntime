@@ -30,8 +30,7 @@ void ConnectButton::keyPressEvent(QKeyEvent *event)
 		emit downPressed();
 		return;
 	}
-	default:
-	{
+	default: {
 		event->ignore();
 		break;
 	}

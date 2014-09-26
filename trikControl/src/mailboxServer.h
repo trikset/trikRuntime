@@ -53,7 +53,7 @@ public:
 	QHostAddress serverIp();
 
 	/// Returns our own IP address or empty QHostAddress if we have none.
-	QHostAddress myIp();
+	QHostAddress myIp() const;
 
 	/// Sets hull number for this robot and notifies all known robots about change.
 	Q_INVOKABLE void setHullNumber(int hullNumber);
