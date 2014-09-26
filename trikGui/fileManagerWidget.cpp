@@ -20,6 +20,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QMessageBox>
+#include <QtGui/QPushButton>
 
 using namespace trikGui;
 
@@ -70,8 +72,40 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		mController.runFile(mFileSystemModel.filePath(index));
+		int choice = showOpenOrDelBox();
+		switch (choice) {
+			case fileState::Open:
+				mController.runFile(mFileSystemModel.filePath(index));
+				break;
+			case fileState::Delete:
+				mFileSystemModel.remove(index);
+				break;
+			default:
+				break;
+		}
 	}
+}
+
+FileManagerWidget::fileState FileManagerWidget::showOpenOrDelBox()
+{
+	QMessageBox box;
+	box.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+	box.setIcon(QMessageBox::Question);
+	box.setText("Open or Delete?");
+
+	QPushButton* openButton = box.addButton("Open", QMessageBox::AcceptRole);
+	QPushButton* deleteButton = box.addButton("Delete", QMessageBox::DestructiveRole);
+
+	box.setDefaultButton(openButton);
+	box.exec();
+
+	QAbstractButton* button = box.clickedButton();
+	if (button == openButton) {
+		return fileState::Open;
+	} else if (button == deleteButton) {
+		return fileState::Delete;
+	}
+	return fileState::None;
 }
 
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)
