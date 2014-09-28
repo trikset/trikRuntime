@@ -205,7 +205,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 
 	<!-- Settings for virtual camera line sensor. -->
-	<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
+	<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor-ov7670.in.fifo" outputFile="/run/line-sensor-ov7670.out.fifo" toleranceFactor="1.0" disabled="false" />
 
 	<!-- Settings for virtual camera object detector sensor. -->
 	<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />

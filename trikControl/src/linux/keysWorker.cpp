@@ -37,7 +37,9 @@ KeysWorker::KeysWorker(QString const &keysPath)
 
 void KeysWorker::reset()
 {
+	mLock.lockForWrite();
 	mWasPressed.clear();
+	mLock.unlock();
 }
 
 bool KeysWorker::wasPressed(int code)

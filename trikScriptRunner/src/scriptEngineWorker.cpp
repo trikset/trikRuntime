@@ -106,6 +106,9 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QStr
 			"(.*%1\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)").arg(function));
 	bool const needCallFunction = !function.isEmpty() && functionRegexp.exactMatch(script)
 			&& !script.trimmed().endsWith(function + "();");
+
+	mBrick.keys()->reset();
+
 	mEngine->evaluate(needCallFunction ? QString("%1\n%2();").arg(script, function) : script);
 
 	if (!mBrick.isInEventDrivenMode()) {
