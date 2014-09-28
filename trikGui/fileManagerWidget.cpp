@@ -20,8 +20,14 @@
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QMessageBox>
+	#include <QtGui/QPushButton>
+#else
+	#include <QtWidgets/QMessageBox>
+	#include <QtWidgets/QPushButton>
+#endif
 
 using namespace trikGui;
 QString const scriptsDirName = "scripts";
@@ -101,13 +107,13 @@ FileManagerWidget::FileState FileManagerWidget::showOpenOrDelBox()
 	box.setIcon(QMessageBox::Question);
 	box.setText(tr("Do you want to open or delete the file?"));
 
-	QPushButton* openButton = box.addButton(tr("Open"), QMessageBox::AcceptRole);
-	QPushButton* deleteButton = box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
+	QPushButton* const openButton = box.addButton(tr("Open"), QMessageBox::AcceptRole);
+	QPushButton const* const deleteButton = box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
 
 	box.setDefaultButton(openButton);
 	box.exec();
 
-	QAbstractButton* button = box.clickedButton();
+	QAbstractButton const* const button = box.clickedButton();
 	if (button == openButton) {
 		return FileState::Open;
 	} else if (button == deleteButton) {
