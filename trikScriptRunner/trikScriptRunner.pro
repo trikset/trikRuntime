@@ -38,7 +38,6 @@ TRANSLATIONS += trikScriptRunner_ru.ts
 TEMPLATE = lib
 QT += script
 
-
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir(system.js)
@@ -50,4 +49,4 @@ INCLUDEPATH += \
 	$$PWD/../trikControl/include/ \
 
 RESOURCES += \
-    trikSrciptRunner.qrc
+	trikSrciptRunner.qrc

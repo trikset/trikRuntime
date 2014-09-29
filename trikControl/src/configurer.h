@@ -183,6 +183,10 @@ public:
 
 	int colorSensorN() const;
 
+	bool hasMailbox() const;
+
+	int mailboxServerPort() const;
+
 private:
 	enum ServoType {
 		angular
@@ -285,6 +289,7 @@ private:
 	void loadKeys(QDomElement const &root);
 	void loadGamepadPort(QDomElement const &root);
 	VirtualSensor loadVirtualSensor(QDomElement const &root, QString const &tagName);
+	void loadMailbox(QDomElement const &root);
 
 	static bool isEnabled(QDomElement const &root, QString const &tagName);
 
@@ -322,6 +327,9 @@ private:
 	VirtualSensor mMxNColorSensor;
 	int mColorSensorM = 0;
 	int mColorSensorN = 0;
+
+	int mMailboxServerPort = 0;
+	bool mIsMailboxEnabled = false;
 };
 
 }

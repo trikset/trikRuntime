@@ -2,6 +2,41 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>trikGui::CommunicationSettingsWidget</name>
+    <message>
+        <source>&lt;b&gt;Comm settings&lt;/b&gt;</source>
+        <translation>&lt;b&gt;Взаимодействие&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <source>Hull number:</source>
+        <translation>Бортномер:</translation>
+    </message>
+    <message>
+        <source>Leader IP:</source>
+        <translation>IP ведущего:</translation>
+    </message>
+    <message>
+        <source>Connect</source>
+        <translation>Подключиться</translation>
+    </message>
+    <message>
+        <source>Comm settings</source>
+        <translation>Взаимодействие</translation>
+    </message>
+    <message>
+        <source>Press &apos;Enter&apos; to edit</source>
+        <translation type="obsolete">&apos;Enter&apos; для изменения</translation>
+    </message>
+    <message>
+        <source>(Press &apos;Enter&apos; to edit)</source>
+        <translation>(&apos;Enter&apos; для изменения)</translation>
+    </message>
+    <message>
+        <source>(last two numbers)</source>
+        <translation>(последние два числа)</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::Controller</name>
     <message>
         <source>direct command</source>
@@ -41,12 +76,12 @@
     <name>trikGui::RunningWidget</name>
     <message>
         <source>Running:</source>
-        <translation type="vanished">Выполняется:</translation>
+        <translation type="obsolete">Выполняется:</translation>
     </message>
     <message>
         <source>Press Power
  to abort</source>
-        <translation type="vanished">Нажмите Power
+        <translation type="obsolete">Нажмите Power
  чтобы выйти</translation>
     </message>
     <message>

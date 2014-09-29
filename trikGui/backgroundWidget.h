@@ -57,7 +57,7 @@ private:
 
 public slots:
 	/// Add a widget to main widgets layout and show it.
-	/// @param - reference to the widget.
+	/// @param widget - reference to the widget.
 	void addMainWidget(MainWidget &widget);
 
 private slots:

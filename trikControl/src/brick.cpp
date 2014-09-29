@@ -180,6 +180,10 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 				, mConfigurer->colorSensorN()
 				);
 	}
+
+	if (mConfigurer->hasMailbox()) {
+		mMailbox.reset(new Mailbox(mConfigurer->mailboxServerPort()));
+	}
 }
 
 Brick::~Brick()
@@ -393,6 +397,11 @@ Display *Brick::display()
 Led *Brick::led()
 {
 	return mLed;
+}
+
+Mailbox *Brick::mailbox()
+{
+	return mMailbox.data();
 }
 
 void Brick::run()
