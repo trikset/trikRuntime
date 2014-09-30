@@ -62,6 +62,7 @@ private slots:
 private:
 	void showCurrentDir();
 	void open();
+	QString showCurrentPath();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;

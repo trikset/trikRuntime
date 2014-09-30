@@ -196,7 +196,7 @@ Use it if JCx ports are configured to work as PWM signal generators.
 	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;" />
 
 	<!-- Device files and on/off values for LED on a brick. -->
-	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" on="0" off="1" />
+	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" on="1" off="0" />
 
 	<!--Device file for keys on a brick -->
 	<keys deviceFile="/dev/input/event0" />
