@@ -87,6 +87,7 @@ int main(int argc, char *argv[])
 		}
 
 		configPath = app.arguments()[index + 1];
+		configPath = QDir(configPath).absolutePath();
 		if (configPath.right(1) != "/") {
 			configPath += "/";
 		}
@@ -101,6 +102,7 @@ int main(int argc, char *argv[])
 		}
 
 		startDirPath = app.arguments()[index + 1];
+		startDirPath = QDir(startDirPath).absolutePath();
 	}
 
 	if (startDirPath.right(1) != "/") {
