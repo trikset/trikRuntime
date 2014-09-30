@@ -24,11 +24,15 @@
 	#include <QtGui/QLabel>
 	#include <QtGui/QListView>
 	#include <QtGui/QFileSystemModel>
+	#include <QtGui/QMessageBox>
+	#include <QtGui/QPushButton>
 #else
 	#include <QtWidgets/QVBoxLayout>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QListView>
 	#include <QtWidgets/QFileSystemModel>
+	#include <QtWidgets/QMessageBox>
+	#include <QtWidgets/QPushButton>
 #endif
 
 #include <QtCore/QString>
@@ -68,6 +72,7 @@ private:
 
 	void showCurrentDir();
 	void open();
+	void initOpenOrDelBox();
 	FileState showOpenOrDelBox();
 
 	QVBoxLayout mLayout;
@@ -76,6 +81,10 @@ private:
 	QFileSystemModel mFileSystemModel;
 	Controller &mController;
 	QString mRootDirPath;
+
+	QMessageBox mOpenDeleteBox;
+	QPushButton* mOpenButton;
+	QPushButton const* mDeleteButton;
 };
 
 }

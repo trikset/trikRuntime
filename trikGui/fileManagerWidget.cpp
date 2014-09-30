@@ -21,14 +21,6 @@
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QMessageBox>
-	#include <QtGui/QPushButton>
-#else
-	#include <QtWidgets/QMessageBox>
-	#include <QtWidgets/QPushButton>
-#endif
-
 using namespace trikGui;
 QString const scriptsDirName = "scripts";
 
@@ -61,11 +53,14 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
+	initOpenOrDelBox();
 	showCurrentDir();
 }
 
 FileManagerWidget::~FileManagerWidget()
 {
+	delete mDeleteButton;
+	delete mOpenButton;
 }
 
 QString FileManagerWidget::menuEntry()
@@ -78,6 +73,16 @@ void FileManagerWidget::renewFocus()
 	mFileSystemView.setFocus();
 }
 
+void FileManagerWidget::initOpenOrDelBox()
+{
+	mOpenDeleteBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+	mOpenDeleteBox.setIcon(QMessageBox::Question);
+	mOpenDeleteBox.setText(tr("Do you want to open or delete the file?"));
+
+	mOpenButton = mOpenDeleteBox.addButton(tr("Open"), QMessageBox::AcceptRole);
+	mDeleteButton = mOpenDeleteBox.addButton(tr("Delete"), QMessageBox::DestructiveRole);
+}
+
 void FileManagerWidget::open()
 {
 	QModelIndex const &index = mFileSystemView.currentIndex();
@@ -86,7 +91,7 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		FileState choice = showOpenOrDelBox();
+		FileState const choice = showOpenOrDelBox();
 		switch (choice) {
 		case FileState::Open:
 			mController.runFile(mFileSystemModel.filePath(index));
@@ -102,21 +107,13 @@ void FileManagerWidget::open()
 
 FileManagerWidget::FileState FileManagerWidget::showOpenOrDelBox()
 {
-	QMessageBox box;
-	box.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
-	box.setIcon(QMessageBox::Question);
-	box.setText(tr("Do you want to open or delete the file?"));
+	mOpenDeleteBox.setDefaultButton(mOpenButton);
+	mOpenDeleteBox.exec();
 
-	QPushButton* const openButton = box.addButton(tr("Open"), QMessageBox::AcceptRole);
-	QPushButton const* const deleteButton = box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
-
-	box.setDefaultButton(openButton);
-	box.exec();
-
-	QAbstractButton const* const button = box.clickedButton();
-	if (button == openButton) {
+	QAbstractButton const* const button = mOpenDeleteBox.clickedButton();
+	if (button == mOpenButton) {
 		return FileState::Open;
-	} else if (button == deleteButton) {
+	} else if (button == mDeleteButton) {
 		return FileState::Delete;
 	}
 
