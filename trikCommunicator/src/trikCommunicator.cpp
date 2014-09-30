@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,89 +25,38 @@
 using namespace trikCommunicator;
 
 TrikCommunicator::TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath)
-	: mTrikScriptRunner(new trikScriptRunner::TrikScriptRunner(brick, startDirPath))
-	, mHasScriptRunnerOwnership(true)
+	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, startDirPath), true)
 {
-	init();
 }
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
-	: mTrikScriptRunner(&runner)
-	, mHasScriptRunnerOwnership(false)
+	: TrikCommunicator(&runner, false)
 {
-	init();
+}
+
+TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership)
+	: trikKernel::TrikServer([this] () { return connectionFactory(); })
+	, mTrikScriptRunner(runner)
+	, mHasScriptRunnerOwnership(hasScriptRunnerOwnership)
+{
+	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
+
+	connect(mTrikScriptRunner, SIGNAL(completed(QString)), this, SIGNAL(finishedScript()));
 }
 
 TrikCommunicator::~TrikCommunicator()
 {
-	foreach (QThread *thread, mConnections.keys()) {
-		thread->quit();
-		if (!thread->wait(1000)) {
-			qDebug() << "Unable to stop thread" << thread;
-		}
-	}
-
-	qDeleteAll(mConnections);
-	qDeleteAll(mConnections.keys());
-
 	if (mHasScriptRunnerOwnership) {
 		delete mTrikScriptRunner;
 	}
 }
 
-void TrikCommunicator::startServer(int const &port)
+Connection *TrikCommunicator::connectionFactory()
 {
-	if (!listen(QHostAddress::Any, port)) {
-		qDebug() << "Can not start TrikCommunicator server";
-	} else {
-		qDebug() << "TrikCommunicator started";
-	}
-}
+	auto connection = new Connection(*mTrikScriptRunner);
 
-void TrikCommunicator::sendMessage(QString const &message)
-{
-	for (Connection * const connection : mConnections.values()) {
-		connection->sendMessage(message);
-	}
-}
+	connect(connection, SIGNAL(startedDirectScript()), this, SIGNAL(startedDirectScript()));
+	connect(connection, SIGNAL(startedScript(QString)), this, SIGNAL(startedScript(QString)));
 
-void TrikCommunicator::incomingConnection(int socketDescriptor)
-{
-	qDebug() << "New connection, socket descriptor: " << socketDescriptor;
-
-	QThread * const connectionThread = new QThread();
-
-	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
-	connect(connectionThread, SIGNAL(finished()), this, SLOT(onConnectionClosed()));
-
-	Connection * const connectionWorker = new Connection();
-
-	connect(connectionWorker, SIGNAL(startedDirectScript()), this, SIGNAL(startedDirectScript()));
-	connect(connectionWorker, SIGNAL(startedScript(QString)), this, SIGNAL(startedScript(QString)));
-
-	connectionWorker->moveToThread(connectionThread);
-
-	mConnections.insert(connectionThread, connectionWorker);
-
-	connectionThread->start();
-
-	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor)
-			, Q_ARG(trikScriptRunner::TrikScriptRunner *, mTrikScriptRunner));
-}
-
-void TrikCommunicator::onConnectionClosed()
-{
-	QThread * const thread = static_cast<QThread *>(sender());
-
-	// Thread shall already be finished here.
-	delete mConnections.value(thread);
-
-	mConnections.remove(thread);
-}
-
-void TrikCommunicator::init()
-{
-	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
-
-	connect(mTrikScriptRunner, SIGNAL(completed(QString)), this, SIGNAL(finishedScript()));
+	return connection;
 }

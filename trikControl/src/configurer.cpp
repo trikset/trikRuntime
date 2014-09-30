@@ -65,6 +65,7 @@ Configurer::Configurer(QString const &configFilePath)
 	mLineSensor = loadVirtualSensor(root, "lineSensor");
 	mObjectSensor = loadVirtualSensor(root, "objectSensor");
 	mMxNColorSensor = loadVirtualSensor(root, "colorSensor");
+	loadMailbox(root);
 }
 
 QString Configurer::initScript() const
@@ -425,6 +426,16 @@ int Configurer::colorSensorM() const
 int Configurer::colorSensorN() const
 {
 	return mColorSensorN;
+}
+
+bool Configurer::hasMailbox() const
+{
+	return mIsMailboxEnabled;
+}
+
+int Configurer::mailboxServerPort() const
+{
+	return mMailboxServerPort;
 }
 
 void Configurer::loadInit(QDomElement const &root)
@@ -825,6 +836,15 @@ Configurer::VirtualSensor Configurer::loadVirtualSensor(QDomElement const &root,
 	}
 
 	return result;
+}
+
+void Configurer::loadMailbox(QDomElement const &root)
+{
+	if (isEnabled(root, "mailbox")) {
+		QDomElement mailboxElement = root.elementsByTagName("mailbox").at(0).toElement();
+		mMailboxServerPort = mailboxElement.attribute("port").toInt();
+		mIsMailboxEnabled = true;
+	}
 }
 
 bool Configurer::isEnabled(QDomElement const &root, QString const &tagName)

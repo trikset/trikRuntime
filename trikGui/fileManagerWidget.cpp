@@ -134,9 +134,21 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
+QString FileManagerWidget::showCurrentPath()
+{
+	QString result = QDir::currentPath();
+	result.remove(mRootDirPath);
+
+	if (result.isEmpty()) {
+		result = "/";
+	}
+
+	return result;
+}
+
 void FileManagerWidget::showCurrentDir()
 {
-	mCurrentPathLabel.setText(QDir::currentPath());
+	mCurrentPathLabel.setText(showCurrentPath());
 
 	QDir::Filters filters = mFileSystemModel.filter();
 	if (QDir::currentPath() == mRootDirPath) {

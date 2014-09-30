@@ -19,6 +19,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
+#include <QtCore/QScopedPointer>
 
 #include "declSpec.h"
 
@@ -32,6 +33,7 @@
 #include "keys.h"
 #include "led.h"
 #include "lineSensor.h"
+#include "mailbox.h"
 #include "motor.h"
 #include "objectSensor.h"
 #include "pwmCapture.h"
@@ -139,6 +141,9 @@ public slots:
 	/// Returns reference to LED control class.
 	Led *led();
 
+	/// Returns reference to mailbox used to send and receive messages to/from other robots.
+	Mailbox *mailbox();
+
 	/// Starts event loop for script.
 	void run();
 
@@ -182,6 +187,7 @@ private:
 	I2cCommunicator *mI2cCommunicator = nullptr;  // Has ownership.
 	Display mDisplay;
 	Led *mLed = nullptr;  // Has ownership.
+	QScopedPointer<Mailbox> mMailbox;
 
 	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.

@@ -30,6 +30,7 @@
 #include "wiFiModeWidget.h"
 #include "motorsWidget.h"
 #include "sensorsSelectionWidget.h"
+#include "communicationSettingsWidget.h"
 
 using namespace trikGui;
 
@@ -49,6 +50,9 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::servoMotor)));
 	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)));
 	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)));
+	if (mController.brick().mailbox()) {
+		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
+	}
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -108,6 +112,10 @@ void StartWidget::launch()
 			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::digitalSensor);
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
+		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
+			CommunicationSettingsWidget communicationSettingsWidget(mController.brick());
+			emit newWidget(communicationSettingsWidget);
+			result = communicationSettingsWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {

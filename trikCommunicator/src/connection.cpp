@@ -24,38 +24,15 @@
 
 using namespace trikCommunicator;
 
-Connection::Connection()
-	: mTrikScriptRunner(nullptr)
+Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
+	: trikKernel::Connection(trikKernel::Protocol::messageLength)
+	, mTrikScriptRunner(trikScriptRunner)
 {
 }
 
-void Connection::sendMessage(QString const &message)
+void Connection::processData(QByteArray const &data)
 {
-	mSocket->write(message.toLocal8Bit());
-}
-
-void Connection::init(int socketDescriptor, trikScriptRunner::TrikScriptRunner *trikScriptRunner)
-{
-	mTrikScriptRunner = trikScriptRunner;
-	mSocket.reset(new QTcpSocket());
-
-	if (!mSocket->setSocketDescriptor(socketDescriptor)) {
-		qDebug() << "Failed to set socket descriptor" << socketDescriptor;
-		return;
-	}
-
-	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(disconnected()));
-}
-
-void Connection::onReadyRead()
-{
-	if (!mSocket || !mSocket->isValid()) {
-		return;
-	}
-
-	QByteArray const &data = mSocket->readAll();
-	QString command = QString::fromUtf8(data.constData());
+	QString command(data);
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
@@ -78,19 +55,13 @@ void Connection::onReadyRead()
 	} else if (command.startsWith("run")) {
 		command.remove(0, QString("run:").length());
 		QString const fileContents = trikKernel::FileUtils::readFromFile(command);
-		QMetaObject::invokeMethod(mTrikScriptRunner, "run", Q_ARG(QString, fileContents));
+		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents));
 		emit startedScript(command);
 	} else if (command == "stop") {
-		QMetaObject::invokeMethod(mTrikScriptRunner, "abort");
+		QMetaObject::invokeMethod(&mTrikScriptRunner, "abort");
 	} else if (command.startsWith("direct")) {
 		command.remove(0, QString("direct:").length());
-		QMetaObject::invokeMethod(mTrikScriptRunner, "run", Q_ARG(QString, command));
+		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, command));
 		emit startedDirectScript();
 	}
-}
-
-void Connection::disconnected()
-{
-	qDebug() << "Disconnected.";
-	thread()->quit();
 }

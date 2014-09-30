@@ -74,6 +74,7 @@ private:
 	void open();
 	void initOpenOrDelBox();
 	FileState showOpenOrDelBox();
+	QString showCurrentPath();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
