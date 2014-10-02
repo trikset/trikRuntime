@@ -53,14 +53,11 @@ FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
-	initOpenOrDelBox();
 	showCurrentDir();
 }
 
 FileManagerWidget::~FileManagerWidget()
 {
-	delete mDeleteButton;
-	delete mOpenButton;
 }
 
 QString FileManagerWidget::menuEntry()
@@ -73,16 +70,6 @@ void FileManagerWidget::renewFocus()
 	mFileSystemView.setFocus();
 }
 
-void FileManagerWidget::initOpenOrDelBox()
-{
-	mOpenDeleteBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
-	mOpenDeleteBox.setIcon(QMessageBox::Question);
-	mOpenDeleteBox.setText(tr("Do you want to open or delete the file?"));
-
-	mOpenButton = mOpenDeleteBox.addButton(tr("Open"), QMessageBox::AcceptRole);
-	mDeleteButton = mOpenDeleteBox.addButton(tr("Delete"), QMessageBox::DestructiveRole);
-}
-
 void FileManagerWidget::open()
 {
 	QModelIndex const &index = mFileSystemView.currentIndex();
@@ -91,33 +78,19 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		FileState const choice = showOpenOrDelBox();
+		mOpenDeleteBox.showMessage();
+		FileManagerMessageBox::FileState const choice = mOpenDeleteBox.userAnswer();
 		switch (choice) {
-		case FileState::Open:
+		case FileManagerMessageBox::FileState::Open:
 			mController.runFile(mFileSystemModel.filePath(index));
 			break;
-		case FileState::Delete:
+		case FileManagerMessageBox::FileState::Delete:
 			mFileSystemModel.remove(index);
 			break;
 		default:
 			break;
 		}
 	}
-}
-
-FileManagerWidget::FileState FileManagerWidget::showOpenOrDelBox()
-{
-	mOpenDeleteBox.setDefaultButton(mOpenButton);
-	mOpenDeleteBox.exec();
-
-	QAbstractButton const* const button = mOpenDeleteBox.clickedButton();
-	if (button == mOpenButton) {
-		return FileState::Open;
-	} else if (button == mDeleteButton) {
-		return FileState::Delete;
-	}
-
-	return FileState::None;
 }
 
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)

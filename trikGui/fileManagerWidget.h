@@ -24,21 +24,18 @@
 	#include <QtGui/QLabel>
 	#include <QtGui/QListView>
 	#include <QtGui/QFileSystemModel>
-	#include <QtGui/QMessageBox>
-	#include <QtGui/QPushButton>
 #else
 	#include <QtWidgets/QVBoxLayout>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QListView>
 	#include <QtWidgets/QFileSystemModel>
-	#include <QtWidgets/QMessageBox>
-	#include <QtWidgets/QPushButton>
 #endif
 
 #include <QtCore/QString>
 
 #include "controller.h"
 #include "trikGuiDialog.h"
+#include "fileManagerMessageBox.h"
 
 namespace trikGui {
 
@@ -64,16 +61,8 @@ private slots:
 	void renewCurrentIndex();
 
 private:
-	enum class FileState {
-		None,
-		Open,
-		Delete
-	};
-
 	void showCurrentDir();
 	void open();
-	void initOpenOrDelBox();
-	FileState showOpenOrDelBox();
 	QString showCurrentPath();
 
 	QVBoxLayout mLayout;
@@ -83,9 +72,7 @@ private:
 	Controller &mController;
 	QString mRootDirPath;
 
-	QMessageBox mOpenDeleteBox;
-	QPushButton* mOpenButton;
-	QPushButton const* mDeleteButton;
+	FileManagerMessageBox mOpenDeleteBox;
 };
 
 }

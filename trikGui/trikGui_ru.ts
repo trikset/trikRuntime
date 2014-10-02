@@ -44,11 +44,7 @@
     </message>
 </context>
 <context>
-    <name>trikGui::FileManagerWidget</name>
-    <message>
-        <source>File Manager</source>
-        <translation>Файлы</translation>
-    </message>
+    <name>trikGui::FileManagerMessageBox</name>
     <message>
         <source>Do you want to open or delete the file?</source>
         <translation>Вы хотите открыть или удалить файл?</translation>
@@ -60,6 +56,13 @@
     <message>
         <source>Delete</source>
         <translation>Удалить</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::FileManagerWidget</name>
+    <message>
+        <source>File Manager</source>
+        <translation>Файлы</translation>
     </message>
 </context>
 <context>
