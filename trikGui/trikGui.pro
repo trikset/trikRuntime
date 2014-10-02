@@ -39,7 +39,7 @@ HEADERS += \
 	$$PWD/wiFiClientWidget.h \
 	$$PWD/wiFiInitWidget.h \
 	$$PWD/wiFiModeWidget.h \
-    fileManagerMessageBox.h
+	$$PWD/fileManagerMessageBox.h
 
 SOURCES += \
 	$$PWD/digitSelector.cpp \
@@ -66,7 +66,7 @@ SOURCES += \
 	$$PWD/trikGuiDialog.cpp \
 	$$PWD/backgroundWidget.cpp \
 	$$PWD/batteryIndicator.cpp \
-    fileManagerMessageBox.cpp
+	$$PWD/fileManagerMessageBox.cpp
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
