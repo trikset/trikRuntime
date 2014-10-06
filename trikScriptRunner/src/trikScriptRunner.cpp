@@ -30,6 +30,11 @@ TrikScriptRunner::~TrikScriptRunner()
 {
 }
 
+void TrikScriptRunner::brickBeep()
+{
+	mScriptRunnerProxy->brickBeep();
+}
+
 void TrikScriptRunner::run(QString const &script)
 {
 	mScriptRunnerProxy->run(script, false);

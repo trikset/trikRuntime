@@ -65,6 +65,11 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
+void ScriptEngineWorker::brickBeep()
+{
+	mBrick.playSound("media/beep.wav");
+}
+
 void ScriptEngineWorker::reset()
 {
 	Q_ASSERT(mEngine);
