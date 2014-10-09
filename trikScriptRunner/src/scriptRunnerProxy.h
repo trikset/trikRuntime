@@ -48,6 +48,7 @@ public:
 	/// Aborts script execution.
 	void reset();
 
+	/// Plays "beep" sound.
 	void brickBeep();
 
 signals:

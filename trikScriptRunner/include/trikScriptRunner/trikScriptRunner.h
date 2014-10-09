@@ -62,6 +62,7 @@ public slots:
 	/// be stopped as well.
 	void abort();
 
+	/// Plays "beep" sound.
 	void brickBeep();
 
 signals:
