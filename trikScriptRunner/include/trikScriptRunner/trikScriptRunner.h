@@ -36,8 +36,6 @@ public:
 
 	~TrikScriptRunner();
 
-	void brickBeep();
-
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted (but no
 	/// completed() signal will be sent for it). Execution state will be reset (and robot fully stopped) before and
@@ -63,6 +61,8 @@ public slots:
 	/// be stopped and execution state will be reset. Note that direct commands and scripts in event-driven mode will
 	/// be stopped as well.
 	void abort();
+
+	void brickBeep();
 
 signals:
 	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit

@@ -47,7 +47,7 @@ ScriptRunnerProxy::~ScriptRunnerProxy()
 
 void ScriptRunnerProxy::brickBeep()
 {
-	mEngineWorker->brickBeep();
+	QMetaObject::invokeMethod(mEngineWorker, "brickBeep");
 }
 
 void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode, QString const &function)

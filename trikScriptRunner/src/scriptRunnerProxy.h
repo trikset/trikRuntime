@@ -39,8 +39,6 @@ public:
 
 	~ScriptRunnerProxy();
 
-	void brickBeep();
-
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.
 	/// @param function - the name of the function execution must start with. If empty then the script will be
@@ -49,6 +47,8 @@ public:
 
 	/// Aborts script execution.
 	void reset();
+
+	void brickBeep();
 
 signals:
 	/// Fired when current script completes execution.

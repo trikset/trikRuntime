@@ -38,8 +38,6 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath);
 
-	void brickBeep();
-
 	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
 	/// called from another thread.
 	void reset();
@@ -65,6 +63,8 @@ public slots:
 	/// @param function - the name of the function execution must start with. If empty then the script will be
 	/// evaluated as-is, else function call will be appended to @arg script.
 	void run(QString const &script, bool inEventDrivenMode, QString const &function = "main");
+
+	void brickBeep();
 
 private slots:
 	/// Abort script execution.
