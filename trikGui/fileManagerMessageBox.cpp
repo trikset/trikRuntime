@@ -69,7 +69,7 @@ void FileManagerMessageBox::keyPressEvent(QKeyEvent *event)
 
 void FileManagerMessageBox::changeDefaultButton()
 {
-	QPushButton* current = defaultButton();
+	QPushButton const* const current = defaultButton();
 	if (current == mOpenButton) {
 		setDefaultButton(mDeleteButton);
 	} else {
