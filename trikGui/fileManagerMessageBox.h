@@ -35,6 +35,7 @@ protected:
 
 private:
 	void init();
+	void changeDefaultButton();
 
 	QPushButton* mOpenButton;
 	QPushButton* mDeleteButton;
