@@ -67,7 +67,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick.playSound("media/beep.wav");
+	mBrick.playSound(mStartDirPath + "media/beep.wav");
 }
 
 void ScriptEngineWorker::reset()
