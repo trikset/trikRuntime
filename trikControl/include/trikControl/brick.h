@@ -130,6 +130,7 @@ public slots:
 	/// Returns reference to external gamepad connected via TCP.
 	Gamepad *gamepad();
 
+	/// Starts a new timer with given interval and returns reference to it.
 	QTimer *timer(int milliseconds);
 
 	/// Waits given amount of time in milliseconds and returns.
