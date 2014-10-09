@@ -78,7 +78,18 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		mController.runFile(mFileSystemModel.filePath(index));
+		mOpenDeleteBox.showMessage();
+		FileManagerMessageBox::FileState const choice = mOpenDeleteBox.userAnswer();
+		switch (choice) {
+		case FileManagerMessageBox::FileState::Open:
+			mController.runFile(mFileSystemModel.filePath(index));
+			break;
+		case FileManagerMessageBox::FileState::Delete:
+			mFileSystemModel.remove(index);
+			break;
+		default:
+			break;
+		}
 	}
 }
 
