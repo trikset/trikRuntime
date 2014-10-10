@@ -51,10 +51,10 @@ void Connection::processData(QByteArray const &data)
 
 		QString const fileName = command.left(separatorPosition);
 		QString const fileContents = command.mid(separatorPosition + 1);
-		trikKernel::FileUtils::writeToFile(fileName, fileContents);
+		trikKernel::FileUtils::writeToFile(fileName, fileContents, mTrikScriptRunner.scriptsDirPath());
 	} else if (command.startsWith("run")) {
 		command.remove(0, QString("run:").length());
-		QString const fileContents = trikKernel::FileUtils::readFromFile(command);
+		QString const fileContents = trikKernel::FileUtils::readFromFile(mTrikScriptRunner.scriptsDirPath() + "/" + command);
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents));
 		emit startedScript(command);
 	} else if (command == "stop") {

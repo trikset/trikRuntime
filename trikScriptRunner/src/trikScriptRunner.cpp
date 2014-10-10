@@ -19,8 +19,11 @@
 
 using namespace trikScriptRunner;
 
+QString const constScriptsDirName = "scripts";
+
 TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
 	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
+	, mStartDirPath(startDirPath)
 {
 	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString))
 			, this, SIGNAL(completed(QString)));
@@ -28,6 +31,16 @@ TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &sta
 
 TrikScriptRunner::~TrikScriptRunner()
 {
+}
+
+QString TrikScriptRunner::scriptsDirPath()
+{
+	return QString(mStartDirPath + constScriptsDirName);
+}
+
+QString TrikScriptRunner::scriptsDirName()
+{
+	return constScriptsDirName;
 }
 
 void TrikScriptRunner::run(QString const &script)

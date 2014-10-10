@@ -83,6 +83,16 @@ QString Controller::startDirPath()
 	return mStartDirPath;
 }
 
+QString Controller::scriptsDirPath()
+{
+	return mScriptRunner.scriptsDirPath();
+}
+
+QString Controller::scriptsDirName()
+{
+	return mScriptRunner.scriptsDirName();
+}
+
 void Controller::scriptExecutionCompleted(QString const &error)
 {
 	if (mRunningWidget && error.isEmpty()) {

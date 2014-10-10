@@ -47,7 +47,7 @@ public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath);
+	TrikCommunicator(trikControl::Brick &brick, QString startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);

@@ -46,6 +46,8 @@ public:
 	trikControl::Brick &brick();
 
 	QString startDirPath();
+	QString scriptsDirPath();
+	QString scriptsDirName();
 
 private slots:
 	void scriptExecutionCompleted(QString const &error);
