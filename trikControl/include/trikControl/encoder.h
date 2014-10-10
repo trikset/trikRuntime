@@ -38,6 +38,8 @@ public slots:
 	/// Returns current encoder reading (in degrees).
 	int read();
 
+	int readRawData();
+
 	/// Resets encoder by setting current reading to 0.
 	void reset();
 

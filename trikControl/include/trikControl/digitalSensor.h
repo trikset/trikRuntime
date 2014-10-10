@@ -40,6 +40,8 @@ public slots:
 	/// Returns current raw reading of a sensor.
 	int read();
 
+	int readRawData();
+
 private:
 	int mMin;
 	int mMax;

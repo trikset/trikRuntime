@@ -42,3 +42,12 @@ int Encoder::read()
 
 	return mRawToDegrees * data;
 }
+
+int Encoder::readRawData()
+{
+	QByteArray command(2, '\0');
+	command[0] = static_cast<char>(mI2cCommandNumber);
+	int data = mCommunicator.read(command);
+
+	return data;
+}

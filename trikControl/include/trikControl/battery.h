@@ -36,6 +36,7 @@ public slots:
 
 	/// Returns current battery voltage in volts.
 	float readVoltage();
+	float readRawDataVoltage();
 
 private:
 	I2cCommunicator &mCommunicator;
