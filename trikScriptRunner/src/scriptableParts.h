@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtScript/QScriptEngine>
+#include <QtCore/QTimer>
 
 #include <trikControl/battery.h>
 #include <trikControl/colorSensor.h>
@@ -64,6 +65,9 @@ void motorFromScriptValue(QScriptValue const &object, trikControl::Motor* &out);
 
 QScriptValue objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensor* const &in);
 void objectSensorFromScriptValue(QScriptValue const &object, trikControl::ObjectSensor* &out);
+
+QScriptValue timerToScriptValue(QScriptEngine *engine, QTimer* const &in);
+void timerFromScriptValue(QScriptValue const &object, QTimer* &out);
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
