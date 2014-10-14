@@ -36,8 +36,11 @@ public:
 
 	~TrikScriptRunner();
 
-	QString scriptsDirPath();
-	QString scriptsDirName();
+	/// Returns path to the directory in which scripts must be saved
+	QString scriptsDirPath() const;
+
+	/// Returns name of the directory in which scripts must be saved
+	QString scriptsDirName() const;
 
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted (but no

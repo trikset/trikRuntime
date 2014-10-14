@@ -78,17 +78,17 @@ trikControl::Brick &Controller::brick()
 	return mBrick;
 }
 
-QString Controller::startDirPath()
+QString Controller::startDirPath() const
 {
 	return mStartDirPath;
 }
 
-QString Controller::scriptsDirPath()
+QString Controller::scriptsDirPath() const
 {
 	return mScriptRunner.scriptsDirPath();
 }
 
-QString Controller::scriptsDirName()
+QString Controller::scriptsDirName() const
 {
 	return mScriptRunner.scriptsDirName();
 }

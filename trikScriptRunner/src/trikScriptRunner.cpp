@@ -19,6 +19,7 @@
 
 using namespace trikScriptRunner;
 
+// name of the directory in which scripts must be saved
 QString const constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
@@ -33,12 +34,12 @@ TrikScriptRunner::~TrikScriptRunner()
 {
 }
 
-QString TrikScriptRunner::scriptsDirPath()
+QString TrikScriptRunner::scriptsDirPath() const
 {
 	return QString(mStartDirPath + constScriptsDirName);
 }
 
-QString TrikScriptRunner::scriptsDirName()
+QString TrikScriptRunner::scriptsDirName() const
 {
 	return constScriptsDirName;
 }
