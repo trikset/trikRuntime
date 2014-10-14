@@ -42,6 +42,12 @@ QString TrikScriptRunner::scriptsDirPath() const
 QString TrikScriptRunner::scriptsDirName() const
 {
 	return constScriptsDirName;
+
+}
+
+void TrikScriptRunner::brickBeep()
+{
+	mScriptRunnerProxy->brickBeep();
 }
 
 void TrikScriptRunner::run(QString const &script)

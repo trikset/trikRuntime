@@ -20,6 +20,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QTimer>
 
 #include "declSpec.h"
 
@@ -129,6 +130,9 @@ public slots:
 	/// Returns reference to external gamepad connected via TCP.
 	Gamepad *gamepad();
 
+	/// Starts a new timer with given interval and returns reference to it.
+	QTimer *timer(int milliseconds);
+
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(int const &milliseconds) const;
 
@@ -182,6 +186,7 @@ private:
 	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
 	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
+	QList<QTimer *> mTimers; // Has ownership.
 
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator = nullptr;  // Has ownership.

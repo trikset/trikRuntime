@@ -55,6 +55,7 @@ Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(Sensor*)
 Q_DECLARE_METATYPE(Sensor3d*)
 Q_DECLARE_METATYPE(QVector<int>)
+Q_DECLARE_METATYPE(QTimer*)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath)
 	: mEngine(nullptr)
@@ -63,6 +64,11 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	, mStartDirPath(startDirPath)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+}
+
+void ScriptEngineWorker::brickBeep()
+{
+	mBrick.playSound(mStartDirPath + "media/beep_soft.wav");
 }
 
 void ScriptEngineWorker::reset()
@@ -159,6 +165,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, timerToScriptValue, timerFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 
 	mEngine->globalObject().setProperty("brick", mEngine->newQObject(&mBrick));

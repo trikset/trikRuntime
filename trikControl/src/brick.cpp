@@ -195,6 +195,7 @@ Brick::~Brick()
 	qDeleteAll(mEncoders);
 	qDeleteAll(mAnalogSensors);
 	qDeleteAll(mDigitalSensors);
+	qDeleteAll(mTimers);
 	delete mAccelerometer;
 	delete mGyroscope;
 	delete mBattery;
@@ -377,6 +378,14 @@ QStringList Brick::encoderPorts() const
 Gamepad* Brick::gamepad()
 {
 	return mGamepad;
+}
+
+QTimer* Brick::timer(int milliseconds)
+{
+	QTimer *result = new QTimer();
+	mTimers.append(result);
+	result->start(milliseconds);
+	return result;
 }
 
 void Brick::wait(int const &milliseconds) const

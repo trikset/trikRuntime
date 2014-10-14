@@ -64,6 +64,9 @@ public slots:
 	/// evaluated as-is, else function call will be appended to @arg script.
 	void run(QString const &script, bool inEventDrivenMode, QString const &function = "main");
 
+	/// Plays "beep" sound.
+	void brickBeep();
+
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();

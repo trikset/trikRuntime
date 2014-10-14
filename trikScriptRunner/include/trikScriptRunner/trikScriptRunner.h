@@ -68,6 +68,9 @@ public slots:
 	/// be stopped as well.
 	void abort();
 
+	/// Plays "beep" sound.
+	void brickBeep();
+
 signals:
 	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
 	/// or was aborted).

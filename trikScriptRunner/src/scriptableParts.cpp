@@ -139,6 +139,16 @@ void trikScriptRunner::objectSensorFromScriptValue(QScriptValue const &object, t
 	out = qobject_cast<ObjectSensor*>(object.toQObject());
 }
 
+QScriptValue trikScriptRunner::timerToScriptValue(QScriptEngine *engine, QTimer* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::timerFromScriptValue(QScriptValue const &object, QTimer* &out)
+{
+	out = qobject_cast<QTimer*>(object.toQObject());
+}
+
 QScriptValue trikScriptRunner::mailboxToScriptValue(QScriptEngine *engine, trikControl::Mailbox * const &in)
 {
 	return engine->newQObject(in);

@@ -43,3 +43,8 @@ if (!String.prototype.format) {
     });
   };
 }
+
+brick.repeat = function(mscs, f) {
+  var timer = brick.timer(mscs);
+  timer.timeout.connect(f);
+}
