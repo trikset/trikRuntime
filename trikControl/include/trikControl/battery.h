@@ -36,6 +36,8 @@ public slots:
 
 	/// Returns current battery voltage in volts.
 	float readVoltage();
+
+	/// Returns current raw reading of battery.
 	float readRawDataVoltage();
 
 private:

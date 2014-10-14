@@ -39,7 +39,5 @@ float Battery::readRawDataVoltage()
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(0x26);
 
-	int const parrot = mCommunicator.read(command);
-
-	return parrot;
+	return mCommunicator.read(command);
 }
