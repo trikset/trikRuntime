@@ -52,3 +52,20 @@ int DigitalSensor::read()
 
 	return value;
 }
+
+int DigitalSensor::readRawData()
+{
+	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";
+		return 0;
+	}
+
+	mStream.setDevice(&mDeviceFile);
+
+	int value = 0;
+	mStream >> value;
+
+	mDeviceFile.close();
+
+	return value;
+}

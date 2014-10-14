@@ -48,6 +48,9 @@ public slots:
 	/// Returns current raw reading of a sensor.
 	int read();
 
+	/// Returns current real raw reading of a sensor.
+	int readRawData() override;
+
 private:
 	I2cCommunicator &mCommunicator;
 	int const mI2cCommandNumber;

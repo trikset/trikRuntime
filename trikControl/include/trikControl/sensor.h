@@ -38,6 +38,9 @@ public:
 public slots:
 	/// Returns current raw reading of a sensor.
 	virtual int read() = 0;
+
+	/// Returns current real raw reading of a sensor.
+	virtual int readRawData() = 0;
 };
 
 }
