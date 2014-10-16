@@ -36,6 +36,12 @@ public:
 
 	~TrikScriptRunner();
 
+	/// Returns path to the directory in which scripts must be saved
+	QString scriptsDirPath() const;
+
+	/// Returns name of the directory in which scripts must be saved
+	QString scriptsDirName() const;
+
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted (but no
 	/// completed() signal will be sent for it). Execution state will be reset (and robot fully stopped) before and
@@ -75,6 +81,8 @@ signals:
 private:
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;
+
+	QString mStartDirPath;
 };
 
 }

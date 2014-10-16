@@ -35,9 +35,10 @@ protected:
 
 private:
 	void init();
+	void changeDefaultButton();
 
-	QPushButton* mOpenButton;
-	QPushButton* mDeleteButton;
+	QPushButton* mOpenButton; // Has ownership
+	QPushButton* mDeleteButton; // Has ownership
 	bool mEscStatus;
 };
 

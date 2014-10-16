@@ -26,7 +26,7 @@ public:
 	static QString readFromFile(QString const &fileName);
 
 	/// Writes given string to given file, throws exception if something went wrong.
-	static void writeToFile(QString const &fileName, QString const &contents);
+	static void writeToFile(QString const &fileName, QString const &contents, QString const &dirPath = "");
 };
 
 }

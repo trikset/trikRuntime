@@ -55,17 +55,24 @@ void FileManagerMessageBox::keyPressEvent(QKeyEvent *event)
 			reject();
 			break;
 		}
-		case Qt::Key_Left: {
-			setDefaultButton(mOpenButton);
-			break;
-		}
+		case Qt::Key_Left:
 		case Qt::Key_Right: {
-			setDefaultButton(mDeleteButton);
+			changeDefaultButton();
 			break;
 		}
 		default: {
 			QMessageBox::keyPressEvent(event);
 			break;
 		}
+	}
+}
+
+void FileManagerMessageBox::changeDefaultButton()
+{
+	QPushButton const* const current = defaultButton();
+	if (current == mOpenButton) {
+		setDefaultButton(mDeleteButton);
+	} else {
+		setDefaultButton(mOpenButton);
 	}
 }
