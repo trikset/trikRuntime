@@ -16,6 +16,7 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
 
 namespace trikGui
@@ -57,6 +58,7 @@ private:
 	trikControl::Brick mBrick;
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
+	trikTelemetry::TrikTelemetry mTelemetry;
 
 	RunningWidget *mRunningWidget;  // Has ownership.
 	QString const &mStartDirPath;

@@ -25,11 +25,13 @@
 using namespace trikGui;
 
 int const communicatorPort = 8888;
+int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
 	: mBrick(*thread(), configPath, startDirPath)
 	, mScriptRunner(mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
+	, mTelemetry(mBrick)
 	, mRunningWidget(NULL)
 	, mStartDirPath(startDirPath)
 {
@@ -39,6 +41,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	connect(&mCommunicator, SIGNAL(startedDirectScript()), this, SLOT(directScriptExecutionStarted()));
 
 	mCommunicator.startServer(communicatorPort);
+	mTelemetry.startServer(telemetryPort);
 }
 
 Controller::~Controller()
