@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.0" language="ru_RU">
 <context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
@@ -41,6 +41,21 @@
     <message>
         <source>direct command</source>
         <translation>команда с компьютера</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::FileManagerMessageBox</name>
+    <message>
+        <source>Do you want to open or delete the file?</source>
+        <translation>Вы хотите открыть или удалить файл?</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Открыть</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>

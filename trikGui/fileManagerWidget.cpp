@@ -22,17 +22,16 @@
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
-QString const scriptsDirName = "scripts";
 
 FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	mRootDirPath = mController.startDirPath() + scriptsDirName;
+	mRootDirPath = mController.scriptsDirPath();
 
 	QDir::setCurrent(mController.startDirPath());
 	QDir dir;
-	dir.mkdir(scriptsDirName);
+	dir.mkdir(mController.scriptsDirName());
 	QDir::setCurrent(mRootDirPath);
 
 	mFileSystemModel.setRootPath(mRootDirPath);
@@ -78,7 +77,18 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		mController.runFile(mFileSystemModel.filePath(index));
+		mOpenDeleteBox.showMessage();
+		FileManagerMessageBox::FileState const choice = mOpenDeleteBox.userAnswer();
+		switch (choice) {
+		case FileManagerMessageBox::FileState::Open:
+			mController.runFile(mFileSystemModel.filePath(index));
+			break;
+		case FileManagerMessageBox::FileState::Delete:
+			mFileSystemModel.remove(index);
+			break;
+		default:
+			break;
+		}
 	}
 }
 

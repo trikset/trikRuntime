@@ -19,8 +19,12 @@
 
 using namespace trikScriptRunner;
 
+// name of the directory in which scripts must be saved
+QString const constScriptsDirName = "scripts";
+
 TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
 	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
+	, mStartDirPath(startDirPath)
 {
 	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString))
 			, this, SIGNAL(completed(QString)));
@@ -28,6 +32,22 @@ TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &sta
 
 TrikScriptRunner::~TrikScriptRunner()
 {
+}
+
+QString TrikScriptRunner::scriptsDirPath() const
+{
+	return QString(mStartDirPath + constScriptsDirName);
+}
+
+QString TrikScriptRunner::scriptsDirName() const
+{
+	return constScriptsDirName;
+
+}
+
+void TrikScriptRunner::brickBeep()
+{
+	mScriptRunnerProxy->brickBeep();
 }
 
 void TrikScriptRunner::run(QString const &script)

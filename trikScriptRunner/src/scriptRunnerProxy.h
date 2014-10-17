@@ -48,6 +48,9 @@ public:
 	/// Aborts script execution.
 	void reset();
 
+	/// Plays "beep" sound.
+	void brickBeep();
+
 signals:
 	/// Fired when current script completes execution.
 	/// @param error - localized error message or empty string.

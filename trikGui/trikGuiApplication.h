@@ -18,8 +18,8 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtCore/QHash>
-
+#include <QtCore/QTimer>
+#
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 #else
@@ -38,8 +38,15 @@ public:
 	/// Constructor with command-line arguments.
 	TrikGuiApplication(int &argc, char **argv);
 
-	// Override.
-	bool notify(QObject *receiver, QEvent *event);
+	bool notify(QObject *receiver, QEvent *event) override;
+
+private slots:
+	/// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update
+	/// all GUI to remove clutter on a screen.
+	void refreshWidgets();
+
+private:
+	QTimer mRefreshTimer;
 };
 
 }

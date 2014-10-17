@@ -35,6 +35,7 @@
 
 #include "controller.h"
 #include "trikGuiDialog.h"
+#include "fileManagerMessageBox.h"
 
 namespace trikGui {
 
@@ -70,6 +71,8 @@ private:
 	QFileSystemModel mFileSystemModel;
 	Controller &mController;
 	QString mRootDirPath;
+
+	FileManagerMessageBox mOpenDeleteBox;
 };
 
 }
