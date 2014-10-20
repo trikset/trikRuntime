@@ -12,29 +12,38 @@ void Connection::processData(QByteArray const &data)
 {
 	QString command(data);
 
-	QString sensorPortsRequested("sensorPorts:");
-	QString sensorRequested("sensor:");
-	QString accelerometerRequested("accelerometer");
-	QString gyroscopeRequested("gyroscope");
+	QString portsRequested("ports");
+	QString dataRequested("data");
 
 	QString answer;
 
-	if (command.startsWith(sensorPortsRequested)) {
-		QString portType = command.remove(sensorPortsRequested.length());
-		if (portType == "analog") {
-			answer = "sensorPorts:analog:" + mBrick.sensorPorts(trikControl::Sensor::analogSensor).join(',');
-		} else if (portType == "digital") {
-			answer = "sensorPorts:digital:" + mBrick.sensorPorts(trikControl::Sensor::digitalSensor).join(',');
-		} else if (portType == "special") {
-			answer = "sensorPorts:special:" + mBrick.sensorPorts(trikControl::Sensor::specialSensor).join(',');
+	if (command.startsWith(dataRequested)) {
+		answer = "data:";
+		answer += "analog:";
+		for (QString port : mBrick.sensorPorts(trikControl::Sensor::analogSensor)) {
+			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
+			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
 		}
-	} else if (command.startsWith(sensorRequested)) {
-		QString port = command.remove(0, sensorRequested.length());
-		answer = "sensor:" + port + ":" + QString::number(mBrick.sensor(port)->read());
-	} else if (command.startsWith(accelerometerRequested)) {
-		answer = "accelerometer:" + serializeVector(mBrick.accelerometer()->read());
-	} else if (command.startsWith(gyroscopeRequested)) {
-		answer = "gyroscope:" + serializeVector(mBrick.gyroscope()->read());
+		answer[answer.length() - 1] = ';';
+		answer += "digital:";
+		for (QString port : mBrick.sensorPorts(trikControl::Sensor::digitalSensor)) {
+			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
+			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
+		}
+		answer[answer.length() - 1] = ';';
+		answer += "special:";
+		for (QString port : mBrick.sensorPorts(trikControl::Sensor::specialSensor)) {
+			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
+			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
+		}
+		answer[answer.length() - 1] = ';';
+		answer += "accelerometer:" + serializeVector(mBrick.accelerometer()->read()) + ";";
+		answer += "gyroscope:" + serializeVector(mBrick.gyroscope()->read());
+	} else if (command.startsWith(portsRequested)) {
+		answer = "ports:";
+		answer += "analog:" + mBrick.sensorPorts(trikControl::Sensor::analogSensor).join(",") + ";";
+		answer += "digital:" + mBrick.sensorPorts(trikControl::Sensor::digitalSensor).join(",") + ";";
+		answer += "special:" + mBrick.sensorPorts(trikControl::Sensor::specialSensor).join(",");
 	}
 
 	send(answer.toUtf8());
