@@ -40,7 +40,7 @@ QT += script
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
-copyToDestdir(system.js)
+copyToDestdir($$PWD/system.js)
 
 uses(trikKernel trikControl)
 

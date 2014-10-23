@@ -14,6 +14,8 @@
 
 include(../global.pri)
 
+QT += network
+
 INCLUDEPATH += $$PWD/include \
 
 HEADERS += \
