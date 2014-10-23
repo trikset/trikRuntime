@@ -72,7 +72,7 @@ public:
 	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
 	///        /run/wpa_supplicant/wlan0.
 	/// @param parent - parent QObject.
-	TrikWiFi(QString const &interfaceFilePrefix, QString const &daemonFile, QObject *parent = NULL);
+	TrikWiFi(QString const &interfaceFilePrefix, QString const &daemonFile, QObject *parent = nullptr);
 
 	/// Destructor.
 	~TrikWiFi();

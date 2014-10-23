@@ -46,7 +46,7 @@ WiFiClientWidget::WiFiClientWidget(QString const &configPath, QWidget *parent)
 	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
 
 	QList<NetworkConfiguration> const networksFromWpaSupplicant = mWiFi->listNetworks();
-	foreach (NetworkConfiguration const &networkConfiguration, networksFromWpaSupplicant) {
+	for (NetworkConfiguration const &networkConfiguration : networksFromWpaSupplicant) {
 		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
 	}
 
@@ -92,7 +92,7 @@ void WiFiClientWidget::renewFocus()
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
-	foreach (ScanResult const &result, mWiFi->scanResults()) {
+	for (ScanResult const &result : mWiFi->scanResults()) {
 		mAvailableNetworksModel.appendRow(new QStandardItem(result.ssid));
 	}
 

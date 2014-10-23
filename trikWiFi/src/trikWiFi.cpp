@@ -221,7 +221,7 @@ QList<NetworkConfiguration> TrikWiFi::listNetworks()
 
 	QStringList const lines = reply.split('\n');
 	QList<NetworkConfiguration> list;
-	foreach (QString const &line, lines) {
+	for (QString const &line : lines) {
 		QStringList const values = line.split('\t');
 		if (values.size() != 4) {
 			continue;
@@ -274,7 +274,7 @@ QHash<QString, QString> TrikWiFi::parseReply(QString const &reply)
 
 	QStringList const lines = reply.split('\n');
 
-	foreach (QString const &line, lines) {
+	for (QString const &line : lines) {
 		int const valuePos = line.indexOf('=') + 1;
 		if (valuePos < 1) {
 			continue;

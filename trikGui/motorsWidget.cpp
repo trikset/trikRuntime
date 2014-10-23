@@ -32,7 +32,7 @@ MotorsWidget::MotorsWidget(trikControl::Brick &brick
 	mPorts.sort();
 
 	int i = 0;
-	foreach (QString const &port, mPorts) {
+	for (QString const &port : mPorts) {
 		MotorLever *lever = new MotorLever(port, *mBrick.motor(port), this);
 		mLayout.addWidget(lever);
 		mLevers[i] = lever;
