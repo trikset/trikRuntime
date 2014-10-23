@@ -28,6 +28,8 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator
 		, int normalizedValue2)
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(i2cCommandNumber)
+	, mK(0)
+	, mB(0)
 {
 	// We use linear subjection to normalize sensor values:
 	// normalizedValue = k * rawValue + b
