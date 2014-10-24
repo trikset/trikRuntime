@@ -40,7 +40,7 @@ using namespace trikWiFi;
 
 WiFiClientWidget::WiFiClientWidget(QString const &configPath, QWidget *parent)
 	: TrikGuiDialog(parent)
-	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/run/wpa_supplicant/wlan0", this))
+	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this))
 	, mConnectionState(notConnected)
 {
 	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);

@@ -34,6 +34,9 @@ public:
 	/// @param deviceFile - device file for this sensor.
 	Sensor3dWorker(int min, int max, QString const &deviceFile);
 
+signals:
+	void newData(QVector<int> reading);
+
 public slots:
 	/// Returns current raw reading of a sensor in a form of vector with 3 coordinates.
 	QVector<int> read();

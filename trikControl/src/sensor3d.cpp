@@ -21,6 +21,7 @@ using namespace trikControl;
 Sensor3d::Sensor3d(int min, int max, const QString &controlFile)
 	: mSensor3dWorker(new Sensor3dWorker(min, max, controlFile))
 {
+	connect(mSensor3dWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
 	mSensor3dWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
 }

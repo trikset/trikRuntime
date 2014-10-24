@@ -80,6 +80,9 @@ void Sensor3dWorker::readFile()
 				}
 				break;
 			case EV_SYN:
+				mLock.lockForRead();
+				emit newData(mReading);
+				mLock.unlock();
 				break;
 		}
 	}

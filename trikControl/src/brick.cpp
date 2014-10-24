@@ -35,6 +35,8 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	, mDisplay(guiThread, startDirPath)
 	, mInEventDrivenMode(false)
 {
+	qRegisterMetaType<QVector<int>>("QVector<int>");
+
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
 		qDebug() << "Init script failed";
 	}

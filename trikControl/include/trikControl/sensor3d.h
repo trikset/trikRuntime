@@ -39,6 +39,9 @@ public:
 
 	~Sensor3d();
 
+signals:
+	void newData(QVector<int> reading);
+
 public slots:
 	/// Returns current raw reading of a sensor in a form of vector with 3 coordinates.
 	QVector<int> read() const;
