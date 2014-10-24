@@ -14,6 +14,9 @@ void Connection::processData(QByteArray const &data)
 
 	QString portsRequested("ports");
 	QString dataRequested("data");
+	QString singleSensorRequested("sensor:");
+	QString accelerometerRequested("AccelerometerPort");
+	QString gyroscopeRequested("GyroscopePort");
 
 	QString answer;
 
@@ -44,6 +47,22 @@ void Connection::processData(QByteArray const &data)
 		answer += "analog:" + mBrick.sensorPorts(trikControl::Sensor::analogSensor).join(",") + ";";
 		answer += "digital:" + mBrick.sensorPorts(trikControl::Sensor::digitalSensor).join(",") + ";";
 		answer += "special:" + mBrick.sensorPorts(trikControl::Sensor::specialSensor).join(",");
+	} else if (command.startsWith(singleSensorRequested)) {
+		answer = command + ":";
+		command.remove(0, singleSensorRequested.length());
+		if (command.startsWith(accelerometerRequested)) {
+			int dimension = command.at(command.length() - 1).toAscii() - 'X';
+			answer += QString::number(mBrick.accelerometer()->read()[dimension]);
+		} else if (command.startsWith(gyroscopeRequested)) {
+			int dimension = command.at(command.length() - 1).toAscii() - 'X';
+			answer += QString::number(mBrick.gyroscope()->read()[dimension]);
+		} else if (mBrick.sensorPorts(trikControl::Sensor::analogSensor).contains(command)
+				|| mBrick.sensorPorts(trikControl::Sensor::digitalSensor).contains(command)
+				|| mBrick.sensorPorts(trikControl::Sensor::specialSensor).contains(command)){
+			answer += QString::number(mBrick.sensor(command)->read());
+		} else if (mBrick.encoderPorts().contains(command)) {
+			answer += QString::number(mBrick.encoder(command)->read());
+		}
 	}
 
 	send(answer.toUtf8());
