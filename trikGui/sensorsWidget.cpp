@@ -32,7 +32,7 @@ SensorsWidget::SensorsWidget(trikControl::Brick &brick, QStringList const &ports
 	mTimer.setSingleShot(false);
 
 	int i = 0;
-	foreach (QString const &port, ports) {
+	for (QString const &port : ports) {
 		SensorIndicator *indicator = new SensorIndicator(port, *mBrick.sensor(port), this);
 		mLayout.addWidget(indicator);
 		connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));

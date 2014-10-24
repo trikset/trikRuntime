@@ -128,7 +128,7 @@ void StartWidget::setRootIndex(QModelIndex const &index)
 {
 	QStandardItem const *item = mMenuModel.itemFromIndex(index);
 
-	if (item == NULL) {
+	if (item == nullptr) {
 		item = mMenuModel.invisibleRootItem();
 	}
 
@@ -169,7 +169,7 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 		}
 		case Qt::Key_Escape: {
 			QStandardItem const * const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
-			if (rootItem == NULL) {
+			if (rootItem == nullptr) {
 				break;
 			}
 

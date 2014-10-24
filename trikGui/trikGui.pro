@@ -71,7 +71,7 @@ SOURCES += \
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
 
-copyToDestdir(wpa-config.xml)
+copyToDestdir($$PWD/wpa-config.xml)
 
 TEMPLATE = app
 

@@ -1,4 +1,4 @@
-/* Copyright 2013 Nikita Batov
+/* Copyright 2013 - 2014 Nikita Batov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,10 +45,10 @@ public:
 			, int normalizedValue2);
 
 public slots:
-	/// Returns current raw reading of a sensor.
+	/// Returns current reading of a sensor.
 	int read();
 
-	/// Returns current real raw reading of a sensor.
+	/// Returns current raw reading of a sensor.
 	int readRawData() override;
 
 private:

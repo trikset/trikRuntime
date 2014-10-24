@@ -31,10 +31,12 @@ using namespace trikControl;
 
 Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &startDirPath)
 	: mConfigurer(new Configurer(configFilePath))
-	, mI2cCommunicator(NULL)
+	, mI2cCommunicator(nullptr)
 	, mDisplay(guiThread, startDirPath)
 	, mInEventDrivenMode(false)
 {
+	qRegisterMetaType<QVector<int>>("QVector<int>");
+
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
 		qDebug() << "Init script failed";
 	}
@@ -44,7 +46,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	for (QString const &port : mConfigurer->servoMotorPorts()) {
 		QString const servoMotorType = mConfigurer->servoMotorDefaultType(port);
 
-		ServoMotor *servoMotor = NULL;
+		ServoMotor *servoMotor = nullptr;
 		if (mConfigurer->isServoMotorTypeContiniousRotation(servoMotorType)) {
 			servoMotor = new ContiniousRotationServoMotor(
 					mConfigurer->servoMotorTypeMin(servoMotorType)
@@ -273,13 +275,13 @@ Motor *Brick::motor(QString const &port)
 	} else if (mServoMotors.contains(port)) {
 		return mServoMotors[port];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
 PwmCapture *Brick::pwmCapture(QString const &port)
 {
-	return mPwmCaptures.value(port, NULL);
+	return mPwmCaptures.value(port, nullptr);
 }
 
 Sensor *Brick::sensor(QString const &port)
@@ -289,7 +291,7 @@ Sensor *Brick::sensor(QString const &port)
 	} else if (mDigitalSensors.contains(port)) {
 		return mDigitalSensors[port];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -332,7 +334,7 @@ QStringList Brick::sensorPorts(Sensor::Type type) const
 
 Encoder *Brick::encoder(QString const &port)
 {
-	return mEncoders.value(port, NULL);
+	return mEncoders.value(port, nullptr);
 }
 
 Battery *Brick::battery()

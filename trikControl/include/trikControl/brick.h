@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	Brick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
 
-	~Brick();
+	~Brick() override;
 
 	/// Do reset (stop motors, reset keys, clear screen, etc). We should call it before executing any script
 	/// with this Brick instance.

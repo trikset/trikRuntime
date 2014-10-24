@@ -33,6 +33,10 @@ AbstractVirtualSensorWorker::~AbstractVirtualSensorWorker()
 {
 }
 
+void AbstractVirtualSensorWorker::stop()
+{
+}
+
 void AbstractVirtualSensorWorker::init()
 {
 }

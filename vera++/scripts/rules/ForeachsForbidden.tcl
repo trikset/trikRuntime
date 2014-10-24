@@ -1,4 +1,4 @@
-# Copyright 2014 CyberTech Labs Ltd.
+# Copyright 2014 Cybertech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,24 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../global.pri)
+proc ForeachsForbidden { fileName } {
+  set lineCount 1
+  foreach line [getAllLines $fileName] {
+    if { [regexp {foreach} $line] } {
+      report $fileName $lineCount "'foreach' is forbidden, use 'for' range loops instead"
+    }
+    incr lineCount
+  }
+}
 
-QT += network
-
-INCLUDEPATH += $$PWD/include \
-
-HEADERS += \
-	$$PWD/include/trikKernel/connection.h \
-	$$PWD/include/trikKernel/debug.h \
-	$$PWD/include/trikKernel/fileUtils.h \
-	$$PWD/include/trikKernel/trikServer.h \
-
-SOURCES += \
-	$$PWD/src/connection.cpp \
-	$$PWD/src/debug.cpp \
-	$$PWD/src/fileUtils.cpp \
-	$$PWD/src/trikServer.cpp \
-
-TEMPLATE = lib
-
-DEFINES += TRIKKERNEL_LIBRARY
+foreach fileName [getSourceFileNames] {
+  ForeachsForbidden $fileName
+}

@@ -41,8 +41,11 @@ public:
 
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.
+	/// @param inEventDrivenMode - true, if script shall be launched in event driven mode, i.e. not be stopped after
+	///        it finishes. In this mode event handlers in a script may be called until script is not explicitly
+	///        stopped.
 	/// @param function - the name of the function execution must start with. If empty then the script will be
-	/// evaluated as-is, else function call will be appended to @arg script.
+	///        evaluated as-is, else function call will be appended to @arg script.
 	void run(QString const &script, bool inEventDrivenMode, QString const &function = "main");
 
 	/// Aborts script execution.

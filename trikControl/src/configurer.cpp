@@ -538,7 +538,7 @@ void Configurer::loadPowerMotors(QDomElement const &root)
 
 		PowerMotorMapping mapping;
 		mapping.port = childElement.attribute("port");
-		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(nullptr, 0);
 		mapping.invert = childElement.attribute("invert") == "true";
 
 		mPowerMotorMappings.insert(mapping.port, mapping);
@@ -569,7 +569,7 @@ void Configurer::loadAnalogSensors(QDomElement const &root)
 
 		AnalogSensorMapping mapping;
 		mapping.port = childElement.attribute("port");
-		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(nullptr, 0);
 		mapping.defaultType = childElement.attribute("defaultType");
 
 		mAnalogSensorMappings.insert(mapping.port, mapping);
@@ -600,7 +600,7 @@ void Configurer::loadEncoders(QDomElement const &root)
 
 		EncoderMapping mapping;
 		mapping.port = childElement.attribute("port");
-		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(NULL, 0);
+		mapping.i2cCommandNumber = childElement.attribute("i2cCommandNumber").toInt(nullptr, 0);
 		mapping.defaultType = childElement.attribute("defaultType");
 
 		mEncoderMappings.insert(mapping.port, mapping);
@@ -791,7 +791,7 @@ Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QStr
 void Configurer::loadI2c(QDomElement const &root)
 {
 	mI2cPath = root.elementsByTagName("i2c").at(0).toElement().attribute("path");
-	mI2cDeviceId = root.elementsByTagName("i2c").at(0).toElement().attribute("deviceId").toInt(NULL, 0);
+	mI2cDeviceId = root.elementsByTagName("i2c").at(0).toElement().attribute("deviceId").toInt(nullptr, 0);
 }
 
 void Configurer::loadLed(QDomElement const &root)
@@ -799,8 +799,8 @@ void Configurer::loadLed(QDomElement const &root)
 	QDomElement led = root.elementsByTagName("led").at(0).toElement();
 	mLedRedDeviceFile = led.attribute("red");
 	mLedGreenDeviceFile = led.attribute("green");
-	mLedOn = led.attribute("on").toInt(NULL, 0);
-	mLedOff = led.attribute("off").toInt(NULL, 0);
+	mLedOn = led.attribute("on").toInt(nullptr, 0);
+	mLedOff = led.attribute("off").toInt(nullptr, 0);
 }
 
 void Configurer::loadKeys(QDomElement const &root)
@@ -813,7 +813,7 @@ void Configurer::loadGamepadPort(QDomElement const &root)
 {
 	if (isEnabled(root, "gamepad")) {
 		QDomElement gamepad = root.elementsByTagName("gamepad").at(0).toElement();
-		mGamepadPort = gamepad.attribute("port").toInt(NULL, 0);
+		mGamepadPort = gamepad.attribute("port").toInt(nullptr, 0);
 		mIsGamepadEnabled = true;
 	}
 }

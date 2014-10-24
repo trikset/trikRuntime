@@ -22,12 +22,12 @@ namespace trikScriptRunner {
 class Utils
 {
 public:
-	/// Creates new instance of script value copying there all insufficient data from @arg prototype.
+	/// Creates new instance of script value copying there all insufficient data from prototype.
 	/// @param prototype - object to copy.
 	/// @paragraph engine - an engine that should own new object.
 	static QScriptValue clone(QScriptValue const &prototype, QScriptEngine * const engine);
 
-	/// Copies insufficient data into @arg target from @arg prototype.
+	/// Copies insufficient data into target from prototype.
 	/// @param prototype - copy source.
 	/// @param target - copy target.
 	/// @paragraph engine - an engine that should own new objects.
