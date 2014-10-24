@@ -50,17 +50,17 @@ class StartWidget : public MainWidget
 
 public:
 	/// Constructor
+	/// @param controller - controller object that provides access to underlying runtime.
 	/// @param configPath - full path to configuration files.
-	/// @param startDirPath - path to the directory from which the application was executed.
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit StartWidget(Controller &controller, QString const &configPath, QWidget *parent = 0);
 
-	~StartWidget();
+	~StartWidget() override;
 
 	void renewFocus() override;
 
 private:
-	virtual void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
 
 	void launch();
 

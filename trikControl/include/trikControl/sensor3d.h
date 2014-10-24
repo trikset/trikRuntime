@@ -37,9 +37,10 @@ public:
 	/// @param deviceFile - device file for this sensor.
 	Sensor3d(int min, int max, QString const &deviceFile);
 
-	~Sensor3d();
+	~Sensor3d() override;
 
 signals:
+	/// Emitted when new sensor reading is ready.
 	void newData(QVector<int> reading);
 
 public slots:

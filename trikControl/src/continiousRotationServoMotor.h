@@ -33,6 +33,7 @@ public:
 	/// @param max - value of duty_ns corresponding to full forward of a motor. Used to calculate actual values from
 	///        values in range [-100..100] from client program.
 	/// @param zero - value of duty_ns corresponding to full stop of a motor.
+	/// @param stop - value of duty_ns corresponding to poweroff state.
 	/// @param dutyFile - file for setting duty of PWM signal supplied to this motor.
 	/// @param periodFile - file for setting period of PWM signal supplied to this motor
 	/// @param period - value of period for setting while initialization

@@ -35,6 +35,7 @@ public:
 	Sensor3dWorker(int min, int max, QString const &deviceFile);
 
 signals:
+	/// Emitted when new sensor reading is ready.
 	void newData(QVector<int> reading);
 
 public slots:
