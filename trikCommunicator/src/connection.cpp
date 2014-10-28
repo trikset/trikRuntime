@@ -32,7 +32,7 @@ Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
 
 void Connection::processData(QByteArray const &data)
 {
-	QString command(data);
+	QString command = QString::fromUtf8(data.data());
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
