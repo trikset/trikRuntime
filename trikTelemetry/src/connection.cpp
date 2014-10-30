@@ -40,13 +40,20 @@ void Connection::processData(QByteArray const &data)
 			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
 		}
 		answer[answer.length() - 1] = ';';
+		answer += "encoders:";
+		for (QString port : mBrick.encoderPorts()) {
+			answer += port + "=" + QString::number(mBrick.encoder(port)->read()) + ":";
+			answer += QString::number(mBrick.encoder(port)->readRawData()) + ",";
+		}
+		answer[answer.length() - 1] = ';';
 		answer += "accelerometer:" + serializeVector(mBrick.accelerometer()->read()) + ";";
 		answer += "gyroscope:" + serializeVector(mBrick.gyroscope()->read());
 	} else if (command.startsWith(portsRequested)) {
 		answer = "ports:";
 		answer += "analog:" + mBrick.sensorPorts(trikControl::Sensor::analogSensor).join(",") + ";";
 		answer += "digital:" + mBrick.sensorPorts(trikControl::Sensor::digitalSensor).join(",") + ";";
-		answer += "special:" + mBrick.sensorPorts(trikControl::Sensor::specialSensor).join(",");
+		answer += "special:" + mBrick.sensorPorts(trikControl::Sensor::specialSensor).join(",") + ";";
+		answer += "encoders:" + mBrick.encoderPorts().join(",");
 	} else if (command.startsWith(singleSensorRequested)) {
 		answer = command + ":";
 		command.remove(0, singleSensorRequested.length());
