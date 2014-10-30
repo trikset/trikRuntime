@@ -62,10 +62,10 @@ void Connection::processData(QByteArray const &data)
 		answer = command + ":";
 		command.remove(0, singleSensorRequested.length());
 		if (command.startsWith(accelerometerRequested)) {
-			int dimension = command.at(command.length() - 1).toAscii() - 'X';
+			int dimension = command.at(command.length() - 1).toLatin1() - 'X';
 			answer += QString::number(mBrick.accelerometer()->read()[dimension]);
 		} else if (command.startsWith(gyroscopeRequested)) {
-			int dimension = command.at(command.length() - 1).toAscii() - 'X';
+			int dimension = command.at(command.length() - 1).toLatin1() - 'X';
 			answer += QString::number(mBrick.gyroscope()->read()[dimension]);
 		} else if (mBrick.sensorPorts(trikControl::Sensor::analogSensor).contains(command)
 				|| mBrick.sensorPorts(trikControl::Sensor::digitalSensor).contains(command)
