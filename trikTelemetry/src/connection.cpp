@@ -12,11 +12,11 @@ void Connection::processData(QByteArray const &data)
 {
 	QString command(data);
 
-	QString portsRequested("ports");
-	QString dataRequested("data");
-	QString singleSensorRequested("sensor:");
-	QString accelerometerRequested("AccelerometerPort");
-	QString gyroscopeRequested("GyroscopePort");
+	QString const portsRequested("ports");
+	QString const dataRequested("data");
+	QString const singleSensorRequested("sensor:");
+	QString const accelerometerRequested("AccelerometerPort");
+	QString const gyroscopeRequested("GyroscopePort");
 
 	QString answer;
 
@@ -27,24 +27,28 @@ void Connection::processData(QByteArray const &data)
 			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
 			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
 		}
+
 		answer[answer.length() - 1] = ';';
 		answer += "digital:";
 		for (QString port : mBrick.sensorPorts(trikControl::Sensor::digitalSensor)) {
 			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
 			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
 		}
+
 		answer[answer.length() - 1] = ';';
 		answer += "special:";
 		for (QString port : mBrick.sensorPorts(trikControl::Sensor::specialSensor)) {
 			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
 			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
 		}
+
 		answer[answer.length() - 1] = ';';
 		answer += "encoders:";
 		for (QString port : mBrick.encoderPorts()) {
 			answer += port + "=" + QString::number(mBrick.encoder(port)->read()) + ":";
 			answer += QString::number(mBrick.encoder(port)->readRawData()) + ",";
 		}
+
 		answer[answer.length() - 1] = ';';
 		answer += "accelerometer:" + serializeVector(mBrick.accelerometer()->read()) + ";";
 		answer += "gyroscope:" + serializeVector(mBrick.gyroscope()->read());
