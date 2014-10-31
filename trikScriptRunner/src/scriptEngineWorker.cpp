@@ -173,6 +173,7 @@ void ScriptEngineWorker::resetScriptEngine()
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
 		mEngine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+		onScriptEvaluated();
 	}
 
 	mEngine->setProcessEventsInterval(1);

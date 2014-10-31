@@ -37,6 +37,9 @@ public:
 	~Display();
 
 public slots:
+
+	QString startDirPath() const;
+
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
 	/// supported formats, but .jpg, .png, .bmp, .gif are supported.
@@ -51,9 +54,6 @@ public slots:
 
 	/// Remove all labels from the screen.
 	void removeLabels();
-
-	/// Shortcut to showImage, shows happy smile.
-	void smile();
 
 	/// Set painter color.
 	void setPainterColor(QString const &color);
@@ -95,9 +95,6 @@ public slots:
 	/// @param startAngle - start angle.
 	/// @param spanAngle - end andle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
-
-	/// Shortcut to showImage, shows sad smile.
-	void sadSmile();
 
 	/// Sets background for a picture.
 	/// @param color - color of a background.
