@@ -34,6 +34,7 @@ public:
 signals:
 	/// Emitted when there is incoming TCP message.
 	void dataReady(QString const &message);
+	void tcpDisconnectedSignal();
 
 public slots:
 	/// Starts a server and begins listening port for incoming connections.
