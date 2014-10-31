@@ -22,4 +22,6 @@ set rules {
   NoRelativePathsInIncludes
   NoSpacesAtTheStart
   OneFileOneClass
+  NullsForbidden
+  ForeachsForbidden
 }

@@ -33,9 +33,6 @@ using namespace trikGui;
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
-	mRefreshTimer.setInterval(1000);
-	connect(&mRefreshTimer, SIGNAL(timeout()), this, SLOT(refreshWidgets()));
-	mRefreshTimer.start();
 }
 
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)

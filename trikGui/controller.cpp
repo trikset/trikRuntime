@@ -25,12 +25,14 @@
 using namespace trikGui;
 
 int const communicatorPort = 8888;
+int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
 	: mBrick(*thread(), configPath, startDirPath)
 	, mScriptRunner(mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
-	, mRunningWidget(NULL)
+	, mTelemetry(mBrick)
+	, mRunningWidget(nullptr)
 	, mStartDirPath(startDirPath)
 {
 	connect(&mScriptRunner, SIGNAL(completed(QString)), this, SLOT(scriptExecutionCompleted(QString)));
@@ -39,6 +41,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	connect(&mCommunicator, SIGNAL(startedDirectScript()), this, SLOT(directScriptExecutionStarted()));
 
 	mCommunicator.startServer(communicatorPort);
+	mTelemetry.startServer(telemetryPort);
 }
 
 Controller::~Controller()
@@ -101,7 +104,7 @@ void Controller::scriptExecutionCompleted(QString const &error)
 
 		// Here we can be inside handler of mRunningWidget key press event.
 		mRunningWidget->deleteLater();
-		mRunningWidget = NULL;
+		mRunningWidget = nullptr;
 	} else if (!error.isEmpty()) {
 		mRunningWidget->showError(error);
 		mCommunicator.sendMessage("error: " + error);

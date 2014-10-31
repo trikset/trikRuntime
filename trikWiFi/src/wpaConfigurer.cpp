@@ -70,11 +70,11 @@ void WpaConfigurer::mergeNetworkConfigurations(QList<NetworkInfo*> const &networ
 	QList<NetworkConfiguration> const networksFromWpaSupplicant = wiFi.listNetworks();
 
 	QHash<QString, int> networksFromWpaSupplicantHash;
-	foreach (NetworkConfiguration const &networkConfiguration, networksFromWpaSupplicant) {
+	for (NetworkConfiguration const &networkConfiguration : networksFromWpaSupplicant) {
 		networksFromWpaSupplicantHash.insert(networkConfiguration.ssid, networkConfiguration.id);
 	}
 
-	foreach (NetworkInfo const * const networkInfo, networksFromConfig) {
+	for (NetworkInfo const * const networkInfo : networksFromConfig) {
 		int const id = networksFromWpaSupplicantHash.contains(networkInfo->ssid)
 				? networksFromWpaSupplicantHash[networkInfo->ssid]
 				: wiFi.addNetwork();

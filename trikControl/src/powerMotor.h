@@ -31,11 +31,13 @@ class PowerMotor : public Motor
 
 public:
 	/// Constructor.
+	/// @param communicator - reference to an object that handles I2C communication.
+	/// @param i2cCommandNumber - I2C command corresponding to this device.
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
 	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
 
 	/// Destructor.
-	~PowerMotor();
+	~PowerMotor() override;
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.

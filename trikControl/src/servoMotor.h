@@ -32,11 +32,11 @@ public:
 	/// @param min - minimal value of duty_ns whose meaning and range depends on motor type.
 	/// @param max - maximal value of duty_ns whose meaning and range depends on motor type.
 	/// @param zero - neutral value of duty_ns.
+	/// @param stop - value of duty_ns corresponding to poweroff state.
 	/// @param dutyFile - file for setting duty of PWM signal supplied to this motor.
 	/// @param periodFile - file for setting period of PWM signal supplied to this motor.
 	/// @param period - value of period for setting while initialization.
 	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	/// @param isContiniousRotationServo - true, if this servo is continious rotation, false if it is angular.
 	ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile, int period
 			, bool invert);
 

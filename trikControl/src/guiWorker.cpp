@@ -82,7 +82,7 @@ void GuiWorker::addLabel(QString const &text, int x, int y)
 
 void GuiWorker::removeLabels()
 {
-	foreach (QLabel * const label, mLabels.values()) {
+	for (QLabel * const label : mLabels.values()) {
 		label->close();
 		delete label;
 	}
@@ -176,13 +176,13 @@ void GuiWorker::hide()
 
 QLabel *GuiWorker::findLabel(int x, int y) const
 {
-	foreach (QLabel * const label, mLabels.values(x ^ y)) {
+	for (QLabel * const label : mLabels.values(x ^ y)) {
 		if (label->x() == x && label->y() == y) {
 			return label;
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void GuiWorker::drawPoint(int x, int y)

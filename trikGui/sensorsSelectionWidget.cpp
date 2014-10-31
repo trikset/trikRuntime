@@ -28,7 +28,7 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::Brick &brick
 	, mBrick(brick)
 {
 	QStringList ports = mBrick.sensorPorts(type);
-	foreach (QString const &port, ports) {
+	for (QString const &port : ports) {
 		QListWidgetItem *item = new QListWidgetItem(port, &mList);
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Checked);
