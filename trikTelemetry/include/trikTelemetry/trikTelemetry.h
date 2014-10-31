@@ -14,7 +14,9 @@ class Connection;
 class TrikTelemetry : public trikKernel::TrikServer
 {
 	Q_OBJECT
+
 public:
+	/// Constructor.
 	/// @param brick - a Brick used to respond to clients
 	TrikTelemetry(trikControl::Brick &brick);
 

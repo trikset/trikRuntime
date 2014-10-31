@@ -2,7 +2,7 @@
 
 #include "src/connection.h"
 
-namespace trikTelemetry {
+using namespace trikTelemetry;
 
 TrikTelemetry::TrikTelemetry(trikControl::Brick &brick)
 	: trikKernel::TrikServer([this] () { return connectionFactory(); })
@@ -13,6 +13,4 @@ TrikTelemetry::TrikTelemetry(trikControl::Brick &brick)
 Connection * TrikTelemetry::connectionFactory()
 {
 	return new Connection(mBrick);
-}
-
 }

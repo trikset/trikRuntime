@@ -1,6 +1,6 @@
 #include "connection.h"
 
-namespace trikTelemetry {
+using namespace trikTelemetry;
 
 Connection::Connection(trikControl::Brick &brick)
 	: trikKernel::Connection(trikKernel::Protocol::messageLength)
@@ -21,32 +21,38 @@ void Connection::processData(QByteArray const &data)
 	QString answer;
 
 	if (command.startsWith(dataRequested)) {
+		auto reportSensorReading = [this, &answer] (QString const &port) {
+			answer += QString("%1=%2:%3,")
+					.arg(port)
+					.arg(mBrick.sensor(port)->read())
+					.arg(mBrick.sensor(port)->readRawData());
+		};
+
 		answer = "data:";
 		answer += "analog:";
-		for (QString port : mBrick.sensorPorts(trikControl::Sensor::analogSensor)) {
-			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
-			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
+		for (QString const &port : mBrick.sensorPorts(trikControl::Sensor::analogSensor)) {
+			reportSensorReading(port);
 		}
 
 		answer[answer.length() - 1] = ';';
 		answer += "digital:";
-		for (QString port : mBrick.sensorPorts(trikControl::Sensor::digitalSensor)) {
-			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
-			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
+		for (QString const &port : mBrick.sensorPorts(trikControl::Sensor::digitalSensor)) {
+			reportSensorReading(port);
 		}
 
 		answer[answer.length() - 1] = ';';
 		answer += "special:";
-		for (QString port : mBrick.sensorPorts(trikControl::Sensor::specialSensor)) {
-			answer += port + "=" + QString::number(mBrick.sensor(port)->read()) + ":";
-			answer += QString::number(mBrick.sensor(port)->readRawData()) + ",";
+		for (QString const &port : mBrick.sensorPorts(trikControl::Sensor::specialSensor)) {
+			reportSensorReading(port);
 		}
 
 		answer[answer.length() - 1] = ';';
 		answer += "encoders:";
-		for (QString port : mBrick.encoderPorts()) {
-			answer += port + "=" + QString::number(mBrick.encoder(port)->read()) + ":";
-			answer += QString::number(mBrick.encoder(port)->readRawData()) + ",";
+		for (QString const &port : mBrick.encoderPorts()) {
+			answer += QString("%1=%2:%3,")
+					.arg(port)
+					.arg(mBrick.encoder(port)->read())
+					.arg(mBrick.encoder(port)->readRawData());
 		}
 
 		answer[answer.length() - 1] = ';';
@@ -62,14 +68,15 @@ void Connection::processData(QByteArray const &data)
 		answer = command + ":";
 		command.remove(0, singleSensorRequested.length());
 		if (command.startsWith(accelerometerRequested)) {
-			int dimension = command.at(command.length() - 1).toLatin1() - 'X';
+			int const dimension = command.at(command.length() - 1).toLatin1() - 'X';
 			answer += QString::number(mBrick.accelerometer()->read()[dimension]);
 		} else if (command.startsWith(gyroscopeRequested)) {
-			int dimension = command.at(command.length() - 1).toLatin1() - 'X';
+			int const dimension = command.at(command.length() - 1).toLatin1() - 'X';
 			answer += QString::number(mBrick.gyroscope()->read()[dimension]);
 		} else if (mBrick.sensorPorts(trikControl::Sensor::analogSensor).contains(command)
 				|| mBrick.sensorPorts(trikControl::Sensor::digitalSensor).contains(command)
-				|| mBrick.sensorPorts(trikControl::Sensor::specialSensor).contains(command)){
+				|| mBrick.sensorPorts(trikControl::Sensor::specialSensor).contains(command))
+		{
 			answer += QString::number(mBrick.sensor(command)->read());
 		} else if (mBrick.encoderPorts().contains(command)) {
 			answer += QString::number(mBrick.encoder(command)->read());
@@ -87,6 +94,4 @@ QString Connection::serializeVector(QVector<int> const &vector) {
 
 	result[result.length() - 1] = ')';
 	return result;
-}
-
 }

@@ -17,5 +17,5 @@ DEFINES += TRIKTELEMETRY_LIBRARY
 uses(trikControl trikKernel)
 
 INCLUDEPATH += \
-	$PWD/../trikControl/include/ \
-	$PWD/../trikKernel/include/ \
+	../trikControl/include/ \
+	../trikKernel/include/ \

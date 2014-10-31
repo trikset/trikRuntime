@@ -14,8 +14,11 @@ namespace trikTelemetry {
 class Connection : public trikKernel::Connection
 {
 	Q_OBJECT
+
 public:
-	Connection(trikControl::Brick &brick);
+	/// Constructor.
+	/// @param brick - a Brick used to respond to clients.
+	explicit Connection(trikControl::Brick &brick);
 
 private:
 	void processData(QByteArray const &data) override;
