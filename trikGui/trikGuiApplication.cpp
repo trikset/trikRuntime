@@ -26,6 +26,8 @@
 	#include <QtWidgets/QWidget>
 #endif
 
+#include "backgroundWidget.h"
+
 using namespace trikGui;
 
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
@@ -36,12 +38,17 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
-		// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update
-		// all GUI to remove clutter on a screen.
-		foreach (QWidget * const widget, QApplication::allWidgets()) {
-			widget->update();
-		}
+		refreshWidgets();
 	}
 
 	return QApplication::notify(receiver, event);
+}
+
+void TrikGuiApplication::refreshWidgets()
+{
+	if (dynamic_cast<BackgroundWidget *>(QApplication::activeWindow())) {
+		for (auto const widget : QApplication::allWidgets()) {
+			widget->update();
+		}
+	}
 }

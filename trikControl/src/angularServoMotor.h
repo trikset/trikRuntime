@@ -33,6 +33,7 @@ public:
 	/// @param max - value of duty_ns corresponding to full counter clockwise rotation of a motor. Used to calculate
 	///        actual values from values in range [-90..90] from client program.
 	/// @param zero - value of duty_ns corresponding to 0 degrees rotation of a motor.
+	/// @param stop - value of duty_ns corresponding to poweroff state.
 	/// @param dutyFile - file for setting duty of PWM signal supplied to this motor.
 	/// @param periodFile - file for setting period of PWM signal supplied to this motor
 	/// @param period - value of period for setting while initialization

@@ -1,6 +1,4 @@
-#pragma once
-
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2014 CuberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/QString>
+#include "trikTelemetry.h"
 
-namespace trikKernel {
+#include "src/connection.h"
 
-/// Helper class with file helper functions.
-class FileUtils
+using namespace trikTelemetry;
+
+TrikTelemetry::TrikTelemetry(trikControl::Brick &brick)
+	: trikKernel::TrikServer([this] () { return connectionFactory(); })
+	, mBrick(brick)
 {
-public:
-	/// Reads all file contents and returns it as sting or throws an exception.
-	static QString readFromFile(QString const &fileName);
+}
 
-	/// Writes given string to given file, throws exception if something went wrong.
-	static void writeToFile(QString const &fileName, QString const &contents, QString const &dirPath = "");
-};
-
+Connection * TrikTelemetry::connectionFactory()
+{
+	return new Connection(mBrick);
 }

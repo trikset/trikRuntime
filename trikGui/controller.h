@@ -16,6 +16,7 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
 
 namespace trikGui
@@ -45,7 +46,14 @@ public:
 	/// Returns reference to Brick object, which provides access to low-level robot functionality.
 	trikControl::Brick &brick();
 
-	QString startDirPath();
+	/// Returns mStartDirPath (path to the directory from which the application was executed)
+	QString startDirPath() const;
+
+	/// Returns path to the directory in which scripts must be saved
+	QString scriptsDirPath() const;
+
+	/// Returns name of the directory in which scripts must be saved
+	QString scriptsDirName() const;
 
 private slots:
 	void scriptExecutionCompleted(QString const &error);
@@ -57,9 +65,10 @@ private:
 	trikControl::Brick mBrick;
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
+	trikTelemetry::TrikTelemetry mTelemetry;
 
 	RunningWidget *mRunningWidget;  // Has ownership.
-	QString const &mStartDirPath;
+	QString const &mStartDirPath; // Path to the directory from which the application was executed
 };
 
 }

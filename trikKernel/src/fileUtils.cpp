@@ -15,6 +15,7 @@
 #include "fileUtils.h"
 
 #include <QtCore/QFile>
+#include <QtCore/QDir>
 #include <QtCore/QDebug>
 
 using namespace trikKernel;
@@ -37,12 +38,17 @@ QString FileUtils::readFromFile(QString const &fileName)
 	return result;
 }
 
-void FileUtils::writeToFile(QString const &fileName, QString const &contents)
+void FileUtils::writeToFile(QString const &fileName, QString const &contents, QString const &dirPath)
 {
-	QFile file(fileName);
+	QDir dir;
+	dir.mkdir(dirPath);
+
+	QString const filePath = dirPath.isEmpty() ? fileName : QString(dirPath + "/" + fileName);
+
+	QFile file(filePath);
 	file.open(QIODevice::WriteOnly | QIODevice::Text);
 	if (!file.isOpen()) {
-		qDebug() << "Failed to open file" << fileName << "for writing";
+		qDebug() << "Failed to open file" << filePath << "for writing";
 		throw "File open operation failed";
 	}
 

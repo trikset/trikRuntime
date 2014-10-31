@@ -116,7 +116,7 @@ public slots:
 private:
 	void resetBackground();
 
-	/// Returns existing label with given coordinates or NULL if no such label exists.
+	/// Returns existing label with given coordinates or nullptr if no such label exists.
 	QLabel *findLabel(int x, int y) const;
 
 	QScopedPointer<GraphicsWidget> mImageWidget;

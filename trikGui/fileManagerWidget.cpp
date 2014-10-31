@@ -22,17 +22,16 @@
 #include <QtGui/QKeyEvent>
 
 using namespace trikGui;
-QString const scriptsDirName = "scripts";
 
 FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	mRootDirPath = mController.startDirPath() + scriptsDirName;
+	mRootDirPath = mController.scriptsDirPath();
 
 	QDir::setCurrent(mController.startDirPath());
 	QDir dir;
-	dir.mkdir(scriptsDirName);
+	dir.mkdir(mController.scriptsDirName());
 	QDir::setCurrent(mRootDirPath);
 
 	mFileSystemModel.setRootPath(mRootDirPath);

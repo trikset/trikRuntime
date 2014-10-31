@@ -64,8 +64,8 @@ public slots:
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
-	/// @param x1 - second point's x coordinate.
-	/// @param y1 - second point's y coordinate.
+	/// @param x2 - second point's x coordinate.
+	/// @param y2 - second point's y coordinate.
 	void drawLine(int x1, int y1, int x2, int y2);
 
 	/// Draw point on the widget.
