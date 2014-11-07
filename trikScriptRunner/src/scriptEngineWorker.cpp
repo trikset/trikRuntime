@@ -19,7 +19,6 @@
 #include <QtCore/QVector>
 
 #include <trikKernel/fileUtils.h>
-#include <trikKernel/debug.h>
 
 #include <trikControl/analogSensor.h>
 #include <trikControl/battery.h>
