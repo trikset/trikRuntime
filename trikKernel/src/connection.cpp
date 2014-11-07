@@ -16,6 +16,7 @@
 #include <QtCore/QThread>
 
 #include "connection.h"
+#include "version.h"
 
 using namespace trikKernel;
 
@@ -91,6 +92,7 @@ void Connection::init(int socketDescriptor)
 
 void Connection::onReadyRead()
 {
+	qDebug() << "Connection::onReadyRead";
 	if (!mSocket || !mSocket->isValid()) {
 		return;
 	}
@@ -105,6 +107,7 @@ void Connection::onReadyRead()
 
 void Connection::processBuffer()
 {
+	qDebug() << "Connection::processBuffer";
 	switch (mProtocol) {
 	case Protocol::messageLength:
 	{
@@ -130,7 +133,7 @@ void Connection::processBuffer()
 					QByteArray const message = mBuffer.left(mExpectedBytes);
 					mBuffer = mBuffer.mid(mExpectedBytes);
 
-					processData(message);
+					handleIncomingData(message);
 
 					mExpectedBytes = 0;
 				} else {
@@ -145,12 +148,22 @@ void Connection::processBuffer()
 		if (mBuffer.contains('\n')) {
 			auto const messages = mBuffer.split('\n');
 			for (int i = 0; i < messages.size() - 1; ++i) {
-				processData(messages.at(i));
+				handleIncomingData(messages.at(i));
 			}
 
 			mBuffer = messages.last();
 		}
 	}
+	}
+}
+
+void Connection::handleIncomingData(QByteArray const &data)
+{
+	qDebug() << "Connection::handleIncomingData" << data;
+	if (data == "version") {
+		send(QString("version: " + version).toUtf8());
+	} else {
+		processData(data);
 	}
 }
 
