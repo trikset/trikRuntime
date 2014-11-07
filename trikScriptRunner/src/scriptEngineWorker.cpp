@@ -75,13 +75,16 @@ void ScriptEngineWorker::reset()
 {
 	Q_ASSERT(mEngine);
 
-	mEngine->abortEvaluation();
-
-	QMetaObject::invokeMethod(this, "resetScriptEngine", Qt::QueuedConnection);
+	mEngineReset = !mEngine->isEvaluating();
+	mEngine->abortEvaluation(QScriptValue("aborted"));
+	while (!mEngineReset) {
+		QThread::yieldCurrentThread();
+	}
 
 	if (mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
 		onScriptEvaluated();
+		resetScriptEngine();
 	}
 }
 
@@ -129,6 +132,8 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QStr
 		onScriptEvaluated();
 		resetScriptEngine();
 	}
+
+	mEngineReset = true;
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
