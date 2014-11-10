@@ -86,6 +86,7 @@ signals:
 	/// to handler (or handlers).
 	void newMessage(int sender, QString const &message);
 
+	/// Used to interrupt waiting for new message.
 	void stopWaiting();
 
 private:

@@ -303,7 +303,7 @@ void MailboxServer::onNewData(QHostAddress const &ip, int port, QByteArray const
 	emit newMessage(senderHullNumber, QString(data));
 }
 
-bool MailboxServer:: hasMessages()
+bool MailboxServer::hasMessages()
 {
 	mMessagesQueueLock.lockForRead();
 	bool const result = !mMessagesQueue.isEmpty();
