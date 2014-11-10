@@ -75,13 +75,13 @@ void ScriptEngineWorker::reset()
 	Q_ASSERT(mEngine);
 
 	mEngineReset = !mEngine->isEvaluating();
+	mBrick.stop();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
 	}
 
 	if (mBrick.isInEventDrivenMode()) {
-		mBrick.stop();
 		onScriptEvaluated();
 		resetScriptEngine();
 	}

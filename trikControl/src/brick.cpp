@@ -244,6 +244,8 @@ void Brick::say(QString const &text)
 
 void Brick::stop()
 {
+	emit stopWaiting();
+
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
 	}
@@ -390,9 +392,12 @@ QTimer* Brick::timer(int milliseconds)
 	return result;
 }
 
-void Brick::wait(int const &milliseconds) const
+void Brick::wait(int const &milliseconds)
 {
-	SleeperThread::msleep(milliseconds);
+	QEventLoop loop;
+	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()));
+	QTimer::singleShot(milliseconds, this, SIGNAL(stopWaiting()));
+	loop.exec();
 }
 
 qint64 Brick::time() const
