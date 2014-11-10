@@ -185,6 +185,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 
 	if (mConfigurer->hasMailbox()) {
 		mMailbox.reset(new Mailbox(mConfigurer->mailboxServerPort()));
+		QObject::connect(this, SIGNAL(stopWaiting()), mMailbox.data(), SIGNAL(stopWaiting()));
 	}
 }
 

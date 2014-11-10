@@ -2,12 +2,15 @@
 
 #include "src/mailboxServer.h"
 
+#include <QtCore/QEventLoop>
+
 using namespace trikControl;
 
 Mailbox::Mailbox(int port)
-	: mWorker(new MailboxServer(port, mReceiveWaitCondition))
+	: mWorker(new MailboxServer(port))
 {
 	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
+	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaiting()));
 
 	mWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
@@ -68,13 +71,13 @@ QString Mailbox::receive()
 {
 	QString result;
 
-	/// @todo Do not block thread entirely. It will make impossible to interrupt a program from QReal.
-	mReceiveMutex.lock();
-	if (!mWorker->hasMessages()) {
-		mReceiveWaitCondition.wait(&mReceiveMutex);
+	QEventLoop loop;
+	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()));
+	loop.exec();
+
+	if (mWorker->hasMessages()) {
+		result = mWorker->receive();
 	}
 
-	result = mWorker->receive();
-	mReceiveMutex.unlock();
 	return result;
 }

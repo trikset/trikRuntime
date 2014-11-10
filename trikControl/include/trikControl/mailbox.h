@@ -86,18 +86,14 @@ signals:
 	/// to handler (or handlers).
 	void newMessage(int sender, QString const &message);
 
+	void stopWaiting();
+
 private:
 	/// Server that works in separate thread.
 	QScopedPointer<MailboxServer> mWorker;
 
 	/// Worker thread.
 	QThread mWorkerThread;
-
-	/// Wait condition that blocks script execution until new message is received.
-	QWaitCondition mReceiveWaitCondition;
-
-	/// Mutex that blocks script execution until new message is received.
-	QMutex mReceiveMutex;
 };
 
 }

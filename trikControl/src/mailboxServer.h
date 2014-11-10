@@ -18,7 +18,6 @@
 #include <QtCore/QMultiHash>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QQueue>
-#include <QtCore/QWaitCondition>
 #include <QtNetwork/QHostAddress>
 
 #include <trikKernel/trikServer.h>
@@ -44,7 +43,7 @@ public:
 	/// @param port - a port for mailbox server.
 	/// @param receiveWaitCondition - reference to a wait condition that is shared with "frontend" mailbox object
 	///        and is used to block script execution on receive() call until new message arrives.
-	MailboxServer(int port, QWaitCondition &receiveWaitCondition);
+	MailboxServer(int port);
 
 	/// Returns hull number of this robot.
 	int hullNumber() const;
@@ -127,8 +126,6 @@ private:
 	QReadWriteLock mKnownRobotsLock;
 
 	QReadWriteLock mAuxiliaryInformationLock;
-
-	QWaitCondition &mReceiveWaitCondition;
 };
 
 inline bool operator ==(MailboxServer::Endpoint const &left, MailboxServer::Endpoint const &right)
