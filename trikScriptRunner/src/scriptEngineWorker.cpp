@@ -61,6 +61,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	, mBrick(brick)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
+	, mEngineReset(false)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
