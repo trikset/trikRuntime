@@ -24,6 +24,7 @@ using namespace trikScriptRunner;
 ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath)
 {
 	mEngineWorker = new ScriptEngineWorker(brick, startDirPath);
+	QMetaObject::invokeMethod(mEngineWorker, "init");
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
@@ -33,8 +34,6 @@ ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &s
 	connect(mEngineWorker, SIGNAL(completed(QString)), this, SIGNAL(completed(QString)));
 
 	mWorkerThread.start();
-
-	QMetaObject::invokeMethod(mEngineWorker, "init");
 }
 
 ScriptRunnerProxy::~ScriptRunnerProxy()
