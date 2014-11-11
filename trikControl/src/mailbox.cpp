@@ -73,7 +73,9 @@ QString Mailbox::receive()
 
 	QEventLoop loop;
 	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()));
-	loop.exec();
+	if (!mWorker->hasMessages()) {
+		loop.exec();
+	}
 
 	if (mWorker->hasMessages()) {
 		result = mWorker->receive();
