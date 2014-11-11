@@ -39,7 +39,7 @@ void Connection::processData(QByteArray const &data)
 		qDebug() << "Command: " << command;
 	}
 
-	if (command.startsWith("file")) {
+	if (command.startsWith("file:")) {
 		command.remove(0, QString("file:").length());
 		int const separatorPosition = command.indexOf(':');
 		if (separatorPosition == -1) {
@@ -64,7 +64,7 @@ void Connection::processData(QByteArray const &data)
 		command.remove(0, QString("direct:").length());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "runDirectCommand", Q_ARG(QString, command));
 		emit startedDirectScript();
-	} else if (command.startsWith("directScript")) {
+	} else if (command.startsWith("directScript:")) {
 		command.remove(0, QString("directScript:").length());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, command));
 		emit startedDirectScript();

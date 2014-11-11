@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QThread>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QHash>
 
 #include "declSpec.h"
 
@@ -40,8 +41,11 @@ public slots:
 	/// Clear data about previous key pressures.
 	void reset();
 
-	/// Returns true, if button with given code was pressed, and clears "pressed" state for that button.
+	/// Returns true if button with given code was pressed, and clears "pressed" state for that button.
 	bool wasPressed(int code);
+
+	/// Returns true if button with given code is pressed at the moment.
+	bool isPressed(int code);
 
 signals:
 	/// Triggered when button state changed (pressed or released).
@@ -49,9 +53,13 @@ signals:
 	/// @param value - key state.
 	void buttonPressed(int code, int value);
 
+private slots:
+	void changeButtonState(int code, int value);
+
 private:
 	QScopedPointer<KeysWorker> mKeysWorker;
 	QThread mWorkerThread;
+	QHash<int, int> mKeysPressed;
 };
 
 }
