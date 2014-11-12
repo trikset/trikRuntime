@@ -22,6 +22,7 @@ Keys::Keys(const QString &keysPath)
 	: mKeysWorker(new KeysWorker(keysPath))
 {
 	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int,int)), this, SIGNAL(buttonPressed(int,int)));
+	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int,int)), this, SLOT(changeButtonState(int,int)));
 	mKeysWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
 }
@@ -40,4 +41,14 @@ void Keys::reset()
 bool Keys::wasPressed(int code)
 {
 	return mKeysWorker->wasPressed(code);
+}
+
+bool Keys::isPressed(int code)
+{
+	return mKeysPressed.value(code, false);
+}
+
+void Keys::changeButtonState(int code, int value)
+{
+	mKeysPressed[code] = value;
 }

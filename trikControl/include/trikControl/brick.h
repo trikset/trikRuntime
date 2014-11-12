@@ -162,18 +162,10 @@ signals:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();
 
+	/// To be connected to quit() slot of local event loops that are used for waiting.
 	void stopWaiting();
 
 private:
-	class SleeperThread : public QThread
-	{
-	public:
-		static void msleep(unsigned long msecs)
-		{
-			QThread::msleep(msecs);
-		}
-	};
-
 	Sensor3d *mAccelerometer = nullptr;  // has ownership.
 	Sensor3d *mGyroscope = nullptr;  // has ownership.
 	LineSensor *mLineSensor = nullptr;  // Has ownership.
