@@ -21,6 +21,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTimer>
+#include <QtCore/QEventLoop>
 
 #include "declSpec.h"
 
@@ -134,7 +135,7 @@ public slots:
 	QTimer *timer(int milliseconds);
 
 	/// Waits given amount of time in milliseconds and returns.
-	void wait(int const &milliseconds) const;
+	void wait(int const &milliseconds);
 
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
@@ -161,16 +162,10 @@ signals:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();
 
-private:
-	class SleeperThread : public QThread
-	{
-	public:
-		static void msleep(unsigned long msecs)
-		{
-			QThread::msleep(msecs);
-		}
-	};
+	/// To be connected to quit() slot of local event loops that are used for waiting.
+	void stopWaiting();
 
+private:
 	Sensor3d *mAccelerometer = nullptr;  // has ownership.
 	Sensor3d *mGyroscope = nullptr;  // has ownership.
 	LineSensor *mLineSensor = nullptr;  // Has ownership.

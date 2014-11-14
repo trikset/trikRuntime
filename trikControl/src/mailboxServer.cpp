@@ -7,12 +7,11 @@
 
 using namespace trikControl;
 
-MailboxServer::MailboxServer(int port, QWaitCondition &receiveWaitCondition)
+MailboxServer::MailboxServer(int port)
 	: trikKernel::TrikServer([this] () { return connectionFactory(); })
 	, mHullNumber(0)
 	, mMyIp(determineMyIp())
 	, mMyPort(port)
-	, mReceiveWaitCondition(receiveWaitCondition)
 {
 	qRegisterMetaType<QHostAddress>("QHostAddress");
 
@@ -300,8 +299,6 @@ void MailboxServer::onNewData(QHostAddress const &ip, int port, QByteArray const
 	mMessagesQueueLock.lockForWrite();
 	mMessagesQueue.enqueue(data);
 	mMessagesQueueLock.unlock();
-
-	mReceiveWaitCondition.wakeOne();
 
 	emit newMessage(senderHullNumber, QString(data));
 }

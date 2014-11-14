@@ -29,6 +29,7 @@ void Connection::processData(QByteArray const &data)
 	QString const portsRequested("ports");
 	QString const dataRequested("data");
 	QString const singleSensorRequested("sensor:");
+	QString const buttonRequested("button:");
 	QString const accelerometerRequested("AccelerometerPort");
 	QString const gyroscopeRequested("GyroscopePort");
 
@@ -94,6 +95,9 @@ void Connection::processData(QByteArray const &data)
 			answer += QString::number(mBrick.sensor(command)->read());
 		} else if (mBrick.encoderPorts().contains(command)) {
 			answer += QString::number(mBrick.encoder(command)->read());
+		} else if (command.startsWith(buttonRequested)) {
+			command.remove(0, buttonRequested.length());
+			answer = "sensor:" + command + ":" + (isButtonPressed(command) ? "1" : "0");
 		}
 	}
 
@@ -108,4 +112,25 @@ QString Connection::serializeVector(QVector<int> const &vector) {
 
 	result[result.length() - 1] = ')';
 	return result;
+}
+
+bool Connection::isButtonPressed(const QString &buttonName)
+{
+	if (buttonName == "LeftButtonPort") {
+		return mBrick.keys()->isPressed(105);
+	} else if (buttonName == "UpButtonPort") {
+		return mBrick.keys()->isPressed(103);
+	} else if (buttonName == "DownButtonPort") {
+		return mBrick.keys()->isPressed(108);
+	} else if (buttonName == "EnterButtonPort") {
+		return mBrick.keys()->isPressed(28);
+	} else if (buttonName == "RightButtonPort") {
+		return mBrick.keys()->isPressed(106);
+	} else if (buttonName == "PowerButtonPort") {
+		return mBrick.keys()->isPressed(116);
+	} else if (buttonName == "MenuButtonPort") {
+		return mBrick.keys()->isPressed(139);
+	} else {
+		return false;
+	}
 }

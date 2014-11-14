@@ -19,7 +19,6 @@
 #include <QtCore/QVector>
 
 #include <trikKernel/fileUtils.h>
-#include <trikKernel/debug.h>
 
 #include <trikControl/analogSensor.h>
 #include <trikControl/battery.h>
@@ -62,6 +61,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	, mBrick(brick)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
+	, mEngineReset(false)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -75,13 +75,16 @@ void ScriptEngineWorker::reset()
 {
 	Q_ASSERT(mEngine);
 
-	mEngine->abortEvaluation();
-
-	QMetaObject::invokeMethod(this, "resetScriptEngine", Qt::QueuedConnection);
+	mEngineReset = !mEngine->isEvaluating();
+	mBrick.stop();
+	mEngine->abortEvaluation(QScriptValue("aborted"));
+	while (!mEngineReset) {
+		QThread::yieldCurrentThread();
+	}
 
 	if (mBrick.isInEventDrivenMode()) {
-		mBrick.stop();
 		onScriptEvaluated();
+		resetScriptEngine();
 	}
 }
 
@@ -129,6 +132,8 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QStr
 		onScriptEvaluated();
 		resetScriptEngine();
 	}
+
+	mEngineReset = true;
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
