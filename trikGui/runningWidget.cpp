@@ -47,19 +47,29 @@ void RunningWidget::showError(QString const &error)
 
 void RunningWidget::keyPressEvent(QKeyEvent *event)
 {
+	qDebug() << "RunningWidget::keyPressEvent";
 	switch (event->key()) {
 		case Qt::Key_PowerDown: {
+			qDebug() << "RunningWidget::keyPressEvent_Key_PowerDown";
 			mController.abortExecution();
 			releaseKeyboard();
 			close();
 			break;
 		}
 		default: {
+			qDebug() << "RunningWidget::keyPressEvent_default";
 			QWidget::keyPressEvent(event);
 			break;
 		}
 	}
 }
+
+/*void RunningWidget::closeEvent(QCloseEvent *event)
+{
+	qDebug() << "RunningWidget::closeEvent";
+	QWidget::closeEvent(event);
+	emit closeMainWidget(*this);
+} */
 
 void RunningWidget::renewFocus()
 {

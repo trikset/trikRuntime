@@ -40,7 +40,6 @@ signals:
 	/// Emitted when the widget created a new one and wants it to be shown.
 	void newWidget(MainWidget &widget);
 
-	void closeMainWidget(MainWidget &widget);
+	//void closeMainWidget(MainWidget &widget);
 };
-
 }

@@ -51,25 +51,32 @@ Controller::~Controller()
 
 void Controller::runFile(QString const &filePath)
 {
+	qDebug() << "Controller::runFile" << filePath;
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
+		qDebug() << "Controller::runFile_qts_js";
 		scriptExecutionFromFileStarted(fileInfo.baseName());
 		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()));
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
+		qDebug() << "Controller::runFile_wav_mp3";
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
 		emit addRunningWidget(*mRunningWidget);
 		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");");
 	} else if (fileInfo.suffix() == "sh") {
+		qDebug() << "Controller::runFile_sh";
 		QStringList args;
 		args << filePath;
 		QProcess::startDetached("sh", args);
 	} else if (fileInfo.isExecutable()) {
+		qDebug() << "Controller::runFile_else";
 		QProcess::startDetached(filePath);
 	}
 }
 
 void Controller::abortExecution()
 {
+	emit closeRunningWidget(*mRunningWidget);
+	qDebug() << "Controller::abortExecution()";
 	mScriptRunner.abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -98,8 +105,11 @@ QString Controller::scriptsDirName() const
 
 void Controller::scriptExecutionCompleted(QString const &error)
 {
+	qDebug() << "Controller::scriptExecutionCompleted";
 	if (mRunningWidget && error.isEmpty()) {
+		qDebug() << "Controller::scriptExecutionCompleted_01";
 		mRunningWidget->releaseKeyboard();
+		//mRunningWidget->close();
 		emit closeRunningWidget(*mRunningWidget);
 
 		// Here we can be inside handler of mRunningWidget key press event.
@@ -107,9 +117,11 @@ void Controller::scriptExecutionCompleted(QString const &error)
 		mRunningWidget = nullptr;
 	} else if (!error.isEmpty()) {
 		if (mRunningWidget->isVisible()) {
+			qDebug() << "Controller::scriptExecutionCompleted_02";
 			mRunningWidget->showError(error);
 			mCommunicator.sendMessage("error: " + error);
 		} else {
+			qDebug() << "Controller::scriptExecutionCompleted_03";
 			// It is already closed so all we need is to delete it.
 			mRunningWidget->deleteLater();
 			mRunningWidget = nullptr;
@@ -119,7 +131,9 @@ void Controller::scriptExecutionCompleted(QString const &error)
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 {
+	qDebug() << "Controller::scriptExecutionFromFileStarted: " << fileName;
 	if (mRunningWidget) {
+		//mRunningWidget->close();
 		emit closeRunningWidget(*mRunningWidget);
 		delete mRunningWidget;
 	}
@@ -137,5 +151,6 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 
 void Controller::directScriptExecutionStarted()
 {
+	qDebug() << "Controller::directScriptExecutionStarted";
 	scriptExecutionFromFileStarted(tr("direct command"));
 }
