@@ -159,7 +159,6 @@ void Connection::processBuffer()
 
 void Connection::handleIncomingData(QByteArray const &data)
 {
-	qDebug() << "Connection::handleIncomingData" << data;
 	if (data == "version") {
 		send(QString("version: " + version).toUtf8());
 	} else {
