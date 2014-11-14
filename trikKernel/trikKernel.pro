@@ -23,7 +23,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
 	$$PWD/include/trikKernel/trikServer.h \
-    include/trikKernel/version.h
+	$$PWD/include/trikKernel/version.h \
 
 SOURCES += \
 	$$PWD/src/connection.cpp \
