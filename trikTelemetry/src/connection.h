@@ -39,6 +39,8 @@ private:
 
 	static QString serializeVector(QVector<int> const &vector);
 
+	bool isButtonPressed(QString const &buttonName);
+
 	trikControl::Brick &mBrick;
 };
 

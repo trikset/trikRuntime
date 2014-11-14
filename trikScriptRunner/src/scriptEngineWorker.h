@@ -83,6 +83,7 @@ private:
 	trikControl::Brick &mBrick;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
+	bool mEngineReset;
 };
 
 }
