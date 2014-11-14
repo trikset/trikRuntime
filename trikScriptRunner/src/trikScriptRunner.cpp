@@ -15,6 +15,7 @@
 #include "include/trikScriptRunner/trikScriptRunner.h"
 
 #include <trikKernel/fileUtils.h>
+
 #include "src/scriptRunnerProxy.h"
 
 using namespace trikScriptRunner;

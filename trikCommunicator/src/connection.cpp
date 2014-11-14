@@ -39,7 +39,7 @@ void Connection::processData(QByteArray const &data)
 		qDebug() << "Command: " << command;
 	}
 
-	if (command.startsWith("file")) {
+	if (command.startsWith("file:")) {
 		command.remove(0, QString("file:").length());
 		int const separatorPosition = command.indexOf(':');
 		if (separatorPosition == -1) {
@@ -53,15 +53,19 @@ void Connection::processData(QByteArray const &data)
 		QString const fileContents = command.mid(separatorPosition + 1);
 		trikKernel::FileUtils::writeToFile(fileName, fileContents, mTrikScriptRunner.scriptsDirPath());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "brickBeep");
-	} else if (command.startsWith("run")) {
+	} else if (command.startsWith("run:")) {
 		command.remove(0, QString("run:").length());
 		QString const fileContents = trikKernel::FileUtils::readFromFile(mTrikScriptRunner.scriptsDirPath() + "/" + command);
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents));
 		emit startedScript(command);
 	} else if (command == "stop") {
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "abort");
-	} else if (command.startsWith("direct")) {
+	} else if (command.startsWith("direct:")) {
 		command.remove(0, QString("direct:").length());
+		QMetaObject::invokeMethod(&mTrikScriptRunner, "runDirectCommand", Q_ARG(QString, command));
+		emit startedDirectScript();
+	} else if (command.startsWith("directScript:")) {
+		command.remove(0, QString("directScript:").length());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, command));
 		emit startedDirectScript();
 	}

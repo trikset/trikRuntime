@@ -185,6 +185,7 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 
 	if (mConfigurer->hasMailbox()) {
 		mMailbox.reset(new Mailbox(mConfigurer->mailboxServerPort()));
+		QObject::connect(this, SIGNAL(stopWaiting()), mMailbox.data(), SIGNAL(stopWaiting()));
 	}
 }
 
@@ -244,6 +245,8 @@ void Brick::say(QString const &text)
 
 void Brick::stop()
 {
+	emit stopWaiting();
+
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
 	}
@@ -390,9 +393,12 @@ QTimer* Brick::timer(int milliseconds)
 	return result;
 }
 
-void Brick::wait(int const &milliseconds) const
+void Brick::wait(int const &milliseconds)
 {
-	SleeperThread::msleep(milliseconds);
+	QEventLoop loop;
+	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()));
+	QTimer::singleShot(milliseconds, this, SIGNAL(stopWaiting()));
+	loop.exec();
 }
 
 qint64 Brick::time() const
