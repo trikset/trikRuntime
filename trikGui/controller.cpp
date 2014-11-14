@@ -106,8 +106,14 @@ void Controller::scriptExecutionCompleted(QString const &error)
 		mRunningWidget->deleteLater();
 		mRunningWidget = nullptr;
 	} else if (!error.isEmpty()) {
-		mRunningWidget->showError(error);
-		mCommunicator.sendMessage("error: " + error);
+		if (mRunningWidget->isVisible()) {
+			mRunningWidget->showError(error);
+			mCommunicator.sendMessage("error: " + error);
+		} else {
+			// It is already closed so all we need is to delete it.
+			mRunningWidget->deleteLater();
+			mRunningWidget = nullptr;
+		}
 	}
 }
 
