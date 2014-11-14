@@ -18,6 +18,7 @@
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
+#include "mainWidget.h"
 
 namespace trikGui
 {
@@ -54,6 +55,10 @@ public:
 
 	/// Returns name of the directory in which scripts must be saved
 	QString scriptsDirName() const;
+
+signals:
+	void addRunningWidget(MainWidget &widget);
+	void closeRunningWidget(MainWidget &widget);
 
 private slots:
 	void scriptExecutionCompleted(QString const &error);

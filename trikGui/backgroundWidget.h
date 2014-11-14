@@ -60,6 +60,8 @@ public slots:
 	/// @param widget - reference to the widget.
 	void addMainWidget(MainWidget &widget);
 
+	void closeRunningWidget(MainWidget &widget);
+
 private slots:
 	void renewFocus();
 };

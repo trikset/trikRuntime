@@ -57,7 +57,7 @@ void Controller::runFile(QString const &filePath)
 		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()));
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
-		mRunningWidget->show();
+		emit addRunningWidget(*mRunningWidget);
 		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");");
 	} else if (fileInfo.suffix() == "sh") {
 		QStringList args;
@@ -100,7 +100,7 @@ void Controller::scriptExecutionCompleted(QString const &error)
 {
 	if (mRunningWidget && error.isEmpty()) {
 		mRunningWidget->releaseKeyboard();
-		mRunningWidget->close();
+		emit closeRunningWidget(*mRunningWidget);
 
 		// Here we can be inside handler of mRunningWidget key press event.
 		mRunningWidget->deleteLater();
@@ -114,12 +114,12 @@ void Controller::scriptExecutionCompleted(QString const &error)
 void Controller::scriptExecutionFromFileStarted(QString const &fileName)
 {
 	if (mRunningWidget) {
-		mRunningWidget->close();
+		emit closeRunningWidget(*mRunningWidget);
 		delete mRunningWidget;
 	}
 
 	mRunningWidget = new RunningWidget(fileName, *this);
-	mRunningWidget->show();
+	emit addRunningWidget(*mRunningWidget);
 
 	// After executing, a script will open a widget for painting with trikControl::Display.
 	// This widget will get all keyboard events and we won't be able to abort execution at Power
