@@ -76,8 +76,9 @@ void ScriptEngineWorker::reset()
 	Q_ASSERT(mEngine);
 
 	mEngineReset = !mEngine->isEvaluating();
-	mBrick.stop();
+	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
+	mBrick.stop();
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
 	}
@@ -96,6 +97,8 @@ ScriptEngineWorker &ScriptEngineWorker::clone()
 	QScriptValue globalObject = result->mEngine->globalObject();
 	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
 	result->mEngine->setGlobalObject(globalObject);
+	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(reset()), Qt::DirectConnection);
+	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(deleteLater()), Qt::DirectConnection);
 	return *result;
 }
 

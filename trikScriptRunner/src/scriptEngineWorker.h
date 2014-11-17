@@ -38,10 +38,6 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath);
 
-	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
-	/// called from another thread.
-	void reset();
-
 	/// Copies this instance of ScriptEngineWorker and returns a new one. Script engine is copied deeply
 	/// i.e. the current state of the global scripting object is copied recursively.
 	/// Takes ownership via Qt parent-child system.
@@ -52,9 +48,16 @@ signals:
 	/// @param error - localized error message or empty string.
 	void completed(QString const &error);
 
+	/// Emitted when evaluation is being interrupted. Used for stopping child threads when robot reset is requested.
+	void abortEvaluation();
+
 public slots:
 	/// Initializes new QtScript engine.
 	void init();
+
+	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
+	/// called from another thread.
+	void reset();
 
 	/// Executes given script.
 	/// @param script - script to execute.
