@@ -92,7 +92,6 @@ void Connection::init(int socketDescriptor)
 
 void Connection::onReadyRead()
 {
-	qDebug() << "Connection::onReadyRead";
 	if (!mSocket || !mSocket->isValid()) {
 		return;
 	}
@@ -107,7 +106,6 @@ void Connection::onReadyRead()
 
 void Connection::processBuffer()
 {
-	qDebug() << "Connection::processBuffer";
 	switch (mProtocol) {
 	case Protocol::messageLength:
 	{
