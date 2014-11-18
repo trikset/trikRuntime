@@ -78,7 +78,7 @@ void ScriptEngineWorker::reset()
 	mEngineReset = !mEngine->isEvaluating();
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
-	mBrick.stop();
+	mBrick.reset();
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
 	}
@@ -157,8 +157,6 @@ void ScriptEngineWorker::resetScriptEngine()
 	}
 
 	mEngine = new QScriptEngine();
-
-	mBrick.reset();
 
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
