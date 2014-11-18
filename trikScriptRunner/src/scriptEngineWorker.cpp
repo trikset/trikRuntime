@@ -98,7 +98,6 @@ ScriptEngineWorker &ScriptEngineWorker::clone()
 	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
 	result->mEngine->setGlobalObject(globalObject);
 	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(reset()), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(deleteLater()), Qt::DirectConnection);
 	return *result;
 }
 
