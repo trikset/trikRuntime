@@ -26,9 +26,13 @@ QString const constScriptsDirName = "scripts";
 TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
 	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
 	, mStartDirPath(startDirPath)
+	, mMaxScriptId(0)
 {
-	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString))
-			, this, SIGNAL(completed(QString)));
+	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString, int))
+			, this, SIGNAL(completed(QString, int)));
+
+	connect(mScriptRunnerProxy.data(), SIGNAL(startedScript(int))
+			, this, SLOT(onScriptStart(int)));
 }
 
 TrikScriptRunner::~TrikScriptRunner()
@@ -51,17 +55,36 @@ void TrikScriptRunner::brickBeep()
 	mScriptRunnerProxy->brickBeep();
 }
 
+void TrikScriptRunner::run(QString const &script, QString const &fileName)
+{
+	mScriptRunnerProxy->run(script, false, mMaxScriptId);
+	mScriptFileNames[mMaxScriptId++] = fileName;
+}
+
 void TrikScriptRunner::run(QString const &script)
 {
-	mScriptRunnerProxy->run(script, false);
+	mScriptRunnerProxy->run(script, false, -1);
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)
 {
-	mScriptRunnerProxy->run(command, true, QString());
+	mScriptRunnerProxy->run(command, true, mMaxScriptId++, QString());
 }
 
 void TrikScriptRunner::abort()
 {
 	mScriptRunnerProxy->reset();
+}
+
+void TrikScriptRunner::onScriptStart(int scriptId)
+{
+	if (scriptId == -1) {
+		return;
+	}
+
+	if (mScriptFileNames.contains(scriptId)) {
+		emit startedScript(mScriptFileNames[scriptId], scriptId);
+	} else {
+		emit startedDirectScript(scriptId);
+	}
 }

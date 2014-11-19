@@ -55,12 +55,6 @@ public:
 	~TrikCommunicator() override;
 
 signals:
-	/// Emitted when command to run a script from a file is received.
-	void startedScript(QString const &scriptFileName);
-
-	/// Emitted when command to run script directly is received.
-	void startedDirectScript();
-
 	/// Emitted when script finishes execution.
 	void finishedScript();
 

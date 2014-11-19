@@ -398,7 +398,7 @@ void Brick::wait(int const &milliseconds)
 	QEventLoop loop;
 	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()), Qt::DirectConnection);
 	QTimer t;
-	connect(&t, SIGNAL(timeout()), this, SIGNAL(stopWaiting()), Qt::DirectConnection);
+	connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
 	t.start(milliseconds);
 	loop.exec();
 }

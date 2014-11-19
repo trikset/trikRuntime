@@ -45,13 +45,6 @@ public:
 	/// Writes a given message to inner socket.
 	void sendMessage(QString const &message);
 
-signals:
-	/// Emitted when command to run a script from a file is received.
-	void startedScript(QString const &scriptFileName);
-
-	/// Emitted when command to run script directly is received.
-	void startedDirectScript();
-
 private:
 	void processData(QByteArray const &data) override;
 

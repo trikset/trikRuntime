@@ -76,14 +76,15 @@ void ScriptEngineWorker::reset()
 	Q_ASSERT(mEngine);
 
 	mEngineReset = !mEngine->isEvaluating();
+	bool const inEventDrivenMode = mBrick.isInEventDrivenMode();
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
-	mBrick.stop();
+	mBrick.reset();
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
 	}
 
-	if (mBrick.isInEventDrivenMode()) {
+	if (inEventDrivenMode) {
 		onScriptEvaluated();
 		resetScriptEngine();
 	}
@@ -98,7 +99,6 @@ ScriptEngineWorker &ScriptEngineWorker::clone()
 	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
 	result->mEngine->setGlobalObject(globalObject);
 	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(reset()), Qt::DirectConnection);
-	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(deleteLater()), Qt::DirectConnection);
 	return *result;
 }
 
@@ -107,9 +107,14 @@ void ScriptEngineWorker::init()
 	resetScriptEngine();
 }
 
-void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QString const &function)
+void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function)
 {
 	Q_ASSERT(mEngine);
+
+	if (!inEventDrivenMode || !mBrick.isInEventDrivenMode()) {
+		mScriptId = scriptId;
+		emit startedScript(mScriptId);
+	}
 
 	if (inEventDrivenMode) {
 		mBrick.run();
@@ -158,8 +163,6 @@ void ScriptEngineWorker::resetScriptEngine()
 
 	mEngine = new QScriptEngine();
 
-	mBrick.reset();
-
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);
@@ -196,5 +199,5 @@ void ScriptEngineWorker::onScriptEvaluated()
 		qDebug() << "Uncaught exception at line" << line << ":" << message;
 	}
 
-	emit completed(error);
+	emit completed(error, mScriptId);
 }

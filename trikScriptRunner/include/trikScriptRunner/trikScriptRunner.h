@@ -54,6 +54,8 @@ public slots:
 	/// and thus to have an opportunity to start concrete function from the given file. But QScriptEngine API
 	/// has no such possibility so we should append function call to the end of the script. So if script will
 	/// run some actions in the global context they will be invoked on each thread start.
+	void run(QString const &script, QString const &fileName);
+
 	void run(QString const &script);
 
 	/// Executes given script as direct command, so it will use existing script execution environment (or create one
@@ -76,13 +78,25 @@ signals:
 	/// or was aborted).
 	/// @param error - localized error message if any error occured during script execution or empty string
 	/// if everything is fine.
-	void completed(QString const &error);
+	/// @param scriptId - unique identifier of a script completed
+	void completed(QString const &error, int scriptId);
+
+	void startedScript(QString const &fileName, int scriptId);
+
+	void startedDirectScript(int scriptId);
+
+private slots:
+	void onScriptStart(int scriptId);
 
 private:
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;
 
 	QString mStartDirPath;
+
+	int mMaxScriptId;
+
+	QHash<int, QString> mScriptFileNames;
 };
 
 }

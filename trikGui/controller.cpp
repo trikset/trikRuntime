@@ -32,13 +32,14 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mScriptRunner(mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
 	, mTelemetry(mBrick)
-	, mRunningWidget(nullptr)
 	, mStartDirPath(startDirPath)
 {
-	connect(&mScriptRunner, SIGNAL(completed(QString)), this, SLOT(scriptExecutionCompleted(QString)));
+	connect(&mScriptRunner, SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
 
-	connect(&mCommunicator, SIGNAL(startedScript(QString)), this, SLOT(scriptExecutionFromFileStarted(QString)));
-	connect(&mCommunicator, SIGNAL(startedDirectScript()), this, SLOT(directScriptExecutionStarted()));
+	connect(&mScriptRunner, SIGNAL(startedScript(QString, int))
+			, this, SLOT(scriptExecutionFromFileStarted(QString, int)));
+	connect(&mScriptRunner, SIGNAL(startedDirectScript(int))
+			, this, SLOT(directScriptExecutionStarted(int)));
 
 	mCommunicator.startServer(communicatorPort);
 	mTelemetry.startServer(telemetryPort);
@@ -46,19 +47,15 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 
 Controller::~Controller()
 {
-	delete mRunningWidget;
 }
 
 void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
-		scriptExecutionFromFileStarted(fileInfo.baseName());
-		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()));
+		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
-		mRunningWidget = new RunningWidget(fileInfo.baseName(), *this);
-		mRunningWidget->show();
-		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");");
+		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
 		QStringList args;
 		args << filePath;
@@ -96,46 +93,47 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner.scriptsDirName();
 }
 
-void Controller::scriptExecutionCompleted(QString const &error)
+void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
-	if (mRunningWidget && error.isEmpty()) {
-		mRunningWidget->releaseKeyboard();
-		mRunningWidget->close();
+	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
+		mRunningWidgets[scriptId]->releaseKeyboard();
+		mRunningWidgets[scriptId]->close();
 
 		// Here we can be inside handler of mRunningWidget key press event.
-		mRunningWidget->deleteLater();
-		mRunningWidget = nullptr;
+		mRunningWidgets[scriptId]->deleteLater();
+		mRunningWidgets.remove(scriptId);
 	} else if (!error.isEmpty()) {
-		if (mRunningWidget->isVisible()) {
-			mRunningWidget->showError(error);
+		if (mRunningWidgets[scriptId]->isVisible()) {
+			mRunningWidgets[scriptId]->showError(error);
 			mCommunicator.sendMessage("error: " + error);
 		} else {
 			// It is already closed so all we need is to delete it.
-			mRunningWidget->deleteLater();
-			mRunningWidget = nullptr;
+			mRunningWidgets[scriptId]->deleteLater();
+			mRunningWidgets.remove(scriptId);
 		}
 	}
 }
 
-void Controller::scriptExecutionFromFileStarted(QString const &fileName)
+void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
 {
-	if (mRunningWidget) {
-		mRunningWidget->close();
-		delete mRunningWidget;
+	if (mRunningWidgets.value(scriptId, nullptr)) {
+		mRunningWidgets[scriptId]->close();
+		delete mRunningWidgets[scriptId];
+		mRunningWidgets.remove(scriptId);
 	}
 
-	mRunningWidget = new RunningWidget(fileName, *this);
-	mRunningWidget->show();
+	mRunningWidgets[scriptId] = new RunningWidget(fileName, *this);
+	mRunningWidgets[scriptId]->show();
 
 	// After executing, a script will open a widget for painting with trikControl::Display.
 	// This widget will get all keyboard events and we won't be able to abort execution at Power
 	// key press. So, mRunningWidget should grab the keyboard input. Nevertheless, the script
 	// can get keyboard events using trikControl::Keys class because it works directly
 	// with the keyboard file.
-	mRunningWidget->grabKeyboard();
+	mRunningWidgets[scriptId]->grabKeyboard();
 }
 
-void Controller::directScriptExecutionStarted()
+void Controller::directScriptExecutionStarted(int scriptId)
 {
-	scriptExecutionFromFileStarted(tr("direct command"));
+	scriptExecutionFromFileStarted(tr("direct command"), scriptId);
 }
