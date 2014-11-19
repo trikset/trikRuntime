@@ -76,6 +76,7 @@ void ScriptEngineWorker::reset()
 	Q_ASSERT(mEngine);
 
 	mEngineReset = !mEngine->isEvaluating();
+	bool const inEventDrivenMode = mBrick.isInEventDrivenMode();
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	mBrick.reset();
@@ -83,7 +84,7 @@ void ScriptEngineWorker::reset()
 		QThread::yieldCurrentThread();
 	}
 
-	if (mBrick.isInEventDrivenMode()) {
+	if (inEventDrivenMode) {
 		onScriptEvaluated();
 		resetScriptEngine();
 	}
@@ -106,9 +107,14 @@ void ScriptEngineWorker::init()
 	resetScriptEngine();
 }
 
-void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, QString const &function)
+void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function)
 {
 	Q_ASSERT(mEngine);
+
+	if (!inEventDrivenMode || !mBrick.isInEventDrivenMode()) {
+		mScriptId = scriptId;
+		emit startedScript(mScriptId);
+	}
 
 	if (inEventDrivenMode) {
 		mBrick.run();
@@ -193,5 +199,5 @@ void ScriptEngineWorker::onScriptEvaluated()
 		qDebug() << "Uncaught exception at line" << line << ":" << message;
 	}
 
-	emit completed(error);
+	emit completed(error, mScriptId);
 }

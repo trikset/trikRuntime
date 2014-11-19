@@ -46,7 +46,8 @@ public:
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
-	void completed(QString const &error);
+	/// @param scriptId - unique identifier of a script completed
+	void completed(QString const &error, int scriptId);
 
 	/// Emitted when evaluation is being interrupted. Used for stopping child threads when robot reset is requested.
 	void abortEvaluation();
@@ -65,10 +66,13 @@ public slots:
 	///        when it is finished.
 	/// @param function - the name of the function execution must start with. If empty then the script will be
 	/// evaluated as-is, else function call will be appended to @arg script.
-	void run(QString const &script, bool inEventDrivenMode, QString const &function = "main");
+	void run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function = "main");
 
 	/// Plays "beep" sound.
 	void brickBeep();
+
+signals:
+	void startedScript(int scriptId);
 
 private slots:
 	/// Abort script execution.
@@ -87,6 +91,7 @@ private:
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
 	bool mEngineReset;
+	int mScriptId;
 };
 
 }

@@ -31,7 +31,9 @@ ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &s
 
 	mEngineWorker->moveToThread(&mWorkerThread);
 
-	connect(mEngineWorker, SIGNAL(completed(QString)), this, SIGNAL(completed(QString)));
+	connect(mEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
+
+	connect(mEngineWorker, SIGNAL(startedScript(int)), this, SIGNAL(startedScript(int)));
 
 	mWorkerThread.start();
 }
@@ -49,7 +51,7 @@ void ScriptRunnerProxy::brickBeep()
 	QMetaObject::invokeMethod(mEngineWorker, "brickBeep");
 }
 
-void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode, QString const &function)
+void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function)
 {
 	if (!inEventDrivenMode) {
 		mEngineWorker->reset();
@@ -58,6 +60,7 @@ void ScriptRunnerProxy::run(QString const &script, bool inEventDrivenMode, QStri
 	QMetaObject::invokeMethod(mEngineWorker, "run"
 			, Q_ARG(QString const &, script)
 			, Q_ARG(bool, inEventDrivenMode)
+			, Q_ARG(int, scriptId)
 			, Q_ARG(QString const &, function));
 }
 
