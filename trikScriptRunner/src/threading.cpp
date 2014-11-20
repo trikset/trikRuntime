@@ -67,5 +67,5 @@ Threading::ScriptThread::ScriptThread(QString const &mainScript, QString const &
 
 void Threading::ScriptThread::run()
 {
-	mRunner.run(mScript, false, mFunction);
+	mRunner.run(mScript, false, -1, mFunction);
 }

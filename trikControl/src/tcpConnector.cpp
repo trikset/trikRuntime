@@ -49,6 +49,7 @@ void TcpConnector::connection()
 void TcpConnector::tcpDisconnected()
 {
 	mTcpSocket->abort();
+	emit tcpDisconnectedSignal();
 }
 
 void TcpConnector::networkRead()

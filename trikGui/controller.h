@@ -61,10 +61,10 @@ signals:
 	void closeRunningWidget(MainWidget &widget);
 
 private slots:
-	void scriptExecutionCompleted(QString const &error);
+	void scriptExecutionCompleted(QString const &error, int scriptId);
 
-	void scriptExecutionFromFileStarted(QString const &fileName);
-	void directScriptExecutionStarted();
+	void scriptExecutionFromFileStarted(QString const &fileName, int scriptId);
+	void directScriptExecutionStarted(int scriptId);
 
 private:
 	trikControl::Brick mBrick;
@@ -72,7 +72,7 @@ private:
 	trikCommunicator::TrikCommunicator mCommunicator;
 	trikTelemetry::TrikTelemetry mTelemetry;
 
-	RunningWidget *mRunningWidget;  // Has ownership.
+	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
 	QString const &mStartDirPath; // Path to the directory from which the application was executed
 };
 

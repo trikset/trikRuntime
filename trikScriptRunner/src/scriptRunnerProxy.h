@@ -46,7 +46,7 @@ public:
 	///        stopped.
 	/// @param function - the name of the function execution must start with. If empty then the script will be
 	///        evaluated as-is, else function call will be appended to @arg script.
-	void run(QString const &script, bool inEventDrivenMode, QString const &function = "main");
+	void run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function = "main");
 
 	/// Aborts script execution.
 	void reset();
@@ -57,7 +57,10 @@ public:
 signals:
 	/// Fired when current script completes execution.
 	/// @param error - localized error message or empty string.
-	void completed(QString const &error);
+	/// @param scriptId - unique identifier of a script completed
+	void completed(QString const &error, int scriptId);
+
+	void startedScript(int scriptId);
 
 private:
 	ScriptEngineWorker *mEngineWorker;  // Has ownership.
