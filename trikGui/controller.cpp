@@ -58,19 +58,16 @@ void Controller::runFile(QString const &filePath)
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
-		qDebug() << "Controller::runFile_sh";
 		QStringList args;
 		args << filePath;
 		QProcess::startDetached("sh", args);
 	} else if (fileInfo.isExecutable()) {
-		qDebug() << "Controller::runFile_else";
 		QProcess::startDetached(filePath);
 	}
 }
 
 void Controller::abortExecution()
 {
-	qDebug() << "Controller::abortExecution()";
 	mScriptRunner.abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -101,7 +98,6 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
 	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
 		mRunningWidgets[scriptId]->releaseKeyboard();
-		// mRunningWidgets[scriptId]->close();
 		emit closeRunningWidget(*mRunningWidgets[scriptId]);
 
 		// Here we can be inside handler of mRunningWidget key press event.
@@ -112,7 +108,6 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 			mRunningWidgets[scriptId]->showError(error);
 			mCommunicator.sendMessage("error: " + error);
 		} else {
-			qDebug() << "Controller::scriptExecutionCompleted_03";
 			// It is already closed so all we need is to delete it.
 			mRunningWidgets[scriptId]->deleteLater();
 			mRunningWidgets.remove(scriptId);
@@ -123,14 +118,12 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
 {
 	if (mRunningWidgets.value(scriptId, nullptr)) {
-		//mRunningWidgets[scriptId]->close();
 		emit closeRunningWidget(*mRunningWidgets[scriptId]);
 		delete mRunningWidgets[scriptId];
 		mRunningWidgets.remove(scriptId);
 	}
 
 	mRunningWidgets[scriptId] = new RunningWidget(fileName, *this);
-	//mRunningWidgets[scriptId]->show();
 	emit addRunningWidget(*mRunningWidgets[scriptId]);
 
 	// After executing, a script will open a widget for painting with trikControl::Display.

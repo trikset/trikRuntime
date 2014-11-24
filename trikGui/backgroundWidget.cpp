@@ -57,12 +57,10 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 	mMainWidgetsLayout.setCurrentIndex(index);
 
 	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
-//	connect(&widget, SIGNAL(closeMainWidget(MainWidget&)), this, SLOT(closeMainWidget(MainWidget &)));
 }
 
 void BackgroundWidget::closeRunningWidget(MainWidget &widget)
 {
-	qDebug() << "BackgroundWidget::closeMainWidget";
 	mMainWidgetsLayout.removeWidget(&widget);
 }
 

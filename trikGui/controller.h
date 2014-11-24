@@ -57,7 +57,10 @@ public:
 	QString scriptsDirName() const;
 
 signals:
+	/// Emitted when controller created a runningWidget (for scripts) and wants it to be shown.
 	void addRunningWidget(MainWidget &widget);
+
+	/// Emitted when controller removed the runningWidget and wants it to be closed.
 	void closeRunningWidget(MainWidget &widget);
 
 private slots:
