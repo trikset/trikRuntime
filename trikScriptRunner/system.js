@@ -49,15 +49,17 @@ brick.repeat = function(mscs, f) {
   timer.timeout.connect(f);
 }
 
-brick.display().smile = function() {
-  var startDir = brick.display.startDirPath() ;
+brick.smile = function() {
+  var display = brick.display();
+  var startDir = display.startDirPath();
   var path = startDir + 'media/trik_smile_normal.png';
-  brick.display.showImage(path);
+  display.showImage(path);
 }
 
-brick.display().sadSmile = function() {
-  var startDir = brick.display.startDirPath() ;
+brick.sadSmile = function() {
+  var display = brick.display();
+  var startDir = display.startDirPath() ;
   var path = startDir + 'media/trik_smile_sad.png';
-  brick.display.showImage(path);
+  display.showImage(path);
 }
 
