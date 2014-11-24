@@ -41,7 +41,7 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const ru
 {
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-	connect(mTrikScriptRunner, SIGNAL(completed(QString)), this, SIGNAL(finishedScript()));
+	connect(mTrikScriptRunner, SIGNAL(completed(QString, int)), this, SIGNAL(finishedScript()));
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -54,9 +54,5 @@ TrikCommunicator::~TrikCommunicator()
 Connection *TrikCommunicator::connectionFactory()
 {
 	auto connection = new Connection(*mTrikScriptRunner);
-
-	connect(connection, SIGNAL(startedDirectScript()), this, SIGNAL(startedDirectScript()));
-	connect(connection, SIGNAL(startedScript(QString)), this, SIGNAL(startedScript(QString)));
-
 	return connection;
 }

@@ -61,6 +61,7 @@ signals:
 	void wheel(int percent);
 	void pad(int pad, int x, int y);
 	void button(int button, int pressed);
+	void disconnect();
 
 private slots:
 	void parse(QString const &message);

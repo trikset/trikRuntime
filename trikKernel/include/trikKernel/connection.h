@@ -77,6 +77,9 @@ private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
 	virtual void processData(QByteArray const &data) = 0;
 
+	/// Handles incoming data: sending version or processing received data.
+	void handleIncomingData(QByteArray const &data);
+
 	void connectSlots();
 
 	void processBuffer();
