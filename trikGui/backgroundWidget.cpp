@@ -41,8 +41,8 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mController, SIGNAL(addRunningWidget(MainWidget&)), this, SLOT(addMainWidget(MainWidget&)));
-	connect(&mController, SIGNAL(closeRunningWidget(MainWidget&)), this, SLOT(closeRunningWidget(MainWidget &)));
+	connect(&mController, SIGNAL(addRunningWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
+	connect(&mController, SIGNAL(closeRunningWidget(MainWidget &)), this, SLOT(closeMainWidget(MainWidget &)));
 }
 
 void BackgroundWidget::addMainWidget(MainWidget &widget)
@@ -59,7 +59,7 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
 }
 
-void BackgroundWidget::closeRunningWidget(MainWidget &widget)
+void BackgroundWidget::closeMainWidget(MainWidget &widget)
 {
 	mMainWidgetsLayout.removeWidget(&widget);
 }

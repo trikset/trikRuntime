@@ -18,6 +18,7 @@
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
+
 #include "mainWidget.h"
 
 namespace trikGui
@@ -55,6 +56,9 @@ public:
 
 	/// Returns name of the directory in which scripts must be saved
 	QString scriptsDirName() const;
+
+	/// Asks controller to correctly close given running widget.
+	void doCloseRunningWidget(MainWidget &widget);
 
 signals:
 	/// Emitted when controller created a runningWidget (for scripts) and wants it to be shown.

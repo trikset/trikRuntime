@@ -50,7 +50,7 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_PowerDown: {
 			mController.abortExecution();
-			releaseKeyboard();
+			mController.doCloseRunningWidget(*this);
 			break;
 		}
 		default: {

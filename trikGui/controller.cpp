@@ -51,7 +51,6 @@ Controller::~Controller()
 
 void Controller::runFile(QString const &filePath)
 {
-	qDebug() << "Controller::runFile" << filePath;
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
 		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
@@ -94,11 +93,16 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner.scriptsDirName();
 }
 
+void Controller::doCloseRunningWidget(MainWidget &widget)
+{
+	widget.releaseKeyboard();
+	emit closeRunningWidget(widget);
+}
+
 void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
 	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
-		mRunningWidgets[scriptId]->releaseKeyboard();
-		emit closeRunningWidget(*mRunningWidgets[scriptId]);
+		doCloseRunningWidget(*mRunningWidgets[scriptId]);
 
 		// Here we can be inside handler of mRunningWidget key press event.
 		mRunningWidgets[scriptId]->deleteLater();

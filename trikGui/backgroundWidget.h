@@ -53,6 +53,18 @@ public:
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
 	explicit BackgroundWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
 
+public slots:
+	/// Add a widget to main widgets layout and show it.
+	/// @param widget - reference to the widget.
+	void addMainWidget(MainWidget &widget);
+
+	/// Remove a widget from main widget layout.
+	/// @param widget - reference to the widget.
+	void closeMainWidget(MainWidget &widget);
+
+private slots:
+	void renewFocus();
+
 private:
 	Controller mController;
 	QVBoxLayout mMainLayout;
@@ -60,18 +72,6 @@ private:
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
-
-public slots:
-	/// Add a widget to main widgets layout and show it.
-	/// @param widget - reference to the widget.
-	void addMainWidget(MainWidget &widget);
-
-	/// Remove a runningWidget from main widgets layout
-	/// @param widget - reference to the runningWidget
-	void closeRunningWidget(MainWidget &widget);
-
-private slots:
-	void renewFocus();
 };
 
 }
