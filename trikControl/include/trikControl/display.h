@@ -31,15 +31,13 @@ class TRIKCONTROL_EXPORT Display : public QObject
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	/// @param startDirPath - path to the directory from which the application was executed.
+	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
+	///        ending with "/").
 	explicit Display(QThread &guiThread, QString const &startDirPath);
 
 	~Display();
 
 public slots:
-
-	QString startDirPath() const;
-
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
 	/// supported formats, but .jpg, .png, .bmp, .gif are supported.

@@ -42,14 +42,9 @@ Display::~Display()
 	mGuiThread.wait(1000);
 }
 
-QString Display::startDirPath() const
-{
-	return mStartDirPath;
-}
-
 void Display::showImage(QString const &fileName)
 {
-	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, fileName));
+	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));
 }
 
 void Display::addLabel(QString const &text, int x, int y)

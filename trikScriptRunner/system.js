@@ -50,16 +50,10 @@ brick.repeat = function(mscs, f) {
 }
 
 brick.smile = function() {
-  var display = brick.display();
-  var startDir = display.startDirPath();
-  var path = startDir + 'media/trik_smile_normal.png';
-  display.showImage(path);
+  brick.display().showImage('media/trik_smile_normal.png');
 }
 
 brick.sadSmile = function() {
-  var display = brick.display();
-  var startDir = display.startDirPath() ;
-  var path = startDir + 'media/trik_smile_sad.png';
-  display.showImage(path);
+  brick.display().showImage('media/trik_smile_sad.png');
 }
 

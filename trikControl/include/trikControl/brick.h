@@ -60,7 +60,8 @@ public:
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
 	/// @param configFilePath - path to config.xml
-	/// @param startDirPath - path to the directory from which the application was executed.
+	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
+	///        ending with "/").
 	Brick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
 
 	~Brick() override;
