@@ -30,10 +30,11 @@
 #include <QtCore/QString>
 
 #include "controller.h"
+#include "mainWidget.h"
 
 namespace trikGui {
 
-class RunningWidget : public QWidget
+class RunningWidget : public MainWidget
 {
 	Q_OBJECT
 
@@ -41,6 +42,7 @@ public:
 	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
 
 	void showError(QString const &error);
+	void renewFocus() override;
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
