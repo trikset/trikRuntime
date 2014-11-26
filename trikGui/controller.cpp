@@ -41,6 +41,8 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	connect(&mScriptRunner, SIGNAL(startedDirectScript(int))
 			, this, SLOT(directScriptExecutionStarted(int)));
 
+	connect(&mBrick, SIGNAL(stopped()), this, SIGNAL(brickStopped()));
+
 	mCommunicator.startServer(communicatorPort);
 	mTelemetry.startServer(telemetryPort);
 }

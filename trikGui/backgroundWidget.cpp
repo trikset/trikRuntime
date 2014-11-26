@@ -15,6 +15,7 @@
 #include "backgroundWidget.h"
 
 #include <QtCore/QDebug>
+#include <QtGui/QApplication>
 
 using namespace trikGui;
 
@@ -43,6 +44,7 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
 	connect(&mController, SIGNAL(addRunningWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
 	connect(&mController, SIGNAL(closeRunningWidget(MainWidget &)), this, SLOT(closeMainWidget(MainWidget &)));
+	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
 }
 
 void BackgroundWidget::addMainWidget(MainWidget &widget)
@@ -74,3 +76,11 @@ void BackgroundWidget::renewFocus()
 		currentWidget->renewFocus();
 	}
 }
+
+void BackgroundWidget::refresh()
+{
+	for (auto const widget : QApplication::allWidgets()) {
+		widget->update();
+	}
+}
+

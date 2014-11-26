@@ -65,6 +65,9 @@ public slots:
 private slots:
 	void renewFocus();
 
+	/// Updates all widgets to remove clutter.
+	void refresh();
+
 private:
 	Controller mController;
 	QVBoxLayout mMainLayout;

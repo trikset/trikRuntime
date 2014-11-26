@@ -25,6 +25,9 @@ ObjectSensor::ObjectSensor(QString const &script, QString const &inputFile, QStr
 	: mObjectSensorWorker(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor))
 {
 	mObjectSensorWorker->moveToThread(&mWorkerThread);
+
+	connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+
 	mWorkerThread.start();
 }
 

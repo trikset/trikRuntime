@@ -67,6 +67,10 @@ signals:
 	/// Emitted when controller removed the runningWidget and wants it to be closed.
 	void closeRunningWidget(MainWidget &widget);
 
+	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible
+	/// clutter from videosensors.
+	void brickStopped();
+
 private slots:
 	void scriptExecutionCompleted(QString const &error, int scriptId);
 

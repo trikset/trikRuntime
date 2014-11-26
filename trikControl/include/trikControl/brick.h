@@ -166,6 +166,10 @@ signals:
 	/// To be connected to quit() slot of local event loops that are used for waiting.
 	void stopWaiting();
 
+	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no
+	/// deferred deinitialization (no video sensors are on, for example), signal will NOT be emitted.
+	void stopped();
+
 private:
 	Sensor3d *mAccelerometer = nullptr;  // has ownership.
 	Sensor3d *mGyroscope = nullptr;  // has ownership.

@@ -40,7 +40,11 @@ public:
 	/// @param n - vertical dimension of a sensor.
 	ColorSensor(QString const &script, QString const &inputFile, QString const &outputFile, int m, int n);
 
-	~ColorSensor();
+	~ColorSensor() override;
+
+signals:
+	/// Emitted when sensor is stopped successfully.
+	void stopped();
 
 public slots:
 	/// Initializes a camera.

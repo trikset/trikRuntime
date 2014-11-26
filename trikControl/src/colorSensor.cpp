@@ -24,6 +24,9 @@ ColorSensor::ColorSensor(QString const &script, QString const &inputFile, QStrin
 	: mColorSensorWorker(new ColorSensorWorker(script, inputFile, outputFile, m, n))
 {
 	mColorSensorWorker->moveToThread(&mWorkerThread);
+
+	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+
 	mWorkerThread.start();
 }
 

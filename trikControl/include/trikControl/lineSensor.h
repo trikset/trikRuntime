@@ -42,7 +42,11 @@ public:
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
 	LineSensor(QString const &script, QString const &inputFile, QString const &outputFile, double toleranceFactor);
 
-	~LineSensor();
+	~LineSensor() override;
+
+signals:
+	/// Emitted when sensor is stopped successfully.
+	void stopped();
 
 public slots:
 	/// Initializes a camera.

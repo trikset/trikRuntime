@@ -192,7 +192,11 @@ void AbstractVirtualSensorWorker::deinitialize()
 
 	if (!launchSensorScript("stop")) {
 		qDebug() << "Failed to stop" << sensorName() << "sensor!";
+	} else {
+		qDebug() << "Successfully stopped" << sensorName() << "sensor";
 	}
+
+	emit stopped();
 
 	mReady = false;
 }
