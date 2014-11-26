@@ -16,6 +16,10 @@
 
 proc getFiles { folder } {
   set listOfFiles ""
+  if {[string match *qslog* $folder] == 1} {
+    return ""
+  }
+
   foreach sourceFile [glob -nocomplain -type f -directory $folder *] {
     if [regexp -nocase {.*[.]cpp$|.*[.]h$} $sourceFile ] {
       set listOfFiles [concat $listOfFiles $sourceFile]

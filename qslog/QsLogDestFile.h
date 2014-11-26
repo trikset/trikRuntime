@@ -23,8 +23,7 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSLOGDESTFILE_H
-#define QSLOGDESTFILE_H
+#pragma once
 
 #include "QsLogDest.h"
 #include <QFile>
@@ -98,5 +97,3 @@ private:
 };
 
 }
-
-#endif // QSLOGDESTFILE_H

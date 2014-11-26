@@ -23,23 +23,20 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSLOGLEVEL_H
-#define QSLOGLEVEL_H
+#pragma once
 
 namespace QsLogging
 {
 
 enum Level
 {
-    TraceLevel = 0,
-    DebugLevel,
-    InfoLevel,
-    WarnLevel,
-    ErrorLevel,
-    FatalLevel,
-    OffLevel
+	TraceLevel = 0,
+	DebugLevel,
+	InfoLevel,
+	WarnLevel,
+	ErrorLevel,
+	FatalLevel,
+	OffLevel
 };
 
 }
-
-#endif // QSLOGLEVEL_H

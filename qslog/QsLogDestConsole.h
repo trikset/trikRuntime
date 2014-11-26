@@ -23,8 +23,7 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSLOGDESTCONSOLE_H
-#define QSLOGDESTCONSOLE_H
+#pragma once
 
 #include "QsLogDest.h"
 
@@ -33,7 +32,7 @@ class QString;
 class QsDebugOutput
 {
 public:
-   static void output(const QString& a_message);
+	static void output(const QString& a_message);
 };
 
 namespace QsLogging
@@ -43,10 +42,8 @@ namespace QsLogging
 class DebugOutputDestination : public Destination
 {
 public:
-    virtual void write(const QString& message, Level level);
-    virtual bool isValid();
+	virtual void write(const QString& message, Level level);
+	virtual bool isValid();
 };
 
 }
-
-#endif // QSLOGDESTCONSOLE_H

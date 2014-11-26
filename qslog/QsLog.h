@@ -23,8 +23,7 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSLOG_H
-#define QSLOG_H
+#pragma once
 
 #include "QsLogLevel.h"
 #include "QsLogDest.h"
@@ -47,15 +46,15 @@ public:
 
 	~Logger();
 
-	//! Adds a log message destination. Don't add null destinations.
+	/// Adds a log message destination. Don't add null destinations.
 	void addDestination(DestinationPtr destination);
-	//! Logging at a level < 'newLevel' will be ignored
+	/// Logging at a level < 'newLevel' will be ignored
 	void setLoggingLevel(Level newLevel);
-	//! The default level is INFO
+	/// The default level is INFO
 	Level loggingLevel() const;
 
-	//! The helper forwards the streaming to QDebug and builds the final
-	//! log message.
+	/// The helper forwards the streaming to QDebug and builds the final
+	/// log message.
 	class QSLOG_SHARED_OBJECT Helper
 	{
 	public:
@@ -88,8 +87,8 @@ private:
 
 } // end namespace
 
-//! WARNING: Here was some piece of code that enabled or disabled file and line info logging.
-//! It was removed, so the version from the repo differs from out one.
+/// WARNING: Here was some piece of code that enabled or disabled file and line info logging.
+/// It was removed, so the version from the repo differs from out one.
 #define QLOG_TRACE() \
 	if (QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel) {} \
 	else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << __FILE__ << '@' << __LINE__
@@ -112,5 +111,3 @@ private:
 #ifdef QS_LOG_DISABLE
 #include "QsLogDisableForThisFile.h"
 #endif
-
-#endif // QSLOG_H

@@ -24,8 +24,7 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSLOGDESTFUNCTOR_H
-#define QSLOGDESTFUNCTOR_H
+#pragma once
 
 #include "QsLogDest.h"
 #include <QObject>
@@ -39,21 +38,19 @@ namespace QsLogging
 // logMessageReady is connected through a queued connection and trace messages are not included
 class FunctorDestination : public QObject, public Destination
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit FunctorDestination(LogFunction f);
-    FunctorDestination(QObject *receiver, const char *member);
+	explicit FunctorDestination(LogFunction f);
+	FunctorDestination(QObject *receiver, const char *member);
 
-    virtual void write(const QString &message, Level level);
-    virtual bool isValid();
+	virtual void write(const QString &message, Level level);
+	virtual bool isValid();
 
 protected:
-    // int used to avoid registering a new enum type
-    Q_SIGNAL void logMessageReady(const QString &message, int level);
+	// int used to avoid registering a new enum type
+	Q_SIGNAL void logMessageReady(const QString &message, int level);
 
 private:
-    LogFunction mLogFunction;
+	LogFunction mLogFunction;
 };
 }
-
-#endif // QSLOGDESTFUNCTOR_H

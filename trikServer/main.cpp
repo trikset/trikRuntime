@@ -79,8 +79,13 @@ int main(int argc, char *argv[])
 
 	int const maxLogSize = 10 * 1024 * 1024;
 	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	QsLogging::Logger::instance().addDestination(QsLogging::DestinationPtr(QsLogging::DestinationFactory::MakeFileDestination(startDirPath + "trik.log", QsLogging::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize), QsLogging::MaxOldLogCount(2), QsLogging::TraceLevel)));
+	QsLogging::DestinationPtr destination = QsLogging::DestinationFactory::MakeFileDestination(
+			startDirPath + "trik.log"
+			, QsLogging::EnableLogRotation
+			, QsLogging::MaxSizeBytes(maxLogSize)
+			, QsLogging::MaxOldLogCount(2)
+			, QsLogging::TraceLevel);
+	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikServer started on port" << port;
 
 	qDebug() << "Running TrikServer on port" << port;

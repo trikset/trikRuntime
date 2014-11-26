@@ -187,7 +187,7 @@ Level Logger::loggingLevel() const
 	return d->level;
 }
 
-//! creates the complete log message and passes it to the logger
+/// creates the complete log message and passes it to the logger
 void Logger::Helper::writeToLog()
 {
 	const char* const levelName = LevelToText(level);
@@ -212,15 +212,15 @@ Logger::Helper::~Helper()
 	}
 }
 
-//! directs the message to the task queue or writes it directly
+/// directs the message to the task queue or writes it directly
 void Logger::enqueueWrite(const QString& message, Level level)
 {
 	LogWriterRunnable *r = new LogWriterRunnable(message, level);
 	d->threadPool.start(r);
 }
 
-//! Sends the message to all the destinations. The level for this message is passed in case
-//! it's useful for processing in the destination.
+/// Sends the message to all the destinations. The level for this message is passed in case
+/// it's useful for processing in the destination.
 void Logger::write(const QString& message, Level level)
 {
 	QMutexLocker lock(&d->logMutex);

@@ -23,8 +23,7 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSLOGDEST_H
-#define QSLOGDEST_H
+#pragma once
 
 #include "QsLogLevel.h"
 #include <QSharedPointer>
@@ -78,8 +77,8 @@ struct QSLOG_SHARED_OBJECT MaxOldLogCount
 };
 
 
-//! Creates logging destinations/sinks. The caller shares ownership of the destinations with the logger.
-//! After being added to a logger, the caller can discard the pointers.
+/// Creates logging destinations/sinks. The caller shares ownership of the destinations with the logger.
+/// After being added to a logger, the caller can discard the pointers.
 class QSLOG_SHARED_OBJECT DestinationFactory
 {
 public:
@@ -96,5 +95,3 @@ public:
 };
 
 } // end namespace
-
-#endif // QSLOGDEST_H

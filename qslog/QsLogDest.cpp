@@ -36,7 +36,7 @@ Destination::~Destination()
 {
 }
 
-//! destination factory
+/// destination factory
 DestinationPtr DestinationFactory::MakeFileDestination(const QString& filePath,
 	LogRotationOption rotation, const MaxSizeBytes &sizeInBytesToRotateAfter,
 	const MaxOldLogCount &oldLogsToKeep, Level level)

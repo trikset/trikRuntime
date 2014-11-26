@@ -22,7 +22,7 @@
 
 #include "src/connection.h"
 
-#include "../qslog/QsLog.h"
+#include "QsLog.h"
 
 using namespace trikCommunicator;
 

@@ -1,5 +1,4 @@
-#ifndef QSLOGDISABLEFORTHISFILE_H
-#define QSLOGDISABLEFORTHISFILE_H
+#pragma once
 
 #include <QtDebug>
 // When included AFTER QsLog.h, this file will disable logging in that C++ file. When included
@@ -18,5 +17,3 @@
 #define QLOG_WARN()  if (1) {} else qDebug()
 #define QLOG_ERROR() if (1) {} else qDebug()
 #define QLOG_FATAL() if (1) {} else qDebug()
-
-#endif // QSLOGDISABLEFORTHISFILE_H

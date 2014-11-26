@@ -31,7 +31,7 @@ DEFINES += TRIKCOMMUNICATOR_LIBRARY
 uses(trikScriptRunner trikControl trikKernel qslog)
 
 INCLUDEPATH += \
-	$PWD/../trikScriptRunner/include/ \
-	$PWD/../trikControl/include/ \
-	$PWD/../trikKernel/include/ \
-	$PWD/../qslog/ \
+	$$PWD/../trikScriptRunner/include/ \
+	$$PWD/../trikControl/include/ \
+	$$PWD/../trikKernel/include/ \
+	$$PWD/../qslog/ \
