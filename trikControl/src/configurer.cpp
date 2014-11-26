@@ -18,7 +18,11 @@
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikControl;
+
+QString const errorMessage = "config.xml parsing failed";
 
 Configurer::Configurer(QString const &configFilePath)
 	: mI2cDeviceId(0)
@@ -30,12 +34,15 @@ Configurer::Configurer(QString const &configFilePath)
 
 	QFile file(configFilePath + "config.xml");
 	if (!file.open(QIODevice::ReadOnly)) {
-		qDebug() << "Failed to open config.xml for reading";
-		throw "Failed to open config.xml for reading";
+		QString const message = "Failed to open config.xml for reading";
+		QLOG_FATAL() << message;
+		qDebug() << message;
+		throw message;
 	} if (!config.setContent(&file)) {
 		file.close();
-		qDebug() << "config.xml parsing failed";
-		throw "config.xml parsing failed";
+		QLOG_FATAL() << errorMessage;
+		qDebug() << errorMessage;
+		throw errorMessage;
 	}
 
 	file.close();
@@ -441,8 +448,9 @@ int Configurer::mailboxServerPort() const
 void Configurer::loadInit(QDomElement const &root)
 {
 	if (root.elementsByTagName("initScript").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <initScript> tag";
 		qDebug() << "config.xml does not have <initScript> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const init = root.elementsByTagName("initScript").at(0).toElement();
@@ -452,8 +460,9 @@ void Configurer::loadInit(QDomElement const &root)
 void Configurer::loadServoMotors(QDomElement const &root)
 {
 	if (root.elementsByTagName("servoMotors").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <servoMotors> tag";
 		qDebug() << "config.xml does not have <servoMotors> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const servoMotors = root.elementsByTagName("servoMotors").at(0).toElement();
@@ -467,8 +476,9 @@ void Configurer::loadServoMotors(QDomElement const &root)
 
 		QDomElement const childElement = child.toElement();
 		if (childElement.nodeName() != "servoMotor") {
+			QLOG_FATAL() << "Malformed <servoMotors> tag";
 			qDebug() << "Malformed <servoMotors> tag";
-			throw "config.xml parsing failed";
+			throw errorMessage;
 		}
 
 		ServoMotorMapping mapping;
@@ -486,8 +496,9 @@ void Configurer::loadServoMotors(QDomElement const &root)
 void Configurer::loadPwmCaptures(QDomElement const &root)
 {
 	if (root.elementsByTagName("pwmCaptures").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <pwmCaptures> tag";
 		qDebug() << "config.xml does not have <pwmCaptures> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const pwmCaptures = root.elementsByTagName("pwmCaptures").at(0).toElement();
@@ -501,8 +512,9 @@ void Configurer::loadPwmCaptures(QDomElement const &root)
 
 		QDomElement const childElement = child.toElement();
 		if (childElement.nodeName() != "capture") {
+			QLOG_FATAL() << "Malformed <pwmCaptures> tag";
 			qDebug() << "Malformed <pwmCaptures> tag";
-			throw "config.xml parsing failed";
+			throw errorMessage;
 		}
 
 		PwmCaptureMapping mapping;
@@ -517,8 +529,9 @@ void Configurer::loadPwmCaptures(QDomElement const &root)
 void Configurer::loadPowerMotors(QDomElement const &root)
 {
 	if (root.elementsByTagName("powerMotors").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <powerMotors> tag";
 		qDebug() << "config.xml does not have <powerMotors> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const powerMotors = root.elementsByTagName("powerMotors").at(0).toElement();
@@ -532,8 +545,9 @@ void Configurer::loadPowerMotors(QDomElement const &root)
 
 		QDomElement const childElement = child.toElement();
 		if (childElement.nodeName() != "powerMotor") {
+			QLOG_FATAL() << "Malformed <powerMotors> tag";
 			qDebug() << "Malformed <powerMotors> tag";
-			throw "config.xml parsing failed";
+			throw errorMessage;
 		}
 
 		PowerMotorMapping mapping;
@@ -548,8 +562,9 @@ void Configurer::loadPowerMotors(QDomElement const &root)
 void Configurer::loadAnalogSensors(QDomElement const &root)
 {
 	if (root.elementsByTagName("analogSensors").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <analogSensors> tag";
 		qDebug() << "config.xml does not have <analogSensors> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const analogSensors = root.elementsByTagName("analogSensors").at(0).toElement();
@@ -563,8 +578,9 @@ void Configurer::loadAnalogSensors(QDomElement const &root)
 
 		QDomElement const childElement = child.toElement();
 		if (childElement.nodeName() != "analogSensor") {
+			QLOG_FATAL() << "Malformed <analogSensors> tag";
 			qDebug() << "Malformed <analogSensors> tag";
-			throw "config.xml parsing failed";
+			throw errorMessage;
 		}
 
 		AnalogSensorMapping mapping;
@@ -579,8 +595,9 @@ void Configurer::loadAnalogSensors(QDomElement const &root)
 void Configurer::loadEncoders(QDomElement const &root)
 {
 	if (root.elementsByTagName("encoders").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <encoders> tag";
 		qDebug() << "config.xml does not have <encoders> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const encoders = root.elementsByTagName("encoders").at(0).toElement();
@@ -594,8 +611,9 @@ void Configurer::loadEncoders(QDomElement const &root)
 
 		QDomElement const childElement = child.toElement();
 		if (childElement.nodeName() != "encoder") {
+			QLOG_FATAL() << "Malformed <encoders> tag";
 			qDebug() << "Malformed <encoders> tag";
-			throw "config.xml parsing failed";
+			throw errorMessage;
 		}
 
 		EncoderMapping mapping;
@@ -610,8 +628,9 @@ void Configurer::loadEncoders(QDomElement const &root)
 void Configurer::loadDigitalSensors(QDomElement const &root)
 {
 	if (root.elementsByTagName("digitalSensors").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <digitalSensors> tag";
 		qDebug() << "config.xml does not have <digitalSensors> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const digitalSensors = root.elementsByTagName("digitalSensors").at(0).toElement();
@@ -640,8 +659,9 @@ void Configurer::loadDigitalSensors(QDomElement const &root)
 void Configurer::loadServoMotorTypes(QDomElement const &root)
 {
 	if (root.elementsByTagName("servoMotorTypes").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <servoMotorTypes> tag";
 		qDebug() << "config.xml does not have <servoMotorTypes> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const servoMotorTypes = root.elementsByTagName("servoMotorTypes").at(0).toElement();
@@ -670,8 +690,9 @@ void Configurer::loadServoMotorTypes(QDomElement const &root)
 void Configurer::loadAnalogSensorTypes(const QDomElement &root)
 {
 	if (root.elementsByTagName("analogSensorTypes").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <analogSensorTypes> tag";
 		qDebug() << "config.xml does not have <analogSensorTypes> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const analogSensorTypes = root.elementsByTagName("analogSensorTypes").at(0).toElement();
@@ -699,8 +720,9 @@ void Configurer::loadAnalogSensorTypes(const QDomElement &root)
 void Configurer::loadDigitalSensorTypes(QDomElement const &root)
 {
 	if (root.elementsByTagName("digitalSensorTypes").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <digitalSensorTypes> tag";
 		qDebug() << "config.xml does not have <digitalSensorTypes> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const digitalSensorTypes = root.elementsByTagName("digitalSensorTypes").at(0).toElement();
@@ -726,8 +748,9 @@ void Configurer::loadDigitalSensorTypes(QDomElement const &root)
 void Configurer::loadEncoderTypes(const QDomElement &root)
 {
 	if (root.elementsByTagName("encoderTypes").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <encoderTypes> tag";
 		qDebug() << "config.xml does not have <encoderTypes> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	QDomElement const encoderTypes = root.elementsByTagName("encoderTypes").at(0).toElement();
@@ -751,15 +774,17 @@ void Configurer::loadEncoderTypes(const QDomElement &root)
 void Configurer::loadSound(QDomElement const &root)
 {
 	if (root.elementsByTagName("playWavFile").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <playWavFile> tag";
 		qDebug() << "config.xml does not have <playWavFile> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	mPlayWavFileCommand = root.elementsByTagName("playWavFile").at(0).toElement().attribute("command");
 
 	if (root.elementsByTagName("playMp3File").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <playMp3File> tag";
 		qDebug() << "config.xml does not have <playMp3File> tag";
-		throw "config.xml parsing failed";
+		throw errorMessage;
 	}
 
 	mPlayMp3FileCommand = root.elementsByTagName("playMp3File").at(0).toElement().attribute("command");
@@ -773,8 +798,9 @@ Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QStr
 	if (isEnabled(root, tagName)) {
 
 		if (root.elementsByTagName(tagName).count() > 1) {
+			QLOG_FATAL() << "config.xml has too many <" << tagName << "> tags, there shall be exactly one";
 			qDebug() << "config.xml has too many <" << tagName << "> tags, there shall be exactly one";
-			throw "config.xml parsing failed";
+			throw errorMessage;
 		}
 
 		QDomElement const sensor = root.elementsByTagName(tagName).at(0).toElement();

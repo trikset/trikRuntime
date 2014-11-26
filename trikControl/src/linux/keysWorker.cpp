@@ -19,13 +19,16 @@
 #include <fcntl.h>
 #include <linux/input.h>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 KeysWorker::KeysWorker(QString const &keysPath)
 {
 	mKeysFileDescriptor = open(keysPath.toStdString().c_str(), O_SYNC, O_RDONLY);
 	if (mKeysFileDescriptor == -1) {
-		qDebug() << "cannot open keys input file";
+		QLOG_ERROR() << "cannot open keys input file" << keysPath;
+		qDebug() << "cannot open keys input file" << keysPath;
 		return;
 	}
 
@@ -62,6 +65,7 @@ void KeysWorker::readKeysEvent()
 	struct input_event event;
 
 	if (read(mKeysFileDescriptor, reinterpret_cast<char*>(&event), sizeof(event)) != sizeof(event)) {
+		QLOG_ERROR() << "keys: incomplete data read";
 		qDebug() << "keys: incomplete data read";
 		return;
 	}

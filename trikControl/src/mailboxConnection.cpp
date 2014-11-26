@@ -4,6 +4,8 @@
 
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 MailboxConnection::MailboxConnection()
@@ -38,7 +40,10 @@ void MailboxConnection::processData(QByteArray const &rawData)
 	QString const connectionCommand = "connection:";
 	QString const selfCommand = "self:";
 	QString const dataCommand = "data:";
-	auto const error = [](QString const &data) { qDebug() << "Malformed data: " << data; };
+	auto const error = [](QString const &data) {
+			QLOG_ERROR() << "Malformed data: " << data;
+			qDebug() << "Malformed data: " << data;
+	};
 
 	if (data.startsWith(registerCommand)) {
 		QStringList const parsedString = data.split(":");

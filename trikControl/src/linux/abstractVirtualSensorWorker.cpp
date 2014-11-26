@@ -21,6 +21,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, QString const &inputFile
@@ -65,6 +67,7 @@ void AbstractVirtualSensorWorker::readFile()
 	mSocketNotifier->setEnabled(false);
 
 	if (::read(mOutputFileDescriptor, data, 4000) < 0) {
+		QLOG_ERROR() << mOutputFile.fileName() << ": fifo read failed: " << errno;
 		qDebug() << mOutputFile.fileName() << ": fifo read failed: " << errno;
 		return;
 	}
@@ -87,6 +90,7 @@ void AbstractVirtualSensorWorker::readFile()
 
 bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 {
+	QLOG_INFO() << "Sending" << command << "command to" << sensorName() << "sensor";
 	qDebug() << "Sending" << command << "command to" << sensorName() << "sensor";
 
 	QFileInfo const scriptFileInfo(mScript);
@@ -103,12 +107,16 @@ bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 	mSensorProcess.waitForStarted();
 
 	if (mSensorProcess.state() != QProcess::Running) {
+		QLOG_ERROR() << "Cannot launch" << sensorName() << "script" << scriptFileInfo.filePath() << " in "
+				<< scriptFileInfo.absolutePath();
 		qDebug() << "Cannot launch" << sensorName() << "script" << scriptFileInfo.filePath() << " in "
 				<< scriptFileInfo.absolutePath();
 		return false;
 	}
 
 	if (!mSensorProcess.waitForFinished()) {
+		QLOG_ERROR() << sensorName() << "script" << scriptFileInfo.filePath() << " in " << scriptFileInfo.absolutePath()
+				<< "hanged up or finished unexpectedly!";
 		qDebug() << sensorName() << "script" << scriptFileInfo.filePath() << " in " << scriptFileInfo.absolutePath()
 				<< "hanged up or finished unexpectedly!";
 		return false;
@@ -116,10 +124,12 @@ bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 
 	QString const processOutput = mSensorProcess.readAllStandardOutput() + mSensorProcess.readAllStandardError();
 	if (processOutput.contains("error")) {
+		QLOG_ERROR() << sensorName() << "script reported error:" << processOutput;
 		qDebug() << sensorName() << "script reported error:" << processOutput;
 		return false;
 	}
 
+	QLOG_INFO() << "Sensor process output:" << processOutput;
 	qDebug() << "Sensor process output:" << processOutput;
 
 	return true;
@@ -128,6 +138,7 @@ bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 void AbstractVirtualSensorWorker::startVirtualSensor()
 {
 	if (launchSensorScript("start")) {
+		QLOG_INFO() << sensorName() << "sensor started, waiting for it to initialize...";
 		qDebug() << sensorName() << "sensor started, waiting for it to initialize...";
 		openFifos();
 	}
@@ -139,12 +150,14 @@ void AbstractVirtualSensorWorker::openFifos()
 		mInputFile.close();
 	}
 
+	QLOG_INFO() << "Opening" << mOutputFile.fileName();
 	qDebug() << "Opening" << mOutputFile.fileName();
 
 	/// @todo Is it possible to use QFile (and QFile::handle()) here?
 	mOutputFileDescriptor = open(mOutputFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 
 	if (mOutputFileDescriptor == -1) {
+		QLOG_ERROR() << "Cannot open" << sensorName() << "sensor output file" << mOutputFile.fileName();
 		qDebug() << "Cannot open" << sensorName() << "sensor output file" << mOutputFile.fileName();
 		return;
 	}
@@ -154,9 +167,11 @@ void AbstractVirtualSensorWorker::openFifos()
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(true);
 
+	QLOG_INFO() << "Opening" << mInputFile.fileName();
 	qDebug() << "Opening" << mInputFile.fileName();
 
 	if (!mInputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		QLOG_ERROR() << "Sensor input file" << mInputFile.fileName() << " failed to open";
 		qDebug() << "Sensor input file" << mInputFile.fileName() << " failed to open";
 		return;
 	}
@@ -165,6 +180,7 @@ void AbstractVirtualSensorWorker::openFifos()
 
 	mReady = true;
 
+	QLOG_INFO() << sensorName() << "initialization completed";
 	qDebug() << sensorName() << "initialization completed";
 
 	sync();
@@ -184,6 +200,7 @@ void AbstractVirtualSensorWorker::deinitialize()
 	}
 
 	if (::close(mOutputFileDescriptor) != 0) {
+		QLOG_ERROR() << mOutputFile.fileName() << ": fifo close failed: " << errno;
 		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
 	}
 
@@ -191,6 +208,7 @@ void AbstractVirtualSensorWorker::deinitialize()
 	mInputFile.close();
 
 	if (!launchSensorScript("stop")) {
+		QLOG_ERROR() << "Failed to stop" << sensorName() << "sensor!";
 		qDebug() << "Failed to stop" << sensorName() << "sensor!";
 	}
 

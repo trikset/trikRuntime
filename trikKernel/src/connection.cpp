@@ -17,6 +17,8 @@
 
 #include "connection.h"
 
+#include "QsLog.h"
+
 using namespace trikKernel;
 
 Connection::Connection(Protocol connectionProtocol)
@@ -27,6 +29,7 @@ Connection::Connection(Protocol connectionProtocol)
 QHostAddress Connection::peerAddress() const
 {
 	if (!mSocket) {
+		QLOG_FATAL() << "Connection::peerAddress() called on empty socket, thread:" << thread();
 		qDebug() << "Connection::peerAddress() called on empty socket, thread:" << thread();
 		Q_ASSERT(false);
 	}
@@ -37,6 +40,7 @@ QHostAddress Connection::peerAddress() const
 int Connection::peerPort() const
 {
 	if (!mSocket) {
+		QLOG_FATAL() << "Connection::peerPort() called on empty socket, thread:" << thread();
 		qDebug() << "Connection::peerPort() called on empty socket, thread:" << thread();
 		Q_ASSERT(false);
 	}
@@ -53,6 +57,7 @@ void Connection::init(QHostAddress const &ip, int port)
 	mSocket->connectToHost(ip, port);
 
 	if (!mSocket->waitForConnected()) {
+		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
 		qDebug() << "Connection to" << ip << ":" << port << "failed";
 		thread()->quit();
 	}
@@ -61,10 +66,12 @@ void Connection::init(QHostAddress const &ip, int port)
 void Connection::send(QByteArray const &data)
 {
 	if (mSocket->state() != QAbstractSocket::ConnectedState) {
+		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
 		qDebug() << "Trying to send through unconnected socket, message is not delivered";
 		return;
 	}
 
+	QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 	qDebug() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 
 	QByteArray const message = mProtocol == Protocol::messageLength
@@ -73,6 +80,7 @@ void Connection::send(QByteArray const &data)
 
 	qint64 const sentBytes = mSocket->write(message);
 	if (sentBytes != message.size()) {
+		QLOG_ERROR() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 		qDebug() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 	}
 }
@@ -82,6 +90,7 @@ void Connection::init(int socketDescriptor)
 	mSocket.reset(new QTcpSocket());
 
 	if (!mSocket->setSocketDescriptor(socketDescriptor)) {
+		QLOG_ERROR() << "Failed to set socket descriptor" << socketDescriptor;
 		qDebug() << "Failed to set socket descriptor" << socketDescriptor;
 		return;
 	}
@@ -98,6 +107,7 @@ void Connection::onReadyRead()
 	QByteArray const &data = mSocket->readAll();
 	mBuffer.append(data);
 
+	QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 	qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 
 	processBuffer();
@@ -156,7 +166,8 @@ void Connection::processBuffer()
 
 void Connection::onDisconnect()
 {
-	qDebug() << "Connection disconnected.";
+	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
+	qDebug() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
 	thread()->quit();
 }
@@ -166,8 +177,10 @@ void Connection::onError(QAbstractSocket::SocketError error)
 	Q_UNUSED(error)
 
 	if (error == QAbstractSocket::RemoteHostClosedError) {
+		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << ": remote host closed";
 		qDebug() << "Connection" << mSocket->socketDescriptor() << ": remote host closed";
 	} else {
+		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored.";
 		qDebug() << "Connection" << mSocket->socketDescriptor() << "errored.";
 	}
 

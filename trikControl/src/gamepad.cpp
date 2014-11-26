@@ -18,6 +18,8 @@
 
 #include "tcpConnector.h"
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 Gamepad::Gamepad(int port)
@@ -84,6 +86,7 @@ void Gamepad::parse(QString const &message)
 		int const perc = cmd.at(1).trimmed().toInt();
 		emit wheel(perc);
 	} else {
-		qDebug() << "Unknown command" ;
+		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
+		qDebug() << "Gamepad: unknown command" << commandName;
 	}
 }

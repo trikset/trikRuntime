@@ -18,6 +18,8 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 PwmCapture::PwmCapture(QString const &frequencyFile, QString const &dutyFile)
@@ -25,10 +27,12 @@ PwmCapture::PwmCapture(QString const &frequencyFile, QString const &dutyFile)
 	, mDutyFile(dutyFile)
 {
 	if (!mFrequencyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		QLOG_ERROR() << "Can't open period capture file " << mFrequencyFile.fileName();
 		qDebug() << "Can't open period capture file " << mFrequencyFile.fileName();
 	}
 
 	if (!mDutyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		QLOG_ERROR() << "Can't open duty capture file " << mDutyFile.fileName();
 		qDebug() << "Can't open duty capture file " << mDutyFile.fileName();
 	}
 }

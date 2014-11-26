@@ -18,6 +18,8 @@
 
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikKernel;
 
 TrikServer::TrikServer(std::function<Connection *()> const &connectionFactory)
@@ -30,6 +32,7 @@ TrikServer::~TrikServer()
 	for (QThread *thread : mConnections.keys()) {
 		thread->quit();
 		if (!thread->wait(1000)) {
+			QLOG_ERROR() << "Unable to stop thread" << thread;
 			qDebug() << "Unable to stop thread" << thread;
 		}
 	}
@@ -41,8 +44,10 @@ TrikServer::~TrikServer()
 void TrikServer::startServer(int const &port)
 {
 	if (!listen(QHostAddress::Any, port)) {
+		QLOG_ERROR() << "Can not start server on port " << port;
 		qDebug() << "Can not start server on port " << port;
 	} else {
+		QLOG_INFO() << "Server on port" << port << "started";
 		qDebug() << "Server on port" << port << "started";
 	}
 }
@@ -57,6 +62,7 @@ void TrikServer::sendMessage(QString const &message)
 void TrikServer::incomingConnection(qintptr socketDescriptor)
 {
 	qDebug() << "New connection, socket descriptor: " << socketDescriptor;
+	QLOG_INFO() << "New connection, socket descriptor: " << socketDescriptor;
 
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);

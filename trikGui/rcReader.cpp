@@ -16,6 +16,8 @@
 
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 RcReader::RcReader(const QString &rcFilePath, QObject *parent)
 	: QObject(parent)
 	, mRcFile(rcFilePath)
@@ -28,6 +30,7 @@ void RcReader::read()
 	mVariables.clear();
 
 	if (!mRcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_ERROR() << "Can't open trikrc file";
 		qDebug() << "Can't open trikrc file";
 		return;
 	}

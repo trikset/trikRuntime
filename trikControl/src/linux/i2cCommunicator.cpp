@@ -22,6 +22,8 @@
 #include <linux/i2c.h>
 #include <unistd.h>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command
@@ -95,11 +97,13 @@ void I2cCommunicator::connect()
 {
 	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
+		QLOG_ERROR() << "Failed to open I2C device file " << mDevicePath;
 		qDebug() << "Failed to open I2C device file " << mDevicePath;
 		return;
 	}
 
 	if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId)) {
+		QLOG_ERROR() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
 		qDebug() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
 		return;
 	}

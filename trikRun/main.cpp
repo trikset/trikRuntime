@@ -29,6 +29,8 @@
 #include <trikControl/brick.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
+#include "QsLog.h"
+
 void printUsage()
 {
 	qDebug() << "Usage: trikRun -qws <QtScript file name> [-c <config file name>] [-d <working directory name>]";
@@ -80,6 +82,12 @@ int main(int argc, char *argv[])
 		server->setCursorVisible(false);
 	}
 #endif
+
+	int const maxLogSize = 10 * 1024 * 1024;
+	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
+	QsLogging::Logger::instance().addDestination(QsLogging::DestinationPtr(QsLogging::DestinationFactory::MakeFileDestination(startDirPath + "trik.log", QsLogging::EnableLogRotation
+			, QsLogging::MaxSizeBytes(maxLogSize), QsLogging::MaxOldLogCount(2), QsLogging::TraceLevel)));
+	QLOG_INFO() << "TrikRun started";
 
 	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
 

@@ -27,6 +27,8 @@
 #include "configurer.h"
 #include "i2cCommunicator.h"
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &startDirPath)
@@ -38,7 +40,9 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
-		qDebug() << "Init script failed";
+		QString const message = "Init script failed";
+		QLOG_ERROR() << message;
+		qDebug() << message;
 	}
 
 	mI2cCommunicator = new I2cCommunicator(mConfigurer->i2cPath(), mConfigurer->i2cDeviceId());
@@ -221,6 +225,7 @@ void Brick::reset()
 
 void Brick::playSound(QString const &soundFileName)
 {
+	QLOG_INFO() << "Playing " << soundFileName;
 	qDebug() << soundFileName;
 
 	QFileInfo const fileInfo(soundFileName);
@@ -234,7 +239,9 @@ void Brick::playSound(QString const &soundFileName)
 	}
 
 	if (command.isEmpty() || ::system(command.toStdString().c_str()) != 0) {
-		qDebug() << "Play sound failed";
+		QString const message = "Play sound failed";
+		QLOG_ERROR() << message;
+		qDebug() << message;
 	}
 }
 
@@ -441,6 +448,7 @@ void Brick::quit()
 void Brick::system(QString const &command)
 {
 	QStringList args{"-c", command};
+	QLOG_INFO() << "Running: " << "sh" << args;
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
 }

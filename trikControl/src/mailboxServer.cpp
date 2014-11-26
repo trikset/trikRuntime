@@ -5,6 +5,8 @@
 #include <QtNetwork/QNetworkInterface>
 #include <QtCore/QSettings>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 MailboxServer::MailboxServer(int port)
@@ -17,6 +19,7 @@ MailboxServer::MailboxServer(int port)
 
 	if (mMyIp.isNull()) {
 		qDebug() << "Self IP address is invalid, connect to a network and restart trikGui";
+		QLOG_ERROR() << "Self IP address is invalid";
 	}
 
 	loadSettings();
@@ -176,6 +179,7 @@ trikKernel::Connection *MailboxServer::prepareConnection(QHostAddress const &ip)
 	mKnownRobotsLock.unlock();
 
 	if (targetEndpoint.ip.isNull()) {
+		QLOG_ERROR() << "Trying to connect to unknown robot, IP:" << ip;
 		qDebug() << "Trying to connect to unknown robot, IP:" << ip;
 		return nullptr;
 	}
@@ -226,6 +230,7 @@ void MailboxServer::onNewConnection(QHostAddress const &ip, int clientPort, int 
 
 		mKnownRobotsLock.unlock();
 	} else {
+		QLOG_ERROR() << "Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
 		qDebug() << "Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
 		return;
 	}
@@ -280,6 +285,7 @@ void MailboxServer::onConnectionInfo(QHostAddress const &ip, int port, int hullN
 
 void MailboxServer::onNewData(QHostAddress const &ip, int port, QByteArray const &data)
 {
+	QLOG_INFO() << "New data received by a mailbox from " << ip << ":" << port << ", data is:" << data;
 	qDebug() << "New data received by a mailbox from " << ip << ":" << port << ", data is:" << data;
 
 	int senderHullNumber = -1;
@@ -293,6 +299,7 @@ void MailboxServer::onNewData(QHostAddress const &ip, int port, QByteArray const
 	mKnownRobotsLock.unlock();
 
 	if (senderHullNumber == -1) {
+		QLOG_INFO() << "Received message from" << ip << ":" << port << "which is unknown at the moment";
 		qDebug() << "Received message from" << ip << ":" << port << "which is unknown at the moment";
 	}
 
@@ -350,6 +357,8 @@ void MailboxServer::forEveryConnection(std::function<void(trikKernel::Connection
 	for (auto const &endpoint : endpoints) {
 		auto const connection = prepareConnection(endpoint.ip);
 		if (connection == nullptr) {
+			QLOG_ERROR() << "Connection to" << endpoint.ip << ":" << endpoint.port << "is dead at the moment, message"
+					<< "is not delivered. Will try to reestablish connection on next send.";
 			qDebug() << "Connection to" << endpoint.ip << ":" << endpoint.port << "is dead at the moment, message"
 					<< "is not delivered. Will try to reestablish connection on next send.";
 		} else {
