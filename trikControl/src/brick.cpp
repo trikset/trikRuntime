@@ -252,6 +252,7 @@ void Brick::say(QString const &text)
 
 void Brick::stop()
 {
+	QLOG_INFO() << "Stopping brick";
 	emit stopWaiting();
 
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {

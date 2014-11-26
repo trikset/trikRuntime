@@ -18,6 +18,8 @@
 
 #include "src/scriptRunnerProxy.h"
 
+#include "QsLog.h"
+
 using namespace trikScriptRunner;
 
 // name of the directory in which scripts must be saved
@@ -57,17 +59,20 @@ void TrikScriptRunner::brickBeep()
 
 void TrikScriptRunner::run(QString const &script, QString const &fileName)
 {
+	QLOG_INFO() << "TrikScriptRunner: new script" << mMaxScriptId << "from file" << fileName;
 	mScriptRunnerProxy->run(script, false, mMaxScriptId);
 	mScriptFileNames[mMaxScriptId++] = fileName;
 }
 
 void TrikScriptRunner::run(QString const &script)
 {
+	QLOG_INFO() << "TrikScriptRunner: new direct script \"" << script << "\"";
 	mScriptRunnerProxy->run(script, false, -1);
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)
 {
+	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
 	mScriptRunnerProxy->run(command, true, mMaxScriptId++, QString());
 }
 
