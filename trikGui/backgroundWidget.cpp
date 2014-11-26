@@ -15,7 +15,12 @@
 #include "backgroundWidget.h"
 
 #include <QtCore/QDebug>
-#include <QtGui/QApplication>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
 
 using namespace trikGui;
 

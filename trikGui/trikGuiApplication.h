@@ -19,7 +19,7 @@
 
 #include <QtCore/qglobal.h>
 #include <QtCore/QTimer>
-#
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 #else
