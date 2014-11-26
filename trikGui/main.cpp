@@ -30,6 +30,7 @@
 
 #include "trikGuiApplication.h"
 #include "backgroundWidget.h"
+#include "QsLog.h"
 
 using namespace trikGui;
 
@@ -122,6 +123,12 @@ int main(int argc, char *argv[])
 
 	BackgroundWidget w(configPath, startDirPath);
 	w.show();
+
+	int const maxLogSize = 10 * 1024 * 1024;
+	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
+	QsLogging::Logger::instance().addDestination(QsLogging::DestinationPtr(QsLogging::DestinationFactory::MakeFileDestination(startDirPath + "trik.log", QsLogging::EnableLogRotation
+			, QsLogging::MaxSizeBytes(maxLogSize), QsLogging::MaxOldLogCount(2), QsLogging::TraceLevel)));
+	QLOG_INFO() << "TrikGui started";
 
 	return app.exec();
 }

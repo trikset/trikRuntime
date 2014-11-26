@@ -81,7 +81,7 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
+uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry qslog)
 
 INCLUDEPATH += \
 	../trikKernel/include/ \
@@ -90,3 +90,4 @@ INCLUDEPATH += \
 	../trikScriptRunner/include/ \
 	../trikWiFi/include/ \
 	../trikTelemetry/include/ \
+	../qslog/ \

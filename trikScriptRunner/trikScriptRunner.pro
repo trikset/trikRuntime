@@ -42,11 +42,12 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir($$PWD/system.js)
 
-uses(trikKernel trikControl)
+uses(trikKernel trikControl qslog)
 
 INCLUDEPATH += \
 	$$PWD/../trikKernel/include/ \
 	$$PWD/../trikControl/include/ \
+	$$PWD/../qslog \
 
 RESOURCES += \
 	trikSrciptRunner.qrc

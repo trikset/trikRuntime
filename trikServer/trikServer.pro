@@ -23,8 +23,9 @@ INCLUDEPATH += \
 	../trikControl/include/ \
 	../trikCommunicator/include/ \
 	../trikKernel/include/ \
+	../qslog/ \
 
-uses(trikKernel)
+uses(trikKernel qslog)
 
 TEMPLATE = app
 CONFIG += console

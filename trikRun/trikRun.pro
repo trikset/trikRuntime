@@ -22,12 +22,13 @@ OTHER_FILES += \
 
 copyToDestdir($$OTHER_FILES)
 
-uses(trikKernel trikControl trikScriptRunner)
+uses(trikKernel trikControl trikScriptRunner qslog)
 
 INCLUDEPATH += \
 	../trikKernel/include/ \
 	../trikControl/include/ \
 	../trikScriptRunner/include/ \
+	../qslog
 
 TEMPLATE = app
 CONFIG += console

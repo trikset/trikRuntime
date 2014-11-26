@@ -17,6 +17,7 @@ include(../global.pri)
 QT += network
 
 INCLUDEPATH += $$PWD/include \
+	$$PWD/../qslog \
 
 HEADERS += \
 	$$PWD/include/trikKernel/connection.h \
@@ -33,3 +34,5 @@ SOURCES += \
 TEMPLATE = lib
 
 DEFINES += TRIKKERNEL_LIBRARY
+
+uses(qslog)

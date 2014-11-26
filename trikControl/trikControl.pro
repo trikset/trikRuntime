@@ -104,10 +104,11 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel)
+uses(trikKernel qslog)
 
 INCLUDEPATH += \
 	$$PWD/../trikKernel/include \
+	$$PWD/../qslog/ \
 
 copyToDestdir( \
 	$$PWD/config.xml  \
