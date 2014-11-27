@@ -18,7 +18,7 @@
 
 #include "i2cCommunicator.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

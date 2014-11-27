@@ -18,7 +18,7 @@
 
 #include "tcpConnector.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

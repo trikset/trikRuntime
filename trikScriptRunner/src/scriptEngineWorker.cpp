@@ -35,7 +35,7 @@
 #include "scriptableParts.h"
 #include "utils.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikScriptRunner;
 using namespace trikControl;

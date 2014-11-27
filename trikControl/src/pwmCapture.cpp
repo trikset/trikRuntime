@@ -18,7 +18,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

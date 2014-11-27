@@ -16,7 +16,7 @@
 
 #include <QtCore/QDataStream>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

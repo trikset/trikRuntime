@@ -22,7 +22,7 @@
 
 #include "trikGuiMessageBox.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikGui;
 

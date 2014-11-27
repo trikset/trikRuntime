@@ -18,7 +18,7 @@
 
 #include "src/scriptRunnerProxy.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikScriptRunner;
 

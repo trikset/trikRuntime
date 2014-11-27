@@ -5,7 +5,7 @@
 #include <QtNetwork/QNetworkInterface>
 #include <QtCore/QSettings>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

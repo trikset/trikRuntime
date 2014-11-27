@@ -28,7 +28,7 @@
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brick.h>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 void printUsage()
 {

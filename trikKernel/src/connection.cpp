@@ -18,7 +18,7 @@
 #include "connection.h"
 #include "version.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikKernel;
 

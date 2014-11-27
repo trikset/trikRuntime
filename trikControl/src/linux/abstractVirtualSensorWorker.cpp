@@ -21,7 +21,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 
@@ -180,8 +180,10 @@ void AbstractVirtualSensorWorker::openFifos()
 
 	mReady = true;
 
-	QLOG_INFO() << sensorName() << "initialization completed";
-	qDebug() << sensorName() << "initialization completed";
+	QString const message = sensorName() + " initialization completed";
+
+	QLOG_INFO() << message;
+	qDebug() << message;
 
 	sync();
 }
@@ -200,18 +202,22 @@ void AbstractVirtualSensorWorker::deinitialize()
 	}
 
 	if (::close(mOutputFileDescriptor) != 0) {
-		QLOG_ERROR() << mOutputFile.fileName() << ": fifo close failed: " << errno;
-		qDebug() << mOutputFile.fileName() << ": fifo close failed: " << errno;
+		QString const message = QString("%1: fifo close failed: %2").arg(mOutputFile.fileName()).arg(errno);
+		QLOG_ERROR() << message;
+		qDebug() << message;
 	}
 
 	mOutputFileDescriptor = -1;
 	mInputFile.close();
 
 	if (!launchSensorScript("stop")) {
-		QLOG_ERROR() << "Failed to stop" << sensorName() << "sensor!";
-		qDebug() << "Failed to stop" << sensorName() << "sensor!";
+		QString const message = QString("Failed to stop %1 sensor!").arg(sensorName());
+		QLOG_ERROR() << message;
+		qDebug() << message;
 	} else {
-		qDebug() << "Successfully stopped" << sensorName() << "sensor";
+		QString const message = QString("Successfully stopped %1 sensor").arg(sensorName());
+		QLOG_INFO() << message;
+		qDebug() << message;
 	}
 
 	emit stopped();
