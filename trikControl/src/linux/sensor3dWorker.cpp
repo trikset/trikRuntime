@@ -26,6 +26,8 @@
 #include <linux/ioctl.h>
 #include <linux/input.h>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 Sensor3dWorker::Sensor3dWorker(int min, int max, const QString &controlFile)
@@ -37,6 +39,7 @@ Sensor3dWorker::Sensor3dWorker(int min, int max, const QString &controlFile)
 
 	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 	if (mDeviceFileDescriptor == -1) {
+		QLOG_ERROR() << "Cannot open input file " << controlFile;
 		qDebug() << "Cannot open input file " << controlFile;
 		return;
 	}
@@ -88,6 +91,7 @@ void Sensor3dWorker::readFile()
 	}
 
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {
+		QLOG_ERROR() << "incomplete data read";
 		qDebug() << "incomplete data read";
 	}
 

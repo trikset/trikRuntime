@@ -28,9 +28,10 @@ QT += network
 
 DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
-uses(trikScriptRunner trikControl trikKernel)
+uses(trikScriptRunner trikControl trikKernel qslog)
 
 INCLUDEPATH += \
-	$PWD/../trikScriptRunner/include/ \
-	$PWD/../trikControl/include/ \
-	$PWD/../trikKernel/include/ \
+	$$PWD/../trikScriptRunner/include/ \
+	$$PWD/../trikControl/include/ \
+	$$PWD/../trikKernel/include/ \
+	$$PWD/../qslog/ \

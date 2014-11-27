@@ -18,6 +18,8 @@
 
 #include "i2cCommunicator.h"
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 AnalogSensor::AnalogSensor(I2cCommunicator &communicator
@@ -36,7 +38,9 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
 	if (rawValue1 == rawValue2) {
-		qDebug() << "Sensor calibration error: rawValue1 = rawValue2!";
+		QString const message = "Sensor calibration error: rawValue1 = rawValue2!";
+		QLOG_ERROR() << message;
+		qDebug() << message;
 		mK = 0;
 		mB = 0;
 	} else {

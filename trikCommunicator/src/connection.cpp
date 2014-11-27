@@ -22,6 +22,8 @@
 
 #include "src/connection.h"
 
+#include "QsLog.h"
+
 using namespace trikCommunicator;
 
 Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
@@ -37,6 +39,7 @@ void Connection::processData(QByteArray const &data)
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
 		qDebug() << "Command: " << command;
+		QLOG_INFO() << "Command: " << command;
 	}
 
 	if (command.startsWith("file:")) {
@@ -45,6 +48,7 @@ void Connection::processData(QByteArray const &data)
 		if (separatorPosition == -1) {
 
 			qDebug() << "Malformed 'file' command";
+			QLOG_ERROR() << "Malformed 'file' command";
 
 			return;
 		}

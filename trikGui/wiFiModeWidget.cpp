@@ -21,6 +21,8 @@
 #include "wiFiAPWidget.h"
 #include "wiFiInitWidget.h"
 
+#include "QsLog.h"
+
 using namespace trikGui;
 
 WiFiModeWidget::WiFiModeWidget(QString const &configPath
@@ -108,6 +110,7 @@ void WiFiModeWidget::setMode(Mode mode)
 			break;
 		}
 		case unknown: {
+			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
 			qDebug() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
 			break;
 		}

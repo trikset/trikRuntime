@@ -16,6 +16,8 @@
 
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 Led::Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, int off)
@@ -25,10 +27,12 @@ Led::Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, i
 	, mOff(off)
 {
 	if (!mRedDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		QLOG_ERROR() << "Can't open red led control file " << mRedDeviceFile.fileName();
 		qDebug() << "Can't open red led control file " << mRedDeviceFile.fileName();
 	}
 
 	if (!mGreenDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		QLOG_ERROR() << "Can't open green led control file " << mGreenDeviceFile.fileName();
 		qDebug() << "Can't open green led control file " << mGreenDeviceFile.fileName();
 	}
 }

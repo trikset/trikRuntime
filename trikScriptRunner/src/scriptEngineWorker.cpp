@@ -35,6 +35,8 @@
 #include "scriptableParts.h"
 #include "utils.h"
 
+#include "QsLog.h"
+
 using namespace trikScriptRunner;
 using namespace trikControl;
 
@@ -73,10 +75,17 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::reset()
 {
-	Q_ASSERT(mEngine);
+	if (!mEngine) {
+		QLOG_FATAL() << "ScriptEngine is null on reset";
+		Q_ASSERT(false);
+	}
+
+	QLOG_INFO() << "ScriptEngineWorker: reset started, current script engine:" << mEngine
+			<< ", thread:" << QThread::currentThread();
 
 	mEngineReset = !mEngine->isEvaluating();
 	bool const inEventDrivenMode = mBrick.isInEventDrivenMode();
+
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	mBrick.reset();
@@ -88,6 +97,9 @@ void ScriptEngineWorker::reset()
 		onScriptEvaluated();
 		resetScriptEngine();
 	}
+
+	QLOG_INFO() << "ScriptEngineWorker: reset complete, current script engine:" << mEngine
+			<< ", thread:" << QThread::currentThread();
 }
 
 ScriptEngineWorker &ScriptEngineWorker::clone()
@@ -109,9 +121,13 @@ void ScriptEngineWorker::init()
 
 void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function)
 {
-	Q_ASSERT(mEngine);
+	if (!mEngine) {
+		QLOG_FATAL() << "ScriptEngine is null on run";
+		Q_ASSERT(false);
+	}
 
 	if (!inEventDrivenMode || !mBrick.isInEventDrivenMode()) {
+		QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
 		mScriptId = scriptId;
 		emit startedScript(mScriptId);
 	}
@@ -128,7 +144,11 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 
 	mBrick.keys()->reset();
 
+	QLOG_INFO() << "ScriptEngineWorker: evaluating, script:" << mScriptId
+			<< ", thread:" << QThread::currentThread();
 	mEngine->evaluate(needCallFunction ? QString("%1\n%2();").arg(script, function) : script);
+	QLOG_INFO() << "ScriptEngineWorker: evaluation stopped, script:" << mScriptId
+			<< ", thread:" << QThread::currentThread();
 
 	if (!mBrick.isInEventDrivenMode()) {
 		mBrick.stop();
@@ -157,11 +177,14 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 
 void ScriptEngineWorker::resetScriptEngine()
 {
+	QLOG_INFO() << "ScriptEngineWorker: resetting script engine" << mEngine
+			<< ", thread: " << QThread::currentThread();
 	if (mEngine) {
 		mEngine->deleteLater();
 	}
 
 	mEngine = new QScriptEngine();
+	QLOG_INFO() << "ScriptEngineWorker: new script engine" << mEngine << ", thread:" << QThread::currentThread();
 
 	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
@@ -202,6 +225,7 @@ void ScriptEngineWorker::onScriptEvaluated()
 		QString const message = mEngine->uncaughtException().toString();
 		error = tr("Line %1: %2").arg(QString::number(line), message);
 		qDebug() << "Uncaught exception at line" << line << ":" << message;
+		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 	}
 
 	emit completed(error, mScriptId);

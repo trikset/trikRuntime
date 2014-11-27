@@ -18,6 +18,8 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikKernel;
 
 QString FileUtils::readFromFile(QString const &fileName)
@@ -26,6 +28,7 @@ QString FileUtils::readFromFile(QString const &fileName)
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 	if (!file.isOpen()) {
 		qDebug() << "Failed to open file" << fileName << "for reading";
+		QLOG_FATAL() << "Failed to open file" << fileName << "for reading";
 		throw "Failed to open file";
 	}
 
@@ -49,6 +52,7 @@ void FileUtils::writeToFile(QString const &fileName, QString const &contents, QS
 	file.open(QIODevice::WriteOnly | QIODevice::Text);
 	if (!file.isOpen()) {
 		qDebug() << "Failed to open file" << filePath << "for writing";
+		QLOG_FATAL() << "Failed to open file" << filePath << "for writing";
 		throw "File open operation failed";
 	}
 

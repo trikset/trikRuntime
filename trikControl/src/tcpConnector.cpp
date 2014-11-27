@@ -16,6 +16,8 @@
 
 #include <QtCore/QDataStream>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 TcpConnector::TcpConnector(int port)
@@ -28,11 +30,13 @@ void TcpConnector::startServer()
 	mTcpServer.reset(new QTcpServer());
 
 	if (!mTcpServer->listen(QHostAddress::Any, mPort)) {
+		QLOG_ERROR() << "Unable to start the server:" << mTcpServer->errorString();
 		qDebug() << "Unable to start the server:" << mTcpServer->errorString();
 		mTcpServer->close();
 		return;
 	}
 
+	QLOG_INFO() << "TcpServer started";
 	qDebug() << "TcpServer started";
 	connect(mTcpServer.data(), SIGNAL(newConnection()), this, SLOT(connection()));
 }
@@ -41,6 +45,7 @@ void TcpConnector::connection()
 {
 	mTcpSocket.reset(mTcpServer->nextPendingConnection());
 	mTcpSocket->setSocketOption(QAbstractSocket::LowDelayOption, 1);
+	QLOG_INFO() << "Set new connection";
 	qDebug() << "Set new connection";
 	connect(mTcpSocket.data(), SIGNAL(disconnected()), this, SLOT(tcpDisconnected()));
 	connect(mTcpSocket.data(), SIGNAL(readyRead()), this, SLOT(networkRead()));

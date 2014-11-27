@@ -16,6 +16,8 @@
 
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 DigitalSensor::DigitalSensor(int min, int max, QString const &deviceFile)
@@ -28,6 +30,7 @@ DigitalSensor::DigitalSensor(int min, int max, QString const &deviceFile)
 int DigitalSensor::read()
 {
 	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_ERROR() << "File " << mDeviceFile.fileName() << " failed to open for reading";
 		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";
 		return 0;
 	}
@@ -56,6 +59,7 @@ int DigitalSensor::read()
 int DigitalSensor::readRawData()
 {
 	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_ERROR() << "File " << mDeviceFile.fileName() << " failed to open for reading";
 		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";
 		return 0;
 	}

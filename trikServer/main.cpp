@@ -28,6 +28,8 @@
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brick.h>
 
+#include "QsLog.h"
+
 void printUsage()
 {
 	qDebug() << "Usage: trikServer [-c <config file name] [-d <working directory name>]";
@@ -74,6 +76,17 @@ int main(int argc, char *argv[])
 		server->setCursorVisible(false);
 	}
 #endif
+
+	int const maxLogSize = 10 * 1024 * 1024;
+	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
+	QsLogging::DestinationPtr destination = QsLogging::DestinationFactory::MakeFileDestination(
+			startDirPath + "trik.log"
+			, QsLogging::EnableLogRotation
+			, QsLogging::MaxSizeBytes(maxLogSize)
+			, QsLogging::MaxOldLogCount(2)
+			, QsLogging::TraceLevel);
+	QsLogging::Logger::instance().addDestination(destination);
+	QLOG_INFO() << "TrikServer started on port" << port;
 
 	qDebug() << "Running TrikServer on port" << port;
 
