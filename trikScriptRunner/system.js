@@ -48,3 +48,12 @@ brick.repeat = function(mscs, f) {
   var timer = brick.timer(mscs);
   timer.timeout.connect(f);
 }
+
+brick.smile = function() {
+  brick.display().showImage('media/trik_smile_normal.png');
+}
+
+brick.sadSmile = function() {
+  brick.display().showImage('media/trik_smile_sad.png');
+}
+

@@ -29,7 +29,7 @@
 #include <trikControl/brick.h>
 #include <trikKernel/coreDumping.h>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 void printUsage()
 {

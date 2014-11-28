@@ -24,13 +24,15 @@ SUBDIRS = \
 	trikGui \
 	trikWiFi \
 	trikTelemetry \
-	qslog/QsLogSharedLibrary.pro \
+	qslog \
 
-trikScriptRunner.depends = trikControl trikKernel qslog/QsLogSharedLibrary.pro
-trikCommunicator.depends = trikScriptRunner qslog/QsLogSharedLibrary.pro
-trikRun.depends = trikScriptRunner trikKernel qslog/QsLogSharedLibrary.pro
-trikServer.depends = trikCommunicator qslog/QsLogSharedLibrary.pro
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog/QsLogSharedLibrary.pro
-trikTelemetry.depends = trikControl trikKernel qslog/QsLogSharedLibrary.pro
-trikControl.depends = qslog/QsLogSharedLibrary.pro
-trikKernel.depends = qslog/QsLogSharedLibrary.pro
+qslog.file = qslog/QsLogSharedLibrary.pro
+
+trikScriptRunner.depends = trikControl trikKernel qslog
+trikCommunicator.depends = trikScriptRunner qslog
+trikRun.depends = trikScriptRunner trikKernel qslog
+trikServer.depends = trikCommunicator qslog
+trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
+trikTelemetry.depends = trikControl trikKernel qslog
+trikControl.depends = qslog
+trikKernel.depends = qslog

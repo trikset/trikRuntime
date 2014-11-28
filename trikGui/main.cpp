@@ -30,7 +30,7 @@
 
 #include "trikGuiApplication.h"
 #include "backgroundWidget.h"
-#include "QsLog.h"
+#include <QsLog.h>
 
 #include <trikKernel/coreDumping.h>
 

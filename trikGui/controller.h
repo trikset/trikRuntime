@@ -19,6 +19,8 @@
 #include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
 
+#include "mainWidget.h"
+
 namespace trikGui
 {
 
@@ -54,6 +56,20 @@ public:
 
 	/// Returns name of the directory in which scripts must be saved
 	QString scriptsDirName() const;
+
+	/// Asks controller to correctly close given running widget.
+	void doCloseRunningWidget(MainWidget &widget);
+
+signals:
+	/// Emitted when controller created a runningWidget (for scripts) and wants it to be shown.
+	void addRunningWidget(MainWidget &widget);
+
+	/// Emitted when controller removed the runningWidget and wants it to be closed.
+	void closeRunningWidget(MainWidget &widget);
+
+	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible
+	/// clutter from videosensors.
+	void brickStopped();
 
 private slots:
 	void scriptExecutionCompleted(QString const &error, int scriptId);

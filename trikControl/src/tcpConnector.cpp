@@ -16,7 +16,7 @@
 
 #include <QtCore/QDataStream>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 
@@ -54,6 +54,7 @@ void TcpConnector::connection()
 void TcpConnector::tcpDisconnected()
 {
 	mTcpSocket->abort();
+	emit tcpDisconnectedSignal();
 }
 
 void TcpConnector::networkRead()

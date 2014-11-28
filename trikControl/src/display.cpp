@@ -44,7 +44,7 @@ Display::~Display()
 
 void Display::showImage(QString const &fileName)
 {
-	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, fileName));
+	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));
 }
 
 void Display::addLabel(QString const &text, int x, int y)
@@ -55,16 +55,6 @@ void Display::addLabel(QString const &text, int x, int y)
 void Display::removeLabels()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "removeLabels");
-}
-
-void Display::smile()
-{
-	showImage(mStartDirPath + "media/trik_smile_normal.png");
-}
-
-void Display::sadSmile()
-{
-	showImage(mStartDirPath + "media/trik_smile_sad.png");
 }
 
 void Display::setBackground(QString const &color)

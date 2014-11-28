@@ -25,6 +25,9 @@ LineSensor::LineSensor(QString const &script, QString const &inputFile, QString 
 	: mLineSensorWorker(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor))
 {
 	mLineSensorWorker->moveToThread(&mWorkerThread);
+
+	connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+
 	mWorkerThread.start();
 }
 

@@ -16,6 +16,12 @@
 
 #include <QtCore/QDebug>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
 using namespace trikGui;
 
 BackgroundWidget::BackgroundWidget(QString const &configPath
@@ -41,6 +47,9 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
+	connect(&mController, SIGNAL(addRunningWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
+	connect(&mController, SIGNAL(closeRunningWidget(MainWidget &)), this, SLOT(closeMainWidget(MainWidget &)));
+	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
 }
 
 void BackgroundWidget::addMainWidget(MainWidget &widget)
@@ -57,6 +66,11 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
 }
 
+void BackgroundWidget::closeMainWidget(MainWidget &widget)
+{
+	mMainWidgetsLayout.removeWidget(&widget);
+}
+
 void BackgroundWidget::renewFocus()
 {
 	// When current widget in main widgets layout changed, we should set focus properly.
@@ -67,3 +81,11 @@ void BackgroundWidget::renewFocus()
 		currentWidget->renewFocus();
 	}
 }
+
+void BackgroundWidget::refresh()
+{
+	for (auto const widget : QApplication::allWidgets()) {
+		widget->update();
+	}
+}
+

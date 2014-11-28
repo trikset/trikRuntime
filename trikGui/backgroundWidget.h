@@ -45,7 +45,28 @@ class BackgroundWidget : public QWidget
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param configPath - path to a directory with config files (config.xml and so on). It is expected to be
+	///        ending with "/".
+	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
+	///        ending with "/").
+	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
 	explicit BackgroundWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
+
+public slots:
+	/// Add a widget to main widgets layout and show it.
+	/// @param widget - reference to the widget.
+	void addMainWidget(MainWidget &widget);
+
+	/// Remove a widget from main widget layout.
+	/// @param widget - reference to the widget.
+	void closeMainWidget(MainWidget &widget);
+
+private slots:
+	void renewFocus();
+
+	/// Updates all widgets to remove clutter.
+	void refresh();
 
 private:
 	Controller mController;
@@ -54,14 +75,6 @@ private:
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
-
-public slots:
-	/// Add a widget to main widgets layout and show it.
-	/// @param widget - reference to the widget.
-	void addMainWidget(MainWidget &widget);
-
-private slots:
-	void renewFocus();
 };
 
 }

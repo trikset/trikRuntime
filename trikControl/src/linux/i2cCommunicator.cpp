@@ -22,7 +22,7 @@
 #include <linux/i2c.h>
 #include <unistd.h>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

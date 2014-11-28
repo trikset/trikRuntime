@@ -16,8 +16,9 @@
 #include <QtCore/QThread>
 
 #include "connection.h"
+#include "version.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikKernel;
 
@@ -140,7 +141,7 @@ void Connection::processBuffer()
 					QByteArray const message = mBuffer.left(mExpectedBytes);
 					mBuffer = mBuffer.mid(mExpectedBytes);
 
-					processData(message);
+					handleIncomingData(message);
 
 					mExpectedBytes = 0;
 				} else {
@@ -155,12 +156,21 @@ void Connection::processBuffer()
 		if (mBuffer.contains('\n')) {
 			auto const messages = mBuffer.split('\n');
 			for (int i = 0; i < messages.size() - 1; ++i) {
-				processData(messages.at(i));
+				handleIncomingData(messages.at(i));
 			}
 
 			mBuffer = messages.last();
 		}
 	}
+	}
+}
+
+void Connection::handleIncomingData(QByteArray const &data)
+{
+	if (data == "version") {
+		send(QString("version: " + version).toUtf8());
+	} else {
+		processData(data);
 	}
 }
 

@@ -44,6 +44,10 @@ public:
 
 	~ObjectSensor() override;
 
+signals:
+	/// Emitted when sensor is stopped successfully.
+	void stopped();
+
 public slots:
 	/// Initializes a camera.
 	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.

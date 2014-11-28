@@ -27,7 +27,7 @@
 #include "configurer.h"
 #include "i2cCommunicator.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 
@@ -168,6 +168,9 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 				, mConfigurer->lineSensorOutFifo()
 				, mConfigurer->lineSensorToleranceFactor()
 				);
+
+		/// @todo This will work only in case when there can be only one video sensor launched at a time.
+		connect(mLineSensor, SIGNAL(stopped()), this, SIGNAL(stopped()));
 	}
 
 	if (mConfigurer->hasObjectSensor()) {
@@ -176,6 +179,9 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 				, mConfigurer->objectSensorOutFifo()
 				, mConfigurer->objectSensorToleranceFactor()
 				);
+
+		/// @todo This will work only in case when there can be only one video sensor launched at a time.
+		connect(mObjectSensor, SIGNAL(stopped()), this, SIGNAL(stopped()));
 	}
 
 	if (mConfigurer->hasColorSensor()) {
@@ -185,6 +191,9 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 				, mConfigurer->colorSensorM()
 				, mConfigurer->colorSensorN()
 				);
+
+		/// @todo This will work only in case when there can be only one video sensor launched at a time.
+		connect(mColorSensor, SIGNAL(stopped()), this, SIGNAL(stopped()));
 	}
 
 	if (mConfigurer->hasMailbox()) {

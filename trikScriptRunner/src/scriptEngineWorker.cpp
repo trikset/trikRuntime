@@ -35,7 +35,7 @@
 #include "scriptableParts.h"
 #include "utils.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikScriptRunner;
 using namespace trikControl;
@@ -207,6 +207,11 @@ void ScriptEngineWorker::resetScriptEngine()
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
 		mEngine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+		if (mEngine->hasUncaughtException()) {
+			int const line = mEngine->uncaughtExceptionLineNumber();
+			QString const message = mEngine->uncaughtException().toString();
+			qDebug() << "Uncaught exception at line" << line << ":" << message;
+		}
 	}
 
 	mEngine->setProcessEventsInterval(1);

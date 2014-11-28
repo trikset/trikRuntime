@@ -41,6 +41,8 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	connect(&mScriptRunner, SIGNAL(startedDirectScript(int))
 			, this, SLOT(directScriptExecutionStarted(int)));
 
+	connect(&mBrick, SIGNAL(stopped()), this, SIGNAL(brickStopped()));
+
 	mCommunicator.startServer(communicatorPort);
 	mTelemetry.startServer(telemetryPort);
 }
@@ -93,11 +95,16 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner.scriptsDirName();
 }
 
+void Controller::doCloseRunningWidget(MainWidget &widget)
+{
+	widget.releaseKeyboard();
+	emit closeRunningWidget(widget);
+}
+
 void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
 	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
-		mRunningWidgets[scriptId]->releaseKeyboard();
-		mRunningWidgets[scriptId]->close();
+		doCloseRunningWidget(*mRunningWidgets[scriptId]);
 
 		// Here we can be inside handler of mRunningWidget key press event.
 		mRunningWidgets[scriptId]->deleteLater();
@@ -117,13 +124,13 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
 {
 	if (mRunningWidgets.value(scriptId, nullptr)) {
-		mRunningWidgets[scriptId]->close();
+		emit closeRunningWidget(*mRunningWidgets[scriptId]);
 		delete mRunningWidgets[scriptId];
 		mRunningWidgets.remove(scriptId);
 	}
 
 	mRunningWidgets[scriptId] = new RunningWidget(fileName, *this);
-	mRunningWidgets[scriptId]->show();
+	emit addRunningWidget(*mRunningWidgets[scriptId]);
 
 	// After executing, a script will open a widget for painting with trikControl::Display.
 	// This widget will get all keyboard events and we won't be able to abort execution at Power

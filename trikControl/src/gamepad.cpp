@@ -18,7 +18,7 @@
 
 #include "tcpConnector.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 
@@ -27,6 +27,7 @@ Gamepad::Gamepad(int port)
 {
 	connect(mListener.data(), SIGNAL(dataReady(QString)), this, SLOT(parse(QString)));
 	connect(&mNetworkThread, SIGNAL(started()), mListener.data(), SLOT(startServer()));
+	connect(mListener.data(), SIGNAL(tcpDisconnectedSignal()), this, SIGNAL(disconnect()));
 	mListener->moveToThread(&mNetworkThread);
 	mNetworkThread.start();
 }

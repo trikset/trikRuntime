@@ -21,7 +21,7 @@
 #include "wiFiAPWidget.h"
 #include "wiFiInitWidget.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikGui;
 

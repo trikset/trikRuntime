@@ -19,7 +19,7 @@
 using namespace trikGui;
 
 RunningWidget::RunningWidget(QString const &programName, Controller &controller, QWidget *parent)
-	: QWidget(parent)
+	: MainWidget(parent)
 	, mController(controller)
 {
 	setWindowState(Qt::WindowFullScreen);
@@ -50,8 +50,7 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_PowerDown: {
 			mController.abortExecution();
-			releaseKeyboard();
-			close();
+			mController.doCloseRunningWidget(*this);
 			break;
 		}
 		default: {
@@ -59,4 +58,9 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 	}
+}
+
+void RunningWidget::renewFocus()
+{
+	setFocus();
 }

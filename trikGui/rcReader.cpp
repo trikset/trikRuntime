@@ -16,7 +16,7 @@
 
 #include <QtCore/QDebug>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 RcReader::RcReader(const QString &rcFilePath, QObject *parent)
 	: QObject(parent)

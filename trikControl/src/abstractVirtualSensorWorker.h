@@ -42,6 +42,10 @@ public:
 
 	~AbstractVirtualSensorWorker() override;
 
+signals:
+	/// Emitted when sensor is stopped successfully.
+	void stopped();
+
 public slots:
 	/// Stops detection until init() will be called again.
 	virtual void stop();

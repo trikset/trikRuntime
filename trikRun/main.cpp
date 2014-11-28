@@ -30,7 +30,7 @@
 #include <trikControl/brick.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 void printUsage()
 {

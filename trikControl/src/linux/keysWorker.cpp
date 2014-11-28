@@ -19,7 +19,7 @@
 #include <fcntl.h>
 #include <linux/input.h>
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikControl;
 

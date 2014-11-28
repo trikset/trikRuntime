@@ -31,7 +31,8 @@ class TRIKCONTROL_EXPORT Display : public QObject
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	/// @param startDirPath - path to the directory from which the application was executed.
+	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
+	///        ending with "/").
 	explicit Display(QThread &guiThread, QString const &startDirPath);
 
 	~Display();
@@ -51,9 +52,6 @@ public slots:
 
 	/// Remove all labels from the screen.
 	void removeLabels();
-
-	/// Shortcut to showImage, shows happy smile.
-	void smile();
 
 	/// Set painter color.
 	void setPainterColor(QString const &color);
@@ -95,9 +93,6 @@ public slots:
 	/// @param startAngle - start angle.
 	/// @param spanAngle - end andle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
-
-	/// Shortcut to showImage, shows sad smile.
-	void sadSmile();
 
 	/// Sets background for a picture.
 	/// @param color - color of a background.

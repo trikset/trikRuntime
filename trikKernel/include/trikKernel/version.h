@@ -14,30 +14,10 @@
 
 #pragma once
 
-#include <QtCore/qglobal.h>
+#include <QtCore/QString>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
+namespace trikKernel {
 
-namespace trikGui {
+QString const version = "3.0.0-b2";
 
-/// Abstract class for widgets which will be used for conversation with user.
-class MainWidget : public QWidget
-{
-	Q_OBJECT
-
-public:
-	MainWidget(QWidget *parent) : QWidget(parent) {}
-	virtual ~MainWidget() {}
-
-	/// Set focus properly on this widget or one of its children.
-	virtual void renewFocus() = 0;
-
-signals:
-	/// Emitted when the widget created a new one and wants it to be shown.
-	void newWidget(MainWidget &widget);
-};
 }
