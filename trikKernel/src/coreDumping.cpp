@@ -28,7 +28,7 @@ void initSignals()
 	sigemptyset(&action.sa_mask);
 	action.sa_flags = 0;
 
-	foreach (int signal, signalsList) {
+	for (int signal : signalsList) {
 		sigaddset(&action.sa_mask, signal);
 		sigaction(signal, &action, nullptr);
 	}
