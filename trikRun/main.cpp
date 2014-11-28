@@ -14,6 +14,8 @@
 
 #include <QtCore/qglobal.h>
 
+#include <sys/resource.h>
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWSServer>
 	#include <QtGui/QApplication>
@@ -93,6 +95,10 @@ int main(int argc, char *argv[])
 			, QsLogging::TraceLevel);
 	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikRun started";
+
+	rlimit core_limits;
+	core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
+	setrlimit(RLIMIT_CORE, &core_limits);
 
 	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
 

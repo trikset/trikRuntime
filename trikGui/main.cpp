@@ -32,6 +32,8 @@
 #include "backgroundWidget.h"
 #include "QsLog.h"
 
+#include <sys/resource.h>
+
 using namespace trikGui;
 
 void printUsage() {
@@ -131,6 +133,10 @@ int main(int argc, char *argv[])
 			, QsLogging::TraceLevel);
 	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikGui started";
+
+	rlimit core_limits;
+	core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
+	setrlimit(RLIMIT_CORE, &core_limits);
 
 	BackgroundWidget w(configPath, startDirPath);
 	w.show();

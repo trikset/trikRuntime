@@ -14,6 +14,8 @@
 
 #include <QtCore/qglobal.h>
 
+#include <sys/resource.h>
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 	#include <QtGui/QWSServer>
@@ -89,6 +91,10 @@ int main(int argc, char *argv[])
 	QLOG_INFO() << "TrikServer started on port" << port;
 
 	qDebug() << "Running TrikServer on port" << port;
+
+	rlimit core_limits;
+	core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
+	setrlimit(RLIMIT_CORE, &core_limits);
 
 	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
 
