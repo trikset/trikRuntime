@@ -32,7 +32,7 @@
 #include "backgroundWidget.h"
 #include "QsLog.h"
 
-#include <sys/resource.h>
+#include <trikKernel/coreDumping.h>
 
 using namespace trikGui;
 
@@ -112,6 +112,8 @@ int main(int argc, char *argv[])
 		startDirPath += "/";
 	}
 
+	trikKernel::coreDumping::initCoreDumping(startDirPath);
+
 #ifdef Q_WS_QWS
 	QWSServer * const server = QWSServer::instance();
 	if (server) {
@@ -133,10 +135,6 @@ int main(int argc, char *argv[])
 			, QsLogging::TraceLevel);
 	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikGui started";
-
-	rlimit core_limits;
-	core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
-	setrlimit(RLIMIT_CORE, &core_limits);
 
 	BackgroundWidget w(configPath, startDirPath);
 	w.show();

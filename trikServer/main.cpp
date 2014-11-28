@@ -14,8 +14,6 @@
 
 #include <QtCore/qglobal.h>
 
-#include <sys/resource.h>
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 	#include <QtGui/QWSServer>
@@ -29,6 +27,7 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brick.h>
+#include <trikKernel/coreDumping.h>
 
 #include "QsLog.h"
 
@@ -72,6 +71,8 @@ int main(int argc, char *argv[])
 		startDirPath += "/";
 	}
 
+	trikKernel::coreDumping::initCoreDumping(startDirPath);
+
 #ifdef Q_WS_QWS
 	QWSServer * const server = QWSServer::instance();
 	if (server) {
@@ -91,10 +92,6 @@ int main(int argc, char *argv[])
 	QLOG_INFO() << "TrikServer started on port" << port;
 
 	qDebug() << "Running TrikServer on port" << port;
-
-	rlimit core_limits;
-	core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
-	setrlimit(RLIMIT_CORE, &core_limits);
 
 	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
 

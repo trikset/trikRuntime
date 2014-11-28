@@ -24,12 +24,14 @@ HEADERS += \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
 	$$PWD/include/trikKernel/trikServer.h \
+	$$PWD/include/trikKernel/coreDumping.h
 
 SOURCES += \
 	$$PWD/src/connection.cpp \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/trikServer.cpp \
+	$$PWD/src/coreDumping.cpp
 
 TEMPLATE = lib
 
