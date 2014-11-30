@@ -32,6 +32,8 @@ public:
 	/// @param eventFile - event file for this sensor.
 	RangeSensor(QString const &eventFile);
 
+	~RangeSensor() override;
+
 public slots:
 	/// Initializes sensor and begins receiving events from it.
 	void init();

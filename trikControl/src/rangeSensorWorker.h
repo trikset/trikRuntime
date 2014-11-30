@@ -33,20 +33,22 @@ public:
 	/// @param eventFile - event file for this sensor.
 	RangeSensorWorker(QString const &eventFile);
 
+	~RangeSensorWorker() override;
+
 public slots:
 	/// Initializes sensor and begins receiving events from it.
 	void init();
 
 	/// Returns current raw reading of a sensor.
-	int read() override;
+	int read();
 
 	/// Returns current real raw reading of a sensor.
-	int readRawData() override;
+	int readRawData();
 
 	/// Stops sensor until init() will be called again.
 	void stop();
 
-private:
+private slots:
 	/// Updates current reading when new value is ready.
 	void readFile();
 
@@ -63,4 +65,6 @@ private:
 
 	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
 	QReadWriteLock mLock;
+};
+
 }

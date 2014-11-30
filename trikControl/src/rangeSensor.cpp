@@ -14,10 +14,10 @@
 
 #include "rangeSensor.h"
 
-#include "src/rangeSensorWorker.h"
-
 #include <QtCore/QDebug>
 #include <QtCore/QThread>
+
+#include "src/rangeSensorWorker.h"
 
 using namespace trikControl;
 
@@ -25,8 +25,6 @@ RangeSensor::RangeSensor(QString const &eventFile)
 	: mSensorWorker(new RangeSensorWorker(eventFile))
 {
 	mSensorWorker->moveToThread(&mWorkerThread);
-
-	connect(mSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
 
 	mWorkerThread.start();
 }
@@ -48,7 +46,7 @@ int RangeSensor::read()
 	return mSensorWorker->read();
 }
 
-int RangeSensor::readRawData() override
+int RangeSensor::readRawData()
 {
 	// Read is called synchronously and only takes prepared value from sensor.
 	return mSensorWorker->readRawData();

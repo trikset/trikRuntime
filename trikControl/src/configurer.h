@@ -113,6 +113,10 @@ public:
 
 	QString digitalSensorDefaultType(QString const &port) const;
 
+	QStringList rangeSensorPorts() const;
+
+	QString rangeSensorEventFile(QString const &port) const;
+
 	QString playWavFileCommand() const;
 
 	QString playMp3FileCommand() const;
@@ -256,6 +260,11 @@ private:
 		QString defaultType;
 	};
 
+	struct RangeSensorMapping {
+		QString port;
+		QString eventFile;
+	};
+
 	struct OnBoardSensor {
 		int min = 0;
 		int max = 0;
@@ -278,6 +287,7 @@ private:
 	void loadAnalogSensors(QDomElement const &root);
 	void loadEncoders(QDomElement const &root);
 	void loadDigitalSensors(QDomElement const &root);
+	void loadRangeSensors(QDomElement const &root);
 	void loadServoMotorTypes(QDomElement const &root);
 	void loadAnalogSensorTypes(QDomElement const &root);
 	void loadDigitalSensorTypes(QDomElement const &root);
@@ -303,6 +313,7 @@ private:
 	QHash<QString, AnalogSensorMapping> mAnalogSensorMappings;
 	QHash<QString, EncoderMapping> mEncoderMappings;
 	QHash<QString, DigitalSensorMapping> mDigitalSensorMappings;
+	QHash<QString, RangeSensorMapping> mRangeSensorMappings;
 
 	OnBoardSensor mAccelerometer;
 	OnBoardSensor mGyroscope;

@@ -16,6 +16,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -137,4 +138,14 @@ void RangeSensorWorker::onNewData(QString const &dataLine)
 		sendCommand(command);
 	}
 	*/
+}
+
+int RangeSensorWorker::read()
+{
+	return 0;
+}
+
+int RangeSensorWorker::readRawData()
+{
+	return 0;
 }
