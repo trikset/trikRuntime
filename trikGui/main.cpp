@@ -130,6 +130,7 @@ int main(int argc, char *argv[])
 			, QsLogging::MaxOldLogCount(2)
 			, QsLogging::TraceLevel);
 	QsLogging::Logger::instance().addDestination(destination);
+	QLOG_INFO() << "====================================================================";
 	QLOG_INFO() << "TrikGui started";
 
 	BackgroundWidget w(configPath, startDirPath);

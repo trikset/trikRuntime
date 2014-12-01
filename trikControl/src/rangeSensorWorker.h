@@ -35,6 +35,10 @@ public:
 
 	~RangeSensorWorker() override;
 
+signals:
+	/// Emitted when new data is received from a sensor.
+	void newData(int distance, int rawDistance);
+
 public slots:
 	/// Initializes sensor and begins receiving events from it.
 	void init();
@@ -61,7 +65,9 @@ private:
 
 	QFile mEventFile;
 
-	QString mBuffer;
+	int mDistance = -1;
+
+	int mRawDistance = -1;
 
 	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
 	QReadWriteLock mLock;

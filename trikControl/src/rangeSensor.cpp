@@ -26,6 +26,8 @@ RangeSensor::RangeSensor(QString const &eventFile)
 {
 	mSensorWorker->moveToThread(&mWorkerThread);
 
+	connect(mSensorWorker.data(), SIGNAL(newData(int, int)), this, SIGNAL(newData(int, int)));
+
 	mWorkerThread.start();
 }
 

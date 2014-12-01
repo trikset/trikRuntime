@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <linux/input.h>
 
 #include <QsLog.h>
 
@@ -74,78 +75,51 @@ void RangeSensorWorker::init()
 
 void RangeSensorWorker::readFile()
 {
-	char data[4000] = {0};
+	struct input_event event;
+	int size = 0;
 
 	mSocketNotifier->setEnabled(false);
 
-	if (::read(mEventFileDescriptor, data, 4000) < 0) {
-		QLOG_ERROR() << mEventFile.fileName() << ": fifo read failed: " << errno;
-		qDebug() << mEventFile.fileName() << ": fifo read failed: " << errno;
-		return;
+	while ((size = ::read(mEventFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
+			== static_cast<int>(sizeof(event)))
+	{
+		switch (event.type) {
+			case EV_ABS:
+				switch (event.code) {
+				case ABS_DISTANCE:
+					mLock.lockForWrite();
+					mDistance = event.value;
+					mLock.unlock();
+					break;
+				case ABS_MISC:
+					mLock.lockForWrite();
+					mRawDistance = event.value;
+					mLock.unlock();
+					break;
+				}
+				break;
+			case EV_SYN:
+				mLock.lockForRead();
+				emit newData(mDistance, mRawDistance);
+				mLock.unlock();
+				break;
+		}
 	}
 
-	mBuffer += data;
-
-	if (mBuffer.contains("\n")) {
-		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
-
-		mBuffer = lines.last();
-		lines.removeLast();
-
-		for (QString const &line : lines) {
-			onNewData(line);
-		}
+	if (0 <= size && size < static_cast<int>(sizeof(event))) {
+		QLOG_ERROR() << "incomplete data read";
+		qDebug() << "incomplete data read";
 	}
 
 	mSocketNotifier->setEnabled(true);
 }
 
-void RangeSensorWorker::onNewData(QString const &dataLine)
-{
-	qDebug() << dataLine;
-/*
-	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
-
-	if (parsedLine[0] == "loc:") {
-		int const x = parsedLine[1].toInt();
-		int const crossroadsProbability = parsedLine[2].toInt();
-		int const mass = parsedLine[3].toInt();
-
-		mLock.lockForWrite();
-		mReading[0] = x;
-		mReading[1] = crossroadsProbability;
-		mReading[2] = mass;
-		mLock.unlock();
-	}
-
-	if (parsedLine[0] == "hsv:") {
-		int const hue = parsedLine[1].toInt();
-		int const hueTolerance = parsedLine[2].toInt();
-		int const saturation = parsedLine[3].toInt();
-		int const saturationTolerance = parsedLine[4].toInt();
-		int const value = parsedLine[5].toInt();
-		int const valueTolerance = parsedLine[6].toInt();
-
-		QString const command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
-				.arg(hue)
-				.arg(static_cast<int>(hueTolerance * mToleranceFactor))
-				.arg(saturation)
-				.arg(static_cast<int>(saturationTolerance * mToleranceFactor))
-				.arg(value)
-				.arg(static_cast<int>(valueTolerance * mToleranceFactor))
-				;
-
-		sendCommand(command);
-	}
-	*/
-}
-
 int RangeSensorWorker::read()
 {
-	return 0;
+	return mDistance;
 }
 
 int RangeSensorWorker::readRawData()
 {
-	return 0;
+	return mRawDistance;
 }

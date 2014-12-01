@@ -239,6 +239,11 @@ void Brick::reset()
 	mKeys->reset();
 	mDisplay.clear();
 	mInEventDrivenMode = false;
+
+	/// @todo Temporary, we need more carefully init/deinit range sensors.
+	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+		rangeSensor->init();
+	}
 }
 
 void Brick::playSound(QString const &soundFileName)
@@ -294,6 +299,10 @@ void Brick::stop()
 
 	if (mObjectSensor) {
 		mObjectSensor->stop();
+	}
+
+	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+		rangeSensor->stop();
 	}
 }
 
