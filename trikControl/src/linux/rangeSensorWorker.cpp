@@ -116,10 +116,16 @@ void RangeSensorWorker::readFile()
 
 int RangeSensorWorker::read()
 {
-	return mDistance;
+	mLock.lockForRead();
+	int const result = mDistance;
+	mLock.unlock();
+	return result;
 }
 
 int RangeSensorWorker::readRawData()
 {
-	return mRawDistance;
+	mLock.lockForRead();
+	int const result = mRawDistance;
+	mLock.unlock();
+	return result;
 }
