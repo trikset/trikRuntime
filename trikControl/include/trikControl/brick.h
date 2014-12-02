@@ -28,7 +28,6 @@
 #include "analogSensor.h"
 #include "battery.h"
 #include "colorSensor.h"
-#include "digitalSensor.h"
 #include "display.h"
 #include "encoder.h"
 #include "gamepad.h"
@@ -48,6 +47,8 @@ class Configurer;
 class I2cCommunicator;
 class PowerMotor;
 class ServoMotor;
+class DigitalSensor;
+class RangeSensor;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -186,6 +187,7 @@ private:
 	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
 	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
+	QHash<QString, RangeSensor *> mRangeSensors;  // Has ownership.
 	QList<QTimer *> mTimers; // Has ownership.
 
 	Configurer const * const mConfigurer;  // Has ownership.

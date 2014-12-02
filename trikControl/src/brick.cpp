@@ -23,6 +23,8 @@
 #include "angularServoMotor.h"
 #include "continiousRotationServoMotor.h"
 #include "powerMotor.h"
+#include "digitalSensor.h"
+#include "rangeSensor.h"
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -124,6 +126,12 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		mDigitalSensors.insert(port, digitalSensor);
 	}
 
+	for (QString const &port : mConfigurer->rangeSensorPorts()) {
+		RangeSensor *rangeSensor = new RangeSensor(mConfigurer->rangeSensorEventFile(port));
+		rangeSensor->init();
+		mRangeSensors.insert(port, rangeSensor);
+	}
+
 	for (QString const &port : mConfigurer->encoderPorts()) {
 		QString const encoderType = mConfigurer->encoderDefaultType(port);
 
@@ -211,6 +219,7 @@ Brick::~Brick()
 	qDeleteAll(mEncoders);
 	qDeleteAll(mAnalogSensors);
 	qDeleteAll(mDigitalSensors);
+	qDeleteAll(mRangeSensors);
 	qDeleteAll(mTimers);
 	delete mAccelerometer;
 	delete mGyroscope;
@@ -230,6 +239,11 @@ void Brick::reset()
 	mKeys->reset();
 	mDisplay.clear();
 	mInEventDrivenMode = false;
+
+	/// @todo Temporary, we need more carefully init/deinit range sensors.
+	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+		rangeSensor->init();
+	}
 }
 
 void Brick::playSound(QString const &soundFileName)
@@ -286,6 +300,10 @@ void Brick::stop()
 	if (mObjectSensor) {
 		mObjectSensor->stop();
 	}
+
+	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+		rangeSensor->stop();
+	}
 }
 
 Motor *Brick::motor(QString const &port)
@@ -310,6 +328,8 @@ Sensor *Brick::sensor(QString const &port)
 		return mAnalogSensors[port];
 	} else if (mDigitalSensors.contains(port)) {
 		return mDigitalSensors[port];
+	} else if (mRangeSensors.contains(port)) {
+		return mRangeSensors[port];
 	} else {
 		return nullptr;
 	}
@@ -341,7 +361,7 @@ QStringList Brick::sensorPorts(Sensor::Type type) const
 			return mAnalogSensors.keys();
 		}
 		case Sensor::digitalSensor: {
-			return mDigitalSensors.keys();
+			return mDigitalSensors.keys() + mRangeSensors.keys();
 		}
 		case Sensor::specialSensor: {
 			// Special sensors can not be connected to standard ports, they have their own methods to access them.

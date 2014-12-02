@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,49 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
+#include <QtCore/QThread>
 
-#include "declSpec.h"
 #include "sensor.h"
 
 namespace trikControl {
 
-/// Generic TRIK sensor.
-/// @todo Why it is in /include?
-class TRIKCONTROL_EXPORT DigitalSensor : public Sensor
+class RangeSensorWorker;
+
+/// TRIK range sensor.
+class RangeSensor : public Sensor
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param deviceFile - device file for this sensor.
-	DigitalSensor(int min, int max, QString const &deviceFile);
+	/// @param eventFile - event file for this sensor.
+	RangeSensor(QString const &eventFile);
+
+	~RangeSensor() override;
+
+signals:
+	/// Emitted when new data is received from a sensor.
+	void newData(int distance, int rawDistance);
 
 public slots:
+	/// Initializes sensor and begins receiving events from it.
+	void init();
+
 	/// Returns current raw reading of a sensor.
-	int read();
+	int read() override;
 
 	/// Returns current real raw reading of a sensor.
 	int readRawData() override;
 
+	/// Stops sensor until init() will be called again.
+	void stop();
+
 private:
-	int mMin;
-	int mMax;
-	QFile mDeviceFile;
-	QTextStream mStream;
+	/// Worker object that handles sensor in separate thread.
+	QScopedPointer<RangeSensorWorker> mSensorWorker;
+
+	/// Worker thread.
+	QThread mWorkerThread;
 };
 
 }

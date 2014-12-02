@@ -53,6 +53,8 @@ HEADERS += \
 	$$PWD/src/mailboxServer.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
+	$$PWD/src/rangeSensor.h \
+	$$PWD/src/rangeSensorWorker.h \
 	$$PWD/src/sensor3dWorker.h \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/tcpConnector.h \
@@ -83,12 +85,14 @@ SOURCES += \
 	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
+	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/sensor3d.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
+	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/sensor3dWorker.cpp \
 
 OTHER_FILES += \

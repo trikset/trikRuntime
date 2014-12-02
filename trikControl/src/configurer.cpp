@@ -56,6 +56,7 @@ Configurer::Configurer(QString const &configFilePath)
 	loadAnalogSensors(root);
 	loadEncoders(root);
 	loadDigitalSensors(root);
+	loadRangeSensors(root);
 	loadServoMotorTypes(root);
 	loadAnalogSensorTypes(root);
 	loadDigitalSensorTypes(root);
@@ -258,6 +259,16 @@ QString Configurer::digitalSensorDeviceFile(QString const &port) const
 QString Configurer::digitalSensorDefaultType(QString const &port) const
 {
 	return mDigitalSensorMappings[port].defaultType;
+}
+
+QStringList Configurer::rangeSensorPorts() const
+{
+	return mRangeSensorMappings.keys();
+}
+
+QString Configurer::rangeSensorEventFile(QString const &port) const
+{
+	return mRangeSensorMappings[port].eventFile;
 }
 
 QString Configurer::playWavFileCommand() const
@@ -653,6 +664,36 @@ void Configurer::loadDigitalSensors(QDomElement const &root)
 		mapping.defaultType = childElement.attribute("defaultType");
 
 		mDigitalSensorMappings.insert(mapping.port, mapping);
+	}
+}
+
+void Configurer::loadRangeSensors(QDomElement const &root)
+{
+	if (root.elementsByTagName("digitalSensors").isEmpty()) {
+		QLOG_FATAL() << "config.xml does not have <digitalSensors> tag";
+		qDebug() << "config.xml does not have <digitalSensors> tag";
+		throw errorMessage;
+	}
+
+	QDomElement const digitalSensors = root.elementsByTagName("digitalSensors").at(0).toElement();
+	for (QDomNode child = digitalSensors.firstChild()
+			; !child.isNull()
+			; child = child.nextSibling())
+	{
+		if (!child.isElement()) {
+			continue;
+		}
+
+		QDomElement const childElement = child.toElement();
+		if (childElement.nodeName() != "rangeSensor") {
+			continue;
+		}
+
+		RangeSensorMapping mapping;
+		mapping.port = childElement.attribute("port");
+		mapping.eventFile = childElement.attribute("eventFile");
+
+		mRangeSensorMappings.insert(mapping.port, mapping);
 	}
 }
 
