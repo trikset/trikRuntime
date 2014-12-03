@@ -32,6 +32,8 @@
 #include "backgroundWidget.h"
 #include <QsLog.h>
 
+#include <trikKernel/coreDumping.h>
+
 using namespace trikGui;
 
 void printUsage() {
@@ -109,6 +111,8 @@ int main(int argc, char *argv[])
 	if (startDirPath.right(1) != "/") {
 		startDirPath += "/";
 	}
+
+	trikKernel::coreDumping::initCoreDumping(startDirPath);
 
 #ifdef Q_WS_QWS
 	QWSServer * const server = QWSServer::instance();

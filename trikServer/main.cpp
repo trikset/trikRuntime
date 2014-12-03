@@ -27,6 +27,7 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brick.h>
+#include <trikKernel/coreDumping.h>
 
 #include <QsLog.h>
 
@@ -69,6 +70,8 @@ int main(int argc, char *argv[])
 	if (startDirPath.right(1) != "/") {
 		startDirPath += "/";
 	}
+
+	trikKernel::coreDumping::initCoreDumping(startDirPath);
 
 #ifdef Q_WS_QWS
 	QWSServer * const server = QWSServer::instance();
