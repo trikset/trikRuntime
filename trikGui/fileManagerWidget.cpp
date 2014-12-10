@@ -128,6 +128,8 @@ void FileManagerWidget::showCurrentDir()
 	} else {
 		filters &= ~QDir::NoDotDot;
 	}
+	filters &= ~QDir::Hidden;
+
 	mFileSystemModel.setFilter(filters);
 
 	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
