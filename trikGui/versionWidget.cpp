@@ -34,7 +34,6 @@ VersionWidget::~VersionWidget()
 
 void VersionWidget::renewFocus()
 {
-	//setFocus();
 }
 
 QString VersionWidget::menuEntry()
