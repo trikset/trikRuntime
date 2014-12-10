@@ -20,7 +20,7 @@ using namespace trikGui;
 VersionWidget::VersionWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
 {
-	QLabel* versionLabel = new QLabel(tr("Current version") + " : \n" + trikKernel::version);
+	QLabel* const versionLabel = new QLabel(tr("Current version") + " : \n" + trikKernel::version);
 	versionLabel->setAlignment(Qt::AlignCenter);
 	mLayout.addWidget(versionLabel);
 
