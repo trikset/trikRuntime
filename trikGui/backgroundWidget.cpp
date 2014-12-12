@@ -50,6 +50,7 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
+	connect(&mController, SIGNAL(addGraphicsWidget(trikKernel::LazyMainWidget &)), this, SLOT(addLazyWidget(trikKernel::LazyMainWidget &)));
 }
 
 void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
@@ -69,6 +70,12 @@ void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
 void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
 {
 	mMainWidgetsLayout.removeWidget(&widget);
+}
+
+void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
+{
+	connect(&widget, SIGNAL(showMe(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
+	connect(&widget, SIGNAL(hideMe(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 }
 
 void BackgroundWidget::renewFocus()

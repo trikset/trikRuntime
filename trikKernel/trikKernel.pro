@@ -27,6 +27,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/coreDumping.h \
         $$PWD/include/trikKernel/version.h \
         $$PWD/include/trikKernel/mainWidget.h \
+        $$PWD/include/trikKernel/lazyMainWidget.h
 
 SOURCES += \
 	$$PWD/src/connection.cpp \

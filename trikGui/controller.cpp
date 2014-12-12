@@ -45,6 +45,8 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 
 	mCommunicator.startServer(communicatorPort);
 	mTelemetry.startServer(telemetryPort);
+
+	emit addGraphicsWidget(mBrick.graphicsWidget());
 }
 
 Controller::~Controller()

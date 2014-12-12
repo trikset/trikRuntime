@@ -19,7 +19,7 @@
 #include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
 
-#include <trikKernel/mainWidget.h>
+#include <trikKernel/lazyMainWidget.h>
 
 namespace trikGui
 {
@@ -66,6 +66,8 @@ signals:
 
 	/// Emitted when controller removed the runningWidget and wants it to be closed.
 	void closeRunningWidget(trikKernel::MainWidget &widget);
+
+	void addGraphicsWidget(trikKernel::LazyMainWidget &widget);
 
 	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible
 	/// clutter from videosensors.
