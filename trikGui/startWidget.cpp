@@ -31,6 +31,7 @@
 #include "motorsWidget.h"
 #include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
+#include "versionWidget.h"
 
 using namespace trikGui;
 
@@ -53,6 +54,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	if (mController.brick().mailbox()) {
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
+	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -116,6 +118,10 @@ void StartWidget::launch()
 			CommunicationSettingsWidget communicationSettingsWidget(mController.brick());
 			emit newWidget(communicationSettingsWidget);
 			result = communicationSettingsWidget.exec();
+		} else if (currentItemText == VersionWidget::menuEntry()) {
+			VersionWidget versionWidget;
+			emit newWidget(versionWidget);
+			result = versionWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {
