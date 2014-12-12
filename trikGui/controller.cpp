@@ -34,6 +34,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mTelemetry(mBrick)
 	, mStartDirPath(startDirPath)
 {
+	qDebug() << "Controller::Controller";
 	connect(&mScriptRunner, SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
 
 	connect(&mScriptRunner, SIGNAL(startedScript(QString, int))
@@ -45,8 +46,6 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 
 	mCommunicator.startServer(communicatorPort);
 	mTelemetry.startServer(telemetryPort);
-
-	emit addGraphicsWidget(mBrick.graphicsWidget());
 }
 
 Controller::~Controller()
@@ -71,6 +70,8 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
+	qDebug() << "Controller::abortExecution";
+	emit closeGraphicsWidget(mBrick.graphicsWidget());
 	mScriptRunner.abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -105,6 +106,8 @@ void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
 
 void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
+	qDebug() << "Controller::scriptExecutionCompleted" << scriptId;
+
 	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
 		doCloseRunningWidget(*mRunningWidgets[scriptId]);
 
@@ -121,10 +124,13 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 			mRunningWidgets.remove(scriptId);
 		}
 	}
+	emit closeGraphicsWidget(mBrick.graphicsWidget());
 }
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
 {
+	qDebug() << "Controller::scriptExecutionFromFileStarted" << fileName << scriptId;
+
 	if (mRunningWidgets.value(scriptId, nullptr)) {
 		emit closeRunningWidget(*mRunningWidgets[scriptId]);
 		delete mRunningWidgets[scriptId];
@@ -140,6 +146,9 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scr
 	// can get keyboard events using trikControl::Keys class because it works directly
 	// with the keyboard file.
 	mRunningWidgets[scriptId]->grabKeyboard();
+
+	emit addGraphicsWidget(mBrick.graphicsWidget());
+	mBrick.hideGraphicsWidget();
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

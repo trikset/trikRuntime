@@ -75,6 +75,7 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::reset()
 {
+	qDebug() << "ScriptEngineWorker::reset()";
 	if (!mEngine) {
 		QLOG_FATAL() << "ScriptEngine is null on reset";
 		Q_ASSERT(false);
@@ -121,6 +122,7 @@ void ScriptEngineWorker::init()
 
 void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function)
 {
+	qDebug() << "ScriptEngineWorker::run";
 	if (!mEngine) {
 		QLOG_FATAL() << "ScriptEngine is null on run";
 		Q_ASSERT(false);

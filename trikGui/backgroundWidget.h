@@ -61,6 +61,7 @@ public slots:
 	/// Remove a widget from main widget layout.
 	/// @param widget - reference to the widget.
 	void closeMainWidget(trikKernel::MainWidget &widget);
+	void abortLazyMainWidget(trikKernel::LazyMainWidget &widget);
 
 	void addLazyWidget(trikKernel::LazyMainWidget &widget);
 
@@ -69,6 +70,10 @@ private slots:
 
 	/// Updates all widgets to remove clutter.
 	void refresh();
+
+	void addMainWidgetWithoutConnect(trikKernel::MainWidget &widget);
+	void showMainWidget(trikKernel::MainWidget &widget);
+	void hideMainWidget(trikKernel::MainWidget &widget);
 
 private:
 	Controller mController;

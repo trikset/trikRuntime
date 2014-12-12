@@ -78,6 +78,7 @@ public:
 	bool isInEventDrivenMode() const;
 
 	trikKernel::LazyMainWidget &graphicsWidget();
+	void hideGraphicsWidget();
 
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).

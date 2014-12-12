@@ -47,8 +47,10 @@ void RunningWidget::showError(QString const &error)
 
 void RunningWidget::keyPressEvent(QKeyEvent *event)
 {
+	qDebug() << "RunningWidget::keyPressEvent()" << event->key();
 	switch (event->key()) {
 		case Qt::Key_PowerDown: {
+		qDebug() << "RunningWidget::keyPressEvent()_Key_PowerDown";
 			mController.abortExecution();
 			mController.doCloseRunningWidget(*this);
 			break;

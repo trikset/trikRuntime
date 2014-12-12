@@ -68,6 +68,7 @@ signals:
 	void closeRunningWidget(trikKernel::MainWidget &widget);
 
 	void addGraphicsWidget(trikKernel::LazyMainWidget &widget);
+	void closeGraphicsWidget(trikKernel::MainWidget &widget);
 
 	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible
 	/// clutter from videosensors.

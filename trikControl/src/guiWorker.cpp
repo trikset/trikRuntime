@@ -31,11 +31,12 @@ using namespace trikControl;
 
 GuiWorker::GuiWorker()
 {
-
+	qDebug() << "GuiWorker::GuiWorker()";
 }
 
 void GuiWorker::init()
 {
+	qDebug() << "GuiWorker::init()";
 	mImageLabel.reset(new QLabel());
 	mImageWidget.reset(new GraphicsWidget());
 	mFontMetrics.reset(new QFontMetrics(mImageWidget->font()));
@@ -54,8 +55,14 @@ trikKernel::LazyMainWidget &GuiWorker::graphicsWidget()
 	return *mImageWidget.data();
 }
 
+void GuiWorker::hideGraphicsWidget()
+{
+	mImageWidget->hide();
+}
+
 void GuiWorker::showImage(QString const &fileName)
 {
+	//qDebug() << "showImage" << fileName;
 	if (!mImagesCache.contains(fileName)) {
 		QPixmap pixmap(fileName);
 		pixmap = pixmap.scaled(mImageWidget->size() - QSize(20, 20), Qt::KeepAspectRatio);

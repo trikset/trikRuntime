@@ -36,8 +36,9 @@ public:
 	virtual ~LazyMainWidget() {}
 
 signals:
-	void showMe(MainWidget &widget);
-	void hideMe(MainWidget &widget);
+	void showMe(trikKernel::MainWidget &widget);
+	void hideMe(trikKernel::MainWidget &widget);
+	void abortMe(trikKernel::MainWidget &widget);
 };
 }
 
