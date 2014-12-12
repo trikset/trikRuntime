@@ -39,7 +39,6 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	, mDisplay(guiThread, startDirPath)
 	, mInEventDrivenMode(false)
 {
-	qDebug() << "Brick::Brick";
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 
 	if (::system(mConfigurer->initScript().toStdString().c_str()) != 0) {
@@ -239,14 +238,8 @@ trikKernel::LazyMainWidget &Brick::graphicsWidget()
 	return mDisplay.graphicsWidget();
 }
 
-void Brick::hideGraphicsWidget()
-{
-	return mDisplay.hideGraphicsWidget();
-}
-
 void Brick::reset()
 {
-	qDebug() << "Brick::reset()";
 	stop();
 	mKeys->reset();
 	mDisplay.clear();
@@ -288,7 +281,6 @@ void Brick::say(QString const &text)
 void Brick::stop()
 {
 	QLOG_INFO() << "Stopping brick";
-	qDebug() << "Brick::stop()";
 	emit stopWaiting();
 
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {

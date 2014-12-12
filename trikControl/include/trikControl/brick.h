@@ -77,8 +77,8 @@ public:
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
 
+	/// Returns a main GraphicsWidget.
 	trikKernel::LazyMainWidget &graphicsWidget();
-	void hideGraphicsWidget();
 
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).

@@ -19,7 +19,6 @@
 
 #include "declSpec.h"
 #include <trikKernel/lazyMainWidget.h>
-#include <QDebug>
 
 namespace trikControl {
 
@@ -39,8 +38,8 @@ public:
 
 	~Display();
 
+	/// Returns a main GraphicsWidget.
 	trikKernel::LazyMainWidget &graphicsWidget();
-	void hideGraphicsWidget();
 
 public slots:
 	/// Shows given image on a display.

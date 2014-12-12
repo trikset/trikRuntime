@@ -34,7 +34,6 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mTelemetry(mBrick)
 	, mStartDirPath(startDirPath)
 {
-	qDebug() << "Controller::Controller";
 	connect(&mScriptRunner, SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
 
 	connect(&mScriptRunner, SIGNAL(startedScript(QString, int))
@@ -70,7 +69,6 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
-	qDebug() << "Controller::abortExecution";
 	emit closeGraphicsWidget(mBrick.graphicsWidget());
 	mScriptRunner.abort();
 
@@ -106,8 +104,6 @@ void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
 
 void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
-	qDebug() << "Controller::scriptExecutionCompleted" << scriptId;
-
 	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
 		doCloseRunningWidget(*mRunningWidgets[scriptId]);
 
@@ -129,8 +125,6 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
 {
-	qDebug() << "Controller::scriptExecutionFromFileStarted" << fileName << scriptId;
-
 	if (mRunningWidgets.value(scriptId, nullptr)) {
 		emit closeRunningWidget(*mRunningWidgets[scriptId]);
 		delete mRunningWidgets[scriptId];
@@ -148,7 +142,6 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scr
 	mRunningWidgets[scriptId]->grabKeyboard();
 
 	emit addGraphicsWidget(mBrick.graphicsWidget());
-	mBrick.hideGraphicsWidget();
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

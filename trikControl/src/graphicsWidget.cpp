@@ -17,7 +17,6 @@
 #include <QtGui/QKeyEvent>
 
 #include "graphicsWidget.h"
-#include <QDebug>
 
 using namespace trikControl;
 
@@ -30,14 +29,12 @@ GraphicsWidget::GraphicsWidget()
 
 void GraphicsWidget::showCommand()
 {
-	show();
 	emit showMe(*this);
 }
 
 void GraphicsWidget::hideCommand()
 {
-	//hide();
-	emit hideMe(*this);
+	emit hideMe();
 }
 
 void GraphicsWidget::renewFocus()

@@ -31,6 +31,7 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	, mController(configPath, startDirPath)
 	, mBatteryIndicator(mController.brick())
 	, mStartWidget(mController, configPath)
+	, mRunWidgetIndex(-1)
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -47,75 +48,71 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &)), this, SLOT(addRunningWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
 	connect(&mController, SIGNAL(addGraphicsWidget(trikKernel::LazyMainWidget &)), this, SLOT(addLazyWidget(trikKernel::LazyMainWidget &)));
 	connect(&mController, SIGNAL(closeGraphicsWidget(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 }
 
-void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
+void BackgroundWidget::resetWidgetLayout(trikKernel::MainWidget &widget)
 {
-	qDebug() << "BackgroundWidget::addMainWidget";
-	addMainWidgetWithoutConnect(widget);
-
-	connect(&widget, SIGNAL(newWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
-}
-
-void BackgroundWidget::addMainWidgetWithoutConnect(trikKernel::MainWidget &widget)
-{
-	qDebug() << "BackgroundWidget::addMainWidgetWithoutConnect_01";
-
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
 	QLayout *layout = widget.layout();
 	if (layout != nullptr) {
 		layout->setContentsMargins(0, 0, 0, 0);
 	}
-
-//if (mMainWidgetsLayout.currentWidget() != *widget) {
-		int const index = mMainWidgetsLayout.addWidget(&widget);
-		mMainWidgetsLayout.setCurrentIndex(index);
-	qDebug() << "BackgroundWidget::addMainWidgetWithoutConnect_02" << index;
-	//}
 }
 
-void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
+void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
 {
-	qDebug() << "BackgroundWidget::closeMainWidget";
-	mMainWidgetsLayout.removeWidget(&widget);
+	resetWidgetLayout(widget);
+
+	int const index = mMainWidgetsLayout.addWidget(&widget);
+	mMainWidgetsLayout.setCurrentIndex(index);
+
+	connect(&widget, SIGNAL(newWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
 }
 
-void BackgroundWidget::abortLazyMainWidget(trikKernel::LazyMainWidget &widget)
+void BackgroundWidget::addRunningWidget(trikKernel::MainWidget &widget)
 {
-	qDebug() << "BackgroundWidget::abortLazyMainWidget";
-	mController.abortExecution();
-	closeMainWidget(widget);
+	resetWidgetLayout(widget);
+
+	mRunWidgetIndex = mMainWidgetsLayout.addWidget(&widget);
+	mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+}
+
+void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
+{
+	resetWidgetLayout(widget);
+
+	mMainWidgetsLayout.addWidget(&widget);
+	if (mRunWidgetIndex >= 0) {
+		mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+	}
+
+	connect(&widget, SIGNAL(showMe(trikKernel::MainWidget &)), this, SLOT(showMainWidget(trikKernel::MainWidget &)));
+	connect(&widget, SIGNAL(hideMe()), this, SLOT(showRunningWidget()));
 }
 
 void BackgroundWidget::showMainWidget(trikKernel::MainWidget &widget)
 {
 	int const index = mMainWidgetsLayout.indexOf(&widget);
-	mMainWidgetsLayout.setCurrentIndex(index);
-}
-
-void BackgroundWidget::hideMainWidget(trikKernel::MainWidget &widget)
-{
-	int const index = mMainWidgetsLayout.indexOf(&widget);
-	int const currentIndex = mMainWidgetsLayout.currentIndex();
-	qDebug() << "BackgroundWidget::hideMainWidget" << index << currentIndex;
-
-	if (index == currentIndex && index > 0) {// else: this widget is hidden already
-		mMainWidgetsLayout.setCurrentIndex(index - 1);
+	if (index >= 0) {
+		mMainWidgetsLayout.setCurrentIndex(index);
 	}
 }
 
-void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
+void BackgroundWidget::showRunningWidget()
 {
-	qDebug() << "BackgroundWidget::addLazyWidget" << widget.toolTip();
-	addMainWidgetWithoutConnect(widget);
-	connect(&widget, SIGNAL(showMe(trikKernel::MainWidget &)), this, SLOT(showMainWidget(trikKernel::MainWidget &)));
-	connect(&widget, SIGNAL(hideMe(trikKernel::MainWidget &)), this, SLOT(hideMainWidget(trikKernel::MainWidget &)));
-	//connect(&widget, SIGNAL(abortMe(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
+	if (mRunWidgetIndex >= 0) {
+		mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+	}
+}
+
+void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
+{
+	mMainWidgetsLayout.removeWidget(&widget);
 }
 
 void BackgroundWidget::renewFocus()

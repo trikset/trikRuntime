@@ -67,7 +67,10 @@ signals:
 	/// Emitted when controller removed the runningWidget and wants it to be closed.
 	void closeRunningWidget(trikKernel::MainWidget &widget);
 
+	/// Emitted when controller wants GraphicsWidget to be shown.
 	void addGraphicsWidget(trikKernel::LazyMainWidget &widget);
+
+	/// Emitted when controller wants GraphicsWidget to be closed.
 	void closeGraphicsWidget(trikKernel::MainWidget &widget);
 
 	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible

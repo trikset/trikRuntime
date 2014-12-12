@@ -35,7 +35,10 @@ class GraphicsWidget : public trikKernel::LazyMainWidget
 public:
 	GraphicsWidget();
 
+	/// Show this GraphicsWidget.
 	void showCommand();
+
+	/// Hide this GraphicsWidget.
 	void hideCommand();
 
 	void renewFocus() override;

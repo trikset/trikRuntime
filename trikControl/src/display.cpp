@@ -32,7 +32,6 @@ Display::Display(QThread &guiThread, const QString &startDirPath)
 	, mStartDirPath(startDirPath)
 	, mGuiWorker(new GuiWorker())
 {
-	qDebug() << "Display::Display";
 	mGuiWorker->moveToThread(&guiThread);
 	QMetaObject::invokeMethod(mGuiWorker, "init");
 }
@@ -46,11 +45,6 @@ Display::~Display()
 trikKernel::LazyMainWidget &Display::graphicsWidget()
 {
 	return mGuiWorker->graphicsWidget();
-}
-
-void Display::hideGraphicsWidget()
-{
-	return mGuiWorker->hideGraphicsWidget();
 }
 
 void Display::showImage(QString const &fileName)

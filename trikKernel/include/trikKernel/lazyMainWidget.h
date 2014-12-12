@@ -36,9 +36,11 @@ public:
 	virtual ~LazyMainWidget() {}
 
 signals:
+	/// Emitted when the widget wants it to be shown.
 	void showMe(trikKernel::MainWidget &widget);
-	void hideMe(trikKernel::MainWidget &widget);
-	void abortMe(trikKernel::MainWidget &widget);
+
+	/// Emitted when the widget wants it to be hidden.
+	void hideMe();
 };
 }
 
