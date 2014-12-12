@@ -143,6 +143,17 @@
     </message>
 </context>
 <context>
+    <name>trikGui::VersionWidget</name>
+    <message>
+        <source>Current version</source>
+        <translation>Текущая версия</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>Версия ПО</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::WiFiAPWidget</name>
     <message>
         <source>Network parameters</source>
