@@ -95,7 +95,7 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner.scriptsDirName();
 }
 
-void Controller::doCloseRunningWidget(MainWidget &widget)
+void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
 {
 	widget.releaseKeyboard();
 	emit closeRunningWidget(widget);

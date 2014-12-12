@@ -47,12 +47,12 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mController, SIGNAL(addRunningWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
-	connect(&mController, SIGNAL(closeRunningWidget(MainWidget &)), this, SLOT(closeMainWidget(MainWidget &)));
+	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
 }
 
-void BackgroundWidget::addMainWidget(MainWidget &widget)
+void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
 {
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
 	QLayout *layout = widget.layout();
@@ -63,10 +63,10 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 	int const index = mMainWidgetsLayout.addWidget(&widget);
 	mMainWidgetsLayout.setCurrentIndex(index);
 
-	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
+	connect(&widget, SIGNAL(newWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
 }
 
-void BackgroundWidget::closeMainWidget(MainWidget &widget)
+void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
 {
 	mMainWidgetsLayout.removeWidget(&widget);
 }
@@ -75,7 +75,7 @@ void BackgroundWidget::renewFocus()
 {
 	// When current widget in main widgets layout changed, we should set focus properly.
 
-	MainWidget *currentWidget = dynamic_cast<MainWidget *>(mMainWidgetsLayout.currentWidget());
+	trikKernel::MainWidget *currentWidget = dynamic_cast<trikKernel::MainWidget *>(mMainWidgetsLayout.currentWidget());
 
 	if (currentWidget != nullptr) {
 		currentWidget->renewFocus();

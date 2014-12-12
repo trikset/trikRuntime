@@ -19,7 +19,7 @@
 using namespace trikGui;
 
 TrikGuiMessageBox::TrikGuiMessageBox(QWidget *parent)
-	: MainWidget(parent)
+	: trikKernel::MainWidget(parent)
 {
 	mLayout.addWidget(&mMessageLabel);
 	setLayout(&mLayout);

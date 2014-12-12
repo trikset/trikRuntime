@@ -16,12 +16,12 @@
 
 #include <QtCore/QEventLoop>
 
-#include "mainWidget.h"
+#include <trikKernel/mainWidget.h>
 
 namespace trikGui {
 
 /// Base class for all trikGui dialog widgets.
-class TrikGuiDialog : public MainWidget
+class TrikGuiDialog : public trikKernel::MainWidget
 {
 	Q_OBJECT
 

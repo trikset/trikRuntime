@@ -19,7 +19,7 @@
 using namespace trikGui;
 
 RunningWidget::RunningWidget(QString const &programName, Controller &controller, QWidget *parent)
-	: MainWidget(parent)
+	: trikKernel::MainWidget(parent)
 	, mController(controller)
 {
 	setWindowState(Qt::WindowFullScreen);

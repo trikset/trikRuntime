@@ -30,7 +30,7 @@
 	#include <QtWidgets/QStackedLayout>
 #endif
 
-#include "mainWidget.h"
+#include <trikKernel/mainWidget.h>
 #include "controller.h"
 #include "batteryIndicator.h"
 #include "startWidget.h"
@@ -56,11 +56,11 @@ public:
 public slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(MainWidget &widget);
+	void addMainWidget(trikKernel::MainWidget &widget);
 
 	/// Remove a widget from main widget layout.
 	/// @param widget - reference to the widget.
-	void closeMainWidget(MainWidget &widget);
+	void closeMainWidget(trikKernel::MainWidget &widget);
 
 private slots:
 	void renewFocus();

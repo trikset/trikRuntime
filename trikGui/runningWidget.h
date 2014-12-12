@@ -30,11 +30,11 @@
 #include <QtCore/QString>
 
 #include "controller.h"
-#include "mainWidget.h"
+#include <trikKernel/mainWidget.h>
 
 namespace trikGui {
 
-class RunningWidget : public MainWidget
+class RunningWidget : public trikKernel::MainWidget
 {
 	Q_OBJECT
 

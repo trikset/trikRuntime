@@ -22,7 +22,7 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-namespace trikGui {
+namespace trikKernel {
 
 /// Abstract class for widgets which will be used for conversation with user.
 class MainWidget : public QWidget
