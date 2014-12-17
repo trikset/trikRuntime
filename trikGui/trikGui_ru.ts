@@ -143,6 +143,25 @@
     </message>
 </context>
 <context>
+    <name>trikGui::UpdateWidget</name>
+    <message>
+        <source>Update is started...</source>
+        <translation>Обновление начато...</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Обновление ПО</translation>
+    </message>
+    <message>
+        <source>Update is successfully finished</source>
+        <translation>Обновление успешно завершено.</translation>
+    </message>
+    <message>
+        <source>Update is failed</source>
+        <translation>Во время обновления произошла ошибка.</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::VersionWidget</name>
     <message>
         <source>Current version</source>
