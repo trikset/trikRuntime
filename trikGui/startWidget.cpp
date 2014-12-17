@@ -32,6 +32,7 @@
 #include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
 #include "versionWidget.h"
+#include "updateWidget.h"
 
 using namespace trikGui;
 
@@ -55,6 +56,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(UpdateWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -122,6 +124,10 @@ void StartWidget::launch()
 			VersionWidget versionWidget;
 			emit newWidget(versionWidget);
 			result = versionWidget.exec();
+		} else if (currentItemText == UpdateWidget::menuEntry()) {
+			UpdateWidget updateWidget;
+			emit newWidget(updateWidget);
+			result = updateWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {

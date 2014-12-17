@@ -41,6 +41,7 @@ HEADERS += \
 	$$PWD/wiFiModeWidget.h \
 	$$PWD/fileManagerMessageBox.h \
 	$$PWD/versionWidget.h \
+	$$PWD/updateWidget.h \
 
 SOURCES += \
 	$$PWD/digitSelector.cpp \
@@ -69,6 +70,7 @@ SOURCES += \
 	$$PWD/batteryIndicator.cpp \
 	$$PWD/fileManagerMessageBox.cpp \
 	$$PWD/versionWidget.cpp \
+	$$PWD/updateWidget.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc
