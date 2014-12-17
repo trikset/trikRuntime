@@ -48,11 +48,15 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &)), this, SLOT(addRunningWidget(trikKernel::MainWidget &)));
-	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &))
+			, this, SLOT(addRunningWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &))
+			, this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
-	connect(&mController, SIGNAL(addGraphicsWidget(trikKernel::LazyMainWidget &)), this, SLOT(addLazyWidget(trikKernel::LazyMainWidget &)));
-	connect(&mController, SIGNAL(closeGraphicsWidget(trikKernel::MainWidget &)), this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(addGraphicsWidget(trikKernel::LazyMainWidget &))
+			, this, SLOT(addLazyWidget(trikKernel::LazyMainWidget &)));
+	connect(&mController, SIGNAL(closeGraphicsWidget(trikKernel::MainWidget &))
+			, this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 }
 
 void BackgroundWidget::resetWidgetLayout(trikKernel::MainWidget &widget)
