@@ -26,7 +26,8 @@
 
 namespace trikKernel {
 
-/// Abstract class for widgets which will be used for conversation with user (but when it doesn't want to be shown immediately).
+/// Abstract class for widgets which will be used for conversation with user
+/// (but when it doesn't want to be shown immediately).
 class LazyMainWidget : public MainWidget
 {
 	Q_OBJECT
