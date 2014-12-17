@@ -46,12 +46,18 @@ public:
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
 
+	int exec() override;
+
 public slots:
 	void renewFocus() override;
 
 private:
+	void showStatus(QString const &text, bool isError = false);
+
 	/// Main layout of this widget.
 	QHBoxLayout mLayout;
+
+	QLabel mStatusLabel;
 };
 
 }
