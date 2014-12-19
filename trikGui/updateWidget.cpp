@@ -78,7 +78,7 @@ int UpdateWidget::exec()
 		qDebug() << "Running:" << "opkg upgrade";
 		QProcess upgradeCommand;
 		upgradeCommand.start("opkg upgrade");
-		bool upgrade = upgradeCommand.waitForFinished();
+		bool upgrade = upgradeCommand.waitForFinished(100000);
 
 		if (upgrade) {
 			showStatus(tr("Update and Upgrade is successfully finished"));
