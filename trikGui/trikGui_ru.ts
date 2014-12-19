@@ -153,12 +153,16 @@
         <translation>Обновление ПО</translation>
     </message>
     <message>
-        <source>Update is successfully finished</source>
+        <source>Update is failed</source>
+        <translation>Во время обновления (update) произошла ошибка.</translation>
+    </message>
+    <message>
+        <source>Update and Upgrade is successfully finished</source>
         <translation>Обновление успешно завершено.</translation>
     </message>
     <message>
-        <source>Update is failed</source>
-        <translation>Во время обновления произошла ошибка.</translation>
+        <source>Upgrade is failed</source>
+        <translation>Во время обновления (upgrade) произошла ошибка.</translation>
     </message>
 </context>
 <context>

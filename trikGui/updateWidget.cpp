@@ -14,6 +14,7 @@
 
 #include <QtCore/QProcess>
 #include <QsLog.h>
+#include <QtCore/QTimer>
 
 #include "updateWidget.h"
 
@@ -49,7 +50,7 @@ QString UpdateWidget::menuEntry()
 
 void UpdateWidget::showStatus(QString const &text, bool isError)
 {
-	mStatusLabel.setAlignment(Qt::AlignLeft);
+	mStatusLabel.setAlignment(Qt::AlignCenter);
 	if (isError) {
 		mStatusLabel.setText(QString("<font color='red'>%1</font>").arg(text));
 	} else {
@@ -61,16 +62,29 @@ void UpdateWidget::showStatus(QString const &text, bool isError)
 int UpdateWidget::exec()
 {
 	show();
+
+	QEventLoop loop;
+	QTimer::singleShot(1000, &loop, SLOT(quit()));
+	loop.exec();
+
 	QLOG_INFO() << "Running: " << "opkg update";
 	qDebug() << "Running:" << "opkg update";
-	bool update = true;//QProcess::startDetached("opkg update");
+	QProcess updateCommand;
+	updateCommand.start("opkg update");
+	bool update = updateCommand.waitForFinished();
 
-	QLOG_INFO() << "Running: " << "opkg upgrade";
-	qDebug() << "Running:" << "opkg upgrade";
-	bool upgrade = true;//QProcess::startDetached("opkg upgrade");
+	if (update) {
+		QLOG_INFO() << "Running: " << "opkg upgrade";
+		qDebug() << "Running:" << "opkg upgrade";
+		QProcess upgradeCommand;
+		upgradeCommand.start("opkg upgrade");
+		bool upgrade = upgradeCommand.waitForFinished();
 
-	if (update && upgrade) {
-		showStatus(tr("Update is successfully finished"));
+		if (upgrade) {
+			showStatus(tr("Update and Upgrade is successfully finished"));
+		} else {
+			showStatus(tr("Upgrade is failed"), true);
+		}
 	} else {
 		showStatus(tr("Update is failed"), true);
 	}
