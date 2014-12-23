@@ -56,6 +56,7 @@ void UpdateWidget::showStatus(QString const &text, bool isError)
 	} else {
 		mStatusLabel.setText(QString("<font color='green'>%1</font>").arg(text));
 	}
+
 	update();
 }
 
