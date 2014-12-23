@@ -17,6 +17,9 @@ include(../global.pri)
 SOURCES += \
 	$$PWD/main.cpp \
 
+HEADERS += \
+	$$PWD/graphicsWidgetHandler.h \
+
 OTHER_FILES += \
 	$$PWD/test.qts \
 

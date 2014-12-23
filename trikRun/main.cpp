@@ -32,6 +32,10 @@
 
 #include <QsLog.h>
 
+#include "graphicsWidgetHandler.h"
+
+using namespace trikRun;
+
 void printUsage()
 {
 	qDebug() << "Usage: trikRun -qws <QtScript file name> [-c <config file name>] [-d <working directory name>]";
@@ -98,6 +102,11 @@ int main(int argc, char *argv[])
 	QLOG_INFO() << "TrikRun started";
 
 	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+	GraphicsWidgetHandler graphicsWidgetHandler;
+
+	QObject::connect(&brick.graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
+			, &graphicsWidgetHandler, SLOT(show(trikKernel::MainWidget&)));
+	QObject::connect(&brick.graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
 	trikScriptRunner::TrikScriptRunner runner(brick, startDirPath);
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));

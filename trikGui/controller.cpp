@@ -120,6 +120,7 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 			mRunningWidgets.remove(scriptId);
 		}
 	}
+
 	emit closeGraphicsWidget(mBrick.graphicsWidget());
 }
 
