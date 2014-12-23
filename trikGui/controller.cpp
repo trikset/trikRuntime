@@ -69,6 +69,7 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
+	emit closeGraphicsWidget(mBrick.graphicsWidget());
 	mScriptRunner.abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -95,7 +96,7 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner.scriptsDirName();
 }
 
-void Controller::doCloseRunningWidget(MainWidget &widget)
+void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
 {
 	widget.releaseKeyboard();
 	emit closeRunningWidget(widget);
@@ -119,6 +120,7 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 			mRunningWidgets.remove(scriptId);
 		}
 	}
+	emit closeGraphicsWidget(mBrick.graphicsWidget());
 }
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
@@ -138,6 +140,8 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scr
 	// can get keyboard events using trikControl::Keys class because it works directly
 	// with the keyboard file.
 	mRunningWidgets[scriptId]->grabKeyboard();
+
+	emit addGraphicsWidget(mBrick.graphicsWidget());
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

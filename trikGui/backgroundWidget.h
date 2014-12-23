@@ -30,7 +30,7 @@
 	#include <QtWidgets/QStackedLayout>
 #endif
 
-#include "mainWidget.h"
+#include <trikKernel/lazyMainWidget.h>
 #include "controller.h"
 #include "batteryIndicator.h"
 #include "startWidget.h"
@@ -56,11 +56,19 @@ public:
 public slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(MainWidget &widget);
+	void addMainWidget(trikKernel::MainWidget &widget);
+
+	/// Add a RunningWidget to main widgets layout and show it.
+	/// @param widget - reference to the widget.
+	void addRunningWidget(trikKernel::MainWidget &widget);
+
+	/// Add a GraphicsWidget to main widgets layout and show RunningWidget.
+	/// @param widget - reference to the widget.
+	void addLazyWidget(trikKernel::LazyMainWidget &widget);
 
 	/// Remove a widget from main widget layout.
 	/// @param widget - reference to the widget.
-	void closeMainWidget(MainWidget &widget);
+	void closeMainWidget(trikKernel::MainWidget &widget);
 
 private slots:
 	void renewFocus();
@@ -68,13 +76,27 @@ private slots:
 	/// Updates all widgets to remove clutter.
 	void refresh();
 
+	/// Show a widget which is contained in main widgets layout.
+	/// @param widget - reference to the widget.
+	void showMainWidget(trikKernel::MainWidget &widget);
+
+	/// Show a RunningWidget which is contained in main widgets layout.
+	/// @param widget - reference to the widget.
+	void showRunningWidget();
+
 private:
+	/// Remove widget margins.
+	/// @param widget - reference to the widget.
+	void resetWidgetLayout(trikKernel::MainWidget &widget);
+
 	Controller mController;
 	QVBoxLayout mMainLayout;
 	QHBoxLayout mStatusBarLayout;
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
+
+	int mRunWidgetIndex; // Index of RunningWidget from main widgets layout.
 };
 
 }

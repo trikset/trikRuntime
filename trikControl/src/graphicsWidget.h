@@ -25,13 +25,23 @@
 	#include <QtWidgets/QWidget>
 #endif
 
+#include <trikKernel/lazyMainWidget.h>
+
 namespace trikControl {
 
 /// Class of graphic widget.
-class GraphicsWidget : public QWidget
+class GraphicsWidget : public trikKernel::LazyMainWidget
 {
 public:
 	GraphicsWidget();
+
+	/// Show this GraphicsWidget.
+	void showCommand();
+
+	/// Hide this GraphicsWidget.
+	void hideCommand();
+
+	void renewFocus() override;
 
 	/// Set painter color.
 	void setPainterColor(QString const &color);

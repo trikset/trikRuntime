@@ -14,15 +14,32 @@
 
 #include <QtGui/QPainter>
 #include <QtGui/QPen>
+#include <QtGui/QKeyEvent>
 
 #include "graphicsWidget.h"
 
 using namespace trikControl;
 
 GraphicsWidget::GraphicsWidget()
-	: mCurrentPenColor(Qt::black)
+	: trikKernel::LazyMainWidget()
+	, mCurrentPenColor(Qt::black)
 	, mCurrentPenWidth(0)
 {
+}
+
+void GraphicsWidget::showCommand()
+{
+	emit showMe(*this);
+}
+
+void GraphicsWidget::hideCommand()
+{
+	emit hideMe();
+}
+
+void GraphicsWidget::renewFocus()
+{
+	setFocus();
 }
 
 void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)

@@ -37,7 +37,7 @@
 using namespace trikGui;
 
 StartWidget::StartWidget(Controller &controller, QString const &configPath, QWidget *parent)
-	: MainWidget(parent)
+	: trikKernel::MainWidget(parent)
 	, mController(controller)
 	, mConfigPath(configPath)
 {

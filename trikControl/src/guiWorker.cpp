@@ -31,7 +31,6 @@ using namespace trikControl;
 
 GuiWorker::GuiWorker()
 {
-
 }
 
 void GuiWorker::init()
@@ -49,6 +48,11 @@ void GuiWorker::init()
 	resetBackground();
 }
 
+trikKernel::LazyMainWidget &GuiWorker::graphicsWidget()
+{
+	return *mImageWidget.data();
+}
+
 void GuiWorker::showImage(QString const &fileName)
 {
 	if (!mImagesCache.contains(fileName)) {
@@ -58,7 +62,7 @@ void GuiWorker::showImage(QString const &fileName)
 	}
 
 	mImageLabel->setPixmap(mImagesCache.value(fileName));
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::addLabel(QString const &text, int x, int y)
@@ -77,7 +81,7 @@ void GuiWorker::addLabel(QString const &text, int x, int y)
 		mLabels.insertMulti(x ^ y, label);
 	}
 
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::removeLabels()
@@ -138,7 +142,7 @@ void GuiWorker::setBackground(QString const &color)
 	}
 
 	mImageWidget->setPalette(palette);
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::resetBackground()
@@ -163,7 +167,7 @@ void GuiWorker::clear()
 	mImageWidget->deleteAllItems();
 	mImageWidget->setPainterColor("black");
 	mImageWidget->setPainterWidth(1);
-	mImageWidget->hide();
+	mImageWidget->hideCommand();
 	removeLabels();
 	mImageLabel->setPixmap(QPixmap());
 	resetBackground();
@@ -171,7 +175,7 @@ void GuiWorker::clear()
 
 void GuiWorker::hide()
 {
-	mImageWidget->hide();
+	mImageWidget->hideCommand();
 }
 
 QLabel *GuiWorker::findLabel(int x, int y) const
@@ -189,33 +193,33 @@ void GuiWorker::drawPoint(int x, int y)
 {
 	mImageWidget->drawPoint(x, y);
 	mImageWidget->update();
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 {
 	mImageWidget->drawLine(x1, y1, x2, y2);
 	mImageWidget->update();
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawRect(int x, int y, int width, int height)
 {
 	mImageWidget->drawRect(x, y, width, height);
 	mImageWidget->update();
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawEllipse(int x, int y, int width, int height)
 {
 	mImageWidget->drawEllipse(x, y, width, height);
 	mImageWidget->update();
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	mImageWidget->drawArc(x, y, width, height, startAngle, spanAngle);
 	mImageWidget->update();
-	mImageWidget->show();
+	mImageWidget->showCommand();
 }

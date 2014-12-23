@@ -19,7 +19,7 @@
 using namespace trikGui;
 
 TrikGuiDialog::TrikGuiDialog(QWidget *parent)
-	: MainWidget(parent)
+	: trikKernel::MainWidget(parent)
 {
 }
 

@@ -42,6 +42,11 @@ Display::~Display()
 	mGuiThread.wait(1000);
 }
 
+trikKernel::LazyMainWidget &Display::graphicsWidget()
+{
+	return mGuiWorker->graphicsWidget();
+}
+
 void Display::showImage(QString const &fileName)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));

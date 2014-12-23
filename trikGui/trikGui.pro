@@ -21,7 +21,6 @@ HEADERS += \
 	$$PWD/controller.h \
 	$$PWD/digitSelector.h \
 	$$PWD/fileManagerWidget.h \
-	$$PWD/mainWidget.h \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
 	$$PWD/numberSelectionWidget.h \

@@ -31,6 +31,7 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	, mController(configPath, startDirPath)
 	, mBatteryIndicator(mController.brick())
 	, mStartWidget(mController, configPath)
+	, mRunWidgetIndex(-1)
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -47,26 +48,73 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mController, SIGNAL(addRunningWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
-	connect(&mController, SIGNAL(closeRunningWidget(MainWidget &)), this, SLOT(closeMainWidget(MainWidget &)));
+	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &))
+			, this, SLOT(addRunningWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &))
+			, this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
+	connect(&mController, SIGNAL(addGraphicsWidget(trikKernel::LazyMainWidget &))
+			, this, SLOT(addLazyWidget(trikKernel::LazyMainWidget &)));
+	connect(&mController, SIGNAL(closeGraphicsWidget(trikKernel::MainWidget &))
+			, this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
 }
 
-void BackgroundWidget::addMainWidget(MainWidget &widget)
+void BackgroundWidget::resetWidgetLayout(trikKernel::MainWidget &widget)
 {
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
 	QLayout *layout = widget.layout();
 	if (layout != nullptr) {
 		layout->setContentsMargins(0, 0, 0, 0);
 	}
+}
+
+void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
+{
+	resetWidgetLayout(widget);
 
 	int const index = mMainWidgetsLayout.addWidget(&widget);
 	mMainWidgetsLayout.setCurrentIndex(index);
 
-	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
+	connect(&widget, SIGNAL(newWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
 }
 
-void BackgroundWidget::closeMainWidget(MainWidget &widget)
+void BackgroundWidget::addRunningWidget(trikKernel::MainWidget &widget)
+{
+	resetWidgetLayout(widget);
+
+	mRunWidgetIndex = mMainWidgetsLayout.addWidget(&widget);
+	mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+}
+
+void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
+{
+	resetWidgetLayout(widget);
+
+	mMainWidgetsLayout.addWidget(&widget);
+	if (mRunWidgetIndex >= 0) {
+		mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+	}
+
+	connect(&widget, SIGNAL(showMe(trikKernel::MainWidget &)), this, SLOT(showMainWidget(trikKernel::MainWidget &)));
+	connect(&widget, SIGNAL(hideMe()), this, SLOT(showRunningWidget()));
+}
+
+void BackgroundWidget::showMainWidget(trikKernel::MainWidget &widget)
+{
+	int const index = mMainWidgetsLayout.indexOf(&widget);
+	if (index >= 0) {
+		mMainWidgetsLayout.setCurrentIndex(index);
+	}
+}
+
+void BackgroundWidget::showRunningWidget()
+{
+	if (mRunWidgetIndex >= 0) {
+		mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+	}
+}
+
+void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
 {
 	mMainWidgetsLayout.removeWidget(&widget);
 }
@@ -75,7 +123,7 @@ void BackgroundWidget::renewFocus()
 {
 	// When current widget in main widgets layout changed, we should set focus properly.
 
-	MainWidget *currentWidget = dynamic_cast<MainWidget *>(mMainWidgetsLayout.currentWidget());
+	trikKernel::MainWidget *currentWidget = dynamic_cast<trikKernel::MainWidget *>(mMainWidgetsLayout.currentWidget());
 
 	if (currentWidget != nullptr) {
 		currentWidget->renewFocus();

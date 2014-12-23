@@ -41,6 +41,8 @@
 #include "sensor.h"
 #include "sensor3d.h"
 
+#include <trikKernel/lazyMainWidget.h>
+
 namespace trikControl {
 
 class Configurer;
@@ -74,6 +76,9 @@ public:
 	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
+
+	/// Returns a main GraphicsWidget.
+	trikKernel::LazyMainWidget &graphicsWidget();
 
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay utility).

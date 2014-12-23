@@ -19,7 +19,7 @@
 #include <trikTelemetry/trikTelemetry.h>
 #include <trikControl/brick.h>
 
-#include "mainWidget.h"
+#include <trikKernel/lazyMainWidget.h>
 
 namespace trikGui
 {
@@ -58,14 +58,20 @@ public:
 	QString scriptsDirName() const;
 
 	/// Asks controller to correctly close given running widget.
-	void doCloseRunningWidget(MainWidget &widget);
+	void doCloseRunningWidget(trikKernel::MainWidget &widget);
 
 signals:
 	/// Emitted when controller created a runningWidget (for scripts) and wants it to be shown.
-	void addRunningWidget(MainWidget &widget);
+	void addRunningWidget(trikKernel::MainWidget &widget);
 
 	/// Emitted when controller removed the runningWidget and wants it to be closed.
-	void closeRunningWidget(MainWidget &widget);
+	void closeRunningWidget(trikKernel::MainWidget &widget);
+
+	/// Emitted when controller wants GraphicsWidget to be shown.
+	void addGraphicsWidget(trikKernel::LazyMainWidget &widget);
+
+	/// Emitted when controller wants GraphicsWidget to be closed.
+	void closeGraphicsWidget(trikKernel::MainWidget &widget);
 
 	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible
 	/// clutter from videosensors.

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,40 +18,30 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
-	#include <QtGui/QVBoxLayout>
-	#include <QtGui/QLabel>
 #else
 	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QVBoxLayout>
 #endif
 
-#include <QtCore/QList>
-#include <QtCore/QString>
+#include "mainWidget.h"
 
-#include "controller.h"
-#include <trikKernel/mainWidget.h>
+namespace trikKernel {
 
-namespace trikGui {
-
-class RunningWidget : public trikKernel::MainWidget
+/// Abstract class for widgets which will be used for conversation with user
+/// (but when it doesn't want to be shown immediately).
+class LazyMainWidget : public MainWidget
 {
 	Q_OBJECT
 
 public:
-	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
+	LazyMainWidget(QWidget *parent = 0) : MainWidget (parent) {}
+	virtual ~LazyMainWidget() {}
 
-	void showError(QString const &error);
-	void renewFocus() override;
+signals:
+	/// Emitted when the widget wants it to be shown.
+	void showMe(trikKernel::MainWidget &widget);
 
-protected:
-	void keyPressEvent(QKeyEvent *event);
-
-private:
-	QVBoxLayout mLayout;
-	QLabel mStatusLabel;
-	QLabel mAbortLabel;
-	Controller &mController;
+	/// Emitted when the widget wants it to be hidden.
+	void hideMe();
 };
-
 }
+

@@ -233,6 +233,11 @@ Brick::~Brick()
 	delete mObjectSensor;
 }
 
+trikKernel::LazyMainWidget &Brick::graphicsWidget()
+{
+	return mDisplay.graphicsWidget();
+}
+
 void Brick::reset()
 {
 	stop();

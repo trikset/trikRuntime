@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 
 #include "declSpec.h"
+#include <trikKernel/lazyMainWidget.h>
 
 namespace trikControl {
 
@@ -36,6 +37,9 @@ public:
 	explicit Display(QThread &guiThread, QString const &startDirPath);
 
 	~Display();
+
+	/// Returns a main GraphicsWidget.
+	trikKernel::LazyMainWidget &graphicsWidget();
 
 public slots:
 	/// Shows given image on a display.

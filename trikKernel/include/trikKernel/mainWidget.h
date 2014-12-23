@@ -22,7 +22,7 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-namespace trikGui {
+namespace trikKernel {
 
 /// Abstract class for widgets which will be used for conversation with user.
 class MainWidget : public QWidget
@@ -38,6 +38,6 @@ public:
 
 signals:
 	/// Emitted when the widget created a new one and wants it to be shown.
-	void newWidget(MainWidget &widget);
+	void newWidget(trikKernel::MainWidget &widget);
 };
 }

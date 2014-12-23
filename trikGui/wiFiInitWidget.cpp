@@ -27,7 +27,7 @@
 using namespace trikGui;
 
 WiFiInitWidget::WiFiInitWidget(QWidget *parent)
-	: MainWidget(parent)
+	: trikKernel::MainWidget(parent)
 	, mInitMessage(tr("Network initialization" "\n"
 			"in process"))
 	, mWaitMessage(tr("Please wait"))

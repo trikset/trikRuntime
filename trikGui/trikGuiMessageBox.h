@@ -30,12 +30,12 @@
 #include <QtCore/QEventLoop>
 #include <QtGui/QKeyEvent>
 
-#include "mainWidget.h"
+#include <trikKernel/mainWidget.h>
 
 namespace trikGui {
 
 /// Widget showing some message and waiting until the user will press any key.
-class TrikGuiMessageBox : public MainWidget
+class TrikGuiMessageBox : public trikKernel::MainWidget
 {
 	Q_OBJECT
 

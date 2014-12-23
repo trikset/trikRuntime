@@ -38,13 +38,13 @@
 #include <QtCore/QMap>
 
 #include "wiFiModeWidget.h"
-#include "mainWidget.h"
+#include <trikKernel/mainWidget.h>
 #include "controller.h"
 
 namespace trikGui {
 
 /// Main widget for trikGui application, displays menu which allows to open other widgets.
-class StartWidget : public MainWidget
+class StartWidget : public trikKernel::MainWidget
 {
 	Q_OBJECT
 
