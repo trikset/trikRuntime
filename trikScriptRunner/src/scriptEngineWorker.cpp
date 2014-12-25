@@ -80,15 +80,30 @@ void ScriptEngineWorker::reset()
 		Q_ASSERT(false);
 	}
 
+	if (thread() == QThread::currentThread() && mEngine->isEvaluating()) {
+		// We are in a stack of mEngine->evaluate, so can't wait for it to finish.
+		QLOG_INFO() << "ScriptEngineWorker::reset called from inside of a script, current script engine:" << mEngine
+		<< ", thread:" << QThread::currentThread();
+
+		/// @todo: remove this sh~.
+		mEngine->abortEvaluation(QScriptValue("aborted"));
+
+		// Restart ScriptEngineWorker::reset when engine is aborted.
+		QMetaObject::invokeMethod(this, "reset", Qt::QueuedConnection);
+		return;
+	}
+
 	QLOG_INFO() << "ScriptEngineWorker: reset started, current script engine:" << mEngine
 			<< ", thread:" << QThread::currentThread();
 
 	mEngineReset = !mEngine->isEvaluating();
+
 	bool const inEventDrivenMode = mBrick.isInEventDrivenMode();
 
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	mBrick.reset();
+
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
 	}
