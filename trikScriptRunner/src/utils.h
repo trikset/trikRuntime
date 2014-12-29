@@ -27,7 +27,7 @@ public:
 	/// @paragraph engine - an engine that should own new object.
 	static QScriptValue clone(QScriptValue const &prototype, QScriptEngine * const engine);
 
-	/// Copies insufficient data into target from prototype.
+	/// Copies data into target from prototype.
 	/// @param prototype - copy source.
 	/// @param target - copy target.
 	/// @paragraph engine - an engine that should own new objects.

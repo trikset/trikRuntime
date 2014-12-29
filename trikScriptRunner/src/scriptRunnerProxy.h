@@ -55,11 +55,13 @@ public:
 	void brickBeep();
 
 signals:
-	/// Fired when current script completes execution.
+	/// Emitted when current script completes execution.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
 	void completed(QString const &error, int scriptId);
 
+	/// Emitted when script started execution.
+	/// @param scriptId - identifier of a script started.
 	void startedScript(int scriptId);
 
 private:
