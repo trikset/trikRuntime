@@ -20,6 +20,10 @@ proc getFiles { folder } {
     return ""
   }
 
+  if {[string match *thirdparty* $folder] == 1} {
+    return ""
+  }
+
   foreach sourceFile [glob -nocomplain -type f -directory $folder *] {
     if [regexp -nocase {.*[.]cpp$|.*[.]h$} $sourceFile ] {
       set listOfFiles [concat $listOfFiles $sourceFile]
