@@ -30,6 +30,12 @@ class MainWidget : public QWidget
 	Q_OBJECT
 
 public:
+
+	enum FileManagerRootType {
+		scriptsDir
+		, allFS
+	};
+
 	MainWidget(QWidget *parent) : QWidget(parent) {}
 	virtual ~MainWidget() {}
 

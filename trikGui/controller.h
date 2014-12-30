@@ -32,6 +32,7 @@ class Controller : public QObject
 	Q_OBJECT
 
 public:
+
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
 	/// @param startDirPath - path to the directory from which the application was executed.

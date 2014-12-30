@@ -23,15 +23,23 @@
 
 using namespace trikGui;
 
-FileManagerWidget::FileManagerWidget(Controller &controller, QWidget *parent)
+FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
+									, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	mRootDirPath = mController.scriptsDirPath();
+	if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir) {
+		mRootDirPath = mController.scriptsDirPath();
 
-	QDir::setCurrent(mController.startDirPath());
-	QDir dir;
-	dir.mkdir(mController.scriptsDirName());
+		QDir::setCurrent(mController.startDirPath());
+		QDir dir;
+		dir.mkdir(mController.scriptsDirName());
+	} else if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
+		mRootDirPath = QDir::rootPath();
+	} else {
+		mRootDirPath = mController.startDirPath();
+	}
+
 	QDir::setCurrent(mRootDirPath);
 
 	mFileSystemModel.setRootPath(mRootDirPath);

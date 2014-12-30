@@ -41,6 +41,7 @@ HEADERS += \
 	$$PWD/fileManagerMessageBox.h \
 	$$PWD/versionWidget.h \
 	$$PWD/updateWidget.h \
+	$$PWD/systemSettingsWidget.h \
 
 SOURCES += \
 	$$PWD/digitSelector.cpp \
@@ -70,6 +71,7 @@ SOURCES += \
 	$$PWD/fileManagerMessageBox.cpp \
 	$$PWD/versionWidget.cpp \
 	$$PWD/updateWidget.cpp \
+	$$PWD/systemSettingsWidget.cpp \
 
 TRANSLATIONS = trikGui_ru.ts
 RESOURCES = trikGui.qrc

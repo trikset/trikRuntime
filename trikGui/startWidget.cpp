@@ -33,6 +33,7 @@
 #include "communicationSettingsWidget.h"
 #include "versionWidget.h"
 #include "updateWidget.h"
+#include "systemSettingsWidget.h"
 
 using namespace trikGui;
 
@@ -40,6 +41,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	: trikKernel::MainWidget(parent)
 	, mController(controller)
 	, mConfigPath(configPath)
+	, mFileManagerRoot(MainWidget::FileManagerRootType::scriptsDir)
 {
 	mTitleLabel.setText(tr("TRIK"));
 
@@ -57,6 +59,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	}
 	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(UpdateWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -93,7 +96,7 @@ void StartWidget::launch()
 
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
-			FileManagerWidget fileManagerWidget(mController);
+			FileManagerWidget fileManagerWidget(mController, mFileManagerRoot);
 			emit newWidget(fileManagerWidget);
 			result = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
@@ -128,12 +131,23 @@ void StartWidget::launch()
 			UpdateWidget updateWidget;
 			emit newWidget(updateWidget);
 			result = updateWidget.exec();
+		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
+			SystemSettingsWidget systemSettingsWidget;
+			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
+					, this, SLOT(changeFileManagerRoot(MainWidget::FileManagerRootType const&)));
+			emit newWidget(systemSettingsWidget);
+			result = systemSettingsWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {
 			goHome();
 		}
 	}
+}
+
+void StartWidget::changeFileManagerRoot(MainWidget::FileManagerRootType const& path)
+{
+	mFileManagerRoot = path;
 }
 
 void StartWidget::setRootIndex(QModelIndex const &index)

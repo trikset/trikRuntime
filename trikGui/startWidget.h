@@ -59,6 +59,9 @@ public:
 
 	void renewFocus() override;
 
+private slots:
+	void changeFileManagerRoot(MainWidget::FileManagerRootType const& path);
+
 private:
 	void keyPressEvent(QKeyEvent *event) override;
 
@@ -74,6 +77,7 @@ private:
 	QStandardItemModel mMenuModel;
 	Controller &mController;
 	QString const mConfigPath;
+	MainWidget::FileManagerRootType mFileManagerRoot;
 
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;
