@@ -12,23 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../../global.pri)
+TEMPLATE = app
 
-include(../common.pri)
-
-HEADERS += \
-	$$PWD/trikScriptRunnerTest.h \
-
-SOURCES += \
-	$$PWD/trikScriptRunnerTest.cpp \
+QT += widgets
 
 INCLUDEPATH += \
-	$$PWD/../../trikScriptRunner/include/trikScriptRunner \
-	$$PWD/../../trikScriptRunner/src \
+	$$_PRO_FILE_PWD_/ \
+	$$PWD/thirdparty/gmock-1.6.0/include \
+	$$PWD/thirdparty/gmock-1.6.0/gtest/include \
 
-INCLUDEPATH += \
-	$$PWD/../../trikKernel/include \
-	$$PWD/../../trikControl/include \
-	$$PWD/../../qslog \
+LIBS += -L$$DESTDIR
 
-uses(trikKernel trikControl trikScriptRunner)
+LIBS += -lgmock$$CONFIGURATION_SUFFIX
