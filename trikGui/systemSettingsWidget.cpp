@@ -31,8 +31,8 @@ SystemSettingsWidget::SystemSettingsWidget(QWidget *parent)
 	QLabel* const allFilesLabel = new QLabel(tr("Directory 'Files' is ..."));
 	allFilesLabel->setAlignment(Qt::AlignCenter);
 
-	mAllFSButton = new QRadioButton("full file system");
-	mOnlyScriptsButton = new QRadioButton("only 'scripts' directory");
+	mAllFSButton = new QRadioButton(tr("full file system"));
+	mOnlyScriptsButton = new QRadioButton(tr("only 'scripts' directory"));
 	mOnlyScriptsButton->setChecked(true);
 
 	mButtonGroup.addButton(mAllFSButton);

@@ -45,6 +45,9 @@ class FileManagerWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
+	/// Constructor
+	/// @param parent - parent of this widget in Qt object hierarchy.
+	/// @param fileManagerRoot - current FilesManagerRoot
 	explicit FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
 								, QWidget *parent = 0);
 	~FileManagerWidget();

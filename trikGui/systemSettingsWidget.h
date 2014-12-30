@@ -52,6 +52,7 @@ public slots:
 	void renewFocus() override;
 
 signals:
+	/// Emitted when we want to save current FilesManegerRoot
 	void currentFilesDirPath(MainWidget::FileManagerRootType const& path);
 
 protected:
