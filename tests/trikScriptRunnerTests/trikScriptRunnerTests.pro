@@ -12,25 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../global.pri)
+include(../../global.pri)
+
+include(../common.pri)
 
 HEADERS += \
-	$$PWD/include/trikTelemetry/trikTelemetry.h \
-	$$PWD/src/connection.h \
+	$$PWD/trikScriptRunnerTest.h \
 
 SOURCES += \
-	$$PWD/src/trikTelemetry.cpp \
-	$$PWD/src/connection.cpp \
-
-TEMPLATE = lib
-
-QT += network
-
-DEFINES += TRIKTELEMETRY_LIBRARY
-
-uses(trikControl trikKernel qslog)
+	$$PWD/trikScriptRunnerTest.cpp \
 
 INCLUDEPATH += \
-	../trikControl/include/ \
-	../trikKernel/include/ \
-	../qslog/ \
+	$$PWD/../../trikScriptRunner/include/trikScriptRunner \
+	$$PWD/../../trikScriptRunner/src \
+
+INCLUDEPATH += \
+	$$PWD/../../trikKernel/include \
+	$$PWD/../../trikControl/include \
+	$$PWD/../../qslog \
+
+uses(trikKernel trikControl trikScriptRunner)

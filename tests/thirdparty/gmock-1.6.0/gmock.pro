@@ -12,25 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../global.pri)
-
-HEADERS += \
-	$$PWD/include/trikTelemetry/trikTelemetry.h \
-	$$PWD/src/connection.h \
-
-SOURCES += \
-	$$PWD/src/trikTelemetry.cpp \
-	$$PWD/src/connection.cpp \
+include(../../../global.pri)
 
 TEMPLATE = lib
 
-QT += network
-
-DEFINES += TRIKTELEMETRY_LIBRARY
-
-uses(trikControl trikKernel qslog)
+CONFIG += warn_off
 
 INCLUDEPATH += \
-	../trikControl/include/ \
-	../trikKernel/include/ \
-	../qslog/ \
+	. \
+	include \
+	gtest \
+	gtest/include \
+
+HEADERS += \
+	$$files(gtest/src/*.h) \
+	$$files(gtest/include/gtest/*.h) \
+	$$files(gtest/include/gtest/internal/*.h) \
+	$$files(include/gmock/*.h) \
+	$$files(include/gmock/internal/*.h) \
+
+SOURCES += \
+	$$files(gtest/src/*.cc) \
+	$$files(src/*.cc) \

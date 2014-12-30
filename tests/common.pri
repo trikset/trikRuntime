@@ -12,25 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../global.pri)
+TEMPLATE = app
 
-HEADERS += \
-	$$PWD/include/trikTelemetry/trikTelemetry.h \
-	$$PWD/src/connection.h \
-
-SOURCES += \
-	$$PWD/src/trikTelemetry.cpp \
-	$$PWD/src/connection.cpp \
-
-TEMPLATE = lib
-
-QT += network
-
-DEFINES += TRIKTELEMETRY_LIBRARY
-
-uses(trikControl trikKernel qslog)
+QT += widgets
 
 INCLUDEPATH += \
-	../trikControl/include/ \
-	../trikKernel/include/ \
-	../qslog/ \
+	$$_PRO_FILE_PWD_/ \
+	$$PWD/thirdparty/gmock-1.6.0/include \
+	$$PWD/thirdparty/gmock-1.6.0/gtest/include \
+
+LIBS += -L$$DESTDIR
+
+LIBS += -lgmock$$CONFIGURATION_SUFFIX

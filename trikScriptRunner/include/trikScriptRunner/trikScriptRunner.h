@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-#include "trikControl/brick.h"
+#include <trikControl/brick.h>
 
 namespace trikScriptRunner {
 

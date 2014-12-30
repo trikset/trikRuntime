@@ -18,9 +18,11 @@
 # copyToDestdir function to copy arbitrary files and directories to DESTDIR
 # uses function to automatically add a library to INCLUDEPATH and LIBS.
 
-CROSS_COMPILE = $$(CROSS_COMPILE)
+COMPILER = $$(CXX)
 
-!isEmpty(CROSS_COMPILE) {
+COMPILER_IS_ARM = $$find(COMPILER, arm-oe.*)
+
+count(COMPILER_IS_ARM, 1) {
 	ARCHITECTURE = arm
 } else {
 	ARCHITECTURE = x86
