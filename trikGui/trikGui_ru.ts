@@ -158,7 +158,7 @@
     </message>
     <message>
         <source>only &apos;scripts&apos; directory</source>
-        <translation>только папка со скриптами</translation>
+        <translation>папка со скриптами</translation>
     </message>
 </context>
 <context>
