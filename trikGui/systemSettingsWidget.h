@@ -40,7 +40,8 @@ class SystemSettingsWidget : public TrikGuiDialog
 public:
 	/// Constructor.
 	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
-	explicit SystemSettingsWidget(QWidget *parent = 0);
+	/// @param fileManagerRoot - current FilesManagerRoot
+	explicit SystemSettingsWidget(MainWidget::FileManagerRootType fileManagerRoot, QWidget *parent = 0);
 
 	/// Destructor.
 	~SystemSettingsWidget();
@@ -61,6 +62,7 @@ protected:
 private:
 	void changeDefaultButton();
 	void emitCheckedDirPath();
+	void setCurrentFilesRootButton(MainWidget::FileManagerRootType fileManagerRoot);
 
 	/// Main layout of this widget.
 	QButtonGroup mButtonGroup;

@@ -150,7 +150,7 @@
     </message>
     <message>
         <source>System Settings</source>
-        <translation>Системные настройки</translation>
+        <translation>Система</translation>
     </message>
     <message>
         <source>full file system</source>

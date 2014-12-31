@@ -132,7 +132,7 @@ void StartWidget::launch()
 			emit newWidget(updateWidget);
 			result = updateWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
-			SystemSettingsWidget systemSettingsWidget;
+			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
 					, this, SLOT(changeFileManagerRoot(MainWidget::FileManagerRootType const&)));
 			emit newWidget(systemSettingsWidget);

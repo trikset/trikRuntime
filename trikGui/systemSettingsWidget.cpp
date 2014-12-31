@@ -25,7 +25,7 @@
 
 using namespace trikGui;
 
-SystemSettingsWidget::SystemSettingsWidget(QWidget *parent)
+SystemSettingsWidget::SystemSettingsWidget(MainWidget::FileManagerRootType fileManagerRoot, QWidget *parent)
 	: TrikGuiDialog(parent)
 {
 	QLabel* const allFilesLabel = new QLabel(tr("Directory 'Files' is ..."));
@@ -33,7 +33,8 @@ SystemSettingsWidget::SystemSettingsWidget(QWidget *parent)
 
 	mAllFSButton = new QRadioButton(tr("full file system"));
 	mOnlyScriptsButton = new QRadioButton(tr("only 'scripts' directory"));
-	mOnlyScriptsButton->setChecked(true);
+
+	setCurrentFilesRootButton(fileManagerRoot);
 
 	mButtonGroup.addButton(mAllFSButton);
 	mButtonGroup.addButton(mOnlyScriptsButton);
@@ -52,6 +53,17 @@ SystemSettingsWidget::~SystemSettingsWidget()
 {
 	delete mAllFSButton;
 	delete mOnlyScriptsButton;
+}
+
+void SystemSettingsWidget::setCurrentFilesRootButton(MainWidget::FileManagerRootType fileManagerRoot)
+{
+	if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
+		mAllFSButton->setChecked(true);
+		mOnlyScriptsButton->setChecked(false);
+	} else {
+		mAllFSButton->setChecked(false);
+		mOnlyScriptsButton->setChecked(true);
+	}
 }
 
 void SystemSettingsWidget::renewFocus()
