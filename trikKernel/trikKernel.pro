@@ -1,4 +1,4 @@
-# Copyright 2014 CyberTech Labs Ltd.
+# Copyright 2014 - 2015 CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 include(../global.pri)
 
-QT += network
+QT += network widgets
 
 INCLUDEPATH += $$PWD/include \
 	$$PWD/../qslog \
@@ -34,7 +34,7 @@ SOURCES += \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/trikServer.cpp \
-	$$PWD/src/coreDumping.cpp \
+	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 
 TEMPLATE = lib
 

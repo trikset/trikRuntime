@@ -14,12 +14,6 @@
 
 include(../global.pri)
 
-win32 {
-	PLATFORM = windows
-} else {
-	PLATFORM = linux
-}
-
 HEADERS += \
 	$$PWD/include/trikControl/analogSensor.h \
 	$$PWD/include/trikControl/battery.h \

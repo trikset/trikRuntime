@@ -12,14 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "coreDumping.h"
 
-#include <QtCore/QString>
-
-namespace trikKernel {
-
-namespace coreDumping {
-	void initCoreDumping(QString const &dumpDir);
-}
-
+void trikKernel::coreDumping::initCoreDumping(QString const &dumpDir)
+{
+	Q_UNUSED(dumpDir)
 }

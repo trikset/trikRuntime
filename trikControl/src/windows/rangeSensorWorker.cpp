@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,14 +12,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "src/rangeSensorWorker.h"
 
-#include <QtCore/QString>
+using namespace trikControl;
 
-namespace trikKernel {
-
-namespace coreDumping {
-	void initCoreDumping(QString const &dumpDir);
+RangeSensorWorker::RangeSensorWorker(QString const &eventFile)
+	: mEventFile(eventFile)
+{
 }
 
+RangeSensorWorker::~RangeSensorWorker()
+{
+}
+
+void RangeSensorWorker::stop()
+{
+}
+
+void RangeSensorWorker::init()
+{
+}
+
+void RangeSensorWorker::readFile()
+{
+}
+
+int RangeSensorWorker::read()
+{
+	return 0;
+}
+
+int RangeSensorWorker::readRawData()
+{
+	return 0;
 }

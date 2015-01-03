@@ -1,4 +1,4 @@
-# Copyright 2014 CyberTech Co. Ltd.
+# Copyright 2014 - 2015 CyberTech Co. Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,6 +26,12 @@ count(COMPILER_IS_ARM, 1) {
 	ARCHITECTURE = arm
 } else {
 	ARCHITECTURE = x86
+}
+
+win32 {
+	PLATFORM = windows
+} else {
+	PLATFORM = linux
 }
 
 CONFIG(debug, debug | release) {
