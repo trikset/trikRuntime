@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-# Copyright 2013-2014 Vladimir Nazarenko, Cybertech Labs Ltd.
+# Copyright 2013-2014 Vladimir Nazarenko and Cybertech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ set maxLength 120
 foreach fileName [getSourceFileNames] {
     set lineNumber 1
     foreach line [getAllLines $fileName] {
+        set line [string map {"\t" "    "} $line]
         if {[string length $line] > $maxLength} {
             report $fileName $lineNumber "line is longer than $maxLength characters"
         }

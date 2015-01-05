@@ -59,7 +59,9 @@ void Connection::processData(QByteArray const &data)
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "brickBeep");
 	} else if (command.startsWith("run:")) {
 		command.remove(0, QString("run:").length());
-		QString const fileContents = trikKernel::FileUtils::readFromFile(mTrikScriptRunner.scriptsDirPath() + "/" + command);
+		QString const fileContents = trikKernel::FileUtils::readFromFile(
+				mTrikScriptRunner.scriptsDirPath() + "/" + command);
+
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents), Q_ARG(QString, command));
 	} else if (command == "stop") {
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "abort");
