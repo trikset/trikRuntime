@@ -25,4 +25,5 @@ set rules {
   NullsForbidden
   ForeachsForbidden
   CopyrightNotice
+  Ownership
 }

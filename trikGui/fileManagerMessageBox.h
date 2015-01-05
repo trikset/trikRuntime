@@ -51,8 +51,8 @@ private:
 	void init();
 	void changeDefaultButton();
 
-	QPushButton* mOpenButton;  // Has ownership
-	QPushButton* mDeleteButton;  // Has ownership
+	QPushButton *mOpenButton;  // Has ownership
+	QPushButton *mDeleteButton;  // Has ownership
 	bool mEscStatus = false;
 };
 

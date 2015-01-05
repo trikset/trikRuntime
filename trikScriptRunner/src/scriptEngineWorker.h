@@ -84,8 +84,8 @@ private slots:
 private:
 	void onScriptEvaluated();
 
-	// Has ownership. No smart pointers here because we need to do manual memory managment
-	// due to complicated mEngine lifecycle (see .cpp for more details).
+	/// Has ownership. No smart pointers here because we need to do manual memory managment
+	/// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 	trikControl::Brick &mBrick;
 	Threading mThreadingVariable;
