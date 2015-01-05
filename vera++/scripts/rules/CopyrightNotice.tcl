@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-# Copyright 2013-2014 Vladimir Nazarenko, Cybertech Labs Ltd.
+# Copyright 2015 Cybertech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set rules {
-  CommaAtTheEnd
-  CommentsStyle
-  IncludeGuards
-  LineLength
-  NoRelativePathsInIncludes
-  NoSpacesAtTheStart
-  OneFileOneClass
-  NullsForbidden
-  ForeachsForbidden
-  CopyrightNotice
+# Checks if there is pragma once and there is no ifdef
+
+proc checkCopyrightNotice { fileName } {
+  set firstLine  [lindex [getAllLines $fileName] 0]
+  set lineCount 1 
+  if {![regexp {^/\* Copyright} $firstLine] } {
+    report $fileName 1 "No copyright notice" 
+  }
+}
+
+foreach fileName [getSourceFileNames] {
+  checkCopyrightNotice $fileName
 }
