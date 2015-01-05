@@ -143,6 +143,25 @@
     </message>
 </context>
 <context>
+    <name>trikGui::SystemSettingsWidget</name>
+    <message>
+        <source>Directory &apos;Files&apos; is ...</source>
+        <translation>Папка &apos;Файлы&apos; --- это...</translation>
+    </message>
+    <message>
+        <source>System Settings</source>
+        <translation>Система</translation>
+    </message>
+    <message>
+        <source>full file system</source>
+        <translation>вся файловая система</translation>
+    </message>
+    <message>
+        <source>only &apos;scripts&apos; directory</source>
+        <translation>папка со скриптами</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::UpdateWidget</name>
     <message>
         <source>Update is started...</source>
