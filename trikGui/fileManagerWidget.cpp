@@ -24,7 +24,7 @@
 using namespace trikGui;
 
 FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
-									, QWidget *parent)
+		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {

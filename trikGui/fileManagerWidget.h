@@ -46,11 +46,13 @@ class FileManagerWidget : public TrikGuiDialog
 
 public:
 	/// Constructor
+	/// @param controller - reference to controller object which provides access to low-level functionality.
+	/// @param fileManagerRoot - root directory for file browser.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	/// @param fileManagerRoot - current FilesManagerRoot
 	explicit FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
-								, QWidget *parent = 0);
-	~FileManagerWidget();
+			, QWidget *parent = 0);
+
+	~FileManagerWidget() override;
 
 	/// Returns main menu entry string for this widget.
 	static QString menuEntry();
