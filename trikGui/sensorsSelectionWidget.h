@@ -38,6 +38,7 @@
 
 namespace trikGui {
 
+/// Widget that allows to select sensors for testing.
 class SensorsSelectionWidget : public TrikGuiDialog
 {
 	Q_OBJECT
@@ -47,6 +48,7 @@ public:
 			, trikControl::Sensor::Type type
 			, QWidget *parent = 0);
 
+	/// Returns main menu entry string for this widget.
 	static QString menuEntry(trikControl::Sensor::Type type);
 
 	void renewFocus() override;

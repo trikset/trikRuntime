@@ -28,6 +28,7 @@
 
 namespace trikGui {
 
+/// Message box that asks user if he/she wants to open or delete a file.
 class FileManagerMessageBox : public QMessageBox
 {
 	Q_OBJECT
@@ -38,11 +39,17 @@ public:
 		Delete
 	};
 
+	/// Constructor.
+	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
 	explicit FileManagerMessageBox(QWidget *parent = 0);
-	~FileManagerMessageBox();
 
+	~FileManagerMessageBox() override;
+
+	/// Shows a widget as modal dialog.
 	void showMessage();
-	FileState userAnswer();
+
+	/// Returns user selection after dialog is closed.
+	FileState userAnswer() const;
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

@@ -34,14 +34,21 @@
 
 namespace trikGui {
 
+/// Window that shows information about currently executed script.
 class RunningWidget : public trikKernel::MainWidget
 {
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param programName - name of a script that is executed.
+	/// @param controller - reference to object providing access to low-level functionality.
+	/// @param parent - parent of a widget in terms of Qt parent-child widget relations.
 	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
 
+	/// Shows given error message on a widget.
 	void showError(QString const &error);
+
 	void renewFocus() override;
 
 protected:

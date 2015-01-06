@@ -37,7 +37,7 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath);
 
-	~ScriptRunnerProxy();
+	~ScriptRunnerProxy() override;
 
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// @param script - script in Qt Script language to be executed.

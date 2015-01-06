@@ -34,7 +34,7 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath);
 
-	~TrikScriptRunner();
+	~TrikScriptRunner() override;
 
 	/// Returns path to the directory in which scripts must be saved
 	QString scriptsDirPath() const;
@@ -48,6 +48,7 @@ public slots:
 	/// after script execution. For event-driven mode (where script has brick.run() command) script counts as finished
 	/// when it requests to quit by itself or was aborted. When script is finished, completed() signal will be emitted.
 	/// @param script - script in Qt Script language to be executed.
+	/// @param fileName - name of a file from which the script was loaded.
 	/// @warning: The multithreaded script must not contain useful actions in the global context
 	/// (function calls, variable initializations and so on in the global context is restricted).
 	/// The reason is in non-thread-safety of script engine. We must run scripts by separate script engines
@@ -56,6 +57,8 @@ public slots:
 	/// run some actions in the global context they will be invoked on each thread start.
 	void run(QString const &script, QString const &fileName);
 
+	/// Executes given direct script asynchronously. Same as run() method above, but without fileName parameter, as
+	/// direct scripts are not stored in files.
 	void run(QString const &script);
 
 	/// Executes given script as direct command, so it will use existing script execution environment (or create one
@@ -81,8 +84,13 @@ signals:
 	/// @param scriptId - unique identifier of a script completed
 	void completed(QString const &error, int scriptId);
 
+	/// Emitted when new script from file started.
+	/// @param fileName - name of a file from where the script was loaded.
+	/// @param scriptId - unique id of executed script assigned when script started.
 	void startedScript(QString const &fileName, int scriptId);
 
+	/// Emitted when new direct script started.
+	/// @param scriptId - unique id of executed script assigned when script started.
 	void startedDirectScript(int scriptId);
 
 private slots:

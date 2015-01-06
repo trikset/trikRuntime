@@ -36,6 +36,7 @@ public:
 	void reset();
 
 public slots:
+	/// Returns true if a key with given code was pressed.
 	bool wasPressed(int code);
 
 private slots:

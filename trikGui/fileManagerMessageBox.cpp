@@ -47,7 +47,7 @@ void FileManagerMessageBox::showMessage()
 	exec();
 }
 
-FileManagerMessageBox::FileState FileManagerMessageBox::userAnswer()
+FileManagerMessageBox::FileState FileManagerMessageBox::userAnswer() const
 {
 	if (!mEscStatus) {
 		QAbstractButton const* const button = clickedButton();

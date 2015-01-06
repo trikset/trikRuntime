@@ -34,6 +34,8 @@ public:
 signals:
 	/// Emitted when there is incoming TCP message.
 	void dataReady(QString const &message);
+
+	/// Emitted when peer is disconnected.
 	void tcpDisconnectedSignal();
 
 public slots:

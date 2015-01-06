@@ -27,6 +27,7 @@ namespace trikControl {
 
 class ColorSensorWorker;
 
+/// Uses virtual color sensor to detect dominant color in every cell of m * n grid of camera field of view.
 class TRIKCONTROL_EXPORT ColorSensor : public QObject
 {
 	Q_OBJECT

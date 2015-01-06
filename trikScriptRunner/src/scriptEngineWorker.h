@@ -72,6 +72,8 @@ public slots:
 	void brickBeep();
 
 signals:
+	/// Emitted when new script is started.
+	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedScript(int scriptId);
 
 private slots:

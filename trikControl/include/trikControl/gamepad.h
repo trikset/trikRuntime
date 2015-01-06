@@ -56,11 +56,26 @@ public slots:
 	int padY(int pad);
 
 signals:
-	/// @todo ??!
+	/// Emitted when user pulls finger off a pad.
+	/// @param pad - id of a pad on which the event occurs.
 	void padUp(int pad);
+
+	/// Emitted when user tilts his Android device with "wheel" turned on.
+	/// @param percent - percent of a tilt angle.
 	void wheel(int percent);
+
+	/// Emitted when user pushes or moves his finger on a pad.
+	/// @param pad - id of a pad on which the event occurs.
+	/// @param x - x coordinate of an event.
+	/// @param y - y coordinate of an event.
 	void pad(int pad, int x, int y);
+
+	/// Emitted when user pushes a button on gamepad.
+	/// @param button - button number.
+	/// @param pressed - 1 if button was pressed, 0 if it was released.
 	void button(int button, int pressed);
+
+	/// Emitted when gamepad disconnects from robot.
 	void disconnect();
 
 private slots:

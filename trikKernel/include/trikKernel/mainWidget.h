@@ -30,14 +30,14 @@ class MainWidget : public QWidget
 	Q_OBJECT
 
 public:
-
-	enum FileManagerRootType {
+	enum class FileManagerRootType {
 		scriptsDir
 		, allFS
 	};
 
 	MainWidget(QWidget *parent) : QWidget(parent) {}
-	virtual ~MainWidget() {}
+
+	~MainWidget() override {}
 
 	/// Set focus properly on this widget or one of its children.
 	virtual void renewFocus() = 0;

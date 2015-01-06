@@ -36,14 +36,19 @@ public:
 	/// Returns a list of motor type names from config.
 	QStringList servoMotorTypes() const;
 
+	/// @todo: comment this.
 	QStringList analogSensorTypes() const;
 
+	/// @todo: comment this.
 	int analogSensorTypeRawValue1(QString const &analogSensorType) const;
 
+	/// @todo: comment this.
 	int analogSensorTypeRawValue2(QString const &analogSensorType) const;
 
+	/// @todo: comment this.
 	int analogSensorTypeNormalizedValue1(QString const &analogSensorType) const;
 
+	/// @todo: comment this.
 	int analogSensorTypeNormalizedValue2(QString const &analogSensorType) const;
 
 	/// Returns a list of sensor type names from config.
@@ -67,128 +72,190 @@ public:
 	/// Returns minimal physical reading value of a digital sensor (corresponds to 0 in client program).
 	int digitalSensorTypeMin(QString const &digitalSensorType) const;
 
+	/// @todo: comment this.
 	int digitalSensorTypeMax(QString const &digitalSensorType) const;
 
+	/// @todo: comment this.
 	double encoderTypeRawToDegrees(QString const &encoderType) const;
 
+	/// @todo: comment this.
 	QStringList servoMotorPorts() const;
 
+	/// @todo: comment this.
 	QString servoMotorDeviceFile(QString const &port) const;
 
+	/// @todo: comment this.
 	QString servoMotorPeriodFile(QString const &port) const;
 
+	/// @todo: comment this.
 	int servoMotorPeriod(QString const &port) const;
 
+	/// @todo: comment this.
 	QString servoMotorDefaultType(QString const &port) const;
 
+	/// @todo: comment this.
 	bool servoMotorInvert(QString const &port) const;
 
+	/// @todo: comment this.
 	QStringList pwmCapturePorts() const;
 
+	/// @todo: comment this.
 	QString pwmCaptureFrequencyFile(QString const &port) const;
 
+	/// @todo: comment this.
 	QString pwmCaptureDutyFile(QString const &port) const;
 
+	/// @todo: comment this.
 	QStringList powerMotorPorts() const;
 
+	/// @todo: comment this.
 	int powerMotorI2cCommandNumber(QString const &port) const;
 
+	/// @todo: comment this.
 	bool powerMotorInvert(QString const &port) const;
 
+	/// @todo: comment this.
 	QStringList analogSensorPorts() const;
 
+	/// @todo: comment this.
 	int analogSensorI2cCommandNumber(QString const &port) const;
 
+	/// @todo: comment this.
 	QString analogSensorDefaultType(QString const &port) const;
 
+	/// @todo: comment this.
 	QStringList encoderPorts() const;
 
+	/// @todo: comment this.
 	int encoderI2cCommandNumber(QString const &port) const;
 
+	/// @todo: comment this.
 	QString encoderDefaultType(QString const &port) const;
 
+	/// @todo: comment this.
 	QStringList digitalSensorPorts() const;
 
+	/// @todo: comment this.
 	QString digitalSensorDeviceFile(QString const &port) const;
 
+	/// @todo: comment this.
 	QString digitalSensorDefaultType(QString const &port) const;
 
+	/// @todo: comment this.
 	QStringList rangeSensorPorts() const;
 
+	/// @todo: comment this.
 	QString rangeSensorEventFile(QString const &port) const;
 
+	/// @todo: comment this.
 	QString playWavFileCommand() const;
 
+	/// @todo: comment this.
 	QString playMp3FileCommand() const;
 
+	/// @todo: comment this.
 	bool hasAccelerometer() const;
 
+	/// @todo: comment this.
 	int accelerometerMin() const;
 
+	/// @todo: comment this.
 	int accelerometerMax() const;
 
+	/// @todo: comment this.
 	QString accelerometerDeviceFile() const;
 
+	/// @todo: comment this.
 	bool hasGyroscope() const;
 
+	/// @todo: comment this.
 	int gyroscopeMin() const;
 
+	/// @todo: comment this.
 	int gyroscopeMax() const;
 
+	/// @todo: comment this.
 	QString gyroscopeDeviceFile() const;
 
+	/// @todo: comment this.
 	QString i2cPath() const;
 
+	/// @todo: comment this.
 	int i2cDeviceId() const;
 
+	/// @todo: comment this.
 	QString ledRedDeviceFile() const;
 
+	/// @todo: comment this.
 	QString ledGreenDeviceFile() const;
 
+	/// @todo: comment this.
 	int ledOn() const;
 
+	/// @todo: comment this.
 	int ledOff() const;
 
+	/// @todo: comment this.
 	QString keysDeviceFile() const;
 
+	/// @todo: comment this.
 	bool hasGamepad() const;
 
+	/// @todo: comment this.
 	int gamepadPort() const;
 
+	/// @todo: comment this.
 	bool hasLineSensor() const;
 
+	/// @todo: comment this.
 	QString lineSensorScript() const;
 
+	/// @todo: comment this.
 	QString lineSensorInFifo() const;
 
+	/// @todo: comment this.
 	QString lineSensorOutFifo() const;
 
+	/// @todo: comment this.
 	double lineSensorToleranceFactor() const;
 
+	/// @todo: comment this.
 	bool hasObjectSensor() const;
 
+	/// @todo: comment this.
 	QString objectSensorScript() const;
 
+	/// @todo: comment this.
 	QString objectSensorInFifo() const;
 
+	/// @todo: comment this.
 	QString objectSensorOutFifo() const;
 
+	/// @todo: comment this.
 	double objectSensorToleranceFactor() const;
 
+	/// @todo: comment this.
 	bool hasColorSensor() const;
 
+	/// @todo: comment this.
 	QString colorSensorScript() const;
 
+	/// @todo: comment this.
 	QString colorSensorInFifo() const;
 
+	/// @todo: comment this.
 	QString colorSensorOutFifo() const;
 
+	/// @todo: comment this.
 	int colorSensorM() const;
 
+	/// @todo: comment this.
 	int colorSensorN() const;
 
+	/// @todo: comment this.
 	bool hasMailbox() const;
 
+	/// @todo: comment this.
 	int mailboxServerPort() const;
 
 private:

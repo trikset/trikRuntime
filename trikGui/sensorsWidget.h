@@ -43,9 +43,10 @@ class SensorsWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
+	/// Constructor.
 	explicit SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent = 0);
 	~SensorsWidget();
-	int exec();
+	int exec() override;
 	void renewFocus() override;
 
 protected:

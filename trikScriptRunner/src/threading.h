@@ -58,9 +58,11 @@ public:
 	void waitForAll();
 
 private:
+	/// Separate thread for script execution.
 	class ScriptThread : public QRunnable
 	{
 	public:
+		/// Constructor.
 		ScriptThread(QString const &mainScript, QString const &function, ScriptEngineWorker &runner);
 
 	private:
