@@ -38,10 +38,8 @@ public:
 	DigitalSensor(int min, int max, QString const &deviceFile);
 
 public slots:
-	/// Returns current raw reading of a sensor.
-	int read();
+	int read() override;
 
-	/// Returns current real raw reading of a sensor.
 	int readRawData() override;
 
 private:
