@@ -20,6 +20,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
 
+#include "analogSensor.h"
 #include "angularServoMotor.h"
 #include "continiousRotationServoMotor.h"
 #include "powerMotor.h"
@@ -145,17 +146,11 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	mBattery = new Battery(*mI2cCommunicator);
 
 	if (mConfigurer->hasAccelerometer()) {
-		mAccelerometer = new Sensor3d(mConfigurer->accelerometerMin()
-				, mConfigurer->accelerometerMax()
-				, mConfigurer->accelerometerDeviceFile()
-				);
+		mAccelerometer = new VectorSensor(mConfigurer->accelerometerDeviceFile());
 	}
 
 	if (mConfigurer->hasGyroscope()) {
-		mGyroscope = new Sensor3d(mConfigurer->gyroscopeMin()
-				, mConfigurer->gyroscopeMax()
-				, mConfigurer->gyroscopeDeviceFile()
-				);
+		mGyroscope = new VectorSensor(mConfigurer->gyroscopeDeviceFile());
 	}
 
 	mKeys = new Keys(mConfigurer->keysDeviceFile());
@@ -387,12 +382,12 @@ Battery *Brick::battery()
 	return mBattery;
 }
 
-Sensor3d *Brick::accelerometer()
+VectorSensor *Brick::accelerometer()
 {
 	return mAccelerometer;
 }
 
-Sensor3d *Brick::gyroscope()
+VectorSensor *Brick::gyroscope()
 {
 	return mGyroscope;
 }

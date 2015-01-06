@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2013-2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/sensor3dWorker.h"
+#include "vectorSensor.h"
 
-#include <QtCore/QDebug>
+#include "src/vectorSensorWorker.h"
 
 using namespace trikControl;
 
-Sensor3dWorker::Sensor3dWorker(int min, int max, QString const &controlFile)
+VectorSensor::VectorSensor(const QString &controlFile)
+	: mVectorSensorWorker(new VectorSensorWorker(controlFile))
 {
-	Q_UNUSED(min)
-	Q_UNUSED(max)
-	Q_UNUSED(controlFile)
+	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
+	mVectorSensorWorker->moveToThread(&mWorkerThread);
+	mWorkerThread.start();
 }
 
-void Sensor3dWorker::readFile()
+
+VectorSensor::~VectorSensor()
 {
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
-QVector<int> Sensor3dWorker::read()
+QVector<int> VectorSensor::read() const
 {
-	QVector<int> const result;
-	return result;
+	return mVectorSensorWorker->read();
 }

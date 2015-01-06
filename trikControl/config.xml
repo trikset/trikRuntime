@@ -164,8 +164,8 @@ Use it if JCx ports are configured to work as PWM signal generators.
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event"/>
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event"/>
 		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" defaultType="volumeSensor" />
-		<accelerometer min="-32767" max="32767" deviceFile="/dev/input/event1" disabled="false" />
-		<gyroscope min="-32767" max="32767" deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" disabled="false" />
+		<accelerometer deviceFile="/dev/input/event1" disabled="false" />
+		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" disabled="false" />
 	</digitalSensors>
 
 	<!-- Analog sensor types.

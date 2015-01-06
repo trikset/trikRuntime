@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2014 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QThread>
 #include <QtCore/QHash>
 #include <QtCore/QStringList>
 #include <QtCore/QScopedPointer>
@@ -25,7 +24,6 @@
 
 #include "declSpec.h"
 
-#include "analogSensor.h"
 #include "battery.h"
 #include "colorSensor.h"
 #include "display.h"
@@ -39,7 +37,7 @@
 #include "objectSensor.h"
 #include "pwmCapture.h"
 #include "sensor.h"
-#include "sensor3d.h"
+#include "vectorSensor.h"
 
 #include <trikKernel/lazyMainWidget.h>
 
@@ -49,6 +47,7 @@ class Configurer;
 class I2cCommunicator;
 class PowerMotor;
 class ServoMotor;
+class AnalogSensor;
 class DigitalSensor;
 class RangeSensor;
 
@@ -112,10 +111,10 @@ public slots:
 	QStringList encoderPorts() const;
 
 	/// Returns reference to on-board accelerometer.
-	Sensor3d *accelerometer();
+	VectorSensor *accelerometer();
 
 	/// Returns reference to on-board gyroscope.
-	Sensor3d *gyroscope();
+	VectorSensor *gyroscope();
 
 	/// Returns reference to high-level line detector sensor using camera.
 	LineSensor *lineSensor();
@@ -177,8 +176,8 @@ signals:
 	void stopped();
 
 private:
-	Sensor3d *mAccelerometer = nullptr;  // has ownership.
-	Sensor3d *mGyroscope = nullptr;  // has ownership.
+	VectorSensor *mAccelerometer = nullptr;  // has ownership.
+	VectorSensor *mGyroscope = nullptr;  // has ownership.
 	LineSensor *mLineSensor = nullptr;  // Has ownership.
 	ColorSensor *mColorSensor = nullptr;  // Has ownership.
 	ObjectSensor *mObjectSensor = nullptr;  // Has ownership.

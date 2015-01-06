@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,41 +15,40 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QSocketNotifier>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QThread>
 #include <QtCore/QVector>
-
-#include "declSpec.h"
+#include <QtCore/QReadWriteLock>
 
 namespace trikControl {
 
-class Sensor3dWorker;
-
-/// Sensor that returns 3d vector.
-class TRIKCONTROL_EXPORT Sensor3d : public QObject
+/// Handles events from sensor, intended to work in separate thread.
+class VectorSensorWorker : public QObject
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
 	/// @param deviceFile - device file for this sensor.
-	Sensor3d(int min, int max, QString const &deviceFile);
-
-	~Sensor3d() override;
+	VectorSensorWorker(QString const &deviceFile);
 
 signals:
 	/// Emitted when new sensor reading is ready.
 	void newData(QVector<int> reading);
 
 public slots:
-	/// Returns current raw reading of a sensor in a form of vector with 3 coordinates.
-	QVector<int> read() const;
+	/// Returns current raw reading of a sensor.
+	QVector<int> read();
+
+private slots:
+	/// Updates current reading when new value is ready.
+	void readFile();
 
 private:
-	QScopedPointer<Sensor3dWorker> mSensor3dWorker;
-	QThread mWorkerThread;
+	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	QVector<int> mReading;
+	int mDeviceFileDescriptor;
+	QReadWriteLock mLock;
 };
 
 }

@@ -20,7 +20,6 @@
 
 #include <trikKernel/fileUtils.h>
 
-#include <trikControl/analogSensor.h>
 #include <trikControl/battery.h>
 #include <trikControl/colorSensor.h>
 #include <trikControl/display.h>
@@ -30,7 +29,7 @@
 #include <trikControl/motor.h>
 #include <trikControl/objectSensor.h>
 #include <trikControl/sensor.h>
-#include <trikControl/sensor3d.h>
+#include <trikControl/vectorSensor.h>
 
 #include "scriptableParts.h"
 #include "utils.h"
@@ -41,7 +40,6 @@ using namespace trikScriptRunner;
 using namespace trikControl;
 
 Q_DECLARE_METATYPE(Threading*)
-Q_DECLARE_METATYPE(AnalogSensor*)
 Q_DECLARE_METATYPE(ColorSensor*)
 Q_DECLARE_METATYPE(Battery*)
 Q_DECLARE_METATYPE(Display*)
@@ -54,7 +52,7 @@ Q_DECLARE_METATYPE(Mailbox*)
 Q_DECLARE_METATYPE(Motor*)
 Q_DECLARE_METATYPE(ObjectSensor*)
 Q_DECLARE_METATYPE(Sensor*)
-Q_DECLARE_METATYPE(Sensor3d*)
+Q_DECLARE_METATYPE(VectorSensor*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -210,7 +208,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, mailboxToScriptValue, mailboxFromScriptValue);
 	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, sensor3dToScriptValue, sensor3dFromScriptValue);
+	qScriptRegisterMetaType(mEngine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);

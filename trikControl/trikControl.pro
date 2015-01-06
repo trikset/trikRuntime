@@ -15,12 +15,10 @@
 include(../global.pri)
 
 HEADERS += \
-	$$PWD/include/trikControl/analogSensor.h \
 	$$PWD/include/trikControl/battery.h \
 	$$PWD/include/trikControl/brick.h \
 	$$PWD/include/trikControl/colorSensor.h \
 	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/include/trikControl/digitalSensor.h \
 	$$PWD/include/trikControl/display.h \
 	$$PWD/include/trikControl/encoder.h \
 	$$PWD/include/trikControl/gamepad.h \
@@ -32,12 +30,14 @@ HEADERS += \
 	$$PWD/include/trikControl/objectSensor.h \
 	$$PWD/include/trikControl/pwmCapture.h \
 	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/sensor3d.h \
+	$$PWD/include/trikControl/vectorSensor.h \
 	$$PWD/src/abstractVirtualSensorWorker.h \
+	$$PWD/src/analogSensor.h \
 	$$PWD/src/angularServoMotor.h \
 	$$PWD/src/colorSensorWorker.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/continiousRotationServoMotor.h \
+	$$PWD/src/digitalSensor.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/i2cCommunicator.h \
@@ -49,7 +49,7 @@ HEADERS += \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/rangeSensor.h \
 	$$PWD/src/rangeSensorWorker.h \
-	$$PWD/src/sensor3dWorker.h \
+	$$PWD/src/vectorSensorWorker.h \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/tcpConnector.h \
 
@@ -80,17 +80,18 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
-	$$PWD/src/sensor3d.cpp \
+	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/sensor3dWorker.cpp \
+	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
 
 OTHER_FILES += \
 	config.xml \
+	config_capture.xml \
 
 TEMPLATE = lib
 

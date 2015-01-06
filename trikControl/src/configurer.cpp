@@ -63,8 +63,8 @@ Configurer::Configurer(QString const &configFilePath)
 	loadEncoderTypes(root);
 	loadSound(root);
 
-	mAccelerometer = loadSensor3d(root, "accelerometer");
-	mGyroscope = loadSensor3d(root, "gyroscope");
+	mAccelerometer = loadVectorSensor(root, "accelerometer");
+	mGyroscope = loadVectorSensor(root, "gyroscope");
 
 	loadI2c(root);
 	loadLed(root);
@@ -286,16 +286,6 @@ bool Configurer::hasAccelerometer() const
 	return mAccelerometer.enabled;
 }
 
-int Configurer::accelerometerMin() const
-{
-	return mAccelerometer.min;
-}
-
-int Configurer::accelerometerMax() const
-{
-	return mAccelerometer.max;
-}
-
 QString Configurer::accelerometerDeviceFile() const
 {
 	return mAccelerometer.deviceFile;
@@ -304,16 +294,6 @@ QString Configurer::accelerometerDeviceFile() const
 bool Configurer::hasGyroscope() const
 {
 	return mGyroscope.enabled;
-}
-
-int Configurer::gyroscopeMin() const
-{
-	return mGyroscope.min;
-}
-
-int Configurer::gyroscopeMax() const
-{
-	return mGyroscope.max;
 }
 
 QString Configurer::gyroscopeDeviceFile() const
@@ -832,7 +812,7 @@ void Configurer::loadSound(QDomElement const &root)
 
 }
 
-Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QString const &tagName)
+Configurer::OnBoardSensor Configurer::loadVectorSensor(QDomElement const &root, QString const &tagName)
 {
 	OnBoardSensor result;
 
@@ -846,8 +826,6 @@ Configurer::OnBoardSensor Configurer::loadSensor3d(QDomElement const &root, QStr
 
 		QDomElement const sensor = root.elementsByTagName(tagName).at(0).toElement();
 
-		result.min = sensor.attribute("min").toInt();
-		result.max = sensor.attribute("max").toInt();
 		result.deviceFile = QString(sensor.attribute("deviceFile"));
 		result.enabled = true;
 	}

@@ -29,7 +29,7 @@
 #include <trikControl/motor.h>
 #include <trikControl/objectSensor.h>
 #include <trikControl/sensor.h>
-#include <trikControl/sensor3d.h>
+#include <trikControl/vectorSensor.h>
 
 namespace trikScriptRunner {
 
@@ -72,7 +72,7 @@ void timerFromScriptValue(QScriptValue const &object, QTimer* &out);
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in);
 void sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out);
 
-QScriptValue sensor3dToScriptValue(QScriptEngine *engine, trikControl::Sensor3d* const &in);
-void sensor3dFromScriptValue(QScriptValue const &object, trikControl::Sensor3d* &out);
+QScriptValue vectorSensorToScriptValue(QScriptEngine *engine, trikControl::VectorSensor* const &in);
+void vectorSensorFromScriptValue(QScriptValue const &object, trikControl::VectorSensor* &out);
 
 }

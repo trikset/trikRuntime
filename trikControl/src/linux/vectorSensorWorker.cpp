@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/sensor3dWorker.h"
+#include "src/vectorSensorWorker.h"
 
 #include <QtCore/QDebug>
 
@@ -30,10 +30,8 @@
 
 using namespace trikControl;
 
-Sensor3dWorker::Sensor3dWorker(int min, int max, const QString &controlFile)
+VectorSensorWorker::VectorSensorWorker(const QString &controlFile)
 	: mDeviceFileDescriptor(0)
-	, mMax(max)
-	, mMin(min)
 {
 	mReading << 0 << 0 << 0;
 
@@ -52,7 +50,7 @@ Sensor3dWorker::Sensor3dWorker(int min, int max, const QString &controlFile)
 	mSocketNotifier->setEnabled(true);
 }
 
-void Sensor3dWorker::readFile()
+void VectorSensorWorker::readFile()
 {
 	struct input_event event;
 	int size = 0;
@@ -98,7 +96,7 @@ void Sensor3dWorker::readFile()
 	mSocketNotifier->setEnabled(true);
 }
 
-QVector<int> Sensor3dWorker::read()
+QVector<int> VectorSensorWorker::read()
 {
 	mLock.lockForRead();
 	QVector<int> const result = mReading;

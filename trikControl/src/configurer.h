@@ -157,22 +157,10 @@ public:
 	bool hasAccelerometer() const;
 
 	/// @todo: comment this.
-	int accelerometerMin() const;
-
-	/// @todo: comment this.
-	int accelerometerMax() const;
-
-	/// @todo: comment this.
 	QString accelerometerDeviceFile() const;
 
 	/// @todo: comment this.
 	bool hasGyroscope() const;
-
-	/// @todo: comment this.
-	int gyroscopeMin() const;
-
-	/// @todo: comment this.
-	int gyroscopeMax() const;
 
 	/// @todo: comment this.
 	QString gyroscopeDeviceFile() const;
@@ -333,8 +321,6 @@ private:
 	};
 
 	struct OnBoardSensor {
-		int min = 0;
-		int max = 0;
 		QString deviceFile;
 		bool enabled = false;
 	};
@@ -360,7 +346,7 @@ private:
 	void loadDigitalSensorTypes(QDomElement const &root);
 	void loadEncoderTypes(QDomElement const &root);
 	void loadSound(QDomElement const &root);
-	static OnBoardSensor loadSensor3d(QDomElement const &root, QString const &tagName);
+	static OnBoardSensor loadVectorSensor(QDomElement const &root, QString const &tagName);
 	void loadI2c(QDomElement const &root);
 	void loadLed(QDomElement const &root);
 	void loadKeys(QDomElement const &root);
