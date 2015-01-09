@@ -99,7 +99,8 @@ void trikScriptRunner::sensorFromScriptValue(QScriptValue const &object, trikCon
 	out = qobject_cast<SensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::vectorSensorToScriptValue(QScriptEngine *engine, trikControl::VectorSensorInterface* const &in)
+QScriptValue trikScriptRunner::vectorSensorToScriptValue(
+		QScriptEngine *engine, trikControl::VectorSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
@@ -109,7 +110,8 @@ void trikScriptRunner::vectorSensorFromScriptValue(QScriptValue const &object, t
 	out = qobject_cast<VectorSensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::lineSensorToScriptValue(QScriptEngine *engine, trikControl::LineSensorInterface* const &in)
+QScriptValue trikScriptRunner::lineSensorToScriptValue(
+		QScriptEngine *engine, trikControl::LineSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
@@ -119,7 +121,8 @@ void trikScriptRunner::lineSensorFromScriptValue(QScriptValue const &object, tri
 	out = qobject_cast<LineSensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::colorSensorToScriptValue(QScriptEngine *engine, trikControl::ColorSensorInterface* const &in)
+QScriptValue trikScriptRunner::colorSensorToScriptValue(
+		QScriptEngine *engine, trikControl::ColorSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
@@ -129,7 +132,8 @@ void trikScriptRunner::colorSensorFromScriptValue(QScriptValue const &object, tr
 	out = qobject_cast<ColorSensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensorInterface* const &in)
+QScriptValue trikScriptRunner::objectSensorToScriptValue(
+		QScriptEngine *engine, trikControl::ObjectSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }

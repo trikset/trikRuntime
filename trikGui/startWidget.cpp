@@ -122,7 +122,7 @@ void StartWidget::launch()
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::SensorInterface::Type::analogSensor);
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::analogSensor);
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)) {
