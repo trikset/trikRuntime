@@ -18,7 +18,7 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 #include "threading.h"
 
@@ -36,7 +36,7 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath);
+	ScriptEngineWorker(trikControl::BrickInterface &brick, QString const &startDirPath);
 
 	/// Copies this instance of ScriptEngineWorker and returns a new one. Script engine is copied deeply
 	/// i.e. the current state of the global scripting object is copied recursively.
@@ -89,7 +89,7 @@ private:
 	/// Has ownership. No smart pointers here because we need to do manual memory managment
 	/// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
 	bool mEngineReset;

@@ -12,35 +12,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+//#pragma once
 
-#include <QtCore/QObject>
+//#include <QtCore/QObject>
 
-#include "declSpec.h"
+//#include "declSpec.h"
 
-namespace trikControl {
+//namespace trikControl {
 
-/// Abstract sensor class. It is inherited by AnalogSensor and DigitalSensor classes.
-class TRIKCONTROL_EXPORT Sensor : public QObject
-{
-	Q_OBJECT
+///// Abstract sensor class. It is inherited by AnalogSensor and DigitalSensor classes.
+//class TRIKCONTROL_EXPORT Sensor : public QObject
+//{
+//	Q_OBJECT
 
-public:
-	/// Destructor.
-	virtual ~Sensor() {}
+//public:
+//	/// Destructor.
+//	virtual ~Sensor() {}
 
-	enum Type {
-		analogSensor
-		, digitalSensor
-		, specialSensor
-	};
+//	enum Type {
+//		analogSensor
+//		, digitalSensor
+//		, specialSensor
+//	};
 
-public slots:
-	/// Returns current raw reading of a sensor.
-	virtual int read() = 0;
+//public slots:
+//	/// Returns current raw reading of a sensor.
+//	virtual int read() = 0;
 
-	/// Returns current real raw reading of a sensor.
-	virtual int readRawData() = 0;
-};
+//	/// Returns current real raw reading of a sensor.
+//	virtual int readRawData() = 0;
+//};
 
-}
+//}

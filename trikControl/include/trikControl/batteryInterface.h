@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Matvey Bryksin, Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,28 +20,17 @@
 
 namespace trikControl {
 
-class I2cCommunicator;
-
 /// Provides battery voltage info.
-class TRIKCONTROL_EXPORT Battery : public QObject
+class TRIKCONTROL_EXPORT BatteryInterface : public QObject
 {
 	Q_OBJECT
 
-public:
-	/// Constructor.
-	/// @param communicator - I2C communicator to use to query battery status.
-	Battery(I2cCommunicator &communicator);
-
 public slots:
-
 	/// Returns current battery voltage in volts.
-	float readVoltage();
+	virtual float readVoltage() = 0;
 
 	/// Returns current raw reading of battery.
-	float readRawDataVoltage();
-
-private:
-	I2cCommunicator &mCommunicator;
+	virtual float readRawDataVoltage() = 0;
 };
 
 }

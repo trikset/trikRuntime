@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@
 #include <QtCore/QDebug>
 
 #include <trikKernel/fileUtils.h>
+#include <trikControl/brickFactory.h>
 
 #include "runningWidget.h"
 
@@ -28,10 +29,10 @@ int const communicatorPort = 8888;
 int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
-	: mBrick(*thread(), configPath, startDirPath)
-	, mScriptRunner(mBrick, startDirPath)
+	: mBrick(trikControl::BrickFactory::createBrick(*thread(), configPath, startDirPath))
+	, mScriptRunner(*mBrick, startDirPath)
 	, mCommunicator(mScriptRunner)
-	, mTelemetry(mBrick)
+	, mTelemetry(*mBrick)
 	, mStartDirPath(startDirPath)
 {
 	connect(&mScriptRunner, SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
@@ -41,7 +42,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	connect(&mScriptRunner, SIGNAL(startedDirectScript(int))
 			, this, SLOT(directScriptExecutionStarted(int)));
 
-	connect(&mBrick, SIGNAL(stopped()), this, SIGNAL(brickStopped()));
+	connect(mBrick.data(), SIGNAL(stopped()), this, SIGNAL(brickStopped()));
 
 	mCommunicator.startServer(communicatorPort);
 	mTelemetry.startServer(telemetryPort);
@@ -69,16 +70,16 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
-	emit closeGraphicsWidget(mBrick.graphicsWidget());
+	emit closeGraphicsWidget(mBrick->graphicsWidget());
 	mScriptRunner.abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
 	// processed as if a script finished by itself.
 }
 
-trikControl::Brick &Controller::brick()
+trikControl::BrickInterface &Controller::brick()
 {
-	return mBrick;
+	return *mBrick;
 }
 
 QString Controller::startDirPath() const
@@ -121,7 +122,7 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 		}
 	}
 
-	emit closeGraphicsWidget(mBrick.graphicsWidget());
+	emit closeGraphicsWidget(mBrick->graphicsWidget());
 }
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
@@ -142,7 +143,7 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scr
 	// with the keyboard file.
 	mRunningWidgets[scriptId]->grabKeyboard();
 
-	emit addGraphicsWidget(mBrick.graphicsWidget());
+	emit addGraphicsWidget(mBrick->graphicsWidget());
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

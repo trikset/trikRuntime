@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Matvey Bryksin, Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QScopedPointer>
-#include <QtCore/QThread>
-#include <QtCore/QHash>
-#include <QtCore/QSet>
 
 #include "declSpec.h"
 
@@ -27,33 +23,25 @@ namespace trikControl {
 class TcpConnector;
 
 /// Class to support remote control of a robot using TCP client.
-class TRIKCONTROL_EXPORT Gamepad : public QObject
+class TRIKCONTROL_EXPORT GamepadInterface : public QObject
 {
 	Q_OBJECT
 
-public:
-	/// Constructor.
-	/// @param port - TCP port of a gamepad server.
-	Gamepad(int port);
-
-	/// Destructor declared here for QScopedPointer to be able to clean up forward-declared TcpConnector.
-	virtual ~Gamepad();
-
 public slots:
 	/// Clear data about previous pad events.
-	void reset();
+	virtual void reset() = 0;
 
 	/// Returns true, if given pad button, and clears "pressed" state for that button.
-	bool buttonWasPressed(int buttonNumber);
+	virtual bool buttonWasPressed(int buttonNumber) = 0;
 
 	/// Returns current state of the pad, true if pressed.
-	bool isPadPressed(int pad);
+	virtual bool isPadPressed(int pad) = 0;
 
 	/// Returns current X coordinate of given pad or -1 if this pad is not pressed.
-	int padX(int pad);
+	virtual int padX(int pad) = 0;
 
 	/// Returns current Y coordinate of given pad or -1 if this pad is not pressed.
-	int padY(int pad);
+	virtual int padY(int pad) = 0;
 
 signals:
 	/// Emitted when user pulls finger off a pad.
@@ -77,24 +65,6 @@ signals:
 
 	/// Emitted when gamepad disconnects from robot.
 	void disconnect();
-
-private slots:
-	void parse(QString const &message);
-
-private:
-	Q_DISABLE_COPY(Gamepad)
-
-	struct PadStatus {
-		int x;
-		int y;
-		bool isPressed;
-	};
-
-	QScopedPointer<TcpConnector> mListener;
-	QThread mNetworkThread;
-
-	QSet<int> mButtonWasPressed;
-	QHash<int, PadStatus> mPads;
 };
 
 }

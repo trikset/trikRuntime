@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,17 @@
 
 #pragma once
 
-#include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
-#include <QtCore/QVector>
 
-#include "declSpec.h"
+#include "vectorSensorInterface.h"
 
 namespace trikControl {
 
 class VectorSensorWorker;
 
 /// Sensor that returns a vector.
-class TRIKCONTROL_EXPORT VectorSensor : public QObject
+class TRIKCONTROL_EXPORT VectorSensor : public VectorSensorInterface
 {
 	Q_OBJECT
 
@@ -39,13 +37,8 @@ public:
 
 	~VectorSensor() override;
 
-signals:
-	/// Emitted when new sensor reading is ready.
-	void newData(QVector<int> reading);
-
 public slots:
-	/// Returns current raw reading of a sensor.
-	QVector<int> read() const;
+	QVector<int> read() const override;
 
 private:
 	QScopedPointer<VectorSensorWorker> mVectorSensorWorker;

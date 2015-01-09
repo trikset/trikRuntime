@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, Smirnov Mikhail, Kogutich Denis
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,80 +14,71 @@
 
 #pragma once
 
-#include <QtCore/QThread>
+#include <QtCore/QObject>
 #include <QtCore/QString>
 
-#include "declSpec.h"
 #include <trikKernel/lazyMainWidget.h>
+
+#include "declSpec.h"
 
 namespace trikControl {
 
-class GuiWorker;
-
 /// Provides ability to draw something on robot display.
-class TRIKCONTROL_EXPORT Display : public QObject
+class TRIKCONTROL_EXPORT DisplayInterface : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param guiThread - GUI thread of an application.
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
-	explicit Display(QThread &guiThread, QString const &startDirPath);
-
-	~Display();
-
 	/// Returns a main GraphicsWidget.
-	trikKernel::LazyMainWidget &graphicsWidget();
+	virtual trikKernel::LazyMainWidget &graphicsWidget() = 0;
 
 public slots:
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
-	/// supported formats, but .jpg, .png, .bmp, .gif are supported.
-	void showImage(QString const &fileName);
+	///        supported formats, but .jpg, .png, .bmp, .gif are supported.
+	virtual void showImage(QString const &fileName) = 0;
 
 	/// Add a label to the specific position of the screen. If there already is a label in these coordinates, its
 	/// contents will be updated.
 	/// @param text - label text.
 	/// @param x - label x coordinate.
 	/// @param y - label y coordinate.
-	void addLabel(QString const &text, int x, int y);
+	virtual void addLabel(QString const &text, int x, int y) = 0;
 
 	/// Remove all labels from the screen.
-	void removeLabels();
+	virtual void removeLabels() = 0;
 
 	/// Set painter color.
-	void setPainterColor(QString const &color);
+	virtual void setPainterColor(QString const &color) = 0;
 
 	/// Set painter width.
-	void setPainterWidth(int penWidth);
+	virtual void setPainterWidth(int penWidth) = 0;
 
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
 	/// @param x2 - second point's x coordinate.
 	/// @param y2 - second point's y coordinate.
-	void drawLine(int x1, int y1, int x2, int y2);
+	virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
 
 	/// Draw point on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
-	void drawPoint(int x, int y);
+	virtual void drawPoint(int x, int y) = 0;
 
 	/// Draw rect on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	void drawRect(int x, int y, int width, int height);
+	virtual void drawRect(int x, int y, int width, int height) = 0;
 
 	/// Draw ellipse.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
-	void drawEllipse(int x, int y, int width, int height);
+	virtual void drawEllipse(int x, int y, int width, int height) = 0;
 
 	/// Draw arc on the widget.
 	/// @param x - x coordinate.
@@ -96,22 +87,17 @@ public slots:
 	/// @param height - height rect forming an arc.
 	/// @param startAngle - start angle.
 	/// @param spanAngle - end andle.
-	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
+	virtual void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle) = 0;
 
 	/// Sets background for a picture.
 	/// @param color - color of a background.
-	void setBackground(QString const &color);
+	virtual void setBackground(QString const &color) = 0;
 
 	/// Hides and clears widget on which everything is drawn.
-	void hide();
+	virtual void hide() = 0;
 
 	/// Clear everything painted with this object.
-	void clear();
-
-private:
-	QThread &mGuiThread;
-	QString const mStartDirPath;
-	GuiWorker *mGuiWorker;  // Has ownership.
+	virtual void clear() = 0;
 };
 
 }

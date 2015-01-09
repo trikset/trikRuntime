@@ -20,16 +20,16 @@
 
 #include <trikKernel/fileUtils.h>
 
-#include <trikControl/battery.h>
-#include <trikControl/colorSensor.h>
-#include <trikControl/display.h>
-#include <trikControl/encoder.h>
-#include <trikControl/lineSensor.h>
-#include <trikControl/mailbox.h>
-#include <trikControl/motor.h>
-#include <trikControl/objectSensor.h>
-#include <trikControl/sensor.h>
-#include <trikControl/vectorSensor.h>
+#include <trikControl/batteryInterface.h>
+#include <trikControl/colorSensorInterface.h>
+#include <trikControl/displayInterface.h>
+#include <trikControl/encoderInterface.h>
+#include <trikControl/lineSensorInterface.h>
+#include <trikControl/mailboxInterface.h>
+#include <trikControl/motorInterface.h>
+#include <trikControl/objectSensorInterface.h>
+#include <trikControl/sensorInterface.h>
+#include <trikControl/vectorSensorInterface.h>
 
 #include "scriptableParts.h"
 #include "utils.h"
@@ -40,23 +40,23 @@ using namespace trikScriptRunner;
 using namespace trikControl;
 
 Q_DECLARE_METATYPE(Threading*)
-Q_DECLARE_METATYPE(ColorSensor*)
-Q_DECLARE_METATYPE(Battery*)
-Q_DECLARE_METATYPE(Display*)
-Q_DECLARE_METATYPE(Encoder*)
-Q_DECLARE_METATYPE(Gamepad*)
-Q_DECLARE_METATYPE(Keys*)
-Q_DECLARE_METATYPE(Led*)
-Q_DECLARE_METATYPE(LineSensor*)
-Q_DECLARE_METATYPE(Mailbox*)
-Q_DECLARE_METATYPE(Motor*)
-Q_DECLARE_METATYPE(ObjectSensor*)
-Q_DECLARE_METATYPE(Sensor*)
-Q_DECLARE_METATYPE(VectorSensor*)
+Q_DECLARE_METATYPE(ColorSensorInterface*)
+Q_DECLARE_METATYPE(BatteryInterface*)
+Q_DECLARE_METATYPE(DisplayInterface*)
+Q_DECLARE_METATYPE(EncoderInterface*)
+Q_DECLARE_METATYPE(GamepadInterface*)
+Q_DECLARE_METATYPE(KeysInterface*)
+Q_DECLARE_METATYPE(LedInterface*)
+Q_DECLARE_METATYPE(LineSensorInterface*)
+Q_DECLARE_METATYPE(MailboxInterface*)
+Q_DECLARE_METATYPE(MotorInterface*)
+Q_DECLARE_METATYPE(ObjectSensorInterface*)
+Q_DECLARE_METATYPE(SensorInterface*)
+Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
-ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath)
+ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick, QString const &startDirPath)
 	: mEngine(nullptr)
 	, mBrick(brick)
 	, mThreadingVariable(*this)

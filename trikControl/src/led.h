@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov, Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,38 +15,38 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QString>
 #include <QtCore/QFile>
-#include <QtCore/QVector>
 
-#include "declSpec.h"
+#include "ledInterface.h"
 
 namespace trikControl {
 
-/// Provides characteristics of PWM signal supplied to the port.
-class TRIKCONTROL_EXPORT PwmCapture : public QObject
+/// Implementation of LED control for a real robot.
+class Led : public LedInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param frequencyFile - device file with frequency.
-	/// @param dutyFile - device file with duty.
-	PwmCapture(QString const &frequencyFile, QString const &dutyFile);
+	Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, int off);
 
-	/// Destructor.
-	~PwmCapture();
+	~Led() override;
 
 public slots:
+	void red() override;
 
-	/// Returns three readings of PWM signal frequency.
-	QVector<int> frequency();
+	void green() override;
 
-	/// Returns PWM signal duty.
-	int duty();
+	void orange() override;
+
+	void off() override;
 
 private:
-	QFile mFrequencyFile;
-	QFile mDutyFile;
+	QFile mRedDeviceFile;
+	QFile mGreenDeviceFile;
+	int mOn;
+	int mOff;
 };
 
 }

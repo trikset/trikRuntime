@@ -25,7 +25,7 @@ using namespace trikScriptRunner;
 // name of the directory in which scripts must be saved
 QString const constScriptsDirName = "scripts";
 
-TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
+TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick, QString const &startDirPath)
 	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)

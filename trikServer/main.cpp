@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,8 @@
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
-#include <trikControl/brick.h>
+#include <trikControl/brickFactory.h>
+#include <trikControl/brickInterface.h>
 #include <trikKernel/coreDumping.h>
 
 #include <QsLog.h>
@@ -93,9 +94,10 @@ int main(int argc, char *argv[])
 
 	qDebug() << "Running TrikServer on port" << port;
 
-	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+	QScopedPointer<trikControl::BrickInterface> brick(
+			trikControl::BrickFactory::createBrick(*app.thread(), configPath, startDirPath));
 
-	trikCommunicator::TrikCommunicator communicator(brick, startDirPath);
+	trikCommunicator::TrikCommunicator communicator(*brick, startDirPath);
 	communicator.startServer(port);
 
 	return app.exec();

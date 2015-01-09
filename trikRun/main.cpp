@@ -27,7 +27,8 @@
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/coreDumping.h>
-#include <trikControl/brick.h>
+#include <trikControl/brickFactory.h>
+#include <trikControl/brickInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
 #include <QsLog.h>
@@ -101,14 +102,16 @@ int main(int argc, char *argv[])
 	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikRun started";
 
-	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+	QScopedPointer<trikControl::BrickInterface> brick(
+			trikControl::BrickFactory::createBrick(*app.thread(), configPath, startDirPath));
+
 	GraphicsWidgetHandler graphicsWidgetHandler;
 
-	QObject::connect(&brick.graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
+	QObject::connect(&brick->graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
 			, &graphicsWidgetHandler, SLOT(show(trikKernel::MainWidget&)));
-	QObject::connect(&brick.graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
+	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
-	trikScriptRunner::TrikScriptRunner runner(brick, startDirPath);
+	trikScriptRunner::TrikScriptRunner runner(*brick, startDirPath);
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
 
 	if (app.arguments().contains("-s")) {

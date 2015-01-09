@@ -23,9 +23,21 @@
 #include "analogSensor.h"
 #include "angularServoMotor.h"
 #include "continiousRotationServoMotor.h"
+#include "display.h"
 #include "powerMotor.h"
 #include "digitalSensor.h"
 #include "rangeSensor.h"
+#include "pwmCapture.h"
+#include "encoder.h"
+#include "battery.h"
+#include "vectorSensor.h"
+#include "keys.h"
+#include "led.h"
+#include "gamepad.h"
+#include "lineSensor.h"
+#include "objectSensor.h"
+#include "colorSensor.h"
+#include "mailbox.h"
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -37,7 +49,7 @@ using namespace trikControl;
 Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &startDirPath)
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(nullptr)
-	, mDisplay(guiThread, startDirPath)
+	, mDisplay(new Display(guiThread, startDirPath))
 	, mInEventDrivenMode(false)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -230,14 +242,14 @@ Brick::~Brick()
 
 trikKernel::LazyMainWidget &Brick::graphicsWidget()
 {
-	return mDisplay.graphicsWidget();
+	return mDisplay->graphicsWidget();
 }
 
 void Brick::reset()
 {
 	stop();
 	mKeys->reset();
-	mDisplay.clear();
+	mDisplay->clear();
 	mInEventDrivenMode = false;
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
@@ -287,7 +299,7 @@ void Brick::stop()
 	}
 
 	mLed->red();
-	mDisplay.hide();
+	mDisplay->hide();
 
 	if (mLineSensor) {
 		mLineSensor->stop();
@@ -306,7 +318,7 @@ void Brick::stop()
 	}
 }
 
-Motor *Brick::motor(QString const &port)
+MotorInterface *Brick::motor(QString const &port)
 {
 	if (mPowerMotors.contains(port)) {
 		return mPowerMotors[port];
@@ -317,12 +329,12 @@ Motor *Brick::motor(QString const &port)
 	}
 }
 
-PwmCapture *Brick::pwmCapture(QString const &port)
+PwmCaptureInterface *Brick::pwmCapture(QString const &port)
 {
 	return mPwmCaptures.value(port, nullptr);
 }
 
-Sensor *Brick::sensor(QString const &port)
+SensorInterface *Brick::sensor(QString const &port)
 {
 	if (mAnalogSensors.contains(port)) {
 		return mAnalogSensors[port];
@@ -335,15 +347,15 @@ Sensor *Brick::sensor(QString const &port)
 	}
 }
 
-QStringList Brick::motorPorts(Motor::Type type) const
+QStringList Brick::motorPorts(MotorInterface::Type type) const
 {
 	switch (type) {
-		case Motor::powerMotor: {
-			return mPowerMotors.keys();
-		}
-		case Motor::servoMotor: {
-			return mServoMotors.keys();
-		}
+	case MotorInterface::Type::powerMotor: {
+		return mPowerMotors.keys();
+	}
+	case MotorInterface::Type::servoMotor: {
+		return mServoMotors.keys();
+	}
 	}
 
 	return QStringList();
@@ -354,60 +366,60 @@ QStringList Brick::pwmCapturePorts() const
 	return mPwmCaptures.keys();
 }
 
-QStringList Brick::sensorPorts(Sensor::Type type) const
+QStringList Brick::sensorPorts(SensorInterface::Type type) const
 {
 	switch (type) {
-		case Sensor::analogSensor: {
-			return mAnalogSensors.keys();
-		}
-		case Sensor::digitalSensor: {
-			return mDigitalSensors.keys() + mRangeSensors.keys();
-		}
-		case Sensor::specialSensor: {
-			// Special sensors can not be connected to standard ports, they have their own methods to access them.
-			return QStringList();
-		}
+	case SensorInterface::Type::analogSensor: {
+		return mAnalogSensors.keys();
+	}
+	case SensorInterface::Type::digitalSensor: {
+		return mDigitalSensors.keys() + mRangeSensors.keys();
+	}
+	case SensorInterface::Type::specialSensor: {
+		// Special sensors can not be connected to standard ports, they have their own methods to access them.
+		return QStringList();
+	}
 	}
 
 	return QStringList();
 }
 
-Encoder *Brick::encoder(QString const &port)
+EncoderInterface *Brick::encoder(QString const &port)
 {
 	return mEncoders.value(port, nullptr);
 }
 
-Battery *Brick::battery()
+BatteryInterface *Brick::battery()
 {
 	return mBattery;
 }
 
-VectorSensor *Brick::accelerometer()
+VectorSensorInterface *Brick::accelerometer()
 {
 	return mAccelerometer;
 }
 
-VectorSensor *Brick::gyroscope()
+VectorSensorInterface *Brick::gyroscope()
 {
 	return mGyroscope;
 }
 
-LineSensor *Brick::lineSensor()
+LineSensorInterface *Brick::lineSensor()
 {
 	return mLineSensor;
 }
 
-ColorSensor *Brick::colorSensor()
+ColorSensorInterface *Brick::colorSensor()
 {
 	return mColorSensor;
 }
 
-ObjectSensor *Brick::objectSensor()
+ObjectSensorInterface *Brick::objectSensor()
 {
 	return mObjectSensor;
 }
 
-Keys* Brick::keys()
+KeysInterface* Brick::keys()
 {
 	return mKeys;
 }
@@ -417,7 +429,7 @@ QStringList Brick::encoderPorts() const
 	return mEncoders.keys();
 }
 
-Gamepad* Brick::gamepad()
+GamepadInterface* Brick::gamepad()
 {
 	return mGamepad;
 }
@@ -445,17 +457,17 @@ qint64 Brick::time() const
 	return QDateTime::currentMSecsSinceEpoch();
 }
 
-Display *Brick::display()
+DisplayInterface *Brick::display()
 {
-	return &mDisplay;
+	return mDisplay.data();
 }
 
-Led *Brick::led()
+LedInterface *Brick::led()
 {
 	return mLed;
 }
 
-Mailbox *Brick::mailbox()
+MailboxInterface *Brick::mailbox()
 {
 	return mMailbox.data();
 }

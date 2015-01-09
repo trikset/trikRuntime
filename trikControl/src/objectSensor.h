@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QVector>
 
-#include "declSpec.h"
-#include "sensor.h"
+#include "objectSensorInterface.h"
 
 namespace trikControl {
 
 class ObjectSensorWorker;
 
-/// Uses virtual line sensor to detect x coordinate of a center of an object that was in camera's field of view
-/// when "detect" method was called. Used mainly to follow the line.
-class TRIKCONTROL_EXPORT ObjectSensor : public QObject
+/// Implementation of object sensor for real robot.
+class TRIKCONTROL_EXPORT ObjectSensor : public ObjectSensorInterface
 {
 	Q_OBJECT
 
@@ -44,24 +39,14 @@ public:
 
 	~ObjectSensor() override;
 
-signals:
-	/// Emitted when sensor is stopped successfully.
-	void stopped();
-
 public slots:
-	/// Initializes a camera.
-	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
-	void init(bool showOnDisplay);
+	void init(bool showOnDisplay) override;
 
-	/// Detects the color of an object in center of current frame and memorizes it.
-	void detect();
+	void detect() override;
 
-	/// Returns x, y coordinates and size of an object in a form of vector [x; y; size].
-	/// Returns 0 in every field if detect() was not called.
-	QVector<int> read();
+	QVector<int> read() override;
 
-	/// Stops detection until init() will be called again.
-	void stop();
+	void stop() override;
 
 private:
 	/// Worker object that handles sensor in separate thread.

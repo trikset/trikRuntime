@@ -24,7 +24,7 @@
 
 using namespace trikCommunicator;
 
-TrikCommunicator::TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath)
+TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick, QString const &startDirPath)
 	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, startDirPath), true)
 {
 }

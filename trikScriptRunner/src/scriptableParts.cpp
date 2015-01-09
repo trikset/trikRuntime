@@ -19,124 +19,124 @@
 using namespace trikScriptRunner;
 using namespace trikControl;
 
-QScriptValue trikScriptRunner::batteryToScriptValue(QScriptEngine *engine, trikControl::Battery* const &in)
+QScriptValue trikScriptRunner::batteryToScriptValue(QScriptEngine *engine, trikControl::BatteryInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::batteryFromScriptValue(QScriptValue const &object, trikControl::Battery* &out)
+void trikScriptRunner::batteryFromScriptValue(QScriptValue const &object, trikControl::BatteryInterface* &out)
 {
-	out = qobject_cast<Battery*>(object.toQObject());
+	out = qobject_cast<BatteryInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::displayToScriptValue(QScriptEngine *engine, trikControl::Display* const &in)
+QScriptValue trikScriptRunner::displayToScriptValue(QScriptEngine *engine, trikControl::DisplayInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::displayFromScriptValue(QScriptValue const &object, trikControl::Display* &out)
+void trikScriptRunner::displayFromScriptValue(QScriptValue const &object, trikControl::DisplayInterface* &out)
 {
-	out = qobject_cast<Display*>(object.toQObject());
+	out = qobject_cast<DisplayInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::encoderToScriptValue(QScriptEngine *engine, trikControl::Encoder* const &in)
+QScriptValue trikScriptRunner::encoderToScriptValue(QScriptEngine *engine, trikControl::EncoderInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::encoderFromScriptValue(QScriptValue const &object, trikControl::Encoder* &out)
+void trikScriptRunner::encoderFromScriptValue(QScriptValue const &object, trikControl::EncoderInterface* &out)
 {
-	out = qobject_cast<Encoder*>(object.toQObject());
+	out = qobject_cast<EncoderInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::gamepadToScriptValue(QScriptEngine *engine, trikControl::Gamepad* const &in)
+QScriptValue trikScriptRunner::gamepadToScriptValue(QScriptEngine *engine, trikControl::GamepadInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::gamepadFromScriptValue(QScriptValue const &object, trikControl::Gamepad* &out)
+void trikScriptRunner::gamepadFromScriptValue(QScriptValue const &object, trikControl::GamepadInterface* &out)
 {
-	out = qobject_cast<Gamepad*>(object.toQObject());
+	out = qobject_cast<GamepadInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::keysToScriptValue(QScriptEngine *engine, trikControl::Keys* const &in)
+QScriptValue trikScriptRunner::keysToScriptValue(QScriptEngine *engine, trikControl::KeysInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::keysFromScriptValue(QScriptValue const &object, trikControl::Keys* &out)
+void trikScriptRunner::keysFromScriptValue(QScriptValue const &object, trikControl::KeysInterface* &out)
 {
-	out = qobject_cast<Keys*>(object.toQObject());
+	out = qobject_cast<KeysInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::ledToScriptValue(QScriptEngine *engine, trikControl::Led* const &in)
+QScriptValue trikScriptRunner::ledToScriptValue(QScriptEngine *engine, trikControl::LedInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::ledFromScriptValue(QScriptValue const &object, trikControl::Led* &out)
+void trikScriptRunner::ledFromScriptValue(QScriptValue const &object, trikControl::LedInterface* &out)
 {
-	out = qobject_cast<Led*>(object.toQObject());
+	out = qobject_cast<LedInterface*>(object.toQObject());
 }
 
-void trikScriptRunner::motorFromScriptValue(QScriptValue const &object, Motor* &out)
+void trikScriptRunner::motorFromScriptValue(QScriptValue const &object, MotorInterface* &out)
 {
-	out = qobject_cast<Motor*>(object.toQObject());
+	out = qobject_cast<MotorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::motorToScriptValue(QScriptEngine *engine, Motor* const &in)
+QScriptValue trikScriptRunner::motorToScriptValue(QScriptEngine *engine, MotorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-QScriptValue trikScriptRunner::sensorToScriptValue(QScriptEngine *engine, trikControl::Sensor* const &in)
+QScriptValue trikScriptRunner::sensorToScriptValue(QScriptEngine *engine, trikControl::SensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::sensorFromScriptValue(QScriptValue const &object, trikControl::Sensor* &out)
+void trikScriptRunner::sensorFromScriptValue(QScriptValue const &object, trikControl::SensorInterface* &out)
 {
-	out = qobject_cast<Sensor*>(object.toQObject());
+	out = qobject_cast<SensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::vectorSensorToScriptValue(QScriptEngine *engine, trikControl::VectorSensor* const &in)
+QScriptValue trikScriptRunner::vectorSensorToScriptValue(QScriptEngine *engine, trikControl::VectorSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::vectorSensorFromScriptValue(QScriptValue const &object, trikControl::VectorSensor* &out)
+void trikScriptRunner::vectorSensorFromScriptValue(QScriptValue const &object, trikControl::VectorSensorInterface* &out)
 {
-	out = qobject_cast<VectorSensor*>(object.toQObject());
+	out = qobject_cast<VectorSensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::lineSensorToScriptValue(QScriptEngine *engine, trikControl::LineSensor* const &in)
+QScriptValue trikScriptRunner::lineSensorToScriptValue(QScriptEngine *engine, trikControl::LineSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::lineSensorFromScriptValue(QScriptValue const &object, trikControl::LineSensor* &out)
+void trikScriptRunner::lineSensorFromScriptValue(QScriptValue const &object, trikControl::LineSensorInterface* &out)
 {
-	out = qobject_cast<LineSensor*>(object.toQObject());
+	out = qobject_cast<LineSensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::colorSensorToScriptValue(QScriptEngine *engine, trikControl::ColorSensor* const &in)
+QScriptValue trikScriptRunner::colorSensorToScriptValue(QScriptEngine *engine, trikControl::ColorSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::colorSensorFromScriptValue(QScriptValue const &object, trikControl::ColorSensor* &out)
+void trikScriptRunner::colorSensorFromScriptValue(QScriptValue const &object, trikControl::ColorSensorInterface* &out)
 {
-	out = qobject_cast<ColorSensor*>(object.toQObject());
+	out = qobject_cast<ColorSensorInterface*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensor* const &in)
+QScriptValue trikScriptRunner::objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensorInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::objectSensorFromScriptValue(QScriptValue const &object, trikControl::ObjectSensor* &out)
+void trikScriptRunner::objectSensorFromScriptValue(QScriptValue const &object, trikControl::ObjectSensorInterface* &out)
 {
-	out = qobject_cast<ObjectSensor*>(object.toQObject());
+	out = qobject_cast<ObjectSensorInterface*>(object.toQObject());
 }
 
 QScriptValue trikScriptRunner::timerToScriptValue(QScriptEngine *engine, QTimer* const &in)
@@ -149,12 +149,12 @@ void trikScriptRunner::timerFromScriptValue(QScriptValue const &object, QTimer* 
 	out = qobject_cast<QTimer*>(object.toQObject());
 }
 
-QScriptValue trikScriptRunner::mailboxToScriptValue(QScriptEngine *engine, trikControl::Mailbox * const &in)
+QScriptValue trikScriptRunner::mailboxToScriptValue(QScriptEngine *engine, trikControl::MailboxInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::mailboxFromScriptValue(QScriptValue const &object, trikControl::Mailbox * &out)
+void trikScriptRunner::mailboxFromScriptValue(QScriptValue const &object, trikControl::MailboxInterface* &out)
 {
-	out = qobject_cast<Mailbox*>(object.toQObject());
+	out = qobject_cast<MailboxInterface*>(object.toQObject());
 }

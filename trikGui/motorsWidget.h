@@ -28,7 +28,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVector>
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 #include "trikGuiDialog.h"
 
@@ -46,15 +46,15 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param type - type of motors we want to test.
 	/// @param parent - pointer to a parent widget.
-	MotorsWidget(trikControl::Brick &brick
-				, trikControl::Motor::Type type
+	MotorsWidget(trikControl::BrickInterface &brick
+				, trikControl::MotorInterface::Type type
 				, QWidget *parent = 0);
 
 	/// Destructor.
-	~MotorsWidget();
+	~MotorsWidget() override;
 
 	/// Title for this widget in a main menu.
-	static QString menuEntry(trikControl::Motor::Type type);
+	static QString menuEntry(trikControl::MotorInterface::Type type);
 
 	void renewFocus() override;
 
@@ -64,7 +64,7 @@ protected:
 private:
 	QVBoxLayout mLayout;
 
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.
 };

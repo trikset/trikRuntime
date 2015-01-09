@@ -26,7 +26,7 @@
 	#include <QtWidgets/QLabel>
 #endif
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 #include "trikGuiDialog.h"
 #include "numberSelectionWidget.h"
@@ -43,7 +43,7 @@ public:
 	/// Constructor.
 	/// @param brick - reference to TRIKControl brick object.
 	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
-	explicit CommunicationSettingsWidget(trikControl::Brick &brick, QWidget *parent = 0);
+	explicit CommunicationSettingsWidget(trikControl::BrickInterface &brick, QWidget *parent = 0);
 
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
@@ -97,7 +97,7 @@ private:
 	ConnectButton mConnectButton;
 
 	/// Reference to TRIKControl brick object.
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 };
 
 }

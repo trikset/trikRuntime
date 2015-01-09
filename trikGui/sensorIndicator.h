@@ -29,7 +29,7 @@
 #endif
 
 namespace trikControl {
-	class Sensor;
+class SensorInterface;
 }
 
 namespace trikGui {
@@ -44,14 +44,14 @@ public:
 	/// @param port - port to which sensor is plugged.
 	/// @param sensor - sensor which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	SensorIndicator(QString const &port, trikControl::Sensor &sensor, QWidget *parent = 0);
+	SensorIndicator(QString const &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
 
 public slots:
 	/// Rereads sensor and updates widget contents.
 	void renew();
 
 private:
-	trikControl::Sensor &mSensor;
+	trikControl::SensorInterface &mSensor;
 	int const mMaxValue;
 	int const mMinValue;
 

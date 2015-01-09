@@ -1,4 +1,5 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov
+ * and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,43 +15,35 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QFile>
-
-#include "declSpec.h"
+#include "encoderInterface.h"
 
 namespace trikControl {
 
-/// Controls light-emitting diode on control brick.
-class TRIKCONTROL_EXPORT Led : public QObject
+class I2cCommunicator;
+
+/// Implementation of encoder for real robot.
+class Encoder : public EncoderInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, int off);
-
-	~Led();
+	/// @param communicator - I2C communicator.
+	/// @param i2cCommandNumber - number of I2C command to query this encoder.
+	/// @param rawToDegrees - coefficient for converting raw encoder readings to degrees.
+	Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double rawToDegrees);
 
 public slots:
-	/// Trun LED on with red color.
-	void red();
+	int read() override;
 
-	/// Trun LED on with green color.
-	void green();
+	int readRawData() override;
 
-	/// Trun LED on with orange color.
-	void orange();
-
-	/// Turn LED off.
-	void off();
+	void reset() override;
 
 private:
-	QFile mRedDeviceFile;
-	QFile mGreenDeviceFile;
-	int mOn;
-	int mOff;
+	I2cCommunicator &mCommunicator;
+	int mI2cCommandNumber;
+	double mRawToDegrees;
 };
 
 }

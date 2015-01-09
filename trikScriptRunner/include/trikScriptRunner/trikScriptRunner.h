@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 namespace trikScriptRunner {
 
@@ -32,7 +32,7 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath);
+	TrikScriptRunner(trikControl::BrickInterface &brick, QString const &startDirPath);
 
 	~TrikScriptRunner() override;
 

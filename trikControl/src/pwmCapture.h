@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Roman Kurbatov, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,36 +14,36 @@
 
 #pragma once
 
-#include <QtCore/QString>
 #include <QtCore/QFile>
-#include <QtCore/QTextStream>
 
-#include "sensorInterface.h"
+#include "pwmCaptureInterface.h"
 
 namespace trikControl {
 
-/// Generic TRIK sensor.
-class DigitalSensor : public SensorInterface
+/// Implementation of PWM capture for real robot.
+class TRIKCONTROL_EXPORT PwmCapture : public PwmCaptureInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param deviceFile - device file for this sensor.
-	DigitalSensor(int min, int max, QString const &deviceFile);
+	/// @param frequencyFile - device file with frequency.
+	/// @param dutyFile - device file with duty.
+	PwmCapture(QString const &frequencyFile, QString const &dutyFile);
+
+	/// Destructor.
+	~PwmCapture() override;
 
 public slots:
-	int read() override;
+	/// Returns three readings of PWM signal frequency.
+	QVector<int> frequency() override;
 
-	int readRawData() override;
+	/// Returns PWM signal duty.
+	int duty() override;
 
 private:
-	int mMin;
-	int mMax;
-	QFile mDeviceFile;
-	QTextStream mStream;
+	QFile mFrequencyFile;
+	QFile mDutyFile;
 };
 
 }

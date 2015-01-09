@@ -15,7 +15,7 @@
 #pragma once
 
 #include <trikKernel/trikServer.h>
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 namespace trikTelemetry {
 
@@ -32,13 +32,13 @@ class TrikTelemetry : public trikKernel::TrikServer
 public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients
-	TrikTelemetry(trikControl::Brick &brick);
+	TrikTelemetry(trikControl::BrickInterface &brick);
 
 private:
 	Connection *connectionFactory();
 
 	/// A Brick which is used by Connections to respond to clients' requests
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 };
 
 }

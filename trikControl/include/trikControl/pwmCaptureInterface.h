@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "batteryIndicator.h"
+#pragma once
 
-#include <QtCore/QString>
+#include <QtCore/QObject>
+#include <QtCore/QVector>
 
-using namespace trikGui;
+#include "declSpec.h"
 
-BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent)
-	: QLabel(parent)
-	, mBrick(brick)
+namespace trikControl {
+
+/// Provides characteristics of PWM signal supplied to the port.
+class TRIKCONTROL_EXPORT PwmCaptureInterface : public QObject
 {
-	renew();
+	Q_OBJECT
 
-	mRenewTimer.setInterval(mRenewInterval);
-	mRenewTimer.setSingleShot(false);
-	connect(&mRenewTimer, SIGNAL(timeout()), this, SLOT(renew()));
-	mRenewTimer.start();
-}
+public slots:
+	/// Returns three readings of PWM signal frequency.
+	virtual QVector<int> frequency() = 0;
 
-void BatteryIndicator::renew()
-{
-	setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+	/// Returns PWM signal duty.
+	virtual int duty() = 0;
+};
+
 }

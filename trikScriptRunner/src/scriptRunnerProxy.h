@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 #include <QtCore/QWaitCondition>
 #include <QtScript/QScriptEngine>
 
-#include "trikControl/brick.h"
+#include <trikControl/brickInterface.h>
 
 namespace trikScriptRunner {
 
@@ -35,7 +35,7 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath);
+	ScriptRunnerProxy(trikControl::BrickInterface &brick, QString const &startDirPath);
 
 	~ScriptRunnerProxy() override;
 

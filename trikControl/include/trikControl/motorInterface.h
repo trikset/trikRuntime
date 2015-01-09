@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,13 @@
 
 namespace trikControl {
 
-/// Abstract motor class. It is inherited by PowerMotor and ServoMotor classes.
-class TRIKCONTROL_EXPORT Motor : public QObject
+/// Abstract motor. It is differently implemented by different motor types (like servo and power motors).
+class TRIKCONTROL_EXPORT MotorInterface : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Destructor.
-	virtual ~Motor() {}
-
-	enum Type {
+	enum class Type {
 		powerMotor
 		, servoMotor
 	};

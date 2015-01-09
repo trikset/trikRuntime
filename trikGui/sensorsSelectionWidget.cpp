@@ -20,8 +20,8 @@
 
 using namespace trikGui;
 
-SensorsSelectionWidget::SensorsSelectionWidget(trikControl::Brick &brick
-		, trikControl::Sensor::Type type
+SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &brick
+		, trikControl::SensorInterface::Type type
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("Select sensors for testing:"))
@@ -48,16 +48,16 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::Brick &brick
 	setLayout(&mLayout);
 }
 
-QString SensorsSelectionWidget::menuEntry(trikControl::Sensor::Type type)
+QString SensorsSelectionWidget::menuEntry(trikControl::SensorInterface::Type type)
 {
 	switch (type) {
-	case trikControl::Sensor::analogSensor: {
+	case trikControl::SensorInterface::Type::analogSensor: {
 		return tr("Test analog sensors");
 	}
-	case trikControl::Sensor::digitalSensor: {
+	case trikControl::SensorInterface::Type::digitalSensor: {
 		return tr("Test digital sensors");
 	}
-	case trikControl::Sensor::specialSensor: {
+	case trikControl::SensorInterface::Type::specialSensor: {
 		return QString();
 	}
 	}

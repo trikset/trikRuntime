@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,34 +20,20 @@
 
 namespace trikControl {
 
-class I2cCommunicator;
-
 /// Encoder of power motor.
-class TRIKCONTROL_EXPORT Encoder : public QObject
+class TRIKCONTROL_EXPORT EncoderInterface : public QObject
 {
 	Q_OBJECT
 
-public:
-	/// Constructor.
-	/// @param communicator - I2C communicator.
-	/// @param i2cCommandNumber - number of I2C command to query this encoder.
-	/// @param rawToDegrees - coefficient for converting raw encoder readings to degrees.
-	Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double rawToDegrees);
-
 public slots:
 	/// Returns current encoder reading (in degrees).
-	int read();
+	virtual int read() = 0;
 
 	/// Returns current raw reading of encoder.
-	int readRawData();
+	virtual int readRawData() = 0;
 
 	/// Resets encoder by setting current reading to 0.
-	void reset();
-
-private:
-	I2cCommunicator &mCommunicator;
-	int mI2cCommandNumber;
-	double mRawToDegrees;
+	virtual void reset() = 0;
 };
 
 }

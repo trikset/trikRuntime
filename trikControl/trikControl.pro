@@ -15,22 +15,40 @@
 include(../global.pri)
 
 HEADERS += \
-	$$PWD/include/trikControl/battery.h \
-	$$PWD/include/trikControl/brick.h \
-	$$PWD/include/trikControl/colorSensor.h \
+	$$PWD/include/trikControl/batteryInterface.h \
+	$$PWD/include/trikControl/brickFactory.h \
+	$$PWD/include/trikControl/brickInterface.h \
+	$$PWD/include/trikControl/colorSensorInterface.h \
 	$$PWD/include/trikControl/declSpec.h \
-	$$PWD/include/trikControl/display.h \
-	$$PWD/include/trikControl/encoder.h \
-	$$PWD/include/trikControl/gamepad.h \
-	$$PWD/include/trikControl/keys.h \
-	$$PWD/include/trikControl/led.h \
-	$$PWD/include/trikControl/lineSensor.h \
-	$$PWD/include/trikControl/mailbox.h \
-	$$PWD/include/trikControl/motor.h \
-	$$PWD/include/trikControl/objectSensor.h \
-	$$PWD/include/trikControl/pwmCapture.h \
-	$$PWD/include/trikControl/sensor.h \
-	$$PWD/include/trikControl/vectorSensor.h \
+	$$PWD/include/trikControl/displayInterface.h \
+	$$PWD/include/trikControl/encoderInterface.h \
+	$$PWD/include/trikControl/gamepadInterface.h \
+	$$PWD/include/trikControl/keysInterface.h \
+	$$PWD/include/trikControl/ledInterface.h \
+	$$PWD/include/trikControl/lineSensorInterface.h \
+	$$PWD/include/trikControl/mailboxInterface.h \
+	$$PWD/include/trikControl/motorInterface.h \
+	$$PWD/include/trikControl/objectSensorInterface.h \
+	$$PWD/include/trikControl/pwmCaptureInterface.h \
+	$$PWD/include/trikControl/sensorInterface.h \
+	$$PWD/include/trikControl/vectorSensorInterface.h \
+
+HEADERS += \
+	$$PWD/src/battery.h \
+	$$PWD/src/brick.h \
+	$$PWD/src/colorSensor.h \
+	$$PWD/src/display.h \
+	$$PWD/src/encoder.h \
+	$$PWD/src/gamepad.h \
+	$$PWD/src/keys.h \
+	$$PWD/src/led.h \
+	$$PWD/src/lineSensor.h \
+	$$PWD/src/mailbox.h \
+	$$PWD/src/motor.h \
+	$$PWD/src/objectSensor.h \
+	$$PWD/src/pwmCapture.h \
+	$$PWD/src/sensor.h \
+	$$PWD/src/vectorSensor.h \
 	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/analogSensor.h \
 	$$PWD/src/angularServoMotor.h \
@@ -58,6 +76,7 @@ SOURCES += \
 	$$PWD/src/angularServoMotor.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/brick.cpp \
+	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
 	$$PWD/src/colorSensorWorker.cpp \
 	$$PWD/src/configurer.cpp \

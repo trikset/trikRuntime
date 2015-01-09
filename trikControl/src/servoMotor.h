@@ -18,12 +18,12 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "motor.h"
+#include "motorInterface.h"
 
 namespace trikControl {
 
 /// TRIK servomotor.
-class ServoMotor : public Motor
+class ServoMotor : public MotorInterface
 {
 	Q_OBJECT
 

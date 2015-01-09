@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "motor.h"
+#include "motorInterface.h"
 
 namespace trikControl {
 
 class I2cCommunicator;
 
 /// TRIK power motor.
-class PowerMotor : public Motor
+class PowerMotor : public MotorInterface
 {
 	Q_OBJECT
 

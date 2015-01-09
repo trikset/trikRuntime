@@ -15,7 +15,7 @@
 #pragma once
 
 #include <trikKernel/connection.h>
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 namespace trikTelemetry {
 
@@ -32,7 +32,7 @@ class Connection : public trikKernel::Connection
 public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients.
-	explicit Connection(trikControl::Brick &brick);
+	explicit Connection(trikControl::BrickInterface &brick);
 
 private:
 	void processData(QByteArray const &data) override;
@@ -41,7 +41,7 @@ private:
 
 	bool isButtonPressed(QString const &buttonName);
 
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 };
 
 }

@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "batteryIndicator.h"
+#pragma once
 
-#include <QtCore/QString>
+#include <QtCore/QObject>
+#include <QtCore/QVector>
 
-using namespace trikGui;
+#include "declSpec.h"
 
-BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent)
-	: QLabel(parent)
-	, mBrick(brick)
+namespace trikControl {
+
+/// Sensor that returns a vector.
+class TRIKCONTROL_EXPORT VectorSensorInterface : public QObject
 {
-	renew();
+	Q_OBJECT
 
-	mRenewTimer.setInterval(mRenewInterval);
-	mRenewTimer.setSingleShot(false);
-	connect(&mRenewTimer, SIGNAL(timeout()), this, SLOT(renew()));
-	mRenewTimer.start();
-}
+signals:
+	/// Emitted when new sensor reading is ready.
+	void newData(QVector<int> reading);
 
-void BatteryIndicator::renew()
-{
-	setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+public slots:
+	/// Returns current raw reading of a sensor.
+	virtual QVector<int> read() const = 0;
+};
+
 }

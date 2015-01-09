@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,25 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "batteryIndicator.h"
+#pragma once
 
-#include <QtCore/QString>
+#include <QtCore/QObject>
 
-using namespace trikGui;
+#include "declSpec.h"
 
-BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent)
-	: QLabel(parent)
-	, mBrick(brick)
+namespace trikControl {
+
+/// Controls light-emitting diode on a brick.
+class TRIKCONTROL_EXPORT LedInterface : public QObject
 {
-	renew();
+	Q_OBJECT
 
-	mRenewTimer.setInterval(mRenewInterval);
-	mRenewTimer.setSingleShot(false);
-	connect(&mRenewTimer, SIGNAL(timeout()), this, SLOT(renew()));
-	mRenewTimer.start();
-}
+public slots:
+	/// Turn LED on with red color.
+	virtual void red() = 0;
 
-void BatteryIndicator::renew()
-{
-	setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+	/// Turn LED on with green color.
+	virtual void green() = 0;
+
+	/// Turn LED on with orange color.
+	virtual void orange() = 0;
+
+	/// Turn LED off.
+	virtual void off() = 0;
+};
+
 }

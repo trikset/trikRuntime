@@ -18,7 +18,7 @@
 
 using namespace trikTelemetry;
 
-TrikTelemetry::TrikTelemetry(trikControl::Brick &brick)
+TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
 	: trikKernel::TrikServer([this] () { return connectionFactory(); })
 	, mBrick(brick)
 {

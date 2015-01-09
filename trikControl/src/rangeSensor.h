@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 #include <QtCore/QThread>
 
-#include "sensor.h"
+#include "sensorInterface.h"
 
 namespace trikControl {
 
 class RangeSensorWorker;
 
 /// TRIK range sensor.
-class RangeSensor : public Sensor
+class RangeSensor : public SensorInterface
 {
 	Q_OBJECT
 

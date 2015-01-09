@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Nikita Batov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,14 @@
 #include <QtCore/QString>
 
 #include "declSpec.h"
-#include "sensor.h"
+#include "sensorInterface.h"
 
 namespace trikControl {
 
 class I2cCommunicator;
 
 /// Analog TRIK sensor.
-class TRIKCONTROL_EXPORT AnalogSensor : public Sensor
+class TRIKCONTROL_EXPORT AnalogSensor : public SensorInterface
 {
 	Q_OBJECT
 

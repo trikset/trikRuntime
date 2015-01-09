@@ -12,9 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "include/trikControl/mailbox.h"
-
-#include "src/mailboxServer.h"
+#include "mailbox.h"
+#include "mailboxServer.h"
 
 #include <QtCore/QEventLoop>
 

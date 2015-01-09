@@ -21,7 +21,7 @@
 
 using namespace trikScriptRunner;
 
-ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath)
+ScriptRunnerProxy::ScriptRunnerProxy(trikControl::BrickInterface &brick, QString const &startDirPath)
 {
 	mEngineWorker = new ScriptEngineWorker(brick, startDirPath);
 	QMetaObject::invokeMethod(mEngineWorker, "init");

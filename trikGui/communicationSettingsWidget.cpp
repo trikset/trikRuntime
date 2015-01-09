@@ -19,7 +19,7 @@
 
 using namespace trikGui;
 
-CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::Brick &brick
+CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::BrickInterface &brick
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("<b>Comm settings</b>"))

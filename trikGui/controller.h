@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 #include <trikKernel/lazyMainWidget.h>
 
@@ -47,7 +47,7 @@ public:
 	void abortExecution();
 
 	/// Returns reference to Brick object, which provides access to low-level robot functionality.
-	trikControl::Brick &brick();
+	trikControl::BrickInterface &brick();
 
 	/// Returns mStartDirPath (path to the directory from which the application was executed)
 	QString startDirPath() const;
@@ -85,7 +85,7 @@ private slots:
 	void directScriptExecutionStarted(int scriptId);
 
 private:
-	trikControl::Brick mBrick;
+	QScopedPointer<trikControl::BrickInterface> mBrick;
 	trikScriptRunner::TrikScriptRunner mScriptRunner;
 	trikCommunicator::TrikCommunicator mCommunicator;
 	trikTelemetry::TrikTelemetry mTelemetry;

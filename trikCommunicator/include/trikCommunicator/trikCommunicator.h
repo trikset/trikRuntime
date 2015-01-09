@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, Cybertech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, Cybertech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,14 @@ class TrikScriptRunner;
 }
 
 namespace trikControl {
-class Brick;
+class BrickInterface;
 }
 
 namespace trikCommunicator {
 
 class Connection;
 
-/// Class that enables connection with a client running on computer (TrikLab or remote control).
+/// Class that enables connection with a client running on computer (TRIKStudio or remote control).
 /// Communication subsystem consists of TrikCommunicator object which runs in main thread and listens for incoming
 /// connections, Connection objects --- one for every connected client, they run in separate threads each, and
 /// ScriptRunnerWrapper object in main thread which processes signals from Connections.
@@ -47,7 +47,7 @@ public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param brick - reference to robot brick.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath);
+	TrikCommunicator(trikControl::BrickInterface &brick, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
