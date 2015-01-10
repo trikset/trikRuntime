@@ -14,45 +14,44 @@
 
 #pragma once
 
-#include <QtCore/QObject>
+#include <QtCore/QList>
+#include <QtCore/QTimer>
 
-#include "declSpec.h"
+namespace trikScriptRunner {
 
-class QTimer;
-
-namespace trikControl {
-
-/// Interface representing TRIK system and script execution controlling functions.
-class TRIKCONTROL_EXPORT ScriptInterface : public QObject
+/// Script execution controller, provides related functions to scripts.
+class Script : public QObject
 {
 	Q_OBJECT
 
 public:
+	~Script() override;
+
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
-	virtual bool isInEventDrivenMode() const = 0;
+	bool isInEventDrivenMode() const;
 
 	/// Resets script execution state, clearing all flags and stopping all timers.
-	virtual void reset() = 0;
+	void reset();
 
 public slots:
 	/// Starts a new timer with given interval and returns reference to it.
-	virtual QTimer *timer(int milliseconds) = 0;
+	QTimer *timer(int milliseconds);
 
 	/// Waits given amount of time in milliseconds and returns.
-	virtual void wait(int const &milliseconds) = 0;
+	void wait(int const &milliseconds);
 
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
-	virtual qint64 time() const = 0;
+	qint64 time() const;
 
 	/// Starts event loop for script.
-	virtual void run() = 0;
+	void run();
 
 	/// Aborts script execution.
-	virtual void quit() = 0;
+	void quit();
 
 	/// Asynchronously execute given sh command.
-	virtual void system(QString const &command) = 0;
+	void system(QString const &command);
 
 signals:
 	/// Emitted when script requested system to abort execution.
@@ -60,6 +59,13 @@ signals:
 
 	/// To be connected to quit() slot of local event loops that are used for waiting.
 	void stopWaiting();
+
+private:
+	QList<QTimer *> mTimers; // Has ownership.
+
+	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
+	/// If it is false, script will exit immediately.
+	bool mInEventDrivenMode = false;
 };
 
 }

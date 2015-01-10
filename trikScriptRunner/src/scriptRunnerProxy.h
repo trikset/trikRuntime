@@ -21,7 +21,8 @@
 #include <QtScript/QScriptEngine>
 
 #include <trikControl/brickInterface.h>
-#include <trikControl/scriptInterface.h>
+
+#include "script.h"
 
 namespace trikScriptRunner {
 
@@ -38,7 +39,7 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptRunnerProxy(trikControl::BrickInterface &brick
-			, trikControl::ScriptInterface &script
+			, Script &script
 			, QString const &startDirPath);
 
 	~ScriptRunnerProxy() override;

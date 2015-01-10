@@ -22,7 +22,7 @@
 using namespace trikScriptRunner;
 
 ScriptRunnerProxy::ScriptRunnerProxy(trikControl::BrickInterface &brick
-		, trikControl::ScriptInterface &script
+		, Script &script
 		, QString const &startDirPath)
 {
 	mEngineWorker = new ScriptEngineWorker(brick, script, startDirPath);

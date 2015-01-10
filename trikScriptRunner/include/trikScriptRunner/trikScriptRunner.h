@@ -18,10 +18,10 @@
 #include <QtCore/QScopedPointer>
 
 #include <trikControl/brickInterface.h>
-#include <trikControl/scriptInterface.h>
 
 namespace trikScriptRunner {
 
+class Script;
 class ScriptRunnerProxy;
 
 /// Executes scripts in Qt Scripting Engine.
@@ -98,7 +98,7 @@ private slots:
 	void onScriptStart(int scriptId);
 
 private:
-	QScopedPointer<trikControl::ScriptInterface> mScriptController;
+	QScopedPointer<Script> mScriptController;
 
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;

@@ -31,8 +31,6 @@ HEADERS += \
 	$$PWD/include/trikControl/objectSensorInterface.h \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
-	$$PWD/include/trikControl/scriptFactory.h \
-	$$PWD/include/trikControl/scriptInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 
 HEADERS += \
@@ -60,16 +58,13 @@ HEADERS += \
 	$$PWD/src/mailbox.h \
 	$$PWD/src/mailboxConnection.h \
 	$$PWD/src/mailboxServer.h \
-	$$PWD/src/motor.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
 	$$PWD/src/rangeSensorWorker.h \
-	$$PWD/src/sensor.h \
 	$$PWD/src/servoMotor.h \
-	$$PWD/src/script.h \
 	$$PWD/src/tcpConnector.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
@@ -103,8 +98,6 @@ SOURCES += \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/script.cpp \
-	$$PWD/src/scriptFactory.cpp \
 	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \

@@ -22,7 +22,7 @@
 
 #include <QsLog.h>
 
-using namespace trikControl;
+using namespace trikScriptRunner;
 
 Script::~Script()
 {
