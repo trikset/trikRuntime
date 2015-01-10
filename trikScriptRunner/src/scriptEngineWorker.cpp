@@ -57,7 +57,7 @@ Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
-		, Script &script
+		, ScriptExecutionControl &script
 		, QString const &startDirPath)
 	: mEngine(nullptr)
 	, mBrick(brick)

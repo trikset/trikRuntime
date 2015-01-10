@@ -22,7 +22,7 @@
 
 #include <trikControl/brickInterface.h>
 
-#include "script.h"
+#include "scriptExecutionControl.h"
 
 namespace trikScriptRunner {
 
@@ -39,7 +39,7 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptRunnerProxy(trikControl::BrickInterface &brick
-			, Script &script
+			, ScriptExecutionControl &script
 			, QString const &startDirPath);
 
 	~ScriptRunnerProxy() override;

@@ -246,6 +246,7 @@ trikKernel::LazyMainWidget &Brick::graphicsWidget()
 void Brick::reset()
 {
 	stop();
+	emit stopWaiting();
 	mKeys->reset();
 	mDisplay->clear();
 

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "script.h"
+#include "scriptExecutionControl.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QDateTime>
@@ -24,12 +24,12 @@
 
 using namespace trikScriptRunner;
 
-Script::~Script()
+ScriptExecutionControl::~ScriptExecutionControl()
 {
 	qDeleteAll(mTimers);
 }
 
-void Script::reset()
+void ScriptExecutionControl::reset()
 {
 	mInEventDrivenMode = false;
 	emit stopWaiting();
@@ -41,7 +41,7 @@ void Script::reset()
 	mTimers.clear();
 }
 
-QTimer* Script::timer(int milliseconds)
+QTimer* ScriptExecutionControl::timer(int milliseconds)
 {
 	QTimer *result = new QTimer();
 	mTimers.append(result);
@@ -49,7 +49,7 @@ QTimer* Script::timer(int milliseconds)
 	return result;
 }
 
-void Script::wait(int const &milliseconds)
+void ScriptExecutionControl::wait(int const &milliseconds)
 {
 	QEventLoop loop;
 	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()), Qt::DirectConnection);
@@ -59,27 +59,27 @@ void Script::wait(int const &milliseconds)
 	loop.exec();
 }
 
-qint64 Script::time() const
+qint64 ScriptExecutionControl::time() const
 {
 	return QDateTime::currentMSecsSinceEpoch();
 }
 
-void Script::run()
+void ScriptExecutionControl::run()
 {
 	mInEventDrivenMode = true;
 }
 
-bool Script::isInEventDrivenMode() const
+bool ScriptExecutionControl::isInEventDrivenMode() const
 {
 	return mInEventDrivenMode;
 }
 
-void Script::quit()
+void ScriptExecutionControl::quit()
 {
 	emit quitSignal();
 }
 
-void Script::system(QString const &command)
+void ScriptExecutionControl::system(QString const &command)
 {
 	QStringList args{"-c", command};
 	QLOG_INFO() << "Running: " << "sh" << args;

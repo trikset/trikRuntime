@@ -21,7 +21,7 @@
 
 namespace trikScriptRunner {
 
-class Script;
+class ScriptExecutionControl;
 class ScriptRunnerProxy;
 
 /// Executes scripts in Qt Scripting Engine.
@@ -98,7 +98,7 @@ private slots:
 	void onScriptStart(int scriptId);
 
 private:
-	QScopedPointer<Script> mScriptController;
+	QScopedPointer<ScriptExecutionControl> mScriptController;
 
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;

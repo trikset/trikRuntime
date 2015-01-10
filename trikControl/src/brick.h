@@ -109,6 +109,10 @@ public slots:
 
 	MailboxInterface *mailbox() override;
 
+signals:
+	/// For internal use, emitted when brick needs to stop all waiting activities of devices.
+	void stopWaiting();
+
 private:
 	VectorSensor *mAccelerometer = nullptr;  // has ownership.
 	VectorSensor *mGyroscope = nullptr;  // has ownership.

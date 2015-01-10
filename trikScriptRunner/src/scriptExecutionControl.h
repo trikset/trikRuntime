@@ -20,12 +20,12 @@
 namespace trikScriptRunner {
 
 /// Script execution controller, provides related functions to scripts.
-class Script : public QObject
+class ScriptExecutionControl : public QObject
 {
 	Q_OBJECT
 
 public:
-	~Script() override;
+	~ScriptExecutionControl() override;
 
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.

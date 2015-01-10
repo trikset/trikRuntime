@@ -20,7 +20,7 @@
 
 #include <trikControl/brickInterface.h>
 
-#include "script.h"
+#include "scriptExecutionControl.h"
 #include "threading.h"
 
 namespace trikScriptRunner
@@ -39,7 +39,7 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
-			, Script &script
+			, ScriptExecutionControl &script
 			, QString const &startDirPath);
 
 	/// Copies this instance of ScriptEngineWorker and returns a new one. Script engine is copied deeply
@@ -94,7 +94,7 @@ private:
 	/// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 	trikControl::BrickInterface &mBrick;
-	Script &mScript;
+	ScriptExecutionControl &mScript;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
 	bool mEngineReset;

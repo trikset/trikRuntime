@@ -16,7 +16,7 @@
 
 #include <trikKernel/fileUtils.h>
 
-#include "src/script.h"
+#include "src/scriptExecutionControl.h"
 #include "src/scriptRunnerProxy.h"
 
 #include <QsLog.h>
@@ -27,7 +27,7 @@ using namespace trikScriptRunner;
 QString const constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick, QString const &startDirPath)
-	: mScriptController(new Script())
+	: mScriptController(new ScriptExecutionControl())
 	, mScriptRunnerProxy(new ScriptRunnerProxy(brick, *mScriptController, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)

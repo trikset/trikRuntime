@@ -18,17 +18,17 @@ include(../global.pri)
 
 HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
-	$$PWD/src/script.h \
 	$$PWD/src/scriptableParts.h \
+	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/scriptRunnerProxy.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 
 SOURCES += \
-	$$PWD/src/script.cpp \
-	$$PWD/src/scriptRunnerProxy.cpp \
 	$$PWD/src/scriptableParts.cpp \
+	$$PWD/src/scriptExecutionControl.cpp \
+	$$PWD/src/scriptRunnerProxy.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/threading.cpp \
