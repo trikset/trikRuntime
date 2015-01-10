@@ -21,6 +21,7 @@
 #include <QtScript/QScriptEngine>
 
 #include <trikControl/brickInterface.h>
+#include <trikControl/scriptInterface.h>
 
 namespace trikScriptRunner {
 
@@ -34,8 +35,11 @@ class ScriptRunnerProxy : public QObject
 public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
+	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	ScriptRunnerProxy(trikControl::BrickInterface &brick, QString const &startDirPath);
+	ScriptRunnerProxy(trikControl::BrickInterface &brick
+			, trikControl::ScriptInterface &script
+			, QString const &startDirPath);
 
 	~ScriptRunnerProxy() override;
 

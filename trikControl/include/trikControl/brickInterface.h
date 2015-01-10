@@ -33,8 +33,6 @@
 
 #include "declSpec.h"
 
-class QTimer;
-
 namespace trikControl {
 
 /// Interface representing TRIK controller board and devices installed on it, also provides access
@@ -47,10 +45,6 @@ public:
 	/// Do reset (stop motors, reset keys, clear screen, etc). We should call it before executing any script
 	/// with this instance.
 	virtual void reset() = 0;
-
-	/// Returns true if a system is in event-driven running mode, so it shall wait for events when script is executed.
-	/// If it is false, script will exit immediately.
-	virtual bool isInEventDrivenMode() const = 0;
 
 	/// Returns a main GraphicsWidget.
 	virtual trikKernel::LazyMainWidget &graphicsWidget() = 0;
@@ -113,15 +107,6 @@ public slots:
 	/// Returns reference to external gamepad connected via TCP.
 	virtual GamepadInterface *gamepad() = 0;
 
-	/// Starts a new timer with given interval and returns reference to it.
-	virtual QTimer *timer(int milliseconds) = 0;
-
-	/// Waits given amount of time in milliseconds and returns.
-	virtual void wait(int const &milliseconds) = 0;
-
-	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
-	virtual qint64 time() const = 0;
-
 	/// Returns reference to class that provides drawing on display.
 	virtual DisplayInterface *display() = 0;
 
@@ -131,22 +116,7 @@ public slots:
 	/// Returns reference to mailbox used to send and receive messages to/from other robots.
 	virtual MailboxInterface *mailbox() = 0;
 
-	/// Starts event loop for script.
-	virtual void run() = 0;
-
-	/// Aborts script execution.
-	virtual void quit() = 0;
-
-	/// Asynchronously execute given sh command.
-	virtual void system(QString const &command) = 0;
-
 signals:
-	/// Emitted when script requested system to abort execution.
-	void quitSignal();
-
-	/// To be connected to quit() slot of local event loops that are used for waiting.
-	void stopWaiting();
-
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no
 	/// deferred deinitialization (no video sensors are on, for example), signal will NOT be emitted.
 	void stopped();

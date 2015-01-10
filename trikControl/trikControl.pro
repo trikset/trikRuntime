@@ -1,4 +1,4 @@
-# Copyright 2013 Yurii Litvinov
+# Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,45 +31,48 @@ HEADERS += \
 	$$PWD/include/trikControl/objectSensorInterface.h \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
+	$$PWD/include/trikControl/scriptFactory.h \
+	$$PWD/include/trikControl/scriptInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 
 HEADERS += \
-	$$PWD/src/battery.h \
-	$$PWD/src/brick.h \
-	$$PWD/src/colorSensor.h \
-	$$PWD/src/display.h \
-	$$PWD/src/encoder.h \
-	$$PWD/src/gamepad.h \
-	$$PWD/src/keys.h \
-	$$PWD/src/led.h \
-	$$PWD/src/lineSensor.h \
-	$$PWD/src/mailbox.h \
-	$$PWD/src/motor.h \
-	$$PWD/src/objectSensor.h \
-	$$PWD/src/pwmCapture.h \
-	$$PWD/src/sensor.h \
-	$$PWD/src/vectorSensor.h \
 	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/analogSensor.h \
 	$$PWD/src/angularServoMotor.h \
+	$$PWD/src/battery.h \
+	$$PWD/src/brick.h \
+	$$PWD/src/colorSensor.h \
 	$$PWD/src/colorSensorWorker.h \
 	$$PWD/src/configurer.h \
 	$$PWD/src/continiousRotationServoMotor.h \
 	$$PWD/src/digitalSensor.h \
+	$$PWD/src/display.h \
+	$$PWD/src/encoder.h \
+	$$PWD/src/gamepad.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/keys.h \
 	$$PWD/src/keysWorker.h \
+	$$PWD/src/led.h \
+	$$PWD/src/lineSensor.h \
 	$$PWD/src/lineSensorWorker.h \
+	$$PWD/src/mailbox.h \
 	$$PWD/src/mailboxConnection.h \
 	$$PWD/src/mailboxServer.h \
+	$$PWD/src/motor.h \
+	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
+	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
 	$$PWD/src/rangeSensorWorker.h \
-	$$PWD/src/vectorSensorWorker.h \
+	$$PWD/src/sensor.h \
 	$$PWD/src/servoMotor.h \
+	$$PWD/src/script.h \
 	$$PWD/src/tcpConnector.h \
+	$$PWD/src/vectorSensor.h \
+	$$PWD/src/vectorSensorWorker.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -99,9 +102,11 @@ SOURCES += \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
-	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
+	$$PWD/src/script.cpp \
+	$$PWD/src/scriptFactory.cpp \
 	$$PWD/src/tcpConnector.cpp \
+	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \

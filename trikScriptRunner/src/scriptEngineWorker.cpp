@@ -56,14 +56,17 @@ Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
-ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick, QString const &startDirPath)
+ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
+		, trikControl::ScriptInterface &script
+		, QString const &startDirPath)
 	: mEngine(nullptr)
 	, mBrick(brick)
+	, mScript(script)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
 	, mEngineReset(false)
 {
-	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+	connect(&mScript, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -96,11 +99,12 @@ void ScriptEngineWorker::reset()
 
 	mEngineReset = !mEngine->isEvaluating();
 
-	bool const inEventDrivenMode = mBrick.isInEventDrivenMode();
+	bool const inEventDrivenMode = mScript.isInEventDrivenMode();
 
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	mBrick.reset();
+	mScript.reset();
 
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
@@ -117,7 +121,7 @@ void ScriptEngineWorker::reset()
 
 ScriptEngineWorker &ScriptEngineWorker::clone()
 {
-	ScriptEngineWorker *result = new ScriptEngineWorker(mBrick, mStartDirPath);
+	ScriptEngineWorker *result = new ScriptEngineWorker(mBrick, mScript, mStartDirPath);
 	result->setParent(this);
 	result->init();
 	QScriptValue globalObject = result->mEngine->globalObject();
@@ -139,14 +143,14 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 		Q_ASSERT(false);
 	}
 
-	if (!inEventDrivenMode || !mBrick.isInEventDrivenMode()) {
+	if (!inEventDrivenMode || !mScript.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
 		mScriptId = scriptId;
 		emit startedScript(mScriptId);
 	}
 
 	if (inEventDrivenMode) {
-		mBrick.run();
+		mScript.run();
 	}
 
 	mThreadingVariable.setCurrentScript(script);
@@ -163,8 +167,9 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 	QLOG_INFO() << "ScriptEngineWorker: evaluation stopped, script:" << mScriptId
 			<< ", thread:" << QThread::currentThread();
 
-	if (!mBrick.isInEventDrivenMode()) {
+	if (!mScript.isInEventDrivenMode()) {
 		mBrick.stop();
+		mScript.reset();
 		if (!dynamic_cast<ScriptEngineWorker *>(parent())) {
 			// Only main thread must wait for others
 			mThreadingVariable.waitForAll();
@@ -179,10 +184,10 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	if (!mBrick.isInEventDrivenMode()) {
-		// Somebody erroneously called brick.quit() before entering event loop, so we must force event loop for brick
+	if (!mScript.isInEventDrivenMode()) {
+		// Somebody erroneously called script.quit() before entering event loop, so we must force event loop for script
 		// and only then quit, to send properly completed() signal.
-		mBrick.run();
+		mScript.run();
 	}
 
 	reset();
@@ -216,6 +221,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 
 	mEngine->globalObject().setProperty("brick", mEngine->newQObject(&mBrick));
+	mEngine->globalObject().setProperty("script", mEngine->newQObject(&mScript));
 	mEngine->globalObject().setProperty("Threading", mEngine->newQObject(&mThreadingVariable));
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
@@ -224,7 +230,10 @@ void ScriptEngineWorker::resetScriptEngine()
 			int const line = mEngine->uncaughtExceptionLineNumber();
 			QString const message = mEngine->uncaughtException().toString();
 			qDebug() << "Uncaught exception at line" << line << ":" << message;
+			QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 		}
+	} else {
+		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
 	}
 
 	mEngine->setProcessEventsInterval(1);

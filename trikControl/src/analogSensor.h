@@ -25,7 +25,7 @@ namespace trikControl {
 class I2cCommunicator;
 
 /// Analog TRIK sensor.
-class TRIKCONTROL_EXPORT AnalogSensor : public SensorInterface
+class AnalogSensor : public SensorInterface
 {
 	Q_OBJECT
 

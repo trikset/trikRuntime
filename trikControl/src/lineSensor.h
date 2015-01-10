@@ -27,7 +27,7 @@ namespace trikControl {
 class LineSensorWorker;
 
 /// Implementation of virtual line sensor for real robot.
-class TRIKCONTROL_EXPORT LineSensor : public LineSensorInterface
+class LineSensor : public LineSensorInterface
 {
 	Q_OBJECT
 

@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 Cybertech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ class MailboxServer;
 ///
 /// @todo Remove mailboxes from TrikControl, as they are not hardware-dependent and may work on a computer or in
 ///       2d model too.
-class TRIKCONTROL_EXPORT Mailbox : public MailboxInterface
+class Mailbox : public MailboxInterface
 {
 	Q_OBJECT
 

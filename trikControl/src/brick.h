@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,8 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
 #include <QtCore/QHash>
-#include <QtCore/QStringList>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QTimer>
-#include <QtCore/QEventLoop>
 
 #include "brickInterface.h"
 
@@ -67,8 +62,6 @@ public:
 
 	void reset() override;
 
-	bool isInEventDrivenMode() const override;
-
 	trikKernel::LazyMainWidget &graphicsWidget() override;
 
 public slots:
@@ -110,23 +103,11 @@ public slots:
 
 	GamepadInterface *gamepad() override;
 
-	QTimer *timer(int milliseconds) override;
-
-	void wait(int const &milliseconds) override;
-
-	qint64 time() const override;
-
 	DisplayInterface *display() override;
 
 	LedInterface *led() override;
 
 	MailboxInterface *mailbox() override;
-
-	void run() override;
-
-	void quit() override;
-
-	void system(QString const &command) override;
 
 private:
 	VectorSensor *mAccelerometer = nullptr;  // has ownership.
@@ -145,17 +126,12 @@ private:
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
 	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
 	QHash<QString, RangeSensor *> mRangeSensors;  // Has ownership.
-	QList<QTimer *> mTimers; // Has ownership.
 
 	Configurer const * const mConfigurer;  // Has ownership.
 	I2cCommunicator *mI2cCommunicator = nullptr;  // Has ownership.
 	QScopedPointer<Display> mDisplay;
 	Led *mLed = nullptr;  // Has ownership.
 	QScopedPointer<Mailbox> mMailbox;
-
-	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
-	/// If it is false, script will exit immediately.
-	bool mInEventDrivenMode;
 };
 
 }

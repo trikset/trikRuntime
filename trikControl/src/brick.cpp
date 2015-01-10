@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,6 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 	: mConfigurer(new Configurer(configFilePath))
 	, mI2cCommunicator(nullptr)
 	, mDisplay(new Display(guiThread, startDirPath))
-	, mInEventDrivenMode(false)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 
@@ -227,7 +226,6 @@ Brick::~Brick()
 	qDeleteAll(mAnalogSensors);
 	qDeleteAll(mDigitalSensors);
 	qDeleteAll(mRangeSensors);
-	qDeleteAll(mTimers);
 	delete mAccelerometer;
 	delete mGyroscope;
 	delete mBattery;
@@ -250,7 +248,6 @@ void Brick::reset()
 	stop();
 	mKeys->reset();
 	mDisplay->clear();
-	mInEventDrivenMode = false;
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
 	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
@@ -282,13 +279,13 @@ void Brick::playSound(QString const &soundFileName)
 
 void Brick::say(QString const &text)
 {
-	this->system("espeak -v russian_test -s 100 \"" + text + "\"");
+	QStringList args{"-c", "espeak -v russian_test -s 100 \"" + text + "\""};
+	QProcess::startDetached("sh", args);
 }
 
 void Brick::stop()
 {
 	QLOG_INFO() << "Stopping brick";
-	emit stopWaiting();
 
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
@@ -434,29 +431,6 @@ GamepadInterface* Brick::gamepad()
 	return mGamepad;
 }
 
-QTimer* Brick::timer(int milliseconds)
-{
-	QTimer *result = new QTimer();
-	mTimers.append(result);
-	result->start(milliseconds);
-	return result;
-}
-
-void Brick::wait(int const &milliseconds)
-{
-	QEventLoop loop;
-	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()), Qt::DirectConnection);
-	QTimer t;
-	connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
-	t.start(milliseconds);
-	loop.exec();
-}
-
-qint64 Brick::time() const
-{
-	return QDateTime::currentMSecsSinceEpoch();
-}
-
 DisplayInterface *Brick::display()
 {
 	return mDisplay.data();
@@ -470,27 +444,4 @@ LedInterface *Brick::led()
 MailboxInterface *Brick::mailbox()
 {
 	return mMailbox.data();
-}
-
-void Brick::run()
-{
-	mInEventDrivenMode = true;
-}
-
-bool Brick::isInEventDrivenMode() const
-{
-	return mInEventDrivenMode;
-}
-
-void Brick::quit()
-{
-	emit quitSignal();
-}
-
-void Brick::system(QString const &command)
-{
-	QStringList args{"-c", command};
-	QLOG_INFO() << "Running: " << "sh" << args;
-	qDebug() << "Running:" << "sh" << args;
-	QProcess::startDetached("sh", args);
 }

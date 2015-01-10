@@ -24,7 +24,7 @@ namespace trikControl {
 class ObjectSensorWorker;
 
 /// Implementation of object sensor for real robot.
-class TRIKCONTROL_EXPORT ObjectSensor : public ObjectSensorInterface
+class ObjectSensor : public ObjectSensorInterface
 {
 	Q_OBJECT
 

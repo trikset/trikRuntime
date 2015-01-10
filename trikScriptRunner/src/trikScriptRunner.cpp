@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #include "include/trikScriptRunner/trikScriptRunner.h"
 
 #include <trikKernel/fileUtils.h>
+#include <trikControl/scriptFactory.h>
 
 #include "src/scriptRunnerProxy.h"
 
@@ -26,7 +27,8 @@ using namespace trikScriptRunner;
 QString const constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick, QString const &startDirPath)
-	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
+	: mScriptController(trikControl::ScriptFactory::createScript())
+	, mScriptRunnerProxy(new ScriptRunnerProxy(brick, *mScriptController, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)
 {
@@ -49,7 +51,6 @@ QString TrikScriptRunner::scriptsDirPath() const
 QString TrikScriptRunner::scriptsDirName() const
 {
 	return constScriptsDirName;
-
 }
 
 void TrikScriptRunner::brickBeep()

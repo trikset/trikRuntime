@@ -21,7 +21,7 @@
 namespace trikControl {
 
 /// Implementation of PWM capture for real robot.
-class TRIKCONTROL_EXPORT PwmCapture : public PwmCaptureInterface
+class PwmCapture : public PwmCaptureInterface
 {
 	Q_OBJECT
 

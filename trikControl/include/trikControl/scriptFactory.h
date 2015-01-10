@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,33 +14,22 @@
 
 #pragma once
 
-#include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
+#include <QtCore/QString>
 
-#include "vectorSensorInterface.h"
+#include "scriptInterface.h"
+
+#include "declSpec.h"
 
 namespace trikControl {
 
-class VectorSensorWorker;
-
-/// Sensor that returns a vector.
-class VectorSensor : public VectorSensorInterface
+/// Factory that creates brick object for a real robot.
+class TRIKCONTROL_EXPORT ScriptFactory
 {
-	Q_OBJECT
-
 public:
-	/// Constructor.
-	/// @param deviceFile - device file for this sensor.
-	VectorSensor(QString const &deviceFile);
-
-	~VectorSensor() override;
-
-public slots:
-	QVector<int> read() const override;
-
-private:
-	QScopedPointer<VectorSensorWorker> mVectorSensorWorker;
-	QThread mWorkerThread;
+	/// Method that creates script control object for real robot.
+	/// Transfers ownership over ScriptInterface object to caller.
+	static ScriptInterface *createScript();
 };
 
 }
