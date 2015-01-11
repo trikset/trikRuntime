@@ -20,16 +20,18 @@ INCLUDEPATH += $$PWD/include \
 	$$PWD/../qslog \
 
 HEADERS += \
+	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
-	$$PWD/include/trikKernel/coreDumping.h \
-	$$PWD/include/trikKernel/version.h \
-	$$PWD/include/trikKernel/mainWidget.h \
 	$$PWD/include/trikKernel/lazyMainWidget.h \
+	$$PWD/include/trikKernel/loggingHelper.h \
+	$$PWD/include/trikKernel/mainWidget.h \
+	$$PWD/include/trikKernel/version.h \
 
 SOURCES += \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
+	$$PWD/src/loggingHelper.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 
 TEMPLATE = lib

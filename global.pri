@@ -74,10 +74,8 @@ INCLUDEPATH += \
 LIBS += -L$$DESTDIR
 
 IS_QSLOG = $$find(PROJECT_NAME, [qQ]s[lL]og)
-message($$IS_QSLOG)
 
 isEmpty(IS_QSLOG) {
-	message(ololo)
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 

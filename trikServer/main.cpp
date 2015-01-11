@@ -30,6 +30,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
 #include <trikKernel/coreDumping.h>
+#include <trikKernel/loggingHelper.h>
 #include <trikNetwork/gamepadFactory.h>
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
@@ -86,15 +87,9 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int const maxLogSize = 10 * 1024 * 1024;
-	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	QsLogging::DestinationPtr destination = QsLogging::DestinationFactory::MakeFileDestination(
-			startDirPath + "trik.log"
-			, QsLogging::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)
-			, QsLogging::TraceLevel);
-	QsLogging::Logger::instance().addDestination(destination);
+	trikKernel::LoggingHelper loggingHelper(startDirPath);
+	Q_UNUSED(loggingHelper);
+
 	QLOG_INFO() << "TrikServer started on port" << port;
 
 	qDebug() << "Running TrikServer on port" << port;

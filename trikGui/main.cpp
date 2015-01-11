@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov
+/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@
 #include <QsLog.h>
 
 #include <trikKernel/coreDumping.h>
+#include <trikKernel/loggingHelper.h>
 
 using namespace trikGui;
 
@@ -125,25 +126,9 @@ int main(int argc, char *argv[])
 		QDir::setCurrent("scripts");
 	}
 
-	int const maxLogSize = 10 * 1024 * 1024;
-	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	QsLogging::DestinationPtr fileDestination = QsLogging::DestinationFactory::MakeFileDestination(
-			startDirPath + "trik.log"
-			, QsLogging::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)
-			, QsLogging::TraceLevel);
+	trikKernel::LoggingHelper loggingHelper(startDirPath);
+	Q_UNUSED(loggingHelper);
 
-	QsLogging::DestinationPtr consoleDestination = QsLogging::DestinationFactory::MakeFunctorDestination(
-			[](QString const &message, QsLogging::Level level) {
-				if (level >= QsLogging::ErrorLevel) {
-					qDebug() << message;
-				}
-			}
-			);
-
-	QsLogging::Logger::instance().addDestination(fileDestination);
-	QsLogging::Logger::instance().addDestination(consoleDestination);
 	QLOG_INFO() << "====================================================================";
 	QLOG_INFO() << "TrikGui started";
 

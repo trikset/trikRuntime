@@ -30,6 +30,7 @@
 #include <trikControl/brickInterface.h>
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/loggingHelper.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikNetwork/gamepadFactory.h>
 #include <trikNetwork/gamepadInterface.h>
@@ -96,16 +97,9 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int const maxLogSize = 10 * 1024 * 1024;
-	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	QsLogging::DestinationPtr destination = QsLogging::DestinationFactory::MakeFileDestination(
-			startDirPath + "trik.log"
-			, QsLogging::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)
-			, QsLogging::TraceLevel);
+	trikKernel::LoggingHelper loggingHelper(startDirPath);
+	Q_UNUSED(loggingHelper);
 
-	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikRun started";
 
 	QScopedPointer<trikControl::BrickInterface> brick(
