@@ -29,12 +29,13 @@ SUBDIRS = \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
-trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog
 trikCommunicator.depends = trikScriptRunner trikNetwork qslog
-trikRun.depends = trikScriptRunner trikKernel qslog
-trikServer.depends = trikCommunicator qslog
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
-trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikControl.depends = qslog
+trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
 trikKernel.depends = qslog
 trikNetwork.depends = trikKernel qslog
+trikRun.depends = trikScriptRunner trikKernel qslog
+trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog
+trikServer.depends = trikCommunicator qslog
+trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
+trikWiFi.depends = qslog
