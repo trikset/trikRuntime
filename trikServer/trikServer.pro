@@ -17,20 +17,14 @@ include(../global.pri)
 SOURCES += \
 	$$PWD/main.cpp \
 
-uses(trikControl trikCommunicator)
-
-INCLUDEPATH += \
-	../trikControl/include/ \
-	../trikCommunicator/include/ \
-	../trikKernel/include/ \
-	../qslog/ \
+uses(trikControl trikCommunicator trikNetwork)
 
 uses(trikKernel qslog)
 
 TEMPLATE = app
 CONFIG += console
 
-QT += gui
+QT += gui xml
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets

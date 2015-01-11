@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikTelemetry.h"
+#include "mailboxFactory.h"
 
-#include "src/connection.h"
+#include "mailbox.h"
 
-using namespace trikTelemetry;
+using namespace trikNetwork;
 
-TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
-	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
-	, mBrick(brick)
+MailboxInterface *MailboxFactory::create(int port)
 {
+	return new Mailbox(port);
 }
 
-Connection * TrikTelemetry::connectionFactory()
+MailboxInterface *MailboxFactory::create()
 {
-	return new Connection(mBrick);
+	return new Mailbox();
 }

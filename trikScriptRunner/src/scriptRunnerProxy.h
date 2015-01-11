@@ -21,6 +21,8 @@
 #include <QtScript/QScriptEngine>
 
 #include <trikControl/brickInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
 
 #include "scriptExecutionControl.h"
 
@@ -39,7 +41,9 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptRunnerProxy(trikControl::BrickInterface &brick
-			, ScriptExecutionControl &script
+			, trikNetwork::MailboxInterface &mailbox
+			, trikNetwork::GamepadInterface &gamepad
+			, ScriptExecutionControl &scriptControl
 			, QString const &startDirPath);
 
 	~ScriptRunnerProxy() override;

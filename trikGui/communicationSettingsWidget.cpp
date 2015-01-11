@@ -19,17 +19,17 @@
 
 using namespace trikGui;
 
-CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::BrickInterface &brick
+CommunicationSettingsWidget::CommunicationSettingsWidget(trikNetwork::MailboxInterface &mailbox
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("<b>Comm settings</b>"))
 	, mSelectorsHelpLabel(tr("(Press 'Enter' to edit)"))
 	, mHullNumberLabel(tr("Hull number:"))
-	, mHullNumberSelector(brick.mailbox()->myHullNumber(), 2, 0, 35, this)
+	, mHullNumberSelector(mailbox.myHullNumber(), 2, 0, 35, this)
 	, mServerIpLabel(tr("Leader IP:"))
 	, mIpHelpLabel(tr("(last two numbers)"))
 	, mServerIpSelector(0, 6, 3, 25, this)
-	, mBrick(brick)
+	, mMailbox(mailbox)
 {
 	mConnectButton.setText(tr("Connect"));
 	mTitle.setAlignment(Qt::AlignCenter);
@@ -51,7 +51,7 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikControl::BrickInter
 
 	mSelectorsHelpLabel.setAlignment(Qt::AlignHCenter);
 
-	auto const hostAddressString = brick.mailbox()->serverIp().toString();
+	auto const hostAddressString = mailbox.serverIp().toString();
 
 	if (hostAddressString == QHostAddress().toString()) {
 		mServerIpSelector.setValue(0);
@@ -112,7 +112,7 @@ void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 void CommunicationSettingsWidget::onConnectButtonClicked()
 {
-	QStringList result = mBrick.mailbox()->myIp().toString().split('.');
+	QStringList result = mMailbox.myIp().toString().split('.');
 	if (result.size() != 4) {
 		/// @todo Properly notify user that the robot is not connected.
 		return;
@@ -123,12 +123,12 @@ void CommunicationSettingsWidget::onConnectButtonClicked()
 	QString const fourthPart = ipSelectorValue.mid(3).replace(QRegExp("^0+"), "");
 	result[2] = thirdPart;
 	result[3] = fourthPart;
-	mBrick.mailbox()->connect(result.join("."));
+	mMailbox.connect(result.join("."));
 }
 
 void CommunicationSettingsWidget::onHullNumberChanged(int newHullNumber)
 {
-	mBrick.mailbox()->setHullNumber(newHullNumber);
+	mMailbox.setHullNumber(newHullNumber);
 }
 
 void CommunicationSettingsWidget::focusUp()

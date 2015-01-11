@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 	#include <QtWidgets/QLabel>
 #endif
 
-#include <trikControl/brickInterface.h>
+#include <trikNetwork/mailboxInterface.h>
 
 #include "trikGuiDialog.h"
 #include "numberSelectionWidget.h"
@@ -41,9 +41,9 @@ class CommunicationSettingsWidget : public TrikGuiDialog
 
 public:
 	/// Constructor.
-	/// @param brick - reference to TRIKControl brick object.
+	/// @param mailbox - reference to mailbox object which we will configure here.
 	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
-	explicit CommunicationSettingsWidget(trikControl::BrickInterface &brick, QWidget *parent = 0);
+	explicit CommunicationSettingsWidget(trikNetwork::MailboxInterface &mailbox, QWidget *parent = 0);
 
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
@@ -96,8 +96,8 @@ private:
 	/// Button that initiates connection to lead robot.
 	ConnectButton mConnectButton;
 
-	/// Reference to TRIKControl brick object.
-	trikControl::BrickInterface &mBrick;
+	/// Reference to mailbox object.
+	trikNetwork::MailboxInterface &mMailbox;
 };
 
 }

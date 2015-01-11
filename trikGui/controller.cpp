@@ -18,8 +18,14 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
+#include <QtXml/QDomDocument>
+
 #include <trikKernel/fileUtils.h>
 #include <trikControl/brickFactory.h>
+#include <trikNetwork/mailboxFactory.h>
+#include <trikNetwork/gamepadFactory.h>
+
+#include <QsLog.h>
 
 #include "runningWidget.h"
 
@@ -30,22 +36,60 @@ int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
 	: mBrick(trikControl::BrickFactory::createBrick(*thread(), configPath, startDirPath))
-	, mScriptRunner(*mBrick, startDirPath)
-	, mCommunicator(mScriptRunner)
-	, mTelemetry(*mBrick)
+	, mTelemetry(new trikTelemetry::TrikTelemetry(*mBrick))
 	, mStartDirPath(startDirPath)
 {
-	connect(&mScriptRunner, SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
+	/// @todo: Remove this code to factories or facade, or to objects themselves.
+	QDomDocument config("config");
 
-	connect(&mScriptRunner, SIGNAL(startedScript(QString, int))
+	QFile file(configPath + "config.xml");
+	if (!file.open(QIODevice::ReadOnly)) {
+		QString const message = "Failed to open config.xml for reading";
+		QLOG_FATAL() << message;
+		throw message;
+	} if (!config.setContent(&file)) {
+		file.close();
+		QLOG_FATAL() << "config.xml parsing failed";
+		throw "config.xml parsing failed";
+	}
+
+	file.close();
+
+	QDomElement const root = config.documentElement();
+
+	if (root.elementsByTagName("mailbox").size() > 0
+			&& root.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true")
+	{
+		auto const mailboxElement = root.elementsByTagName("mailbox").at(0).toElement();
+		auto const mailboxServerPort = mailboxElement.attribute("port").toInt();
+		mMailbox.reset(trikNetwork::MailboxFactory::create(mailboxServerPort));
+	} else {
+		mMailbox.reset(trikNetwork::MailboxFactory::create());
+	}
+
+	if (root.elementsByTagName("gamepad").size() > 0
+				&& root.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
+	{
+		auto const gamepadElement = root.elementsByTagName("gamepad").at(0).toElement();
+		auto const gamepadServerPort = gamepadElement.attribute("port").toInt();
+		mGamepad.reset(trikNetwork::GamepadFactory::create(gamepadServerPort));
+	}
+
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, *mMailbox, *mGamepad, startDirPath));
+	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
+
+	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
+
+	connect(mScriptRunner.data(), SIGNAL(startedScript(QString, int))
 			, this, SLOT(scriptExecutionFromFileStarted(QString, int)));
-	connect(&mScriptRunner, SIGNAL(startedDirectScript(int))
+
+	connect(mScriptRunner.data(), SIGNAL(startedDirectScript(int))
 			, this, SLOT(directScriptExecutionStarted(int)));
 
 	connect(mBrick.data(), SIGNAL(stopped()), this, SIGNAL(brickStopped()));
 
-	mCommunicator.startServer(communicatorPort);
-	mTelemetry.startServer(telemetryPort);
+	mCommunicator->startServer(communicatorPort);
+	mTelemetry->startServer(telemetryPort);
 }
 
 Controller::~Controller()
@@ -56,9 +100,9 @@ void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
-		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
+		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
-		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
+		mScriptRunner->run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
 		QStringList args;
 		args << filePath;
@@ -71,7 +115,7 @@ void Controller::runFile(QString const &filePath)
 void Controller::abortExecution()
 {
 	emit closeGraphicsWidget(mBrick->graphicsWidget());
-	mScriptRunner.abort();
+	mScriptRunner->abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
 	// processed as if a script finished by itself.
@@ -82,6 +126,11 @@ trikControl::BrickInterface &Controller::brick()
 	return *mBrick;
 }
 
+trikNetwork::MailboxInterface &Controller::mailbox()
+{
+	return *mMailbox;
+}
+
 QString Controller::startDirPath() const
 {
 	return mStartDirPath;
@@ -89,12 +138,12 @@ QString Controller::startDirPath() const
 
 QString Controller::scriptsDirPath() const
 {
-	return mScriptRunner.scriptsDirPath();
+	return mScriptRunner->scriptsDirPath();
 }
 
 QString Controller::scriptsDirName() const
 {
-	return mScriptRunner.scriptsDirName();
+	return mScriptRunner->scriptsDirName();
 }
 
 void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
@@ -114,7 +163,7 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 	} else if (!error.isEmpty()) {
 		if (mRunningWidgets[scriptId]->isVisible()) {
 			mRunningWidgets[scriptId]->showError(error);
-			mCommunicator.sendMessage("error: " + error);
+			mCommunicator->sendMessage("error: " + error);
 		} else {
 			// It is already closed so all we need is to delete it.
 			mRunningWidgets[scriptId]->deleteLater();

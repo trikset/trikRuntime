@@ -26,9 +26,12 @@ using namespace trikScriptRunner;
 // name of the directory in which scripts must be saved
 QString const constScriptsDirName = "scripts";
 
-TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick, QString const &startDirPath)
+TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
+		, trikNetwork::MailboxInterface &mailbox
+		, trikNetwork::GamepadInterface &gamepad
+		, QString const &startDirPath)
 	: mScriptController(new ScriptExecutionControl())
-	, mScriptRunnerProxy(new ScriptRunnerProxy(brick, *mScriptController, startDirPath))
+	, mScriptRunnerProxy(new ScriptRunnerProxy(brick, mailbox, gamepad, *mScriptController, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)
 {

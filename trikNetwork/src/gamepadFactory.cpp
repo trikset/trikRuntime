@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikTelemetry.h"
+#include "gamepadFactory.h"
 
-#include "src/connection.h"
+#include "gamepad.h"
 
-using namespace trikTelemetry;
+using namespace trikNetwork;
 
-TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
-	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
-	, mBrick(brick)
+GamepadInterface *GamepadFactory::create(int port)
 {
-}
-
-Connection * TrikTelemetry::connectionFactory()
-{
-	return new Connection(mBrick);
+	return new Gamepad(port);
 }

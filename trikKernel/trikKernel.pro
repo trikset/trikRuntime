@@ -14,26 +14,22 @@
 
 include(../global.pri)
 
-QT += network widgets
+QT += widgets
 
 INCLUDEPATH += $$PWD/include \
 	$$PWD/../qslog \
 
 HEADERS += \
-	$$PWD/include/trikKernel/connection.h \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
-	$$PWD/include/trikKernel/trikServer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/mainWidget.h \
 	$$PWD/include/trikKernel/lazyMainWidget.h \
 
 SOURCES += \
-	$$PWD/src/connection.cpp \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
-	$$PWD/src/trikServer.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 
 TEMPLATE = lib

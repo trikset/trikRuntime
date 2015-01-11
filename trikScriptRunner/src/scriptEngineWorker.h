@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
 #include <QtScript/QScriptEngine>
 
 #include <trikControl/brickInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
 
 #include "scriptExecutionControl.h"
 #include "threading.h"
@@ -39,6 +41,8 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
+			, trikNetwork::MailboxInterface &mailbox
+			, trikNetwork::GamepadInterface &gamepad
 			, ScriptExecutionControl &script
 			, QString const &startDirPath);
 
@@ -94,7 +98,9 @@ private:
 	/// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 	trikControl::BrickInterface &mBrick;
-	ScriptExecutionControl &mScript;
+	trikNetwork::MailboxInterface &mMailbox;
+	trikNetwork::GamepadInterface &mGamepad;
+	ScriptExecutionControl &mScriptControl;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
 	bool mEngineReset;

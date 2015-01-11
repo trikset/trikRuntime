@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@
 
 #include <QsLog.h>
 
-using namespace trikControl;
+using namespace trikNetwork;
 
 MailboxServer::MailboxServer(int port)
-	: trikKernel::TrikServer([this] () { return connectionFactory(); })
+	: TrikServer([this] () { return connectionFactory(); })
 	, mHullNumber(0)
 	, mMyIp(determineMyIp())
 	, mMyPort(port)
@@ -68,7 +68,7 @@ void MailboxServer::setHullNumber(int hullNumber)
 	mHullNumber = hullNumber;
 	saveSettings();
 
-	forEveryConnection([this](trikKernel::Connection *connection) {
+	forEveryConnection([this](Connection *connection) {
 		QMetaObject::invokeMethod(connection, "sendConnectionInfo"
 				, Q_ARG(QHostAddress const &, mMyIp)
 				, Q_ARG(int, mMyPort)
@@ -112,7 +112,7 @@ void MailboxServer::connect(QString const &ip)
 	connect(ip, mMyPort);
 }
 
-trikKernel::Connection *MailboxServer::connect(QHostAddress const &ip, int port)
+Connection *MailboxServer::connect(QHostAddress const &ip, int port)
 {
 	auto const connection = new MailboxConnection();
 
@@ -130,7 +130,7 @@ trikKernel::Connection *MailboxServer::connect(QHostAddress const &ip, int port)
 	return connection;
 }
 
-trikKernel::Connection *MailboxServer::connectionFactory()
+Connection *MailboxServer::connectionFactory()
 {
 	auto connection = new MailboxConnection();
 
@@ -142,7 +142,7 @@ trikKernel::Connection *MailboxServer::connectionFactory()
 	return connection;
 }
 
-void MailboxServer::connectConnection(trikKernel::Connection * connection)
+void MailboxServer::connectConnection(Connection * connection)
 {
 	QObject::connect(connection, SIGNAL(connectionInfo(QHostAddress, int, int))
 			, this, SLOT(onConnectionInfo(QHostAddress, int, int)));
@@ -172,7 +172,7 @@ QHostAddress MailboxServer::determineMyIp()
 	return QHostAddress();
 }
 
-trikKernel::Connection *MailboxServer::prepareConnection(QHostAddress const &ip)
+Connection *MailboxServer::prepareConnection(QHostAddress const &ip)
 {
 	// First, trying to reuse existing connection.
 	auto const connectionObject = connection(ip);
@@ -215,7 +215,7 @@ void MailboxServer::onNewConnection(QHostAddress const &ip, int clientPort, int 
 
 	if (!knownRobot) {
 		// Propagate information about newly connected robot through robot network.
-		forEveryConnection([&ip, &serverPort, &hullNumber](trikKernel::Connection *connection) {
+		forEveryConnection([&ip, &serverPort, &hullNumber](Connection *connection) {
 			QMetaObject::invokeMethod(connection, "sendConnectionInfo"
 					, Q_ARG(QHostAddress const &, ip)
 					, Q_ARG(int, serverPort)
@@ -259,7 +259,7 @@ void MailboxServer::onNewConnection(QHostAddress const &ip, int clientPort, int 
 
 void MailboxServer::send(int hullNumber, QString const &message)
 {
-	forEveryConnection([&message](trikKernel::Connection *connection) {
+	forEveryConnection([&message](Connection *connection) {
 		auto const data = QString("data:%1").arg(message).toUtf8();
 		QMetaObject::invokeMethod(connection, "send"
 				, Q_ARG(QByteArray const &, data)
@@ -362,7 +362,7 @@ void MailboxServer::saveSettings()
 	mAuxiliaryInformationLock.unlock();
 }
 
-void MailboxServer::forEveryConnection(std::function<void(trikKernel::Connection *)> method, int hullNumber)
+void MailboxServer::forEveryConnection(std::function<void(Connection *)> method, int hullNumber)
 {
 	mKnownRobotsLock.lockForRead();
 	auto const endpoints = hullNumber == -1 ? mKnownRobots.values() : mKnownRobots.values(hullNumber);

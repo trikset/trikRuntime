@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,14 @@
 
 #include <QsLog.h>
 
-using namespace trikControl;
+using namespace trikNetwork;
 
 MailboxConnection::MailboxConnection()
-	: trikKernel::Connection(trikKernel::Protocol::messageLength)
+	: Connection(Protocol::messageLength)
 {
 }
 
-void MailboxConnection::connect(const QHostAddress &targetIp, int targetPort, int myServerPort, int myHullNumber)
+void MailboxConnection::connect(QHostAddress const &targetIp, int targetPort, int myServerPort, int myHullNumber)
 {
 	init(targetIp, targetPort);
 

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,12 +24,17 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtXml/QDomDocument>
 
-#include <trikKernel/fileUtils.h>
-#include <trikKernel/coreDumping.h>
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
+#include <trikKernel/coreDumping.h>
+#include <trikKernel/fileUtils.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikNetwork/gamepadFactory.h>
+#include <trikNetwork/gamepadInterface.h>
+#include <trikNetwork/mailboxFactory.h>
+#include <trikNetwork/mailboxInterface.h>
 
 #include <QsLog.h>
 
@@ -99,6 +104,7 @@ int main(int argc, char *argv[])
 			, QsLogging::MaxSizeBytes(maxLogSize)
 			, QsLogging::MaxOldLogCount(2)
 			, QsLogging::TraceLevel);
+
 	QsLogging::Logger::instance().addDestination(destination);
 	QLOG_INFO() << "TrikRun started";
 
@@ -109,9 +115,46 @@ int main(int argc, char *argv[])
 
 	QObject::connect(&brick->graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
 			, &graphicsWidgetHandler, SLOT(show(trikKernel::MainWidget&)));
+
 	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
-	trikScriptRunner::TrikScriptRunner runner(*brick, startDirPath);
+	/// @todo: Remove this code to factories or facade, or to objects themselves.
+	QDomDocument config("config");
+
+	QFile file(configPath + "config.xml");
+	if (!file.open(QIODevice::ReadOnly)) {
+		QString const message = "Failed to open config.xml for reading";
+		QLOG_FATAL() << message;
+		throw message;
+	} if (!config.setContent(&file)) {
+		file.close();
+		QLOG_FATAL() << "config.xml parsing failed";
+		throw "config.xml parsing failed";
+	}
+
+	file.close();
+
+	QDomElement const root = config.documentElement();
+	QScopedPointer<trikNetwork::GamepadInterface> gamepad;
+	QScopedPointer<trikNetwork::MailboxInterface> mailbox;
+
+	if (root.elementsByTagName("mailbox").size() > 0
+				&& root.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true")
+	{
+		auto const mailboxElement = root.elementsByTagName("mailbox").at(0).toElement();
+		auto const mailboxServerPort = mailboxElement.attribute("port").toInt();
+		mailbox.reset(trikNetwork::MailboxFactory::create(mailboxServerPort));
+	}
+
+	if (root.elementsByTagName("gamepad").size() > 0
+				&& root.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
+	{
+		auto const gamepadElement = root.elementsByTagName("gamepad").at(0).toElement();
+		auto const gamepadServerPort = gamepadElement.attribute("port").toInt();
+		gamepad.reset(trikNetwork::GamepadFactory::create(gamepadServerPort));
+	}
+
+	trikScriptRunner::TrikScriptRunner runner(*brick, *mailbox, *gamepad, startDirPath);
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
 
 	if (app.arguments().contains("-s")) {

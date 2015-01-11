@@ -36,12 +36,10 @@ Configurer::Configurer(QString const &configFilePath)
 	if (!file.open(QIODevice::ReadOnly)) {
 		QString const message = "Failed to open config.xml for reading";
 		QLOG_FATAL() << message;
-		qDebug() << message;
 		throw message;
 	} if (!config.setContent(&file)) {
 		file.close();
 		QLOG_FATAL() << errorMessage;
-		qDebug() << errorMessage;
 		throw errorMessage;
 	}
 

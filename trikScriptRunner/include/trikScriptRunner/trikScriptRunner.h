@@ -18,6 +18,8 @@
 #include <QtCore/QScopedPointer>
 
 #include <trikControl/brickInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
 
 namespace trikScriptRunner {
 
@@ -33,7 +35,10 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikScriptRunner(trikControl::BrickInterface &brick, QString const &startDirPath);
+	TrikScriptRunner(trikControl::BrickInterface &brick
+			, trikNetwork::MailboxInterface &mailbox
+			, trikNetwork::GamepadInterface &gamepad
+			, QString const &startDirPath);
 
 	~TrikScriptRunner() override;
 

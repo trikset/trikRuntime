@@ -21,11 +21,11 @@
 
 #include "gamepadInterface.h"
 
-namespace trikControl {
+namespace trikNetwork {
 
 class TcpConnector;
 
-/// Implementation of remote control for real robot.
+/// Implementation of remote control interface.
 class Gamepad : public GamepadInterface
 {
 	Q_OBJECT

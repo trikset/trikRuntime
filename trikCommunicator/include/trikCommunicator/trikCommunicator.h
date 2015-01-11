@@ -21,7 +21,7 @@
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
 
-#include <trikKernel/trikServer.h>
+#include <trikNetwork/trikServer.h>
 
 namespace trikScriptRunner {
 class TrikScriptRunner;
@@ -29,6 +29,11 @@ class TrikScriptRunner;
 
 namespace trikControl {
 class BrickInterface;
+}
+
+namespace trikNetwork {
+class MailboxInterface;
+class GamepadInterface;
 }
 
 namespace trikCommunicator {
@@ -39,7 +44,7 @@ class Connection;
 /// Communication subsystem consists of TrikCommunicator object which runs in main thread and listens for incoming
 /// connections, Connection objects --- one for every connected client, they run in separate threads each, and
 /// ScriptRunnerWrapper object in main thread which processes signals from Connections.
-class TrikCommunicator : public trikKernel::TrikServer
+class TrikCommunicator : public trikNetwork::TrikServer
 {
 	Q_OBJECT
 
@@ -47,7 +52,10 @@ public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param brick - reference to robot brick.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikCommunicator(trikControl::BrickInterface &brick, QString const &startDirPath);
+	TrikCommunicator(trikControl::BrickInterface &brick
+			, trikNetwork::MailboxInterface &mailbox
+			, trikNetwork::GamepadInterface &gamepad
+			, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);

@@ -80,19 +80,10 @@ copyToDestdir($$PWD/wpa-config.xml)
 
 TEMPLATE = app
 
-QT += network
+QT += network xml
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry qslog)
-
-INCLUDEPATH += \
-	../trikKernel/include/ \
-	../trikControl/include/ \
-	../trikCommunicator/include/ \
-	../trikScriptRunner/include/ \
-	../trikWiFi/include/ \
-	../trikTelemetry/include/ \
-	../qslog/ \
+uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)

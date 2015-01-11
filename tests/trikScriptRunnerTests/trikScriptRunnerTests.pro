@@ -31,4 +31,4 @@ INCLUDEPATH += \
 	$$PWD/../../trikControl/include \
 	$$PWD/../../qslog \
 
-uses(trikKernel trikControl trikScriptRunner)
+uses(trikKernel trikControl trikScriptRunner trikNetwork)

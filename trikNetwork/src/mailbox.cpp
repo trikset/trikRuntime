@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,11 @@
 
 #include <QtCore/QEventLoop>
 
-using namespace trikControl;
+using namespace trikNetwork;
+
+Mailbox::Mailbox()
+{
+}
 
 Mailbox::Mailbox(int port)
 	: mWorker(new MailboxServer(port))
@@ -53,6 +57,19 @@ QHostAddress Mailbox::serverIp() const
 QHostAddress Mailbox::myIp() const
 {
 	return mWorker->myIp();
+}
+
+void Mailbox::reset()
+{
+	emit stopWaiting();
+	while (mWorker->hasMessages()) {
+		mWorker->receive();
+	}
+}
+
+bool Mailbox::isEnabled()
+{
+	return !mWorker.isNull();
 }
 
 void Mailbox::connect(QString const &ip, int port)

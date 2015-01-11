@@ -19,22 +19,22 @@
 
 #include "mailboxInterface.h"
 
-namespace trikControl {
+namespace trikNetwork {
 
 class MailboxServer;
 
-/// Implementation of mailboxes system for real robot.
+/// Implementation of mailboxes system.
 ///
 /// @todo Make mailbox renew its IP information when robots connects to a new network.
 ///       Workaround: reboot trikGui (or robot) after connectiong to a new network.
-///
-/// @todo Remove mailboxes from TrikControl, as they are not hardware-dependent and may work on a computer or in
-///       2d model too.
 class Mailbox : public MailboxInterface
 {
 	Q_OBJECT
 
 public:
+	/// Default constructor, leaves mailbox in uninitialized state.
+	Mailbox();
+
 	/// Constructor.
 	/// @param port - port for mailbox server.
 	Mailbox(int port);
@@ -46,6 +46,10 @@ public:
 	QHostAddress serverIp() const override;
 
 	QHostAddress myIp() const override;
+
+	void reset() override;
+
+	bool isEnabled() override;
 
 public slots:
 	void connect(QString const &ip, int port) override;

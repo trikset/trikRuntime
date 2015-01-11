@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 #include "trikServer.h"
 
-#include "trikKernel/connection.h"
+#include "connection.h"
 
 #include <QtCore/QDebug>
 
 #include <QsLog.h>
 
-using namespace trikKernel;
+using namespace trikNetwork;
 
 TrikServer::TrikServer(std::function<Connection *()> const &connectionFactory)
 	: mConnectionFactory(connectionFactory)

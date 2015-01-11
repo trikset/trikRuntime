@@ -22,10 +22,12 @@
 using namespace trikScriptRunner;
 
 ScriptRunnerProxy::ScriptRunnerProxy(trikControl::BrickInterface &brick
-		, ScriptExecutionControl &script
+		, trikNetwork::MailboxInterface &mailbox
+		, trikNetwork::GamepadInterface &gamepad
+		, ScriptExecutionControl &scriptControl
 		, QString const &startDirPath)
 {
-	mEngineWorker = new ScriptEngineWorker(brick, script, startDirPath);
+	mEngineWorker = new ScriptEngineWorker(brick, mailbox, gamepad, scriptControl, startDirPath);
 	QMetaObject::invokeMethod(mEngineWorker, "init");
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));

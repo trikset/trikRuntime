@@ -22,11 +22,9 @@ HEADERS += \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/include/trikControl/displayInterface.h \
 	$$PWD/include/trikControl/encoderInterface.h \
-	$$PWD/include/trikControl/gamepadInterface.h \
 	$$PWD/include/trikControl/keysInterface.h \
 	$$PWD/include/trikControl/ledInterface.h \
 	$$PWD/include/trikControl/lineSensorInterface.h \
-	$$PWD/include/trikControl/mailboxInterface.h \
 	$$PWD/include/trikControl/motorInterface.h \
 	$$PWD/include/trikControl/objectSensorInterface.h \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
@@ -46,7 +44,6 @@ HEADERS += \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
-	$$PWD/src/gamepad.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/i2cCommunicator.h \
@@ -55,9 +52,6 @@ HEADERS += \
 	$$PWD/src/led.h \
 	$$PWD/src/lineSensor.h \
 	$$PWD/src/lineSensorWorker.h \
-	$$PWD/src/mailbox.h \
-	$$PWD/src/mailboxConnection.h \
-	$$PWD/src/mailboxServer.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
@@ -65,7 +59,6 @@ HEADERS += \
 	$$PWD/src/rangeSensor.h \
 	$$PWD/src/rangeSensorWorker.h \
 	$$PWD/src/servoMotor.h \
-	$$PWD/src/tcpConnector.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
 
@@ -82,23 +75,18 @@ SOURCES += \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \
-	$$PWD/src/gamepad.cpp \
 	$$PWD/src/graphicsWidget.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/keys.cpp \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/lineSensorWorker.cpp \
-	$$PWD/src/mailbox.cpp \
-	$$PWD/src/mailboxConnection.cpp \
-	$$PWD/src/mailboxServer.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
-	$$PWD/src/tcpConnector.cpp \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
@@ -120,11 +108,7 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel qslog)
-
-INCLUDEPATH += \
-	$$PWD/../trikKernel/include \
-	$$PWD/../qslog/ \
+uses(trikKernel)
 
 copyToDestdir( \
 	$$PWD/config.xml  \

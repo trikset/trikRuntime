@@ -15,11 +15,12 @@
 #pragma once
 
 #include <trikCommunicator/trikCommunicator.h>
+#include <trikControl/brickInterface.h>
+#include <trikKernel/lazyMainWidget.h>
+#include <trikNetwork/gamepadInterface.h>
+#include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
-#include <trikControl/brickInterface.h>
-
-#include <trikKernel/lazyMainWidget.h>
 
 namespace trikGui
 {
@@ -46,8 +47,11 @@ public:
 	/// Cancels execution of current program.
 	void abortExecution();
 
-	/// Returns reference to Brick object, which provides access to low-level robot functionality.
+	/// Returns reference to Brick object, which provides access to robot hardware.
 	trikControl::BrickInterface &brick();
+
+	/// Returns reference to Mailbox object, which provides access to robot-to-robot communications.
+	trikNetwork::MailboxInterface &mailbox();
 
 	/// Returns mStartDirPath (path to the directory from which the application was executed)
 	QString startDirPath() const;
@@ -86,9 +90,11 @@ private slots:
 
 private:
 	QScopedPointer<trikControl::BrickInterface> mBrick;
-	trikScriptRunner::TrikScriptRunner mScriptRunner;
-	trikCommunicator::TrikCommunicator mCommunicator;
-	trikTelemetry::TrikTelemetry mTelemetry;
+	QScopedPointer<trikNetwork::GamepadInterface> mGamepad;
+	QScopedPointer<trikNetwork::MailboxInterface> mMailbox;
+	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
+	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;
+	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
 	QString const &mStartDirPath; // Path to the directory from which the application was executed

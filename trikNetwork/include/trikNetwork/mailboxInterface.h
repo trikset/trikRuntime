@@ -19,7 +19,7 @@
 
 #include "declSpec.h"
 
-namespace trikControl {
+namespace trikNetwork {
 
 /// Allows communication between robots. Each robot has its hull number (assigned in "Settings->Comm settings" in GUI),
 /// and can connect to other robot (called "leader") by IP, if they are in the same subnet (it is also can be done
@@ -27,7 +27,7 @@ namespace trikControl {
 /// that is connected to a leader (or to a robot that is connected to a robot that is connected to a leader, and so on).
 /// Recipients are identified by their hull numbers, if two or more robots in a network have the same hull number,
 /// they will all receive a message.
-class TRIKCONTROL_EXPORT MailboxInterface : public QObject
+class TRIKNETWORK_EXPORT MailboxInterface : public QObject
 {
 	Q_OBJECT
 
@@ -40,6 +40,12 @@ public:
 
 	/// Returns our IP address, or empty QHostAddress if we are not connected.
 	virtual QHostAddress myIp() const = 0;
+
+	/// Stops waiting for messages, clears message queue.
+	virtual void reset() = 0;
+
+	/// Returns true if mailbox is enabled in current configuration.
+	virtual bool isEnabled() = 0;
 
 public slots:
 	/// Connects to robot by IP and port.

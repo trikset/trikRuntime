@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
 #include <QtCore/QDebug>
 #include <QtCore/QThread>
 
+#include <trikKernel/version.h>
+
 #include "connection.h"
-#include "version.h"
 
 #include <QsLog.h>
 
-using namespace trikKernel;
+using namespace trikNetwork;
 
 Connection::Connection(Protocol connectionProtocol)
 	: mProtocol(connectionProtocol)
@@ -168,7 +169,7 @@ void Connection::processBuffer()
 void Connection::handleIncomingData(QByteArray const &data)
 {
 	if (data == "version") {
-		send(QString("version: " + version).toUtf8());
+		send(QString("version: " + trikKernel::version).toUtf8());
 	} else {
 		processData(data);
 	}

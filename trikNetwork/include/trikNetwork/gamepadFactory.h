@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikTelemetry.h"
+#pragma once
 
-#include "src/connection.h"
+#include <QtCore/QThread>
+#include <QtCore/QString>
 
-using namespace trikTelemetry;
+#include "gamepadInterface.h"
 
-TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
-	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
-	, mBrick(brick)
+#include "declSpec.h"
+
+namespace trikNetwork {
+
+/// Factory that creates real gamepad receiver object.
+class TRIKNETWORK_EXPORT GamepadFactory
 {
-}
+public:
+	/// Method that creates gamepad object.
+	/// Transfers ownership over GamepadInterface object to caller.
+	/// @param port - TCP port of a gamepad server.
+	static GamepadInterface *create(int port);
+};
 
-Connection * TrikTelemetry::connectionFactory()
-{
-	return new Connection(mBrick);
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
 #include <trikControl/lineSensorInterface.h>
-#include <trikControl/mailboxInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
 
 #include "scriptableParts.h"
 #include "utils.h"
@@ -38,6 +39,7 @@
 
 using namespace trikScriptRunner;
 using namespace trikControl;
+using namespace trikNetwork;
 
 Q_DECLARE_METATYPE(Threading*)
 Q_DECLARE_METATYPE(ColorSensorInterface*)
@@ -57,16 +59,20 @@ Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
+		, trikNetwork::MailboxInterface &mailbox
+		, trikNetwork::GamepadInterface &gamepad
 		, ScriptExecutionControl &script
 		, QString const &startDirPath)
 	: mEngine(nullptr)
 	, mBrick(brick)
-	, mScript(script)
+	, mMailbox(mailbox)
+	, mGamepad(gamepad)
+	, mScriptControl(script)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
 	, mEngineReset(false)
 {
-	connect(&mScript, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -99,12 +105,14 @@ void ScriptEngineWorker::reset()
 
 	mEngineReset = !mEngine->isEvaluating();
 
-	bool const inEventDrivenMode = mScript.isInEventDrivenMode();
+	bool const inEventDrivenMode = mScriptControl.isInEventDrivenMode();
 
 	emit abortEvaluation();
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	mBrick.reset();
-	mScript.reset();
+	mScriptControl.reset();
+	mMailbox.reset();
+	mGamepad.reset();
 
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
@@ -121,7 +129,7 @@ void ScriptEngineWorker::reset()
 
 ScriptEngineWorker &ScriptEngineWorker::clone()
 {
-	ScriptEngineWorker *result = new ScriptEngineWorker(mBrick, mScript, mStartDirPath);
+	ScriptEngineWorker *result = new ScriptEngineWorker(mBrick, mMailbox, mGamepad, mScriptControl, mStartDirPath);
 	result->setParent(this);
 	result->init();
 	QScriptValue globalObject = result->mEngine->globalObject();
@@ -143,14 +151,14 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 		Q_ASSERT(false);
 	}
 
-	if (!inEventDrivenMode || !mScript.isInEventDrivenMode()) {
+	if (!inEventDrivenMode || !mScriptControl.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
 		mScriptId = scriptId;
 		emit startedScript(mScriptId);
 	}
 
 	if (inEventDrivenMode) {
-		mScript.run();
+		mScriptControl.run();
 	}
 
 	mThreadingVariable.setCurrentScript(script);
@@ -163,13 +171,16 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 
 	QLOG_INFO() << "ScriptEngineWorker: evaluating, script:" << mScriptId
 			<< ", thread:" << QThread::currentThread();
+
 	mEngine->evaluate(needCallFunction ? QString("%1\n%2();").arg(script, function) : script);
 	QLOG_INFO() << "ScriptEngineWorker: evaluation stopped, script:" << mScriptId
 			<< ", thread:" << QThread::currentThread();
 
-	if (!mScript.isInEventDrivenMode()) {
+	if (!mScriptControl.isInEventDrivenMode()) {
 		mBrick.stop();
-		mScript.reset();
+		mScriptControl.reset();
+		mMailbox.reset();
+		mGamepad.reset();
 		if (!dynamic_cast<ScriptEngineWorker *>(parent())) {
 			// Only main thread must wait for others
 			mThreadingVariable.waitForAll();
@@ -184,10 +195,10 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	if (!mScript.isInEventDrivenMode()) {
+	if (!mScriptControl.isInEventDrivenMode()) {
 		// Somebody erroneously called script.quit() before entering event loop, so we must force event loop for script
 		// and only then quit, to send properly completed() signal.
-		mScript.run();
+		mScriptControl.run();
 	}
 
 	reset();
@@ -197,6 +208,7 @@ void ScriptEngineWorker::resetScriptEngine()
 {
 	QLOG_INFO() << "ScriptEngineWorker: resetting script engine" << mEngine
 			<< ", thread: " << QThread::currentThread();
+
 	if (mEngine) {
 		mEngine->deleteLater();
 	}
@@ -221,7 +233,9 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 
 	mEngine->globalObject().setProperty("brick", mEngine->newQObject(&mBrick));
-	mEngine->globalObject().setProperty("script", mEngine->newQObject(&mScript));
+	mEngine->globalObject().setProperty("script", mEngine->newQObject(&mScriptControl));
+	mEngine->globalObject().setProperty("mailbox", mEngine->newQObject(&mMailbox));
+	mEngine->globalObject().setProperty("gamepad", mEngine->newQObject(&mGamepad));
 	mEngine->globalObject().setProperty("Threading", mEngine->newQObject(&mThreadingVariable));
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
@@ -229,7 +243,6 @@ void ScriptEngineWorker::resetScriptEngine()
 		if (mEngine->hasUncaughtException()) {
 			int const line = mEngine->uncaughtExceptionLineNumber();
 			QString const message = mEngine->uncaughtException().toString();
-			qDebug() << "Uncaught exception at line" << line << ":" << message;
 			QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 		}
 	} else {
@@ -246,7 +259,6 @@ void ScriptEngineWorker::onScriptEvaluated()
 		int const line = mEngine->uncaughtExceptionLineNumber();
 		QString const message = mEngine->uncaughtException().toString();
 		error = tr("Line %1: %2").arg(QString::number(line), message);
-		qDebug() << "Uncaught exception at line" << line << ":" << message;
 		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 	}
 

@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <trikKernel/connection.h>
+#include <trikNetwork/connection.h>
 #include <trikControl/brickInterface.h>
 
 namespace trikTelemetry {
@@ -25,7 +25,7 @@ namespace trikTelemetry {
 /// Accepted commands:
 ///     data - sends data from sensors to a client
 ///     ports - sends current ports configuration to a client
-class Connection : public trikKernel::Connection
+class Connection : public trikNetwork::Connection
 {
 	Q_OBJECT
 

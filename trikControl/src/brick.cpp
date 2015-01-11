@@ -33,11 +33,9 @@
 #include "vectorSensor.h"
 #include "keys.h"
 #include "led.h"
-#include "gamepad.h"
 #include "lineSensor.h"
 #include "objectSensor.h"
 #include "colorSensor.h"
-#include "mailbox.h"
 
 #include "configurer.h"
 #include "i2cCommunicator.h"
@@ -172,9 +170,9 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 			, mConfigurer->ledOff()
 			);
 
-	if (mConfigurer->hasGamepad()) {
-		mGamepad = new Gamepad(mConfigurer->gamepadPort());
-	}
+//	if (mConfigurer->hasGamepad()) {
+//		mGamepad = new Gamepad(mConfigurer->gamepadPort());
+//	}
 
 	if (mConfigurer->hasLineSensor()) {
 		mLineSensor = new LineSensor(mConfigurer->lineSensorScript()
@@ -210,10 +208,10 @@ Brick::Brick(QThread &guiThread, QString const &configFilePath, const QString &s
 		connect(mColorSensor, SIGNAL(stopped()), this, SIGNAL(stopped()));
 	}
 
-	if (mConfigurer->hasMailbox()) {
-		mMailbox.reset(new Mailbox(mConfigurer->mailboxServerPort()));
-		QObject::connect(this, SIGNAL(stopWaiting()), mMailbox.data(), SIGNAL(stopWaiting()));
-	}
+//	if (mConfigurer->hasMailbox()) {
+//		mMailbox.reset(new Mailbox(mConfigurer->mailboxServerPort()));
+//		QObject::connect(this, SIGNAL(stopWaiting()), mMailbox.data(), SIGNAL(stopWaiting()));
+//	}
 }
 
 Brick::~Brick()
@@ -232,7 +230,6 @@ Brick::~Brick()
 	delete mI2cCommunicator;
 	delete mLed;
 	delete mKeys;
-	delete mGamepad;
 	delete mLineSensor;
 	delete mColorSensor;
 	delete mObjectSensor;
@@ -246,7 +243,6 @@ trikKernel::LazyMainWidget &Brick::graphicsWidget()
 void Brick::reset()
 {
 	stop();
-	emit stopWaiting();
 	mKeys->reset();
 	mDisplay->clear();
 
@@ -427,11 +423,6 @@ QStringList Brick::encoderPorts() const
 	return mEncoders.keys();
 }
 
-GamepadInterface* Brick::gamepad()
-{
-	return mGamepad;
-}
-
 DisplayInterface *Brick::display()
 {
 	return mDisplay.data();
@@ -440,9 +431,4 @@ DisplayInterface *Brick::display()
 LedInterface *Brick::led()
 {
 	return mLed;
-}
-
-MailboxInterface *Brick::mailbox()
-{
-	return mMailbox.data();
 }

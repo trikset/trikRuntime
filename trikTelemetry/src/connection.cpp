@@ -17,7 +17,7 @@
 using namespace trikTelemetry;
 
 Connection::Connection(trikControl::BrickInterface &brick)
-	: trikKernel::Connection(trikKernel::Protocol::messageLength)
+	: trikNetwork::Connection(trikNetwork::Protocol::messageLength)
 	, mBrick(brick)
 {
 }

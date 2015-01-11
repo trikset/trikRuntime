@@ -1,10 +1,10 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -12,19 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikTelemetry.h"
+#pragma once
 
-#include "src/connection.h"
+#include <QtCore/qglobal.h>
 
-using namespace trikTelemetry;
-
-TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
-	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
-	, mBrick(brick)
-{
-}
-
-Connection * TrikTelemetry::connectionFactory()
-{
-	return new Connection(mBrick);
-}
+#ifndef TRIKNETWORK_EXPORT
+#  if defined(TRIKNETWORK_LIBRARY)
+#    define TRIKNETWORK_EXPORT Q_DECL_EXPORT
+#  else
+#    define TRIKNETWORK_EXPORT Q_DECL_IMPORT
+#  endif
+#endif

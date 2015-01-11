@@ -20,11 +20,9 @@
 #include "colorSensorInterface.h"
 #include "displayInterface.h"
 #include "encoderInterface.h"
-#include "gamepadInterface.h"
 #include "keysInterface.h"
 #include "ledInterface.h"
 #include "lineSensorInterface.h"
-#include "mailboxInterface.h"
 #include "motorInterface.h"
 #include "objectSensorInterface.h"
 #include "pwmCaptureInterface.h"
@@ -104,17 +102,11 @@ public slots:
 	/// Returns reference to keys on a control brick.
 	virtual KeysInterface *keys() = 0;
 
-	/// Returns reference to external gamepad connected via TCP.
-	virtual GamepadInterface *gamepad() = 0;
-
 	/// Returns reference to class that provides drawing on display.
 	virtual DisplayInterface *display() = 0;
 
 	/// Returns reference to LED control class.
 	virtual LedInterface *led() = 0;
-
-	/// Returns reference to mailbox used to send and receive messages to/from other robots.
-	virtual MailboxInterface *mailbox() = 0;
 
 signals:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no

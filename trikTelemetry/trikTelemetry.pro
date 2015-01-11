@@ -28,9 +28,4 @@ QT += network
 
 DEFINES += TRIKTELEMETRY_LIBRARY
 
-uses(trikControl trikKernel qslog)
-
-INCLUDEPATH += \
-	../trikControl/include/ \
-	../trikKernel/include/ \
-	../qslog/ \
+uses(trikControl trikNetwork trikKernel qslog)

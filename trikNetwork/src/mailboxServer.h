@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,11 @@
 #include <QtCore/QQueue>
 #include <QtNetwork/QHostAddress>
 
-#include <trikKernel/trikServer.h>
+#include "trikServer.h"
 
 #include "declSpec.h"
 
-namespace trikControl {
+namespace trikNetwork {
 
 /// Worker object for mailbox functionality. It is a server that is supposed to be run in a separate thread and
 /// it allows to handle a number of connections, keeping them open if possible or attempting to reestablish them if
@@ -34,7 +34,7 @@ namespace trikControl {
 /// hullNumber - hull number of this robot.
 /// server - IP of a robot we last connected to.
 /// serverPort - mailbox port of a robot we last connected to.
-class MailboxServer : public trikKernel::TrikServer
+class MailboxServer : public TrikServer
 {
 	Q_OBJECT
 
@@ -85,20 +85,20 @@ private slots:
 	void onNewData(QHostAddress const &ip, int port, QByteArray const &data);
 
 private:
-	trikKernel::Connection *connect(QHostAddress const &ip, int port);
+	Connection *connect(QHostAddress const &ip, int port);
 
-	trikKernel::Connection *connectionFactory();
+	Connection *connectionFactory();
 
-	void connectConnection(trikKernel::Connection * connection);
+	void connectConnection(Connection * connection);
 
 	static QHostAddress determineMyIp();
 
-	trikKernel::Connection *prepareConnection(QHostAddress const &ip);
+	Connection *prepareConnection(QHostAddress const &ip);
 
 	void loadSettings();
 	void saveSettings();
 
-	void forEveryConnection(std::function<void(trikKernel::Connection *)> method, int hullNumber = -1);
+	void forEveryConnection(std::function<void(Connection *)> method, int hullNumber = -1);
 
 	int mHullNumber;
 	QHostAddress const mMyIp;

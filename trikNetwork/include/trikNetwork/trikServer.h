@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,18 @@
 #include <QtCore/QThread>
 #include <QtNetwork/QTcpServer>
 
+#include "declSpec.h"
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	typedef int qintptr;
 #endif
 
-namespace trikKernel {
+namespace trikNetwork {
 
 class Connection;
 
 /// Server that can handle multiple clients. Actual work is done in separate threads by Connection objects.
-class TrikServer : public QTcpServer
+class TRIKNETWORK_EXPORT TrikServer : public QTcpServer
 {
 	Q_OBJECT
 

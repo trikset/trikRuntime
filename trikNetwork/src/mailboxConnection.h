@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtNetwork/QTcpSocket>
-#include <trikKernel/connection.h>
 
-namespace trikControl {
+#include "connection.h"
+
+namespace trikNetwork {
 
 /// One connection to a client (or server) in mailbox. Supposed to be working in a separate thread.
-class MailboxConnection : public trikKernel::Connection {
+class MailboxConnection : public Connection
+{
 	Q_OBJECT
 
 public:

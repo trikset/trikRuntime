@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 
-namespace trikKernel {
+#include "declSpec.h"
+
+namespace trikNetwork {
 
 /// Connection protocol variants.
 enum class Protocol
@@ -33,7 +35,7 @@ enum class Protocol
 
 /// Abstract class that serves one client of TrikServer. Meant to work in separate thread. Creates its own socket and
 /// handles all incoming messages.
-class Connection : public QObject
+class TRIKNETWORK_EXPORT Connection : public QObject
 {
 	Q_OBJECT
 

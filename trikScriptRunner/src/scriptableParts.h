@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,16 @@
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
-#include <trikControl/gamepadInterface.h>
 #include <trikControl/keysInterface.h>
 #include <trikControl/ledInterface.h>
 #include <trikControl/lineSensorInterface.h>
-#include <trikControl/mailboxInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+
+#include <trikNetwork/gamepadInterface.h>
+#include <trikNetwork/mailboxInterface.h>
 
 namespace trikScriptRunner {
 
@@ -45,8 +46,8 @@ void displayFromScriptValue(QScriptValue const &object, trikControl::DisplayInte
 QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::EncoderInterface* const &in);
 void encoderFromScriptValue(QScriptValue const &object, trikControl::EncoderInterface* &out);
 
-QScriptValue gamepadToScriptValue(QScriptEngine *engine, trikControl::GamepadInterface* const &in);
-void gamepadFromScriptValue(QScriptValue const &object, trikControl::GamepadInterface* &out);
+QScriptValue gamepadToScriptValue(QScriptEngine *engine, trikNetwork::GamepadInterface* const &in);
+void gamepadFromScriptValue(QScriptValue const &object, trikNetwork::GamepadInterface* &out);
 
 QScriptValue keysToScriptValue(QScriptEngine *engine, trikControl::KeysInterface* const &in);
 void keysFromScriptValue(QScriptValue const &object, trikControl::KeysInterface* &out);
@@ -57,8 +58,8 @@ void ledFromScriptValue(QScriptValue const &object, trikControl::LedInterface* &
 QScriptValue lineSensorToScriptValue(QScriptEngine *engine, trikControl::LineSensorInterface* const &in);
 void lineSensorFromScriptValue(QScriptValue const &object, trikControl::LineSensorInterface* &out);
 
-QScriptValue mailboxToScriptValue(QScriptEngine *engine, trikControl::MailboxInterface* const &in);
-void mailboxFromScriptValue(QScriptValue const &object, trikControl::MailboxInterface* &out);
+QScriptValue mailboxToScriptValue(QScriptEngine *engine, trikNetwork::MailboxInterface* const &in);
+void mailboxFromScriptValue(QScriptValue const &object, trikNetwork::MailboxInterface* &out);
 
 QScriptValue motorToScriptValue(QScriptEngine *engine, trikControl::MotorInterface* const &in);
 void motorFromScriptValue(QScriptValue const &object, trikControl::MotorInterface* &out);

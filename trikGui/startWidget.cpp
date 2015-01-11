@@ -63,7 +63,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	settingsItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)));
 
-	if (mController.brick().mailbox()) {
+	if (mController.mailbox().isEnabled()) {
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 
@@ -130,7 +130,7 @@ void StartWidget::launch()
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
-			CommunicationSettingsWidget communicationSettingsWidget(mController.brick());
+			CommunicationSettingsWidget communicationSettingsWidget(mController.mailbox());
 			emit newWidget(communicationSettingsWidget);
 			result = communicationSettingsWidget.exec();
 		} else if (currentItemText == VersionWidget::menuEntry()) {
@@ -145,6 +145,7 @@ void StartWidget::launch()
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
 					, this, SLOT(changeFileManagerRoot(MainWidget::FileManagerRootType const&)));
+
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
 		}

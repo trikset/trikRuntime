@@ -23,25 +23,23 @@
 
 namespace trikControl {
 
-class Configurer;
-class I2cCommunicator;
-class PowerMotor;
-class ServoMotor;
 class AnalogSensor;
-class DigitalSensor;
-class RangeSensor;
 class Battery;
-class VectorSensor;
-class Display;
-class LineSensor;
 class ColorSensor;
-class ObjectSensor;
-class Keys;
-class Gamepad;
-class PwmCapture;
-class Led;
+class Configurer;
+class DigitalSensor;
+class Display;
 class Encoder;
-class Mailbox;
+class I2cCommunicator;
+class Keys;
+class Led;
+class LineSensor;
+class ObjectSensor;
+class PowerMotor;
+class PwmCapture;
+class RangeSensor;
+class ServoMotor;
+class VectorSensor;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -101,17 +99,9 @@ public slots:
 
 	KeysInterface *keys() override;
 
-	GamepadInterface *gamepad() override;
-
 	DisplayInterface *display() override;
 
 	LedInterface *led() override;
-
-	MailboxInterface *mailbox() override;
-
-signals:
-	/// For internal use, emitted when brick needs to stop all waiting activities of devices.
-	void stopWaiting();
 
 private:
 	VectorSensor *mAccelerometer = nullptr;  // has ownership.
@@ -121,7 +111,6 @@ private:
 	ObjectSensor *mObjectSensor = nullptr;  // Has ownership.
 	Battery *mBattery = nullptr;  // Has ownership.
 	Keys *mKeys = nullptr;  // Has ownership.
-	Gamepad *mGamepad = nullptr;  // Has ownership.
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
@@ -135,7 +124,6 @@ private:
 	I2cCommunicator *mI2cCommunicator = nullptr;  // Has ownership.
 	QScopedPointer<Display> mDisplay;
 	Led *mLed = nullptr;  // Has ownership.
-	QScopedPointer<Mailbox> mMailbox;
 };
 
 }
