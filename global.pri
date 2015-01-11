@@ -72,7 +72,14 @@ INCLUDEPATH += \
 	$$PWD/qslog \
 
 LIBS += -L$$DESTDIR
-LIBS += -lqslog$$CONFIGURATION_SUFFIX
+
+IS_QSLOG = $$find(PROJECT_NAME, [qQ]s[lL]og)
+message($$IS_QSLOG)
+
+isEmpty(IS_QSLOG) {
+	message(ololo)
+	LIBS += -lqslog$$CONFIGURATION_SUFFIX
+}
 
 unix {
 	target.path = $$[INSTALL_ROOT]/
