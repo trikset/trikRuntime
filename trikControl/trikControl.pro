@@ -95,8 +95,9 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
 
 OTHER_FILES += \
-	config.xml \
-	config_capture.xml \
+#	config_capture.xml \
+	model-config.xml \
+	system-config.xml \
 
 TEMPLATE = lib
 
@@ -111,7 +112,8 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 uses(trikKernel)
 
 copyToDestdir( \
-	$$PWD/config.xml  \
-	$$PWD/config_capture.xml \
+	$$PWD/model-config.xml  \
+	$$PWD/system-config.xml  \
+#	$$PWD/config_capture.xml \
 	$$PWD/../media/ \
 )
