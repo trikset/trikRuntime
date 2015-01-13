@@ -1,4 +1,23 @@
-<!-- TrikControl system configuration file. -->
+<!-- TrikControl system configuration file. Meant to be written once for each release of OS and shall be the same
+for all models running that OS release.
+
+Devices have properties depending on a port to which device is plugged and device class (IR Sensor, Servomotor
+and so on), such as device file, and properties common for some devices of given class regardless of port (for example,
+we may have two different types of angular servos that have common control interface but different parameters).
+So we distinguish "device class" and "device type". "device class" is a class of device as in underlying C++ code
+(basically, a logic of communication with particular kind of device), "device type" is a set of parameters for
+each device class. Device class can have many device types assotiated with it (for instance, for different kinds of
+servomotors from example above). Device classes are hard-coded, device types are defined in system config. Every
+parameter for device type may be overridden in model config, to allow to fine-tune devices for particular purpose
+(ability to set the maximum and minimum angles of angular servo proven to be especially useful).
+
+System config has declaration of configurable device classes ("deviceClasses" section) with properties common to all
+devices of that class, definition of device-port relations (which device class can be attached to which port and it
+also defines port-specific properties like device file) and definition of device types (containing variable parameters
+for device class, for example, various raw-to-degree coefficients for different encoders). If device has no variable
+parameters, it may be not listed in "device types" section, it is assumed that it has one device type with a name
+equal to its class name.
+-->
 
 <config>
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
@@ -39,7 +58,35 @@
 		amixer -q set PCM 127
 	</initScript>
 
+	<!-- A list of known devices -->
 	<deviceClasses>
+		<servoMotor />
+		<pwmCapture />
+		<powerMotor />
+		<analogSensor />
+		<encoder />
+		<rangeSensor />
+		<digitalSensor />
+		<accelerometer deviceFile="/dev/input/event1" />
+		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
+		<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
+		<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
+		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" />
+
+		<!-- Device files for LED on a brick. -->
+		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
+
+		<!--Device file for keys on a brick -->
+		<keys deviceFile="/dev/input/event0" />
+
+		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
+		<gamepad port="4444" disabled="false" />
+
+		<!-- Settings for mailbox server (which enables communication between robots) -->
+		<mailbox port="8889" disabled="false" />
+	</deviceClasses>
+
+	<devicePorts>
 		<servoMotor
 			port="E1"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
@@ -102,26 +149,24 @@
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" />
 		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" />
-		<accelerometer deviceFile="/dev/input/event1" />
-		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" />
-		<lineSensor port="video0" script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
-		<lineSensor port="video1" script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
-		<objectSensor port="video0" script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
-		<objectSensor port="video1" script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" disabled="false" />
-		<colorSensor port="video0" script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" disabled="false" />
-		<colorSensor port="video1" script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" disabled="false" />
-	</deviceClasses>
+		<lineSensor port="video0" />
+		<lineSensor port="video1" />
+		<objectSensor port="video0" />
+		<objectSensor port="video1" />
+		<colorSensor port="video0" />
+		<colorSensor port="video1" />
+	</devicePorts>
 
 	<deviceTypes>
 		<angularServomotor class="servoMotor" min="600000" max="2200000" zero="1400000" stop="0" type="angular" />
 		<continuousRotationServomotor class="servoMotor" min="600000" max="2200000" zero="1400000" stop="0" type="continuousRotation" />
-		<pwmCapture class="pwmCapture" />
 		<irSensor class="analogSensor" rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" />
 		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />
 		<lightSensor class="digitalSensor" min="30000" max="350000" />
 		<volumeSensor class="digitalSensor" min="0" max="100" />
 		<encoder95 class="encoder" rawToDegrees="0.02304708" />
 		<encoder126 class="encoder" rawToDegrees="0.03033597" />
+		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
@@ -130,19 +175,7 @@
 	<!-- Format for playSound command, used to play .mp3 files. %1 designates file name to be played. -->
 	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;" />
 
-	<!-- Device files and on/off values for LED on a brick. -->
-	<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
-
-	<!--Device file for keys on a brick -->
-	<keys deviceFile="/dev/input/event0" />
-
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
-
-	<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
-	<gamepad port="4444" disabled="false" />
-
-	<!-- Settings for mailbox server (which enables communication between robots) -->
-	<mailbox port="8889" disabled="false" />
 
 </config>

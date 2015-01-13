@@ -109,7 +109,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</video0>
 
 	<video1>
-		<colorSensor/>
+		<colorSensor3x3/>
 	</video1>
 
 	<!-- On-board sensors. -->
