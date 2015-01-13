@@ -16,6 +16,7 @@
 
 #include <QtCore/QThread>
 #include <QtCore/QString>
+#include <QtXml/QDomElement>
 
 #include "mailboxInterface.h"
 
@@ -31,6 +32,12 @@ public:
 	/// Transfers ownership over MailboxInterface object to caller.
 	/// @param port - TCP port of mailbox server.
 	static MailboxInterface *create(int port);
+
+	/// Method that creates mailbox object.
+	/// Transfers ownership over MailboxInterface object to caller.
+	/// @param config - root of XML document with configuration. If configuration is incorrect, uninitialized mailbox
+	///        object will be returned.
+	static MailboxInterface *create(QDomElement const &config);
 
 	/// Creates uninitialized mailbox object as a placeholder for configurations where mailbox is turned off.
 	/// Transfers ownership over MailboxInterface object to caller.

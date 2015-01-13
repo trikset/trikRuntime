@@ -24,24 +24,35 @@ Mailbox::Mailbox()
 }
 
 Mailbox::Mailbox(int port)
-	: mWorker(new MailboxServer(port))
 {
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaiting()));
+	init(port);
+}
 
-	mWorker->moveToThread(&mWorkerThread);
-	mWorkerThread.start();
+Mailbox::Mailbox(QDomElement const &config)
+{
+	bool const isEnabled = config.elementsByTagName("mailbox").size() > 0
+			&& config.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true";
+
+	if (isEnabled) {
+		QDomElement const mailboxElement = config.elementsByTagName("mailbox").at(0).toElement();
+		int const port = mailboxElement.attribute("port").toInt();
+		init(port);
+	}
 }
 
 Mailbox::~Mailbox()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
 }
 
 void Mailbox::setHullNumber(int hullNumber)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "setHullNumber", Q_ARG(int, hullNumber));
+	if (isEnabled()) {
+		QMetaObject::invokeMethod(mWorker.data(), "setHullNumber", Q_ARG(int, hullNumber));
+	}
 }
 
 int Mailbox::myHullNumber() const
@@ -112,4 +123,14 @@ QString Mailbox::receive()
 	}
 
 	return result;
+}
+
+void Mailbox::init(int port)
+{
+	mWorker.reset(new MailboxServer(port));
+	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
+	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaiting()));
+
+	mWorker->moveToThread(&mWorkerThread);
+	mWorkerThread.start();
 }

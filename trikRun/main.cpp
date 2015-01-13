@@ -112,38 +112,14 @@ int main(int argc, char *argv[])
 
 	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
-	/// @todo: Remove this code to factories or facade, or to objects themselves.
-	QDomDocument config("config");
-
-	QFile file(configPath + "config.xml");
-	if (!file.open(QIODevice::ReadOnly)) {
-		QString const message = "Failed to open config.xml for reading";
-		QLOG_FATAL() << message;
-		throw message;
-	} if (!config.setContent(&file)) {
-		file.close();
-		QLOG_FATAL() << "config.xml parsing failed";
-		throw "config.xml parsing failed";
-	}
-
-	file.close();
-
-	QDomElement const root = config.documentElement();
+	QDomElement const configRoot = trikKernel::FileUtils::readXmlFile(configPath, "system-config.xml");
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad;
-	QScopedPointer<trikNetwork::MailboxInterface> mailbox;
+	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configRoot));
 
-	if (root.elementsByTagName("mailbox").size() > 0
-				&& root.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true")
+	if (configRoot.elementsByTagName("gamepad").size() > 0
+				&& configRoot.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
 	{
-		auto const mailboxElement = root.elementsByTagName("mailbox").at(0).toElement();
-		auto const mailboxServerPort = mailboxElement.attribute("port").toInt();
-		mailbox.reset(trikNetwork::MailboxFactory::create(mailboxServerPort));
-	}
-
-	if (root.elementsByTagName("gamepad").size() > 0
-				&& root.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
-	{
-		auto const gamepadElement = root.elementsByTagName("gamepad").at(0).toElement();
+		auto const gamepadElement = configRoot.elementsByTagName("gamepad").at(0).toElement();
 		auto const gamepadServerPort = gamepadElement.attribute("port").toInt();
 		gamepad.reset(trikNetwork::GamepadFactory::create(gamepadServerPort));
 	}

@@ -16,6 +16,7 @@
 
 #include <QtCore/QObject>
 #include <QtNetwork/QHostAddress>
+#include <QtXml/QDomElement>
 
 #include "declSpec.h"
 
@@ -32,6 +33,10 @@ class TRIKNETWORK_EXPORT MailboxInterface : public QObject
 	Q_OBJECT
 
 public:
+	/// Reconfigures mailbox according to given config file and restarts mailbox. Clears all received messages and
+	/// waiting state.
+//	virtual void reconfigure(QDomElement const &config) = 0;
+
 	/// Sets hull number of this robot and sends a message to update hull number to all known robots.
 	virtual void setHullNumber(int myHullNumber) = 0;
 

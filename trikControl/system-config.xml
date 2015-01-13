@@ -1,4 +1,5 @@
-<!-- TrikControl system configuration file. Meant to be written once for each release of OS and shall be the same
+<!--
+TrikControl system configuration file. Meant to be written once for each release of OS and shall be the same
 for all models running that OS release.
 
 Devices have properties depending on a port to which device is plugged and device class (IR Sensor, Servomotor
@@ -58,7 +59,7 @@ equal to its class name.
 		amixer -q set PCM 127
 	</initScript>
 
-	<!-- A list of known devices -->
+	<!-- A list of known devices. -->
 	<deviceClasses>
 		<servoMotor />
 		<pwmCapture />
@@ -177,5 +178,4 @@ equal to its class name.
 
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
-
 </config>

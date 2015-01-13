@@ -14,12 +14,13 @@
 
 include(../global.pri)
 
-QT += widgets
+QT += widgets xml
 
 INCLUDEPATH += $$PWD/include \
 	$$PWD/../qslog \
 
 HEADERS += \
+	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
@@ -27,8 +28,13 @@ HEADERS += \
 	$$PWD/include/trikKernel/loggingHelper.h \
 	$$PWD/include/trikKernel/mainWidget.h \
 	$$PWD/include/trikKernel/version.h \
+	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
+	$$PWD/include/trikKernel/exceptions/failedToParseXmlException.h \
+	$$PWD/include/trikKernel/exceptions/malformedConfigException.h \
+	$$PWD/include/trikKernel/exceptions/trikRuntimeException.h \
 
 SOURCES += \
+	$$PWD/src/configurer.cpp \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/loggingHelper.cpp \

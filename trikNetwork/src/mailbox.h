@@ -16,6 +16,7 @@
 
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
+#include <QtXml/QDomElement>
 
 #include "mailboxInterface.h"
 
@@ -39,7 +40,14 @@ public:
 	/// @param port - port for mailbox server.
 	Mailbox(int port);
 
+	/// Constructor.
+	/// @param config - root of XML document with configuration. If configuration is incorrect, uninitialized mailbox
+	///        object will be created.
+	Mailbox(QDomElement const &config);
+
 	~Mailbox() override;
+
+//	void reconfigure(QDomElement const &config) override;
 
 	void setHullNumber(int myHullNumber) override;
 
@@ -71,6 +79,9 @@ signals:
 	void stopWaiting();
 
 private:
+	/// Starts mailbox listening given port.
+	void init(int port);
+
 	/// Server that works in separate thread.
 	QScopedPointer<MailboxServer> mWorker;
 

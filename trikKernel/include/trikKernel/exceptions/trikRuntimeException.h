@@ -12,23 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "mailboxFactory.h"
+#pragma once
 
-#include "mailbox.h"
+#include <exception>
 
-using namespace trikNetwork;
+namespace trikKernel {
 
-MailboxInterface *MailboxFactory::create(int port)
+/// Base class for all exceptions in TRIKRuntime.
+class TrikRuntimeException : public std::exception
 {
-	return new Mailbox(port);
-}
+public:
+	virtual ~TrikRuntimeException() {}
+};
 
-MailboxInterface *MailboxFactory::create(QDomElement const &config)
-{
-	return new Mailbox(config);
-}
-
-MailboxInterface *MailboxFactory::create()
-{
-	return new Mailbox();
 }
