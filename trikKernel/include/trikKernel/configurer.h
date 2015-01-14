@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QHash>
 
 class QDomElement;
@@ -27,24 +28,40 @@ namespace trikKernel {
 class Configurer
 {
 public:
+	/// Constructor.
+	/// @param pathToSystemConfig - path to system-config.xml.
+	/// @param pathToModelConfig - path to model-config.xml.
 	Configurer(QString const &pathToSystemConfig, QString const &pathToModelConfig);
 
-	QString attribute(QString const &deviceName, QString const &attributeName) const;
+	/// Returns value of given attribute of given device.
+	QString attribute(QString const &deviceType, QString const &attributeName) const;
 
-	QString attribute(QString const &deviceName, QString const &port, QString const &attributeName) const;
-
-	bool isConfigured(QString const deviceName) const;
+	/// Returns true if device is enabled in current configuration (either explicitly enabled in model configuration
+	/// or can not be disabled at all).
+	bool isEnabled(QString const deviceName) const;
 
 private:
 	struct Device {
 		QString name;
 		QHash<QString, QString> attributes;
 		QHash<QString, QHash<QString, QString>> portSpecificAttributes;
+		bool isOptional = false;
 	};
 
 	struct DeviceType {
 		QString name;
 		QString deviceClass;
+		QHash<QString, QString> attributes;
+	};
+
+	struct ModelConfigurationElement {
+		QString port;
+		QString deviceType;
+		QHash<QString, QString> attributes;
+	};
+
+	struct AdditionalModelConfigurationElement {
+		QString deviceType;
 		QHash<QString, QString> attributes;
 	};
 
@@ -59,6 +76,8 @@ private:
 	QHash<QString, Device> mDevices;
 	QHash<QString, DeviceType> mDeviceTypes;
 	QHash<QString, Device> mAdditionalConfiguration;
+	QHash<QString, ModelConfigurationElement> mModelConfiguration;
+	QHash<QString, AdditionalModelConfigurationElement> mAdditionalModelConfiguration;
 };
 
 }

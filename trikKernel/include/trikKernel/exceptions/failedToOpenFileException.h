@@ -36,13 +36,13 @@ public:
 	}
 
 	/// Returns file that is failed to open.
-	QFile file() const
+	QFile const &file() const
 	{
 		return mFile;
 	}
 
 private:
-	QFile const mFile;
+	QFile const &mFile;
 };
 
 }

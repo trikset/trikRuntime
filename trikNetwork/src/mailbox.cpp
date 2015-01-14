@@ -17,27 +17,25 @@
 
 #include <QtCore/QEventLoop>
 
-using namespace trikNetwork;
+#include <trikKernel/configurer.h>
+#include <trikKernel/exceptions/malformedConfigException.h>
 
-Mailbox::Mailbox()
-{
-}
+using namespace trikNetwork;
 
 Mailbox::Mailbox(int port)
 {
 	init(port);
 }
 
-Mailbox::Mailbox(QDomElement const &config)
+Mailbox::Mailbox(trikKernel::Configurer const &configurer)
 {
-	bool const isEnabled = config.elementsByTagName("mailbox").size() > 0
-			&& config.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true";
-
-	if (isEnabled) {
-		QDomElement const mailboxElement = config.elementsByTagName("mailbox").at(0).toElement();
-		int const port = mailboxElement.attribute("port").toInt();
-		init(port);
+	bool ok = false;
+	int const port = configurer.attribute("mailbox", "port").toInt(&ok);
+	if (!ok) {
+		throw trikKernel::MalformedConfigException("Incorrect mailbox port");
 	}
+
+	init(port);
 }
 
 Mailbox::~Mailbox()

@@ -16,6 +16,8 @@
 
 #include <QtCore/QStringList>
 
+#include <trikKernel/exceptions/malformedConfigException.h>
+
 #include "tcpConnector.h"
 
 #include <QsLog.h>
@@ -23,13 +25,19 @@
 using namespace trikNetwork;
 
 Gamepad::Gamepad(int port)
-	: mListener(new TcpConnector(port))
 {
-	connect(mListener.data(), SIGNAL(dataReady(QString)), this, SLOT(parse(QString)));
-	connect(&mNetworkThread, SIGNAL(started()), mListener.data(), SLOT(startServer()));
-	connect(mListener.data(), SIGNAL(tcpDisconnectedSignal()), this, SIGNAL(disconnect()));
-	mListener->moveToThread(&mNetworkThread);
-	mNetworkThread.start();
+	init(port);
+}
+
+Gamepad::Gamepad(trikKernel::Configurer const &configurer)
+{
+	bool ok = false;
+	int const port = configurer.attribute("gamepad", "port").toInt(&ok);
+	if (!ok) {
+		throw trikKernel::MalformedConfigException("Incorrect gamepad port");
+	}
+
+	init(port);
 }
 
 Gamepad::~Gamepad()
@@ -88,6 +96,15 @@ void Gamepad::parse(QString const &message)
 		emit wheel(perc);
 	} else {
 		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
-		qDebug() << "Gamepad: unknown command" << commandName;
 	}
+}
+
+void Gamepad::init(int port)
+{
+	mListener.reset(new TcpConnector(port));
+	connect(mListener.data(), SIGNAL(dataReady(QString)), this, SLOT(parse(QString)));
+	connect(&mNetworkThread, SIGNAL(started()), mListener.data(), SLOT(startServer()));
+	connect(mListener.data(), SIGNAL(tcpDisconnectedSignal()), this, SIGNAL(disconnect()));
+	mListener->moveToThread(&mNetworkThread);
+	mNetworkThread.start();
 }

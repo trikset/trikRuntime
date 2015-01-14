@@ -37,27 +37,60 @@ Configurer::Configurer(QString const &pathToSystemConfig, QString const &pathToM
 		action(section.at(0).toElement());
 	};
 
-	parseSection("deviceClasses", parseDeviceClasses);
-	parseSection("devicePorts", parseDevicePorts);
-	parseSection("deviceTypes", parseDeviceTypes);
+	parseSection("deviceClasses", [this](QDomElement const &element) { parseDeviceClasses(element); });
+	parseSection("devicePorts", [this](QDomElement const &element) { parseDevicePorts(element); });
+	parseSection("deviceTypes", [this](QDomElement const &element) { parseDeviceTypes(element); });
 
-	parseSection("initScript", parseInitScript);
+	parseSection("initScript", [this](QDomElement const &element) { parseInitScript(element); });
 
 	parseAdditionalConfigurations(systemConfig);
 
 	parseModelConfig(modelConfig);
 }
 
-QString Configurer::attribute(QString const &deviceName, QString const &attributeName) const
+QString Configurer::attribute(QString const &deviceType, QString const &attributeName) const
 {
+	if (mAdditionalModelConfiguration.contains(deviceType)
+			&& mAdditionalModelConfiguration[deviceType].attributes.contains(attributeName))
+	{
+		return mAdditionalModelConfiguration[deviceType].attributes[attributeName];
+	}
+
+	if (mAdditionalConfiguration.contains(deviceType)
+			&& mAdditionalConfiguration[deviceType].attributes.contains(attributeName))
+	{
+		return mAdditionalConfiguration[deviceType].attributes[attributeName];
+	}
+
+	if (mDeviceTypes.contains(deviceType)) {
+		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
+			return mDeviceTypes[deviceType].attributes[attributeName];
+		}
+
+		QString const deviceClass = mDeviceTypes[deviceType].deviceClass;
+		if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
+			return mDevices[deviceClass].attributes[attributeName];
+		}
+	}
+
+	if (mDevices.contains(deviceType) && mDevices[deviceType].attributes.contains(attributeName)) {
+		return mDevices[deviceType].attributes[attributeName];
+	}
+
+	return "";
 }
 
-QString Configurer::attribute(QString const &deviceName, QString const &port, QString const &attributeName) const
+bool Configurer::isEnabled(QString const deviceName) const
 {
-}
+	if (mAdditionalModelConfiguration.contains(deviceName)) {
+		return true;
+	}
 
-bool Configurer::isConfigured(QString const deviceName) const
-{
+	if (mDevices.contains(deviceName) && !mDevices.value(deviceName).isOptional) {
+		return true;
+	}
+
+	return false;
 }
 
 void Configurer::parseDeviceClasses(QDomElement const &element)
@@ -68,6 +101,7 @@ void Configurer::parseDeviceClasses(QDomElement const &element)
 		if (!deviceNode.isNull()) {
 			Device device;
 			device.name = deviceNode.tagName();
+			device.isOptional = deviceNode.attribute("optional", "false") == "true";
 			QDomNamedNodeMap const &attributes = deviceNode.attributes();
 			for (int j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
@@ -172,7 +206,42 @@ void Configurer::parseModelConfig(QDomElement const &element)
 		if (!tag.isNull()) {
 			if (tag.tagName() == "initScript") {
 				parseInitScript(tag);
+			} else if (tag.hasChildNodes()) {
+				ModelConfigurationElement port;
+				port.port = tag.tagName();
+				QDomNodeList const devices = tag.childNodes();
+				if (devices.count() > 1) {
+					throw MalformedConfigException("Only one device can be configured on a port", tag);
+				}
+
+				QDomElement const device = devices.item(0).toElement();
+				if (!device.isNull()) {
+					port.deviceType = device.tagName();
+					QDomNamedNodeMap const &attributes = tag.attributes();
+					for (int j = 0; j < attributes.length(); ++j) {
+						QDomAttr const &attribute = attributes.item(j).toAttr();
+						port.attributes.insert(attribute.name(), attribute.value());
+					}
+
+					mModelConfiguration.insert(port.port, port);
+				}
 			} else {
+				AdditionalModelConfigurationElement element;
+				element.deviceType = tag.tagName();
+				if (!mDevices.contains(element.deviceType)) {
+					throw MalformedConfigException(
+							"Device shall be listed in 'deviceClasses' section in system config", tag);
+				}
+
+				if (tag.attribute("disabled", "false") == "false") {
+					QDomNamedNodeMap const &attributes = tag.attributes();
+					for (int j = 0; j < attributes.length(); ++j) {
+						QDomAttr const &attribute = attributes.item(j).toAttr();
+						element.attributes.insert(attribute.name(), attribute.value());
+					}
+
+					mAdditionalModelConfiguration.insert(element.deviceType, element);
+				}
 			}
 		}
 	}

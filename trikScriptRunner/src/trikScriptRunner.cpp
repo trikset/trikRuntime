@@ -27,8 +27,8 @@ using namespace trikScriptRunner;
 QString const constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface &mailbox
-		, trikNetwork::GamepadInterface &gamepad
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
 		, QString const &startDirPath)
 	: mScriptController(new ScriptExecutionControl())
 	, mScriptRunnerProxy(new ScriptRunnerProxy(brick, mailbox, gamepad, *mScriptController, startDirPath))

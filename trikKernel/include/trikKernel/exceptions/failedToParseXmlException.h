@@ -43,7 +43,7 @@ public:
 	}
 
 	/// Returns XML file that is failed to parse.
-	QFile file() const
+	QFile const &file() const
 	{
 		return mFile;
 	}
@@ -67,7 +67,7 @@ public:
 	}
 
 private:
-	QFile const mFile;
+	QFile const &mFile;
 	QString const mErrorMessage;
 	int const mErrorLine;
 	int const mErrorColumn;

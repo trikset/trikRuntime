@@ -20,6 +20,7 @@
 
 #include <QtXml/QDomDocument>
 
+#include <trikKernel/configurer.h>
 #include <trikKernel/fileUtils.h>
 #include <trikControl/brickFactory.h>
 #include <trikNetwork/mailboxFactory.h>
@@ -39,43 +40,13 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mTelemetry(new trikTelemetry::TrikTelemetry(*mBrick))
 	, mStartDirPath(startDirPath)
 {
-	/// @todo: Remove this code to factories or facade, or to objects themselves.
-	QDomDocument config("config");
+	trikKernel::Configurer configurer(configPath, configPath);
+	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
+	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 
-	QFile file(configPath + "config.xml");
-	if (!file.open(QIODevice::ReadOnly)) {
-		QString const message = "Failed to open config.xml for reading";
-		QLOG_FATAL() << message;
-		throw message;
-	} if (!config.setContent(&file)) {
-		file.close();
-		QLOG_FATAL() << "config.xml parsing failed";
-		throw "config.xml parsing failed";
-	}
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(
+			*mBrick, mMailbox.data(), mGamepad.data(), startDirPath));
 
-	file.close();
-
-	QDomElement const root = config.documentElement();
-
-	if (root.elementsByTagName("mailbox").size() > 0
-			&& root.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true")
-	{
-		auto const mailboxElement = root.elementsByTagName("mailbox").at(0).toElement();
-		auto const mailboxServerPort = mailboxElement.attribute("port").toInt();
-		mMailbox.reset(trikNetwork::MailboxFactory::create(mailboxServerPort));
-	} else {
-		mMailbox.reset(trikNetwork::MailboxFactory::create());
-	}
-
-	if (root.elementsByTagName("gamepad").size() > 0
-				&& root.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
-	{
-		auto const gamepadElement = root.elementsByTagName("gamepad").at(0).toElement();
-		auto const gamepadServerPort = gamepadElement.attribute("port").toInt();
-		mGamepad.reset(trikNetwork::GamepadFactory::create(gamepadServerPort));
-	}
-
-	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, *mMailbox, *mGamepad, startDirPath));
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
 
 	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));

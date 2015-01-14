@@ -59,8 +59,8 @@ Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface &mailbox
-		, trikNetwork::GamepadInterface &gamepad
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &script
 		, QString const &startDirPath)
 	: mEngine(nullptr)
@@ -111,8 +111,13 @@ void ScriptEngineWorker::reset()
 	mEngine->abortEvaluation(QScriptValue("aborted"));
 	mBrick.reset();
 	mScriptControl.reset();
-	mMailbox.reset();
-	mGamepad.reset();
+	if (mMailbox) {
+		mMailbox->reset();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
+	}
 
 	while (!mEngineReset) {
 		QThread::yieldCurrentThread();
@@ -179,8 +184,14 @@ void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int 
 	if (!mScriptControl.isInEventDrivenMode()) {
 		mBrick.stop();
 		mScriptControl.reset();
-		mMailbox.reset();
-		mGamepad.reset();
+		if (mMailbox) {
+			mMailbox->reset();
+		}
+
+		if (mGamepad) {
+			mGamepad->reset();
+		}
+
 		if (!dynamic_cast<ScriptEngineWorker *>(parent())) {
 			// Only main thread must wait for others
 			mThreadingVariable.waitForAll();
@@ -234,8 +245,14 @@ void ScriptEngineWorker::resetScriptEngine()
 
 	mEngine->globalObject().setProperty("brick", mEngine->newQObject(&mBrick));
 	mEngine->globalObject().setProperty("script", mEngine->newQObject(&mScriptControl));
-	mEngine->globalObject().setProperty("mailbox", mEngine->newQObject(&mMailbox));
-	mEngine->globalObject().setProperty("gamepad", mEngine->newQObject(&mGamepad));
+	if (mMailbox) {
+		mEngine->globalObject().setProperty("mailbox", mEngine->newQObject(mMailbox));
+	}
+
+	if (mGamepad) {
+		mEngine->globalObject().setProperty("gamepad", mEngine->newQObject(mGamepad));
+	}
+
 	mEngine->globalObject().setProperty("Threading", mEngine->newQObject(&mThreadingVariable));
 
 	if (QFile::exists(mStartDirPath + "system.js")) {

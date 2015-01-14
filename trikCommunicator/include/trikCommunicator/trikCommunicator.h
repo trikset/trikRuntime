@@ -53,8 +53,8 @@ public:
 	/// @param brick - reference to robot brick.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	TrikCommunicator(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface &mailbox
-			, trikNetwork::GamepadInterface &gamepad
+			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::GamepadInterface * const gamepad
 			, QString const &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.

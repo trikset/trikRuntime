@@ -38,12 +38,6 @@ TEST_F(TrikScriptRunnerTest, sanityCheck)
 	QScopedPointer<trikControl::BrickInterface> brick(
 			trikControl::BrickFactory::createBrick(*QThread::currentThread(), "./", "./"));
 
-	QScopedPointer<trikNetwork::GamepadInterface> gamepad(
-			trikNetwork::GamepadFactory::create(4444));
-
-	QScopedPointer<trikNetwork::MailboxInterface> mailbox(
-			trikNetwork::MailboxFactory::create(8889));
-
-	trikScriptRunner::TrikScriptRunner scriptRunner(*brick, *mailbox, *gamepad, "./");
+	trikScriptRunner::TrikScriptRunner scriptRunner(*brick, nullptr, nullptr, "./");
 	scriptRunner.run("1 + 1");
 }

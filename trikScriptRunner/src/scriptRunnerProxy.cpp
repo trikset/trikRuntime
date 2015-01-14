@@ -22,8 +22,8 @@
 using namespace trikScriptRunner;
 
 ScriptRunnerProxy::ScriptRunnerProxy(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface &mailbox
-		, trikNetwork::GamepadInterface &gamepad
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &scriptControl
 		, QString const &startDirPath)
 {

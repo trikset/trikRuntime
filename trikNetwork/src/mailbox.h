@@ -20,6 +20,10 @@
 
 #include "mailboxInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikNetwork {
 
 class MailboxServer;
@@ -33,21 +37,15 @@ class Mailbox : public MailboxInterface
 	Q_OBJECT
 
 public:
-	/// Default constructor, leaves mailbox in uninitialized state.
-	Mailbox();
-
 	/// Constructor.
 	/// @param port - port for mailbox server.
 	Mailbox(int port);
 
 	/// Constructor.
-	/// @param config - root of XML document with configuration. If configuration is incorrect, uninitialized mailbox
-	///        object will be created.
-	Mailbox(QDomElement const &config);
+	/// @param configurer - configurer object that contains preparsed XML config.
+	Mailbox(trikKernel::Configurer const &configurer);
 
 	~Mailbox() override;
-
-//	void reconfigure(QDomElement const &config) override;
 
 	void setHullNumber(int myHullNumber) override;
 

@@ -19,6 +19,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QSet>
 
+#include <trikKernel/configurer.h>
+
 #include "gamepadInterface.h"
 
 namespace trikNetwork {
@@ -34,6 +36,10 @@ public:
 	/// Constructor.
 	/// @param port - TCP port of a gamepad server.
 	Gamepad(int port);
+
+	/// Constructor.
+	/// @param configurer - configurer object that contains preparsed XML config.
+	Gamepad(trikKernel::Configurer const &configurer);
 
 	/// Destructor declared here for QScopedPointer to be able to clean up forward-declared TcpConnector.
 	~Gamepad() override;
@@ -54,6 +60,9 @@ private slots:
 
 private:
 	Q_DISABLE_COPY(Gamepad)
+
+	/// Does object initialization.
+	void init(int port);
 
 	struct PadStatus {
 		int x;

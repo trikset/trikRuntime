@@ -41,8 +41,8 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface &mailbox
-			, trikNetwork::GamepadInterface &gamepad
+			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::GamepadInterface * const gamepad
 			, ScriptExecutionControl &script
 			, QString const &startDirPath);
 
@@ -98,8 +98,8 @@ private:
 	/// due to complicated mEngine lifecycle (see .cpp for more details).
 	QScriptEngine *mEngine;
 	trikControl::BrickInterface &mBrick;
-	trikNetwork::MailboxInterface &mMailbox;
-	trikNetwork::GamepadInterface &mGamepad;
+	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
+	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;

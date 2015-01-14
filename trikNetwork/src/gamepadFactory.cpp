@@ -14,6 +14,8 @@
 
 #include "gamepadFactory.h"
 
+#include <trikKernel/configurer.h>
+
 #include "gamepad.h"
 
 using namespace trikNetwork;
@@ -21,4 +23,13 @@ using namespace trikNetwork;
 GamepadInterface *GamepadFactory::create(int port)
 {
 	return new Gamepad(port);
+}
+
+GamepadInterface *GamepadFactory::create(trikKernel::Configurer const &configurer)
+{
+	if (configurer.isEnabled("gamepad")) {
+		return new Gamepad(configurer);
+	} else {
+		return nullptr;
+	}
 }

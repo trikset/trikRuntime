@@ -28,6 +28,7 @@
 
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
+#include <trikKernel/configurer.h>
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/loggingHelper.h>
@@ -112,19 +113,11 @@ int main(int argc, char *argv[])
 
 	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
-	QDomElement const configRoot = trikKernel::FileUtils::readXmlFile(configPath, "system-config.xml");
-	QScopedPointer<trikNetwork::GamepadInterface> gamepad;
-	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configRoot));
+	trikKernel::Configurer configurer(configPath, configPath);
+	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
+	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data(), startDirPath);
 
-	if (configRoot.elementsByTagName("gamepad").size() > 0
-				&& configRoot.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
-	{
-		auto const gamepadElement = configRoot.elementsByTagName("gamepad").at(0).toElement();
-		auto const gamepadServerPort = gamepadElement.attribute("port").toInt();
-		gamepad.reset(trikNetwork::GamepadFactory::create(gamepadServerPort));
-	}
-
-	trikScriptRunner::TrikScriptRunner runner(*brick, *mailbox, *gamepad, startDirPath);
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
 
 	if (app.arguments().contains("-s")) {

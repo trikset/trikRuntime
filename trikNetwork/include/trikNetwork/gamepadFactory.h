@@ -17,11 +17,15 @@
 #include <QtCore/QThread>
 #include <QtCore/QString>
 
-#include "gamepadInterface.h"
-
 #include "declSpec.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikNetwork {
+
+class GamepadInterface;
 
 /// Factory that creates real gamepad receiver object.
 class TRIKNETWORK_EXPORT GamepadFactory
@@ -31,6 +35,12 @@ public:
 	/// Transfers ownership over GamepadInterface object to caller.
 	/// @param port - TCP port of a gamepad server.
 	static GamepadInterface *create(int port);
+
+	/// Method that creates gamepad object.
+	/// Transfers ownership over GamepadInterface object to caller.
+	/// @param configurer - configurer object that contains preparsed XML config. If gamepad is not enabled, nullptr
+	///        will be returned.
+	static GamepadInterface *create(trikKernel::Configurer const &configurer);
 };
 
 }

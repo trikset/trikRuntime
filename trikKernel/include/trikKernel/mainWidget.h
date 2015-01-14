@@ -35,9 +35,9 @@ public:
 		, allFS
 	};
 
+	/// Constructor.
+	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
 	MainWidget(QWidget *parent) : QWidget(parent) {}
-
-	~MainWidget() override {}
 
 	/// Set focus properly on this widget or one of its children.
 	virtual void renewFocus() = 0;

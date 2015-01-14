@@ -81,10 +81,10 @@ equal to its class name.
 		<keys deviceFile="/dev/input/event0" />
 
 		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
-		<gamepad port="4444" disabled="false" />
+		<gamepad port="4444" optional="true" />
 
 		<!-- Settings for mailbox server (which enables communication between robots) -->
-		<mailbox port="8889" disabled="false" />
+		<mailbox port="8889" optional="true" />
 	</deviceClasses>
 
 	<devicePorts>

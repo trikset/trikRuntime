@@ -14,15 +14,15 @@
 
 #pragma once
 
-#include <QtCore/QThread>
-#include <QtCore/QString>
-#include <QtXml/QDomElement>
-
-#include "mailboxInterface.h"
-
 #include "declSpec.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikNetwork {
+
+class MailboxInterface;
 
 /// Factory that creates real mailbox object.
 class TRIKNETWORK_EXPORT MailboxFactory
@@ -35,13 +35,9 @@ public:
 
 	/// Method that creates mailbox object.
 	/// Transfers ownership over MailboxInterface object to caller.
-	/// @param config - root of XML document with configuration. If configuration is incorrect, uninitialized mailbox
-	///        object will be returned.
-	static MailboxInterface *create(QDomElement const &config);
-
-	/// Creates uninitialized mailbox object as a placeholder for configurations where mailbox is turned off.
-	/// Transfers ownership over MailboxInterface object to caller.
-	static MailboxInterface *create();
+	/// @param configurer - configurer object that contains preparsed XML config. If configuration is incorrect,
+	///        uninitialized mailbox object will be returned.
+	static MailboxInterface *create(trikKernel::Configurer const &configurer);
 };
 
 }

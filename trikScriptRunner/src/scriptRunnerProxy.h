@@ -41,8 +41,8 @@ public:
 	/// @param script - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptRunnerProxy(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface &mailbox
-			, trikNetwork::GamepadInterface &gamepad
+			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::GamepadInterface * const gamepad
 			, ScriptExecutionControl &scriptControl
 			, QString const &startDirPath);
 

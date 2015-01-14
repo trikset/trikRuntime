@@ -14,6 +14,8 @@
 
 #include "mailboxFactory.h"
 
+#include <trikKernel/configurer.h>
+
 #include "mailbox.h"
 
 using namespace trikNetwork;
@@ -23,12 +25,11 @@ MailboxInterface *MailboxFactory::create(int port)
 	return new Mailbox(port);
 }
 
-MailboxInterface *MailboxFactory::create(QDomElement const &config)
+MailboxInterface *MailboxFactory::create(trikKernel::Configurer const &configurer)
 {
-	return new Mailbox(config);
-}
-
-MailboxInterface *MailboxFactory::create()
-{
-	return new Mailbox();
+	if (configurer.isEnabled("mailbox")) {
+		return new Mailbox(configurer);
+	} else {
+		return nullptr;
+	}
 }

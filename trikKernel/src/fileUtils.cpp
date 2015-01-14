@@ -74,12 +74,12 @@ QDomElement FileUtils::readXmlFile(QString const &path, QString const &fileName)
 	int errorLine = 0;
 	int errorColumn = 0;
 	QString errorMessage;
-	if (!document.setContent(&document, &errorMessage, &errorLine, &errorColumn)) {
-		document.close();
+	if (!document.setContent(&file, &errorMessage, &errorLine, &errorColumn)) {
+		file.close();
 		throw FailedToParseXmlException(file, errorMessage, errorLine, errorColumn);
 	}
 
-	document.close();
+	file.close();
 
 	return document.documentElement();
 }

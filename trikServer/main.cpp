@@ -29,6 +29,7 @@
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
+#include <trikKernel/configurer.h>
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
 #include <trikNetwork/gamepadFactory.h>
@@ -97,43 +98,11 @@ int main(int argc, char *argv[])
 	QScopedPointer<trikControl::BrickInterface> brick(
 			trikControl::BrickFactory::createBrick(*app.thread(), configPath, startDirPath));
 
-	/// @todo: Remove this code to factories or facade, or to objects themselves.
-	QDomDocument config("config");
+	trikKernel::Configurer configurer(configPath, configPath);
+	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
+	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 
-	QFile file(configPath + "config.xml");
-	if (!file.open(QIODevice::ReadOnly)) {
-		QString const message = "Failed to open config.xml for reading";
-		QLOG_FATAL() << message;
-		throw message;
-	} if (!config.setContent(&file)) {
-		file.close();
-		QLOG_FATAL() << "config.xml parsing failed";
-		throw "config.xml parsing failed";
-	}
-
-	file.close();
-
-	QDomElement const root = config.documentElement();
-	QScopedPointer<trikNetwork::GamepadInterface> gamepad;
-	QScopedPointer<trikNetwork::MailboxInterface> mailbox;
-
-	if (root.elementsByTagName("mailbox").size() > 0
-				&& root.elementsByTagName("mailbox").at(0).toElement().attribute("disabled") != "true")
-	{
-		auto const mailboxElement = root.elementsByTagName("mailbox").at(0).toElement();
-		auto const mailboxServerPort = mailboxElement.attribute("port").toInt();
-		mailbox.reset(trikNetwork::MailboxFactory::create(mailboxServerPort));
-	}
-
-	if (root.elementsByTagName("gamepad").size() > 0
-				&& root.elementsByTagName("gamepad").at(0).toElement().attribute("disabled") != "true")
-	{
-		auto const gamepadElement = root.elementsByTagName("gamepad").at(0).toElement();
-		auto const gamepadServerPort = gamepadElement.attribute("port").toInt();
-		gamepad.reset(trikNetwork::GamepadFactory::create(gamepadServerPort));
-	}
-
-	trikCommunicator::TrikCommunicator communicator(*brick, *mailbox, *gamepad, startDirPath);
+	trikCommunicator::TrikCommunicator communicator(*brick, mailbox.data(), gamepad.data(), startDirPath);
 	communicator.startServer(port);
 
 	return app.exec();
