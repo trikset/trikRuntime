@@ -30,7 +30,7 @@ Mailbox::Mailbox(int port)
 Mailbox::Mailbox(trikKernel::Configurer const &configurer)
 {
 	bool ok = false;
-	int const port = configurer.attribute("mailbox", "port").toInt(&ok);
+	int const port = configurer.attributeByDevice("mailbox", "port").toInt(&ok);
 	if (!ok) {
 		throw trikKernel::MalformedConfigException("Incorrect mailbox port");
 	}

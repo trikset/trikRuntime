@@ -32,7 +32,7 @@ public:
 		: mFile(file)
 	{
 		QLOG_ERROR() << "Failed to open file" << file.fileName()
-				<< (file.openMode() | QIODevice::WriteOnly ? "for writing" : "for reading");
+				<< (file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading");
 	}
 
 	/// Returns file that is failed to open.

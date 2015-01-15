@@ -25,7 +25,7 @@ using namespace trikControl;
 PowerMotor::PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
 	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
-	, mInvert(configurer.attributeByPort(port, "invert") == false)
+	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
 {
 }

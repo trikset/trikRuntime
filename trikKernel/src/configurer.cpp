@@ -109,6 +109,15 @@ QString Configurer::attributeByPort(QString const &port, QString const &attribut
 			if (device.attributes.contains(attributeName)) {
 				return device.attributes[attributeName];
 			}
+
+			if (!device.portSpecificAttributes.contains(port)) {
+				throw MalformedConfigException(QString("Device type '%1' is not allowed on port %2.")
+						.arg(deviceType).arg(port));
+			}
+		} else {
+			throw MalformedConfigException(
+					QString("Device type '%1' has device class '%2' which is not listed in 'deviceClasses' section.")
+							.arg(deviceType).arg(deviceClass));
 		}
 	}
 
@@ -125,8 +134,8 @@ QString Configurer::attributeByPort(QString const &port, QString const &attribut
 		}
 	}
 
-	throw MalformedConfigException(QString("Unknown attribute '%1' of device on port '%2'")
-			.arg(attributeName).arg(port));
+	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2' on port '%3'")
+			.arg(attributeName).arg(deviceType).arg(port));
 }
 
 bool Configurer::isEnabled(QString const deviceName) const

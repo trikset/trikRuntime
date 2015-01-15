@@ -32,7 +32,7 @@ Gamepad::Gamepad(int port)
 Gamepad::Gamepad(trikKernel::Configurer const &configurer)
 {
 	bool ok = false;
-	int const port = configurer.attribute("gamepad", "port").toInt(&ok);
+	int const port = configurer.attributeByDevice("gamepad", "port").toInt(&ok);
 	if (!ok) {
 		throw trikKernel::MalformedConfigException("Incorrect gamepad port");
 	}

@@ -61,9 +61,9 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
-		<servoMotor period="20000000"/>
+		<servoMotor period="20000000" invert="false" />
 		<pwmCapture />
-		<powerMotor />
+		<powerMotor invert="false" />
 		<analogSensor />
 		<encoder />
 		<rangeSensor />
