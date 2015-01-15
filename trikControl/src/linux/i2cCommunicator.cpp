@@ -84,8 +84,8 @@ static inline __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value
 }
 
 I2cCommunicator::I2cCommunicator(trikKernel::Configurer const &configurer)
-	: mDevicePath(configurer.attribute("i2c", "path"))
-	, mDeviceId(configurer.attribute("i2c", "deviceId").toInt(nullptr, 0))
+	: mDevicePath(configurer.attributeByDevice("i2c", "path"))
+	, mDeviceId(configurer.attributeByDevice("i2c", "deviceId").toInt(nullptr, 0))
 {
 	connect();
 }
