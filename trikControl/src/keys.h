@@ -35,6 +35,8 @@ class Keys : public KeysInterface
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	Keys(trikKernel::Configurer const &configurer);
 
 	~Keys() override;

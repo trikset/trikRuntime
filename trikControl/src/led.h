@@ -32,6 +32,8 @@ class Led : public LedInterface
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	Led(trikKernel::Configurer const &configurer);
 
 	~Led() override;

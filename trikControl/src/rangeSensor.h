@@ -32,6 +32,9 @@ class RangeSensor : public SensorInterface
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param port - port on which this sensor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	RangeSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 	~RangeSensor() override;

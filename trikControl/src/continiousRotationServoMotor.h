@@ -32,6 +32,9 @@ class ContiniousRotationServoMotor : public ServoMotor
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param port - port on which this motor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	ContiniousRotationServoMotor(QString const &port, trikKernel::Configurer const &configurer);
 
 public slots:

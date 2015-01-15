@@ -32,6 +32,10 @@ class DigitalSensor : public SensorInterface
 	Q_OBJECT
 
 public:
+
+	/// Constructor.
+	/// @param port - port on which this sensor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	DigitalSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 public slots:

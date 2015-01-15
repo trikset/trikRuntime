@@ -39,7 +39,6 @@ HEADERS += \
 	$$PWD/src/brick.h \
 	$$PWD/src/colorSensor.h \
 	$$PWD/src/colorSensorWorker.h \
-	$$PWD/src/configurer.h \
 	$$PWD/src/continiousRotationServoMotor.h \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
@@ -70,7 +69,6 @@ SOURCES += \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
 	$$PWD/src/colorSensorWorker.cpp \
-	$$PWD/src/configurer.cpp \
 	$$PWD/src/continiousRotationServoMotor.cpp \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \

@@ -34,6 +34,10 @@ class PowerMotor : public MotorInterface
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param port - port on which this motor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
+	/// @param communicator - I2C communicator to use to query sensor.
 	PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
 
 	~PowerMotor() override;
