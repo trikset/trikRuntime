@@ -31,7 +31,7 @@ public:
 	/// Transfers ownership over BrickInterface object to caller.
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
-	/// @param configFilePath - path to config.xml
+	/// @param configFilePath - path to system-config.xml and model-config.xml.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
 	static BrickInterface *createBrick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);

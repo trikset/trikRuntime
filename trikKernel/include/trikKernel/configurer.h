@@ -29,16 +29,27 @@ class Configurer
 {
 public:
 	/// Constructor.
-	/// @param pathToSystemConfig - path to system-config.xml.
-	/// @param pathToModelConfig - path to model-config.xml.
-	Configurer(QString const &pathToSystemConfig, QString const &pathToModelConfig);
+	/// @param pathToConfigs - path to system-config.xml and model-config.xml.
+	Configurer(QString const &pathToConfigs);
 
 	/// Returns value of given attribute of given device.
-	QString attribute(QString const &deviceType, QString const &attributeName) const;
+	QString attributeByDevice(QString const &deviceType, QString const &attributeName) const;
+
+	/// Returns value of given attribute of a device on given port.
+	QString attributeByPort(QString const &port, QString const &attributeName) const;
 
 	/// Returns true if device is enabled in current configuration (either explicitly enabled in model configuration
 	/// or can not be disabled at all).
 	bool isEnabled(QString const deviceName) const;
+
+	/// Ports configured in model config.
+	QStringList ports() const;
+
+	/// Returns class of a device configured on given port.
+	QString deviceClass(QString const &port) const;
+
+	/// Returns init scripts defined in config files, first from system config then from model config.
+	QStringList initScripts() const;
 
 private:
 	struct Device {
@@ -73,10 +84,20 @@ private:
 	void parseModelConfig(QDomElement const &element);
 
 	QStringList mInitScripts;
+
+	/// Maps device class name to its configuration.
 	QHash<QString, Device> mDevices;
+
+	/// Maps device type name to its configuration.
 	QHash<QString, DeviceType> mDeviceTypes;
+
+	/// Maps device class name to its configuration.
 	QHash<QString, Device> mAdditionalConfiguration;
+
+	/// Maps port name to configuration of device on that port.
 	QHash<QString, ModelConfigurationElement> mModelConfiguration;
+
+	/// Maps device type name to its configuration.
 	QHash<QString, AdditionalModelConfigurationElement> mAdditionalModelConfiguration;
 };
 

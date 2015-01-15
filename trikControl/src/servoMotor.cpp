@@ -16,26 +16,26 @@
 
 #include <QtCore/QDebug>
 
+#include <trikKernel/configurer.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile
-		, int period, bool invert)
-	: mDutyFile(dutyFile)
-	, mPeriodFile(periodFile)
-	, mPeriod(period)
+ServoMotor::ServoMotor(QString const &port, trikKernel::Configurer const &configurer)
+	: mDutyFile(configurer.attributeByPort(port, "deviceFile"))
+	, mPeriodFile(configurer.attributeByPort(port, "periodFile"))
+	, mPeriod(configurer.attributeByPort(port, "period").toInt())
 	, mCurrentDutyPercent(0)
-	, mMin(min)
-	, mMax(max)
-	, mZero(zero)
-	, mStop(stop)
-	, mInvert(invert)
+	, mMin(configurer.attributeByPort(port, "min").toInt())
+	, mMax(configurer.attributeByPort(port, "max").toInt())
+	, mZero(configurer.attributeByPort(port, "zero").toInt())
+	, mStop(configurer.attributeByPort(port, "stop").toInt())
+	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
 {
 	if (!mPeriodFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor period file " << mPeriodFile.fileName();
-		qDebug() << "Can't open motor period file " << mPeriodFile.fileName();
 		return;
 	}
 
@@ -64,7 +64,6 @@ void ServoMotor::powerOff()
 {
 	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor duty file " << mDutyFile.fileName();
-		qDebug() << "Can't open motor duty file " << mDutyFile.fileName();
 		return;
 	}
 
@@ -88,7 +87,6 @@ void ServoMotor::writeMotorCommand(QString const &command)
 {
 	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor control file " << mDutyFile.fileName();
-		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
 		return;
 	}
 

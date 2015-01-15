@@ -23,10 +23,10 @@
 
 using namespace trikKernel;
 
-Configurer::Configurer(QString const &pathToSystemConfig, QString const &pathToModelConfig)
+Configurer::Configurer(QString const &pathToConfigs)
 {
-	QDomElement const systemConfig = trikKernel::FileUtils::readXmlFile(pathToSystemConfig, "system-config.xml");
-	QDomElement const modelConfig = trikKernel::FileUtils::readXmlFile(pathToModelConfig, "model-config.xml");
+	QDomElement const systemConfig = trikKernel::FileUtils::readXmlFile(pathToConfigs, "system-config.xml");
+	QDomElement const modelConfig = trikKernel::FileUtils::readXmlFile(pathToConfigs, "model-config.xml");
 
 	auto parseSection = [&systemConfig](QString const &sectionName, std::function<void(QDomElement const &)> action) {
 		QDomNodeList const section = systemConfig.elementsByTagName(sectionName);
@@ -48,7 +48,7 @@ Configurer::Configurer(QString const &pathToSystemConfig, QString const &pathToM
 	parseModelConfig(modelConfig);
 }
 
-QString Configurer::attribute(QString const &deviceType, QString const &attributeName) const
+QString Configurer::attributeByDevice(QString const &deviceType, QString const &attributeName) const
 {
 	if (mAdditionalModelConfiguration.contains(deviceType)
 			&& mAdditionalModelConfiguration[deviceType].attributes.contains(attributeName))
@@ -77,7 +77,56 @@ QString Configurer::attribute(QString const &deviceType, QString const &attribut
 		return mDevices[deviceType].attributes[attributeName];
 	}
 
-	return "";
+	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceType));
+}
+
+QString Configurer::attributeByPort(QString const &port, QString const &attributeName) const
+{
+	if (!mModelConfiguration.contains(port)) {
+		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
+	}
+
+	if (mModelConfiguration[port].attributes.contains(attributeName)) {
+		return mModelConfiguration[port].attributes[attributeName];
+	}
+
+	QString const &deviceType = mModelConfiguration.value(port).deviceType;
+
+	if (mDeviceTypes.contains(deviceType)) {
+		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
+			return mDeviceTypes[deviceType].attributes[attributeName];
+		}
+
+		QString const deviceClass = mDeviceTypes[deviceType].deviceClass;
+		if (mDevices.contains(deviceClass)) {
+			Device const &device = mDevices[deviceClass];
+			if (device.portSpecificAttributes.contains(port)) {
+				if (device.portSpecificAttributes[port].contains(attributeName)) {
+					return device.portSpecificAttributes[port][attributeName];
+				}
+			}
+
+			if (device.attributes.contains(attributeName)) {
+				return device.attributes[attributeName];
+			}
+		}
+	}
+
+	if (mDevices.contains(deviceType)) {
+		Device const &device = mDevices[deviceType];
+		if (device.portSpecificAttributes.contains(port)) {
+			if (device.portSpecificAttributes[port].contains(attributeName)) {
+				return device.portSpecificAttributes[port][attributeName];
+			}
+		}
+
+		if (device.attributes.contains(attributeName)) {
+			return device.attributes[attributeName];
+		}
+	}
+
+	throw MalformedConfigException(QString("Unknown attribute '%1' of device on port '%2'")
+			.arg(attributeName).arg(port));
 }
 
 bool Configurer::isEnabled(QString const deviceName) const
@@ -91,6 +140,36 @@ bool Configurer::isEnabled(QString const deviceName) const
 	}
 
 	return false;
+}
+
+QStringList Configurer::ports() const
+{
+	return mModelConfiguration.keys();
+}
+
+QString Configurer::deviceClass(QString const &port) const
+{
+	if (!mModelConfiguration.contains(port)) {
+		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
+	}
+
+	QString const &deviceType = mModelConfiguration.value(port).deviceType;
+	if (mDeviceTypes.contains(deviceType)) {
+		return mDeviceTypes.value(deviceType).deviceClass;
+	}
+
+	if (!mDevices.contains(deviceType)) {
+		throw MalformedConfigException(QString("Port '%1' is configured to use unknown device class '%2'")
+				.arg(port)
+				.arg(deviceType));
+	}
+
+	return deviceType;
+}
+
+QStringList Configurer::initScripts() const
+{
+	return mInitScripts;
 }
 
 void Configurer::parseDeviceClasses(QDomElement const &element)

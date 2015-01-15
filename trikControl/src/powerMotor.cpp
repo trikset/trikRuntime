@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,16 @@
 
 #include <QtCore/QDebug>
 
+#include <trikKernel/configurer.h>
+
 #include "i2cCommunicator.h"
 
 using namespace trikControl;
 
-PowerMotor::PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert)
+PowerMotor::PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(i2cCommandNumber)
-	, mInvert(invert)
+	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
+	, mInvert(configurer.attributeByPort(port, "invert") == false)
 	, mCurrentPower(0)
 {
 }

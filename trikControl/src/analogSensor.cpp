@@ -1,4 +1,4 @@
-/* Copyright 2013 Nikita Batov
+/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,15 @@
 
 #include "i2cCommunicator.h"
 
+#include <trikKernel/configurer.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(I2cCommunicator &communicator
-		, int i2cCommandNumber
-		, int rawValue1
-		, int rawValue2
-		, int normalizedValue1
-		, int normalizedValue2)
+AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(i2cCommandNumber)
+	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
 	, mK(0)
 	, mB(0)
 {
@@ -37,10 +34,13 @@ AnalogSensor::AnalogSensor(I2cCommunicator &communicator
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
+	int const rawValue1 = configurer.attributeByPort(port, "rawValue1").toInt();
+	int const rawValue2 = configurer.attributeByPort(port, "rawValue2").toInt();
+	int const normalizedValue1 = configurer.attributeByPort(port, "normalizedValue1").toInt();
+	int const normalizedValue2 = configurer.attributeByPort(port, "normalizedValue2").toInt();
+
 	if (rawValue1 == rawValue2) {
-		QString const message = "Sensor calibration error: rawValue1 = rawValue2!";
-		QLOG_ERROR() << message;
-		qDebug() << message;
+		QLOG_ERROR() <<  "Sensor calibration error: rawValue1 = rawValue2!";
 		mK = 0;
 		mB = 0;
 	} else {

@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov, Yurii Litvinov
+/* Copyright 2013 - 2015 Roman Kurbatov, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,22 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
+#include <trikKernel/configurer.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;
 
-PwmCapture::PwmCapture(QString const &frequencyFile, QString const &dutyFile)
-	: mFrequencyFile(frequencyFile)
-	, mDutyFile(dutyFile)
+PwmCapture::PwmCapture(QString const &port, trikKernel::Configurer const &configurer)
+	: mFrequencyFile(configurer.attributeByPort(port, "frequencyFile"))
+	, mDutyFile(configurer.attributeByPort(port, "dutyFile"))
 {
 	if (!mFrequencyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open period capture file " << mFrequencyFile.fileName();
-		qDebug() << "Can't open period capture file " << mFrequencyFile.fileName();
 	}
 
 	if (!mDutyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open duty capture file " << mDutyFile.fileName();
-		qDebug() << "Can't open duty capture file " << mDutyFile.fileName();
 	}
 }
 

@@ -22,6 +22,10 @@
 
 #include "lineSensorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class LineSensorWorker;
@@ -32,13 +36,7 @@ class LineSensor : public LineSensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param script - file name of a scrit used to start or stop a sensor.
-	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
-	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
-	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
-	LineSensor(QString const &script, QString const &inputFile, QString const &outputFile, double toleranceFactor);
+	LineSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 	~LineSensor() override;
 

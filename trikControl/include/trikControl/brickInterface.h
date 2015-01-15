@@ -85,13 +85,13 @@ public slots:
 	virtual VectorSensorInterface *gyroscope() = 0;
 
 	/// Returns reference to high-level line detector sensor using camera.
-	virtual LineSensorInterface *lineSensor() = 0;
+	virtual LineSensorInterface *lineSensor(QString const &port) = 0;
 
 	/// Returns reference to high-level color sensor using camera.
-	virtual ColorSensorInterface *colorSensor() = 0;
+	virtual ColorSensorInterface *colorSensor(QString const &port) = 0;
 
 	/// Returns reference to high-level object detector sensor using USB camera.
-	virtual ObjectSensorInterface *objectSensor() = 0;
+	virtual ObjectSensorInterface *objectSensor(QString const &port) = 0;
 
 	/// Returns reference to encoder on given port.
 	virtual EncoderInterface *encoder(QString const &port) = 0;

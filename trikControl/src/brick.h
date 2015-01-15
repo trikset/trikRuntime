@@ -19,19 +19,17 @@
 
 #include "brickInterface.h"
 
-#include <trikKernel/lazyMainWidget.h>
-
 namespace trikControl {
 
 class AnalogSensor;
 class Battery;
 class ColorSensor;
-class Configurer;
 class DigitalSensor;
 class Display;
 class Encoder;
 class I2cCommunicator;
 class Keys;
+class LazyMainWidget;
 class Led;
 class LineSensor;
 class ObjectSensor;
@@ -50,11 +48,11 @@ class Brick : public BrickInterface
 public:
 	/// Constructor.
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
-	///        QApplication app; app.thread();
-	/// @param configFilePath - path to config.xml
+	///        QApplication app; app.thread();.
+	/// @param configFilePath - path to config files.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	Brick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
+	Brick(QThread &guiThread, QString const &configPath, QString const &startDirPath);
 
 	~Brick() override;
 
@@ -87,11 +85,11 @@ public slots:
 
 	VectorSensorInterface *gyroscope() override;
 
-	LineSensorInterface *lineSensor() override;
+	LineSensorInterface *lineSensor(QString const &port) override;
 
-	ColorSensorInterface *colorSensor() override;
+	ColorSensorInterface *colorSensor(QString const &port) override;
 
-	ObjectSensorInterface *objectSensor() override;
+	ObjectSensorInterface *objectSensor(QString const &port) override;
 
 	EncoderInterface *encoder(QString const &port) override;
 
@@ -104,13 +102,10 @@ public slots:
 	LedInterface *led() override;
 
 private:
-	VectorSensor *mAccelerometer = nullptr;  // has ownership.
-	VectorSensor *mGyroscope = nullptr;  // has ownership.
-	LineSensor *mLineSensor = nullptr;  // Has ownership.
-	ColorSensor *mColorSensor = nullptr;  // Has ownership.
-	ObjectSensor *mObjectSensor = nullptr;  // Has ownership.
-	Battery *mBattery = nullptr;  // Has ownership.
-	Keys *mKeys = nullptr;  // Has ownership.
+	QScopedPointer<VectorSensor> mAccelerometer;
+	QScopedPointer<VectorSensor> mGyroscope;
+	QScopedPointer<Battery> mBattery;
+	QScopedPointer<Keys> mKeys;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
@@ -119,11 +114,16 @@ private:
 	QHash<QString, Encoder *> mEncoders;  // Has ownership.
 	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
 	QHash<QString, RangeSensor *> mRangeSensors;  // Has ownership.
+	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
+	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
+	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
 
-	Configurer const * const mConfigurer;  // Has ownership.
-	I2cCommunicator *mI2cCommunicator = nullptr;  // Has ownership.
+	QScopedPointer<I2cCommunicator> mI2cCommunicator;
 	QScopedPointer<Display> mDisplay;
-	Led *mLed = nullptr;  // Has ownership.
+	QScopedPointer<Led> mLed;
+
+	QString mPlayWavFileCommand;
+	QString mPlayMp3FileCommand;
 };
 
 }

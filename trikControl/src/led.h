@@ -20,6 +20,10 @@
 
 #include "ledInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 /// Implementation of LED control for a real robot.
@@ -28,8 +32,7 @@ class Led : public LedInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, int off);
+	Led(trikKernel::Configurer const &configurer);
 
 	~Led() override;
 

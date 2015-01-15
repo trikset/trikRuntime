@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
 
 #include "rangeSensor.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QThread>
 
-#include "src/rangeSensorWorker.h"
+#include <trikKernel/configurer.h>
+
+#include "rangeSensorWorker.h"
 
 using namespace trikControl;
 
-RangeSensor::RangeSensor(QString const &eventFile)
-	: mSensorWorker(new RangeSensorWorker(eventFile))
+RangeSensor::RangeSensor(QString const &port, trikKernel::Configurer const &configurer)
+	: mSensorWorker(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile")))
 {
 	mSensorWorker->moveToThread(&mWorkerThread);
 

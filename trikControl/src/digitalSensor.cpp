@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,16 @@
 
 #include <QtCore/QDebug>
 
+#include <trikKernel/configurer.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;
 
-DigitalSensor::DigitalSensor(int min, int max, QString const &deviceFile)
-	: mMin(min)
-	, mMax(max)
-	, mDeviceFile(deviceFile)
+DigitalSensor::DigitalSensor(QString const &port, trikKernel::Configurer const &configurer)
+	: mMin(configurer.attributeByPort(port, "min").toInt())
+	, mMax(configurer.attributeByPort(port, "max").toInt())
+	, mDeviceFile(configurer.attributeByPort(port, "deviceFile"))
 {
 }
 

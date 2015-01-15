@@ -18,9 +18,9 @@
 
 using namespace trikControl;
 
-ContiniousRotationServoMotor::ContiniousRotationServoMotor(int min, int max, int zero, int stop, QString const &dutyFile
-		, QString const &periodFile, int period, bool invert)
-	: ServoMotor(min, max, zero, stop, dutyFile, periodFile, period, invert)
+ContiniousRotationServoMotor::ContiniousRotationServoMotor(QString const &port
+		, trikKernel::Configurer const &configurer)
+	: ServoMotor(port, configurer)
 {
 }
 

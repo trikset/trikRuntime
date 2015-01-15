@@ -18,6 +18,10 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QMutex>
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 /// Provides direct interaction with I2C device.
@@ -25,9 +29,8 @@ class I2cCommunicator
 {
 public:
 	/// Constructor.
-	/// @param devicePath - path to Linux I2C device file.
-	/// @param deviceId - id of I2C device.
-	I2cCommunicator(QString const &devicePath, int deviceId);
+	/// @param configurer - contains preparsed XML configuration.
+	I2cCommunicator(trikKernel::Configurer const &configurer);
 
 	~I2cCommunicator();
 

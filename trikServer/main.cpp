@@ -24,7 +24,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
-#include <QtXml/QDomDocument>
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickFactory.h>
@@ -98,7 +97,7 @@ int main(int argc, char *argv[])
 	QScopedPointer<trikControl::BrickInterface> brick(
 			trikControl::BrickFactory::createBrick(*app.thread(), configPath, startDirPath));
 
-	trikKernel::Configurer configurer(configPath, configPath);
+	trikKernel::Configurer configurer(configPath);
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 

@@ -1,4 +1,4 @@
-/* Copyright 2013-2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,19 @@
 
 #include "vectorSensor.h"
 
-#include "src/vectorSensorWorker.h"
+#include <trikKernel/configurer.h>
+
+#include "vectorSensorWorker.h"
 
 using namespace trikControl;
 
-VectorSensor::VectorSensor(const QString &controlFile)
-	: mVectorSensorWorker(new VectorSensorWorker(controlFile))
+VectorSensor::VectorSensor(QString const &deviceName, trikKernel::Configurer const &configurer)
+	: mVectorSensorWorker(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile")))
 {
 	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
 	mVectorSensorWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
 }
-
 
 VectorSensor::~VectorSensor()
 {

@@ -19,6 +19,10 @@
 
 #include "vectorSensorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class VectorSensorWorker;
@@ -29,9 +33,7 @@ class VectorSensor : public VectorSensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param deviceFile - device file for this sensor.
-	VectorSensor(QString const &deviceFile);
+	VectorSensor(QString const &deviceName, trikKernel::Configurer const &configurer);
 
 	~VectorSensor() override;
 

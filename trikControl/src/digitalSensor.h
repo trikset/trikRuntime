@@ -20,6 +20,10 @@
 
 #include "sensorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 /// Generic TRIK sensor.
@@ -28,11 +32,7 @@ class DigitalSensor : public SensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param min - minimal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param max - maximal actual (physical) value returned by sensor. Used to normalize returned values.
-	/// @param deviceFile - device file for this sensor.
-	DigitalSensor(int min, int max, QString const &deviceFile);
+	DigitalSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 public slots:
 	int read() override;

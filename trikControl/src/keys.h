@@ -21,6 +21,10 @@
 
 #include "keysInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class KeysWorker;
@@ -31,9 +35,7 @@ class Keys : public KeysInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param keysPath - path to device file that controls brick keys.
-	Keys(QString const &keysPath);
+	Keys(trikKernel::Configurer const &configurer);
 
 	~Keys() override;
 

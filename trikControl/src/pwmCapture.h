@@ -18,6 +18,10 @@
 
 #include "pwmCaptureInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 /// Implementation of PWM capture for real robot.
@@ -26,12 +30,8 @@ class PwmCapture : public PwmCaptureInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param frequencyFile - device file with frequency.
-	/// @param dutyFile - device file with duty.
-	PwmCapture(QString const &frequencyFile, QString const &dutyFile);
+	PwmCapture(QString const &port, trikKernel::Configurer const &configurer);
 
-	/// Destructor.
 	~PwmCapture() override;
 
 public slots:

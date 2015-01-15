@@ -18,9 +18,8 @@
 
 using namespace trikControl;
 
-AngularServoMotor::AngularServoMotor(int min, int max, int zero, int stop, QString const &dutyFile
-		, QString const &periodFile, int period, bool invert)
-	: ServoMotor(min, max, zero, stop, dutyFile, periodFile, period, invert)
+AngularServoMotor::AngularServoMotor(QString const &port, trikKernel::Configurer const &configurer)
+	: ServoMotor(port, configurer)
 {
 }
 

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,22 @@
 
 #include <QtCore/QDebug>
 
+#include <trikKernel/configurer.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;
 
-Led::Led(QString const &redDeviceFile, QString const &greenDeviceFile, int on, int off)
-	: mRedDeviceFile(redDeviceFile)
-	, mGreenDeviceFile(greenDeviceFile)
-	, mOn(on)
-	, mOff(off)
+Led::Led(trikKernel::Configurer const &configurer)
+	: mRedDeviceFile(configurer.attributeByDevice("led", "red"))
+	, mGreenDeviceFile(configurer.attributeByDevice("led", "green"))
 {
 	if (!mRedDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open red led control file " << mRedDeviceFile.fileName();
-		qDebug() << "Can't open red led control file " << mRedDeviceFile.fileName();
 	}
 
 	if (!mGreenDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open green led control file " << mGreenDeviceFile.fileName();
-		qDebug() << "Can't open green led control file " << mGreenDeviceFile.fileName();
 	}
 }
 
@@ -47,42 +45,36 @@ Led::~Led()
 
 void Led::red()
 {
-	off();
-
-	QString const command = QString::number(mOn);
-
-	mRedDeviceFile.write(command.toLatin1());
+	mRedDeviceFile.write("1");
 	mRedDeviceFile.flush();
+
+	mGreenDeviceFile.write("0");
+	mGreenDeviceFile.flush();
 }
 
 void Led::green()
 {
-	off();
+	mRedDeviceFile.write("0");
+	mRedDeviceFile.flush();
 
-	QString const command = QString::number(mOn);
-
-	mGreenDeviceFile.write(command.toLatin1());
+	mGreenDeviceFile.write("1");
 	mGreenDeviceFile.flush();
 }
 
 void Led::orange()
 {
-	QString const command = QString::number(mOn);
-
-	mRedDeviceFile.write(command.toLatin1());
+	mRedDeviceFile.write("1");
 	mRedDeviceFile.flush();
 
-	mGreenDeviceFile.write(command.toLatin1());
+	mGreenDeviceFile.write("1");
 	mGreenDeviceFile.flush();
 }
 
 void Led::off()
 {
-	QString const command = QString::number(mOff);
-
-	mRedDeviceFile.write(command.toLatin1());
+	mRedDeviceFile.write("0");
 	mRedDeviceFile.flush();
 
-	mGreenDeviceFile.write(command.toLatin1());
+	mGreenDeviceFile.write("0");
 	mGreenDeviceFile.flush();
 }

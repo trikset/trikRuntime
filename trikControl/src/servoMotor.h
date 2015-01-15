@@ -20,6 +20,10 @@
 
 #include "motorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 /// TRIK servomotor.
@@ -28,17 +32,7 @@ class ServoMotor : public MotorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param min - minimal value of duty_ns whose meaning and range depends on motor type.
-	/// @param max - maximal value of duty_ns whose meaning and range depends on motor type.
-	/// @param zero - neutral value of duty_ns.
-	/// @param stop - value of duty_ns corresponding to poweroff state.
-	/// @param dutyFile - file for setting duty of PWM signal supplied to this motor.
-	/// @param periodFile - file for setting period of PWM signal supplied to this motor.
-	/// @param period - value of period for setting while initialization.
-	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile, int period
-			, bool invert);
+	ServoMotor(QString const &port, trikKernel::Configurer const &configurer);
 
 public slots:
 	/// Returns currently set power of continuous rotation servo or angle of angular servo.

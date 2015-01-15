@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,21 @@
 
 #include "objectSensor.h"
 
-#include "src/objectSensorWorker.h"
+#include <trikKernel/configurer.h>
 
-#include <QtCore/QDebug>
+#include "objectSensorWorker.h"
 
 using namespace trikControl;
 
-ObjectSensor::ObjectSensor(QString const &script, QString const &inputFile, QString const &outputFile
-		, double toleranceFactor)
-	: mObjectSensorWorker(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor))
+ObjectSensor::ObjectSensor(QString const &port, trikKernel::Configurer const &configurer)
 {
+	QString const &script = configurer.attributeByPort(port, "script");
+	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
+	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
+	double const toleranceFactor = configurer.attributeByPort(port, "toleranceFactor").toDouble();
+
+	mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor));
+
 	mObjectSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));

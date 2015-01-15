@@ -20,6 +20,10 @@
 
 #include "motorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class I2cCommunicator;
@@ -30,13 +34,8 @@ class PowerMotor : public MotorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param communicator - reference to an object that handles I2C communication.
-	/// @param i2cCommandNumber - I2C command corresponding to this device.
-	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
+	PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
 
-	/// Destructor.
 	~PowerMotor() override;
 
 public slots:

@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,16 @@
 
 #include "encoder.h"
 
-#include "src/i2cCommunicator.h"
+#include <trikKernel/configurer.h>
+
+#include "i2cCommunicator.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double rawToDegrees)
+Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(i2cCommandNumber)
-	, mRawToDegrees(rawToDegrees)
+	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
+	, mRawToDegrees(configurer.attributeByPort(port, "rawToDegrees").toDouble())
 {
 }
 

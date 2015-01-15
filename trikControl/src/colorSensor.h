@@ -21,6 +21,10 @@
 
 #include "declSpec.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class ColorSensorWorker;
@@ -31,13 +35,7 @@ class ColorSensor : public ColorSensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param script - file name of a scrit used to start or stop a sensor.
-	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
-	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	/// @param m - horisontal dimension of a sensor.
-	/// @param n - vertical dimension of a sensor.
-	ColorSensor(QString const &script, QString const &inputFile, QString const &outputFile, int m, int n);
+	ColorSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 	~ColorSensor() override;
 

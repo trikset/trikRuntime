@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,23 @@
 
 #include "lineSensor.h"
 
-#include "src/lineSensorWorker.h"
-
 #include <QtCore/QDebug>
+
+#include <trikKernel/configurer.h>
+
+#include "lineSensorWorker.h"
 
 using namespace trikControl;
 
-LineSensor::LineSensor(QString const &script, QString const &inputFile, QString const &outputFile
-		, double toleranceFactor)
-	: mLineSensorWorker(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor))
+LineSensor::LineSensor(QString const &port, trikKernel::Configurer const &configurer)
 {
+	QString const &script = configurer.attributeByPort(port, "script");
+	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
+	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
+	double const toleranceFactor = configurer.attributeByPort(port, "toleranceFactor").toDouble();
+
+	mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor));
+
 	mLineSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));

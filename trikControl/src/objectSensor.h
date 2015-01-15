@@ -19,6 +19,10 @@
 
 #include "objectSensorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class ObjectSensorWorker;
@@ -29,13 +33,7 @@ class ObjectSensor : public ObjectSensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param script - file name of a scrit used to start or stop a sensor.
-	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
-	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
-	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
-	ObjectSensor(QString const &script, QString const &inputFile, QString const &outputFile, double toleranceFactor);
+	ObjectSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 	~ObjectSensor() override;
 

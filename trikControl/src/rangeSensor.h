@@ -18,6 +18,10 @@
 
 #include "sensorInterface.h"
 
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 class RangeSensorWorker;
@@ -28,9 +32,7 @@ class RangeSensor : public SensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param eventFile - event file for this sensor.
-	RangeSensor(QString const &eventFile);
+	RangeSensor(QString const &port, trikKernel::Configurer const &configurer);
 
 	~RangeSensor() override;
 
