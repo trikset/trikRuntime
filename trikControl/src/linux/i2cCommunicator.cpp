@@ -22,6 +22,8 @@
 #include <linux/i2c.h>
 #include <unistd.h>
 
+#include <trikKernel/configurer.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;

@@ -93,7 +93,6 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
 
 OTHER_FILES += \
-#	config_capture.xml \
 	model-config.xml \
 	system-config.xml \
 
@@ -112,6 +111,5 @@ uses(trikKernel)
 copyToDestdir( \
 	$$PWD/model-config.xml  \
 	$$PWD/system-config.xml  \
-#	$$PWD/config_capture.xml \
 	$$PWD/../media/ \
 )

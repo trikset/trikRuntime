@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 	qDebug() << "Running TrikServer on port" << port;
 
 	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::createBrick(*app.thread(), configPath, startDirPath));
+			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath));
 
 	trikKernel::Configurer configurer(configPath);
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));

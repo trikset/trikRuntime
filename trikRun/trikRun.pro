@@ -30,7 +30,7 @@ uses(trikKernel trikControl trikScriptRunner trikNetwork)
 TEMPLATE = app
 CONFIG += console
 
-QT += gui xml
+QT += gui
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets

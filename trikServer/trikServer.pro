@@ -24,7 +24,7 @@ uses(trikKernel qslog)
 TEMPLATE = app
 CONFIG += console
 
-QT += gui xml
+QT += gui
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets

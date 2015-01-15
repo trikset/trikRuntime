@@ -34,7 +34,7 @@ public:
 	/// @param configFilePath - path to system-config.xml and model-config.xml.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	static BrickInterface *createBrick(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
+	static BrickInterface *create(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
 };
 
 }
