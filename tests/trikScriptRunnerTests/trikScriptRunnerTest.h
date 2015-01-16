@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "trikScriptRunner.h"
+#include <trikScriptRunner/trikScriptRunner.h>
 
 #include <gtest/gtest.h>
 

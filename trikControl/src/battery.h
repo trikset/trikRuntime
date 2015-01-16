@@ -32,11 +32,11 @@ public:
 	/// @param communicator - I2C communicator to use to query battery status.
 	Battery(I2cCommunicator &communicator);
 
+	Status status() const override;
+
 public slots:
-	/// Returns current battery voltage in volts.
 	float readVoltage() override;
 
-	/// Returns current raw reading of battery.
 	float readRawDataVoltage() override;
 
 private:

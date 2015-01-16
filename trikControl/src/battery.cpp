@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,4 +40,9 @@ float Battery::readRawDataVoltage()
 	command[0] = static_cast<char>(0x26);
 
 	return mCommunicator.read(command);
+}
+
+Battery::Status Battery::status() const
+{
+	return mCommunicator.status();
 }

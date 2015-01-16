@@ -15,6 +15,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+	selftest \
 	thirdparty \
 	trikScriptRunnerTests \
 

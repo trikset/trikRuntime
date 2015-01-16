@@ -16,12 +16,14 @@
 
 #include <QtCore/QObject>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Provides battery voltage info.
-class TRIKCONTROL_EXPORT BatteryInterface : public QObject
+class TRIKCONTROL_EXPORT BatteryInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

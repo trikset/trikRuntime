@@ -18,10 +18,6 @@
 
 #include <trikControl/brickInterface.h>
 #include <trikControl/brickFactory.h>
-#include <trikNetwork/gamepadFactory.h>
-#include <trikNetwork/gamepadInterface.h>
-#include <trikNetwork/mailboxFactory.h>
-#include <trikNetwork/mailboxInterface.h>
 
 using namespace tests;
 
@@ -36,7 +32,7 @@ void TrikScriptRunnerTest::TearDown()
 TEST_F(TrikScriptRunnerTest, sanityCheck)
 {
 	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(*QThread::currentThread(), "../../trikControl/", "./"));
+			trikControl::BrickFactory::create(*QThread::currentThread(), "./", "./"));
 
 	trikScriptRunner::TrikScriptRunner scriptRunner(*brick, nullptr, nullptr, "./");
 	scriptRunner.run("1 + 1");
