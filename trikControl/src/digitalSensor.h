@@ -26,13 +26,12 @@ class Configurer;
 
 namespace trikControl {
 
-/// Generic TRIK sensor.
+/// Digital TRIK sensor.
 class DigitalSensor : public SensorInterface
 {
 	Q_OBJECT
 
 public:
-
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.

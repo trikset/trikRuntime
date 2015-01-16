@@ -18,7 +18,7 @@
 
 using namespace trikControl;
 
-BrickInterface *BrickFactory::create(QThread &guiThread, QString const &configFilePath, QString const &startDirPath)
+BrickInterface *BrickFactory::create(QThread &guiThread, QString const &configFilesPath, QString const &startDirPath)
 {
-	return new Brick(guiThread, configFilePath, startDirPath);
+	return new Brick(guiThread, configFilesPath, startDirPath);
 }

@@ -17,11 +17,11 @@
 #include <QtCore/QThread>
 #include <QtCore/QString>
 
-#include "brickInterface.h"
-
 #include "declSpec.h"
 
 namespace trikControl {
+
+class BrickInterface;
 
 /// Factory that creates brick object for a real robot.
 class TRIKCONTROL_EXPORT BrickFactory
@@ -31,10 +31,10 @@ public:
 	/// Transfers ownership over BrickInterface object to caller.
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
-	/// @param configFilePath - path to system-config.xml and model-config.xml.
+	/// @param configFilesPath - path to system-config.xml and model-config.xml.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	static BrickInterface *create(QThread &guiThread, QString const &configFilePath, QString const &startDirPath);
+	static BrickInterface *create(QThread &guiThread, QString const &configFilesPath, QString const &startDirPath);
 };
 
 }

@@ -97,9 +97,9 @@ trikControl::BrickInterface &Controller::brick()
 	return *mBrick;
 }
 
-trikNetwork::MailboxInterface &Controller::mailbox()
+trikNetwork::MailboxInterface *Controller::mailbox()
 {
-	return *mMailbox;
+	return mMailbox.data();
 }
 
 QString Controller::startDirPath() const

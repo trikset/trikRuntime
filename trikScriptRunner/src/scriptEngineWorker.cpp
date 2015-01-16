@@ -61,13 +61,13 @@ Q_DECLARE_METATYPE(QTimer*)
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, ScriptExecutionControl &script
+		, ScriptExecutionControl &scriptControl
 		, QString const &startDirPath)
 	: mEngine(nullptr)
 	, mBrick(brick)
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
-	, mScriptControl(script)
+	, mScriptControl(scriptControl)
 	, mThreadingVariable(*this)
 	, mStartDirPath(startDirPath)
 	, mEngineReset(false)

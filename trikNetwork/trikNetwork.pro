@@ -51,4 +51,4 @@ QT += network
 
 DEFINES += TRIKNETWORK_LIBRARY
 
-uses(qslog trikKernel)
+uses(trikKernel)

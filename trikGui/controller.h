@@ -51,7 +51,8 @@ public:
 	trikControl::BrickInterface &brick();
 
 	/// Returns reference to Mailbox object, which provides access to robot-to-robot communications.
-	trikNetwork::MailboxInterface &mailbox();
+	/// Does not pass ownership to the caller.
+	trikNetwork::MailboxInterface *mailbox();
 
 	/// Returns mStartDirPath (path to the directory from which the application was executed)
 	QString startDirPath() const;

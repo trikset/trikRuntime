@@ -48,7 +48,7 @@ public:
 	virtual trikKernel::LazyMainWidget &graphicsWidget() = 0;
 
 public slots:
-	/// Plays given music file on a speaker (in format accepted by aplay utility).
+	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
 	virtual void playSound(QString const &soundFileName) = 0;
 
 	/// Uses text synthesis to say given text on a speaker.
@@ -78,34 +78,34 @@ public slots:
 	/// Returns list of encoder ports
 	virtual QStringList encoderPorts() const = 0;
 
-	/// Returns reference to on-board accelerometer.
+	/// Returns on-board accelerometer.
 	virtual VectorSensorInterface *accelerometer() = 0;
 
-	/// Returns reference to on-board gyroscope.
+	/// Returns on-board gyroscope.
 	virtual VectorSensorInterface *gyroscope() = 0;
 
-	/// Returns reference to high-level line detector sensor using camera.
+	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
 	virtual LineSensorInterface *lineSensor(QString const &port) = 0;
 
-	/// Returns reference to high-level color sensor using camera.
+	/// Returns high-level color sensor using camera on given port (video0 or video1).
 	virtual ColorSensorInterface *colorSensor(QString const &port) = 0;
 
-	/// Returns reference to high-level object detector sensor using USB camera.
+	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
 	virtual ObjectSensorInterface *objectSensor(QString const &port) = 0;
 
-	/// Returns reference to encoder on given port.
+	/// Returns encoder on given port.
 	virtual EncoderInterface *encoder(QString const &port) = 0;
 
-	/// Returns reference to battery.
+	/// Returns battery.
 	virtual BatteryInterface *battery() = 0;
 
-	/// Returns reference to keys on a control brick.
+	/// Returns keys on a control brick.
 	virtual KeysInterface *keys() = 0;
 
-	/// Returns reference to class that provides drawing on display.
+	/// Returns class that provides drawing on display.
 	virtual DisplayInterface *display() = 0;
 
-	/// Returns reference to LED control class.
+	/// Returns LED control class.
 	virtual LedInterface *led() = 0;
 
 signals:

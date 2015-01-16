@@ -16,9 +16,6 @@ include(../global.pri)
 
 QT += widgets xml
 
-INCLUDEPATH += $$PWD/include \
-	$$PWD/../qslog \
-
 HEADERS += \
 	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
@@ -43,5 +40,3 @@ SOURCES += \
 TEMPLATE = lib
 
 DEFINES += TRIKKERNEL_LIBRARY
-
-uses(qslog)

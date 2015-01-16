@@ -38,7 +38,9 @@ class ScriptRunnerProxy : public QObject
 public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
-	/// @param script - reference to script execution control object.
+	/// @param mailbox - mailbox object used to communicate with other robots.
+	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
+	/// @param scriptControl - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptRunnerProxy(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox

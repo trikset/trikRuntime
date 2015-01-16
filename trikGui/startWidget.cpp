@@ -63,7 +63,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	settingsItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)));
 
-	if (mController.mailbox().isEnabled()) {
+	if (mController.mailbox()) {
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 
@@ -130,9 +130,13 @@ void StartWidget::launch()
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
-			CommunicationSettingsWidget communicationSettingsWidget(mController.mailbox());
-			emit newWidget(communicationSettingsWidget);
-			result = communicationSettingsWidget.exec();
+			if (mController.mailbox()) {
+				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
+				emit newWidget(communicationSettingsWidget);
+				result = communicationSettingsWidget.exec();
+			} else {
+				Q_ASSERT(!"Mailbox is disabled but commmunications widget still tries to be shown");
+			}
 		} else if (currentItemText == VersionWidget::menuEntry()) {
 			VersionWidget versionWidget;
 			emit newWidget(versionWidget);

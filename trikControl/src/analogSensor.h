@@ -17,7 +17,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-#include "declSpec.h"
 #include "sensorInterface.h"
 
 namespace trikKernel {
@@ -37,7 +36,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	/// @param communicator - I2C communicator to use to query sensor.
+	/// @param communicator - I2C communicator used to query sensor.
 	AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
 
 public slots:

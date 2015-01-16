@@ -191,7 +191,7 @@ void Configurer::parseDeviceClasses(QDomElement const &element)
 			device.name = deviceNode.tagName();
 			device.isOptional = deviceNode.attribute("optional", "false") == "true";
 			QDomNamedNodeMap const &attributes = deviceNode.attributes();
-			for (int j = 0; j < attributes.length(); ++j) {
+			for (unsigned j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				device.attributes.insert(attribute.name(), attribute.value());
 			}
@@ -218,7 +218,7 @@ void Configurer::parseDevicePorts(QDomElement const &element)
 			}
 
 			QDomNamedNodeMap const &attributes = devicePortNode.attributes();
-			for (int j = 0; j < attributes.length(); ++j) {
+			for (unsigned j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				mDevices[deviceName].portSpecificAttributes[port].insert(attribute.name(), attribute.value());
 			}
@@ -244,7 +244,7 @@ void Configurer::parseDeviceTypes(QDomElement const &element)
 			}
 
 			QDomNamedNodeMap const &attributes = deviceTypeNode.attributes();
-			for (int j = 0; j < attributes.length(); ++j) {
+			for (unsigned j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				deviceType.attributes.insert(attribute.name(), attribute.value());
 			}
@@ -276,7 +276,7 @@ void Configurer::parseAdditionalConfigurations(QDomElement const &element)
 			Device additionalDevice;
 			additionalDevice.name = tag.tagName();
 			QDomNamedNodeMap const &attributes = tag.attributes();
-			for (int j = 0; j < attributes.length(); ++j) {
+			for (unsigned j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				additionalDevice.attributes.insert(attribute.name(), attribute.value());
 			}
@@ -306,7 +306,7 @@ void Configurer::parseModelConfig(QDomElement const &element)
 				if (!device.isNull()) {
 					port.deviceType = device.tagName();
 					QDomNamedNodeMap const &attributes = tag.attributes();
-					for (int j = 0; j < attributes.length(); ++j) {
+					for (unsigned j = 0; j < attributes.length(); ++j) {
 						QDomAttr const &attribute = attributes.item(j).toAttr();
 						port.attributes.insert(attribute.name(), attribute.value());
 					}
@@ -323,7 +323,7 @@ void Configurer::parseModelConfig(QDomElement const &element)
 
 				if (tag.attribute("disabled", "false") == "false") {
 					QDomNamedNodeMap const &attributes = tag.attributes();
-					for (int j = 0; j < attributes.length(); ++j) {
+					for (unsigned j = 0; j < attributes.length(); ++j) {
 						QDomAttr const &attribute = attributes.item(j).toAttr();
 						element.attributes.insert(attribute.name(), attribute.value());
 					}
