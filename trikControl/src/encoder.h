@@ -16,6 +16,7 @@
 #pragma once
 
 #include "encoderInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -37,6 +38,8 @@ public:
 	/// @param communicator - I2C communicator to use to query encoder.
 	Encoder(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
 
+	Status status() const override;
+
 public slots:
 	int read() override;
 
@@ -47,7 +50,8 @@ public slots:
 private:
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
-	double mRawToDegrees;
+	qreal mRawToDegrees;
+	DeviceState mState;
 };
 
 }

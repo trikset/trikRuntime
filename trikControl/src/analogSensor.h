@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 
 #include "sensorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -39,6 +40,8 @@ public:
 	/// @param communicator - I2C communicator used to query sensor.
 	AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
 
+	Status status() const override;
+
 public slots:
 	/// Returns current reading of a sensor.
 	int read();
@@ -51,10 +54,13 @@ private:
 	int const mI2cCommandNumber;
 
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
-	double mK;
+	qreal mK;
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
-	double mB;
+	qreal mB;
+
+	/// State of a device.
+	DeviceState mState;
 };
 
 }

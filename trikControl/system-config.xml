@@ -56,7 +56,7 @@ equal to its class name.
 
 		echo 1 > /sys/devices/virtual/input/input1/enable_device
 
-		amixer -q set PCM 127
+		#amixer -q set PCM 127
 	</initScript>
 
 	<!-- A list of known devices. -->

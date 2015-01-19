@@ -21,17 +21,28 @@
 using namespace trikControl;
 
 VectorSensor::VectorSensor(QString const &deviceName, trikKernel::Configurer const &configurer)
-	: mVectorSensorWorker(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile")))
 {
-	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
-	mVectorSensorWorker->moveToThread(&mWorkerThread);
-	mWorkerThread.start();
+	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState));
+	if (!mState.isFailed()) {
+		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
+		mVectorSensorWorker->moveToThread(&mWorkerThread);
+		mWorkerThread.start();
+
+		mState.ready();
+	}
 }
 
 VectorSensor::~VectorSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+VectorSensor::Status VectorSensor::status() const
+{
+	return mState.status();
 }
 
 QVector<int> VectorSensor::read() const

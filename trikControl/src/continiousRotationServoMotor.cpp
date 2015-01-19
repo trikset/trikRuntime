@@ -14,7 +14,7 @@
 
 #include "continiousRotationServoMotor.h"
 
-#include <QtCore/QDebug>
+#include <QsLog.h>
 
 using namespace trikControl;
 
@@ -26,6 +26,11 @@ ContiniousRotationServoMotor::ContiniousRotationServoMotor(QString const &port
 
 void ContiniousRotationServoMotor::setPower(int power)
 {
+	if (!isReady()) {
+		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
+		return;
+	}
+
 	if (power > 100) {
 		power = 100;
 	} else if (power < -100) {

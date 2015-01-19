@@ -19,6 +19,7 @@
 #include <QtCore/QMutex>
 
 #include "deviceInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -27,6 +28,7 @@ class Configurer;
 namespace trikControl {
 
 /// Provides direct interaction with I2C device.
+/// @todo: It shall work in separate thread.
 class I2cCommunicator : public DeviceInterface
 {
 public:
@@ -55,7 +57,7 @@ private:
 	int mDeviceId = 0;
 	int mDeviceFileDescriptor;
 	QMutex mLock;
-	Status mStatus = Status::off;
+	DeviceState mState;
 };
 
 }

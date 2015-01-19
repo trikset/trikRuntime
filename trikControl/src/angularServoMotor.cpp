@@ -14,7 +14,7 @@
 
 #include "angularServoMotor.h"
 
-#include <QtCore/QDebug>
+#include <QsLog.h>
 
 using namespace trikControl;
 
@@ -25,6 +25,11 @@ AngularServoMotor::AngularServoMotor(QString const &port, trikKernel::Configurer
 
 void AngularServoMotor::setPower(int power)
 {
+	if (!isReady()) {
+		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
+		return;
+	}
+
 	if (power > 90) {
 		power = 90;
 	} else if (power < -90) {

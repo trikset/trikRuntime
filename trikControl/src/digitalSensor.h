@@ -18,6 +18,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
+#include "deviceState.h"
 #include "sensorInterface.h"
 
 namespace trikKernel {
@@ -42,11 +43,14 @@ public slots:
 
 	int readRawData() override;
 
+	Status status() const override;
+
 private:
 	int mMin;
 	int mMax;
 	QFile mDeviceFile;
 	QTextStream mStream;
+	DeviceState mState;
 };
 
 }

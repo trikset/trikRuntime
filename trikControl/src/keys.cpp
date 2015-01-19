@@ -21,18 +21,29 @@
 using namespace trikControl;
 
 Keys::Keys(trikKernel::Configurer const &configurer)
-	: mKeysWorker(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile")))
 {
-	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SIGNAL(buttonPressed(int, int)));
-	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));
-	mKeysWorker->moveToThread(&mWorkerThread);
-	mWorkerThread.start();
+	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState));
+	if (!mState.isFailed()) {
+		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SIGNAL(buttonPressed(int, int)));
+		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));
+		mKeysWorker->moveToThread(&mWorkerThread);
+		mWorkerThread.start();
+	}
+
+	mState.ready();
 }
 
 Keys::~Keys()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+Keys::Status Keys::status() const
+{
+	return mState.status();
 }
 
 void Keys::reset()

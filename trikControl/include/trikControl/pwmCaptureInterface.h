@@ -17,12 +17,14 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Provides characteristics of PWM signal supplied to the port.
-class TRIKCONTROL_EXPORT PwmCaptureInterface : public QObject
+class TRIKCONTROL_EXPORT PwmCaptureInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

@@ -16,12 +16,14 @@
 
 #include <QtCore/QObject>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Abstract motor. It is differently implemented by different motor types (like servo and power motors).
-class TRIKCONTROL_EXPORT MotorInterface : public QObject
+class TRIKCONTROL_EXPORT MotorInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

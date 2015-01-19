@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
-#include "src/abstractVirtualSensorWorker.h"
+#include "abstractVirtualSensorWorker.h"
 
 namespace trikControl {
 
@@ -37,7 +37,7 @@ public:
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
 	ObjectSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
-			, double toleranceFactor);
+			, qreal toleranceFactor, DeviceState &state);
 
 	~ObjectSensorWorker() override;
 
@@ -62,7 +62,7 @@ private:
 	QVector<int> mReading;
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
-	double mToleranceFactor = 1.0;
+	qreal mToleranceFactor = 1.0;
 
 	/// True, if video stream from camera shall be shown on robot display.
 	bool mShowOnDisplay = true;

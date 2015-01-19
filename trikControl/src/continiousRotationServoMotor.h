@@ -40,7 +40,7 @@ public:
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power - power of the motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
-	void setPower(int power);
+	void setPower(int power) override;
 };
 
 }

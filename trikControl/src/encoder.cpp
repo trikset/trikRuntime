@@ -17,38 +17,56 @@
 #include <trikKernel/configurer.h>
 
 #include "i2cCommunicator.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
 Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
-	, mRawToDegrees(configurer.attributeByPort(port, "rawToDegrees").toDouble())
 {
+	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+	mRawToDegrees = ConfigurerHelper::configureReal(configurer, mState, port, "rawToDegrees");
+
+	mState.ready();
 }
 
 void Encoder::reset()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber);
-	command[1] = static_cast<char>(0x00);
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(2, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber);
+		command[1] = static_cast<char>(0x00);
 
-	mCommunicator.send(command);
+		mCommunicator.send(command);
+	}
+}
+
+Encoder::Status Encoder::status() const
+{
+	return combine(mCommunicator, *this);
 }
 
 int Encoder::read()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber);
-	int data = mCommunicator.read(command);
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(2, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber);
+		int data = mCommunicator.read(command);
 
-	return mRawToDegrees * data;
+		return mRawToDegrees * data;
+	} else {
+		return 0;
+	}
 }
 
 int Encoder::readRawData()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber);
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(2, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber);
 
-	return mCommunicator.read(command);
+		return mCommunicator.read(command);
+	} else {
+		return 0;
+	}
 }

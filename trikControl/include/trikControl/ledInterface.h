@@ -16,12 +16,14 @@
 
 #include <QtCore/QObject>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Controls light-emitting diode on a brick.
-class TRIKCONTROL_EXPORT LedInterface : public QObject
+class TRIKCONTROL_EXPORT LedInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

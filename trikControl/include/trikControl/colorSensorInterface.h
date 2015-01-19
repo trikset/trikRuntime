@@ -17,12 +17,14 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Uses virtual color sensor to detect dominant color in every cell of m * n grid of camera field of view.
-class TRIKCONTROL_EXPORT ColorSensorInterface : public QObject
+class TRIKCONTROL_EXPORT ColorSensorInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

@@ -19,6 +19,7 @@
 #include <trikKernel/configurer.h>
 
 #include "lineSensorWorker.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
@@ -27,9 +28,9 @@ LineSensor::LineSensor(QString const &port, trikKernel::Configurer const &config
 	QString const &script = configurer.attributeByPort(port, "script");
 	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
 	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
-	double const toleranceFactor = configurer.attributeByPort(port, "toleranceFactor").toDouble();
+	qreal const toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
-	mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor));
+	mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
 
 	mLineSensorWorker->moveToThread(&mWorkerThread);
 
@@ -42,6 +43,11 @@ LineSensor::~LineSensor()
 {
 	mWorkerThread.quit();
 	mWorkerThread.wait();
+}
+
+LineSensor::Status LineSensor::status() const
+{
+	return mState.status();
 }
 
 void LineSensor::init(bool showOnDisplay)

@@ -41,6 +41,18 @@ public:
 		, failure
 	};
 
+	/// Helper method to return status of a device relying on other device to work. If first device is ready, status of
+	/// a second device is returned, otherwise it is status of a first device.
+	static Status combine(DeviceInterface const &underlying, DeviceInterface const &dependent)
+	{
+		DeviceInterface::Status const status = underlying.status();
+		if (status != DeviceInterface::Status::ready) {
+			return status;
+		}
+
+		return dependent.status();
+	}
+
 	/// Returns current status of the device.
 	virtual Status status() const = 0;
 };

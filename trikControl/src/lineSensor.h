@@ -21,6 +21,7 @@
 #include <QtCore/QVector>
 
 #include "lineSensorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -43,6 +44,8 @@ public:
 
 	~LineSensor() override;
 
+	Status status() const override;
+
 public slots:
 	void init(bool showOnDisplay) override;
 
@@ -53,6 +56,9 @@ public slots:
 	void stop() override;
 
 private:
+	/// State of the device, shared with worker.
+	DeviceState mState;
+
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<LineSensorWorker> mLineSensorWorker;
 

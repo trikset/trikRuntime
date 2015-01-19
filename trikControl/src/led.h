@@ -19,6 +19,7 @@
 #include <QtCore/QFile>
 
 #include "ledInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -38,6 +39,8 @@ public:
 
 	~Led() override;
 
+	Status status() const override;
+
 public slots:
 	void red() override;
 
@@ -52,6 +55,7 @@ private:
 	QFile mGreenDeviceFile;
 	int mOn;
 	int mOff;
+	DeviceState mState;
 };
 
 }

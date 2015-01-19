@@ -20,6 +20,7 @@
 #include <QtCore/QHash>
 
 #include "keysInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -41,6 +42,8 @@ public:
 
 	~Keys() override;
 
+	Status status() const override;
+
 public slots:
 	void reset() override;
 
@@ -52,6 +55,9 @@ private slots:
 	void changeButtonState(int code, int value);
 
 private:
+	/// Device state, shared with worker object.
+	DeviceState mState;
+
 	QScopedPointer<KeysWorker> mKeysWorker;
 	QThread mWorkerThread;
 	QHash<int, int> mKeysPressed;

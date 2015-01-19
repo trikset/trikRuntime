@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 
 #include "motorInterface.h"
 
+#include "deviceState.h"
+
 namespace trikKernel {
 class Configurer;
 }
@@ -37,9 +39,10 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	ServoMotor(QString const &port, trikKernel::Configurer const &configurer);
 
+	Status status() const override;
+
 public slots:
-	/// Returns currently set power of continuous rotation servo or angle of angular servo.
-	int power() const;
+	int power() const override;
 
 	/// Returns currently set frequency of PWM signal supplied to the motor.
 	int frequency() const;
@@ -47,9 +50,7 @@ public slots:
 	/// Returns currently set duty of PWM signal supplied to the motor.
 	int duty() const;
 
-	/// Turns off motor. This is not the same as setPower(0), because setPower will
-	/// leave motor on in a break mode, and this method will turn motor off.
-	void powerOff();
+	void powerOff() override;
 
 protected:
 	void setCurrentPower(int currentPower);
@@ -59,11 +60,12 @@ protected:
 	int max() const;
 	int zero() const;
 	bool invert() const;
+	bool isReady() const;
 
 private:
 	QFile mDutyFile;
 	QFile mPeriodFile;
-	int const mPeriod;
+	int mPeriod;
 	int mCurrentDutyPercent;
 	int mMin;
 	int mMax;
@@ -71,6 +73,7 @@ private:
 	int mStop;
 	bool mInvert;
 	int mCurrentPower;
+	DeviceState mState;
 };
 
 }

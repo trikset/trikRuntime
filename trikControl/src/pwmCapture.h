@@ -17,6 +17,7 @@
 #include <QtCore/QFile>
 
 #include "pwmCaptureInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -37,6 +38,8 @@ public:
 
 	~PwmCapture() override;
 
+	Status status() const override;
+
 public slots:
 	/// Returns three readings of PWM signal frequency.
 	QVector<int> frequency() override;
@@ -47,6 +50,7 @@ public slots:
 private:
 	QFile mFrequencyFile;
 	QFile mDutyFile;
+	DeviceState mState;
 };
 
 }

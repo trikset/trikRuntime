@@ -19,6 +19,7 @@
 #include <QtCore/QFile>
 
 #include "motorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -42,6 +43,8 @@ public:
 
 	~PowerMotor() override;
 
+	Status status() const override;
+
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
@@ -56,9 +59,10 @@ public slots:
 
 private:
 	I2cCommunicator &mCommunicator;
-	int const mI2cCommandNumber;
+	int mI2cCommandNumber;
 	bool const mInvert;
 	int mCurrentPower;
+	DeviceState mState;
 };
 
 }

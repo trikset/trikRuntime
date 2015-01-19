@@ -20,6 +20,8 @@
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QReadWriteLock>
 
+#include "deviceState.h"
+
 namespace trikControl {
 
 /// Worker object that processes range sensor output and updates stored reading. Meant to be executed in separate
@@ -31,7 +33,7 @@ class RangeSensorWorker : public QObject
 public:
 	/// Constructor.
 	/// @param eventFile - event file for this sensor.
-	RangeSensorWorker(QString const &eventFile);
+	RangeSensorWorker(QString const &eventFile, DeviceState &state);
 
 	~RangeSensorWorker() override;
 
@@ -71,6 +73,9 @@ private:
 
 	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
 	QReadWriteLock mLock;
+
+	/// State of a sensor, shared with proxy.
+	DeviceState &mState;
 };
 
 }

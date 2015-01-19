@@ -18,6 +18,7 @@
 #include <QtCore/QScopedPointer>
 
 #include "colorSensorInterface.h"
+#include "deviceState.h"
 
 #include "declSpec.h"
 
@@ -42,6 +43,8 @@ public:
 
 	~ColorSensor() override;
 
+	Status status() const override;
+
 public slots:
 	void init(bool showOnDisplay) override;
 
@@ -50,6 +53,9 @@ public slots:
 	void stop() override;
 
 private:
+	/// State of a sensor. Shared with worker object.
+	DeviceState mState;
+
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<ColorSensorWorker> mColorSensorWorker;
 

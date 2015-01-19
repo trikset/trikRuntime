@@ -27,43 +27,48 @@
 
 using namespace trikControl;
 
-RangeSensorWorker::RangeSensorWorker(QString const &eventFile)
+RangeSensorWorker::RangeSensorWorker(QString const &eventFile, DeviceState &state)
 	: mEventFile(eventFile)
+	, mState(state)
 {
 }
 
 RangeSensorWorker::~RangeSensorWorker()
 {
-	stop();
+	if (mState.isReady()) {
+		stop();
+	}
 }
 
 void RangeSensorWorker::stop()
 {
+	mState.stop();
 	if (mSocketNotifier) {
 		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 		mSocketNotifier->setEnabled(false);
 	}
 
 	if (::close(mEventFileDescriptor) != 0) {
-		QString const message = QString("%1: close failed: %2").arg(mEventFile.fileName()).arg(errno);
-		QLOG_ERROR() << message;
-		qDebug() << message;
+		QLOG_ERROR() << QString("%1: close failed: %2").arg(mEventFile.fileName()).arg(strerror(errno));
+		mState.fail();
 	}
 
 	mEventFileDescriptor = -1;
+	mState.off();
 }
 
 void RangeSensorWorker::init()
 {
+	mState.start();
+
 	QLOG_INFO() << "Opening" << mEventFile.fileName();
-	qDebug() << "Opening" << mEventFile.fileName();
 
 	/// @todo Is it possible to use QFile (and QFile::handle()) here?
 	mEventFileDescriptor = open(mEventFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 
 	if (mEventFileDescriptor == -1) {
 		QLOG_ERROR() << "Cannot open range sensor output file" << mEventFile.fileName();
-		qDebug() << "Cannot open range sensor output file" << mEventFile.fileName();
+		mState.fail();
 		return;
 	}
 
@@ -71,10 +76,15 @@ void RangeSensorWorker::init()
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(true);
+	mState.ready();
 }
 
 void RangeSensorWorker::readFile()
 {
+	if (!mState.isReady()) {
+		return;
+	}
+
 	struct input_event event;
 	int size = 0;
 
@@ -108,7 +118,6 @@ void RangeSensorWorker::readFile()
 
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {
 		QLOG_ERROR() << "incomplete data read";
-		qDebug() << "incomplete data read";
 	}
 
 	mSocketNotifier->setEnabled(true);
@@ -116,6 +125,11 @@ void RangeSensorWorker::readFile()
 
 int RangeSensorWorker::read()
 {
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to read from uninitialized sensor, ignoring";
+		return 0;
+	}
+
 	mLock.lockForRead();
 	int const result = mDistance;
 	mLock.unlock();
@@ -124,6 +138,11 @@ int RangeSensorWorker::read()
 
 int RangeSensorWorker::readRawData()
 {
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to read from uninitialized sensor, ignoring";
+		return 0;
+	}
+
 	mLock.lockForRead();
 	int const result = mRawDistance;
 	mLock.unlock();

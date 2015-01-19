@@ -15,8 +15,10 @@
 #include "objectSensor.h"
 
 #include <trikKernel/configurer.h>
+#include <QsLog.h>
 
 #include "objectSensorWorker.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
@@ -25,40 +27,64 @@ ObjectSensor::ObjectSensor(QString const &port, trikKernel::Configurer const &co
 	QString const &script = configurer.attributeByPort(port, "script");
 	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
 	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
-	double const toleranceFactor = configurer.attributeByPort(port, "toleranceFactor").toDouble();
+	qreal const toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
-	mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor));
+	if (!mState.isFailed()) {
+		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
 
-	mObjectSensorWorker->moveToThread(&mWorkerThread);
+		mObjectSensorWorker->moveToThread(&mWorkerThread);
 
-	connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
 
-	mWorkerThread.start();
+		mWorkerThread.start();
+	}
 }
 
 ObjectSensor::~ObjectSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+ObjectSensor::Status ObjectSensor::status() const
+{
+	return mState.status();
 }
 
 void ObjectSensor::init(bool showOnDisplay)
 {
-	QMetaObject::invokeMethod(mObjectSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+	if (!mState.isFailed()) {
+		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+	}
 }
 
 void ObjectSensor::detect()
 {
-	QMetaObject::invokeMethod(mObjectSensorWorker.data(), "detect");
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "detect");
+	} else {
+		QLOG_ERROR() << "Trying to call 'detect' when sensor is not ready, ignoring";
+	}
 }
 
 QVector<int>  ObjectSensor::read()
 {
-	// Read is called synchronously and only takes prepared value from sensor.
-	return mObjectSensorWorker->read();
+	if (mState.isReady()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mObjectSensorWorker->read();
+	} else {
+		QLOG_ERROR() << "Trying to call 'read' when sensor is not ready, ignoring";
+		return {};
+	}
 }
 
 void ObjectSensor::stop()
 {
-	QMetaObject::invokeMethod(mObjectSensorWorker.data(), "stop");
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "stop");
+	} else {
+		QLOG_ERROR() << "Trying to call 'stop' when sensor is not ready, ignoring";
+	}
 }

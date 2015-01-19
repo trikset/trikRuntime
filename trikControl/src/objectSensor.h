@@ -18,6 +18,7 @@
 #include <QtCore/QScopedPointer>
 
 #include "objectSensorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -40,6 +41,8 @@ public:
 
 	~ObjectSensor() override;
 
+	Status status() const override;
+
 public slots:
 	void init(bool showOnDisplay) override;
 
@@ -50,6 +53,9 @@ public slots:
 	void stop() override;
 
 private:
+	/// Sensor state.
+	DeviceState mState;
+
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<ObjectSensorWorker> mObjectSensorWorker;
 

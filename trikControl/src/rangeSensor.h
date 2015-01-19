@@ -17,6 +17,7 @@
 #include <QtCore/QThread>
 
 #include "sensorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -39,6 +40,8 @@ public:
 
 	~RangeSensor() override;
 
+	Status status() const override;
+
 signals:
 	/// Emitted when new data is received from a sensor.
 	void newData(int distance, int rawDistance);
@@ -57,6 +60,9 @@ public slots:
 	void stop();
 
 private:
+	/// Device state, shared with worker.
+	DeviceState mState;
+
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<RangeSensorWorker> mSensorWorker;
 

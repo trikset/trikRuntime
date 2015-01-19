@@ -30,11 +30,15 @@ PwmCapture::PwmCapture(QString const &port, trikKernel::Configurer const &config
 {
 	if (!mFrequencyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open period capture file " << mFrequencyFile.fileName();
+		mState.fail();
 	}
 
 	if (!mDutyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open duty capture file " << mDutyFile.fileName();
+		mState.fail();
 	}
+
+	mState.ready();
 }
 
 PwmCapture::~PwmCapture()
@@ -43,8 +47,17 @@ PwmCapture::~PwmCapture()
 	mDutyFile.close();
 }
 
+PwmCapture::Status PwmCapture::status() const
+{
+	return mState.status();
+}
+
 QVector<int> PwmCapture::frequency()
 {
+	if (!mState.isReady()) {
+		return {};
+	}
+
 	mFrequencyFile.reset();
 	QByteArray dataText = mFrequencyFile.readAll();
 	QTextStream stream(dataText);
@@ -56,6 +69,10 @@ QVector<int> PwmCapture::frequency()
 
 int PwmCapture::duty()
 {
+	if (!mState.isReady()) {
+		return {};
+	}
+
 	mDutyFile.reset();
 	QByteArray dataText = mDutyFile.readAll();
 	QTextStream stream(dataText);

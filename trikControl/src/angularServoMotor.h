@@ -40,7 +40,7 @@ public:
 public slots:
 	/// Sets current motor angle to specified value.
 	/// @param power - servo shaft angle, allowed values are from -90 to 90.
-	void setPower(int power);
+	void setPower(int power) override;
 };
 
 }

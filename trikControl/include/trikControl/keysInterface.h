@@ -16,12 +16,14 @@
 
 #include <QtCore/QObject>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Class for handling keys on a brick.
-class TRIKCONTROL_EXPORT KeysInterface : public QObject
+class TRIKCONTROL_EXPORT KeysInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

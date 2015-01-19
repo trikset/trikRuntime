@@ -23,39 +23,60 @@
 using namespace trikControl;
 
 RangeSensor::RangeSensor(QString const &port, trikKernel::Configurer const &configurer)
-	: mSensorWorker(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile")))
+	: mSensorWorker(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState))
 {
-	mSensorWorker->moveToThread(&mWorkerThread);
+	if (!mState.isFailed()) {
+		mSensorWorker->moveToThread(&mWorkerThread);
 
-	connect(mSensorWorker.data(), SIGNAL(newData(int, int)), this, SIGNAL(newData(int, int)));
+		connect(mSensorWorker.data(), SIGNAL(newData(int, int)), this, SIGNAL(newData(int, int)));
 
-	mWorkerThread.start();
+		mWorkerThread.start();
+	}
 }
 
 RangeSensor::~RangeSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+RangeSensor::Status RangeSensor::status() const
+{
+	return mState.status();
 }
 
 void RangeSensor::init()
 {
-	QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	if (!mState.isFailed()) {
+		QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	}
 }
 
 int RangeSensor::read()
 {
-	// Read is called synchronously and only takes prepared value from sensor.
-	return mSensorWorker->read();
+	if (!mState.isFailed()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mSensorWorker->read();
+	} else {
+		return 0;
+	}
 }
 
 int RangeSensor::readRawData()
 {
-	// Read is called synchronously and only takes prepared value from sensor.
-	return mSensorWorker->readRawData();
+	if (!mState.isFailed()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mSensorWorker->readRawData();
+	} else {
+		return 0;
+	}
 }
 
 void RangeSensor::stop()
 {
-	QMetaObject::invokeMethod(mSensorWorker.data(), "stop");
+	if (!mState.isFailed()) {
+		QMetaObject::invokeMethod(mSensorWorker.data(), "stop");
+	}
 }

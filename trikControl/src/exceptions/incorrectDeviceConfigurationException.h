@@ -14,32 +14,21 @@
 
 #pragma once
 
-#include <QtCore/QObject>
+#include <trikKernel/exceptions/trikRuntimeException.h>
 
-#include "deviceInterface.h"
-
-#include "declSpec.h"
+#include <QsLog.h>
 
 namespace trikControl {
 
-/// Abstract sensor, inherited by various sensor types.
-class TRIKCONTROL_EXPORT SensorInterface : public QObject, public DeviceInterface
+/// Exception for semantically incorrect device config, for example, trying to init MxN color sensor with negative
+/// grid size.
+class IncorrectDeviceConfigurationException : public trikKernel::TrikRuntimeException
 {
-	Q_OBJECT
-
 public:
-	enum class Type {
-		analogSensor
-		, digitalSensor
-		, specialSensor
-	};
-
-public slots:
-	/// Returns current raw reading of a sensor.
-	virtual int read() = 0;
-
-	/// Returns current real raw reading of a sensor.
-	virtual int readRawData() = 0;
+	IncorrectDeviceConfigurationException(QString const &message)
+	{
+		QLOG_ERROR() << message;
+	}
 };
 
 }

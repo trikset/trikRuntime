@@ -89,7 +89,8 @@ I2cCommunicator::I2cCommunicator(trikKernel::Configurer const &configurer)
 	bool ok = false;
 	mDeviceId = configurer.attributeByDevice("i2c", "deviceId").toInt(&ok, 0);
 	if (!ok) {
-		mStatus = Status::failure;
+		QLOG_ERROR() << "Incorrect I2C device id" << configurer.attributeByDevice("i2c", "deviceId");
+		mState.fail();
 		return;
 	}
 
@@ -98,7 +99,7 @@ I2cCommunicator::I2cCommunicator(trikKernel::Configurer const &configurer)
 
 I2cCommunicator::~I2cCommunicator()
 {
-	if (mStatus == Status::ready) {
+	if (mState.isReady()) {
 		disconnect();
 	}
 }
@@ -108,22 +109,22 @@ void I2cCommunicator::connect()
 	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
 		QLOG_ERROR() << "Failed to open I2C device file " << mDevicePath;
-		mStatus = Status::failure;
+		mState.fail();
 		return;
 	}
 
 	if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId)) {
 		QLOG_ERROR() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
-		mStatus = Status::failure;
+		mState.fail();
 		return;
 	}
 
-	mStatus = Status::ready;
+	mState.ready();
 }
 
 void I2cCommunicator::send(QByteArray const &data)
 {
-	if (mStatus != Status::ready) {
+	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
 		return;
 	}
@@ -139,7 +140,7 @@ void I2cCommunicator::send(QByteArray const &data)
 /// todo: rewrite it
 int I2cCommunicator::read(QByteArray const &data)
 {
-	if (mStatus != Status::ready) {
+	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
 		return 0;
 	}
@@ -158,12 +159,12 @@ int I2cCommunicator::read(QByteArray const &data)
 
 DeviceInterface::Status I2cCommunicator::status() const
 {
-	return mStatus;
+	return mState.status();
 }
 
 void I2cCommunicator::disconnect()
 {
 	QMutexLocker lock(&mLock);
 	close(mDeviceFileDescriptor);
-	mStatus = Status::off;
+	mState.off();
 }

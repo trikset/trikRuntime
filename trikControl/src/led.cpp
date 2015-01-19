@@ -28,11 +28,15 @@ Led::Led(trikKernel::Configurer const &configurer)
 {
 	if (!mRedDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open red led control file " << mRedDeviceFile.fileName();
+		mState.fail();
 	}
 
 	if (!mGreenDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open green led control file " << mGreenDeviceFile.fileName();
+		mState.fail();
 	}
+
+	mState.ready();
 }
 
 Led::~Led()
@@ -43,38 +47,51 @@ Led::~Led()
 	mGreenDeviceFile.close();
 }
 
+Led::Status Led::status() const
+{
+	return mState.status();
+}
+
 void Led::red()
 {
-	mRedDeviceFile.write("1");
-	mRedDeviceFile.flush();
+	if (mState.isReady()) {
+		mRedDeviceFile.write("1");
+		mRedDeviceFile.flush();
 
-	mGreenDeviceFile.write("0");
-	mGreenDeviceFile.flush();
+		mGreenDeviceFile.write("0");
+		mGreenDeviceFile.flush();
+	}
 }
 
 void Led::green()
 {
-	mRedDeviceFile.write("0");
-	mRedDeviceFile.flush();
+	if (mState.isReady()) {
+		mRedDeviceFile.write("0");
+		mRedDeviceFile.flush();
 
-	mGreenDeviceFile.write("1");
-	mGreenDeviceFile.flush();
+		mGreenDeviceFile.write("1");
+		mGreenDeviceFile.flush();
+	}
 }
 
 void Led::orange()
 {
-	mRedDeviceFile.write("1");
-	mRedDeviceFile.flush();
+	if (mState.isReady()) {
+		mRedDeviceFile.write("1");
+		mRedDeviceFile.flush();
 
-	mGreenDeviceFile.write("1");
-	mGreenDeviceFile.flush();
+		mGreenDeviceFile.write("1");
+		mGreenDeviceFile.flush();
+	}
 }
 
 void Led::off()
 {
-	mRedDeviceFile.write("0");
-	mRedDeviceFile.flush();
+	if (mState.isReady()) {
+		mRedDeviceFile.write("0");
+		mRedDeviceFile.flush();
 
-	mGreenDeviceFile.write("0");
-	mGreenDeviceFile.flush();
+		mGreenDeviceFile.write("0");
+		mGreenDeviceFile.flush();
+	}
 }

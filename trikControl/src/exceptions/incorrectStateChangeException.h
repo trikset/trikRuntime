@@ -1,0 +1,54 @@
+/* Copyright 2015 CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#pragma once
+
+#include <trikKernel/exceptions/trikRuntimeException.h>
+
+#include "deviceInterface.h"
+
+#include <QsLog.h>
+
+namespace trikControl {
+
+/// Exception for incorrect device state change, for example, from "off" to "stopping".
+class IncorrectStateChangeException : public trikKernel::TrikRuntimeException
+{
+public:
+	IncorrectStateChangeException(DeviceInterface::Status from, DeviceInterface::Status to)
+	{
+		QLOG_ERROR() << QString("Incorrect device state change from \"%1\" to \"%2\"")
+				.arg(statusToString(from)).arg(statusToString(to));
+	}
+
+private:
+	static QString statusToString(DeviceInterface::Status status) {
+		switch (status) {
+		case DeviceInterface::Status::failure:
+			return "failure";
+		case DeviceInterface::Status::off:
+			return "off";
+		case DeviceInterface::Status::ready:
+			return "ready";
+		case DeviceInterface::Status::starting:
+			return "starting";
+		case DeviceInterface::Status::stopping:
+			return "stopping";
+		}
+
+		return "";
+	}
+};
+
+}

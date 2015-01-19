@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 #include <QtCore/QSet>
 #include <QtCore/QReadWriteLock>
 
+#include "deviceState.h"
+
 namespace trikControl {
 
 /// Watches for keys on a brick, intended to work in separate thread.
@@ -30,7 +32,7 @@ class KeysWorker : public QObject
 public:
 	/// Constructor.
 	/// @param keysPath - path to device file that controls brick keys.
-	KeysWorker(QString const &keysPath);
+	KeysWorker(QString const &keysPath, DeviceState &state);
 
 	/// Clear data about previous key pressures.
 	void reset();
@@ -55,6 +57,9 @@ private:
 	int mButtonValue;
 	QSet<int> mWasPressed;
 	QReadWriteLock mLock;
+
+	/// Device state object, shared between worker and proxy,
+	DeviceState &mState;
 };
 
 }

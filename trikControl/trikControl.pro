@@ -40,7 +40,9 @@ HEADERS += \
 	$$PWD/src/brick.h \
 	$$PWD/src/colorSensor.h \
 	$$PWD/src/colorSensorWorker.h \
+	$$PWD/src/configurerHelper.h \
 	$$PWD/src/continiousRotationServoMotor.h \
+	$$PWD/src/deviceState.h \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
@@ -61,6 +63,8 @@ HEADERS += \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
+	$$PWD/src/exceptions/incorrectStateChangeException.h \
+	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -70,7 +74,9 @@ SOURCES += \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
 	$$PWD/src/colorSensorWorker.cpp \
+	$$PWD/src/configurerHelper.cpp \
 	$$PWD/src/continiousRotationServoMotor.cpp \
+	$$PWD/src/deviceState.cpp \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \

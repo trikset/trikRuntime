@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,21 +30,20 @@
 
 using namespace trikControl;
 
-VectorSensorWorker::VectorSensorWorker(const QString &controlFile)
+VectorSensorWorker::VectorSensorWorker(QString const &controlFile, DeviceState &state)
 	: mDeviceFileDescriptor(0)
+	, mState(state)
 {
 	mReading << 0 << 0 << 0;
 
 	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 	if (mDeviceFileDescriptor == -1) {
 		QLOG_ERROR() << "Cannot open input file " << controlFile;
-		qDebug() << "Cannot open input file " << controlFile;
+		mState.fail();
 		return;
 	}
 
-	mSocketNotifier.reset(
-			new QSocketNotifier(mDeviceFileDescriptor, QSocketNotifier::Read, this)
-			);
+	mSocketNotifier.reset(new QSocketNotifier(mDeviceFileDescriptor, QSocketNotifier::Read, this));
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(true);
@@ -90,7 +89,6 @@ void VectorSensorWorker::readFile()
 
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {
 		QLOG_ERROR() << "incomplete data read";
-		qDebug() << "incomplete data read";
 	}
 
 	mSocketNotifier->setEnabled(true);
@@ -98,8 +96,12 @@ void VectorSensorWorker::readFile()
 
 QVector<int> VectorSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> const result = mReading;
-	mLock.unlock();
-	return result;
+	if (mState.isReady()) {
+		mLock.lockForRead();
+		QVector<int> const result = mReading;
+		mLock.unlock();
+		return result;
+	} else {
+		return {};
+	}
 }

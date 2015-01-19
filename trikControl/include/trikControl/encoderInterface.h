@@ -16,12 +16,14 @@
 
 #include <QtCore/QObject>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Encoder of power motor.
-class TRIKCONTROL_EXPORT EncoderInterface : public QObject
+class TRIKCONTROL_EXPORT EncoderInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

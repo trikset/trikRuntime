@@ -17,12 +17,14 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
+#include "deviceInterface.h"
+
 #include "declSpec.h"
 
 namespace trikControl {
 
 /// Sensor that returns a vector.
-class TRIKCONTROL_EXPORT VectorSensorInterface : public QObject
+class TRIKCONTROL_EXPORT VectorSensorInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 

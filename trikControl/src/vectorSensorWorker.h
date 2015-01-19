@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@
 #include <QtCore/QVector>
 #include <QtCore/QReadWriteLock>
 
+#include "deviceState.h"
+
 namespace trikControl {
 
 /// Handles events from sensor, intended to work in separate thread.
@@ -30,7 +32,8 @@ class VectorSensorWorker : public QObject
 public:
 	/// Constructor.
 	/// @param deviceFile - device file for this sensor.
-	VectorSensorWorker(QString const &deviceFile);
+	/// @param state - state of a device.
+	VectorSensorWorker(QString const &deviceFile, DeviceState &state);
 
 signals:
 	/// Emitted when new sensor reading is ready.
@@ -49,6 +52,9 @@ private:
 	QVector<int> mReading;
 	int mDeviceFileDescriptor;
 	QReadWriteLock mLock;
+
+	/// Device state, shared between worker and proxy.
+	DeviceState &mState;
 };
 
 }

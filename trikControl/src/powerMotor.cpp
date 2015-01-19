@@ -19,20 +19,29 @@
 #include <trikKernel/configurer.h>
 
 #include "i2cCommunicator.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
 PowerMotor::PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
 {
+	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+	mState.ready();
 }
 
 PowerMotor::~PowerMotor()
 {
-	powerOff();
+	if (mState.isReady()) {
+		powerOff();
+	}
+}
+
+PowerMotor::Status PowerMotor::status() const
+{
+	return combine(mCommunicator, *this);
 }
 
 void PowerMotor::setPower(int power)

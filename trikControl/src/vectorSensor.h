@@ -18,6 +18,7 @@
 #include <QtCore/QThread>
 
 #include "vectorSensorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
@@ -40,10 +41,15 @@ public:
 
 	~VectorSensor() override;
 
+	Status status() const override;
+
 public slots:
 	QVector<int> read() const override;
 
 private:
+	/// Device state, shared with worker.
+	DeviceState mState;
+
 	QScopedPointer<VectorSensorWorker> mVectorSensorWorker;
 	QThread mWorkerThread;
 };

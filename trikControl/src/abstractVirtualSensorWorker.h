@@ -23,13 +23,16 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QList>
 
+#include "deviceInterface.h"
+#include "deviceState.h"
+
 namespace trikControl {
 
 /// Base class for all virtual sensor workers. Virtual sensor is an external process that communicates using input and
 /// output FIFOs and uses script that allows to start, stop or restart it. This class is a worker that is intended to
 /// run in separate process and is responsible for technical side of communication with virtual server. Actual
 /// protocol and interpretation of data must be implemented in descendants.
-class AbstractVirtualSensorWorker : public QObject
+class AbstractVirtualSensorWorker : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 
@@ -38,9 +41,13 @@ public:
 	/// @param script - file name of a scrit used to start or stop a sensor.
 	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	AbstractVirtualSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile);
+	/// @param state - shared state of a sensor.
+	AbstractVirtualSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+			, DeviceState &state);
 
 	~AbstractVirtualSensorWorker() override;
+
+	Status status() const override;
 
 signals:
 	/// Emitted when sensor is stopped successfully.
@@ -108,14 +115,14 @@ private:
 	/// File stream for command fifo. Despite its name it is used to output commands. It is input for virtual sensor.
 	QTextStream mInputStream;
 
-	/// Flag that sensor is ready and waiting for commands.
-	bool mReady = false;
-
 	/// A queue of commands to be passed to input fifo when it is ready.
 	QList<QString> mCommandQueue;
 
 	/// Buffer with current line being read from FIFO.
 	QString mBuffer;
+
+	/// Current state of a device, shared between worker and proxy.
+	DeviceState &mState;
 };
 
 }
