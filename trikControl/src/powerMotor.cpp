@@ -41,7 +41,7 @@ PowerMotor::~PowerMotor()
 
 PowerMotor::Status PowerMotor::status() const
 {
-	return combine(mCommunicator, *this);
+	return combine(mCommunicator, mState.status());
 }
 
 void PowerMotor::setPower(int power)

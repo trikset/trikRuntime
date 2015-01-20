@@ -25,8 +25,11 @@ public:
 
 	/// Device status.
 	enum class Status {
+		/// Device can not be turned off due to hardware or configuration failure.
+		failure
+
 		/// Device is turned off.
-		off
+		, off
 
 		/// Device received command to turn on, but is starting now, and it may take some time.
 		, starting
@@ -36,21 +39,18 @@ public:
 
 		/// Device received command to turn off and stopping now, it may take some time.
 		, stopping
-
-		/// Device can not be turned off due to hardware or configuration failure.
-		, failure
 	};
 
 	/// Helper method to return status of a device relying on other device to work. If first device is ready, status of
 	/// a second device is returned, otherwise it is status of a first device.
-	static Status combine(DeviceInterface const &underlying, DeviceInterface const &dependent)
+	static Status combine(DeviceInterface const &underlying, DeviceInterface::Status const &dependent)
 	{
 		DeviceInterface::Status const status = underlying.status();
 		if (status != DeviceInterface::Status::ready) {
 			return status;
 		}
 
-		return dependent.status();
+		return dependent;
 	}
 
 	/// Returns current status of the device.

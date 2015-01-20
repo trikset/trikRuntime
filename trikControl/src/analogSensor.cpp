@@ -54,7 +54,7 @@ AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &co
 
 AnalogSensor::Status AnalogSensor::status() const
 {
-	return DeviceInterface::combine(mCommunicator, *this);
+	return DeviceInterface::combine(mCommunicator, mState.status());
 }
 
 int AnalogSensor::read()

@@ -43,7 +43,7 @@ void Encoder::reset()
 
 Encoder::Status Encoder::status() const
 {
-	return combine(mCommunicator, *this);
+	return combine(mCommunicator, mState.status());
 }
 
 int Encoder::read()

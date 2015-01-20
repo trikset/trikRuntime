@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/lineSensorWorker.h"
+#include "lineSensorWorker.h"
 
 #include <QtCore/QDebug>
 
