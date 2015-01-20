@@ -37,7 +37,9 @@ AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, 
 
 AbstractVirtualSensorWorker::~AbstractVirtualSensorWorker()
 {
-	stop();
+	if (mState.isReady()) {
+		stop();
+	}
 }
 
 AbstractVirtualSensorWorker::Status AbstractVirtualSensorWorker::status() const

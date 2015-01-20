@@ -1,13 +1,13 @@
 <!--
 Configuration file for a model. Meant to be edited automatically via TRIKStudio or TRIKGui and can be different
-for each model. File below is an annotated example of possible configuration.
+for each model. File below is an example of possible configuration.
 
 Devices have properties depending on a port to which device is plugged and device class (IR Sensor, Servomotor
 and so on), such as device file, and properties common for some devices of given class regardless of port (for example,
 we may have two different types of angular servos that have common control interface but different parameters).
 So we distinguish "device class" and "device type". "device class" is a class of device as in underlying C++ code
 (basically, a logic of communication with particular kind of device), "device type" is a set of parameters for
-each device class. Device class can have many device types assotiated with it (for instance, for different kinds of
+each device class. Device class can have many device types associated with it (for instance, for different kinds of
 servomotors from example above). Device classes are hard-coded, device types are defined in system config. Every
 parameter for device type may be overridden here, in model config, to allow to fine-tune devices for particular purpose
 (ability to set the maximum and minimum angles of angular servo proven to be especially useful).
@@ -26,7 +26,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Servomotor or PWM capture ports. -->
 	<E1>
-		<angularServomotor invert="false" />
+		<angularServomotor />
 	</E1>
 	<E2>
 		<angularServomotor invert="false" />
@@ -35,13 +35,13 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<angularServomotor min="600000" max="2200000" zero="1400000" stop="0" invert="false" />
 	</E3>
 	<C1>
-		<angularServomotor invert="false" />
+		<angularServomotor />
 	</C1>
 	<C2>
 		<angularServomotor />
 	</C2>
 	<C3>
-		<pwmCapture />
+		<angularServomotor />
 	</C3>
 
 	<!-- Analog sensor ports. -->

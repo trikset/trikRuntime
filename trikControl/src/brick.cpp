@@ -78,6 +78,8 @@ Brick::Brick(QThread &guiThread, QString const &configPath, const QString &start
 			mDigitalSensors.insert(port, new DigitalSensor(port, configurer));
 		} else if (deviceClass == "rangeSensor") {
 			mRangeSensors.insert(port, new RangeSensor(port, configurer));
+			/// @todo Range sensor shall be turned on only when needed.
+			mRangeSensors[port]->init();
 		} else if (deviceClass == "encoder") {
 			mEncoders.insert(port, new Encoder(port, configurer, *mI2cCommunicator));
 		} else if (deviceClass == "lineSensor") {

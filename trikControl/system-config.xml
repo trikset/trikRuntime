@@ -7,7 +7,7 @@ and so on), such as device file or I2C device number, and properties common for 
 of port (for example, we may have two different types of angular servos that have common control interface but
 different parameters). So we distinguish "device class" and "device type". "device class" is a class of device as in
 underlying C++ code (basically, a logic of communication with particular kind of device), "device type" is a set of
-parameters for each device class. Device class can have many device types assotiated with it (for instance, for
+parameters for each device class. Device class can have many device types associated with it (for instance, for
 different kinds of servomotors from example above). Device classes are hard-coded, device types are defined in system
 config. Every parameter for device type may be overridden in model config, to allow to fine-tune devices for particular
 purpose (ability to set the maximum and minimum angles of angular servo proven to be especially useful).
