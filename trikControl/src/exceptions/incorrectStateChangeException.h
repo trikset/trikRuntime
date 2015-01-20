@@ -26,6 +26,9 @@ namespace trikControl {
 class IncorrectStateChangeException : public trikKernel::TrikRuntimeException
 {
 public:
+	/// Constructor.
+	/// @param from - status from which we tried to change.
+	/// @param to - status to which we tried to change.
 	IncorrectStateChangeException(DeviceInterface::Status from, DeviceInterface::Status to)
 	{
 		QLOG_ERROR() << QString("Incorrect device state change from \"%1\" to \"%2\"")
@@ -33,6 +36,7 @@ public:
 	}
 
 private:
+	/// Helper method to convert status enum value to string.
 	static QString statusToString(DeviceInterface::Status status) {
 		switch (status) {
 		case DeviceInterface::Status::failure:

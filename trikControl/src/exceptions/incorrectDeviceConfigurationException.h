@@ -25,6 +25,8 @@ namespace trikControl {
 class IncorrectDeviceConfigurationException : public trikKernel::TrikRuntimeException
 {
 public:
+	/// Constructor.
+	/// @param message - message with some information about exception.
 	IncorrectDeviceConfigurationException(QString const &message)
 	{
 		QLOG_ERROR() << message;
