@@ -28,19 +28,16 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir) {
-		mRootDirPath = mController.scriptsDirPath();
-
-		QDir::setCurrent(mController.startDirPath());
-		QDir dir;
-		dir.mkdir(mController.scriptsDirName());
-	} else if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
+	if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
 		mRootDirPath = QDir::rootPath();
-	} else {
-		mRootDirPath = mController.startDirPath();
+	} else { // if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir)
+		mRootDirPath = mController.scriptsDirPath();
 	}
 
-	QDir::setCurrent(mRootDirPath);
+	QDir::setCurrent(mController.startDirPath());
+	QDir dir;
+	dir.mkdir(mController.scriptsDirName());
+	QDir::setCurrent(mController.scriptsDirPath());
 
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
