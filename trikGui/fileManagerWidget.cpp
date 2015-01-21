@@ -114,7 +114,9 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 QString FileManagerWidget::showCurrentPath()
 {
 	QString result = QDir::currentPath();
-	result.remove(mRootDirPath);
+	if (mRootDirPath != "/") {
+		result.remove(mRootDirPath);
+	}
 
 	if (result.isEmpty()) {
 		result = "/";
