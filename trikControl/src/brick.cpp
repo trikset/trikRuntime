@@ -45,12 +45,12 @@
 
 using namespace trikControl;
 
-Brick::Brick(QThread &guiThread, QString const &configPath, const QString &startDirPath)
+Brick::Brick(QThread &guiThread, QString const &systemConfig, QString const &modelConfig, const QString &startDirPath)
 	: mDisplay(new Display(guiThread, startDirPath))
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 
-	trikKernel::Configurer configurer(configPath);
+	trikKernel::Configurer configurer(systemConfig, modelConfig);
 
 	for (QString const &initScript : configurer.initScripts()) {
 		if (::system(initScript.toStdString().c_str()) != 0) {

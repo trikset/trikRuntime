@@ -28,9 +28,8 @@ Keys::Keys(trikKernel::Configurer const &configurer)
 		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));
 		mKeysWorker->moveToThread(&mWorkerThread);
 		mWorkerThread.start();
+		mState.ready();
 	}
-
-	mState.ready();
 }
 
 Keys::~Keys()

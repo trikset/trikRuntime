@@ -13,6 +13,8 @@
  * limitations under the License. */
 
 #include <QtCore/QScopedPointer>
+#include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
 
 #include <trikControl/brickInterface.h>
 #include <trikControl/brickFactory.h>
@@ -31,7 +33,8 @@ using namespace trikNetwork;
 
 TEST(selftest, brickCheck)
 {
-	QScopedPointer<BrickInterface> brick(BrickFactory::create(*QThread::currentThread(), "./", "./"));
+	QScopedPointer<BrickInterface> brick(BrickFactory::create(*QThread::currentThread()
+			, "./system-config.xml", "./selftest-model-config.xml", "./"));
 
 	EXPECT_TRUE(brick->battery() != nullptr);
 	if (brick->battery() != nullptr) {
@@ -155,18 +158,18 @@ TEST(selftest, brickCheck)
 	}
 
 
-	EXPECT_TRUE(brick->sensor("D1") != nullptr);
+//	EXPECT_TRUE(brick->sensor("D1") != nullptr);
 	if (brick->sensor("D1") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("D1")->status());
 	}
 
-	EXPECT_TRUE(brick->sensor("D2") != nullptr);
+//	EXPECT_TRUE(brick->sensor("D2") != nullptr);
 	if (brick->sensor("D2") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("D2")->status());
 	}
 
 
-	EXPECT_TRUE(brick->sensor("F1") != nullptr);
+//	EXPECT_TRUE(brick->sensor("F1") != nullptr);
 	if (brick->sensor("F1") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("F1")->status());
 	}
@@ -185,14 +188,15 @@ TEST(selftest, brickCheck)
 
 TEST(selftest, mailboxCheck)
 {
-	trikKernel::Configurer configurer(".");
+	trikKernel::Configurer configurer("./system-config.xml", "./selftest-model-config.xml");
 	QScopedPointer<MailboxInterface> mailbox(MailboxFactory::create(configurer));
 	ASSERT_FALSE(mailbox.isNull());
 }
 
+
 TEST(selftest, gamepadCheck)
 {
-//	trikKernel::Configurer configurer(".");
-//	QScopedPointer<GamepadInterface> gamepad(GamepadFactory::create(configurer));
-//	ASSERT_FALSE(gamepad.isNull());
+	trikKernel::Configurer configurer("./system-config.xml", "./selftest-model-config.xml");
+	QScopedPointer<GamepadInterface> gamepad(GamepadFactory::create(configurer));
+	ASSERT_FALSE(gamepad.isNull());
 }

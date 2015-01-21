@@ -14,37 +14,17 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-
-#include "declSpec.h"
+#include "connection.h"
 
 namespace trikNetwork {
 
-class TcpConnector;
-
-/// Class to support remote control of a robot using TCP client.
-class TRIKNETWORK_EXPORT GamepadInterface : public QObject
+/// Connection object for android gamepad.
+class GamepadConnection : public Connection
 {
 	Q_OBJECT
 
-public slots:
-	/// Clear data about previous pad events.
-	virtual void reset() = 0;
-
-	/// Returns true, if given pad button, and clears "pressed" state for that button.
-	virtual bool buttonWasPressed(int buttonNumber) = 0;
-
-	/// Returns current state of the pad, true if pressed.
-	virtual bool isPadPressed(int pad) const = 0;
-
-	/// Returns current X coordinate of given pad or -1 if this pad is not pressed.
-	virtual int padX(int pad) const = 0;
-
-	/// Returns current Y coordinate of given pad or -1 if this pad is not pressed.
-	virtual int padY(int pad) const = 0;
-
-	/// Returns current tilt angle of Android device when "wheel" is turned on.
-	virtual int wheel() const = 0;
+public:
+	GamepadConnection();
 
 signals:
 	/// Emitted when user pulls finger off a pad.
@@ -66,8 +46,8 @@ signals:
 	/// @param pressed - 1 if button was pressed, 0 if it was released.
 	void button(int button, int pressed);
 
-	/// Emitted when gamepad disconnects from robot.
-	void disconnect();
+private:
+	void processData(QByteArray const &data) override;
 };
 
 }

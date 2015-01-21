@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 	QScopedPointer<trikControl::BrickInterface> brick(
 			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath));
 
-	trikKernel::Configurer configurer(configPath);
+	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 

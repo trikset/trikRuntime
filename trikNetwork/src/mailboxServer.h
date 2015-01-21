@@ -22,8 +22,6 @@
 
 #include "trikServer.h"
 
-#include "declSpec.h"
-
 namespace trikNetwork {
 
 /// Worker object for mailbox functionality. It is a server that is supposed to be run in a separate thread and
@@ -41,8 +39,6 @@ class MailboxServer : public TrikServer
 public:
 	/// Constructor.
 	/// @param port - a port for mailbox server.
-	/// @param receiveWaitCondition - reference to a wait condition that is shared with "frontend" mailbox object
-	///        and is used to block script execution on receive() call until new message arrives.
 	MailboxServer(int port);
 
 	/// Returns hull number of this robot.
@@ -53,6 +49,9 @@ public:
 
 	/// Returns our own IP address or empty QHostAddress if we have none.
 	QHostAddress myIp() const;
+
+	/// Launches server, supposed to be called when mailbox server is already in a separate thread.
+	Q_INVOKABLE void start();
 
 	/// Sets hull number for this robot and notifies all known robots about change.
 	Q_INVOKABLE void setHullNumber(int hullNumber);

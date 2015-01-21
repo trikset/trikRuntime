@@ -40,7 +40,7 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	, mTelemetry(new trikTelemetry::TrikTelemetry(*mBrick))
 	, mStartDirPath(startDirPath)
 {
-	trikKernel::Configurer configurer(configPath);
+	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 

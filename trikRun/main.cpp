@@ -104,7 +104,8 @@ int main(int argc, char *argv[])
 	QLOG_INFO() << "TrikRun started";
 
 	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath));
+			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath)
+	);
 
 	GraphicsWidgetHandler graphicsWidgetHandler;
 
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
 
 	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
-	trikKernel::Configurer configurer(configPath);
+	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data(), startDirPath);

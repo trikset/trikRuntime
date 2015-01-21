@@ -30,7 +30,7 @@ public:
 	static void writeToFile(QString const &fileName, QString const &contents, QString const &dirPath = "");
 
 	/// Reads given XML file and returns root element, throws exception if something went wrong.
-	static QDomElement readXmlFile(QString const &path, QString const &fileName);
+	static QDomElement readXmlFile(QString const &fileNameWithPath);
 };
 
 }

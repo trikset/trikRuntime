@@ -29,8 +29,9 @@ class Configurer
 {
 public:
 	/// Constructor.
-	/// @param pathToConfigs - path to system-config.xml and model-config.xml.
-	Configurer(QString const &pathToConfigs);
+	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
+	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
+	Configurer(QString const &systemConfig, QString const &modelConfig);
 
 	/// Returns value of given attribute of given device.
 	QString attributeByDevice(QString const &deviceType, QString const &attributeName) const;

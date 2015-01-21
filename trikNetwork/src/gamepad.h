@@ -21,11 +21,11 @@
 
 #include <trikKernel/configurer.h>
 
-#include "gamepadInterface.h"
+#include "include/trikNetwork/gamepadInterface.h"
 
 namespace trikNetwork {
 
-class TcpConnector;
+class GamepadServer;
 
 /// Implementation of remote control interface.
 class Gamepad : public GamepadInterface
@@ -49,14 +49,22 @@ public slots:
 
 	bool buttonWasPressed(int buttonNumber) override;
 
-	bool isPadPressed(int pad) override;
+	bool isPadPressed(int pad) const override;
 
-	int padX(int pad) override;
+	int padX(int pad) const override;
 
-	int padY(int pad) override;
+	int padY(int pad) const override;
+
+	int wheel() const override;
 
 private slots:
-	void parse(QString const &message);
+	void onPadUp(int padId);
+
+	void onWheel(int percent);
+
+	void onPad(int padId, int x, int y);
+
+	void onButton(int button, int pressed);
 
 private:
 	Q_DISABLE_COPY(Gamepad)
@@ -70,11 +78,15 @@ private:
 		bool isPressed;
 	};
 
-	QScopedPointer<TcpConnector> mListener;
-	QThread mNetworkThread;
-
 	QSet<int> mButtonWasPressed;
 	QHash<int, PadStatus> mPads;
+	int mWheelPercent = 0;
+
+	/// Server that works in separate thread.
+	QScopedPointer<GamepadServer> mWorker;
+
+	/// Worker thread.
+	QThread mWorkerThread;
 };
 
 }

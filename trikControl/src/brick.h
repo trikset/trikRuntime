@@ -49,10 +49,11 @@ public:
 	/// Constructor.
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();.
-	/// @param configPath - path to config files.
+	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
+	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	Brick(QThread &guiThread, QString const &configPath, QString const &startDirPath);
+	Brick(QThread &guiThread, QString const &systemConfig, QString const &modelConfig, QString const &startDirPath);
 
 	~Brick() override;
 

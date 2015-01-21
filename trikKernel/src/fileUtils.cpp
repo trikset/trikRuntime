@@ -16,9 +16,6 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QDir>
-#include <QtCore/QDebug>
-
-#include <QsLog.h>
 
 #include "exceptions/failedToOpenFileException.h"
 #include "exceptions/failedToParseXmlException.h"
@@ -61,12 +58,10 @@ void FileUtils::writeToFile(QString const &fileName, QString const &contents, QS
 	file.close();
 }
 
-QDomElement FileUtils::readXmlFile(QString const &path, QString const &fileName)
+QDomElement FileUtils::readXmlFile(QString const &fileNameWithPath)
 {
 	QDomDocument document("file");
-	QString correctedPath = path.endsWith(QDir::separator()) ? path : path + QDir::separator();
-
-	QFile file(correctedPath + fileName);
+	QFile file(fileNameWithPath);
 	if (!file.open(QIODevice::ReadOnly)) {
 		throw FailedToOpenFileException(file);
 	}
@@ -83,4 +78,3 @@ QDomElement FileUtils::readXmlFile(QString const &path, QString const &fileName)
 
 	return document.documentElement();
 }
-

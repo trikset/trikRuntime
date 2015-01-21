@@ -42,8 +42,10 @@ ColorSensor::ColorSensor(QString const &port, const trikKernel::Configurer &conf
 
 ColorSensor::~ColorSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
 }
 
 ColorSensor::Status ColorSensor::status() const

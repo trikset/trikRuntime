@@ -31,6 +31,16 @@ public:
 	/// Transfers ownership over BrickInterface object to caller.
 	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
 	///        QApplication app; app.thread();
+	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
+	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
+	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
+	///        ending with "/").
+	static BrickInterface *create(QThread &guiThread, QString const &systemConfig, QString const &modelConfig
+			, QString const &startDirPath);
+
+	/// Convenience method that creates brick with default config files, "system-config.xml" and "model-config.xml".
+	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
+	///        QApplication app; app.thread();
 	/// @param configFilesPath - path to system-config.xml and model-config.xml.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").

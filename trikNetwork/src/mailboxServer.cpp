@@ -37,12 +37,6 @@ MailboxServer::MailboxServer(int port)
 	}
 
 	loadSettings();
-
-	startServer(port);
-
-	if (!mServerIp.isNull() && mServerIp != mMyIp) {
-		connect(mServerIp, mServerPort);
-	}
 }
 
 int MailboxServer::hullNumber() const
@@ -61,6 +55,15 @@ QHostAddress MailboxServer::serverIp()
 QHostAddress MailboxServer::myIp() const
 {
 	return mMyIp;
+}
+
+void MailboxServer::start()
+{
+	startServer(mMyPort);
+
+	if (!mServerIp.isNull() && mServerIp != mMyIp) {
+		connect(mServerIp, mServerPort);
+	}
 }
 
 void MailboxServer::setHullNumber(int hullNumber)

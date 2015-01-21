@@ -58,6 +58,10 @@ public:
 	/// Sends given byte array to peer.
 	Q_INVOKABLE void send(QByteArray const &data);
 
+signals:
+	/// Emitted after connection becomes closed.
+	void disconnected();
+
 protected:
 	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
 	/// thread.

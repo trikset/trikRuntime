@@ -131,4 +131,6 @@ void Mailbox::init(int port)
 
 	mWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
+
+	QMetaObject::invokeMethod(mWorker.data(), "start", Qt::QueuedConnection);
 }

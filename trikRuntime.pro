@@ -30,7 +30,7 @@ SUBDIRS = \
 qslog.file = qslog/QsLogSharedLibrary.pro
 
 trikCommunicator.depends = trikScriptRunner trikNetwork qslog
-trikControl.depends = qslog
+trikControl.depends = trikKernel qslog
 trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
 trikKernel.depends = qslog
 trikNetwork.depends = trikKernel qslog

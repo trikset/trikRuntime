@@ -17,10 +17,9 @@
 #include <QtCore/QStringList>
 
 #include <trikKernel/exceptions/malformedConfigException.h>
-
-#include "tcpConnector.h"
-
 #include <QsLog.h>
+
+#include "src/gamepadServer.h"
 
 using namespace trikNetwork;
 
@@ -42,6 +41,10 @@ Gamepad::Gamepad(trikKernel::Configurer const &configurer)
 
 Gamepad::~Gamepad()
 {
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
 }
 
 void Gamepad::reset()
@@ -55,56 +58,61 @@ bool Gamepad::buttonWasPressed(int buttonNumber)
 	return mButtonWasPressed.remove(buttonNumber);
 }
 
-bool Gamepad::isPadPressed(int pad)
+bool Gamepad::isPadPressed(int pad) const
 {
 	return mPads.contains(pad) && mPads.value(pad).isPressed;
 }
 
-int Gamepad::padX(int pad)
+int Gamepad::padX(int pad) const
 {
 	return (!mPads.contains(pad) || !mPads.value(pad).isPressed) ? -1 : mPads.value(pad).x;
 }
 
-int Gamepad::padY(int pad)
+int Gamepad::padY(int pad) const
 {
 	return (!mPads.contains(pad) || !mPads.value(pad).isPressed) ? -1 : mPads.value(pad).y;
 }
 
-void Gamepad::parse(QString const &message)
+int Gamepad::wheel() const
 {
-	QStringList const cmd = message.split(" ", QString::SkipEmptyParts);
-	QString const commandName = cmd.at(0).trimmed();
-	if (commandName == "pad") {
-		int const padId = cmd.at(1).trimmed().toInt();
-		if (cmd.at(2).trimmed() == "up") {
-			mPads[padId].isPressed = false;
-			emit padUp(padId);
-		} else {
-			int const x = cmd.at(2).trimmed().toInt();
-			int const y = cmd.at(3).trimmed().toInt();
-			mPads[padId].isPressed = true;
-			mPads[padId].x = x;
-			mPads[padId].y = y;
-			emit pad(padId, x, y);
-		}
-	} else if (commandName == "btn") {
-		int const buttonCode = cmd.at(1).trimmed().toInt();
-		mButtonWasPressed.insert(buttonCode);
-		emit button(buttonCode, 1);
-	} else if (commandName == "wheel") {
-		int const perc = cmd.at(1).trimmed().toInt();
-		emit wheel(perc);
-	} else {
-		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
-	}
+	return mWheelPercent;
 }
 
 void Gamepad::init(int port)
 {
-	mListener.reset(new TcpConnector(port));
-	connect(mListener.data(), SIGNAL(dataReady(QString)), this, SLOT(parse(QString)));
-	connect(&mNetworkThread, SIGNAL(started()), mListener.data(), SLOT(startServer()));
-	connect(mListener.data(), SIGNAL(tcpDisconnectedSignal()), this, SIGNAL(disconnect()));
-	mListener->moveToThread(&mNetworkThread);
-	mNetworkThread.start();
+	mWorker.reset(new GamepadServer());
+
+	connect(mWorker.data(), SIGNAL(button(int,int)),this, SLOT(onButton(int,int)));
+	connect(mWorker.data(), SIGNAL(pad(int,int,int)),this, SLOT(onPad(int,int,int)));
+	connect(mWorker.data(), SIGNAL(padUp(int)),this, SLOT(onPadUp(int)));
+	connect(mWorker.data(), SIGNAL(wheel(int)),this, SLOT(onWheel(int)));
+	connect(mWorker.data(), SIGNAL(disconnect()),this, SIGNAL(disconnect()));
+
+	mWorker->moveToThread(&mWorkerThread);
+	mWorkerThread.start();
+
+	QMetaObject::invokeMethod(mWorker.data(), "startServer", Qt::QueuedConnection, Q_ARG(int, port));
+}
+
+void Gamepad::onPadUp(int padId)
+{
+	mPads[padId].isPressed = false;
+}
+
+void Gamepad::onWheel(int percent)
+{
+	mWheelPercent = percent;
+}
+
+void Gamepad::onPad(int padId, int x, int y)
+{
+	mPads[padId].isPressed = true;
+	mPads[padId].x = x;
+	mPads[padId].y = y;
+}
+
+void Gamepad::onButton(int button, int pressed)
+{
+	Q_UNUSED(pressed);
+	mButtonWasPressed.insert(button);
 }

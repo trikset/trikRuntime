@@ -16,17 +16,25 @@
 
 #include <functional>
 
+#include <QtCore/qglobal.h>
 #include <QtXml/QDomElement>
 
 #include "exceptions/malformedConfigException.h"
 #include "fileUtils.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#define QDomNamedNodeMapLengthType unsigned
+#else
+	#define QDomNamedNodeMapLengthType int
+#endif
+
+
 using namespace trikKernel;
 
-Configurer::Configurer(QString const &pathToConfigs)
+Configurer::Configurer(QString const &systemConfigFileName, QString const &modelConfigFileName)
 {
-	QDomElement const systemConfig = trikKernel::FileUtils::readXmlFile(pathToConfigs, "system-config.xml");
-	QDomElement const modelConfig = trikKernel::FileUtils::readXmlFile(pathToConfigs, "model-config.xml");
+	QDomElement const systemConfig = trikKernel::FileUtils::readXmlFile(systemConfigFileName);
+	QDomElement const modelConfig = trikKernel::FileUtils::readXmlFile(modelConfigFileName);
 
 	auto parseSection = [&systemConfig](QString const &sectionName, std::function<void(QDomElement const &)> action) {
 		QDomNodeList const section = systemConfig.elementsByTagName(sectionName);
@@ -191,7 +199,7 @@ void Configurer::parseDeviceClasses(QDomElement const &element)
 			device.name = deviceNode.tagName();
 			device.isOptional = deviceNode.attribute("optional", "false") == "true";
 			QDomNamedNodeMap const &attributes = deviceNode.attributes();
-			for (unsigned j = 0; j < attributes.length(); ++j) {
+			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				device.attributes.insert(attribute.name(), attribute.value());
 			}
@@ -218,7 +226,7 @@ void Configurer::parseDevicePorts(QDomElement const &element)
 			}
 
 			QDomNamedNodeMap const &attributes = devicePortNode.attributes();
-			for (unsigned j = 0; j < attributes.length(); ++j) {
+			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				mDevices[deviceName].portSpecificAttributes[port].insert(attribute.name(), attribute.value());
 			}
@@ -244,7 +252,7 @@ void Configurer::parseDeviceTypes(QDomElement const &element)
 			}
 
 			QDomNamedNodeMap const &attributes = deviceTypeNode.attributes();
-			for (unsigned j = 0; j < attributes.length(); ++j) {
+			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				deviceType.attributes.insert(attribute.name(), attribute.value());
 			}
@@ -276,7 +284,7 @@ void Configurer::parseAdditionalConfigurations(QDomElement const &element)
 			Device additionalDevice;
 			additionalDevice.name = tag.tagName();
 			QDomNamedNodeMap const &attributes = tag.attributes();
-			for (unsigned j = 0; j < attributes.length(); ++j) {
+			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 				QDomAttr const &attribute = attributes.item(j).toAttr();
 				additionalDevice.attributes.insert(attribute.name(), attribute.value());
 			}
@@ -306,7 +314,7 @@ void Configurer::parseModelConfig(QDomElement const &element)
 				if (!device.isNull()) {
 					port.deviceType = device.tagName();
 					QDomNamedNodeMap const &attributes = tag.attributes();
-					for (unsigned j = 0; j < attributes.length(); ++j) {
+					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 						QDomAttr const &attribute = attributes.item(j).toAttr();
 						port.attributes.insert(attribute.name(), attribute.value());
 					}
@@ -323,7 +331,7 @@ void Configurer::parseModelConfig(QDomElement const &element)
 
 				if (tag.attribute("disabled", "false") == "false") {
 					QDomNamedNodeMap const &attributes = tag.attributes();
-					for (unsigned j = 0; j < attributes.length(); ++j) {
+					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 						QDomAttr const &attribute = attributes.item(j).toAttr();
 						element.attributes.insert(attribute.name(), attribute.value());
 					}

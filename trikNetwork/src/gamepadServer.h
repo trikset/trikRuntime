@@ -15,36 +15,24 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QMultiHash>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QQueue>
+#include <QtNetwork/QHostAddress>
 
-#include "declSpec.h"
+#include "trikServer.h"
 
 namespace trikNetwork {
 
-class TcpConnector;
-
-/// Class to support remote control of a robot using TCP client.
-class TRIKNETWORK_EXPORT GamepadInterface : public QObject
+/// Worker object for android gamepad. It is a server that is supposed to be run in a separate thread.
+class GamepadServer : public TrikServer
 {
 	Q_OBJECT
 
-public slots:
-	/// Clear data about previous pad events.
-	virtual void reset() = 0;
-
-	/// Returns true, if given pad button, and clears "pressed" state for that button.
-	virtual bool buttonWasPressed(int buttonNumber) = 0;
-
-	/// Returns current state of the pad, true if pressed.
-	virtual bool isPadPressed(int pad) const = 0;
-
-	/// Returns current X coordinate of given pad or -1 if this pad is not pressed.
-	virtual int padX(int pad) const = 0;
-
-	/// Returns current Y coordinate of given pad or -1 if this pad is not pressed.
-	virtual int padY(int pad) const = 0;
-
-	/// Returns current tilt angle of Android device when "wheel" is turned on.
-	virtual int wheel() const = 0;
+public:
+	/// Constructor.
+	/// @param port - a port for gamepad server.
+	GamepadServer();
 
 signals:
 	/// Emitted when user pulls finger off a pad.
@@ -66,8 +54,15 @@ signals:
 	/// @param pressed - 1 if button was pressed, 0 if it was released.
 	void button(int button, int pressed);
 
-	/// Emitted when gamepad disconnects from robot.
+	/// Emitted when gamepad disconnect from robot. If there are several gamepads connected simultaneously, signal is
+	/// emitted when all gamepads become disconnected.
 	void disconnect();
+
+private slots:
+	void onConnectionClosed();
+
+private:
+	Connection *connectionFactory();
 };
 
 }

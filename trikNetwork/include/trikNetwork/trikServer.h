@@ -42,11 +42,14 @@ public:
 
 	~TrikServer() override;
 
-	/// Starts listening given port on all network interfaces.
-	void startServer(int const &port);
-
 	/// Broadcasts message across all opened connections.
 	void sendMessage(QString const &message);
+
+	/// Returns number of connections currently opened.
+	int activeConnections() const;
+
+	/// Starts listening given port on all network interfaces.
+	Q_INVOKABLE void startServer(int const &port);
 
 protected:
 	void incomingConnection(qintptr socketDescriptor) override;
