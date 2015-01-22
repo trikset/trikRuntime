@@ -45,13 +45,13 @@ working properly, it tests only that runtime can interact with them).
 		<irSensor />
 	</A6>
 
-	<!--
 	<D1>
 		<rangeSensor />
 	</D1>
 	<D2>
 		<rangeSensor />
 	</D2>
+	<!--
 	<F1>
 		<volumeSensor />
 	</F1>
