@@ -16,7 +16,7 @@
 
 #include <trikKernel/fileUtils.h>
 
-#include "src/scriptRunnerProxy.h"
+#include "src/scriptEngineWorker.h"
 
 #include <QsLog.h>
 
@@ -26,19 +26,29 @@ using namespace trikScriptRunner;
 QString const constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
-	: mScriptRunnerProxy(new ScriptRunnerProxy(brick, startDirPath))
+	: mScriptEngineWorker(new ScriptEngineWorker(brick, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)
 {
-	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString, int))
-			, this, SIGNAL(completed(QString, int)));
+	QMetaObject::invokeMethod(mScriptEngineWorker, "init");
 
-	connect(mScriptRunnerProxy.data(), SIGNAL(startedScript(int))
-			, this, SLOT(onScriptStart(int)));
+	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
+	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
+
+	mScriptEngineWorker->moveToThread(&mWorkerThread);
+
+	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
+	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+
+	mWorkerThread.start();
 }
 
 TrikScriptRunner::~TrikScriptRunner()
 {
+	/// @todo Do not reset engine here, just shut it down.
+	mScriptEngineWorker->reset();
+	QMetaObject::invokeMethod(&mWorkerThread, "quit");
+	mWorkerThread.wait(1000);
 }
 
 QString TrikScriptRunner::scriptsDirPath() const
@@ -54,31 +64,38 @@ QString TrikScriptRunner::scriptsDirName() const
 
 void TrikScriptRunner::brickBeep()
 {
-	mScriptRunnerProxy->brickBeep();
+	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
 }
 
 void TrikScriptRunner::run(QString const &script, QString const &fileName)
 {
 	QLOG_INFO() << "TrikScriptRunner: new script" << mMaxScriptId << "from file" << fileName;
-	mScriptRunnerProxy->run(script, false, mMaxScriptId);
-	mScriptFileNames[mMaxScriptId++] = fileName;
-}
+	mScriptEngineWorker->reset();
 
-void TrikScriptRunner::run(QString const &script)
-{
-	QLOG_INFO() << "TrikScriptRunner: new direct script \"" << script << "\"";
-	mScriptRunnerProxy->run(script, false, -1);
+	if (!fileName.isEmpty()) {
+		mScriptFileNames[mMaxScriptId] = fileName;
+	}
+
+	QMetaObject::invokeMethod(mScriptEngineWorker, "run"
+			, Q_ARG(QString const &, script)
+			, Q_ARG(bool, false)
+			, Q_ARG(int, (fileName.isEmpty() ? -1 : mMaxScriptId++))
+			, Q_ARG(QString const &, "main"));
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)
 {
 	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
-	mScriptRunnerProxy->run(command, true, mMaxScriptId++, QString());
+	QMetaObject::invokeMethod(mScriptEngineWorker, "run"
+			, Q_ARG(QString const &, command)
+			, Q_ARG(bool, false)
+			, Q_ARG(int, mMaxScriptId++)
+			, Q_ARG(QString const &, QString()));
 }
 
 void TrikScriptRunner::abort()
 {
-	mScriptRunnerProxy->reset();
+	mScriptEngineWorker->reset();
 }
 
 void TrikScriptRunner::onScriptStart(int scriptId)

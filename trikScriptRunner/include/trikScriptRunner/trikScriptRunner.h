@@ -16,12 +16,13 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QThread>
 
 #include <trikControl/brick.h>
 
 namespace trikScriptRunner {
 
-class ScriptRunnerProxy;
+class ScriptEngineWorker;
 
 /// Executes scripts in Qt Scripting Engine.
 class TrikScriptRunner : public QObject
@@ -55,11 +56,7 @@ public slots:
 	/// and thus to have an opportunity to start concrete function from the given file. But QScriptEngine API
 	/// has no such possibility so we should append function call to the end of the script. So if script will
 	/// run some actions in the global context they will be invoked on each thread start.
-	void run(QString const &script, QString const &fileName);
-
-	/// Executes given direct script asynchronously. Same as run() method above, but without fileName parameter, as
-	/// direct scripts are not stored in files.
-	void run(QString const &script);
+	void run(QString const &script, QString const &fileName = "");
 
 	/// Executes given script as direct command, so it will use existing script execution environment (or create one
 	/// if needed) and will not reset execution state before or after execution. Sequence of direct commands counts
@@ -97,8 +94,8 @@ private slots:
 	void onScriptStart(int scriptId);
 
 private:
-	/// Proxy for script engine thread.
-	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;
+	ScriptEngineWorker *mScriptEngineWorker;
+	QThread mWorkerThread;
 
 	QString mStartDirPath;
 

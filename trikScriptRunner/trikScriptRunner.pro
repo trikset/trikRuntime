@@ -20,12 +20,10 @@ HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptEngineWorker.h \
-	$$PWD/src/scriptRunnerProxy.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 
 SOURCES += \
-	$$PWD/src/scriptRunnerProxy.cpp \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
