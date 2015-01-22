@@ -52,6 +52,7 @@ HEADERS += \
 	$$PWD/src/led.h \
 	$$PWD/src/lineSensor.h \
 	$$PWD/src/lineSensorWorker.h \
+	$$PWD/src/moduleLoader.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
 	$$PWD/src/powerMotor.h \
@@ -82,6 +83,7 @@ SOURCES += \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/lineSensorWorker.cpp \
+	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \

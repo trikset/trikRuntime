@@ -26,6 +26,7 @@ class Configurer;
 namespace trikControl {
 
 class RangeSensorWorker;
+class ModuleLoader;
 
 /// TRIK range sensor.
 class RangeSensor : public SensorInterface
@@ -36,7 +37,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	RangeSensor(QString const &port, trikKernel::Configurer const &configurer);
+	RangeSensor(QString const &port, trikKernel::Configurer const &configurer, ModuleLoader &moduleLoader);
 
 	~RangeSensor() override;
 

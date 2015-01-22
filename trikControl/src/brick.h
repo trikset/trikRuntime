@@ -32,6 +32,7 @@ class Keys;
 class LazyMainWidget;
 class Led;
 class LineSensor;
+class ModuleLoader;
 class ObjectSensor;
 class PowerMotor;
 class PwmCapture;
@@ -103,10 +104,15 @@ public slots:
 	LedInterface *led() override;
 
 private:
+	QScopedPointer<I2cCommunicator> mI2cCommunicator;
+	QScopedPointer<ModuleLoader> mModuleLoader;
+
 	QScopedPointer<VectorSensor> mAccelerometer;
 	QScopedPointer<VectorSensor> mGyroscope;
 	QScopedPointer<Battery> mBattery;
 	QScopedPointer<Keys> mKeys;
+	QScopedPointer<Display> mDisplay;
+	QScopedPointer<Led> mLed;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
@@ -118,10 +124,6 @@ private:
 	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
-
-	QScopedPointer<I2cCommunicator> mI2cCommunicator;
-	QScopedPointer<Display> mDisplay;
-	QScopedPointer<Led> mLed;
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;

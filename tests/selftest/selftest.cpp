@@ -36,6 +36,14 @@ TEST(selftest, brickCheck)
 	QScopedPointer<BrickInterface> brick(BrickFactory::create(*QThread::currentThread()
 			, "./system-config.xml", "./selftest-model-config.xml", "./"));
 
+	// Give devices some time to initialize.
+	/// @todo: it shall not be here, use asynchronous initialization instead.
+	QEventLoop loop;
+	QTimer t;
+	QObject::connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
+	t.start(100);
+	loop.exec();
+
 	EXPECT_TRUE(brick->battery() != nullptr);
 	if (brick->battery() != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->battery()->status());
@@ -156,7 +164,6 @@ TEST(selftest, brickCheck)
 	if (brick->sensor("A6") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("A6")->status());
 	}
-
 
 //	EXPECT_TRUE(brick->sensor("D1") != nullptr);
 	if (brick->sensor("D1") != nullptr) {

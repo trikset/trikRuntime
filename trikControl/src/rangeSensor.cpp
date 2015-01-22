@@ -17,14 +17,25 @@
 #include <QtCore/QThread>
 
 #include <trikKernel/configurer.h>
+#include <QsLog.h>
 
 #include "rangeSensorWorker.h"
+#include "moduleLoader.h"
 
 using namespace trikControl;
 
-RangeSensor::RangeSensor(QString const &port, trikKernel::Configurer const &configurer)
-	: mSensorWorker(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState))
+RangeSensor::RangeSensor(QString const &port, trikKernel::Configurer const &configurer, ModuleLoader &moduleLoader)
 {
+	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
+			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))
+	{
+		QLOG_ERROR() << "Module loading failed";
+		mState.fail();
+		return;
+	}
+
+	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState));
+
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);
 

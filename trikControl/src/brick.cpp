@@ -39,6 +39,7 @@
 #include "servoMotor.h"
 
 #include "i2cCommunicator.h"
+#include "moduleLoader.h"
 
 #include <QsLog.h>
 
@@ -58,6 +59,7 @@ Brick::Brick(QThread &guiThread, QString const &systemConfig, QString const &mod
 	}
 
 	mI2cCommunicator.reset(new I2cCommunicator(configurer));
+	mModuleLoader.reset(new ModuleLoader());
 
 	for (QString const &port : configurer.ports()) {
 		QString const &deviceClass = configurer.deviceClass(port);
@@ -72,7 +74,7 @@ Brick::Brick(QThread &guiThread, QString const &systemConfig, QString const &mod
 		} else if (deviceClass == "digitalSensor") {
 			mDigitalSensors.insert(port, new DigitalSensor(port, configurer));
 		} else if (deviceClass == "rangeSensor") {
-			mRangeSensors.insert(port, new RangeSensor(port, configurer));
+			mRangeSensors.insert(port, new RangeSensor(port, configurer, *mModuleLoader));
 			/// @todo Range sensor shall be turned on only when needed.
 			mRangeSensors[port]->init();
 		} else if (deviceClass == "encoder") {
