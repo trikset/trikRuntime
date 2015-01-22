@@ -14,7 +14,13 @@
 
 #include <gtest/gtest.h>
 
-#include <QtWidgets/QApplication>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
 
 int main(int argc, char *argv[])
 {

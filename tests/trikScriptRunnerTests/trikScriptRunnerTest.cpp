@@ -14,7 +14,7 @@
 
 #include "trikScriptRunnerTest.h"
 
-#include <QtWidgets/QApplication>
+#include <QtCore/qglobal.h>
 
 using namespace tests;
 
