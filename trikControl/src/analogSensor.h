@@ -51,13 +51,13 @@ public slots:
 
 private:
 	I2cCommunicator &mCommunicator;
-	int const mI2cCommandNumber;
+	int mI2cCommandNumber = 0;
 
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
-	qreal mK;
+	qreal mK = 0;
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
-	qreal mB;
+	qreal mB = 0;
 
 	/// State of a device.
 	DeviceState mState;

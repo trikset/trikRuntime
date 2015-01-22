@@ -14,16 +14,22 @@
 
 #include "loggingHelper.h"
 
+#include <QtCore/QDir>
+
 #include <QsLog.h>
 
 using namespace trikKernel;
 
 LoggingHelper::LoggingHelper(QString const &pathToLog)
 {
+	QString const correctedPath = pathToLog.endsWith(QDir::separator())
+			? pathToLog
+			: pathToLog + QDir::separator();
+
 	int const maxLogSize = 10 * 1024 * 1024;
 	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
 	mFileDestination = QsLogging::DestinationFactory::MakeFileDestination(
-			pathToLog + "trik.log"
+			correctedPath + "trik.log"
 			, QsLogging::EnableLogRotation
 			, QsLogging::MaxSizeBytes(maxLogSize)
 			, QsLogging::MaxOldLogCount(2)

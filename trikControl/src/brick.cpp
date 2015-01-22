@@ -23,8 +23,6 @@
 #include <trikKernel/configurer.h>
 
 #include "analogSensor.h"
-#include "angularServoMotor.h"
-#include "continiousRotationServoMotor.h"
 #include "display.h"
 #include "powerMotor.h"
 #include "digitalSensor.h"
@@ -38,6 +36,7 @@
 #include "lineSensor.h"
 #include "objectSensor.h"
 #include "colorSensor.h"
+#include "servoMotor.h"
 
 #include "i2cCommunicator.h"
 
@@ -63,11 +62,7 @@ Brick::Brick(QThread &guiThread, QString const &systemConfig, QString const &mod
 	for (QString const &port : configurer.ports()) {
 		QString const &deviceClass = configurer.deviceClass(port);
 		if (deviceClass == "servoMotor") {
-			if (configurer.attributeByPort(port, "type") == "continuousRotation") {
-				mServoMotors.insert(port, new ContiniousRotationServoMotor(port, configurer));
-			} else {
-				mServoMotors.insert(port, new AngularServoMotor(port, configurer));
-			}
+			mServoMotors.insert(port, new ServoMotor(port, configurer));
 		} else if (deviceClass == "pwmCapture") {
 			mPwmCaptures.insert(port, new PwmCapture(port, configurer));
 		} else if (deviceClass == "powerMotor") {
@@ -189,16 +184,23 @@ void Brick::stop()
 	mLed->red();
 	mDisplay->hide();
 
+	/// @todo: Also be able to stop initializing sensor.
 	for (LineSensor * const lineSensor : mLineSensors) {
-		lineSensor->stop();
+		if (lineSensor->status() == DeviceInterface::Status::ready) {
+			lineSensor->stop();
+		}
 	}
 
 	for (ColorSensor * const colorSensor : mColorSensors) {
-		colorSensor->stop();
+		if (colorSensor->status() == DeviceInterface::Status::ready) {
+			colorSensor->stop();
+		}
 	}
 
 	for (ObjectSensor * const objectSensor : mObjectSensors) {
-		objectSensor->stop();
+		if (objectSensor->status() == DeviceInterface::Status::ready) {
+			objectSensor->stop();
+		}
 	}
 
 	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {

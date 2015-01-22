@@ -26,10 +26,9 @@ using namespace trikControl;
 
 AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(configurer.attributeByPort(port, "i2cCommandNumber").toInt(nullptr, 0))
-	, mK(0)
-	, mB(0)
 {
+	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+
 	// We use linear subjection to normalize sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.

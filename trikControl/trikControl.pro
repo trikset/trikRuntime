@@ -35,13 +35,11 @@ HEADERS += \
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/analogSensor.h \
-	$$PWD/src/angularServoMotor.h \
 	$$PWD/src/battery.h \
 	$$PWD/src/brick.h \
 	$$PWD/src/colorSensor.h \
 	$$PWD/src/colorSensorWorker.h \
 	$$PWD/src/configurerHelper.h \
-	$$PWD/src/continiousRotationServoMotor.h \
 	$$PWD/src/deviceState.h \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
@@ -68,14 +66,12 @@ HEADERS += \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
-	$$PWD/src/angularServoMotor.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
 	$$PWD/src/colorSensorWorker.cpp \
 	$$PWD/src/configurerHelper.cpp \
-	$$PWD/src/continiousRotationServoMotor.cpp \
 	$$PWD/src/deviceState.cpp \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \

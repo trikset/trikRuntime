@@ -40,6 +40,8 @@ ServoMotor::ServoMotor(QString const &port, trikKernel::Configurer const &config
 	mZero = configure("zero");
 	mStop = configure("stop");
 
+	mMotorType = configurer.attributeByPort(port, "type") == "angular" ? Type::angular : Type::continiousRotation;
+
 	if (!mPeriodFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor period file " << mPeriodFile.fileName();
 		mState.fail();
@@ -93,18 +95,32 @@ void ServoMotor::powerOff()
 	mCurrentPower = 0;
 }
 
-void ServoMotor::setCurrentPower(int currentPower)
+void ServoMotor::setPower(int power)
 {
-	mCurrentPower = currentPower;
-}
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
+		return;
+	}
 
-void ServoMotor::setCurrentDuty(int duty)
-{
+	int const powerBoundary = mMotorType == Type::angular ? 90 : 100;
+
+	if (power > powerBoundary) {
+		power = powerBoundary;
+	} else if (power < -powerBoundary) {
+		power = -powerBoundary;
+	}
+
+	mCurrentPower = power;
+
+	power = mInvert ? -power : power;
+
+	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
+	qreal const powerFactor = static_cast<qreal>(range) / 90;
+	int duty = static_cast<int>(mZero + power * powerFactor);
+	QString const command = QString::number(duty);
+
 	mCurrentDutyPercent = 100 * duty / mPeriod;
-}
 
-void ServoMotor::writeMotorCommand(QString const &command)
-{
 	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor control file " << mDutyFile.fileName();
 		mState.fail();
@@ -113,29 +129,4 @@ void ServoMotor::writeMotorCommand(QString const &command)
 
 	mDutyFile.write(command.toLatin1());
 	mDutyFile.close();
-}
-
-int ServoMotor::min() const
-{
-	return mMin;
-}
-
-int ServoMotor::max() const
-{
-	return mMax;
-}
-
-int ServoMotor::zero() const
-{
-	return mZero;
-}
-
-bool ServoMotor::invert() const
-{
-	return mInvert;
-}
-
-bool ServoMotor::isReady() const
-{
-	return mState.isReady();
 }

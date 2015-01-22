@@ -52,17 +52,18 @@ public slots:
 
 	void powerOff() override;
 
-protected:
-	void setCurrentPower(int currentPower);
-	void setCurrentDuty(int duty);
-	void writeMotorCommand(QString const &command);
-	int min() const;
-	int max() const;
-	int zero() const;
-	bool invert() const;
-	bool isReady() const;
+	/// For angular servos sets current motor angle to specified value. For continious rotation servos sets power of
+	/// a motor.
+	/// @param power - for angular servos --- servo shaft angle, allowed values are from -90 to 90, for continious
+	///        rotation servos --- power, allowed values are from -100 to 100.
+	void setPower(int power) override;
 
 private:
+	enum class Type {
+		angular
+		, continiousRotation
+	};
+
 	QFile mDutyFile;
 	QFile mPeriodFile;
 	int mPeriod;
@@ -74,6 +75,7 @@ private:
 	bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
+	Type mMotorType;
 };
 
 }
