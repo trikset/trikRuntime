@@ -115,7 +115,7 @@ QString FileManagerWidget::showCurrentPath()
 {
 	QString result = QDir::currentPath();
 	if (mRootDirPath != "/") {
-		result.remove(mRootDirPath);
+		result.replace(0, mRootDirPath.length(), "");
 	}
 
 	if (result.isEmpty()) {
