@@ -36,6 +36,7 @@ Sensor3dWorker::Sensor3dWorker(int min, int max, const QString &controlFile)
 	, mMin(min)
 {
 	mReading << 0 << 0 << 0;
+	mReadingUnsynced = mReading;
 
 	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 	if (mDeviceFileDescriptor == -1) {
@@ -57,7 +58,7 @@ void Sensor3dWorker::readFile()
 	struct input_event event;
 	int size = 0;
 
-	mSocketNotifier->setEnabled(false);
+//	mSocketNotifier->setEnabled(false);
 
 	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
 			== static_cast<int>(sizeof(event)))
@@ -66,26 +67,20 @@ void Sensor3dWorker::readFile()
 			case EV_ABS:
 				switch (event.code) {
 				case ABS_X:
-					mLock.lockForWrite();
-					mReading[0] = event.value;
-					mLock.unlock();
+					mReadingUnsynced[0] = event.value;
 					break;
 				case ABS_Y:
-					mLock.lockForWrite();
-					mReading[1] = event.value;
-					mLock.unlock();
+					mReadingUnsynced[1] = event.value;
 					break;
 				case ABS_Z:
-					mLock.lockForWrite();
-					mReading[2] = event.value;
-					mLock.unlock();
+					mReadingUnsynced[2] = event.value;
 					break;
 				}
 				break;
 			case EV_SYN:
-				mLock.lockForRead();
+				mReading.swap(mReadingUnsynced);				
 				emit newData(mReading);
-				mLock.unlock();
+				
 				break;
 		}
 	}
@@ -95,13 +90,10 @@ void Sensor3dWorker::readFile()
 		qDebug() << "incomplete data read";
 	}
 
-	mSocketNotifier->setEnabled(true);
+	
 }
 
 QVector<int> Sensor3dWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> const result = mReading;
-	mLock.unlock();
-	return result;
+	return mReading;
 }
