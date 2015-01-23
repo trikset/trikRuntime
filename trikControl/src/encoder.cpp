@@ -15,6 +15,7 @@
 #include "encoder.h"
 
 #include <trikKernel/configurer.h>
+#include <QsLog.h>
 
 #include "i2cCommunicator.h"
 #include "configurerHelper.h"
@@ -25,7 +26,12 @@ Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, 
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mRawToDegrees = ConfigurerHelper::configureReal(configurer, mState, port, "rawToDegrees");
+	mTicksInDegree = ConfigurerHelper::configureReal(configurer, mState, port, "ticksInDegree");
+
+	if (qFuzzyCompare(mTicksInDegree, 0.0)) {
+		QLOG_ERROR() << "'ticksInDegree' parameter can not be 0";
+		mState.fail();
+	}
 
 	mState.ready();
 }
@@ -53,7 +59,7 @@ int Encoder::read()
 		command[0] = static_cast<char>(mI2cCommandNumber);
 		int data = mCommunicator.read(command);
 
-		return mRawToDegrees * data;
+		return data / mTicksInDegree;
 	} else {
 		return 0;
 	}

@@ -50,7 +50,7 @@ public slots:
 private:
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
-	qreal mRawToDegrees;
+	qreal mTicksInDegree;
 	DeviceState mState;
 };
 
