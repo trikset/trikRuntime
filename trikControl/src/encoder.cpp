@@ -28,7 +28,7 @@ Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, 
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mTicksInDegree = ConfigurerHelper::configureReal(configurer, mState, port, "ticksInDegree");
 
-	if (qFuzzyCompare(mTicksInDegree, 0.0)) {
+	if (qFuzzyCompare(mTicksInDegree, static_cast<qreal>(0.0))) {
 		QLOG_ERROR() << "'ticksInDegree' parameter can not be 0";
 		mState.fail();
 	}

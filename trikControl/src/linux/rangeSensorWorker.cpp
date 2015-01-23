@@ -17,6 +17,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
+#include <QtCore/QTimer>
+#include <QtCore/QEventLoop>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -63,8 +65,18 @@ void RangeSensorWorker::init()
 
 	QLOG_INFO() << "Opening" << mEventFile.fileName();
 
-	/// @todo Is it possible to use QFile (and QFile::handle()) here?
-	mEventFileDescriptor = open(mEventFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+	tryOpenEventFile();
+	if (mEventFileDescriptor == -1) {
+		// Give driver some time to create event file.
+		mInitWaitingLoop.reset(new QEventLoop());
+		QTimer checkTimer;
+		QObject::connect(&checkTimer, SIGNAL(timeout()), this, SLOT(tryOpenEventFile()));
+		checkTimer.start(100);
+
+		QTimer::singleShot(2000, mInitWaitingLoop.data(), SLOT(quit()));
+
+		mInitWaitingLoop->exec();
+	}
 
 	if (mEventFileDescriptor == -1) {
 		QLOG_ERROR() << "Cannot open range sensor output file" << mEventFile.fileName();
@@ -121,6 +133,15 @@ void RangeSensorWorker::readFile()
 	}
 
 	mSocketNotifier->setEnabled(true);
+}
+
+void RangeSensorWorker::tryOpenEventFile()
+{
+	mEventFileDescriptor = open(mEventFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+
+	if (mEventFileDescriptor != -1 && !mInitWaitingLoop.isNull() && mInitWaitingLoop->isRunning()) {
+		mInitWaitingLoop->quit();
+	}
 }
 
 int RangeSensorWorker::read()

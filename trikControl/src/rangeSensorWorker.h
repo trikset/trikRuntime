@@ -19,8 +19,11 @@
 #include <QtCore/QFile>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QScopedPointer>
 
 #include "deviceState.h"
+
+class QEventLoop;
 
 namespace trikControl {
 
@@ -58,6 +61,8 @@ private slots:
 	/// Updates current reading when new value is ready.
 	void readFile();
 
+	void tryOpenEventFile();
+
 private:
 	void onNewData(QString const &dataLine);
 
@@ -76,6 +81,9 @@ private:
 
 	/// State of a sensor, shared with proxy.
 	DeviceState &mState;
+
+	QScopedPointer<QEventLoop> mInitWaitingLoop;
+
 };
 
 }
