@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ private slots:
 
 private:
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
-	
+
 	QVector<int> mReading;
 	QVector<int> mReadingUnsynced;
-	
+
 	int mDeviceFileDescriptor;
 	int mMax;
 	int mMin;

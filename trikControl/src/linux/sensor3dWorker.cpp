@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,8 +58,6 @@ void Sensor3dWorker::readFile()
 	struct input_event event;
 	int size = 0;
 
-//	mSocketNotifier->setEnabled(false);
-
 	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
 			== static_cast<int>(sizeof(event)))
 	{
@@ -78,9 +76,9 @@ void Sensor3dWorker::readFile()
 				}
 				break;
 			case EV_SYN:
-				mReading.swap(mReadingUnsynced);				
+				mReading.swap(mReadingUnsynced);
 				emit newData(mReading);
-				
+
 				break;
 		}
 	}
@@ -89,8 +87,6 @@ void Sensor3dWorker::readFile()
 		QLOG_ERROR() << "incomplete data read";
 		qDebug() << "incomplete data read";
 	}
-
-	
 }
 
 QVector<int> Sensor3dWorker::read()
