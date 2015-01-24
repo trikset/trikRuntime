@@ -48,7 +48,10 @@ private slots:
 
 private:
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	
 	QVector<int> mReading;
+	QVector<int> mReadingUnsynced;
+	
 	int mDeviceFileDescriptor;
 	int mMax;
 	int mMin;
