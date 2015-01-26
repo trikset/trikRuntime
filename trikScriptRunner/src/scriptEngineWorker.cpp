@@ -84,7 +84,7 @@ void ScriptEngineWorker::run(QString const &script, int scriptId)
 	startScriptEvaluation(scriptId);
 	mThreadingVariable.startMainThread(script);
 	mThreadingVariable.waitForAll();
-	QLOG_INFO() << "ScriptEngineWorker: evaluation ended";
+	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << mThreadingVariable.errorMessage();
 	emit completed(mThreadingVariable.errorMessage(), mScriptId);
 	reset();
 }

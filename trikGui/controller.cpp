@@ -111,14 +111,8 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 		mRunningWidgets[scriptId]->deleteLater();
 		mRunningWidgets.remove(scriptId);
 	} else if (!error.isEmpty()) {
-		if (mRunningWidgets[scriptId]->isVisible()) {
-			mRunningWidgets[scriptId]->showError(error);
-			mCommunicator.sendMessage("error: " + error);
-		} else {
-			// It is already closed so all we need is to delete it.
-			mRunningWidgets[scriptId]->deleteLater();
-			mRunningWidgets.remove(scriptId);
-		}
+		mRunningWidgets[scriptId]->showError(error);
+		mCommunicator.sendMessage("error: " + error);
 	}
 
 	emit closeGraphicsWidget(mBrick.graphicsWidget());
