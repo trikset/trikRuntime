@@ -56,7 +56,6 @@ QString TrikScriptRunner::scriptsDirPath() const
 QString TrikScriptRunner::scriptsDirName() const
 {
 	return constScriptsDirName;
-
 }
 
 void TrikScriptRunner::brickBeep()
@@ -66,16 +65,17 @@ void TrikScriptRunner::brickBeep()
 
 void TrikScriptRunner::run(QString const &script, QString const &fileName)
 {
-	QLOG_INFO() << "TrikScriptRunner: new script" << mMaxScriptId << "from file" << fileName;
+	int const scriptId = mMaxScriptId++;
+	QLOG_INFO() << "TrikScriptRunner: new script" << scriptId << "from file" << fileName;
 	mScriptEngineWorker->reset();
 
 	if (!fileName.isEmpty()) {
-		mScriptFileNames[mMaxScriptId] = fileName;
+		mScriptFileNames[scriptId] = fileName;
 	}
 
 	QMetaObject::invokeMethod(mScriptEngineWorker, "run"
 			, Q_ARG(QString const &, script)
-			, Q_ARG(int, (fileName.isEmpty() ? -1 : mMaxScriptId++)));
+			, Q_ARG(int, (fileName.isEmpty() ? -1 : scriptId)));
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)

@@ -81,6 +81,7 @@ void ScriptEngineWorker::reset()
 
 void ScriptEngineWorker::run(QString const &script, int scriptId)
 {
+	/// @todo: fix running two scripts simultaneously
 	startScriptEvaluation(scriptId);
 	mThreadingVariable.startMainThread(script);
 	mThreadingVariable.waitForAll();

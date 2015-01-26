@@ -80,8 +80,6 @@ private slots:
 private:
 	void startScriptEvaluation(int scriptId);
 
-	/// Has ownership. No smart pointers here because we need to do manual memory managment
-	/// due to complicated mEngine lifecycle (see .cpp for more details).
 	trikControl::Brick &mBrick;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;

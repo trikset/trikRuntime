@@ -73,11 +73,9 @@ void Utils::copyRecursivelyTo(QScriptValue const &prototype, QScriptValue &targe
 	QScriptValueIterator iterator(prototype);
 	while (iterator.hasNext()) {
 		iterator.next();
-		if (!hasProperty(target, iterator.name())) {
-			QScriptValue const value = clone(iterator.value(), engine);
-			if (value.engine() == engine) {
-				target.setProperty(iterator.name(), value);
-			}
+		QScriptValue const value = clone(iterator.value(), engine);
+		if (value.engine() == engine) {
+			target.setProperty(iterator.name(), value);
 		}
 	}
 }

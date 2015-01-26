@@ -111,7 +111,7 @@ void Threading::reset()
 	}
 
 	mThreadsMutex.unlock();
-	QApplication::processEvents();
+	waitForAll();
 
 	QLOG_INFO() << "Threading: reset ended";
 	mResetStarted = false;
