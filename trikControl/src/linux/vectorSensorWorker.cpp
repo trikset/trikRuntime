@@ -35,6 +35,7 @@ VectorSensorWorker::VectorSensorWorker(QString const &controlFile, DeviceState &
 	, mState(state)
 {
 	mReading << 0 << 0 << 0;
+	mReadingUnsynced = mReading;
 
 	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 	if (mDeviceFileDescriptor == -1) {
@@ -54,8 +55,6 @@ void VectorSensorWorker::readFile()
 	struct input_event event;
 	int size = 0;
 
-	mSocketNotifier->setEnabled(false);
-
 	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
 			== static_cast<int>(sizeof(event)))
 	{
@@ -63,26 +62,20 @@ void VectorSensorWorker::readFile()
 			case EV_ABS:
 				switch (event.code) {
 				case ABS_X:
-					mLock.lockForWrite();
-					mReading[0] = event.value;
-					mLock.unlock();
+					mReadingUnsynced[0] = event.value;
 					break;
 				case ABS_Y:
-					mLock.lockForWrite();
-					mReading[1] = event.value;
-					mLock.unlock();
+					mReadingUnsynced[1] = event.value;
 					break;
 				case ABS_Z:
-					mLock.lockForWrite();
-					mReading[2] = event.value;
-					mLock.unlock();
+					mReadingUnsynced[2] = event.value;
 					break;
 				}
 				break;
 			case EV_SYN:
-				mLock.lockForRead();
+				mReading.swap(mReadingUnsynced);
 				emit newData(mReading);
-				mLock.unlock();
+
 				break;
 		}
 	}
@@ -90,17 +83,12 @@ void VectorSensorWorker::readFile()
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {
 		QLOG_ERROR() << "incomplete data read";
 	}
-
-	mSocketNotifier->setEnabled(true);
 }
 
 QVector<int> VectorSensorWorker::read()
 {
 	if (mState.isReady()) {
-		mLock.lockForRead();
-		QVector<int> const result = mReading;
-		mLock.unlock();
-		return result;
+		return mReading;
 	} else {
 		return {};
 	}
