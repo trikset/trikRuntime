@@ -44,19 +44,23 @@ RangeSensorWorker::~RangeSensorWorker()
 
 void RangeSensorWorker::stop()
 {
-	mState.stop();
-	if (mSocketNotifier) {
-		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-		mSocketNotifier->setEnabled(false);
-	}
+	if (mState.isReady()) {
+		mState.stop();
+		if (mSocketNotifier) {
+			disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+			mSocketNotifier->setEnabled(false);
+		}
 
-	if (::close(mEventFileDescriptor) != 0) {
-		QLOG_ERROR() << QString("%1: close failed: %2").arg(mEventFile.fileName()).arg(strerror(errno));
-		mState.fail();
-	}
+		if (::close(mEventFileDescriptor) != 0) {
+			QLOG_ERROR() << QString("%1: close failed: %2").arg(mEventFile.fileName()).arg(strerror(errno));
+			mState.fail();
+		}
 
-	mEventFileDescriptor = -1;
-	mState.off();
+		mEventFileDescriptor = -1;
+		mState.off();
+	} else {
+		QLOG_ERROR() << "Trying to stop range sensor that is not started, ignoring";
+	}
 }
 
 void RangeSensorWorker::init()
