@@ -1,71 +1,142 @@
-/* Copyright 2014 Dmitry Mordvinov, CyberTech Labs Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License. */
-
 #include "threading.h"
 
 #include "scriptEngineWorker.h"
+#include "src/utils.h"
+#include "src/scriptThread.h"
+
+#include "QsLog.h"
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
 
 using namespace trikScriptRunner;
 
-int const maxThreadsCount = 100;
-
-Threading::Threading(ScriptEngineWorker &runner)
-	: mRunner(runner)
+Threading::Threading(ScriptEngineWorker *scriptWorker)
+	: QObject(scriptWorker)
+	, mResetStarted(false)
+	, mScriptWorker(scriptWorker)
 {
-	QThreadPool::globalInstance()->setMaxThreadCount(maxThreadsCount);
 }
 
-void Threading::start(QScriptValue const &function)
+Threading::~Threading()
 {
-	ScriptThread *thread = new ScriptThread(mScript, function.toString(), mRunner);
-	thread->setAutoDelete(true);
-	QThreadPool::globalInstance()->start(thread);
+	reset();
 }
 
-QScriptValue Threading::activeThreadCount() const
-{
-	return QScriptValue(QThreadPool::globalInstance()->activeThreadCount());
-}
-
-QScriptValue Threading::maxThreadCount() const
-{
-	return QScriptValue(QThreadPool::globalInstance()->maxThreadCount());
-}
-
-QScriptValue Threading::waitForDone(QScriptValue const &timeout)
-{
-	return QScriptValue(QThreadPool::globalInstance()->waitForDone(timeout.toInt32()));
-}
-
-void Threading::setCurrentScript(QString const &script)
+void Threading::startMainThread(const QString &script)
 {
 	mScript = script;
+	mErrorMessage.clear();
+
+	QRegExp const mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
+	bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
+
+	startThread("__mainThread__", mScriptWorker->createScriptEngine(), needCallMain ? script + "\nmain();" : script);
+}
+
+void Threading::startThread(QScriptValue const &threadId, QScriptValue const &function)
+{
+	startThread(threadId.toString(), cloneEngine(function.engine()), mScript + "\n" + function.toString() + "();");
+}
+
+void Threading::startThread(QString const &threadId, QScriptEngine *engine, QString const &script)
+{
+	mResetMutex.lock();
+	if (mResetStarted) {
+		delete engine;
+		mResetMutex.unlock();
+		return;
+	}
+
+	QLOG_INFO() << "Threading: starting new thread" << threadId << "with engine" << engine;
+	ScriptThread *thread = new ScriptThread(threadId, engine, script);
+	mThreadsMutex.lock();
+	mThreads[threadId] = thread;
+	mThreadsMutex.unlock();
+	engine->moveToThread(thread);
+
+	connect(thread, SIGNAL(finished()), this, SLOT(threadFinished()));
+
+	thread->start();
+	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
+	mResetMutex.unlock();
 }
 
 void Threading::waitForAll()
 {
-	QThreadPool::globalInstance()->waitForDone();
+	while (!mThreads.isEmpty()) {
+		QThread::yieldCurrentThread();
+		QApplication::processEvents();
+	}
 }
 
-Threading::ScriptThread::ScriptThread(QString const &mainScript, QString const &function, ScriptEngineWorker &runner)
-	: mScript(mainScript)
-	, mFunction(function)
-	, mRunner(runner.clone())
+void Threading::joinThread(const QString &threadId)
 {
+	mThreadsMutex.lock();
+	mThreads[threadId]->wait();
+	mThreadsMutex.unlock();
 }
 
-void Threading::ScriptThread::run()
+QScriptEngine * Threading::cloneEngine(QScriptEngine *engine)
 {
-	mRunner.run(mScript, false, -1, mFunction);
+	QScriptEngine *result = mScriptWorker->createScriptEngine();
+	result->evaluate(mScript);
+
+	QScriptValue globalObject = result->globalObject();
+	Utils::copyRecursivelyTo(engine->globalObject(), globalObject, result);
+	result->setGlobalObject(globalObject);
+
+	return result;
+}
+
+void Threading::reset()
+{
+	mResetMutex.lock();
+	if (mResetStarted) {
+		mResetMutex.unlock();
+		return;
+	}
+
+	mResetStarted = true;
+	mResetMutex.unlock();
+	QLOG_INFO() << "Threading: reset started";
+
+	mThreadsMutex.lock();
+	for (ScriptThread *thread : mThreads.values()) {
+		thread->abort();
+	}
+
+	mThreadsMutex.unlock();
+	QApplication::processEvents();
+
+	mResetStarted = false;
+	QLOG_INFO() << "Threading: reset ended";
+}
+
+void Threading::threadFinished()
+{
+	QString id = dynamic_cast<ScriptThread *>(sender())->id();
+	QLOG_INFO() << "Threading: finishing thread" <<	id;
+
+	mThreadsMutex.lock();
+	if (!mThreads[id]->error().isEmpty() && mErrorMessage.isEmpty()) {
+		mErrorMessage = mThreads[id]->error();
+	}
+
+	mThreads[id]->deleteLater();
+	QLOG_INFO() << "Threading: thread" << id << "has finished, thread object" << mThreads[id];
+	mThreads.remove(id);
+	mThreadsMutex.unlock();
+
+	if (!mErrorMessage.isEmpty()) {
+		reset();
+	}
+}
+
+QString Threading::errorMessage() const
+{
+	return mErrorMessage;
 }

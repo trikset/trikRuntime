@@ -30,8 +30,6 @@ TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &sta
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, "init");
-
 	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
 
@@ -45,7 +43,6 @@ TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &sta
 
 TrikScriptRunner::~TrikScriptRunner()
 {
-	/// @todo Do not reset engine here, just shut it down.
 	mScriptEngineWorker->reset();
 	QMetaObject::invokeMethod(&mWorkerThread, "quit");
 	mWorkerThread.wait(1000);
@@ -78,19 +75,15 @@ void TrikScriptRunner::run(QString const &script, QString const &fileName)
 
 	QMetaObject::invokeMethod(mScriptEngineWorker, "run"
 			, Q_ARG(QString const &, script)
-			, Q_ARG(bool, false)
-			, Q_ARG(int, (fileName.isEmpty() ? -1 : mMaxScriptId++))
-			, Q_ARG(QString const &, "main"));
+			, Q_ARG(int, (fileName.isEmpty() ? -1 : mMaxScriptId++)));
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)
 {
 	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
-	QMetaObject::invokeMethod(mScriptEngineWorker, "run"
+	QMetaObject::invokeMethod(mScriptEngineWorker, "runDirect"
 			, Q_ARG(QString const &, command)
-			, Q_ARG(bool, false)
-			, Q_ARG(int, mMaxScriptId++)
-			, Q_ARG(QString const &, QString()));
+			, Q_ARG(int, mMaxScriptId++));
 }
 
 void TrikScriptRunner::abort()

@@ -116,6 +116,10 @@ void BackgroundWidget::showRunningWidget()
 
 void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
 {
+	if (mMainWidgetsLayout.indexOf(&widget) == mRunWidgetIndex) {
+		mRunWidgetIndex = -1;
+	}
+
 	mMainWidgetsLayout.removeWidget(&widget);
 }
 

@@ -38,10 +38,8 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath);
 
-	/// Copies this instance of ScriptEngineWorker and returns a new one. Script engine is copied deeply
-	/// i.e. the current state of the global scripting object is copied recursively.
-	/// Takes ownership via Qt parent-child system.
-	ScriptEngineWorker &clone();
+	/// Create and initizlize a new script engine.
+	QScriptEngine *createScriptEngine();
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
@@ -53,9 +51,6 @@ signals:
 	void abortEvaluation();
 
 public slots:
-	/// Initializes new QtScript engine.
-	void init();
-
 	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
 	/// called from another thread.
 	void reset();
@@ -66,7 +61,9 @@ public slots:
 	///        when it is finished.
 	/// @param function - the name of the function execution must start with. If empty then the script will be
 	/// evaluated as-is, else function call will be appended to @arg script.
-	void run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function = "main");
+	void run(QString const &script, int scriptId);
+
+	void runDirect(QString const &command, int scriptId);
 
 	/// Plays "beep" sound.
 	void brickBeep();
@@ -80,19 +77,14 @@ private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
-	/// Kill old script engine, create and reinit a new one.
-	void resetScriptEngine();
-
 private:
-	void onScriptEvaluated();
+	void startScriptEvaluation(int scriptId);
 
 	/// Has ownership. No smart pointers here because we need to do manual memory managment
 	/// due to complicated mEngine lifecycle (see .cpp for more details).
-	QScriptEngine *mEngine;
 	trikControl::Brick &mBrick;
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
-	bool mEngineReset;
 	int mScriptId;
 };
 
