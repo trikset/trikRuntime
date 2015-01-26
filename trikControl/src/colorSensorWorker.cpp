@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/colorSensorWorker.h"
+#include "colorSensorWorker.h"
 
-#include <QtCore/QDebug>
+#include <QsLog.h>
+
+#include "exceptions/incorrectDeviceConfigurationException.h"
 
 using namespace trikControl;
 
 ColorSensorWorker::ColorSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
-		, int m, int n)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile)
+		, int m, int n, DeviceState &state)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
 {
-	/// @todo Throw an exception here.
-	Q_ASSERT(m > 0);
-	Q_ASSERT(n > 0);
+	if (m <= 0) {
+		state.fail();
+		throw IncorrectDeviceConfigurationException("Color Sensor shall have 'm' parameter greater than zero");
+	}
+
+	if (n <= 0) {
+		state.fail();
+		throw IncorrectDeviceConfigurationException("Color Sensor shall have 'n' parameter greater than zero");
+	}
 
 	mReading.resize(m);
 	for (int i = 0; i < m; ++i) {
@@ -48,6 +56,7 @@ void ColorSensorWorker::init(bool showOnDisplay)
 QVector<int> ColorSensorWorker::read(int m, int n)
 {
 	if(m > mReading.size() || n > mReading[0].size() || m <= 0 || n <= 0) {
+		QLOG_WARN() << QString("Incorrect parameters for ColorSensorWorker::read: m = %1, n = %2").arg(m).arg(n);
 		return {-1, -1, -1};
 	}
 
@@ -71,6 +80,7 @@ void ColorSensorWorker::onNewData(QString const &dataLine)
 
 		if (parsedLine.size() <= mReading.size() * mReading[0].size()) {
 			// Data is corrupted, for example, by other process that have read part of data from FIFO.
+			QLOG_WARN() << "Corrupted data in sensor output queue:" << dataLine;
 			return;
 		}
 

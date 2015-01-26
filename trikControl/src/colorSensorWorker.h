@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
-#include "src/abstractVirtualSensorWorker.h"
+#include "abstractVirtualSensorWorker.h"
 
 namespace trikControl {
 
@@ -36,7 +36,9 @@ public:
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param m - horisontal dimension of a sensor.
 	/// @param n - vertical dimension of a sensor.
-	ColorSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, int m, int n);
+	/// @param state - shared state of a sensor.
+	ColorSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, int m, int n
+			, DeviceState &state);
 
 	~ColorSensorWorker() override;
 

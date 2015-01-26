@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,39 +14,65 @@
 
 #include "encoder.h"
 
-#include "src/i2cCommunicator.h"
+#include <trikKernel/configurer.h>
+#include <QsLog.h>
+
+#include "i2cCommunicator.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(I2cCommunicator &communicator, int i2cCommandNumber, double rawToDegrees)
+Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(i2cCommandNumber)
-	, mRawToDegrees(rawToDegrees)
 {
+	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+	mTicksInDegree = ConfigurerHelper::configureReal(configurer, mState, port, "ticksInDegree");
+
+	if (qFuzzyCompare(mTicksInDegree, static_cast<qreal>(0.0))) {
+		QLOG_ERROR() << "'ticksInDegree' parameter can not be 0";
+		mState.fail();
+	}
+
+	mState.ready();
 }
 
 void Encoder::reset()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber);
-	command[1] = static_cast<char>(0x00);
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(2, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber);
+		command[1] = static_cast<char>(0x00);
 
-	mCommunicator.send(command);
+		mCommunicator.send(command);
+	}
+}
+
+Encoder::Status Encoder::status() const
+{
+	return combine(mCommunicator, mState.status());
 }
 
 int Encoder::read()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber);
-	int data = mCommunicator.read(command);
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(2, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber);
+		int data = mCommunicator.read(command);
 
-	return mRawToDegrees * data;
+		return data / mTicksInDegree;
+	} else {
+		return 0;
+	}
 }
 
 int Encoder::readRawData()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber);
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(2, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber);
 
-	return mCommunicator.read(command);
+		return mCommunicator.read(command);
+	} else {
+		return 0;
+	}
 }

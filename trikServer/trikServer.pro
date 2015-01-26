@@ -17,15 +17,7 @@ include(../global.pri)
 SOURCES += \
 	$$PWD/main.cpp \
 
-uses(trikControl trikCommunicator)
-
-INCLUDEPATH += \
-	../trikControl/include/ \
-	../trikCommunicator/include/ \
-	../trikKernel/include/ \
-	../qslog/ \
-
-uses(trikKernel qslog)
+uses(trikControl trikCommunicator trikNetwork trikKernel)
 
 TEMPLATE = app
 CONFIG += console

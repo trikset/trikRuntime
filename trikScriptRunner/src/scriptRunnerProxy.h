@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,11 @@
 #include <QtCore/QWaitCondition>
 #include <QtScript/QScriptEngine>
 
-#include "trikControl/brick.h"
+#include <trikControl/brickInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
+
+#include "scriptExecutionControl.h"
 
 namespace trikScriptRunner {
 
@@ -34,8 +38,15 @@ class ScriptRunnerProxy : public QObject
 public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
+	/// @param mailbox - mailbox object used to communicate with other robots.
+	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
+	/// @param scriptControl - reference to script execution control object.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath);
+	ScriptRunnerProxy(trikControl::BrickInterface &brick
+			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::GamepadInterface * const gamepad
+			, ScriptExecutionControl &scriptControl
+			, QString const &startDirPath);
 
 	~ScriptRunnerProxy() override;
 

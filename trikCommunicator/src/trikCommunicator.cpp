@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 #include "trikCommunicator.h"
 
 #include <QtCore/QFile>
-#include <QtCore/QDebug>
 #include <QtCore/QCoreApplication>
 
 #include <trikScriptRunner/trikScriptRunner.h>
@@ -24,8 +23,11 @@
 
 using namespace trikCommunicator;
 
-TrikCommunicator::TrikCommunicator(trikControl::Brick &brick, QString const &startDirPath)
-	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, startDirPath), true)
+TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
+		, QString const &startDirPath)
+	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad, startDirPath), true)
 {
 }
 
@@ -35,7 +37,7 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
 }
 
 TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership)
-	: trikKernel::TrikServer([this] () { return connectionFactory(); })
+	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
 	, mTrikScriptRunner(runner)
 	, mHasScriptRunnerOwnership(hasScriptRunnerOwnership)
 {
@@ -53,6 +55,5 @@ TrikCommunicator::~TrikCommunicator()
 
 Connection *TrikCommunicator::connectionFactory()
 {
-	auto connection = new Connection(*mTrikScriptRunner);
-	return connection;
+	return new Connection(*mTrikScriptRunner);
 }

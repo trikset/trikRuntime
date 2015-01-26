@@ -17,10 +17,13 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
 
 namespace trikScriptRunner {
 
+class ScriptExecutionControl;
 class ScriptRunnerProxy;
 
 /// Executes scripts in Qt Scripting Engine.
@@ -31,8 +34,13 @@ class TrikScriptRunner : public QObject
 public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
+	/// @param mailbox - mailbox object used to communicate with other robots.
+	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath);
+	TrikScriptRunner(trikControl::BrickInterface &brick
+			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::GamepadInterface * const gamepad
+			, QString const &startDirPath);
 
 	~TrikScriptRunner() override;
 
@@ -97,6 +105,8 @@ private slots:
 	void onScriptStart(int scriptId);
 
 private:
+	QScopedPointer<ScriptExecutionControl> mScriptController;
+
 	/// Proxy for script engine thread.
 	QScopedPointer<ScriptRunnerProxy> mScriptRunnerProxy;
 

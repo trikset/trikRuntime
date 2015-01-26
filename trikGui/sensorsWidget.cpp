@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 #include <QtGui/QKeyEvent>
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 #include "sensorIndicator.h"
 
 using namespace trikGui;
 
-SensorsWidget::SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent)
+SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, QStringList const &ports, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mIndicators(ports.size())

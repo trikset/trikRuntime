@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <trikKernel/connection.h>
-#include <trikControl/brick.h>
+#include <trikNetwork/connection.h>
+#include <trikControl/brickInterface.h>
 
 namespace trikTelemetry {
 
@@ -25,14 +25,14 @@ namespace trikTelemetry {
 /// Accepted commands:
 ///     data - sends data from sensors to a client
 ///     ports - sends current ports configuration to a client
-class Connection : public trikKernel::Connection
+class Connection : public trikNetwork::Connection
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients.
-	explicit Connection(trikControl::Brick &brick);
+	explicit Connection(trikControl::BrickInterface &brick);
 
 private:
 	void processData(QByteArray const &data) override;
@@ -41,7 +41,7 @@ private:
 
 	bool isButtonPressed(QString const &buttonName);
 
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 };
 
 }

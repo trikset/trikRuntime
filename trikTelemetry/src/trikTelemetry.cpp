@@ -18,8 +18,8 @@
 
 using namespace trikTelemetry;
 
-TrikTelemetry::TrikTelemetry(trikControl::Brick &brick)
-	: trikKernel::TrikServer([this] () { return connectionFactory(); })
+TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
+	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
 	, mBrick(brick)
 {
 }

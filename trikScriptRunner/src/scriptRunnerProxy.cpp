@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,13 @@
 
 using namespace trikScriptRunner;
 
-ScriptRunnerProxy::ScriptRunnerProxy(trikControl::Brick &brick, QString const &startDirPath)
+ScriptRunnerProxy::ScriptRunnerProxy(trikControl::BrickInterface &brick
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
+		, ScriptExecutionControl &scriptControl
+		, QString const &startDirPath)
 {
-	mEngineWorker = new ScriptEngineWorker(brick, startDirPath);
+	mEngineWorker = new ScriptEngineWorker(brick, mailbox, gamepad, scriptControl, startDirPath);
 	QMetaObject::invokeMethod(mEngineWorker, "init");
 
 	connect(&mWorkerThread, SIGNAL(finished()), mEngineWorker, SLOT(deleteLater()));

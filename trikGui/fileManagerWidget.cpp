@@ -141,8 +141,7 @@ void FileManagerWidget::showCurrentDir()
 
 	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
 
-	/// @todo Here and several lines down we use QTimer
-	/// to fix a bug with selecting first item. Rewrite it.
+	/// @todo Here and several lines down we use QTimer to fix a bug with selecting first item. Rewrite it.
 	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 

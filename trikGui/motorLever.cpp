@@ -24,11 +24,11 @@
 	#include <QtWidgets/QStyleOptionFocusRect>
 #endif
 
-#include <trikControl/motor.h>
+#include <trikControl/motorInterface.h>
 
 using namespace trikGui;
 
-MotorLever::MotorLever(QString const &port, trikControl::Motor &motor, QWidget *parent)
+MotorLever::MotorLever(QString const &port, trikControl::MotorInterface &motor, QWidget *parent)
 	: QWidget(parent)
 	, mMotor(motor)
 	, mIsOn(false)

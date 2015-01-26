@@ -21,8 +21,8 @@
 
 using namespace trikGui;
 
-MotorsWidget::MotorsWidget(trikControl::Brick &brick
-		, trikControl::Motor::Type type
+MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
+		, trikControl::MotorInterface::Type type
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
@@ -47,15 +47,15 @@ MotorsWidget::~MotorsWidget()
 	qDeleteAll(mLevers);
 }
 
-QString MotorsWidget::menuEntry(trikControl::Motor::Type type)
+QString MotorsWidget::menuEntry(trikControl::MotorInterface::Type type)
 {
 	switch (type) {
-		case trikControl::Motor::powerMotor: {
-			return tr("Test power motors");
-		}
-		case trikControl::Motor::servoMotor: {
-			return tr("Test servo motors");
-		}
+	case trikControl::MotorInterface::Type::powerMotor: {
+		return tr("Test power motors");
+	}
+	case trikControl::MotorInterface::Type::servoMotor: {
+		return tr("Test servo motors");
+	}
 	}
 
 	return QString();

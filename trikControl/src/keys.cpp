@@ -1,4 +1,4 @@
-/* Copyright 2013 Matvey Bryksin, Yurii Litvinov
+/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,35 @@
 
 #include "keys.h"
 
-#include "src/keysWorker.h"
+#include <trikKernel/configurer.h>
+
+#include "keysWorker.h"
 
 using namespace trikControl;
 
-Keys::Keys(const QString &keysPath)
-	: mKeysWorker(new KeysWorker(keysPath))
+Keys::Keys(trikKernel::Configurer const &configurer)
 {
-	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int,int)), this, SIGNAL(buttonPressed(int,int)));
-	connect(mKeysWorker.data(), SIGNAL(buttonPressed(int,int)), this, SLOT(changeButtonState(int,int)));
-	mKeysWorker->moveToThread(&mWorkerThread);
-	mWorkerThread.start();
+	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState));
+	if (!mState.isFailed()) {
+		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SIGNAL(buttonPressed(int, int)));
+		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));
+		mKeysWorker->moveToThread(&mWorkerThread);
+		mWorkerThread.start();
+		mState.ready();
+	}
 }
 
 Keys::~Keys()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+Keys::Status Keys::status() const
+{
+	return mState.status();
 }
 
 void Keys::reset()

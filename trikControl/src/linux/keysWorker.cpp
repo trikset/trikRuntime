@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,13 @@
 
 using namespace trikControl;
 
-KeysWorker::KeysWorker(QString const &keysPath)
+KeysWorker::KeysWorker(QString const &keysPath, DeviceState &state)
+	: mState(state)
 {
 	mKeysFileDescriptor = open(keysPath.toStdString().c_str(), O_SYNC, O_RDONLY);
 	if (mKeysFileDescriptor == -1) {
 		QLOG_ERROR() << "cannot open keys input file" << keysPath;
-		qDebug() << "cannot open keys input file" << keysPath;
+		mState.fail();
 		return;
 	}
 
@@ -66,7 +67,6 @@ void KeysWorker::readKeysEvent()
 
 	if (read(mKeysFileDescriptor, reinterpret_cast<char*>(&event), sizeof(event)) != sizeof(event)) {
 		QLOG_ERROR() << "keys: incomplete data read";
-		qDebug() << "keys: incomplete data read";
 		return;
 	}
 

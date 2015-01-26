@@ -1,4 +1,4 @@
-/* Copyright 2014 Cybertech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,10 @@
 
 #include "trikScriptRunnerTest.h"
 
-#include <QtCore/qglobal.h>
+#include <QtCore/QScopedPointer>
+
+#include <trikControl/brickInterface.h>
+#include <trikControl/brickFactory.h>
 
 using namespace tests;
 
@@ -28,7 +31,9 @@ void TrikScriptRunnerTest::TearDown()
 
 TEST_F(TrikScriptRunnerTest, sanityCheck)
 {
-	trikControl::Brick brick(*QThread::currentThread(), "./", "./");
-	trikScriptRunner::TrikScriptRunner scriptRunner(brick, "./");
+	QScopedPointer<trikControl::BrickInterface> brick(
+			trikControl::BrickFactory::create(*QThread::currentThread(), "./", "./"));
+
+	trikScriptRunner::TrikScriptRunner scriptRunner(*brick, nullptr, nullptr, "./");
 	scriptRunner.run("1 + 1");
 }

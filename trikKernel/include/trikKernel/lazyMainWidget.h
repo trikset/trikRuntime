@@ -33,8 +33,9 @@ class LazyMainWidget : public MainWidget
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
 	LazyMainWidget(QWidget *parent = 0) : MainWidget (parent) {}
-	virtual ~LazyMainWidget() {}
 
 signals:
 	/// Emitted when the widget wants it to be shown.

@@ -19,6 +19,11 @@
 #include <QtCore/QFile>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QScopedPointer>
+
+#include "deviceState.h"
+
+class QEventLoop;
 
 namespace trikControl {
 
@@ -31,7 +36,7 @@ class RangeSensorWorker : public QObject
 public:
 	/// Constructor.
 	/// @param eventFile - event file for this sensor.
-	RangeSensorWorker(QString const &eventFile);
+	RangeSensorWorker(QString const &eventFile, DeviceState &state);
 
 	~RangeSensorWorker() override;
 
@@ -56,6 +61,8 @@ private slots:
 	/// Updates current reading when new value is ready.
 	void readFile();
 
+	void tryOpenEventFile();
+
 private:
 	void onNewData(QString const &dataLine);
 
@@ -71,6 +78,12 @@ private:
 
 	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
 	QReadWriteLock mLock;
+
+	/// State of a sensor, shared with proxy.
+	DeviceState &mState;
+
+	QScopedPointer<QEventLoop> mInitWaitingLoop;
+
 };
 
 }

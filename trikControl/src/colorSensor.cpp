@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,25 @@
 
 #include "colorSensor.h"
 
-#include "src/colorSensorWorker.h"
-
 #include <QtCore/QDebug>
+
+#include <trikKernel/configurer.h>
+
+#include "colorSensorWorker.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
-ColorSensor::ColorSensor(QString const &script, QString const &inputFile, QString const &outputFile, int m, int n)
-	: mColorSensorWorker(new ColorSensorWorker(script, inputFile, outputFile, m, n))
+ColorSensor::ColorSensor(QString const &port, const trikKernel::Configurer &configurer)
 {
+	QString const &script = configurer.attributeByPort(port, "script");
+	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
+	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
+
+	int const m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
+	int const n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
+
+	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState));
 	mColorSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
@@ -32,8 +42,15 @@ ColorSensor::ColorSensor(QString const &script, QString const &inputFile, QStrin
 
 ColorSensor::~ColorSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+ColorSensor::Status ColorSensor::status() const
+{
+	return mColorSensorWorker->status();
 }
 
 void ColorSensor::init(bool showOnDisplay)

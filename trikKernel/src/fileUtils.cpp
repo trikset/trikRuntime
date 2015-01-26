@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QDir>
-#include <QtCore/QDebug>
 
-#include <QsLog.h>
+#include "exceptions/failedToOpenFileException.h"
+#include "exceptions/failedToParseXmlException.h"
 
 using namespace trikKernel;
 
@@ -27,9 +27,7 @@ QString FileUtils::readFromFile(QString const &fileName)
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
 	if (!file.isOpen()) {
-		qDebug() << "Failed to open file" << fileName << "for reading";
-		QLOG_FATAL() << "Failed to open file" << fileName << "for reading";
-		throw "Failed to open file";
+		throw FailedToOpenFileException(file);
 	}
 
 	QTextStream input;
@@ -51,13 +49,32 @@ void FileUtils::writeToFile(QString const &fileName, QString const &contents, QS
 	QFile file(filePath);
 	file.open(QIODevice::WriteOnly | QIODevice::Text);
 	if (!file.isOpen()) {
-		qDebug() << "Failed to open file" << filePath << "for writing";
-		QLOG_FATAL() << "Failed to open file" << filePath << "for writing";
-		throw "File open operation failed";
+		throw FailedToOpenFileException(file);
 	}
 
 	QTextStream stream(&file);
 	stream.setCodec("UTF-8");
 	stream << contents;
 	file.close();
+}
+
+QDomElement FileUtils::readXmlFile(QString const &fileNameWithPath)
+{
+	QDomDocument document("file");
+	QFile file(fileNameWithPath);
+	if (!file.open(QIODevice::ReadOnly)) {
+		throw FailedToOpenFileException(file);
+	}
+
+	int errorLine = 0;
+	int errorColumn = 0;
+	QString errorMessage;
+	if (!document.setContent(&file, &errorMessage, &errorLine, &errorColumn)) {
+		file.close();
+		throw FailedToParseXmlException(file, errorMessage, errorLine, errorColumn);
+	}
+
+	file.close();
+
+	return document.documentElement();
 }

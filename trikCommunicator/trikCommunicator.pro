@@ -1,4 +1,4 @@
-# Copyright 2013 Yurii Litvinov
+# Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,10 +28,4 @@ QT += network
 
 DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
-uses(trikScriptRunner trikControl trikKernel qslog)
-
-INCLUDEPATH += \
-	$$PWD/../trikScriptRunner/include/ \
-	$$PWD/../trikControl/include/ \
-	$$PWD/../trikKernel/include/ \
-	$$PWD/../qslog/ \
+uses(trikScriptRunner trikControl trikKernel trikNetwork)

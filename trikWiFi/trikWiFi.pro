@@ -20,12 +20,6 @@ QT += xml
 
 DEFINES += TRIKWIFI_LIBRARY
 
-win32 {
-	PLATFORM = windows
-} else {
-	PLATFORM = linux
-}
-
 HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
 	$$PWD/include/trikWiFi/wpaConfigurer.h \

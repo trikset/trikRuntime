@@ -22,6 +22,9 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include <trikKernel/coreDumping.h>
+#include <trikKernel/loggingHelper.h>
+
 int main(int argc, char *argv[])
 {
 	::testing::InitGoogleTest(&argc, argv);
@@ -29,6 +32,11 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 
 	Q_UNUSED(app);
+
+	trikKernel::coreDumping::initCoreDumping(".");
+
+	trikKernel::LoggingHelper loggingHelper(".");
+	Q_UNUSED(loggingHelper);
 
 	return RUN_ALL_TESTS();
 }

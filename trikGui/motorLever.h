@@ -31,7 +31,7 @@
 #include <QtCore/QString>
 
 namespace trikControl {
-	class Motor;
+	class MotorInterface;
 }
 
 namespace trikGui {
@@ -47,20 +47,22 @@ public:
 	/// @param port - name of a port which the motor is connected to.
 	/// @param motor - pointer to an instance representing the motor.
 	/// @param parent - pointer to a parent widget.
-	MotorLever(QString const &port, trikControl::Motor &motor, QWidget *parent = 0);
+	MotorLever(QString const &port, trikControl::MotorInterface &motor, QWidget *parent = 0);
 
 	/// Destructor.
-	~MotorLever();
+	~MotorLever() override;
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
-	void paintEvent(QPaintEvent *);
+	void keyPressEvent(QKeyEvent *event) override;
+
+	void paintEvent(QPaintEvent *) override;
 
 private:
 	void setPower(int power);
+
 	void turnOnOff();
 
-	trikControl::Motor &mMotor;
+	trikControl::MotorInterface &mMotor;
 	bool mIsOn;
 	int const mMaxPower;
 	int const mMinPower;

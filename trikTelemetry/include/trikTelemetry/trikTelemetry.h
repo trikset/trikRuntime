@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <trikKernel/trikServer.h>
-#include <trikControl/brick.h>
+#include <trikNetwork/trikServer.h>
+#include <trikControl/brickInterface.h>
 
 namespace trikTelemetry {
 
@@ -25,20 +25,20 @@ class Connection;
 /// of a brick.
 /// TrikTelemetry class creates for each client a new Connection which runs in a separate thread
 /// and serves clients' requests for ports and sensors data.
-class TrikTelemetry : public trikKernel::TrikServer
+class TrikTelemetry : public trikNetwork::TrikServer
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients
-	TrikTelemetry(trikControl::Brick &brick);
+	TrikTelemetry(trikControl::BrickInterface &brick);
 
 private:
 	Connection *connectionFactory();
 
 	/// A Brick which is used by Connections to respond to clients' requests
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 };
 
 }

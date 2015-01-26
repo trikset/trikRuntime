@@ -30,7 +30,7 @@
 #include "trikGuiDialog.h"
 
 namespace trikControl {
-	class Brick;
+class BrickInterface;
 }
 
 namespace trikGui {
@@ -44,17 +44,21 @@ class SensorsWidget : public TrikGuiDialog
 
 public:
 	/// Constructor.
-	explicit SensorsWidget(trikControl::Brick &brick, QStringList const &ports, QWidget *parent = 0);
-	~SensorsWidget();
+	explicit SensorsWidget(trikControl::BrickInterface &brick, QStringList const &ports, QWidget *parent = 0);
+
+	~SensorsWidget() override;
+
 	int exec() override;
+
 	void renewFocus() override;
 
 protected:
 	void exit();
+
 	void goHome();
 
 private:
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 	QVBoxLayout mLayout;
 	QVector<SensorIndicator *> mIndicators;  // Has ownership.
 	int const mInterval;

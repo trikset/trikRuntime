@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,46 +14,75 @@
 
 #include "lineSensor.h"
 
-#include "src/lineSensorWorker.h"
+#include <trikKernel/configurer.h>
+#include <QsLog.h>
 
-#include <QtCore/QDebug>
+#include "lineSensorWorker.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
-LineSensor::LineSensor(QString const &script, QString const &inputFile, QString const &outputFile
-		, double toleranceFactor)
-	: mLineSensorWorker(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor))
+LineSensor::LineSensor(QString const &port, trikKernel::Configurer const &configurer)
 {
-	mLineSensorWorker->moveToThread(&mWorkerThread);
+	QString const &script = configurer.attributeByPort(port, "script");
+	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
+	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
+	qreal const toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
-	connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+	mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
 
-	mWorkerThread.start();
+	if (!mState.isFailed()) {
+		mLineSensorWorker->moveToThread(&mWorkerThread);
+		connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+		mWorkerThread.start();
+	}
 }
 
 LineSensor::~LineSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+LineSensor::Status LineSensor::status() const
+{
+	return mState.status();
 }
 
 void LineSensor::init(bool showOnDisplay)
 {
-	QMetaObject::invokeMethod(mLineSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+	if (!mState.isFailed()) {
+		QMetaObject::invokeMethod(mLineSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+	}
 }
 
 void LineSensor::detect()
 {
-	QMetaObject::invokeMethod(mLineSensorWorker.data(), "detect");
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mLineSensorWorker.data(), "detect");
+	} else {
+		QLOG_WARN() << "Calling 'detect' for sensor which is not ready";
+	}
 }
 
 QVector<int> LineSensor::read()
 {
-	// Read is called synchronously and only takes prepared value from sensor.
-	return mLineSensorWorker->read();
+	if (mState.isReady()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mLineSensorWorker->read();
+	} else {
+		QLOG_WARN() << "Calling 'read' for sensor which is not ready";
+		return {};
+	}
 }
 
 void LineSensor::stop()
 {
-	QMetaObject::invokeMethod(mLineSensorWorker.data(), "stop");
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mLineSensorWorker.data(), "stop");
+	} else {
+		QLOG_WARN() << "Calling 'stop' for sensor which is not ready";
+	}
 }

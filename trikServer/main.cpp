@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,15 @@
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
-#include <trikControl/brick.h>
+#include <trikControl/brickFactory.h>
+#include <trikControl/brickInterface.h>
+#include <trikKernel/configurer.h>
 #include <trikKernel/coreDumping.h>
+#include <trikKernel/loggingHelper.h>
+#include <trikNetwork/gamepadFactory.h>
+#include <trikNetwork/gamepadInterface.h>
+#include <trikNetwork/mailboxFactory.h>
+#include <trikNetwork/mailboxInterface.h>
 
 #include <QsLog.h>
 
@@ -80,22 +87,21 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int const maxLogSize = 10 * 1024 * 1024;
-	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	QsLogging::DestinationPtr destination = QsLogging::DestinationFactory::MakeFileDestination(
-			startDirPath + "trik.log"
-			, QsLogging::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)
-			, QsLogging::TraceLevel);
-	QsLogging::Logger::instance().addDestination(destination);
+	trikKernel::LoggingHelper loggingHelper(startDirPath);
+	Q_UNUSED(loggingHelper);
+
 	QLOG_INFO() << "TrikServer started on port" << port;
 
 	qDebug() << "Running TrikServer on port" << port;
 
-	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+	QScopedPointer<trikControl::BrickInterface> brick(
+			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath));
 
-	trikCommunicator::TrikCommunicator communicator(brick, startDirPath);
+	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
+	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
+	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+
+	trikCommunicator::TrikCommunicator communicator(*brick, mailbox.data(), gamepad.data(), startDirPath);
 	communicator.startServer(port);
 
 	return app.exec();
