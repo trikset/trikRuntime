@@ -91,13 +91,12 @@ void ScriptEngineWorker::run(QString const &script, int scriptId)
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
-/*	if (!mBrick.isInEventDrivenMode()) {
+/*
+	if (!mBrick.isInEventDrivenMode()) {
+		reset();
 		startScriptEvaluation(scriptId);
 		mBrick.run();
 	}
-
-	mThreadingVariable.startMainThread(initScriptEngine(), command);
-	mThreadingVariable.waitForAll();
 */
 }
 

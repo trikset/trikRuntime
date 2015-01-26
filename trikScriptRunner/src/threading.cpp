@@ -76,8 +76,9 @@ void Threading::waitForAll()
 void Threading::joinThread(const QString &threadId)
 {
 	mThreadsMutex.lock();
-	mThreads[threadId]->wait();
+	ScriptThread *thread = mThreads[threadId];
 	mThreadsMutex.unlock();
+	thread->wait();
 }
 
 QScriptEngine * Threading::cloneEngine(QScriptEngine *engine)
@@ -112,8 +113,8 @@ void Threading::reset()
 	mThreadsMutex.unlock();
 	QApplication::processEvents();
 
-	mResetStarted = false;
 	QLOG_INFO() << "Threading: reset ended";
+	mResetStarted = false;
 }
 
 void Threading::threadFinished()
