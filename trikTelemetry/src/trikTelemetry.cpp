@@ -18,13 +18,14 @@
 
 using namespace trikTelemetry;
 
-TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
+TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad)
 	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
 	, mBrick(brick)
+	, mGamepad(gamepad)
 {
 }
 
 Connection * TrikTelemetry::connectionFactory()
 {
-	return new Connection(mBrick);
+	return new Connection(mBrick, mGamepad);
 }

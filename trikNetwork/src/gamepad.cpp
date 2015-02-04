@@ -45,6 +45,8 @@ Gamepad::~Gamepad()
 		mWorkerThread.quit();
 		mWorkerThread.wait();
 	}
+
+	qDeleteAll(mButtonStateClearTimers);
 }
 
 void Gamepad::reset()
@@ -56,6 +58,11 @@ void Gamepad::reset()
 bool Gamepad::buttonWasPressed(int buttonNumber)
 {
 	return mButtonWasPressed.remove(buttonNumber);
+}
+
+bool Gamepad::buttonIsPressed(int buttonNumber)
+{
+	return mButtonState[buttonNumber];
 }
 
 bool Gamepad::isPadPressed(int pad) const
@@ -76,6 +83,11 @@ int Gamepad::padY(int pad) const
 int Gamepad::wheel() const
 {
 	return mWheelPercent;
+}
+
+bool Gamepad::isConnected() const
+{
+	return mWorker->activeConnections() > 0;
 }
 
 void Gamepad::init(int port)
@@ -113,6 +125,26 @@ void Gamepad::onPad(int padId, int x, int y)
 
 void Gamepad::onButton(int button, int pressed)
 {
-	Q_UNUSED(pressed);
-	mButtonWasPressed.insert(button);
+	if (pressed == 1) {
+		mButtonWasPressed.insert(button);
+	}
+
+	mButtonState[button] = pressed == 1;
+	if (!mButtonStateClearTimers[button]) {
+		mButtonStateClearTimers[button] = new QTimer();
+		mButtonStateClearTimers[button]->setInterval(500);
+		connect(mButtonStateClearTimers[button], SIGNAL(timeout()), this, SLOT(onButtonStateClearTimerTimeout()));
+	}
+
+	mButtonStateClearTimers[button]->start();
+}
+
+void Gamepad::onButtonStateClearTimerTimeout()
+{
+	const auto timer = dynamic_cast<QTimer *>(sender());
+	if (timer) {
+		const int button = mButtonStateClearTimers.key(timer);
+		mButtonState[button] = false;
+		timer->stop();
+	}
 }

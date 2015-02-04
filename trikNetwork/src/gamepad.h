@@ -18,6 +18,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QHash>
 #include <QtCore/QSet>
+#include <QtCore/QTimer>
 
 #include <trikKernel/configurer.h>
 
@@ -49,6 +50,8 @@ public slots:
 
 	bool buttonWasPressed(int buttonNumber) override;
 
+	bool buttonIsPressed(int buttonNumber) override;
+
 	bool isPadPressed(int pad) const override;
 
 	int padX(int pad) const override;
@@ -56,6 +59,8 @@ public slots:
 	int padY(int pad) const override;
 
 	int wheel() const override;
+
+	bool isConnected() const override;
 
 private slots:
 	void onPadUp(int padId);
@@ -65,6 +70,8 @@ private slots:
 	void onPad(int padId, int x, int y);
 
 	void onButton(int button, int pressed);
+
+	void onButtonStateClearTimerTimeout();
 
 private:
 	Q_DISABLE_COPY(Gamepad)
@@ -79,6 +86,13 @@ private:
 	};
 
 	QSet<int> mButtonWasPressed;
+	QHash<int, bool> mButtonState;
+
+	/// Hack for the fact that gamepad does not send button press events, only releases. We count button as "pressed"
+	/// if it was released within 500 milliseconds from this moment. So actually button becomes "pressed" when it is
+	/// released and stays pressed for 500 milliseconds.
+	QHash<int, QTimer *> mButtonStateClearTimers;
+
 	QHash<int, PadStatus> mPads;
 	int mWheelPercent = 0;
 

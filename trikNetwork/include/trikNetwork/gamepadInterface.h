@@ -31,8 +31,12 @@ public slots:
 	/// Clear data about previous pad events.
 	virtual void reset() = 0;
 
-	/// Returns true, if given pad button, and clears "pressed" state for that button.
+	/// Returns true, if given pad button is pressed, and clears "pressed" state for that button.
+	/// Buttons have indexes from 1 to 5.
 	virtual bool buttonWasPressed(int buttonNumber) = 0;
+
+	/// Returns true, if given pad button is pressed now. Buttons have indexes from 1 to 5.
+	virtual bool buttonIsPressed(int buttonNumber) = 0;
 
 	/// Returns current state of the pad, true if pressed.
 	virtual bool isPadPressed(int pad) const = 0;
@@ -45,6 +49,9 @@ public slots:
 
 	/// Returns current tilt angle of Android device when "wheel" is turned on.
 	virtual int wheel() const = 0;
+
+	/// Returns true if a gamepad is currently connected to a robot.
+	virtual bool isConnected() const = 0;
 
 signals:
 	/// Emitted when user pulls finger off a pad.

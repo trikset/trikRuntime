@@ -30,7 +30,7 @@ Connection *GamepadServer::connectionFactory()
 	connect(connection, SIGNAL(button(int,int)),this, SIGNAL(button(int,int)));
 	connect(connection, SIGNAL(pad(int,int,int)),this, SIGNAL(pad(int,int,int)));
 	connect(connection, SIGNAL(padUp(int)),this, SIGNAL(padUp(int)));
-	connect(connection, SIGNAL(wheel(int)),this, SIGNAL(whel(int)));
+	connect(connection, SIGNAL(wheel(int)),this, SIGNAL(wheel(int)));
 	connect(connection, SIGNAL(disconnected()),this, SLOT(onConnectionClosed()));
 
 	return connection;

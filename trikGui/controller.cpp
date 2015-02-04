@@ -37,12 +37,12 @@ int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
 	: mBrick(trikControl::BrickFactory::create(*thread(), configPath, startDirPath))
-	, mTelemetry(new trikTelemetry::TrikTelemetry(*mBrick))
 	, mStartDirPath(startDirPath)
 {
 	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
+	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
 
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(
 			*mBrick, mMailbox.data(), mGamepad.data(), startDirPath));
