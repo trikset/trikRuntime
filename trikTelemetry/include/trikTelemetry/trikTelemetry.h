@@ -14,8 +14,9 @@
 
 #pragma once
 
-#include <trikNetwork/trikServer.h>
 #include <trikControl/brickInterface.h>
+#include <trikNetwork/trikServer.h>
+#include <trikNetwork/gamepadInterface.h>
 
 namespace trikTelemetry {
 
@@ -32,13 +33,16 @@ class TrikTelemetry : public trikNetwork::TrikServer
 public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients
-	TrikTelemetry(trikControl::BrickInterface &brick);
+	TrikTelemetry(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad);
 
 private:
 	Connection *connectionFactory();
 
 	/// A Brick which is used by Connections to respond to clients' requests
 	trikControl::BrickInterface &mBrick;
+
+	/// A Gamepad object which is used by Connections to respond to requests about gamepad state.
+	trikNetwork::GamepadInterface &mGamepad;
 };
 
 }
