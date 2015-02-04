@@ -45,6 +45,8 @@ Gamepad::~Gamepad()
 		mWorkerThread.quit();
 		mWorkerThread.wait();
 	}
+
+	qDeleteAll(mButtonStateClearTimers);
 }
 
 void Gamepad::reset()

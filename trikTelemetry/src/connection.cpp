@@ -74,7 +74,7 @@ void Connection::processData(QByteArray const &data)
 
 		answer[answer.length() - 1] = ';';
 		answer += "accelerometer:" + serializeVector(mBrick.accelerometer()->read()) + ";";
-		answer += "gyroscope:" + serializeVector(mBrick.gyroscope()->read()) + ";";
+		answer += "gyroscope:" + serializeVector(mBrick.gyroscope()->read());
 	} else if (command.startsWith(portsRequested)) {
 		answer = "ports:";
 		answer += "analog:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).join(",") + ";";
@@ -93,7 +93,6 @@ void Connection::processData(QByteArray const &data)
 		} else if (command.startsWith(gamepadRequested)) {
 			if (command == "GamepadButton1Port") {
 				answer += QString::number(mGamepad.buttonIsPressed(1));
-				qDebug() << answer;
 			} else if (command == "GamepadButton2Port") {
 				answer += QString::number(mGamepad.buttonIsPressed(2));
 			} else if (command == "GamepadButton3Port") {
