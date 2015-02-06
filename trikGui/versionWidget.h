@@ -63,7 +63,7 @@ private slots:
 private:
 	/// Main layout of this widget.
 	QHBoxLayout mLayout;
-	QPushButton* mUpdateButton;
+	QPushButton *mUpdateButton;
 };
 
 }
