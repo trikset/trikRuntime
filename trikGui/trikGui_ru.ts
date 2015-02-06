@@ -194,6 +194,10 @@
         <source>Version</source>
         <translation>Версия ПО</translation>
     </message>
+    <message>
+        <source>Do you really want to update current version?</source>
+        <translation>Вы действительно хотите обновиться?</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::WiFiAPWidget</name>
