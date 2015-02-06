@@ -72,12 +72,12 @@ bool Gamepad::isPadPressed(int pad) const
 
 int Gamepad::padX(int pad) const
 {
-	return (!mPads.contains(pad) || !mPads.value(pad).isPressed) ? -1 : mPads.value(pad).x;
+	return (!mPads.contains(pad) || !mPads.value(pad).isPressed) ? -101 : mPads.value(pad).x;
 }
 
 int Gamepad::padY(int pad) const
 {
-	return (!mPads.contains(pad) || !mPads.value(pad).isPressed) ? -1 : mPads.value(pad).y;
+	return (!mPads.contains(pad) || !mPads.value(pad).isPressed) ? -101 : mPads.value(pad).y;
 }
 
 int Gamepad::wheel() const

@@ -94,7 +94,7 @@ private:
 	QHash<int, QTimer *> mButtonStateClearTimers;
 
 	QHash<int, PadStatus> mPads;
-	int mWheelPercent = 0;
+	int mWheelPercent = -101;
 
 	/// Server that works in separate thread.
 	QScopedPointer<GamepadServer> mWorker;
