@@ -44,8 +44,8 @@ if (!String.prototype.format) {
   };
 }
 
-brick.repeat = function(mscs, f) {
-  var timer = brick.timer(mscs);
+script.repeat = function(mscs, f) {
+  var timer = script.timer(mscs);
   timer.timeout.connect(f);
 }
 
