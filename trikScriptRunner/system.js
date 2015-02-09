@@ -19,7 +19,7 @@ var KeysEnum = {
     Enter : 28,
     Right : 106,
     Power : 116,
-    Escape : 1
+    Esc : 1
 };
 
 // Aliases for passing ports without quotes
