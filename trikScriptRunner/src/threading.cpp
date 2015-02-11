@@ -34,7 +34,7 @@ void Threading::startMainThread(const QString &script)
 	QRegExp const mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
 	bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
 
-	startThread("__mainThread__", mScriptWorker->createScriptEngine(), needCallMain ? script + "\nmain();" : script);
+	startThread("main", mScriptWorker->createScriptEngine(), needCallMain ? script + "\nmain();" : script);
 }
 
 void Threading::startThread(QScriptValue const &threadId, QScriptValue const &function)
@@ -46,21 +46,31 @@ void Threading::startThread(QString const &threadId, QScriptEngine *engine, QStr
 {
 	mResetMutex.lock();
 	if (mResetStarted) {
+		QLOG_INFO() << "Threading: can't start new thread" << threadId << "with engine" << engine << "due to reset";
 		delete engine;
 		mResetMutex.unlock();
 		return;
 	}
 
 	QLOG_INFO() << "Threading: starting new thread" << threadId << "with engine" << engine;
-	ScriptThread *thread = new ScriptThread(threadId, engine, script);
+	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
 	mThreadsMutex.lock();
 	mThreads[threadId] = thread;
 	mThreadsMutex.unlock();
 	engine->moveToThread(thread);
 
-	connect(thread, SIGNAL(finished()), this, SLOT(threadFinished()));
+	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
 	thread->start();
+	while (!thread->isEvaluating()) {
+		QThread::yieldCurrentThread();
+	}
+
+	// wait until script actually start
+	for (int i = 0; i < 500; ++i) {
+		QThread::yieldCurrentThread();
+	}
+
 	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
 	mResetMutex.unlock();
 }
@@ -69,13 +79,17 @@ void Threading::waitForAll()
 {
 	while (!mThreads.isEmpty()) {
 		QThread::yieldCurrentThread();
-		QApplication::processEvents();
 	}
 }
 
 void Threading::joinThread(const QString &threadId)
 {
 	mThreadsMutex.lock();
+	if (!mThreads.contains(threadId)) {
+		mThreadsMutex.unlock();
+		return;
+	}
+
 	ScriptThread *thread = mThreads[threadId];
 	mThreadsMutex.unlock();
 	thread->wait();
@@ -117,9 +131,8 @@ void Threading::reset()
 	mResetStarted = false;
 }
 
-void Threading::threadFinished()
+void Threading::threadFinished(const QString &id)
 {
-	QString id = dynamic_cast<ScriptThread *>(sender())->id();
 	QLOG_INFO() << "Threading: finishing thread" <<	id;
 
 	mThreadsMutex.lock();
@@ -127,7 +140,6 @@ void Threading::threadFinished()
 		mErrorMessage = mThreads[id]->error();
 	}
 
-	mThreads[id]->deleteLater();
 	QLOG_INFO() << "Threading: thread" << id << "has finished, thread object" << mThreads[id];
 	mThreads.remove(id);
 	mThreadsMutex.unlock();

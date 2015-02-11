@@ -62,6 +62,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const 
 	: mBrick(brick)
 	, mThreadingVariable(this)
 	, mStartDirPath(startDirPath)
+	, mState(ready)
 {
 	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
@@ -73,17 +74,32 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::reset()
 {
+	if (mState == resetting || mState == ready) {
+		return;
+	}
+
 	QLOG_INFO() << "ScriptEngineWorker: reset started";
+	while (mState == starting) {
+		QThread::yieldCurrentThread();
+	}
+
+	mState = resetting;
 	mThreadingVariable.reset();
 	mBrick.reset();
+	mState = ready;
 	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
 
 void ScriptEngineWorker::run(QString const &script, int scriptId)
 {
-	/// @todo: fix running two scripts simultaneously
 	startScriptEvaluation(scriptId);
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+}
+
+void ScriptEngineWorker::doRun(const QString &script)
+{
 	mThreadingVariable.startMainThread(script);
+	mState = running;
 	mThreadingVariable.waitForAll();
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << mThreadingVariable.errorMessage();
 	emit completed(mThreadingVariable.errorMessage(), mScriptId);
@@ -104,6 +120,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 {
 	QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
+	mState = starting;
 	mScriptId = scriptId;
 	emit startedScript(mScriptId);
 }

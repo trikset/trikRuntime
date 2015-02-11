@@ -30,8 +30,7 @@ public:
 
 	QString errorMessage() const;
 
-private slots:
-	void threadFinished();
+	void threadFinished(const QString &id);
 
 private:
 	void startThread(QString const &threadId, QScriptEngine *engine, QString const &script);

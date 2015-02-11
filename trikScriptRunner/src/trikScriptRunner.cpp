@@ -73,9 +73,7 @@ void TrikScriptRunner::run(QString const &script, QString const &fileName)
 		mScriptFileNames[scriptId] = fileName;
 	}
 
-	QMetaObject::invokeMethod(mScriptEngineWorker, "run"
-			, Q_ARG(QString const &, script)
-			, Q_ARG(int, (fileName.isEmpty() ? -1 : scriptId)));
+	mScriptEngineWorker->run(script, (fileName.isEmpty() ? -1 : scriptId));
 }
 
 void TrikScriptRunner::runDirectCommand(QString const &command)

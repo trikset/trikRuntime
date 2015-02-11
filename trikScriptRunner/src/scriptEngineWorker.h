@@ -33,6 +33,13 @@ class ScriptEngineWorker : public QObject
 	Q_OBJECT
 
 public:
+	enum State {
+		ready
+		, starting
+		, resetting
+		, running
+	};
+
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param startDirPath - path to the directory from which the application was executed.
@@ -77,6 +84,8 @@ private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
+	void doRun(const QString &script);
+
 private:
 	void startScriptEvaluation(int scriptId);
 
@@ -84,6 +93,7 @@ private:
 	Threading mThreadingVariable;
 	QString const mStartDirPath;
 	int mScriptId;
+	State mState;
 };
 
 }

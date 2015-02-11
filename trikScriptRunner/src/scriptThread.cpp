@@ -1,14 +1,16 @@
 #include "scriptThread.h"
 
+#include "threading.h"
+
 #include "QsLog.h"
 
 using namespace trikScriptRunner;
 
-ScriptThread::ScriptThread(QString const &id, QScriptEngine *engine, QString const &script)
+ScriptThread::ScriptThread(Threading &threading, QString const &id, QScriptEngine *engine, QString const &script)
 	: mId(id)
 	, mEngine(engine)
 	, mScript(script)
-	, mFinished(false)
+	, mThreading(threading)
 {
 }
 
@@ -30,16 +32,13 @@ void ScriptThread::run()
 	}
 
 	mEngine->deleteLater();
-	mFinished = true;
+	mThreading.threadFinished(mId);
 	QLOG_INFO() << "ScriptThread: ended evaluation, thread" << this;
 }
 
 void ScriptThread::abort()
 {
 	mEngine->abortEvaluation();
-	while (!mFinished) {
-		msleep(100);
-	}
 }
 
 QString ScriptThread::id() const
@@ -55,4 +54,9 @@ QScriptEngine * ScriptThread::engine() const
 QString ScriptThread::error() const
 {
 	return mError;
+}
+
+bool ScriptThread::isEvaluating() const
+{
+	return mEngine->isEvaluating();
 }

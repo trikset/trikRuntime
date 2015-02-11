@@ -5,11 +5,13 @@
 
 namespace trikScriptRunner {
 
+class Threading;
+
 class ScriptThread : public QThread
 {
 	Q_OBJECT
 public:
-	ScriptThread(QString const &id, QScriptEngine *engine, QString const &script);
+	ScriptThread(Threading &threading, QString const &id, QScriptEngine *engine, QString const &script);
 	~ScriptThread();
 
 	void abort();
@@ -18,8 +20,7 @@ public:
 	QScriptEngine *engine() const;
 	QString error() const;
 
-signals:
-	void finished(QString const &id);
+	bool isEvaluating() const;
 
 protected:
 	void run();
@@ -29,8 +30,9 @@ private:
 	QScriptEngine *mEngine;
 	QString mScript;
 
+	Threading &mThreading;
+
 	QString mError;
-	bool mFinished;
 };
 
 }
