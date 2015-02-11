@@ -28,19 +28,16 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-	if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir) {
-		mRootDirPath = mController.scriptsDirPath();
-
-		QDir::setCurrent(mController.startDirPath());
-		QDir dir;
-		dir.mkdir(mController.scriptsDirName());
-	} else if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
+	if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
 		mRootDirPath = QDir::rootPath();
-	} else {
-		mRootDirPath = mController.startDirPath();
+	} else { // if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir)
+		mRootDirPath = mController.scriptsDirPath();
 	}
 
-	QDir::setCurrent(mRootDirPath);
+	QDir::setCurrent(mController.startDirPath());
+	QDir dir;
+	dir.mkdir(mController.scriptsDirName());
+	QDir::setCurrent(mController.scriptsDirPath());
 
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
@@ -117,7 +114,9 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 QString FileManagerWidget::showCurrentPath()
 {
 	QString result = QDir::currentPath();
-	result.remove(mRootDirPath);
+	if (mRootDirPath != "/") {
+		result.replace(0, mRootDirPath.length(), "");
+	}
 
 	if (result.isEmpty()) {
 		result = "/";
@@ -142,8 +141,7 @@ void FileManagerWidget::showCurrentDir()
 
 	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
 
-	/// @todo Here and several lines down we use QTimer
-	/// to fix a bug with selecting first item. Rewrite it.
+	/// @todo Here and several lines down we use QTimer to fix a bug with selecting first item. Rewrite it.
 	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 

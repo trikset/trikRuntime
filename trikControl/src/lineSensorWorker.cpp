@@ -12,15 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/lineSensorWorker.h"
+#include "lineSensorWorker.h"
 
 #include <QtCore/QDebug>
 
 using namespace trikControl;
 
 LineSensorWorker::LineSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
-		, double toleranceFactor)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile)
+		, qreal toleranceFactor, DeviceState &state)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
 	, mToleranceFactor(toleranceFactor)
 {
 }

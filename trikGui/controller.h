@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,12 @@
 #pragma once
 
 #include <trikCommunicator/trikCommunicator.h>
+#include <trikControl/brickInterface.h>
+#include <trikKernel/lazyMainWidget.h>
+#include <trikNetwork/gamepadInterface.h>
+#include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
-#include <trikControl/brick.h>
-
-#include <trikKernel/lazyMainWidget.h>
 
 namespace trikGui
 {
@@ -46,8 +47,12 @@ public:
 	/// Cancels execution of current program.
 	void abortExecution();
 
-	/// Returns reference to Brick object, which provides access to low-level robot functionality.
-	trikControl::Brick &brick();
+	/// Returns reference to Brick object, which provides access to robot hardware.
+	trikControl::BrickInterface &brick();
+
+	/// Returns reference to Mailbox object, which provides access to robot-to-robot communications.
+	/// Does not pass ownership to the caller.
+	trikNetwork::MailboxInterface *mailbox();
 
 	/// Returns mStartDirPath (path to the directory from which the application was executed)
 	QString startDirPath() const;
@@ -85,10 +90,12 @@ private slots:
 	void directScriptExecutionStarted(int scriptId);
 
 private:
-	trikControl::Brick mBrick;
-	trikScriptRunner::TrikScriptRunner mScriptRunner;
-	trikCommunicator::TrikCommunicator mCommunicator;
-	trikTelemetry::TrikTelemetry mTelemetry;
+	QScopedPointer<trikControl::BrickInterface> mBrick;
+	QScopedPointer<trikNetwork::GamepadInterface> mGamepad;
+	QScopedPointer<trikNetwork::MailboxInterface> mMailbox;
+	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
+	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;
+	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
 	QString const &mStartDirPath; // Path to the directory from which the application was executed

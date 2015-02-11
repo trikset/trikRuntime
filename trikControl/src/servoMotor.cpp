@@ -16,26 +16,35 @@
 
 #include <QtCore/QDebug>
 
+#include <trikKernel/configurer.h>
 #include <QsLog.h>
+
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile
-		, int period, bool invert)
-	: mDutyFile(dutyFile)
-	, mPeriodFile(periodFile)
-	, mPeriod(period)
+ServoMotor::ServoMotor(QString const &port, trikKernel::Configurer const &configurer)
+	: mDutyFile(configurer.attributeByPort(port, "deviceFile"))
+	, mPeriodFile(configurer.attributeByPort(port, "periodFile"))
 	, mCurrentDutyPercent(0)
-	, mMin(min)
-	, mMax(max)
-	, mZero(zero)
-	, mStop(stop)
-	, mInvert(invert)
+	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
 {
+	auto configure = [this, &port, &configurer](QString const &parameterName) {
+		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
+	};
+
+	mPeriod = configure("period");
+	mMin = configure("min");
+	mMax = configure("max");
+	mZero = configure("zero");
+	mStop = configure("stop");
+
+	mMotorType = configurer.attributeByPort(port, "type") == "angular" ? Type::angular : Type::continiousRotation;
+
 	if (!mPeriodFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor period file " << mPeriodFile.fileName();
-		qDebug() << "Can't open motor period file " << mPeriodFile.fileName();
+		mState.fail();
 		return;
 	}
 
@@ -43,6 +52,13 @@ ServoMotor::ServoMotor(int min, int max, int zero, int stop, QString const &duty
 
 	mPeriodFile.write(command.toLatin1());
 	mPeriodFile.close();
+
+	mState.ready();
+}
+
+ServoMotor::Status ServoMotor::status() const
+{
+	return mState.status();
 }
 
 int ServoMotor::power() const
@@ -52,7 +68,7 @@ int ServoMotor::power() const
 
 int ServoMotor::frequency() const
 {
-	return 1000000000.0 / static_cast<double>(mPeriod);
+	return 1000000000.0 / static_cast<qreal>(mPeriod);
 }
 
 int ServoMotor::duty() const
@@ -62,9 +78,14 @@ int ServoMotor::duty() const
 
 void ServoMotor::powerOff()
 {
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to power off motor which is not ready, ignoring";
+		return;
+	}
+
 	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor duty file " << mDutyFile.fileName();
-		qDebug() << "Can't open motor duty file " << mDutyFile.fileName();
+		mState.fail();
 		return;
 	}
 
@@ -74,44 +95,38 @@ void ServoMotor::powerOff()
 	mCurrentPower = 0;
 }
 
-void ServoMotor::setCurrentPower(int currentPower)
+void ServoMotor::setPower(int power)
 {
-	mCurrentPower = currentPower;
-}
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
+		return;
+	}
 
-void ServoMotor::setCurrentDuty(int duty)
-{
+	int const powerBoundary = mMotorType == Type::angular ? 90 : 100;
+
+	if (power > powerBoundary) {
+		power = powerBoundary;
+	} else if (power < -powerBoundary) {
+		power = -powerBoundary;
+	}
+
+	mCurrentPower = power;
+
+	power = mInvert ? -power : power;
+
+	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
+	qreal const powerFactor = static_cast<qreal>(range) / 90;
+	int duty = static_cast<int>(mZero + power * powerFactor);
+	QString const command = QString::number(duty);
+
 	mCurrentDutyPercent = 100 * duty / mPeriod;
-}
 
-void ServoMotor::writeMotorCommand(QString const &command)
-{
 	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "Can't open motor control file " << mDutyFile.fileName();
-		qDebug() << "Can't open motor control file " << mDutyFile.fileName();
+		mState.fail();
 		return;
 	}
 
 	mDutyFile.write(command.toLatin1());
 	mDutyFile.close();
-}
-
-int ServoMotor::min() const
-{
-	return mMin;
-}
-
-int ServoMotor::max() const
-{
-	return mMax;
-}
-
-int ServoMotor::zero() const
-{
-	return mZero;
-}
-
-bool ServoMotor::invert() const
-{
-	return mInvert;
 }

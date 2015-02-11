@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <QtXml/QDomElement>
 
 namespace trikKernel {
 
@@ -27,6 +28,9 @@ public:
 
 	/// Writes given string to given file, throws exception if something went wrong.
 	static void writeToFile(QString const &fileName, QString const &contents, QString const &dirPath = "");
+
+	/// Reads given XML file and returns root element, throws exception if something went wrong.
+	static QDomElement readXmlFile(QString const &fileNameWithPath);
 };
 
 }

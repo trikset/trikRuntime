@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtNetwork/QTcpSocket>
-#include <trikKernel/connection.h>
+#include <trikNetwork/connection.h>
 
 namespace trikScriptRunner {
 class TrikScriptRunner;
@@ -34,7 +34,7 @@ namespace trikCommunicator {
 /// - stop --- stop current script execution and a robot.
 /// - direct:<command> --- execute given script without saving it to a file.
 /// - keepalive --- do nothing, used to check the availability of connection.
-class Connection : public trikKernel::Connection {
+class Connection : public trikNetwork::Connection {
 	Q_OBJECT
 
 public:

@@ -19,6 +19,7 @@ include(../global.pri)
 HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 	$$PWD/src/scriptableParts.h \
+	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
@@ -26,6 +27,7 @@ HEADERS += \
 
 SOURCES += \
 	$$PWD/src/scriptableParts.cpp \
+	$$PWD/src/scriptExecutionControl.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/threading.cpp \
@@ -43,12 +45,7 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir($$PWD/system.js)
 
-uses(trikKernel trikControl qslog)
-
-INCLUDEPATH += \
-	$$PWD/../trikKernel/include/ \
-	$$PWD/../trikControl/include/ \
-	$$PWD/../qslog \
+uses(trikKernel trikControl trikNetwork)
 
 RESOURCES += \
 	trikSrciptRunner.qrc

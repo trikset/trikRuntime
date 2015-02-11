@@ -1,0 +1,52 @@
+/* Copyright 2015 CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#pragma once
+
+#include <QtCore/QObject>
+#include <QtCore/QVector>
+
+#include "deviceInterface.h"
+
+#include "declSpec.h"
+
+namespace trikControl {
+
+/// Uses virtual line sensor to detect x coordinate of a center of an object that was in camera's field of view
+/// when "detect" method was called. Used mainly to follow the line.
+class TRIKCONTROL_EXPORT ObjectSensorInterface : public QObject, public DeviceInterface
+{
+	Q_OBJECT
+
+signals:
+	/// Emitted when sensor is stopped successfully.
+	void stopped();
+
+public slots:
+	/// Initializes a camera.
+	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
+	virtual void init(bool showOnDisplay) = 0;
+
+	/// Detects the color of an object in center of current frame and memorizes it.
+	virtual void detect() = 0;
+
+	/// Returns x, y coordinates and size of an object in a form of vector [x; y; size].
+	/// Returns 0 in every field if detect() was not called.
+	virtual QVector<int> read() = 0;
+
+	/// Stops detection until init() will be called again.
+	virtual void stop() = 0;
+};
+
+}

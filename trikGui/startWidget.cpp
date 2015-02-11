@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov
+/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@
 	#include <QtWidgets/QApplication>
 #endif
 
-#include "trikControl/motor.h"
+#include <trikControl/motorInterface.h>
+
 #include "fileManagerWidget.h"
 #include "wiFiModeWidget.h"
 #include "motorsWidget.h"
@@ -36,6 +37,9 @@
 #include "systemSettingsWidget.h"
 
 using namespace trikGui;
+
+using trikControl::MotorInterface;
+using trikControl::SensorInterface;
 
 StartWidget::StartWidget(Controller &controller, QString const &configPath, QWidget *parent)
 	: trikKernel::MainWidget(parent)
@@ -50,13 +54,19 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::powerMotor)));
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(trikControl::Motor::servoMotor)));
-	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)));
-	settingsItem->appendRow(new QStandardItem(SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)));
-	if (mController.brick().mailbox()) {
+	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
+	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
+
+	settingsItem->appendRow(new QStandardItem(
+			SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)));
+
+	settingsItem->appendRow(new QStandardItem(
+			SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)));
+
+	if (mController.mailbox()) {
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
+
 	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(UpdateWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
@@ -103,26 +113,30 @@ void StartWidget::launch()
 			WiFiModeWidget wiFiModeWidget(mConfigPath);
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
-		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::powerMotor)) {
-			MotorsWidget motorsWidget(mController.brick(), trikControl::Motor::powerMotor);
+		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
+			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == MotorsWidget::menuEntry(trikControl::Motor::servoMotor)) {
-			MotorsWidget motorsWidget(mController.brick(), trikControl::Motor::servoMotor);
+		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)) {
+			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::analogSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::analogSensor);
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)) {
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::analogSensor);
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(trikControl::Sensor::digitalSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), trikControl::Sensor::digitalSensor);
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)) {
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::digitalSensor);
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
-			CommunicationSettingsWidget communicationSettingsWidget(mController.brick());
-			emit newWidget(communicationSettingsWidget);
-			result = communicationSettingsWidget.exec();
+			if (mController.mailbox()) {
+				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
+				emit newWidget(communicationSettingsWidget);
+				result = communicationSettingsWidget.exec();
+			} else {
+				Q_ASSERT(!"Mailbox is disabled but commmunications widget still tries to be shown");
+			}
 		} else if (currentItemText == VersionWidget::menuEntry()) {
 			VersionWidget versionWidget;
 			emit newWidget(versionWidget);
@@ -135,6 +149,7 @@ void StartWidget::launch()
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
 					, this, SLOT(changeFileManagerRoot(MainWidget::FileManagerRootType const&)));
+
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
 		}

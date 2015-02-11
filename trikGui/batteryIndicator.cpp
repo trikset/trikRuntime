@@ -18,7 +18,7 @@
 
 using namespace trikGui;
 
-BatteryIndicator::BatteryIndicator(trikControl::Brick &brick, QWidget *parent)
+BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent)
 	: QLabel(parent)
 	, mBrick(brick)
 {

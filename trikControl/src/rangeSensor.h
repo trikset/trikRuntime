@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,32 @@
 
 #include <QtCore/QThread>
 
-#include "sensor.h"
+#include "sensorInterface.h"
+#include "deviceState.h"
+
+namespace trikKernel {
+class Configurer;
+}
 
 namespace trikControl {
 
 class RangeSensorWorker;
+class ModuleLoader;
 
 /// TRIK range sensor.
-class RangeSensor : public Sensor
+class RangeSensor : public SensorInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param eventFile - event file for this sensor.
-	RangeSensor(QString const &eventFile);
+	/// @param port - port on which this sensor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
+	RangeSensor(QString const &port, trikKernel::Configurer const &configurer, ModuleLoader &moduleLoader);
 
 	~RangeSensor() override;
+
+	Status status() const override;
 
 signals:
 	/// Emitted when new data is received from a sensor.
@@ -52,6 +61,9 @@ public slots:
 	void stop();
 
 private:
+	/// Device state, shared with worker.
+	DeviceState mState;
+
 	/// Worker object that handles sensor in separate thread.
 	QScopedPointer<RangeSensorWorker> mSensorWorker;
 

@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,12 @@
 #include <QtCore/QString>
 #include <QtCore/QDebug>
 
-#include <trikControl/sensor.h>
+#include <trikControl/sensorInterface.h>
 
 using namespace trikGui;
 
 SensorIndicator::SensorIndicator(QString const &port
-		, trikControl::Sensor &sensor
+		, trikControl::SensorInterface &sensor
 		, QWidget *parent)
 	: QWidget(parent)
 	, mSensor(sensor)

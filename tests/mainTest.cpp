@@ -14,7 +14,16 @@
 
 #include <gtest/gtest.h>
 
-#include <QtWidgets/QApplication>
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
+#include <trikKernel/coreDumping.h>
+#include <trikKernel/loggingHelper.h>
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +32,11 @@ int main(int argc, char *argv[])
 	QApplication app(argc, argv);
 
 	Q_UNUSED(app);
+
+	trikKernel::coreDumping::initCoreDumping(".");
+
+	trikKernel::LoggingHelper loggingHelper(".");
+	Q_UNUSED(loggingHelper);
 
 	return RUN_ALL_TESTS();
 }

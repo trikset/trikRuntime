@@ -1,4 +1,4 @@
-# Copyright 2013 Yurii Litvinov
+# Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,13 +25,7 @@ OTHER_FILES += \
 
 copyToDestdir($$OTHER_FILES)
 
-uses(trikKernel trikControl trikScriptRunner qslog)
-
-INCLUDEPATH += \
-	../trikKernel/include/ \
-	../trikControl/include/ \
-	../trikScriptRunner/include/ \
-	../qslog
+uses(trikKernel trikControl trikScriptRunner trikNetwork)
 
 TEMPLATE = app
 CONFIG += console

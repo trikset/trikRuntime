@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,15 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDebug>
 
+#include <QtXml/QDomDocument>
+
+#include <trikKernel/configurer.h>
 #include <trikKernel/fileUtils.h>
+#include <trikControl/brickFactory.h>
+#include <trikNetwork/mailboxFactory.h>
+#include <trikNetwork/gamepadFactory.h>
+
+#include <QsLog.h>
 
 #include "runningWidget.h"
 
@@ -28,23 +36,31 @@ int const communicatorPort = 8888;
 int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
-	: mBrick(*thread(), configPath, startDirPath)
-	, mScriptRunner(mBrick, startDirPath)
-	, mCommunicator(mScriptRunner)
-	, mTelemetry(mBrick)
+	: mBrick(trikControl::BrickFactory::create(*thread(), configPath, startDirPath))
 	, mStartDirPath(startDirPath)
 {
-	connect(&mScriptRunner, SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
+	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
+	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
+	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
+	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
 
-	connect(&mScriptRunner, SIGNAL(startedScript(QString, int))
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(
+			*mBrick, mMailbox.data(), mGamepad.data(), startDirPath));
+
+	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
+
+	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
+
+	connect(mScriptRunner.data(), SIGNAL(startedScript(QString, int))
 			, this, SLOT(scriptExecutionFromFileStarted(QString, int)));
-	connect(&mScriptRunner, SIGNAL(startedDirectScript(int))
+
+	connect(mScriptRunner.data(), SIGNAL(startedDirectScript(int))
 			, this, SLOT(directScriptExecutionStarted(int)));
 
-	connect(&mBrick, SIGNAL(stopped()), this, SIGNAL(brickStopped()));
+	connect(mBrick.data(), SIGNAL(stopped()), this, SIGNAL(brickStopped()));
 
-	mCommunicator.startServer(communicatorPort);
-	mTelemetry.startServer(telemetryPort);
+	mCommunicator->startServer(communicatorPort);
+	mTelemetry->startServer(telemetryPort);
 }
 
 Controller::~Controller()
@@ -55,9 +71,9 @@ void Controller::runFile(QString const &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
-		mScriptRunner.run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
+		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
-		mScriptRunner.run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
+		mScriptRunner->run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
 		QStringList args;
 		args << filePath;
@@ -69,16 +85,21 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
-	emit closeGraphicsWidget(mBrick.graphicsWidget());
-	mScriptRunner.abort();
+	emit closeGraphicsWidget(mBrick->graphicsWidget());
+	mScriptRunner->abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
 	// processed as if a script finished by itself.
 }
 
-trikControl::Brick &Controller::brick()
+trikControl::BrickInterface &Controller::brick()
 {
-	return mBrick;
+	return *mBrick;
+}
+
+trikNetwork::MailboxInterface *Controller::mailbox()
+{
+	return mMailbox.data();
 }
 
 QString Controller::startDirPath() const
@@ -88,12 +109,12 @@ QString Controller::startDirPath() const
 
 QString Controller::scriptsDirPath() const
 {
-	return mScriptRunner.scriptsDirPath();
+	return mScriptRunner->scriptsDirPath();
 }
 
 QString Controller::scriptsDirName() const
 {
-	return mScriptRunner.scriptsDirName();
+	return mScriptRunner->scriptsDirName();
 }
 
 void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
@@ -111,11 +132,17 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 		mRunningWidgets[scriptId]->deleteLater();
 		mRunningWidgets.remove(scriptId);
 	} else if (!error.isEmpty()) {
-		mRunningWidgets[scriptId]->showError(error);
-		mCommunicator.sendMessage("error: " + error);
+		if (mRunningWidgets[scriptId]->isVisible()) {
+			mRunningWidgets[scriptId]->showError(error);
+			mCommunicator->sendMessage("error: " + error);
+		} else {
+			// It is already closed so all we need is to delete it.
+			mRunningWidgets[scriptId]->deleteLater();
+			mRunningWidgets.remove(scriptId);
+		}
 	}
 
-	emit closeGraphicsWidget(mBrick.graphicsWidget());
+	emit closeGraphicsWidget(mBrick->graphicsWidget());
 }
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
@@ -136,7 +163,7 @@ void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scr
 	// with the keyboard file.
 	mRunningWidgets[scriptId]->grabKeyboard();
 
-	emit addGraphicsWidget(mBrick.graphicsWidget());
+	emit addGraphicsWidget(mBrick->graphicsWidget());
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

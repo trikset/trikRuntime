@@ -23,7 +23,7 @@
 	#include <QtWidgets/QLabel>
 #endif
 
-#include <trikControl/brick.h>
+#include <trikControl/brickInterface.h>
 
 namespace trikGui {
 
@@ -36,13 +36,13 @@ public:
 	/// Constructor.
 	/// @param brick - object that provides interface to a hardware.
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
-	explicit BatteryIndicator(trikControl::Brick &brick, QWidget *parent = 0);
+	explicit BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent = 0);
 
 private slots:
 	void renew();
 
 private:
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 	QTimer mRenewTimer;
 	int const mRenewInterval = 1000;
 };

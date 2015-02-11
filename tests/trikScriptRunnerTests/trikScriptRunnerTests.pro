@@ -1,4 +1,4 @@
-# Copyright 2014 CyberTech Labs Ltd.
+# Copyright 2014 - 2015 CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,13 +22,4 @@ HEADERS += \
 SOURCES += \
 	$$PWD/trikScriptRunnerTest.cpp \
 
-INCLUDEPATH += \
-	$$PWD/../../trikScriptRunner/include/trikScriptRunner \
-	$$PWD/../../trikScriptRunner/src \
-
-INCLUDEPATH += \
-	$$PWD/../../trikKernel/include \
-	$$PWD/../../trikControl/include \
-	$$PWD/../../qslog \
-
-uses(trikKernel trikControl trikScriptRunner)
+uses(trikKernel trikControl trikScriptRunner trikNetwork)

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,23 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QMutex>
 
+#include "deviceInterface.h"
+#include "deviceState.h"
+
+namespace trikKernel {
+class Configurer;
+}
+
 namespace trikControl {
 
 /// Provides direct interaction with I2C device.
-class I2cCommunicator
+/// @todo: It shall work in separate thread.
+class I2cCommunicator : public DeviceInterface
 {
 public:
 	/// Constructor.
-	/// @param devicePath - path to Linux I2C device file.
-	/// @param deviceId - id of I2C device.
-	I2cCommunicator(QString const &devicePath, int deviceId);
+	/// @param configurer - contains preparsed XML configuration.
+	I2cCommunicator(trikKernel::Configurer const &configurer);
 
 	~I2cCommunicator();
 
@@ -37,6 +44,8 @@ public:
 	/// Reads data by given I2C command number and returns the result.
 	int read(QByteArray const &data);
 
+	Status status() const override;
+
 private:
 	/// Establish connection with current device.
 	void connect();
@@ -45,9 +54,10 @@ private:
 	void disconnect();
 
 	QString const mDevicePath;
-	int const mDeviceId;
+	int mDeviceId = 0;
 	int mDeviceFileDescriptor;
 	QMutex mLock;
+	DeviceState mState;
 };
 
 }

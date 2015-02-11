@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,31 +18,31 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "motor.h"
+#include "motorInterface.h"
+
+#include "deviceState.h"
+
+namespace trikKernel {
+class Configurer;
+}
 
 namespace trikControl {
 
 /// TRIK servomotor.
-class ServoMotor : public Motor
+class ServoMotor : public MotorInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param min - minimal value of duty_ns whose meaning and range depends on motor type.
-	/// @param max - maximal value of duty_ns whose meaning and range depends on motor type.
-	/// @param zero - neutral value of duty_ns.
-	/// @param stop - value of duty_ns corresponding to poweroff state.
-	/// @param dutyFile - file for setting duty of PWM signal supplied to this motor.
-	/// @param periodFile - file for setting period of PWM signal supplied to this motor.
-	/// @param period - value of period for setting while initialization.
-	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	ServoMotor(int min, int max, int zero, int stop, QString const &dutyFile, QString const &periodFile, int period
-			, bool invert);
+	/// @param port - port on which this motor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
+	ServoMotor(QString const &port, trikKernel::Configurer const &configurer);
+
+	Status status() const override;
 
 public slots:
-	/// Returns currently set power of continuous rotation servo or angle of angular servo.
-	int power() const;
+	int power() const override;
 
 	/// Returns currently set frequency of PWM signal supplied to the motor.
 	int frequency() const;
@@ -50,23 +50,23 @@ public slots:
 	/// Returns currently set duty of PWM signal supplied to the motor.
 	int duty() const;
 
-	/// Turns off motor. This is not the same as setPower(0), because setPower will
-	/// leave motor on in a break mode, and this method will turn motor off.
-	void powerOff();
+	void powerOff() override;
 
-protected:
-	void setCurrentPower(int currentPower);
-	void setCurrentDuty(int duty);
-	void writeMotorCommand(QString const &command);
-	int min() const;
-	int max() const;
-	int zero() const;
-	bool invert() const;
+	/// For angular servos sets current motor angle to specified value. For continious rotation servos sets power of
+	/// a motor.
+	/// @param power - for angular servos --- servo shaft angle, allowed values are from -90 to 90, for continious
+	///        rotation servos --- power, allowed values are from -100 to 100.
+	void setPower(int power) override;
 
 private:
+	enum class Type {
+		angular
+		, continiousRotation
+	};
+
 	QFile mDutyFile;
 	QFile mPeriodFile;
-	int const mPeriod;
+	int mPeriod;
 	int mCurrentDutyPercent;
 	int mMin;
 	int mMax;
@@ -74,6 +74,8 @@ private:
 	int mStop;
 	bool mInvert;
 	int mCurrentPower;
+	DeviceState mState;
+	Type mMotorType;
 };
 
 }

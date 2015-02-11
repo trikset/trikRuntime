@@ -29,7 +29,8 @@ proc ClassSection { old line } {
 }
 
 proc MayBeMethodDeclaration { line inClass } {
-  if { ![regexp { \w+\(([\w:]+ [*& ]*\w+.*)?\)} $line] } {
+  if { ![regexp { \w+\(([\w:]+ [*& ]*\w+.*)?\)} $line] && ![regexp {\t\w+\([\w:]+ [*& ]*\w+.*\)} $line]} {
+    # Regular method (space before name, name, optional parameters) or constructor (tab before name, name, parameters, since parameterless constructors may be not documented)
     return 0
   }
 

@@ -37,7 +37,7 @@ public:
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
 	LineSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
-			, double toleranceFactor);
+			, qreal toleranceFactor, DeviceState &state);
 
 	~LineSensorWorker() override;
 
@@ -62,7 +62,7 @@ private:
 	QVector<int> mReading{0, 0, 0};
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
-	double mToleranceFactor = 1.0;
+	qreal mToleranceFactor = 1.0;
 
 	/// True, if video stream from camera shall be shown on robot display.
 	bool mShowOnDisplay = true;

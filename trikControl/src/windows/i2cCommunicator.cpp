@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 #include "src/i2cCommunicator.h"
 
+#include <trikKernel/configurer.h>
+
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(QString const &devicePath, int deviceId)
-	: mDevicePath(devicePath)
-	, mDeviceId(deviceId)
+I2cCommunicator::I2cCommunicator(trikKernel::Configurer const &configurer)
+	: mDevicePath(configurer.attributeByDevice("i2c", "path"))
+	, mDeviceId(configurer.attributeByDevice("i2c", "deviceId").toInt(nullptr, 0))
 {
 }
 

@@ -68,6 +68,17 @@ UI_DIR = .build/$$CONFIGURATION/.ui
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
 
+INCLUDEPATH += \
+	$$PWD/qslog \
+
+LIBS += -L$$DESTDIR
+
+IS_QSLOG = $$find(PROJECT_NAME, [qQ]s[lL]og)
+
+isEmpty(IS_QSLOG) {
+	LIBS += -lqslog$$CONFIGURATION_SUFFIX
+}
+
 unix {
 	target.path = $$[INSTALL_ROOT]/
 	INSTALLS += target

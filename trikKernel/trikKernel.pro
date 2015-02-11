@@ -14,30 +14,29 @@
 
 include(../global.pri)
 
-QT += network widgets
-
-INCLUDEPATH += $$PWD/include \
-	$$PWD/../qslog \
+QT += widgets xml
 
 HEADERS += \
-	$$PWD/include/trikKernel/connection.h \
+	$$PWD/include/trikKernel/configurer.h \
+	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
-	$$PWD/include/trikKernel/trikServer.h \
-	$$PWD/include/trikKernel/coreDumping.h \
-	$$PWD/include/trikKernel/version.h \
-	$$PWD/include/trikKernel/mainWidget.h \
 	$$PWD/include/trikKernel/lazyMainWidget.h \
+	$$PWD/include/trikKernel/loggingHelper.h \
+	$$PWD/include/trikKernel/mainWidget.h \
+	$$PWD/include/trikKernel/version.h \
+	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
+	$$PWD/include/trikKernel/exceptions/failedToParseXmlException.h \
+	$$PWD/include/trikKernel/exceptions/malformedConfigException.h \
+	$$PWD/include/trikKernel/exceptions/trikRuntimeException.h \
 
 SOURCES += \
-	$$PWD/src/connection.cpp \
+	$$PWD/src/configurer.cpp \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
-	$$PWD/src/trikServer.cpp \
+	$$PWD/src/loggingHelper.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 
 TEMPLATE = lib
 
 DEFINES += TRIKKERNEL_LIBRARY
-
-uses(qslog)

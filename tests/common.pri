@@ -26,3 +26,5 @@ LIBS += -L$$DESTDIR
 LIBS += -lgmock$$CONFIGURATION_SUFFIX
 
 SOURCES = $$PWD/mainTest.cpp
+
+QMAKE_CXXFLAGS += -Wno-unused-local-typedefs

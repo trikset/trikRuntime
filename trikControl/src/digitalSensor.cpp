@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,35 @@
 
 #include <QtCore/QDebug>
 
+#include <trikKernel/configurer.h>
 #include <QsLog.h>
+
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
-DigitalSensor::DigitalSensor(int min, int max, QString const &deviceFile)
-	: mMin(min)
-	, mMax(max)
-	, mDeviceFile(deviceFile)
+DigitalSensor::DigitalSensor(QString const &port, trikKernel::Configurer const &configurer)
+	: mDeviceFile(configurer.attributeByPort(port, "deviceFile"))
 {
+
+	mMin = ConfigurerHelper::configureInt(configurer, mState, port, "min");
+	mMax = ConfigurerHelper::configureInt(configurer, mState, port, "max");
+
+	mState.ready();
+
+	// Testing availability of a device.
+	read();
 }
 
 int DigitalSensor::read()
 {
+	if (!mState.isReady()) {
+		return 0;
+	}
+
 	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QLOG_ERROR() << "File " << mDeviceFile.fileName() << " failed to open for reading";
-		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";
+		mState.fail();
 		return 0;
 	}
 
@@ -49,7 +62,7 @@ int DigitalSensor::read()
 	value = qMin(value, mMax);
 	value = qMax(value, mMin);
 
-	double const scale = 100.0 / (static_cast<double>(mMax - mMin));
+	qreal const scale = 100.0 / (static_cast<qreal>(mMax - mMin));
 
 	value = (value - mMin) * scale;
 
@@ -58,9 +71,13 @@ int DigitalSensor::read()
 
 int DigitalSensor::readRawData()
 {
+	if (!mState.isReady()) {
+		return 0;
+	}
+
 	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QLOG_ERROR() << "File " << mDeviceFile.fileName() << " failed to open for reading";
-		qDebug() << "File " << mDeviceFile.fileName() << " failed to open for reading";
+		mState.fail();
 		return 0;
 	}
 
@@ -72,4 +89,9 @@ int DigitalSensor::readRawData()
 	mDeviceFile.close();
 
 	return value;
+}
+
+DigitalSensor::Status DigitalSensor::status() const
+{
+	return mState.status();
 }

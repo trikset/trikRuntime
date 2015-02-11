@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 #include <trikKernel/fileUtils.h>
 
 #include "src/scriptEngineWorker.h"
+#include "src/scriptExecutionControl.h"
 
 #include <QsLog.h>
 
@@ -25,8 +26,12 @@ using namespace trikScriptRunner;
 // name of the directory in which scripts must be saved
 QString const constScriptsDirName = "scripts";
 
-TrikScriptRunner::TrikScriptRunner(trikControl::Brick &brick, QString const &startDirPath)
-	: mScriptEngineWorker(new ScriptEngineWorker(brick, startDirPath))
+TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
+		, QString const &startDirPath)
+	: mScriptController(new ScriptExecutionControl())
+	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)
 {

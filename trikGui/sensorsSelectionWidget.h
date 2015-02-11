@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@
 #include <QtCore/QStringList>
 #include <QtGui/QKeyEvent>
 
-#include <trikControl/brick.h>
-#include <trikControl/sensor.h>
+#include <trikControl/brickInterface.h>
+#include <trikControl/sensorInterface.h>
 
 #include "trikGuiDialog.h"
 
@@ -44,12 +44,12 @@ class SensorsSelectionWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
-	SensorsSelectionWidget(trikControl::Brick &brick
-			, trikControl::Sensor::Type type
+	SensorsSelectionWidget(trikControl::BrickInterface &brick
+			, trikControl::SensorInterface::Type type
 			, QWidget *parent = 0);
 
 	/// Returns main menu entry string for this widget.
-	static QString menuEntry(trikControl::Sensor::Type type);
+	static QString menuEntry(trikControl::SensorInterface::Type type);
 
 	void renewFocus() override;
 
@@ -64,7 +64,7 @@ private:
 	QLabel mTitle;
 	QListWidget mList;
 
-	trikControl::Brick &mBrick;
+	trikControl::BrickInterface &mBrick;
 };
 
 }

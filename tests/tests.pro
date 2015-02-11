@@ -15,9 +15,11 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+	selftest \
 	thirdparty \
 	trikScriptRunnerTests \
 
 thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
 
 trikScriptRunnerTests.depends = thirdparty
+selftest.depends = thirdparty

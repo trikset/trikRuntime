@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,47 +14,80 @@
 
 #include "rangeSensor.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QThread>
 
-#include "src/rangeSensorWorker.h"
+#include <trikKernel/configurer.h>
+#include <QsLog.h>
+
+#include "rangeSensorWorker.h"
+#include "moduleLoader.h"
 
 using namespace trikControl;
 
-RangeSensor::RangeSensor(QString const &eventFile)
-	: mSensorWorker(new RangeSensorWorker(eventFile))
+RangeSensor::RangeSensor(QString const &port, trikKernel::Configurer const &configurer, ModuleLoader &moduleLoader)
 {
-	mSensorWorker->moveToThread(&mWorkerThread);
+	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
+			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))
+	{
+		QLOG_ERROR() << "Module loading failed";
+		mState.fail();
+		return;
+	}
 
-	connect(mSensorWorker.data(), SIGNAL(newData(int, int)), this, SIGNAL(newData(int, int)));
+	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState));
 
-	mWorkerThread.start();
+	if (!mState.isFailed()) {
+		mSensorWorker->moveToThread(&mWorkerThread);
+
+		connect(mSensorWorker.data(), SIGNAL(newData(int, int)), this, SIGNAL(newData(int, int)));
+
+		mWorkerThread.start();
+	}
 }
 
 RangeSensor::~RangeSensor()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
+
+RangeSensor::Status RangeSensor::status() const
+{
+	return mState.status();
 }
 
 void RangeSensor::init()
 {
-	QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	if (!mState.isFailed()) {
+		QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	}
 }
 
 int RangeSensor::read()
 {
-	// Read is called synchronously and only takes prepared value from sensor.
-	return mSensorWorker->read();
+	if (!mState.isFailed()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mSensorWorker->read();
+	} else {
+		return 0;
+	}
 }
 
 int RangeSensor::readRawData()
 {
-	// Read is called synchronously and only takes prepared value from sensor.
-	return mSensorWorker->readRawData();
+	if (!mState.isFailed()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mSensorWorker->readRawData();
+	} else {
+		return 0;
+	}
 }
 
 void RangeSensor::stop()
 {
-	QMetaObject::invokeMethod(mSensorWorker.data(), "stop");
+	if (!mState.isFailed()) {
+		QMetaObject::invokeMethod(mSensorWorker.data(), "stop");
+	}
 }

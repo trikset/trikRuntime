@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,32 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "motor.h"
+#include "motorInterface.h"
+#include "deviceState.h"
+
+namespace trikKernel {
+class Configurer;
+}
 
 namespace trikControl {
 
 class I2cCommunicator;
 
 /// TRIK power motor.
-class PowerMotor : public Motor
+class PowerMotor : public MotorInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param communicator - reference to an object that handles I2C communication.
-	/// @param i2cCommandNumber - I2C command corresponding to this device.
-	/// @param invert - true, if power values set by setPower slot shall be negated before sent to motor.
-	PowerMotor(I2cCommunicator &communicator, int i2cCommandNumber, bool invert);
+	/// @param port - port on which this motor is configured.
+	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
+	/// @param communicator - I2C communicator to use to query sensor.
+	PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
 
-	/// Destructor.
 	~PowerMotor() override;
+
+	Status status() const override;
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -53,9 +59,10 @@ public slots:
 
 private:
 	I2cCommunicator &mCommunicator;
-	int const mI2cCommandNumber;
+	int mI2cCommandNumber;
 	bool const mInvert;
 	int mCurrentPower;
+	DeviceState mState;
 };
 
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,19 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtXml/QDomDocument>
 
-#include <trikKernel/fileUtils.h>
+#include <trikControl/brickFactory.h>
+#include <trikControl/brickInterface.h>
+#include <trikKernel/configurer.h>
 #include <trikKernel/coreDumping.h>
-#include <trikControl/brick.h>
+#include <trikKernel/fileUtils.h>
+#include <trikKernel/loggingHelper.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikNetwork/gamepadFactory.h>
+#include <trikNetwork/gamepadInterface.h>
+#include <trikNetwork/mailboxFactory.h>
+#include <trikNetwork/mailboxInterface.h>
 
 #include <QsLog.h>
 
@@ -90,25 +98,27 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	int const maxLogSize = 10 * 1024 * 1024;
-	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	QsLogging::DestinationPtr destination = QsLogging::DestinationFactory::MakeFileDestination(
-			startDirPath + "trik.log"
-			, QsLogging::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)
-			, QsLogging::TraceLevel);
-	QsLogging::Logger::instance().addDestination(destination);
+	trikKernel::LoggingHelper loggingHelper(startDirPath);
+	Q_UNUSED(loggingHelper);
+
 	QLOG_INFO() << "TrikRun started";
 
-	trikControl::Brick brick(*app.thread(), configPath, startDirPath);
+	QScopedPointer<trikControl::BrickInterface> brick(
+			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath)
+	);
+
 	GraphicsWidgetHandler graphicsWidgetHandler;
 
-	QObject::connect(&brick.graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
+	QObject::connect(&brick->graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
 			, &graphicsWidgetHandler, SLOT(show(trikKernel::MainWidget&)));
-	QObject::connect(&brick.graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
 
-	trikScriptRunner::TrikScriptRunner runner(brick, startDirPath);
+	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
+
+	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
+	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
+	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data(), startDirPath);
+
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
 
 	if (app.arguments().contains("-s")) {

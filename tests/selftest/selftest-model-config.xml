@@ -1,0 +1,108 @@
+<!--
+Config for robot self-test, checks availability of all devices on operating system level (does not test that they are
+working properly, it tests only that runtime can interact with them).
+-->
+
+<config>
+	<initScript>
+	</initScript>
+
+	<E1>
+		<angularServomotor />
+	</E1>
+	<E2>
+		<angularServomotor />
+	</E2>
+	<E3>
+		<angularServomotor  />
+	</E3>
+	<C1>
+		<angularServomotor />
+	</C1>
+	<C2>
+		<angularServomotor />
+	</C2>
+	<C3>
+		<angularServomotor />
+	</C3>
+
+	<A1>
+		<irSensor />
+	</A1>
+	<A2>
+		<irSensor />
+	</A2>
+	<A3>
+		<irSensor />
+	</A3>
+	<A4>
+		<irSensor />
+	</A4>
+	<A5>
+		<irSensor />
+	</A5>
+	<A6>
+		<irSensor />
+	</A6>
+
+	<D1>
+		<rangeSensor />
+	</D1>
+	<D2>
+		<rangeSensor />
+	</D2>
+	<!--
+	<F1>
+		<volumeSensor />
+	</F1>
+	-->
+
+	<!-- Encoder ports. -->
+	<B1>
+		<encoder95 />
+	</B1>
+	<B2>
+		<encoder95 />
+	</B2>
+	<B3>
+		<encoder95 />
+	</B3>
+	<B4>
+		<encoder95 />
+	</B4>
+
+	<!-- Power motor ports. -->
+	<M1>
+		<powerMotor />
+	</M1>
+	<M2>
+		<powerMotor />
+	</M2>
+	<M3>
+		<powerMotor />
+	</M3>
+	<M4>
+		<powerMotor />
+	</M4>
+
+	<!-- Video sensor ports. -->
+	<!--
+	<video0>
+		<lineSensor />
+	</video0>
+
+	<video1>
+		<colorSensor3x3 />
+	</video1>
+	-->
+
+	<!-- On-board sensors. -->
+	<!-- If model is not using those, they can be turned off to save system resources, by deleting them or
+		 commenting them out. -->
+	<accelerometer />
+	<gyroscope />
+
+	<!-- Optional modules -->
+	<gamepad />
+	<mailbox />
+</config>

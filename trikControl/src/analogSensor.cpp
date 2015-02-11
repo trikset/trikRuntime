@@ -1,4 +1,4 @@
-/* Copyright 2013 Nikita Batov
+/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,64 @@
 
 #include <QtCore/QDebug>
 
-#include "i2cCommunicator.h"
-
+#include <trikKernel/configurer.h>
 #include <QsLog.h>
+
+#include "i2cCommunicator.h"
+#include "configurerHelper.h"
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(I2cCommunicator &communicator
-		, int i2cCommandNumber
-		, int rawValue1
-		, int rawValue2
-		, int normalizedValue1
-		, int normalizedValue2)
+AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
-	, mI2cCommandNumber(i2cCommandNumber)
-	, mK(0)
-	, mB(0)
 {
+	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+
 	// We use linear subjection to normalize sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
+	int const rawValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue1");
+	int const rawValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue2");
+	int const normalizedValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue1");
+	int const normalizedValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue2");
+
 	if (rawValue1 == rawValue2) {
-		QString const message = "Sensor calibration error: rawValue1 = rawValue2!";
-		QLOG_ERROR() << message;
-		qDebug() << message;
+		QLOG_ERROR() <<  "Sensor calibration error: rawValue1 = rawValue2!";
+		mState.fail();
 		mK = 0;
 		mB = 0;
 	} else {
-		mK = static_cast<double>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
+		mK = static_cast<qreal>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
 		mB = normalizedValue1 - mK * rawValue1;
 	}
+
+	mState.ready();
+}
+
+AnalogSensor::Status AnalogSensor::status() const
+{
+	return DeviceInterface::combine(mCommunicator, mState.status());
 }
 
 int AnalogSensor::read()
 {
+	if (!mState.isReady() || mCommunicator.status() != DeviceInterface::Status::ready) {
+		return 0;
+	}
+
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
-	int value = mK * mCommunicator.read(command) + mB;
-
-	return value;
+	return mK * mCommunicator.read(command) + mB;
 }
 
 int AnalogSensor::readRawData()
 {
+	if (!mState.isReady() || mCommunicator.status() != DeviceInterface::Status::ready) {
+		return 0;
+	}
+
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 

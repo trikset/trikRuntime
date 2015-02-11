@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@
 
 #include <trikKernel/fileUtils.h>
 
-#include <trikControl/analogSensor.h>
-#include <trikControl/battery.h>
-#include <trikControl/colorSensor.h>
-#include <trikControl/display.h>
-#include <trikControl/encoder.h>
-#include <trikControl/lineSensor.h>
-#include <trikControl/mailbox.h>
-#include <trikControl/motor.h>
-#include <trikControl/objectSensor.h>
-#include <trikControl/sensor.h>
-#include <trikControl/sensor3d.h>
+#include <trikControl/batteryInterface.h>
+#include <trikControl/colorSensorInterface.h>
+#include <trikControl/displayInterface.h>
+#include <trikControl/encoderInterface.h>
+#include <trikControl/lineSensorInterface.h>
+#include <trikControl/motorInterface.h>
+#include <trikControl/objectSensorInterface.h>
+#include <trikControl/sensorInterface.h>
+#include <trikControl/vectorSensorInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+#include <trikNetwork/gamepadInterface.h>
 
 #include "scriptableParts.h"
 #include "utils.h"
@@ -39,32 +39,39 @@
 
 using namespace trikScriptRunner;
 using namespace trikControl;
+using namespace trikNetwork;
 
 Q_DECLARE_METATYPE(Threading*)
-Q_DECLARE_METATYPE(AnalogSensor*)
-Q_DECLARE_METATYPE(ColorSensor*)
-Q_DECLARE_METATYPE(Battery*)
-Q_DECLARE_METATYPE(Display*)
-Q_DECLARE_METATYPE(Encoder*)
-Q_DECLARE_METATYPE(Gamepad*)
-Q_DECLARE_METATYPE(Keys*)
-Q_DECLARE_METATYPE(Led*)
-Q_DECLARE_METATYPE(LineSensor*)
-Q_DECLARE_METATYPE(Mailbox*)
-Q_DECLARE_METATYPE(Motor*)
-Q_DECLARE_METATYPE(ObjectSensor*)
-Q_DECLARE_METATYPE(Sensor*)
-Q_DECLARE_METATYPE(Sensor3d*)
+Q_DECLARE_METATYPE(ColorSensorInterface*)
+Q_DECLARE_METATYPE(BatteryInterface*)
+Q_DECLARE_METATYPE(DisplayInterface*)
+Q_DECLARE_METATYPE(EncoderInterface*)
+Q_DECLARE_METATYPE(GamepadInterface*)
+Q_DECLARE_METATYPE(KeysInterface*)
+Q_DECLARE_METATYPE(LedInterface*)
+Q_DECLARE_METATYPE(LineSensorInterface*)
+Q_DECLARE_METATYPE(MailboxInterface*)
+Q_DECLARE_METATYPE(MotorInterface*)
+Q_DECLARE_METATYPE(ObjectSensorInterface*)
+Q_DECLARE_METATYPE(SensorInterface*)
+Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
-ScriptEngineWorker::ScriptEngineWorker(trikControl::Brick &brick, QString const &startDirPath)
+ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
+		, trikNetwork::MailboxInterface * const mailbox
+		, trikNetwork::GamepadInterface * const gamepad
+		, ScriptExecutionControl &scriptControl
+		, QString const &startDirPath)
 	: mBrick(brick)
+	, mMailbox(mailbox)
+	, mGamepad(gamepad)
+	, mScriptControl(scriptControl)
 	, mThreadingVariable(this)
 	, mStartDirPath(startDirPath)
 	, mState(ready)
 {
-	connect(&mBrick, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -86,6 +93,15 @@ void ScriptEngineWorker::reset()
 	mState = resetting;
 	mThreadingVariable.reset();
 	mBrick.reset();
+	mScriptControl.reset();
+	if (mMailbox) {
+		mMailbox->reset();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
+	}
+
 	mState = ready;
 	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
@@ -113,7 +129,6 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		reset();
 		startScriptEvaluation(scriptId);
 		mBrick.run();
-	}
 */
 }
 
@@ -127,10 +142,10 @@ void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	if (!mBrick.isInEventDrivenMode()) {
-		// Somebody erroneously called brick.quit() before entering event loop, so we must force event loop for brick
+	if (!mScriptControl.isInEventDrivenMode()) {
+		// Somebody erroneously called script.quit() before entering event loop, so we must force event loop for script
 		// and only then quit, to send properly completed() signal.
-		mBrick.run();
+		mScriptControl.run();
 	}
 
 	reset();
@@ -150,7 +165,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine()
 	qScriptRegisterMetaType(engine, mailboxToScriptValue, mailboxFromScriptValue);
 	qScriptRegisterMetaType(engine, motorToScriptValue, motorFromScriptValue);
 	qScriptRegisterMetaType(engine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(engine, sensor3dToScriptValue, sensor3dFromScriptValue);
+	qScriptRegisterMetaType(engine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
@@ -158,6 +173,15 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine()
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
+	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+	if (mMailbox) {
+		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
+	}
+
+	if (mGamepad) {
+		engine->globalObject().setProperty("gamepad", engine->newQObject(mGamepad));
+	}
+
 	engine->globalObject().setProperty("Threading", engine->newQObject(&mThreadingVariable));
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
@@ -168,6 +192,8 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine()
 			qDebug() << "system.js: Uncaught exception at line" << line << ":" << message;
 			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
 		}
+	} else {
+		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
 	}
 
 	engine->setProcessEventsInterval(1);
