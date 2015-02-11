@@ -26,8 +26,6 @@
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/gamepadFactory.h>
 
-#include <QsLog.h>
-
 #include "runningWidget.h"
 
 using namespace trikGui;
@@ -143,6 +141,9 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 	}
 
 	emit closeGraphicsWidget(mBrick->graphicsWidget());
+	if (!mRunningWidgets.isEmpty()) {  // another script has already started execution
+		emit addGraphicsWidget(mBrick->graphicsWidget());
+	}
 }
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
