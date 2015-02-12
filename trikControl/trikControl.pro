@@ -31,7 +31,6 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
-    include/trikControl/usbMSP430Interface.h
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -63,6 +62,7 @@ HEADERS += \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
+	$$PWD/src/usbMSP430Interface.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
 
@@ -92,12 +92,12 @@ SOURCES += \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/vectorSensor.cpp \
+	$$PWD/src/usbMSP430Interface.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
-    src/usbMSP430Interface.cpp
 
 OTHER_FILES += \
 	model-config.xml \

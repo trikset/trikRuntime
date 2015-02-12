@@ -5,3 +5,6 @@
  *      Author: Rostislav Varzar
  */
 
+#include <stdint.h>
+#include <QByteArray>
+#include "usbMSP430Interface.h"
