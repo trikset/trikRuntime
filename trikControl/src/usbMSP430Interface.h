@@ -24,7 +24,10 @@
 #define ENC3    0x32
 #define ENC4    0x33
 
+/// Write data to MSP430 via USB
 void usb_msp_write(QByteArray const &i2c_data);
+
+/// Read data from MSP430 via USB
 int32_t usb_msp_read(QByteArray const &i2c_data);
 
 #endif // USBMSP430INTERFACE_H
