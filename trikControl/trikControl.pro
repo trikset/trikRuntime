@@ -31,6 +31,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
+    include/trikControl/usbmsp430interface.h
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -96,6 +97,7 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
+    src/usbmsp430interface.cpp
 
 OTHER_FILES += \
 	model-config.xml \
