@@ -84,9 +84,7 @@ void TrikScriptRunner::run(QString const &script, QString const &fileName)
 void TrikScriptRunner::runDirectCommand(QString const &command)
 {
 	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
-	QMetaObject::invokeMethod(mScriptEngineWorker, "runDirect"
-			, Q_ARG(QString const &, command)
-			, Q_ARG(int, mMaxScriptId++));
+	mScriptEngineWorker->runDirect(command, mMaxScriptId++);
 }
 
 void TrikScriptRunner::abort()

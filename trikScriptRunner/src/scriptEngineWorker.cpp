@@ -68,6 +68,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
 	, mThreadingVariable(this)
+	, mDirectScriptsEngine(nullptr)
 	, mStartDirPath(startDirPath)
 	, mState(ready)
 {
@@ -92,6 +93,17 @@ void ScriptEngineWorker::reset()
 
 	mState = resetting;
 	mThreadingVariable.reset();
+
+	if (mDirectScriptsEngine) {
+		mDirectScriptsEngine->abortEvaluation();
+		QLOG_INFO() << "ScriptEngineWorker : ending interpretation";
+		emit completed(mDirectScriptsEngine->hasUncaughtException()
+				? mDirectScriptsEngine->uncaughtException().toString()
+				: "", mScriptId);
+		mDirectScriptsEngine->deleteLater();
+		mDirectScriptsEngine = nullptr;
+	}
+
 	mBrick.reset();
 	mScriptControl.reset();
 	if (mMailbox) {
@@ -124,12 +136,26 @@ void ScriptEngineWorker::doRun(const QString &script)
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
-/*
-	if (!mBrick.isInEventDrivenMode()) {
+	if (!mScriptControl.isInEventDrivenMode()) {
+		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
 		reset();
 		startScriptEvaluation(scriptId);
-		mBrick.run();
-*/
+		mDirectScriptsEngine = createScriptEngine();
+		mScriptControl.run();
+		mState = running;
+	}
+
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
+}
+
+void ScriptEngineWorker::doRunDirect(const QString &command)
+{
+	if (mDirectScriptsEngine) {
+		mDirectScriptsEngine->evaluate(command);\
+		if (mDirectScriptsEngine->hasUncaughtException()) {
+			reset();
+		}
+	}
 }
 
 void ScriptEngineWorker::startScriptEvaluation(int scriptId)

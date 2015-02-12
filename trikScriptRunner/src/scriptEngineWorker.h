@@ -96,6 +96,8 @@ private slots:
 
 	void doRun(const QString &script);
 
+	void doRunDirect(const QString &command);
+
 private:
 	void startScriptEvaluation(int scriptId);
 
@@ -104,6 +106,7 @@ private:
 	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreadingVariable;
+	QScriptEngine *mDirectScriptsEngine;
 	QString const mStartDirPath;
 	int mScriptId;
 	State mState;
