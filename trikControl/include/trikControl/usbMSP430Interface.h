@@ -1,5 +1,5 @@
 /*
- * usbmsp430interface.h
+ * usbMSP430Interface.h
  *
  *  Created on: Fabruary 12, 2015
  *      Author: Rostislav Varzar
