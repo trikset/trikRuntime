@@ -8,7 +8,7 @@
 #ifndef USBMSP430INTERFACE_H
 #define USBMSP430INTERFACE_H
 
-
+void privet();
 
 #endif // USBMSP430INTERFACE_H
 
