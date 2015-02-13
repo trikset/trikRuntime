@@ -42,6 +42,10 @@
 
 #include "graphicsWidgetHandler.h"
 
+/// For debug
+#include "../trikControl/src/usbMSP430Interface.h"
+char stmp1[32];
+
 using namespace trikRun;
 
 void printUsage()
@@ -142,6 +146,9 @@ int main(int argc, char *argv[])
 
 		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
 	}
+
+    //makeWriteRegPacket(stmp1, 0x26, 0x01, 0x01f4);
+    //qDebug() << stmp1;
 
 	return app.exec();
 }

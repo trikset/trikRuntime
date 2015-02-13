@@ -6,24 +6,20 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
 #include <QByteArray>
+#include <QDebug>
 #include "usbMSP430Interface.h"
 
-/// Converts number to ASCII code according to HEX format
-uint8_t to_hex(uint8_t i)
+/// Make write reg packet
+void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, uint32_t reg_val)
 {
-    return (i <= 9 ? '0' + i : 'A' - 10 + i);
+    uint8_t crc; //Checksum
+
+    crc = (0xFF - (dev_addr + WRITE_FUNC + reg_addr + uint8_t(reg_val & 0xFF) + uint8_t((reg_val >> 8) & 0xFF) +
+                   uint8_t((reg_val >> 16) & 0xFF) + uint8_t((reg_val >> 24) & 0xFF)) + 1) & 0xFF;
+    sprintf(msp_packet, ":%02X%02X%02X%08X%02X\n", dev_addr, WRITE_FUNC, reg_addr, reg_val, crc);
 }
-
-/// Converts number to HEX string
-void num2hex(char *string, uint8_t number)
-{
-    string[0] = to_hex((number & 0x00F0) >> 4);
-    string[1] = to_hex(number & 0x000F);
-    string[2] = '\0';
-}
-
-
 
 /// Write data to MSP430 via USB
 void usb_msp_write(QByteArray const &i2c_data)
@@ -32,7 +28,7 @@ void usb_msp_write(QByteArray const &i2c_data)
     {
         switch (i2c_data[0])
         {
-            case MOT1:
+            case i2cMOT1:
 
                 break;
             default:
@@ -46,13 +42,13 @@ void usb_msp_write(QByteArray const &i2c_data)
 }
 
 /// Read data from MSP430 via USB
-int32_t usb_msp_read(QByteArray const &i2c_data)
+uint32_t usb_msp_read(QByteArray const &i2c_data)
 {
     if (i2c_data.size() == 2)
     {
         switch (i2c_data[0])
         {
-            case ENC1:
+            case i2cENC1:
 
                 break;
             default:
