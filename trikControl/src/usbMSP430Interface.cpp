@@ -29,8 +29,6 @@ signals:
     void resultReady(const QString &s);
 };
 
-
-
 /// Extract number from packet
 uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize)
 {
@@ -91,6 +89,7 @@ uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet
     fusb = fopen(usb_name, "w");
     fprintf(fusb, in_msp_packet);
     fclose(fusb);
+    /*
     while ((strlen(fstmp) == 0) || (tout < TIME_OUT))
         tout++;
     if (strlen(fstmp) != 0)
@@ -103,6 +102,8 @@ uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet
         sprintf(out_msp_packet, "ERROR");
         return NO_PACKET;
     }
+    */
+    return NO_RESP_ERROR;
 }
 
 /// Write data to MSP430 via USB

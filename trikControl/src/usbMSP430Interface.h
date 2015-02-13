@@ -108,6 +108,8 @@
 
 #define TIME_OUT            0x03E8
 
+#define USB_DEV_NAME        "/dev/ttyACM0"
+
 /// Extract number from packet
 uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize);
 
@@ -116,6 +118,9 @@ void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, ui
 
 /// Make read register packet
 void makeReadRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr);
+
+/// Send packet via USB port
+uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet);
 
 /// Function for decoding received packet
 uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func_code, uint8_t &reg_addr, uint32_t &reg_val);
@@ -126,8 +131,6 @@ void writeUSBMSP(QByteArray const &i2c_data);
 /// Read data from MSP430 via USB
 uint32_t readUSBMSP(QByteArray const &i2c_data);
 
-/// Send packet via USB port
-uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet);
 
 #endif // USBMSP430INTERFACE_H
 

@@ -45,6 +45,8 @@
 /// For debug
 #include "../trikControl/src/usbMSP430Interface.h"
 char stmp1[32];
+char stmp2[32];
+char stmp3[32];
 uint8_t devaddr, regaddr, funccode;
 uint32_t regval, errcode;
 
@@ -195,6 +197,26 @@ int main(int argc, char *argv[])
     qDebug() << regval;
     qDebug() << errcode;
     */
+
+    sprintf(stmp3, USB_DEV_NAME);
+    //sprintf(stmp3, "/dev/ttyACM0");
+    qDebug() << stmp3;
+
+    makeWriteRegPacket(stmp1, 0x01, 0x02, 0x1000);
+    qDebug() << stmp1;
+    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+
+    makeWriteRegPacket(stmp1, 0x01, 0x01, 0x0FFF);
+    qDebug() << stmp1;
+    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+
+    makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8007);
+    qDebug() << stmp1;
+    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+
+    makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8000);
+    qDebug() << stmp1;
+    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
 
     return app.exec();
 }

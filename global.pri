@@ -85,7 +85,7 @@ unix {
 }
 
 QMAKE_CXXFLAGS += -std=c++11
-QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual -fpermissive
+QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual
 
 GLOBAL_PWD = $$PWD
 
