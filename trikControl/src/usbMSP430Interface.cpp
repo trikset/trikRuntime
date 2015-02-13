@@ -10,7 +10,26 @@
 #include <string.h>
 #include <QByteArray>
 #include <QDebug>
+#include <QThread>
 #include "usbMSP430Interface.h"
+
+// volatile char fstmp[MAX_STRING_LENGTH];             // Buffer for response packets
+char fstmp[MAX_STRING_LENGTH];             // Buffer for response packets
+
+/// Class for reading data from USB in separated thread
+class ReadUSBThread : public QThread
+{
+    Q_OBJECT
+    void run() {
+        QString result;
+        /* expensive or blocking operation  */
+        emit resultReady(result);
+    }
+signals:
+    void resultReady(const QString &s);
+};
+
+
 
 /// Extract number from packet
 uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize)
@@ -65,12 +84,25 @@ uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func
 }
 
 /// Send packet via USB port
-void sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet)
+uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet)
 {
-    FILE *fusb;
+    uint16_t tout = 0;                                  // Timeout counter
+    FILE *fusb;                                         // File descriptor
     fusb = fopen(usb_name, "w");
     fprintf(fusb, in_msp_packet);
     fclose(fusb);
+    while ((strlen(fstmp) == 0) || (tout < TIME_OUT))
+        tout++;
+    if (strlen(fstmp) != 0)
+    {
+        strcpy(out_msp_packet, fstmp);
+        return NO_RESP_ERROR;
+    }
+    else
+    {
+        sprintf(out_msp_packet, "ERROR");
+        return NO_PACKET;
+    }
 }
 
 /// Write data to MSP430 via USB

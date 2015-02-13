@@ -102,6 +102,12 @@
 
 #define RECV_PACK_LEN       0x12
 
+/// Errors for response
+#define NO_RESP_ERROR       0x00
+#define NO_PACKET           0xFF
+
+#define TIME_OUT            0x03E8
+
 /// Extract number from packet
 uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize);
 
@@ -121,7 +127,7 @@ void writeUSBMSP(QByteArray const &i2c_data);
 uint32_t readUSBMSP(QByteArray const &i2c_data);
 
 /// Send packet via USB port
-void sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet);
+uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet);
 
 #endif // USBMSP430INTERFACE_H
 
