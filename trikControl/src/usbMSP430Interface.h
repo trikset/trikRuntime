@@ -115,10 +115,13 @@ void makeReadRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr);
 uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func_code, uint8_t &reg_addr, uint32_t &reg_val);
 
 /// Write data to MSP430 via USB
-void usb_msp_write(QByteArray const &i2c_data);
+void writeUSBMSP(QByteArray const &i2c_data);
 
 /// Read data from MSP430 via USB
-uint32_t usb_msp_read(QByteArray const &i2c_data);
+uint32_t readUSBMSP(QByteArray const &i2c_data);
+
+/// Send packet via USB port
+void sendUSBPacket(char *usb_name, char *msp_packet);
 
 #endif // USBMSP430INTERFACE_H
 

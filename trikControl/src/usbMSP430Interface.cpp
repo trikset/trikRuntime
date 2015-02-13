@@ -64,8 +64,14 @@ uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func
     return NO_ERROR;                                    // Return NO ERROR
 }
 
+/// Send packet via USB port
+void sendUSBPacket(char *usb_name, char *msp_packet)
+{
+
+}
+
 /// Write data to MSP430 via USB
-void usb_msp_write(QByteArray const &i2c_data)
+void writeUSBMSP(QByteArray const &i2c_data)
 {
     if (i2c_data.size() == 2)
     {
@@ -85,7 +91,7 @@ void usb_msp_write(QByteArray const &i2c_data)
 }
 
 /// Read data from MSP430 via USB
-uint32_t usb_msp_read(QByteArray const &i2c_data)
+uint32_t readUSBMSP(QByteArray const &i2c_data)
 {
     if (i2c_data.size() == 2)
     {
