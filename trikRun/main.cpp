@@ -147,8 +147,11 @@ int main(int argc, char *argv[])
 		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
 	}
 
-    //makeWriteRegPacket(stmp1, 0x26, 0x01, 0x01f4);
-    //qDebug() << stmp1;
+    makeWriteRegPacket(stmp1, 0x26, 0x01, 0x01f4);
+    qDebug() << stmp1;
+    makeReadRegPacket(stmp1, 0x12, 0x02);
+    qDebug() << stmp1;
+
 
 	return app.exec();
 }

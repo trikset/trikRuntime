@@ -30,8 +30,11 @@
 #define WRITE_FUNC          0x03
 #define READ_FUNC           0x05
 
-/// Make write reg packet
+/// Make write register packet
 void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, uint32_t reg_val);
+
+/// Make read register packet
+void makeReadRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr);
 
 /// Write data to MSP430 via USB
 void usb_msp_write(QByteArray const &i2c_data);
