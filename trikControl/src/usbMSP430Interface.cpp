@@ -65,9 +65,12 @@ uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func
 }
 
 /// Send packet via USB port
-void sendUSBPacket(char *usb_name, char *msp_packet)
+void sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet)
 {
-
+    FILE *fusb;
+    fusb = fopen(usb_name, "w");
+    fprintf(fusb, in_msp_packet);
+    fclose(fusb);
 }
 
 /// Write data to MSP430 via USB

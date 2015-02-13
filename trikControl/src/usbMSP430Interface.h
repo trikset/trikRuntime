@@ -121,7 +121,7 @@ void writeUSBMSP(QByteArray const &i2c_data);
 uint32_t readUSBMSP(QByteArray const &i2c_data);
 
 /// Send packet via USB port
-void sendUSBPacket(char *usb_name, char *msp_packet);
+void sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet);
 
 #endif // USBMSP430INTERFACE_H
 
