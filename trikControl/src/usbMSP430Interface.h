@@ -30,7 +30,7 @@
 #define WRITE_FUNC          0x03
 #define READ_FUNC           0x05
 
-//Error defines
+/// Error defines
 #define NO_ERROR            0x00
 #define FUNC_CODE_ERROR     0x01
 #define REG_ADDR_ERROR      0x02
@@ -43,6 +43,16 @@
 #define LENGTH_ERROR        0x14
 #define REG_INC_ERROR       0x15
 #define UNDEF_ERROR         0xFF
+
+/// HEX number sizes
+#define NUM_BYTE            0x02
+#define NUM_WORD            0x04
+#define NUM_DWORD           0x08
+
+#define RECV_PACK_LEN       0x12
+
+/// Extract number from packet
+uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize);
 
 /// Make write register packet
 void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, uint32_t reg_val);

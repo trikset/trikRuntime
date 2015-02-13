@@ -45,6 +45,8 @@
 /// For debug
 #include "../trikControl/src/usbMSP430Interface.h"
 char stmp1[32];
+uint8_t devaddr, regaddr, funccode;
+uint32_t regval, errcode;
 
 using namespace trikRun;
 
@@ -147,11 +149,52 @@ int main(int argc, char *argv[])
 		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
 	}
 
+    /*
     makeWriteRegPacket(stmp1, 0x26, 0x01, 0x01f4);
     qDebug() << stmp1;
-    makeReadRegPacket(stmp1, 0x12, 0x02);
+    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
+
+    sprintf(stmp1, ":2603010000C350C3\n");
     qDebug() << stmp1;
+    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
 
+    sprintf(stmp1, ":26030100C350C3\n");
+    qDebug() << stmp1;
+    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
 
-	return app.exec();
+    sprintf(stmp1, ":2603010000C350D3\n");
+    qDebug() << stmp1;
+    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
+
+    sprintf(stmp1, "2603010000C350C3\n");
+    qDebug() << stmp1;
+    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
+    */
+
+    return app.exec();
 }
