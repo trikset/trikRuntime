@@ -234,10 +234,25 @@ int main(int argc, char *argv[])
         qDebug() << stmp1 << " " << stmp2;
     }
 
-
-
     disconnect_USBMSP(fusb);
 
+    qDebug() << "void = " << sizeof(void);
+    qDebug() << "volatile = " << sizeof(volatile);
+    qDebug() << "char = " << sizeof(char);
+    qDebug() << "short = " << sizeof(short);
+    qDebug() << "unsigned = " << sizeof(unsigned);
+    qDebug() << "int = " << sizeof(int);
+    qDebug() << "long = " << sizeof(long);
+    qDebug() << "float = " << sizeof(float);
+    qDebug() << "double = " << sizeof(double);
+    qDebug() << "int8_t = " << sizeof(int8_t);
+    qDebug() << "int16_t = " << sizeof(int16_t);
+    qDebug() << "int32_t = " << sizeof(int32_t);
+    qDebug() << "int64_t = " << sizeof(int64_t);
+    qDebug() << "uint8_t = " << sizeof(uint8_t);
+    qDebug() << "uint16_t = " << sizeof(uint16_t);
+    qDebug() << "uint32_t = " << sizeof(uint32_t);
+    qDebug() << "uint64_t = " << sizeof(uint64_t);
 
     return app.exec();
 }

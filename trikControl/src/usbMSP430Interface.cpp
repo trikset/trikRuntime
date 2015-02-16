@@ -90,7 +90,6 @@ uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet
     return NO_RESP_ERROR;
 }
 
-
 /// Connect to USB MSP430 device
 void connect_USBMSP(FILE *&usb_out_descr, char *usb_name)
 {
@@ -128,15 +127,18 @@ void disconnect_USBMSP(FILE *&usb_out_descr)
 }
 
 
-/// Write data to MSP430 via USB
-void write_USBMSP(QByteArray const &i2c_data)
+/// Send data to MSP430 via USB
+void send_USBMSP(QByteArray const &i2c_data)
 {
+    char s1[MAX_STRING_LENGTH];
     if (i2c_data.size() == 2)
     {
         switch (i2c_data[0])
         {
             case i2cMOT1:
-
+                makeWriteRegPacket(s1, MOTOR1, MMPER, DEF_MOT_PER);
+                makeWriteRegPacket(s1, MOTOR1, MMDUT, DEF_MOT_PER / 2);
+                makeWriteRegPacket(s1, MOTOR1, MMCTL, 0x8007);
                 break;
             default:
                 break;

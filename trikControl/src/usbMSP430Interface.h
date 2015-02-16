@@ -76,6 +76,26 @@
 #define BSL                 0xEE
 #define NNONE				0xFF
 
+/// Motor registers
+#define MMCTL               0x00
+#define MMDUT               0x01
+#define MMPER               0x02
+#define MMANG               0x03
+#define MMTMR               0x04
+#define MMVAL               0x05
+#define MMERR               0x06
+
+/// Masks for bits of control register
+#define MOT_ENABLE          0x8000      // Motor enable
+#define MOT_AUTO            0x4000      // Autostop mode
+#define MOT_ANGLE           0x2000      // Angle autostop mode
+#define MOT_BACK            0x0010      // Backward direction
+#define MOT_BRAKE           0x0008      // Brake enable
+#define MOT_POWER           0x0003      // Motor power
+
+/// Default motor period
+#define DEF_MOT_PER         0x1000
+
 #define MAX_STRING_LENGTH   0x20
 
 #define WRITE_FUNC          0x03
@@ -131,8 +151,8 @@ void connect_USBMSP(FILE *&usb_out_descr, char *usb_name);
 /// Disconnect from USB MSP430 device
 void disconnect_USBMSP(FILE *&usb_out_descr);
 
-/// Write data to MSP430 via USB
-void write_USBMSP(QByteArray const &i2c_data);
+/// Send data to MSP430 via USB
+void send_USBMSP(QByteArray const &i2c_data);
 
 /// Read data from MSP430 via USB
 uint32_t read_USBMSP(QByteArray const &i2c_data);
