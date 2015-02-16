@@ -21,13 +21,13 @@
 	#include <QtGui/QHBoxLayout>
 	#include <QtGui/QLabel>
 	#include <QtGui/QPushButton>
-#include <QtGui/QMessageBox>
+	#include <QtGui/QMessageBox>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QPushButton>
-#include <QtWidgets/QMessageBox>
+	#include <QtWidgets/QMessageBox>
 #endif
 
 #include "trikGuiDialog.h"

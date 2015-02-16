@@ -69,7 +69,7 @@ void VersionWidget::updateVersion()
 	updateMessageBox.setText(tr("Do you really want to update current version?"));
 	updateMessageBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 	updateMessageBox.setDefaultButton(QMessageBox::Yes);
-	int answer = updateMessageBox.exec();
+	const int answer = updateMessageBox.exec();
 
 	switch (answer) {
 		case QMessageBox::Yes: {
