@@ -198,25 +198,46 @@ int main(int argc, char *argv[])
     qDebug() << errcode;
     */
 
+    FILE *fusb;
+
     sprintf(stmp3, USB_DEV_NAME);
-    //sprintf(stmp3, "/dev/ttyACM0");
     qDebug() << stmp3;
+
+    connect_USBMSP(fusb, stmp3);
 
     makeWriteRegPacket(stmp1, 0x01, 0x02, 0x1000);
     qDebug() << stmp1;
     errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+    qDebug() << errcode;
+
 
     makeWriteRegPacket(stmp1, 0x01, 0x01, 0x0FFF);
     qDebug() << stmp1;
     errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+    qDebug() << errcode;
 
-    makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8007);
-    qDebug() << stmp1;
-    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+    int eklmn=0;
 
-    makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8000);
-    qDebug() << stmp1;
-    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+    for (eklmn=0; eklmn<100; eklmn++)
+    {
+
+        makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8007);
+        //qDebug() << stmp1;
+        errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+        //qDebug() << errcode;
+        qDebug() << stmp1 << " " << stmp2;
+
+        makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8000);
+        //qDebug() << stmp1;
+        errcode = sendUSBPacket(stmp3, stmp1, stmp2);
+        //qDebug() << errcode;
+        qDebug() << stmp1 << " " << stmp2;
+    }
+
+
+
+    disconnect_USBMSP(fusb);
+
 
     return app.exec();
 }

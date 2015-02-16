@@ -11,23 +11,15 @@
 #include <QByteArray>
 #include <QDebug>
 #include <QThread>
+#include <QString>
+#include <QObject>
 #include "usbMSP430Interface.h"
+#include "usbMSP430Read.h"
 
-// volatile char fstmp[MAX_STRING_LENGTH];             // Buffer for response packets
-char fstmp[MAX_STRING_LENGTH];             // Buffer for response packets
-
-/// Class for reading data from USB in separated thread
-class ReadUSBThread : public QThread
-{
-    Q_OBJECT
-    void run() {
-        QString result;
-        /* expensive or blocking operation  */
-        emit resultReady(result);
-    }
-signals:
-    void resultReady(const QString &s);
-};
+// volatile char fstmp[MAX_STRING_LENGTH];          // Buffer for response packets
+volatile char fstmp[MAX_STRING_LENGTH];             // Buffer for response packets
+FILE *usb_in_descr;                                 // Input USB device descriptor
+volatile int killflag = 0x01;                       // Flag to terminate read thread
 
 /// Extract number from packet
 uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize)
@@ -81,33 +73,63 @@ uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func
     return NO_ERROR;                                    // Return NO ERROR
 }
 
-/// Send packet via USB port
+/// Send USB packet
 uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet)
 {
     uint16_t tout = 0;                                  // Timeout counter
-    FILE *fusb;                                         // File descriptor
-    fusb = fopen(usb_name, "w");
-    fprintf(fusb, in_msp_packet);
-    fclose(fusb);
-    /*
-    while ((strlen(fstmp) == 0) || (tout < TIME_OUT))
+    FILE *usb_descr = fopen("/dev/ttyACM0", "w");
+    fprintf(usb_descr, in_msp_packet);
+    fflush(usb_descr);
+    fclose(usb_descr);
+    while ((tout < TIME_OUT))
+    {
         tout++;
-    if (strlen(fstmp) != 0)
-    {
-        strcpy(out_msp_packet, fstmp);
-        return NO_RESP_ERROR;
     }
-    else
-    {
-        sprintf(out_msp_packet, "ERROR");
-        return NO_PACKET;
-    }
-    */
+    strcpy(out_msp_packet, const_cast<char*>(fstmp));
+
     return NO_RESP_ERROR;
 }
 
+
+/// Connect to USB MSP430 device
+void connect_USBMSP(FILE *&usb_out_descr, char *usb_name)
+{
+    // Clear temporary buffer
+    sprintf(fstmp, "");
+
+    // Set terminate flag for read thread
+    killflag = 0x01;
+
+    // Open USB device for input
+    usb_in_descr = fopen(usb_name, "r");
+
+    // Start separated thread to read from USB device
+    ReadUSBThread *readUSBThread = new ReadUSBThread();
+    QObject::connect(readUSBThread, SIGNAL(finished()), readUSBThread, SLOT(deleteLater()));
+    readUSBThread->start();
+
+    //usb_out_descr = fopen(usb_name, "w");
+}
+
+/// Disconnect from USB MSP430 device
+void disconnect_USBMSP(FILE *&usb_out_descr)
+{
+    // Reset terminate flag for read thread
+    killflag = 0x00;
+
+    // Send empty packet to terminate read function in thread
+    usb_out_descr = fopen("/dev/ttyACM0", "w");
+    fprintf(usb_out_descr, "\n");
+    fclose(usb_out_descr);
+
+
+    fclose(usb_in_descr);
+    //fclose(usb_out_descr);
+}
+
+
 /// Write data to MSP430 via USB
-void writeUSBMSP(QByteArray const &i2c_data)
+void write_USBMSP(QByteArray const &i2c_data)
 {
     if (i2c_data.size() == 2)
     {
@@ -127,7 +149,7 @@ void writeUSBMSP(QByteArray const &i2c_data)
 }
 
 /// Read data from MSP430 via USB
-uint32_t readUSBMSP(QByteArray const &i2c_data)
+uint32_t read_USBMSP(QByteArray const &i2c_data)
 {
     if (i2c_data.size() == 2)
     {
