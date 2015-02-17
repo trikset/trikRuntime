@@ -33,7 +33,6 @@
 #include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
 #include "versionWidget.h"
-#include "updateWidget.h"
 #include "systemSettingsWidget.h"
 
 using namespace trikGui;
@@ -68,7 +67,6 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	}
 
 	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
-	settingsItem->appendRow(new QStandardItem(UpdateWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
@@ -141,10 +139,6 @@ void StartWidget::launch()
 			VersionWidget versionWidget;
 			emit newWidget(versionWidget);
 			result = versionWidget.exec();
-		} else if (currentItemText == UpdateWidget::menuEntry()) {
-			UpdateWidget updateWidget;
-			emit newWidget(updateWidget);
-			result = updateWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
