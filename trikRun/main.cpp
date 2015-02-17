@@ -51,8 +51,6 @@ char stmp3[32];
 uint8_t devaddr, regaddr, funccode;
 uint32_t regval, errcode;
 
-
-
 using namespace trikRun;
 
 void printUsage()
@@ -206,6 +204,8 @@ int main(int argc, char *argv[])
     sprintf(stmp3, USB_DEV_NAME);
     qDebug() << stmp3;
 
+    setPower12V(1);
+    sttyUSBConfig(stmp3);
     connect_USBMSP(fusb, stmp3);
 
     makeWriteRegPacket(stmp1, 0x01, 0x02, 0x1000);
@@ -237,8 +237,9 @@ int main(int argc, char *argv[])
         qDebug() << stmp1 << " " << stmp2;
     }
 
-    disconnect_USBMSP(fusb);
+    disconnect_USBMSP(fusb, stmp3);
 
+    /*
     qDebug() << "void = " << sizeof(void);
     qDebug() << "volatile = " << sizeof(volatile);
     qDebug() << "char = " << sizeof(char);
@@ -256,6 +257,7 @@ int main(int argc, char *argv[])
     qDebug() << "uint16_t = " << sizeof(uint16_t);
     qDebug() << "uint32_t = " << sizeof(uint32_t);
     qDebug() << "uint64_t = " << sizeof(uint64_t);
+    */
 
     return app.exec();
 }

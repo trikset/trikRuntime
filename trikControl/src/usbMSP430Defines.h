@@ -126,7 +126,7 @@
 #define NO_RESP_ERROR       0x00
 #define NO_PACKET           0xFF
 
-#define TIME_OUT            0x00FF
+#define TIME_OUT            0x0FFF
 
 #define USB_DEV_NAME        "/dev/ttyACM0"
 

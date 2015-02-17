@@ -13,14 +13,15 @@
 #include <QThread>
 #include <QString>
 #include <QObject>
+#include <QProcess>
 #include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
 #include "usbMSP430Read.h"
 
 // volatile char fstmp[MAX_STRING_LENGTH];          // Buffer for response packets
 volatile char fstmp[MAX_STRING_LENGTH];             // Buffer for response packets
-FILE *usb_in_descr;                                 // Input USB device descriptor
-volatile int killflag = 0x01;                       // Flag to terminate read thread
+volatile FILE *usb_in_descr;                        // Input USB device descriptor
+volatile int killflag;                              // Flag to terminate read thread
 
 /// Extract number from packet
 uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize)
@@ -78,7 +79,7 @@ uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func
 uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet)
 {
     uint16_t tout = 0;                                  // Timeout counter
-    FILE *usb_descr = fopen("/dev/ttyACM0", "w");
+    FILE *usb_descr = fopen(usb_name, "w");
     fprintf(usb_descr, in_msp_packet);
     fflush(usb_descr);
     fclose(usb_descr);
@@ -89,6 +90,29 @@ uint32_t sendUSBPacket(char *usb_name, char *in_msp_packet, char *out_msp_packet
     strcpy(out_msp_packet, const_cast<char*>(fstmp));
 
     return NO_RESP_ERROR;
+}
+
+/// Set power 12 volts on
+void setPower12V(uint8_t pwr)
+{
+    char s1[MAX_STRING_LENGTH];
+    QProcess process;
+    if (pwr)
+        sprintf(s1, "echo 1 > /sys/class/gpio/gpio62/value");
+    else
+        sprintf(s1, "echo 0 > /sys/class/gpio/gpio62/value");
+    process.startDetached(s1);
+    process.waitForFinished(1000);
+}
+
+/// Configure USB stty device
+void sttyUSBConfig(char *usb_name)
+{
+    char s1[MAX_STRING_LENGTH];
+    QProcess process;
+    sprintf(s1, "stty 921600 -F %s -echo -onlcr ", usb_name);
+    process.startDetached(s1);
+    process.waitForFinished(1000);
 }
 
 /// Connect to USB MSP430 device
@@ -107,24 +131,20 @@ void connect_USBMSP(FILE *&usb_out_descr, char *usb_name)
     ReadUSBThread *readUSBThread = new ReadUSBThread();
     QObject::connect(readUSBThread, SIGNAL(finished()), readUSBThread, SLOT(deleteLater()));
     readUSBThread->start();
-
-    //usb_out_descr = fopen(usb_name, "w");
 }
 
 /// Disconnect from USB MSP430 device
-void disconnect_USBMSP(FILE *&usb_out_descr)
+void disconnect_USBMSP(FILE *&usb_out_descr, char *usb_name)
 {
     // Reset terminate flag for read thread
     killflag = 0x00;
 
     // Send empty packet to terminate read function in thread
-    usb_out_descr = fopen("/dev/ttyACM0", "w");
+    usb_out_descr = fopen(usb_name, "w");
     fprintf(usb_out_descr, "\n");
     fclose(usb_out_descr);
 
-
     fclose(usb_in_descr);
-    //fclose(usb_out_descr);
 }
 
 
