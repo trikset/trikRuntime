@@ -31,7 +31,8 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
-    src/usbMSP430Read.h
+    src/usbMSP430Read.h \
+    src/usbMSP430Defines.h
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \

@@ -1,3 +1,11 @@
+/*
+ * usbMSP430Interface.h
+ *
+ *  Created on: Fabruary 16, 2015
+ *      Author: Rostislav Varzar
+ */
+
+
 #ifndef USBMSP430READ_H
 #define USBMSP430READ_H
 

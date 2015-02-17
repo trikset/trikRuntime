@@ -44,11 +44,14 @@
 
 /// For debug
 #include "../trikControl/src/usbMSP430Interface.h"
+#include "../trikControl/src/usbMSP430Defines.h"
 char stmp1[32];
 char stmp2[32];
 char stmp3[32];
 uint8_t devaddr, regaddr, funccode;
 uint32_t regval, errcode;
+
+
 
 using namespace trikRun;
 

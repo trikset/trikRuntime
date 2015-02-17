@@ -13,6 +13,7 @@
 #include <QThread>
 #include <QString>
 #include <QObject>
+#include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
 #include "usbMSP430Read.h"
 
