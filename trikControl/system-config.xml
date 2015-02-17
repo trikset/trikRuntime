@@ -56,6 +56,10 @@ equal to its class name.
 
 		echo 1 > /sys/devices/virtual/input/input1/enable_device
 
+                echo 1 > /sys/class/gpio/gpio62/value
+
+                stty 921600 -F /dev/ttyACM0 -echo -onlcr
+
 		#amixer -q set PCM 127
 	</initScript>
 

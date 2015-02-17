@@ -199,17 +199,7 @@ int main(int argc, char *argv[])
     qDebug() << errcode;
     */
 
-    FILE *fusb;
-
-
-    sprintf(stmp3, USB_DEV_NAME);
-    qDebug() << stmp3;
-
-    setPower12V(1);
-    sttyUSBConfig(stmp3);
-
-    connect_USBMSP(fusb, stmp3);
-
+    //connect_USBMSP();
 
     /*
     makeWriteRegPacket(stmp1, 0x01, 0x02, 0x1000);
@@ -241,26 +231,67 @@ int main(int argc, char *argv[])
     }
     */
 
+    /*
     QByteArray a(2, '\0');
 
     a[0] = i2cMOT1;
     a[1] = 0;
-    send_USBMSP(a, stmp3);
+    send_USBMSP(a);
 
 
     a[0] = i2cMOT2;
     a[1] = 0;
-    send_USBMSP(a, stmp3);
+    send_USBMSP(a);
 
     a[0] = i2cMOT3;
-    a[1] = -0;
-    send_USBMSP(a, stmp3);
+    a[1] = 100;
+    send_USBMSP(a);
 
     a[0] = i2cMOT4;
     a[1] = 0;
-    send_USBMSP(a, stmp3);
+    send_USBMSP(a);
+    */
+    //char s1[32];
+    //char s2[32];
 
-    disconnect_USBMSP(fusb, stmp3);
+    /*
+    makeWriteRegPacket(s1, ENCODER1, EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+    errcode = sendUSBPacket(s1, s2);
+    qDebug() << s1;
+    qDebug() << s2;
+    qDebug() << errcode;
+    makeReadRegPacket(s1, ENCODER1, EEVAL);
+    errcode = sendUSBPacket(s1, s2);
+    qDebug() << s1;
+    qDebug() << s2;
+    qDebug() << errcode;
+    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
+
+    makeWriteRegPacket(s1, ENCODER1, EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+    errcode = sendUSBPacket(s1, s2);
+    qDebug() << s1;
+    qDebug() << s2;
+    qDebug() << errcode;
+    makeReadRegPacket(s1, ENCODER1, EEVAL);
+    errcode = sendUSBPacket(s1, s2);
+    qDebug() << s1;
+    qDebug() << s2;
+    qDebug() << errcode;
+    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+    qDebug() << devaddr;
+    qDebug() << funccode;
+    qDebug() << regaddr;
+    qDebug() << regval;
+    qDebug() << errcode;
+
+    disconnect_USBMSP();
+    */
+
 
 
     /*

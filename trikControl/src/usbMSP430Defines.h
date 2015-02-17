@@ -9,6 +9,10 @@
 #define USBMSP430DEFINES_H
 
 /// I2C devices addresses
+#define i2cPWMMOT1          0x10
+#define i2cPWMMOT2          0x11
+#define i2cPWMMOT3          0x13
+#define i2cPWMMOT4          0x12
 #define i2cMOT1             0x14
 #define i2cMOT2             0x15
 #define i2cMOT3             0x17
@@ -96,6 +100,34 @@
 /// Default motor period
 #define DEF_MOT_PER         0x1000
 
+/// Encoder registers
+#define EECTL               0x00
+#define EEVAL               0x01
+#define EESTA               0x02
+
+/// Masks for bits of control register
+#define ENC_ENABLE          0x8000      //Enable bit
+#define ENC_ASYNC           0x4000      //Async mode
+#define ENC_2WIRES          0x2000      //2-wires mode
+#define ENC_PUPEN           0x1000      //Pull up resistors
+#define ENC_FALL            0x0800      //Falling edge select
+
+/// Sensor registers
+#define SSCTL               0x00
+#define SSIDX               0x01
+#define SSVAL               0x02
+#define SSSTA               0x03
+
+/// Sensor types
+#define DIGITAL_INP         0x0000
+#define ANALOG_INP          0x0001
+
+/// Masks for bits of control register
+#define SENS_ENABLE     0x8000          //Enable bit
+#define SENS_ASYNC      0x4000          //Async mode
+#define SENS_PULL       0x2000          //Pull up resistors
+#define SENS_READ       0x0001          //Sensor read
+
 #define MAX_STRING_LENGTH   0x20
 
 #define WRITE_FUNC          0x03
@@ -120,11 +152,12 @@
 #define NUM_WORD            0x04
 #define NUM_DWORD           0x08
 
-#define RECV_PACK_LEN       0x12
+#define RECV_PACK_LEN       0x11
 
 /// Errors for response
-#define NO_RESP_ERROR       0x00
-#define NO_PACKET           0xFF
+#define NO_ERROR            0x00
+#define DEVICE_ERROR        0x01
+#define PACKET_ERROR        0x02
 
 #define TIME_OUT            0x0FFF
 
