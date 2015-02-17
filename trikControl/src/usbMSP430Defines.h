@@ -28,8 +28,8 @@
 /// USB devices addresses
 #define MOTOR1				0x00
 #define MOTOR2				0x01
-#define MOTOR3				0x02
-#define MOTOR4				0x03
+#define MOTOR3				0x03
+#define MOTOR4				0x02
 #define SENSOR1				0x04
 #define SENSOR2				0x05
 #define SENSOR3				0x06

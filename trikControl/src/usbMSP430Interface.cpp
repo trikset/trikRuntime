@@ -149,19 +149,70 @@ void disconnect_USBMSP(FILE *&usb_out_descr, char *usb_name)
 
 
 /// Send data to MSP430 via USB
-void send_USBMSP(QByteArray const &i2c_data)
+void send_USBMSP(QByteArray const &i2c_data, char *usb_name)
 {
     char s1[MAX_STRING_LENGTH];
+    char s2[MAX_STRING_LENGTH];
+    uint16_t mdut;
+    uint16_t mctl;
+    uint32_t errcode;
+    int8_t mtmp;
     if (i2c_data.size() == 2)
     {
+        if ((i2c_data[0] == i2cMOT1) || (i2c_data[0] == i2cMOT2) || (i2c_data[0] == i2cMOT3) || (i2c_data[0] == i2cMOT4))
+        {
+            mtmp = i2c_data[1];
+            mctl = MOT_ENABLE;
+            if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
+            {
+                mctl = mctl + MOT_BRAKE;
+                mtmp = 0;
+            }
+            if (mtmp < 0)
+                mctl = mctl + MOT_BACK;
+            if (mtmp != 0)
+                mctl = mctl + MOT_POWER;
+            if (mtmp < -100)
+                mtmp = -100;
+            if (mtmp > 100)
+                mtmp = 100;
+            mdut = uint16_t(float(abs(mtmp)) * (DEF_MOT_PER - 1) / 100);
+        }
         switch (i2c_data[0])
         {
             case i2cMOT1:
                 makeWriteRegPacket(s1, MOTOR1, MMPER, DEF_MOT_PER);
-                makeWriteRegPacket(s1, MOTOR1, MMDUT, DEF_MOT_PER / 2);
-                makeWriteRegPacket(s1, MOTOR1, MMCTL, 0x8007);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR1, MMDUT, mdut);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR1, MMCTL, mctl);
+                errcode = sendUSBPacket(usb_name, s1, s2);
                 break;
-            default:
+            case i2cMOT2:
+                makeWriteRegPacket(s1, MOTOR2, MMPER, DEF_MOT_PER);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR2, MMDUT, mdut);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR2, MMCTL, mctl);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                break;
+            case i2cMOT3:
+                makeWriteRegPacket(s1, MOTOR3, MMPER, DEF_MOT_PER);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR3, MMDUT, mdut);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR3, MMCTL, mctl);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                break;
+            case i2cMOT4:
+                makeWriteRegPacket(s1, MOTOR4, MMPER, DEF_MOT_PER);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR4, MMDUT, mdut);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                makeWriteRegPacket(s1, MOTOR4, MMCTL, mctl);
+                errcode = sendUSBPacket(usb_name, s1, s2);
+                break;
+        default:
                 break;
         }
     }
@@ -172,7 +223,7 @@ void send_USBMSP(QByteArray const &i2c_data)
 }
 
 /// Read data from MSP430 via USB
-uint32_t read_USBMSP(QByteArray const &i2c_data)
+uint32_t read_USBMSP(QByteArray const &i2c_data, char *usb_name)
 {
     if (i2c_data.size() == 2)
     {

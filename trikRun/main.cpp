@@ -201,13 +201,17 @@ int main(int argc, char *argv[])
 
     FILE *fusb;
 
+
     sprintf(stmp3, USB_DEV_NAME);
     qDebug() << stmp3;
 
     setPower12V(1);
     sttyUSBConfig(stmp3);
+
     connect_USBMSP(fusb, stmp3);
 
+
+    /*
     makeWriteRegPacket(stmp1, 0x01, 0x02, 0x1000);
     qDebug() << stmp1;
     errcode = sendUSBPacket(stmp3, stmp1, stmp2);
@@ -220,7 +224,6 @@ int main(int argc, char *argv[])
     qDebug() << errcode;
 
     int eklmn=0;
-
     for (eklmn=0; eklmn<100; eklmn++)
     {
 
@@ -236,8 +239,29 @@ int main(int argc, char *argv[])
         //qDebug() << errcode;
         qDebug() << stmp1 << " " << stmp2;
     }
+    */
+
+    QByteArray a(2, '\0');
+
+    a[0] = i2cMOT1;
+    a[1] = 0;
+    send_USBMSP(a, stmp3);
+
+
+    a[0] = i2cMOT2;
+    a[1] = 0;
+    send_USBMSP(a, stmp3);
+
+    a[0] = i2cMOT3;
+    a[1] = -0;
+    send_USBMSP(a, stmp3);
+
+    a[0] = i2cMOT4;
+    a[1] = 0;
+    send_USBMSP(a, stmp3);
 
     disconnect_USBMSP(fusb, stmp3);
+
 
     /*
     qDebug() << "void = " << sizeof(void);

@@ -36,10 +36,10 @@ void connect_USBMSP(FILE *&usb_out_descr, char *usb_name);
 void disconnect_USBMSP(FILE *&usb_out_descr, char *usb_name);
 
 /// Send data to MSP430 via USB
-void send_USBMSP(QByteArray const &i2c_data);
+void send_USBMSP(QByteArray const &i2c_data, char *usb_name);
 
 /// Read data from MSP430 via USB
-uint32_t read_USBMSP(QByteArray const &i2c_data);
+uint32_t read_USBMSP(QByteArray const &i2c_data, char *usb_name);
 
 
 #endif // USBMSP430INTERFACE_H
