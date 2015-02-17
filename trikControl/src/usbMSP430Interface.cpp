@@ -362,9 +362,89 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                 } while ((devaddr != ENCODER4) || (regaddr != EEVAL));
                 return regval;
             case i2cSENS1:
+                makeWriteRegPacket(s1, SENSOR1, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
                 makeWriteRegPacket(s1, SENSOR1, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR1, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR1) || (regaddr != SSVAL));
+                return 1;
+            case i2cSENS2:
+                makeWriteRegPacket(s1, SENSOR2, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR2, SSIDX, ANALOG_INP);
+                errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR2, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR2) || (regaddr != SSVAL));
+                return 5;
+            case i2cSENS3:
+                makeWriteRegPacket(s1, SENSOR3, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR3, SSIDX, ANALOG_INP);
+                errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR3, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR3) || (regaddr != SSVAL));
+                return 7;
+            case i2cSENS4:
+                makeWriteRegPacket(s1, SENSOR4, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR4, SSIDX, ANALOG_INP);
+                errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR4, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR4) || (regaddr != SSVAL));
+                return 10;
+            case i2cSENS5:
+                makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
+                errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR5, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR5) || (regaddr != SSVAL));
+                return 15;
+            case i2cSENS6:
+                makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
+                errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR6, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR6) || (regaddr != SSVAL));
+                return 18;
+            default:
+                break;
+        }
+    }
+    else if (i2c_data.size() == 1)
+    {
+        switch (i2c_data[0])
+        {
+            case i2cSENS1:
                 makeWriteRegPacket(s1, SENSOR1, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR1, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
                 do
                 {
@@ -374,9 +454,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                 } while ((devaddr != SENSOR1) || (regaddr != SSVAL));
                 return regval;
             case i2cSENS2:
-                makeWriteRegPacket(s1, SENSOR2, SSIDX, ANALOG_INP);
-                errcode = sendUSBPacket(s1, s2);
                 makeWriteRegPacket(s1, SENSOR2, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR2, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
                 do
                 {
@@ -386,9 +466,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                 } while ((devaddr != SENSOR2) || (regaddr != SSVAL));
                 return regval;
             case i2cSENS3:
-                makeWriteRegPacket(s1, SENSOR3, SSIDX, ANALOG_INP);
-                errcode = sendUSBPacket(s1, s2);
                 makeWriteRegPacket(s1, SENSOR3, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR3, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
                 do
                 {
@@ -398,9 +478,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                 } while ((devaddr != SENSOR3) || (regaddr != SSVAL));
                 return regval;
             case i2cSENS4:
-                makeWriteRegPacket(s1, SENSOR4, SSIDX, ANALOG_INP);
-                errcode = sendUSBPacket(s1, s2);
                 makeWriteRegPacket(s1, SENSOR4, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR4, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
                 do
                 {
@@ -410,9 +490,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                 } while ((devaddr != SENSOR4) || (regaddr != SSVAL));
                 return regval;
             case i2cSENS5:
-                makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
-                errcode = sendUSBPacket(s1, s2);
                 makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
                 do
                 {
@@ -422,9 +502,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                 } while ((devaddr != SENSOR5) || (regaddr != SSVAL));
                 return regval;
             case i2cSENS6:
-                makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
-                errcode = sendUSBPacket(s1, s2);
                 makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
                 errcode = sendUSBPacket(s1, s2);
                 do
                 {
@@ -433,13 +513,21 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
                     errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
                 } while ((devaddr != SENSOR6) || (regaddr != SSVAL));
                 return regval;
+            case i2cBATT:
+                makeWriteRegPacket(s1, SENSOR17, SSCTL, SENS_ENABLE + SENS_READ);
+                errcode = sendUSBPacket(s1, s2);
+                makeWriteRegPacket(s1, SENSOR17, SSIDX, ANALOG_INP);
+                errcode = sendUSBPacket(s1, s2);
+                do
+                {
+                    makeReadRegPacket(s1, SENSOR17, SSVAL);
+                    errcode = sendUSBPacket(s1, s2);
+                    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+                } while ((devaddr != SENSOR17) || (regaddr != SSVAL));
+                return regval;
             default:
                 break;
         }
-    }
-    else
-    {
-
     }
     return NO_ERROR;
 }
