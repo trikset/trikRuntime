@@ -78,7 +78,7 @@ equal to its class name.
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!--Device file for keys on a brick -->
-		<keys deviceFile="/dev/input/event0" />
+		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
 
 		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
 		<gamepad port="4444" optional="true" />
