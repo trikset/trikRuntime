@@ -6,27 +6,22 @@ brick.encoder("B2").reset();
 brick.encoder("B3").reset();
 brick.encoder("B4").reset();
 
+e1 = brick.encoder("B1").readRawData();
+e2 = brick.encoder("B2").readRawData();
+e3 = brick.encoder("B3").readRawData();
+e4 = brick.encoder("B4").readRawData();
+
+print("Encoder 1: ", e1); 
+print("Encoder 2: ", e2); 
+print("Encoder 3: ", e3); 
+print("Encoder 4: ", e4); 
+
 brick.motor(M1).setPower(100);
-
 brick.motor(M2).setPower(100);
-
 brick.motor(M3).setPower(100);
-
 brick.motor(M4).setPower(100);
 
-script.wait(1000);
-
-e1 = brick.encoder("B1").readRawData();
-print("Encoder 1: ", e1); 
-
-e2 = brick.encoder("B2").readRawData();
-print("Encoder 2: ", e2); 
-
-e3 = brick.encoder("B3").readRawData();
-print("Encoder 3: ", e3); 
-
-e4 = brick.encoder("B4").readRawData();
-print("Encoder 4: ", e4); 
+script.wait(2000);
 
 var i = 0;
 
@@ -38,8 +33,11 @@ while (i < 10)
   a4 = brick.sensor("A4").readRawData();
   a5 = brick.sensor("A5").readRawData();
   a6 = brick.sensor("A6").readRawData();
+  e1 = brick.encoder("B1").readRawData();
+  e2 = brick.encoder("B2").readRawData();
+  e3 = brick.encoder("B3").readRawData();
+  e4 = brick.encoder("B4").readRawData();
   bat1 = brick.battery().readRawDataVoltage();
-  bat2 = brick.battery().readVoltage();
   print("Sensor 1: ", a1); 
   print("Sensor 2: ", a2); 
   print("Sensor 3: ", a3); 
@@ -47,6 +45,9 @@ while (i < 10)
   print("Sensor 5: ", a5); 
   print("Sensor 6: ", a6); 
   print("Battery: ", bat1); 
-  print("Battery: ", bat2); 
+  print("Encoder 1: ", e1); 
+  print("Encoder 2: ", e2); 
+  print("Encoder 3: ", e3); 
+  print("Encoder 4: ", e4); 
   i = i + 1;
 }

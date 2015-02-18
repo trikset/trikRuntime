@@ -25,6 +25,7 @@
 #include <trikKernel/configurer.h>
 
 #include <QsLog.h>
+#include <QTime>
 
 #include "src/usbMSP430Defines.h"
 #include "src/usbMSP430Interface.h"
@@ -109,6 +110,10 @@ I2cCommunicator::~I2cCommunicator()
 
 void I2cCommunicator::connect()
 {
+
+    QTime myTimer;
+    myTimer.start();
+
     // Connect to USB device
     if (connect_USBMSP() == DEVICE_ERROR)
     {
@@ -119,6 +124,10 @@ void I2cCommunicator::connect()
     {
         //mState.ready();
     }
+
+    int nMilliseconds = myTimer.elapsed();
+    //qDebug() << "Connect measured time: ";
+    //qDebug() << nMilliseconds;
 
     mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
     if (mDeviceFileDescriptor < 0)
@@ -156,12 +165,21 @@ void I2cCommunicator::send(QByteArray const &data)
 		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
 	}
 
+    QTime myTimer;
+    myTimer.start();
+
     send_USBMSP(data);
+
+    int nMilliseconds = myTimer.elapsed();
+    //qDebug() << "Send measured time: ";
+    //qDebug() << nMilliseconds;
 }
 
 /// todo: rewrite it
 int I2cCommunicator::read(QByteArray const &data)
 {
+    int ret_result = 0;
+
     if (!mState.isReady())
     {
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
@@ -170,7 +188,17 @@ int I2cCommunicator::read(QByteArray const &data)
 
 	QMutexLocker lock(&mLock);
 
-    return read_USBMSP(data);
+    QTime myTimer;
+    myTimer.start();
+
+    ret_result = read_USBMSP(data);
+
+    int nMilliseconds = myTimer.elapsed();
+    //qDebug() << "Read measured time: ";
+    //qDebug() << nMilliseconds;
+
+    return ret_result;
+
 
 	if (data.size() == 1)
 	{
@@ -194,8 +222,15 @@ void I2cCommunicator::disconnect()
     QMutexLocker lock(&mLock);
 	close(mDeviceFileDescriptor);
 
+    QTime myTimer;
+    myTimer.start();
+
     // Disconnect from USB device
     disconnect_USBMSP();
+
+    int nMilliseconds = myTimer.elapsed();
+    //qDebug() << "Disconnect measured time: ";
+    //qDebug() << nMilliseconds;
 
 	mState.off();
 }

@@ -60,6 +60,8 @@ equal to its class name.
 
                 stty 921600 -F /dev/ttyACM0 -echo -onlcr
 
+                stty 921600 -F /dev/ttyACM1 -echo -onlcr
+
 		#amixer -q set PCM 127
 	</initScript>
 

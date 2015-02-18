@@ -54,8 +54,8 @@
 #define SENSOR18            0x15
 #define ENCODER1			0x16
 #define ENCODER2			0x17
-#define ENCODER3			0x18
-#define ENCODER4			0x19
+#define ENCODER3			0x19
+#define ENCODER4			0x18
 #define PORT1   			0x1A
 #define PORT2	    		0x1B
 #define PORT3		    	0x1C
@@ -98,7 +98,7 @@
 #define MOT_POWER           0x0003      // Motor power
 
 /// Default motor period
-#define DEF_MOT_PER         0x1000
+#define DEF_MOT_PER         0x3000
 
 /// Encoder registers
 #define EECTL               0x00
@@ -123,10 +123,10 @@
 #define ANALOG_INP          0x0001
 
 /// Masks for bits of control register
-#define SENS_ENABLE     0x8000          //Enable bit
-#define SENS_ASYNC      0x4000          //Async mode
-#define SENS_PULL       0x2000          //Pull up resistors
-#define SENS_READ       0x0001          //Sensor read
+#define SENS_ENABLE         0x8000          //Enable bit
+#define SENS_ASYNC          0x4000          //Async mode
+#define SENS_PULL           0x2000          //Pull up resistors
+#define SENS_READ           0x0001          //Sensor read
 
 #define MAX_STRING_LENGTH   0x20
 

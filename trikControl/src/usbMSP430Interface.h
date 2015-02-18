@@ -23,6 +23,15 @@ uint32_t sendUSBPacket(char *in_msp_packet, char *out_msp_packet);
 /// Function for decoding received packet
 uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func_code, uint8_t &reg_addr, uint32_t &reg_val);
 
+/// Init motors
+uint32_t init_motors_USBMSP();
+
+/// Init encoders
+uint32_t init_encoders_USBMSP();
+
+/// Init sensors
+uint32_t init_sensors_USBMSP();
+
 /// Connect to USB MSP430 device
 uint32_t connect_USBMSP();
 
