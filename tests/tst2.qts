@@ -1,3 +1,10 @@
-while (!brick.keys().wasPressed(KeysEnum.Up)) {
-	brick.wait(100);
+var S = brick.sensor(A1).read();
+var Sold = S;
+while (!brick.keys().wasPressed(KeysEnum.Up)) 
+{
+	var u = 2.5 * (S - brick.sensor(A1).read()) + 5 * (Sold - brick.sensor(A1).read());
+	Sold = brick.sensor(A1).read();
+	brick.motor(M1).setPower(50 - u);
+	brick.motor(M2).setPower(50 + u);
+	script.wait(30);
 }

@@ -242,7 +242,7 @@ uint32_t connect_USBMSP()
     errcode = init_motors_USBMSP();
 
     // Init encoders
-    errcode = init_motors_USBMSP();
+    errcode = init_encoders_USBMSP();
 
     // Init sensors
     errcode = init_sensors_USBMSP();
