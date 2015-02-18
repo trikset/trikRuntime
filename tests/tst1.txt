@@ -17,15 +17,15 @@ print("Encoder 3: ", e3);
 print("Encoder 4: ", e4); 
 
 brick.motor(M1).setPower(100);
-brick.motor(M2).setPower(100);
+brick.motor(M2).setPower(-100);
 brick.motor(M3).setPower(100);
 brick.motor(M4).setPower(100);
 
-script.wait(2000);
+script.wait(500);
 
 var i = 0;
 
-while (i < 10) 
+while (i < 3) 
 {
   a1 = brick.sensor("A1").readRawData();
   a2 = brick.sensor("A2").readRawData();
