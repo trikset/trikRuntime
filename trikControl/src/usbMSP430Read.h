@@ -14,25 +14,25 @@
 
 #define MAX_STRING_LENGTH   0x20
 
-extern volatile char fstmp[MAX_STRING_LENGTH];          // Buffer for response packets
-extern volatile FILE *usb_in_descr;                     // Input USB device descriptor
-extern volatile int killflag;                           // Flag to terminate read thread
+extern volatile char fstmp[MAX_STRING_LENGTH];			// Buffer for response packets
+extern volatile FILE *usb_in_descr;						// Input USB device descriptor
+extern volatile int killflag;							// Flag to terminate read thread
 
 /// Class for reading data from USB in separated thread
 class ReadUSBThread : public QThread
 {
-    Q_OBJECT
-    void run() {
-        QString result;
-        /* expensive or blocking operation  */
-        while (killflag)
-        {
-            fscanf(usb_in_descr, "%s", fstmp);
-        }
-        emit resultReady(result);
-    }
+	Q_OBJECT
+	void run() {
+		QString result;
+		// Expensive or blocking operation
+		while (killflag)
+		{
+			fscanf(usb_in_descr, "%s", fstmp);
+		}
+		emit resultReady(result);
+	}
 signals:
-    void resultReady(const QString &s);
+	void resultReady(const QString &s);
 };
 
 

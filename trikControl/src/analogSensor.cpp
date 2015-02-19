@@ -62,7 +62,7 @@ int AnalogSensor::read()
 		return 0;
 	}
 
-    QByteArray command(1, '\0');
+	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
 	return mK * mCommunicator.read(command) + mB;
@@ -74,7 +74,7 @@ int AnalogSensor::readRawData()
 		return 0;
 	}
 
-    QByteArray command(1, '\0');
+	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
 	return mCommunicator.read(command);

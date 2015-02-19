@@ -111,94 +111,93 @@ I2cCommunicator::~I2cCommunicator()
 void I2cCommunicator::connect()
 {
 
-    QTime myTimer;
-    myTimer.start();
+	QTime myTimer;
+	myTimer.start();
 
-    // Connect to USB device
-    if (connect_USBMSP() == DEVICE_ERROR)
-    {
-        QLOG_ERROR() << "Failed to open USB device file " << USB_DEV_NAME;
-        //mState.fail();
-    }
-    else
-    {
-        //mState.ready();
-    }
+	// Connect to USB device
+	if (connect_USBMSP() == DEVICE_ERROR)
+	{
+		QLOG_ERROR() << "Failed to open USB device file " << USB_DEV_NAME;
+		//mState.fail();
+	}
+	else
+	{
+		//mState.ready();
+	}
 
-    int nMilliseconds = myTimer.elapsed();
-    //qDebug() << "Connect measured time: ";
-    //qDebug() << nMilliseconds;
+	int nMilliseconds = myTimer.elapsed();
+	//qDebug() << "Connect measured time: ";
+	//qDebug() << nMilliseconds;
 
-    mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
-    if (mDeviceFileDescriptor < 0)
-    {
+	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
+	if (mDeviceFileDescriptor < 0)
+	{
 		QLOG_ERROR() << "Failed to open I2C device file " << mDevicePath;
-        mState.fail();
-        return;
+		mState.fail();
+		return;
 	}
 
-    if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId))
-    {
+	if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId))
+	{
 		QLOG_ERROR() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
-        mState.fail();
-        return;
+		mState.fail();
+		return;
 	}
 
-    mState.ready();
+	mState.ready();
 }
 
 void I2cCommunicator::send(QByteArray const &data)
 {
-    if (!mState.isReady())
-    {
+	if (!mState.isReady())
+	{
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
 		return;
 	}
 
 	QMutexLocker lock(&mLock);
-    if (data.size() == 2)
-    {
+	if (data.size() == 2)
+	{
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[1]);
-    }
-    else
-    {
+	}
+	else
+	{
 		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
 	}
 
-    QTime myTimer;
-    myTimer.start();
+	QTime myTimer;
+	myTimer.start();
 
-    send_USBMSP(data);
+	send_USBMSP(data);
 
-    int nMilliseconds = myTimer.elapsed();
-    //qDebug() << "Send measured time: ";
-    //qDebug() << nMilliseconds;
+	int nMilliseconds = myTimer.elapsed();
+	//qDebug() << "Send measured time: ";
+	//qDebug() << nMilliseconds;
 }
 
 /// todo: rewrite it
 int I2cCommunicator::read(QByteArray const &data)
 {
-    int ret_result = 0;
+	int ret_result = 0;
 
-    if (!mState.isReady())
-    {
+	if (!mState.isReady())
+	{
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
 		return 0;
 	}
 
 	QMutexLocker lock(&mLock);
 
-    QTime myTimer;
-    myTimer.start();
+	QTime myTimer;
+	myTimer.start();
 
-    ret_result = read_USBMSP(data);
+	ret_result = read_USBMSP(data);
 
-    int nMilliseconds = myTimer.elapsed();
-    //qDebug() << "Read measured time: ";
-    //qDebug() << nMilliseconds;
+	int nMilliseconds = myTimer.elapsed();
+	//qDebug() << "Read measured time: ";
+	//qDebug() << nMilliseconds;
 
-    return ret_result;
-
+	return ret_result;
 
 	if (data.size() == 1)
 	{
@@ -209,7 +208,6 @@ int I2cCommunicator::read(QByteArray const &data)
 		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
 		return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
 	}
-
 }
 
 DeviceInterface::Status I2cCommunicator::status() const
@@ -219,18 +217,18 @@ DeviceInterface::Status I2cCommunicator::status() const
 
 void I2cCommunicator::disconnect()
 {
-    QMutexLocker lock(&mLock);
+	QMutexLocker lock(&mLock);
 	close(mDeviceFileDescriptor);
 
-    QTime myTimer;
-    myTimer.start();
+	QTime myTimer;
+	myTimer.start();
 
-    // Disconnect from USB device
-    disconnect_USBMSP();
+	// Disconnect from USB device
+	disconnect_USBMSP();
 
-    int nMilliseconds = myTimer.elapsed();
-    //qDebug() << "Disconnect measured time: ";
-    //qDebug() << nMilliseconds;
+	int nMilliseconds = myTimer.elapsed();
+	//qDebug() << "Disconnect measured time: ";
+	//qDebug() << nMilliseconds;
 
 	mState.off();
 }
