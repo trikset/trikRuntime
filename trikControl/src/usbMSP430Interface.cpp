@@ -24,7 +24,9 @@ volatile int killflag;                              // Flag to terminate read th
 volatile uint16_t mper;                             // Global PWM motor period
 
 /// Extract number from packet
-uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize)
+uint32_t hex2num(char *string
+                 , uint16_t pos
+                 , uint16_t numsize)
 {
     uint32_t resnum = 0;
     uint32_t tmpnum = 0;
@@ -40,7 +42,10 @@ uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize)
 
 
 /// Make write register packet
-void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, uint32_t reg_val)
+void makeWriteRegPacket(char *msp_packet
+                        , uint8_t dev_addr
+                        , uint8_t reg_addr
+                        , uint32_t reg_val)
 {
     uint8_t crc = (0xFF - (dev_addr + WRITE_FUNC + reg_addr + uint8_t(reg_val & 0xFF) + uint8_t((reg_val >> 8) & 0xFF) +
                    uint8_t((reg_val >> 16) & 0xFF) + uint8_t((reg_val >> 24) & 0xFF)) + 1) & 0xFF;  // Checksum
@@ -48,14 +53,20 @@ void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, ui
 }
 
 /// Make read register packet
-void makeReadRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr)
+void makeReadRegPacket(char *msp_packet
+                       , uint8_t dev_addr
+                       , uint8_t reg_addr)
 {
     uint8_t crc = (0xFF - (dev_addr + READ_FUNC + reg_addr) + 1) & 0xFF;  // Checksum
     sprintf(msp_packet, ":%02X%02X%02X%02X\n", dev_addr, READ_FUNC, reg_addr, crc);
 }
 
 /// Function for decoding received packet
-uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func_code, uint8_t &reg_addr, uint32_t &reg_val)
+uint32_t decodeReceivedPacket(char *msp_packet
+                              , uint8_t &dev_addr
+                              , uint8_t &func_code
+                              , uint8_t &reg_addr
+                              , uint32_t &reg_val)
 {
     uint8_t crc1 = 0;   // Received cheksum
     uint8_t crc2 = 0;   // Calculated checksum
@@ -83,7 +94,8 @@ uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func
 }
 
 /// Send USB packet
-uint32_t sendUSBPacket(char *in_msp_packet, char *out_msp_packet)
+uint32_t sendUSBPacket(char *in_msp_packet
+                       , char *out_msp_packet)
 {
     uint16_t tout = 0;                                  // Timeout counter
     FILE *usb_descr = fopen(USB_DEV_NAME, "w");

@@ -9,19 +9,31 @@
 #define USBMSP430INTERFACE_H
 
 /// Extract number from packet
-uint32_t hex2num(char *string, uint16_t pos, uint16_t numsize);
+uint32_t hex2num(char *string                       // Input string
+                 , uint16_t pos                     // Start position
+                 , uint16_t numsize);               // Number size
 
 /// Make write register packet
-void makeWriteRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr, uint32_t reg_val);
+void makeWriteRegPacket(char *msp_packet            // Created packet string
+                        , uint8_t dev_addr          // Device address
+                        , uint8_t reg_addr          // Registers address to write
+                        , uint32_t reg_val);        // Value to write
 
 /// Make read register packet
-void makeReadRegPacket(char *msp_packet, uint8_t dev_addr, uint8_t reg_addr);
+void makeReadRegPacket(char *msp_packet             // Created packet string
+                       , uint8_t dev_addr           // Device address
+                       , uint8_t reg_addr);         // Register address to read
 
 /// Send USB packet
-uint32_t sendUSBPacket(char *in_msp_packet, char *out_msp_packet);
+uint32_t sendUSBPacket(char *in_msp_packet          // Packet to send
+                       , char *out_msp_packet);     // Received packet
 
 /// Function for decoding received packet
-uint32_t decodeReceivedPacket(char *msp_packet, uint8_t &dev_addr, uint8_t &func_code, uint8_t &reg_addr, uint32_t &reg_val);
+uint32_t decodeReceivedPacket(char *msp_packet      // Input MSP430 USB packet string
+                              , uint8_t &dev_addr   // Decoded response device address
+                              , uint8_t &func_code  // Decoded function number (read/write)
+                              , uint8_t &reg_addr   // Decoded register address
+                              , uint32_t &reg_val); // Decoded register value
 
 /// Init motors
 uint32_t init_motors_USBMSP();

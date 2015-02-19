@@ -123,10 +123,10 @@
 #define ANALOG_INP          0x0001
 
 /// Masks for bits of control register
-#define SENS_ENABLE         0x8000          //Enable bit
-#define SENS_ASYNC          0x4000          //Async mode
-#define SENS_PULL           0x2000          //Pull up resistors
-#define SENS_READ           0x0001          //Sensor read
+#define SENS_ENABLE         0x8000      //Enable bit
+#define SENS_ASYNC          0x4000      //Async mode
+#define SENS_PULL           0x2000      //Pull up resistors
+#define SENS_READ           0x0001      //Sensor read
 
 #define MAX_STRING_LENGTH   0x20
 

@@ -58,8 +58,8 @@ equal to its class name.
 
                 echo 1 > /sys/class/gpio/gpio62/value
 
+                <!-- It is very important to initialize MSP430 USB devices with this parameters -->
                 stty 921600 -F /dev/ttyACM0 -echo -onlcr
-
                 stty 921600 -F /dev/ttyACM1 -echo -onlcr
 
 		#amixer -q set PCM 127
