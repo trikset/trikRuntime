@@ -28,7 +28,7 @@ class ReadUSBThread : public QThread
 		// Expensive or blocking operation
 		while (killflag)
 		{
-			//fscanf(usb_in_descr, "%s", fstmp);
+			fscanf(usb_in_descr, "%s", fstmp);
 			read_flag = 0x00;
 		}
 		emit resultReady(result);

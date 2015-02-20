@@ -279,7 +279,6 @@ uint32_t disconnect_USBMSP()
 /// Send data to MSP430 via USB
 uint32_t send_USBMSP(QByteArray const &i2c_data)
 {
-	/*
 	char s1[MAX_STRING_LENGTH];
 	char s2[MAX_STRING_LENGTH];
 	uint16_t mdut;
@@ -424,11 +423,6 @@ uint32_t send_USBMSP(QByteArray const &i2c_data)
 			default:
 				break;
 		}
-	}
-	*/
-	read_flag = 0x01;
-	while (read_flag)
-	{
 	}
 	return NO_ERROR;
 }
