@@ -152,14 +152,14 @@
 #define NUM_WORD			0x04
 #define NUM_DWORD			0x08
 
-#define RECV_PACK_LEN		0x11
+#define RECV_PACK_LEN		0x12
 
 /// Errors for response
 #define NO_ERROR			0x00
 #define DEVICE_ERROR		0x01
 #define PACKET_ERROR		0x02
 
-#define TIME_OUT			0xFFFFF
+#define TIME_OUT			0xFFFF
 
 #define USB_DEV_NAME		"/dev/ttyACM0"
 

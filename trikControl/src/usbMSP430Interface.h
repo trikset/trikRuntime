@@ -24,6 +24,9 @@ void makeReadRegPacket(char *msp_packet				// Created packet string
 						, uint8_t dev_addr			// Device address
 						, uint8_t reg_addr);		// Register address to read
 
+/// Init USB TTY device
+uint32_t init_USBTTYDevice();
+
 /// Send USB packet
 uint32_t sendUSBPacket(char *in_msp_packet			// Packet to send
 						, char *out_msp_packet);	// Received packet

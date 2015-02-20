@@ -7,23 +7,32 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <termios.h>
+
 #include <QByteArray>
 #include <QDebug>
-#include <QThread>
+//#include <QThread>
 #include <QString>
 #include <QObject>
-#include <QProcess>
+//#include <QProcess>
+
 #include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
-#include "usbMSP430Read.h"
+//#include "usbMSP430Read.h"
 
-volatile char fstmp[MAX_STRING_LENGTH];				// Buffer for response packets
-volatile FILE *usb_in_descr;						// Input USB device descriptor
-volatile FILE *usb_out_descr;						// Output USB device descriptor
-volatile int killflag;								// Flag to terminate read thread
+//volatile char fstmp[MAX_STRING_LENGTH];				// Buffer for response packets
+//volatile FILE *usb_in_descr;						// Input USB device descriptor
+//volatile FILE *usb_out_descr;						// Output USB device descriptor
+//volatile int killflag;								// Flag to terminate read thread
 volatile uint16_t mper;								// Global PWM motor period
-volatile uint8_t read_flag;							// Flag that shows, that fstmp buffer is busy
+//volatile uint8_t read_flag;							// Flag that shows, that fstmp buffer is busy
+int usb_out_descr;									// Input/Output USB device descriptor
+struct termios usb_tty;								// Struct for termio parameters, MUST BE GLOBAL!!!
 
 /// Extract number from packet
 uint32_t hex2num(char *string
@@ -41,7 +50,6 @@ uint32_t hex2num(char *string
 	}
 	return resnum;
 }
-
 
 /// Make write register packet
 void makeWriteRegPacket(char *msp_packet
@@ -93,29 +101,138 @@ uint32_t decodeReceivedPacket(char *msp_packet
 	return NO_ERROR;									// Return NO ERROR
 }
 
+/// Init USB TTY device
+uint32_t init_USBTTYDevice()
+{
+	memset (&usb_tty, 0, sizeof(usb_tty));
+
+	if (tcgetattr(usb_out_descr, &usb_tty) != 0)
+	{
+		qDebug() << "Error " << errno << " from tcgetattr: " << strerror(errno);
+		return DEVICE_ERROR;
+	}
+
+	cfsetospeed (&usb_tty, B921600);
+	cfsetispeed (&usb_tty, B921600);
+
+	usb_tty.c_cflag     &=  ~PARENB;        // Make 8n1
+	usb_tty.c_cflag     &=  ~CSTOPB;
+	usb_tty.c_cflag     &=  ~CSIZE;
+	usb_tty.c_cflag     |=  CS8;
+	usb_tty.c_cflag     &=  ~CRTSCTS;       // no flow control
+	usb_tty.c_lflag     =   0;          // no signaling chars, no echo, no canonical processing
+	usb_tty.c_oflag     =   0;                  // no remapping, no delays
+	usb_tty.c_cc[VMIN]      =   0;                  // read doesn't block
+	usb_tty.c_cc[VTIME]     =   5;                  // 0.5 seconds read timeout
+
+	usb_tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
+	usb_tty.c_iflag     &=  ~(IXON | IXOFF | IXANY);// turn off s/w flow ctrl
+	usb_tty.c_lflag     &=  ~(ICANON | ECHO | ECHOE | ISIG); // make raw
+	usb_tty.c_oflag     &=  ~OPOST;              // make raw
+
+	tcflush(usb_out_descr, TCIFLUSH);
+
+	if (tcsetattr(usb_out_descr, TCSANOW, &usb_tty) != 0)
+	{
+		qDebug() << "Error " << errno << " from tcsetattr";
+		return DEVICE_ERROR;
+	}
+
+	return NO_ERROR;
+}
+
 /// Send USB packet
 uint32_t sendUSBPacket(char *in_msp_packet
 						, char *out_msp_packet)
 {
-	uint32_t tout = 0;									// Timeout counter
-	if (usb_out_descr == NULL)
+	uint32_t tout = 0;			// Timeout counter
+	int32_t n_written = 0;		// Number of written bytes
+	int32_t n_read = 0;			// Number of read bytes
+	size_t n_write = 0;		// Number to write bytes
+	char s1[MAX_STRING_LENGTH];
+
+	if (usb_out_descr < 0)
+	{
+		qDebug() << "Error device descriptor" << errno << " : " << strerror (errno);
 		return DEVICE_ERROR;
-	read_flag = 0x01;
-	fprintf(usb_out_descr, in_msp_packet);
-	fflush(usb_out_descr);
-	while ((tout < TIME_OUT) && read_flag)
-	{
-		tout++;
 	}
-	if (tout < TIME_OUT)
+
+//	read_flag = 0x01;
+//	fprintf(usb_out_descr, in_msp_packet);
+//	fflush(usb_out_descr);
+//	while ((tout < TIME_OUT) && read_flag)
+//	{
+//		tout++;
+//	}
+//	if (tout < TIME_OUT)
+//	{
+//		strcpy(out_msp_packet, const_cast<char*>(fstmp));
+//	}
+//	else
+//	{
+//		sprintf(out_msp_packet, "\0");
+//		return PACKET_ERROR;
+//	}
+
+	// Write packet
+	//sprintf(s1, ":1234567890789012\n");
+	//n_written = write(usb_out_descr, s1, 18);
+	n_write = strlen(in_msp_packet);
+	sprintf(s1, in_msp_packet);
+
+	n_written = write(usb_out_descr, s1, n_write);
+	if (n_written != strlen(s1))
 	{
-		strcpy(out_msp_packet, const_cast<char*>(fstmp));
+		qDebug() << "Error writing: " << strerror(errno);
+		return PACKET_ERROR;
 	}
-	else
+	tcflush(usb_out_descr, TCIFLUSH);
+
+	// qDebug() << "After writing";
+	// qDebug() << "Write size: " << n_written;
+	// qDebug() << "Buf size: " << sizeof(in_msp_packet);
+
+	// Read packet
+
+	// qDebug() << "Clear buffer";
+
+	memset (&s1, '\0', MAX_STRING_LENGTH);
+
+	// qDebug() << "Before reading";
+
+//	do
+//	{
+//		n_read = read(usb_out_descr, &s1, MAX_STRING_LENGTH);
+//		tout ++;
+//	} while ((n_read < RECV_PACK_LEN) && (tout < TIME_OUT));
+
+	do
 	{
+		n_read = read(usb_out_descr, &s1, MAX_STRING_LENGTH);
+
+	} while ((n_read < RECV_PACK_LEN));
+
+
+	// qDebug() << "After reading";
+
+	// qDebug() << "Read: " << const_cast<char*>(s1);
+	// qDebug() << "Buf size: " << sizeof(s1);
+	// qDebug() << "Read size: " << strlen(s1);
+	//qDebug() << "Read size: " << n_read;
+	// qDebug() << "Timeout counter: " << tout;
+
+	if ((n_read < RECV_PACK_LEN) || (tout == TIME_OUT))
+	{
+		qDebug() << "Error reading: " << strerror(errno);
 		sprintf(out_msp_packet, "\0");
 		return PACKET_ERROR;
 	}
+	else
+	{
+		strncpy(out_msp_packet, s1, n_read);
+	}
+
+
 	return NO_ERROR;
 }
 
@@ -200,36 +317,51 @@ uint32_t init_sensors_USBMSP()
 	return NO_ERROR;
 }
 
-
 /// Connect to USB MSP430 device
 uint32_t connect_USBMSP()
 {
+
 	uint32_t errcode;
 
 	// Clear temporary buffer
-	sprintf(fstmp, "\0");
+//	sprintf(fstmp, "\0");
 
 	// Set terminate flag for read thread
-	killflag = 0x01;
+//	killflag = 0x01;
 
 	// Open USB device for input
-	usb_in_descr = fopen(USB_DEV_NAME, "r");
-	if (usb_in_descr == NULL)
-		return DEVICE_ERROR;
+//	usb_in_descr = fopen(USB_DEV_NAME, "r");
+//	if (usb_in_descr == NULL)
+//		return DEVICE_ERROR;
 
 	// Start separated thread to read from USB device
-	ReadUSBThread *readUSBThread = new ReadUSBThread();
-	QObject::connect(readUSBThread, SIGNAL(finished()), readUSBThread, SLOT(deleteLater()));
-	readUSBThread->start();
+//	ReadUSBThread *readUSBThread = new ReadUSBThread();
+//	QObject::connect(readUSBThread, SIGNAL(finished()), readUSBThread, SLOT(deleteLater()));
+//	readUSBThread->start();
 
 	// Open USB descriptor for writing
-	usb_out_descr = fopen(USB_DEV_NAME, "w");
-	if (usb_out_descr == NULL)
-		return DEVICE_ERROR;
+//	usb_out_descr = fopen(USB_DEV_NAME, "w");
+//	if (usb_out_descr == NULL)
+//		return DEVICE_ERROR;
 
 	// Send empty packet
-	//fprintf(usb_out_descr, "\n");
-	//fflush(usb_out_descr);
+	// fprintf(usb_out_descr, "\n");
+	// fflush(usb_out_descr);
+
+	// Open USB descriptor for writing
+	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY);
+
+	if (usb_out_descr < 0)
+	{
+		qDebug() << "Error " << errno << " opening " << USB_DEV_NAME << ": " << strerror (errno);
+		return DEVICE_ERROR;
+	}
+
+	// Init TTY parameters
+	errcode = init_USBTTYDevice();
+
+	// Init USB STTY device with serial port parameters
+	errcode = init_USBTTYDevice();
 
 	// Init motors
 	errcode = init_motors_USBMSP();
@@ -240,14 +372,17 @@ uint32_t connect_USBMSP()
 	// Init sensors
 	errcode = init_sensors_USBMSP();
 
+
 	return NO_ERROR;
 }
 
 /// Disconnect from USB MSP430 device
 uint32_t disconnect_USBMSP()
 {
+	uint32_t errcode;
+
 	// Reset terminate flag for read thread
-	killflag = 0x00;
+//	killflag = 0x00;
 
 	// Send empty packet to terminate read function in thread
 	/*
@@ -260,18 +395,79 @@ uint32_t disconnect_USBMSP()
 	*/
 
 	// Send empty packet to terminate read function in thread
-	if (usb_out_descr == NULL)
-		return DEVICE_ERROR;
-	fprintf(usb_out_descr, "\n");
-	fflush(usb_out_descr);
+//	if (usb_out_descr == NULL)
+//		return DEVICE_ERROR;
+//	fprintf(usb_out_descr, "\n");
+//	fflush(usb_out_descr);
 
 	// Close output USB descriptor
-	fclose(usb_out_descr);
+//	fclose(usb_out_descr);
 
 	// Close input USB descriptor
-	if (usb_in_descr == NULL)
-		return DEVICE_ERROR;
-	fclose(usb_in_descr);
+//	if (usb_in_descr == NULL)
+//		return DEVICE_ERROR;
+//	fclose(usb_in_descr);
+
+	// Close output USB descriptor
+//	if (usb_out_descr < 0)
+//	{
+//		qDebug() << "Error device descriptor" << errno << " : " << strerror (errno);
+//		return DEVICE_ERROR;
+//	}
+//	close(usb_out_descr);
+
+
+//	int32_t n_written = 0;		// Number of written bytes
+//	int32_t n_read = 0;			// Number of read bytes
+
+//	// Write
+//	char buf[32];
+
+
+//	for (int eee = 0; eee < 50; eee ++)
+//	{
+//		if (usb_out_descr < 0)
+//		{
+//			qDebug() << "Error device descriptor" << errno << " : " << strerror (errno);
+//			return DEVICE_ERROR;
+//		}
+
+//		sprintf(buf, ":1234567890789012\n");
+//		sendUSBPacket(buf, buf);
+//		int stlen = strlen(buf);
+//		n_written = write(usb_out_descr, buf, stlen);
+
+//		if (n_written != stlen)
+//		{
+//			qDebug() << "Error writing: " << strerror(errno);
+//			return PACKET_ERROR;
+//		}
+
+
+//		tcflush(usb_out_descr, TCIFLUSH);
+
+//		// Read
+//		memset (&buf, '\0', sizeof(buf));
+
+//		do
+//		{
+//			n_read = read(usb_out_descr, &buf , sizeof(buf));
+//		} while (n_read < 0);
+
+//	}
+
+//	qDebug() << "Write size: " << n_written;
+//	qDebug() << "Read: " << const_cast<char*>(buf);
+//	qDebug() << "Buf size: " << sizeof(buf);
+//	qDebug() << "Read size: " << strlen(buf);
+//	qDebug() << "Read size: " << n;
+
+
+
+	close(usb_out_descr);
+
+//	qDebug() << "Device closed";
+
 
 	return NO_ERROR;
 }
@@ -286,8 +482,6 @@ uint32_t send_USBMSP(QByteArray const &i2c_data)
 	uint16_t ptmp;
 	uint32_t errcode;
 	int8_t mtmp;
-	if (usb_in_descr == NULL)
-		return DEVICE_ERROR;
 	if (i2c_data.size() == 2)
 	{
 		if ((i2c_data[0] == i2cMOT1) || (i2c_data[0] == i2cMOT2) || (i2c_data[0] == i2cMOT3) || (i2c_data[0] == i2cMOT4))
