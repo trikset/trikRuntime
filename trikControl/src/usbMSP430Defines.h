@@ -159,7 +159,7 @@
 #define DEVICE_ERROR		0x01
 #define PACKET_ERROR		0x02
 
-#define TIME_OUT			0x0FFF
+#define TIME_OUT			0xFFFFF
 
 #define USB_DEV_NAME		"/dev/ttyACM0"
 

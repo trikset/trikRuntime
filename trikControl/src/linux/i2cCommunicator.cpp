@@ -25,7 +25,7 @@
 #include <trikKernel/configurer.h>
 
 #include <QsLog.h>
-#include <QTime>
+#include <QElapsedTimer>
 
 #include "src/usbMSP430Defines.h"
 #include "src/usbMSP430Interface.h"
@@ -111,7 +111,7 @@ I2cCommunicator::~I2cCommunicator()
 void I2cCommunicator::connect()
 {
 
-	QTime myTimer;
+	QElapsedTimer myTimer;
 	myTimer.start();
 
 	// Connect to USB device
@@ -125,9 +125,9 @@ void I2cCommunicator::connect()
 		//mState.ready();
 	}
 
-	int nMilliseconds = myTimer.elapsed();
-	//qDebug() << "Connect measured time: ";
-	//qDebug() << nMilliseconds;
+	int nanoseconds = myTimer.nsecsElapsed();
+	qDebug() << "Connect measured time (ns): ";
+	qDebug() << nanoseconds;
 
 	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0)
@@ -165,14 +165,14 @@ void I2cCommunicator::send(QByteArray const &data)
 		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
 	}
 
-	QTime myTimer;
+	QElapsedTimer myTimer;
 	myTimer.start();
 
 	send_USBMSP(data);
 
-	int nMilliseconds = myTimer.elapsed();
-	//qDebug() << "Send measured time: ";
-	//qDebug() << nMilliseconds;
+	int nanoseconds = myTimer.nsecsElapsed();
+	qDebug() << "Send measured time (ns): ";
+	qDebug() << nanoseconds;
 }
 
 /// todo: rewrite it
@@ -188,14 +188,14 @@ int I2cCommunicator::read(QByteArray const &data)
 
 	QMutexLocker lock(&mLock);
 
-	QTime myTimer;
+	QElapsedTimer myTimer;
 	myTimer.start();
 
 	ret_result = read_USBMSP(data);
 
-	int nMilliseconds = myTimer.elapsed();
-	//qDebug() << "Read measured time: ";
-	//qDebug() << nMilliseconds;
+	int nanoseconds = myTimer.nsecsElapsed();
+	qDebug() << "Read measured time (ns): ";
+	qDebug() << nanoseconds;
 
 	return ret_result;
 
@@ -220,15 +220,15 @@ void I2cCommunicator::disconnect()
 	QMutexLocker lock(&mLock);
 	close(mDeviceFileDescriptor);
 
-	QTime myTimer;
+	QElapsedTimer myTimer;
 	myTimer.start();
 
 	// Disconnect from USB device
 	disconnect_USBMSP();
 
-	int nMilliseconds = myTimer.elapsed();
-	//qDebug() << "Disconnect measured time: ";
-	//qDebug() << nMilliseconds;
+	int nanoseconds = myTimer.nsecsElapsed();
+	qDebug() << "Disconnect measured time (ns): ";
+	qDebug() << nanoseconds;
 
 	mState.off();
 }

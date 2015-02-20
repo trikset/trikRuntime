@@ -20,8 +20,10 @@
 
 volatile char fstmp[MAX_STRING_LENGTH];				// Buffer for response packets
 volatile FILE *usb_in_descr;						// Input USB device descriptor
+volatile FILE *usb_out_descr;						// Output USB device descriptor
 volatile int killflag;								// Flag to terminate read thread
 volatile uint16_t mper;								// Global PWM motor period
+volatile uint8_t read_flag;							// Flag that shows, that fstmp buffer is busy
 
 /// Extract number from packet
 uint32_t hex2num(char *string
@@ -77,8 +79,6 @@ uint32_t decodeReceivedPacket(char *msp_packet
 	}
 	if ((strlen(msp_packet) != RECV_PACK_LEN))			// Incorrect packet length
 	{
-		//qDebug() << strlen(msp_packet);
-		//qDebug() << strlen(RECV_PACK_LEN);
 		return LENGTH_ERROR;
 	}
 	dev_addr = hex2num(msp_packet, 1, NUM_BYTE);		// Get device address
@@ -97,18 +97,25 @@ uint32_t decodeReceivedPacket(char *msp_packet
 uint32_t sendUSBPacket(char *in_msp_packet
 						, char *out_msp_packet)
 {
-	uint16_t tout = 0;									// Timeout counter
-	FILE *usb_descr = fopen(USB_DEV_NAME, "w");
-	if (usb_descr == NULL)
+	uint32_t tout = 0;									// Timeout counter
+	if (usb_out_descr == NULL)
 		return DEVICE_ERROR;
-	fprintf(usb_descr, in_msp_packet);
-	fflush(usb_descr);
-	fclose(usb_descr);
-	while ((tout < TIME_OUT))
+	read_flag = 0x01;
+	fprintf(usb_out_descr, in_msp_packet);
+	fflush(usb_out_descr);
+	while ((tout < TIME_OUT) && read_flag)
 	{
 		tout++;
 	}
-	strcpy(out_msp_packet, const_cast<char*>(fstmp));
+	if (tout < TIME_OUT)
+	{
+		strcpy(out_msp_packet, const_cast<char*>(fstmp));
+	}
+	else
+	{
+		sprintf(out_msp_packet, "\0");
+		return PACKET_ERROR;
+	}
 	return NO_ERROR;
 }
 
@@ -215,13 +222,14 @@ uint32_t connect_USBMSP()
 	QObject::connect(readUSBThread, SIGNAL(finished()), readUSBThread, SLOT(deleteLater()));
 	readUSBThread->start();
 
-	// Send empty packet
-	FILE *usb_descr = fopen(USB_DEV_NAME, "w");
-	if (usb_descr == NULL)
+	// Open USB descriptor for writing
+	usb_out_descr = fopen(USB_DEV_NAME, "w");
+	if (usb_out_descr == NULL)
 		return DEVICE_ERROR;
-	fprintf(usb_descr, "\n");
-	fflush(usb_descr);
-	fclose(usb_descr);
+
+	// Send empty packet
+	//fprintf(usb_out_descr, "\n");
+	//fflush(usb_out_descr);
 
 	// Init motors
 	errcode = init_motors_USBMSP();
@@ -242,12 +250,23 @@ uint32_t disconnect_USBMSP()
 	killflag = 0x00;
 
 	// Send empty packet to terminate read function in thread
+	/*
 	FILE *usb_descr = fopen(USB_DEV_NAME, "w");
 	if (usb_descr == NULL)
 		return DEVICE_ERROR;
 	fprintf(usb_descr, "\n");
 	fflush(usb_descr);
 	fclose(usb_descr);
+	*/
+
+	// Send empty packet to terminate read function in thread
+	if (usb_out_descr == NULL)
+		return DEVICE_ERROR;
+	fprintf(usb_out_descr, "\n");
+	fflush(usb_out_descr);
+
+	// Close output USB descriptor
+	fclose(usb_out_descr);
 
 	// Close input USB descriptor
 	if (usb_in_descr == NULL)
@@ -260,6 +279,7 @@ uint32_t disconnect_USBMSP()
 /// Send data to MSP430 via USB
 uint32_t send_USBMSP(QByteArray const &i2c_data)
 {
+	/*
 	char s1[MAX_STRING_LENGTH];
 	char s2[MAX_STRING_LENGTH];
 	uint16_t mdut;
@@ -404,6 +424,11 @@ uint32_t send_USBMSP(QByteArray const &i2c_data)
 			default:
 				break;
 		}
+	}
+	*/
+	read_flag = 0x01;
+	while (read_flag)
+	{
 	}
 	return NO_ERROR;
 }
