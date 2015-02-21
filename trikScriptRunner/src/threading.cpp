@@ -126,6 +126,7 @@ void Threading::reset()
 	}
 
 	mThreadsMutex.unlock();
+
 	waitForAll();
 
 	qDeleteAll(mMessageQueueMutexes);

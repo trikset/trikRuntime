@@ -92,6 +92,7 @@ void ScriptEngineWorker::reset()
 	}
 
 	mState = resetting;
+	mScriptControl.reset();
 	mThreadingVariable.reset();
 
 	if (mDirectScriptsEngine) {
@@ -105,7 +106,6 @@ void ScriptEngineWorker::reset()
 	}
 
 	mBrick.reset();
-	mScriptControl.reset();
 	if (mMailbox) {
 		mMailbox->reset();
 	}
