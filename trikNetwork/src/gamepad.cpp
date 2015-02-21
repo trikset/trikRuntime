@@ -109,11 +109,15 @@ void Gamepad::init(int port)
 void Gamepad::onPadUp(int padId)
 {
 	mPads[padId].isPressed = false;
+
+	emit padUp(padId);
 }
 
 void Gamepad::onWheel(int percent)
 {
 	mWheelPercent = percent;
+
+	emit wheelEvent(percent);
 }
 
 void Gamepad::onPad(int padId, int x, int y)
@@ -121,6 +125,8 @@ void Gamepad::onPad(int padId, int x, int y)
 	mPads[padId].isPressed = true;
 	mPads[padId].x = x;
 	mPads[padId].y = y;
+
+	emit pad(padId, x, y);
 }
 
 void Gamepad::onButton(int button, int pressed)
@@ -137,6 +143,8 @@ void Gamepad::onButton(int button, int pressed)
 	}
 
 	mButtonStateClearTimers[button]->start();
+
+	emit Gamepad::button(button, pressed);
 }
 
 void Gamepad::onButtonStateClearTimerTimeout()

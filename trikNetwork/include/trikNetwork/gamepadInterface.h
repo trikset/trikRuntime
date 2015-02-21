@@ -60,7 +60,7 @@ signals:
 
 	/// Emitted when user tilts his Android device with "wheel" turned on.
 	/// @param percent - percent of a tilt angle.
-	void wheel(int percent);
+	void wheelEvent(int percent);
 
 	/// Emitted when user pushes or moves his finger on a pad.
 	/// @param pad - id of a pad on which the event occurs.

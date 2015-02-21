@@ -15,14 +15,20 @@
 #include "versionWidget.h"
 #include <trikKernel/version.h>
 
+#include <QtGui/QKeyEvent>
+
 using namespace trikGui;
 
 VersionWidget::VersionWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
 {
 	QLabel* const versionLabel = new QLabel(tr("Current version") + " : \n" + trikKernel::version);
-	versionLabel->setAlignment(Qt::AlignCenter);
+	versionLabel->setAlignment(Qt::AlignTop);
 	mLayout.addWidget(versionLabel);
+
+	mUpdateButton = new QPushButton("Update");
+	mLayout.addWidget(mUpdateButton);
+	mUpdateButton->setDefault(true);
 
 	setLayout(&mLayout);
 	setFocusPolicy(Qt::StrongFocus);
@@ -30,6 +36,7 @@ VersionWidget::VersionWidget(QWidget *parent)
 
 VersionWidget::~VersionWidget()
 {
+	delete mUpdateButton;
 }
 
 void VersionWidget::renewFocus()
@@ -39,4 +46,40 @@ void VersionWidget::renewFocus()
 QString VersionWidget::menuEntry()
 {
 	return QString(tr("Version"));
+}
+
+void VersionWidget::keyPressEvent(QKeyEvent *event)
+{
+	switch (event->key()) {
+		case Qt::Key_Return: {
+			updateVersion();
+			break;
+		}
+		default: {
+			TrikGuiDialog::keyPressEvent(event);
+			break;
+		}
+	}
+}
+
+void VersionWidget::updateVersion()
+{
+	QMessageBox updateMessageBox(this);
+	updateMessageBox.setIcon(QMessageBox::Question);
+	updateMessageBox.setText(tr("Do you really want to update current version?"));
+	updateMessageBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+	updateMessageBox.setDefaultButton(QMessageBox::Yes);
+	const int answer = updateMessageBox.exec();
+
+	switch (answer) {
+		case QMessageBox::Yes: {
+			UpdateWidget updateWidget;
+			emit newWidget(updateWidget);
+			updateWidget.exec();
+			break;
+		}
+		default:
+			break;
+	 }
+
 }

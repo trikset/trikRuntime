@@ -20,13 +20,18 @@
 	#include <QtGui/QWidget>
 	#include <QtGui/QHBoxLayout>
 	#include <QtGui/QLabel>
+	#include <QtGui/QPushButton>
+	#include <QtGui/QMessageBox>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QPushButton>
+	#include <QtWidgets/QMessageBox>
 #endif
 
 #include "trikGuiDialog.h"
+#include "updateWidget.h"
 
 namespace trikGui {
 
@@ -49,9 +54,16 @@ public:
 public slots:
 	void renewFocus() override;
 
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+
+private slots:
+	void updateVersion();
+
 private:
 	/// Main layout of this widget.
 	QHBoxLayout mLayout;
+	QPushButton *mUpdateButton;  // Has ownership.
 };
 
 }

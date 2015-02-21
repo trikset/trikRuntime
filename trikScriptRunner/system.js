@@ -27,7 +27,9 @@ var aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
         , "D1", "D2", "F1"
         , "M1", "M2", "M3", "M4"
         , "B1", "B2", "B3", "B4"
-        , "E1", "E2", "E3", "E4"];
+        , "E1", "E2", "E3"
+	, "C1", "C2", "C3"];
+
 aliases.forEach(function(port) { this[port] = port; });
 
 // String.format function implementation.
@@ -44,8 +46,8 @@ if (!String.prototype.format) {
   };
 }
 
-brick.repeat = function(mscs, f) {
-  var timer = brick.timer(mscs);
+script.repeat = function(mscs, f) {
+  var timer = script.timer(mscs);
   timer.timeout.connect(f);
 }
 
