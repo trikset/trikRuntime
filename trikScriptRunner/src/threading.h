@@ -1,3 +1,17 @@
+/* Copyright 2014 CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QThread>
@@ -11,36 +25,57 @@ namespace trikScriptRunner {
 class ScriptEngineWorker;
 class ScriptThread;
 
-/// Provides methods for managing OS threads in QtScript.
+/// Designed to support OS threads from a Qt Script.
+/// Provides methods for creation and joining threads and for sending messages between threads.
 class Threading : public QObject
 {
 	Q_OBJECT
 
 public:
+	/// Constructs a Threading object with given script worker as a parent.
 	explicit Threading(ScriptEngineWorker *scriptWorker);
 	~Threading();
 
+	/// Starts the main thread of a script
 	void startMainThread(QString const &script);
 
+	/// Starts a thread with given threadId.
+	/// @param function - a thread routine
 	Q_INVOKABLE void startThread(QScriptValue const &threadId, QScriptValue const &function);
 
+	/// Joins a thread with given threadId. Does nothing if there is no thread with such id.
 	Q_INVOKABLE void joinThread(QString const &threadId);
 
+	/// Sends message to a mailbox with given threadId, even if such thread does not exist.
+	/// The message can be accessed in the future by any thread with the same threadId.
 	Q_INVOKABLE void sendMessage(const QString &threadId, const QScriptValue &message);
 
+	/// Designed to be called from a thread receiving a message.
 	Q_INVOKABLE QScriptValue receiveMessage();
 
+	/// Wait until all threads finish execution.
 	void waitForAll();
 
+	/// Aborts evalutation of all threads, resets to initial state.
 	void reset();
 
+	/// The last error message.
 	QString errorMessage() const;
 
+	/// Designed to be called from a thread that's finished execution.
 	void threadFinished(const QString &id);
 
 private:
+	/// Starts a thread with given threadId
+	/// @param engine - script engine that will do the work; it will be owned by a newly created thread
+	/// @param script - exact script to evaluate in new thread
 	void startThread(QString const &threadId, QScriptEngine *engine, QString const &script);
+
+	/// Create new engine and initialize it with a context of given engine
+	/// The caller is responsible for deletion of created engine.
 	QScriptEngine *cloneEngine(QScriptEngine *engine);
+
+	/// Utility function which locks reset mutex in case if reset is not started.
 	bool tryLockReset();
 
 	QHash<QString, ScriptThread *> mThreads;
@@ -55,7 +90,7 @@ private:
 	bool mResetStarted;
 	QMutex mResetMutex;
 
-	ScriptEngineWorker *mScriptWorker;
+	ScriptEngineWorker *mScriptWorker;  // Doesn't have ownership.
 	QString mScript;
 };
 

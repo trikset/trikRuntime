@@ -52,8 +52,8 @@ public:
 	QString scriptsDirName() const;
 
 public slots:
-	/// Executes given script asynchronously. If some script is already executing, it will be aborted (but no
-	/// completed() signal will be sent for it). Execution state will be reset (and robot fully stopped) before and
+	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
+	/// Execution state will be reset (and robot fully stopped) before and
 	/// after script execution. For event-driven mode (where script has brick.run() command) script counts as finished
 	/// when it requests to quit by itself or was aborted. When script is finished, completed() signal will be emitted.
 	/// @param script - script in Qt Script language to be executed.
@@ -103,7 +103,7 @@ private slots:
 
 private:
 	QScopedPointer<ScriptExecutionControl> mScriptController;
-	ScriptEngineWorker *mScriptEngineWorker;
+	ScriptEngineWorker *mScriptEngineWorker;  // Has ownership.
 	QThread mWorkerThread;
 
 	QString mStartDirPath;
