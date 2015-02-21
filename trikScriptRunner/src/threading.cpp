@@ -1,5 +1,7 @@
 #include "threading.h"
 
+#include <QtCore/QQueue>
+
 #include "scriptEngineWorker.h"
 #include "src/utils.h"
 #include "src/scriptThread.h"
@@ -51,11 +53,11 @@ void Threading::startThread(QString const &threadId, QScriptEngine *engine, QStr
 	mThreadsMutex.lock();
 	mThreads[threadId] = thread;
 	mThreadsMutex.unlock();
+
 	engine->moveToThread(thread);
-
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-
 	thread->start();
+
 	while (!thread->isEvaluating()) {
 		QThread::yieldCurrentThread();
 	}
@@ -103,15 +105,20 @@ QScriptEngine * Threading::cloneEngine(QScriptEngine *engine)
 
 void Threading::reset()
 {
-	mResetMutex.lock();
-	if (mResetStarted) {
-		mResetMutex.unlock();
+	if (!tryLockReset()) {
 		return;
 	}
 
 	mResetStarted = true;
 	mResetMutex.unlock();
 	QLOG_INFO() << "Threading: reset started";
+
+	mMessageMutex.lock();
+	for (QWaitCondition * const condition : mMessageQueueConditions.values()) {
+		condition->wakeAll();
+	}
+
+	mMessageMutex.unlock();
 
 	mThreadsMutex.lock();
 	for (ScriptThread *thread : mThreads.values()) {
@@ -120,6 +127,12 @@ void Threading::reset()
 
 	mThreadsMutex.unlock();
 	waitForAll();
+
+	qDeleteAll(mMessageQueueMutexes);
+	qDeleteAll(mMessageQueueConditions);
+	mMessageQueueMutexes.clear();
+	mMessageQueueConditions.clear();
+	mMessageQueues.clear();
 
 	QLOG_INFO() << "Threading: reset ended";
 	mResetStarted = false;
@@ -143,7 +156,69 @@ void Threading::threadFinished(const QString &id)
 	}
 }
 
+void Threading::sendMessage(const QString &threadId, const QScriptValue &message)
+{
+	if (!tryLockReset()) {
+		return;
+	}
+
+	mMessageMutex.lock();
+	if (!mMessageQueueConditions.contains(threadId)) {
+		mMessageQueueMutexes[threadId] = new QMutex();
+		mMessageQueueConditions[threadId] = new QWaitCondition();
+	}
+
+	mMessageQueues[threadId].enqueue(message);
+	mMessageQueueConditions[threadId]->wakeOne();
+	mMessageMutex.unlock();
+
+	mResetMutex.unlock();
+}
+
+QScriptValue Threading::receiveMessage()
+{
+	if (!tryLockReset()) {
+		return QScriptValue();
+	}
+
+	QString threadId = static_cast<ScriptThread *>(QThread::currentThread())->id();
+	mMessageMutex.lock();
+	if (!mMessageQueueConditions.contains(threadId)) {
+		mMessageQueueMutexes[threadId] = new QMutex();
+		mMessageQueueConditions[threadId] = new QWaitCondition();
+	}
+
+	QMutex *mutex = mMessageQueueMutexes[threadId];
+	QWaitCondition *condition = mMessageQueueConditions[threadId];
+	QQueue<QScriptValue> &queue = mMessageQueues[threadId];
+	mMessageMutex.unlock();
+
+	mutex->lock();
+	if (queue.isEmpty()) {
+		mResetMutex.unlock();
+		condition->wait(mutex);
+		if (!tryLockReset()) {
+			return QScriptValue();
+		}
+	}
+
+	mutex->unlock();
+	QScriptValue result = queue.dequeue();
+	mResetMutex.unlock();
+	return result;
+}
+
 QString Threading::errorMessage() const
 {
 	return mErrorMessage;
+}
+
+bool Threading::tryLockReset()
+{
+	mResetMutex.lock();
+	if (mResetStarted) {
+		mResetMutex.unlock();
+	}
+
+	return !mResetStarted;
 }

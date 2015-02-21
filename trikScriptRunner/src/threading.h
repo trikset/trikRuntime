@@ -2,6 +2,8 @@
 
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
+
 #include <QtScript/QScriptEngine>
 
 namespace trikScriptRunner {
@@ -24,6 +26,10 @@ public:
 
 	Q_INVOKABLE void joinThread(QString const &threadId);
 
+	Q_INVOKABLE void sendMessage(const QString &threadId, const QScriptValue &message);
+
+	Q_INVOKABLE QScriptValue receiveMessage();
+
 	void waitForAll();
 
 	void reset();
@@ -35,10 +41,16 @@ public:
 private:
 	void startThread(QString const &threadId, QScriptEngine *engine, QString const &script);
 	QScriptEngine *cloneEngine(QScriptEngine *engine);
+	bool tryLockReset();
 
 	QHash<QString, ScriptThread *> mThreads;
 	QMutex mThreadsMutex;
 	QString mErrorMessage;
+
+	QHash<QString, QQueue<QScriptValue> > mMessageQueues;
+	QMutex mMessageMutex;
+	QHash<QString, QMutex *> mMessageQueueMutexes;
+	QHash<QString, QWaitCondition *> mMessageQueueConditions;
 
 	bool mResetStarted;
 	QMutex mResetMutex;
