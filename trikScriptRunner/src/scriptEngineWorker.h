@@ -61,7 +61,8 @@ public:
 			, QString const &startDirPath);
 
 	/// Create and initialize a new script engine.
-	QScriptEngine *createScriptEngine();
+	/// @param supportThreads - true if created engine should support creation of threads.
+	QScriptEngine *createScriptEngine(bool supportThreads = true);
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
@@ -89,6 +90,7 @@ public slots:
 	/// Runs a command in a `current` context. Permits to run a script line by line.
 	/// The command will be executed asynchronously.
 	/// If called when an ordinary script is running, that script would be aborted before evaluation of a command.
+	/// In this mode, threads and messages are unsupported.
 	void runDirect(QString const &command, int scriptId);
 
 	/// Plays "beep" sound.

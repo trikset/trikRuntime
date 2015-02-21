@@ -140,7 +140,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
 		reset();
 		startScriptEvaluation(scriptId);
-		mDirectScriptsEngine = createScriptEngine();
+		mDirectScriptsEngine = createScriptEngine(false);
 		mScriptControl.run();
 		mState = running;
 	}
@@ -177,7 +177,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 	reset();
 }
 
-QScriptEngine * ScriptEngineWorker::createScriptEngine()
+QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 {
 	QScriptEngine *engine = new QScriptEngine();
 	QLOG_INFO() << "ScriptEngineWorker: new script engine" << engine << ", thread:" << QThread::currentThread();
@@ -208,7 +208,9 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine()
 		engine->globalObject().setProperty("gamepad", engine->newQObject(mGamepad));
 	}
 
-	engine->globalObject().setProperty("Threading", engine->newQObject(&mThreadingVariable));
+	if (supportThreads) {
+		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreadingVariable));
+	}
 
 	if (QFile::exists(mStartDirPath + "system.js")) {
 		engine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
