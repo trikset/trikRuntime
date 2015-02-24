@@ -9,25 +9,25 @@
 #define USBMSP430DEFINES_H
 
 /// I2C devices addresses
-#define i2cPWMMOT1			0x10
-#define i2cPWMMOT2			0x11
-#define i2cPWMMOT3			0x13
-#define i2cPWMMOT4			0x12
-#define i2cMOT1				0x14
-#define i2cMOT2				0x15
-#define i2cMOT3				0x17
-#define i2cMOT4				0x16
-#define i2cBATT				0x26
-#define i2cSENS1			0x25
-#define i2cSENS2			0x24
-#define i2cSENS3			0x23
-#define i2cSENS4			0x22
-#define i2cSENS5			0x21
-#define i2cSENS6			0x20
-#define i2cENC1				0x30
-#define i2cENC2				0x31
-#define i2cENC3				0x32
-#define i2cENC4				0x33
+#define i2cPWMMOT1			0x10		// 16 dec
+#define i2cPWMMOT2			0x11		// 17 dec
+#define i2cPWMMOT3			0x13		// 19 dec
+#define i2cPWMMOT4			0x12		// 18 dec
+#define i2cMOT1				0x14		// 20 dec
+#define i2cMOT2				0x15		// 21 dec
+#define i2cMOT3				0x17		// 23 dec
+#define i2cMOT4				0x16		// 22 dec
+#define i2cBATT				0x26		// 38 dec
+#define i2cSENS1			0x25		// 37 dec
+#define i2cSENS2			0x24		// 36 dec
+#define i2cSENS3			0x23		// 35 dec
+#define i2cSENS4			0x22		// 34 dec
+#define i2cSENS5			0x21		// 33 dec
+#define i2cSENS6			0x20		// 32 dec
+#define i2cENC1				0x30		// 48 dec
+#define i2cENC2				0x31		// 49 dec
+#define i2cENC3				0x32		// 50 dec
+#define i2cENC4				0x33		// 51 dec
 
 /// USB devices addresses
 #define MOTOR1				0x00

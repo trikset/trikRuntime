@@ -47,6 +47,21 @@ uint32_t init_encoders_USBMSP();
 /// Init sensors
 uint32_t init_sensors_USBMSP();
 
+/// Motor power control function
+uint32_t power_Motor(QByteArray const &i2c_data);
+
+/// Set motor frequency function
+uint32_t freq_Motor(QByteArray const &i2c_data);
+
+/// Reset encoder function
+uint32_t reset_Encoder(QByteArray const &i2c_data);
+
+/// Read encoder function
+uint32_t read_Encoder(QByteArray const &i2c_data);
+
+/// Read sensor function
+uint32_t read_Sensor(QByteArray const &i2c_data);
+
 /// Connect to USB MSP430 device
 uint32_t connect_USBMSP();
 
