@@ -129,6 +129,7 @@ uint32_t init_USBTTYDevice()
 	usb_tty.c_iflag     &=  ~(IXON | IXOFF | IXANY);// turn off s/w flow ctrl
 	usb_tty.c_lflag     &=  ~(ICANON | ECHO | ECHOE | ISIG); // make raw
 	usb_tty.c_oflag     &=  ~OPOST;              // make raw
+	//usb_tty.c_oflag     &=  ~OPOST;              // LF to CRLF translation
 
 	tcflush(usb_out_descr, TCIFLUSH);
 
@@ -179,14 +180,13 @@ uint32_t sendUSBPacket(char *in_msp_packet
 	//n_written = write(usb_out_descr, s1, 18);
 	n_write = strlen(in_msp_packet);
 	sprintf(s1, in_msp_packet);
-
 	n_written = write(usb_out_descr, s1, n_write);
 	if (n_written != strlen(s1))
 	{
 		qDebug() << "Error writing: " << strerror(errno);
 		return PACKET_ERROR;
 	}
-	tcflush(usb_out_descr, TCIFLUSH);
+	tcflush(usb_out_descr, TCOFLUSH);
 
 	// qDebug() << "After writing";
 	// qDebug() << "Write size: " << n_written;
@@ -200,17 +200,19 @@ uint32_t sendUSBPacket(char *in_msp_packet
 
 	// qDebug() << "Before reading";
 
-//	do
-//	{
-//		n_read = read(usb_out_descr, &s1, MAX_STRING_LENGTH);
-//		tout ++;
-//	} while ((n_read < RECV_PACK_LEN) && (tout < TIME_OUT));
-
 	do
 	{
 		n_read = read(usb_out_descr, &s1, MAX_STRING_LENGTH);
+		tout ++;
+	} while ((n_read < RECV_PACK_LEN) && (tout < TIME_OUT));
 
-	} while ((n_read < RECV_PACK_LEN));
+//	do
+//	{
+//		n_read = read(usb_out_descr, &s1, MAX_STRING_LENGTH);
+
+//	} while ((n_read < RECV_PACK_LEN));
+
+	tcflush(usb_out_descr, TCIFLUSH);
 
 
 	// qDebug() << "After reading";
@@ -224,12 +226,21 @@ uint32_t sendUSBPacket(char *in_msp_packet
 	if ((n_read < RECV_PACK_LEN) || (tout == TIME_OUT))
 	{
 		qDebug() << "Error reading: " << strerror(errno);
+		qDebug() << out_msp_packet;
 		sprintf(out_msp_packet, "\0");
 		return PACKET_ERROR;
 	}
 	else
 	{
-		strncpy(out_msp_packet, s1, n_read);
+		s1[18] = 0x00;
+		strncpy(out_msp_packet, s1, n_read + 1);
+//		qDebug() << "Received packet: ";
+//		qDebug() << out_msp_packet;
+//		qDebug() << "Received length (strlen): ";
+//		qDebug() << strlen(out_msp_packet);
+//		qDebug() << "Received length (bytes): ";
+//		qDebug() << n_read;
+
 	}
 
 
@@ -738,5 +749,6 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
 				break;
 		}
 	}
+
 	return NO_ERROR;
 }
