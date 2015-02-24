@@ -27,11 +27,11 @@ int usb_out_descr;									// Input/Output USB device descriptor
 struct termios usb_tty;								// Struct for termio parameters, MUST BE GLOBAL!!!
 uint8_t addr_table_i2c_usb[52] =					// Correspondence address table (between I2C and USB device addresses)
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, MOTOR1, MOTOR2, MOTOR4, MOTOR3,
+		0, 0, 0, 0, 0, 0, MOTOR1, MOTOR2, MOTOR3, MOTOR4,
 		MOTOR1, MOTOR2, MOTOR4, MOTOR3, 0, 0, 0, 0, 0, 0,
 		0, 0, SENSOR6, SENSOR5, SENSOR4, SENSOR3, SENSOR2, SENSOR1, SENSOR17, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, ENCODER1, ENCODER2,
-		ENCODER4, ENCODER3};
+		ENCODER3, ENCODER4};
 
 /// Extract number from packet
 uint32_t hex2num(char *string
@@ -111,8 +111,8 @@ uint32_t init_USBTTYDevice()
 		return DEVICE_ERROR;
 	}
 
-	cfsetospeed (&usb_tty, B921600);
-	cfsetispeed (&usb_tty, B921600);
+	cfsetospeed (&usb_tty, __MAX_BAUD);
+	cfsetispeed (&usb_tty, __MAX_BAUD);
 
 	usb_tty.c_cflag     &=  ~PARENB;							// Make 8n1
 	usb_tty.c_cflag     &=  ~CSTOPB;
