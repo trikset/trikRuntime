@@ -67,7 +67,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
-	, mThreadingVariable(this)
+	, mThreadingVariable(this, scriptControl)
 	, mDirectScriptsEngine(nullptr)
 	, mStartDirPath(startDirPath)
 	, mState(ready)
@@ -92,6 +92,7 @@ void ScriptEngineWorker::reset()
 	}
 
 	mState = resetting;
+	mBrick.reset();
 	mScriptControl.reset();
 	mThreadingVariable.reset();
 
@@ -105,7 +106,6 @@ void ScriptEngineWorker::reset()
 		mDirectScriptsEngine = nullptr;
 	}
 
-	mBrick.reset();
 	if (mMailbox) {
 		mMailbox->reset();
 	}

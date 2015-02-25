@@ -14,11 +14,14 @@
 
 #pragma once
 
+#include <QtCore/QQueue>
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
 
 #include <QtScript/QScriptEngine>
+
+#include "scriptExecutionControl.h"
 
 namespace trikScriptRunner {
 
@@ -33,7 +36,7 @@ class Threading : public QObject
 
 public:
 	/// Constructs a Threading object with given script worker as a parent.
-	explicit Threading(ScriptEngineWorker *scriptWorker);
+	explicit Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl);
 	~Threading();
 
 	/// Starts the main thread of a script
@@ -91,6 +94,7 @@ private:
 	QMutex mResetMutex;
 
 	ScriptEngineWorker *mScriptWorker;  // Doesn't have ownership.
+	ScriptExecutionControl &mScriptControl;
 	QString mScript;
 };
 

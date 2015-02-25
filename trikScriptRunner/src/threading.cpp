@@ -14,8 +14,6 @@
 
 #include "threading.h"
 
-#include <QtCore/QQueue>
-
 #include "scriptEngineWorker.h"
 #include "src/utils.h"
 #include "src/scriptThread.h"
@@ -24,10 +22,11 @@
 
 using namespace trikScriptRunner;
 
-Threading::Threading(ScriptEngineWorker *scriptWorker)
+Threading::Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl)
 	: QObject(scriptWorker)
 	, mResetStarted(false)
 	, mScriptWorker(scriptWorker)
+	, mScriptControl(scriptControl)
 {
 }
 
@@ -76,7 +75,8 @@ void Threading::startThread(QString const &threadId, QScriptEngine *engine, QStr
 		QThread::yieldCurrentThread();
 	}
 
-	// wait until script actually start
+	// wait until script actually start to avoid problems with multiple starts and resets
+	// TODO: efficient AND safe solution
 	for (int i = 0; i < 500; ++i) {
 		QThread::yieldCurrentThread();
 	}
@@ -136,11 +136,13 @@ void Threading::reset()
 
 	mThreadsMutex.lock();
 	for (ScriptThread *thread : mThreads.values()) {
+		mScriptControl.reset();  // TODO: find more sophisticated solution to prevent waiting after abortion
 		thread->abort();
 	}
 
 	mThreadsMutex.unlock();
 
+	mScriptControl.reset();
 	waitForAll();
 
 	qDeleteAll(mMessageQueueMutexes);
