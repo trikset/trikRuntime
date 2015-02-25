@@ -128,6 +128,29 @@
 #define SENS_PULL			0x2000		// Pull up resistors
 #define SENS_READ			0x0001		// Sensor read
 
+/// Software I2C registers
+#define IICTL				0x00
+#define IIDEV				0x01
+#define IIREG				0x02
+#define IIDAT				0x03
+#define IIERR				0x04
+#define IIIDX				0x05
+#define IIVAL				0x06
+#define IIDEL				0x07
+#define IIVER				0x08
+
+/// Masks for bits of control register
+#define I2C_ENABLE			0x80		// I2C enable
+#define I2C_READ			0x20		// I2C read
+#define I2C_WRITE			0x40		// I2C write
+#define I2C_SENS			0x10		// I2C read sensor
+
+/// Software I2C sensors addresses
+#define NXTTEMP             0x0000
+#define HMC5883L_X          0x0001
+#define HMC5883L_Y          0x0002
+#define HMC5883L_Z          0x0003
+
 #define MAX_STRING_LENGTH	0x20
 
 #define WRITE_FUNC			0x03

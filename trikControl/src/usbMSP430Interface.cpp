@@ -238,6 +238,7 @@ uint32_t init_sensors_USBMSP()
 {
 	char s1[MAX_STRING_LENGTH];	// Temp string
 
+	// Analog inputs JA1-JA4
 	makeWriteRegPacket(s1, SENSOR1, SSCTL, SENS_ENABLE + SENS_READ);
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR1, SSIDX, ANALOG_INP);
@@ -254,14 +255,20 @@ uint32_t init_sensors_USBMSP()
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR4, SSIDX, ANALOG_INP);
 	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
+//	makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
+//	sendUSBPacket(s1, s1);
+//	makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
+//	sendUSBPacket(s1, s1);
+//	makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
+//	sendUSBPacket(s1, s1);
+//	makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
+//	sendUSBPacket(s1, s1);
+	// NXT I2C temperature sensor on JA5-JA6 inputs
+	makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE + I2C_SENS);
 	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
+	makeWriteRegPacket(s1, I2C1, IIIDX, NXTTEMP);
 	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
-	sendUSBPacket(s1, s1);
+	// Battery
 	makeWriteRegPacket(s1, SENSOR17, SSCTL, SENS_ENABLE + SENS_READ);
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR17, SSIDX, ANALOG_INP);
@@ -435,8 +442,11 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	uint32_t regval=UINT32_MAX;	// Returned register value
 	uint16_t tmout = 0;			// Reading timeout
 
+//	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
+//			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
+	// Only JA1-JA4 are available for analog inputs
 	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
-			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
+			|| (i2c_data[0] == i2cBATT))
 	{
 		do
 		{
@@ -445,6 +455,18 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
 		} while (((devaddr != addr_table_i2c_usb[i2c_data[0]]) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		return regval;
+	}
+	// Inputs JA5 (SDA) and JA6 (SCL) used for NXT I2C temperature sensor
+	else if ((i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6))
+	{
+		do
+		{
+			makeReadRegPacket(s1, I2C1, IIVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != I2C1) || (regaddr != IIVAL)) && (tmout < TIME_OUT));
 		return regval;
 	}
 	else
