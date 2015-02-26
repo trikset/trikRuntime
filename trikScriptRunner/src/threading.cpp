@@ -61,9 +61,18 @@ void Threading::startThread(QString const &threadId, QScriptEngine *engine, QStr
 		return;
 	}
 
+	mThreadsMutex.lock();
+	if (mThreads.contains(threadId)) {
+		QLOG_ERROR() << "Threading: attempt to create a thread with an already occupied id" << threadId;
+		mErrorMessage = tr("Attempt to create a thread with an already occupied id %1").arg(threadId);
+		mThreads[threadId]->abort();
+		mThreadsMutex.unlock();
+		mResetMutex.unlock();
+		return;
+	}
+
 	QLOG_INFO() << "Threading: starting new thread" << threadId << "with engine" << engine;
 	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
-	mThreadsMutex.lock();
 	mThreads[threadId] = thread;
 	mThreadsMutex.unlock();
 
