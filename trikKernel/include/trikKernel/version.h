@@ -18,6 +18,6 @@
 
 namespace trikKernel {
 
-QString const version = "3.0.1";
+QString const version = "3.0.2";
 
 }
