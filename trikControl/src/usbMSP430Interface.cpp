@@ -488,29 +488,32 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 /// Send data to MSP430 via USB
 uint32_t send_USBMSP(QByteArray const &i2c_data)
 {
-	if (i2c_data.size() == 2)
+	switch (i2c_data.size())
 	{
-		power_Motor(i2c_data);
-		reset_Encoder(i2c_data);
+		case 2:
+			power_Motor(i2c_data);
+			reset_Encoder(i2c_data);
+			break;
+		case 3:
+			freq_Motor(i2c_data);
+			break;
+		default:
+			break;
 	}
-	else if (i2c_data.size() == 3)
-	{
-		freq_Motor(i2c_data);
-	}
+
 	return NO_ERROR;
 }
 
 /// Read data from MSP430 via USB
 uint32_t read_USBMSP(QByteArray const &i2c_data)
 {
-	if (i2c_data.size() == 2)
+	switch (i2c_data.size())
 	{
-		return read_Encoder(i2c_data);
+		case 1:
+			return read_Sensor(i2c_data);
+		case 2:
+			return read_Encoder(i2c_data);
+		default:
+			return NO_ERROR;
 	}
-	else if (i2c_data.size() == 1)
-	{
-		return read_Sensor(i2c_data);
-	}
-
-	return NO_ERROR;
 }
