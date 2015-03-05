@@ -321,14 +321,17 @@ uint32_t disconnect_USBMSP()
 /// Motor power control function
 uint32_t power_Motor(QByteArray const &i2c_data)
 {
-	uint16_t mdut;				// PWM duty
-	uint16_t mctl;				// Control register
-	int8_t mtmp;				// Temp variable
-	char s1[MAX_STRING_LENGTH];	// Temp string variable
+	uint16_t mdut;								// PWM duty
+	uint16_t mctl;								// Control register
+	int8_t mtmp;								// Temp variable
+	char s1[MAX_STRING_LENGTH];					// Temp string variable
+	const uint8_t dev_address = i2c_data[0];	// Device address
+	const int8_t reg_value = i2c_data[1];		// Register value
 
-	if ((i2c_data[0] == i2cMOT1) || (i2c_data[0] == i2cMOT2) || (i2c_data[0] == i2cMOT3) || (i2c_data[0] == i2cMOT4))
+	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
+			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
 	{
-		mtmp = i2c_data[1];
+		mtmp = reg_value;
 		mctl = MOT_ENABLE;
 		if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
 		{
@@ -345,9 +348,9 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 			mtmp = 100;
 		mdut = uint16_t(float(abs(mtmp)) * (mper - 1) / 100);
 
-		makeWriteRegPacket(s1, addr_table_i2c_usb[i2c_data[0]], MMDUT, mdut);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMDUT, mdut);
 		sendUSBPacket(s1, s1);
-		makeWriteRegPacket(s1, addr_table_i2c_usb[i2c_data[0]], MMCTL, mctl);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMCTL, mctl);
 		sendUSBPacket(s1, s1);
 	}
 	else
@@ -359,15 +362,16 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 /// Set motor frequency function
 uint32_t freq_Motor(QByteArray const &i2c_data)
 {
-	uint16_t ptmp;				// Temp variable
-	char s1[MAX_STRING_LENGTH];	// Temp string variable
+	char s1[MAX_STRING_LENGTH];										// Temp string variable
+	const uint8_t dev_address = i2c_data[0];						// Device address
+	const uint16_t reg_value = ((i2c_data[2] << 8) | i2c_data[1]);	// Register value
 
-	if ((i2c_data[0] == i2cPWMMOT1) || (i2c_data[0] == i2cPWMMOT2) || (i2c_data[0] == i2cPWMMOT3) || (i2c_data[0] == i2cPWMMOT4))
+	if ((dev_address == i2cPWMMOT1) || (dev_address == i2cPWMMOT2) ||
+			(dev_address == i2cPWMMOT3) || (dev_address == i2cPWMMOT4))
 	{
-		ptmp = ((i2c_data[2] << 8) | i2c_data[1]);
-		if (ptmp > 0)
+		if (reg_value > 0)
 		{
-			mper = (uint16_t)(24 / 8 * (float)ptmp);
+			mper = (uint16_t)(24 / 8 * (float)reg_value);
 			if (mper < 1)
 				mper = 1;
 		}
@@ -376,7 +380,7 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 			mper = 1;
 		}
 
-		makeWriteRegPacket(s1, addr_table_i2c_usb[i2c_data[0]], MMPER, mper);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMPER, mper);
 		sendUSBPacket(s1, s1);
 	}
 	else
@@ -388,11 +392,14 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 /// Reset encoder function
 uint32_t reset_Encoder(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];	// Temp string variable
+	char s1[MAX_STRING_LENGTH];					// Temp string variable
+	const uint8_t dev_address = i2c_data[0];	// Device address
+	const uint8_t reg_value = i2c_data[1];		// Register value
 
-	if ((i2c_data[0] == i2cENC1) || (i2c_data[0] == i2cENC2) || (i2c_data[0] == i2cENC3) || (i2c_data[0] == i2cENC4))
+	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
+			(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
-		makeWriteRegPacket(s1, addr_table_i2c_usb[i2c_data[0]], EEVAL, i2c_data[1]);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL, reg_value);
 		sendUSBPacket(s1, s1);
 	}
 	else
@@ -404,24 +411,26 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 /// Read encoder function
 uint32_t read_Encoder(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];	// Temp string variable
-	char s2[MAX_STRING_LENGTH];	// Temp string variable
-	uint32_t errcode;			// Returned error code
-	uint8_t devaddr;			// Returned device address
-	uint8_t funccode;			// Returned function code
-	uint8_t regaddr;			// Returned register address
-	uint32_t regval=UINT32_MAX;	// Returned register value
-	uint16_t tmout = 0;			// Reading timeout
+	char s1[MAX_STRING_LENGTH];					// Temp string variable
+	char s2[MAX_STRING_LENGTH];					// Temp string variable
+	uint32_t errcode;							// Returned error code
+	uint8_t devaddr;							// Returned device address
+	uint8_t funccode;							// Returned function code
+	uint8_t regaddr;							// Returned register address
+	uint32_t regval=UINT32_MAX;					// Returned register value
+	uint16_t tmout = 0;							// Reading timeout
+	const uint8_t dev_address = i2c_data[0];	// Device address
 
-	if ((i2c_data[0] == i2cENC1) || (i2c_data[0] == i2cENC2) || (i2c_data[0] == i2cENC3) || (i2c_data[0] == i2cENC4))
+	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
+			(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		do
 		{
-			makeReadRegPacket(s1, addr_table_i2c_usb[i2c_data[0]], EEVAL);
+			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL);
 			errcode = sendUSBPacket(s1, s2);
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
-		} while (((devaddr != addr_table_i2c_usb[i2c_data[0]]) || (regaddr != EEVAL)) && (tmout < TIME_OUT));
+		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != EEVAL)) && (tmout < TIME_OUT));
 		return regval;
 	}
 	else
@@ -433,32 +442,33 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 /// Read sensor function
 uint32_t read_Sensor(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];	// Temp string variable
-	char s2[MAX_STRING_LENGTH];	// Temp string variable
-	uint32_t errcode;			// Returned error code
-	uint8_t devaddr;			// Returned device address
-	uint8_t funccode;			// Returned function code
-	uint8_t regaddr;			// Returned register address
-	uint32_t regval=UINT32_MAX;	// Returned register value
-	uint16_t tmout = 0;			// Reading timeout
+	char s1[MAX_STRING_LENGTH];					// Temp string variable
+	char s2[MAX_STRING_LENGTH];					// Temp string variable
+	uint32_t errcode;							// Returned error code
+	uint8_t devaddr;							// Returned device address
+	uint8_t funccode;							// Returned function code
+	uint8_t regaddr;							// Returned register address
+	uint32_t regval=UINT32_MAX;					// Returned register value
+	uint16_t tmout = 0;							// Reading timeout
+	const uint8_t dev_address = i2c_data[0];	// Device address
 
 //	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
 //			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
 	// Only JA1-JA4 are available for analog inputs
-	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
-			|| (i2c_data[0] == i2cBATT))
+	if ((dev_address == i2cSENS1) || (dev_address == i2cSENS2) || (dev_address == i2cSENS3) ||
+			(dev_address == i2cSENS4) || (i2c_data[0] == i2cBATT))
 	{
 		do
 		{
-			makeReadRegPacket(s1, addr_table_i2c_usb[i2c_data[0]], SSVAL);
+			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], SSVAL);
 			errcode = sendUSBPacket(s1, s2);
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
-		} while (((devaddr != addr_table_i2c_usb[i2c_data[0]]) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		return regval;
 	}
 	// Inputs JA5 (SDA) and JA6 (SCL) used for NXT I2C temperature sensor
-	else if ((i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6))
+	else if ((dev_address == i2cSENS5) || (dev_address == i2cSENS6))
 	{
 		do
 		{
