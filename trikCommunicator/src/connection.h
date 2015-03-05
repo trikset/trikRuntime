@@ -45,6 +45,10 @@ public:
 	/// Writes a given message to inner socket.
 	void sendMessage(QString const &message);
 
+signals:
+	/// Emitted when a stop command received from a computer.
+	void stopCommandReceived();
+
 private:
 	void processData(QByteArray const &data) override;
 

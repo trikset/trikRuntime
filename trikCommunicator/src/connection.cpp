@@ -64,7 +64,7 @@ void Connection::processData(QByteArray const &data)
 
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents), Q_ARG(QString, command));
 	} else if (command == "stop") {
-		QMetaObject::invokeMethod(&mTrikScriptRunner, "abort");
+		emit stopCommandReceived();
 	} else if (command.startsWith("direct:")) {
 		command.remove(0, QString("direct:").length());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "runDirectCommand", Q_ARG(QString, command));

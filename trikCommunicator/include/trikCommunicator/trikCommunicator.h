@@ -65,8 +65,8 @@ public:
 	~TrikCommunicator() override;
 
 signals:
-	/// Emitted when script finishes execution.
-	void finishedScript();
+	/// Emitted when stop command received from a computer.
+	void stopCommandReceived();
 
 private:
 	TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership);

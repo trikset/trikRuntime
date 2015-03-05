@@ -17,6 +17,7 @@
 #include <QtCore/qglobal.h>
 
 #include <QtCore/QString>
+#include <QtCore/QStack>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -34,6 +35,7 @@
 #include "controller.h"
 #include "batteryIndicator.h"
 #include "startWidget.h"
+#include "runningWidget.h"
 
 namespace trikGui {
 
@@ -66,10 +68,6 @@ public slots:
 	/// @param widget - reference to the widget.
 	void addLazyWidget(trikKernel::LazyMainWidget &widget);
 
-	/// Remove a widget from main widget layout.
-	/// @param widget - reference to the widget.
-	void closeMainWidget(trikKernel::MainWidget &widget);
-
 private slots:
 	void renewFocus();
 
@@ -82,7 +80,17 @@ private slots:
 
 	/// Show a RunningWidget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showRunningWidget();
+	void showRunningWidget(const QString &fileName, int scriptId);
+
+	void hideRunningWidget(int scriptId);
+
+	void showError(const QString &error, int scriptId);
+
+	void hideGraphicsWidget();
+
+	void hideScriptWidgets();
+
+	void updateStack(int removedWidget);
 
 private:
 	/// Remove widget margins.
@@ -95,8 +103,9 @@ private:
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
+	RunningWidget mRunningWidget;
 
-	int mRunWidgetIndex; // Index of RunningWidget from main widgets layout.
+	QStack<int> mMainWidgetIndex;
 };
 
 }

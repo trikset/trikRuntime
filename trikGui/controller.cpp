@@ -47,6 +47,8 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
 
+	connect(mCommunicator.data(), SIGNAL(stopCommandReceived()), this, SLOT(abortExecution()));
+
 	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
 
 	connect(mScriptRunner.data(), SIGNAL(startedScript(QString, int))
@@ -83,7 +85,7 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
-	emit closeGraphicsWidget(mBrick->graphicsWidget());
+	emit hideScriptWidgets();
 	mScriptRunner->abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -115,56 +117,19 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner->scriptsDirName();
 }
 
-void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
-{
-	widget.releaseKeyboard();
-	emit closeRunningWidget(widget);
-}
-
 void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 {
-	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
-		doCloseRunningWidget(*mRunningWidgets[scriptId]);
-
-		// Here we can be inside handler of mRunningWidget key press event.
-		mRunningWidgets[scriptId]->deleteLater();
-		mRunningWidgets.remove(scriptId);
-	} else if (!error.isEmpty()) {
-		if (mRunningWidgets[scriptId]->isVisible()) {
-			mRunningWidgets[scriptId]->showError(error);
-			mCommunicator->sendMessage("error: " + error);
-		} else {
-			// It is already closed so all we need is to delete it.
-			mRunningWidgets[scriptId]->deleteLater();
-			mRunningWidgets.remove(scriptId);
-		}
-	}
-
-	emit closeGraphicsWidget(mBrick->graphicsWidget());
-	if (!mRunningWidgets.isEmpty()) {  // another script has already started execution
-		emit addGraphicsWidget(mBrick->graphicsWidget());
+	if (error.isEmpty()) {
+		emit hideRunningWidget(scriptId);
+	} else {
+		mCommunicator->sendMessage("error: " + error);
+		emit showError(error, scriptId);
 	}
 }
 
 void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
 {
-	if (mRunningWidgets.value(scriptId, nullptr)) {
-		emit closeRunningWidget(*mRunningWidgets[scriptId]);
-		delete mRunningWidgets[scriptId];
-		mRunningWidgets.remove(scriptId);
-	}
-
-	mRunningWidgets[scriptId] = new RunningWidget(fileName, *this);
-	emit addRunningWidget(*mRunningWidgets[scriptId]);
-
-	// After executing, a script will open a widget for painting with trikControl::Display.
-	// This widget will get all keyboard events and we won't be able to abort execution at Power
-	// key press. So, mRunningWidget should grab the keyboard input. Nevertheless, the script
-	// can get keyboard events using trikControl::Keys class because it works directly
-	// with the keyboard file.
-	mRunningWidgets[scriptId]->grabKeyboard();
-
-	emit addGraphicsWidget(mBrick->graphicsWidget());
+	emit showRunningWidget(fileName, scriptId);
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

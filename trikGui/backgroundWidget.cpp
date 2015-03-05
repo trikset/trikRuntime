@@ -31,7 +31,7 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	, mController(configPath, startDirPath)
 	, mBatteryIndicator(mController.brick())
 	, mStartWidget(mController, configPath)
-	, mRunWidgetIndex(-1)
+	, mRunningWidget(mController)
 {
 	setWindowState(Qt::WindowFullScreen);
 
@@ -41,6 +41,8 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 
 	mStatusBarLayout.addWidget(&mBatteryIndicator);
 	addMainWidget(mStartWidget);
+	addLazyWidget(mController.brick().graphicsWidget());
+	mMainWidgetsLayout.addWidget(&mRunningWidget);
 
 	mMainLayout.addLayout(&mStatusBarLayout);
 	mMainLayout.addLayout(&mMainWidgetsLayout);
@@ -48,15 +50,16 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	setLayout(&mMainLayout);
 
 	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mController, SIGNAL(addRunningWidget(trikKernel::MainWidget &))
-			, this, SLOT(addRunningWidget(trikKernel::MainWidget &)));
-	connect(&mController, SIGNAL(closeRunningWidget(trikKernel::MainWidget &))
-			, this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
+	connect(&mMainWidgetsLayout, SIGNAL(widgetRemoved(int)), this, SLOT(updateStack(int)));
+
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
-	connect(&mController, SIGNAL(addGraphicsWidget(trikKernel::LazyMainWidget &))
-			, this, SLOT(addLazyWidget(trikKernel::LazyMainWidget &)));
-	connect(&mController, SIGNAL(closeGraphicsWidget(trikKernel::MainWidget &))
-			, this, SLOT(closeMainWidget(trikKernel::MainWidget &)));
+	connect(&mController, SIGNAL(showRunningWidget(QString,int)), this, SLOT(showRunningWidget(QString,int)));
+	connect(&mController, SIGNAL(showError(QString,int)), this, SLOT(showError(QString,int)));
+	connect(&mController, SIGNAL(hideRunningWidget(int)), this, SLOT(hideRunningWidget(int)));
+	connect(&mController, SIGNAL(hideGraphicsWidget()), this, SLOT(hideGraphicsWidget()));
+	connect(&mController, SIGNAL(hideScriptWidgets()), this, SLOT(hideScriptWidgets()));
+
+	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
 }
 
 void BackgroundWidget::resetWidgetLayout(trikKernel::MainWidget &widget)
@@ -72,8 +75,8 @@ void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
 {
 	resetWidgetLayout(widget);
 
-	int const index = mMainWidgetsLayout.addWidget(&widget);
-	mMainWidgetsLayout.setCurrentIndex(index);
+	mMainWidgetIndex.push(mMainWidgetsLayout.addWidget(&widget));
+	mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
 
 	connect(&widget, SIGNAL(newWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
 }
@@ -81,22 +84,16 @@ void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
 void BackgroundWidget::addRunningWidget(trikKernel::MainWidget &widget)
 {
 	resetWidgetLayout(widget);
-
-	mRunWidgetIndex = mMainWidgetsLayout.addWidget(&widget);
-	mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+	mMainWidgetsLayout.addWidget(&widget);
 }
 
 void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
 {
 	resetWidgetLayout(widget);
-
 	mMainWidgetsLayout.addWidget(&widget);
-	if (mRunWidgetIndex >= 0) {
-		mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
-	}
 
 	connect(&widget, SIGNAL(showMe(trikKernel::MainWidget &)), this, SLOT(showMainWidget(trikKernel::MainWidget &)));
-	connect(&widget, SIGNAL(hideMe()), this, SLOT(showRunningWidget()));
+	connect(&widget, SIGNAL(hideMe()), this, SLOT(hideGraphicsWidget()));
 }
 
 void BackgroundWidget::showMainWidget(trikKernel::MainWidget &widget)
@@ -107,20 +104,40 @@ void BackgroundWidget::showMainWidget(trikKernel::MainWidget &widget)
 	}
 }
 
-void BackgroundWidget::showRunningWidget()
+void BackgroundWidget::showRunningWidget(const QString &fileName, int scriptId)
 {
-	if (mRunWidgetIndex >= 0) {
-		mMainWidgetsLayout.setCurrentIndex(mRunWidgetIndex);
+	mRunningWidget.setProgram(fileName, scriptId);
+	mMainWidgetsLayout.setCurrentWidget(&mRunningWidget);
+	mRunningWidget.grabKeyboard();
+}
+
+void BackgroundWidget::hideRunningWidget(int scriptId)
+{
+	if (mRunningWidget.scriptId() == scriptId) {
+		mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
+		mRunningWidget.releaseKeyboard();
 	}
 }
 
-void BackgroundWidget::closeMainWidget(trikKernel::MainWidget &widget)
+void BackgroundWidget::showError(const QString &error, int scriptId)
 {
-	if (mMainWidgetsLayout.indexOf(&widget) == mRunWidgetIndex) {
-		mRunWidgetIndex = -1;
+	if (mRunningWidget.scriptId() == scriptId) {
+		mRunningWidget.showError(error, scriptId);
+		mMainWidgetsLayout.setCurrentWidget(&mRunningWidget);
 	}
+}
 
-	mMainWidgetsLayout.removeWidget(&widget);
+void BackgroundWidget::hideGraphicsWidget()
+{
+	if (mMainWidgetsLayout.currentWidget() == &mController.brick().graphicsWidget()) {
+		mMainWidgetsLayout.setCurrentWidget(&mRunningWidget);
+	}
+}
+
+void BackgroundWidget::hideScriptWidgets()
+{
+	mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
+	mRunningWidget.releaseKeyboard();
 }
 
 void BackgroundWidget::renewFocus()
@@ -141,3 +158,10 @@ void BackgroundWidget::refresh()
 	}
 }
 
+void BackgroundWidget::updateStack(int removedWidget)
+{
+	if (mMainWidgetIndex.top() == removedWidget) {
+		mMainWidgetIndex.pop();
+		mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
+	}
+}
