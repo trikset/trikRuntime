@@ -104,7 +104,19 @@ void Threading::waitForAll()
 void Threading::joinThread(const QString &threadId)
 {
 	mThreadsMutex.lock();
-	if (!mThreads.contains(threadId)) {
+
+	while ((!mThreads.contains(threadId) || !mThreads[threadId]->isRunning())
+			&& !mFinishedThreads.contains(threadId)) {
+		mThreadsMutex.unlock();
+		if (mResetStarted) {
+			return;
+		}
+
+		QThread::yieldCurrentThread();
+		mThreadsMutex.lock();
+	}
+
+	if (mFinishedThreads.contains(threadId)) {
 		mThreadsMutex.unlock();
 		return;
 	}
@@ -149,6 +161,7 @@ void Threading::reset()
 		thread->abort();
 	}
 
+	mFinishedThreads.clear();
 	mThreadsMutex.unlock();
 
 	mScriptControl.reset();
@@ -175,6 +188,7 @@ void Threading::threadFinished(const QString &id)
 
 	QLOG_INFO() << "Threading: thread" << id << "has finished, thread object" << mThreads[id];
 	mThreads.remove(id);
+	mFinishedThreads.insert(id);
 	mThreadsMutex.unlock();
 
 	if (!mErrorMessage.isEmpty()) {

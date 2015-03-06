@@ -18,6 +18,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QMutex>
 #include <QtCore/QWaitCondition>
+#include <QtCore/QSet>
 
 #include <QtScript/QScriptEngine>
 
@@ -82,6 +83,7 @@ private:
 	bool tryLockReset();
 
 	QHash<QString, ScriptThread *> mThreads;
+	QSet<QString> mFinishedThreads;
 	QMutex mThreadsMutex;
 	QString mErrorMessage;
 
