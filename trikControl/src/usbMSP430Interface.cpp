@@ -255,18 +255,18 @@ uint32_t init_sensors_USBMSP()
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR4, SSIDX, ANALOG_INP);
 	sendUSBPacket(s1, s1);
-//	makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
-//	sendUSBPacket(s1, s1);
-//	makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
-//	sendUSBPacket(s1, s1);
-//	makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
-//	sendUSBPacket(s1, s1);
-//	makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
-//	sendUSBPacket(s1, s1);
-	// NXT I2C temperature sensor on JA5-JA6 inputs
-	makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE + I2C_SENS);
+	makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
 	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SENSOR5, SSIDX, ANALOG_INP);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
+	sendUSBPacket(s1, s1);
+	// NXT I2C temperature sensor on JA5-JA6 inputs
 	makeWriteRegPacket(s1, I2C1, IIIDX, NXTTEMP);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE + I2C_SENS);
 	sendUSBPacket(s1, s1);
 	// Battery
 	makeWriteRegPacket(s1, SENSOR17, SSCTL, SENS_ENABLE + SENS_READ);
