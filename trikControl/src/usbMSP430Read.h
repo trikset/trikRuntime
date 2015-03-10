@@ -2,7 +2,7 @@
  * usbMSP430Interface.h
  *
  *  Created on: Fabruary 16, 2015
- *      Author: Rostislav Varzar
+ *	Author: Rostislav Varzar
  */
 
 
@@ -14,10 +14,10 @@
 
 //#define MAX_STRING_LENGTH   0x20
 
-//extern volatile char fstmp[MAX_STRING_LENGTH];			// Buffer for response packets
-//extern volatile FILE *usb_in_descr;						// Input USB device descriptor
-//extern volatile int killflag;							// Flag to terminate read thread
-//extern volatile uint8_t read_flag;						// Flag that shows, that fstmp buffer is busy
+//extern volatile char fstmp[MAX_STRING_LENGTH];    // Buffer for response packets
+//extern volatile FILE *usb_in_descr;		    // Input USB device descriptor
+//extern volatile int killflag;			    // Flag to terminate read thread
+//extern volatile uint8_t read_flag;		    // Flag that shows, that fstmp buffer is busy
 
 /// Class for reading data from USB in separated thread
 /*

@@ -2,7 +2,7 @@
  * usbMSP430Interface.cpp
  *
  *  Created on: Fabruary 12, 2015
- *      Author: Rostislav Varzar
+ *	Author: Rostislav Varzar
  */
 
 #include <stdint.h>
@@ -22,10 +22,10 @@
 #include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
 
-volatile uint16_t mper;								// Global PWM motor period
-int usb_out_descr;									// Input/Output USB device descriptor
-struct termios usb_tty;								// Struct for termio parameters, MUST BE GLOBAL!!!
-uint8_t addr_table_i2c_usb[52] =					// Correspondence address table (between I2C and USB device addresses)
+volatile uint16_t mper;			// Global PWM motor period
+int usb_out_descr;			// Input/Output USB device descriptor
+struct termios usb_tty;			// Struct for termio parameters, MUST BE GLOBAL!!!
+uint8_t addr_table_i2c_usb[52] =	// Correspondence address table (between I2C and USB device addresses)
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, MOTOR1, MOTOR2, MOTOR3, MOTOR4,
 		MOTOR1, MOTOR2, MOTOR4, MOTOR3, 0, 0, 0, 0, 0, 0,
@@ -35,8 +35,8 @@ uint8_t addr_table_i2c_usb[52] =					// Correspondence address table (between I2
 
 /// Extract number from packet
 uint32_t hex2num(char *string
-				, uint16_t pos
-				, uint16_t numsize)
+		, uint16_t pos
+		, uint16_t numsize)
 {
 	uint32_t resnum = 0;
 	uint32_t tmpnum = 0;
@@ -52,9 +52,9 @@ uint32_t hex2num(char *string
 
 /// Make write register packet
 void makeWriteRegPacket(char *msp_packet
-						, uint8_t dev_addr
-						, uint8_t reg_addr
-						, uint32_t reg_val)
+			, uint8_t dev_addr
+			, uint8_t reg_addr
+			, uint32_t reg_val)
 {
 	uint8_t crc = (0xFF - (dev_addr + WRITE_FUNC + reg_addr + uint8_t(reg_val & 0xFF) + uint8_t((reg_val >> 8) & 0xFF) +
 					uint8_t((reg_val >> 16) & 0xFF) + uint8_t((reg_val >> 24) & 0xFF)) + 1) & 0xFF;			// Checksum
@@ -63,41 +63,41 @@ void makeWriteRegPacket(char *msp_packet
 
 /// Make read register packet
 void makeReadRegPacket(char *msp_packet
-						, uint8_t dev_addr
-						, uint8_t reg_addr)
+			, uint8_t dev_addr
+			, uint8_t reg_addr)
 {
-	uint8_t crc = (0xFF - (dev_addr + READ_FUNC + reg_addr) + 1) & 0xFF;			// Checksum
+	uint8_t crc = (0xFF - (dev_addr + READ_FUNC + reg_addr) + 1) & 0xFF;	// Checksum
 	sprintf(msp_packet, ":%02X%02X%02X%02X\n", dev_addr, READ_FUNC, reg_addr, crc);
 }
 
 /// Function for decoding received packet
 uint32_t decodeReceivedPacket(char *msp_packet
-								, uint8_t &dev_addr
-								, uint8_t &func_code
-								, uint8_t &reg_addr
-								, uint32_t &reg_val)
+				, uint8_t &dev_addr
+				, uint8_t &func_code
+				, uint8_t &reg_addr
+				, uint32_t &reg_val)
 {
-	uint8_t crc1 = 0;									// Received cheksum
-	uint8_t crc2 = 0;									// Calculated checksum
-	uint8_t err = 0;									// Error code
-	if (msp_packet[0] != ':')							// Start condition error
+	uint8_t crc1 = 0;				// Received cheksum
+	uint8_t crc2 = 0;				// Calculated checksum
+	uint8_t err = 0;				// Error code
+	if (msp_packet[0] != ':')			// Start condition error
 	{
 		return START_ERROR;
 	}
-	if ((strlen(msp_packet) != RECV_PACK_LEN))			// Incorrect packet length
+	if ((strlen(msp_packet) != RECV_PACK_LEN))	// Incorrect packet length
 	{
 		return LENGTH_ERROR;
 	}
-	dev_addr = hex2num(msp_packet, 1, NUM_BYTE);		// Get device address
-	func_code = hex2num(msp_packet, 3, NUM_BYTE);		// Get function
-	reg_addr = hex2num(msp_packet, 5, NUM_BYTE);		// Get register address
-	reg_val = hex2num(msp_packet, 7, NUM_DWORD);		// Get register value
-	crc1 = hex2num(msp_packet, 15, NUM_BYTE);			// Get CRC from packet
+	dev_addr = hex2num(msp_packet, 1, NUM_BYTE);	// Get device address
+	func_code = hex2num(msp_packet, 3, NUM_BYTE);	// Get function
+	reg_addr = hex2num(msp_packet, 5, NUM_BYTE);	// Get register address
+	reg_val = hex2num(msp_packet, 7, NUM_DWORD);	// Get register value
+	crc1 = hex2num(msp_packet, 15, NUM_BYTE);	// Get CRC from packet
 	crc2 = (0xFF - (dev_addr + func_code + reg_addr + uint8_t(reg_val & 0xFF) + uint8_t((reg_val >> 8) & 0xFF) +
 					uint8_t((reg_val >> 16) & 0xFF) + uint8_t((reg_val >> 24) & 0xFF)) + 1) & 0xFF;			// Calculate CRC
-	if (crc1 != crc2)									// Check CRC
+	if (crc1 != crc2)				// Check CRC
 		return CRC_ERROR;
-	return NO_ERROR;									// Return NO ERROR
+	return NO_ERROR;				// Return NO ERROR
 }
 
 /// Init USB TTY device
@@ -114,19 +114,19 @@ uint32_t init_USBTTYDevice()
 	cfsetospeed (&usb_tty, __MAX_BAUD);
 	cfsetispeed (&usb_tty, __MAX_BAUD);
 
-	usb_tty.c_cflag     &=  ~PARENB;							// Make 8n1
+	usb_tty.c_cflag     &=  ~PARENB;			    // Make 8n1
 	usb_tty.c_cflag     &=  ~CSTOPB;
 	usb_tty.c_cflag     &=  ~CSIZE;
 	usb_tty.c_cflag     |=  CS8;
-	usb_tty.c_cflag     &=  ~CRTSCTS;							// No flow control
-	usb_tty.c_lflag     =   0;									// No signaling chars, no echo, no canonical processing
-	usb_tty.c_oflag     =   0;									// No remapping, no delays
-	usb_tty.c_cc[VMIN]      =   0;								// Read doesn't block
-	usb_tty.c_cc[VTIME]     =   1;								// 0.1 seconds read timeout
-	usb_tty.c_cflag     |=  CREAD | CLOCAL;						// Turn on READ & ignore ctrl lines
-	usb_tty.c_iflag     &=  ~(IXON | IXOFF | IXANY);			// Turn off s/w flow ctrl
-	usb_tty.c_lflag     &=  ~(ICANON | ECHO | ECHOE | ISIG);	// Make raw
-	usb_tty.c_oflag     &=  ~OPOST;								// Make raw
+	usb_tty.c_cflag     &=  ~CRTSCTS;			    // No flow control
+	usb_tty.c_lflag     =   0;				    // No signaling chars, no echo, no canonical processing
+	usb_tty.c_oflag     =   0;				    // No remapping, no delays
+	usb_tty.c_cc[VMIN]      =   0;				    // Read doesn't block
+	usb_tty.c_cc[VTIME]     =   1;				    // 0.1 seconds read timeout
+	usb_tty.c_cflag     |=  CREAD | CLOCAL;			    // Turn on READ & ignore ctrl lines
+	usb_tty.c_iflag     &=  ~(IXON | IXOFF | IXANY);	    // Turn off s/w flow ctrl
+	usb_tty.c_lflag     &=  ~(ICANON | ECHO | ECHOE | ISIG);    // Make raw
+	usb_tty.c_oflag     &=  ~OPOST;				    // Make raw
 
 	tcflush(usb_out_descr, TCIFLUSH);
 
@@ -141,13 +141,13 @@ uint32_t init_USBTTYDevice()
 
 /// Send USB packet
 uint32_t sendUSBPacket(char *in_msp_packet
-						, char *out_msp_packet)
+			, char *out_msp_packet)
 {
-	uint32_t tout = 0;			// Timeout counter
-	int32_t n_written = 0;		// Number of written bytes
-	int32_t n_read = 0;			// Number of read bytes
-	size_t n_write = 0;			// Number to write bytes
-	char s1[MAX_STRING_LENGTH];	// Temp string
+	uint32_t tout = 0;	    // Timeout counter
+	int32_t n_written = 0;	    // Number of written bytes
+	int32_t n_read = 0;	    // Number of read bytes
+	size_t n_write = 0;	    // Number to write bytes
+	char s1[MAX_STRING_LENGTH]; // Temp string
 
 	if (usb_out_descr < 0)
 	{
@@ -321,12 +321,12 @@ uint32_t disconnect_USBMSP()
 /// Motor power control function
 uint32_t power_Motor(QByteArray const &i2c_data)
 {
-	uint16_t mdut;								// PWM duty
-	uint16_t mctl;								// Control register
-	int8_t mtmp;								// Temp variable
-	char s1[MAX_STRING_LENGTH];					// Temp string variable
-	const uint8_t dev_address = i2c_data[0];	// Device address
-	const int8_t reg_value = i2c_data[1];		// Register value
+	uint16_t mdut;				    // PWM duty
+	uint16_t mctl;				    // Control register
+	int8_t mtmp;				    // Temp variable
+	char s1[MAX_STRING_LENGTH];		    // Temp string variable
+	const uint8_t dev_address = i2c_data[0];    // Device address
+	const int8_t reg_value = i2c_data[1];	    // Register value
 
 	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
 			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
@@ -362,8 +362,8 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 /// Set motor frequency function
 uint32_t freq_Motor(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];										// Temp string variable
-	const uint8_t dev_address = i2c_data[0];						// Device address
+	char s1[MAX_STRING_LENGTH];					// Temp string variable
+	const uint8_t dev_address = i2c_data[0];			// Device address
 	const uint16_t reg_value = ((i2c_data[2] << 8) | i2c_data[1]);	// Register value
 
 	if ((dev_address == i2cPWMMOT1) || (dev_address == i2cPWMMOT2) ||
@@ -392,9 +392,9 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 /// Reset encoder function
 uint32_t reset_Encoder(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];					// Temp string variable
-	const uint8_t dev_address = i2c_data[0];	// Device address
-	const uint8_t reg_value = i2c_data[1];		// Register value
+	char s1[MAX_STRING_LENGTH];		    // Temp string variable
+	const uint8_t dev_address = i2c_data[0];    // Device address
+	const uint8_t reg_value = i2c_data[1];	    // Register value
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
 			(dev_address == i2cENC3) || (dev_address == i2cENC4))
@@ -411,15 +411,15 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 /// Read encoder function
 uint32_t read_Encoder(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];					// Temp string variable
-	char s2[MAX_STRING_LENGTH];					// Temp string variable
-	uint32_t errcode;							// Returned error code
-	uint8_t devaddr;							// Returned device address
-	uint8_t funccode;							// Returned function code
-	uint8_t regaddr;							// Returned register address
-	uint32_t regval=UINT32_MAX;					// Returned register value
-	uint16_t tmout = 0;							// Reading timeout
-	const uint8_t dev_address = i2c_data[0];	// Device address
+	char s1[MAX_STRING_LENGTH];		    // Temp string variable
+	char s2[MAX_STRING_LENGTH];		    // Temp string variable
+	uint32_t errcode;			    // Returned error code
+	uint8_t devaddr;			    // Returned device address
+	uint8_t funccode;			    // Returned function code
+	uint8_t regaddr;			    // Returned register address
+	uint32_t regval=UINT32_MAX;		    // Returned register value
+	uint16_t tmout = 0;			    // Reading timeout
+	const uint8_t dev_address = i2c_data[0];    // Device address
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
 			(dev_address == i2cENC3) || (dev_address == i2cENC4))
@@ -442,15 +442,15 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 /// Read sensor function
 uint32_t read_Sensor(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];					// Temp string variable
-	char s2[MAX_STRING_LENGTH];					// Temp string variable
-	uint32_t errcode;							// Returned error code
-	uint8_t devaddr;							// Returned device address
-	uint8_t funccode;							// Returned function code
-	uint8_t regaddr;							// Returned register address
-	uint32_t regval=UINT32_MAX;					// Returned register value
-	uint16_t tmout = 0;							// Reading timeout
-	const uint8_t dev_address = i2c_data[0];	// Device address
+	char s1[MAX_STRING_LENGTH];		    // Temp string variable
+	char s2[MAX_STRING_LENGTH];		    // Temp string variable
+	uint32_t errcode;			    // Returned error code
+	uint8_t devaddr;			    // Returned device address
+	uint8_t funccode;			    // Returned function code
+	uint8_t regaddr;			    // Returned register address
+	uint32_t regval=UINT32_MAX;		    // Returned register value
+	uint16_t tmout = 0;			    // Reading timeout
+	const uint8_t dev_address = i2c_data[0];    // Device address
 
 //	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
 //			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
