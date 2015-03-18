@@ -183,7 +183,7 @@ int I2cCommunicator::read(QByteArray const &data)
 	if (!mState.isReady())
 	{
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
-		return 0;
+		return -1;
 	}
 
 	QMutexLocker lock(&mLock);
