@@ -456,7 +456,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 //			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
 	// Only JA1-JA4 are available for analog inputs
 	if ((dev_address == i2cSENS1) || (dev_address == i2cSENS2) || (dev_address == i2cSENS3) ||
-			(dev_address == i2cSENS4) || (i2c_data[0] == i2cBATT))
+			(dev_address == i2cSENS4) || (dev_address == i2cBATT))
 	{
 		do
 		{
