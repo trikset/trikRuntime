@@ -141,6 +141,20 @@ equal to its class name.
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
 		<powerMotor port="M3" i2cCommandNumber="0x17" />
 		<powerMotor port="M4" i2cCommandNumber="0x16" />
+		<powerMotor port="S1" i2cCommandNumber="0x3F" />
+		<powerMotor port="S2" i2cCommandNumber="0x40" />
+		<powerMotor port="S3" i2cCommandNumber="0x41" />
+		<powerMotor port="S4" i2cCommandNumber="0x42" />
+		<powerMotor port="S5" i2cCommandNumber="0x43" />
+		<powerMotor port="S6" i2cCommandNumber="0x44" />
+		<powerMotor port="S7" i2cCommandNumber="0x45" />
+		<powerMotor port="S8" i2cCommandNumber="0x46" />
+		<powerMotor port="S9" i2cCommandNumber="0x47" />
+		<powerMotor port="S10" i2cCommandNumber="0x48" />
+		<powerMotor port="S11" i2cCommandNumber="0x49" />
+		<powerMotor port="S12" i2cCommandNumber="0x4A" />
+		<powerMotor port="S13" i2cCommandNumber="0x4B" />
+		<powerMotor port="S14" i2cCommandNumber="0x4C" />
 		<analogSensor port="A1" i2cCommandNumber="0x25" />
 		<analogSensor port="A2" i2cCommandNumber="0x24" />
 		<analogSensor port="A3" i2cCommandNumber="0x23" />

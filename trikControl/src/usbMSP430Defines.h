@@ -28,6 +28,20 @@
 #define i2cENC2			0x31	// 49 dec
 #define i2cENC3			0x32	// 50 dec
 #define i2cENC4			0x33	// 51 dec
+#define i2cSERV1		0x3F	// 63 dec
+#define i2cSERV2		0x40	// 64 dec
+#define i2cSERV3		0x41	// 65 dec
+#define i2cSERV4		0x42	// 66 dec
+#define i2cSERV5		0x43	// 67 dec
+#define i2cSERV6		0x44	// 68 dec
+#define i2cSERV7		0x45	// 69 dec
+#define i2cSERV8		0x46	// 70 dec
+#define i2cSERV9		0x47	// 71 dec
+#define i2cSERV10		0x48	// 72 dec
+#define i2cSERV11		0x49	// 73 dec
+#define i2cSERV12		0x4A	// 74 dec
+#define i2cSERV13		0x4B	// 75 dec
+#define i2cSERV14		0x4C	// 76 dec
 
 /// USB devices addresses
 #define MOTOR1			0x00
@@ -67,7 +81,7 @@
 #define PWM2			0x22
 #define PWM3			0x23
 #define PWM4			0x24
-#define SENSCTRL		0x25
+#define VERSIONCTRL		0x25
 #define ASYNCTIMER		0x26
 #define TOUCHDEVICE		0x27
 #define I2C1			0x28
@@ -77,6 +91,20 @@
 #define I2C5			0x2C
 #define I2C6			0x2D
 #define I2C7			0x2E
+#define SPWM1			0x2F
+#define SPWM2			0x30
+#define SPWM3			0x31
+#define SPWM4			0x32
+#define SPWM5			0x33
+#define SPWM6			0x34
+#define SPWM7			0x35
+#define SPWM8			0x36
+#define SPWM9			0x37
+#define SPWM10			0x38
+#define SPWM11			0x39
+#define SPWM12			0x3A
+#define SPWM13			0x3B
+#define SPWM14			0x3C
 #define BSL			0xEE
 #define NNONE			0xFF
 
@@ -150,6 +178,15 @@
 #define HMC5883L_X		0x0001
 #define HMC5883L_Y		0x0002
 #define HMC5883L_Z		0x0003
+
+/// Software PWM registers
+#define SPPCTL			0x00
+#define SPPDUT			0x01
+#define SPPPER			0x02
+#define SPPVER			0x03
+
+/// Masks for bits of control register
+#define SPWM_ENABLE		0x8000	// SPWM enable
 
 #define MAX_STRING_LENGTH	0x20
 

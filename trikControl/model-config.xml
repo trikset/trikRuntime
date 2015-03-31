@@ -103,6 +103,50 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<powerMotor />
 	</M4>
 
+	<!-- Servo motor ports (software PWMs on new MSP USB firmware). -->
+	<S1>
+		<powerMotor />
+	</S1>
+	<S2>
+		<powerMotor />
+	</S2>
+	<S3>
+		<powerMotor />
+	</S3>
+	<S4>
+		<powerMotor />
+	</S4>
+	<S5>
+		<powerMotor />
+	</S5>
+	<S6>
+		<powerMotor />
+	</S6>
+	<S7>
+		<powerMotor />
+	</S7>
+	<S8>
+		<powerMotor />
+	</S8>
+	<S9>
+		<powerMotor />
+	</S9>
+	<S10>
+		<powerMotor />
+	</S10>
+	<S11>
+		<powerMotor />
+	</S11>
+	<S12>
+		<powerMotor />
+	</S12>
+	<S13>
+		<powerMotor />
+	</S13>
+	<S14>
+		<powerMotor />
+	</S14>
+
 	<!-- Video sensor ports. -->
 	<video0>
 		<lineSensor />
