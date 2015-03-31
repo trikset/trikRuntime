@@ -25,13 +25,15 @@
 volatile uint16_t mper;			// Global PWM motor period
 int usb_out_descr;			// Input/Output USB device descriptor
 struct termios usb_tty;			// Struct for termio parameters, MUST BE GLOBAL!!!
-uint8_t addr_table_i2c_usb[52] =	// Correspondence address table (between I2C and USB device addresses)
+uint8_t addr_table_i2c_usb[77] =	// Correspondence address table (between I2C and USB device addresses)
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, MOTOR1, MOTOR2, MOTOR3, MOTOR4,
 		MOTOR1, MOTOR2, MOTOR4, MOTOR3, 0, 0, 0, 0, 0, 0,
 		0, 0, SENSOR6, SENSOR5, SENSOR4, SENSOR3, SENSOR2, SENSOR1, SENSOR17, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, ENCODER1, ENCODER2,
-		ENCODER3, ENCODER4};
+		ENCODER3, ENCODER4, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, SPWM1, SPWM2, SPWM3, SPWM4, SPWM5, SPWM6, SPWM7,
+		SPWM8, SPWM9, SPWM10, SPWM11, SPWM12, SPWM13, SPWM14};
 
 /// Extract number from packet
 uint32_t hex2num(char *string
@@ -321,36 +323,51 @@ uint32_t disconnect_USBMSP()
 /// Motor power control function
 uint32_t power_Motor(QByteArray const &i2c_data)
 {
-	uint16_t mdut;				    // PWM duty
+	uint16_t mdut;				    // Motor PWM duty
+	uint16_t sdut;				    // Software PWM duty
 	uint16_t mctl;				    // Control register
 	int8_t mtmp;				    // Temp variable
 	char s1[MAX_STRING_LENGTH];		    // Temp string variable
 	const uint8_t dev_address = i2c_data[0];    // Device address
 	const int8_t reg_value = i2c_data[1];	    // Register value
 
+	mtmp = reg_value;
+	mctl = MOT_ENABLE;
+	if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
+	{
+		mctl = mctl + MOT_BRAKE;
+		mtmp = 0;
+	}
+	if (mtmp < 0)
+		mctl = mctl + MOT_BACK;
+	if (mtmp != 0)
+		mctl = mctl + MOT_POWER;
+	if (mtmp < -100)
+		mtmp = -100;
+	if (mtmp > 100)
+		mtmp = 100;
+	mdut = uint16_t(float(abs(mtmp)) * (mper - 1) / 100);
+
 	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
 			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
 	{
-		mtmp = reg_value;
-		mctl = MOT_ENABLE;
-		if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
-		{
-			mctl = mctl + MOT_BRAKE;
-			mtmp = 0;
-		}
-		if (mtmp < 0)
-			mctl = mctl + MOT_BACK;
-		if (mtmp != 0)
-			mctl = mctl + MOT_POWER;
-		if (mtmp < -100)
-			mtmp = -100;
-		if (mtmp > 100)
-			mtmp = 100;
-		mdut = uint16_t(float(abs(mtmp)) * (mper - 1) / 100);
 
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMDUT, mdut);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMCTL, mctl);
+		sendUSBPacket(s1, s1);
+	}
+	else if ((dev_address == i2cSERV1) || (dev_address == i2cSERV2) ||
+		 (dev_address == i2cSERV3) || (dev_address == i2cSERV4) ||
+		 (dev_address == i2cSERV5) || (dev_address == i2cSERV6) ||
+		 (dev_address == i2cSERV7) || (dev_address == i2cSERV8) ||
+		 (dev_address == i2cSERV9) || (dev_address == i2cSERV10) ||
+		 (dev_address == i2cSERV11) || (dev_address == i2cSERV12) ||
+		 (dev_address == i2cSERV13) || (dev_address == i2cSERV14))
+	{
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, SPWM_ENABLE);
 		sendUSBPacket(s1, s1);
 	}
 	else

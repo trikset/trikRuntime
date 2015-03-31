@@ -125,7 +125,7 @@
 #define MOT_BRAKE		0x0008	// Brake enable
 #define MOT_POWER		0x0003	// Motor power
 
-/// Default motor period
+/// Default motor PWM period
 #define DEF_MOT_PER		0x3000	// Default motor period in uS
 
 /// Encoder registers
@@ -187,6 +187,9 @@
 
 /// Masks for bits of control register
 #define SPWM_ENABLE		0x8000	// SPWM enable
+
+/// Default software PWM period
+#define DEF_SPWM_PER		0x00C8	// Default software PWM period (for servo motors), 50 Hz (20 ms)
 
 #define MAX_STRING_LENGTH	0x20
 
