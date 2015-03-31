@@ -27,7 +27,8 @@ var aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
         , "D1", "D2", "F1"
         , "M1", "M2", "M3", "M4"
         , "B1", "B2", "B3", "B4"
-        , "E1", "E2", "E3", "E4"];
+        , "E1", "E2", "E3", "E4"
+        , "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "S13", "S14"];
 aliases.forEach(function(port) { this[port] = port; });
 
 // String.format function implementation.

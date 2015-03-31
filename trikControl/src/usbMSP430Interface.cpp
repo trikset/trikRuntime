@@ -372,8 +372,9 @@ uint32_t disconnect_USBMSP()
 uint32_t power_Motor(QByteArray const &i2c_data)
 {
 	uint16_t mdut;				    // Motor PWM duty
+	uint16_t mctl;				    // Motor control register
 	uint16_t sdut;				    // Software PWM duty
-	uint16_t mctl;				    // Control register
+	uint16_t sctl;				    // Software PWM control register
 	int8_t mtmp;				    // Temp variable
 	char s1[MAX_STRING_LENGTH];		    // Temp string variable
 	const uint8_t dev_address = i2c_data[0];    // Device address
@@ -419,18 +420,21 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 			mtmp = -100;
 		if (mtmp > 100)
 			mtmp = 100;
-		sdut = uint16_t(float((mtmp + 100) / 200 * float(MAX_SERV_DUTY - MIN_SERV_DUTY)) + 7);
+		//sdut = uint16_t((float(mtmp) + 100) / 200 * (MAX_SERV_DUTY - MIN_SERV_DUTY) + 7);
+		sdut = uint16_t((float(abs(mtmp))) / 100 * (MAX_SERV_DUTY - MIN_SERV_DUTY) + 7);
+		if (mtmp != 0)
+		    sctl = SPWM_ENABLE;
+		else
+		{
+		    sctl = 0;
+		    sdut = 0;
+		}
 
-		qDebug() << "SPWM duty";
-		qDebug() << dev_address;
-		qDebug() << addr_table_i2c_usb[dev_address];
-		qDebug() << mtmp;
-		qDebug() << sdut;
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, sctl);
+		sendUSBPacket(s1, s1);
 
-		//makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
-		//sendUSBPacket(s1, s1);
-		//makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, SPWM_ENABLE);
-		//sendUSBPacket(s1, s1);
 	}
 	else
 		return DEV_ADDR_ERROR;
