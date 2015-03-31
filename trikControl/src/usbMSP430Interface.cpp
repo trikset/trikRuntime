@@ -23,6 +23,7 @@
 #include "usbMSP430Interface.h"
 
 volatile uint16_t mper;			// Global PWM motor period
+volatile uint16_t sper;			// Global software PWM period
 int usb_out_descr;			// Input/Output USB device descriptor
 struct termios usb_tty;			// Struct for termio parameters, MUST BE GLOBAL!!!
 uint8_t addr_table_i2c_usb[77] =	// Correspondence address table (between I2C and USB device addresses)
@@ -193,7 +194,7 @@ uint32_t sendUSBPacket(char *in_msp_packet
 	return NO_ERROR;
 }
 
-/// Init motors
+/// Init power motors
 uint32_t init_motors_USBMSP()
 {
 	char s1[MAX_STRING_LENGTH];	// Temp string
@@ -215,6 +216,50 @@ uint32_t init_motors_USBMSP()
 	makeWriteRegPacket(s1, MOTOR3, MMPER, mper);
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, MOTOR4, MMPER, mper);
+	sendUSBPacket(s1, s1);
+	return NO_ERROR;
+}
+
+/// Init servo motors
+uint32_t init_servomotors_USBMSP()
+{
+	char s1[MAX_STRING_LENGTH];	// Temp string
+
+	if (DEF_SPWM_PER > 0)
+	{
+		sper = DEF_SPWM_PER;
+	}
+	else
+	{
+		sper = 1;
+	}
+	makeWriteRegPacket(s1, SPWM1, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM2, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM3, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM4, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM5, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM6, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM7, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM8, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM9, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM10, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM11, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM12, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM13, SPPPER, sper);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, SPWM14, SPPPER, sper);
 	sendUSBPacket(s1, s1);
 	return NO_ERROR;
 }
@@ -298,6 +343,9 @@ uint32_t connect_USBMSP()
 	// Init motors
 	init_motors_USBMSP();
 
+	// Init servo motors
+	init_servomotors_USBMSP();
+
 	// Init encoders
 	init_encoders_USBMSP();
 
@@ -331,26 +379,25 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 	const uint8_t dev_address = i2c_data[0];    // Device address
 	const int8_t reg_value = i2c_data[1];	    // Register value
 
-	mtmp = reg_value;
-	mctl = MOT_ENABLE;
-	if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
-	{
-		mctl = mctl + MOT_BRAKE;
-		mtmp = 0;
-	}
-	if (mtmp < 0)
-		mctl = mctl + MOT_BACK;
-	if (mtmp != 0)
-		mctl = mctl + MOT_POWER;
-	if (mtmp < -100)
-		mtmp = -100;
-	if (mtmp > 100)
-		mtmp = 100;
-	mdut = uint16_t(float(abs(mtmp)) * (mper - 1) / 100);
-
 	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
 			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
 	{
+		mtmp = reg_value;
+		mctl = MOT_ENABLE;
+		if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
+		{
+			mctl = mctl + MOT_BRAKE;
+			mtmp = 0;
+		}
+		if (mtmp < 0)
+			mctl = mctl + MOT_BACK;
+		if (mtmp != 0)
+			mctl = mctl + MOT_POWER;
+		if (mtmp < -100)
+			mtmp = -100;
+		if (mtmp > 100)
+			mtmp = 100;
+		mdut = uint16_t(float(abs(mtmp)) * (mper - 1) / 100);
 
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMDUT, mdut);
 		sendUSBPacket(s1, s1);
@@ -365,10 +412,25 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		 (dev_address == i2cSERV11) || (dev_address == i2cSERV12) ||
 		 (dev_address == i2cSERV13) || (dev_address == i2cSERV14))
 	{
-		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
-		sendUSBPacket(s1, s1);
-		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, SPWM_ENABLE);
-		sendUSBPacket(s1, s1);
+		mtmp = reg_value;
+		if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
+			mtmp = 0;
+		if (mtmp < -100)
+			mtmp = -100;
+		if (mtmp > 100)
+			mtmp = 100;
+		sdut = uint16_t(float((mtmp + 100) / 200 * float(MAX_SERV_DUTY - MIN_SERV_DUTY)) + 7);
+
+		qDebug() << "SPWM duty";
+		qDebug() << dev_address;
+		qDebug() << addr_table_i2c_usb[dev_address];
+		qDebug() << mtmp;
+		qDebug() << sdut;
+
+		//makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
+		//sendUSBPacket(s1, s1);
+		//makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, SPWM_ENABLE);
+		//sendUSBPacket(s1, s1);
 	}
 	else
 		return DEV_ADDR_ERROR;

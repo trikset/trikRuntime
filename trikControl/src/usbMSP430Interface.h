@@ -41,6 +41,9 @@ uint32_t decodeReceivedPacket(char *msp_packet		// Input MSP430 USB packet strin
 /// Init motors
 uint32_t init_motors_USBMSP();
 
+/// Init servo motors
+uint32_t init_servomotors_USBMSP();
+
 /// Init encoders
 uint32_t init_encoders_USBMSP();
 

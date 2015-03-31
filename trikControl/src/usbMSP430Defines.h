@@ -191,6 +191,10 @@
 /// Default software PWM period
 #define DEF_SPWM_PER		0x00C8	// Default software PWM period (for servo motors), 50 Hz (20 ms)
 
+/// Ranges of servo motors PWM duty
+#define MIN_SERV_DUTY		0x0007
+#define MAX_SERV_DUTY		0x0017
+
 #define MAX_STRING_LENGTH	0x20
 
 #define WRITE_FUNC		0x03
