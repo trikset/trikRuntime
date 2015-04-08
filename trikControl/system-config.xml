@@ -161,6 +161,13 @@ equal to its class name.
 		<analogSensor port="A4" i2cCommandNumber="0x22" />
 		<analogSensor port="A5" i2cCommandNumber="0x21" />
 		<analogSensor port="A6" i2cCommandNumber="0x20" />
+		<analogSensor port="T1" i2cCommandNumber="0x4D" />
+		<analogSensor port="T2" i2cCommandNumber="0x4E" />
+		<analogSensor port="T3" i2cCommandNumber="0x4F" />
+		<analogSensor port="W1" i2cCommandNumber="0x50" />
+		<analogSensor port="W2" i2cCommandNumber="0x51" />
+		<analogSensor port="W3" i2cCommandNumber="0x52" />
+		<analogSensor port="W4" i2cCommandNumber="0x53" />
 		<encoder port="B1" i2cCommandNumber="0x30" />
 		<encoder port="B2" i2cCommandNumber="0x31" />
 		<encoder port="B3" i2cCommandNumber="0x32" />

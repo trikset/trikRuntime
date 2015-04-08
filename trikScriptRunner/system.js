@@ -23,7 +23,7 @@ var KeysEnum = {
 };
 
 // Aliases for passing ports without quotes
-var aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
+var aliases = ["A1", "A2", "A3", "A4", "A5", "A6", "T1", "T2", "T3", "W1", "W2", "W3", "W4"
         , "D1", "D2", "F1"
         , "M1", "M2", "M3", "M4"
         , "B1", "B2", "B3", "B4"

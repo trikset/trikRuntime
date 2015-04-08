@@ -63,7 +63,27 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<A6>
 		<irSensor />
 	</A6>
-
+	<T1>
+		<irSensor />
+	</T1>
+	<T2>
+		<irSensor />
+	</T2>
+	<T3>
+		<irSensor />
+	</T3>
+	<W1>
+		<irSensor />
+	</W1>
+	<W2>
+		<irSensor />
+	</W2>
+	<W3>
+		<irSensor />
+	</W3>
+	<W4>
+		<irSensor />
+	</W4>
 	<!-- Digital sensor ports. -->
 	<D1>
 		<rangeSensor />

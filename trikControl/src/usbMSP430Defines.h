@@ -42,6 +42,13 @@
 #define i2cSERV12		0x4A	// 74 dec
 #define i2cSERV13		0x4B	// 75 dec
 #define i2cSERV14		0x4C	// 76 dec
+#define i2cTEMP1		0x4D	// 77 dec
+#define i2cTEMP2		0x4E	// 78 dec
+#define i2cTEMP3		0x4F	// 79 dec
+#define i2cW1			0x50	// 80 dec
+#define i2cW2			0x51	// 81 dec
+#define i2cW3			0x52	// 82 dec
+#define i2cW4			0x53	// 83 dec
 
 /// USB devices addresses
 #define MOTOR1			0x00
@@ -228,6 +235,12 @@
 
 #define TIME_OUT		0xFFFF
 
+/// Alternative functions of devices
+#define ALT_ANALOG		0x00
+#define ALT_I2C			0x01
+#define ALT_SERVO		0x02
+
+/// USB device file
 #define USB_DEV_NAME		"/dev/ttyACM0"
 
 #endif // USBMSP430DEFINES_H

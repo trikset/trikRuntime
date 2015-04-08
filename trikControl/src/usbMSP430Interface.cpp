@@ -26,7 +26,8 @@ volatile uint16_t mper;			// Global PWM motor period
 volatile uint16_t sper;			// Global software PWM period
 int usb_out_descr;			// Input/Output USB device descriptor
 struct termios usb_tty;			// Struct for termio parameters, MUST BE GLOBAL!!!
-uint8_t addr_table_i2c_usb[77] =	// Correspondence address table (between I2C and USB device addresses)
+volatile uint8_t alt_func_flag;		// Alternate function switch flag for devices
+uint8_t addr_table_i2c_usb[84] =	// Correspondence address table (between I2C and USB device addresses)
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, MOTOR1, MOTOR2, MOTOR3, MOTOR4,
 		MOTOR1, MOTOR2, MOTOR4, MOTOR3, 0, 0, 0, 0, 0, 0,
@@ -34,7 +35,8 @@ uint8_t addr_table_i2c_usb[77] =	// Correspondence address table (between I2C an
 		0, 0, 0, 0, 0, 0, 0, 0, ENCODER1, ENCODER2,
 		ENCODER3, ENCODER4, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, SPWM1, SPWM2, SPWM3, SPWM4, SPWM5, SPWM6, SPWM7,
-		SPWM8, SPWM9, SPWM10, SPWM11, SPWM12, SPWM13, SPWM14};
+		SPWM8, SPWM9, SPWM10, SPWM11, SPWM12, SPWM13, SPWM14, I2C1, I2C2, I2C3,
+		I2C4, I2C5, I2C6, I2C7};
 
 /// Extract number from packet
 uint32_t hex2num(char *string
@@ -429,12 +431,10 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		    sctl = 0;
 		    sdut = 0;
 		}
-
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, sctl);
 		sendUSBPacket(s1, s1);
-
 	}
 	else
 		return DEV_ADDR_ERROR;
