@@ -103,9 +103,7 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikRun started";
 
-	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath)
-	);
+	QScopedPointer<trikControl::BrickInterface> brick(trikControl::BrickFactory::create(configPath, startDirPath));
 
 	GraphicsWidgetHandler graphicsWidgetHandler;
 

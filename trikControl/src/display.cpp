@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 CyberTech Labs Ltd, Smirnov Mikhail, Kogutich Denis
+/* Copyright 2013 - 2015 CyberTech Labs Ltd, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,29 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QStackedLayout>
 	#include <QtGui/QLabel>
+	#include <QtGui/QApplication>
 #else
 	#include <QtWidgets/QStackedLayout>
 	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QPushButton>
+	#include <QtWidgets/QApplication>
 #endif
 
 #include "src/guiWorker.h"
 
 using namespace trikControl;
 
-Display::Display(QThread &guiThread, const QString &startDirPath)
-	: mGuiThread(guiThread)
-	, mStartDirPath(startDirPath)
+Display::Display(const QString &startDirPath)
+	: mStartDirPath(startDirPath)
 	, mGuiWorker(new GuiWorker())
 {
-	mGuiWorker->moveToThread(&guiThread);
+	mGuiWorker->moveToThread(qApp->thread());
 	QMetaObject::invokeMethod(mGuiWorker, "init");
 }
 
 Display::~Display()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "deleteWorker");
-	mGuiThread.wait(1000);
+	qApp->thread()->wait(1000);
 }
 
 trikKernel::LazyMainWidget &Display::graphicsWidget()

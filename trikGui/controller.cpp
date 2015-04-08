@@ -35,7 +35,7 @@ int const communicatorPort = 8888;
 int const telemetryPort = 9000;
 
 Controller::Controller(QString const &configPath, QString const &startDirPath)
-	: mBrick(trikControl::BrickFactory::create(*thread(), configPath, startDirPath))
+	: mBrick(trikControl::BrickFactory::create(configPath, startDirPath))
 	, mStartDirPath(startDirPath)
 {
 	if (configPath.isEmpty()) {

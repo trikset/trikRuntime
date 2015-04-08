@@ -45,8 +45,8 @@
 
 using namespace trikControl;
 
-Brick::Brick(QThread &guiThread, QString const &systemConfig, QString const &modelConfig, const QString &startDirPath)
-	: mDisplay(new Display(guiThread, startDirPath))
+Brick::Brick(QString const &systemConfig, QString const &modelConfig, const QString &startDirPath)
+	: mDisplay(new Display(startDirPath))
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 

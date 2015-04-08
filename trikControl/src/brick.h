@@ -54,7 +54,7 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	Brick(QThread &guiThread, QString const &systemConfig, QString const &modelConfig, QString const &startDirPath);
+	Brick(QString const &systemConfig, QString const &modelConfig, QString const &startDirPath);
 
 	~Brick() override;
 

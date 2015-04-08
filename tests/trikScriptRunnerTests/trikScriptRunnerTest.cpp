@@ -32,7 +32,7 @@ void TrikScriptRunnerTest::TearDown()
 TEST_F(TrikScriptRunnerTest, sanityCheck)
 {
 	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(*QThread::currentThread(), "./", "./"));
+			trikControl::BrickFactory::create("./", "./"));
 
 	trikScriptRunner::TrikScriptRunner scriptRunner(*brick, nullptr, nullptr, "./");
 	scriptRunner.run("1 + 1");

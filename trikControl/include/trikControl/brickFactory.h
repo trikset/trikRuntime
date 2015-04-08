@@ -35,7 +35,7 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	static BrickInterface *create(QThread &guiThread, QString const &systemConfig, QString const &modelConfig
+	static BrickInterface *create(QString const &systemConfig, QString const &modelConfig
 			, QString const &startDirPath);
 
 	/// Convenience method that creates brick with default config files, "system-config.xml" and "model-config.xml".
@@ -44,7 +44,7 @@ public:
 	/// @param configFilesPath - path to system-config.xml and model-config.xml.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	static BrickInterface *create(QThread &guiThread, QString const &configFilesPath, QString const &startDirPath);
+	static BrickInterface *create(QString const &configFilesPath, QString const &startDirPath);
 };
 
 }

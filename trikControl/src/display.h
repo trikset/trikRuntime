@@ -36,7 +36,7 @@ public:
 	/// @param guiThread - GUI thread of an application.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	explicit Display(QThread &guiThread, QString const &startDirPath);
+	explicit Display(QString const &startDirPath);
 
 	~Display() override;
 
@@ -70,7 +70,7 @@ public slots:
 	void clear() override;
 
 private:
-	QThread &mGuiThread;
+//	QThread &mGuiThread;
 	QString const mStartDirPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };

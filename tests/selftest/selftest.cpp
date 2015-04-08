@@ -33,8 +33,8 @@ using namespace trikNetwork;
 
 TEST(selftest, brickCheck)
 {
-	QScopedPointer<BrickInterface> brick(BrickFactory::create(*QThread::currentThread()
-			, "./system-config.xml", "./selftest-model-config.xml", "./"));
+	QScopedPointer<BrickInterface> brick(BrickFactory::create("./system-config.xml"
+			, "./selftest-model-config.xml", "./"));
 
 	// Give devices some time to initialize.
 	/// @todo: it shall not be here, use asynchronous initialization instead.

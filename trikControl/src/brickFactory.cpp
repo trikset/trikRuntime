@@ -20,18 +20,18 @@
 
 using namespace trikControl;
 
-BrickInterface *BrickFactory::create(QThread &guiThread, QString const &systemConfig
+BrickInterface *BrickFactory::create(QString const &systemConfig
 		, QString const &modelConfig, QString const &startDirPath)
 {
-	return new Brick(guiThread, systemConfig, modelConfig, startDirPath);
+	return new Brick(systemConfig, modelConfig, startDirPath);
 }
 
-BrickInterface *BrickFactory::create(QThread &guiThread, QString const &configFilesPath, QString const &startDirPath)
+BrickInterface *BrickFactory::create(QString const &configFilesPath, QString const &startDirPath)
 {
 	QString const correctedPath = configFilesPath.endsWith(QDir::separator())
 			? configFilesPath
 			: configFilesPath + QDir::separator();
 
-	return new Brick(guiThread, correctedPath + "system-config.xml", correctedPath + "model-config.xml", startDirPath);
+	return new Brick(correctedPath + "system-config.xml", correctedPath + "model-config.xml", startDirPath);
 }
 
