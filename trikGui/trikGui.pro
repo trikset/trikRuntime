@@ -38,8 +38,8 @@ HEADERS += \
 	$$PWD/wiFiClientWidget.h \
 	$$PWD/wiFiInitWidget.h \
 	$$PWD/wiFiModeWidget.h \
+	$$PWD/informationWidget.h \
 	$$PWD/fileManagerMessageBox.h \
-	$$PWD/versionWidget.h \
 	$$PWD/updateWidget.h \
 	$$PWD/systemSettingsWidget.h \
 
@@ -68,8 +68,8 @@ SOURCES += \
 	$$PWD/trikGuiDialog.cpp \
 	$$PWD/backgroundWidget.cpp \
 	$$PWD/batteryIndicator.cpp \
+	$$PWD/informationWidget.cpp \
 	$$PWD/fileManagerMessageBox.cpp \
-	$$PWD/versionWidget.cpp \
 	$$PWD/updateWidget.cpp \
 	$$PWD/systemSettingsWidget.cpp \
 

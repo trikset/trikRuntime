@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
@@ -63,6 +63,33 @@
     <message>
         <source>File Manager</source>
         <translation>Файлы</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::InformationWidget</name>
+    <message>
+        <source>Current version</source>
+        <translation>Текущая версия</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Обновление ПО</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>Не найден</translation>
+    </message>
+    <message>
+        <source>MAC address</source>
+        <translation>MAC-адрес</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <source>Do you really want to update current version?</source>
+        <translation>Вы действительно хотите обновиться?</translation>
     </message>
 </context>
 <context>
@@ -188,15 +215,15 @@
     <name>trikGui::VersionWidget</name>
     <message>
         <source>Current version</source>
-        <translation>Текущая версия</translation>
+        <translation type="obsolete">Текущая версия</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation>Версия ПО</translation>
+        <translation type="obsolete">Версия ПО</translation>
     </message>
     <message>
         <source>Do you really want to update current version?</source>
-        <translation>Вы действительно хотите обновиться?</translation>
+        <translation type="obsolete">Вы действительно хотите обновиться?</translation>
     </message>
 </context>
 <context>

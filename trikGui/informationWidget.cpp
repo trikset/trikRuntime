@@ -12,43 +12,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "versionWidget.h"
+#include "informationWidget.h"
 #include <trikKernel/version.h>
 
 #include <QtGui/QKeyEvent>
+#include <QtNetwork/QNetworkInterface>
 
 using namespace trikGui;
 
-VersionWidget::VersionWidget(QWidget *parent)
+InformationWidget::InformationWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
 {
-	QLabel* const versionLabel = new QLabel(tr("Current version") + " : \n" + trikKernel::version);
+	QLabel* const versionLabel = new QLabel(tr("Current version") + ": \n" + trikKernel::version);
 	versionLabel->setAlignment(Qt::AlignTop);
 	mLayout.addWidget(versionLabel);
 
-	mUpdateButton = new QPushButton("Update");
+	mUpdateButton = new QPushButton(tr("Update"));
 	mLayout.addWidget(mUpdateButton);
 	mUpdateButton->setDefault(true);
+
+	QString mac = tr("Not found");
+
+	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+	for (QNetworkInterface const &interface : interfaces) {
+		if (interface.name() == "wlan0") {
+			mac = interface.hardwareAddress();
+			break;
+		}
+	}
+
+	QLabel* const macLabel = new QLabel(tr("MAC address") + ": \n" + mac);
+	mLayout.addWidget(macLabel);
+
+	mLayout.addStretch();
 
 	setLayout(&mLayout);
 	setFocusPolicy(Qt::StrongFocus);
 }
 
-VersionWidget::~VersionWidget()
+InformationWidget::~InformationWidget()
 {
 	delete mUpdateButton;
 }
 
-void VersionWidget::renewFocus()
+void InformationWidget::renewFocus()
 {
 }
 
-QString VersionWidget::menuEntry()
+QString InformationWidget::menuEntry()
 {
-	return QString(tr("Version"));
+	return QString(tr("Information"));
 }
 
-void VersionWidget::keyPressEvent(QKeyEvent *event)
+void InformationWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Return: {
@@ -62,7 +78,7 @@ void VersionWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void VersionWidget::updateVersion()
+void InformationWidget::updateVersion()
 {
 	QMessageBox updateMessageBox(this);
 	updateMessageBox.setIcon(QMessageBox::Question);

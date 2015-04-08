@@ -32,7 +32,7 @@
 #include "motorsWidget.h"
 #include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
-#include "versionWidget.h"
+#include "informationWidget.h"
 #include "systemSettingsWidget.h"
 
 using namespace trikGui;
@@ -66,7 +66,7 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 
-	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
@@ -135,8 +135,8 @@ void StartWidget::launch()
 			} else {
 				Q_ASSERT(!"Mailbox is disabled but commmunications widget still tries to be shown");
 			}
-		} else if (currentItemText == VersionWidget::menuEntry()) {
-			VersionWidget versionWidget;
+		} else if (currentItemText == InformationWidget::menuEntry()) {
+			InformationWidget versionWidget;
 			emit newWidget(versionWidget);
 			result = versionWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {

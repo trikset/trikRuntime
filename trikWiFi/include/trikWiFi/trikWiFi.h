@@ -75,7 +75,7 @@ public:
 	TrikWiFi(QString const &interfaceFilePrefix, QString const &daemonFile, QObject *parent = nullptr);
 
 	/// Destructor.
-	~TrikWiFi();
+	~TrikWiFi() override;
 
 	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
 	int connect(int id);

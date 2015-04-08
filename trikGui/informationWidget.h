@@ -36,17 +36,17 @@
 namespace trikGui {
 
 /// Widget that shows current version of TrikRuntime.
-class VersionWidget : public TrikGuiDialog
+class InformationWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
-	explicit VersionWidget(QWidget *parent = 0);
+	explicit InformationWidget(QWidget *parent = 0);
 
 	/// Destructor.
-	~VersionWidget();
+	~InformationWidget() override;
 
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
@@ -62,7 +62,8 @@ private slots:
 
 private:
 	/// Main layout of this widget.
-	QHBoxLayout mLayout;
+	QVBoxLayout mLayout;
+
 	QPushButton *mUpdateButton;  // Has ownership.
 };
 
