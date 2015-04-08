@@ -27,6 +27,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
 	$$PWD/include/trikKernel/exceptions/failedToParseXmlException.h \
+	$$PWD/include/trikKernel/exceptions/internalErrorException.h \
 	$$PWD/include/trikKernel/exceptions/malformedConfigException.h \
 	$$PWD/include/trikKernel/exceptions/trikRuntimeException.h \
 

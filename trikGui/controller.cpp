@@ -22,6 +22,7 @@
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 #include <trikControl/brickFactory.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/gamepadFactory.h>
@@ -37,7 +38,15 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 	: mBrick(trikControl::BrickFactory::create(*thread(), configPath, startDirPath))
 	, mStartDirPath(startDirPath)
 {
-	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
+	if (configPath.isEmpty()) {
+		throw trikKernel::InternalErrorException("Config path is empty");
+	}
+
+	auto correctedConfigPath = configPath.endsWith('/') ? configPath : configPath + '/';
+
+	trikKernel::Configurer configurer(correctedConfigPath + "system-config.xml"
+			, correctedConfigPath + "model-config.xml");
+
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
