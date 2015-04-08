@@ -312,17 +312,56 @@ uint32_t init_sensors_USBMSP()
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR6, SSIDX, ANALOG_INP);
 	sendUSBPacket(s1, s1);
-	// NXT I2C temperature sensor on JA5-JA6 inputs
-	//makeWriteRegPacket(s1, I2C1, IIIDX, NXTTEMP);
-	//sendUSBPacket(s1, s1);
-	//makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE + I2C_SENS);
-	//sendUSBPacket(s1, s1);
 	// Battery
 	makeWriteRegPacket(s1, SENSOR17, SSCTL, SENS_ENABLE + SENS_READ);
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR17, SSIDX, ANALOG_INP);
 	sendUSBPacket(s1, s1);
 	return NO_ERROR;
+}
+
+/// Init I2C sensors
+uint32_t init_i2c_sensors_USBMSP()
+{
+    char s1[MAX_STRING_LENGTH];	// Temp string
+
+    makeWriteRegPacket(s1, I2C1, IIIDX, NXTTEMP);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C2, IIIDX, NXTTEMP);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C2, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C3, IIIDX, NXTTEMP);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C3, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C4, IIIDX, MCP3424_CH1);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C4, IIPAR, MCP3424_GAIN1);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C4, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C5, IIIDX, MCP3424_CH1);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C5, IIPAR, MCP3424_GAIN2);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C5, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C6, IIIDX, MCP3424_CH1);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C6, IIPAR, MCP3424_GAIN4);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C6, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C7, IIIDX, MCP3424_CH1);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C7, IIPAR, MCP3424_GAIN8);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, I2C7, IICTL, I2C_ENABLE + I2C_SENS);
+    sendUSBPacket(s1, s1);
+    return NO_ERROR;
 }
 
 /// Connect to USB MSP430 device
@@ -342,6 +381,12 @@ uint32_t connect_USBMSP()
 	// Init USB STTY device with serial port parameters
 	init_USBTTYDevice();
 
+	// Init servo motors
+	init_servomotors_USBMSP();
+
+	// Init I2C sensors
+	init_i2c_sensors_USBMSP();
+
 	// Init motors
 	init_motors_USBMSP();
 
@@ -351,8 +396,9 @@ uint32_t connect_USBMSP()
 	// Init sensors
 	init_sensors_USBMSP();
 
-	// Init servo motors
-	init_servomotors_USBMSP();
+
+	// Default alternative function
+	alt_func_flag = ALT_ANALOG;
 
 	return NO_ERROR;
 }
@@ -382,6 +428,7 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 	const uint8_t dev_address = i2c_data[0];    // Device address
 	const int8_t reg_value = i2c_data[1];	    // Register value
 
+	// Power motors
 	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
 			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
 	{
@@ -407,6 +454,7 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMCTL, mctl);
 		sendUSBPacket(s1, s1);
 	}
+	// Servo motors
 	else if ((dev_address == i2cSERV1) || (dev_address == i2cSERV2) ||
 		 (dev_address == i2cSERV3) || (dev_address == i2cSERV4) ||
 		 (dev_address == i2cSERV5) || (dev_address == i2cSERV6) ||
@@ -431,10 +479,17 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		    sctl = 0;
 		    sdut = 0;
 		}
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_ANALOG) ||
+			(alt_func_flag == ALT_ENC) || (alt_func_flag == ALT_I2C))
+		{
+		    makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPPER, sper);
+		    sendUSBPacket(s1, s1);
+		}
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, sctl);
 		sendUSBPacket(s1, s1);
+		alt_func_flag = ALT_SERVO;
 	}
 	else
 		return DEV_ADDR_ERROR;
@@ -462,7 +517,6 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 		{
 			mper = 1;
 		}
-
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMPER, mper);
 		sendUSBPacket(s1, s1);
 	}
@@ -480,10 +534,18 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 	const uint8_t reg_value = i2c_data[1];	    // Register value
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
-			(dev_address == i2cENC3) || (dev_address == i2cENC4))
+	    (dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
+					   EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+			sendUSBPacket(s1, s1);
+		}
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL, reg_value);
 		sendUSBPacket(s1, s1);
+		alt_func_flag = ALT_ENC;
 	}
 	else
 		return DEV_ADDR_ERROR;
@@ -507,6 +569,13 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
 			(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
+					    EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+			sendUSBPacket(s1, s1);
+		}
 		do
 		{
 			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL);
@@ -514,6 +583,7 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != EEVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_ENC;
 		return regval;
 	}
 	else
@@ -535,12 +605,16 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	uint16_t tmout = 0;			    // Reading timeout
 	const uint8_t dev_address = i2c_data[0];    // Device address
 
+	// Analog sensors
 	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
 			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
-//	Only JA1-JA4 are available for analog inputs
-//	if ((dev_address == i2cSENS1) || (dev_address == i2cSENS2) || (dev_address == i2cSENS3) ||
-//			(dev_address == i2cSENS4) || (dev_address == i2cBATT))
 	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSCTL, SENS_ENABLE + SENS_READ);
+			sendUSBPacket(s1, s1);
+		}
 		do
 		{
 			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], SSVAL);
@@ -548,22 +622,31 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_ANALOG;
 		return regval;
 	}
-	/*
-	// Inputs JA5 (SDA) and JA6 (SCL) used for NXT I2C temperature sensor
-	else if ((dev_address == i2cSENS5) || (dev_address == i2cSENS6))
+
+	// I2C sensors
+	else if ((dev_address == i2cTEMP1) || (dev_address == i2cTEMP2) || (dev_address == i2cTEMP3)
+		  || (dev_address == i2cW1) || (dev_address == i2cW2) || (dev_address == i2cW3) || (dev_address == i2cW4))
 	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC))
+		{
+			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], IICTL, I2C_ENABLE + I2C_SENS);
+			sendUSBPacket(s1, s1);
+		}
 		do
 		{
-			makeReadRegPacket(s1, I2C1, IIVAL);
+			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], IIVAL);
 			errcode = sendUSBPacket(s1, s2);
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
-		} while (((devaddr != I2C1) || (regaddr != IIVAL)) && (tmout < TIME_OUT));
+		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != IIVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_I2C;
 		return regval;
 	}
-	*/
+
 	else
 		return DEV_ADDR_ERROR;
 

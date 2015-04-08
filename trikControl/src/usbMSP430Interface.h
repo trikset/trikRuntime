@@ -50,6 +50,9 @@ uint32_t init_encoders_USBMSP();
 /// Init sensors
 uint32_t init_sensors_USBMSP();
 
+/// Init I2C sensors
+uint32_t init_i2c_sensors_USBMSP();
+
 /// Motor power control function
 uint32_t power_Motor(QByteArray const &i2c_data);
 

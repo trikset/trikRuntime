@@ -173,18 +173,30 @@
 #define IIVAL			0x06
 #define IIDEL			0x07
 #define IIVER			0x08
+#define IIPAR			0x09
 
 /// Masks for bits of control register
 #define I2C_ENABLE		0x80	// I2C enable
 #define I2C_READ		0x20	// I2C read
 #define I2C_WRITE		0x40	// I2C write
 #define I2C_SENS		0x10	// I2C read sensor
+#define I2C_SENS		0x08	// I2C pullup resistors
 
 /// Software I2C sensors addresses
 #define NXTTEMP			0x0000
 #define HMC5883L_X		0x0001
 #define HMC5883L_Y		0x0002
 #define HMC5883L_Z		0x0003
+#define MCP3424_CH1		0x0004
+#define MCP3424_CH2		0x0005
+#define MCP3424_CH3		0x0006
+#define MCP3424_CH4		0x0007
+
+/// MCP3424 PGA gain
+#define MCP3424_GAIN1		0x0000
+#define MCP3424_GAIN2		0x0001
+#define MCP3424_GAIN4		0x0002
+#define MCP3424_GAIN8		0x0003
 
 /// Software PWM registers
 #define SPPCTL			0x00
@@ -236,9 +248,11 @@
 #define TIME_OUT		0xFFFF
 
 /// Alternative functions of devices
-#define ALT_ANALOG		0x00
-#define ALT_I2C			0x01
-#define ALT_SERVO		0x02
+#define ALT_NOTHING		0x00
+#define ALT_ANALOG		0x01
+#define ALT_I2C			0x02
+#define ALT_SERVO		0x03
+#define ALT_ENC			0x04
 
 /// USB device file
 #define USB_DEV_NAME		"/dev/ttyACM0"
