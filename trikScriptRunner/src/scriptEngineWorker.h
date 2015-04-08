@@ -64,6 +64,11 @@ public:
 	/// @param supportThreads - true if created engine should support creation of threads.
 	QScriptEngine *createScriptEngine(bool supportThreads = true);
 
+	/// Copies given script engine creating a new one with the same context as existing one.
+	/// Note that functions will not be copied to a new engine due to limitations of Qt Scripting engine,
+	/// they need to be re-evaluated manually.
+	QScriptEngine *copyScriptEngine(const QScriptEngine * const original);
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
@@ -109,6 +114,9 @@ private slots:
 private:
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);
+
+	/// Evaluates "system.js" file in given engine.
+	void evalSystemJs(QScriptEngine * const engine) const;
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.

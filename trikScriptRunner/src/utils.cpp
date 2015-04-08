@@ -18,12 +18,15 @@
 #include <QtCore/QRegExp>
 #include <QtScript/QScriptValueIterator>
 
+#include <QtCore/QDebug>
+
 using namespace trikScriptRunner;
 
 QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const engine)
 {
 	QScriptValue copy;
 	if (prototype.isFunction()) {
+		// Functions can not be copied across script engines, so they actually will not be copied.
 		return prototype;
 	} else if (prototype.isArray()) {
 		copy = engine->newArray();
@@ -74,6 +77,7 @@ void Utils::copyRecursivelyTo(QScriptValue const &prototype, QScriptValue &targe
 	while (iterator.hasNext()) {
 		iterator.next();
 		QScriptValue const value = clone(iterator.value(), engine);
+		// Functions will not be copied to a new engine.
 		if (value.engine() == engine) {
 			target.setProperty(iterator.name(), value);
 		}

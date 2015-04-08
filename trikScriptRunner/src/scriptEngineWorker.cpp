@@ -14,7 +14,6 @@
 
 #include "scriptEngineWorker.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QVector>
 
@@ -151,7 +150,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 void ScriptEngineWorker::doRunDirect(const QString &command)
 {
 	if (mDirectScriptsEngine) {
-		mDirectScriptsEngine->evaluate(command);\
+		mDirectScriptsEngine->evaluate(command);
 		if (mDirectScriptsEngine->hasUncaughtException()) {
 			reset();
 		}
@@ -180,7 +179,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 {
 	QScriptEngine *engine = new QScriptEngine();
-	QLOG_INFO() << "ScriptEngineWorker: new script engine" << engine << ", thread:" << QThread::currentThread();
+	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
 	qScriptRegisterMetaType(engine, batteryToScriptValue, batteryFromScriptValue);
 	qScriptRegisterMetaType(engine, displayToScriptValue, displayFromScriptValue);
@@ -212,18 +211,37 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreadingVariable));
 	}
 
+	evalSystemJs(engine);
+
+	engine->setProcessEventsInterval(1);
+	return engine;
+}
+
+QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const original)
+{
+	QScriptEngine *const result = createScriptEngine();
+
+	QScriptValue globalObject = result->globalObject();
+	Utils::copyRecursivelyTo(original->globalObject(), globalObject, result);
+	result->setGlobalObject(globalObject);
+
+	// We need to re-eval system.js after global object copying because functions did not get copied by
+	// copyRecursivelyTo, and existing ones were overwritten by copying.
+	evalSystemJs(result);
+
+	return result;
+}
+
+void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
+{
 	if (QFile::exists(mStartDirPath + "system.js")) {
 		engine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
 		if (engine->hasUncaughtException()) {
 			int const line = engine->uncaughtExceptionLineNumber();
 			QString const message = engine->uncaughtException().toString();
-			qDebug() << "system.js: Uncaught exception at line" << line << ":" << message;
 			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
 		}
 	} else {
 		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
 	}
-
-	engine->setProcessEventsInterval(1);
-	return engine;
 }

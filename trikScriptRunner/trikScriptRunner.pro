@@ -23,7 +23,7 @@ HEADERS += \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
-	$$PWD/src/scriptThread.h
+	$$PWD/src/scriptThread.h \
 
 SOURCES += \
 	$$PWD/src/scriptableParts.cpp \
@@ -32,7 +32,7 @@ SOURCES += \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
-	$$PWD/src/scriptThread.cpp
+	$$PWD/src/scriptThread.cpp \
 
 OTHER_FILES += \
 	$$PWD/system.js \

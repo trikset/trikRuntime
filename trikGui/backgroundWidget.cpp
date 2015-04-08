@@ -53,8 +53,8 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 	connect(&mMainWidgetsLayout, SIGNAL(widgetRemoved(int)), this, SLOT(updateStack(int)));
 
 	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
-	connect(&mController, SIGNAL(showRunningWidget(QString,int)), this, SLOT(showRunningWidget(QString,int)));
-	connect(&mController, SIGNAL(showError(QString,int)), this, SLOT(showError(QString,int)));
+	connect(&mController, SIGNAL(showRunningWidget(QString, int)), this, SLOT(showRunningWidget(QString, int)));
+	connect(&mController, SIGNAL(showError(QString, int)), this, SLOT(showError(QString, int)));
 	connect(&mController, SIGNAL(hideRunningWidget(int)), this, SLOT(hideRunningWidget(int)));
 	connect(&mController, SIGNAL(hideGraphicsWidget()), this, SLOT(hideGraphicsWidget()));
 	connect(&mController, SIGNAL(hideScriptWidgets()), this, SLOT(hideScriptWidgets()));

@@ -31,7 +31,8 @@ public:
 	/// @param engine - QScriptEngine which will do the work
 	/// @param script - a Qt Script to run
 	ScriptThread(Threading &threading, QString const &id, QScriptEngine *engine, QString const &script);
-	~ScriptThread();
+
+	~ScriptThread() override;
 
 	/// Aborts execution. Asynchronous: a thread will not be finished on return from this function
 	void abort();
@@ -46,7 +47,7 @@ public:
 	bool isEvaluating() const;
 
 protected:
-	void run();
+	void run() override;
 
 private:
 	QString mId;

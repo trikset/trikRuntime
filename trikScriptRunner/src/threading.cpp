@@ -18,7 +18,7 @@
 #include "src/utils.h"
 #include "src/scriptThread.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikScriptRunner;
 
@@ -71,7 +71,7 @@ void Threading::startThread(QString const &threadId, QScriptEngine *engine, QStr
 		return;
 	}
 
-	QLOG_INFO() << "Threading: starting new thread" << threadId << "with engine" << engine;
+	QLOG_INFO() << "Starting new thread" << threadId << "with engine" << engine;
 	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
 	mThreads[threadId] = thread;
 	mThreadsMutex.unlock();
@@ -106,7 +106,8 @@ void Threading::joinThread(const QString &threadId)
 	mThreadsMutex.lock();
 
 	while ((!mThreads.contains(threadId) || !mThreads[threadId]->isRunning())
-			&& !mFinishedThreads.contains(threadId)) {
+			&& !mFinishedThreads.contains(threadId))
+	{
 		mThreadsMutex.unlock();
 		if (mResetStarted) {
 			return;
@@ -128,13 +129,8 @@ void Threading::joinThread(const QString &threadId)
 
 QScriptEngine * Threading::cloneEngine(QScriptEngine *engine)
 {
-	QScriptEngine *result = mScriptWorker->createScriptEngine();
+	QScriptEngine *result = mScriptWorker->copyScriptEngine(engine);
 	result->evaluate(mScript);
-
-	QScriptValue globalObject = result->globalObject();
-	Utils::copyRecursivelyTo(engine->globalObject(), globalObject, result);
-	result->setGlobalObject(globalObject);
-
 	return result;
 }
 

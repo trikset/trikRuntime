@@ -16,7 +16,7 @@
 
 #include "threading.h"
 
-#include "QsLog.h"
+#include <QsLog.h>
 
 using namespace trikScriptRunner;
 
@@ -34,20 +34,19 @@ ScriptThread::~ScriptThread()
 
 void ScriptThread::run()
 {
-	QLOG_INFO() << "ScriptThread: started thread" << this;
+	QLOG_INFO() << "Started thread" << this;
 
 	mEngine->evaluate(mScript);
 	if (mEngine->hasUncaughtException()) {
 		int const line = mEngine->uncaughtExceptionLineNumber();
 		QString const message = mEngine->uncaughtException().toString();
 		mError = tr("Line %1: %2").arg(QString::number(line), message);
-		qDebug() << "Uncaught exception at line" << line << ":" << message;
 		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 	}
 
 	mEngine->deleteLater();
 	mThreading.threadFinished(mId);
-	QLOG_INFO() << "ScriptThread: ended evaluation, thread" << this;
+	QLOG_INFO() << "Ended evaluation, thread" << this;
 }
 
 void ScriptThread::abort()

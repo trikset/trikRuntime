@@ -28,34 +28,34 @@ var aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
         , "M1", "M2", "M3", "M4"
         , "B1", "B2", "B3", "B4"
         , "E1", "E2", "E3"
-	, "C1", "C2", "C3"];
+        , "C1", "C2", "C3"];
 
 aliases.forEach(function(port) { this[port] = port; });
 
 // String.format function implementation.
 // Taken from http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
 if (!String.prototype.format) {
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined'
-        ? args[number]
-        : match
-      ;
-    });
-  };
+    String.prototype.format = function() {
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function(match, number) {
+            return typeof args[number] != 'undefined'
+                ? args[number]
+                : match
+                ;
+        });
+    };
 }
 
 script.repeat = function(mscs, f) {
-  var timer = script.timer(mscs);
-  timer.timeout.connect(f);
+    var timer = script.timer(mscs);
+    timer.timeout.connect(f);
 }
 
 brick.smile = function() {
-  brick.display().showImage('media/trik_smile_normal.png');
+    brick.display().showImage('media/trik_smile_normal.png');
 }
 
 brick.sadSmile = function() {
-  brick.display().showImage('media/trik_smile_sad.png');
+    brick.display().showImage('media/trik_smile_sad.png');
 }
 
