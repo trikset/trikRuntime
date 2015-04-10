@@ -180,7 +180,7 @@
 #define I2C_READ		0x20	// I2C read
 #define I2C_WRITE		0x40	// I2C write
 #define I2C_SENS		0x10	// I2C read sensor
-#define I2C_SENS		0x08	// I2C pullup resistors
+#define I2C_PULL		0x08	// I2C pullup resistors
 
 /// Software I2C sensors addresses
 #define NXTTEMP			0x0000

@@ -533,8 +533,8 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 	const uint8_t dev_address = i2c_data[0];    // Device address
 	const uint8_t reg_value = i2c_data[1];	    // Register value
 
-	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
-	    (dev_address == i2cENC3) || (dev_address == i2cENC4))
+	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
+	    ||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
 		    || (alt_func_flag == ALT_I2C))
@@ -566,8 +566,8 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	uint16_t tmout = 0;			    // Reading timeout
 	const uint8_t dev_address = i2c_data[0];    // Device address
 
-	if ((dev_address == i2cENC1) || (dev_address == i2cENC2) ||
-			(dev_address == i2cENC3) || (dev_address == i2cENC4))
+	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
+	    ||  (dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
 		    || (alt_func_flag == ALT_I2C))
@@ -606,8 +606,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	const uint8_t dev_address = i2c_data[0];    // Device address
 
 	// Analog sensors
-	if ((i2c_data[0] == i2cSENS1) || (i2c_data[0] == i2cSENS2) || (i2c_data[0] == i2cSENS3) || (i2c_data[0] == i2cSENS4)
-			 || (i2c_data[0] == i2cSENS5) || (i2c_data[0] == i2cSENS6) || (i2c_data[0] == i2cBATT))
+	if ((dev_address == i2cSENS1) || (dev_address == i2cSENS2) || (dev_address == i2cSENS3) || (dev_address == i2cSENS4)
+			 || (dev_address == i2cSENS5) || (dev_address == i2cSENS6) || (dev_address == i2cBATT))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
 		    || (alt_func_flag == ALT_I2C))
@@ -625,7 +625,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		alt_func_flag = ALT_ANALOG;
 		return regval;
 	}
-
 	// I2C sensors
 	else if ((dev_address == i2cTEMP1) || (dev_address == i2cTEMP2) || (dev_address == i2cTEMP3)
 		  || (dev_address == i2cW1) || (dev_address == i2cW2) || (dev_address == i2cW3) || (dev_address == i2cW4))
@@ -646,7 +645,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		alt_func_flag = ALT_I2C;
 		return regval;
 	}
-
 	else
 		return DEV_ADDR_ERROR;
 
