@@ -35,6 +35,6 @@ script:
   - cd minimalCppApp
   - qmake -r CONFIG+=$CONFIG minimalCppApp.pro
   - make -j2
-  - cd ../../bin
+  - cd ../../bin/x86-$CONFIG
   - ls -A
   - sh -c "./trikScriptRunnerTests-x86"
