@@ -33,7 +33,7 @@ script:
   - qmake -r CONFIG+=$CONFIG tests.pro
   - make -j2
   - cd minimalCppApp
-  - qmake -r minimalCppApp.pro
+  - qmake -r CONFIG+=$CONFIG minimalCppApp.pro
   - make -j2
   - cd ../../bin
   - ls -A
