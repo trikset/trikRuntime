@@ -24,6 +24,8 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include <QsLog.h>
+
 #include "src/guiWorker.h"
 
 using namespace trikControl;
@@ -32,6 +34,11 @@ Display::Display(const QString &startDirPath)
 	: mStartDirPath(startDirPath)
 	, mGuiWorker(new GuiWorker())
 {
+	if (!qApp) {
+		QLOG_ERROR() << "No QApplication object, it seems that trikControl is used from console application";
+		return;
+	}
+
 	mGuiWorker->moveToThread(qApp->thread());
 	QMetaObject::invokeMethod(mGuiWorker, "init");
 }

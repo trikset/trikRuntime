@@ -29,5 +29,12 @@ script:
   - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
   - qmake trikRuntime.pro CONFIG+=$CONFIG
   - make -j2
-  - cd ./bin
+  - cd tests
+  - qmake -r CONFIG+=$CONFIG tests.pro
+  - make -j2
+  - cd minimalCppApp
+  - qmake -r minimalCppApp.pro
+  - make -j2
+  - cd ../../bin
   - ls -A
+  - sh -c "./trikScriptRunnerTests-x86"
