@@ -45,4 +45,3 @@ signals:
 	void hideMe();
 };
 }
-

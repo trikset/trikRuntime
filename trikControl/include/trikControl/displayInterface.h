@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-#include <trikKernel/lazyMainWidget.h>
+#include "displayWidgetInterface.h"
 
 #include "declSpec.h"
 
@@ -29,8 +29,8 @@ class TRIKCONTROL_EXPORT DisplayInterface : public QObject
 	Q_OBJECT
 
 public:
-	/// Returns a main GraphicsWidget.
-	virtual trikKernel::LazyMainWidget &graphicsWidget() = 0;
+	/// Returns widget on which everything is drawn.
+	virtual DisplayWidgetInterface &graphicsWidget() = 0;
 
 public slots:
 	/// Shows given image on a display.

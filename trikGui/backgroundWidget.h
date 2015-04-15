@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QStack>
+#include <QtCore/QScopedPointer>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -31,11 +32,14 @@
 	#include <QtWidgets/QStackedLayout>
 #endif
 
-#include <trikKernel/lazyMainWidget.h>
 #include "controller.h"
 #include "batteryIndicator.h"
 #include "startWidget.h"
 #include "runningWidget.h"
+
+namespace trikKernel {
+class LazyMainWidget;
+}
 
 namespace trikGui {
 
@@ -104,6 +108,7 @@ private:
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
 	RunningWidget mRunningWidget;
+	QScopedPointer<trikKernel::LazyMainWidget> mBrickDisplayWidgetWrapper;
 
 	QStack<int> mMainWidgetIndex;
 };

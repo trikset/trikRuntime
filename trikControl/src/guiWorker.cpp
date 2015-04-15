@@ -48,7 +48,7 @@ void GuiWorker::init()
 	resetBackground();
 }
 
-trikKernel::LazyMainWidget &GuiWorker::graphicsWidget()
+DisplayWidgetInterface &GuiWorker::graphicsWidget()
 {
 	return *mImageWidget.data();
 }

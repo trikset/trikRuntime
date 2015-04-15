@@ -18,8 +18,6 @@
 #include <QtCore/QThread>
 #include <QtCore/QString>
 
-#include <trikKernel/lazyMainWidget.h>
-
 #include "displayInterface.h"
 
 namespace trikControl {
@@ -40,7 +38,7 @@ public:
 
 	~Display() override;
 
-	trikKernel::LazyMainWidget &graphicsWidget() override;
+	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
 	void showImage(QString const &fileName) override;

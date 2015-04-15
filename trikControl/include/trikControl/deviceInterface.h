@@ -25,7 +25,7 @@ public:
 
 	/// Device status.
 	enum class Status {
-		/// Device can not be turned off due to hardware or configuration failure.
+		/// Device can not be turned on due to hardware or configuration failure.
 		failure
 
 		/// Device is turned off.

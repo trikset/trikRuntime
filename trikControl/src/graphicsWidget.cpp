@@ -1,4 +1,4 @@
-/* Copyright 2014 Kogutich Denis, Smirnov Mikhail
+/* Copyright 2014 - 2015 Kogutich Denis, Smirnov Mikhail and CyberTech Labs ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,25 +21,21 @@
 using namespace trikControl;
 
 GraphicsWidget::GraphicsWidget()
-	: trikKernel::LazyMainWidget()
-	, mCurrentPenColor(Qt::black)
+	: mCurrentPenColor(Qt::black)
 	, mCurrentPenWidth(0)
 {
 }
 
 void GraphicsWidget::showCommand()
 {
-	emit showMe(*this);
+	show();
+	emit shown();
 }
 
 void GraphicsWidget::hideCommand()
 {
-	emit hideMe();
-}
-
-void GraphicsWidget::renewFocus()
-{
-	setFocus();
+	hide();
+	emit hidden();
 }
 
 void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)

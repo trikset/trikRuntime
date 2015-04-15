@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <trikKernel/lazyMainWidget.h>
+#include <QtCore/QStringList>
 
 #include "batteryInterface.h"
 #include "colorSensorInterface.h"
@@ -44,8 +44,8 @@ public:
 	/// with this instance.
 	virtual void reset() = 0;
 
-	/// Returns a main GraphicsWidget.
-	virtual trikKernel::LazyMainWidget &graphicsWidget() = 0;
+	/// Returns a widget on which display output is drawn.
+	virtual DisplayWidgetInterface &graphicsWidget() = 0;
 
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).

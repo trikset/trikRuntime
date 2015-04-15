@@ -49,7 +49,7 @@ Display::~Display()
 	qApp->thread()->wait(1000);
 }
 
-trikKernel::LazyMainWidget &Display::graphicsWidget()
+DisplayWidgetInterface &Display::graphicsWidget()
 {
 	return mGuiWorker->graphicsWidget();
 }

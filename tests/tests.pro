@@ -18,6 +18,7 @@ SUBDIRS = \
 	selftest \
 	thirdparty \
 	trikScriptRunnerTests \
+	minimalCppApp \
 
 thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
 

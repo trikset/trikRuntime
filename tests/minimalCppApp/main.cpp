@@ -36,5 +36,6 @@ int main(int argc, char *argv[])
 
 	trikControl::BrickInterface *brick = trikControl::BrickFactory::create(".", ".");
 	brick->display()->showImage("/media/trik_smile_normal.png");
-	return 0;
+
+	return app.exec();
 }

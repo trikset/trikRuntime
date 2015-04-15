@@ -22,6 +22,7 @@ HEADERS += \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/include/trikControl/deviceInterface.h \
 	$$PWD/include/trikControl/displayInterface.h \
+	$$PWD/include/trikControl/displayWidgetInterface.h \
 	$$PWD/include/trikControl/encoderInterface.h \
 	$$PWD/include/trikControl/keysInterface.h \
 	$$PWD/include/trikControl/ledInterface.h \

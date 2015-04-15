@@ -19,18 +19,12 @@
 #include <QtCore/QRect>
 #include <QtGui/QColor>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
-
-#include <trikKernel/lazyMainWidget.h>
+#include "include/trikControl/displayWidgetInterface.h"
 
 namespace trikControl {
 
 /// Class of graphic widget.
-class GraphicsWidget : public trikKernel::LazyMainWidget
+class GraphicsWidget : public DisplayWidgetInterface
 {
 public:
 	GraphicsWidget();
@@ -40,8 +34,6 @@ public:
 
 	/// Hide this GraphicsWidget.
 	void hideCommand();
-
-	void renewFocus() override;
 
 	/// Set painter color.
 	void setPainterColor(QString const &color);

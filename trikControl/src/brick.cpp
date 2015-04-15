@@ -129,7 +129,7 @@ Brick::~Brick()
 	qDeleteAll(mColorSensors);
 }
 
-trikKernel::LazyMainWidget &Brick::graphicsWidget()
+DisplayWidgetInterface &Brick::graphicsWidget()
 {
 	return mDisplay->graphicsWidget();
 }

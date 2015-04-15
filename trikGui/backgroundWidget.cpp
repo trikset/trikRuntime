@@ -22,6 +22,10 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include <trikKernel/lazyMainWidget.h>
+
+#include "lazyMainWidgetWrapper.h"
+
 using namespace trikGui;
 
 BackgroundWidget::BackgroundWidget(QString const &configPath
@@ -41,7 +45,8 @@ BackgroundWidget::BackgroundWidget(QString const &configPath
 
 	mStatusBarLayout.addWidget(&mBatteryIndicator);
 	addMainWidget(mStartWidget);
-	addLazyWidget(mController.brick().graphicsWidget());
+	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(&mController.brick().graphicsWidget()));
+	addLazyWidget(*mBrickDisplayWidgetWrapper);
 	mMainWidgetsLayout.addWidget(&mRunningWidget);
 
 	mMainLayout.addLayout(&mStatusBarLayout);

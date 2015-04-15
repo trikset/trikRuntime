@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,29 @@
 
 #pragma once
 
-#include <trikKernel/mainWidget.h>
+#include <QtCore/qglobal.h>
 
-namespace trikRun {
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QWidget>
+#else
+	#include <QtWidgets/QWidget>
+#endif
 
-/// Helper class to show or hide graphics widget from brick.
-class GraphicsWidgetHandler : public QWidget
+#include "declSpec.h"
+
+namespace trikControl {
+
+/// Interface for widget on which Brick draws its graphics. Can notify when it shows or hides itself.
+class TRIKCONTROL_EXPORT DisplayWidgetInterface : public QWidget
 {
 	Q_OBJECT
 
-public slots:
-	/// Shows widget.
-	void show(trikKernel::MainWidget &widget)
-	{
-		widget.show();
-	}
+signals:
+	/// Emitted when widget is shown.
+	void shown();
 
-	/// Hides widget.
-	void hide()
-	{
-		auto widget = dynamic_cast<trikKernel::MainWidget *>(sender());
-		if (widget) {
-			widget->hide();
-		}
-	}
+	/// Emitted when widget is hidden.
+	void hidden();
 };
 
 }

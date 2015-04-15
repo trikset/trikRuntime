@@ -29,7 +29,6 @@ class Display;
 class Encoder;
 class I2cCommunicator;
 class Keys;
-class LazyMainWidget;
 class Led;
 class LineSensor;
 class ModuleLoader;
@@ -60,7 +59,7 @@ public:
 
 	void reset() override;
 
-	trikKernel::LazyMainWidget &graphicsWidget() override;
+	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
 	void playSound(QString const &soundFileName) override;

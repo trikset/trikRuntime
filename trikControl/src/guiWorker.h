@@ -41,8 +41,8 @@ class GuiWorker : public QObject
 public:
 	GuiWorker();
 
-	/// Returns a main GraphicsWidget.
-	trikKernel::LazyMainWidget &graphicsWidget();
+	/// Returns a widget on which everything is drawn.
+	DisplayWidgetInterface &graphicsWidget();
 
 public slots:
 	/// Shows image with given filename on display. Image is scaled to fill the screen and is cached on first read
