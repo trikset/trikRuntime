@@ -36,7 +36,7 @@ RunningWidget::RunningWidget(Controller &controller, QWidget *parent)
 	setLayout(&mLayout);
 }
 
-void RunningWidget::showError(QString const &error, int scriptId)
+void RunningWidget::showError(const QString &error, int scriptId)
 {
 	if (mScriptId != scriptId) {
 		return;

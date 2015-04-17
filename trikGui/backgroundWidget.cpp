@@ -28,8 +28,8 @@
 
 using namespace trikGui;
 
-BackgroundWidget::BackgroundWidget(QString const &configPath
-		, QString const &startDirPath
+BackgroundWidget::BackgroundWidget(const QString &configPath
+		, const QString &startDirPath
 		, QWidget *parent)
 	: QWidget(parent)
 	, mController(configPath, startDirPath)
@@ -103,7 +103,7 @@ void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
 
 void BackgroundWidget::showMainWidget(trikKernel::MainWidget &widget)
 {
-	int const index = mMainWidgetsLayout.indexOf(&widget);
+	const int index = mMainWidgetsLayout.indexOf(&widget);
 	if (index >= 0) {
 		mMainWidgetsLayout.setCurrentIndex(index);
 	}
@@ -158,7 +158,7 @@ void BackgroundWidget::renewFocus()
 
 void BackgroundWidget::refresh()
 {
-	for (auto const widget : QApplication::allWidgets()) {
+	for (const auto widget : QApplication::allWidgets()) {
 		widget->update();
 	}
 }

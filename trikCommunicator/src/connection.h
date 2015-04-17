@@ -34,7 +34,8 @@ namespace trikCommunicator {
 /// - stop --- stop current script execution and a robot.
 /// - direct:<command> --- execute given script without saving it to a file.
 /// - keepalive --- do nothing, used to check the availability of connection.
-class Connection : public trikNetwork::Connection {
+class Connection : public trikNetwork::Connection
+{
 	Q_OBJECT
 
 public:
@@ -43,14 +44,14 @@ public:
 	explicit Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner);
 
 	/// Writes a given message to inner socket.
-	void sendMessage(QString const &message);
+	void sendMessage(const QString &message);
 
 signals:
 	/// Emitted when a stop command received from a computer.
 	void stopCommandReceived();
 
 private:
-	void processData(QByteArray const &data) override;
+	void processData(const QByteArray &data) override;
 
 	/// Common script runner object, located in another thread.
 	trikScriptRunner::TrikScriptRunner &mTrikScriptRunner;

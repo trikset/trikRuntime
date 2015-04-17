@@ -22,15 +22,15 @@
 
 using namespace trikWiFi;
 
-TrikWiFi::TrikWiFi(QString const &interfaceFilePrefix
-		, QString const &daemonFile
+TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
+		, const QString &daemonFile
 		, QObject *parent)
 	: QObject(parent)
 	, mControlInterface(new WpaSupplicantCommunicator(interfaceFilePrefix + "ctrl", daemonFile))
 	, mMonitorInterface(new WpaSupplicantCommunicator(interfaceFilePrefix + "mon", daemonFile))
 {
 	mMonitorInterface->attach();
-	int const monitorFileDesc = mMonitorInterface->fileDescriptor();
+	const int monitorFileDesc = mMonitorInterface->fileDescriptor();
 	if (monitorFileDesc >= 0) {
 		mMonitorFileSocketNotifier.reset(new QSocketNotifier(monitorFileDesc, QSocketNotifier::Read));
 		QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
@@ -63,7 +63,7 @@ int TrikWiFi::connect(int id)
 int TrikWiFi::disconnect()
 {
 	QString reply;
-	int const result = mControlInterface->request("DISCONNECT", reply);
+	const int result = mControlInterface->request("DISCONNECT", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -75,7 +75,7 @@ int TrikWiFi::scan()
 {
 	QString reply;
 
-	int const result = mControlInterface->request("SCAN", reply);
+	const int result = mControlInterface->request("SCAN", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -85,7 +85,7 @@ int TrikWiFi::scan()
 
 Status TrikWiFi::status() const
 {
-	QString const command = "STATUS";
+	const QString command = "STATUS";
 	QString reply;
 
 	Status result;
@@ -111,7 +111,7 @@ QList<ScanResult> TrikWiFi::scanResults()
 	QList<ScanResult> results;
 
 	forever {
-		QString const command = "BSS " + QString::number(index++);
+		const QString command = "BSS " + QString::number(index++);
 
 		qDebug() << command;
 
@@ -150,7 +150,7 @@ int TrikWiFi::addNetwork()
 	}
 
 	bool ok = false;
-	int const id = reply.toInt(&ok);
+	const int id = reply.toInt(&ok);
 	if (ok) {
 		mControlInterface->request("SET_NETWORK " + QString::number(id) + " disabled 1", reply);
 		return id;
@@ -162,7 +162,7 @@ int TrikWiFi::addNetwork()
 int TrikWiFi::removeNetwork(int id)
 {
 	QString reply;
-	int const result = mControlInterface->request("REMOVE_NETWORK " + QString::number(id), reply);
+	const int result = mControlInterface->request("REMOVE_NETWORK " + QString::number(id), reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -170,10 +170,10 @@ int TrikWiFi::removeNetwork(int id)
 	}
 }
 
-int TrikWiFi::setSsid(int id, QString const &ssid)
+int TrikWiFi::setSsid(int id, const QString &ssid)
 {
 	QString reply;
-	int const result
+	const int result
 			= mControlInterface->request("SET_NETWORK " + QString::number(id) + " ssid \"" + ssid + "\"", reply);
 
 	if (result == 0 && reply == "OK\n") {
@@ -183,10 +183,10 @@ int TrikWiFi::setSsid(int id, QString const &ssid)
 	}
 }
 
-int TrikWiFi::setKey(int id, QString const &key)
+int TrikWiFi::setKey(int id, const QString &key)
 {
 	QString reply;
-	int const result = mControlInterface->request("SET_NETWORK " + QString::number(id) + " psk \"" + key + "\"", reply);
+	const int result = mControlInterface->request("SET_NETWORK " + QString::number(id) + " psk \"" + key + "\"", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -197,7 +197,7 @@ int TrikWiFi::setKey(int id, QString const &key)
 int TrikWiFi::setNoKeyNeeded(int id)
 {
 	QString reply;
-	int const result = mControlInterface->request("SET_NETWORK " + QString::number(id) + " key_mgmt NONE", reply);
+	const int result = mControlInterface->request("SET_NETWORK " + QString::number(id) + " key_mgmt NONE", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -208,7 +208,7 @@ int TrikWiFi::setNoKeyNeeded(int id)
 int TrikWiFi::saveConfiguration()
 {
 	QString reply;
-	int const result = mControlInterface->request("SAVE_CONFIG", reply);
+	const int result = mControlInterface->request("SAVE_CONFIG", reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -219,14 +219,14 @@ int TrikWiFi::saveConfiguration()
 QList<NetworkConfiguration> TrikWiFi::listNetworks()
 {
 	QString reply;
-	int const result = mControlInterface->request("LIST_NETWORKS", reply);
+	const int result = mControlInterface->request("LIST_NETWORKS", reply);
 	if (result < 0 || reply.isEmpty() || reply.startsWith("FAIL")) {
 		return QList<NetworkConfiguration>();
 	}
 
 	QStringList const lines = reply.split('\n');
 	QList<NetworkConfiguration> list;
-	for (QString const &line : lines) {
+	for (const QString &line : lines) {
 		QStringList const values = line.split('\t');
 		if (values.size() != 4) {
 			continue;
@@ -246,7 +246,7 @@ QList<NetworkConfiguration> TrikWiFi::listNetworks()
 	return list;
 }
 
-void TrikWiFi::processMessage(QString const &message)
+void TrikWiFi::processMessage(const QString &message)
 {
 	if (message.contains("CTRL-EVENT-SCAN-RESULTS")) {
 		emit scanFinished();
@@ -269,7 +269,7 @@ void TrikWiFi::receiveMessages()
 	}
 }
 
-QHash<QString, QString> TrikWiFi::parseReply(QString const &reply)
+QHash<QString, QString> TrikWiFi::parseReply(const QString &reply)
 {
 	QHash<QString, QString> result;
 
@@ -279,14 +279,14 @@ QHash<QString, QString> TrikWiFi::parseReply(QString const &reply)
 
 	QStringList const lines = reply.split('\n');
 
-	for (QString const &line : lines) {
-		int const valuePos = line.indexOf('=') + 1;
+	for (const QString &line : lines) {
+		const int valuePos = line.indexOf('=') + 1;
 		if (valuePos < 1) {
 			continue;
 		}
 
-		QString const key = line.left(valuePos - 1);
-		QString const value = line.mid(valuePos);
+		const QString key = line.left(valuePos - 1);
+		const QString value = line.mid(valuePos);
 
 		result.insert(key, value);
 	}

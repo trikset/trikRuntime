@@ -23,7 +23,7 @@
 
 using namespace trikControl;
 
-KeysWorker::KeysWorker(QString const &keysPath, DeviceState &state)
+KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state)
 	: mState(state)
 {
 	mKeysFileDescriptor = open(keysPath.toStdString().c_str(), O_SYNC, O_RDONLY);

@@ -24,7 +24,7 @@
 
 using namespace trikControl;
 
-RangeSensor::RangeSensor(QString const &port, trikKernel::Configurer const &configurer, ModuleLoader &moduleLoader)
+RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader)
 {
 	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
 			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))

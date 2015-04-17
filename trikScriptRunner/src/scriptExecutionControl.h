@@ -39,7 +39,7 @@ public slots:
 	QTimer *timer(int milliseconds);
 
 	/// Waits given amount of time in milliseconds and returns.
-	void wait(int const &milliseconds);
+	void wait(const int &milliseconds);
 
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
@@ -51,7 +51,7 @@ public slots:
 	void quit();
 
 	/// Asynchronously execute given sh command.
-	void system(QString const &command);
+	void system(const QString &command);
 
 signals:
 	/// Emitted when script requested system to abort execution.

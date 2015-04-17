@@ -22,7 +22,7 @@
 
 using namespace trikGui;
 
-SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, QStringList const &ports, QWidget *parent)
+SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mIndicators(ports.size())
@@ -32,7 +32,7 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, QStringList con
 	mTimer.setSingleShot(false);
 
 	int i = 0;
-	for (QString const &port : ports) {
+	for (const QString &port : ports) {
 		SensorIndicator *indicator = new SensorIndicator(port, *mBrick.sensor(port), this);
 		mLayout.addWidget(indicator);
 		connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));

@@ -46,12 +46,12 @@ void Threading::startMainThread(const QString &script)
 	startThread("main", mScriptWorker->createScriptEngine(), needCallMain ? script + "\nmain();" : script);
 }
 
-void Threading::startThread(QScriptValue const &threadId, QScriptValue const &function)
+void Threading::startThread(const QScriptValue &threadId, const QScriptValue &function)
 {
 	startThread(threadId.toString(), cloneEngine(function.engine()), mScript + "\n" + function.toString() + "();");
 }
 
-void Threading::startThread(QString const &threadId, QScriptEngine *engine, QString const &script)
+void Threading::startThread(const QString &threadId, QScriptEngine *engine, const QString &script)
 {
 	mResetMutex.lock();
 	if (mResetStarted) {

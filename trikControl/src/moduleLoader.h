@@ -25,7 +25,7 @@ class ModuleLoader
 {
 public:
 	/// Loads given module using modprobe. Returns true if module is loaded.
-	bool load(QString const &module);
+	bool load(const QString &module);
 
 private:
 	QSet<QString> mLoadedModules;

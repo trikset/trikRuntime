@@ -21,8 +21,8 @@
 
 using namespace trikControl;
 
-AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, QString const &inputFile
-		, QString const &outputFile, DeviceState &state)
+AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile
+		, const QString &outputFile, DeviceState &state)
 	: mState(state)
 {
 	Q_UNUSED(script)
@@ -51,7 +51,7 @@ void AbstractVirtualSensorWorker::readFile()
 {
 }
 
-bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
+bool AbstractVirtualSensorWorker::launchSensorScript(const QString &command)
 {
 	Q_UNUSED(command)
 
@@ -66,7 +66,7 @@ void AbstractVirtualSensorWorker::openFifos()
 {
 }
 
-void AbstractVirtualSensorWorker::sendCommand(QString const &command)
+void AbstractVirtualSensorWorker::sendCommand(const QString &command)
 {
 	Q_UNUSED(command)
 }

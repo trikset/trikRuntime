@@ -23,7 +23,7 @@
 
 using namespace trikControl;
 
-PowerMotor::PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
+PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)

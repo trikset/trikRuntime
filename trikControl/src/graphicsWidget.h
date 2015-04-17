@@ -36,7 +36,7 @@ public:
 	void hideCommand();
 
 	/// Set painter color.
-	void setPainterColor(QString const &color);
+	void setPainterColor(const QString &color);
 
 	/// Set painter width.
 	void setPainterWidth(int penWidth);
@@ -161,27 +161,27 @@ private:
 	/// Check list contains point.
 	/// @param coordinates - point that we are looking for.
 	/// @return - true if list contains this point.
-	bool containsPoint(PointCoordinates const &coordinates);
+	bool containsPoint(const PointCoordinates &coordinates);
 
 	/// Check that list contains given line.
 	/// @param coordinates - line that we are looking for.
 	/// @return - true if list contains this line.
-	bool containsLine(LineCoordinates const &coordinates);
+	bool containsLine(const LineCoordinates &coordinates);
 
 	/// Check that list contains given rect.
 	/// @param coordinates - rect that we are looking for.
 	/// @return - true if list contains this rect.
-	bool containsRect(RectCoordinates const &coordinates);
+	bool containsRect(const RectCoordinates &coordinates);
 
 	/// Check that list contains given ellipse.
 	/// @param coordinates - ellipse that we are looking for.
 	/// @return - true if list contains this ellipse.
-	bool containsEllipse(EllipseCoordinates const &coordinates);
+	bool containsEllipse(const EllipseCoordinates &coordinates);
 
 	/// Check that list contains given arc.
 	/// @param coordinates - arc that we are looking for.
 	/// @return - true if list contains this arc.
-	bool containsArc(ArcCoordinates const &coordinates);
+	bool containsArc(const ArcCoordinates &coordinates);
 
 	/// List of all lines.
 	QList<LineCoordinates> mLines;

@@ -39,7 +39,7 @@ public:
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	/// @param communicator - I2C communicator to use to query sensor.
-	PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
+	PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
 
 	~PowerMotor() override;
 
@@ -60,7 +60,7 @@ public slots:
 private:
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
-	bool const mInvert;
+	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
 };

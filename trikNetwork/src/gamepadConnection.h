@@ -47,7 +47,7 @@ signals:
 	void button(int button, int pressed);
 
 private:
-	void processData(QByteArray const &data) override;
+	void processData(const QByteArray &data) override;
 };
 
 }

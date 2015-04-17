@@ -34,20 +34,20 @@ public:
 	/// @param guiThread - GUI thread of an application.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	explicit Display(QString const &startDirPath);
+	explicit Display(const QString &startDirPath);
 
 	~Display() override;
 
 	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
-	void showImage(QString const &fileName) override;
+	void showImage(const QString &fileName) override;
 
-	void addLabel(QString const &text, int x, int y) override;
+	void addLabel(const QString &text, int x, int y) override;
 
 	void removeLabels() override;
 
-	void setPainterColor(QString const &color) override;
+	void setPainterColor(const QString &color) override;
 
 	void setPainterWidth(int penWidth) override;
 
@@ -61,7 +61,7 @@ public slots:
 
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle) override;
 
-	void setBackground(QString const &color) override;
+	void setBackground(const QString &color) override;
 
 	void hide() override;
 
@@ -69,7 +69,7 @@ public slots:
 
 private:
 //	QThread &mGuiThread;
-	QString const mStartDirPath;
+	const QString mStartDirPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

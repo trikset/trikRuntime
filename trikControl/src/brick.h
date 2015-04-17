@@ -53,7 +53,7 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	Brick(QString const &systemConfig, QString const &modelConfig, QString const &startDirPath);
+	Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath);
 
 	~Brick() override;
 
@@ -62,17 +62,17 @@ public:
 	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
-	void playSound(QString const &soundFileName) override;
+	void playSound(const QString &soundFileName) override;
 
-	void say(QString const &text) override;
+	void say(const QString &text) override;
 
 	void stop() override;
 
-	MotorInterface *motor(QString const &port) override;
+	MotorInterface *motor(const QString &port) override;
 
-	PwmCaptureInterface *pwmCapture(QString const &port) override;
+	PwmCaptureInterface *pwmCapture(const QString &port) override;
 
-	SensorInterface *sensor(QString const &port) override;
+	SensorInterface *sensor(const QString &port) override;
 
 	QStringList motorPorts(MotorInterface::Type type) const override;
 
@@ -86,13 +86,13 @@ public slots:
 
 	VectorSensorInterface *gyroscope() override;
 
-	LineSensorInterface *lineSensor(QString const &port) override;
+	LineSensorInterface *lineSensor(const QString &port) override;
 
-	ColorSensorInterface *colorSensor(QString const &port) override;
+	ColorSensorInterface *colorSensor(const QString &port) override;
 
-	ObjectSensorInterface *objectSensor(QString const &port) override;
+	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	EncoderInterface *encoder(QString const &port) override;
+	EncoderInterface *encoder(const QString &port) override;
 
 	BatteryInterface *battery() override;
 

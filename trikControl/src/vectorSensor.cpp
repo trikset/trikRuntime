@@ -20,7 +20,7 @@
 
 using namespace trikControl;
 
-VectorSensor::VectorSensor(QString const &deviceName, trikKernel::Configurer const &configurer)
+VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer)
 {
 	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState));
 	if (!mState.isFailed()) {

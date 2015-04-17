@@ -54,7 +54,7 @@ public:
 	/// Constructor.
 	/// @param parent - parent QObject.
 	/// @param configPath - path to wpa-config.xml.
-	explicit WiFiClientWidget(QString const &configPath, QWidget *parent = 0);
+	explicit WiFiClientWidget(const QString &configPath, QWidget *parent = 0);
 
 	/// Destructor.
 	~WiFiClientWidget();
@@ -89,7 +89,7 @@ private:
 	QHash<QString, int> mNetworksAvailableForConnection;
 	ConnectionState mConnectionState;
 
-	void setConnectionStatus(trikWiFi::Status const &status);
+	void setConnectionStatus(const trikWiFi::Status &status);
 	void updateConnectionStatusesInNetworkList();
 	void connectToSelectedNetwork();
 };

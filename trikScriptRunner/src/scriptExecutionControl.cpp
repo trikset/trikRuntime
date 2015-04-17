@@ -49,7 +49,7 @@ QTimer* ScriptExecutionControl::timer(int milliseconds)
 	return result;
 }
 
-void ScriptExecutionControl::wait(int const &milliseconds)
+void ScriptExecutionControl::wait(const int &milliseconds)
 {
 	QEventLoop loop;
 	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()), Qt::DirectConnection);
@@ -79,7 +79,7 @@ void ScriptExecutionControl::quit()
 	emit quitSignal();
 }
 
-void ScriptExecutionControl::system(QString const &command)
+void ScriptExecutionControl::system(const QString &command)
 {
 	QStringList args{"-c", command};
 	QLOG_INFO() << "Running: " << "sh" << args;

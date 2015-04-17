@@ -20,7 +20,7 @@
 
 using namespace trikControl;
 
-ColorSensorWorker::ColorSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+ColorSensorWorker::ColorSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, int m, int n, DeviceState &state)
 	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
 {
@@ -72,7 +72,7 @@ QString ColorSensorWorker::sensorName() const
 	return "Color sensor";
 }
 
-void ColorSensorWorker::onNewData(QString const &dataLine)
+void ColorSensorWorker::onNewData(const QString &dataLine)
 {
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
@@ -87,10 +87,10 @@ void ColorSensorWorker::onNewData(QString const &dataLine)
 		mLock.lockForWrite();
 		for (int i = 0; i < mReading.size(); ++i) {
 			for (int j = 0; j < mReading[i].size(); ++j) {
-				unsigned int const colorValue = parsedLine[i * mReading.size() + j + 1].toUInt();
-				int const r = (colorValue >> 16) & 0xFF;
-				int const g = (colorValue >> 8) & 0xFF;
-				int const b = colorValue & 0xFF;
+				unsigned const int colorValue = parsedLine[i * mReading.size() + j + 1].toUInt();
+				const int r = (colorValue >> 16) & 0xFF;
+				const int g = (colorValue >> 8) & 0xFF;
+				const int b = colorValue & 0xFF;
 				mReading[i][j] = {r, g, b};
 			}
 		}

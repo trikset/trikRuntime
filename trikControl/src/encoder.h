@@ -36,7 +36,7 @@ public:
 	/// @param port - port on which this encoder is configured.
 	/// @param configurer - configurer object containing preparsed XML files with encoder parameters.
 	/// @param communicator - I2C communicator to use to query encoder.
-	Encoder(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
+	Encoder(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
 
 	Status status() const override;
 

@@ -21,7 +21,7 @@
 using namespace trikControl;
 
 /// Loads given module using modprobe.
-bool ModuleLoader::load(QString const &module)
+bool ModuleLoader::load(const QString &module)
 {
 	if (mLoadedModules.contains(module)) {
 		return true;

@@ -37,7 +37,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	RangeSensor(QString const &port, trikKernel::Configurer const &configurer, ModuleLoader &moduleLoader);
+	RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader);
 
 	~RangeSensor() override;
 

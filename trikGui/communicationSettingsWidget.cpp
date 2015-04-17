@@ -51,12 +51,12 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikNetwork::MailboxInt
 
 	mSelectorsHelpLabel.setAlignment(Qt::AlignHCenter);
 
-	auto const hostAddressString = mailbox.serverIp().toString();
+	const auto hostAddressString = mailbox.serverIp().toString();
 
 	if (hostAddressString == QHostAddress().toString()) {
 		mServerIpSelector.setValue(0);
 	} else {
-		auto const parsedAddress = hostAddressString.split('.');
+		const auto parsedAddress = hostAddressString.split('.');
 		Q_ASSERT(parsedAddress.size() == 4);
 		auto hostAddress = parsedAddress[2].toInt() * 1000 + parsedAddress[3].toInt();
 		mServerIpSelector.setValue(hostAddress);
@@ -118,9 +118,9 @@ void CommunicationSettingsWidget::onConnectButtonClicked()
 		return;
 	}
 
-	QString const ipSelectorValue = QString("%1").arg(mServerIpSelector.value(), 6, 10, QChar('0'));
-	QString const thirdPart = ipSelectorValue.left(3).replace(QRegExp("^0+"), "");
-	QString const fourthPart = ipSelectorValue.mid(3).replace(QRegExp("^0+"), "");
+	const QString ipSelectorValue = QString("%1").arg(mServerIpSelector.value(), 6, 10, QChar('0'));
+	const QString thirdPart = ipSelectorValue.left(3).replace(QRegExp("^0+"), "");
+	const QString fourthPart = ipSelectorValue.mid(3).replace(QRegExp("^0+"), "");
 	result[2] = thirdPart;
 	result[3] = fourthPart;
 	mMailbox.connect(result.join("."));

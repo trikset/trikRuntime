@@ -36,7 +36,7 @@ public:
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
-	ObjectSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+	ObjectSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 			, qreal toleranceFactor, DeviceState &state);
 
 	~ObjectSensorWorker() override;
@@ -56,7 +56,7 @@ public slots:
 private:
 	QString sensorName() const override;
 
-	void onNewData(QString const &dataLine) override;
+	void onNewData(const QString &dataLine) override;
 
 	/// Current stored reading of a sensor.
 	QVector<int> mReading;

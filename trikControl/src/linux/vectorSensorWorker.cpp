@@ -30,7 +30,7 @@
 
 using namespace trikControl;
 
-VectorSensorWorker::VectorSensorWorker(QString const &controlFile, DeviceState &state)
+VectorSensorWorker::VectorSensorWorker(const QString &controlFile, DeviceState &state)
 	: mDeviceFileDescriptor(0)
 	, mState(state)
 {

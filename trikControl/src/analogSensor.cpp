@@ -24,7 +24,7 @@
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
+AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
@@ -33,10 +33,10 @@ AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &co
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
-	int const rawValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue1");
-	int const rawValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue2");
-	int const normalizedValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue1");
-	int const normalizedValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue2");
+	const int rawValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue1");
+	const int rawValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue2");
+	const int normalizedValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue1");
+	const int normalizedValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue2");
 
 	if (rawValue1 == rawValue2) {
 		QLOG_ERROR() <<  "Sensor calibration error: rawValue1 = rawValue2!";

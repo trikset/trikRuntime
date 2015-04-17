@@ -31,10 +31,10 @@ public:
 	MailboxConnection();
 
 	/// Connect to given endpoint and send "register" command with our mailbox server port and hull number.
-	Q_INVOKABLE void connect(QHostAddress const &targetIp, int targetPort, int myServerPort, int myHullNumber);
+	Q_INVOKABLE void connect(const QHostAddress &targetIp, int targetPort, int myServerPort, int myHullNumber);
 
 	/// Send info about other robot: its IP, port and hull number.
-	Q_INVOKABLE void sendConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	Q_INVOKABLE void sendConnectionInfo(const QHostAddress &ip, int port, int hullNumber);
 
 	/// Send our hull number. Used in response for connection request.
 	Q_INVOKABLE void sendSelfInfo(int hullNumber);
@@ -45,16 +45,16 @@ signals:
 	/// @param clientPort - remote robot client port (peer port), for reuse of this new connection.
 	/// @param serverPort - remote robot mailbox server port.
 	/// @param hullNumber - remote robot hull number.
-	void newConnection(QHostAddress const &ip, int clientPort, int serverPort, int hullNumber);
+	void newConnection(const QHostAddress &ip, int clientPort, int serverPort, int hullNumber);
 
 	/// Emitted when remote robot sends info about other known robots ("connection" command).
-	void connectionInfo(QHostAddress const &ip, int port, int hullNumber);
+	void connectionInfo(const QHostAddress &ip, int port, int hullNumber);
 
 	/// Emitted when new data message received ("data" command).
-	void newData(QHostAddress const &ip, int port, QByteArray const &data);
+	void newData(const QHostAddress &ip, int port, const QByteArray &data);
 
 private:
-	void processData(QByteArray const &data) override;
+	void processData(const QByteArray &data) override;
 };
 
 }

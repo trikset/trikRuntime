@@ -20,7 +20,7 @@
 
 using namespace trikControl;
 
-Keys::Keys(trikKernel::Configurer const &configurer)
+Keys::Keys(const trikKernel::Configurer &configurer)
 {
 	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState));
 	if (!mState.isFailed()) {

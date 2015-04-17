@@ -18,11 +18,11 @@ using namespace trikKernel;
 
 QHash<QThread *, int> Debugger::mIndent;
 
-Debugger::Debugger(QString const &methodName)
+Debugger::Debugger(const QString &methodName)
 	: mMethodName(methodName)
 {
-	QString const indent(mIndent[thread()], ' ');
-	QString const str = QString("%1(Thread %2) Entering %3")
+	const QString indent(mIndent[thread()], ' ');
+	const QString str = QString("%1(Thread %2) Entering %3")
 			.arg(indent)
 			.arg(reinterpret_cast<unsigned long>(thread()))
 			.arg(mMethodName);
@@ -34,8 +34,8 @@ Debugger::Debugger(QString const &methodName)
 Debugger::~Debugger()
 {
 	--mIndent[thread()];
-	QString const indent(mIndent[thread()], ' ');
-	QString const str = QString("%1(Thread %2) Exiting %3")
+	const QString indent(mIndent[thread()], ' ');
+	const QString str = QString("%1(Thread %2) Exiting %3")
 			.arg(indent)
 			.arg(reinterpret_cast<unsigned long>(thread()))
 			.arg(mMethodName);

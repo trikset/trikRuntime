@@ -47,7 +47,7 @@ public:
 	explicit RunningWidget(Controller &controller, QWidget *parent = 0);
 
 	/// Shows given error message on a widget.
-	void showError(QString const &error, int scriptId);
+	void showError(const QString &error, int scriptId);
 
 	/// Associates running widget with a new script.
 	void setProgram(const QString &programName, int scriptId);

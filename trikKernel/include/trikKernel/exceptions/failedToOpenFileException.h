@@ -28,7 +28,7 @@ class FailedToOpenFileException : public TrikRuntimeException
 public:
 	/// Constructor.
 	/// @param file - file that is failed to open.
-	FailedToOpenFileException(QFile const &file)
+	FailedToOpenFileException(const QFile &file)
 		: mFile(file)
 	{
 		QLOG_ERROR() << "Failed to open file" << file.fileName()
@@ -36,13 +36,13 @@ public:
 	}
 
 	/// Returns file that is failed to open.
-	QFile const &file() const
+	const QFile &file() const
 	{
 		return mFile;
 	}
 
 private:
-	QFile const &mFile;
+	const QFile &mFile;
 };
 
 }

@@ -46,7 +46,7 @@ int Connection::peerPort() const
 	return mSocket->peerPort();
 }
 
-void Connection::init(QHostAddress const &ip, int port)
+void Connection::init(const QHostAddress &ip, int port)
 {
 	mSocket.reset(new QTcpSocket());
 
@@ -61,7 +61,7 @@ void Connection::init(QHostAddress const &ip, int port)
 	}
 }
 
-void Connection::send(QByteArray const &data)
+void Connection::send(const QByteArray &data)
 {
 	if (mSocket->state() != QAbstractSocket::ConnectedState) {
 		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
@@ -98,7 +98,7 @@ void Connection::onReadyRead()
 		return;
 	}
 
-	QByteArray const &data = mSocket->readAll();
+	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
 
 	QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
@@ -114,7 +114,7 @@ void Connection::processBuffer()
 		while (!mBuffer.isEmpty()) {
 			if (mExpectedBytes == 0) {
 				// Determining the length of a message.
-				int const delimiterIndex = mBuffer.indexOf(':');
+				const int delimiterIndex = mBuffer.indexOf(':');
 				if (delimiterIndex == -1) {
 					// We did not receive full message length yet.
 					return;
@@ -146,7 +146,7 @@ void Connection::processBuffer()
 	case Protocol::endOfLineSeparator:
 	{
 		if (mBuffer.contains('\n')) {
-			auto const messages = mBuffer.split('\n');
+			const auto messages = mBuffer.split('\n');
 			for (int i = 0; i < messages.size() - 1; ++i) {
 				handleIncomingData(messages.at(i));
 			}
@@ -157,7 +157,7 @@ void Connection::processBuffer()
 	}
 }
 
-void Connection::handleIncomingData(QByteArray const &data)
+void Connection::handleIncomingData(const QByteArray &data)
 {
 	if (data == "version") {
 		send(QString("version: " + trikKernel::version).toUtf8());

@@ -29,7 +29,7 @@
 
 using namespace trikControl;
 
-RangeSensorWorker::RangeSensorWorker(QString const &eventFile, DeviceState &state)
+RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state)
 	: mEventFile(eventFile)
 	, mState(state)
 {
@@ -156,7 +156,7 @@ int RangeSensorWorker::read()
 	}
 
 	mLock.lockForRead();
-	int const result = mDistance;
+	const int result = mDistance;
 	mLock.unlock();
 	return result;
 }
@@ -169,7 +169,7 @@ int RangeSensorWorker::readRawData()
 	}
 
 	mLock.lockForRead();
-	int const result = mRawDistance;
+	const int result = mRawDistance;
 	mLock.unlock();
 	return result;
 }

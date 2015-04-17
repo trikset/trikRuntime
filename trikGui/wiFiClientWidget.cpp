@@ -38,15 +38,15 @@ using namespace trikGui;
 
 using namespace trikWiFi;
 
-WiFiClientWidget::WiFiClientWidget(QString const &configPath, QWidget *parent)
+WiFiClientWidget::WiFiClientWidget(const QString &configPath, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this))
 	, mConnectionState(notConnected)
 {
 	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
 
-	QList<NetworkConfiguration> const networksFromWpaSupplicant = mWiFi->listNetworks();
-	for (NetworkConfiguration const &networkConfiguration : networksFromWpaSupplicant) {
+	const QList<NetworkConfiguration> networksFromWpaSupplicant = mWiFi->listNetworks();
+	for (const NetworkConfiguration &networkConfiguration : networksFromWpaSupplicant) {
 		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
 	}
 
@@ -92,7 +92,7 @@ void WiFiClientWidget::renewFocus()
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
-	for (ScanResult const &result : mWiFi->scanResults()) {
+	for (const ScanResult &result : mWiFi->scanResults()) {
 		mAvailableNetworksModel.appendRow(new QStandardItem(result.ssid));
 	}
 
@@ -131,7 +131,7 @@ void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void WiFiClientWidget::setConnectionStatus(trikWiFi::Status const &status)
+void WiFiClientWidget::setConnectionStatus(const trikWiFi::Status &status)
 {
 	QPixmap pixmap;
 	switch (mConnectionState) {
@@ -188,7 +188,7 @@ void WiFiClientWidget::connectToSelectedNetwork()
 		return;
 	}
 
-	QString const ssid = mAvailableNetworksModel.itemFromIndex(selected[0])->text();
+	const QString ssid = mAvailableNetworksModel.itemFromIndex(selected[0])->text();
 	if (ssid == mCurrentSsid) {
 		return;
 	}

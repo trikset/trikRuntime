@@ -34,7 +34,7 @@ InformationWidget::InformationWidget(QWidget *parent)
 	QString mac = tr("Not found");
 
 	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-	for (QNetworkInterface const &interface : interfaces) {
+	for (const QNetworkInterface &interface : interfaces) {
 		if (interface.name() == "wlan0") {
 			mac = interface.hardwareAddress();
 			break;

@@ -24,12 +24,12 @@
 using namespace trikScriptRunner;
 
 // name of the directory in which scripts must be saved
-QString const constScriptsDirName = "scripts";
+const QString constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, QString const &startDirPath)
+		, const QString &startDirPath)
 	: mScriptController(new ScriptExecutionControl())
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController, startDirPath))
 	, mStartDirPath(startDirPath)
@@ -68,9 +68,9 @@ void TrikScriptRunner::brickBeep()
 	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
 }
 
-void TrikScriptRunner::run(QString const &script, QString const &fileName)
+void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
-	int const scriptId = mMaxScriptId++;
+	const int scriptId = mMaxScriptId++;
 	QLOG_INFO() << "TrikScriptRunner: new script" << scriptId << "from file" << fileName;
 	mScriptEngineWorker->reset();
 
@@ -81,7 +81,7 @@ void TrikScriptRunner::run(QString const &script, QString const &fileName)
 	mScriptEngineWorker->run(script, (fileName.isEmpty() ? -1 : scriptId));
 }
 
-void TrikScriptRunner::runDirectCommand(QString const &command)
+void TrikScriptRunner::runDirectCommand(const QString &command)
 {
 	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
 	mScriptEngineWorker->runDirect(command, mMaxScriptId++);

@@ -24,13 +24,13 @@ class FileUtils
 {
 public:
 	/// Reads all file contents and returns it as sting or throws an exception.
-	static QString readFromFile(QString const &fileName);
+	static QString readFromFile(const QString &fileName);
 
 	/// Writes given string to given file, throws exception if something went wrong.
-	static void writeToFile(QString const &fileName, QString const &contents, QString const &dirPath = "");
+	static void writeToFile(const QString &fileName, const QString &contents, const QString &dirPath = "");
 
 	/// Reads given XML file and returns root element, throws exception if something went wrong.
-	static QDomElement readXmlFile(QString const &fileNameWithPath);
+	static QDomElement readXmlFile(const QString &fileNameWithPath);
 };
 
 }

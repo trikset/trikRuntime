@@ -41,14 +41,14 @@ public:
 	~Threading();
 
 	/// Starts the main thread of a script
-	void startMainThread(QString const &script);
+	void startMainThread(const QString &script);
 
 	/// Starts a thread with given threadId.
 	/// @param function - a thread routine
-	Q_INVOKABLE void startThread(QScriptValue const &threadId, QScriptValue const &function);
+	Q_INVOKABLE void startThread(const QScriptValue &threadId, const QScriptValue &function);
 
 	/// Joins a thread with given threadId. Does nothing if there is no thread with such id.
-	Q_INVOKABLE void joinThread(QString const &threadId);
+	Q_INVOKABLE void joinThread(const QString &threadId);
 
 	/// Sends message to a mailbox with given threadId, even if such thread does not exist.
 	/// The message can be accessed in the future by any thread with the same threadId.
@@ -73,7 +73,7 @@ private:
 	/// Starts a thread with given threadId
 	/// @param engine - script engine that will do the work; it will be owned by a newly created thread
 	/// @param script - exact script to evaluate in new thread
-	void startThread(QString const &threadId, QScriptEngine *engine, QString const &script);
+	void startThread(const QString &threadId, QScriptEngine *engine, const QString &script);
 
 	/// Create new engine and initialize it with a context of given engine
 	/// The caller is responsible for deletion of created engine.

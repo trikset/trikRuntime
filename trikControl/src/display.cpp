@@ -54,12 +54,12 @@ DisplayWidgetInterface &Display::graphicsWidget()
 	return mGuiWorker->graphicsWidget();
 }
 
-void Display::showImage(QString const &fileName)
+void Display::showImage(const QString &fileName)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));
 }
 
-void Display::addLabel(QString const &text, int x, int y)
+void Display::addLabel(const QString &text, int x, int y)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "addLabel", Q_ARG(QString, text), Q_ARG(int, x), Q_ARG(int, y));
 }
@@ -69,7 +69,7 @@ void Display::removeLabels()
 	QMetaObject::invokeMethod(mGuiWorker, "removeLabels");
 }
 
-void Display::setBackground(QString const &color)
+void Display::setBackground(const QString &color)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setBackground", Q_ARG(QString, color));
 }
@@ -112,7 +112,7 @@ void Display::drawArc(int x, int y, int width, int height, int startAngle, int s
 			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle));
 }
 
-void Display::setPainterColor(QString const &color)
+void Display::setPainterColor(const QString &color)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setPainterColor", Q_ARG(QString, color));
 }

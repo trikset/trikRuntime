@@ -45,14 +45,14 @@
 
 using namespace trikControl;
 
-Brick::Brick(QString const &systemConfig, QString const &modelConfig, const QString &startDirPath)
+Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath)
 	: mDisplay(new Display(startDirPath))
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 
 	trikKernel::Configurer configurer(systemConfig, modelConfig);
 
-	for (QString const &initScript : configurer.initScripts()) {
+	for (const QString &initScript : configurer.initScripts()) {
 		if (::system(initScript.toStdString().c_str()) != 0) {
 			QLOG_ERROR() << "Init script failed";
 		}
@@ -61,8 +61,8 @@ Brick::Brick(QString const &systemConfig, QString const &modelConfig, const QStr
 	mI2cCommunicator.reset(new I2cCommunicator(configurer));
 	mModuleLoader.reset(new ModuleLoader());
 
-	for (QString const &port : configurer.ports()) {
-		QString const &deviceClass = configurer.deviceClass(port);
+	for (const QString &port : configurer.ports()) {
+		const QString &deviceClass = configurer.deviceClass(port);
 		if (deviceClass == "servoMotor") {
 			mServoMotors.insert(port, new ServoMotor(port, configurer));
 		} else if (deviceClass == "pwmCapture") {
@@ -146,7 +146,7 @@ void Brick::reset()
 	}
 }
 
-void Brick::playSound(QString const &soundFileName)
+void Brick::playSound(const QString &soundFileName)
 {
 	QLOG_INFO() << "Playing " << soundFileName;
 
@@ -165,7 +165,7 @@ void Brick::playSound(QString const &soundFileName)
 	}
 }
 
-void Brick::say(QString const &text)
+void Brick::say(const QString &text)
 {
 	QStringList args{"-c", "espeak -v russian_test -s 100 \"" + text + "\""};
 	QProcess::startDetached("sh", args);
@@ -210,7 +210,7 @@ void Brick::stop()
 	}
 }
 
-MotorInterface *Brick::motor(QString const &port)
+MotorInterface *Brick::motor(const QString &port)
 {
 	if (mPowerMotors.contains(port)) {
 		return mPowerMotors[port];
@@ -221,12 +221,12 @@ MotorInterface *Brick::motor(QString const &port)
 	}
 }
 
-PwmCaptureInterface *Brick::pwmCapture(QString const &port)
+PwmCaptureInterface *Brick::pwmCapture(const QString &port)
 {
 	return mPwmCaptures.value(port, nullptr);
 }
 
-SensorInterface *Brick::sensor(QString const &port)
+SensorInterface *Brick::sensor(const QString &port)
 {
 	if (mAnalogSensors.contains(port)) {
 		return mAnalogSensors[port];
@@ -276,7 +276,7 @@ QStringList Brick::sensorPorts(SensorInterface::Type type) const
 	return QStringList();
 }
 
-EncoderInterface *Brick::encoder(QString const &port)
+EncoderInterface *Brick::encoder(const QString &port)
 {
 	return mEncoders.value(port, nullptr);
 }
@@ -296,17 +296,17 @@ VectorSensorInterface *Brick::gyroscope()
 	return mGyroscope.data();
 }
 
-LineSensorInterface *Brick::lineSensor(QString const &port)
+LineSensorInterface *Brick::lineSensor(const QString &port)
 {
 	return mLineSensors.contains(port) ? mLineSensors[port] : nullptr;
 }
 
-ColorSensorInterface *Brick::colorSensor(QString const &port)
+ColorSensorInterface *Brick::colorSensor(const QString &port)
 {
 	return mColorSensors.contains(port) ? mColorSensors[port] : nullptr;
 }
 
-ObjectSensorInterface *Brick::objectSensor(QString const &port)
+ObjectSensorInterface *Brick::objectSensor(const QString &port)
 {
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }

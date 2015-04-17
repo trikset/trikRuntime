@@ -26,7 +26,7 @@ using namespace trikCommunicator;
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, QString const &startDirPath)
+		, const QString &startDirPath)
 	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad, startDirPath), true)
 {
 }

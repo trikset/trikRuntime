@@ -23,14 +23,14 @@
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(QString const &port, trikKernel::Configurer const &configurer)
+ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &configurer)
 	: mDutyFile(configurer.attributeByPort(port, "deviceFile"))
 	, mPeriodFile(configurer.attributeByPort(port, "periodFile"))
 	, mCurrentDutyPercent(0)
 	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
 {
-	auto configure = [this, &port, &configurer](QString const &parameterName) {
+	auto configure = [this, &port, &configurer](const QString &parameterName) {
 		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
 	};
 
@@ -48,7 +48,7 @@ ServoMotor::ServoMotor(QString const &port, trikKernel::Configurer const &config
 		return;
 	}
 
-	QString const command = QString::number(mPeriod);
+	const QString command = QString::number(mPeriod);
 
 	mPeriodFile.write(command.toLatin1());
 	mPeriodFile.close();
@@ -102,7 +102,7 @@ void ServoMotor::setPower(int power)
 		return;
 	}
 
-	int const powerBoundary = mMotorType == Type::angular ? 90 : 100;
+	const int powerBoundary = mMotorType == Type::angular ? 90 : 100;
 
 	if (power > powerBoundary) {
 		power = powerBoundary;
@@ -114,10 +114,10 @@ void ServoMotor::setPower(int power)
 
 	power = mInvert ? -power : power;
 
-	int const range = power <= 0 ? mZero - mMin : mMax - mZero;
-	qreal const powerFactor = static_cast<qreal>(range) / 90;
+	const int range = power <= 0 ? mZero - mMin : mMax - mZero;
+	const qreal powerFactor = static_cast<qreal>(range) / 90;
 	int duty = static_cast<int>(mZero + power * powerFactor);
-	QString const command = QString::number(duty);
+	const QString command = QString::number(duty);
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 

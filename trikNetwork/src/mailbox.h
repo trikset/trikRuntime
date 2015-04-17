@@ -43,7 +43,7 @@ public:
 
 	/// Constructor.
 	/// @param configurer - configurer object that contains preparsed XML config.
-	Mailbox(trikKernel::Configurer const &configurer);
+	Mailbox(const trikKernel::Configurer &configurer);
 
 	~Mailbox() override;
 
@@ -58,13 +58,13 @@ public:
 	bool isEnabled() override;
 
 public slots:
-	void connect(QString const &ip, int port) override;
+	void connect(const QString &ip, int port) override;
 
-	void connect(QString const &ip) override;
+	void connect(const QString &ip) override;
 
-	void send(int hullNumber, QString const &message) override;
+	void send(int hullNumber, const QString &message) override;
 
-	void send(QString const &message) override;
+	void send(const QString &message) override;
 
 	bool hasMessages() override;
 

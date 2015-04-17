@@ -37,11 +37,11 @@ public:
 	explicit Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad);
 
 private:
-	void processData(QByteArray const &data) override;
+	void processData(const QByteArray &data) override;
 
-	static QString serializeVector(QVector<int> const &vector);
+	static QString serializeVector(const QVector<int> &vector);
 
-	bool isButtonPressed(QString const &buttonName);
+	bool isButtonPressed(const QString &buttonName);
 
 	/// A Brick which is used by Connections to respond to clients' requests
 	trikControl::BrickInterface &mBrick;

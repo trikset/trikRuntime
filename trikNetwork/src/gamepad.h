@@ -40,7 +40,7 @@ public:
 
 	/// Constructor.
 	/// @param configurer - configurer object that contains preparsed XML config.
-	Gamepad(trikKernel::Configurer const &configurer);
+	Gamepad(const trikKernel::Configurer &configurer);
 
 	/// Destructor declared here for QScopedPointer to be able to clean up forward-declared TcpConnector.
 	~Gamepad() override;

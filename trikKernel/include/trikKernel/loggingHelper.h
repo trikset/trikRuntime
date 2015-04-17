@@ -29,7 +29,7 @@ class LoggingHelper
 public:
 	/// Constructor. Initializes logger with default settings, supposed to be used in main() (RAII idiom).
 	/// @param pathToLog - path to "trik.log" file that will be created or appended by logger. Supposed to end with "/".
-	LoggingHelper(QString const &pathToLog);
+	LoggingHelper(const QString &pathToLog);
 
 	~LoggingHelper();
 

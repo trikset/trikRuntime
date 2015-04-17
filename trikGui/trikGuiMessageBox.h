@@ -46,7 +46,7 @@ public:
 
 	/// Show widget and wait until the user will press any key.
 	/// @param message - message to show.
-	int exec(QString const &message);
+	int exec(const QString &message);
 
 	void renewFocus() override;
 

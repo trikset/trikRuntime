@@ -28,7 +28,7 @@
 
 using namespace trikGui;
 
-MotorLever::MotorLever(QString const &port, trikControl::MotorInterface &motor, QWidget *parent)
+MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent)
 	: QWidget(parent)
 	, mMotor(motor)
 	, mIsOn(false)

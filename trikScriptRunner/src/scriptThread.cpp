@@ -20,7 +20,7 @@
 
 using namespace trikScriptRunner;
 
-ScriptThread::ScriptThread(Threading &threading, QString const &id, QScriptEngine *engine, QString const &script)
+ScriptThread::ScriptThread(Threading &threading, const QString &id, QScriptEngine *engine, const QString &script)
 	: mId(id)
 	, mEngine(engine)
 	, mScript(script)
@@ -38,8 +38,8 @@ void ScriptThread::run()
 
 	mEngine->evaluate(mScript);
 	if (mEngine->hasUncaughtException()) {
-		int const line = mEngine->uncaughtExceptionLineNumber();
-		QString const message = mEngine->uncaughtException().toString();
+		const int line = mEngine->uncaughtExceptionLineNumber();
+		const QString message = mEngine->uncaughtException().toString();
 		mError = tr("Line %1: %2").arg(QString::number(line), message);
 		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 	}

@@ -49,22 +49,22 @@ public:
 
 public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
-	virtual void playSound(QString const &soundFileName) = 0;
+	virtual void playSound(const QString &soundFileName) = 0;
 
 	/// Uses text synthesis to say given text on a speaker.
-	virtual void say(QString const &text) = 0;
+	virtual void say(const QString &text) = 0;
 
 	/// Stops all motors and shuts down all current activity.
 	virtual void stop() = 0;
 
 	/// Returns reference to motor of a given type on a given port
-	virtual MotorInterface *motor(QString const &port) = 0;
+	virtual MotorInterface *motor(const QString &port) = 0;
 
 	/// Returns reference to PWM signal capture device on a given port.
-	virtual PwmCaptureInterface *pwmCapture(QString const &port) = 0;
+	virtual PwmCaptureInterface *pwmCapture(const QString &port) = 0;
 
 	/// Returns reference to sensor on a given port.
-	virtual SensorInterface *sensor(QString const &port) = 0;
+	virtual SensorInterface *sensor(const QString &port) = 0;
 
 	/// Retruns list of ports for motors of a given type.
 	virtual QStringList motorPorts(MotorInterface::Type type) const = 0;
@@ -85,16 +85,16 @@ public slots:
 	virtual VectorSensorInterface *gyroscope() = 0;
 
 	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
-	virtual LineSensorInterface *lineSensor(QString const &port) = 0;
+	virtual LineSensorInterface *lineSensor(const QString &port) = 0;
 
 	/// Returns high-level color sensor using camera on given port (video0 or video1).
-	virtual ColorSensorInterface *colorSensor(QString const &port) = 0;
+	virtual ColorSensorInterface *colorSensor(const QString &port) = 0;
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
-	virtual ObjectSensorInterface *objectSensor(QString const &port) = 0;
+	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns encoder on given port.
-	virtual EncoderInterface *encoder(QString const &port) = 0;
+	virtual EncoderInterface *encoder(const QString &port) = 0;
 
 	/// Returns battery.
 	virtual BatteryInterface *battery() = 0;

@@ -22,12 +22,12 @@
 
 using namespace trikControl;
 
-LineSensor::LineSensor(QString const &port, trikKernel::Configurer const &configurer)
+LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &configurer)
 {
-	QString const &script = configurer.attributeByPort(port, "script");
-	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
-	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
-	qreal const toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
+	const QString &script = configurer.attributeByPort(port, "script");
+	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
+	const QString &outputFile = configurer.attributeByPort(port, "outputFile");
+	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
 	mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
 

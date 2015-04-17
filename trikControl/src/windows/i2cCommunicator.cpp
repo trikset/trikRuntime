@@ -20,7 +20,7 @@
 
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(trikKernel::Configurer const &configurer)
+I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer)
 	: mDevicePath(configurer.attributeByDevice("i2c", "path"))
 	, mDeviceId(configurer.attributeByDevice("i2c", "deviceId").toInt(nullptr, 0))
 {
@@ -34,7 +34,7 @@ void I2cCommunicator::connect()
 {
 }
 
-void I2cCommunicator::send(QByteArray const &data)
+void I2cCommunicator::send(const QByteArray &data)
 {
 	Q_UNUSED(data);
 }
@@ -43,7 +43,7 @@ void I2cCommunicator::disconnect()
 {
 }
 
-int I2cCommunicator::read(QByteArray const &data)
+int I2cCommunicator::read(const QByteArray &data)
 {
 	Q_UNUSED(data);
 	return 0;

@@ -20,15 +20,15 @@
 
 using namespace trikControl;
 
-BrickInterface *BrickFactory::create(QString const &systemConfig
-		, QString const &modelConfig, QString const &startDirPath)
+BrickInterface *BrickFactory::create(const QString &systemConfig
+		, const QString &modelConfig, const QString &startDirPath)
 {
 	return new Brick(systemConfig, modelConfig, startDirPath);
 }
 
-BrickInterface *BrickFactory::create(QString const &configFilesPath, QString const &startDirPath)
+BrickInterface *BrickFactory::create(const QString &configFilesPath, const QString &startDirPath)
 {
-	QString const correctedPath = configFilesPath.endsWith(QDir::separator())
+	const QString correctedPath = configFilesPath.endsWith(QDir::separator())
 			? configFilesPath
 			: configFilesPath + QDir::separator();
 

@@ -18,7 +18,7 @@
 
 using namespace trikControl;
 
-RangeSensorWorker::RangeSensorWorker(QString const &eventFile, DeviceState &state)
+RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state)
 	: mEventFile(eventFile)
 	, mState(state)
 {

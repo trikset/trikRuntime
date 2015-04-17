@@ -74,7 +74,7 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 
 	show();
 
-	int const result = mEventLoop.exec();
+	const int result = mEventLoop.exec();
 
 	close();
 

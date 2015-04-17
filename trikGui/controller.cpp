@@ -31,10 +31,10 @@
 
 using namespace trikGui;
 
-int const communicatorPort = 8888;
-int const telemetryPort = 9000;
+const int communicatorPort = 8888;
+const int telemetryPort = 9000;
 
-Controller::Controller(QString const &configPath, QString const &startDirPath)
+Controller::Controller(const QString &configPath, const QString &startDirPath)
 	: mBrick(trikControl::BrickFactory::create(configPath, startDirPath))
 	, mStartDirPath(startDirPath)
 {
@@ -76,7 +76,7 @@ Controller::~Controller()
 {
 }
 
-void Controller::runFile(QString const &filePath)
+void Controller::runFile(const QString &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
@@ -126,7 +126,7 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner->scriptsDirName();
 }
 
-void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
+void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 {
 	if (error.isEmpty()) {
 		emit hideRunningWidget(scriptId);
@@ -136,7 +136,7 @@ void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
 	}
 }
 
-void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
+void Controller::scriptExecutionFromFileStarted(const QString &fileName, int scriptId)
 {
 	emit showRunningWidget(fileName, scriptId);
 }

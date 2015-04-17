@@ -50,16 +50,16 @@ public:
 
 public slots:
 	/// Connects to robot by IP and port.
-	virtual void connect(QString const &ip, int port) = 0;
+	virtual void connect(const QString &ip, int port) = 0;
 
 	/// Connects to robot by IP and uses port of local mailbox server as a port on remote robot.
-	virtual void connect(QString const &ip) = 0;
+	virtual void connect(const QString &ip) = 0;
 
 	/// Sends message to a robot with given hull number.
-	virtual void send(int hullNumber, QString const &message) = 0;
+	virtual void send(int hullNumber, const QString &message) = 0;
 
 	/// Sends message to all known robots.
-	virtual void send(QString const &message) = 0;
+	virtual void send(const QString &message) = 0;
 
 	/// Returns true if there are incoming messages. Returns immediately.
 	virtual bool hasMessages() = 0;
@@ -76,7 +76,7 @@ signals:
 	/// Emitted when new message is received from a robot with given hull number. Note that if receive() and
 	/// handler for newMessage() is used simultaneously, message will be delivered twice --- first for receive(), then
 	/// to handler (or handlers).
-	void newMessage(int sender, QString const &message);
+	void newMessage(int sender, const QString &message);
 };
 
 }

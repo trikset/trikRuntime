@@ -36,20 +36,20 @@ public slots:
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
 	///        supported formats, but .jpg, .png, .bmp, .gif are supported.
-	virtual void showImage(QString const &fileName) = 0;
+	virtual void showImage(const QString &fileName) = 0;
 
 	/// Add a label to the specific position of the screen. If there already is a label in these coordinates, its
 	/// contents will be updated.
 	/// @param text - label text.
 	/// @param x - label x coordinate.
 	/// @param y - label y coordinate.
-	virtual void addLabel(QString const &text, int x, int y) = 0;
+	virtual void addLabel(const QString &text, int x, int y) = 0;
 
 	/// Remove all labels from the screen.
 	virtual void removeLabels() = 0;
 
 	/// Set painter color.
-	virtual void setPainterColor(QString const &color) = 0;
+	virtual void setPainterColor(const QString &color) = 0;
 
 	/// Set painter width.
 	virtual void setPainterWidth(int penWidth) = 0;
@@ -91,7 +91,7 @@ public slots:
 
 	/// Sets background for a picture.
 	/// @param color - color of a background.
-	virtual void setBackground(QString const &color) = 0;
+	virtual void setBackground(const QString &color) = 0;
 
 	/// Hides and clears widget on which everything is drawn.
 	virtual void hide() = 0;

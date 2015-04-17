@@ -63,7 +63,7 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
-	void onDirectoryLoaded(QString const &path);
+	void onDirectoryLoaded(const QString &path);
 	void renewCurrentIndex();
 
 private:

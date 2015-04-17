@@ -1,4 +1,4 @@
-/* Copyright 2014 Dmitry Mordvinov, CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 Dmitry Mordvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 
 using namespace trikScriptRunner;
 
-QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const engine)
+QScriptValue Utils::clone(const QScriptValue &prototype, QScriptEngine * const engine)
 {
 	QScriptValue copy;
 	if (prototype.isFunction()) {
@@ -58,7 +58,7 @@ QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const e
 	return copy;
 }
 
-bool Utils::hasProperty(QScriptValue const &object, QString const &property)
+bool Utils::hasProperty(const QScriptValue &object, const QString &property)
 {
 	QScriptValueIterator iterator(object);
 	while (iterator.hasNext()) {
@@ -71,7 +71,7 @@ bool Utils::hasProperty(QScriptValue const &object, QString const &property)
 	return false;
 }
 
-void Utils::copyRecursivelyTo(QScriptValue const &prototype, QScriptValue &target, QScriptEngine *engine)
+void Utils::copyRecursivelyTo(const QScriptValue &prototype, QScriptValue &target, QScriptEngine *engine)
 {
 	QScriptValueIterator iterator(prototype);
 	while (iterator.hasNext()) {

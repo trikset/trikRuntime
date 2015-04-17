@@ -28,7 +28,7 @@ TrikGuiMessageBox::TrikGuiMessageBox(QWidget *parent)
 }
 
 
-int TrikGuiMessageBox::exec(QString const &message)
+int TrikGuiMessageBox::exec(const QString &message)
 {
 	mMessageLabel.setText(message);
 	show();

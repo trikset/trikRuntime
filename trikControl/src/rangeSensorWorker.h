@@ -36,7 +36,7 @@ class RangeSensorWorker : public QObject
 public:
 	/// Constructor.
 	/// @param eventFile - event file for this sensor.
-	RangeSensorWorker(QString const &eventFile, DeviceState &state);
+	RangeSensorWorker(const QString &eventFile, DeviceState &state);
 
 	~RangeSensorWorker() override;
 
@@ -64,7 +64,7 @@ private slots:
 	void tryOpenEventFile();
 
 private:
-	void onNewData(QString const &dataLine);
+	void onNewData(const QString &dataLine);
 
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
 

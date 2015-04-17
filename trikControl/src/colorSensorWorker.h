@@ -37,7 +37,7 @@ public:
 	/// @param m - horisontal dimension of a sensor.
 	/// @param n - vertical dimension of a sensor.
 	/// @param state - shared state of a sensor.
-	ColorSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, int m, int n
+	ColorSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile, int m, int n
 			, DeviceState &state);
 
 	~ColorSensorWorker() override;
@@ -55,7 +55,7 @@ public slots:
 private:
 	QString sensorName() const override;
 
-	void onNewData(QString const &dataLine) override;
+	void onNewData(const QString &dataLine) override;
 
 	/// Current stored reading of a sensor. First two vectors are m*n matrix, inner vector contains 3 values --- red,
 	/// green and blue components of a dominant color in this cell.

@@ -56,7 +56,7 @@ public:
 	Q_INVOKABLE void init(int socketDescriptor);
 
 	/// Sends given byte array to peer.
-	Q_INVOKABLE void send(QByteArray const &data);
+	Q_INVOKABLE void send(const QByteArray &data);
 
 signals:
 	/// Emitted after connection becomes closed.
@@ -67,7 +67,7 @@ protected:
 	/// thread.
 	/// @param ip - target ip address.
 	/// @param port - target port.
-	void init(QHostAddress const &ip, int port);
+	void init(const QHostAddress &ip, int port);
 
 private slots:
 	/// New data is ready on a socket.
@@ -81,10 +81,10 @@ private slots:
 
 private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
-	virtual void processData(QByteArray const &data) = 0;
+	virtual void processData(const QByteArray &data) = 0;
 
 	/// Handles incoming data: sending version or processing received data.
-	void handleIncomingData(QByteArray const &data);
+	void handleIncomingData(const QByteArray &data);
 
 	void connectSlots();
 

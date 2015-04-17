@@ -38,7 +38,7 @@ class Keys : public KeysInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Keys(trikKernel::Configurer const &configurer);
+	Keys(const trikKernel::Configurer &configurer);
 
 	~Keys() override;
 

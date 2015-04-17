@@ -47,14 +47,14 @@ public:
 public slots:
 	/// Shows image with given filename on display. Image is scaled to fill the screen and is cached on first read
 	/// for better performance.
-	void showImage(QString const &fileName);
+	void showImage(const QString &fileName);
 
 	/// Add a label to the specific position of the screen. If there already is a label in these coordinates, its
 	/// contents will be updated.
 	/// @param text - label text.
 	/// @param x - label x coordinate.
 	/// @param y - label y coordinate.
-	void addLabel(QString const &text, int x, int y);
+	void addLabel(const QString &text, int x, int y);
 
 	/// Remove all labels from the screen.
 	void removeLabels();
@@ -67,13 +67,13 @@ public slots:
 
 	/// Sets background for a picture.
 	/// @param color - color of a background.
-	void setBackground(QString const &color);
+	void setBackground(const QString &color);
 
 	/// Set painter width.
 	void setPainterWidth(int penWidth);
 
 	/// Set painter color.
-	void setPainterColor(QString const &color);
+	void setPainterColor(const QString &color);
 
 	/// Clear everything painted with this object.
 	void clear();

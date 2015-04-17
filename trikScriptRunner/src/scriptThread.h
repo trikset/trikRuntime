@@ -30,7 +30,7 @@ public:
 	/// @param threading - threading manager for this thread
 	/// @param engine - QScriptEngine which will do the work
 	/// @param script - a Qt Script to run
-	ScriptThread(Threading &threading, QString const &id, QScriptEngine *engine, QString const &script);
+	ScriptThread(Threading &threading, const QString &id, QScriptEngine *engine, const QString &script);
 
 	~ScriptThread() override;
 

@@ -25,8 +25,8 @@
 
 using namespace trikControl;
 
-AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, QString const &inputFile
-		, QString const &outputFile, DeviceState &state)
+AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile
+		, const QString &outputFile, DeviceState &state)
 	: mScript(script)
 	, mSensorProcess(this)
 	, mInputFile(inputFile)
@@ -97,7 +97,7 @@ void AbstractVirtualSensorWorker::readFile()
 		mBuffer = lines.last();
 		lines.removeLast();
 
-		for (QString const line : lines) {
+		for (const QString line : lines) {
 			onNewData(line);
 		}
 	}
@@ -105,7 +105,7 @@ void AbstractVirtualSensorWorker::readFile()
 	mSocketNotifier->setEnabled(true);
 }
 
-bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
+bool AbstractVirtualSensorWorker::launchSensorScript(const QString &command)
 {
 	QLOG_INFO() << "Sending" << command << "command to" << sensorName() << "sensor";
 
@@ -136,7 +136,7 @@ bool AbstractVirtualSensorWorker::launchSensorScript(QString const &command)
 		return false;
 	}
 
-	QString const processOutput = mSensorProcess.readAllStandardOutput() + mSensorProcess.readAllStandardError();
+	const QString processOutput = mSensorProcess.readAllStandardOutput() + mSensorProcess.readAllStandardError();
 	if (processOutput.contains("error")) {
 		QLOG_ERROR() << sensorName() << "script reported error:" << processOutput;
 		mState.fail();
@@ -193,7 +193,7 @@ void AbstractVirtualSensorWorker::openFifos()
 	sync();
 }
 
-void AbstractVirtualSensorWorker::sendCommand(QString const &command)
+void AbstractVirtualSensorWorker::sendCommand(const QString &command)
 {
 	mCommandQueue << command;
 	sync();
@@ -229,7 +229,7 @@ void AbstractVirtualSensorWorker::deinitialize()
 void AbstractVirtualSensorWorker::sync()
 {
 	if (mState.isReady()) {
-		for (QString const &command : mCommandQueue) {
+		for (const QString &command : mCommandQueue) {
 			mInputStream << command + "\n";
 			mInputStream.flush();
 		}

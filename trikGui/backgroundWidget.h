@@ -57,7 +57,7 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
-	explicit BackgroundWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
+	explicit BackgroundWidget(const QString &configPath, const QString &startDirPath, QWidget *parent = 0);
 
 public slots:
 	/// Add a widget to main widgets layout and show it.

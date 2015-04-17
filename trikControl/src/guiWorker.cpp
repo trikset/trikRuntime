@@ -53,7 +53,7 @@ DisplayWidgetInterface &GuiWorker::graphicsWidget()
 	return *mImageWidget.data();
 }
 
-void GuiWorker::showImage(QString const &fileName)
+void GuiWorker::showImage(const QString &fileName)
 {
 	if (!mImagesCache.contains(fileName)) {
 		QPixmap pixmap(fileName);
@@ -65,7 +65,7 @@ void GuiWorker::showImage(QString const &fileName)
 	mImageWidget->showCommand();
 }
 
-void GuiWorker::addLabel(QString const &text, int x, int y)
+void GuiWorker::addLabel(const QString &text, int x, int y)
 {
 	QLabel *label = findLabel(x, y);
 	label = label ? label : new QLabel(mImageWidget.data());
@@ -99,7 +99,7 @@ void GuiWorker::deleteWorker()
 	deleteLater();
 }
 
-void GuiWorker::setBackground(QString const &color)
+void GuiWorker::setBackground(const QString &color)
 {
 	QPalette palette = mImageWidget->palette();
 
@@ -152,7 +152,7 @@ void GuiWorker::resetBackground()
 	mImageWidget->setPalette(palette);
 }
 
-void GuiWorker::setPainterColor(QString const &color)
+void GuiWorker::setPainterColor(const QString &color)
 {
 	mImageWidget->setPainterColor(color);
 }

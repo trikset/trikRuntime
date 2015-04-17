@@ -38,7 +38,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	/// @param communicator - I2C communicator used to query sensor.
-	AnalogSensor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
+	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
 
 	Status status() const override;
 

@@ -47,7 +47,7 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 void TrikGuiApplication::refreshWidgets()
 {
 	if (dynamic_cast<BackgroundWidget *>(QApplication::activeWindow())) {
-		for (auto const widget : QApplication::allWidgets()) {
+		for (const auto widget : QApplication::allWidgets()) {
 			widget->update();
 		}
 	}

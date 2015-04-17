@@ -37,12 +37,12 @@ public:
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	Controller(QString const &configPath, QString const &startDirPath);
+	Controller(const QString &configPath, const QString &startDirPath);
 
 	~Controller();
 
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.
-	void runFile(QString const &filePath);
+	void runFile(const QString &filePath);
 
 	/// Returns reference to Brick object, which provides access to robot hardware.
 	trikControl::BrickInterface &brick();
@@ -88,9 +88,9 @@ signals:
 	void brickStopped();
 
 private slots:
-	void scriptExecutionCompleted(QString const &error, int scriptId);
+	void scriptExecutionCompleted(const QString &error, int scriptId);
 
-	void scriptExecutionFromFileStarted(QString const &fileName, int scriptId);
+	void scriptExecutionFromFileStarted(const QString &fileName, int scriptId);
 	void directScriptExecutionStarted(int scriptId);
 
 private:
@@ -102,7 +102,7 @@ private:
 	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
-	QString const &mStartDirPath; // Path to the directory from which the application was executed
+	const QString &mStartDirPath; // Path to the directory from which the application was executed
 };
 
 }

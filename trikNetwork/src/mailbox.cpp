@@ -27,10 +27,10 @@ Mailbox::Mailbox(int port)
 	init(port);
 }
 
-Mailbox::Mailbox(trikKernel::Configurer const &configurer)
+Mailbox::Mailbox(const trikKernel::Configurer &configurer)
 {
 	bool ok = false;
-	int const port = configurer.attributeByDevice("mailbox", "port").toInt(&ok);
+	const int port = configurer.attributeByDevice("mailbox", "port").toInt(&ok);
 	if (!ok) {
 		throw trikKernel::MalformedConfigException("Incorrect mailbox port");
 	}
@@ -81,24 +81,24 @@ bool Mailbox::isEnabled()
 	return !mWorker.isNull();
 }
 
-void Mailbox::connect(QString const &ip, int port)
+void Mailbox::connect(const QString &ip, int port)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString const &, ip), Q_ARG(int, port));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(const QString &, ip), Q_ARG(int, port));
 }
 
-void Mailbox::connect(QString const &ip)
+void Mailbox::connect(const QString &ip)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString const &, ip));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(const QString &, ip));
 }
 
-void Mailbox::send(int hullNumber, QString const &message)
+void Mailbox::send(int hullNumber, const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(QString const &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(const QString &, message));
 }
 
-void Mailbox::send(QString const &message)
+void Mailbox::send(const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(QString const &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(const QString &, message));
 }
 
 bool Mailbox::hasMessages()

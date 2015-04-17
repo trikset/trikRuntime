@@ -44,7 +44,7 @@ class SensorsWidget : public TrikGuiDialog
 
 public:
 	/// Constructor.
-	explicit SensorsWidget(trikControl::BrickInterface &brick, QStringList const &ports, QWidget *parent = 0);
+	explicit SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports, QWidget *parent = 0);
 
 	~SensorsWidget() override;
 
@@ -61,7 +61,7 @@ private:
 	trikControl::BrickInterface &mBrick;
 	QVBoxLayout mLayout;
 	QVector<SensorIndicator *> mIndicators;  // Has ownership.
-	int const mInterval;
+	const int mInterval;
 	QTimer mTimer;
 };
 

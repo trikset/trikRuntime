@@ -37,7 +37,7 @@ public:
 	/// Transfers ownership over MailboxInterface object to caller.
 	/// @param configurer - configurer object that contains preparsed XML config. If configuration is incorrect,
 	///        uninitialized mailbox object will be returned.
-	static MailboxInterface *create(trikKernel::Configurer const &configurer);
+	static MailboxInterface *create(const trikKernel::Configurer &configurer);
 };
 
 }

@@ -44,7 +44,7 @@ public:
 	/// @param port - port to which sensor is plugged.
 	/// @param sensor - sensor which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	SensorIndicator(QString const &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
+	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
 
 public slots:
 	/// Rereads sensor and updates widget contents.
@@ -52,8 +52,8 @@ public slots:
 
 private:
 	trikControl::SensorInterface &mSensor;
-	int const mMaxValue;
-	int const mMinValue;
+	const int mMaxValue;
+	const int mMinValue;
 
 	QHBoxLayout mLayout;
 	QLabel mNameLabel;

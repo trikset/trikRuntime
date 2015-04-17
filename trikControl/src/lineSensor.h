@@ -40,7 +40,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	LineSensor(QString const &port, trikKernel::Configurer const &configurer);
+	LineSensor(const QString &port, const trikKernel::Configurer &configurer);
 
 	~LineSensor() override;
 

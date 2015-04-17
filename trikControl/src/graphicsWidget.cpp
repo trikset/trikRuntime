@@ -91,7 +91,7 @@ void GraphicsWidget::deleteAllItems()
 	mArcs.clear();
 }
 
-void GraphicsWidget::setPainterColor(QString const &color)
+void GraphicsWidget::setPainterColor(const QString &color)
 {
 	if (color == tr("white")) {
 		mCurrentPenColor = Qt::white;
@@ -144,7 +144,7 @@ void GraphicsWidget::drawPoint(int x, int y)
 	}
 }
 
-bool GraphicsWidget::containsPoint(PointCoordinates const &coordinates)
+bool GraphicsWidget::containsPoint(const PointCoordinates &coordinates)
 {
 	for (int i = 0; i < mPoints.length(); ++i) {
 		if (mPoints.at(i).coord.x() == coordinates.coord.x()
@@ -166,7 +166,7 @@ void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 	}
 }
 
-bool GraphicsWidget::containsLine(LineCoordinates const &coordinates)
+bool GraphicsWidget::containsLine(const LineCoordinates &coordinates)
 {
 	for (int i = 0; i < mLines.length(); ++i) {
 		if (mLines.at(i).coord1.x() == coordinates.coord1.x()
@@ -190,7 +190,7 @@ void GraphicsWidget::drawRect(int x, int y, int width, int height)
 	}
 }
 
-bool GraphicsWidget::containsRect(RectCoordinates const &coordinates)
+bool GraphicsWidget::containsRect(const RectCoordinates &coordinates)
 {
 	for (int i = 0; i < mRects.length(); ++i) {
 		if (mRects.at(i).rect.x() == coordinates.rect.x()
@@ -214,7 +214,7 @@ void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
 	}
 }
 
-bool GraphicsWidget::containsEllipse(EllipseCoordinates const &coordinates)
+bool GraphicsWidget::containsEllipse(const EllipseCoordinates &coordinates)
 {
 	for (int i = 0; i < mEllipses.length(); i++) {
 		if (mEllipses.at(i).ellipse.x() == coordinates.ellipse.x()
@@ -238,7 +238,7 @@ void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle
 	}
 }
 
-bool GraphicsWidget::containsArc(ArcCoordinates const &coordinates)
+bool GraphicsWidget::containsArc(const ArcCoordinates &coordinates)
 {
 	for (int i = 0; i < mArcs.length(); ++i) {
 		if (mArcs.at(i).arc.x() == coordinates.arc.x()

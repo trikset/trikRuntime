@@ -22,7 +22,7 @@
 
 using namespace trikControl;
 
-Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator)
+Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");

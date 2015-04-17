@@ -150,7 +150,7 @@ class Secret;
 char IsNullLiteralHelper(Secret* p);
 char (&IsNullLiteralHelper(...))[2];  // NOLINT
 
-// A compile-time bool constant that is true if and only if x is a
+// A compile-time const boolant that is true if and only if x is a
 // null pointer literal (i.e. NULL or any 0-valued compile-time
 // integral constant).
 #ifdef GTEST_ELLIPSIS_NEEDS_POD_
@@ -893,7 +893,7 @@ class ImplicitlyConvertible {
 template <typename From, typename To>
 const bool ImplicitlyConvertible<From, To>::value;
 
-// IsAProtocolMessage<T>::value is a compile-time bool constant that's
+// IsAProtocolMessage<T>::value is a compile-time const boolant that's
 // true iff T is type ProtocolMessage, proto2::Message, or a subclass
 // of those.
 template <typename T>

@@ -32,7 +32,7 @@ Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
 {
 }
 
-void Connection::processData(QByteArray const &data)
+void Connection::processData(const QByteArray &data)
 {
 	QString command = QString::fromUtf8(data.data());
 
@@ -44,7 +44,7 @@ void Connection::processData(QByteArray const &data)
 
 	if (command.startsWith("file:")) {
 		command.remove(0, QString("file:").length());
-		int const separatorPosition = command.indexOf(':');
+		const int separatorPosition = command.indexOf(':');
 		if (separatorPosition == -1) {
 
 			qDebug() << "Malformed 'file' command";
@@ -53,13 +53,13 @@ void Connection::processData(QByteArray const &data)
 			return;
 		}
 
-		QString const fileName = command.left(separatorPosition);
-		QString const fileContents = command.mid(separatorPosition + 1);
+		const QString fileName = command.left(separatorPosition);
+		const QString fileContents = command.mid(separatorPosition + 1);
 		trikKernel::FileUtils::writeToFile(fileName, fileContents, mTrikScriptRunner.scriptsDirPath());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "brickBeep");
 	} else if (command.startsWith("run:")) {
 		command.remove(0, QString("run:").length());
-		QString const fileContents = trikKernel::FileUtils::readFromFile(
+		const QString fileContents = trikKernel::FileUtils::readFromFile(
 				mTrikScriptRunner.scriptsDirPath() + "/" + command);
 
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents), Q_ARG(QString, command));

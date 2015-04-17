@@ -63,22 +63,22 @@ void WiFiAPWidget::getParameters()
 {
 	RcReader const rcReader("/etc/trik/trikrc");
 
-	QString const ssid = rcReader.value("trik_wifi_ap_ssid");
+	const QString ssid = rcReader.value("trik_wifi_ap_ssid");
 	if (!ssid.isEmpty()) {
 		mNetworkLabel.setText(tr("Name: ") + ssid);
 	}
 
-	QString const passphrase = rcReader.value("trik_wifi_ap_passphrase");
+	const QString passphrase = rcReader.value("trik_wifi_ap_passphrase");
 	if (!passphrase.isEmpty()) {
 		mKeyLabel.setText(tr("Password: ") + passphrase);
 	}
 
 	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-	for (QNetworkInterface const &interface : interfaces) {
+	for (const QNetworkInterface &interface : interfaces) {
 		if (interface.name() == "wlan0") {
 			QList<QNetworkAddressEntry> const entries = interface.addressEntries();
-			for (QNetworkAddressEntry const &entry : entries) {
-				QHostAddress const ip = entry.ip();
+			for (const QNetworkAddressEntry &entry : entries) {
+				const QHostAddress ip = entry.ip();
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
 					mIpLabel.setText(tr("IP address: ") + ip.toString());
 					break;

@@ -58,7 +58,7 @@ public:
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
 			, ScriptExecutionControl &scriptControl
-			, QString const &startDirPath);
+			, const QString &startDirPath);
 
 	/// Create and initialize a new script engine.
 	/// @param supportThreads - true if created engine should support creation of threads.
@@ -73,7 +73,7 @@ signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
-	void completed(QString const &error, int scriptId);
+	void completed(const QString &error, int scriptId);
 
 	/// Emitted when new script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
@@ -90,13 +90,13 @@ public slots:
 	/// by calling reset() first.
 	/// @param script - QtScript code to evaluate
 	/// @param scriptId - an id of a script, used to distinguish between different scripts run by a worker
-	void run(QString const &script, int scriptId);
+	void run(const QString &script, int scriptId);
 
 	/// Runs a command in a `current` context. Permits to run a script line by line.
 	/// The command will be executed asynchronously.
 	/// If called when an ordinary script is running, that script would be aborted before evaluation of a command.
 	/// In this mode, threads and messages are unsupported.
-	void runDirect(QString const &command, int scriptId);
+	void runDirect(const QString &command, int scriptId);
 
 	/// Plays "beep" sound.
 	void brickBeep();
@@ -124,7 +124,7 @@ private:
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreadingVariable;
 	QScriptEngine *mDirectScriptsEngine;  // Has ownership.
-	QString const mStartDirPath;
+	const QString mStartDirPath;
 	int mScriptId;
 	State mState;
 };

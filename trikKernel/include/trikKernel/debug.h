@@ -30,12 +30,12 @@ class Debugger : public QObject
 public:
 	/// Constructor.
 	/// @param methodName - name of a method to be logged
-	Debugger(QString const &methodName);
+	Debugger(const QString &methodName);
 
 	~Debugger();
 
 private:
-	QString const mMethodName;
+	const QString mMethodName;
 	static QHash<QThread *, int> mIndent;
 };
 

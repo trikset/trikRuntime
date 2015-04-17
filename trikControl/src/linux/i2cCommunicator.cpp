@@ -83,7 +83,7 @@ static inline __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value
 	return i2c_smbus_access(file,I2C_SMBUS_WRITE,command, I2C_SMBUS_BYTE_DATA, &data);
 }
 
-I2cCommunicator::I2cCommunicator(trikKernel::Configurer const &configurer)
+I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer)
 	: mDevicePath(configurer.attributeByDevice("i2c", "path"))
 {
 	bool ok = false;
@@ -122,7 +122,7 @@ void I2cCommunicator::connect()
 	mState.ready();
 }
 
-void I2cCommunicator::send(QByteArray const &data)
+void I2cCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
@@ -138,7 +138,7 @@ void I2cCommunicator::send(QByteArray const &data)
 }
 
 /// todo: rewrite it
-int I2cCommunicator::read(QByteArray const &data)
+int I2cCommunicator::read(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";

@@ -29,7 +29,7 @@
 
 using namespace trikGui;
 
-SensorIndicator::SensorIndicator(QString const &port
+SensorIndicator::SensorIndicator(const QString &port
 		, trikControl::SensorInterface &sensor
 		, QWidget *parent)
 	: QWidget(parent)
@@ -64,7 +64,7 @@ SensorIndicator::SensorIndicator(QString const &port
 
 void SensorIndicator::renew()
 {
-	int const value = mSensor.read();
+	const int value = mSensor.read();
 	mValueLabel.setText(QString::number(value));
 	mValueBar.setValue(value);
 }

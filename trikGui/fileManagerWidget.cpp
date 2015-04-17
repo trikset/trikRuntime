@@ -76,7 +76,7 @@ void FileManagerWidget::renewFocus()
 
 void FileManagerWidget::open()
 {
-	QModelIndex const &index = mFileSystemView.currentIndex();
+	const QModelIndex &index = mFileSystemView.currentIndex();
 	if (mFileSystemModel.isDir(index)) {
 		if (QDir::setCurrent(mFileSystemModel.filePath(index))) {
 			showCurrentDir();
@@ -145,7 +145,7 @@ void FileManagerWidget::showCurrentDir()
 	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 
-void FileManagerWidget::onDirectoryLoaded(QString const &path)
+void FileManagerWidget::onDirectoryLoaded(const QString &path)
 {
 	if (QDir::currentPath() != path) {
 		return;

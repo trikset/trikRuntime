@@ -72,7 +72,7 @@ public:
 	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
 	///        /run/wpa_supplicant/wlan0.
 	/// @param parent - parent QObject.
-	TrikWiFi(QString const &interfaceFilePrefix, QString const &daemonFile, QObject *parent = nullptr);
+	TrikWiFi(const QString &interfaceFilePrefix, const QString &daemonFile, QObject *parent = nullptr);
 
 	/// Destructor.
 	~TrikWiFi() override;
@@ -101,10 +101,10 @@ public:
 	int removeNetwork(int id);
 
 	/// Sets SSID for a network with given id in wpa_supplicant configuration.
-	int setSsid(int id, QString const &ssid);
+	int setSsid(int id, const QString &ssid);
 
 	/// Sets PSK key for a network with given id in wpa_supplicant configuration.
-	int setKey(int id, QString const &key);
+	int setKey(int id, const QString &key);
 
 	/// Sets key management protocol to "none" for a network with given id in wpa_supplicant configuration.
 	int setNoKeyNeeded(int id);
@@ -134,9 +134,9 @@ private:
 	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
 	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
 
-	static QHash<QString, QString> parseReply(QString const &reply);
+	static QHash<QString, QString> parseReply(const QString &reply);
 
-	void processMessage(QString const &message);
+	void processMessage(const QString &message);
 };
 
 }

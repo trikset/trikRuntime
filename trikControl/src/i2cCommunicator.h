@@ -34,15 +34,15 @@ class I2cCommunicator : public DeviceInterface
 public:
 	/// Constructor.
 	/// @param configurer - contains preparsed XML configuration.
-	I2cCommunicator(trikKernel::Configurer const &configurer);
+	I2cCommunicator(const trikKernel::Configurer &configurer);
 
 	~I2cCommunicator();
 
 	/// Send data to current device, if it is connected.
-	void send(QByteArray const &data);
+	void send(const QByteArray &data);
 
 	/// Reads data by given I2C command number and returns the result.
-	int read(QByteArray const &data);
+	int read(const QByteArray &data);
 
 	Status status() const override;
 
@@ -53,7 +53,7 @@ private:
 	/// Disconnect from a device.
 	void disconnect();
 
-	QString const mDevicePath;
+	const QString mDevicePath;
 	int mDeviceId = 0;
 	int mDeviceFileDescriptor;
 	QMutex mLock;

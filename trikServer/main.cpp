@@ -45,13 +45,13 @@ void printUsage()
 
 int main(int argc, char *argv[])
 {
-	int const port = 8888;
+	const int port = 8888;
 
 	QApplication app(argc, argv);
 
 	QString configPath = "./";
 	if (app.arguments().contains("-c")) {
-		int const index = app.arguments().indexOf("-c");
+		const int index = app.arguments().indexOf("-c");
 		if (app.arguments().count() <= index + 1) {
 			printUsage();
 			return 1;
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
 	QString startDirPath = QDir::currentPath();
 	if (app.arguments().contains("-d")) {
-		int const index = app.arguments().indexOf("-d");
+		const int index = app.arguments().indexOf("-d");
 		if (app.arguments().count() <= index + 1) {
 			printUsage();
 			return 1;

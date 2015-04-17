@@ -61,7 +61,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &scriptControl
-		, QString const &startDirPath)
+		, const QString &startDirPath)
 	: mBrick(brick)
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
@@ -117,7 +117,7 @@ void ScriptEngineWorker::reset()
 	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
 
-void ScriptEngineWorker::run(QString const &script, int scriptId)
+void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	startScriptEvaluation(scriptId);
 	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
@@ -237,8 +237,8 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 	if (QFile::exists(mStartDirPath + "system.js")) {
 		engine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
 		if (engine->hasUncaughtException()) {
-			int const line = engine->uncaughtExceptionLineNumber();
-			QString const message = engine->uncaughtException().toString();
+			const int line = engine->uncaughtExceptionLineNumber();
+			const QString message = engine->uncaughtException().toString();
 			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
 		}
 	} else {

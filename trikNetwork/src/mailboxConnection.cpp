@@ -27,34 +27,34 @@ MailboxConnection::MailboxConnection()
 {
 }
 
-void MailboxConnection::connect(QHostAddress const &targetIp, int targetPort, int myServerPort, int myHullNumber)
+void MailboxConnection::connect(const QHostAddress &targetIp, int targetPort, int myServerPort, int myHullNumber)
 {
 	init(targetIp, targetPort);
 
-	QString const handshake = QString("register:%1:%2").arg(myServerPort).arg(myHullNumber);
+	const QString handshake = QString("register:%1:%2").arg(myServerPort).arg(myHullNumber);
 	send(handshake.toUtf8());
 }
 
-void MailboxConnection::sendConnectionInfo(QHostAddress const &ip, int port, int hullNumber)
+void MailboxConnection::sendConnectionInfo(const QHostAddress &ip, int port, int hullNumber)
 {
-	QString const info = QString("connection:%1:%2:%3").arg(ip.toString()).arg(port).arg(hullNumber);
+	const QString info = QString("connection:%1:%2:%3").arg(ip.toString()).arg(port).arg(hullNumber);
 	send(info.toUtf8());
 }
 
 void MailboxConnection::sendSelfInfo(int hullNumber)
 {
-	QString const info = QString("self:%3").arg(hullNumber);
+	const QString info = QString("self:%3").arg(hullNumber);
 	send(info.toUtf8());
 }
 
-void MailboxConnection::processData(QByteArray const &rawData)
+void MailboxConnection::processData(const QByteArray &rawData)
 {
-	QString const data = QString::fromUtf8(rawData);
-	QString const registerCommand = "register:";
-	QString const connectionCommand = "connection:";
-	QString const selfCommand = "self:";
-	QString const dataCommand = "data:";
-	auto const error = [](QString const &data) {
+	const QString data = QString::fromUtf8(rawData);
+	const QString registerCommand = "register:";
+	const QString connectionCommand = "connection:";
+	const QString selfCommand = "self:";
+	const QString dataCommand = "data:";
+	const auto error = [](const QString &data) {
 			QLOG_ERROR() << "Malformed data: " << data;
 			qDebug() << "Malformed data: " << data;
 	};
@@ -65,9 +65,9 @@ void MailboxConnection::processData(QByteArray const &rawData)
 			error(data);
 		} else {
 			bool serverPortOk = false;
-			int const serverPort = parsedString[1].toInt(&serverPortOk);
+			const int serverPort = parsedString[1].toInt(&serverPortOk);
 			bool hullNumberOk = false;
-			int const hullNumber = parsedString[2].toInt(&hullNumberOk);
+			const int hullNumber = parsedString[2].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
 			} else {
@@ -80,9 +80,9 @@ void MailboxConnection::processData(QByteArray const &rawData)
 			error(data);
 		} else {
 			bool serverPortOk = false;
-			int const serverPort = parsedString[2].toInt(&serverPortOk);
+			const int serverPort = parsedString[2].toInt(&serverPortOk);
 			bool hullNumberOk = false;
-			int const hullNumber = parsedString[3].toInt(&hullNumberOk);
+			const int hullNumber = parsedString[3].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
 			} else {
@@ -96,7 +96,7 @@ void MailboxConnection::processData(QByteArray const &rawData)
 		} else {
 			// Self-info. Host and port is to be determined automatically via socket.
 			bool hullNumberOk = false;
-			int const hullNumber = parsedString[1].toInt(&hullNumberOk);
+			const int hullNumber = parsedString[1].toInt(&hullNumberOk);
 			if (!hullNumberOk) {
 				error(data);
 			} else {

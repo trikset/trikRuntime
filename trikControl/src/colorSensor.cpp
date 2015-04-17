@@ -23,14 +23,14 @@
 
 using namespace trikControl;
 
-ColorSensor::ColorSensor(QString const &port, const trikKernel::Configurer &configurer)
+ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &configurer)
 {
-	QString const &script = configurer.attributeByPort(port, "script");
-	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
-	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
+	const QString &script = configurer.attributeByPort(port, "script");
+	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
+	const QString &outputFile = configurer.attributeByPort(port, "outputFile");
 
-	int const m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
-	int const n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
+	const int m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
+	const int n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
 
 	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState));
 	mColorSensorWorker->moveToThread(&mWorkerThread);

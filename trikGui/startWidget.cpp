@@ -40,7 +40,7 @@ using namespace trikGui;
 using trikControl::MotorInterface;
 using trikControl::SensorInterface;
 
-StartWidget::StartWidget(Controller &controller, QString const &configPath, QWidget *parent)
+StartWidget::StartWidget(Controller &controller, const QString &configPath, QWidget *parent)
 	: trikKernel::MainWidget(parent)
 	, mController(controller)
 	, mConfigPath(configPath)
@@ -93,8 +93,8 @@ void StartWidget::renewFocus()
 
 void StartWidget::launch()
 {
-	QModelIndex const &currentIndex = mMenuView.currentIndex();
-	QStandardItem const * const currentItem = mMenuModel.itemFromIndex(currentIndex);
+	const QModelIndex &currentIndex = mMenuView.currentIndex();
+	const QStandardItem * const currentItem = mMenuModel.itemFromIndex(currentIndex);
 	if (currentItem->hasChildren()) {
 		setRootIndex(currentIndex);
 	} else {
@@ -159,9 +159,9 @@ void StartWidget::changeFileManagerRoot(MainWidget::FileManagerRootType const& p
 	mFileManagerRoot = path;
 }
 
-void StartWidget::setRootIndex(QModelIndex const &index)
+void StartWidget::setRootIndex(const QModelIndex &index)
 {
-	QStandardItem const *item = mMenuModel.itemFromIndex(index);
+	const QStandardItem *item = mMenuModel.itemFromIndex(index);
 
 	if (item == nullptr) {
 		item = mMenuModel.invisibleRootItem();

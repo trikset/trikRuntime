@@ -30,8 +30,8 @@
 using namespace trikWiFi;
 
 WpaSupplicantCommunicator::WpaSupplicantCommunicator(
-		QString const &interfaceFile
-		, QString const &daemonFile
+		const QString &interfaceFile
+		, const QString &daemonFile
 		, QObject *parent
 		)
 	: QObject(parent)
@@ -101,9 +101,9 @@ int WpaSupplicantCommunicator::attach()
 		return -1;
 	}
 
-	QString const command = "ATTACH";
+	const QString command = "ATTACH";
 	QString reply;
-	int const result = request(command, reply);
+	const int result = request(command, reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -119,7 +119,7 @@ int WpaSupplicantCommunicator::detach()
 
 	QString command = "DETACH";
 	QString reply;
-	int const result = request(command, reply);
+	const int result = request(command, reply);
 	if (result == 0 && reply == "OK\n") {
 		return 0;
 	} else {
@@ -127,7 +127,7 @@ int WpaSupplicantCommunicator::detach()
 	}
 }
 
-int WpaSupplicantCommunicator::request(QString const &command, QString &reply)
+int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 {
 	if (mSocket < 0) {
 		return -1;
@@ -151,9 +151,9 @@ int WpaSupplicantCommunicator::request(QString const &command, QString &reply)
 		tv.tv_usec = 0;
 		select(mSocket + 1, &rfds, nullptr, nullptr, &tv);
 		if (FD_ISSET(mSocket, &rfds)) {
-			int const bufferSize = 2048;
+			const int bufferSize = 2048;
 			char buffer[bufferSize];
-			int const replyLen = recv(mSocket, buffer, bufferSize, 0);
+			const int replyLen = recv(mSocket, buffer, bufferSize, 0);
 			if (replyLen < 0) {
 				std::cerr << "Cannot receive a reply from the daemon:" << std::endl;
 				std::cerr << strerror(errno) << std::endl;
@@ -187,9 +187,9 @@ bool WpaSupplicantCommunicator::isPending()
 
 int WpaSupplicantCommunicator::receive(QString &message)
 {
-	int const bufferSize = 256;
+	const int bufferSize = 256;
 	char buffer[bufferSize];
-	int const messageLen = recv(mSocket, buffer, bufferSize, 0);
+	const int messageLen = recv(mSocket, buffer, bufferSize, 0);
 	if (messageLen < 0) {
 		std::cerr << "Cannot receive a message from the daemon:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;

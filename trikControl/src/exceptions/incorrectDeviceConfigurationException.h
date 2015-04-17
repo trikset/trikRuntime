@@ -27,7 +27,7 @@ class IncorrectDeviceConfigurationException : public trikKernel::TrikRuntimeExce
 public:
 	/// Constructor.
 	/// @param message - message with some information about exception.
-	IncorrectDeviceConfigurationException(QString const &message)
+	IncorrectDeviceConfigurationException(const QString &message)
 	{
 		QLOG_ERROR() << message;
 	}
