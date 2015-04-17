@@ -48,3 +48,8 @@ int I2cCommunicator::read(QByteArray const &data)
 	Q_UNUSED(data);
 	return 0;
 }
+
+DeviceInterface::Status I2cCommunicator::status() const
+{
+	return mState.status();
+}

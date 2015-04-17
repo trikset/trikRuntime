@@ -22,7 +22,8 @@
 using namespace trikControl;
 
 AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, QString const &inputFile
-		, QString const &outputFile)
+		, QString const &outputFile, DeviceState &state)
+	: mState(state)
 {
 	Q_UNUSED(script)
 	Q_UNUSED(inputFile)
@@ -31,6 +32,11 @@ AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(QString const &script, 
 
 AbstractVirtualSensorWorker::~AbstractVirtualSensorWorker()
 {
+}
+
+DeviceInterface::Status AbstractVirtualSensorWorker::status() const
+{
+	return mState.status();
 }
 
 void AbstractVirtualSensorWorker::stop()

@@ -18,7 +18,8 @@
 
 using namespace trikControl;
 
-KeysWorker::KeysWorker(QString const &keysPath)
+KeysWorker::KeysWorker(QString const &keysPath, DeviceState &state)
+	: mState(state)
 {
 	Q_UNUSED(keysPath)
 }
