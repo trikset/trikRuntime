@@ -16,11 +16,12 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickInterface.h>
-#include <trikKernel/lazyMainWidget.h>
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
+
+#include "lazyMainWidget.h"
 
 namespace trikGui
 {
@@ -61,7 +62,7 @@ public:
 	QString scriptsDirName() const;
 
 	/// Asks controller to correctly close given running widget.
-	void doCloseRunningWidget(trikKernel::MainWidget &widget);
+	void doCloseRunningWidget(MainWidget &widget);
 
 public slots:
 	/// Cancels execution of current program.

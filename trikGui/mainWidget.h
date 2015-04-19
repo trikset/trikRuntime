@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,26 +22,28 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-#include "mainWidget.h"
+namespace trikGui {
 
-namespace trikKernel {
-
-/// Abstract class for widgets which will be used for conversation with user
-/// (but when it doesn't want to be shown immediately).
-class LazyMainWidget : public MainWidget
+/// Abstract class for widgets which will be used for conversation with user.
+class MainWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
+	enum class FileManagerRootType {
+		scriptsDir
+		, allFS
+	};
+
 	/// Constructor.
 	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
-	LazyMainWidget(QWidget *parent = 0) : MainWidget (parent) {}
+	MainWidget(QWidget *parent) : QWidget(parent) {}
+
+	/// Set focus properly on this widget or one of its children.
+	virtual void renewFocus() = 0;
 
 signals:
-	/// Emitted when the widget wants it to be shown.
-	void showMe(trikKernel::MainWidget &widget);
-
-	/// Emitted when the widget wants it to be hidden.
-	void hideMe();
+	/// Emitted when the widget created a new one and wants it to be shown.
+	void newWidget(MainWidget &widget);
 };
 }

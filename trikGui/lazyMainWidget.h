@@ -22,28 +22,26 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-namespace trikKernel {
+#include "mainWidget.h"
 
-/// Abstract class for widgets which will be used for conversation with user.
-class MainWidget : public QWidget
+namespace trikGui {
+
+/// Abstract class for widgets which will be used for conversation with user
+/// (but when it doesn't want to be shown immediately).
+class LazyMainWidget : public MainWidget
 {
 	Q_OBJECT
 
 public:
-	enum class FileManagerRootType {
-		scriptsDir
-		, allFS
-	};
-
 	/// Constructor.
 	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
-	MainWidget(QWidget *parent) : QWidget(parent) {}
-
-	/// Set focus properly on this widget or one of its children.
-	virtual void renewFocus() = 0;
+	LazyMainWidget(QWidget *parent = 0) : MainWidget (parent) {}
 
 signals:
-	/// Emitted when the widget created a new one and wants it to be shown.
-	void newWidget(trikKernel::MainWidget &widget);
+	/// Emitted when the widget wants it to be shown.
+	void showMe(MainWidget &widget);
+
+	/// Emitted when the widget wants it to be hidden.
+	void hideMe();
 };
 }

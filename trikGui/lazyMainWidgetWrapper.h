@@ -14,8 +14,7 @@
 
 #pragma once
 
-#include <trikKernel/lazyMainWidget.h>
-#include <trikControl/displayWidgetInterface.h>
+#include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QHBoxLayout>
@@ -23,10 +22,14 @@
 	#include <QtWidgets/QHBoxLayout>
 #endif
 
+#include <trikControl/displayWidgetInterface.h>
+
+#include "lazyMainWidget.h"
+
 namespace trikGui {
 
 /// Wrapper that adapts DisplayWidgetInterface to LazyMainWidget.
-class LazyMainWidgetWrapper : public trikKernel::LazyMainWidget
+class LazyMainWidgetWrapper : public LazyMainWidget
 {
 	Q_OBJECT
 
@@ -47,13 +50,6 @@ public:
 	{
 		mWrappedWidget->setFocus();
 	}
-
-signals:
-	/// Emitted when the widget wants it to be shown.
-	void showMe(trikKernel::MainWidget &widget);
-
-	/// Emitted when the widget wants it to be hidden.
-	void hideMe();
 
 private slots:
 	/// Helper slot to re-emit a signal with correct parameter (life without Qt5 is pain).

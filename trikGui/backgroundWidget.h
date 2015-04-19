@@ -37,11 +37,9 @@
 #include "startWidget.h"
 #include "runningWidget.h"
 
-namespace trikKernel {
-class LazyMainWidget;
-}
-
 namespace trikGui {
+
+class LazyMainWidget;
 
 /// TrikGui backround widget which is a parent for other trikGui widgets.
 /// It consists of a status bar and a place for one of main widgets which is
@@ -62,15 +60,15 @@ public:
 public slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(trikKernel::MainWidget &widget);
+	void addMainWidget(MainWidget &widget);
 
 	/// Add a RunningWidget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addRunningWidget(trikKernel::MainWidget &widget);
+	void addRunningWidget(MainWidget &widget);
 
 	/// Add a GraphicsWidget to main widgets layout and show RunningWidget.
 	/// @param widget - reference to the widget.
-	void addLazyWidget(trikKernel::LazyMainWidget &widget);
+	void addLazyWidget(LazyMainWidget &widget);
 
 private slots:
 	void renewFocus();
@@ -80,7 +78,7 @@ private slots:
 
 	/// Show a widget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showMainWidget(trikKernel::MainWidget &widget);
+	void showMainWidget(MainWidget &widget);
 
 	/// Show a RunningWidget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
@@ -99,7 +97,7 @@ private slots:
 private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
-	void resetWidgetLayout(trikKernel::MainWidget &widget);
+	void resetWidgetLayout(MainWidget &widget);
 
 	Controller mController;
 	QVBoxLayout mMainLayout;
@@ -108,7 +106,7 @@ private:
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
 	RunningWidget mRunningWidget;
-	QScopedPointer<trikKernel::LazyMainWidget> mBrickDisplayWidgetWrapper;
+	QScopedPointer<LazyMainWidget> mBrickDisplayWidgetWrapper;
 
 	QStack<int> mMainWidgetIndex;
 };

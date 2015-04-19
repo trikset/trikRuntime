@@ -30,12 +30,12 @@
 #include <QtCore/QString>
 
 #include "controller.h"
-#include <trikKernel/mainWidget.h>
+#include "mainWidget.h"
 
 namespace trikGui {
 
 /// Window that shows information about currently executed script.
-class RunningWidget : public trikKernel::MainWidget
+class RunningWidget : public MainWidget
 {
 	Q_OBJECT
 

@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
 using namespace trikGui;
 
 WiFiInitWidget::WiFiInitWidget(QWidget *parent)
-	: trikKernel::MainWidget(parent)
+	: MainWidget(parent)
 	, mInitMessage(tr("Network initialization" "\n"
 			"in process"))
 	, mWaitMessage(tr("Please wait"))

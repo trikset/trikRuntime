@@ -41,7 +41,7 @@ using trikControl::MotorInterface;
 using trikControl::SensorInterface;
 
 StartWidget::StartWidget(Controller &controller, const QString &configPath, QWidget *parent)
-	: trikKernel::MainWidget(parent)
+	: MainWidget(parent)
 	, mController(controller)
 	, mConfigPath(configPath)
 	, mFileManagerRoot(MainWidget::FileManagerRootType::scriptsDir)

@@ -22,8 +22,7 @@
 	#include <QtWidgets/QApplication>
 #endif
 
-#include <trikKernel/lazyMainWidget.h>
-
+#include "lazyMainWidget.h"
 #include "lazyMainWidgetWrapper.h"
 
 using namespace trikGui;
@@ -67,7 +66,7 @@ BackgroundWidget::BackgroundWidget(const QString &configPath
 	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
 }
 
-void BackgroundWidget::resetWidgetLayout(trikKernel::MainWidget &widget)
+void BackgroundWidget::resetWidgetLayout(MainWidget &widget)
 {
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
 	QLayout *layout = widget.layout();
@@ -76,32 +75,32 @@ void BackgroundWidget::resetWidgetLayout(trikKernel::MainWidget &widget)
 	}
 }
 
-void BackgroundWidget::addMainWidget(trikKernel::MainWidget &widget)
+void BackgroundWidget::addMainWidget(MainWidget &widget)
 {
 	resetWidgetLayout(widget);
 
 	mMainWidgetIndex.push(mMainWidgetsLayout.addWidget(&widget));
 	mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
 
-	connect(&widget, SIGNAL(newWidget(trikKernel::MainWidget &)), this, SLOT(addMainWidget(trikKernel::MainWidget &)));
+	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
 }
 
-void BackgroundWidget::addRunningWidget(trikKernel::MainWidget &widget)
+void BackgroundWidget::addRunningWidget(MainWidget &widget)
 {
 	resetWidgetLayout(widget);
 	mMainWidgetsLayout.addWidget(&widget);
 }
 
-void BackgroundWidget::addLazyWidget(trikKernel::LazyMainWidget &widget)
+void BackgroundWidget::addLazyWidget(LazyMainWidget &widget)
 {
 	resetWidgetLayout(widget);
 	mMainWidgetsLayout.addWidget(&widget);
 
-	connect(&widget, SIGNAL(showMe(trikKernel::MainWidget &)), this, SLOT(showMainWidget(trikKernel::MainWidget &)));
+	connect(&widget, SIGNAL(showMe(MainWidget &)), this, SLOT(showMainWidget(MainWidget &)));
 	connect(&widget, SIGNAL(hideMe()), this, SLOT(hideGraphicsWidget()));
 }
 
-void BackgroundWidget::showMainWidget(trikKernel::MainWidget &widget)
+void BackgroundWidget::showMainWidget(MainWidget &widget)
 {
 	const int index = mMainWidgetsLayout.indexOf(&widget);
 	if (index >= 0) {
@@ -149,7 +148,7 @@ void BackgroundWidget::renewFocus()
 {
 	// When current widget in main widgets layout changed, we should set focus properly.
 
-	trikKernel::MainWidget *currentWidget = dynamic_cast<trikKernel::MainWidget *>(mMainWidgetsLayout.currentWidget());
+	MainWidget *currentWidget = dynamic_cast<MainWidget *>(mMainWidgetsLayout.currentWidget());
 
 	if (currentWidget != nullptr) {
 		currentWidget->renewFocus();
