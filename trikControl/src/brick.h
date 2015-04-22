@@ -17,6 +17,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QScopedPointer>
 
+#include <trikKernel/configurer.h>
+
 #include "brickInterface.h"
 
 namespace trikControl {
@@ -62,6 +64,8 @@ public:
 	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
+	void configure(const QString &portName, const QString &deviceName) override;
+
 	void playSound(const QString &soundFileName) override;
 
 	void say(const QString &text) override;
@@ -103,6 +107,12 @@ public slots:
 	LedInterface *led() override;
 
 private:
+	/// Deinitializes and properly shuts down device on a given port.
+	void shutdownDevice(const QString &port);
+
+	/// Creates and configures a device on a given port.
+	void createDevice(const QString &port);
+
 	QScopedPointer<I2cCommunicator> mI2cCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
@@ -126,6 +136,8 @@ private:
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
+
+	trikKernel::Configurer mConfigurer;
 };
 
 }

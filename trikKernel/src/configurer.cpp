@@ -189,6 +189,11 @@ QStringList Configurer::initScripts() const
 	return mInitScripts;
 }
 
+void Configurer::configure(const QString &portName, const QString &deviceName)
+{
+	mModelConfiguration[portName] = { portName, deviceName, {}};
+}
+
 void Configurer::parseDeviceClasses(const QDomElement &element)
 {
 	const QDomNodeList deviceClasses = element.childNodes();
