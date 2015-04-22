@@ -52,6 +52,11 @@ public:
 	/// Returns init scripts defined in config files, first from system config then from model config.
 	QStringList initScripts() const;
 
+	/// Changes configuration by configuring given device on given port. Port must be listed in model-config.xml,
+	/// device shall be listed in system-config.xml, and device shall be able to be configured on a port
+	/// (it is also described in system-config.xml).
+	void configure(const QString &portName, const QString &deviceName);
+
 private:
 	struct Device {
 		QString name;
