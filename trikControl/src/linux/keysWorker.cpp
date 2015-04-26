@@ -41,16 +41,16 @@ KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state)
 
 void KeysWorker::reset()
 {
-	mLock.lockForWrite();
-	mWasPressed.clear();
-	mLock.unlock();
+    mLock.lockForWrite();
+    mWasPressed.clear();
+    mLock.unlock();
 }
 
 bool KeysWorker::wasPressed(int code)
 {
-	mLock.lockForRead();
-	bool result = mWasPressed.contains(code);
-	mLock.unlock();
+    mLock.lockForRead();
+    bool result = mWasPressed.contains(code);
+    mLock.unlock();
 
 	if (result) {
 		mLock.lockForWrite();
