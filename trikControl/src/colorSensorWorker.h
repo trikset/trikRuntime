@@ -16,7 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
 #include "abstractVirtualSensorWorker.h"
@@ -59,13 +58,11 @@ private:
 
 	/// Current stored reading of a sensor. First two vectors are m*n matrix, inner vector contains 3 values --- red,
 	/// green and blue components of a dominant color in this cell.
-	QVector<QVector<QVector<int>>> mReading;
+    /// mReadingTemp is used to imput values in lock-free manner.
+    QVector<QVector<QVector<int>>> mReading, mReadingTemp;
 
 	/// True, if video stream from camera shall be shown on robot display.
 	bool mShowOnDisplay = true;
-
-	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
-	QReadWriteLock mLock;
 };
 
 }
