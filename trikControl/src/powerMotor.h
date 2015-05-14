@@ -52,10 +52,12 @@ public slots:
 
 	/// Returns currently set power of a motor.
 	int power() const;
+	int period() const;
 
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
+	void setPeriod(int period);
 
 private:
 	I2cCommunicator &mCommunicator;
@@ -63,6 +65,7 @@ private:
 	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
+	int mCurrentPeriod;
 };
 
 }
