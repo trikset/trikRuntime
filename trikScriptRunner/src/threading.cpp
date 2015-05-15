@@ -39,6 +39,8 @@ void Threading::startMainThread(const QString &script)
 {
 	mScript = script;
 	mErrorMessage.clear();
+	mFinishedThreads.clear();
+	mPreventFromStart.clear();
 
 	QRegExp const mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
 	bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
@@ -71,9 +73,19 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 		return;
 	}
 
+	if (mPreventFromStart.contains(threadId)) {
+		QLOG_INFO() << "Threading: attempt to create a thread which must be killed" << threadId;
+		mPreventFromStart.remove(threadId);
+		mFinishedThreads.insert(threadId);
+		mThreadsMutex.unlock();
+		mResetMutex.unlock();
+		return;
+	}
+
 	QLOG_INFO() << "Starting new thread" << threadId << "with engine" << engine;
 	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
 	mThreads[threadId] = thread;
+	mFinishedThreads.remove(threadId);
 	mThreadsMutex.unlock();
 
 	engine->moveToThread(thread);
@@ -242,6 +254,30 @@ QScriptValue Threading::receiveMessage()
 	QScriptValue result = queue.dequeue();
 	mResetMutex.unlock();
 	return result;
+}
+
+void Threading::killThread(const QString &threadId)
+{
+	if (!tryLockReset()) {
+		return;
+	}
+
+	mThreadsMutex.lock();
+	if (!mThreads.contains(threadId)) {
+		if (!mFinishedThreads.contains(threadId)) {
+			QLOG_INFO() << "Threading: killing thread that is not started yet," << threadId
+					<< "will be prevented from running";
+			mPreventFromStart.insert(threadId);
+		} else {
+			QLOG_INFO() << "Threading: killing already finished thread, ignoring";
+		}
+	} else {
+		QLOG_INFO() << "Threading: killing thread" << threadId;
+		mThreads[threadId]->abort();
+	}
+
+	mThreadsMutex.unlock();
+	mResetMutex.unlock();
 }
 
 QString Threading::errorMessage() const
