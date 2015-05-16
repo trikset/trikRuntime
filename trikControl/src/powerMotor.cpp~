@@ -15,25 +15,32 @@
 #include "powerMotor.h"
 #include <math.h>
 #include <QtCore/QDebug>
+#include <QStringList>
 
 #include <trikKernel/configurer.h>
 
 #include "i2cCommunicator.h"
 #include "configurerHelper.h"
 
-int searchSuitable(int duty,int *array, int step)
+
+	
+	
+int searchSuitable(int duty,int *array, int step, int length)
 {
-	int diff = 100*100;
-	int index = sizeof(array);
+	double diff = 100.0*100.0;
+	int index = length;
 	int n = 0;
-	for (n = 0; n < sizeof(array); n++);
+
+	for (n = 0; n < length; n++)
 	{
 		int newDiff = abs(duty - array[n]);
+
 		if (newDiff < diff)
 		{
 			diff = newDiff;
 			index = n;
 		}
+
 	}
 
 	if (duty == 100) return (duty);
@@ -51,24 +58,31 @@ int searchSuitable(int duty,int *array, int step)
 	}
 }
 
+
+
 using namespace trikControl;
 
 PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
+	, listm(configurer.attributeByPort(port, "mas").split(","))
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mState.ready();
 	mMotorType = configurer.attributeByPort(port, "type") == "motor1" ? Type::motor1 : Type::motor;
+	
 	int i = 0;
-	int step =1;
+	int step = 1;
+	lngth = listm.count();
 	if (mMotorType == Type::motor1)
 	{
-	
+		calc(listm);
 		for ( i = 0; i <= 100; i++)
 		{
-			recalcDuties[i] = searchSuitable(i, calcDuties,step);
+			recalcDuties[i] = searchSuitable(i, calcDuties,step,lngth);
+
+			
 		}
 	} else {
 		for ( i = 0; i <= 100; i++)
@@ -89,6 +103,17 @@ PowerMotor::Status PowerMotor::status() const
 {
 	return combine(mCommunicator, mState.status());
 }
+
+void PowerMotor::calc(QStringList  me)
+{	
+	int k = 0;
+	for (k = 0; k < me.count(); k++)
+	{
+		calcDuties[k] = me[k].toInt();		
+		calcDuties[k] = (int)((1.0*calcDuties[k]/calcDuties[100])*100);
+	}
+}
+
 
 void PowerMotor::setPower(int power)
 {

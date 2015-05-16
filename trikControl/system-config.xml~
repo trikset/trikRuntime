@@ -63,7 +63,7 @@ equal to its class name.
 	<deviceClasses>
 		<servoMotor period="20000000" invert="false" />
 		<pwmCapture />
-		<powerMotor invert="false" />
+		<powerMotor invert="false" type="motor"/>
 		<analogSensor />
 		<encoder />
 		<rangeSensor commonModule="hcsr04" />
@@ -160,7 +160,7 @@ equal to its class name.
 
 	<deviceTypes>
 		<angularServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="angular" />
-		<myMotor1 class="powerMotor"  type="motor1" realDuties="1" realDuties2="2" real="[1;2]" />
+		<myMotor1 class="powerMotor"  type="motor1" mas="" />
 		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="continuousRotation" />
 		<irSensor class="analogSensor" rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" />
 		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />

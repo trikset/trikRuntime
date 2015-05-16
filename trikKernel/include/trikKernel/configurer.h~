@@ -17,7 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QHash>
-
+#include <QStringList>
 
 
 class QDomElement;

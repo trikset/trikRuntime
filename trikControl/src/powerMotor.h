@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QFile>
-
+#include <QStringList>
 #include "motorInterface.h"
 #include "deviceState.h"
 
@@ -57,6 +57,10 @@ public slots:
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
+
+	
+	
+
 private:
 	enum class Type {
 		motor1
@@ -67,9 +71,14 @@ private:
 	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
+	int lngth;
 	Type mMotorType;
-	int calcDuties[2];
-	int recalcDuties[2];
+	int calcDuties[101] ;
+	int recalcDuties[101];
+        QStringList  listm;
+	void calc(QStringList  me);
+
+	
 
 };
 
