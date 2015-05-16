@@ -28,8 +28,12 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
 	, mCurrentPeriod(0x1000)
+{
+	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+	mState.ready();
+}
 
-
+	mMotorType = configurer.attributeByPort(port, "type") == "motor1" ? Type::motor1 : Type::motor;
 PowerMotor::~PowerMotor()
 {
 	if (mState.isReady()) {

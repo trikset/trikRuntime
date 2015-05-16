@@ -86,7 +86,7 @@ int AnalogSensor::read()
 	float help2 = (x3 + answer) * (x2 - x1);
 	float answer2 = y3 - help / help2;
 	float answer3 = (y - y2)*(x2 + answer)*(x1 + answer) / (x2 - x1);
-	int fa = (int)(answer3/((mCommunicator.read(command)) + answer) + answer2);
+	int fa = Int(answer3/((mCommunicator.read(command)) + answer) + answer2);
 	return fa;
 
 }

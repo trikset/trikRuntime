@@ -33,7 +33,7 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	mState.ready();
 }
 
-
+	
 PowerMotor::~PowerMotor()
 {
 	if (mState.isReady()) {

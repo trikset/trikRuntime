@@ -63,7 +63,6 @@ private:
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mB = 0;
 	qreal sen = 0;
-	Type mIRType;
 
 	/// State of a device.
 	DeviceState mState;

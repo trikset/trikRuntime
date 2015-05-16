@@ -91,7 +91,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Power motor ports. -->
 	<M1>
-		<powerMotor />
+		<myMotor1 />
 	</M1>
 	<M2>
 		<powerMotor invert="true" />

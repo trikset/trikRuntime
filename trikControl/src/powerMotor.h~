@@ -66,6 +66,7 @@ private:
 	int mCurrentPower;
 	DeviceState mState;
 	int mCurrentPeriod;
+	Type mMotorType;
 };
 
 }
