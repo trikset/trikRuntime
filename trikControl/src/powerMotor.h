@@ -62,22 +62,22 @@ public slots:
 	
 
 private:
-	enum class Type {
-		motor1
+	/*enum class Type {
+	       	motor1
 		, motor
-	};
+	};*/
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
-	int lngth;
-	Type mMotorType;
-	int calcDuties[101] ;
+	//Type mMotorType;
+	//int calcDuties[101] ;
 	int recalcDuties[101];
-        QStringList  listm;
-	void calc(QStringList  me);
-
+	
+        //QStringList  listm;
+	//void calc(QStringList  me);
+	//int length;
 	
 
 };
