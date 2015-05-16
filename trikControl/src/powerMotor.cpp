@@ -22,7 +22,6 @@
 #include "i2cCommunicator.h"
 #include "configurerHelper.h"
 
-
 	
 	
 int searchSuitable(int duty,int *array, int step, int length)
@@ -59,6 +58,36 @@ int searchSuitable(int duty,int *array, int step, int length)
 }
 
 
+void calculateDutyCorrection (QStringList const & me,byte * recalcDuties)
+{
+	
+	int k = 0;
+	int step = 1;
+	int length = listm.count();
+	double calcDuties [me.count()];
+	double max = 0;
+	
+	for (k = 0; k < me.count(); k++)
+	{
+		calcDuties[k] = me[k].toDouble();
+		if  (calcDuties[k] > max)
+		{
+			max = calcDuties[k];
+		}
+	}
+	
+	for (k = 0; k < me.count(); k++)
+	{
+		calcDuties[k] = calcDuties[k]*100/max;
+	}
+	
+
+	for ( i = 0; i <= 100; i++)
+	{
+		recalcDuties[i] = searchSuitable(i, calcDuties,step,length);
+	}
+	
+}
 
 using namespace trikControl;
 
@@ -66,30 +95,14 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
-	, listm(configurer.attributeByPort(port, "mas").split(","))
+	
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mState.ready();
-	mMotorType = configurer.attributeByPort(port, "type") == "motor1" ? Type::motor1 : Type::motor;
-	
-	int i = 0;
-	int step = 1;
-	lngth = listm.count();
-	if (mMotorType == Type::motor1)
-	{
-		calc(listm);
-		for ( i = 0; i <= 100; i++)
-		{
-			recalcDuties[i] = searchSuitable(i, calcDuties,step,lngth);
 
-			
-		}
-	} else {
-		for ( i = 0; i <= 100; i++)
-		{
-			recalcDuties[i] = i;
-		}
-	       }
+	calculateDutyCorrection(configurer.attributeByPort(port, "mas").split(","),recalcDuties);
+
+
 }
 
 PowerMotor::~PowerMotor()
@@ -104,18 +117,7 @@ PowerMotor::Status PowerMotor::status() const
 	return combine(mCommunicator, mState.status());
 }
 
-void PowerMotor::calc(QStringList  me)
-{	
-	int k = 0;
-	for (k = 0; k < me.count(); k++)
-	{
-		calcDuties[k] = me[k].toInt();		
-	}
-	for (k = 0; k < me.count(); k++)
-	{
-		calcDuties[k] = (int)((1.0*calcDuties[k]/calcDuties[(me.count())-1])*100);
-	}
-}
+
 
 
 void PowerMotor::setPower(int power)
