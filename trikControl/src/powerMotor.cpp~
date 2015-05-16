@@ -24,9 +24,9 @@
 int searchSuitable(int duty,int *array, int step)
 {
 	int diff = 100*100;
-	int index = sizeof(array)/sizeof(int);
+	int index = sizeof(array);
 	int n = 0;
-	for (n = 0; n < index; n++);
+	for (n = 0; n < sizeof(array); n++);
 	{
 		int newDiff = abs(duty - array[n]);
 		if (newDiff < diff)

@@ -68,7 +68,6 @@ private:
 	int mCurrentPower;
 	DeviceState mState;
 	Type mMotorType;
-	int calcDuties[2];
 	int recalcDuties[2];
 
 };
