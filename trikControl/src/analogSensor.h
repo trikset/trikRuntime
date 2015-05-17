@@ -49,24 +49,31 @@ public slots:
 	/// Returns current raw reading of a sensor.
 	int readRawData() override;
 
+
 private:
 	enum class Type {
 		IR
-		, IRCommon
+		, CustomIR
+		
 	};
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber = 0;
-
+	Type mIRType;
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mK = 0;
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mB = 0;
-	qreal sen = 0;
-	Type mIRType;
+
+	qreal mL = 0;
+	qreal mN = 0;
+	qreal mS = 0;
+	
 
 	/// State of a device.
 	DeviceState mState;
+	void CalculateLNS(const QString &port, const trikKernel::Configurer &configurer);
+	void CalculateKB(const QString &port, const trikKernel::Configurer &configurer);
 };
 
 }
