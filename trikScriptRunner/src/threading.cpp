@@ -223,7 +223,7 @@ void Threading::sendMessage(const QString &threadId, const QScriptValue &message
 	mResetMutex.unlock();
 }
 
-QScriptValue Threading::receiveMessage()
+QScriptValue Threading::receiveMessage(bool waitForMessage)
 {
 	if (!tryLockReset()) {
 		return QScriptValue();
@@ -244,8 +244,14 @@ QScriptValue Threading::receiveMessage()
 	mutex->lock();
 	if (queue.isEmpty()) {
 		mResetMutex.unlock();
+		if (!waitForMessage) {
+			mutex->unlock();
+			return QScriptValue("");
+		}
+
 		condition->wait(mutex);
 		if (!tryLockReset()) {
+			mutex->unlock();
 			return QScriptValue();
 		}
 	}
