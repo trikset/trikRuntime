@@ -94,7 +94,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<myMotor1 />
 	</M1>
 	<M2>
-		<myMotor1 invert="true" />
+		<myMotor1 />
 	</M2>
 	<M3>
 		<powerMotor />
