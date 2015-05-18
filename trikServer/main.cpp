@@ -47,6 +47,7 @@ int main(int argc, char *argv[])
 {
 	const int port = 8888;
 
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 	QApplication app(argc, argv);
 
 	QString configPath = "./";

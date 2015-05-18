@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 		printUsage();
 	}
 
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 	TrikGuiApplication app(argc, argv);
 
 	QFont font(app.font());

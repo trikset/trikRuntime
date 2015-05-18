@@ -48,6 +48,7 @@ void printUsage()
 
 int main(int argc, char *argv[])
 {
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 	QApplication app(argc, argv);
 	QStringList args = app.arguments();
 

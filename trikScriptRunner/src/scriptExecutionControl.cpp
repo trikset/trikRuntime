@@ -64,6 +64,15 @@ qint64 ScriptExecutionControl::time() const
 	return QDateTime::currentMSecsSinceEpoch();
 }
 
+int ScriptExecutionControl::random(int from, int to) const
+{
+	if (from > to) {
+		qSwap(from, to);
+	}
+
+	return qrand() % (to - from + 1) + from;
+}
+
 void ScriptExecutionControl::run()
 {
 	mInEventDrivenMode = true;
