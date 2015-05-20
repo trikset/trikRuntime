@@ -53,8 +53,10 @@ public slots:
 	/// Asynchronously execute given sh command.
 	void system(const QString &command);
 
+	/// Appends given text to the end of a file.
 	void writeToFile(const QString &file, const QString &text);
 
+	/// Truncates a file.
 	void truncateFile(const QString &file);
 
 signals:
