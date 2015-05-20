@@ -53,6 +53,10 @@ public slots:
 	/// Asynchronously execute given sh command.
 	void system(const QString &command);
 
+	void writeToFile(const QString &file, const QString &text);
+
+	void truncateFile(const QString &file);
+
 signals:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();
