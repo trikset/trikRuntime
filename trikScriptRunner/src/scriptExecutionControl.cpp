@@ -94,8 +94,8 @@ void ScriptExecutionControl::writeToFile(const QString &file, const QString &tex
 	out.write(text.toUtf8());
 }
 
-void ScriptExecutionControl::truncateFile(const QString &file)
+void ScriptExecutionControl::removeFile(const QString &file)
 {
 	QFile out(file);
-	out.open(QIODevice::WriteOnly);
+	out.remove();
 }

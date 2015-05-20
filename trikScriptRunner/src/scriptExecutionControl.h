@@ -56,8 +56,8 @@ public slots:
 	/// Appends given text to the end of a file.
 	void writeToFile(const QString &file, const QString &text);
 
-	/// Truncates a file.
-	void truncateFile(const QString &file);
+	/// Removes a file.
+	void removeFile(const QString &file);
 
 signals:
 	/// Emitted when script requested system to abort execution.
