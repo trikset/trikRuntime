@@ -26,6 +26,7 @@
 
 #include <QtCore/QTranslator>
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtGui/QFont>
 
 #include "trikGuiApplication.h"

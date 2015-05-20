@@ -24,6 +24,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtXml/QDomDocument>
 
 #include <trikControl/brickFactory.h>

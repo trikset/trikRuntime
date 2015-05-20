@@ -23,6 +23,7 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
