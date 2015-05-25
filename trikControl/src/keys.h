@@ -51,10 +51,14 @@ public slots:
 
 	bool isPressed(int code) override;
 
+	int buttonCode() override;
+
 private slots:
 	void changeButtonState(int code, int value);
 
 private:
+	int pressedButton();
+
 	/// Device state, shared with worker object.
 	DeviceState mState;
 
