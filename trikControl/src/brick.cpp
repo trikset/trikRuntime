@@ -124,14 +124,17 @@ void Brick::playSound(const QString &soundFileName)
 {
 	QLOG_INFO() << "Playing " << soundFileName;
 
-	QFileInfo const fileInfo(soundFileName);
+	QFileInfo fileInfo(soundFileName);
+	if (fileInfo.isRelative()) {
+		fileInfo.setFile("../" + soundFileName);
+	}
 
 	QString command;
 
 	if (fileInfo.suffix() == "wav") {
-		command = mPlayWavFileCommand.arg(soundFileName);
+		command = mPlayWavFileCommand.arg(fileInfo.absoluteFilePath());
 	} else if (fileInfo.suffix() == "mp3") {
-		command = mPlayMp3FileCommand.arg(soundFileName);
+		command = mPlayMp3FileCommand.arg(fileInfo.absoluteFilePath());
 	}
 
 	if (command.isEmpty() || ::system(command.toStdString().c_str()) != 0) {
