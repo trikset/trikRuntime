@@ -91,11 +91,11 @@ void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configure
 	const float d2 = x1*x2;
 	const float d3 = x2*x3;
 	const float d4 = x3 - x1 - (y1 - y3)*(x2 - x1) / (y1 - y2);
-	const float d5 = (y1 - y2)*(x1 + mL)*(x2 + mL);
-	const float d6 = (x3 + mL) * (x2 - x1);
-	mL = (d1 + d2 - d3) / d4;
-	mN = y3 - d5 / d6;
-	mS = (y1 - y2)*(x2 + mL)*(x1 + mL) / (x2 - x1);
+	mN = (-1)*(d1 + d2 - d3) / d4;
+	const float d5 = (y1 - y2)*(x1 - mN)*(x2 - mN);
+	const float d6 = (x3 - mN) * (x2 - x1);
+	mL = (-1)*y3 + d5 / d6;
+	mS = (y1 - y2)*(x2 - mN)*(x1 - mN) / (x2 - x1);
 }
 
 
