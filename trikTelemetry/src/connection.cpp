@@ -114,7 +114,7 @@ void Connection::processData(const QByteArray &data)
 			} else if (command == "GamepadPad1PosPort") {
 				answer += QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1));
 			} else if (command == "GamepadPad2PosPort") {
-				answer += QString("%(1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2));
+				answer += QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2));
 			}
 		} else if (mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).contains(command)
 				|| mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).contains(command)
