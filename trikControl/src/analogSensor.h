@@ -52,8 +52,8 @@ public slots:
 
 private:
 	enum class Type {
-		IR
-		, CustomIR
+		 SharpGP2,
+		Analog
 		
 	};
 	I2cCommunicator &mCommunicator;

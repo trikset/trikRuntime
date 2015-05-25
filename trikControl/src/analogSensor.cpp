@@ -28,14 +28,14 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mIRType = configurer.attributeByPort(port, "type") == "IR" ? Type::IR : Type::CustomIR;
+	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::SharpGP2 : Type::Analog;
 	// We use linear subjection to normalize sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
 	
 
-	if (mIRType == Type::CustomIR){
+	if (mIRType == Type::SharpGP2){
 		CalculateLNS(port, configurer);	
 	} else {
 			CalculateKB(port, configurer);	
@@ -57,11 +57,11 @@ int AnalogSensor::read()
 	}
 	QByteArray command(1, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	if (mIRType == Type::IR){
-		return mK * mCommunicator.read(command) + mB;
+	if (mIRType == Type::SharpGP2){
+		return mS/((mCommunicator.read(command)) + mL) + mN;
+		
 	}
-	
-	return mS/((mCommunicator.read(command)) + mL) + mN;
+	return mK * mCommunicator.read(command) + mB;
 
 }
 
