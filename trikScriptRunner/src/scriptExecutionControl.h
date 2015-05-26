@@ -60,6 +60,9 @@ signals:
 	/// To be connected to quit() slot of local event loops that are used for waiting.
 	void stopWaiting();
 
+	/// Requests sending a message to a desktop.
+	void sendMessage(const QString &text);
+
 private:
 	QList<QTimer *> mTimers; // Has ownership.
 

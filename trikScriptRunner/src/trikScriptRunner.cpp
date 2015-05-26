@@ -43,6 +43,8 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
 	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
 
+	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
+
 	mWorkerThread.start();
 }
 
