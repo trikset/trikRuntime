@@ -69,7 +69,6 @@ private:
 	int mN = 0;
 	int mS = 0;
 	
-	
 
 	/// State of a device.
 	DeviceState mState;

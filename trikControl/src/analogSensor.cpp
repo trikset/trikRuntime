@@ -79,12 +79,27 @@ int AnalogSensor::readRawData()
 
 void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configurer &configurer)
 {
-	const long long x1 = ConfigurerHelper::configureInt(configurer, mState, port, "x1");
+	/*const long long x1 = ConfigurerHelper::configureInt(configurer, mState, port, "x1");
 	const long long x2 = ConfigurerHelper::configureInt(configurer, mState, port, "x2");
 	const long long x3 = ConfigurerHelper::configureInt(configurer, mState, port, "x3");
 	const auto y1 = ConfigurerHelper::configureInt(configurer, mState, port, "y1");
 	const auto y2 = ConfigurerHelper::configureInt(configurer, mState, port, "y2");
 	const auto y3 = ConfigurerHelper::configureInt(configurer, mState, port, "y3");
+
+	QString str = "(5;4)(1;3)(8;9)";
+    	QStringList list;
+    	QStringList result;
+    	list = str.split(")");*/
+	QStringList result;
+    	foreach (const QString &str1, configurer.attributeByPort(port, "values").split(")")) {
+            result += str1.mid(1).split(";");
+        }
+    	int x1 = result[0].toInt();
+    	int y1 = result[1].toInt();
+    	int x2 = result[2].toInt();
+    	int y2 = result[3].toInt();
+    	int x3 = result[4].toInt();
+    	int y3 = result[5].toInt();
 	mL = (-x1*y1*y3 - x3*y2*y3 + x3*y1*y3+x1*y1*y2+x2*y2*y3-x2*y1*y2)/(x1*y3-x2*y3+x2*y1-x1*y2+x3*y2-x3*y1);
 	mS = (x1-x2)*(y1 + mL)*(y2+mL)/(y2-y1);
 	mN = x1 - mS/(y1+mL);	
