@@ -50,18 +50,16 @@ AnalogSensor::Status AnalogSensor::status() const
 	return DeviceInterface::combine(mCommunicator, mState.status());
 }
 
+
 int AnalogSensor::read()
 {
-	if (!mState.isReady() || mCommunicator.status() != DeviceInterface::Status::ready) {
-		return 0;
-	}
-	QByteArray command(1, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	if (mIRType == Type::SharpGP2){
-		return mS/((mCommunicator.read(command)) + mL) + mN;
+	auto raw = readRawData();
+	if (mIRType == Type::sharpGP2){
+		return mS/(raw + mL) + mN;
 		
 	}
-	return mK * mCommunicator.read(command) + mB;
+	return mK * raw + mB;
+		
 
 }
 
@@ -81,20 +79,20 @@ int AnalogSensor::readRawData()
 
 void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configurer &configurer)
 {
-	const float x1 = ConfigurerHelper::configureInt(configurer, mState, port, "x1");
-	const float x2 = ConfigurerHelper::configureInt(configurer, mState, port, "x2");
-	const float x3 = ConfigurerHelper::configureInt(configurer, mState, port, "x3");
-	const float y1 = ConfigurerHelper::configureInt(configurer, mState, port, "y1");
-	const float y2 = ConfigurerHelper::configureInt(configurer, mState, port, "y2");
-	const float y3 = ConfigurerHelper::configureInt(configurer, mState, port, "y3");
-	const float d1 = (x3*(y1 - y3)*(x2 - x1)) / (y1 - y2);
-	const float d2 = x1*x2;
-	const float d3 = x2*x3;
-	const float d4 = x3 - x1 - (y1 - y3)*(x2 - x1) / (y1 - y2);
-	mN = (-1)*(d1 + d2 - d3) / d4;
-	const float d5 = (y1 - y2)*(x1 - mN)*(x2 - mN);
-	const float d6 = (x3 - mN) * (x2 - x1);
-	mL = (-1)*y3 + d5 / d6;
+	const long long x1 = ConfigurerHelper::configureInt(configurer, mState, port, "x1");
+	const long long x2 = ConfigurerHelper::configureInt(configurer, mState, port, "x2");
+	const long long x3 = ConfigurerHelper::configureInt(configurer, mState, port, "x3");
+	const auto y1 = ConfigurerHelper::configureInt(configurer, mState, port, "y1");
+	const auto y2 = ConfigurerHelper::configureInt(configurer, mState, port, "y2");
+	const auto y3 = ConfigurerHelper::configureInt(configurer, mState, port, "y3");
+	const auto d1 = x3*(y1 - y3)*(x2 - x1);
+	const auto d2 = x1*x2;
+	const auto d3 = x2*x3;
+	const auto d4 = x3 - x1 - (y1 - y3)*(x2 - x1);
+	mN = -(d1 + (d2 - d3)*(y1 - y2)) / d4;
+	const auto d5 = (y1 - y2)*(x1 - mN)*(x2 - mN);
+	const auto d6 = (x3 - mN) * (x2 - x1);
+	mL = d5 / d6 - y3;
 	mS = (y1 - y2)*(x2 - mN)*(x1 - mN) / (x2 - x1);
 }
 
