@@ -52,8 +52,8 @@ public slots:
 
 private:
 	enum class Type {
-		 SharpGP2,
-		Analog
+		 sharpGP2,
+		analog
 		
 	};
 	I2cCommunicator &mCommunicator;

@@ -28,14 +28,14 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::SharpGP2 : Type::Analog;
+	mIRType = configurer.attributeByPort(port, "type") == "sharpGP2" ? Type::sharpGP2 : Type::analog;
 	// We use linear subjection to normalize sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
 	
 
-	if (mIRType == Type::SharpGP2){
+	if (mIRType == Type::sharpGP2){
 		CalculateLNS(port, configurer);	
 	} else {
 			CalculateKB(port, configurer);	
@@ -85,15 +85,9 @@ void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configure
 	const auto y1 = ConfigurerHelper::configureInt(configurer, mState, port, "y1");
 	const auto y2 = ConfigurerHelper::configureInt(configurer, mState, port, "y2");
 	const auto y3 = ConfigurerHelper::configureInt(configurer, mState, port, "y3");
-	const auto d1 = x3*(y1 - y3)*(x2 - x1);
-	const auto d2 = x1*x2;
-	const auto d3 = x2*x3;
-	const auto d4 = x3 - x1 - (y1 - y3)*(x2 - x1);
-	mN = -(d1 + (d2 - d3)*(y1 - y2)) / d4;
-	const auto d5 = (y1 - y2)*(x1 - mN)*(x2 - mN);
-	const auto d6 = (x3 - mN) * (x2 - x1);
-	mL = d5 / d6 - y3;
-	mS = (y1 - y2)*(x2 - mN)*(x1 - mN) / (x2 - x1);
+	mL = (-x1*y1*y3 - x3*y2*y3 + x3*y1*y3+x1*y1*y2+x2*y2*y3-x2*y1*y2)/(x1*y3-x2*y3+x2*y1-x1*y2+x3*y2-x3*y1);
+	mS = (x1-x2)*(y1 + mL)*(y2+mL)/(y2-y1);
+	mN = x1 - mS/(y1+mL);	
 }
 
 
