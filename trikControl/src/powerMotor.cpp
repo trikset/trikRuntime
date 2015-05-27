@@ -62,12 +62,11 @@ void calculateDutyCorrection (QStringList const & me,byte * recalcDuties)
 {
 	
 	int k = 0;
-	int step = 1;
-	int length = listm.count();
+	int length = me.count();
 	double calcDuties [me.count()];
 	double max = 0;
-	
-	for (k = 0; k < me.count(); k++)
+	int step = 100 / (length - 1)
+	for (k = 0; k < length; k++)
 	{
 		calcDuties[k] = me[k].toDouble();
 		if  (calcDuties[k] > max)
@@ -76,7 +75,7 @@ void calculateDutyCorrection (QStringList const & me,byte * recalcDuties)
 		}
 	}
 	
-	for (k = 0; k < me.count(); k++)
+	for (k = 0; k < length; k++)
 	{
 		calcDuties[k] = calcDuties[k]*100/max;
 	}
@@ -100,7 +99,7 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mState.ready();
 
-	calculateDutyCorrection(configurer.attributeByPort(port, "mas").split(","),recalcDuties);
+	calculateDutyCorrection(configurer.attributeByPort(port, "inputDuties").split(";"),outputDuties);
 
 
 }
@@ -128,9 +127,9 @@ void PowerMotor::setPower(int power)
 		power = -100;
 	}
 
-	mCurrentPower = recalcDuties[power];
+	mCurrentPower = outputDuties[power];
 
-	power = mInvert ? -recalcDuties[power] : recalcDuties[power];
+	power = mInvert ? -outputDuties[power] : outputDuties[power];
 
 	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
