@@ -396,7 +396,6 @@ uint32_t connect_USBMSP()
 	// Init sensors
 	init_sensors_USBMSP();
 
-
 	// Default alternative function
 	alt_func_flag = ALT_ANALOG;
 
@@ -654,7 +653,69 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		|| (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		|| (alt_func_flag == ALT_I2C))
 	    {
-
+		    if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU1_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART1, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART1, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
+		    if ((dev_address >= i2cU2_0x11) && (dev_address <= i2cU2_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C2, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART2, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART2, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
+		    if ((dev_address >= i2cU3_0x11) && (dev_address <= i2cU3_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C3, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART3, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART3, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
+		    if ((dev_address >= i2cU4_0x11) && (dev_address <= i2cU4_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C4, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART4, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART4, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
+		    if ((dev_address >= i2cU5_0x11) && (dev_address <= i2cU5_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C5, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART5, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART5, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
+		    if ((dev_address >= i2cU6_0x11) && (dev_address <= i2cU6_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C6, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART6, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART6, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
+		    if ((dev_address >= i2cU7_0x11) && (dev_address <= i2cU7_0x20))
+		    {
+			makeWriteRegPacket(s1, I2C7, IICTL, I2C_ENABLE);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART7, UUSPD, 19200);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, USART7, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+			sendUSBPacket(s1, s1);
+		    }
 	    }
 	}
 	else
