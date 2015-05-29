@@ -647,6 +647,16 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		alt_func_flag = ALT_I2C;
 		return regval;
 	}
+	// URM04 sensors
+	else if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU7_0x20))
+	{
+	    if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		|| (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
+		|| (alt_func_flag == ALT_I2C))
+	    {
+
+	    }
+	}
 	else
 		return DEV_ADDR_ERROR;
 
