@@ -480,7 +480,8 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		    sdut = 0;
 		}
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_ANALOG) ||
-			(alt_func_flag == ALT_ENC) || (alt_func_flag == ALT_I2C))
+			(alt_func_flag == ALT_ENC) || (alt_func_flag == ALT_I2C)
+			|| (alt_func_flag == ALT_USART))
 		{
 		    makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPPER, sper);
 		    sendUSBPacket(s1, s1);
@@ -537,7 +538,7 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 	    ||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-		    || (alt_func_flag == ALT_I2C))
+		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART))
 		{
 			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
 					   EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
@@ -570,7 +571,7 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	    ||  (dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-		    || (alt_func_flag == ALT_I2C))
+		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART))
 		{
 			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
 					    EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
@@ -610,7 +611,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			 || (dev_address == i2cSENS5) || (dev_address == i2cSENS6) || (dev_address == i2cBATT))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-		    || (alt_func_flag == ALT_I2C))
+		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART))
 		{
 			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSCTL, SENS_ENABLE + SENS_READ);
 			sendUSBPacket(s1, s1);
@@ -630,7 +631,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		  || (dev_address == i2cW1) || (dev_address == i2cW2) || (dev_address == i2cW3) || (dev_address == i2cW4))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC))
+		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
+		    || (alt_func_flag == ALT_USART))
 		{
 			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], IICTL, I2C_ENABLE + I2C_SENS);
 			sendUSBPacket(s1, s1);
