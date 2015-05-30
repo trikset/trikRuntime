@@ -64,9 +64,14 @@ private:
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mB = 0;
-
+	
+	/// Hyperbolical approximation coefficient l. Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mL = 0;
+
+	/// Hyperbolical approximation coefficient n. Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mN = 0;
+
+	/// Hyperbolical approximation coefficient s. Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mS = 0;
 	
 

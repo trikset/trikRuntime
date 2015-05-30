@@ -29,11 +29,13 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mIRType = configurer.attributeByPort(port, "type") == "sharpGP2" ? Type::sharpGP2 : Type::analog;
-	// We use linear subjection to normalize sensor values:
+	// We use linear subjection to normalize common analog sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
-	
+	// We use hyperbolical subjection to normalize SharpGP2 sensor values:
+	// normalizedValue = s / (rawValue + l) + n
+	// To calculate s, l and n we need sensor readings at three distances.
 
 	if (mIRType == Type::sharpGP2){
 		CalculateLNS(port, configurer);	
@@ -79,20 +81,10 @@ int AnalogSensor::readRawData()
 
 void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configurer &configurer)
 {
-	/*const long long x1 = ConfigurerHelper::configureInt(configurer, mState, port, "x1");
-	const long long x2 = ConfigurerHelper::configureInt(configurer, mState, port, "x2");
-	const long long x3 = ConfigurerHelper::configureInt(configurer, mState, port, "x3");
-	const auto y1 = ConfigurerHelper::configureInt(configurer, mState, port, "y1");
-	const auto y2 = ConfigurerHelper::configureInt(configurer, mState, port, "y2");
-	const auto y3 = ConfigurerHelper::configureInt(configurer, mState, port, "y3");
 
-	QString str = "(5;4)(1;3)(8;9)";
-    	QStringList list;
-    	QStringList result;
-    	list = str.split(")");*/
 	QStringList result;
-    	foreach (const QString &str1, configurer.attributeByPort(port, "values").split(")")) {
-            result += str1.mid(1).split(";");
+    	foreach (const QString &str, configurer.attributeByPort(port, "values").split(")")){
+            result += str.mid(1).split(";");
         }
     	int x1 = result[0].toInt();
     	int y1 = result[1].toInt();

@@ -55,13 +55,13 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<sharpGP2Sensor />
 	</A3>
 	<A4>
-		<sharpGP2Sensor />
+		<analogSensor />
 	</A4>
 	<A5>
-		<sharpGP2Sensor />
+		<analogSensor />
 	</A5>
 	<A6>
-		<sharpGP2Sensor />
+		<analogSensor />
 	</A6>
 
 	<!-- Digital sensor ports. -->
