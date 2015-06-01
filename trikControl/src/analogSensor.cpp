@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Nikita Batov, Kseniya Gonta and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,8 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	if (mIRType == Type::sharpGP2){
 		CalculateLNS(port, configurer);	
 	} else {
-			CalculateKB(port, configurer);	
-	       }
-
-
+		CalculateKB(port, configurer);	
+	}
 	mState.ready();
 }
 
@@ -52,17 +50,13 @@ AnalogSensor::Status AnalogSensor::status() const
 	return DeviceInterface::combine(mCommunicator, mState.status());
 }
 
-
 int AnalogSensor::read()
 {
 	auto raw = readRawData();
 	if (mIRType == Type::sharpGP2){
-		return mS/(raw + mL) + mN;
-		
+		return mS/(raw + mL) + mN;	
 	}
 	return mK * raw + mB;
-		
-
 }
 
 int AnalogSensor::readRawData()
@@ -77,27 +71,25 @@ int AnalogSensor::readRawData()
 	return mCommunicator.read(command);
 }
 
-
-
 void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configurer &configurer)
 {
-
 	QStringList result;
-    	foreach (const QString &str, configurer.attributeByPort(port, "values").split(")")){
-            result += str.mid(1).split(";");
-        }
-    	int x1 = result[0].toInt();
-    	int y1 = result[1].toInt();
-    	int x2 = result[2].toInt();
-    	int y2 = result[3].toInt();
-    	int x3 = result[4].toInt();
-    	int y3 = result[5].toInt();
-	mL = (-x1*y1*y3 - x3*y2*y3 + x3*y1*y3+x1*y1*y2+x2*y2*y3-x2*y1*y2)/(x1*y3-x2*y3+x2*y1-x1*y2+x3*y2-x3*y1);
-	mS = (x1-x2)*(y1 + mL)*(y2+mL)/(y2-y1);
-	mN = x1 - mS/(y1+mL);	
+	for (const QString &str : configurer.attributeByPort(port, "values").split(")")){
+		result += str.mid(1).split(";");
+	}
+	const int x1 = result[0].toInt();
+	const int y1 = result[1].toInt();
+	const int x2 = result[2].toInt();
+	const int y2 = result[3].toInt();
+	const int x3 = result[4].toInt();
+	const int y3 = result[5].toInt();
+
+	// Counted from equations x1 = mS/(y1 + mL) + mN, x2 = mS/(y2 + mL) + mN, x3 = mS/(y3 + mL) + mN 
+	mL = (-x1 * y1 * y3 - x3 * y2 * y3 + x3 * y1 * y3 + x1 * y1 * y2 + x2 * y2 * y3 - x2 * y1 * y2) / 
+			(x1 * y3 - x2 * y3 + x2 * y1 - x1 * y2 + x3 * y2 - x3 * y1);
+	mS = (x1 - x2) * (y1 + mL) * (y2 + mL) / (y2 - y1);
+	mN = x1 - mS / (y1 + mL);	
 }
-
-
 
 void AnalogSensor::CalculateKB(const QString &port, const trikKernel::Configurer &configurer)
 {
@@ -113,13 +105,5 @@ void AnalogSensor::CalculateKB(const QString &port, const trikKernel::Configurer
 	} else {
 		mK = static_cast<qreal>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
 		mB = normalizedValue1 - mK * rawValue1;
-		}
+	}
 }
-
-
-
-
-
-
-
-

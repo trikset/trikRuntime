@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Nikita Batov, Kseniya Gonta and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 
 #include "sensorInterface.h"
 #include "deviceState.h"
-#include <math.h>
+
 namespace trikKernel {
 class Configurer;
 }
@@ -49,16 +49,22 @@ public slots:
 	/// Returns current raw reading of a sensor.
 	int readRawData() override;
 
-
 private:
-	enum class Type {
-		 sharpGP2,
-		analog
-		
+	enum class Type 
+	{
+		/// Calibrated IR sensor.
+		sharpGP2
+		/// Normalized IR sensor.
+		, analog	
 	};
+	
+	void CalculateLNS(const QString &port, const trikKernel::Configurer &configurer);
+	void CalculateKB(const QString &port, const trikKernel::Configurer &configurer);
+
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber = 0;
 	Type mIRType;
+
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mK = 0;
 
@@ -74,11 +80,8 @@ private:
 	/// Hyperbolical approximation coefficient s. Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mS = 0;
 	
-
 	/// State of a device.
 	DeviceState mState;
-	void CalculateLNS(const QString &port, const trikKernel::Configurer &configurer);
-	void CalculateKB(const QString &port, const trikKernel::Configurer &configurer);
 };
 
 }

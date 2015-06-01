@@ -87,5 +87,5 @@ void PowerMotor::setPeriod(int period)
 	command[0] = static_cast<char>((mI2cCommandNumber - 4) & 0xFF);
 	command[1] = static_cast<char>(period && 0xFF);
 	command[2] = static_cast<char>(period >> 8);
-        mCommunicator.send(command);
+	mCommunicator.send(command);
 }
