@@ -44,6 +44,9 @@ public slots:
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
 
+	/// Returns random number from an interval [from, to].
+	int random(int from, int to) const;
+
 	/// Starts event loop for script.
 	void run();
 
