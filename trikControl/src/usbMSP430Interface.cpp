@@ -18,6 +18,7 @@
 #include <QDebug>
 #include <QString>
 #include <QObject>
+#include <QThread>
 
 #include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
@@ -592,6 +593,81 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	return NO_ERROR;
 }
 
+/// Delays class
+class Sleeper : public QThread
+{
+public:
+    static void usleep(unsigned long usecs){QThread::usleep(usecs);}
+    static void msleep(unsigned long msecs){QThread::msleep(msecs);}
+    static void sleep(unsigned long secs){QThread::sleep(secs);}
+};
+
+/// Init I2C + USART + URM04
+uint32_t init_URM04(uint8_t i2c_addr, uint8_t usart_addr)
+{
+    char s1[MAX_STRING_LENGTH];		    // Temp string variable
+    makeWriteRegPacket(s1, i2c_addr, IICTL, I2C_ENABLE);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, usart_addr, UUSPD, 19200);
+    sendUSBPacket(s1, s1);
+    makeWriteRegPacket(s1, usart_addr, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
+    sendUSBPacket(s1, s1);
+    return NO_ERROR;
+}
+
+/// Read URM04 distance function
+uint32_t read_URM04_dist(uint8_t dev_addr, uint8_t urm04_addr)
+{
+    char s1[MAX_STRING_LENGTH];		    // Temp string variable
+    char s2[MAX_STRING_LENGTH];		    // Temp string variable
+    uint8_t crc1;			    // URM04 CRC
+    uint32_t errcode;			    // Returned error code
+    uint8_t devaddr;			    // Returned device address
+    uint8_t funccode;			    // Returned function code
+    uint8_t regaddr;			    // Returned register address
+    uint32_t regval=UINT32_MAX;		    // Returned register value
+    uint16_t tmout = 0;			    // Reading timeout
+    uint8_t pack1[6] = {0x55, 0xAA, urm04_addr, 0x00, 0x01, 0x55 + 0xAA + urm04_addr + 0x00 + 0x01};
+    uint8_t pack2[6] = {0x55, 0xAA, urm04_addr, 0x00, 0x02, 0x55 + 0xAA + urm04_addr + 0x00 + 0x02};
+    uint8_t buf1[8] = {0};
+    // Trigger device
+    for (int i = 0; i < 6; i++)
+    {
+	makeWriteRegPacket(s1, dev_addr, UUDAT, pack1[i]);
+	sendUSBPacket(s1, s1);
+    }
+    // Wait about 400 ms
+    Sleeper::msleep(400);
+    // Read distance
+    for (int i = 0; i < 6; i++)
+    {
+	makeWriteRegPacket(s1, dev_addr, UUDAT, pack2[i]);
+	sendUSBPacket(s1, s1);
+    }
+    for (int i = 0; i < 8; i++)
+    {
+	do
+	{
+		makeReadRegPacket(s1, dev_addr, UUDAT);
+		errcode = sendUSBPacket(s1, s2);
+		errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+		tmout ++;
+	} while (((devaddr != dev_addr) || (regaddr != UUDAT)) && (tmout < TIME_OUT));
+	buf1[i] = regval;
+    }
+    crc1 = buf1[0] + buf1[1] + buf1[2] + buf1[3] + buf1[4] + buf1[5] + buf1[6];
+    if (crc1 != buf1[7])
+    {
+	// qDebug() << "URM04 CRC ERROR!";
+	return URM04_ERROR;
+    }
+    else
+    {
+	// qDebug() << "Distance: " << (uint32_t)(buf1[5] << 8) + (uint32_t)buf1[6];
+	return (uint32_t)(buf1[5] << 8) + (uint32_t)buf1[6];
+    }
+}
+
 /// Read sensor function
 uint32_t read_Sensor(QByteArray const &i2c_data)
 {
@@ -655,67 +731,150 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	    {
 		    if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU1_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C1, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART1, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART1, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C1, USART1);
 		    }
 		    if ((dev_address >= i2cU2_0x11) && (dev_address <= i2cU2_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C2, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART2, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART2, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C2, USART2);
 		    }
 		    if ((dev_address >= i2cU3_0x11) && (dev_address <= i2cU3_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C3, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART3, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART3, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C3, USART3);
 		    }
 		    if ((dev_address >= i2cU4_0x11) && (dev_address <= i2cU4_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C4, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART4, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART4, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C4, USART4);
 		    }
 		    if ((dev_address >= i2cU5_0x11) && (dev_address <= i2cU5_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C5, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART5, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART5, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C5, USART5);
 		    }
 		    if ((dev_address >= i2cU6_0x11) && (dev_address <= i2cU6_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C6, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART6, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART6, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C6, USART6);
 		    }
 		    if ((dev_address >= i2cU7_0x11) && (dev_address <= i2cU7_0x20))
 		    {
-			makeWriteRegPacket(s1, I2C7, IICTL, I2C_ENABLE);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART7, UUSPD, 19200);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, USART7, UUCTL, USART_EN+USART_8BITS+USART_RS485+USART_INVRTS+USART_RXEN+USART_TXEN);
-			sendUSBPacket(s1, s1);
+			init_URM04(I2C7, USART7);
 		    }
+	    }
+	    alt_func_flag = ALT_USART;
+	    switch (dev_address)
+	    {
+		    case i2cU1_0x11: return read_URM04_dist(USART1, 0x11); break;
+		    case i2cU1_0x12: return read_URM04_dist(USART1, 0x12); break;
+		    case i2cU1_0x13: return read_URM04_dist(USART1, 0x13); break;
+		    case i2cU1_0x14: return read_URM04_dist(USART1, 0x14); break;
+		    case i2cU1_0x15: return read_URM04_dist(USART1, 0x15); break;
+		    case i2cU1_0x16: return read_URM04_dist(USART1, 0x16); break;
+		    case i2cU1_0x17: return read_URM04_dist(USART1, 0x17); break;
+		    case i2cU1_0x18: return read_URM04_dist(USART1, 0x18); break;
+		    case i2cU1_0x19: return read_URM04_dist(USART1, 0x19); break;
+		    case i2cU1_0x1A: return read_URM04_dist(USART1, 0x1A); break;
+		    case i2cU1_0x1B: return read_URM04_dist(USART1, 0x1B); break;
+		    case i2cU1_0x1C: return read_URM04_dist(USART1, 0x1C); break;
+		    case i2cU1_0x1D: return read_URM04_dist(USART1, 0x1D); break;
+		    case i2cU1_0x1E: return read_URM04_dist(USART1, 0x1E); break;
+		    case i2cU1_0x1F: return read_URM04_dist(USART1, 0x1F); break;
+		    case i2cU1_0x20: return read_URM04_dist(USART1, 0x20); break;
+		    case i2cU2_0x11: return read_URM04_dist(USART2, 0x11); break;
+		    case i2cU2_0x12: return read_URM04_dist(USART2, 0x12); break;
+		    case i2cU2_0x13: return read_URM04_dist(USART2, 0x13); break;
+		    case i2cU2_0x14: return read_URM04_dist(USART2, 0x14); break;
+		    case i2cU2_0x15: return read_URM04_dist(USART2, 0x15); break;
+		    case i2cU2_0x16: return read_URM04_dist(USART2, 0x16); break;
+		    case i2cU2_0x17: return read_URM04_dist(USART2, 0x17); break;
+		    case i2cU2_0x18: return read_URM04_dist(USART2, 0x18); break;
+		    case i2cU2_0x19: return read_URM04_dist(USART2, 0x19); break;
+		    case i2cU2_0x1A: return read_URM04_dist(USART2, 0x1A); break;
+		    case i2cU2_0x1B: return read_URM04_dist(USART2, 0x1B); break;
+		    case i2cU2_0x1C: return read_URM04_dist(USART2, 0x1C); break;
+		    case i2cU2_0x1D: return read_URM04_dist(USART2, 0x1D); break;
+		    case i2cU2_0x1E: return read_URM04_dist(USART2, 0x1E); break;
+		    case i2cU2_0x1F: return read_URM04_dist(USART2, 0x1F); break;
+		    case i2cU2_0x20: return read_URM04_dist(USART2, 0x20); break;
+		    case i2cU3_0x11: return read_URM04_dist(USART3, 0x11); break;
+		    case i2cU3_0x12: return read_URM04_dist(USART3, 0x12); break;
+		    case i2cU3_0x13: return read_URM04_dist(USART3, 0x13); break;
+		    case i2cU3_0x14: return read_URM04_dist(USART3, 0x14); break;
+		    case i2cU3_0x15: return read_URM04_dist(USART3, 0x15); break;
+		    case i2cU3_0x16: return read_URM04_dist(USART3, 0x16); break;
+		    case i2cU3_0x17: return read_URM04_dist(USART3, 0x17); break;
+		    case i2cU3_0x18: return read_URM04_dist(USART3, 0x18); break;
+		    case i2cU3_0x19: return read_URM04_dist(USART3, 0x19); break;
+		    case i2cU3_0x1A: return read_URM04_dist(USART3, 0x1A); break;
+		    case i2cU3_0x1B: return read_URM04_dist(USART3, 0x1B); break;
+		    case i2cU3_0x1C: return read_URM04_dist(USART3, 0x1C); break;
+		    case i2cU3_0x1D: return read_URM04_dist(USART3, 0x1D); break;
+		    case i2cU3_0x1E: return read_URM04_dist(USART3, 0x1E); break;
+		    case i2cU3_0x1F: return read_URM04_dist(USART3, 0x1F); break;
+		    case i2cU3_0x20: return read_URM04_dist(USART3, 0x20); break;
+		    case i2cU4_0x11: return read_URM04_dist(USART4, 0x11); break;
+		    case i2cU4_0x12: return read_URM04_dist(USART4, 0x12); break;
+		    case i2cU4_0x13: return read_URM04_dist(USART4, 0x13); break;
+		    case i2cU4_0x14: return read_URM04_dist(USART4, 0x14); break;
+		    case i2cU4_0x15: return read_URM04_dist(USART4, 0x15); break;
+		    case i2cU4_0x16: return read_URM04_dist(USART4, 0x16); break;
+		    case i2cU4_0x17: return read_URM04_dist(USART4, 0x17); break;
+		    case i2cU4_0x18: return read_URM04_dist(USART4, 0x18); break;
+		    case i2cU4_0x19: return read_URM04_dist(USART4, 0x19); break;
+		    case i2cU4_0x1A: return read_URM04_dist(USART4, 0x1A); break;
+		    case i2cU4_0x1B: return read_URM04_dist(USART4, 0x1B); break;
+		    case i2cU4_0x1C: return read_URM04_dist(USART4, 0x1C); break;
+		    case i2cU4_0x1D: return read_URM04_dist(USART4, 0x1D); break;
+		    case i2cU4_0x1E: return read_URM04_dist(USART4, 0x1E); break;
+		    case i2cU4_0x1F: return read_URM04_dist(USART4, 0x1F); break;
+		    case i2cU4_0x20: return read_URM04_dist(USART4, 0x20); break;
+		    case i2cU5_0x11: return read_URM04_dist(USART5, 0x11); break;
+		    case i2cU5_0x12: return read_URM04_dist(USART5, 0x12); break;
+		    case i2cU5_0x13: return read_URM04_dist(USART5, 0x13); break;
+		    case i2cU5_0x14: return read_URM04_dist(USART5, 0x14); break;
+		    case i2cU5_0x15: return read_URM04_dist(USART5, 0x15); break;
+		    case i2cU5_0x16: return read_URM04_dist(USART5, 0x16); break;
+		    case i2cU5_0x17: return read_URM04_dist(USART5, 0x17); break;
+		    case i2cU5_0x18: return read_URM04_dist(USART5, 0x18); break;
+		    case i2cU5_0x19: return read_URM04_dist(USART5, 0x19); break;
+		    case i2cU5_0x1A: return read_URM04_dist(USART5, 0x1A); break;
+		    case i2cU5_0x1B: return read_URM04_dist(USART5, 0x1B); break;
+		    case i2cU5_0x1C: return read_URM04_dist(USART5, 0x1C); break;
+		    case i2cU5_0x1D: return read_URM04_dist(USART5, 0x1D); break;
+		    case i2cU5_0x1E: return read_URM04_dist(USART5, 0x1E); break;
+		    case i2cU5_0x1F: return read_URM04_dist(USART5, 0x1F); break;
+		    case i2cU5_0x20: return read_URM04_dist(USART5, 0x20); break;
+		    case i2cU6_0x11: return read_URM04_dist(USART6, 0x11); break;
+		    case i2cU6_0x12: return read_URM04_dist(USART6, 0x12); break;
+		    case i2cU6_0x13: return read_URM04_dist(USART6, 0x13); break;
+		    case i2cU6_0x14: return read_URM04_dist(USART6, 0x14); break;
+		    case i2cU6_0x15: return read_URM04_dist(USART6, 0x15); break;
+		    case i2cU6_0x16: return read_URM04_dist(USART6, 0x16); break;
+		    case i2cU6_0x17: return read_URM04_dist(USART6, 0x17); break;
+		    case i2cU6_0x18: return read_URM04_dist(USART6, 0x18); break;
+		    case i2cU6_0x19: return read_URM04_dist(USART6, 0x19); break;
+		    case i2cU6_0x1A: return read_URM04_dist(USART6, 0x1A); break;
+		    case i2cU6_0x1B: return read_URM04_dist(USART6, 0x1B); break;
+		    case i2cU6_0x1C: return read_URM04_dist(USART6, 0x1C); break;
+		    case i2cU6_0x1D: return read_URM04_dist(USART6, 0x1D); break;
+		    case i2cU6_0x1E: return read_URM04_dist(USART6, 0x1E); break;
+		    case i2cU6_0x1F: return read_URM04_dist(USART6, 0x1F); break;
+		    case i2cU6_0x20: return read_URM04_dist(USART6, 0x20); break;
+		    case i2cU7_0x11: return read_URM04_dist(USART7, 0x11); break;
+		    case i2cU7_0x12: return read_URM04_dist(USART7, 0x12); break;
+		    case i2cU7_0x13: return read_URM04_dist(USART7, 0x13); break;
+		    case i2cU7_0x14: return read_URM04_dist(USART7, 0x14); break;
+		    case i2cU7_0x15: return read_URM04_dist(USART7, 0x15); break;
+		    case i2cU7_0x16: return read_URM04_dist(USART7, 0x16); break;
+		    case i2cU7_0x17: return read_URM04_dist(USART7, 0x17); break;
+		    case i2cU7_0x18: return read_URM04_dist(USART7, 0x18); break;
+		    case i2cU7_0x19: return read_URM04_dist(USART7, 0x19); break;
+		    case i2cU7_0x1A: return read_URM04_dist(USART7, 0x1A); break;
+		    case i2cU7_0x1B: return read_URM04_dist(USART7, 0x1B); break;
+		    case i2cU7_0x1C: return read_URM04_dist(USART7, 0x1C); break;
+		    case i2cU7_0x1D: return read_URM04_dist(USART7, 0x1D); break;
+		    case i2cU7_0x1E: return read_URM04_dist(USART7, 0x1E); break;
+		    case i2cU7_0x1F: return read_URM04_dist(USART7, 0x1F); break;
+		    case i2cU7_0x20: return read_URM04_dist(USART7, 0x20); break;
+		    default:
+		    break;
 	    }
 	}
 	else

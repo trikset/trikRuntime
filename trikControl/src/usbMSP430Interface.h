@@ -68,6 +68,12 @@ uint32_t read_Encoder(QByteArray const &i2c_data);
 /// Read sensor function
 uint32_t read_Sensor(QByteArray const &i2c_data);
 
+/// Init I2C + USART + URM04
+uint32_t init_URM04(uint8_t i2c_addr, uint8_t usart_addr);
+
+/// Read URM04 distance function
+uint32_t read_URM04_dist(uint8_t dev_addr, uint8_t urm04_addr);
+
 /// Connect to USB MSP430 device
 uint32_t connect_USBMSP();
 

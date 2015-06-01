@@ -375,6 +375,7 @@
 #define LENGTH_ERROR		0x14
 #define REG_INC_ERROR		0x15
 #define UNDEF_ERROR		0xFF
+#define URM04_ERROR		0xFFFFFFFF
 
 /// HEX number sizes
 #define NUM_BYTE		0x02
