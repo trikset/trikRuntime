@@ -64,6 +64,10 @@ public:
 
 	~TrikCommunicator() override;
 
+public slots:
+	/// Broadcasts given text as a message to be printed.
+	void sendPrintMessage(const QString &text);
+
 signals:
 	/// Emitted when stop command received from a computer.
 	void stopCommandReceived();

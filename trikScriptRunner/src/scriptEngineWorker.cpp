@@ -16,6 +16,7 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QVector>
+#include <QtCore/QTextStream>
 
 #include <trikKernel/fileUtils.h>
 
@@ -232,6 +233,23 @@ QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const 
 	return result;
 }
 
+QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+{
+	QString result;
+	for (int i = 0; i < context->argumentCount(); ++i) {
+		if (i > 0) {
+			result.append(" ");
+		}
+
+		result.append(context->argument(i).toString());
+	}
+
+	QTextStream(stdout) << result << "\n";
+	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
+
+	return engine->toScriptValue(result);
+}
+
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 {
 	if (QFile::exists(mStartDirPath + "system.js")) {
@@ -244,4 +262,7 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 	} else {
 		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
 	}
+
+	QScriptValue printFunction = engine->newFunction(print);
+	engine->globalObject().setProperty("print", printFunction);
 }

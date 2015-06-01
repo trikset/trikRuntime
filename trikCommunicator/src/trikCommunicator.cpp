@@ -42,6 +42,8 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const ru
 	, mHasScriptRunnerOwnership(hasScriptRunnerOwnership)
 {
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
+
+	connect(runner, SIGNAL(sendMessage(QString)), this, SLOT(sendPrintMessage(QString)));
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -56,4 +58,9 @@ Connection *TrikCommunicator::connectionFactory()
 	Connection *connection = new Connection(*mTrikScriptRunner);
 	connect(connection, SIGNAL(stopCommandReceived()), this, SIGNAL(stopCommandReceived()));
 	return connection;
+}
+
+void TrikCommunicator::sendPrintMessage(const QString &text)
+{
+	sendMessage("print: " + text);
 }
