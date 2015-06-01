@@ -56,6 +56,12 @@ public slots:
 	/// Asynchronously execute given sh command.
 	void system(const QString &command);
 
+	/// Appends given text to the end of a file.
+	void writeToFile(const QString &file, const QString &text);
+
+	/// Removes a file.
+	void removeFile(const QString &file);
+
 signals:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();

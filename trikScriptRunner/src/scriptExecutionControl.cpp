@@ -95,3 +95,16 @@ void ScriptExecutionControl::system(const QString &command)
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
 }
+
+void ScriptExecutionControl::writeToFile(const QString &file, const QString &text)
+{
+	QFile out(file);
+	out.open(QIODevice::WriteOnly | QIODevice::Append);
+	out.write(text.toUtf8());
+}
+
+void ScriptExecutionControl::removeFile(const QString &file)
+{
+	QFile out(file);
+	out.remove();
+}
