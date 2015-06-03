@@ -92,9 +92,9 @@ void ScriptEngineWorker::reset()
 	}
 
 	mState = resetting;
-	mBrick.reset();
 	mScriptControl.reset();
 	mThreadingVariable.reset();
+	mBrick.reset();
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();

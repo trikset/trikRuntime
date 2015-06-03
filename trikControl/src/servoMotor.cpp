@@ -53,7 +53,17 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 	mPeriodFile.write(command.toLatin1());
 	mPeriodFile.close();
 
-	mState.ready();
+	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		QLOG_ERROR() << "Can't open motor control file " << mDutyFile.fileName();
+		mState.fail();
+	} else {
+		mState.ready();
+	}
+}
+
+ServoMotor::~ServoMotor()
+{
+	mDutyFile.close();
 }
 
 ServoMotor::Status ServoMotor::status() const
@@ -83,15 +93,7 @@ void ServoMotor::powerOff()
 		return;
 	}
 
-	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open motor duty file " << mDutyFile.fileName();
-		mState.fail();
-		return;
-	}
-
 	mDutyFile.write(QString::number(mStop).toLatin1());
-	mDutyFile.close();
-
 	mCurrentPower = 0;
 }
 
@@ -121,12 +123,5 @@ void ServoMotor::setPower(int power)
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 
-	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open motor control file " << mDutyFile.fileName();
-		mState.fail();
-		return;
-	}
-
 	mDutyFile.write(command.toLatin1());
-	mDutyFile.close();
 }
