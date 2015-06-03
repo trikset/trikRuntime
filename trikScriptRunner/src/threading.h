@@ -72,6 +72,7 @@ public:
 	/// Designed to be called from a thread that's finished execution.
 	void threadFinished(const QString &id);
 
+	/// Returns true if the script is being evaluated in event-driven mode.
 	bool inEventDrivenMode() const;
 
 private:

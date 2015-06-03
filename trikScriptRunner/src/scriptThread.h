@@ -47,6 +47,7 @@ public:
 	bool isEvaluating() const;
 
 signals:
+	/// Emitted when event loop must be stopped.
 	void stopRunning();
 
 protected:
