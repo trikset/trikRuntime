@@ -43,8 +43,6 @@ SystemSettingsWidget::SystemSettingsWidget(MainWidget::FileManagerRootType fileM
 	mLayout.addWidget(mOnlyScriptsButton);
 	mLayout.addWidget(mAllFSButton);
 	mLayout.addStretch(1);
-//	mLayout.setAlignment(mOnlyScriptsButton);
-//	mLayout.setAlignment(mAllFSButton, Qt::AlignCenter);
 
 	setLayout(&mLayout);
 	setFocusPolicy(Qt::StrongFocus);
