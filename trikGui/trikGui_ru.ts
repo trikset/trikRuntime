@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.0" language="ru_RU">
 <context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
@@ -173,15 +173,15 @@
     <name>trikGui::SystemSettingsWidget</name>
     <message>
         <source>Directory &apos;Files&apos; is ...</source>
-        <translation>Папка &apos;Файлы&apos; --- это...</translation>
+        <translation>Папка &apos;Файлы&apos; - это:</translation>
     </message>
     <message>
         <source>System Settings</source>
-        <translation>Система</translation>
+        <translation>Системные настройки</translation>
     </message>
     <message>
         <source>full file system</source>
-        <translation>вся файловая система</translation>
+        <translation>файловая система</translation>
     </message>
     <message>
         <source>only &apos;scripts&apos; directory</source>
