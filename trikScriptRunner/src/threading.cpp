@@ -300,3 +300,8 @@ bool Threading::tryLockReset()
 
 	return !mResetStarted;
 }
+
+bool Threading::inEventDrivenMode() const
+{
+	return mScriptControl.isInEventDrivenMode();
+}

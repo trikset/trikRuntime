@@ -72,6 +72,8 @@ public:
 	/// Designed to be called from a thread that's finished execution.
 	void threadFinished(const QString &id);
 
+	bool inEventDrivenMode() const;
+
 private:
 	/// Starts a thread with given threadId
 	/// @param engine - script engine that will do the work; it will be owned by a newly created thread

@@ -46,6 +46,9 @@ public:
 	/// @returns true if the script engine is evaluating a script at the moment
 	bool isEvaluating() const;
 
+signals:
+	void stopRunning();
+
 protected:
 	void run() override;
 
