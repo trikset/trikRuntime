@@ -28,7 +28,7 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mIRType = configurer.attributeByPort(port, "type") == "sharpGP2" ? Type::sharpGP2 : Type::analog;
+	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;
 	// We use linear subjection to normalize common analog sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
