@@ -25,6 +25,7 @@ GraphicsWidget::GraphicsWidget()
 	, mCurrentPenWidth(0)
 {
 	setAutoFillBackground(true);
+	mFontMetrics.reset(new QFontMetrics(font()));
 }
 
 void GraphicsWidget::showCommand()
@@ -81,6 +82,13 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 				, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
 				, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
 	}
+
+	for (const QPair<int, int> &position : mLabels.keys()) {
+		painter.setPen(mCurrentPenColor);
+		const QString text = mLabels[position];
+		painter.drawText(position.first, position.second, mFontMetrics->width(text), mFontMetrics->height()
+				, Qt::TextWordWrap, text);
+	}
 }
 
 void GraphicsWidget::deleteAllItems()
@@ -90,6 +98,7 @@ void GraphicsWidget::deleteAllItems()
 	mRects.clear();
 	mEllipses.clear();
 	mArcs.clear();
+	mLabels.clear();
 }
 
 void GraphicsWidget::setPainterColor(const QString &color)
@@ -256,7 +265,7 @@ bool GraphicsWidget::containsArc(const ArcCoordinates &coordinates)
 	return false;
 }
 
-QColor GraphicsWidget::currentPenColor() const
+void GraphicsWidget::addLabel(const QString &text, int x, int y)
 {
-	return mCurrentPenColor;
+	mLabels[qMakePair(x, y)] = text;
 }

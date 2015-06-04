@@ -16,6 +16,7 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QStackedLayout>
+	#include <QtGui/QApplication>
 #else
 	#include <QtWidgets/QStackedLayout>
 	#include <QtWidgets/QPushButton>
@@ -37,7 +38,6 @@ void GuiWorker::init()
 {
 	mImageLabel.reset(new QLabel());
 	mImageWidget.reset(new GraphicsWidget());
-	mFontMetrics.reset(new QFontMetrics(mImageWidget->font()));
 
 	QHBoxLayout * const layout = new QHBoxLayout();
 	mImageLabel->setScaledContents(true);
@@ -67,31 +67,9 @@ void GuiWorker::showImage(const QString &fileName)
 
 void GuiWorker::addLabel(const QString &text, int x, int y)
 {
-	QLabel *label = findLabel(x, y);
-	label = label ? label : new QLabel(mImageWidget.data());
-	label->setText(text);
-	label->setStyleSheet(QString("color: %1").arg(mImageWidget->currentPenColor().name()));
-
-	// There is no layout for the label, so its size cannot be set automatically. We set
-	// it with QFontMetrics.
-	label->setGeometry(x, y, mFontMetrics->width(text), mFontMetrics->height());
-
-	label->show();
-	if (!mLabels.contains(x ^ y, label)) {
-		mLabels.insertMulti(x ^ y, label);
-	}
-
+	mImageWidget->addLabel(text, x, y);
+	mImageWidget->update();
 	mImageWidget->showCommand();
-}
-
-void GuiWorker::removeLabels()
-{
-	for (QLabel * const label : mLabels.values()) {
-		label->close();
-		delete label;
-	}
-
-	mLabels.clear();
 }
 
 void GuiWorker::deleteWorker()
@@ -164,11 +142,11 @@ void GuiWorker::setPainterWidth(int penWidth)
 
 void GuiWorker::clear()
 {
+	QApplication::processEvents();  // process pending draw events so that they don't show after clearing
 	mImageWidget->deleteAllItems();
 	mImageWidget->setPainterColor("black");
 	mImageWidget->setPainterWidth(1);
 	mImageWidget->hideCommand();
-	removeLabels();
 	mImageLabel->setPixmap(QPixmap());
 	resetBackground();
 }
@@ -176,17 +154,6 @@ void GuiWorker::clear()
 void GuiWorker::hide()
 {
 	mImageWidget->hideCommand();
-}
-
-QLabel *GuiWorker::findLabel(int x, int y) const
-{
-	for (QLabel * const label : mLabels.values(x ^ y)) {
-		if (label->x() == x && label->y() == y) {
-			return label;
-		}
-	}
-
-	return nullptr;
 }
 
 void GuiWorker::drawPoint(int x, int y)

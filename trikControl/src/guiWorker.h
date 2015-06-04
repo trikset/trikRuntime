@@ -56,9 +56,6 @@ public slots:
 	/// @param y - label y coordinate.
 	void addLabel(const QString &text, int x, int y);
 
-	/// Remove all labels from the screen.
-	void removeLabels();
-
 	/// Queues worker object for deletion. It is actually deleted when control flow returns to event loop.
 	void deleteWorker();
 
@@ -119,14 +116,9 @@ public slots:
 private:
 	void resetBackground();
 
-	/// Returns existing label with given coordinates or nullptr if no such label exists.
-	QLabel *findLabel(int x, int y) const;
-
 	QScopedPointer<GraphicsWidget> mImageWidget;
 	QScopedPointer<QLabel> mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
-	QMultiHash<int, QLabel *> mLabels; // Has ownership.
-	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }

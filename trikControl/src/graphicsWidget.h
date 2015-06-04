@@ -79,8 +79,8 @@ public:
 	/// @param spanAngle - end angle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 
-	/// Returns current pen color.
-	QColor currentPenColor() const;
+	/// Prints text at given coordinates.
+	void addLabel(const QString &text, int x, int y);
 
 private:
 	/// Information about point.
@@ -198,11 +198,17 @@ private:
 	/// List of all arcs.
 	QList<ArcCoordinates> mArcs;
 
+	/// List of all labels.
+	QHash<QPair<int, int>, QString> mLabels;
+
 	/// Current pen color.
 	QColor mCurrentPenColor;
 
 	/// Current pen width.
 	int mCurrentPenWidth;
+
+	/// Font information used for printing text.
+	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }
