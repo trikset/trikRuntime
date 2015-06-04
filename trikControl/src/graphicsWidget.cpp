@@ -24,6 +24,7 @@ GraphicsWidget::GraphicsWidget()
 	: mCurrentPenColor(Qt::black)
 	, mCurrentPenWidth(0)
 {
+	setAutoFillBackground(true);
 }
 
 void GraphicsWidget::showCommand()

@@ -148,7 +148,7 @@ void GuiWorker::setBackground(const QString &color)
 void GuiWorker::resetBackground()
 {
 	QPalette palette = mImageWidget->palette();
-	palette.setColor(QPalette::Window, Qt::lightGray);
+	palette.setColor(QPalette::Window, Qt::transparent);
 	mImageWidget->setPalette(palette);
 }
 
