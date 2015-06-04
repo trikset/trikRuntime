@@ -42,10 +42,7 @@ void LineSensorWorker::detect()
 
 QVector<int> LineSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> result = mReading;
-	mLock.unlock();
-	return result;
+    return mReading;
 }
 
 QString LineSensorWorker::sensorName() const
@@ -62,11 +59,10 @@ void LineSensorWorker::onNewData(const QString &dataLine)
 		const int crossroadsProbability = parsedLine[2].toInt();
 		const int mass = parsedLine[3].toInt();
 
-		mLock.lockForWrite();
-		mReading[0] = x;
-		mReading[1] = crossroadsProbability;
-		mReading[2] = mass;
-		mLock.unlock();
+        mReadingTemp[0] = x;
+        mReadingTemp[1] = crossroadsProbability;
+        mReadingTemp[2] = mass;
+        mReading.swap(mReadingTemp);
 	}
 
 	if (parsedLine[0] == "hsv:") {

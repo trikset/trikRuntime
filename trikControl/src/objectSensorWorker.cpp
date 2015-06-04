@@ -42,11 +42,7 @@ void ObjectSensorWorker::detect()
 
 QVector<int> ObjectSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> result = mReading;
-	mLock.unlock();
-
-	return result;
+    return mReading;
 }
 
 QString ObjectSensorWorker::sensorName() const
@@ -59,13 +55,12 @@ void ObjectSensorWorker::onNewData(const QString &dataLine)
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
 	if (parsedLine[0] == "loc:") {
-		const int x = parsedLine[1].toInt();
-		const int y = parsedLine[2].toInt();
-		const int size = parsedLine[3].toInt();
+        mReadingTemp[0] = parsedLine[1].toInt();
+        mReadingTemp[1] = parsedLine[2].toInt();
+        mReadingTemp[2] = parsedLine[3].toInt();
 
-		mLock.lockForWrite();
-		mReading = {x, y, size};
-		mLock.unlock();
+        mReading.swap(mReadingTemp);
+
 	}
 
 	if (parsedLine[0] == "hsv:") {

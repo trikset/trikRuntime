@@ -34,13 +34,9 @@ ColorSensorWorker::ColorSensorWorker(const QString &script, const QString &input
 		throw IncorrectDeviceConfigurationException("Color Sensor shall have 'n' parameter greater than zero");
 	}
 
-	mReading.resize(m);
-	for (int i = 0; i < m; ++i) {
-		mReading[i].resize(n);
-		for (int j = 0; j < n; ++j) {
-			mReading[i][j] = {0, 0, 0};
-		}
-	}
+    typedef decltype (mReading) storage_type;
+    storage_type(m, storage_type::value_type(n, storage_type::value_type::value_type(3, 0))).swap(mReading);
+    mReadingTemp = mReading;
 }
 
 ColorSensorWorker::~ColorSensorWorker()
@@ -60,10 +56,7 @@ QVector<int> ColorSensorWorker::read(int m, int n)
 		return {-1, -1, -1};
 	}
 
-	mLock.lockForRead();
-	QVector<int> result = mReading[m - 1][n - 1];
-	mLock.unlock();
-
+    QVector<int> result = mReading[m - 1][n - 1];
 	return result;
 }
 
@@ -84,17 +77,17 @@ void ColorSensorWorker::onNewData(const QString &dataLine)
 			return;
 		}
 
-		mLock.lockForWrite();
-		for (int i = 0; i < mReading.size(); ++i) {
-			for (int j = 0; j < mReading[i].size(); ++j) {
-				unsigned const int colorValue = parsedLine[i * mReading.size() + j + 1].toUInt();
+
+        for (int i = 0; i < mReadingTemp.size(); ++i) {
+            for (int j = 0; j < mReadingTemp.size(); ++j) {
+                unsigned const int colorValue = parsedLine[i * mReadingTemp.size() + j + 1].toUInt();
 				const int r = (colorValue >> 16) & 0xFF;
 				const int g = (colorValue >> 8) & 0xFF;
 				const int b = colorValue & 0xFF;
-				mReading[i][j] = {r, g, b};
+                mReadingTemp[i][j] = {r, g, b};
 			}
 		}
 
-		mLock.unlock();
+        mReading.swap(mReadingTemp); // atomic operation
 	}
 }

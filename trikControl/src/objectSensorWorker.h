@@ -59,7 +59,7 @@ private:
 	void onNewData(const QString &dataLine) override;
 
 	/// Current stored reading of a sensor.
-	QVector<int> mReading;
+    QVector<int> mReading {0,0,0}, mReadingTemp{0,0,0};
 
 	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
 	qreal mToleranceFactor = 1.0;

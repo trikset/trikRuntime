@@ -164,6 +164,10 @@ void BackgroundWidget::refresh()
 
 void BackgroundWidget::updateStack(int removedWidget)
 {
+    Q_ASSERT(!mMainWidgetIndex.isEmpty() && "Closing main widget is prohibited");
+    // or allowed ???
+    // if (mMainWidgetIndex.isEmpty()) return;
+
 	if (mMainWidgetIndex.top() == removedWidget) {
 		mMainWidgetIndex.pop();
 		mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());

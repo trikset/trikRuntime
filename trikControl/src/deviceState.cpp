@@ -20,45 +20,40 @@ using namespace trikControl;
 
 DeviceInterface::Status DeviceState::status() const
 {
-	// Operation is atomic so it does not require locking.
 	return mStatus;
 }
 
 bool DeviceState::isReady() const
 {
-	// Read operation is atomic here, so it does not require locking.
 	return mStatus == DeviceInterface::Status::ready;
 }
 
 bool DeviceState::isFailed() const
 {
-	// Read operation is atomic here, so it does not require locking.
 	return mStatus == DeviceInterface::Status::failure;
 }
 
 void DeviceState::fail()
 {
-	mLock.lockForWrite();
-	mStatus = DeviceInterface::Status::failure;
-	mLock.unlock();
+    mStatus = DeviceInterface::Status::failure;
 }
 
 void DeviceState::start()
 {
-	mLock.lockForWrite();
-	if (mStatus == DeviceInterface::Status::failure) {
-		mLock.unlock();
-		return;
-	}
+    mLock.lockForWrite();
+    if (mStatus == DeviceInterface::Status::failure) {
+        mLock.unlock();
+        return;
+    }
 
-	if (mStatus == DeviceInterface::Status::off) {
-		mStatus = DeviceInterface::Status::starting;
-	} else {
-		mLock.unlock();
-		throw IncorrectStateChangeException(mStatus, DeviceInterface::Status::starting);
-	}
+    if (mStatus == DeviceInterface::Status::off) {
+        mStatus = DeviceInterface::Status::starting;
+    } else {
+        mLock.unlock();
+        throw IncorrectStateChangeException(mStatus, DeviceInterface::Status::starting);
+    }
 
-	mLock.unlock();
+    mLock.unlock();
 }
 
 void DeviceState::ready()
