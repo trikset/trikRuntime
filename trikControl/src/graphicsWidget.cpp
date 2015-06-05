@@ -46,6 +46,11 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 
 	QPainter painter(this);
 
+	if (!mPicture.isNull()) {
+		painter.drawPixmap(geometry(), mPicture);
+		return;
+	}
+
 	for (int i = 0; i < mLines.length(); i++)
 	{
 		painter.setPen(QPen(mLines.at(i).color, mLines.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
@@ -99,6 +104,7 @@ void GraphicsWidget::deleteAllItems()
 	mEllipses.clear();
 	mArcs.clear();
 	mLabels.clear();
+	mPicture = QPixmap();
 }
 
 void GraphicsWidget::setPainterColor(const QString &color)
@@ -268,4 +274,9 @@ bool GraphicsWidget::containsArc(const ArcCoordinates &coordinates)
 void GraphicsWidget::addLabel(const QString &text, int x, int y)
 {
 	mLabels[qMakePair(x, y)] = text;
+}
+
+void GraphicsWidget::setPixmap(const QPixmap &picture)
+{
+	mPicture = picture;
 }

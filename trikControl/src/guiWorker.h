@@ -117,7 +117,6 @@ private:
 	void resetBackground();
 
 	QScopedPointer<GraphicsWidget> mImageWidget;
-	QScopedPointer<QLabel> mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
 };
 

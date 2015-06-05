@@ -82,6 +82,8 @@ public:
 	/// Prints text at given coordinates.
 	void addLabel(const QString &text, int x, int y);
 
+	void setPixmap(const QPixmap &picture);
+
 private:
 	/// Information about point.
 	struct PointCoordinates
@@ -200,6 +202,8 @@ private:
 
 	/// List of all labels.
 	QHash<QPair<int, int>, QString> mLabels;
+
+	QPixmap mPicture;
 
 	/// Current pen color.
 	QColor mCurrentPenColor;

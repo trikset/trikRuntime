@@ -36,13 +36,7 @@ GuiWorker::GuiWorker()
 
 void GuiWorker::init()
 {
-	mImageLabel.reset(new QLabel());
 	mImageWidget.reset(new GraphicsWidget());
-
-	QHBoxLayout * const layout = new QHBoxLayout();
-	mImageLabel->setScaledContents(true);
-	layout->addWidget(mImageLabel.data());
-	mImageWidget->setLayout(layout);
 	mImageWidget->setWindowState(Qt::WindowFullScreen);
 	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
 	resetBackground();
@@ -61,7 +55,8 @@ void GuiWorker::showImage(const QString &fileName)
 		mImagesCache.insert(fileName, pixmap);
 	}
 
-	mImageLabel->setPixmap(mImagesCache.value(fileName));
+	mImageWidget->setPixmap(mImagesCache.value(fileName));
+	mImageWidget->update();
 	mImageWidget->showCommand();
 }
 
@@ -147,7 +142,6 @@ void GuiWorker::clear()
 	mImageWidget->setPainterColor("black");
 	mImageWidget->setPainterWidth(1);
 	mImageWidget->hideCommand();
-	mImageLabel->setPixmap(QPixmap());
 	resetBackground();
 }
 
