@@ -82,6 +82,7 @@ public:
 	/// Prints text at given coordinates.
 	void addLabel(const QString &text, int x, int y);
 
+	/// Sets pixmap which will be drawn instead of other elements.
 	void setPixmap(const QPixmap &picture);
 
 private:
