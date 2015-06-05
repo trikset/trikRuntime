@@ -35,6 +35,7 @@
 #include "objectSensor.h"
 #include "colorSensor.h"
 #include "servoMotor.h"
+#include "fifo.h"
 
 #include "i2cCommunicator.h"
 #include "moduleLoader.h"
@@ -92,6 +93,7 @@ Brick::~Brick()
 	qDeleteAll(mLineSensors);
 	qDeleteAll(mObjectSensors);
 	qDeleteAll(mColorSensors);
+	qDeleteAll(mFifos);
 }
 
 DisplayWidgetInterface &Brick::graphicsWidget()
@@ -308,6 +310,11 @@ LedInterface *Brick::led()
 	return mLed.data();
 }
 
+FifoInterface *Brick::fifo(const QString &port)
+{
+	return mFifos[port];
+}
+
 void Brick::shutdownDevice(const QString &port)
 {
 	const QString &deviceClass = mConfigurer.deviceClass(port);
@@ -347,6 +354,9 @@ void Brick::shutdownDevice(const QString &port)
 		mColorSensors[port]->stop();
 		delete mColorSensors[port];
 		mColorSensors.remove(port);
+	} else if (deviceClass == "fifo") {
+		delete mFifos[port];
+		mFifos.remove(port);
 	}
 }
 
@@ -384,5 +394,7 @@ void Brick::createDevice(const QString &port)
 
 		/// @todo This will work only in case when there can be only one video sensor launched at a time.
 		connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+	} else if (deviceClass == "fifo") {
+		mFifos.insert(port, new Fifo(port, mConfigurer));
 	}
 }

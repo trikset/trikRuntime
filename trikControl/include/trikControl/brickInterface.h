@@ -28,6 +28,7 @@
 #include "pwmCaptureInterface.h"
 #include "sensorInterface.h"
 #include "vectorSensorInterface.h"
+#include "fifoInterface.h"
 
 #include "declSpec.h"
 
@@ -115,6 +116,9 @@ public slots:
 
 	/// Returns LED control class.
 	virtual LedInterface *led() = 0;
+
+	/// Returns custom FIFO file which can be used as sensor.
+	virtual FifoInterface *fifo(const QString &port) = 0;
 
 signals:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no
