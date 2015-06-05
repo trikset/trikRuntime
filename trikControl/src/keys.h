@@ -51,7 +51,7 @@ public slots:
 
 	bool isPressed(int code) override;
 
-	int buttonCode() override;
+	int buttonCode(bool wait = true) override;
 
 private slots:
 	void changeButtonState(int code, int value);

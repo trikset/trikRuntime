@@ -73,8 +73,12 @@ void Keys::changeButtonState(int code, int value)
 	mKeysPressed[code] = value;
 }
 
-int Keys::buttonCode()
+int Keys::buttonCode(bool wait)
 {
+	if (!wait) {
+		return pressedButton();
+	}
+
 	while (true) {
 		int code = pressedButton();
 		if (code == -1) {
