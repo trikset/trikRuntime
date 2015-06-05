@@ -23,6 +23,7 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtCore/QDebug>
 
 #include <trikCommunicator/trikCommunicator.h>
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
 {
 	const int port = 8888;
 
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 	QApplication app(argc, argv);
 
 	QString configPath = "./";

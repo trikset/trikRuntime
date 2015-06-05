@@ -24,6 +24,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtXml/QDomDocument>
 
 #include <trikControl/brickFactory.h>
@@ -48,6 +49,7 @@ void printUsage()
 
 int main(int argc, char *argv[])
 {
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 	QApplication app(argc, argv);
 	QStringList args = app.arguments();
 

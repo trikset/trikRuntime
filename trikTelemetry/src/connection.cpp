@@ -14,6 +14,8 @@
 
 #include "connection.h"
 
+#include "QsLog.h"
+
 using namespace trikTelemetry;
 
 Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad)
@@ -112,7 +114,7 @@ void Connection::processData(const QByteArray &data)
 			} else if (command == "GamepadPad1PosPort") {
 				answer += QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1));
 			} else if (command == "GamepadPad2PosPort") {
-				answer += QString("%(1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2));
+				answer += QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2));
 			}
 		} else if (mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).contains(command)
 				|| mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).contains(command)
@@ -142,20 +144,20 @@ QString Connection::serializeVector(const QVector<int> &vector) {
 
 bool Connection::isButtonPressed(const QString &buttonName)
 {
-	if (buttonName == "LeftButtonPort") {
+	if (buttonName == "Left") {
 		return mBrick.keys()->isPressed(105);
-	} else if (buttonName == "UpButtonPort") {
+	} else if (buttonName == "Up") {
 		return mBrick.keys()->isPressed(103);
-	} else if (buttonName == "DownButtonPort") {
+	} else if (buttonName == "Down") {
 		return mBrick.keys()->isPressed(108);
-	} else if (buttonName == "EnterButtonPort") {
+	} else if (buttonName == "Enter") {
 		return mBrick.keys()->isPressed(28);
-	} else if (buttonName == "RightButtonPort") {
+	} else if (buttonName == "Right") {
 		return mBrick.keys()->isPressed(106);
-	} else if (buttonName == "PowerButtonPort") {
+	} else if (buttonName == "Power") {
 		return mBrick.keys()->isPressed(116);
-	} else if (buttonName == "MenuButtonPort") {
-		return mBrick.keys()->isPressed(139);
+	} else if (buttonName == "Esc") {
+		return mBrick.keys()->isPressed(1);
 	} else {
 		return false;
 	}

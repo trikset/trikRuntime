@@ -44,6 +44,9 @@ public slots:
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
 
+	/// Returns random number from an interval [from, to].
+	int random(int from, int to) const;
+
 	/// Starts event loop for script.
 	void run();
 
@@ -53,12 +56,21 @@ public slots:
 	/// Asynchronously execute given sh command.
 	void system(const QString &command);
 
+	/// Appends given text to the end of a file.
+	void writeToFile(const QString &file, const QString &text);
+
+	/// Removes a file.
+	void removeFile(const QString &file);
+
 signals:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();
 
 	/// To be connected to quit() slot of local event loops that are used for waiting.
 	void stopWaiting();
+
+	/// Requests sending a message to a desktop.
+	void sendMessage(const QString &text);
 
 private:
 	QList<QTimer *> mTimers; // Has ownership.

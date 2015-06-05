@@ -18,6 +18,6 @@
 
 namespace trikKernel {
 
-const QString version = "3.0.2";
+const QString version = "3.1.0-b1";
 
 }
