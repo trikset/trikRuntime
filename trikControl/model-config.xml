@@ -121,4 +121,9 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<!-- Optional modules -->
 	<gamepad />
 	<mailbox />
+
+	<!-- Example of custom FIFO sensor -->
+<!--	<soundSensor>
+		<fifo />
+	</soundSensor>-->
 </config>

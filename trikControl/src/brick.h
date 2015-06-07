@@ -40,6 +40,7 @@ class PwmCapture;
 class RangeSensor;
 class ServoMotor;
 class VectorSensor;
+class Fifo;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -106,6 +107,8 @@ public slots:
 
 	LedInterface *led() override;
 
+	FifoInterface *fifo(const QString &port) override;
+
 private:
 	/// Deinitializes and properly shuts down device on a given port.
 	void shutdownDevice(const QString &port);
@@ -133,6 +136,7 @@ private:
 	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
+	QHash<QString, Fifo *> mFifos;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
