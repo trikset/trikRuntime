@@ -86,3 +86,14 @@ void LineSensor::stop()
 		QLOG_WARN() << "Calling 'stop' for sensor which is not ready";
 	}
 }
+
+QVector<int> LineSensor::getDetectParameters() const
+{
+	if (mState.isReady()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mLineSensorWorker->getDetectParameters();
+	} else {
+		QLOG_WARN() << "Calling 'read' for sensor which is not ready";
+		return {};
+	}
+}

@@ -88,3 +88,14 @@ void ObjectSensor::stop()
 		QLOG_ERROR() << "Trying to call 'stop' when sensor is not ready, ignoring";
 	}
 }
+
+QVector<int> ObjectSensor::getDetectParameters() const
+{
+	if (mState.isReady()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mObjectSensorWorker->getDetectParameters();
+	} else {
+		QLOG_ERROR() << "Trying to call 'read' when sensor is not ready, ignoring";
+		return {};
+	}
+}
