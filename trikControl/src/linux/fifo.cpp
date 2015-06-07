@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "fifo.h"
+#include "src/fifo.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -25,7 +25,7 @@
 
 #include <QsLog.h>
 
-#include "configurerHelper.h"
+#include "src/configurerHelper.h"
 
 using namespace trikControl;
 

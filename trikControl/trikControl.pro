@@ -80,7 +80,6 @@ SOURCES += \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \
-	$$PWD/src/fifo.cpp \
 	$$PWD/src/graphicsWidget.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/keys.cpp \
@@ -96,6 +95,7 @@ SOURCES += \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
+	$$PWD/src/$$PLATFORM/fifo.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
