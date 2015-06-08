@@ -189,6 +189,7 @@ void Threading::threadFinished(const QString &id)
 {
 	QLOG_INFO() << "Threading: finishing thread" <<	id;
 
+	mResetMutex.lock();
 	mThreadsMutex.lock();
 	if (!mThreads[id]->error().isEmpty() && mErrorMessage.isEmpty()) {
 		mErrorMessage = mThreads[id]->error();
@@ -198,6 +199,7 @@ void Threading::threadFinished(const QString &id)
 	mThreads.remove(id);
 	mFinishedThreads.insert(id);
 	mThreadsMutex.unlock();
+	mResetMutex.unlock();
 
 	if (!mErrorMessage.isEmpty()) {
 		reset();
@@ -299,4 +301,9 @@ bool Threading::tryLockReset()
 	}
 
 	return !mResetStarted;
+}
+
+bool Threading::inEventDrivenMode() const
+{
+	return mScriptControl.isInEventDrivenMode();
 }

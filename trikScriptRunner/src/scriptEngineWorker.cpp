@@ -130,9 +130,10 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mThreadingVariable.startMainThread(script);
 	mState = running;
 	mThreadingVariable.waitForAll();
-	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << mThreadingVariable.errorMessage();
-	emit completed(mThreadingVariable.errorMessage(), mScriptId);
+	const QString error = mThreadingVariable.errorMessage();
 	reset();
+	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	emit completed(error, mScriptId);
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
