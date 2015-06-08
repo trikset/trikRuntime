@@ -50,10 +50,9 @@ AbstractVirtualSensorWorker::Status AbstractVirtualSensorWorker::status() const
 void AbstractVirtualSensorWorker::stop()
 {
 	if (mState.isReady()) {
+		/// @todo Correctly stop starting sensor.
 		mState.stop();
 		deinitialize();
-	} else {
-		QLOG_ERROR() << "Trying to stop video sensor that is not started, ignoring";
 	}
 }
 

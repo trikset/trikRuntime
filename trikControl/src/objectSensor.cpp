@@ -83,9 +83,8 @@ QVector<int>  ObjectSensor::read()
 void ObjectSensor::stop()
 {
 	if (mState.isReady()) {
+		/// @todo Correctly stop starting sensors.
 		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "stop");
-	} else {
-		QLOG_ERROR() << "Trying to call 'stop' when sensor is not ready, ignoring";
 	}
 }
 

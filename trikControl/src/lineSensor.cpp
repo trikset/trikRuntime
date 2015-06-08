@@ -81,9 +81,8 @@ QVector<int> LineSensor::read()
 void LineSensor::stop()
 {
 	if (mState.isReady()) {
+		/// @todo Correctly stop starting sensor.
 		QMetaObject::invokeMethod(mLineSensorWorker.data(), "stop");
-	} else {
-		QLOG_WARN() << "Calling 'stop' for sensor which is not ready";
 	}
 }
 
