@@ -56,6 +56,9 @@ public slots:
 	/// @param y - label y coordinate.
 	void addLabel(const QString &text, int x, int y);
 
+	/// Remove all labels from the screen.
+	void removeLabels();
+
 	/// Queues worker object for deletion. It is actually deleted when control flow returns to event loop.
 	void deleteWorker();
 

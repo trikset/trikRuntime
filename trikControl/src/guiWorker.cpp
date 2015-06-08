@@ -67,6 +67,13 @@ void GuiWorker::addLabel(const QString &text, int x, int y)
 	mImageWidget->showCommand();
 }
 
+void GuiWorker::removeLabels()
+{
+	mImageWidget->deleteLabels();
+	mImageWidget->update();
+	mImageWidget->showCommand();
+}
+
 void GuiWorker::deleteWorker()
 {
 	deleteLater();

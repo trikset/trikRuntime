@@ -44,6 +44,9 @@ public:
 	/// Delete all items.
 	void deleteAllItems();
 
+	/// Delets only text labels.
+	void deleteLabels();
+
 	/// Draw point on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.

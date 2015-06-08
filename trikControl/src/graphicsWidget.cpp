@@ -76,7 +76,7 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 		painter.setPen(
 				QPen(mEllipses.at(i).color, mEllipses.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 
-		painter.drawEllipse(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y()
+		painter.drawEllipse(QPointF(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y())
 				, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
 	}
 
@@ -103,8 +103,13 @@ void GraphicsWidget::deleteAllItems()
 	mRects.clear();
 	mEllipses.clear();
 	mArcs.clear();
-	mLabels.clear();
+	deleteLabels();
 	mPicture = QPixmap();
+}
+
+void GraphicsWidget::deleteLabels()
+{
+	mLabels.clear();
 }
 
 void GraphicsWidget::setPainterColor(const QString &color)
