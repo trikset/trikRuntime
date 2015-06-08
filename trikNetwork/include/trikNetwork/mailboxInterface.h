@@ -67,7 +67,8 @@ public slots:
 	/// Receives and returns one incoming message. If there is already a message in a queue, returns immediately,
 	/// otherwise blocks until a message is received. Note that if receive() and handler for newMessage() is used
 	/// simultaneously, message will be delivered twice --- first for receive(), then to handler (or handlers).
-	virtual QString receive() = 0;
+	/// @param wait - if false, doesn't wait for new messages and returns empty string if message queue is empty
+	virtual QString receive(bool wait = true) = 0;
 
 	/// Returns hull number of this robot.
 	virtual int myHullNumber() const = 0;

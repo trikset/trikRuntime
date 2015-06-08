@@ -38,7 +38,7 @@ public slots:
 	virtual bool isPressed(int code) = 0;
 
 	/// Returns a code of a pressed button.
-	virtual int buttonCode() = 0;
+	virtual int buttonCode(bool wait = true) = 0;
 
 signals:
 	/// Triggered when button state changed (pressed or released).
