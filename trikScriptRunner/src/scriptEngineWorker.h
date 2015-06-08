@@ -118,6 +118,9 @@ private:
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * const engine) const;
 
+	/// Part of reset procedure, clears state of brick and other robot parts.
+	void clearRobotExecutionState();
+
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
