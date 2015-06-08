@@ -162,3 +162,13 @@ void trikScriptRunner::mailboxFromScriptValue(const QScriptValue &object, Mailbo
 {
 	out = qobject_cast<MailboxInterface*>(object.toQObject());
 }
+
+QScriptValue trikScriptRunner::fifoToScriptValue(QScriptEngine *engine, FifoInterface* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::fifoFromScriptValue(const QScriptValue &object, FifoInterface* &out)
+{
+	out = qobject_cast<FifoInterface*>(object.toQObject());
+}

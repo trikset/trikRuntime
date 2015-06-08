@@ -55,6 +55,7 @@ Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -129,9 +130,10 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mThreadingVariable.startMainThread(script);
 	mState = running;
 	mThreadingVariable.waitForAll();
-	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << mThreadingVariable.errorMessage();
-	emit completed(mThreadingVariable.errorMessage(), mScriptId);
+	const QString error = mThreadingVariable.errorMessage();
 	reset();
+	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	emit completed(error, mScriptId);
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
@@ -196,6 +198,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
+	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));

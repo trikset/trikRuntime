@@ -24,6 +24,7 @@ HEADERS += \
 	$$PWD/include/trikControl/displayInterface.h \
 	$$PWD/include/trikControl/displayWidgetInterface.h \
 	$$PWD/include/trikControl/encoderInterface.h \
+	$$PWD/include/trikControl/fifoInterface.h \
 	$$PWD/include/trikControl/keysInterface.h \
 	$$PWD/include/trikControl/ledInterface.h \
 	$$PWD/include/trikControl/lineSensorInterface.h \
@@ -45,6 +46,7 @@ HEADERS += \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
+	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/i2cCommunicator.h \
@@ -93,6 +95,7 @@ SOURCES += \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
+	$$PWD/src/$$PLATFORM/fifo.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
