@@ -14,8 +14,6 @@
 
 #include "src/i2cCommunicator.h"
 
-#include <QtCore/QDebug>
-
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>

@@ -14,7 +14,6 @@
 
 #include "pwmCapture.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 

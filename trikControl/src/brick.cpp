@@ -14,7 +14,6 @@
 
 #include "brick.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
@@ -386,7 +385,6 @@ void Brick::createDevice(const QString &port)
 		connect(mLineSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 	} else if (deviceClass == "objectSensor") {
 		mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer));
-
 		/// @todo This will work only in case when there can be only one video sensor launched at a time.
 		connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 	} else if (deviceClass == "colorSensor") {

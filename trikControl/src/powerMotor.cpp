@@ -14,8 +14,6 @@
 
 #include "powerMotor.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
 
 #include "i2cCommunicator.h"

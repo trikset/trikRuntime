@@ -14,8 +14,6 @@
 
 #include "lineSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 using namespace trikControl;
 
 LineSensorWorker::LineSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile

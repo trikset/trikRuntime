@@ -29,8 +29,6 @@
 	#include <QtWidgets/QScrollBar>
 #endif
 
-#include <QtCore/QDebug>
-
 #include <trikWiFi/trikWiFi.h>
 #include <trikWiFi/wpaConfigurer.h>
 

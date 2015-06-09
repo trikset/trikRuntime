@@ -14,8 +14,6 @@
 
 #include "digitalSensor.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 

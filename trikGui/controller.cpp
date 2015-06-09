@@ -16,7 +16,6 @@
 
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
-#include <QtCore/QDebug>
 
 #include <QtXml/QDomDocument>
 

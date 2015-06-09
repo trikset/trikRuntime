@@ -31,11 +31,8 @@ ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &co
 
 	if (!mState.isFailed()) {
 		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
-
 		mObjectSensorWorker->moveToThread(&mWorkerThread);
-
-		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
-
+		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 		mWorkerThread.start();
 	}
 }
@@ -97,4 +94,9 @@ QVector<int> ObjectSensor::getDetectParameters() const
 		QLOG_ERROR() << "Trying to call 'read' when sensor is not ready, ignoring";
 		return {};
 	}
+}
+
+void ObjectSensor::onStopped()
+{
+	emit stopped();
 }

@@ -14,7 +14,6 @@
 
 #include "src/rangeSensorWorker.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
 #include <QtCore/QTimer>

@@ -71,9 +71,11 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<D2>
 		<rangeSensor />
 	</D2>
+	<!--
 	<F1>
 		<volumeSensor />
 	</F1>
+	-->
 
 	<!-- Encoder ports. -->
 	<B1>
