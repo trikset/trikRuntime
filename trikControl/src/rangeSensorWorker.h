@@ -76,9 +76,6 @@ private:
 
 	int mRawDistance = -1;
 
-	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
-	QReadWriteLock mLock;
-
 	/// State of a sensor, shared with proxy.
 	DeviceState &mState;
 
