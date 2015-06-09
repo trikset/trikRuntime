@@ -119,14 +119,8 @@ public slots:
 private:
 	void resetBackground();
 
-	/// Returns existing label with given coordinates or nullptr if no such label exists.
-	QLabel *findLabel(int x, int y) const;
-
 	QScopedPointer<GraphicsWidget> mImageWidget;
-	QScopedPointer<QLabel> mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
-	QMultiHash<int, QLabel *> mLabels; // Has ownership.
-	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }
