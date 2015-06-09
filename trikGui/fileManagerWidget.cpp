@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov
+/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
+#include <QtCore/QSettings>
 
 using namespace trikGui;
 
@@ -57,11 +58,19 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
+	connect(mFileSystemView.selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex))
+			, this, SLOT(onSelectionChanged(QModelIndex, QModelIndex)));
+
+	QSettings settings("trik");
+	mLastSelectedFile = settings.value("lastSelectedFile").toString();
+
 	showCurrentDir();
 }
 
 FileManagerWidget::~FileManagerWidget()
 {
+	QSettings settings("trik");
+	settings.setValue("lastSelectedFile", mLastSelectedFile);
 }
 
 QString FileManagerWidget::menuEntry()
@@ -111,7 +120,14 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-QString FileManagerWidget::showCurrentPath()
+void FileManagerWidget::onSelectionChanged(QModelIndex current, QModelIndex previous)
+{
+	Q_UNUSED(previous);
+
+	mLastSelectedFile = mFileSystemModel.filePath(current);
+}
+
+QString FileManagerWidget::currentPath()
 {
 	QString result = QDir::currentPath();
 	if (mRootDirPath != "/") {
@@ -127,7 +143,7 @@ QString FileManagerWidget::showCurrentPath()
 
 void FileManagerWidget::showCurrentDir()
 {
-	mCurrentPathLabel.setText(showCurrentPath());
+	mCurrentPathLabel.setText(currentPath());
 
 	QDir::Filters filters = mFileSystemModel.filter();
 	if (QDir::currentPath() == mRootDirPath) {
@@ -135,14 +151,12 @@ void FileManagerWidget::showCurrentDir()
 	} else {
 		filters &= ~QDir::NoDotDot;
 	}
+
 	filters &= ~QDir::Hidden;
 
 	mFileSystemModel.setFilter(filters);
 
 	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
-
-	/// @todo Here and several lines down we use QTimer to fix a bug with selecting first item. Rewrite it.
-	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
 }
 
 void FileManagerWidget::onDirectoryLoaded(const QString &path)
@@ -151,19 +165,29 @@ void FileManagerWidget::onDirectoryLoaded(const QString &path)
 		return;
 	}
 
-	QTimer::singleShot(200, this, SLOT(renewCurrentIndex()));
+	mFileSystemModel.sort(0);
+
+	renewCurrentIndex();
 }
 
 void FileManagerWidget::renewCurrentIndex()
 {
 	mFileSystemView.setFocus();
 
-	QModelIndex const currentIndex = mFileSystemModel.index(
-			0
-			, 0
-			, mFileSystemModel.index(QDir::currentPath())
-			);
+	QModelIndex currentIndex;
+	if (!mLastSelectedFile.isEmpty()) {
+		currentIndex = mFileSystemModel.index(mLastSelectedFile);
+		if (currentIndex.parent() != mFileSystemView.rootIndex()) {
+			// If last selected file is not in this directory, ignore it.
+			currentIndex = QModelIndex();
+		}
+	}
+
+	if (!currentIndex.isValid()) {
+		currentIndex = mFileSystemModel.index(0, 0, mFileSystemView.rootIndex());
+	}
 
 	mFileSystemView.selectionModel()->select(currentIndex, QItemSelectionModel::ClearAndSelect);
 	mFileSystemView.setCurrentIndex(currentIndex);
+	mFileSystemView.scrollTo(currentIndex, QAbstractItemView::PositionAtCenter);
 }

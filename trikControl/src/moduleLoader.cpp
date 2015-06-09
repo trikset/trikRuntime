@@ -14,8 +14,6 @@
 
 #include "src/moduleLoader.h"
 
-#include <QtCore/QDebug>
-
 #include <QsLog.h>
 
 using namespace trikControl;

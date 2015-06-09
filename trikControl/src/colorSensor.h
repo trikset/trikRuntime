@@ -52,6 +52,9 @@ public slots:
 
 	void stop() override;
 
+private slots:
+	void onStopped();
+
 private:
 	/// State of a sensor. Shared with worker object.
 	DeviceState mState;

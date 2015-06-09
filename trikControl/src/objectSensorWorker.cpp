@@ -14,8 +14,6 @@
 
 #include "objectSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 using namespace trikControl;
 
 ObjectSensorWorker::ObjectSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile

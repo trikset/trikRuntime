@@ -14,7 +14,6 @@
 
 #include "motorsWidget.h"
 
-#include <QtCore/QDebug>
 #include <QtGui/QKeyEvent>
 
 #include "motorLever.h"

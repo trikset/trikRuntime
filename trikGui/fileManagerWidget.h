@@ -65,11 +65,12 @@ protected:
 private slots:
 	void onDirectoryLoaded(const QString &path);
 	void renewCurrentIndex();
+	void onSelectionChanged(QModelIndex current, QModelIndex previous);
 
 private:
 	void showCurrentDir();
 	void open();
-	QString showCurrentPath();
+	QString currentPath();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
@@ -77,6 +78,7 @@ private:
 	QFileSystemModel mFileSystemModel;
 	Controller &mController;
 	QString mRootDirPath;
+	QString mLastSelectedFile;
 
 	FileManagerMessageBox mOpenDeleteBox;
 };

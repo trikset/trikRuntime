@@ -24,8 +24,6 @@
 	#include <QtWidgets/QDialog>
 #endif
 
-#include <QtCore/QDebug>
-#include <QtCore/QThread>
 #include <QtGui/QPixmap>
 
 using namespace trikControl;
