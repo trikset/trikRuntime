@@ -67,6 +67,12 @@ HEADERS += \
 	$$PWD/src/vectorSensorWorker.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
+	$$PWD/src/shapes/shape.h \
+	$$PWD/src/shapes/ellipse.h \
+	$$PWD/src/shapes/point.h \
+	$$PWD/src/shapes/line.h \
+	$$PWD/src/shapes/rectangle.h \
+	$$PWD/src/shapes/arc.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -100,6 +106,12 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
+	$$PWD/src/shapes/ellipse.cpp \
+	$$PWD/src/shapes/shape.cpp \
+	$$PWD/src/shapes/point.cpp \
+	$$PWD/src/shapes/line.cpp \
+	$$PWD/src/shapes/rectangle.cpp \
+	$$PWD/src/shapes/arc.cpp \
 
 OTHER_FILES += \
 	model-config.xml \

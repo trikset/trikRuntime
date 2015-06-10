@@ -18,6 +18,12 @@
 
 #include "graphicsWidget.h"
 
+#include "shapes/arc.h"
+#include "shapes/ellipse.h"
+#include "shapes/line.h"
+#include "shapes/point.h"
+#include "shapes/rectangle.h"
+
 using namespace trikControl;
 
 GraphicsWidget::GraphicsWidget()
@@ -26,6 +32,11 @@ GraphicsWidget::GraphicsWidget()
 {
 	setAutoFillBackground(true);
 	mFontMetrics.reset(new QFontMetrics(font()));
+}
+
+GraphicsWidget::~GraphicsWidget()
+{
+	qDeleteAll(mElements);
 }
 
 void GraphicsWidget::showCommand()
@@ -48,44 +59,10 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 
 	if (!mPicture.isNull()) {
 		painter.drawPixmap(geometry(), mPicture);
-		return;
 	}
 
-	for (int i = 0; i < mLines.length(); i++)
-	{
-		painter.setPen(QPen(mLines.at(i).color, mLines.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-		painter.drawLine(mLines.at(i).coord1.x(), mLines.at(i).coord1.y()
-				, mLines.at(i).coord2.x(), mLines.at(i).coord2.y());
-	}
-
-	for (int i = 0; i < mPoints.length(); i++)
-	{
-		painter.setPen(QPen(mPoints.at(i).color, mPoints.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-		painter.drawPoint(mPoints.at(i).coord.x(), mPoints.at(i).coord.y());
-	}
-
-	for (int i = 0; i < mRects.length(); i++)
-	{
-		painter.setPen(QPen(mRects.at(i).color, mRects.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-		painter.drawRect(mRects.at(i).rect.x(), mRects.at(i).rect.y()
-				, mRects.at(i).rect.width(), mRects.at(i).rect.height());
-	}
-
-	for (int i = 0; i < mEllipses.length(); i++)
-	{
-		painter.setPen(
-				QPen(mEllipses.at(i).color, mEllipses.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-
-		painter.drawEllipse(QPointF(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y())
-				, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
-	}
-
-	for (int i = 0; i < mArcs.length(); i++)
-	{
-		painter.setPen(QPen(mArcs.at(i).color, mArcs.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-		painter.drawArc(mArcs.at(i).arc.x(), mArcs.at(i).arc.y()
-				, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
-				, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
+	for (Shape *shape : mElements) {
+		shape->draw(&painter);
 	}
 
 	for (const QPair<int, int> &position : mLabels.keys()) {
@@ -98,11 +75,8 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 
 void GraphicsWidget::deleteAllItems()
 {
-	mPoints.clear();
-	mLines.clear();
-	mRects.clear();
-	mEllipses.clear();
-	mArcs.clear();
+	qDeleteAll(mElements);
+	mElements.clear();
 	deleteLabels();
 	mPicture = QPixmap();
 }
@@ -112,43 +86,9 @@ void GraphicsWidget::deleteLabels()
 	mLabels.clear();
 }
 
-void GraphicsWidget::setPainterColor(const QString &color)
+void GraphicsWidget::setPainterColor(const QColor &color)
 {
-	if (color == tr("white")) {
-		mCurrentPenColor = Qt::white;
-	} else if (color == tr("red")) {
-		mCurrentPenColor = Qt::red;
-	} else if (color == tr("darkRed")) {
-		mCurrentPenColor = Qt::darkRed;
-	} else if (color == tr("green")) {
-		mCurrentPenColor = Qt::green;
-	} else if (color == tr("darkGreen")) {
-		mCurrentPenColor = Qt::darkGreen;
-	} else if (color == tr("blue")) {
-		mCurrentPenColor = Qt::blue;
-	} else if (color == tr("darkBlue")) {
-		mCurrentPenColor = Qt::darkBlue;
-	} else if (color == tr("cyan")) {
-		mCurrentPenColor = Qt::cyan;
-	} else if (color == tr("darkCyan")) {
-		mCurrentPenColor = Qt::darkCyan;
-	} else if (color == tr("magenta")) {
-		mCurrentPenColor = Qt::magenta;
-	} else if (color == tr("darkMagenta")) {
-		mCurrentPenColor = Qt::darkMagenta;
-	} else if (color == tr("yellow")) {
-		mCurrentPenColor = Qt::yellow;
-	} else if (color == tr("darkYellow")) {
-		mCurrentPenColor = Qt::darkYellow;
-	} else if (color == tr("gray")) {
-		mCurrentPenColor = Qt::gray;
-	} else if (color == tr("darkGray")) {
-		mCurrentPenColor = Qt::darkGray;
-	} else if (color == tr("lightGray")) {
-		mCurrentPenColor = Qt::lightGray;
-	} else {
-		mCurrentPenColor = Qt::black;
-	}
+	mCurrentPenColor = color;
 }
 
 void GraphicsWidget::setPainterWidth(int penWidth)
@@ -158,122 +98,44 @@ void GraphicsWidget::setPainterWidth(int penWidth)
 
 void GraphicsWidget::drawPoint(int x, int y)
 {
-	PointCoordinates const coordinates(x, y, mCurrentPenColor, mCurrentPenWidth);
-
-	if (!containsPoint(coordinates)) {
-		mPoints.insert(mPoints.length(), coordinates);
-	}
-}
-
-bool GraphicsWidget::containsPoint(const PointCoordinates &coordinates)
-{
-	for (int i = 0; i < mPoints.length(); ++i) {
-		if (mPoints.at(i).coord.x() == coordinates.coord.x()
-			&& mPoints.at(i).coord.y() == coordinates.coord.y())
-		{
-			return true;
-		}
-	}
-
-	return false;
+	addShape(new Point(x, y, mCurrentPenColor, mCurrentPenWidth));
 }
 
 void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 {
-	LineCoordinates const coordinates(x1, y1, x2, y2, mCurrentPenColor, mCurrentPenWidth);
-
-	if (!containsLine(coordinates)) {
-		mLines.insert(mLines.length(), coordinates);
-	}
-}
-
-bool GraphicsWidget::containsLine(const LineCoordinates &coordinates)
-{
-	for (int i = 0; i < mLines.length(); ++i) {
-		if (mLines.at(i).coord1.x() == coordinates.coord1.x()
-			&& mLines.at(i).coord1.y() == coordinates.coord1.y()
-			&& mLines.at(i).coord2.x() == coordinates.coord2.x()
-			&& mLines.at(i).coord2.y() == coordinates.coord2.y())
-		{
-			return true;
-		}
-	}
-
-	return false;
+	addShape(new Line(x1, y1, x2, y2, mCurrentPenColor, mCurrentPenWidth));
 }
 
 void GraphicsWidget::drawRect(int x, int y, int width, int height)
 {
-	RectCoordinates const coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
-
-	if (!containsRect(coordinates)) {
-		mRects.insert(mRects.length(), coordinates);
-	}
-}
-
-bool GraphicsWidget::containsRect(const RectCoordinates &coordinates)
-{
-	for (int i = 0; i < mRects.length(); ++i) {
-		if (mRects.at(i).rect.x() == coordinates.rect.x()
-			&& mRects.at(i).rect.y() == coordinates.rect.y()
-			&& mRects.at(i).rect.width() == coordinates.rect.width()
-			&& mRects.at(i).rect.height() == coordinates.rect.height())
-		{
-			return true;
-		}
-	}
-
-	return false;
+	addShape(new Rectangle(x, y, width, height, mCurrentPenColor, mCurrentPenWidth));
 }
 
 void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
 {
-	EllipseCoordinates const coordinates(x, y, width, height, mCurrentPenColor, mCurrentPenWidth);
-
-	if (!containsEllipse(coordinates)) {
-		mEllipses.insert(mEllipses.length(), coordinates);
-	}
-}
-
-bool GraphicsWidget::containsEllipse(const EllipseCoordinates &coordinates)
-{
-	for (int i = 0; i < mEllipses.length(); i++) {
-		if (mEllipses.at(i).ellipse.x() == coordinates.ellipse.x()
-			&& mEllipses.at(i).ellipse.y() == coordinates.ellipse.y()
-			&& mEllipses.at(i).ellipse.width() == coordinates.ellipse.width()
-			&& mEllipses.at(i).ellipse.height() == coordinates.ellipse.height())
-		{
-			return true;
-		}
-	}
-
-	return false;
+	addShape(new Ellipse(x, y, width, height, mCurrentPenColor, mCurrentPenWidth));
 }
 
 void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	ArcCoordinates const coordinates(x, y, width, height, startAngle, spanAngle, mCurrentPenColor, mCurrentPenWidth);
-
-	if (!containsArc(coordinates)) {
-		mArcs.insert(mArcs.length(), coordinates);
-	}
+	addShape(new Arc(x, y, width, height, startAngle, spanAngle, mCurrentPenColor, mCurrentPenWidth));
 }
 
-bool GraphicsWidget::containsArc(const ArcCoordinates &coordinates)
+void GraphicsWidget::addShape(Shape *shape)
 {
-	for (int i = 0; i < mArcs.length(); ++i) {
-		if (mArcs.at(i).arc.x() == coordinates.arc.x()
-			&& mArcs.at(i).arc.y() == coordinates.arc.y()
-			&& mArcs.at(i).arc.width() == coordinates.arc.width()
-			&& mArcs.at(i).arc.height() == coordinates.arc.height()
-			&& mArcs.at(i).startAngle == coordinates.startAngle
-			&& mArcs.at(i).spanAngle == coordinates.spanAngle)
-		{
-			return true;
+	bool found = false;
+	for (const Shape *element : mElements) {
+		if (element && element->equals(shape)) {
+			found = true;
+			break;
 		}
 	}
 
-	return false;
+	if (found) {
+		delete shape;
+	} else {
+		mElements << shape;
+	}
 }
 
 void GraphicsWidget::addLabel(const QString &text, int x, int y)

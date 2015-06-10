@@ -43,7 +43,7 @@ public:
 public slots:
 	void showImage(const QString &fileName) override;
 
-	void addLabel(const QString &text, int x, int y) override;
+	void addLabel(const QString &text, int x, int y, bool redraw) override;
 
 	void removeLabels() override;
 
@@ -51,21 +51,23 @@ public slots:
 
 	void setPainterWidth(int penWidth) override;
 
-	void drawLine(int x1, int y1, int x2, int y2) override;
+	void drawLine(int x1, int y1, int x2, int y2, bool redraw) override;
 
-	void drawPoint(int x, int y) override;
+	void drawPoint(int x, int y, bool redraw) override;
 
-	void drawRect(int x, int y, int width, int height) override;
+	void drawRect(int x, int y, int width, int height, bool redraw) override;
 
-	void drawEllipse(int x, int y, int width, int height) override;
+	void drawEllipse(int x, int y, int width, int height, bool redraw) override;
 
-	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle) override;
+	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle, bool redraw) override;
 
 	void setBackground(const QString &color) override;
 
 	void hide() override;
 
 	void clear() override;
+
+	void reset() override;
 
 private:
 //	QThread &mGuiThread;
