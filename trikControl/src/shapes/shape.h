@@ -7,20 +7,21 @@ namespace trikControl {
 class Shape
 {
 public:
-	Shape(const QColor &color, int penWidth);
-	virtual ~Shape();
+	Shape(const QColor &color, int penWidth)
+		: mColor(color)
+		, mPenWidth(penWidth)
+	{
+	}
 
-	virtual void draw(QPainter *painter);
+	virtual ~Shape() {}
 
-	virtual bool equals(const Shape *other) const;
+	virtual void draw(QPainter *painter) = 0;
+
+	virtual bool equals(const Shape *other) const = 0;
+
 protected:
 	QColor mColor;
 	int mPenWidth;
 };
-
-inline bool operator==(const Shape &first, const Shape &second)
-{
-	return first.equals(&second);
-}
 
 }
