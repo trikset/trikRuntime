@@ -46,22 +46,22 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Analog sensor ports. -->
 	<A1>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A1>
 	<A2>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A2>
 	<A3>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A3>
 	<A4>
-		<irSensor />
+		<analogSensor />
 	</A4>
 	<A5>
-		<irSensor />
+		<analogSensor />
 	</A5>
 	<A6>
-		<irSensor />
+		<analogSensor />
 	</A6>
 
 	<!-- Digital sensor ports. -->
