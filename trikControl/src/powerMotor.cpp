@@ -13,80 +13,22 @@
  * limitations under the License. */
 
 #include "powerMotor.h"
+#include "exceptions/incorrectDeviceConfigurationException.h"
+
+#include "deviceInterface.h"
+#include "deviceState.h"
+
+#include <QsLog.h>
 #include <math.h>
 #include <QtCore/QDebug>
 #include <QStringList>
-
+#include <limits.h>
 #include <trikKernel/configurer.h>
 
 #include "i2cCommunicator.h"
 #include "configurerHelper.h"
 
 	
-	
-int searchSuitable(int duty,int *array, int step, int length)
-{
-	double diff = 100.0*100.0;
-	int index = length;
-	int n = 0;
-
-	for (n = 0; n < length; n++)
-	{
-		int newDiff = abs(duty - array[n]);
-
-		if (newDiff < diff)
-		{
-			diff = newDiff;
-			index = n;
-		}
-
-	}
-
-	if (duty == 100) return (duty);
-	int side = duty < array[index] ? 0 : 1;
-	diff = (array[index + side] - array[index + side -1]);
-	
-	if (abs(diff) < 0.01)
-	{
-		return (index + side -1)*step;
-		
-	}
-	else 
-	{
-		return((duty - array[index + side -1])*step/diff + (index + side -1)*step);
-	}
-}
-
-
-void calculateDutyCorrection (QStringList const & me,byte * recalcDuties)
-{
-	
-	int k = 0;
-	int length = me.count();
-	double calcDuties [me.count()];
-	double max = 0;
-	int step = 100 / (length - 1)
-	for (k = 0; k < length; k++)
-	{
-		calcDuties[k] = me[k].toDouble();
-		if  (calcDuties[k] > max)
-		{
-			max = calcDuties[k];
-		}
-	}
-	
-	for (k = 0; k < length; k++)
-	{
-		calcDuties[k] = calcDuties[k]*100/max;
-	}
-	
-
-	for ( i = 0; i <= 100; i++)
-	{
-		recalcDuties[i] = searchSuitable(i, calcDuties,step,length);
-	}
-	
-}
 
 using namespace trikControl;
 
@@ -147,3 +89,78 @@ void PowerMotor::powerOff()
 {
 	setPower(0);
 }
+
+
+
+int PowerMotor::searchSuitable(int duty,int *array, int step, int length)
+{
+	auto diff = INT_MAX;
+	auto index = length;
+
+	if (duty >= (100 * fixedPointOrder))
+		return duty;
+	
+	for (int n = 0; n < length; n++){
+		int newDiff = abs(duty - array[n]);
+
+		if (newDiff < diff){
+			diff = newDiff;
+			index = n;
+		}
+
+	}
+
+  	
+	int side = duty < array[index] ? 0 : 1;
+	auto next = index + side;
+	auto prev = index + side - 1;
+	diff = (array[next] - array[prev]);
+	
+	if (!diff){
+		return prev * step;
+	}
+	else{
+        	return (duty - array[prev]) * step / diff + prev * step;
+    	}     
+	
+}
+
+void PowerMotor::calculateDutyCorrection (QStringList const & input,int * outputDuties)
+{
+	
+	int k = 0;
+	int length = input.count();
+	if (length < 2 ) {
+		//mstate.fail();
+		//QLOG_ERROR() << "array of input Duties shall have more than 1 value";
+		throw IncorrectDeviceConfigurationException("array of input Duties shall have more than 1 values");
+	} 
+	else{
+		int calcDuties [length];
+		int  max = 0;
+		int step = 100 * fixedPointOrder / (length - 1);
+		for (k = 0; k < length; k++)
+		{
+			calcDuties[k] = input[k].toInt();
+			if  (calcDuties[k] > max)
+			{
+				max = calcDuties[k];
+			}
+		}
+	
+		for (k = 0; k < length; k++)
+		{
+			calcDuties[k] = calcDuties[k]* 100 * fixedPointOrder / max;
+		}
+	
+
+		for ( k = 0; k <= 100; k++)
+		{
+			outputDuties[k] = searchSuitable(k * fixedPointOrder, calcDuties,step,length) / fixedPointOrder;
+		}
+	}
+}
+
+
+
+

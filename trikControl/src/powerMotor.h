@@ -44,6 +44,9 @@ public:
 	~PowerMotor() override;
 
 	Status status() const override;
+	
+
+
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
@@ -57,7 +60,6 @@ public slots:
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
-
 	
 	
 
@@ -67,8 +69,10 @@ private:
 	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
-	int outputDuties[101];
-
+	int searchSuitable(int duty,int *array, int step, int length);
+	void calculateDutyCorrection (QStringList const & input,int * outputDuties);
+	int outputDuties[101];		
+	const int fixedPointOrder = 100;
 };
 
 }
