@@ -91,10 +91,10 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Power motor ports. -->
 	<M1>
-		<myMotor1 />
+		<jga25Motor />
 	</M1>
 	<M2>
-		<myMotor1 />
+		<jga25Motor />
 	</M2>
 	<M3>
 		<powerMotor />

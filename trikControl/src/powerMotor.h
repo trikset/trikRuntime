@@ -64,6 +64,7 @@ public slots:
 	
 
 private:
+	
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
 	const bool mInvert;

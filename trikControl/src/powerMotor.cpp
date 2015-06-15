@@ -38,11 +38,10 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	, mCurrentPower(0)
 	
 {
+	
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mState.ready();
-
 	calculateDutyCorrection(configurer.attributeByPort(port, "inputDuties").split(";"),outputDuties);
-
+	mState.ready();
 
 }
 
@@ -69,7 +68,11 @@ void PowerMotor::setPower(int power)
 		power = -100;
 	}
 
-	mCurrentPower = outputDuties[power];
+	if (power > 0){
+		mCurrentPower = outputDuties[power];
+	}else {
+		mCurrentPower = -outputDuties[power];
+	}
 
 	power = mInvert ? -outputDuties[power] : outputDuties[power];
 
