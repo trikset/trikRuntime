@@ -28,6 +28,7 @@
 #include <trikControl/objectSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+#include <trikControl/fifoInterface.h>
 
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -75,5 +76,8 @@ void sensorFromScriptValue(const QScriptValue &object, trikControl::SensorInterf
 
 QScriptValue vectorSensorToScriptValue(QScriptEngine *engine, trikControl::VectorSensorInterface* const &in);
 void vectorSensorFromScriptValue(const QScriptValue &object, trikControl::VectorSensorInterface* &out);
+
+QScriptValue fifoToScriptValue(QScriptEngine *engine, trikControl::FifoInterface* const &in);
+void fifoFromScriptValue(const QScriptValue &object, trikControl::FifoInterface* &out);
 
 }

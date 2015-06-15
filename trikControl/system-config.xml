@@ -68,11 +68,12 @@ equal to its class name.
 		<encoder />
 		<rangeSensor commonModule="hcsr04" />
 		<digitalSensor />
+		<fifo />
 		<accelerometer deviceFile="/dev/input/event1" optional="true" />
 		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" optional="true" />
 		<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
-		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" />
+		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
 
 		<!-- Device files for LED on a brick. -->
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
@@ -149,13 +150,14 @@ equal to its class name.
 		<encoder port="B4" i2cCommandNumber="0x33" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
-		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" />
+		<!-- <digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video0" />
 		<lineSensor port="video1" />
 		<objectSensor port="video0" />
 		<objectSensor port="video1" />
 		<colorSensor port="video0" />
 		<colorSensor port="video1" />
+		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 	</devicePorts>
 
 	<deviceTypes>

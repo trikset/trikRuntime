@@ -14,8 +14,6 @@
 
 #include "objectSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 using namespace trikControl;
 
 ObjectSensorWorker::ObjectSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
@@ -42,11 +40,12 @@ void ObjectSensorWorker::detect()
 
 QVector<int> ObjectSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> result = mReading;
-	mLock.unlock();
+	return mReading;
+}
 
-	return result;
+QVector<int> ObjectSensorWorker::getDetectParameters() const
+{
+	return mDetectParameters;
 }
 
 QString ObjectSensorWorker::sensorName() const
@@ -63,9 +62,8 @@ void ObjectSensorWorker::onNewData(const QString &dataLine)
 		const int y = parsedLine[2].toInt();
 		const int size = parsedLine[3].toInt();
 
-		mLock.lockForWrite();
-		mReading = {x, y, size};
-		mLock.unlock();
+		mReadingBuffer = {x, y, size};
+		mReading.swap(mReadingBuffer);
 	}
 
 	if (parsedLine[0] == "hsv:") {
@@ -86,5 +84,11 @@ void ObjectSensorWorker::onNewData(const QString &dataLine)
 				;
 
 		sendCommand(command);
+
+		mDetectParametersBuffer = {hue, saturation, value, hueTolerance, saturationTolerance, valueTolerance};
+
+		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
+		// this thread prepares data.
+		mDetectParameters.swap(mDetectParametersBuffer);
 	}
 }

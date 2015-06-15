@@ -98,6 +98,9 @@ signals:
 	/// @param scriptId - unique id of executed script assigned when script started.
 	void startedDirectScript(int scriptId);
 
+	/// Emitted when a message must be sent to a desktop.
+	void sendMessage(const QString &text);
+
 private slots:
 	void onScriptStart(int scriptId);
 

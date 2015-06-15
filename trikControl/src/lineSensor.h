@@ -55,6 +55,11 @@ public slots:
 
 	void stop() override;
 
+	QVector<int> getDetectParameters() const override;
+
+private slots:
+	void onStopped();
+
 private:
 	/// State of the device, shared with worker.
 	DeviceState mState;

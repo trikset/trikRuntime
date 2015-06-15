@@ -18,7 +18,6 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtCore/QHash>
-#include <QtCore/QDebug>
 
 namespace trikKernel {
 

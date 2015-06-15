@@ -44,6 +44,9 @@ public:
 	/// Delete all items.
 	void deleteAllItems();
 
+	/// Delets only text labels.
+	void deleteLabels();
+
 	/// Draw point on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
@@ -79,8 +82,11 @@ public:
 	/// @param spanAngle - end angle.
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 
-	/// Returns current pen color.
-	QColor currentPenColor() const;
+	/// Prints text at given coordinates.
+	void addLabel(const QString &text, int x, int y);
+
+	/// Sets pixmap which will be drawn instead of other elements.
+	void setPixmap(const QPixmap &picture);
 
 private:
 	/// Information about point.
@@ -198,11 +204,19 @@ private:
 	/// List of all arcs.
 	QList<ArcCoordinates> mArcs;
 
+	/// List of all labels.
+	QHash<QPair<int, int>, QString> mLabels;
+
+	QPixmap mPicture;
+
 	/// Current pen color.
 	QColor mCurrentPenColor;
 
 	/// Current pen width.
 	int mCurrentPenWidth;
+
+	/// Font information used for printing text.
+	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }

@@ -14,8 +14,9 @@
 
 #include "scriptThread.h"
 
-#include "threading.h"
+#include <QtCore/QEventLoop>
 
+#include "threading.h"
 #include <QsLog.h>
 
 using namespace trikScriptRunner;
@@ -42,6 +43,10 @@ void ScriptThread::run()
 		const QString message = mEngine->uncaughtException().toString();
 		mError = tr("Line %1: %2").arg(QString::number(line), message);
 		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
+	} else if (mThreading.inEventDrivenMode()) {
+		QEventLoop loop;
+		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::DirectConnection);
+		loop.exec();
 	}
 
 	mEngine->deleteLater();
@@ -52,6 +57,7 @@ void ScriptThread::run()
 void ScriptThread::abort()
 {
 	mEngine->abortEvaluation();
+	emit stopRunning();
 }
 
 QString ScriptThread::id() const

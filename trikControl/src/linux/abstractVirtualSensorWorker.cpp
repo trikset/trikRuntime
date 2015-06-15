@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 #include "src/abstractVirtualSensorWorker.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
 
 #include <unistd.h>
@@ -50,10 +49,9 @@ AbstractVirtualSensorWorker::Status AbstractVirtualSensorWorker::status() const
 void AbstractVirtualSensorWorker::stop()
 {
 	if (mState.isReady()) {
+		/// @todo Correctly stop starting sensor.
 		mState.stop();
 		deinitialize();
-	} else {
-		QLOG_ERROR() << "Trying to stop video sensor that is not started, ignoring";
 	}
 }
 

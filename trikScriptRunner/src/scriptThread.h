@@ -46,6 +46,10 @@ public:
 	/// @returns true if the script engine is evaluating a script at the moment
 	bool isEvaluating() const;
 
+signals:
+	/// Emitted when event loop must be stopped.
+	void stopRunning();
+
 protected:
 	void run() override;
 

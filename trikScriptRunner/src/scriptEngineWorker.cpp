@@ -16,6 +16,7 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QVector>
+#include <QtCore/QTextStream>
 
 #include <trikKernel/fileUtils.h>
 
@@ -54,6 +55,7 @@ Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -81,17 +83,27 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::reset()
 {
-	if (mState == resetting || mState == ready) {
+	if (mState == resetting) {
 		return;
 	}
 
-	QLOG_INFO() << "ScriptEngineWorker: reset started";
 	while (mState == starting) {
 		QThread::yieldCurrentThread();
 	}
 
+	if (mState == ready) {
+		/// Engine is ready for execution, but we need to clear brick state before we go.
+		QLOG_INFO() << "ScriptEngineWorker: 'soft' reset";
+		mState = resetting;
+		clearRobotExecutionState();
+		mState = ready;
+		return;
+	}
+
+	QLOG_INFO() << "ScriptEngineWorker: reset started";
+
 	mState = resetting;
-	mBrick.reset();
+
 	mScriptControl.reset();
 	mThreadingVariable.reset();
 
@@ -105,14 +117,7 @@ void ScriptEngineWorker::reset()
 		mDirectScriptsEngine = nullptr;
 	}
 
-	if (mMailbox) {
-		mMailbox->reset();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
-	}
-
+	clearRobotExecutionState();
 	mState = ready;
 	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
@@ -128,9 +133,10 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mThreadingVariable.startMainThread(script);
 	mState = running;
 	mThreadingVariable.waitForAll();
-	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << mThreadingVariable.errorMessage();
-	emit completed(mThreadingVariable.errorMessage(), mScriptId);
+	const QString error = mThreadingVariable.errorMessage();
 	reset();
+	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	emit completed(error, mScriptId);
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
@@ -195,6 +201,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
+	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
@@ -232,6 +239,23 @@ QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const 
 	return result;
 }
 
+QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+{
+	QString result;
+	for (int i = 0; i < context->argumentCount(); ++i) {
+		if (i > 0) {
+			result.append(" ");
+		}
+
+		result.append(context->argument(i).toString());
+	}
+
+	QTextStream(stdout) << result << "\n";
+	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
+
+	return engine->toScriptValue(result);
+}
+
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 {
 	if (QFile::exists(mStartDirPath + "system.js")) {
@@ -243,5 +267,21 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 		}
 	} else {
 		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
+	}
+
+	QScriptValue printFunction = engine->newFunction(print);
+	engine->globalObject().setProperty("print", printFunction);
+}
+
+void ScriptEngineWorker::clearRobotExecutionState()
+{
+	mBrick.reset();
+
+	if (mMailbox) {
+		mMailbox->reset();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
 	}
 }

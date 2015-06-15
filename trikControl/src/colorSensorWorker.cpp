@@ -34,13 +34,18 @@ ColorSensorWorker::ColorSensorWorker(const QString &script, const QString &input
 		throw IncorrectDeviceConfigurationException("Color Sensor shall have 'n' parameter greater than zero");
 	}
 
-	mReading.resize(m);
-	for (int i = 0; i < m; ++i) {
-		mReading[i].resize(n);
-		for (int j = 0; j < n; ++j) {
-			mReading[i][j] = {0, 0, 0};
+	const auto init = [m, n](QVector<QVector<QVector<int>>> &reading) {
+		reading.resize(m);
+		for (int i = 0; i < m; ++i) {
+			reading[i].resize(n);
+			for (int j = 0; j < n; ++j) {
+				reading[i][j] = {0, 0, 0};
+			}
 		}
-	}
+	};
+
+	init(mReading);
+	init(mReadingBuffer);
 }
 
 ColorSensorWorker::~ColorSensorWorker()
@@ -60,11 +65,7 @@ QVector<int> ColorSensorWorker::read(int m, int n)
 		return {-1, -1, -1};
 	}
 
-	mLock.lockForRead();
-	QVector<int> result = mReading[m - 1][n - 1];
-	mLock.unlock();
-
-	return result;
+	return mReading[m - 1][n - 1];
 }
 
 QString ColorSensorWorker::sensorName() const
@@ -78,23 +79,22 @@ void ColorSensorWorker::onNewData(const QString &dataLine)
 
 	if (parsedLine[0] == "color:") {
 
-		if (parsedLine.size() <= mReading.size() * mReading[0].size()) {
+		if (parsedLine.size() <= mReadingBuffer.size() * mReadingBuffer[0].size()) {
 			// Data is corrupted, for example, by other process that have read part of data from FIFO.
 			QLOG_WARN() << "Corrupted data in sensor output queue:" << dataLine;
 			return;
 		}
 
-		mLock.lockForWrite();
-		for (int i = 0; i < mReading.size(); ++i) {
-			for (int j = 0; j < mReading[i].size(); ++j) {
-				unsigned const int colorValue = parsedLine[i * mReading.size() + j + 1].toUInt();
+		for (int i = 0; i < mReadingBuffer.size(); ++i) {
+			for (int j = 0; j < mReadingBuffer[i].size(); ++j) {
+				unsigned const int colorValue = parsedLine[i * mReadingBuffer.size() + j + 1].toUInt();
 				const int r = (colorValue >> 16) & 0xFF;
 				const int g = (colorValue >> 8) & 0xFF;
 				const int b = colorValue & 0xFF;
-				mReading[i][j] = {r, g, b};
+				mReadingBuffer[i][j] = {r, g, b};
 			}
 		}
 
-		mLock.unlock();
+		mReading.swap(mReadingBuffer);
 	}
 }

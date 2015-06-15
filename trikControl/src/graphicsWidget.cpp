@@ -24,6 +24,8 @@ GraphicsWidget::GraphicsWidget()
 	: mCurrentPenColor(Qt::black)
 	, mCurrentPenWidth(0)
 {
+	setAutoFillBackground(true);
+	mFontMetrics.reset(new QFontMetrics(font()));
 }
 
 void GraphicsWidget::showCommand()
@@ -43,6 +45,11 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 	Q_UNUSED(paintEvent)
 
 	QPainter painter(this);
+
+	if (!mPicture.isNull()) {
+		painter.drawPixmap(geometry(), mPicture);
+		return;
+	}
 
 	for (int i = 0; i < mLines.length(); i++)
 	{
@@ -69,7 +76,7 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 		painter.setPen(
 				QPen(mEllipses.at(i).color, mEllipses.at(i).penWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
 
-		painter.drawEllipse(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y()
+		painter.drawEllipse(QPointF(mEllipses.at(i).ellipse.x(), mEllipses.at(i).ellipse.y())
 				, mEllipses.at(i).ellipse.width(), mEllipses.at(i).ellipse.height());
 	}
 
@@ -80,6 +87,13 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 				, mArcs.at(i).arc.width(), mArcs.at(i).arc.height()
 				, mArcs.at(i).startAngle, mArcs.at(i).spanAngle);
 	}
+
+	for (const QPair<int, int> &position : mLabels.keys()) {
+		painter.setPen(mCurrentPenColor);
+		const QString text = mLabels[position];
+		painter.drawText(position.first, position.second, mFontMetrics->width(text), mFontMetrics->height()
+				, Qt::TextWordWrap, text);
+	}
 }
 
 void GraphicsWidget::deleteAllItems()
@@ -89,6 +103,13 @@ void GraphicsWidget::deleteAllItems()
 	mRects.clear();
 	mEllipses.clear();
 	mArcs.clear();
+	deleteLabels();
+	mPicture = QPixmap();
+}
+
+void GraphicsWidget::deleteLabels()
+{
+	mLabels.clear();
 }
 
 void GraphicsWidget::setPainterColor(const QString &color)
@@ -255,7 +276,12 @@ bool GraphicsWidget::containsArc(const ArcCoordinates &coordinates)
 	return false;
 }
 
-QColor GraphicsWidget::currentPenColor() const
+void GraphicsWidget::addLabel(const QString &text, int x, int y)
 {
-	return mCurrentPenColor;
+	mLabels[qMakePair(x, y)] = text;
+}
+
+void GraphicsWidget::setPixmap(const QPixmap &picture)
+{
+	mPicture = picture;
 }

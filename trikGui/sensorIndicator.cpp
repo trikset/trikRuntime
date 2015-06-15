@@ -23,7 +23,6 @@
 #endif
 
 #include <QtCore/QString>
-#include <QtCore/QDebug>
 
 #include <trikControl/sensorInterface.h>
 

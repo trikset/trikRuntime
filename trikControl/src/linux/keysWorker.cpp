@@ -14,7 +14,6 @@
 
 #include "src/keysWorker.h"
 
-#include <QtCore/QDebug>
 #include <unistd.h>
 #include <fcntl.h>
 #include <linux/input.h>

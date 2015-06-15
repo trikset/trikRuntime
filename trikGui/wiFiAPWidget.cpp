@@ -14,7 +14,6 @@
 
 #include "wiFiAPWidget.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QList>
 
 #include <QtNetwork/QNetworkInterface>

@@ -14,6 +14,14 @@
 
 #include "keys.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
+#include <unistd.h>
+
 #include <trikKernel/configurer.h>
 
 #include "keysWorker.h"
@@ -63,4 +71,32 @@ bool Keys::isPressed(int code)
 void Keys::changeButtonState(int code, int value)
 {
 	mKeysPressed[code] = value;
+}
+
+int Keys::buttonCode(bool wait)
+{
+	if (!wait) {
+		return pressedButton();
+	}
+
+	while (true) {
+		int code = pressedButton();
+		if (code == -1) {
+			usleep(20);
+			QApplication::processEvents();
+		} else {
+			return code;
+		}
+	}
+}
+
+int Keys::pressedButton()
+{
+	for (int button : mKeysPressed.keys()) {
+		if (mKeysPressed[button]) {
+			return button;
+		}
+	}
+
+	return -1;
 }

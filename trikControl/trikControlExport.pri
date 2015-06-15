@@ -61,7 +61,11 @@ LIBS += -L$$TRIK_RUNTIME_BIN_DIR
 
 LIBS += -lqslog$$CONFIGURATION_SUFFIX
 
-CONFIG += c++11
+if (equals(QT_MAJOR_VERSION, 5)) {
+	CONFIG += c++11
+} else {
+	QMAKE_CXXFLAGS += -std=c++11
+}
 
 defineTest(copyToDestdir) {
 	FILES = $$1

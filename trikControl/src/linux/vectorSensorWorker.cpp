@@ -14,8 +14,6 @@
 
 #include "src/vectorSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 #include <cmath>
 #include <unistd.h>
 #include <fcntl.h>
