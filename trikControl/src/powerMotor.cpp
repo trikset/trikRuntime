@@ -68,13 +68,16 @@ void PowerMotor::setPower(int power)
 		power = -100;
 	}
 
-	if (power > 0){
+	if (power >= 0){
 		mCurrentPower = outputDuties[power];
 	}else {
-		mCurrentPower = -outputDuties[power];
+		
+		mCurrentPower = -outputDuties[-power];
+		
 	}
+	power = mCurrentPower;
 
-	power = mInvert ? -outputDuties[power] : outputDuties[power];
+	power = mInvert ? -power: power;
 
 	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
@@ -134,10 +137,11 @@ void PowerMotor::calculateDutyCorrection (QStringList const & input,int * output
 	int k = 0;
 	int length = input.count();
 	if (length < 2 ) {
-		//mstate.fail();
-		//QLOG_ERROR() << "array of input Duties shall have more than 1 value";
-		throw IncorrectDeviceConfigurationException("array of input Duties shall have more than 1 values");
+		mState.fail();
+		throw IncorrectDeviceConfigurationException("Array of input Duties shall have more than 1 values. Change string <jga25Motor /> in system-config.xml");
 	} 
+
+	
 	else{
 		int calcDuties [length];
 		int  max = 0;
@@ -150,16 +154,19 @@ void PowerMotor::calculateDutyCorrection (QStringList const & input,int * output
 				max = calcDuties[k];
 			}
 		}
-	
-		for (k = 0; k < length; k++)
-		{
-			calcDuties[k] = calcDuties[k]* 100 * fixedPointOrder / max;
-		}
+		if (calcDuties[length - 1] != max){
+			mState.fail();
+			throw IncorrectDeviceConfigurationException("Last value in inputDuties array should be maximum value. Recount encoder's values!!!");
+		}	
+		else{
+			for (k = 0; k < length; k++){
+				calcDuties[k] = calcDuties[k]* 100 * fixedPointOrder / max;
+			}
 	
 
-		for ( k = 0; k <= 100; k++)
-		{
-			outputDuties[k] = searchSuitable(k * fixedPointOrder, calcDuties,step,length) / fixedPointOrder;
+			for ( k = 0; k <= 100; k++){
+				outputDuties[k] = searchSuitable(k * fixedPointOrder, calcDuties,step,length) / fixedPointOrder;
+			}
 		}
 	}
 }
