@@ -54,12 +54,13 @@ private:
 	{
 		/// Calibrated IR sensor.
 		sharpGP2
+
 		/// Normalized IR sensor.
 		, analog	
 	};
 	
-	void CalculateLNS(const QString &port, const trikKernel::Configurer &configurer);
-	void CalculateKB(const QString &port, const trikKernel::Configurer &configurer);
+	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
+	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber = 0;
@@ -70,7 +71,7 @@ private:
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mB = 0;
-	
+
 	/// Hyperbolical approximation coefficient l.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mL = 0;

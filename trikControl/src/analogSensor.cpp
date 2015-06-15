@@ -38,9 +38,9 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	// To calculate s, l and n we need sensor readings at three distances.
 
 	if (mIRType == Type::sharpGP2){
-		CalculateLNS(port, configurer);	
+		calculateLNS(port, configurer);	
 	} else {
-		CalculateKB(port, configurer);	
+		calculateKB(port, configurer);	
 	}
 	mState.ready();
 }
@@ -52,9 +52,9 @@ AnalogSensor::Status AnalogSensor::status() const
 
 int AnalogSensor::read()
 {
-	auto raw = readRawData();
-	if (mIRType == Type::sharpGP2){
-		return mS/(raw + mL) + mN;	
+	const auto raw = readRawData();
+	if (mIRType == Type::sharpGP2) {
+		return mS /(raw + mL) + mN;	
 	}
 	return mK * raw + mB;
 }
@@ -71,12 +71,13 @@ int AnalogSensor::readRawData()
 	return mCommunicator.read(command);
 }
 
-void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configurer &configurer)
+void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)
 {
 	QStringList result;
-	for (const QString &str : configurer.attributeByPort(port, "values").split(")")){
+	for (const QString &str : configurer.attributeByPort(port, "values").split(")")) {
 		result += str.mid(1).split(";");
 	}
+
 	const int x1 = result[0].toInt();
 	const int y1 = result[1].toInt();
 	const int x2 = result[2].toInt();
@@ -91,7 +92,7 @@ void AnalogSensor::CalculateLNS(const QString &port, const trikKernel::Configure
 	mN = x1 - mS / (y1 + mL);	
 }
 
-void AnalogSensor::CalculateKB(const QString &port, const trikKernel::Configurer &configurer)
+void AnalogSensor::calculateKB(const QString &port, const trikKernel::Configurer &configurer)
 {
 	const int rawValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue1");
 	const int rawValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue2");
