@@ -25,6 +25,7 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
+	, mCurrentPeriod(0x1000)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mState.ready();
@@ -66,7 +67,22 @@ int PowerMotor::power() const
 	return mCurrentPower;
 }
 
+int PowerMotor::period() const
+{
+	return mCurrentPeriod;
+}
+
 void PowerMotor::powerOff()
 {
 	setPower(0);
+}
+
+void PowerMotor::setPeriod(int period)
+{
+	mCurrentPeriod = period;
+	QByteArray command(3, '\0');
+	command[0] = static_cast<char>((mI2cCommandNumber - 4) & 0xFF);
+	command[1] = static_cast<char>(period && 0xFF);
+	command[2] = static_cast<char>(period >> 8);
+	mCommunicator.send(command);
 }

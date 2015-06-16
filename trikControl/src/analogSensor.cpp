@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Nikita Batov, Kseniya Gonta and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,26 +26,20 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-
-	// We use linear subjection to normalize sensor values:
+	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;
+	// We use linear subjection to normalize common analog sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
 
-	const int rawValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue1");
-	const int rawValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue2");
-	const int normalizedValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue1");
-	const int normalizedValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue2");
+	// We use hyperbolical subjection to normalize SharpGP2 sensor values:
+	// normalizedValue = s / (rawValue + l) + n
+	// To calculate s, l and n we need sensor readings at three distances.
 
-	if (rawValue1 == rawValue2) {
-		QLOG_ERROR() <<  "Sensor calibration error: rawValue1 = rawValue2!";
-		mState.fail();
-		mK = 0;
-		mB = 0;
+	if (mIRType == Type::sharpGP2){
+		calculateLNS(port, configurer);	
 	} else {
-		mK = static_cast<qreal>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
-		mB = normalizedValue1 - mK * rawValue1;
+		calculateKB(port, configurer);	
 	}
-
 	mState.ready();
 }
 
@@ -56,14 +50,11 @@ AnalogSensor::Status AnalogSensor::status() const
 
 int AnalogSensor::read()
 {
-	if (!mState.isReady() || mCommunicator.status() != DeviceInterface::Status::ready) {
-		return 0;
+	const auto raw = readRawData();
+	if (mIRType == Type::sharpGP2) {
+		return mS /(raw + mL) + mN;	
 	}
-
-	QByteArray command(1, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-
-	return mK * mCommunicator.read(command) + mB;
+	return mK * raw + mB;
 }
 
 int AnalogSensor::readRawData()
@@ -76,4 +67,42 @@ int AnalogSensor::readRawData()
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 
 	return mCommunicator.read(command);
+}
+
+void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)
+{
+	QStringList result;
+	for (const QString &str : configurer.attributeByPort(port, "values").split(")")) {
+		result += str.mid(1).split(";");
+	}
+
+	const int x1 = result[0].toInt();
+	const int y1 = result[1].toInt();
+	const int x2 = result[2].toInt();
+	const int y2 = result[3].toInt();
+	const int x3 = result[4].toInt();
+	const int y3 = result[5].toInt();
+
+	// Counted from equations x1 = mS/(y1 + mL) + mN, x2 = mS/(y2 + mL) + mN, x3 = mS/(y3 + mL) + mN 
+	mL = (-x1 * y1 * y3 - x3 * y2 * y3 + x3 * y1 * y3 + x1 * y1 * y2 + x2 * y2 * y3 - x2 * y1 * y2) / 
+			(x1 * y3 - x2 * y3 + x2 * y1 - x1 * y2 + x3 * y2 - x3 * y1);
+	mS = (x1 - x2) * (y1 + mL) * (y2 + mL) / (y2 - y1);
+	mN = x1 - mS / (y1 + mL);	
+}
+
+void AnalogSensor::calculateKB(const QString &port, const trikKernel::Configurer &configurer)
+{
+	const int rawValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue1");
+	const int rawValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "rawValue2");
+	const int normalizedValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue1");
+	const int normalizedValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue2");
+	if (rawValue1 == rawValue2) {
+		QLOG_ERROR() <<  "Sensor calibration error: rawValue1 = rawValue2!";
+		mState.fail();
+		mK = 0;
+		mB = 0;
+	} else {
+		mK = static_cast<qreal>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
+		mB = normalizedValue1 - mK * rawValue1;
+	}
 }
