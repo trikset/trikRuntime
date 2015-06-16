@@ -84,6 +84,7 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 	QLOG_INFO() << "Starting new thread" << threadId << "with engine" << engine;
 	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
+	connect(&mScriptControl, SIGNAL(quitSignal()), thread, SIGNAL(stopRunning()), Qt::DirectConnection);
 	mThreads[threadId] = thread;
 	mFinishedThreads.remove(threadId);
 	mThreadsMutex.unlock();

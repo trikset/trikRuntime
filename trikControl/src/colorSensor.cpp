@@ -14,8 +14,6 @@
 
 #include "colorSensor.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
 
 #include "colorSensorWorker.h"
@@ -35,7 +33,7 @@ ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &conf
 	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState));
 	mColorSensorWorker->moveToThread(&mWorkerThread);
 
-	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 
 	mWorkerThread.start();
 }
@@ -67,4 +65,9 @@ QVector<int> ColorSensor::read(int m, int n)
 void ColorSensor::stop()
 {
 	QMetaObject::invokeMethod(mColorSensorWorker.data(), "stop");
+}
+
+void ColorSensor::onStopped()
+{
+	emit stopped();
 }

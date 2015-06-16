@@ -55,6 +55,7 @@ Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -82,19 +83,29 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::reset()
 {
-	if (mState == resetting || mState == ready) {
+	if (mState == resetting) {
 		return;
 	}
 
-	QLOG_INFO() << "ScriptEngineWorker: reset started";
 	while (mState == starting) {
 		QThread::yieldCurrentThread();
 	}
 
+	if (mState == ready) {
+		/// Engine is ready for execution, but we need to clear brick state before we go.
+		QLOG_INFO() << "ScriptEngineWorker: 'soft' reset";
+		mState = resetting;
+		clearRobotExecutionState();
+		mState = ready;
+		return;
+	}
+
+	QLOG_INFO() << "ScriptEngineWorker: reset started";
+
 	mState = resetting;
+
 	mScriptControl.reset();
 	mThreadingVariable.reset();
-	mBrick.reset();
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();
@@ -106,14 +117,7 @@ void ScriptEngineWorker::reset()
 		mDirectScriptsEngine = nullptr;
 	}
 
-	if (mMailbox) {
-		mMailbox->reset();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
-	}
-
+	clearRobotExecutionState();
 	mState = ready;
 	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
@@ -197,6 +201,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
+	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
@@ -266,4 +271,17 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 
 	QScriptValue printFunction = engine->newFunction(print);
 	engine->globalObject().setProperty("print", printFunction);
+}
+
+void ScriptEngineWorker::clearRobotExecutionState()
+{
+	mBrick.reset();
+
+	if (mMailbox) {
+		mMailbox->reset();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
+	}
 }

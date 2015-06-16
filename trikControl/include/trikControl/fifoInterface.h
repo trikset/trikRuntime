@@ -22,29 +22,21 @@
 
 namespace trikControl {
 
-/// Class for handling keys on a brick.
-class TRIKCONTROL_EXPORT KeysInterface : public QObject, public DeviceInterface
+/// Interface that represents linux FIFO file, which is commonly used by various sensors.
+class TRIKCONTROL_EXPORT FifoInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 
 public slots:
-	/// Clear data about previous key pressures.
-	virtual void reset() = 0;
+	/// Reads data from this FIFO file, returning all available data as string.
+	virtual QString read() = 0;
 
-	/// Returns true if button with given code was pressed, and clears "pressed" state for that button.
-	virtual bool wasPressed(int code) = 0;
-
-	/// Returns true if button with given code is pressed at the moment.
-	virtual bool isPressed(int code) = 0;
-
-	/// Returns a code of a pressed button.
-	virtual int buttonCode(bool wait = true) = 0;
+	/// Returns true if FIFO has new data in it.
+	virtual bool hasData() const = 0;
 
 signals:
-	/// Triggered when button state changed (pressed or released).
-	/// @param code - key code.
-	/// @param value - key state.
-	void buttonPressed(int code, int value);
+	/// Emitted when new string is arrived to FIFO file. Emitted several times if more than one string arrives at once.
+	void newData(const QString &data);
 };
 
 }

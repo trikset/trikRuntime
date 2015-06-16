@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
  * limitations under the License. */
 
 #include "lineSensorWorker.h"
-
-#include <QtCore/QDebug>
 
 using namespace trikControl;
 
@@ -42,10 +40,12 @@ void LineSensorWorker::detect()
 
 QVector<int> LineSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> result = mReading;
-	mLock.unlock();
-	return result;
+	return mReading;
+}
+
+QVector<int> LineSensorWorker::getDetectParameters() const
+{
+	return mDetectParameters;
 }
 
 QString LineSensorWorker::sensorName() const
@@ -62,11 +62,11 @@ void LineSensorWorker::onNewData(const QString &dataLine)
 		const int crossroadsProbability = parsedLine[2].toInt();
 		const int mass = parsedLine[3].toInt();
 
-		mLock.lockForWrite();
-		mReading[0] = x;
-		mReading[1] = crossroadsProbability;
-		mReading[2] = mass;
-		mLock.unlock();
+		mReadingBuffer = {x, crossroadsProbability, mass};
+
+		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
+		// this thread prepares data.
+		mReading.swap(mReadingBuffer);
 	}
 
 	if (parsedLine[0] == "hsv:") {
@@ -87,5 +87,11 @@ void LineSensorWorker::onNewData(const QString &dataLine)
 				;
 
 		sendCommand(command);
+
+		mDetectParametersBuffer = {hue, saturation, value, hueTolerance, saturationTolerance, valueTolerance};
+
+		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
+		// this thread prepares data.
+		mDetectParameters.swap(mDetectParametersBuffer);
 	}
 }

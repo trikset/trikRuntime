@@ -52,6 +52,11 @@ public slots:
 
 	void stop() override;
 
+	QVector<int> getDetectParameters() const override;
+
+private slots:
+	void onStopped();
+
 private:
 	/// Sensor state.
 	DeviceState mState;

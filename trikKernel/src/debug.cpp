@@ -14,6 +14,8 @@
 
 #include "debug.h"
 
+#include <QtCore/QDebug>
+
 using namespace trikKernel;
 
 QHash<QThread *, int> Debugger::mIndent;

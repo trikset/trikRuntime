@@ -29,11 +29,10 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 	const QString &outputFile = configurer.attributeByPort(port, "outputFile");
 	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
-	mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
-
 	if (!mState.isFailed()) {
+		mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
 		mLineSensorWorker->moveToThread(&mWorkerThread);
-		connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+		connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 		mWorkerThread.start();
 	}
 }
@@ -81,8 +80,23 @@ QVector<int> LineSensor::read()
 void LineSensor::stop()
 {
 	if (mState.isReady()) {
+		/// @todo Correctly stop starting sensor.
 		QMetaObject::invokeMethod(mLineSensorWorker.data(), "stop");
-	} else {
-		QLOG_WARN() << "Calling 'stop' for sensor which is not ready";
 	}
+}
+
+QVector<int> LineSensor::getDetectParameters() const
+{
+	if (mState.isReady()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mLineSensorWorker->getDetectParameters();
+	} else {
+		QLOG_WARN() << "Calling 'read' for sensor which is not ready";
+		return {};
+	}
+}
+
+void LineSensor::onStopped()
+{
+	emit stopped();
 }

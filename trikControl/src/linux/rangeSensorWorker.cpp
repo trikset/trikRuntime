@@ -14,7 +14,6 @@
 
 #include "src/rangeSensorWorker.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
 #include <QtCore/QTimer>
@@ -113,21 +112,15 @@ void RangeSensorWorker::readFile()
 			case EV_ABS:
 				switch (event.code) {
 				case ABS_DISTANCE:
-					mLock.lockForWrite();
 					mDistance = event.value;
-					mLock.unlock();
 					break;
 				case ABS_MISC:
-					mLock.lockForWrite();
 					mRawDistance = event.value;
-					mLock.unlock();
 					break;
 				}
 				break;
 			case EV_SYN:
-				mLock.lockForRead();
 				emit newData(mDistance, mRawDistance);
-				mLock.unlock();
 				break;
 		}
 	}
@@ -155,10 +148,7 @@ int RangeSensorWorker::read()
 		return 0;
 	}
 
-	mLock.lockForRead();
-	const int result = mDistance;
-	mLock.unlock();
-	return result;
+	return mDistance;
 }
 
 int RangeSensorWorker::readRawData()
@@ -168,8 +158,5 @@ int RangeSensorWorker::readRawData()
 		return 0;
 	}
 
-	mLock.lockForRead();
-	const int result = mRawDistance;
-	mLock.unlock();
-	return result;
+	return mRawDistance;
 }

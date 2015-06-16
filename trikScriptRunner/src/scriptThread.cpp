@@ -45,7 +45,7 @@ void ScriptThread::run()
 		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 	} else if (mThreading.inEventDrivenMode()) {
 		QEventLoop loop;
-		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()));
+		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::DirectConnection);
 		loop.exec();
 	}
 

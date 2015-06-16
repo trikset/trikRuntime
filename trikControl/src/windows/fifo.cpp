@@ -12,27 +12,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/moduleLoader.h"
+#include "src/fifo.h"
 
-#include <QsLog.h>
+#include <QtCore/QSocketNotifier>
+#include <QtCore/QEventLoop>
+
+#include <trikKernel/configurer.h>
+
+
+#include "src/configurerHelper.h"
 
 using namespace trikControl;
 
-/// Loads given module using modprobe.
-bool ModuleLoader::load(const QString &module)
+Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer)
+	: mFifoFileDescriptor(-1)
 {
-	if (mLoadedModules.contains(module)) {
-		return true;
-	}
+	Q_UNUSED(virtualPort)
+	Q_UNUSED(configurer)
 
-	if (::system(QString("modprobe %1").arg(module).toStdString().c_str()) != 0) {
-		QLOG_ERROR() << "modprobe" << module << "failed";
-		return false;
-	}
+	mState.fail();
+}
 
-	QLOG_INFO() << "Module" << module << "loaded";
+Fifo::~Fifo()
+{
+}
 
-	mLoadedModules.insert(module);
+DeviceInterface::Status Fifo::status() const
+{
+	return mState.status();
+}
 
-	return true;
+QString Fifo::read()
+{
+	return "";
+}
+
+bool Fifo::hasData() const
+{
+	return false;
+}
+
+void Fifo::readFile()
+{
 }

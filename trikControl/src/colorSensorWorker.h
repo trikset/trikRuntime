@@ -61,11 +61,11 @@ private:
 	/// green and blue components of a dominant color in this cell.
 	QVector<QVector<QVector<int>>> mReading;
 
+	/// Temporary buffer for new readings of a sensor. When all data is received, it is synced with mReading.
+	QVector<QVector<QVector<int>>> mReadingBuffer;
+
 	/// True, if video stream from camera shall be shown on robot display.
 	bool mShowOnDisplay = true;
-
-	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
-	QReadWriteLock mLock;
 };
 
 }
