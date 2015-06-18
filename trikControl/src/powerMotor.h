@@ -83,8 +83,6 @@ private:
 		
 	int mOutputDuties[101];		
 	const int mFixedPointOrder = 100;
-
-
 };
 
 }
