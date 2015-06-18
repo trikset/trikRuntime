@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 #include <QStringList>
+
 #include "motorInterface.h"
 #include "deviceState.h"
 
@@ -65,15 +66,17 @@ public slots:
 
 private:
 	
+	int searchSuitable(int duty,int *array, int step, int length);
+	void calculateDutyCorrection(const QStringList & input,int *outputDuties);
+
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
-	int searchSuitable(int duty,int *array, int step, int length);
-	void calculateDutyCorrection (QStringList const & input,int * outputDuties);
-	int outputDuties[101];		
-	const int fixedPointOrder = 100;
+	
+	int mOutputDuties[101];		
+	const int mFixedPointOrder = 100;
 };
 
 }
