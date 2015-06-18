@@ -118,7 +118,8 @@ void I2cCommunicator::connect()
 	if (connect_USBMSP() == DEVICE_ERROR)
 	{
 		QLOG_ERROR() << "Failed to open USB device file " << USB_DEV_NAME;
-		//mState.fail();
+		mState.fail();
+		return;
 	}
 	else
 	{
