@@ -57,12 +57,17 @@ public slots:
 	/// Returns currently set power of a motor.
 	int power() const;
 
+	/// Returns currently set period of a motor.
+	int period() const;
+
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
-	
-	
+	/// Sets current motor period.
+	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses. 
+	void setPeriod(int period);
+
 
 private:
 	
@@ -73,10 +78,13 @@ private:
 	int mI2cCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
+	int mCurrentPeriod;
 	DeviceState mState;
-	
+		
 	int mOutputDuties[101];		
 	const int mFixedPointOrder = 100;
+
+
 };
 
 }
