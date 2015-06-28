@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
+#include <QtScript/QScriptEngine>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -50,6 +51,9 @@ public:
 
 	/// Returns name of the directory in which scripts must be saved
 	QString scriptsDirName() const;
+
+	/// Registers given C++ function as callable from script, with given name.
+	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
 
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.

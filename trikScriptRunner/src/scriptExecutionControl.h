@@ -16,6 +16,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QTimer>
+#include <QtCore/QStringList>
 
 namespace trikScriptRunner {
 
@@ -58,6 +59,9 @@ public slots:
 
 	/// Appends given text to the end of a file.
 	void writeToFile(const QString &file, const QString &text);
+
+	/// Reads all lines from a text file and returns it as a list of strings.
+	QStringList readAll(const QString &file) const;
 
 	/// Removes a file.
 	void removeFile(const QString &file);

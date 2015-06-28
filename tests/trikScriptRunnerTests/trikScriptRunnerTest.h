@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <trikControl/brickInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
 #include <gtest/gtest.h>
@@ -26,6 +27,14 @@ class TrikScriptRunnerTest : public testing::Test
 protected:
 	void SetUp() override;
 	void TearDown() override;
+
+	void run(const QString &script);
+	void runFromFile(const QString &fileName);
+
+
+private:
+	QScopedPointer<trikControl::BrickInterface> mBrick;
+	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
 };
 
 }
