@@ -69,6 +69,9 @@ public:
 	/// they need to be re-evaluated manually.
 	QScriptEngine *copyScriptEngine(const QScriptEngine * const original);
 
+	/// Registers given C++ function as callable from script, with given name.
+	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
@@ -130,6 +133,7 @@ private:
 	const QString mStartDirPath;
 	int mScriptId;
 	State mState;
+	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;
 };
 
 }

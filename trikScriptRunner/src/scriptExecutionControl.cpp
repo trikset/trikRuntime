@@ -92,7 +92,6 @@ void ScriptExecutionControl::system(const QString &command)
 {
 	QStringList args{"-c", command};
 	QLOG_INFO() << "Running: " << "sh" << args;
-	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
 }
 
@@ -101,6 +100,24 @@ void ScriptExecutionControl::writeToFile(const QString &file, const QString &tex
 	QFile out(file);
 	out.open(QIODevice::WriteOnly | QIODevice::Append);
 	out.write(text.toUtf8());
+}
+
+QStringList ScriptExecutionControl::readAll(const QString &file) const
+{
+	QFile in(file);
+	if (!in.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_INFO() << "Trying to read from file" << file << "failed";
+		return {};
+	}
+
+	QStringList result;
+
+	while (!in.atEnd()) {
+		const auto line = in.readLine();
+		result << QString::fromUtf8(line);
+	}
+
+	return result;
 }
 
 void ScriptExecutionControl::removeFile(const QString &file)
