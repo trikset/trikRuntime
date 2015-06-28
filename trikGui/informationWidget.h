@@ -61,6 +61,9 @@ private slots:
 	void updateVersion();
 
 private:
+	/// Returns operating system version.
+	QString osVersion() const;
+
 	/// Main layout of this widget.
 	QVBoxLayout mLayout;
 

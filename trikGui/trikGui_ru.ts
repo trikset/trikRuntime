@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
@@ -90,6 +90,14 @@
     <message>
         <source>Do you really want to update current version?</source>
         <translation>Вы действительно хотите обновиться?</translation>
+    </message>
+    <message>
+        <source>OS version</source>
+        <translation>Версия ОС</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Неизвестна</translation>
     </message>
 </context>
 <context>
