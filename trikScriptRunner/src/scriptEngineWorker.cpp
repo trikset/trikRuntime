@@ -59,6 +59,23 @@ Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
+QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+{
+	QString result;
+	for (int i = 0; i < context->argumentCount(); ++i) {
+		if (i > 0) {
+			result.append(" ");
+		}
+
+		result.append(context->argument(i).toString());
+	}
+
+	QTextStream(stdout) << result << "\n";
+	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
+
+	return engine->toScriptValue(result);
+}
+
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
@@ -74,6 +91,8 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mState(ready)
 {
 	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+
+	registerUserFunction("print", print);
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -239,21 +258,9 @@ QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const 
 	return result;
 }
 
-QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+void ScriptEngineWorker::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
-	QString result;
-	for (int i = 0; i < context->argumentCount(); ++i) {
-		if (i > 0) {
-			result.append(" ");
-		}
-
-		result.append(context->argument(i).toString());
-	}
-
-	QTextStream(stdout) << result << "\n";
-	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
-
-	return engine->toScriptValue(result);
+	mRegisteredUserFunctions[name] = function;
 }
 
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
@@ -269,8 +276,10 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
 	}
 
-	QScriptValue printFunction = engine->newFunction(print);
-	engine->globalObject().setProperty("print", printFunction);
+	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
+		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);
+		engine->globalObject().setProperty(functionName, functionValue);
+	}
 }
 
 void ScriptEngineWorker::clearRobotExecutionState()

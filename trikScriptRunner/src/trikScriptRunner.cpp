@@ -65,6 +65,11 @@ QString TrikScriptRunner::scriptsDirName() const
 	return constScriptsDirName;
 }
 
+void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
+{
+	mScriptEngineWorker->registerUserFunction(name, function);
+}
+
 void TrikScriptRunner::brickBeep()
 {
 	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");

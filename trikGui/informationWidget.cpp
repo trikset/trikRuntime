@@ -22,10 +22,15 @@ using namespace trikGui;
 
 InformationWidget::InformationWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
+	, mUpdateButton(nullptr)
 {
 	QLabel* const versionLabel = new QLabel(tr("Current version") + ": \n" + trikKernel::version);
 	versionLabel->setAlignment(Qt::AlignTop);
 	mLayout.addWidget(versionLabel);
+
+	QLabel* const osVersionLabel = new QLabel(tr("OS version") + ": \n" + osVersion());
+	osVersionLabel->setAlignment(Qt::AlignTop);
+	mLayout.addWidget(osVersionLabel);
 
 	mUpdateButton = new QPushButton(tr("Update"));
 	mLayout.addWidget(mUpdateButton);
@@ -97,5 +102,16 @@ void InformationWidget::updateVersion()
 		default:
 			break;
 	 }
+}
 
+QString InformationWidget::osVersion() const
+{
+	QFile version("/etc/version");
+	if (!version.exists()) {
+		return tr("Unknown");
+	}
+
+	version.open(QIODevice::ReadOnly);
+
+	return QString::fromUtf8(version.readAll()).trimmed();
 }

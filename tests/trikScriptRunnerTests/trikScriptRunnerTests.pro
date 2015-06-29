@@ -16,10 +16,17 @@ include(../../global.pri)
 
 include(../common.pri)
 
+QT += script
+
 HEADERS += \
 	$$PWD/trikScriptRunnerTest.h \
 
 SOURCES += \
 	$$PWD/trikScriptRunnerTest.cpp \
 
+OTHER_FILES += \
+	$$PWD/data/file-test.js \
+
 uses(trikKernel trikControl trikScriptRunner trikNetwork)
+
+copyToDestdir($$PWD/data/, now)
