@@ -52,8 +52,11 @@ int AnalogSensor::read()
 {
 	const auto raw = readRawData();
 	if (mIRType == Type::sharpGP2) {
-		return mS /(raw + mL) + mN;	
+		const auto quotient = raw + mL;	
+		const auto result = quotient != 0 ? mS / quotient + mN : 0;
+		return result;	
 	}
+
 	return mK * raw + mB;
 }
 
