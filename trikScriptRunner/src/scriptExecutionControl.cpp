@@ -19,6 +19,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 #include <QsLog.h>
 
@@ -85,4 +86,44 @@ void ScriptExecutionControl::system(QString const &command)
 	QLOG_INFO() << "Running: " << "sh" << args;
 	qDebug() << "Running:" << "sh" << args;
 	QProcess::startDetached("sh", args);
+}
+
+int ScriptExecutionControl::random(int from, int to) const
+{
+	if (from > to) {
+		qSwap(from, to);
+	}
+
+	return qrand() % (to - from + 1) + from;
+}
+
+void ScriptExecutionControl::writeToFile(const QString &file, const QString &text)
+{
+	QFile out(file);
+	out.open(QIODevice::WriteOnly | QIODevice::Append);
+	out.write(text.toUtf8());
+}
+
+QStringList ScriptExecutionControl::readAll(const QString &file) const
+{
+	QFile in(file);
+	if (!in.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_INFO() << "Trying to read from file" << file << "failed";
+		return {};
+	}
+
+	QStringList result;
+
+	while (!in.atEnd()) {
+		const auto line = in.readLine();
+		result << QString::fromUtf8(line);
+	}
+
+	return result;
+}
+
+void ScriptExecutionControl::removeFile(const QString &file)
+{
+	QFile out(file);
+	out.remove();
 }
