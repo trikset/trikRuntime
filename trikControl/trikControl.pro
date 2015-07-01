@@ -31,6 +31,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
+	$$PWD/include/trikControl/soundSensorInterface.h \
 	$$PWD/src/usbMSP430Read.h \
 	$$PWD/src/usbMSP430Defines.h
 
@@ -57,6 +58,8 @@ HEADERS += \
 	$$PWD/src/moduleLoader.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
+	$$PWD/src/soundSensor.h \
+	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
@@ -89,6 +92,8 @@ SOURCES += \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
+	$$PWD/src/soundSensor.cpp \
+	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
