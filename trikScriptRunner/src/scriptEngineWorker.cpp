@@ -27,6 +27,7 @@
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
+#include <trikControl/soundSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -53,6 +54,7 @@ Q_DECLARE_METATYPE(LineSensorInterface*)
 Q_DECLARE_METATYPE(MailboxInterface*)
 Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
+Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
@@ -240,6 +242,7 @@ void ScriptEngineWorker::resetScriptEngine()
 	qScriptRegisterMetaType(mEngine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterMetaType(mEngine, soundSensorToScriptValue, soundSensorFromScriptValue);
 	qScriptRegisterMetaType(mEngine, timerToScriptValue, timerFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
 

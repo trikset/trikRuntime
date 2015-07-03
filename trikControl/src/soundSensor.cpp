@@ -27,10 +27,9 @@ SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &conf
 	QString const &script = configurer.attributeByPort(port, "script");
 	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
 	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
-	qreal const toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
 	if (!mState.isFailed()) {
-		mSoundSensorWorker.reset(new SoundSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
+		mSoundSensorWorker.reset(new SoundSensorWorker(script, inputFile, outputFile, mState));
 
 		mSoundSensorWorker->moveToThread(&mWorkerThread);
 

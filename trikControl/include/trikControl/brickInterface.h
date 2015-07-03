@@ -25,6 +25,7 @@
 #include "lineSensorInterface.h"
 #include "motorInterface.h"
 #include "objectSensorInterface.h"
+#include "soundSensorInterface.h"
 #include "pwmCaptureInterface.h"
 #include "sensorInterface.h"
 #include "vectorSensorInterface.h"
@@ -92,6 +93,9 @@ public slots:
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
 	virtual ObjectSensorInterface *objectSensor(QString const &port) = 0;
+
+	/// Returns high-level sound detector sensor using microphones.
+	virtual SoundSensorInterface *soundSensor(QString const &port) = 0;
 
 	/// Returns encoder on given port.
 	virtual EncoderInterface *encoder(QString const &port) = 0;

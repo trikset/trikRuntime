@@ -18,12 +18,11 @@
 
 using namespace trikControl;
 
-SoundSensorWorker::SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
-		, qreal toleranceFactor, DeviceState &state)
+SoundSensorWorker::SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, DeviceState &state)
 	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
-	, mToleranceFactor(toleranceFactor)
 {
 }
+
 
 SoundSensorWorker::~SoundSensorWorker()
 {
@@ -58,33 +57,14 @@ void SoundSensorWorker::onNewData(QString const &dataLine)
 {
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
-	if (parsedLine[0] == "loc:") {
-		int const x = parsedLine[1].toInt();
-		int const y = parsedLine[2].toInt();
-		int const size = parsedLine[3].toInt();
+	if (parsedLine[0] == "sound:") {
+		int const angle = parsedLine[1].toInt();
+		int const lvolume = parsedLine[2].toInt();
+		int const rvolume = parsedLine[3].toInt();
 
 		mLock.lockForWrite();
-		mReading = {x, y, size};
+		mReading = {angle, lvolume, rvolume};
 		mLock.unlock();
 	}
 
-	if (parsedLine[0] == "hsv:") {
-		int const hue = parsedLine[1].toInt();
-		int const hueTolerance = parsedLine[2].toInt();
-		int const saturation = parsedLine[3].toInt();
-		int const saturationTolerance = parsedLine[4].toInt();
-		int const value = parsedLine[5].toInt();
-		int const valueTolerance = parsedLine[6].toInt();
-
-		QString const command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
-				.arg(hue)
-				.arg(static_cast<int>(hueTolerance * mToleranceFactor))
-				.arg(saturation)
-				.arg(static_cast<int>(saturationTolerance * mToleranceFactor))
-				.arg(value)
-				.arg(static_cast<int>(valueTolerance * mToleranceFactor))
-				;
-
-		sendCommand(command);
-	}
 }

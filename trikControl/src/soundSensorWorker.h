@@ -33,10 +33,7 @@ public:
 	/// @param script - file name of a scrit used to start or stop a sensor.
 	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
-	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
-	SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
-			, qreal toleranceFactor, DeviceState &state);
+	SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, DeviceState &state);
 
 	~SoundSensorWorker() override;
 
@@ -45,10 +42,10 @@ public slots:
 	/// @param showOnDisplay - true if we want an image from a DSP to be drawn on robot display.
 	void init(bool showOnDisplay);
 
-	/// ???
+	/// Not use
 	void detect();
 
-	/// Returns detect flag and angle
+	/// Returns angle and volume for both channels
 	/// Can be accessed directly from other thread.
 	QVector<int> read();
 
@@ -59,9 +56,6 @@ private:
 
 	/// Current stored reading of a sensor.
 	QVector<int> mReading;
-
-	/// A value on which hueTolerance, saturationTolerance and valueTolerance is multiplied after "detect" command.
-	qreal mToleranceFactor = 1.0;
 
 	/// True, if video stream from DSP shall be shown on robot display.
 	bool mShowOnDisplay = true;

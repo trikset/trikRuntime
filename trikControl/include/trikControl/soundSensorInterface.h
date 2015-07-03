@@ -37,10 +37,10 @@ public slots:
 	/// @param showOnDisplay - true if we want an image from DSP to be drawn on robot display.
 	virtual void init(bool showOnDisplay) = 0;
 
-	/// ???
+	/// Not use
 	virtual void detect() = 0;
 
-	/// Returns detect flag and angle
+	/// Returns angle and volume for both channels
 	virtual QVector<int> read() = 0;
 
 	/// Stops detection until init() will be called again.

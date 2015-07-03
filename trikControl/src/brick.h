@@ -34,6 +34,7 @@ class Led;
 class LineSensor;
 class ModuleLoader;
 class ObjectSensor;
+class SoundSensor;
 class PowerMotor;
 class PwmCapture;
 class RangeSensor;
@@ -93,6 +94,8 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(QString const &port) override;
 
+	SoundSensorInterface *soundSensor(QString const &port) override;
+
 	EncoderInterface *encoder(QString const &port) override;
 
 	BatteryInterface *battery() override;
@@ -124,6 +127,7 @@ private:
 	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
+	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;

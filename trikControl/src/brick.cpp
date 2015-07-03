@@ -35,6 +35,7 @@
 #include "led.h"
 #include "lineSensor.h"
 #include "objectSensor.h"
+#include "soundSensor.h"
 #include "colorSensor.h"
 #include "servoMotor.h"
 
@@ -89,6 +90,11 @@ Brick::Brick(QThread &guiThread, QString const &systemConfig, QString const &mod
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
 			connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+		} else if (deviceClass == "soundSensor") {
+			mSoundSensors.insert(port, new SoundSensor(port, configurer));
+
+			/// @todo This will work only in case when there can be only one sound sensor launched at a time.
+			connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 		} else if (deviceClass == "colorSensor") {
 			mColorSensors.insert(port, new ColorSensor(port, configurer));
 
@@ -126,6 +132,7 @@ Brick::~Brick()
 	qDeleteAll(mRangeSensors);
 	qDeleteAll(mLineSensors);
 	qDeleteAll(mObjectSensors);
+	qDeleteAll(mSoundSensors);
 	qDeleteAll(mColorSensors);
 }
 
@@ -202,6 +209,12 @@ void Brick::stop()
 	for (ObjectSensor * const objectSensor : mObjectSensors) {
 		if (objectSensor->status() == DeviceInterface::Status::ready) {
 			objectSensor->stop();
+		}
+	}
+
+	for (SoundSensor * const soundSensor : mSoundSensors) {
+		if (soundSensor->status() == DeviceInterface::Status::ready) {
+			soundSensor->stop();
 		}
 	}
 
@@ -309,6 +322,11 @@ ColorSensorInterface *Brick::colorSensor(QString const &port)
 ObjectSensorInterface *Brick::objectSensor(QString const &port)
 {
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
+}
+
+SoundSensorInterface *Brick::soundSensor(QString const &port)
+{
+	return mSoundSensors.contains(port) ? mSoundSensors[port] : nullptr;
 }
 
 KeysInterface* Brick::keys()
