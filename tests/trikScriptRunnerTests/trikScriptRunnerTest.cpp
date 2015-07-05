@@ -38,7 +38,7 @@ QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 
 	if (!context->argument(0).toBool()) {
 		ADD_FAILURE() << "Assertion failure at\n"
-				<< QStringList(context->backtrace().mid(1)).join('\n').toStdString();
+                << QStringList(context->backtrace().mid(1)).join("\n").toStdString();
 	}
 
 	return {};
