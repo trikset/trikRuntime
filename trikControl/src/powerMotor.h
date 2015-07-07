@@ -76,9 +76,10 @@ private:
 	int mCurrentPower;
 	int mCurrentPeriod;
 	DeviceState mState;
-       
+
         QVector<int> mOutputDuties;		
 	const int fixedPointOrder = 100;
+
 };
 	
 }

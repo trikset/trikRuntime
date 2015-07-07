@@ -91,7 +91,9 @@ void PowerMotor::powerOff()
 }
 
 
+
 int PowerMotor::searchSuitable(int duty, QVector <int> array, int step, int length)
+
 {
 	auto diff = INT_MAX;
 	auto index = length;
@@ -119,6 +121,7 @@ int PowerMotor::searchSuitable(int duty, QVector <int> array, int step, int leng
 	} else {
         	return (duty - array[prev]) * step / diff + prev * step;
     	}     	
+
 }
 
 void PowerMotor::calculateDutyCorrection(const QStringList & input, QVector <int> outputDuties)
@@ -129,6 +132,7 @@ void PowerMotor::calculateDutyCorrection(const QStringList & input, QVector <int
 	if (length < 2 ) {
 		mState.fail();
 		throw IncorrectDeviceConfigurationException("Array of input Duties shall have more than 1 values. Change string <jga25Motor /> in system-config.xml");
+
 	} else {
 		QVector <int> calcDuties(length);
 		int  max = 0;
