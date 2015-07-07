@@ -18,8 +18,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QHash>
 
-
-
 class QDomElement;
 
 namespace trikKernel {

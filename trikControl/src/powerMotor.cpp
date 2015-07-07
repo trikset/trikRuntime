@@ -15,9 +15,10 @@
 #include "powerMotor.h"
 
 #include <QtCore/QString>
-
+#include <QtCore/QVector>
 #include <trikKernel/configurer.h>
 #include "i2cCommunicator.h"
+#include <QDebug>
 #include "configurerHelper.h"
 #include "exceptions/incorrectDeviceConfigurationException.h"
 
@@ -41,6 +42,7 @@ PowerMotor::~PowerMotor()
 	if (mState.isReady()) {
 		powerOff();
 	}
+
 }
 
 PowerMotor::Status PowerMotor::status() const
@@ -64,7 +66,7 @@ void PowerMotor::setPower(int power)
 	
 	power = mCurrentPower;
 	
-	power = mInvert ? -power: power;
+	power = mInvert ? -power : power;
 
 	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
@@ -89,12 +91,12 @@ void PowerMotor::powerOff()
 }
 
 
-int PowerMotor::searchSuitable(int duty, int *array, int step, int length)
+int PowerMotor::searchSuitable(int duty, QVector <int> array, int step, int length)
 {
 	auto diff = INT_MAX;
 	auto index = length;
 
-	if (duty >= 100 * mFixedPointOrder) {
+	if (duty >= 100 * fixedPointOrder) {
 		return duty;
 	}
 	
@@ -110,33 +112,28 @@ int PowerMotor::searchSuitable(int duty, int *array, int step, int length)
 	const int side = duty < array[index] ? 0 : 1;
 	const auto next = index + side;
 	const auto prev = index + side - 1;
-	diff = (array[next] - array[prev]);
+	diff = array[next] - array[prev];
 	
 	if (!diff) {
 		return prev * step;
 	} else {
         	return (duty - array[prev]) * step / diff + prev * step;
-    	}     
-	
+    	}     	
 }
 
-void PowerMotor::calculateDutyCorrection(const QStringList & input,int * outputDuties)
+void PowerMotor::calculateDutyCorrection(const QStringList & input, QVector <int> outputDuties)
 {
-	
 	const int length = input.count();
 	int k = 0;
 	
 	if (length < 2 ) {
 		mState.fail();
 		throw IncorrectDeviceConfigurationException("Array of input Duties shall have more than 1 values. Change string <jga25Motor /> in system-config.xml");
-	} 
-
-	
-	else {
-		int calcDuties [length];
+	} else {
+		QVector <int> calcDuties(length);
 		int  max = 0;
-		const int step = 100 * mFixedPointOrder / (length - 1);
-		
+		const int step = 100 * fixedPointOrder / (length - 1);
+	
 		for (k = 0; k < length; k++) {
 			calcDuties[k] = input[k].toInt();
 			if  (calcDuties[k] > max) {
@@ -149,11 +146,11 @@ void PowerMotor::calculateDutyCorrection(const QStringList & input,int * outputD
 			throw IncorrectDeviceConfigurationException("Last value in inputDuties array should be maximum value. Recount encoder's values!!!");
 		} else {
 			for (k = 0; k < length; k++) {
-				calcDuties[k] = calcDuties[k]* 100 * mFixedPointOrder / max;
+				calcDuties[k] = calcDuties[k] * 100 * fixedPointOrder / max;
 			}
 
 			for (k = 0; k <= 100; k++) {
-				outputDuties[k] = searchSuitable(k * mFixedPointOrder, calcDuties,step,length) / mFixedPointOrder;
+				outputDuties [k] = searchSuitable(k * fixedPointOrder, calcDuties, step, length) / fixedPointOrder;
 			}
 		}
 	}

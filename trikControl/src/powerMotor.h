@@ -17,7 +17,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QFile>
-#include <QStringList>
+#include <QtCore/QVector>
+#include <QtCore/QStringList>
 
 #include "motorInterface.h"
 #include "deviceState.h"
@@ -46,9 +47,6 @@ public:
 
 	Status status() const override;
 	
-
-
-
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
@@ -68,11 +66,9 @@ public slots:
 	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses. 
 	void setPeriod(int period);
 
-
-private:
-	
-	int searchSuitable(int duty,int *array, int step, int length);
-	void calculateDutyCorrection(const QStringList & input,int *outputDuties);
+private:	
+	int searchSuitable(int duty,QVector <int> array, int step, int length);
+	void calculateDutyCorrection(const QStringList & input,QVector <int> outputDuties);
 
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
@@ -80,11 +76,9 @@ private:
 	int mCurrentPower;
 	int mCurrentPeriod;
 	DeviceState mState;
-		
-	int mOutputDuties[101];		
-	const int mFixedPointOrder = 100;
-
-
+       
+        QVector<int> mOutputDuties;		
+	const int fixedPointOrder = 100;
 };
-
+	
 }
