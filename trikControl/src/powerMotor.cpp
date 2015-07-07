@@ -90,8 +90,6 @@ void PowerMotor::powerOff()
 	setPower(0);
 }
 
-
-
 int PowerMotor::searchSuitable(int duty, QVector <int> array, int step, int length)
 
 {
