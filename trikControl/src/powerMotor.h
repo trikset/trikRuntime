@@ -67,8 +67,8 @@ public slots:
 	void setPeriod(int period);
 
 private:	
-	int searchSuitable(int duty,QVector <int> array, int step, int length);
-	void calculateDutyCorrection(const QStringList & input,QVector <int> outputDuties);
+	int searchSuitable(int duty, QVector <int> array, int step, int length);
+	void calculateDutyCorrection(const QStringList & input, QVector <int> outputDuties);
 
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
@@ -79,7 +79,5 @@ private:
 
         QVector<int> mOutputDuties;		
 	const int fixedPointOrder = 100;
-
 };
-	
 }
