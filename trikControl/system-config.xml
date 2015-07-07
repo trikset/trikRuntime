@@ -63,18 +63,8 @@ equal to its class name.
 	<deviceClasses>
 		<servoMotor period="20000000" invert="false" />
 		<pwmCapture />
-
-
-		<powerMotor invert="false" inputDuties="0;100"/>
-		<analogSensor />
-
-		<powerMotor invert="false" />
-		<analogSensor rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" type="Analog" />
-
-
 		<powerMotor invert="false" inputDuties="0;100"/>
 		<analogSensor rawValue1="0" rawValue2="1024" normalizedValue1="0" normalizedValue2="100" type="Analog" />
-
 		<encoder />
 		<rangeSensor commonModule="hcsr04" />
 		<digitalSensor />
