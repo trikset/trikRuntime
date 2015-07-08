@@ -77,7 +77,7 @@ equal to its class name.
 		<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
 		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" />
-		<soundSensor script="/etc/init.d/sound-sensor-v1.sh" inputFile="/run/sound-sensor.in.fifo" outputFile="/run/sound-sensor.out.fifo" />
+		<soundSensor script="/etc/init.d/sound-sensor-1.sh" inputFile="/run/sound-sensor.in.fifo" outputFile="/run/sound-sensor.out.fifo" />
 
 		<!-- Device files for LED on a brick. -->
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
