@@ -222,6 +222,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
 	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
+	qScriptRegisterSequenceMetaType<QStringList>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
