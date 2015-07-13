@@ -294,6 +294,7 @@ equal to its class name.
 		<objectSensor port="video1" />
 		<colorSensor port="video0" />
 		<colorSensor port="video1" />
+		<soundSensor port="default" />
 	</devicePorts>
 
 	<deviceTypes>
