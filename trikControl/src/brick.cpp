@@ -113,7 +113,7 @@ void Brick::reset()
 {
 	stop();
 	mKeys->reset();
-	mDisplay->clear();
+	mDisplay->reset();
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
 	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {

@@ -20,6 +20,7 @@
 #include <QtGui/QColor>
 
 #include "include/trikControl/displayWidgetInterface.h"
+#include "shapes/shape.h"
 
 namespace trikControl {
 
@@ -28,6 +29,7 @@ class GraphicsWidget : public DisplayWidgetInterface
 {
 public:
 	GraphicsWidget();
+	~GraphicsWidget();
 
 	/// Show this GraphicsWidget.
 	void showCommand();
@@ -36,7 +38,7 @@ public:
 	void hideCommand();
 
 	/// Set painter color.
-	void setPainterColor(const QString &color);
+	void setPainterColor(const QColor &color);
 
 	/// Set painter width.
 	void setPainterWidth(int penWidth);
@@ -89,123 +91,15 @@ public:
 	void setPixmap(const QPixmap &picture);
 
 private:
-	/// Information about point.
-	struct PointCoordinates
-	{
-		PointCoordinates(int x, int y, QColor color, int penWidth)
-				: coord(QPoint(x, y)), color(color), penWidth(penWidth)
-		{
-		}
-
-		QPoint coord;
-		QColor color;
-		int penWidth;
-	};
-
-	/// Information about rectangle.
-	struct RectCoordinates
-	{
-		RectCoordinates(int x, int y, int width, int height, QColor color, int penWidth)
-			: rect(QRect(x, y, width, height)), color(color), penWidth(penWidth)
-		{
-		}
-
-		QRect rect;
-		QColor color;
-		int penWidth;
-	};
-
-	/// Information about line.
-	struct LineCoordinates
-	{
-		LineCoordinates(int x1, int y1, int x2, int y2, QColor color, int penWidth)
-			: coord1(QPoint(x1, y1)), coord2(QPoint(x2, y2)), color(color), penWidth(penWidth)
-		{
-		}
-
-		QPoint coord1;
-		QPoint coord2;
-		QColor color;
-		int penWidth;
-	};
-
-	/// Struct of ellipse coordinates.
-	struct EllipseCoordinates
-	{
-		EllipseCoordinates(int x, int y, int width, int height, QColor color, int penWidth)
-			: ellipse(QRect(x, y, width, height)), color(color), penWidth(penWidth)
-		{
-		}
-
-		QRect ellipse;
-		QColor color;
-		int penWidth;
-	};
-
-	/// Struct of arc coordinates.
-	struct ArcCoordinates
-	{
-		ArcCoordinates(int x, int y, int width, int height, int startAngle, int spanAngle, QColor color, int penWidth)
-			: arc(QRect(x, y, width, height))
-			, startAngle(startAngle)
-			, spanAngle(spanAngle)
-			, color(color)
-			, penWidth(penWidth)
-		{
-		}
-
-		QRect arc;
-		int startAngle;
-		int spanAngle;
-		QColor color;
-		int penWidth;
-	};
-
 	/// Draw all elements.
 	virtual void paintEvent(QPaintEvent *paintEvent);
 
-	/// Check list contains point.
-	/// @param coordinates - point that we are looking for.
-	/// @return - true if list contains this point.
-	bool containsPoint(const PointCoordinates &coordinates);
-
-	/// Check that list contains given line.
-	/// @param coordinates - line that we are looking for.
-	/// @return - true if list contains this line.
-	bool containsLine(const LineCoordinates &coordinates);
-
-	/// Check that list contains given rect.
-	/// @param coordinates - rect that we are looking for.
-	/// @return - true if list contains this rect.
-	bool containsRect(const RectCoordinates &coordinates);
-
-	/// Check that list contains given ellipse.
-	/// @param coordinates - ellipse that we are looking for.
-	/// @return - true if list contains this ellipse.
-	bool containsEllipse(const EllipseCoordinates &coordinates);
-
-	/// Check that list contains given arc.
-	/// @param coordinates - arc that we are looking for.
-	/// @return - true if list contains this arc.
-	bool containsArc(const ArcCoordinates &coordinates);
-
-	/// List of all lines.
-	QList<LineCoordinates> mLines;
-
-	/// List of all points.
-	QList<PointCoordinates> mPoints;
-
-	/// List of all rectangles.
-	QList<RectCoordinates> mRects;
-
-	/// List of all ellipses.
-	QList<EllipseCoordinates> mEllipses;
-
-	/// List of all arcs.
-	QList<ArcCoordinates> mArcs;
+	void addShape(Shape *shape);
 
 	/// List of all labels.
 	QHash<QPair<int, int>, QString> mLabels;
+
+	QList<Shape *> mElements;
 
 	QPixmap mPicture;
 

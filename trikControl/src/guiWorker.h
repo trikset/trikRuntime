@@ -21,8 +21,6 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QFontMetrics>
 
-#include "graphicsWidget.h"
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
 	#include <QtGui/QLabel>
@@ -30,6 +28,9 @@
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QLabel>
 #endif
+
+#include "graphicsWidget.h"
+#include "shapes/shape.h"
 
 namespace trikControl {
 
@@ -54,7 +55,7 @@ public slots:
 	/// @param text - label text.
 	/// @param x - label x coordinate.
 	/// @param y - label y coordinate.
-	void addLabel(const QString &text, int x, int y);
+	void addLabel(const QString &text, int x, int y, bool redraw);
 
 	/// Remove all labels from the screen.
 	void removeLabels();
@@ -78,31 +79,34 @@ public slots:
 	/// Clear everything painted with this object.
 	void clear();
 
+	/// Returns a display in a blank state.
+	void reset();
+
 	/// Draw point on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
-	void drawPoint(int x, int y);
+	void drawPoint(int x, int y, bool redraw);
 
 	/// Draw line on the widget.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
 	/// @param x2 - second point's x coordinate.
 	/// @param y2 - second point's y coordinate.
-	void drawLine(int x1, int y1, int x2, int y2);
+	void drawLine(int x1, int y1, int x2, int y2, bool redraw);
 
 	/// Draw rect on the widget.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	void drawRect(int x, int y, int width, int height);
+	void drawRect(int x, int y, int width, int height, bool redraw);
 
 	/// Draw ellipse.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
-	void drawEllipse(int x, int y, int width, int height);
+	void drawEllipse(int x, int y, int width, int height, bool redraw);
 
 	/// Draw arc on the widget.
 	/// @param x - x coordinate.
@@ -111,13 +115,19 @@ public slots:
 	/// @param height - height rect forming an arc.
 	/// @param startAngle - start angle.
 	/// @param spanAngle - end andle.
-	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
+	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle, bool redraw);
 
 	/// Initializes widget. Shall be called when widget is moved to correct thread. Not supposed to be called from .qts.
 	void init();
 
 private:
 	void resetBackground();
+
+	void repaintGraphicsWidget();
+
+	void addShape(Shape *shape, bool redraw);
+
+	static QColor colorByName(const QString &name);
 
 	QScopedPointer<GraphicsWidget> mImageWidget;
 	QHash<QString, QPixmap> mImagesCache;
