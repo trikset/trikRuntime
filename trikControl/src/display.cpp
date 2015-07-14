@@ -59,10 +59,9 @@ void Display::showImage(const QString &fileName)
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));
 }
 
-void Display::addLabel(const QString &text, int x, int y, bool redraw)
+void Display::addLabel(const QString &text, int x, int y)
 {
-	QMetaObject::invokeMethod(mGuiWorker, "addLabel", Q_ARG(QString, text), Q_ARG(int, x), Q_ARG(int, y)
-			, Q_ARG(bool, redraw));
+	QMetaObject::invokeMethod(mGuiWorker, "addLabel", Q_ARG(QString, text), Q_ARG(int, x), Q_ARG(int, y));
 }
 
 void Display::removeLabels()
@@ -90,34 +89,37 @@ void Display::reset()
 	QMetaObject::invokeMethod(mGuiWorker, "reset");
 }
 
-void Display::drawLine(int x1, int y1, int x2, int y2, bool redraw)
+void Display::redraw()
 {
-	QMetaObject::invokeMethod(mGuiWorker, "drawLine", Q_ARG(int, x1), Q_ARG(int, y1), Q_ARG(int, x2), Q_ARG(int, y2)
-			, Q_ARG(bool, redraw));
+	QMetaObject::invokeMethod(mGuiWorker, "redraw");
 }
 
-void Display::drawPoint(int x, int y, bool redraw)
+void Display::drawLine(int x1, int y1, int x2, int y2)
 {
-	QMetaObject::invokeMethod(mGuiWorker, "drawPoint", Q_ARG(int, x), Q_ARG(int, y), Q_ARG(bool, redraw));
+	QMetaObject::invokeMethod(mGuiWorker, "drawLine", Q_ARG(int, x1), Q_ARG(int, y1), Q_ARG(int, x2), Q_ARG(int, y2));
 }
 
-void Display::drawRect(int x, int y, int width, int height, bool redraw)
+void Display::drawPoint(int x, int y)
+{
+	QMetaObject::invokeMethod(mGuiWorker, "drawPoint", Q_ARG(int, x), Q_ARG(int, y));
+}
+
+void Display::drawRect(int x, int y, int width, int height)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawRect", Q_ARG(int, x), Q_ARG(int, y)
-			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(bool, redraw));
+			, Q_ARG(int, width), Q_ARG(int, height));
 }
 
-void Display::drawEllipse(int x, int y, int width, int height, bool redraw)
+void Display::drawEllipse(int x, int y, int width, int height)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawEllipse", Q_ARG(int, x), Q_ARG(int, y)
-			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(bool, redraw));
+			, Q_ARG(int, width), Q_ARG(int, height));
 }
 
-void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle, bool redraw)
+void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawArc", Q_ARG(int, x), Q_ARG(int, y)
-			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle)
-			, Q_ARG(bool, redraw));
+			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle));
 }
 
 void Display::setPainterColor(const QString &color)
