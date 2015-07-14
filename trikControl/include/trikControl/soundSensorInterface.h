@@ -40,6 +40,9 @@ public slots:
 	/// Not use
 	virtual void detect() = 0;
 
+	/// Sets volume coefficient
+	virtual void volume(int volCoeff) = 0;
+
 	/// Returns angle and volume for both channels
 	virtual QVector<int> read() = 0;
 

@@ -39,6 +39,12 @@ void SoundSensorWorker::detect()
 	sendCommand("detect");
 }
 
+void SoundSensorWorker::volume(int volCoeff)
+{
+	sendCommand(QString("volcoeff %1").arg(volCoeff));
+	//qDebug() << QString("volcoeff %1").arg(volCoeff);
+}
+
 QVector<int> SoundSensorWorker::read()
 {
 	mLock.lockForRead();

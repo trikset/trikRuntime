@@ -63,8 +63,21 @@ void SoundSensor::detect()
 {
 	if (mState.isReady()) {
 		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "detect");
-	} else {
+	}
+	else
+	{
 		QLOG_ERROR() << "Trying to call 'detect' when sensor is not ready, ignoring";
+	}
+}
+
+void SoundSensor::volume(int volCoeff)
+{
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "volume", Q_ARG(int, volCoeff));
+	}
+	else
+	{
+		QLOG_ERROR() << "Trying to call 'volume' when sensor is not ready, ignoring";
 	}
 }
 

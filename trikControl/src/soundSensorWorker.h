@@ -45,6 +45,9 @@ public slots:
 	/// Not use
 	void detect();
 
+	/// Sets volume coefficient
+	void volume(int volCoeff);
+
 	/// Returns angle and volume for both channels
 	/// Can be accessed directly from other thread.
 	QVector<int> read();

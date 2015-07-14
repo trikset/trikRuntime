@@ -48,6 +48,8 @@ public slots:
 
 	void detect() override;
 
+	void volume(int volCoeff) override;
+
 	QVector<int> read() override;
 
 	void stop() override;
