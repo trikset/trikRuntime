@@ -24,11 +24,13 @@ var KeysEnum = {
 
 // Aliases for passing ports without quotes
 var aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
-        , "D1", "D2", "F1"
+        , "D1", "D2", "D3", "F1"
         , "M1", "M2", "M3", "M4"
         , "B1", "B2", "B3", "B4"
-        , "E1", "E2", "E3"
-        , "C1", "C2", "C3"];
+        , "E1", "E2", "E3", "E4"
+        , "C1", "C2", "C3"
+        , "S1", "S2", "S3", "S4", "S5", "S6",
+        , "video1", "video2"];
 
 aliases.forEach(function(port) { this[port] = port; });
 

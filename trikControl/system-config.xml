@@ -134,10 +134,10 @@ equal to its class name.
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x14" />
+		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
-		<powerMotor port="M3" i2cCommandNumber="0x17" />
-		<powerMotor port="M4" i2cCommandNumber="0x16" />
+		<powerMotor port="M3" i2cCommandNumber="0x16" />
+		<powerMotor port="M4" i2cCommandNumber="0x17" />
 		<analogSensor port="A1" i2cCommandNumber="0x25" />
 		<analogSensor port="A2" i2cCommandNumber="0x24" />
 		<analogSensor port="A3" i2cCommandNumber="0x23" />
@@ -146,17 +146,17 @@ equal to its class name.
 		<analogSensor port="A6" i2cCommandNumber="0x20" />
 		<encoder port="E1" i2cCommandNumber="0x30" />
 		<encoder port="E2" i2cCommandNumber="0x31" />
-		<encoder port="E3" i2cCommandNumber="0x32" />
-		<encoder port="E4" i2cCommandNumber="0x33" />
+		<encoder port="E3" i2cCommandNumber="0x33" />
+		<encoder port="E4" i2cCommandNumber="0x32" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
-		<!-- <digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
-		<lineSensor port="video0" />
+		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
-		<objectSensor port="video0" />
+		<lineSensor port="video2" />
 		<objectSensor port="video1" />
-		<colorSensor port="video0" />
+		<objectSensor port="video2" />
 		<colorSensor port="video1" />
+		<colorSensor port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 	</devicePorts>
 
