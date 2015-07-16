@@ -130,6 +130,8 @@ uses(trikKernel)
 
 copyToDestdir( \
 	$$PWD/model-config.xml  \
+	$$PWD/model-config-v6.xml  \
 	$$PWD/system-config.xml  \
+	$$PWD/system-config-v6.xml  \
 	$$PWD/../media/ \
 )

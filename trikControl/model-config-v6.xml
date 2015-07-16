@@ -25,24 +25,24 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</initScript>
 
 	<!-- Servomotor or PWM capture ports. -->
-	<S1>
+	<E1>
 		<angularServomotor />
-	</S1>
-	<S2>
+	</E1>
+	<E2>
 		<angularServomotor invert="false" />
-	</S2>
-	<S3>
+	</E2>
+	<E3>
 		<angularServomotor min="600000" max="2200000" zero="1400000" stop="0" invert="false" />
-	</S3>
-	<S4>
+	</E3>
+	<C1>
 		<angularServomotor />
-	</S41>
-	<S5>
+	</C1>
+	<C2>
 		<angularServomotor />
-	</S5>
-	<S6>
+	</C2>
+	<C3>
 		<angularServomotor />
-	</S6>
+	</C3>
 
 	<!-- Analog sensor ports. -->
 	<A1>
@@ -78,18 +78,18 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	-->
 
 	<!-- Encoder ports. -->
-	<E1>
+	<B1>
 		<encoder95 />
-	</E1>
-	<E2>
+	</B1>
+	<B2>
 		<encoder95 />
-	</E2>
-	<E3>
+	</B2>
+	<B3>
+		<encoder126 />
+	</B3>
+	<B4>
 		<encoder95 />
-	</E3>
-	<E4>
-		<encoder95 />
-	</E4>
+	</B4>
 
 	<!-- Power motor ports. -->
 	<M1>

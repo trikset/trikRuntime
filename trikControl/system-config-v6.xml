@@ -90,47 +90,47 @@ equal to its class name.
 
 	<devicePorts>
 		<servoMotor
-			port="S1"
+			port="E1"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
 		/>
 		<servoMotor
-			port="S2"
+			port="E2"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
 		/>
 		<servoMotor
-			port="S3"
+			port="E3"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
 		/>
 		<servoMotor
-			port="S4"
+			port="C1"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 		/>
 		<servoMotor
-			port="S5"
+			port="C2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 		/>
 		<servoMotor
-			port="S6"
+			port="C3"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 		/>
 		<pwmCapture
-			port="S4"
+			port="C1"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
 		<pwmCapture
-			port="S5"
+			port="C2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
 		/>
 		<pwmCapture
-			port="S6"
+			port="C3"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
@@ -144,10 +144,10 @@ equal to its class name.
 		<analogSensor port="A4" i2cCommandNumber="0x22" />
 		<analogSensor port="A5" i2cCommandNumber="0x21" />
 		<analogSensor port="A6" i2cCommandNumber="0x20" />
-		<encoder port="E1" i2cCommandNumber="0x30" />
-		<encoder port="E2" i2cCommandNumber="0x31" />
-		<encoder port="E3" i2cCommandNumber="0x32" />
-		<encoder port="E4" i2cCommandNumber="0x33" />
+		<encoder port="B1" i2cCommandNumber="0x30" />
+		<encoder port="B2" i2cCommandNumber="0x31" />
+		<encoder port="B3" i2cCommandNumber="0x32" />
+		<encoder port="B4" i2cCommandNumber="0x33" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
 		<!-- <digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
