@@ -90,73 +90,73 @@ equal to its class name.
 
 	<devicePorts>
 		<servoMotor
-			port="S1"
+			port="E1"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
 		/>
 		<servoMotor
-			port="S2"
+			port="E2"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
 		/>
 		<servoMotor
-			port="S3"
+			port="E3"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
 		/>
 		<servoMotor
-			port="S4"
+			port="C1"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 		/>
 		<servoMotor
-			port="S5"
+			port="C2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 		/>
 		<servoMotor
-			port="S6"
+			port="C3"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 		/>
 		<pwmCapture
-			port="S4"
+			port="C1"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
 		<pwmCapture
-			port="S5"
+			port="C2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
 		/>
 		<pwmCapture
-			port="S6"
+			port="C3"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
+		<powerMotor port="M1" i2cCommandNumber="0x14" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
-		<powerMotor port="M3" i2cCommandNumber="0x16" />
-		<powerMotor port="M4" i2cCommandNumber="0x17" />
+		<powerMotor port="M3" i2cCommandNumber="0x17" />
+		<powerMotor port="M4" i2cCommandNumber="0x16" />
 		<analogSensor port="A1" i2cCommandNumber="0x25" />
 		<analogSensor port="A2" i2cCommandNumber="0x24" />
 		<analogSensor port="A3" i2cCommandNumber="0x23" />
 		<analogSensor port="A4" i2cCommandNumber="0x22" />
 		<analogSensor port="A5" i2cCommandNumber="0x21" />
 		<analogSensor port="A6" i2cCommandNumber="0x20" />
-		<encoder port="E1" i2cCommandNumber="0x30" />
-		<encoder port="E2" i2cCommandNumber="0x31" />
-		<encoder port="E3" i2cCommandNumber="0x33" />
-		<encoder port="E4" i2cCommandNumber="0x32" />
+		<encoder port="B1" i2cCommandNumber="0x30" />
+		<encoder port="B2" i2cCommandNumber="0x31" />
+		<encoder port="B3" i2cCommandNumber="0x32" />
+		<encoder port="B4" i2cCommandNumber="0x33" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
-		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
+		<!-- <digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
+		<lineSensor port="video0" />
 		<lineSensor port="video1" />
-		<lineSensor port="video2" />
+		<objectSensor port="video0" />
 		<objectSensor port="video1" />
-		<objectSensor port="video2" />
+		<colorSensor port="video0" />
 		<colorSensor port="video1" />
-		<colorSensor port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 	</devicePorts>
 
