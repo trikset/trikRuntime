@@ -40,6 +40,7 @@ void GuiWorker::init()
 	resetBackground();
 }
 
+
 DisplayWidgetInterface &GuiWorker::graphicsWidget()
 {
 	return *mImageWidget.data();
@@ -57,12 +58,9 @@ void GuiWorker::showImage(const QString &fileName)
 	repaintGraphicsWidget();
 }
 
-void GuiWorker::addLabel(const QString &text, int x, int y, bool redraw)
+void GuiWorker::addLabel(const QString &text, int x, int y)
 {
 	mImageWidget->addLabel(text, x, y);
-	if (redraw) {
-		repaintGraphicsWidget();
-	}
 }
 
 void GuiWorker::removeLabels()
@@ -122,44 +120,34 @@ void GuiWorker::hide()
 	mImageWidget->hideCommand();
 }
 
-void GuiWorker::drawPoint(int x, int y, bool redraw)
+void GuiWorker::drawPoint(int x, int y)
 {
 	mImageWidget->drawPoint(x, y);
-	if (redraw) {
-		repaintGraphicsWidget();
-	}
 }
 
-void GuiWorker::drawLine(int x1, int y1, int x2, int y2, bool redraw)
+void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 {
 	mImageWidget->drawLine(x1, y1, x2, y2);
-	if (redraw) {
-		repaintGraphicsWidget();
-	}
 }
 
-void GuiWorker::drawRect(int x, int y, int width, int height, bool redraw)
+void GuiWorker::drawRect(int x, int y, int width, int height)
 {
 	mImageWidget->drawRect(x, y, width, height);
-	if (redraw) {
-		repaintGraphicsWidget();
-	}
 }
 
-void GuiWorker::drawEllipse(int x, int y, int width, int height, bool redraw)
+void GuiWorker::drawEllipse(int x, int y, int width, int height)
 {
 	mImageWidget->drawEllipse(x, y, width, height);
-	if (redraw) {
-		repaintGraphicsWidget();
-	}
 }
 
-void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle, bool redraw)
+void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	mImageWidget->drawArc(x, y, width, height, startAngle, spanAngle);
-	if (redraw) {
-		repaintGraphicsWidget();
-	}
+}
+
+void GuiWorker::redraw()
+{
+	repaintGraphicsWidget();
 }
 
 void GuiWorker::repaintGraphicsWidget()
