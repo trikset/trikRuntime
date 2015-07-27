@@ -46,6 +46,11 @@ Mailbox::~Mailbox()
 	}
 }
 
+bool Mailbox::isConnected() const
+{
+	return mWorker->isConnected();
+}
+
 void Mailbox::setHullNumber(int hullNumber)
 {
 	if (isEnabled()) {

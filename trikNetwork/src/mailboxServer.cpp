@@ -39,6 +39,23 @@ MailboxServer::MailboxServer(int port)
 	loadSettings();
 }
 
+bool MailboxServer::isConnected()
+{
+	bool result = false;
+	mKnownRobotsLock.lockForRead();
+	for (const auto &endpoint : mKnownRobots.values()) {
+		Connection * const connection = this->connection(endpoint.ip, endpoint.port);
+		MailboxConnection * const mailboxConnection = dynamic_cast<MailboxConnection *>(connection);
+		if (mailboxConnection && mailboxConnection->isConnected()) {
+			result = true;
+			break;
+		}
+	}
+
+	mKnownRobotsLock.unlock();
+	return result;
+}
+
 int MailboxServer::hullNumber() const
 {
 	return mHullNumber;
