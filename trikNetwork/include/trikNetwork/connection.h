@@ -44,6 +44,9 @@ public:
 	/// @param connectionProtocol - protocol used by this connection.
 	explicit Connection(Protocol connectionProtocol);
 
+	/// Returns true if socket is opened or false otherwise.
+	bool isConnected() const;
+
 	/// Returns peer address of a connection, if it is open, or empty QHostAddress if connection is not established yet.
 	QHostAddress peerAddress() const;
 

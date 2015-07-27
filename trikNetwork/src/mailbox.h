@@ -47,6 +47,8 @@ public:
 
 	~Mailbox() override;
 
+	bool isConnected() const override;
+
 	void setHullNumber(int myHullNumber) override;
 
 	QHostAddress serverIp() const override;
