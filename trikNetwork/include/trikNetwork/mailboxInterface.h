@@ -33,6 +33,9 @@ class TRIKNETWORK_EXPORT MailboxInterface : public QObject
 	Q_OBJECT
 
 public:
+	/// Returns true if at least one opened mailbox connection presents at the moment.
+	virtual bool isConnected() const = 0;
+
 	/// Sets hull number of this robot and sends a message to update hull number to all known robots.
 	virtual void setHullNumber(int myHullNumber) = 0;
 

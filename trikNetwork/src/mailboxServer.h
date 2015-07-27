@@ -41,6 +41,9 @@ public:
 	/// @param port - a port for mailbox server.
 	MailboxServer(int port);
 
+	/// Returns true if at least one opened mailbox connection presents at the moment.
+	bool isConnected();
+
 	/// Returns hull number of this robot.
 	int hullNumber() const;
 
