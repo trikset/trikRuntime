@@ -25,6 +25,7 @@ class Threading;
 class ScriptThread : public QThread
 {
 	Q_OBJECT
+
 public:
 	/// Constructor
 	/// @param threading - threading manager for this thread
@@ -55,7 +56,9 @@ protected:
 
 private:
 	QString mId;
-	QScriptEngine *mEngine;  // Takes ownership
+
+	/// Has ownership (thru deleteLater() call).
+	QScriptEngine *mEngine;
 	QString mScript;
 
 	Threading &mThreading;
