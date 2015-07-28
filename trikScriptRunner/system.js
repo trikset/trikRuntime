@@ -35,7 +35,15 @@ var aliases = ["A1", "A2", "A3", "A4", "A5", "A6", "T1", "T2", "T3", "W1", "W2",
         , "U4_0x11", "U4_0x12", "U4_0x13", "U4_0x14", "U4_0x15", "U4_0x16", "U4_0x17", "U4_0x18", "U4_0x19", "U4_0x1A", "U4_0x1B", "U4_0x1C", "U4_0x1D", "U4_0x1E", "U4_0x1F", "U4_0x20"
         , "U5_0x11", "U5_0x12", "U5_0x13", "U5_0x14", "U5_0x15", "U5_0x16", "U5_0x17", "U5_0x18", "U5_0x19", "U5_0x1A", "U5_0x1B", "U5_0x1C", "U5_0x1D", "U5_0x1E", "U5_0x1F", "U5_0x20"
         , "U6_0x11", "U6_0x12", "U6_0x13", "U6_0x14", "U6_0x15", "U6_0x16", "U6_0x17", "U6_0x18", "U6_0x19", "U6_0x1A", "U6_0x1B", "U6_0x1C", "U6_0x1D", "U6_0x1E", "U6_0x1F", "U6_0x20"
-        , "U7_0x11", "U7_0x12", "U7_0x13", "U7_0x14", "U7_0x15", "U7_0x16", "U7_0x17", "U7_0x18", "U7_0x19", "U7_0x1A", "U7_0x1B", "U7_0x1C", "U7_0x1D", "U7_0x1E", "U7_0x1F", "U7_0x20"];
+        , "U7_0x11", "U7_0x12", "U7_0x13", "U7_0x14", "U7_0x15", "U7_0x16", "U7_0x17", "U7_0x18", "U7_0x19", "U7_0x1A", "U7_0x1B", "U7_0x1C", "U7_0x1D", "U7_0x1E", "U7_0x1F", "U7_0x20"
+        , "TEMP_DHT11_1", "TEMP_DHT11_2", "TEMP_DHT11_3", "TEMP_DHT11_4", "TEMP_DHT11_5", "TEMP_DHT11_6", "TEMP_DHT11_7"
+        , "TEMP_DHT11_8", "TEMP_DHT11_9", "TEMP_DHT11_10", "TEMP_DHT11_11", "TEMP_DHT11_12", "TEMP_DHT11_13", "TEMP_DHT11_14"
+        , "TEMP_DHT22_1", "TEMP_DHT22_2", "TEMP_DHT22_3", "TEMP_DHT22_4", "TEMP_DHT22_5", "TEMP_DHT22_6", "TEMP_DHT22_7"
+        , "TEMP_DHT22_8", "TEMP_DHT22_9", "TEMP_DHT22_10", "TEMP_DHT22_11", "TEMP_DHT22_12", "TEMP_DHT22_13", "TEMP_DHT22_14"
+        , "HUM_DHT11_1", "HUM_DHT11_2", "HUM_DHT11_3", "HUM_DHT11_4", "HUM_DHT11_5", "HUM_DHT11_6", "HUM_DHT11_7"
+        , "HUM_DHT11_8", "HUM_DHT11_9", "HUM_DHT11_10", "HUM_DHT11_11", "HUM_DHT11_12", "HUM_DHT11_13", "HUM_DHT11_14"
+        , "HUM_DHT22_1", "HUM_DHT22_2", "HUM_DHT22_3", "HUM_DHT22_4", "HUM_DHT22_5", "HUM_DHT22_6", "HUM_DHT22_7"
+        , "HUM_DHT22_8", "HUM_DHT22_9", "HUM_DHT22_10", "HUM_DHT22_11", "HUM_DHT22_12", "HUM_DHT22_13", "HUM_DHT22_14"];
 aliases.forEach(function(port) { this[port] = port; });
 
 // String.format function implementation.

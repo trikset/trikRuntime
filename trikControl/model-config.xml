@@ -86,6 +86,176 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<W4>
 		<irSensor />
 	</W4>
+	<!-- DHT11 sensors. -->
+	<TEMP_DHT11_1>
+		<irSensor />
+	</TEMP_DHT11_1>
+	<TEMP_DHT11_2>
+		<irSensor />
+	</TEMP_DHT11_2>
+	<TEMP_DHT11_3>
+		<irSensor />
+	</TEMP_DHT11_3>
+	<TEMP_DHT11_4>
+		<irSensor />
+	</TEMP_DHT11_4>
+	<TEMP_DHT11_5>
+		<irSensor />
+	</TEMP_DHT11_5>
+	<TEMP_DHT11_6>
+		<irSensor />
+	</TEMP_DHT11_6>
+	<TEMP_DHT11_7>
+		<irSensor />
+	</TEMP_DHT11_7>
+	<TEMP_DHT11_8>
+		<irSensor />
+	</TEMP_DHT11_8>
+	<TEMP_DHT11_9>
+		<irSensor />
+	</TEMP_DHT11_9>
+	<TEMP_DHT11_10>
+		<irSensor />
+	</TEMP_DHT11_10>
+	<TEMP_DHT11_11>
+		<irSensor />
+	</TEMP_DHT11_11>
+	<TEMP_DHT11_12>
+		<irSensor />
+	</TEMP_DHT11_12>
+	<TEMP_DHT11_13>
+		<irSensor />
+	</TEMP_DHT11_13>
+	<TEMP_DHT11_14>
+		<irSensor />
+	</TEMP_DHT11_14>
+	<HUM_DHT11_1>
+		<irSensor />
+	</HUM_DHT11_1>
+	<HUM_DHT11_2>
+		<irSensor />
+	</HUM_DHT11_2>
+	<HUM_DHT11_3>
+		<irSensor />
+	</HUM_DHT11_3>
+	<HUM_DHT11_4>
+		<irSensor />
+	</HUM_DHT11_4>
+	<HUM_DHT11_5>
+		<irSensor />
+	</HUM_DHT11_5>
+	<HUM_DHT11_6>
+		<irSensor />
+	</HUM_DHT11_6>
+	<HUM_DHT11_7>
+		<irSensor />
+	</HUM_DHT11_7>
+	<HUM_DHT11_8>
+		<irSensor />
+	</HUM_DHT11_8>
+	<HUM_DHT11_9>
+		<irSensor />
+	</HUM_DHT11_9>
+	<HUM_DHT11_10>
+		<irSensor />
+	</HUM_DHT11_10>
+	<HUM_DHT11_11>
+		<irSensor />
+	</HUM_DHT11_11>
+	<HUM_DHT11_12>
+		<irSensor />
+	</HUM_DHT11_12>
+	<HUM_DHT11_13>
+		<irSensor />
+	</HUM_DHT11_13>
+	<HUM_DHT11_14>
+		<irSensor />
+	</HUM_DHT11_14>
+	<!-- DHT22 sensors. -->
+	<TEMP_DHT22_1>
+		<irSensor />
+	</TEMP_DHT22_1>
+	<TEMP_DHT22_2>
+		<irSensor />
+	</TEMP_DHT22_2>
+	<TEMP_DHT22_3>
+		<irSensor />
+	</TEMP_DHT22_3>
+	<TEMP_DHT22_4>
+		<irSensor />
+	</TEMP_DHT22_4>
+	<TEMP_DHT22_5>
+		<irSensor />
+	</TEMP_DHT22_5>
+	<TEMP_DHT22_6>
+		<irSensor />
+	</TEMP_DHT22_6>
+	<TEMP_DHT22_7>
+		<irSensor />
+	</TEMP_DHT22_7>
+	<TEMP_DHT22_8>
+		<irSensor />
+	</TEMP_DHT22_8>
+	<TEMP_DHT22_9>
+		<irSensor />
+	</TEMP_DHT22_9>
+	<TEMP_DHT22_10>
+		<irSensor />
+	</TEMP_DHT22_10>
+	<TEMP_DHT22_11>
+		<irSensor />
+	</TEMP_DHT22_11>
+	<TEMP_DHT22_12>
+		<irSensor />
+	</TEMP_DHT22_12>
+	<TEMP_DHT22_13>
+		<irSensor />
+	</TEMP_DHT22_13>
+	<TEMP_DHT22_14>
+		<irSensor />
+	</TEMP_DHT22_14>
+	<HUM_DHT22_1>
+		<irSensor />
+	</HUM_DHT22_1>
+	<HUM_DHT22_2>
+		<irSensor />
+	</HUM_DHT22_2>
+	<HUM_DHT22_3>
+		<irSensor />
+	</HUM_DHT22_3>
+	<HUM_DHT22_4>
+		<irSensor />
+	</HUM_DHT22_4>
+	<HUM_DHT22_5>
+		<irSensor />
+	</HUM_DHT22_5>
+	<HUM_DHT22_6>
+		<irSensor />
+	</HUM_DHT22_6>
+	<HUM_DHT22_7>
+		<irSensor />
+	</HUM_DHT22_7>
+	<HUM_DHT22_8>
+		<irSensor />
+	</HUM_DHT22_8>
+	<HUM_DHT22_9>
+		<irSensor />
+	</HUM_DHT22_9>
+	<HUM_DHT22_10>
+		<irSensor />
+	</HUM_DHT22_10>
+	<HUM_DHT22_11>
+		<irSensor />
+	</HUM_DHT22_11>
+	<HUM_DHT22_12>
+		<irSensor />
+	</HUM_DHT22_12>
+	<HUM_DHT22_13>
+		<irSensor />
+	</HUM_DHT22_13>
+	<HUM_DHT22_14>
+		<irSensor />
+	</HUM_DHT22_14>
 	<!-- Analog sensor ports (I2C -> UART -> RS485 distance sensor URM04). -->
 	<U1_0x11>
 		<irSensor />
