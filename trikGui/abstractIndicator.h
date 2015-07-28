@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,47 +17,26 @@
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QProgressBar>
+	#include <QtGui/QWidget>
 #else
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QProgressBar>
+	#include <QtWidgets/QWidget>
 #endif
-
-#include "abstractIndicator.h"
-
-namespace trikControl {
-class SensorInterface;
-}
 
 namespace trikGui {
 
-/// Widget that shows current sensor reading.
-class SensorIndicator : public AbstractIndicator
+/// Base class for a widget that can show some reading from sensor, encoder and so on.
+class AbstractIndicator : public QWidget
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param port - port to which sensor is plugged.
-	/// @param sensor - sensor which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
+	AbstractIndicator(QWidget *parent = 0) : QWidget(parent) {}
 
 public slots:
-	void renew() override;
-
-private:
-	trikControl::SensorInterface &mSensor;
-	const int mMaxValue;
-	const int mMinValue;
-
-	QHBoxLayout mLayout;
-	QLabel mNameLabel;
-	QProgressBar mValueBar;
-	QLabel mValueLabel;
+	/// Rereads sensor and updates widget contents.
+	virtual void renew() = 0;
 };
 
 }

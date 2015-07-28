@@ -161,6 +161,10 @@
         <source>Test digital sensors</source>
         <translation>Цифровые датчики</translation>
     </message>
+    <message>
+        <source>Test encoders</source>
+        <translation>Энкодеры</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::StartWidget</name>

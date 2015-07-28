@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,44 +19,42 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QHBoxLayout>
 	#include <QtGui/QLabel>
-	#include <QtGui/QProgressBar>
+	#include <QtGui/QDial>
 #else
 	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QProgressBar>
+	#include <QtWidgets/QDial>
 #endif
 
 #include "abstractIndicator.h"
 
 namespace trikControl {
-class SensorInterface;
+class EncoderInterface;
 }
 
 namespace trikGui {
 
-/// Widget that shows current sensor reading.
-class SensorIndicator : public AbstractIndicator
+/// Widget that shows current encoder reading.
+class EncoderIndicator : public AbstractIndicator
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param port - port to which sensor is plugged.
-	/// @param sensor - sensor which we will read.
+	/// @param encoder - encoder which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
+	EncoderIndicator(const QString &port, trikControl::EncoderInterface &encoder, QWidget *parent = 0);
 
 public slots:
 	void renew() override;
 
 private:
-	trikControl::SensorInterface &mSensor;
-	const int mMaxValue;
-	const int mMinValue;
+	trikControl::EncoderInterface &mEncoder;
 
 	QHBoxLayout mLayout;
 	QLabel mNameLabel;
-	QProgressBar mValueBar;
+	QDial mValueDial;
 	QLabel mValueLabel;
 };
 

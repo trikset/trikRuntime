@@ -21,13 +21,29 @@
 using namespace trikGui;
 
 SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &brick
-		, trikControl::SensorInterface::Type type
+		, SensorType type
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("Select sensors for testing:"))
+	, mSensorType(type)
 	, mBrick(brick)
 {
-	QStringList ports = mBrick.sensorPorts(type);
+	QStringList ports;
+
+	switch (type) {
+	case SensorType::analogSensor: {
+		ports = mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor);
+	}
+	case SensorType::digitalSensor: {
+		ports = mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
+	}
+	case SensorType::encoder: {
+		ports = mBrick.encoderPorts();
+	}
+	}
+
+	ports.sort();
+
 	for (const QString &port : ports) {
 		QListWidgetItem *item = new QListWidgetItem(port, &mList);
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
@@ -48,17 +64,17 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	setLayout(&mLayout);
 }
 
-QString SensorsSelectionWidget::menuEntry(trikControl::SensorInterface::Type type)
+QString SensorsSelectionWidget::menuEntry(SensorType type)
 {
 	switch (type) {
-	case trikControl::SensorInterface::Type::analogSensor: {
+	case SensorType::analogSensor: {
 		return tr("Test analog sensors");
 	}
-	case trikControl::SensorInterface::Type::digitalSensor: {
+	case SensorType::digitalSensor: {
 		return tr("Test digital sensors");
 	}
-	case trikControl::SensorInterface::Type::specialSensor: {
-		return QString();
+	case SensorType::encoder: {
+		return tr("Test encoders");
 	}
 	}
 
@@ -110,7 +126,12 @@ void SensorsSelectionWidget::startTesting()
 		}
 	}
 
-	SensorsWidget sensorsWidget(mBrick, ports);
+	const auto sensorType = mSensorType == SensorType::analogSensor || mSensorType == SensorType::digitalSensor
+			? SensorsWidget::SensorType::analogOrDigitalSensor
+			: SensorsWidget::SensorType::encoder
+			;
+
+	SensorsWidget sensorsWidget(mBrick, ports, sensorType);
 	emit newWidget(sensorsWidget);
 	if (sensorsWidget.exec() == TrikGuiDialog::goHomeExit) {
 		goHome();

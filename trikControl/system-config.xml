@@ -167,7 +167,8 @@ equal to its class name.
 		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />
 		<lightSensor class="digitalSensor" min="30000" max="350000" />
 		<volumeSensor class="digitalSensor" min="0" max="100" />
-		<encoder95 class="encoder" ticksInDegree="43.389445" />
+		<!-- <encoder95 class="encoder" ticksInDegree="43.389445" /> -->
+		<encoder95 class="encoder" ticksInDegree="1.569444" />
 		<encoder126 class="encoder" ticksInDegree="32.964168" />
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 	</deviceTypes>

@@ -57,8 +57,7 @@ int Encoder::read()
 	if (status() == DeviceInterface::Status::ready) {
 		QByteArray command(2, '\0');
 		command[0] = static_cast<char>(mI2cCommandNumber);
-		int data = mCommunicator.read(command);
-
+		const int data = mCommunicator.read(command);
 		return data / mTicksInDegree;
 	} else {
 		return 0;

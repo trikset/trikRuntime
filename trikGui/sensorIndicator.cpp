@@ -31,7 +31,7 @@ using namespace trikGui;
 SensorIndicator::SensorIndicator(const QString &port
 		, trikControl::SensorInterface &sensor
 		, QWidget *parent)
-	: QWidget(parent)
+	: AbstractIndicator(parent)
 	, mSensor(sensor)
 	, mMaxValue(100)
 	, mMinValue(0)
