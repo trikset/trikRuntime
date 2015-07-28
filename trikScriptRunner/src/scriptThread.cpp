@@ -15,6 +15,7 @@
 #include "scriptThread.h"
 
 #include <QtCore/QEventLoop>
+#include <QtCore/QDateTime>
 
 #include "threading.h"
 #include <QsLog.h>
@@ -36,6 +37,8 @@ ScriptThread::~ScriptThread()
 void ScriptThread::run()
 {
 	QLOG_INFO() << "Started thread" << this;
+
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 
 	mEngine->evaluate(mScript);
 	if (mEngine->hasUncaughtException()) {

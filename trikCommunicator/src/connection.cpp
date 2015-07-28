@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QThread>
@@ -38,7 +37,6 @@ void Connection::processData(const QByteArray &data)
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
-		qDebug() << "Command: " << command;
 		QLOG_INFO() << "Command: " << command;
 	}
 
@@ -46,10 +44,7 @@ void Connection::processData(const QByteArray &data)
 		command.remove(0, QString("file:").length());
 		const int separatorPosition = command.indexOf(':');
 		if (separatorPosition == -1) {
-
-			qDebug() << "Malformed 'file' command";
 			QLOG_ERROR() << "Malformed 'file' command";
-
 			return;
 		}
 
