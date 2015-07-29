@@ -432,7 +432,7 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 	{
 		mtmp = reg_value;
 		mctl = MOT_ENABLE;
-		if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
+		if ((mtmp < -100) || (mtmp > 100))
 		{
 			mctl = mctl + MOT_BRAKE;
 			mtmp = 0;
@@ -491,7 +491,9 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		alt_func_flag = ALT_SERVO;
 	}
 	else
+	{
 		return DEV_ADDR_ERROR;
+	}
 
 	return NO_ERROR;
 }
