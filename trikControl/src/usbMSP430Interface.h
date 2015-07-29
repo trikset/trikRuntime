@@ -50,6 +50,9 @@ uint32_t init_encoders_USBMSP();
 /// Init sensors
 uint32_t init_sensors_USBMSP();
 
+/// Init DHTxx sensors
+uint32_t init_dhtxx_sensors_USBMSP();
+
 /// Init I2C sensors
 uint32_t init_i2c_sensors_USBMSP();
 

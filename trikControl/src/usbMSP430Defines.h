@@ -331,6 +331,8 @@
 /// Sensor types
 #define DIGITAL_INP		0x0000
 #define ANALOG_INP		0x0001
+#define DHTXX_TEMP		0x0002
+#define DHTXX_HUM		0x0003
 
 /// Masks for bits of control register
 #define SENS_ENABLE		0x8000	// Enable bit
@@ -454,6 +456,7 @@
 #define ALT_SERVO		0x03
 #define ALT_ENC			0x04
 #define ALT_USART		0x05
+#define ALT_DHTXX		0x06
 
 /// USB device file
 #define USB_DEV_NAME		"/dev/ttyACM0"
