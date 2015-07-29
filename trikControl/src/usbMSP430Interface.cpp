@@ -334,30 +334,6 @@ uint32_t init_dhtxx_sensors_USBMSP()
 {
 	char s1[MAX_STRING_LENGTH];	// Temp string
 
-	makeWriteRegPacket(s1, SENSOR1, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR1, SSIDX, DHTXX_TEMP);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR2, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR2, SSIDX, DHTXX_TEMP);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR3, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR3, SSIDX, DHTXX_TEMP);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR4, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR4, SSIDX, DHTXX_TEMP);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR5, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR5, SSIDX, DHTXX_TEMP);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR6, SSCTL, SENS_ENABLE + SENS_READ);
-	sendUSBPacket(s1, s1);
-	makeWriteRegPacket(s1, SENSOR6, SSIDX, DHTXX_TEMP);
-	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR7, SSCTL, SENS_ENABLE + SENS_READ);
 	sendUSBPacket(s1, s1);
 	makeWriteRegPacket(s1, SENSOR7, SSIDX, DHTXX_TEMP);
@@ -508,7 +484,7 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
 	{
 
-		qDebug() << "Dev address (power_motor): " << dev_address << " " << reg_value;
+		//qDebug() << "Dev address (power_motor): " << dev_address << " " << reg_value;
 		mtmp = reg_value;
 		mctl = MOT_ENABLE;
 		if ((mtmp < -100) || (mtmp > 100))
@@ -541,7 +517,7 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		 (dev_address == i2cSERV13) || (dev_address == i2cSERV14))
 	{
 
-		qDebug() << "Dev address (servo_motor): " << dev_address << " " << reg_value;
+		//qDebug() << "Dev address (servo_motor): " << dev_address << " " << reg_value;
 		mtmp = reg_value;
 		if ((mtmp == INT8_MIN) || (mtmp == INT8_MAX))
 			mtmp = 0;
@@ -562,9 +538,9 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 			(alt_func_flag == ALT_ENC) || (alt_func_flag == ALT_I2C)
 			|| (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_DHTXX))
 		{
-		    makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPPER, sper);
-		    sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPPER, sper);
+		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPDUT, sdut);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SPPCTL, sctl);
@@ -590,7 +566,7 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 	if ((dev_address == i2cPWMMOT1) || (dev_address == i2cPWMMOT2) ||
 			(dev_address == i2cPWMMOT3) || (dev_address == i2cPWMMOT4))
 	{
-		qDebug() << "Dev address (freq_motor): " << dev_address << " " << reg_value;
+		//qDebug() << "Dev address (freq_motor): " << dev_address << " " << reg_value;
 		if (reg_value > 0)
 		{
 			mper = (uint16_t)(24 / 8 * (float)reg_value);
@@ -623,15 +599,15 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
 	    ||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
-		qDebug() << "Dev address (reset_encoder): " << dev_address << " " << reg_value;
+		//qDebug() << "Dev address (reset_encoder): " << dev_address << " " << reg_value;
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
 		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
-		    || (alt_func_flag == ALT_DHTXX))
+		    || (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
 		{
-			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
-					   EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
+				   EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL, reg_value);
 		sendUSBPacket(s1, s1);
 		alt_func_flag = ALT_ENC;
@@ -663,12 +639,12 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
 		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
-		    || (alt_func_flag == ALT_DHTXX))
+		    || (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
 		{
-			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
-					    EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
+				    EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL);
@@ -677,7 +653,7 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != EEVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_ENC;
-		qDebug() << "Dev address (read_encoder): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (read_encoder): " << dev_address << " " << regval;
 		return regval;
 	}
 	else
@@ -776,11 +752,11 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
 		    || (alt_func_flag == ALT_DHTXX))
 		{
-			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSCTL, SENS_ENABLE + SENS_READ);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSIDX, ANALOG_INP);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSIDX, ANALOG_INP);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], SSVAL);
@@ -789,7 +765,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_ANALOG;
-		qDebug() << "Dev address (analog_sensor): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (analog_sensor): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (analog_sensor): " << addr_table_i2c_usb[dev_address] << " " << regval;
 		return regval;
 	}
 	// I2C sensors
@@ -800,9 +777,9 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_DHTXX))
 		{
-			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], IICTL, I2C_ENABLE + I2C_SENS);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], IICTL, I2C_ENABLE + I2C_SENS);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, addr_table_i2c_usb[dev_address], IIVAL);
@@ -811,7 +788,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != IIVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_I2C;
-		qDebug() << "Dev address (i2c_sensor): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (i2c_sensor): " << dev_address << " " << regval;
 		return regval;
 	}
 	// DHT11 sensors (temperature)
@@ -821,11 +798,11 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
 		{
-			makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSIDX, DHTXX_TEMP);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSIDX, DHTXX_TEMP);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSVAL);
@@ -834,8 +811,9 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != (dev_address-TEMP_DHT11_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_DHTXX;
-		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << ((regval >> 8) & 0xFF);
-		return ((regval >> 8) & 0xFF);
+		//qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (dht11_temperature): " << (dev_address-TEMP_DHT11_1+SENSOR1) << " " << regval;
+		return regval;
 	}
 	// DHT11 sensors (humidity)
 	else if ((dev_address >= HUM_DHT11_1) && (dev_address <= HUM_DHT11_14))
@@ -844,11 +822,11 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
 		{
-			makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSIDX, DHTXX_HUM);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSIDX, DHTXX_HUM);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSVAL);
@@ -857,8 +835,9 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != (dev_address-HUM_DHT11_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_DHTXX;
-		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << ((regval >> 8) & 0xFF);
-		return ((regval >> 8) & 0xFF);
+		//qDebug() << "Dev address (dht11_humidity): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (dht11_humidity): " << (dev_address-HUM_DHT11_1+SENSOR1) << " " << regval;
+		return regval;
 	}
 	// DHT22 sensors (temperature)
 	else if ((dev_address >= TEMP_DHT22_1) && (dev_address <= TEMP_DHT22_14))
@@ -867,11 +846,11 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
 		{
-			makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSIDX, DHTXX_TEMP);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSIDX, DHTXX_TEMP);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSVAL);
@@ -880,7 +859,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != (dev_address-TEMP_DHT22_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_DHTXX;
-		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (dht22_temperature): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (dht22_temperature): " << (dev_address-TEMP_DHT22_1+SENSOR1) << " " << regval;
 		return regval;
 	}
 	// DHT22 sensors (humidity)
@@ -890,11 +870,11 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
 		{
-			makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
-			sendUSBPacket(s1, s1);
-			makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSIDX, DHTXX_HUM);
-			sendUSBPacket(s1, s1);
 		}
+		makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSIDX, DHTXX_HUM);
+		sendUSBPacket(s1, s1);
 		do
 		{
 			makeReadRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSVAL);
@@ -903,7 +883,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			tmout ++;
 		} while (((devaddr != (dev_address-HUM_DHT22_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_DHTXX;
-		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (dht22_humidity): " << dev_address << " " << regval;
+		//qDebug() << "Dev address (dht22_humidity): " << (dev_address-HUM_DHT22_1+SENSOR1) << " " << regval;
 		return regval;
 	}
 	// URM04 sensors
@@ -913,37 +894,37 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		|| (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
 		|| (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_DHTXX))
 	    {
-		    if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU1_0x20))
-		    {
-			init_URM04(I2C1, USART1);
-		    }
-		    if ((dev_address >= i2cU2_0x11) && (dev_address <= i2cU2_0x20))
-		    {
-			init_URM04(I2C2, USART2);
-		    }
-		    if ((dev_address >= i2cU3_0x11) && (dev_address <= i2cU3_0x20))
-		    {
-			init_URM04(I2C3, USART3);
-		    }
-		    if ((dev_address >= i2cU4_0x11) && (dev_address <= i2cU4_0x20))
-		    {
-			init_URM04(I2C4, USART4);
-		    }
-		    if ((dev_address >= i2cU5_0x11) && (dev_address <= i2cU5_0x20))
-		    {
-			init_URM04(I2C5, USART5);
-		    }
-		    if ((dev_address >= i2cU6_0x11) && (dev_address <= i2cU6_0x20))
-		    {
-			init_URM04(I2C6, USART6);
-		    }
-		    if ((dev_address >= i2cU7_0x11) && (dev_address <= i2cU7_0x20))
-		    {
-			init_URM04(I2C7, USART7);
-		    }
+	    }
+	    if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU1_0x20))
+	    {
+		init_URM04(I2C1, USART1);
+	    }
+	    if ((dev_address >= i2cU2_0x11) && (dev_address <= i2cU2_0x20))
+	    {
+		init_URM04(I2C2, USART2);
+	    }
+	    if ((dev_address >= i2cU3_0x11) && (dev_address <= i2cU3_0x20))
+	    {
+		init_URM04(I2C3, USART3);
+	    }
+	    if ((dev_address >= i2cU4_0x11) && (dev_address <= i2cU4_0x20))
+	    {
+		init_URM04(I2C4, USART4);
+	    }
+	    if ((dev_address >= i2cU5_0x11) && (dev_address <= i2cU5_0x20))
+	    {
+		init_URM04(I2C5, USART5);
+	    }
+	    if ((dev_address >= i2cU6_0x11) && (dev_address <= i2cU6_0x20))
+	    {
+		init_URM04(I2C6, USART6);
+	    }
+	    if ((dev_address >= i2cU7_0x11) && (dev_address <= i2cU7_0x20))
+	    {
+		init_URM04(I2C7, USART7);
 	    }
 	    alt_func_flag = ALT_USART;
-	    qDebug() << "Dev address (URM04_sensor): " << dev_address << " " << regval;
+	    //qDebug() << "Dev address (URM04_sensor): " << dev_address << " " << regval;
 	    switch (dev_address)
 	    {
 		    case i2cU1_0x11: return read_URM04_dist(USART1, 0x11); break;

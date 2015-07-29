@@ -123,8 +123,7 @@ void I2cCommunicator::connect()
 	}
 
 	int nanoseconds = myTimer.nsecsElapsed();
-	//qDebug() << "Connect measured time (ns): ";
-	//qDebug() << nanoseconds;
+	qDebug() << "Connect measured time (ns): " << nanoseconds;
 
 	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0)
@@ -168,8 +167,7 @@ void I2cCommunicator::send(QByteArray const &data)
 	send_USBMSP(data);
 
 	int nanoseconds = myTimer.nsecsElapsed();
-	//qDebug() << "Send measured time (ns): ";
-	//qDebug() << nanoseconds;
+	qDebug() << "Send measured time (ns): " << nanoseconds;
 }
 
 /// todo: rewrite it
@@ -191,8 +189,7 @@ int I2cCommunicator::read(QByteArray const &data)
 	ret_result = read_USBMSP(data);
 
 	int nanoseconds = myTimer.nsecsElapsed();
-	//qDebug() << "Read measured time (ns): ";
-	//qDebug() << nanoseconds;
+	qDebug() << "Read measured time (ns): " << nanoseconds;
 
 	return ret_result;
 
@@ -225,8 +222,7 @@ void I2cCommunicator::disconnect()
 	disconnect_USBMSP();
 
 	int nanoseconds = myTimer.nsecsElapsed();
-	//qDebug() << "Disconnect measured time (ns): ";
-	//qDebug() << nanoseconds;
+	qDebug() << "Disconnect measured time (ns): " << nanoseconds;
 
 	mState.off();
 }
