@@ -523,7 +523,9 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 		sendUSBPacket(s1, s1);
 	}
 	else
+	{
 		return DEV_ADDR_ERROR;
+	}
 
 	return NO_ERROR;
 }
@@ -551,7 +553,9 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 		alt_func_flag = ALT_ENC;
 	}
 	else
+	{
 		return DEV_ADDR_ERROR;
+	}
 
 	return NO_ERROR;
 }
@@ -591,7 +595,9 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 		return regval;
 	}
 	else
+	{
 		return DEV_ADDR_ERROR;
+	}
 
 	return NO_ERROR;
 }
@@ -882,7 +888,9 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	    }
 	}
 	else
+	{
 		return DEV_ADDR_ERROR;
+	}
 
 	return NO_ERROR;
 }
@@ -900,10 +908,9 @@ uint32_t send_USBMSP(QByteArray const &i2c_data)
 			freq_Motor(i2c_data);
 			break;
 		default:
-			break;
+			return NO_ERROR;
 	}
 
-	return NO_ERROR;
 }
 
 /// Read data from MSP430 via USB
