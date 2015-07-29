@@ -188,7 +188,7 @@ void Threading::reset()
 
 void Threading::threadFinished(const QString &id)
 {
-	QLOG_INFO() << "Threading: finishing thread" <<	id;
+	QLOG_INFO() << "Finishing thread" << id;
 
 	mResetMutex.lock();
 	mThreadsMutex.lock();
@@ -196,7 +196,7 @@ void Threading::threadFinished(const QString &id)
 		mErrorMessage = mThreads[id]->error();
 	}
 
-	QLOG_INFO() << "Threading: thread" << id << "has finished, thread object" << mThreads[id];
+	QLOG_INFO() << "Thread" << id << "has finished, thread object" << mThreads[id];
 	mThreads.remove(id);
 	mFinishedThreads.insert(id);
 	mThreadsMutex.unlock();
