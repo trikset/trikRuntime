@@ -883,7 +883,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		} while (((devaddr != (dev_address-HUM_DHT22_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_DHTXX;
 		//qDebug() << "Dev address (dht22_humidity): " << dev_address << " " << regval;
-		//qDebug() << "Dev address (dht22_humidity): " << (dev_address-HUM_DHT22_1+SENSOR1) << " " << regval;
+		//qDebug() << "Dev address (dht22_humidity): " << (dev_address-HUM_DHT22_1+SENSOR1) << " " << regval;;;
 		return regval;
 	}
 	// URM04 sensors
