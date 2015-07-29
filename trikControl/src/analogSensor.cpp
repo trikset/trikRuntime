@@ -43,7 +43,9 @@ AnalogSensor::AnalogSensor(QString const &port, trikKernel::Configurer const &co
 		mState.fail();
 		mK = 0;
 		mB = 0;
-	} else {
+	}
+	else
+	{
 		mK = static_cast<qreal>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
 		mB = normalizedValue1 - mK * rawValue1;
 	}
@@ -62,8 +64,9 @@ int AnalogSensor::read()
 		return 0;
 	}
 
-	QByteArray command(1, '\0');
+	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
 
 	return mK * mCommunicator.read(command) + mB;
 }
@@ -74,8 +77,9 @@ int AnalogSensor::readRawData()
 		return 0;
 	}
 
-	QByteArray command(1, '\0');
+	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
 
 	return mCommunicator.read(command);
 }

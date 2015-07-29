@@ -39,9 +39,10 @@ Encoder::Encoder(QString const &port, trikKernel::Configurer const &configurer, 
 void Encoder::reset()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(2, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber);
-		command[1] = static_cast<char>(0x00);
+		QByteArray command(3, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
+		command[2] = static_cast<char>(0x00);
 
 		mCommunicator.send(command);
 	}
@@ -55,12 +56,17 @@ Encoder::Status Encoder::status() const
 int Encoder::read()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(2, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber);
+		QByteArray command(3, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
+		command[2] = static_cast<char>(0x00);
+
 		int data = mCommunicator.read(command);
 
 		return data / mTicksInDegree;
-	} else {
+	}
+	else
+	{
 		return 0;
 	}
 }
@@ -68,11 +74,15 @@ int Encoder::read()
 int Encoder::readRawData()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(2, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber);
+		QByteArray command(3, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
+		command[2] = static_cast<char>(0x00);
 
 		return mCommunicator.read(command);
-	} else {
+	}
+	else
+	{
 		return 0;
 	}
 }

@@ -46,19 +46,24 @@ PowerMotor::Status PowerMotor::status() const
 
 void PowerMotor::setPower(int power)
 {
-	if (power > 100) {
+	/*
+	if (power > 100)
+	{
 		power = 100;
-	} else if (power < -100) {
+	} else if (power < -100)
+	{
 		power = -100;
 	}
+	*/
 
 	mCurrentPower = power;
 
 	power = mInvert ? -power : power;
 
-	QByteArray command(2, '\0');
+	QByteArray command(3, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	command[1] = static_cast<char>(power & 0xFF);
+	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
+	command[2] = static_cast<char>(power & 0xFF);
 
 	mCommunicator.send(command);
 }

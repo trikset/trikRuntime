@@ -121,10 +121,6 @@ void I2cCommunicator::connect()
 		mState.fail();
 		return;
 	}
-	else
-	{
-		//mState.ready();
-	}
 
 	int nanoseconds = myTimer.nsecsElapsed();
 	//qDebug() << "Connect measured time (ns): ";
@@ -157,13 +153,13 @@ void I2cCommunicator::send(QByteArray const &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	if (data.size() == 2)
+	if (data.size() == 3)
 	{
-		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[1]);
+		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
 	}
 	else
 	{
-		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
+		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[2] | (data[3] << 8));
 	}
 
 	QElapsedTimer myTimer;
@@ -200,10 +196,11 @@ int I2cCommunicator::read(QByteArray const &data)
 
 	return ret_result;
 
-	if (data.size() == 1)
+	if (data.size() == 2)
 	{
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
-	} else
+	}
+	else
 	{
 		__u8 buffer[4] = {0};
 		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);

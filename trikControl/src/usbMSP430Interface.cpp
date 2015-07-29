@@ -376,9 +376,6 @@ uint32_t connect_USBMSP()
 		return DEVICE_ERROR;
 	}
 
-	// Init TTY parameters
-	init_USBTTYDevice();
-
 	// Init USB STTY device with serial port parameters
 	init_USBTTYDevice();
 
@@ -425,8 +422,9 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 	uint16_t sctl;				    // Software PWM control register
 	int8_t mtmp;				    // Temp variable
 	char s1[MAX_STRING_LENGTH];		    // Temp string variable
-	const uint8_t dev_address = i2c_data[0];    // Device address
-	const int8_t reg_value = i2c_data[1];	    // Register value
+	const int8_t reg_value = i2c_data[2];	    // Register value
+	const uint16_t dev_address = (uint16_t)i2c_data[0] +
+		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	// Power motors
 	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
@@ -502,8 +500,9 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 uint32_t freq_Motor(QByteArray const &i2c_data)
 {
 	char s1[MAX_STRING_LENGTH];					// Temp string variable
-	const uint8_t dev_address = i2c_data[0];			// Device address
-	const uint16_t reg_value = ((i2c_data[2] << 8) | i2c_data[1]);	// Register value
+	const uint16_t reg_value = ((i2c_data[3] << 8) | i2c_data[2]);	// Register value
+	const uint16_t dev_address = (uint16_t)i2c_data[0] +
+		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	if ((dev_address == i2cPWMMOT1) || (dev_address == i2cPWMMOT2) ||
 			(dev_address == i2cPWMMOT3) || (dev_address == i2cPWMMOT4))
@@ -531,8 +530,9 @@ uint32_t freq_Motor(QByteArray const &i2c_data)
 uint32_t reset_Encoder(QByteArray const &i2c_data)
 {
 	char s1[MAX_STRING_LENGTH];		    // Temp string variable
-	const uint8_t dev_address = i2c_data[0];    // Device address
-	const uint8_t reg_value = i2c_data[1];	    // Register value
+	const uint8_t reg_value = i2c_data[2];	    // Register value
+	const uint16_t dev_address = (uint16_t)i2c_data[0] +
+		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
 	    ||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
@@ -565,7 +565,8 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	uint8_t regaddr;			    // Returned register address
 	uint32_t regval=UINT32_MAX;		    // Returned register value
 	uint16_t tmout = 0;			    // Reading timeout
-	const uint8_t dev_address = i2c_data[0];    // Device address
+	const uint16_t dev_address = (uint16_t)i2c_data[0] +
+		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
 	    ||  (dev_address == i2cENC3) || (dev_address == i2cENC4))
@@ -679,7 +680,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	uint8_t regaddr;			    // Returned register address
 	uint32_t regval=UINT32_MAX;		    // Returned register value
 	uint16_t tmout = 0;			    // Reading timeout
-	const uint8_t dev_address = i2c_data[0];    // Device address
+	const uint16_t dev_address = (uint16_t)i2c_data[0] +
+		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	// Analog sensors
 	if ((dev_address == i2cSENS1) || (dev_address == i2cSENS2) || (dev_address == i2cSENS3) || (dev_address == i2cSENS4)
@@ -888,11 +890,11 @@ uint32_t send_USBMSP(QByteArray const &i2c_data)
 {
 	switch (i2c_data.size())
 	{
-		case 2:
+		case 3:
 			power_Motor(i2c_data);
 			reset_Encoder(i2c_data);
 			break;
-		case 3:
+		case 4:
 			freq_Motor(i2c_data);
 			break;
 		default:
@@ -907,9 +909,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
 {
 	switch (i2c_data.size())
 	{
-		case 1:
-			return read_Sensor(i2c_data);
 		case 2:
+			return read_Sensor(i2c_data);
+		case 3:
 			return read_Encoder(i2c_data);
 		default:
 			return NO_ERROR;
