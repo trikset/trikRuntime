@@ -778,6 +778,8 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		{
 			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSCTL, SENS_ENABLE + SENS_READ);
 			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSIDX, ANALOG_INP);
+			sendUSBPacket(s1, s1);
 		}
 		do
 		{
@@ -810,6 +812,98 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != IIVAL)) && (tmout < TIME_OUT));
 		alt_func_flag = ALT_I2C;
 		qDebug() << "Dev address (i2c_sensor): " << dev_address << " " << regval;
+		return regval;
+	}
+	// DHT11 sensors (temperature)
+	else if ((dev_address >= TEMP_DHT11_1) && (dev_address <= TEMP_DHT11_14))
+	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
+		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSIDX, DHTXX_TEMP);
+			sendUSBPacket(s1, s1);
+		}
+		do
+		{
+			makeReadRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != (dev_address-TEMP_DHT11_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_DHTXX;
+		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << ((regval >> 8) & 0xFF);
+		return ((regval >> 8) & 0xFF);
+	}
+	// DHT11 sensors (humidity)
+	else if ((dev_address >= HUM_DHT11_1) && (dev_address <= HUM_DHT11_14))
+	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
+		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSIDX, DHTXX_HUM);
+			sendUSBPacket(s1, s1);
+		}
+		do
+		{
+			makeReadRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != (dev_address-HUM_DHT11_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_DHTXX;
+		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << ((regval >> 8) & 0xFF);
+		return ((regval >> 8) & 0xFF);
+	}
+	// DHT22 sensors (temperature)
+	else if ((dev_address >= TEMP_DHT22_1) && (dev_address <= TEMP_DHT22_14))
+	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
+		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSIDX, DHTXX_TEMP);
+			sendUSBPacket(s1, s1);
+		}
+		do
+		{
+			makeReadRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != (dev_address-TEMP_DHT22_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_DHTXX;
+		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << regval;
+		return regval;
+	}
+	// DHT22 sensors (humidity)
+	else if ((dev_address >= HUM_DHT22_1) && (dev_address <= HUM_DHT22_14))
+	{
+		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		    || (alt_func_flag == ALT_ANALOG) || (alt_func_flag == ALT_ENC)
+		    || (alt_func_flag == ALT_USART) || (alt_func_flag == ALT_I2C))
+		{
+			makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
+			sendUSBPacket(s1, s1);
+			makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSIDX, DHTXX_HUM);
+			sendUSBPacket(s1, s1);
+		}
+		do
+		{
+			makeReadRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != (dev_address-HUM_DHT22_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+		alt_func_flag = ALT_DHTXX;
+		qDebug() << "Dev address (dht11_temperature): " << dev_address << " " << regval;
 		return regval;
 	}
 	// URM04 sensors
