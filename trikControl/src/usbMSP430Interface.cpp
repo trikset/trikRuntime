@@ -39,6 +39,15 @@ uint8_t addr_table_i2c_usb[84] =	// Correspondence address table (between I2C an
 		SPWM8, SPWM9, SPWM10, SPWM11, SPWM12, SPWM13, SPWM14, I2C1, I2C2, I2C3,
 		I2C4, I2C5, I2C6, I2C7};
 
+/// Delays class
+class Sleeper : public QThread
+{
+public:
+    static void usleep(unsigned long usecs){QThread::usleep(usecs);}
+    static void msleep(unsigned long msecs){QThread::msleep(msecs);}
+    static void sleep(unsigned long secs){QThread::sleep(secs);}
+};
+
 /// Extract number from packet
 uint32_t hex2num(char *string
 		, uint16_t pos
@@ -601,15 +610,6 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 
 	return NO_ERROR;
 }
-
-/// Delays class
-class Sleeper : public QThread
-{
-public:
-    static void usleep(unsigned long usecs){QThread::usleep(usecs);}
-    static void msleep(unsigned long msecs){QThread::msleep(msecs);}
-    static void sleep(unsigned long secs){QThread::sleep(secs);}
-};
 
 /// Init I2C + USART + URM04
 uint32_t init_URM04(uint8_t i2c_addr, uint8_t usart_addr)
