@@ -370,7 +370,6 @@ uint32_t init_dhtxx_sensors_USBMSP()
 	return NO_ERROR;
 }
 
-
 /// Init I2C sensors
 uint32_t init_i2c_sensors_USBMSP()
 {
@@ -1066,7 +1065,6 @@ uint32_t send_USBMSP(QByteArray const &i2c_data)
 		default:
 			return NO_ERROR;
 	}
-
 }
 
 /// Read data from MSP430 via USB
