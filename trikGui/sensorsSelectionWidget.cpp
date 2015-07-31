@@ -33,12 +33,15 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	switch (type) {
 	case SensorType::analogSensor: {
 		ports = mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor);
+		break;
 	}
 	case SensorType::digitalSensor: {
 		ports = mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
+		break;
 	}
 	case SensorType::encoder: {
 		ports = mBrick.encoderPorts();
+		break;
 	}
 	}
 
