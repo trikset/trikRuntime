@@ -115,6 +115,9 @@ SOURCES += \
 OTHER_FILES += \
 	model-config.xml \
 	system-config.xml \
+	model-config-v6.xml \
+	system-config-v6.xml \
+	trikControlExport.pri \
 
 TEMPLATE = lib
 
@@ -126,7 +129,8 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel)
+links(trikKernel)
+implementationIncludes(trikKernel)
 
 copyToDestdir( \
 	$$PWD/model-config.xml  \

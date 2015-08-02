@@ -45,7 +45,8 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir($$PWD/system.js)
 
-uses(trikKernel trikControl trikNetwork)
+links(trikKernel trikControl trikNetwork)
+implementationIncludes(trikKernel trikControl trikNetwork)
 
 RESOURCES += \
 	trikSrciptRunner.qrc
