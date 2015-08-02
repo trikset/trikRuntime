@@ -129,8 +129,8 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-links(trikKernel)
-implementationIncludes(trikKernel)
+links(trikKernel trikHal)
+implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
 	$$PWD/model-config.xml  \

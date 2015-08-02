@@ -14,85 +14,31 @@
 
 #include "src/i2cCommunicator.h"
 
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/i2c-dev.h>
-#include <linux/i2c.h>
-#include <unistd.h>
-
 #include <trikKernel/configurer.h>
 
+#include <trikHal/i2cInterface.h>
 #include <QsLog.h>
 
 using namespace trikControl;
 
-static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command
-		, int size, union i2c_smbus_data *data)
+I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::I2CInterface &i2c)
+	: mI2c(i2c)
 {
-	struct i2c_smbus_ioctl_data args;
+	const QString devicePath = configurer.attributeByDevice("i2c", "path");
 
-	args.read_write = read_write;
-	args.command = command;
-	args.size = size;
-	args.data = data;
-	return ioctl(file, I2C_SMBUS, &args);
-}
-
-static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
-{
-	union i2c_smbus_data data;
-	if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
-						 I2C_SMBUS_WORD_DATA,&data))
-		return -1;
-	else
-		return 0x0FFFF & data.word;
-}
-
-static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command,
-		__u8 length, __u8 *values)
-{
-	union i2c_smbus_data data;
-
-	if (length > 32)
-			length = 32;
-	data.block[0] = length;
-	if (i2c_smbus_access(file,I2C_SMBUS_READ,command,
-						 length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN :
-						  I2C_SMBUS_I2C_BLOCK_DATA,&data))
-			return -1;
-	else {
-			for (int i = 1; i <= data.block[0]; i++)
-					values[i-1] = data.block[i];
-			return data.block[0];
-	}
-}
-
-static inline __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value)
-{
-	union i2c_smbus_data data;
-	data.word = value;
-	return i2c_smbus_access(file, I2C_SMBUS_WRITE, command, I2C_SMBUS_WORD_DATA, &data);
-}
-
-static inline __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value)
-{
-	union i2c_smbus_data data;
-	data.byte = value;
-	return i2c_smbus_access(file,I2C_SMBUS_WRITE,command, I2C_SMBUS_BYTE_DATA, &data);
-}
-
-I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer)
-	: mDevicePath(configurer.attributeByDevice("i2c", "path"))
-{
 	bool ok = false;
-	mDeviceId = configurer.attributeByDevice("i2c", "deviceId").toInt(&ok, 0);
+	const int deviceId = configurer.attributeByDevice("i2c", "deviceId").toInt(&ok, 0);
 	if (!ok) {
 		QLOG_ERROR() << "Incorrect I2C device id" << configurer.attributeByDevice("i2c", "deviceId");
 		mState.fail();
 		return;
 	}
 
-	connect();
+	if (mI2c.connect(devicePath, deviceId)) {
+		mState.ready();
+	} else {
+		mState.fail();
+	}
 }
 
 I2cCommunicator::~I2cCommunicator()
@@ -100,24 +46,6 @@ I2cCommunicator::~I2cCommunicator()
 	if (mState.isReady()) {
 		disconnect();
 	}
-}
-
-void I2cCommunicator::connect()
-{
-	mDeviceFileDescriptor = open(mDevicePath.toStdString().c_str(), O_RDWR);
-	if (mDeviceFileDescriptor < 0) {
-		QLOG_ERROR() << "Failed to open I2C device file " << mDevicePath;
-		mState.fail();
-		return;
-	}
-
-	if (ioctl(mDeviceFileDescriptor, I2C_SLAVE, mDeviceId)) {
-		QLOG_ERROR() << "ioctl(" << mDeviceFileDescriptor << ", I2C_SLAVE, " << mDeviceId << ") failed ";
-		mState.fail();
-		return;
-	}
-
-	mState.ready();
 }
 
 void I2cCommunicator::send(const QByteArray &data)
@@ -128,14 +56,9 @@ void I2cCommunicator::send(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	if (data.size() == 2) {
-		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[1]);
-	} else {
-		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
-	}
+	mI2c.send(data);
 }
 
-/// todo: rewrite it
 int I2cCommunicator::read(const QByteArray &data)
 {
 	if (!mState.isReady()) {
@@ -144,15 +67,7 @@ int I2cCommunicator::read(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	if (data.size() == 1)
-	{
-		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
-	} else
-	{
-		__u8 buffer[4] = {0};
-		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer);
-		return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
-	}
+	return mI2c.read(data);
 }
 
 DeviceInterface::Status I2cCommunicator::status() const
@@ -163,6 +78,6 @@ DeviceInterface::Status I2cCommunicator::status() const
 void I2cCommunicator::disconnect()
 {
 	QMutexLocker lock(&mLock);
-	close(mDeviceFileDescriptor);
+	mI2c.disconnect();
 	mState.off();
 }

@@ -20,9 +20,12 @@
 
 using namespace trikControl;
 
-VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer)
+VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
-	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState));
+	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
+			, hardwareAbstraction));
+
 	if (!mState.isFailed()) {
 		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
 		mVectorSensorWorker->moveToThread(&mWorkerThread);

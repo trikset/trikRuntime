@@ -14,28 +14,25 @@
 
 #include "src/keysWorker.h"
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <linux/input.h>
-
 #include <QsLog.h>
 
 using namespace trikControl;
 
-KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state)
+KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(state)
 {
-	mKeysFileDescriptor = open(keysPath.toStdString().c_str(), O_SYNC, O_RDONLY);
-	if (mKeysFileDescriptor == -1) {
-		QLOG_ERROR() << "cannot open keys input file" << keysPath;
+	mState.start();
+	mEventFile.reset(hardwareAbstraction.createEventFile());
+	if (!mEventFile->open(keysPath)) {
 		mState.fail();
 		return;
 	}
 
-	mSocketNotifier.reset(new QSocketNotifier(mKeysFileDescriptor, QSocketNotifier::Read, this));
+	connect(mEventFile.data(), SIGNAL(newEvent(EventType, int, int))
+			, this, SLOT(readKeysEvent(trikHal::EventFileInterface::EventType, int, int)));
 
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readKeysEvent()));
-	mSocketNotifier->setEnabled(true);
+	mState.ready();
 }
 
 void KeysWorker::reset()
@@ -48,7 +45,7 @@ void KeysWorker::reset()
 bool KeysWorker::wasPressed(int code)
 {
 	mLock.lockForRead();
-	bool result = mWasPressed.contains(code);
+	const bool result = mWasPressed.contains(code);
 	mLock.unlock();
 
 	if (result) {
@@ -60,22 +57,15 @@ bool KeysWorker::wasPressed(int code)
 	return result;
 }
 
-void KeysWorker::readKeysEvent()
+void KeysWorker::readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
 {
-	struct input_event event;
-
-	if (read(mKeysFileDescriptor, reinterpret_cast<char*>(&event), sizeof(event)) != sizeof(event)) {
-		QLOG_ERROR() << "keys: incomplete data read";
-		return;
-	}
-
-	switch (event.type)
+	switch (eventType)
 	{
-	case EV_KEY:
-		mButtonCode = static_cast<int>(event.code);
-		mButtonValue = static_cast<int>(event.value);
+	case trikHal::EventFileInterface::EventType::evKey:
+		mButtonCode = code;
+		mButtonValue = value;
 		break;
-	case EV_SYN:
+	case trikHal::EventFileInterface::EventType::evSyn:
 		if (mButtonValue) {
 			mLock.lockForWrite();
 			mWasPressed.insert(mButtonCode);
@@ -83,6 +73,9 @@ void KeysWorker::readKeysEvent()
 		}
 
 		emit buttonPressed(mButtonCode, mButtonValue);
+		break;
+	default:
+		QLOG_ERROR() << "Event of unknown type in keys device file";
 		break;
 	}
 }

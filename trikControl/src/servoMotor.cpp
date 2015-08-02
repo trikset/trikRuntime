@@ -28,7 +28,7 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
 {
-	auto configure = [this, &port, &configurer](const QString &parameterName) {
+	const auto configure = [this, &port, &configurer](const QString &parameterName) {
 		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
 	};
 

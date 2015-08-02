@@ -29,30 +29,27 @@
 
 using namespace trikControl;
 
-Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer)
-	: mFifoFileDescriptor(-1)
+Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mFifo(hardwareAbstraction.createFifo())
 {
-	const QString fileName = configurer.attributeByPort(virtualPort, "file");
+	mState.start();
 
-	mFifoFileDescriptor = open(fileName.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
-	if (mFifoFileDescriptor == -1) {
-		QLOG_ERROR() << "Can't open FIFO file" << fileName;
+	connect(mFifo.data(), SIGNAL(newData(QString)), this, SLOT(onNewData(QString)));
+	connect(mFifo.data(), SIGNAL(readError()), this, SLOT(onReadError()));
+
+	if (mFifo->open(configurer.attributeByPort(virtualPort, "file"))) {
+		mState.ready();
+	} else {
 		mState.fail();
-		return;
 	}
-
-	mSocketNotifier.reset(new QSocketNotifier(mFifoFileDescriptor, QSocketNotifier::Read, this));
-
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(true);
-
-	QLOG_INFO() << "Opened FIFO file" << fileName;
-	mState.ready();
 }
 
 Fifo::~Fifo()
 {
-	close(mFifoFileDescriptor);
+	if (mState.isReady()) {
+		mFifo->close();
+	}
 }
 
 DeviceInterface::Status Fifo::status() const
@@ -78,31 +75,14 @@ bool Fifo::hasData() const
 	return mCurrent != "";
 }
 
-void Fifo::readFile()
+void Fifo::onNewData(const QString &data)
 {
-	char data[4000] = {0};
+	QString buffer = data;
+	mCurrent.swap(buffer);
+	emit newData(data);
+}
 
-	mSocketNotifier->setEnabled(false);
-
-	if (::read(mFifoFileDescriptor, data, 4000) < 0) {
-		QLOG_ERROR() << "FIFO read failed: " << strerror(errno);
-		mState.fail();
-		return;
-	}
-
-	mBuffer += data;
-
-	if (mBuffer.contains("\n")) {
-		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
-
-		mBuffer = lines.last();
-		lines.removeLast();
-		mCurrent = lines.last();
-
-		for (const QString line : lines) {
-			emit newData(line);
-		}
-	}
-
-	mSocketNotifier->setEnabled(true);
+void Fifo::onReadError()
+{
+	mState.fail();
 }

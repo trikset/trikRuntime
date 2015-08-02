@@ -14,24 +14,18 @@
 
 #include "src/rangeSensorWorker.h"
 
-#include <QtCore/QFileInfo>
-#include <QtCore/QStringList>
-#include <QtCore/QTimer>
-#include <QtCore/QEventLoop>
-
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <linux/input.h>
-
 #include <QsLog.h>
 
 using namespace trikControl;
 
-RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state)
-	: mEventFile(eventFile)
+RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mEventFile(hardwareAbstraction.createEventFile())
+	, mEventFileName(eventFile)
 	, mState(state)
 {
+	connect(mEventFile.data(), SIGNAL(newEvent(EventType, int, int))
+			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
 }
 
 RangeSensorWorker::~RangeSensorWorker()
@@ -45,18 +39,11 @@ void RangeSensorWorker::stop()
 {
 	if (mState.isReady()) {
 		mState.stop();
-		if (mSocketNotifier) {
-			disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-			mSocketNotifier->setEnabled(false);
-		}
-
-		if (::close(mEventFileDescriptor) != 0) {
-			QLOG_ERROR() << QString("%1: close failed: %2").arg(mEventFile.fileName()).arg(strerror(errno));
+		if (mEventFile->close()) {
+			mState.off();
+		} else {
 			mState.fail();
 		}
-
-		mEventFileDescriptor = -1;
-		mState.off();
 	} else {
 		QLOG_ERROR() << "Trying to stop range sensor that is not started, ignoring";
 	}
@@ -65,79 +52,28 @@ void RangeSensorWorker::stop()
 void RangeSensorWorker::init()
 {
 	mState.start();
-
-	QLOG_INFO() << "Opening" << mEventFile.fileName();
-
-	tryOpenEventFile();
-	if (mEventFileDescriptor == -1) {
-		// Give driver some time to create event file.
-		mInitWaitingLoop.reset(new QEventLoop());
-		QTimer checkTimer;
-		QObject::connect(&checkTimer, SIGNAL(timeout()), this, SLOT(tryOpenEventFile()));
-		checkTimer.start(100);
-
-		QTimer::singleShot(2000, mInitWaitingLoop.data(), SLOT(quit()));
-
-		mInitWaitingLoop->exec();
-	}
-
-	if (mEventFileDescriptor == -1) {
-		QLOG_ERROR() << "Cannot open range sensor output file" << mEventFile.fileName();
-		mState.fail();
-		return;
-	}
-
-	mSocketNotifier.reset(new QSocketNotifier(mEventFileDescriptor, QSocketNotifier::Read));
-
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(true);
+	mEventFile->open(mEventFileName);
 	mState.ready();
 }
 
-void RangeSensorWorker::readFile()
+void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
 {
 	if (!mState.isReady()) {
 		return;
 	}
 
-	struct input_event event;
-	int size = 0;
-
-	mSocketNotifier->setEnabled(false);
-
-	while ((size = ::read(mEventFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
-			== static_cast<int>(sizeof(event)))
-	{
-		switch (event.type) {
-			case EV_ABS:
-				switch (event.code) {
-				case ABS_DISTANCE:
-					mDistance = event.value;
-					break;
-				case ABS_MISC:
-					mRawDistance = event.value;
-					break;
-				}
-				break;
-			case EV_SYN:
-				emit newData(mDistance, mRawDistance);
-				break;
-		}
-	}
-
-	if (0 <= size && size < static_cast<int>(sizeof(event))) {
-		QLOG_ERROR() << "incomplete data read";
-	}
-
-	mSocketNotifier->setEnabled(true);
-}
-
-void RangeSensorWorker::tryOpenEventFile()
-{
-	mEventFileDescriptor = open(mEventFile.fileName().toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
-
-	if (mEventFileDescriptor != -1 && !mInitWaitingLoop.isNull() && mInitWaitingLoop->isRunning()) {
-		mInitWaitingLoop->quit();
+	switch (eventType) {
+		case trikHal::EventFileInterface::EventType::evAbsDistance:
+			mDistance = value;
+			break;
+		case trikHal::EventFileInterface::EventType::evAbsMisc:
+			mRawDistance = value;
+			break;
+		case trikHal::EventFileInterface::EventType::evSyn:
+			emit newData(mDistance, mRawDistance);
+			break;
+		default:
+			QLOG_ERROR() << "Unknown event in range sensor event file:" << static_cast<int>(eventType) << code << value;
 	}
 }
 
@@ -145,7 +81,7 @@ int RangeSensorWorker::read()
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read from uninitialized sensor, ignoring";
-		return 0;
+		return -1;
 	}
 
 	return mDistance;
@@ -155,7 +91,7 @@ int RangeSensorWorker::readRawData()
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read from uninitialized sensor, ignoring";
-		return 0;
+		return -1;
 	}
 
 	return mRawDistance;

@@ -19,6 +19,8 @@
 #include <QtCore/QScopedPointer>
 #include <QtCore/QHash>
 
+#include <trikHal/hardwareAbstractionInterface.h>
+
 #include "keysInterface.h"
 #include "deviceState.h"
 
@@ -38,7 +40,7 @@ class Keys : public KeysInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Keys(const trikKernel::Configurer &configurer);
+	Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Keys() override;
 

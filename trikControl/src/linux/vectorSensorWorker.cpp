@@ -14,72 +14,45 @@
 
 #include "src/vectorSensorWorker.h"
 
-#include <cmath>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <linux/ioctl.h>
-#include <linux/input.h>
-
 #include <QsLog.h>
 
 using namespace trikControl;
 
-VectorSensorWorker::VectorSensorWorker(const QString &controlFile, DeviceState &state)
-	: mDeviceFileDescriptor(0)
+VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &state
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mEventFile(hardwareAbstraction.createEventFile())
 	, mState(state)
 {
 	mReading << 0 << 0 << 0;
 	mReadingUnsynced = mReading;
 
-	mDeviceFileDescriptor = open(controlFile.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
-	if (mDeviceFileDescriptor == -1) {
-		QLOG_ERROR() << "Cannot open input file " << controlFile;
-		mState.fail();
-		return;
-	}
+	mState.start();
 
-	mSocketNotifier.reset(new QSocketNotifier(mDeviceFileDescriptor, QSocketNotifier::Read, this));
+	connect(mEventFile.data(), SIGNAL(newEvent(EventType, int, int))
+			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
 
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
-	mSocketNotifier->setEnabled(true);
+	mEventFile->open(eventFile);
 }
 
-void VectorSensorWorker::readFile()
+void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
 {
-	struct input_event event;
-	int size = 0;
-
-	while ((size = ::read(mDeviceFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
-			== static_cast<int>(sizeof(event)))
-	{
-		switch (event.type) {
-			case EV_ABS:
-				switch (event.code) {
-				case ABS_X:
-					mReadingUnsynced[0] = event.value;
-					break;
-				case ABS_Y:
-					mReadingUnsynced[1] = event.value;
-					break;
-				case ABS_Z:
-					mReadingUnsynced[2] = event.value;
-					break;
-				}
-				break;
-			case EV_SYN:
-				mReading.swap(mReadingUnsynced);
-				emit newData(mReading);
-
-				break;
-		}
-	}
-
-	if (0 <= size && size < static_cast<int>(sizeof(event))) {
-		QLOG_ERROR() << "incomplete data read";
+	switch (eventType) {
+		case trikHal::EventFileInterface::EventType::evAbsX:
+			mReadingUnsynced[0] = value;
+			break;
+		case trikHal::EventFileInterface::EventType::evAbsY:
+			mReadingUnsynced[1] = value;
+			break;
+		case trikHal::EventFileInterface::EventType::evAbsZ:
+			mReadingUnsynced[2] = value;
+			break;
+		case trikHal::EventFileInterface::EventType::evSyn:
+			mReading.swap(mReadingUnsynced);
+			emit newData(mReading);
+			break;
+		default:
+			QLOG_ERROR() << "Unknown event type in vector sensor event file:" << static_cast<int>(eventType)
+					<< code << value;
 	}
 }
 

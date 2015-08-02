@@ -23,6 +23,8 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QList>
 
+#include <trikHal/hardwareAbstractionInterface.h>
+
 #include "deviceInterface.h"
 #include "deviceState.h"
 
@@ -43,7 +45,7 @@ public:
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param state - shared state of a sensor.
 	AbstractVirtualSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-			, DeviceState &state);
+			, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~AbstractVirtualSensorWorker() override;
 
@@ -66,7 +68,7 @@ protected:
 
 private slots:
 	/// Updates current reading when new value is ready.
-	void readFile();
+	void onNewDataInOutputFifo(const QString &data);
 
 private:
 	/// Provides user-friendly name of a sensor used in debug output.
@@ -94,17 +96,14 @@ private:
 	/// Flushes queued commands to a sensor, if it is ready, otherwise does nothing.
 	void sync();
 
-	/// Listener for output fifo.
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	trikHal::SystemConsoleInterface &mSystemConsole;
+
+	QScopedPointer<trikHal::FifoInterface> mOutputFifo;
+
+//	QScopedPointer<trikHal::
 
 	/// File name (with path) of a script that launches or stops sensor.
 	QString mScript;
-
-	/// File descriptor for output fifo.
-	int mOutputFileDescriptor = -1;
-
-	/// Virtual sensor process.
-	QProcess mSensorProcess;
 
 	/// Input fifo.
 	QFile mInputFile;
@@ -117,9 +116,6 @@ private:
 
 	/// A queue of commands to be passed to input fifo when it is ready.
 	QList<QString> mCommandQueue;
-
-	/// Buffer with current line being read from FIFO.
-	QString mBuffer;
 
 	/// Current state of a device, shared between worker and proxy.
 	DeviceState &mState;

@@ -21,7 +21,8 @@
 
 using namespace trikControl;
 
-ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &configurer)
+ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &configurer
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
 	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
@@ -30,7 +31,7 @@ ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &conf
 	const int m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
 	const int n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
 
-	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState));
+	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState, hardwareAbstraction));
 	mColorSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
