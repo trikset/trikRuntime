@@ -28,6 +28,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QDirIterator>
 #include <QtCore/QDateTime>
+#include <QtCore/QSettings>
 #include <QtGui/QFont>
 
 #include <trikKernel/coreDumping.h>
@@ -78,13 +79,18 @@ void setDefaultLocale(bool localizationDisabled)
 		return;
 	}
 
+	QSettings settings("localSettings.ini", QSettings::IniFormat);
+	const QString lastLocale = settings.value("locale", "").toString();
+
 	const RcReader rcReader("/etc/trik/trikrc");
 	const QString localeInSettings = rcReader.value("locale");
-	const QString locale = localeInSettings.isEmpty() ? "ru" : localeInSettings;
-	if (!locale.isEmpty()) {
-		QLocale::setDefault(QLocale(locale));
-		loadTranslators(locale);
+	const QString locale = !lastLocale.isEmpty() ? lastLocale : !localeInSettings.isEmpty() ? localeInSettings : "ru";
+	if (lastLocale != locale) {
+		settings.setValue("locale", locale);
 	}
+
+	QLocale::setDefault(QLocale(locale));
+	loadTranslators(locale);
 }
 
 int main(int argc, char *argv[])

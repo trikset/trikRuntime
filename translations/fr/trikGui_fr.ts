@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_FR">
+<TS version="2.0" language="fr_FR">
 <context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
@@ -117,6 +117,34 @@
     </message>
 </context>
 <context>
+    <name>trikGui::LanguageSelectionWidget</name>
+    <message>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="36"/>
+        <source>Select language:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="42"/>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="71"/>
+        <source>Language</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="87"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="88"/>
+        <source>GUI will now restart</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>trikGui::MotorLever</name>
     <message>
         <location filename="../../trikGui/motorLever.cpp" line="41"/>
@@ -188,12 +216,12 @@
 <context>
     <name>trikGui::StartWidget</name>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="49"/>
+        <location filename="../../trikGui/startWidget.cpp" line="50"/>
         <source>TRIK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="54"/>
+        <location filename="../../trikGui/startWidget.cpp" line="55"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>

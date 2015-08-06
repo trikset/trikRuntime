@@ -23,6 +23,7 @@ HEADERS += \
 	$$PWD/digitSelector.h \
 	$$PWD/encoderIndicator.h \
 	$$PWD/fileManagerWidget.h \
+	$$PWD/languageSelectionWidget.h \
 	$$PWD/lazyMainWidget.h \
 	$$PWD/lazyMainWidgetWrapper.h \
 	$$PWD/mainWidget.h \
@@ -49,35 +50,36 @@ HEADERS += \
 	$$PWD/systemSettingsWidget.h \
 
 SOURCES += \
+	$$PWD/backgroundWidget.cpp \
+	$$PWD/batteryIndicator.cpp \
+	$$PWD/communicationSettingsWidget.cpp \
 	$$PWD/connectButton.cpp \
 	$$PWD/controller.cpp \
 	$$PWD/digitSelector.cpp \
 	$$PWD/encoderIndicator.cpp \
+	$$PWD/fileManagerMessageBox.cpp \
 	$$PWD/fileManagerWidget.cpp \
+	$$PWD/informationWidget.cpp \
+	$$PWD/languageSelectionWidget.cpp \
 	$$PWD/main.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/numberSelectionWidget.cpp \
 	$$PWD/rcReader.cpp \
 	$$PWD/runningWidget.cpp \
+	$$PWD/sensorIndicator.cpp \
 	$$PWD/sensorsSelectionWidget.cpp \
+	$$PWD/sensorsWidget.cpp \
 	$$PWD/startWidget.cpp \
+	$$PWD/systemSettingsWidget.cpp \
 	$$PWD/trikGuiApplication.cpp \
+	$$PWD/trikGuiDialog.cpp \
+	$$PWD/trikGuiMessageBox.cpp \
+	$$PWD/updateWidget.cpp \
 	$$PWD/wiFiAPWidget.cpp \
 	$$PWD/wiFiClientWidget.cpp \
 	$$PWD/wiFiInitWidget.cpp \
 	$$PWD/wiFiModeWidget.cpp \
-	$$PWD/sensorIndicator.cpp \
-	$$PWD/sensorsWidget.cpp \
-	$$PWD/communicationSettingsWidget.cpp \
-	$$PWD/trikGuiMessageBox.cpp \
-	$$PWD/trikGuiDialog.cpp \
-	$$PWD/backgroundWidget.cpp \
-	$$PWD/batteryIndicator.cpp \
-	$$PWD/informationWidget.cpp \
-	$$PWD/fileManagerMessageBox.cpp \
-	$$PWD/updateWidget.cpp \
-	$$PWD/systemSettingsWidget.cpp \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

@@ -19,7 +19,13 @@ include(../global.pri)
 win32 {
 	DESTDIR ~= s,/,\,g
 	system(cmd /C "xcopy *.qm $$DESTDIR\\translations\\ /s /e /y")
+	system(cmd /C "xcopy *.ini $$DESTDIR\\translations\\ /s /e /y")
 }
 else {
 	system(mkdir -p $$DESTDIR/translations/; find ./ -name *.qm -exec cp --parents {} $$DESTDIR/translations \;)
+	system(mkdir -p $$DESTDIR/translations/; find ./ -name *.ini -exec cp --parents {} $$DESTDIR/translations \;)
 }
+
+OTHER_FILES += \
+	$$PWD/ru/locale.ini \
+	$$PWD/fr/locale.ini \
