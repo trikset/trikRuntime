@@ -37,7 +37,10 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/system.js \
 
-TRANSLATIONS += trikScriptRunner_ru.ts
+
+TRANSLATIONS = \
+	$$PWD/../translations/ru/trikScriptRunner_ru.ts \
+	$$PWD/../translations/fr/trikScriptRunner_fr.ts \
 
 QT += script
 
@@ -46,6 +49,3 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 copyToDestdir($$PWD/system.js)
 
 uses(trikKernel trikControl trikNetwork)
-
-RESOURCES += \
-	trikSrciptRunner.qrc

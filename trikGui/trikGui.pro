@@ -79,7 +79,10 @@ SOURCES += \
 	$$PWD/updateWidget.cpp \
 	$$PWD/systemSettingsWidget.cpp \
 
-TRANSLATIONS = trikGui_ru.ts
+TRANSLATIONS = \
+	$$PWD/../translations/ru/trikGui_ru.ts \
+	$$PWD/../translations/fr/trikGui_fr.ts \
+
 RESOURCES = trikGui.qrc
 
 copyToDestdir($$PWD/wpa-config.xml)
