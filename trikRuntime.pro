@@ -27,6 +27,7 @@ SUBDIRS = \
 	trikTelemetry \
 	trikWiFi \
 	trikRuntimeKiller \
+	translations \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 

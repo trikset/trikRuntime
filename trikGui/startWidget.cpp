@@ -34,6 +34,7 @@
 #include "communicationSettingsWidget.h"
 #include "informationWidget.h"
 #include "systemSettingsWidget.h"
+#include "languageSelectionWidget.h"
 
 using namespace trikGui;
 
@@ -71,6 +72,8 @@ StartWidget::StartWidget(Controller &controller, const QString &configPath, QWid
 
 	settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+
+	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -165,6 +168,10 @@ void StartWidget::launch()
 
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
+		} else if (currentItemText == LanguageSelectionWidget::menuEntry()) {
+			LanguageSelectionWidget languageSelectionWidget;
+			emit newWidget(languageSelectionWidget);
+			result = languageSelectionWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {

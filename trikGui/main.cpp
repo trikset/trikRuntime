@@ -26,15 +26,19 @@
 
 #include <QtCore/QTranslator>
 #include <QtCore/QDir>
+#include <QtCore/QDirIterator>
 #include <QtCore/QDateTime>
+#include <QtCore/QSettings>
 #include <QtGui/QFont>
-
-#include "trikGuiApplication.h"
-#include "backgroundWidget.h"
-#include <QsLog.h>
 
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
+#include <QsLog.h>
+
+#include "trikGuiApplication.h"
+#include "backgroundWidget.h"
+
+#include "rcReader.h"
 
 using namespace trikGui;
 
@@ -53,6 +57,40 @@ void printUsage() {
 				<< "Example: ./trikGui -qws -c /home/root/trik/";
 	qDebug() << "  -d --- path to a directory where images, example scripts and system.js file are stored."
 				<< "Example: ./trikGui -qws -d /home/root/trik/";
+}
+
+void loadTranslators(const QString &locale)
+{
+	const QDir translationsDirectory(QApplication::applicationDirPath() + "/translations/" + locale);
+	QDirIterator directories(translationsDirectory, QDirIterator::Subdirectories);
+	while (directories.hasNext()) {
+		for (const QFileInfo &translatorFile : QDir(directories.next()).entryInfoList(QDir::Files)) {
+			QTranslator *translator = new QTranslator(qApp);
+			translator->load(translatorFile.absoluteFilePath());
+			QApplication::installTranslator(translator);
+		}
+	}
+}
+
+void setDefaultLocale(bool localizationDisabled)
+{
+	if (localizationDisabled) {
+		QLocale::setDefault(QLocale::English);
+		return;
+	}
+
+	QSettings settings("localSettings.ini", QSettings::IniFormat);
+	const QString lastLocale = settings.value("locale", "").toString();
+
+	const RcReader rcReader("/etc/trik/trikrc");
+	const QString localeInSettings = rcReader.value("locale");
+	const QString locale = !lastLocale.isEmpty() ? lastLocale : !localeInSettings.isEmpty() ? localeInSettings : "ru";
+	if (lastLocale != locale) {
+		settings.setValue("locale", locale);
+	}
+
+	QLocale::setDefault(QLocale(locale));
+	loadTranslators(locale);
 }
 
 int main(int argc, char *argv[])
@@ -75,14 +113,7 @@ int main(int argc, char *argv[])
 	font.setPixelSize(18);
 	app.setFont(font);
 
-	QTranslator guiTranslator;
-	QTranslator scriptRunnerTranslator;
-	if (!app.arguments().contains("--no-locale")) {
-		guiTranslator.load(":/trikGui_ru");
-		scriptRunnerTranslator.load(":/trikScriptRunner_ru");
-		app.installTranslator(&guiTranslator);
-		app.installTranslator(&scriptRunnerTranslator);
-	}
+	setDefaultLocale(app.arguments().contains("--no-locale"));
 
 	QString configPath = QDir::currentPath() + "/";
 	if (app.arguments().contains("-c")) {
