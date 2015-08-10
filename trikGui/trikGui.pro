@@ -22,7 +22,9 @@ HEADERS += \
 	$$PWD/controller.h \
 	$$PWD/digitSelector.h \
 	$$PWD/encoderIndicator.h \
+	$$PWD/fileManagerMessageBox.h \
 	$$PWD/fileManagerWidget.h \
+	$$PWD/informationWidget.h \
 	$$PWD/languageSelectionWidget.h \
 	$$PWD/lazyMainWidget.h \
 	$$PWD/lazyMainWidgetWrapper.h \
@@ -37,17 +39,15 @@ HEADERS += \
 	$$PWD/sensorsSelectionWidget.h \
 	$$PWD/sensorsWidget.h \
 	$$PWD/startWidget.h \
+	$$PWD/systemSettingsWidget.h \
 	$$PWD/trikGuiApplication.h \
 	$$PWD/trikGuiDialog.h \
 	$$PWD/trikGuiMessageBox.h \
+	$$PWD/updateWidget.h \
 	$$PWD/wiFiAPWidget.h \
 	$$PWD/wiFiClientWidget.h \
 	$$PWD/wiFiInitWidget.h \
 	$$PWD/wiFiModeWidget.h \
-	$$PWD/informationWidget.h \
-	$$PWD/fileManagerMessageBox.h \
-	$$PWD/updateWidget.h \
-	$$PWD/systemSettingsWidget.h \
 
 SOURCES += \
 	$$PWD/backgroundWidget.cpp \
