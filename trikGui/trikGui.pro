@@ -44,7 +44,6 @@ HEADERS += \
 	$$PWD/trikGuiDialog.h \
 	$$PWD/trikGuiMessageBox.h \
 	$$PWD/updateWidget.h \
-	$$PWD/verticalScrollArea.h \
 	$$PWD/wiFiAPWidget.h \
 	$$PWD/wiFiClientWidget.h \
 	$$PWD/wiFiInitWidget.h \
@@ -77,7 +76,6 @@ SOURCES += \
 	$$PWD/trikGuiDialog.cpp \
 	$$PWD/trikGuiMessageBox.cpp \
 	$$PWD/updateWidget.cpp \
-	$$PWD/verticalScrollArea.cpp \
 	$$PWD/wiFiAPWidget.cpp \
 	$$PWD/wiFiClientWidget.cpp \
 	$$PWD/wiFiInitWidget.cpp \

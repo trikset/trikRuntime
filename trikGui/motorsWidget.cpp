@@ -14,15 +14,17 @@
 
 #include "motorsWidget.h"
 
+#include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QScrollArea>
 #else
 	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QScrollArea>
 #endif
 
-#include "verticalScrollArea.h"
 #include "motorLever.h"
 
 using namespace trikGui;
@@ -35,8 +37,11 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {
-	const auto scrollArea = new VerticalScrollArea(this);
+	const auto scrollArea = new QScrollArea(this);
 	scrollArea->setFrameStyle(QFrame::NoFrame);
+	scrollArea->setWidgetResizable(true);
+	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	scrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
 	const auto leversWidget = new QWidget(this);
 	const auto innerLayout = new QVBoxLayout(this);
@@ -55,8 +60,11 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	leversWidget->setLayout(innerLayout);
 
 	outerLayout->addWidget(scrollArea);
+	delete this->layout();
 	this->setLayout(outerLayout);
 	scrollArea->setWidget(leversWidget);
+
+	QTimer::singleShot(0, this, SLOT(fixLeversPosition()));
 }
 
 MotorsWidget::~MotorsWidget()
@@ -101,4 +109,10 @@ void MotorsWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 	}
+}
+
+void MotorsWidget::fixLeversPosition()
+{
+	focusNextChild();
+	focusPreviousChild();
 }

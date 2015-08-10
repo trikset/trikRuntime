@@ -63,6 +63,11 @@ public:
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
+private slots:
+	/// Hack to work around odd QScrollArea behavior which incorrectly positions inner widget when there is no need for
+	/// vertical scrollbar.
+	void fixLeversPosition();
+
 private:
 	trikControl::BrickInterface &mBrick;
 	QStringList mPorts;
