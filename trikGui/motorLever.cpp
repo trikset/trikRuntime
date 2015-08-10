@@ -67,6 +67,7 @@ MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, 
 	setLayout(&mLayout);
 
 	setFocusPolicy(Qt::StrongFocus);
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::QSizePolicy::MinimumExpanding);
 }
 
 MotorLever::~MotorLever()

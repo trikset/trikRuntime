@@ -16,6 +16,13 @@
 
 #include <QtGui/QKeyEvent>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QVBoxLayout>
+#else
+	#include <QtWidgets/QVBoxLayout>
+#endif
+
+#include "verticalScrollArea.h"
 #include "motorLever.h"
 
 using namespace trikGui;
@@ -28,17 +35,28 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
 {
+	const auto scrollArea = new VerticalScrollArea(this);
+	scrollArea->setFrameStyle(QFrame::NoFrame);
+
+	const auto leversWidget = new QWidget(this);
+	const auto innerLayout = new QVBoxLayout(this);
+	const auto outerLayout = new QHBoxLayout(this);
+
 	mPorts.sort();
 
 	int i = 0;
 	for (const QString &port : mPorts) {
 		MotorLever *lever = new MotorLever(port, *mBrick.motor(port), this);
-		mLayout.addWidget(lever);
+		innerLayout->addWidget(lever);
 		mLevers[i] = lever;
 		++i;
 	}
 
-	setLayout(&mLayout);
+	leversWidget->setLayout(innerLayout);
+
+	outerLayout->addWidget(scrollArea);
+	this->setLayout(outerLayout);
+	scrollArea->setWidget(leversWidget);
 }
 
 MotorsWidget::~MotorsWidget()

@@ -19,9 +19,11 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
 	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QScrollArea>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QScrollArea>
 #endif
 
 #include <QtCore/QString>
@@ -62,8 +64,6 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private:
-	QVBoxLayout mLayout;
-
 	trikControl::BrickInterface &mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.
