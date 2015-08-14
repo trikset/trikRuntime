@@ -42,7 +42,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="145"/>
+        <location filename="../../trikGui/controller.cpp" line="143"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -70,6 +70,16 @@
     <message>
         <location filename="../../trikGui/fileManagerWidget.cpp" line="78"/>
         <source>File Manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="102"/>
+        <source>Confirm deletion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="103"/>
+        <source>Are you sure you want to delete file?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -119,27 +129,27 @@
 <context>
     <name>trikGui::LanguageSelectionWidget</name>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="36"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="38"/>
         <source>Select language:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="42"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="44"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="71"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="75"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="87"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="92"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="88"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="93"/>
         <source>GUI will now restart</source>
         <translation type="unfinished"></translation>
     </message>
@@ -147,13 +157,13 @@
 <context>
     <name>trikGui::MotorLever</name>
     <message>
-        <location filename="../../trikGui/motorLever.cpp" line="41"/>
-        <location filename="../../trikGui/motorLever.cpp" line="132"/>
+        <location filename="../../trikGui/motorLever.cpp" line="40"/>
+        <location filename="../../trikGui/motorLever.cpp" line="127"/>
         <source>off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/motorLever.cpp" line="129"/>
+        <location filename="../../trikGui/motorLever.cpp" line="124"/>
         <source>on</source>
         <translation type="unfinished"></translation>
     </message>
@@ -161,12 +171,12 @@
 <context>
     <name>trikGui::MotorsWidget</name>
     <message>
-        <location filename="../../trikGui/motorsWidget.cpp" line="53"/>
+        <location filename="../../trikGui/motorsWidget.cpp" line="79"/>
         <source>Test power motors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/motorsWidget.cpp" line="56"/>
+        <location filename="../../trikGui/motorsWidget.cpp" line="82"/>
         <source>Test servo motors</source>
         <translation type="unfinished"></translation>
     </message>

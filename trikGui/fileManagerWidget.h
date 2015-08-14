@@ -35,7 +35,6 @@
 
 #include "controller.h"
 #include "trikGuiDialog.h"
-#include "fileManagerMessageBox.h"
 
 namespace trikGui {
 
@@ -70,6 +69,7 @@ private slots:
 private:
 	void showCurrentDir();
 	void open();
+	void remove();
 	QString currentPath();
 
 	QVBoxLayout mLayout;
@@ -79,8 +79,6 @@ private:
 	Controller &mController;
 	QString mRootDirPath;
 	QString mLastSelectedFile;
-
-	FileManagerMessageBox mOpenDeleteBox;
 };
 
 }

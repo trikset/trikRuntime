@@ -22,7 +22,6 @@ HEADERS += \
 	$$PWD/controller.h \
 	$$PWD/digitSelector.h \
 	$$PWD/encoderIndicator.h \
-	$$PWD/fileManagerMessageBox.h \
 	$$PWD/fileManagerWidget.h \
 	$$PWD/informationWidget.h \
 	$$PWD/languageSelectionWidget.h \
@@ -57,7 +56,6 @@ SOURCES += \
 	$$PWD/controller.cpp \
 	$$PWD/digitSelector.cpp \
 	$$PWD/encoderIndicator.cpp \
-	$$PWD/fileManagerMessageBox.cpp \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/informationWidget.cpp \
 	$$PWD/languageSelectionWidget.cpp \
