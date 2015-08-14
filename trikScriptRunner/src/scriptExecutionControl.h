@@ -54,8 +54,8 @@ public slots:
 	/// Aborts script execution.
 	void quit();
 
-	/// Asynchronously execute given sh command.
-	void system(const QString &command);
+	/// Execute given sh command.
+	void system(const QString &command, bool synchronously = false);
 
 	/// Appends given text to the end of a file.
 	void writeToFile(const QString &file, const QString &text);

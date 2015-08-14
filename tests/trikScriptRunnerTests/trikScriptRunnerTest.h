@@ -30,7 +30,7 @@ protected:
 
 	void run(const QString &script);
 	void runFromFile(const QString &fileName);
-
+	static void wait(int msec);
 
 private:
 	QScopedPointer<trikControl::BrickInterface> mBrick;
