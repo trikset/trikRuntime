@@ -25,573 +25,573 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</initScript>
 
 	<!-- Servomotor or PWM capture ports. -->
-	<E1>
+	<S1>
 		<angularServomotor />
-	</E1>
-	<E2>
-		<angularServomotor invert="false" />
-	</E2>
-	<E3>
-		<angularServomotor min="600000" max="2200000" zero="1400000" stop="0" invert="false" />
-	</E3>
-	<C1>
+	</S1>
+	<S2>
 		<angularServomotor />
-	</C1>
-	<C2>
+	</S2>
+	<S3>
 		<angularServomotor />
-	</C2>
-	<C3>
+	</S3>
+	<S4>
 		<angularServomotor />
-	</C3>
+	</S4>
+	<S5>
+		<angularServomotor />
+	</S5>
+	<S6>
+		<angularServomotor />
+	</S6>
 
 	<!-- Analog sensor ports. -->
 	<A1>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A1>
 	<A2>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A2>
 	<A3>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A3>
 	<A4>
-		<irSensor />
+		<analogSensor />
 	</A4>
 	<A5>
-		<irSensor />
+		<analogSensor />
 	</A5>
 	<A6>
-		<irSensor />
+		<analogSensor />
 	</A6>
 	<!-- Analog sensor ports (I2C NXT temp sensors). -->
 	<T1>
-		<irSensor />
+		<analogSensor />
 	</T1>
 	<T2>
-		<irSensor />
+		<analogSensor />
 	</T2>
 	<T3>
-		<irSensor />
+		<analogSensor />
 	</T3>
 	<!-- Analog sensor ports (I2C ADC MCP3424). -->
 	<W1>
-		<irSensor />
+		<analogSensor />
 	</W1>
 	<W2>
-		<irSensor />
+		<analogSensor />
 	</W2>
 	<W3>
-		<irSensor />
+		<analogSensor />
 	</W3>
 	<W4>
-		<irSensor />
+		<analogSensor />
 	</W4>
 	<!-- DHT11 sensors. -->
 	<TEMP_DHT11_1>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_1>
 	<TEMP_DHT11_2>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_2>
 	<TEMP_DHT11_3>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_3>
 	<TEMP_DHT11_4>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_4>
 	<TEMP_DHT11_5>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_5>
 	<TEMP_DHT11_6>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_6>
 	<TEMP_DHT11_7>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_7>
 	<TEMP_DHT11_8>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_8>
 	<TEMP_DHT11_9>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_9>
 	<TEMP_DHT11_10>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_10>
 	<TEMP_DHT11_11>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_11>
 	<TEMP_DHT11_12>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_12>
 	<TEMP_DHT11_13>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_13>
 	<TEMP_DHT11_14>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT11_14>
 	<HUM_DHT11_1>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_1>
 	<HUM_DHT11_2>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_2>
 	<HUM_DHT11_3>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_3>
 	<HUM_DHT11_4>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_4>
 	<HUM_DHT11_5>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_5>
 	<HUM_DHT11_6>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_6>
 	<HUM_DHT11_7>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_7>
 	<HUM_DHT11_8>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_8>
 	<HUM_DHT11_9>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_9>
 	<HUM_DHT11_10>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_10>
 	<HUM_DHT11_11>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_11>
 	<HUM_DHT11_12>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_12>
 	<HUM_DHT11_13>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_13>
 	<HUM_DHT11_14>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT11_14>
 	<!-- DHT22 sensors. -->
 	<TEMP_DHT22_1>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_1>
 	<TEMP_DHT22_2>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_2>
 	<TEMP_DHT22_3>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_3>
 	<TEMP_DHT22_4>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_4>
 	<TEMP_DHT22_5>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_5>
 	<TEMP_DHT22_6>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_6>
 	<TEMP_DHT22_7>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_7>
 	<TEMP_DHT22_8>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_8>
 	<TEMP_DHT22_9>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_9>
 	<TEMP_DHT22_10>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_10>
 	<TEMP_DHT22_11>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_11>
 	<TEMP_DHT22_12>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_12>
 	<TEMP_DHT22_13>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_13>
 	<TEMP_DHT22_14>
-		<irSensor />
+		<analogSensor />
 	</TEMP_DHT22_14>
 	<HUM_DHT22_1>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_1>
 	<HUM_DHT22_2>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_2>
 	<HUM_DHT22_3>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_3>
 	<HUM_DHT22_4>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_4>
 	<HUM_DHT22_5>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_5>
 	<HUM_DHT22_6>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_6>
 	<HUM_DHT22_7>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_7>
 	<HUM_DHT22_8>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_8>
 	<HUM_DHT22_9>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_9>
 	<HUM_DHT22_10>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_10>
 	<HUM_DHT22_11>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_11>
 	<HUM_DHT22_12>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_12>
 	<HUM_DHT22_13>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_13>
 	<HUM_DHT22_14>
-		<irSensor />
+		<analogSensor />
 	</HUM_DHT22_14>
 	<!-- Analog sensor ports (I2C -> UART -> RS485 distance sensor URM04). -->
 	<U1_0x11>
-		<irSensor />
+		<analogSensor />
 	</U1_0x11>
 	<U1_0x12>
-		<irSensor />
+		<analogSensor />
 	</U1_0x12>
 	<U1_0x13>
-		<irSensor />
+		<analogSensor />
 	</U1_0x13>
 	<U1_0x14>
-		<irSensor />
+		<analogSensor />
 	</U1_0x14>
 	<U1_0x15>
-		<irSensor />
+		<analogSensor />
 	</U1_0x15>
 	<U1_0x16>
-		<irSensor />
+		<analogSensor />
 	</U1_0x16>
 	<U1_0x17>
-		<irSensor />
+		<analogSensor />
 	</U1_0x17>
 	<U1_0x18>
-		<irSensor />
+		<analogSensor />
 	</U1_0x18>
 	<U1_0x19>
-		<irSensor />
+		<analogSensor />
 	</U1_0x19>
 	<U1_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U1_0x1A>
 	<U1_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U1_0x1B>
 	<U1_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U1_0x1C>
 	<U1_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U1_0x1D>
 	<U1_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U1_0x1E>
 	<U1_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U1_0x1F>
 	<U1_0x20>
-		<irSensor />
+		<analogSensor />
 	</U1_0x20>
 	<U2_0x11>
-		<irSensor />
+		<analogSensor />
 	</U2_0x11>
 	<U2_0x12>
-		<irSensor />
+		<analogSensor />
 	</U2_0x12>
 	<U2_0x13>
-		<irSensor />
+		<analogSensor />
 	</U2_0x13>
 	<U2_0x14>
-		<irSensor />
+		<analogSensor />
 	</U2_0x14>
 	<U2_0x15>
-		<irSensor />
+		<analogSensor />
 	</U2_0x15>
 	<U2_0x16>
-		<irSensor />
+		<analogSensor />
 	</U2_0x16>
 	<U2_0x17>
-		<irSensor />
+		<analogSensor />
 	</U2_0x17>
 	<U2_0x18>
-		<irSensor />
+		<analogSensor />
 	</U2_0x18>
 	<U2_0x19>
-		<irSensor />
+		<analogSensor />
 	</U2_0x19>
 	<U2_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U2_0x1A>
 	<U2_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U2_0x1B>
 	<U2_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U2_0x1C>
 	<U2_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U2_0x1D>
 	<U2_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U2_0x1E>
 	<U2_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U2_0x1F>
 	<U2_0x20>
-		<irSensor />
+		<analogSensor />
 	</U2_0x20>
 	<U3_0x11>
-		<irSensor />
+		<analogSensor />
 	</U3_0x11>
 	<U3_0x12>
-		<irSensor />
+		<analogSensor />
 	</U3_0x12>
 	<U3_0x13>
-		<irSensor />
+		<analogSensor />
 	</U3_0x13>
 	<U3_0x14>
-		<irSensor />
+		<analogSensor />
 	</U3_0x14>
 	<U3_0x15>
-		<irSensor />
+		<analogSensor />
 	</U3_0x15>
 	<U3_0x16>
-		<irSensor />
+		<analogSensor />
 	</U3_0x16>
 	<U3_0x17>
-		<irSensor />
+		<analogSensor />
 	</U3_0x17>
 	<U3_0x18>
-		<irSensor />
+		<analogSensor />
 	</U3_0x18>
 	<U3_0x19>
-		<irSensor />
+		<analogSensor />
 	</U3_0x19>
 	<U3_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U3_0x1A>
 	<U3_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U3_0x1B>
 	<U3_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U3_0x1C>
 	<U3_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U3_0x1D>
 	<U3_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U3_0x1E>
 	<U3_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U3_0x1F>
 	<U3_0x20>
-		<irSensor />
+		<analogSensor />
 	</U3_0x20>
 	<U4_0x11>
-		<irSensor />
+		<analogSensor />
 	</U4_0x11>
 	<U4_0x12>
-		<irSensor />
+		<analogSensor />
 	</U4_0x12>
 	<U4_0x13>
-		<irSensor />
+		<analogSensor />
 	</U4_0x13>
 	<U4_0x14>
-		<irSensor />
+		<analogSensor />
 	</U4_0x14>
 	<U4_0x15>
-		<irSensor />
+		<analogSensor />
 	</U4_0x15>
 	<U4_0x16>
-		<irSensor />
+		<analogSensor />
 	</U4_0x16>
 	<U4_0x17>
-		<irSensor />
+		<analogSensor />
 	</U4_0x17>
 	<U4_0x18>
-		<irSensor />
+		<analogSensor />
 	</U4_0x18>
 	<U4_0x19>
-		<irSensor />
+		<analogSensor />
 	</U4_0x19>
 	<U4_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U4_0x1A>
 	<U4_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U4_0x1B>
 	<U4_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U4_0x1C>
 	<U4_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U4_0x1D>
 	<U4_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U4_0x1E>
 	<U4_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U4_0x1F>
 	<U4_0x20>
-		<irSensor />
+		<analogSensor />
 	</U4_0x20>
 	<U5_0x11>
-		<irSensor />
+		<analogSensor />
 	</U5_0x11>
 	<U5_0x12>
-		<irSensor />
+		<analogSensor />
 	</U5_0x12>
 	<U5_0x13>
-		<irSensor />
+		<analogSensor />
 	</U5_0x13>
 	<U5_0x14>
-		<irSensor />
+		<analogSensor />
 	</U5_0x14>
 	<U5_0x15>
-		<irSensor />
+		<analogSensor />
 	</U5_0x15>
 	<U5_0x16>
-		<irSensor />
+		<analogSensor />
 	</U5_0x16>
 	<U5_0x17>
-		<irSensor />
+		<analogSensor />
 	</U5_0x17>
 	<U5_0x18>
-		<irSensor />
+		<analogSensor />
 	</U5_0x18>
 	<U5_0x19>
-		<irSensor />
+		<analogSensor />
 	</U5_0x19>
 	<U5_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U5_0x1A>
 	<U5_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U5_0x1B>
 	<U5_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U5_0x1C>
 	<U5_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U5_0x1D>
 	<U5_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U5_0x1E>
 	<U5_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U5_0x1F>
 	<U5_0x20>
-		<irSensor />
+		<analogSensor />
 	</U5_0x20>
 	<U6_0x11>
-		<irSensor />
+		<analogSensor />
 	</U6_0x11>
 	<U6_0x12>
-		<irSensor />
+		<analogSensor />
 	</U6_0x12>
 	<U6_0x13>
-		<irSensor />
+		<analogSensor />
 	</U6_0x13>
 	<U6_0x14>
-		<irSensor />
+		<analogSensor />
 	</U6_0x14>
 	<U6_0x15>
-		<irSensor />
+		<analogSensor />
 	</U6_0x15>
 	<U6_0x16>
-		<irSensor />
+		<analogSensor />
 	</U6_0x16>
 	<U6_0x17>
-		<irSensor />
+		<analogSensor />
 	</U6_0x17>
 	<U6_0x18>
-		<irSensor />
+		<analogSensor />
 	</U6_0x18>
 	<U6_0x19>
-		<irSensor />
+		<analogSensor />
 	</U6_0x19>
 	<U6_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U6_0x1A>
 	<U6_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U6_0x1B>
 	<U6_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U6_0x1C>
 	<U6_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U6_0x1D>
 	<U6_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U6_0x1E>
 	<U6_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U6_0x1F>
 	<U6_0x20>
-		<irSensor />
+		<analogSensor />
 	</U6_0x20>
 	<U7_0x11>
-		<irSensor />
+		<analogSensor />
 	</U7_0x11>
 	<U7_0x12>
-		<irSensor />
+		<analogSensor />
 	</U7_0x12>
 	<U7_0x13>
-		<irSensor />
+		<analogSensor />
 	</U7_0x13>
 	<U7_0x14>
-		<irSensor />
+		<analogSensor />
 	</U7_0x14>
 	<U7_0x15>
-		<irSensor />
+		<analogSensor />
 	</U7_0x15>
 	<U7_0x16>
-		<irSensor />
+		<analogSensor />
 	</U7_0x16>
 	<U7_0x17>
-		<irSensor />
+		<analogSensor />
 	</U7_0x17>
 	<U7_0x18>
-		<irSensor />
+		<analogSensor />
 	</U7_0x18>
 	<U7_0x19>
-		<irSensor />
+		<analogSensor />
 	</U7_0x19>
 	<U7_0x1A>
-		<irSensor />
+		<analogSensor />
 	</U7_0x1A>
 	<U7_0x1B>
-		<irSensor />
+		<analogSensor />
 	</U7_0x1B>
 	<U7_0x1C>
-		<irSensor />
+		<analogSensor />
 	</U7_0x1C>
 	<U7_0x1D>
-		<irSensor />
+		<analogSensor />
 	</U7_0x1D>
 	<U7_0x1E>
-		<irSensor />
+		<analogSensor />
 	</U7_0x1E>
 	<U7_0x1F>
-		<irSensor />
+		<analogSensor />
 	</U7_0x1F>
 	<U7_0x20>
-		<irSensor />
+		<analogSensor />
 	</U7_0x20>
 	<!-- Digital sensor ports. -->
 	<D1>
@@ -600,20 +600,26 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<D2>
 		<rangeSensor />
 	</D2>
-	<F1>
+	<!--
+	<D3>
 		<volumeSensor />
-	</F1>
+	</D3>
+	-->
 
 	<!-- Encoder ports. -->
+
 	<B1>
 		<encoder95 />
 	</B1>
+
 	<B2>
 		<encoder95 />
 	</B2>
+
 	<B3>
 		<encoder95 />
 	</B3>
+
 	<B4>
 		<encoder95 />
 	</B4>
@@ -623,7 +629,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<powerMotor />
 	</M1>
 	<M2>
-		<powerMotor invert="true" />
+		<powerMotor />
 	</M2>
 	<M3>
 		<powerMotor />
@@ -633,57 +639,57 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</M4>
 
 	<!-- Servo motor ports (software PWMs on new MSP USB firmware). -->
-	<S1>
+	<SS1>
 		<powerMotor />
-	</S1>
-	<S2>
+	</SS1>
+	<SS2>
 		<powerMotor />
-	</S2>
-	<S3>
+	</SS2>
+	<SS3>
 		<powerMotor />
-	</S3>
-	<S4>
+	</SS3>
+	<SS4>
 		<powerMotor />
-	</S4>
-	<S5>
+	</SS4>
+	<SS5>
 		<powerMotor />
-	</S5>
-	<S6>
+	</SS5>
+	<SS6>
 		<powerMotor />
-	</S6>
-	<S7>
+	</SS6>
+	<SS7>
 		<powerMotor />
-	</S7>
-	<S8>
+	</SS7>
+	<SS8>
 		<powerMotor />
-	</S8>
-	<S9>
+	</SS8>
+	<SS9>
 		<powerMotor />
-	</S9>
-	<S10>
+	</SS9>
+	<SS10>
 		<powerMotor />
-	</S10>
-	<S11>
+	</SS10>
+	<SS11>
 		<powerMotor />
-	</S11>
-	<S12>
+	</SS11>
+	<SS12>
 		<powerMotor />
-	</S12>
-	<S13>
+	</SS12>
+	<SS13>
 		<powerMotor />
-	</S13>
-	<S14>
+	</SS13>
+	<SS14>
 		<powerMotor />
-	</S14>
+	</SS14>
 
 	<!-- Video sensor ports. -->
-	<video0>
-		<lineSensor />
-	</video0>
-
 	<video1>
-		<colorSensor3x3 />
+		<lineSensor />
 	</video1>
+
+	<video2>
+		<colorSensor3x3 />
+	</video2>
 
 	<!-- Sound sensor ports. -->
 	<default>
@@ -700,4 +706,9 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<!-- Optional modules -->
 	<gamepad />
 	<mailbox />
+
+	<!-- Example of custom FIFO sensor -->
+<!--	<soundSensor>
+		<fifo />
+	</soundSensor>-->
 </config>

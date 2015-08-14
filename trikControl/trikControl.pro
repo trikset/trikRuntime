@@ -22,7 +22,9 @@ HEADERS += \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/include/trikControl/deviceInterface.h \
 	$$PWD/include/trikControl/displayInterface.h \
+	$$PWD/include/trikControl/displayWidgetInterface.h \
 	$$PWD/include/trikControl/encoderInterface.h \
+	$$PWD/include/trikControl/fifoInterface.h \
 	$$PWD/include/trikControl/keysInterface.h \
 	$$PWD/include/trikControl/ledInterface.h \
 	$$PWD/include/trikControl/lineSensorInterface.h \
@@ -47,6 +49,7 @@ HEADERS += \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
+	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
 	$$PWD/src/i2cCommunicator.h \
@@ -70,6 +73,12 @@ HEADERS += \
 	$$PWD/src/usbMSP430Interface.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
+	$$PWD/src/shapes/shape.h \
+	$$PWD/src/shapes/ellipse.h \
+	$$PWD/src/shapes/point.h \
+	$$PWD/src/shapes/line.h \
+	$$PWD/src/shapes/rectangle.h \
+	$$PWD/src/shapes/arc.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -101,11 +110,17 @@ SOURCES += \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/usbMSP430Interface.cpp \
 	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
+	$$PWD/src/$$PLATFORM/fifo.cpp \
 	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
 	$$PWD/src/$$PLATFORM/keysWorker.cpp \
 	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
 	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
-	$$PWD/src/usbMSP430Read.cpp
+	$$PWD/src/usbMSP430Read.cpp \
+	$$PWD/src/shapes/ellipse.cpp \
+	$$PWD/src/shapes/point.cpp \
+	$$PWD/src/shapes/line.cpp \
+	$$PWD/src/shapes/rectangle.cpp \
+	$$PWD/src/shapes/arc.cpp \
 
 OTHER_FILES += \
 	model-config.xml \
@@ -115,7 +130,7 @@ TEMPLATE = lib
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-QT += xml gui network
+QT += xml gui
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
@@ -125,6 +140,8 @@ uses(trikKernel)
 
 copyToDestdir( \
 	$$PWD/model-config.xml  \
+	$$PWD/model-config-v6.xml  \
 	$$PWD/system-config.xml  \
+	$$PWD/system-config-v6.xml  \
 	$$PWD/../media/ \
 )

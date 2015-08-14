@@ -21,14 +21,33 @@
 using namespace trikGui;
 
 SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &brick
-		, trikControl::SensorInterface::Type type
+		, SensorType type
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("Select sensors for testing:"))
+	, mSensorType(type)
 	, mBrick(brick)
 {
-	QStringList ports = mBrick.sensorPorts(type);
-	for (QString const &port : ports) {
+	QStringList ports;
+
+	switch (type) {
+	case SensorType::analogSensor: {
+		ports = mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor);
+		break;
+	}
+	case SensorType::digitalSensor: {
+		ports = mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
+		break;
+	}
+	case SensorType::encoder: {
+		ports = mBrick.encoderPorts();
+		break;
+	}
+	}
+
+	ports.sort();
+
+	for (const QString &port : ports) {
 		QListWidgetItem *item = new QListWidgetItem(port, &mList);
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Checked);
@@ -48,17 +67,17 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	setLayout(&mLayout);
 }
 
-QString SensorsSelectionWidget::menuEntry(trikControl::SensorInterface::Type type)
+QString SensorsSelectionWidget::menuEntry(SensorType type)
 {
 	switch (type) {
-	case trikControl::SensorInterface::Type::analogSensor: {
+	case SensorType::analogSensor: {
 		return tr("Test analog sensors");
 	}
-	case trikControl::SensorInterface::Type::digitalSensor: {
+	case SensorType::digitalSensor: {
 		return tr("Test digital sensors");
 	}
-	case trikControl::SensorInterface::Type::specialSensor: {
-		return QString();
+	case SensorType::encoder: {
+		return tr("Test encoders");
 	}
 	}
 
@@ -100,9 +119,9 @@ void SensorsSelectionWidget::activateItem()
 void SensorsSelectionWidget::startTesting()
 {
 	QStringList ports;
-	int const itemsCount = mList.count();
+	const int itemsCount = mList.count();
 	for (int i = 0; i < itemsCount; ++i) {
-		QListWidgetItem const &item = *mList.item(i);
+		const QListWidgetItem &item = *mList.item(i);
 		if ((item.flags() & Qt::ItemIsUserCheckable)
 				&& (item.checkState() == Qt::Checked))
 		{
@@ -110,7 +129,12 @@ void SensorsSelectionWidget::startTesting()
 		}
 	}
 
-	SensorsWidget sensorsWidget(mBrick, ports);
+	const auto sensorType = mSensorType == SensorType::analogSensor || mSensorType == SensorType::digitalSensor
+			? SensorsWidget::SensorType::analogOrDigitalSensor
+			: SensorsWidget::SensorType::encoder
+			;
+
+	SensorsWidget sensorsWidget(mBrick, ports, sensorType);
 	emit newWidget(sensorsWidget);
 	if (sensorsWidget.exec() == TrikGuiDialog::goHomeExit) {
 		goHome();

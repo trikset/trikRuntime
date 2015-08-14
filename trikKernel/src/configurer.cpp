@@ -31,13 +31,13 @@
 
 using namespace trikKernel;
 
-Configurer::Configurer(QString const &systemConfigFileName, QString const &modelConfigFileName)
+Configurer::Configurer(const QString &systemConfigFileName, const QString &modelConfigFileName)
 {
-	QDomElement const systemConfig = trikKernel::FileUtils::readXmlFile(systemConfigFileName);
-	QDomElement const modelConfig = trikKernel::FileUtils::readXmlFile(modelConfigFileName);
+	const QDomElement systemConfig = trikKernel::FileUtils::readXmlFile(systemConfigFileName);
+	const QDomElement modelConfig = trikKernel::FileUtils::readXmlFile(modelConfigFileName);
 
-	auto parseSection = [&systemConfig](QString const &sectionName, std::function<void(QDomElement const &)> action) {
-		QDomNodeList const section = systemConfig.elementsByTagName(sectionName);
+	auto parseSection = [&systemConfig](const QString &sectionName, std::function<void(const QDomElement &)> action) {
+		const QDomNodeList section = systemConfig.elementsByTagName(sectionName);
 		if (section.size() != 1) {
 			throw MalformedConfigException("'" + sectionName + "' element shall appear exactly once in config");
 		}
@@ -45,18 +45,18 @@ Configurer::Configurer(QString const &systemConfigFileName, QString const &model
 		action(section.at(0).toElement());
 	};
 
-	parseSection("deviceClasses", [this](QDomElement const &element) { parseDeviceClasses(element); });
-	parseSection("devicePorts", [this](QDomElement const &element) { parseDevicePorts(element); });
-	parseSection("deviceTypes", [this](QDomElement const &element) { parseDeviceTypes(element); });
+	parseSection("deviceClasses", [this](const QDomElement &element) { parseDeviceClasses(element); });
+	parseSection("devicePorts", [this](const QDomElement &element) { parseDevicePorts(element); });
+	parseSection("deviceTypes", [this](const QDomElement &element) { parseDeviceTypes(element); });
 
-	parseSection("initScript", [this](QDomElement const &element) { parseInitScript(element); });
+	parseSection("initScript", [this](const QDomElement &element) { parseInitScript(element); });
 
 	parseAdditionalConfigurations(systemConfig);
 
 	parseModelConfig(modelConfig);
 }
 
-QString Configurer::attributeByDevice(QString const &deviceType, QString const &attributeName) const
+QString Configurer::attributeByDevice(const QString &deviceType, const QString &attributeName) const
 {
 	if (mAdditionalModelConfiguration.contains(deviceType)
 			&& mAdditionalModelConfiguration[deviceType].attributes.contains(attributeName))
@@ -75,7 +75,7 @@ QString Configurer::attributeByDevice(QString const &deviceType, QString const &
 			return mDeviceTypes[deviceType].attributes[attributeName];
 		}
 
-		QString const deviceClass = mDeviceTypes[deviceType].deviceClass;
+		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
 		if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
 			return mDevices[deviceClass].attributes[attributeName];
 		}
@@ -88,7 +88,7 @@ QString Configurer::attributeByDevice(QString const &deviceType, QString const &
 	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceType));
 }
 
-QString Configurer::attributeByPort(QString const &port, QString const &attributeName) const
+QString Configurer::attributeByPort(const QString &port, const QString &attributeName) const
 {
 	if (!mModelConfiguration.contains(port)) {
 		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
@@ -98,16 +98,16 @@ QString Configurer::attributeByPort(QString const &port, QString const &attribut
 		return mModelConfiguration[port].attributes[attributeName];
 	}
 
-	QString const &deviceType = mModelConfiguration.value(port).deviceType;
+	const QString &deviceType = mModelConfiguration.value(port).deviceType;
 
 	if (mDeviceTypes.contains(deviceType)) {
 		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
 			return mDeviceTypes[deviceType].attributes[attributeName];
 		}
 
-		QString const deviceClass = mDeviceTypes[deviceType].deviceClass;
+		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
 		if (mDevices.contains(deviceClass)) {
-			Device const &device = mDevices[deviceClass];
+			const Device &device = mDevices[deviceClass];
 			if (device.portSpecificAttributes.contains(port)) {
 				if (device.portSpecificAttributes[port].contains(attributeName)) {
 					return device.portSpecificAttributes[port][attributeName];
@@ -130,7 +130,7 @@ QString Configurer::attributeByPort(QString const &port, QString const &attribut
 	}
 
 	if (mDevices.contains(deviceType)) {
-		Device const &device = mDevices[deviceType];
+		const Device &device = mDevices[deviceType];
 		if (device.portSpecificAttributes.contains(port)) {
 			if (device.portSpecificAttributes[port].contains(attributeName)) {
 				return device.portSpecificAttributes[port][attributeName];
@@ -146,7 +146,7 @@ QString Configurer::attributeByPort(QString const &port, QString const &attribut
 			.arg(attributeName).arg(deviceType).arg(port));
 }
 
-bool Configurer::isEnabled(QString const deviceName) const
+bool Configurer::isEnabled(const QString deviceName) const
 {
 	if (mAdditionalModelConfiguration.contains(deviceName)) {
 		return true;
@@ -164,13 +164,13 @@ QStringList Configurer::ports() const
 	return mModelConfiguration.keys();
 }
 
-QString Configurer::deviceClass(QString const &port) const
+QString Configurer::deviceClass(const QString &port) const
 {
 	if (!mModelConfiguration.contains(port)) {
 		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
 	}
 
-	QString const &deviceType = mModelConfiguration.value(port).deviceType;
+	const QString &deviceType = mModelConfiguration.value(port).deviceType;
 	if (mDeviceTypes.contains(deviceType)) {
 		return mDeviceTypes.value(deviceType).deviceClass;
 	}
@@ -189,18 +189,23 @@ QStringList Configurer::initScripts() const
 	return mInitScripts;
 }
 
-void Configurer::parseDeviceClasses(QDomElement const &element)
+void Configurer::configure(const QString &portName, const QString &deviceName)
 {
-	QDomNodeList const deviceClasses = element.childNodes();
+	mModelConfiguration[portName] = { portName, deviceName, {}};
+}
+
+void Configurer::parseDeviceClasses(const QDomElement &element)
+{
+	const QDomNodeList deviceClasses = element.childNodes();
 	for (int i = 0; i < deviceClasses.size(); ++i) {
-		QDomElement const deviceNode = deviceClasses.item(i).toElement();
+		const QDomElement deviceNode = deviceClasses.item(i).toElement();
 		if (!deviceNode.isNull()) {
 			Device device;
 			device.name = deviceNode.tagName();
 			device.isOptional = deviceNode.attribute("optional", "false") == "true";
-			QDomNamedNodeMap const &attributes = deviceNode.attributes();
+			const QDomNamedNodeMap &attributes = deviceNode.attributes();
 			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
-				QDomAttr const &attribute = attributes.item(j).toAttr();
+				const QDomAttr &attribute = attributes.item(j).toAttr();
 				device.attributes.insert(attribute.name(), attribute.value());
 			}
 
@@ -209,36 +214,36 @@ void Configurer::parseDeviceClasses(QDomElement const &element)
 	}
 }
 
-void Configurer::parseDevicePorts(QDomElement const &element)
+void Configurer::parseDevicePorts(const QDomElement &element)
 {
-	QDomNodeList const devicePorts = element.childNodes();
+	const QDomNodeList devicePorts = element.childNodes();
 	for (int i = 0; i < devicePorts.size(); ++i) {
-		QDomElement const devicePortNode = devicePorts.item(i).toElement();
+		const QDomElement devicePortNode = devicePorts.item(i).toElement();
 		if (!devicePortNode.isNull()) {
-			QString const deviceName = devicePortNode.tagName();
+			const QString deviceName = devicePortNode.tagName();
 			if (!mDevices.contains(deviceName)) {
 				throw MalformedConfigException("Device is not listed in 'DeviceClasses' section", devicePortNode);
 			}
 
-			QString const port = devicePortNode.attribute("port");
+			const QString port = devicePortNode.attribute("port");
 			if (port.isEmpty()) {
 				throw MalformedConfigException("Port map shall have non-empty 'port' attribute", devicePortNode);
 			}
 
-			QDomNamedNodeMap const &attributes = devicePortNode.attributes();
+			const QDomNamedNodeMap &attributes = devicePortNode.attributes();
 			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
-				QDomAttr const &attribute = attributes.item(j).toAttr();
+				const QDomAttr &attribute = attributes.item(j).toAttr();
 				mDevices[deviceName].portSpecificAttributes[port].insert(attribute.name(), attribute.value());
 			}
 		}
 	}
 }
 
-void Configurer::parseDeviceTypes(QDomElement const &element)
+void Configurer::parseDeviceTypes(const QDomElement &element)
 {
-	QDomNodeList const deviceTypes = element.childNodes();
+	const QDomNodeList deviceTypes = element.childNodes();
 	for (int i = 0; i < deviceTypes.size(); ++i) {
-		QDomElement const deviceTypeNode = deviceTypes.item(i).toElement();
+		const QDomElement deviceTypeNode = deviceTypes.item(i).toElement();
 		if (!deviceTypeNode.isNull()) {
 			DeviceType deviceType;
 			deviceType.name = deviceTypeNode.tagName();
@@ -251,9 +256,9 @@ void Configurer::parseDeviceTypes(QDomElement const &element)
 				throw MalformedConfigException("Device is not listed in 'DeviceClasses' section", deviceTypeNode);
 			}
 
-			QDomNamedNodeMap const &attributes = deviceTypeNode.attributes();
+			const QDomNamedNodeMap &attributes = deviceTypeNode.attributes();
 			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
-				QDomAttr const &attribute = attributes.item(j).toAttr();
+				const QDomAttr &attribute = attributes.item(j).toAttr();
 				deviceType.attributes.insert(attribute.name(), attribute.value());
 			}
 
@@ -262,16 +267,16 @@ void Configurer::parseDeviceTypes(QDomElement const &element)
 	}
 }
 
-void Configurer::parseInitScript(QDomElement const &element)
+void Configurer::parseInitScript(const QDomElement &element)
 {
 	mInitScripts.append(element.text());
 }
 
-void Configurer::parseAdditionalConfigurations(QDomElement const &element)
+void Configurer::parseAdditionalConfigurations(const QDomElement &element)
 {
-	QDomNodeList const tags = element.childNodes();
+	const QDomNodeList tags = element.childNodes();
 	for (int i = 0; i < tags.size(); ++i) {
-		QDomElement const tag = tags.item(i).toElement();
+		const QDomElement tag = tags.item(i).toElement();
 		if (!tag.isNull()) {
 			if (tag.tagName() == "initScript"
 					|| tag.tagName() == "deviceClasses"
@@ -283,9 +288,9 @@ void Configurer::parseAdditionalConfigurations(QDomElement const &element)
 
 			Device additionalDevice;
 			additionalDevice.name = tag.tagName();
-			QDomNamedNodeMap const &attributes = tag.attributes();
+			const QDomNamedNodeMap &attributes = tag.attributes();
 			for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
-				QDomAttr const &attribute = attributes.item(j).toAttr();
+				const QDomAttr &attribute = attributes.item(j).toAttr();
 				additionalDevice.attributes.insert(attribute.name(), attribute.value());
 			}
 
@@ -294,28 +299,28 @@ void Configurer::parseAdditionalConfigurations(QDomElement const &element)
 	}
 }
 
-void Configurer::parseModelConfig(QDomElement const &element)
+void Configurer::parseModelConfig(const QDomElement &element)
 {
-	QDomNodeList const tags = element.childNodes();
+	const QDomNodeList tags = element.childNodes();
 	for (int i = 0; i < tags.size(); ++i) {
-		QDomElement const tag = tags.item(i).toElement();
+		const QDomElement tag = tags.item(i).toElement();
 		if (!tag.isNull()) {
 			if (tag.tagName() == "initScript") {
 				parseInitScript(tag);
 			} else if (tag.hasChildNodes()) {
 				ModelConfigurationElement port;
 				port.port = tag.tagName();
-				QDomNodeList const devices = tag.childNodes();
+				const QDomNodeList devices = tag.childNodes();
 				if (devices.count() > 1) {
 					throw MalformedConfigException("Only one device can be configured on a port", tag);
 				}
 
-				QDomElement const device = devices.item(0).toElement();
+				const QDomElement device = devices.item(0).toElement();
 				if (!device.isNull()) {
 					port.deviceType = device.tagName();
-					QDomNamedNodeMap const &attributes = tag.attributes();
+					const QDomNamedNodeMap &attributes = tag.attributes();
 					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
-						QDomAttr const &attribute = attributes.item(j).toAttr();
+						const QDomAttr &attribute = attributes.item(j).toAttr();
 						port.attributes.insert(attribute.name(), attribute.value());
 					}
 
@@ -330,9 +335,9 @@ void Configurer::parseModelConfig(QDomElement const &element)
 				}
 
 				if (tag.attribute("disabled", "false") == "false") {
-					QDomNamedNodeMap const &attributes = tag.attributes();
+					const QDomNamedNodeMap &attributes = tag.attributes();
 					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
-						QDomAttr const &attribute = attributes.item(j).toAttr();
+						const QDomAttr &attribute = attributes.item(j).toAttr();
 						element.attributes.insert(attribute.name(), attribute.value());
 					}
 

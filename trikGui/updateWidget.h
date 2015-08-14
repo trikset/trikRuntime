@@ -52,7 +52,7 @@ public slots:
 	void renewFocus() override;
 
 private:
-	void showStatus(QString const &text, bool isError = false);
+	void showStatus(const QString &text, bool isError = false);
 
 	/// Main layout of this widget.
 	QHBoxLayout mLayout;

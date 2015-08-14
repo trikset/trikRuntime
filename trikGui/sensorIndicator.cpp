@@ -23,16 +23,15 @@
 #endif
 
 #include <QtCore/QString>
-#include <QtCore/QDebug>
 
 #include <trikControl/sensorInterface.h>
 
 using namespace trikGui;
 
-SensorIndicator::SensorIndicator(QString const &port
+SensorIndicator::SensorIndicator(const QString &port
 		, trikControl::SensorInterface &sensor
 		, QWidget *parent)
-	: QWidget(parent)
+	: AbstractIndicator(parent)
 	, mSensor(sensor)
 	, mMaxValue(100)
 	, mMinValue(0)
@@ -64,7 +63,7 @@ SensorIndicator::SensorIndicator(QString const &port
 
 void SensorIndicator::renew()
 {
-	int const value = mSensor.read();
+	const int value = mSensor.read();
 	mValueLabel.setText(QString::number(value));
 	mValueBar.setValue(value);
 }

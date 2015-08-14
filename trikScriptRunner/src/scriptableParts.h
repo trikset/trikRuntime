@@ -29,6 +29,7 @@
 #include <trikControl/soundSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+#include <trikControl/fifoInterface.h>
 
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -36,48 +37,51 @@
 namespace trikScriptRunner {
 
 QScriptValue batteryToScriptValue(QScriptEngine *engine, trikControl::BatteryInterface* const &in);
-void batteryFromScriptValue(QScriptValue const &object, trikControl::BatteryInterface* &out);
+void batteryFromScriptValue(const QScriptValue &object, trikControl::BatteryInterface* &out);
 
 QScriptValue colorSensorToScriptValue(QScriptEngine *engine, trikControl::ColorSensorInterface* const &in);
-void colorSensorFromScriptValue(QScriptValue const &object, trikControl::ColorSensorInterface* &out);
+void colorSensorFromScriptValue(const QScriptValue &object, trikControl::ColorSensorInterface* &out);
 
 QScriptValue displayToScriptValue(QScriptEngine *engine, trikControl::DisplayInterface* const &in);
-void displayFromScriptValue(QScriptValue const &object, trikControl::DisplayInterface* &out);
+void displayFromScriptValue(const QScriptValue &object, trikControl::DisplayInterface* &out);
 
 QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::EncoderInterface* const &in);
-void encoderFromScriptValue(QScriptValue const &object, trikControl::EncoderInterface* &out);
+void encoderFromScriptValue(const QScriptValue &object, trikControl::EncoderInterface* &out);
 
 QScriptValue gamepadToScriptValue(QScriptEngine *engine, trikNetwork::GamepadInterface* const &in);
-void gamepadFromScriptValue(QScriptValue const &object, trikNetwork::GamepadInterface* &out);
+void gamepadFromScriptValue(const QScriptValue &object, trikNetwork::GamepadInterface* &out);
 
 QScriptValue keysToScriptValue(QScriptEngine *engine, trikControl::KeysInterface* const &in);
-void keysFromScriptValue(QScriptValue const &object, trikControl::KeysInterface* &out);
+void keysFromScriptValue(const QScriptValue &object, trikControl::KeysInterface* &out);
 
 QScriptValue ledToScriptValue(QScriptEngine *engine, trikControl::LedInterface* const &in);
-void ledFromScriptValue(QScriptValue const &object, trikControl::LedInterface* &out);
+void ledFromScriptValue(const QScriptValue &object, trikControl::LedInterface* &out);
 
 QScriptValue lineSensorToScriptValue(QScriptEngine *engine, trikControl::LineSensorInterface* const &in);
-void lineSensorFromScriptValue(QScriptValue const &object, trikControl::LineSensorInterface* &out);
+void lineSensorFromScriptValue(const QScriptValue &object, trikControl::LineSensorInterface* &out);
 
 QScriptValue mailboxToScriptValue(QScriptEngine *engine, trikNetwork::MailboxInterface* const &in);
-void mailboxFromScriptValue(QScriptValue const &object, trikNetwork::MailboxInterface* &out);
+void mailboxFromScriptValue(const QScriptValue &object, trikNetwork::MailboxInterface* &out);
 
 QScriptValue motorToScriptValue(QScriptEngine *engine, trikControl::MotorInterface* const &in);
-void motorFromScriptValue(QScriptValue const &object, trikControl::MotorInterface* &out);
+void motorFromScriptValue(const QScriptValue &object, trikControl::MotorInterface* &out);
 
 QScriptValue objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensorInterface* const &in);
-void objectSensorFromScriptValue(QScriptValue const &object, trikControl::ObjectSensorInterface* &out);
+void objectSensorFromScriptValue(const QScriptValue &object, trikControl::ObjectSensorInterface* &out);
 
 QScriptValue soundSensorToScriptValue(QScriptEngine *engine, trikControl::SoundSensorInterface* const &in);
 void soundSensorFromScriptValue(QScriptValue const &object, trikControl::SoundSensorInterface* &out);
 
 QScriptValue timerToScriptValue(QScriptEngine *engine, QTimer* const &in);
-void timerFromScriptValue(QScriptValue const &object, QTimer* &out);
+void timerFromScriptValue(const QScriptValue &object, QTimer* &out);
 
 QScriptValue sensorToScriptValue(QScriptEngine *engine, trikControl::SensorInterface* const &in);
-void sensorFromScriptValue(QScriptValue const &object, trikControl::SensorInterface* &out);
+void sensorFromScriptValue(const QScriptValue &object, trikControl::SensorInterface* &out);
 
 QScriptValue vectorSensorToScriptValue(QScriptEngine *engine, trikControl::VectorSensorInterface* const &in);
-void vectorSensorFromScriptValue(QScriptValue const &object, trikControl::VectorSensorInterface* &out);
+void vectorSensorFromScriptValue(const QScriptValue &object, trikControl::VectorSensorInterface* &out);
+
+QScriptValue fifoToScriptValue(QScriptEngine *engine, trikControl::FifoInterface* const &in);
+void fifoFromScriptValue(const QScriptValue &object, trikControl::FifoInterface* &out);
 
 }

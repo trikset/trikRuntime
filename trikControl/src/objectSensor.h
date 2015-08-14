@@ -37,7 +37,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	ObjectSensor(QString const &port, trikKernel::Configurer const &configurer);
+	ObjectSensor(const QString &port, const trikKernel::Configurer &configurer);
 
 	~ObjectSensor() override;
 
@@ -51,6 +51,11 @@ public slots:
 	QVector<int> read() override;
 
 	void stop() override;
+
+	QVector<int> getDetectParameters() const override;
+
+private slots:
+	void onStopped();
 
 private:
 	/// Sensor state.

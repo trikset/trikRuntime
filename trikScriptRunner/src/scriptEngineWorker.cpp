@@ -14,9 +14,9 @@
 
 #include "scriptEngineWorker.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QVector>
+#include <QtCore/QTextStream>
 
 #include <trikKernel/fileUtils.h>
 
@@ -57,24 +57,44 @@ Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
+
+QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+{
+	QString result;
+	for (int i = 0; i < context->argumentCount(); ++i) {
+		if (i > 0) {
+			result.append(" ");
+		}
+
+		result.append(context->argument(i).toString());
+	}
+
+	QTextStream(stdout) << result << "\n";
+	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
+
+	return engine->toScriptValue(result);
+}
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &scriptControl
-		, QString const &startDirPath)
-	: mEngine(nullptr)
-	, mBrick(brick)
+		, const QString &startDirPath)
+	: mBrick(brick)
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
-	, mThreadingVariable(*this)
+	, mThreadingVariable(this, scriptControl)
+	, mDirectScriptsEngine(nullptr)
 	, mStartDirPath(startDirPath)
-	, mEngineReset(false)
+	, mState(ready)
 {
 	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+
+	registerUserFunction("print", print);
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -84,126 +104,96 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::reset()
 {
-	if (!mEngine) {
-		QLOG_FATAL() << "ScriptEngine is null on reset";
-		Q_ASSERT(false);
-	}
-
-	if (thread() == QThread::currentThread() && mEngine->isEvaluating()) {
-		// We are in a stack of mEngine->evaluate, so can't wait for it to finish.
-		QLOG_INFO() << "ScriptEngineWorker::reset called from inside of a script, current script engine:" << mEngine
-		<< ", thread:" << QThread::currentThread();
-
-		/// @todo: remove this sh~.
-		mEngine->abortEvaluation(QScriptValue("aborted"));
-
-		// Restart ScriptEngineWorker::reset when engine is aborted.
-		QMetaObject::invokeMethod(this, "reset", Qt::QueuedConnection);
+	if (mState == resetting) {
 		return;
 	}
 
-	QLOG_INFO() << "ScriptEngineWorker: reset started, current script engine:" << mEngine
-			<< ", thread:" << QThread::currentThread();
-
-	mEngineReset = !mEngine->isEvaluating();
-
-	bool const inEventDrivenMode = mScriptControl.isInEventDrivenMode();
-
-	emit abortEvaluation();
-	mEngine->abortEvaluation(QScriptValue("aborted"));
-	mBrick.reset();
-	mScriptControl.reset();
-	if (mMailbox) {
-		mMailbox->reset();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
-	}
-
-	while (!mEngineReset) {
+	while (mState == starting) {
 		QThread::yieldCurrentThread();
 	}
 
-	if (inEventDrivenMode) {
-		onScriptEvaluated();
-		resetScriptEngine();
+	if (mState == ready) {
+		/// Engine is ready for execution, but we need to clear brick state before we go.
+		QLOG_INFO() << "ScriptEngineWorker: 'soft' reset";
+		mState = resetting;
+		clearMailboxAndGamepadStateState();
+		clearBrickState();
+		mState = ready;
+		return;
 	}
 
-	QLOG_INFO() << "ScriptEngineWorker: reset complete, current script engine:" << mEngine
-			<< ", thread:" << QThread::currentThread();
+	QLOG_INFO() << "ScriptEngineWorker: reset started";
+
+	mState = resetting;
+
+	mScriptControl.reset();
+
+	clearMailboxAndGamepadStateState();
+
+	mThreadingVariable.reset();
+
+	if (mDirectScriptsEngine) {
+		mDirectScriptsEngine->abortEvaluation();
+		QLOG_INFO() << "ScriptEngineWorker : ending interpretation";
+		emit completed(mDirectScriptsEngine->hasUncaughtException()
+				? mDirectScriptsEngine->uncaughtException().toString()
+				: "", mScriptId);
+		mDirectScriptsEngine->deleteLater();
+		mDirectScriptsEngine = nullptr;
+	}
+
+	clearBrickState();
+	mState = ready;
+	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
 
-ScriptEngineWorker &ScriptEngineWorker::clone()
+void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
-	ScriptEngineWorker *result = new ScriptEngineWorker(mBrick, mMailbox, mGamepad, mScriptControl, mStartDirPath);
-	result->setParent(this);
-	result->init();
-	QScriptValue globalObject = result->mEngine->globalObject();
-	Utils::copyRecursivelyTo(mEngine->globalObject(), globalObject, result->mEngine);
-	result->mEngine->setGlobalObject(globalObject);
-	QObject::connect(this, SIGNAL(abortEvaluation()), result, SLOT(reset()), Qt::DirectConnection);
-	return *result;
+	startScriptEvaluation(scriptId);
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
 }
 
-void ScriptEngineWorker::init()
+void ScriptEngineWorker::doRun(const QString &script)
 {
-	resetScriptEngine();
+	mThreadingVariable.startMainThread(script);
+	mState = running;
+	mThreadingVariable.waitForAll();
+	const QString error = mThreadingVariable.errorMessage();
+	reset();
+	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	emit completed(error, mScriptId);
 }
 
-void ScriptEngineWorker::run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function)
+void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
-	if (!mEngine) {
-		QLOG_FATAL() << "ScriptEngine is null on run";
-		Q_ASSERT(false);
-	}
-
-	if (!inEventDrivenMode || !mScriptControl.isInEventDrivenMode()) {
-		QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
-		mScriptId = scriptId;
-		emit startedScript(mScriptId);
-	}
-
-	if (inEventDrivenMode) {
-		mScriptControl.run();
-	}
-
-	mThreadingVariable.setCurrentScript(script);
-	QRegExp const functionRegexp(QString(
-			"(.*%1\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)").arg(function));
-	bool const needCallFunction = !function.isEmpty() && functionRegexp.exactMatch(script)
-			&& !script.trimmed().endsWith(function + "();");
-
-	mBrick.keys()->reset();
-
-	QLOG_INFO() << "ScriptEngineWorker: evaluating, script:" << mScriptId
-			<< ", thread:" << QThread::currentThread();
-
-	mEngine->evaluate(needCallFunction ? QString("%1\n%2();").arg(script, function) : script);
-	QLOG_INFO() << "ScriptEngineWorker: evaluation stopped, script:" << mScriptId
-			<< ", thread:" << QThread::currentThread();
-
 	if (!mScriptControl.isInEventDrivenMode()) {
-		mBrick.stop();
-		mScriptControl.reset();
-		if (mMailbox) {
-			mMailbox->reset();
-		}
-
-		if (mGamepad) {
-			mGamepad->reset();
-		}
-
-		if (!dynamic_cast<ScriptEngineWorker *>(parent())) {
-			// Only main thread must wait for others
-			mThreadingVariable.waitForAll();
-		}
-
-		onScriptEvaluated();
-		resetScriptEngine();
+		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
+		reset();
+		startScriptEvaluation(scriptId);
+		mDirectScriptsEngine = createScriptEngine(false);
+		mScriptControl.run();
+		mState = running;
 	}
 
-	mEngineReset = true;
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
+}
+
+void ScriptEngineWorker::doRunDirect(const QString &command)
+{
+	if (mDirectScriptsEngine) {
+		mDirectScriptsEngine->evaluate(command);
+		if (mDirectScriptsEngine->hasUncaughtException()) {
+			reset();
+		}
+	}
+}
+
+void ScriptEngineWorker::startScriptEvaluation(int scriptId)
+{
+	QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
+	mState = starting;
+	mScriptId = scriptId;
+	emit startedScript(mScriptId);
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
@@ -217,70 +207,103 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 	reset();
 }
 
-void ScriptEngineWorker::resetScriptEngine()
+QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 {
-	QLOG_INFO() << "ScriptEngineWorker: resetting script engine" << mEngine
-			<< ", thread: " << QThread::currentThread();
+	QScriptEngine *engine = new QScriptEngine();
+	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
-	if (mEngine) {
-		mEngine->deleteLater();
-	}
+	qScriptRegisterMetaType(engine, batteryToScriptValue, batteryFromScriptValue);
+	qScriptRegisterMetaType(engine, displayToScriptValue, displayFromScriptValue);
+	qScriptRegisterMetaType(engine, encoderToScriptValue, encoderFromScriptValue);
+	qScriptRegisterMetaType(engine, gamepadToScriptValue, gamepadFromScriptValue);
+	qScriptRegisterMetaType(engine, keysToScriptValue, keysFromScriptValue);
+	qScriptRegisterMetaType(engine, ledToScriptValue, ledFromScriptValue);
+	qScriptRegisterMetaType(engine, mailboxToScriptValue, mailboxFromScriptValue);
+	qScriptRegisterMetaType(engine, motorToScriptValue, motorFromScriptValue);
+	qScriptRegisterMetaType(engine, sensorToScriptValue, sensorFromScriptValue);
+	qScriptRegisterMetaType(engine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
+	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
+	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
+	qScriptRegisterSequenceMetaType<QStringList>(engine);
 
-	mEngine = new QScriptEngine();
-	QLOG_INFO() << "ScriptEngineWorker: new script engine" << mEngine << ", thread:" << QThread::currentThread();
+	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
+	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
 
-	qScriptRegisterMetaType(mEngine, batteryToScriptValue, batteryFromScriptValue);
-	qScriptRegisterMetaType(mEngine, displayToScriptValue, displayFromScriptValue);
-	qScriptRegisterMetaType(mEngine, encoderToScriptValue, encoderFromScriptValue);
-	qScriptRegisterMetaType(mEngine, gamepadToScriptValue, gamepadFromScriptValue);
-	qScriptRegisterMetaType(mEngine, keysToScriptValue, keysFromScriptValue);
-	qScriptRegisterMetaType(mEngine, ledToScriptValue, ledFromScriptValue);
-	qScriptRegisterMetaType(mEngine, mailboxToScriptValue, mailboxFromScriptValue);
-	qScriptRegisterMetaType(mEngine, motorToScriptValue, motorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, lineSensorToScriptValue, lineSensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, colorSensorToScriptValue, colorSensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, objectSensorToScriptValue, objectSensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, soundSensorToScriptValue, soundSensorFromScriptValue);
-	qScriptRegisterMetaType(mEngine, timerToScriptValue, timerFromScriptValue);
-	qScriptRegisterSequenceMetaType<QVector<int>>(mEngine);
-
-	mEngine->globalObject().setProperty("brick", mEngine->newQObject(&mBrick));
-	mEngine->globalObject().setProperty("script", mEngine->newQObject(&mScriptControl));
 	if (mMailbox) {
-		mEngine->globalObject().setProperty("mailbox", mEngine->newQObject(mMailbox));
+		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
 	}
 
 	if (mGamepad) {
-		mEngine->globalObject().setProperty("gamepad", mEngine->newQObject(mGamepad));
+		engine->globalObject().setProperty("gamepad", engine->newQObject(mGamepad));
 	}
 
-	mEngine->globalObject().setProperty("Threading", mEngine->newQObject(&mThreadingVariable));
+	if (supportThreads) {
+		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreadingVariable));
+	}
 
+	evalSystemJs(engine);
+
+	engine->setProcessEventsInterval(1);
+	return engine;
+}
+
+QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const original)
+{
+	QScriptEngine *const result = createScriptEngine();
+
+	QScriptValue globalObject = result->globalObject();
+	Utils::copyRecursivelyTo(original->globalObject(), globalObject, result);
+	result->setGlobalObject(globalObject);
+
+	// We need to re-eval system.js after global object copying because functions did not get copied by
+	// copyRecursivelyTo, and existing ones were overwritten by copying.
+	evalSystemJs(result);
+
+	return result;
+}
+
+void ScriptEngineWorker::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
+{
+	mRegisteredUserFunctions[name] = function;
+}
+
+void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
+{
 	if (QFile::exists(mStartDirPath + "system.js")) {
-		mEngine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
-		if (mEngine->hasUncaughtException()) {
-			int const line = mEngine->uncaughtExceptionLineNumber();
-			QString const message = mEngine->uncaughtException().toString();
-			QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
+		engine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+		if (engine->hasUncaughtException()) {
+			const int line = engine->uncaughtExceptionLineNumber();
+			const QString message = engine->uncaughtException().toString();
+			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
 		}
 	} else {
 		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
 	}
 
-	mEngine->setProcessEventsInterval(1);
+	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
+		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);
+		engine->globalObject().setProperty(functionName, functionValue);
+	}
 }
 
-void ScriptEngineWorker::onScriptEvaluated()
+void ScriptEngineWorker::clearBrickState()
 {
-	QString error;
-	if (mEngine->hasUncaughtException()) {
-		int const line = mEngine->uncaughtExceptionLineNumber();
-		QString const message = mEngine->uncaughtException().toString();
-		error = tr("Line %1: %2").arg(QString::number(line), message);
-		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
+	mBrick.reset();
+}
+
+void ScriptEngineWorker::clearMailboxAndGamepadStateState()
+{
+	if (mMailbox) {
+		mMailbox->reset();
 	}
 
-	emit completed(error, mScriptId);
+	if (mGamepad) {
+		mGamepad->reset();
+	}
 }
+

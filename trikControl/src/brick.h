@@ -17,6 +17,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QScopedPointer>
 
+#include <trikKernel/configurer.h>
+
 #include "brickInterface.h"
 
 namespace trikControl {
@@ -29,7 +31,6 @@ class Display;
 class Encoder;
 class I2cCommunicator;
 class Keys;
-class LazyMainWidget;
 class Led;
 class LineSensor;
 class ModuleLoader;
@@ -40,6 +41,7 @@ class PwmCapture;
 class RangeSensor;
 class ServoMotor;
 class VectorSensor;
+class Fifo;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -55,26 +57,28 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
-	Brick(QThread &guiThread, QString const &systemConfig, QString const &modelConfig, QString const &startDirPath);
+	Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath);
 
 	~Brick() override;
 
 	void reset() override;
 
-	trikKernel::LazyMainWidget &graphicsWidget() override;
+	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
-	void playSound(QString const &soundFileName) override;
+	void configure(const QString &portName, const QString &deviceName) override;
 
-	void say(QString const &text) override;
+	void playSound(const QString &soundFileName) override;
+
+	void say(const QString &text) override;
 
 	void stop() override;
 
-	MotorInterface *motor(QString const &port) override;
+	MotorInterface *motor(const QString &port) override;
 
-	PwmCaptureInterface *pwmCapture(QString const &port) override;
+	PwmCaptureInterface *pwmCapture(const QString &port) override;
 
-	SensorInterface *sensor(QString const &port) override;
+	SensorInterface *sensor(const QString &port) override;
 
 	QStringList motorPorts(MotorInterface::Type type) const override;
 
@@ -88,15 +92,15 @@ public slots:
 
 	VectorSensorInterface *gyroscope() override;
 
-	LineSensorInterface *lineSensor(QString const &port) override;
+	LineSensorInterface *lineSensor(const QString &port) override;
 
-	ColorSensorInterface *colorSensor(QString const &port) override;
+	ColorSensorInterface *colorSensor(const QString &port) override;
 
-	ObjectSensorInterface *objectSensor(QString const &port) override;
+	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	SoundSensorInterface *soundSensor(QString const &port) override;
+	SoundSensorInterface *soundSensor(const QString &port) override;
 
-	EncoderInterface *encoder(QString const &port) override;
+	EncoderInterface *encoder(const QString &port) override;
 
 	BatteryInterface *battery() override;
 
@@ -106,7 +110,15 @@ public slots:
 
 	LedInterface *led() override;
 
+	FifoInterface *fifo(const QString &port) override;
+
 private:
+	/// Deinitializes and properly shuts down device on a given port.
+	void shutdownDevice(const QString &port);
+
+	/// Creates and configures a device on a given port.
+	void createDevice(const QString &port);
+
 	QScopedPointer<I2cCommunicator> mI2cCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
@@ -128,9 +140,12 @@ private:
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
 	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
+	QHash<QString, Fifo *> mFifos;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
+
+	trikKernel::Configurer mConfigurer;
 };
 
 }

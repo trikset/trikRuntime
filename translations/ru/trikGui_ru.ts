@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
@@ -64,6 +64,72 @@
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>
+    <message>
+        <source>Confirm deletion</source>
+        <translation>Удаление</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete file?</source>
+        <translation>Вы уверены, что хотите удалить файл?</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::InformationWidget</name>
+    <message>
+        <source>Current version</source>
+        <translation>Текущая версия</translation>
+    </message>
+    <message>
+        <source>Update</source>
+        <translation>Обновление ПО</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>Не найден</translation>
+    </message>
+    <message>
+        <source>MAC address</source>
+        <translation>MAC-адрес</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Информация</translation>
+    </message>
+    <message>
+        <source>Do you really want to update current version?</source>
+        <translation>Вы действительно хотите обновиться?</translation>
+    </message>
+    <message>
+        <source>OS version</source>
+        <translation>Версия ОС</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Неизвестна</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::LanguageSelectionWidget</name>
+    <message>
+        <source>Select language:</source>
+        <translation>Выберите язык:</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Язык / Language</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Внимание</translation>
+    </message>
+    <message>
+        <source>GUI will now restart</source>
+        <translation>Сейчас произойдёт перезапуск</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::MotorLever</name>
@@ -126,6 +192,10 @@
         <source>Test digital sensors</source>
         <translation>Цифровые датчики</translation>
     </message>
+    <message>
+        <source>Test encoders</source>
+        <translation>Энкодеры</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::StartWidget</name>
@@ -146,15 +216,15 @@
     <name>trikGui::SystemSettingsWidget</name>
     <message>
         <source>Directory &apos;Files&apos; is ...</source>
-        <translation>Папка &apos;Файлы&apos; --- это...</translation>
+        <translation>Папка &apos;Файлы&apos; - это:</translation>
     </message>
     <message>
         <source>System Settings</source>
-        <translation>Система</translation>
+        <translation>Системные настройки</translation>
     </message>
     <message>
         <source>full file system</source>
-        <translation>вся файловая система</translation>
+        <translation>файловая система</translation>
     </message>
     <message>
         <source>only &apos;scripts&apos; directory</source>
@@ -188,11 +258,15 @@
     <name>trikGui::VersionWidget</name>
     <message>
         <source>Current version</source>
-        <translation>Текущая версия</translation>
+        <translation type="obsolete">Текущая версия</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation>Версия ПО</translation>
+        <translation type="obsolete">Версия ПО</translation>
+    </message>
+    <message>
+        <source>Do you really want to update current version?</source>
+        <translation type="obsolete">Вы действительно хотите обновиться?</translation>
     </message>
 </context>
 <context>

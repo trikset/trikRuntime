@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-namespace trikKernel {
+namespace trikGui {
 
 /// Abstract class for widgets which will be used for conversation with user.
 class MainWidget : public QWidget
@@ -44,6 +44,6 @@ public:
 
 signals:
 	/// Emitted when the widget created a new one and wants it to be shown.
-	void newWidget(trikKernel::MainWidget &widget);
+	void newWidget(MainWidget &widget);
 };
 }

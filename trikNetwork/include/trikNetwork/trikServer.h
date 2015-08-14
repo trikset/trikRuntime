@@ -38,18 +38,18 @@ class TRIKNETWORK_EXPORT TrikServer : public QTcpServer
 public:
 	/// Constructor.
 	/// @param connectionFactory - function that provides actual connection objects.
-	explicit TrikServer(std::function<Connection *()> const &connectionFactory);
+	explicit TrikServer(const std::function<Connection *()> &connectionFactory);
 
 	~TrikServer() override;
 
 	/// Broadcasts message across all opened connections.
-	void sendMessage(QString const &message);
+	void sendMessage(const QString &message);
 
 	/// Returns number of connections currently opened.
 	int activeConnections() const;
 
 	/// Starts listening given port on all network interfaces.
-	Q_INVOKABLE void startServer(int const &port);
+	Q_INVOKABLE void startServer(const int &port);
 
 protected:
 	void incomingConnection(qintptr socketDescriptor) override;
@@ -59,12 +59,12 @@ protected:
 
 	/// Searches connection to given IP and port in a list of all open connections. Note that if connection is added
 	/// by startConnection() call but not finished to open yet, it will not be found.
-	Connection *connection(QHostAddress const &ip, int port) const;
+	Connection *connection(const QHostAddress &ip, int port) const;
 
 	/// Searches connection to given IP and any port in a list of all open connections. Will return arbitrary matching
 	/// connection if there are more than one connection with this IP. Note that if connection is added
 	/// by startConnection() call but not finished to open yet, it will not be found.
-	Connection *connection(QHostAddress const &ip) const;
+	Connection *connection(const QHostAddress &ip) const;
 
 private slots:
 	/// Called when connection thread finishes.

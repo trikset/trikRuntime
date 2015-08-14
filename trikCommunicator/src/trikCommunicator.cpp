@@ -26,7 +26,7 @@ using namespace trikCommunicator;
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, QString const &startDirPath)
+		, const QString &startDirPath)
 	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad, startDirPath), true)
 {
 }
@@ -43,7 +43,7 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const ru
 {
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-	connect(mTrikScriptRunner, SIGNAL(completed(QString, int)), this, SIGNAL(finishedScript()));
+	connect(runner, SIGNAL(sendMessage(QString)), this, SLOT(sendPrintMessage(QString)));
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -55,5 +55,12 @@ TrikCommunicator::~TrikCommunicator()
 
 Connection *TrikCommunicator::connectionFactory()
 {
-	return new Connection(*mTrikScriptRunner);
+	Connection *connection = new Connection(*mTrikScriptRunner);
+	connect(connection, SIGNAL(stopCommandReceived()), this, SIGNAL(stopCommandReceived()));
+	return connection;
+}
+
+void TrikCommunicator::sendPrintMessage(const QString &text)
+{
+	sendMessage("print: " + text);
 }

@@ -22,7 +22,7 @@
 
 using namespace trikNetwork;
 
-TrikServer::TrikServer(std::function<Connection *()> const &connectionFactory)
+TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	: mConnectionFactory(connectionFactory)
 {
 }
@@ -40,7 +40,7 @@ TrikServer::~TrikServer()
 	qDeleteAll(mConnections.keys());
 }
 
-void TrikServer::startServer(int const &port)
+void TrikServer::startServer(const int &port)
 {
 	if (!listen(QHostAddress::Any, port)) {
 		QLOG_ERROR() << "Can not start server on port " << port;
@@ -50,7 +50,7 @@ void TrikServer::startServer(int const &port)
 	}
 }
 
-void TrikServer::sendMessage(QString const &message)
+void TrikServer::sendMessage(const QString &message)
 {
 	for (Connection * const connection : mConnections.values()) {
 		connection->send(message.toUtf8());
@@ -86,7 +86,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connectionThread->start();
 }
 
-Connection *TrikServer::connection(QHostAddress const &ip, int port) const
+Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 {
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip && connection->peerPort() == port) {
@@ -97,7 +97,7 @@ Connection *TrikServer::connection(QHostAddress const &ip, int port) const
 	return nullptr;
 }
 
-Connection *TrikServer::connection(QHostAddress const &ip) const
+Connection *TrikServer::connection(const QHostAddress &ip) const
 {
 	for (auto *connection : mConnections.values()) {
 		if (connection->peerAddress() == ip) {

@@ -14,8 +14,6 @@
 
 #include "src/vectorSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 #include <cmath>
 #include <unistd.h>
 #include <fcntl.h>
@@ -30,7 +28,7 @@
 
 using namespace trikControl;
 
-VectorSensorWorker::VectorSensorWorker(QString const &controlFile, DeviceState &state)
+VectorSensorWorker::VectorSensorWorker(const QString &controlFile, DeviceState &state)
 	: mDeviceFileDescriptor(0)
 	, mState(state)
 {

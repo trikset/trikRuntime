@@ -42,7 +42,7 @@ public:
 	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param state - shared state of a sensor.
-	AbstractVirtualSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+	AbstractVirtualSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 			, DeviceState &state);
 
 	~AbstractVirtualSensorWorker() override;
@@ -62,7 +62,7 @@ protected:
 	void init();
 
 	/// If sensor is ready, sends a command to its input FIFO, otherwise queues this command and sends it later.
-	void sendCommand(QString const &command);
+	void sendCommand(const QString &command);
 
 private slots:
 	/// Updates current reading when new value is ready.
@@ -73,14 +73,14 @@ private:
 	virtual QString sensorName() const = 0;
 
 	/// Called when new data is available in sensor output fifo, called separately for each line.
-	virtual void onNewData(QString const &dataLine) = 0;
+	virtual void onNewData(const QString &dataLine) = 0;
 
 	/// Starts virtual sensor if needed and opens its fifos.
 	void initVirtualSensor();
 
 	/// Launches sensor control script with given command as a parameter.
 	/// @returns true if sensor script launched successfully.
-	bool launchSensorScript(QString const &command);
+	bool launchSensorScript(const QString &command);
 
 	/// Starts virtual sensor process.
 	void startVirtualSensor();

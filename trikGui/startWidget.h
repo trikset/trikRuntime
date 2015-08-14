@@ -38,13 +38,13 @@
 #include <QtCore/QMap>
 
 #include "wiFiModeWidget.h"
-#include <trikKernel/mainWidget.h>
+#include "mainWidget.h"
 #include "controller.h"
 
 namespace trikGui {
 
 /// Main widget for trikGui application, displays menu which allows to open other widgets.
-class StartWidget : public trikKernel::MainWidget
+class StartWidget : public MainWidget
 {
 	Q_OBJECT
 
@@ -53,7 +53,7 @@ public:
 	/// @param controller - controller object that provides access to underlying runtime.
 	/// @param configPath - full path to configuration files.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit StartWidget(Controller &controller, QString const &configPath, QWidget *parent = 0);
+	explicit StartWidget(Controller &controller, const QString &configPath, QWidget *parent = 0);
 
 	~StartWidget() override;
 
@@ -68,7 +68,7 @@ private:
 
 	void launch();
 
-	void setRootIndex(QModelIndex const &index);
+	void setRootIndex(const QModelIndex &index);
 
 	void goHome();
 
@@ -77,7 +77,7 @@ private:
 	QListView mMenuView;
 	QStandardItemModel mMenuModel;
 	Controller &mController;
-	QString const mConfigPath;
+	const QString mConfigPath;
 	MainWidget::FileManagerRootType mFileManagerRoot; // current FilesManegerRoot
 
 	/// Stores index of item which was selected in a submenu after a last visit.

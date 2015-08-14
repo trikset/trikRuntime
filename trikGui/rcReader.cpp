@@ -45,18 +45,18 @@ void RcReader::read()
 			line.chop(1);
 		}
 
-		int const commentStart = line.indexOf('#');
+		const int commentStart = line.indexOf('#');
 		if (commentStart >= 0) {
 			line.truncate(commentStart);
 		}
 
-		int const equalsSign = line.indexOf('=');
+		const int equalsSign = line.indexOf('=');
 		if (equalsSign < 0) {
 			continue;
 		}
 
-		QString const name = line.left(equalsSign);
-		QString const value = line.mid(equalsSign + 1);
+		const QString name = line.left(equalsSign);
+		const QString value = line.mid(equalsSign + 1);
 
 		mVariables[name] = value;
 	}
@@ -64,7 +64,7 @@ void RcReader::read()
 	mRcFile.close();
 }
 
-QString RcReader::value(QString const &name) const
+QString RcReader::value(const QString &name) const
 {
 	return mVariables.value(name);
 }

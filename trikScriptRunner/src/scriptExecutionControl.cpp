@@ -50,7 +50,7 @@ QTimer* ScriptExecutionControl::timer(int milliseconds)
 	return result;
 }
 
-void ScriptExecutionControl::wait(int const &milliseconds)
+void ScriptExecutionControl::wait(const int &milliseconds)
 {
 	QEventLoop loop;
 	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()), Qt::DirectConnection);
@@ -63,6 +63,15 @@ void ScriptExecutionControl::wait(int const &milliseconds)
 qint64 ScriptExecutionControl::time() const
 {
 	return QDateTime::currentMSecsSinceEpoch();
+}
+
+int ScriptExecutionControl::random(int from, int to) const
+{
+	if (from > to) {
+		qSwap(from, to);
+	}
+
+	return qrand() % (to - from + 1) + from;
 }
 
 void ScriptExecutionControl::run()
@@ -80,21 +89,16 @@ void ScriptExecutionControl::quit()
 	emit quitSignal();
 }
 
-void ScriptExecutionControl::system(QString const &command)
+void ScriptExecutionControl::system(const QString &command, bool synchronously)
 {
-	QStringList args{"-c", command};
-	QLOG_INFO() << "Running: " << "sh" << args;
-	qDebug() << "Running:" << "sh" << args;
-	QProcess::startDetached("sh", args);
-}
-
-int ScriptExecutionControl::random(int from, int to) const
-{
-	if (from > to) {
-		qSwap(from, to);
+	if (!synchronously) {
+		QStringList args{"-c", command};
+		QLOG_INFO() << "Running: " << "sh" << args;
+		QProcess::startDetached("sh", args);
+	} else {
+		QLOG_INFO() << "Running synchronously: " << command;
+		::system(command.toStdString().c_str());
 	}
-
-	return qrand() % (to - from + 1) + from;
 }
 
 void ScriptExecutionControl::writeToFile(const QString &file, const QString &text)

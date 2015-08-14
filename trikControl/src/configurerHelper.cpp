@@ -23,8 +23,8 @@
 
 using namespace trikControl;
 
-int ConfigurerHelper::configureInt(trikKernel::Configurer const &configurer, DeviceState &state, QString const &port
-		, QString const &parameterName)
+int ConfigurerHelper::configureInt(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
+		, const QString &parameterName)
 {
 	bool ok = false;
 	int parameter = configurer.attributeByPort(port, parameterName).toInt(&ok, 0);
@@ -39,11 +39,11 @@ int ConfigurerHelper::configureInt(trikKernel::Configurer const &configurer, Dev
 	return parameter;
 }
 
-qreal ConfigurerHelper::configureReal(trikKernel::Configurer const &configurer, DeviceState &state, QString const &port
-		, QString const &parameterName)
+qreal ConfigurerHelper::configureReal(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
+		, const QString &parameterName)
 {
 	bool ok = false;
-	int parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
+	const qreal parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
 	if (!ok) {
 		QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
 				.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));

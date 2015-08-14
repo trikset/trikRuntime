@@ -17,16 +17,16 @@
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
 	#include <QtGui/QHBoxLayout>
 	#include <QtGui/QLabel>
 	#include <QtGui/QProgressBar>
 #else
-	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QProgressBar>
 #endif
+
+#include "abstractIndicator.h"
 
 namespace trikControl {
 class SensorInterface;
@@ -35,7 +35,7 @@ class SensorInterface;
 namespace trikGui {
 
 /// Widget that shows current sensor reading.
-class SensorIndicator : public QWidget
+class SensorIndicator : public AbstractIndicator
 {
 	Q_OBJECT
 
@@ -44,16 +44,15 @@ public:
 	/// @param port - port to which sensor is plugged.
 	/// @param sensor - sensor which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	SensorIndicator(QString const &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
+	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QWidget *parent = 0);
 
 public slots:
-	/// Rereads sensor and updates widget contents.
-	void renew();
+	void renew() override;
 
 private:
 	trikControl::SensorInterface &mSensor;
-	int const mMaxValue;
-	int const mMinValue;
+	const int mMaxValue;
+	const int mMinValue;
 
 	QHBoxLayout mLayout;
 	QLabel mNameLabel;

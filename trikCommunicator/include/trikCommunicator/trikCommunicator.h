@@ -57,16 +57,20 @@ public:
 	TrikCommunicator(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
-			, QString const &startDirPath);
+			, const QString &startDirPath);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
 
 	~TrikCommunicator() override;
 
+public slots:
+	/// Broadcasts given text as a message to be printed.
+	void sendPrintMessage(const QString &text);
+
 signals:
-	/// Emitted when script finishes execution.
-	void finishedScript();
+	/// Emitted when stop command received from a computer.
+	void stopCommandReceived();
 
 private:
 	TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership);
@@ -79,7 +83,7 @@ private:
 	trikScriptRunner::TrikScriptRunner *mTrikScriptRunner;
 
 	/// True, if we created our own script runner, false if we got it from someone.
-	bool const mHasScriptRunnerOwnership;
+	const bool mHasScriptRunnerOwnership;
 };
 
 }

@@ -47,7 +47,7 @@ public:
 	/// @param port - name of a port which the motor is connected to.
 	/// @param motor - pointer to an instance representing the motor.
 	/// @param parent - pointer to a parent widget.
-	MotorLever(QString const &port, trikControl::MotorInterface &motor, QWidget *parent = 0);
+	MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent = 0);
 
 	/// Destructor.
 	~MotorLever() override;
@@ -64,15 +64,14 @@ private:
 
 	trikControl::MotorInterface &mMotor;
 	bool mIsOn;
-	int const mMaxPower;
-	int const mMinPower;
-	int const mPowerStep;
+	const int mMaxPower;
+	const int mMinPower;
+	const int mPowerStep;
 	int mPower;
 
 	QHBoxLayout mLayout;
 	QLabel mNameLabel;
 	QProgressBar mPowerBar;
-	QLabel mPowerLabel;
 	QLabel mOnOffLabel;
 };
 

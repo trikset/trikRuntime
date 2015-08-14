@@ -29,7 +29,7 @@ class MalformedConfigException : public TrikRuntimeException
 public:
 	/// Constructor.
 	/// @param errorMessage - string message that specifies what was wrong.
-	MalformedConfigException(QString const &errorMessage)
+	MalformedConfigException(const QString &errorMessage)
 		: mErrorMessage(errorMessage)
 	{
 		QLOG_ERROR() << "Configuration file malformed:" << errorMessage;
@@ -38,7 +38,7 @@ public:
 	/// Constructor.
 	/// @param errorMessage - string message that specifies what was wrong.
 	/// @param node - XML node where error was detected.
-	MalformedConfigException(QString const &errorMessage, QDomNode const &node)
+	MalformedConfigException(const QString &errorMessage, const QDomNode &node)
 		: MalformedConfigException(QString("Configuration file malformed, line %1, column %2: %3")
 				.arg(node.lineNumber()).arg(node.columnNumber()).arg(errorMessage))
 	{
@@ -51,7 +51,7 @@ public:
 	}
 
 private:
-	QString const mErrorMessage;
+	const QString mErrorMessage;
 };
 
 }

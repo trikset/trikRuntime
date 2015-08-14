@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QThread>
@@ -32,39 +31,35 @@ Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
 {
 }
 
-void Connection::processData(QByteArray const &data)
+void Connection::processData(const QByteArray &data)
 {
 	QString command = QString::fromUtf8(data.data());
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
-		qDebug() << "Command: " << command;
 		QLOG_INFO() << "Command: " << command;
 	}
 
 	if (command.startsWith("file:")) {
 		command.remove(0, QString("file:").length());
-		int const separatorPosition = command.indexOf(':');
+		const int separatorPosition = command.indexOf(':');
 		if (separatorPosition == -1) {
-
-			qDebug() << "Malformed 'file' command";
 			QLOG_ERROR() << "Malformed 'file' command";
-
 			return;
 		}
 
-		QString const fileName = command.left(separatorPosition);
-		QString const fileContents = command.mid(separatorPosition + 1);
+		const QString fileName = command.left(separatorPosition);
+		const QString fileContents = command.mid(separatorPosition + 1);
 		trikKernel::FileUtils::writeToFile(fileName, fileContents, mTrikScriptRunner.scriptsDirPath());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "brickBeep");
 	} else if (command.startsWith("run:")) {
 		command.remove(0, QString("run:").length());
-		QString const fileContents = trikKernel::FileUtils::readFromFile(
+		const QString fileContents = trikKernel::FileUtils::readFromFile(
 				mTrikScriptRunner.scriptsDirPath() + "/" + command);
 
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents), Q_ARG(QString, command));
 	} else if (command == "stop") {
-		QMetaObject::invokeMethod(&mTrikScriptRunner, "abort");
+		emit stopCommandReceived();
 	} else if (command.startsWith("direct:")) {
 		command.remove(0, QString("direct:").length());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "runDirectCommand", Q_ARG(QString, command));

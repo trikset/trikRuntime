@@ -14,8 +14,6 @@
 
 #include "digitalSensor.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
@@ -23,7 +21,7 @@
 
 using namespace trikControl;
 
-DigitalSensor::DigitalSensor(QString const &port, trikKernel::Configurer const &configurer)
+DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer)
 	: mDeviceFile(configurer.attributeByPort(port, "deviceFile"))
 {
 
@@ -62,7 +60,7 @@ int DigitalSensor::read()
 	value = qMin(value, mMax);
 	value = qMax(value, mMin);
 
-	qreal const scale = 100.0 / (static_cast<qreal>(mMax - mMin));
+	const qreal scale = 100.0 / (static_cast<qreal>(mMax - mMin));
 
 	value = (value - mMin) * scale;
 

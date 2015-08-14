@@ -24,6 +24,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
+#include <QtCore/QDateTime>
 #include <QtXml/QDomDocument>
 
 #include <trikControl/brickFactory.h>
@@ -40,22 +41,6 @@
 
 #include <QsLog.h>
 
-#include "graphicsWidgetHandler.h"
-
-/// For debug
-
-/*
-#include "../trikControl/src/usbMSP430Interface.h"
-#include "../trikControl/src/usbMSP430Defines.h"
-char stmp1[32];
-char stmp2[32];
-char stmp3[32];
-uint8_t devaddr, regaddr, funccode;
-uint32_t regval, errcode;
-*/
-
-using namespace trikRun;
-
 void printUsage()
 {
 	qDebug() << "Usage: trikRun -qws <QtScript file name> [-c <config file name>] [-d <working directory name>]";
@@ -64,6 +49,7 @@ void printUsage()
 
 int main(int argc, char *argv[])
 {
+	qsrand(QDateTime::currentMSecsSinceEpoch());
 	QApplication app(argc, argv);
 	QStringList args = app.arguments();
 
@@ -74,7 +60,7 @@ int main(int argc, char *argv[])
 
 	QString configPath = "./";
 	if (app.arguments().contains("-c")) {
-		int const index = app.arguments().indexOf("-c");
+		const int index = app.arguments().indexOf("-c");
 		if (app.arguments().count() <= index + 1) {
 			printUsage();
 			return 1;
@@ -88,7 +74,7 @@ int main(int argc, char *argv[])
 
 	QString startDirPath = QDir::currentPath();
 	if (app.arguments().contains("-d")) {
-		int const index = app.arguments().indexOf("-d");
+		const int index = app.arguments().indexOf("-d");
 		if (app.arguments().count() <= index + 1) {
 			printUsage();
 			return 1;
@@ -115,16 +101,7 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikRun started";
 
-	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(*app.thread(), configPath, startDirPath)
-	);
-
-	GraphicsWidgetHandler graphicsWidgetHandler;
-
-	QObject::connect(&brick->graphicsWidget(), SIGNAL(showMe(trikKernel::MainWidget&))
-			, &graphicsWidgetHandler, SLOT(show(trikKernel::MainWidget&)));
-
-	QObject::connect(&brick->graphicsWidget(), SIGNAL(hideMe()), &graphicsWidgetHandler, SLOT(hide()));
+	QScopedPointer<trikControl::BrickInterface> brick(trikControl::BrickFactory::create(configPath, startDirPath));
 
 	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
@@ -154,168 +131,6 @@ int main(int argc, char *argv[])
 
 		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
 	}
-
-    /// For debug
-
-    /*
-    makeWriteRegPacket(stmp1, 0x26, 0x01, 0x01f4);
-    qDebug() << stmp1;
-    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-
-    sprintf(stmp1, ":2603010000C350C3\n");
-    qDebug() << stmp1;
-    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-
-    sprintf(stmp1, ":26030100C350C3\n");
-    qDebug() << stmp1;
-    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-
-    sprintf(stmp1, ":2603010000C350D3\n");
-    qDebug() << stmp1;
-    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-
-    sprintf(stmp1, "2603010000C350C3\n");
-    qDebug() << stmp1;
-    errcode = decodeReceivedPacket(stmp1, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-    */
-
-    //connect_USBMSP();
-
-    /*
-    makeWriteRegPacket(stmp1, 0x01, 0x02, 0x1000);
-    qDebug() << stmp1;
-    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
-    qDebug() << errcode;
-
-
-    makeWriteRegPacket(stmp1, 0x01, 0x01, 0x0FFF);
-    qDebug() << stmp1;
-    errcode = sendUSBPacket(stmp3, stmp1, stmp2);
-    qDebug() << errcode;
-
-    int eklmn=0;
-    for (eklmn=0; eklmn<100; eklmn++)
-    {
-
-        makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8007);
-        //qDebug() << stmp1;
-        errcode = sendUSBPacket(stmp3, stmp1, stmp2);
-        //qDebug() << errcode;
-        qDebug() << stmp1 << " " << stmp2;
-
-        makeWriteRegPacket(stmp1, 0x01, 0x00, 0x8000);
-        //qDebug() << stmp1;
-        errcode = sendUSBPacket(stmp3, stmp1, stmp2);
-        //qDebug() << errcode;
-        qDebug() << stmp1 << " " << stmp2;
-    }
-    */
-
-    /*
-    QByteArray a(2, '\0');
-
-    a[0] = i2cMOT1;
-    a[1] = 0;
-    send_USBMSP(a);
-
-
-    a[0] = i2cMOT2;
-    a[1] = 0;
-    send_USBMSP(a);
-
-    a[0] = i2cMOT3;
-    a[1] = 100;
-    send_USBMSP(a);
-
-    a[0] = i2cMOT4;
-    a[1] = 0;
-    send_USBMSP(a);
-    */
-    //char s1[32];
-    //char s2[32];
-
-    /*
-    makeWriteRegPacket(s1, ENCODER1, EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
-    errcode = sendUSBPacket(s1, s2);
-    qDebug() << s1;
-    qDebug() << s2;
-    qDebug() << errcode;
-    makeReadRegPacket(s1, ENCODER1, EEVAL);
-    errcode = sendUSBPacket(s1, s2);
-    qDebug() << s1;
-    qDebug() << s2;
-    qDebug() << errcode;
-    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-
-    makeWriteRegPacket(s1, ENCODER1, EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
-    errcode = sendUSBPacket(s1, s2);
-    qDebug() << s1;
-    qDebug() << s2;
-    qDebug() << errcode;
-    makeReadRegPacket(s1, ENCODER1, EEVAL);
-    errcode = sendUSBPacket(s1, s2);
-    qDebug() << s1;
-    qDebug() << s2;
-    qDebug() << errcode;
-    errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
-    qDebug() << devaddr;
-    qDebug() << funccode;
-    qDebug() << regaddr;
-    qDebug() << regval;
-    qDebug() << errcode;
-
-    disconnect_USBMSP();
-    */
-
-    /*
-    qDebug() << "void = " << sizeof(void);
-    qDebug() << "volatile = " << sizeof(volatile);
-    qDebug() << "char = " << sizeof(char);
-    qDebug() << "short = " << sizeof(short);
-    qDebug() << "unsigned = " << sizeof(unsigned);
-    qDebug() << "int = " << sizeof(int);
-    qDebug() << "long = " << sizeof(long);
-    qDebug() << "float = " << sizeof(float);
-    qDebug() << "double = " << sizeof(double);
-    qDebug() << "int8_t = " << sizeof(int8_t);
-    qDebug() << "int16_t = " << sizeof(int16_t);
-    qDebug() << "int32_t = " << sizeof(int32_t);
-    qDebug() << "int64_t = " << sizeof(int64_t);
-    qDebug() << "uint8_t = " << sizeof(uint8_t);
-    qDebug() << "uint16_t = " << sizeof(uint16_t);
-    qDebug() << "uint32_t = " << sizeof(uint32_t);
-    qDebug() << "uint64_t = " << sizeof(uint64_t);
-    */
 
     return app.exec();
 }

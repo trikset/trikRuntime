@@ -30,12 +30,12 @@
 #include <QtCore/QString>
 
 #include "controller.h"
-#include <trikKernel/mainWidget.h>
+#include "mainWidget.h"
 
 namespace trikGui {
 
 /// Window that shows information about currently executed script.
-class RunningWidget : public trikKernel::MainWidget
+class RunningWidget : public MainWidget
 {
 	Q_OBJECT
 
@@ -44,12 +44,22 @@ public:
 	/// @param programName - name of a script that is executed.
 	/// @param controller - reference to object providing access to low-level functionality.
 	/// @param parent - parent of a widget in terms of Qt parent-child widget relations.
-	explicit RunningWidget(QString const &programName, Controller &controller, QWidget *parent = 0);
+	explicit RunningWidget(Controller &controller, QWidget *parent = 0);
 
 	/// Shows given error message on a widget.
-	void showError(QString const &error);
+	void showError(const QString &error, int scriptId);
+
+	/// Associates running widget with a new script.
+	void setProgram(const QString &programName, int scriptId);
+
+	/// Returns an id of the script which information running widget is showing at the moment.
+	int scriptId() const;
 
 	void renewFocus() override;
+
+signals:
+	/// Emitted when running widget wants to hide itself.
+	void hideMe(int scriptId);
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
@@ -59,6 +69,7 @@ private:
 	QLabel mStatusLabel;
 	QLabel mAbortLabel;
 	Controller &mController;
+	int mScriptId;
 };
 
 }

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <trikKernel/lazyMainWidget.h>
+#include <QtCore/QStringList>
 
 #include "batteryInterface.h"
 #include "colorSensorInterface.h"
@@ -29,6 +29,7 @@
 #include "pwmCaptureInterface.h"
 #include "sensorInterface.h"
 #include "vectorSensorInterface.h"
+#include "fifoInterface.h"
 
 #include "declSpec.h"
 
@@ -45,27 +46,35 @@ public:
 	/// with this instance.
 	virtual void reset() = 0;
 
-	/// Returns a main GraphicsWidget.
-	virtual trikKernel::LazyMainWidget &graphicsWidget() = 0;
+	/// Returns a widget on which display output is drawn.
+	virtual DisplayWidgetInterface &graphicsWidget() = 0;
 
 public slots:
+	/// Configures given device on given port. Port must be listed in model-config.xml, device shall be listed
+	/// in system-config.xml, and device shall be able to be configured on a port (it is also described
+	/// in system-config.xml). Previously configured device is properly shut down, and new device is created
+	/// and initialized on a port. Method blocks caller thread until device is created. Note that this method does not
+	/// initialize devices like camera sensors, "init" shall be called for them separately when they are configured
+	/// (it is consistent with Brick constructor behavior).
+	virtual void configure(const QString &portName, const QString &deviceName) = 0;
+
 	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
-	virtual void playSound(QString const &soundFileName) = 0;
+	virtual void playSound(const QString &soundFileName) = 0;
 
 	/// Uses text synthesis to say given text on a speaker.
-	virtual void say(QString const &text) = 0;
+	virtual void say(const QString &text) = 0;
 
 	/// Stops all motors and shuts down all current activity.
 	virtual void stop() = 0;
 
 	/// Returns reference to motor of a given type on a given port
-	virtual MotorInterface *motor(QString const &port) = 0;
+	virtual MotorInterface *motor(const QString &port) = 0;
 
 	/// Returns reference to PWM signal capture device on a given port.
-	virtual PwmCaptureInterface *pwmCapture(QString const &port) = 0;
+	virtual PwmCaptureInterface *pwmCapture(const QString &port) = 0;
 
 	/// Returns reference to sensor on a given port.
-	virtual SensorInterface *sensor(QString const &port) = 0;
+	virtual SensorInterface *sensor(const QString &port) = 0;
 
 	/// Retruns list of ports for motors of a given type.
 	virtual QStringList motorPorts(MotorInterface::Type type) const = 0;
@@ -86,19 +95,19 @@ public slots:
 	virtual VectorSensorInterface *gyroscope() = 0;
 
 	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
-	virtual LineSensorInterface *lineSensor(QString const &port) = 0;
+	virtual LineSensorInterface *lineSensor(const QString &port) = 0;
 
 	/// Returns high-level color sensor using camera on given port (video0 or video1).
-	virtual ColorSensorInterface *colorSensor(QString const &port) = 0;
+	virtual ColorSensorInterface *colorSensor(const QString &port) = 0;
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
-	virtual ObjectSensorInterface *objectSensor(QString const &port) = 0;
+	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
 	virtual SoundSensorInterface *soundSensor(QString const &port) = 0;
 
 	/// Returns encoder on given port.
-	virtual EncoderInterface *encoder(QString const &port) = 0;
+	virtual EncoderInterface *encoder(const QString &port) = 0;
 
 	/// Returns battery.
 	virtual BatteryInterface *battery() = 0;
@@ -111,6 +120,9 @@ public slots:
 
 	/// Returns LED control class.
 	virtual LedInterface *led() = 0;
+
+	/// Returns custom FIFO file which can be used as sensor.
+	virtual FifoInterface *fifo(const QString &port) = 0;
 
 signals:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no

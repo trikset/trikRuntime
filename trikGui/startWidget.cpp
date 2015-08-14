@@ -32,17 +32,17 @@
 #include "motorsWidget.h"
 #include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
-#include "versionWidget.h"
-#include "updateWidget.h"
+#include "informationWidget.h"
 #include "systemSettingsWidget.h"
+#include "languageSelectionWidget.h"
 
 using namespace trikGui;
 
 using trikControl::MotorInterface;
 using trikControl::SensorInterface;
 
-StartWidget::StartWidget(Controller &controller, QString const &configPath, QWidget *parent)
-	: trikKernel::MainWidget(parent)
+StartWidget::StartWidget(Controller &controller, const QString &configPath, QWidget *parent)
+	: MainWidget(parent)
 	, mController(controller)
 	, mConfigPath(configPath)
 	, mFileManagerRoot(MainWidget::FileManagerRootType::scriptsDir)
@@ -58,18 +58,22 @@ StartWidget::StartWidget(Controller &controller, QString const &configPath, QWid
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 
 	settingsItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
 
 	settingsItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
+
+	settingsItem->appendRow(new QStandardItem(
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
 	if (mController.mailbox()) {
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 
-	settingsItem->appendRow(new QStandardItem(VersionWidget::menuEntry()));
-	settingsItem->appendRow(new QStandardItem(UpdateWidget::menuEntry()));
+	settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+
+	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -95,8 +99,8 @@ void StartWidget::renewFocus()
 
 void StartWidget::launch()
 {
-	QModelIndex const &currentIndex = mMenuView.currentIndex();
-	QStandardItem const * const currentItem = mMenuModel.itemFromIndex(currentIndex);
+	const QModelIndex &currentIndex = mMenuView.currentIndex();
+	const QStandardItem * const currentItem = mMenuModel.itemFromIndex(currentIndex);
 	if (currentItem->hasChildren()) {
 		setRootIndex(currentIndex);
 	} else {
@@ -121,12 +125,28 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::analogSensor);
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
+				SensorsSelectionWidget::SensorType::analogSensor))
+		{
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+					, SensorsSelectionWidget::SensorType::analogSensor);
+
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::digitalSensor);
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
+				SensorsSelectionWidget::SensorType::digitalSensor))
+		{
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+					, SensorsSelectionWidget::SensorType::digitalSensor);
+
+			emit newWidget(sensorsSelectionWidget);
+			result = sensorsSelectionWidget.exec();
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
+				SensorsSelectionWidget::SensorType::encoder))
+		{
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+					, SensorsSelectionWidget::SensorType::encoder);
+
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
@@ -137,14 +157,10 @@ void StartWidget::launch()
 			} else {
 				Q_ASSERT(!"Mailbox is disabled but commmunications widget still tries to be shown");
 			}
-		} else if (currentItemText == VersionWidget::menuEntry()) {
-			VersionWidget versionWidget;
+		} else if (currentItemText == InformationWidget::menuEntry()) {
+			InformationWidget versionWidget;
 			emit newWidget(versionWidget);
 			result = versionWidget.exec();
-		} else if (currentItemText == UpdateWidget::menuEntry()) {
-			UpdateWidget updateWidget;
-			emit newWidget(updateWidget);
-			result = updateWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
@@ -152,6 +168,10 @@ void StartWidget::launch()
 
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
+		} else if (currentItemText == LanguageSelectionWidget::menuEntry()) {
+			LanguageSelectionWidget languageSelectionWidget;
+			emit newWidget(languageSelectionWidget);
+			result = languageSelectionWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {
@@ -165,9 +185,9 @@ void StartWidget::changeFileManagerRoot(MainWidget::FileManagerRootType const& p
 	mFileManagerRoot = path;
 }
 
-void StartWidget::setRootIndex(QModelIndex const &index)
+void StartWidget::setRootIndex(const QModelIndex &index)
 {
-	QStandardItem const *item = mMenuModel.itemFromIndex(index);
+	const QStandardItem *item = mMenuModel.itemFromIndex(index);
 
 	if (item == nullptr) {
 		item = mMenuModel.invisibleRootItem();

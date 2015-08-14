@@ -16,34 +16,43 @@
 
 #include <trikKernel/fileUtils.h>
 
+#include "src/scriptEngineWorker.h"
 #include "src/scriptExecutionControl.h"
-#include "src/scriptRunnerProxy.h"
 
 #include <QsLog.h>
 
 using namespace trikScriptRunner;
 
 // name of the directory in which scripts must be saved
-QString const constScriptsDirName = "scripts";
+const QString constScriptsDirName = "scripts";
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, QString const &startDirPath)
+		, const QString &startDirPath)
 	: mScriptController(new ScriptExecutionControl())
-	, mScriptRunnerProxy(new ScriptRunnerProxy(brick, mailbox, gamepad, *mScriptController, startDirPath))
+	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController, startDirPath))
 	, mStartDirPath(startDirPath)
 	, mMaxScriptId(0)
 {
-	connect(mScriptRunnerProxy.data(), SIGNAL(completed(QString, int))
-			, this, SIGNAL(completed(QString, int)));
+	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
+	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
 
-	connect(mScriptRunnerProxy.data(), SIGNAL(startedScript(int))
-			, this, SLOT(onScriptStart(int)));
+	mScriptEngineWorker->moveToThread(&mWorkerThread);
+
+	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
+	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+
+	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
+
+	mWorkerThread.start();
 }
 
 TrikScriptRunner::~TrikScriptRunner()
 {
+	mScriptEngineWorker->reset();
+	QMetaObject::invokeMethod(&mWorkerThread, "quit");
+	mWorkerThread.wait(1000);
 }
 
 QString TrikScriptRunner::scriptsDirPath() const
@@ -56,33 +65,38 @@ QString TrikScriptRunner::scriptsDirName() const
 	return constScriptsDirName;
 }
 
+void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
+{
+	mScriptEngineWorker->registerUserFunction(name, function);
+}
+
 void TrikScriptRunner::brickBeep()
 {
-	mScriptRunnerProxy->brickBeep();
+	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
 }
 
-void TrikScriptRunner::run(QString const &script, QString const &fileName)
+void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
-	QLOG_INFO() << "TrikScriptRunner: new script" << mMaxScriptId << "from file" << fileName;
-	mScriptRunnerProxy->run(script, false, mMaxScriptId);
-	mScriptFileNames[mMaxScriptId++] = fileName;
+	const int scriptId = mMaxScriptId++;
+	QLOG_INFO() << "TrikScriptRunner: new script" << scriptId << "from file" << fileName;
+	mScriptEngineWorker->reset();
+
+	if (!fileName.isEmpty()) {
+		mScriptFileNames[scriptId] = fileName;
+	}
+
+	mScriptEngineWorker->run(script, (fileName.isEmpty() ? -1 : scriptId));
 }
 
-void TrikScriptRunner::run(QString const &script)
-{
-	QLOG_INFO() << "TrikScriptRunner: new direct script \"" << script << "\"";
-	mScriptRunnerProxy->run(script, false, -1);
-}
-
-void TrikScriptRunner::runDirectCommand(QString const &command)
+void TrikScriptRunner::runDirectCommand(const QString &command)
 {
 	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
-	mScriptRunnerProxy->run(command, true, mMaxScriptId++, QString());
+	mScriptEngineWorker->runDirect(command, mMaxScriptId++);
 }
 
 void TrikScriptRunner::abort()
 {
-	mScriptRunnerProxy->reset();
+	mScriptEngineWorker->reset();
 }
 
 void TrikScriptRunner::onScriptStart(int scriptId)

@@ -14,11 +14,9 @@
 
 #include "objectSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 using namespace trikControl;
 
-ObjectSensorWorker::ObjectSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+ObjectSensorWorker::ObjectSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, qreal toleranceFactor, DeviceState &state)
 	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
 	, mToleranceFactor(toleranceFactor)
@@ -42,11 +40,12 @@ void ObjectSensorWorker::detect()
 
 QVector<int> ObjectSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> result = mReading;
-	mLock.unlock();
+	return mReading;
+}
 
-	return result;
+QVector<int> ObjectSensorWorker::getDetectParameters() const
+{
+	return mDetectParameters;
 }
 
 QString ObjectSensorWorker::sensorName() const
@@ -54,29 +53,28 @@ QString ObjectSensorWorker::sensorName() const
 	return "Object sensor";
 }
 
-void ObjectSensorWorker::onNewData(QString const &dataLine)
+void ObjectSensorWorker::onNewData(const QString &dataLine)
 {
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
 	if (parsedLine[0] == "loc:") {
-		int const x = parsedLine[1].toInt();
-		int const y = parsedLine[2].toInt();
-		int const size = parsedLine[3].toInt();
+		const int x = parsedLine[1].toInt();
+		const int y = parsedLine[2].toInt();
+		const int size = parsedLine[3].toInt();
 
-		mLock.lockForWrite();
-		mReading = {x, y, size};
-		mLock.unlock();
+		mReadingBuffer = {x, y, size};
+		mReading.swap(mReadingBuffer);
 	}
 
 	if (parsedLine[0] == "hsv:") {
-		int const hue = parsedLine[1].toInt();
-		int const hueTolerance = parsedLine[2].toInt();
-		int const saturation = parsedLine[3].toInt();
-		int const saturationTolerance = parsedLine[4].toInt();
-		int const value = parsedLine[5].toInt();
-		int const valueTolerance = parsedLine[6].toInt();
+		const int hue = parsedLine[1].toInt();
+		const int hueTolerance = parsedLine[2].toInt();
+		const int saturation = parsedLine[3].toInt();
+		const int saturationTolerance = parsedLine[4].toInt();
+		const int value = parsedLine[5].toInt();
+		const int valueTolerance = parsedLine[6].toInt();
 
-		QString const command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
+		const QString command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
 				.arg(hue)
 				.arg(static_cast<int>(hueTolerance * mToleranceFactor))
 				.arg(saturation)
@@ -86,5 +84,11 @@ void ObjectSensorWorker::onNewData(QString const &dataLine)
 				;
 
 		sendCommand(command);
+
+		mDetectParametersBuffer = {hue, saturation, value, hueTolerance, saturationTolerance, valueTolerance};
+
+		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
+		// this thread prepares data.
+		mDetectParameters.swap(mDetectParametersBuffer);
 	}
 }

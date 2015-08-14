@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,27 +22,21 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-#include "mainWidget.h"
+#include "declSpec.h"
 
-namespace trikKernel {
+namespace trikControl {
 
-/// Abstract class for widgets which will be used for conversation with user
-/// (but when it doesn't want to be shown immediately).
-class LazyMainWidget : public MainWidget
+/// Interface for widget on which Brick draws its graphics. Can notify when it shows or hides itself.
+class TRIKCONTROL_EXPORT DisplayWidgetInterface : public QWidget
 {
 	Q_OBJECT
 
-public:
-	/// Constructor.
-	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
-	LazyMainWidget(QWidget *parent = 0) : MainWidget (parent) {}
-
 signals:
-	/// Emitted when the widget wants it to be shown.
-	void showMe(trikKernel::MainWidget &widget);
+	/// Emitted when widget is shown.
+	void shown();
 
-	/// Emitted when the widget wants it to be hidden.
-	void hideMe();
+	/// Emitted when widget is hidden.
+	void hidden();
 };
-}
 
+}

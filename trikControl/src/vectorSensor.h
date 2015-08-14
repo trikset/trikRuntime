@@ -37,7 +37,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	VectorSensor(QString const &deviceName, trikKernel::Configurer const &configurer);
+	VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer);
 
 	~VectorSensor() override;
 

@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
 
 #include "lineSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 using namespace trikControl;
 
-LineSensorWorker::LineSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+LineSensorWorker::LineSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, qreal toleranceFactor, DeviceState &state)
 	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
 	, mToleranceFactor(toleranceFactor)
@@ -42,10 +40,12 @@ void LineSensorWorker::detect()
 
 QVector<int> LineSensorWorker::read()
 {
-	mLock.lockForRead();
-	QVector<int> result = mReading;
-	mLock.unlock();
-	return result;
+	return mReading;
+}
+
+QVector<int> LineSensorWorker::getDetectParameters() const
+{
+	return mDetectParameters;
 }
 
 QString LineSensorWorker::sensorName() const
@@ -53,31 +53,31 @@ QString LineSensorWorker::sensorName() const
 	return "Line sensor";
 }
 
-void LineSensorWorker::onNewData(QString const &dataLine)
+void LineSensorWorker::onNewData(const QString &dataLine)
 {
 	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
 	if (parsedLine[0] == "loc:") {
-		int const x = parsedLine[1].toInt();
-		int const crossroadsProbability = parsedLine[2].toInt();
-		int const mass = parsedLine[3].toInt();
+		const int x = parsedLine[1].toInt();
+		const int crossroadsProbability = parsedLine[2].toInt();
+		const int mass = parsedLine[3].toInt();
 
-		mLock.lockForWrite();
-		mReading[0] = x;
-		mReading[1] = crossroadsProbability;
-		mReading[2] = mass;
-		mLock.unlock();
+		mReadingBuffer = {x, crossroadsProbability, mass};
+
+		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
+		// this thread prepares data.
+		mReading.swap(mReadingBuffer);
 	}
 
 	if (parsedLine[0] == "hsv:") {
-		int const hue = parsedLine[1].toInt();
-		int const hueTolerance = parsedLine[2].toInt();
-		int const saturation = parsedLine[3].toInt();
-		int const saturationTolerance = parsedLine[4].toInt();
-		int const value = parsedLine[5].toInt();
-		int const valueTolerance = parsedLine[6].toInt();
+		const int hue = parsedLine[1].toInt();
+		const int hueTolerance = parsedLine[2].toInt();
+		const int saturation = parsedLine[3].toInt();
+		const int saturationTolerance = parsedLine[4].toInt();
+		const int value = parsedLine[5].toInt();
+		const int valueTolerance = parsedLine[6].toInt();
 
-		QString const command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
+		const QString command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
 				.arg(hue)
 				.arg(static_cast<int>(hueTolerance * mToleranceFactor))
 				.arg(saturation)
@@ -87,5 +87,11 @@ void LineSensorWorker::onNewData(QString const &dataLine)
 				;
 
 		sendCommand(command);
+
+		mDetectParametersBuffer = {hue, saturation, value, hueTolerance, saturationTolerance, valueTolerance};
+
+		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
+		// this thread prepares data.
+		mDetectParameters.swap(mDetectParametersBuffer);
 	}
 }

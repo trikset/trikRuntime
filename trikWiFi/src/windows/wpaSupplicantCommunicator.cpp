@@ -22,8 +22,8 @@ struct sockaddr_un
 };
 
 WpaSupplicantCommunicator::WpaSupplicantCommunicator(
-		QString const &interfaceFile
-		, QString const &daemonFile
+		const QString &interfaceFile
+		, const QString &daemonFile
 		, QObject *parent
 		)
 	: QObject(parent)
@@ -53,7 +53,7 @@ int WpaSupplicantCommunicator::detach()
 	return -1;
 }
 
-int WpaSupplicantCommunicator::request(QString const &command, QString &reply)
+int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 {
 	Q_UNUSED(command);
 	Q_UNUSED(reply);

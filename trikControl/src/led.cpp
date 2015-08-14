@@ -14,15 +14,13 @@
 
 #include "led.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
 
 #include <QsLog.h>
 
 using namespace trikControl;
 
-Led::Led(trikKernel::Configurer const &configurer)
+Led::Led(const trikKernel::Configurer &configurer)
 	: mRedDeviceFile(configurer.attributeByDevice("led", "red"))
 	, mGreenDeviceFile(configurer.attributeByDevice("led", "green"))
 {

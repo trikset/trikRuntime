@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,32 @@
 
 #pragma once
 
-#include <trikKernel/mainWidget.h>
+#include <QsLog.h>
 
-namespace trikRun {
+#include "trikRuntimeException.h"
 
-/// Helper class to show or hide graphics widget from brick.
-class GraphicsWidgetHandler : public QWidget
+namespace trikKernel {
+
+/// Exception that is thrown when something is wrong with implementation of trikRuntime.
+class InternalErrorException : public TrikRuntimeException
 {
-	Q_OBJECT
-
-public slots:
-	/// Shows widget.
-	void show(trikKernel::MainWidget &widget)
+public:
+	/// Constructor.
+	/// @param message - information about what went wrong.
+	InternalErrorException(const QString &message)
+		: mMessage(message)
 	{
-		widget.show();
+		QLOG_ERROR() << "Internal error:" << message;
 	}
 
-	/// Hides widget.
-	void hide()
+	/// Returns exception information.
+	const QString &message() const
 	{
-		auto widget = dynamic_cast<trikKernel::MainWidget *>(sender());
-		if (widget) {
-			widget->hide();
-		}
+		return mMessage;
 	}
+
+private:
+	const QString &mMessage;
 };
 
 }

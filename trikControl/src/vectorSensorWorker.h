@@ -33,7 +33,7 @@ public:
 	/// Constructor.
 	/// @param deviceFile - device file for this sensor.
 	/// @param state - state of a device.
-	VectorSensorWorker(QString const &deviceFile, DeviceState &state);
+	VectorSensorWorker(const QString &deviceFile, DeviceState &state);
 
 signals:
 	/// Emitted when new sensor reading is ready.

@@ -1,4 +1,4 @@
-/* Copyright 2014 Dmitry Mordvinov, CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 Dmitry Mordvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,11 @@
 
 using namespace trikScriptRunner;
 
-QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const engine)
+QScriptValue Utils::clone(const QScriptValue &prototype, QScriptEngine * const engine)
 {
 	QScriptValue copy;
 	if (prototype.isFunction()) {
+		// Functions can not be copied across script engines, so they actually will not be copied.
 		return prototype;
 	} else if (prototype.isArray()) {
 		copy = engine->newArray();
@@ -55,7 +56,7 @@ QScriptValue Utils::clone(QScriptValue const &prototype, QScriptEngine * const e
 	return copy;
 }
 
-bool Utils::hasProperty(QScriptValue const &object, QString const &property)
+bool Utils::hasProperty(const QScriptValue &object, const QString &property)
 {
 	QScriptValueIterator iterator(object);
 	while (iterator.hasNext()) {
@@ -68,16 +69,15 @@ bool Utils::hasProperty(QScriptValue const &object, QString const &property)
 	return false;
 }
 
-void Utils::copyRecursivelyTo(QScriptValue const &prototype, QScriptValue &target, QScriptEngine *engine)
+void Utils::copyRecursivelyTo(const QScriptValue &prototype, QScriptValue &target, QScriptEngine *engine)
 {
 	QScriptValueIterator iterator(prototype);
 	while (iterator.hasNext()) {
 		iterator.next();
-		if (!hasProperty(target, iterator.name())) {
-			QScriptValue const value = clone(iterator.value(), engine);
-			if (value.engine() == engine) {
-				target.setProperty(iterator.name(), value);
-			}
+		QScriptValue const value = clone(iterator.value(), engine);
+		// Functions will not be copied to a new engine.
+		if (value.engine() == engine) {
+			target.setProperty(iterator.name(), value);
 		}
 	}
 }

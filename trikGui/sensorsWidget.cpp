@@ -18,11 +18,14 @@
 
 #include <trikControl/brickInterface.h>
 
+#include "abstractIndicator.h"
 #include "sensorIndicator.h"
+#include "encoderIndicator.h"
 
 using namespace trikGui;
 
-SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, QStringList const &ports, QWidget *parent)
+SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports
+		, SensorType sensorType, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mIndicators(ports.size())
@@ -32,12 +35,14 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, QStringList con
 	mTimer.setSingleShot(false);
 
 	int i = 0;
-	for (QString const &port : ports) {
-		SensorIndicator *indicator = new SensorIndicator(port, *mBrick.sensor(port), this);
-		mLayout.addWidget(indicator);
-		connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
-		mIndicators[i] = indicator;
-		++i;
+	for (const QString &port : ports) {
+		AbstractIndicator *indicator = produceIndicator(port, sensorType);
+		if (indicator) {
+			mLayout.addWidget(indicator);
+			connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
+			mIndicators[i] = indicator;
+			++i;
+		}
 	}
 
 	setLayout(&mLayout);
@@ -69,4 +74,18 @@ void SensorsWidget::goHome()
 {
 	mTimer.stop();
 	TrikGuiDialog::goHome();
+}
+
+AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorType sensorType)
+{
+	switch (sensorType) {
+	case SensorType::analogOrDigitalSensor: {
+		return new SensorIndicator(port, *mBrick.sensor(port), this);
+	}
+	case SensorType::encoder: {
+		return new EncoderIndicator(port, *mBrick.encoder(port), this);
+	}
+	}
+
+	return nullptr;
 }

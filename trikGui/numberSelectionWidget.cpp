@@ -60,7 +60,7 @@ NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int s
 
 bool NumberSelectionWidget::hasFocusInside()
 {
-	auto const editsList = lineEdits();
+	const auto editsList = lineEdits();
 	for (int i = 0; i < mDigits; ++i) {
 		if (editsList.at(mCurrentDigit)->hasFocus()) {
 			return true;
@@ -72,7 +72,7 @@ bool NumberSelectionWidget::hasFocusInside()
 
 int NumberSelectionWidget::value() const
 {
-	auto const editsList = lineEdits();
+	const auto editsList = lineEdits();
 	int result = 0;
 	for (int i = 0; i < mDigits; ++i) {
 		result = result * 10 + editsList.at(i)->text().toInt();
@@ -83,9 +83,9 @@ int NumberSelectionWidget::value() const
 
 void NumberSelectionWidget::setValue(int value)
 {
-	QString const &valueString = QString("%1").arg(value, mDigits, 10, QChar('0'));
+	const QString &valueString = QString("%1").arg(value, mDigits, 10, QChar('0'));
 	Q_ASSERT(valueString.length() == mDigits);
-	auto const editsList = lineEdits();
+	const auto editsList = lineEdits();
 	for (int i = 0; i < mDigits; ++i) {
 		editsList.at(i)->setText(valueString[i]);
 	}
@@ -130,7 +130,7 @@ QList<DigitSelector *> NumberSelectionWidget::lineEdits() const
 {
 	QList<DigitSelector *> result;
 	for (int i = 0; i < mLayout.count(); ++i) {
-		auto const digitSelector = dynamic_cast<DigitSelector *>(mLayout.itemAt(i)->widget());
+		const auto digitSelector = dynamic_cast<DigitSelector *>(mLayout.itemAt(i)->widget());
 		if (digitSelector) {
 			result.append(digitSelector);
 		}

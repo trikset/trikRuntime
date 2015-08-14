@@ -32,7 +32,7 @@ public:
 	/// @param errorMessage - error message from QDomDocument::setContent.
 	/// @param errorLine - line in XML document where error occured.
 	/// @param errorColumn - column in XML document where error occured.
-	FailedToParseXmlException(QFile const &file, QString const &errorMessage, int errorLine, int errorColumn)
+	FailedToParseXmlException(const QFile &file, const QString &errorMessage, int errorLine, int errorColumn)
 		: mFile(file), mErrorMessage(errorMessage), mErrorLine(errorLine), mErrorColumn(errorColumn)
 	{
 		QLOG_ERROR() << QString("Failed to parse %1, %2:%3 - %4")
@@ -43,7 +43,7 @@ public:
 	}
 
 	/// Returns XML file that is failed to parse.
-	QFile const &file() const
+	const QFile &file() const
 	{
 		return mFile;
 	}
@@ -67,10 +67,10 @@ public:
 	}
 
 private:
-	QFile const &mFile;
-	QString const mErrorMessage;
-	int const mErrorLine;
-	int const mErrorColumn;
+	const QFile &mFile;
+	const QString mErrorMessage;
+	const int mErrorLine;
+	const int mErrorColumn;
 };
 
 }

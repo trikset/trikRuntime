@@ -1,4 +1,4 @@
-/* Copyright 2014 Dmitry Mordvinov, CyberTech Labs Ltd.
+/* Copyright 2014 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,67 +14,97 @@
 
 #pragma once
 
-#include <QtCore/QThreadPool>
+#include <QtCore/QQueue>
+#include <QtCore/QThread>
+#include <QtCore/QMutex>
+#include <QtCore/QWaitCondition>
+#include <QtCore/QSet>
+
 #include <QtScript/QScriptEngine>
+
+#include "scriptExecutionControl.h"
 
 namespace trikScriptRunner {
 
 class ScriptEngineWorker;
+class ScriptThread;
 
-/// Provides methods for managing OS threads in QtScript.
+/// Designed to support OS threads from a Qt Script.
+/// Provides methods for creation and joining threads and for sending messages between threads.
 class Threading : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param runner - will be used for starting new script engines.
-	explicit Threading(ScriptEngineWorker &runner);
+	/// Constructs a Threading object with given script worker as a parent.
+	explicit Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl);
+	~Threading();
 
-	/// Starts new OS thread invoking the given function.
-	/// @warning: as far as QScriptEngine is not thread-safe threads have some restrictions.
-	/// One of them described in TrikScriptRunner::run() documentation. The other one is that
-	/// scripts have no shared memory and though they will see the global memory state on the
-	/// moment when they start, further modifications will not be obtained by new thread.
-	/// There may be added some special thread communication functions for this problem solution.
-	Q_INVOKABLE void start(QScriptValue const &function);
+	/// Starts the main thread of a script
+	void startMainThread(const QString &script);
 
-	/// Returns a number of threads that created by Threading object.
-	Q_INVOKABLE QScriptValue activeThreadCount() const;
+	/// Starts a thread with given threadId.
+	/// @param function - a thread routine
+	Q_INVOKABLE void startThread(const QScriptValue &threadId, const QScriptValue &function);
 
-	/// Returns the maximum number of threads used by the Threading object.
-	Q_INVOKABLE QScriptValue maxThreadCount() const;
+	/// Joins a thread with given threadId. Does nothing if there is no thread with such id.
+	Q_INVOKABLE void joinThread(const QString &threadId);
 
-	/// Waits up to @arg timeout milliseconds for all threads to exit and removes all threads from
-	/// the thread pool. Returns true if all threads were removed; otherwise it returns false.
-	/// If @arg timeout is -1, the timeout is ignored (waits for the last thread to exit).
-	Q_INVOKABLE QScriptValue waitForDone(QScriptValue const &timeout);
+	/// Sends message to a mailbox with given threadId, even if such thread does not exist.
+	/// The message can be accessed in the future by any thread with the same threadId.
+	Q_INVOKABLE void sendMessage(const QString &threadId, const QScriptValue &message);
 
-	/// @param script - a text of the script that is evaluated at the moment. New threads will
-	/// invoke functions declared in this script.
-	void setCurrentScript(QString const &script);
+	/// Designed to be called from a thread receiving a message.
+	Q_INVOKABLE QScriptValue receiveMessage(bool waitForMessage = true);
 
-	/// Blocks current thread untill all threads in thread pool finish their execution.
+	/// Stops given thread.
+	Q_INVOKABLE void killThread(const QString &threadId);
+
+	/// Wait until all threads finish execution.
 	void waitForAll();
 
+	/// Aborts evalutation of all threads, resets to initial state.
+	void reset();
+
+	/// The last error message.
+	QString errorMessage() const;
+
+	/// Designed to be called from a thread that's finished execution.
+	void threadFinished(const QString &id);
+
+	/// Returns true if the script is being evaluated in event-driven mode.
+	bool inEventDrivenMode() const;
+
 private:
-	/// Separate thread for script execution.
-	class ScriptThread : public QRunnable
-	{
-	public:
-		/// Constructor.
-		ScriptThread(QString const &mainScript, QString const &function, ScriptEngineWorker &runner);
+	/// Starts a thread with given threadId
+	/// @param engine - script engine that will do the work; it will be owned by a newly created thread
+	/// @param script - exact script to evaluate in new thread
+	void startThread(const QString &threadId, QScriptEngine *engine, const QString &script);
 
-	private:
-		void run() override;
+	/// Create new engine and initialize it with a context of given engine
+	/// The caller is responsible for deletion of created engine.
+	QScriptEngine *cloneEngine(QScriptEngine *engine);
 
-		QString const mScript;
-		QString const mFunction;
-		ScriptEngineWorker &mRunner;
-	};
+	/// Utility function which locks reset mutex in case if reset is not started.
+	bool tryLockReset();
 
+	QHash<QString, ScriptThread *> mThreads;
+	QSet<QString> mFinishedThreads;
+	QSet<QString> mPreventFromStart;
+	QMutex mThreadsMutex;
+	QString mErrorMessage;
+
+	QHash<QString, QQueue<QScriptValue> > mMessageQueues;
+	QMutex mMessageMutex;
+	QHash<QString, QMutex *> mMessageQueueMutexes;
+	QHash<QString, QWaitCondition *> mMessageQueueConditions;
+
+	bool mResetStarted;
+	QMutex mResetMutex;
+
+	ScriptEngineWorker *mScriptWorker;  // Doesn't have ownership.
+	ScriptExecutionControl &mScriptControl;
 	QString mScript;
-	ScriptEngineWorker &mRunner;
 };
 
 }

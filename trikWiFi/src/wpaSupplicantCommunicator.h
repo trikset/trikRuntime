@@ -34,7 +34,7 @@ public:
 	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
 	///        /run/wpa_supplicant/wlan0.
 	/// @param parent - parent QObject.
-	WpaSupplicantCommunicator(QString const &interfaceFile, QString const &daemonFile, QObject *parent = 0);
+	WpaSupplicantCommunicator(const QString &interfaceFile, const QString &daemonFile, QObject *parent = 0);
 
 	/// Destructor.
 	~WpaSupplicantCommunicator();
@@ -52,7 +52,7 @@ public:
 	/// @param command - command to wpa_supplicant. List of available commands is here:
 	///        http://hostap.epitest.fi/wpa_supplicant/devel/ctrl_iface_page.html
 	/// @param reply - reply from wpa_supplicant.
-	int request(QString const &command, QString &reply);
+	int request(const QString &command, QString &reply);
 
 	/// Returns true if there are unread incoming messages from wpa_supplicant.
 	bool isPending();

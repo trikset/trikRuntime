@@ -40,7 +40,7 @@ public:
 	/// Transfers ownership over GamepadInterface object to caller.
 	/// @param configurer - configurer object that contains preparsed XML config. If gamepad is not enabled, nullptr
 	///        will be returned.
-	static GamepadInterface *create(trikKernel::Configurer const &configurer);
+	static GamepadInterface *create(const trikKernel::Configurer &configurer);
 };
 
 }

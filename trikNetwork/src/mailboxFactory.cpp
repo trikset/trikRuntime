@@ -25,7 +25,7 @@ MailboxInterface *MailboxFactory::create(int port)
 	return new Mailbox(port);
 }
 
-MailboxInterface *MailboxFactory::create(trikKernel::Configurer const &configurer)
+MailboxInterface *MailboxFactory::create(const trikKernel::Configurer &configurer)
 {
 	if (configurer.isEnabled("mailbox")) {
 		return new Mailbox(configurer);

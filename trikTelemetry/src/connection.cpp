@@ -14,6 +14,8 @@
 
 #include "connection.h"
 
+#include "QsLog.h"
+
 using namespace trikTelemetry;
 
 Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad)
@@ -23,22 +25,22 @@ Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadI
 {
 }
 
-void Connection::processData(QByteArray const &data)
+void Connection::processData(const QByteArray &data)
 {
 	QString command(data);
 
-	QString const portsRequested("ports");
-	QString const dataRequested("data");
-	QString const singleSensorRequested("sensor:");
-	QString const buttonRequested("button:");
-	QString const accelerometerRequested("AccelerometerPort");
-	QString const gyroscopeRequested("GyroscopePort");
+	const QString portsRequested("ports");
+	const QString dataRequested("data");
+	const QString singleSensorRequested("sensor:");
+	const QString buttonRequested("button:");
+	const QString accelerometerRequested("AccelerometerPort");
+	const QString gyroscopeRequested("GyroscopePort");
 	const QString gamepadRequested("Gamepad");
 
 	QString answer;
 
 	if (command.startsWith(dataRequested)) {
-		auto reportSensorReading = [this, &answer] (QString const &port) {
+		auto reportSensorReading = [this, &answer] (const QString &port) {
 			answer += QString("%1=%2:%3,")
 					.arg(port)
 					.arg(mBrick.sensor(port)->read())
@@ -47,25 +49,25 @@ void Connection::processData(QByteArray const &data)
 
 		answer = "data:";
 		answer += "analog:";
-		for (QString const &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor)) {
+		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor)) {
 			reportSensorReading(port);
 		}
 
 		answer[answer.length() - 1] = ';';
 		answer += "digital:";
-		for (QString const &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor)) {
+		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor)) {
 			reportSensorReading(port);
 		}
 
 		answer[answer.length() - 1] = ';';
 		answer += "special:";
-		for (QString const &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor)) {
+		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor)) {
 			reportSensorReading(port);
 		}
 
 		answer[answer.length() - 1] = ';';
 		answer += "encoders:";
-		for (QString const &port : mBrick.encoderPorts()) {
+		for (const QString &port : mBrick.encoderPorts()) {
 			answer += QString("%1=%2:%3,")
 					.arg(port)
 					.arg(mBrick.encoder(port)->read())
@@ -85,10 +87,10 @@ void Connection::processData(QByteArray const &data)
 		answer = command + ":";
 		command.remove(0, singleSensorRequested.length());
 		if (command.startsWith(accelerometerRequested)) {
-			int const dimension = command.at(command.length() - 1).toLatin1() - 'X';
+			const int dimension = command.at(command.length() - 1).toLatin1() - 'X';
 			answer += QString::number(mBrick.accelerometer()->read()[dimension]);
 		} else if (command.startsWith(gyroscopeRequested)) {
-			int const dimension = command.at(command.length() - 1).toLatin1() - 'X';
+			const int dimension = command.at(command.length() - 1).toLatin1() - 'X';
 			answer += QString::number(mBrick.gyroscope()->read()[dimension]);
 		} else if (command.startsWith(gamepadRequested)) {
 			if (command == "GamepadButton1Port") {
@@ -112,7 +114,7 @@ void Connection::processData(QByteArray const &data)
 			} else if (command == "GamepadPad1PosPort") {
 				answer += QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1));
 			} else if (command == "GamepadPad2PosPort") {
-				answer += QString("%(1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2));
+				answer += QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2));
 			}
 		} else if (mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).contains(command)
 				|| mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).contains(command)
@@ -130,7 +132,7 @@ void Connection::processData(QByteArray const &data)
 	send(answer.toUtf8());
 }
 
-QString Connection::serializeVector(QVector<int> const &vector) {
+QString Connection::serializeVector(const QVector<int> &vector) {
 	QString result = "(";
 	for (int coord : vector) {
 		result += QString::number(coord) + ",";
@@ -142,20 +144,20 @@ QString Connection::serializeVector(QVector<int> const &vector) {
 
 bool Connection::isButtonPressed(const QString &buttonName)
 {
-	if (buttonName == "LeftButtonPort") {
+	if (buttonName == "Left") {
 		return mBrick.keys()->isPressed(105);
-	} else if (buttonName == "UpButtonPort") {
+	} else if (buttonName == "Up") {
 		return mBrick.keys()->isPressed(103);
-	} else if (buttonName == "DownButtonPort") {
+	} else if (buttonName == "Down") {
 		return mBrick.keys()->isPressed(108);
-	} else if (buttonName == "EnterButtonPort") {
+	} else if (buttonName == "Enter") {
 		return mBrick.keys()->isPressed(28);
-	} else if (buttonName == "RightButtonPort") {
+	} else if (buttonName == "Right") {
 		return mBrick.keys()->isPressed(106);
-	} else if (buttonName == "PowerButtonPort") {
+	} else if (buttonName == "Power") {
 		return mBrick.keys()->isPressed(116);
-	} else if (buttonName == "MenuButtonPort") {
-		return mBrick.keys()->isPressed(139);
+	} else if (buttonName == "Esc") {
+		return mBrick.keys()->isPressed(1);
 	} else {
 		return false;
 	}

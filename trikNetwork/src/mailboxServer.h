@@ -41,6 +41,9 @@ public:
 	/// @param port - a port for mailbox server.
 	MailboxServer(int port);
 
+	/// Returns true if at least one opened mailbox connection presents at the moment.
+	bool isConnected();
+
 	/// Returns hull number of this robot.
 	int hullNumber() const;
 
@@ -57,16 +60,16 @@ public:
 	Q_INVOKABLE void setHullNumber(int hullNumber);
 
 	/// Connects to robot by IP and port.
-	Q_INVOKABLE void connect(QString const &ip, int port);
+	Q_INVOKABLE void connect(const QString &ip, int port);
 
 	/// Connects to robot by IP and uses port of local mailbox server as a port on remote robot.
-	Q_INVOKABLE void connect(QString const &ip);
+	Q_INVOKABLE void connect(const QString &ip);
 
 	/// Sends message to a robot with given hull number.
-	Q_INVOKABLE void send(int hullNumber, QString const &message);
+	Q_INVOKABLE void send(int hullNumber, const QString &message);
 
 	/// Sends message to all known robots.
-	Q_INVOKABLE void send(QString const &message);
+	Q_INVOKABLE void send(const QString &message);
 
 	/// Returns true if there are incoming messages.
 	Q_INVOKABLE bool hasMessages();
@@ -76,15 +79,15 @@ public:
 
 signals:
 	/// Emitted when new message was received from a robot with given hull number.
-	void newMessage(int senderHullNumber, QString const &message);
+	void newMessage(int senderHullNumber, const QString &message);
 
 private slots:
-	void onNewConnection(QHostAddress const &ip, int clientPort, int serverPort, int hullNumber);
-	void onConnectionInfo(QHostAddress const &ip, int port, int hullNumber);
-	void onNewData(QHostAddress const &ip, int port, QByteArray const &data);
+	void onNewConnection(const QHostAddress &ip, int clientPort, int serverPort, int hullNumber);
+	void onConnectionInfo(const QHostAddress &ip, int port, int hullNumber);
+	void onNewData(const QHostAddress &ip, int port, const QByteArray &data);
 
 private:
-	Connection *connect(QHostAddress const &ip, int port);
+	Connection *connect(const QHostAddress &ip, int port);
 
 	Connection *connectionFactory();
 
@@ -92,7 +95,7 @@ private:
 
 	static QHostAddress determineMyIp();
 
-	Connection *prepareConnection(QHostAddress const &ip);
+	Connection *prepareConnection(const QHostAddress &ip);
 
 	void loadSettings();
 	void saveSettings();
@@ -100,8 +103,8 @@ private:
 	void forEveryConnection(std::function<void(Connection *)> method, int hullNumber = -1);
 
 	int mHullNumber;
-	QHostAddress const mMyIp;
-	int const mMyPort;
+	const QHostAddress mMyIp;
+	const int mMyPort;
 	QHostAddress mServerIp;
 	int mServerPort;
 
@@ -110,13 +113,13 @@ private:
 		int port;
 	};
 
-	inline uint qHash(Endpoint const &key)
+	inline uint qHash(const Endpoint &key)
 	{
 		return ::qHash(key.ip.toString()) ^ key.port;
 	}
 
-	friend bool operator ==(MailboxServer::Endpoint const &left, MailboxServer::Endpoint const &right);
-	friend inline QDebug operator <<(QDebug dbg, Endpoint const &endpoint);
+	friend bool operator ==(const MailboxServer::Endpoint &left, const MailboxServer::Endpoint &right);
+	friend inline QDebug operator <<(QDebug dbg, const Endpoint &endpoint);
 
 	QMultiHash<int, Endpoint> mKnownRobots;
 
@@ -127,12 +130,12 @@ private:
 	QReadWriteLock mAuxiliaryInformationLock;
 };
 
-inline bool operator ==(MailboxServer::Endpoint const &left, MailboxServer::Endpoint const &right)
+inline bool operator ==(const MailboxServer::Endpoint &left, const MailboxServer::Endpoint &right)
 {
 	return left.ip == right.ip && left.port == right.port;
 }
 
-inline QDebug operator <<(QDebug dbg, MailboxServer::Endpoint const &endpoint)
+inline QDebug operator <<(QDebug dbg, const MailboxServer::Endpoint &endpoint)
 {
 	dbg.nospace() << endpoint.ip << ":" << endpoint.port;
 	return dbg.space();

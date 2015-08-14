@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,31 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "versionWidget.h"
-#include <trikKernel/version.h>
+#include "rectangle.h"
 
-using namespace trikGui;
+using namespace trikControl;
 
-VersionWidget::VersionWidget(QWidget *parent)
-	: TrikGuiDialog(parent)
-{
-	QLabel* const versionLabel = new QLabel(tr("Current version") + " : \n" + trikKernel::version);
-	versionLabel->setAlignment(Qt::AlignCenter);
-	mLayout.addWidget(versionLabel);
-
-	setLayout(&mLayout);
-	setFocusPolicy(Qt::StrongFocus);
-}
-
-VersionWidget::~VersionWidget()
+Rectangle::Rectangle(int x, int y, int width, int height, QColor color, int penWidth)
+	: Shape(color, penWidth)
+	, mRect(QRect(x, y, width, height))
 {
 }
 
-void VersionWidget::renewFocus()
+void Rectangle::draw(QPainter *painter)
 {
+	painter->setPen(QPen(mColor, mPenWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+	painter->drawRect(mRect);
 }
 
-QString VersionWidget::menuEntry()
+bool Rectangle::equals(const Shape *other) const
 {
-	return QString(tr("Version"));
+	const Rectangle *rect = dynamic_cast<const Rectangle *>(other);
+	return rect && mRect == rect->mRect;
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 CyberTech Labs Ltd, Smirnov Mikhail, Kogutich Denis
+/* Copyright 2013 - 2015 CyberTech Labs Ltd, Smirnov Mikhail, Kogutich Denis
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,42 +17,49 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QStackedLayout>
 	#include <QtGui/QLabel>
+	#include <QtGui/QApplication>
 #else
 	#include <QtWidgets/QStackedLayout>
 	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QPushButton>
+	#include <QtWidgets/QApplication>
 #endif
+
+#include <QsLog.h>
 
 #include "src/guiWorker.h"
 
 using namespace trikControl;
 
-Display::Display(QThread &guiThread, const QString &startDirPath)
-	: mGuiThread(guiThread)
-	, mStartDirPath(startDirPath)
+Display::Display(const QString &startDirPath)
+	: mStartDirPath(startDirPath)
 	, mGuiWorker(new GuiWorker())
 {
-	mGuiWorker->moveToThread(&guiThread);
+	if (!qApp) {
+		QLOG_ERROR() << "No QApplication object, it seems that trikControl is used from console application";
+		return;
+	}
+
+	mGuiWorker->moveToThread(qApp->thread());
 	QMetaObject::invokeMethod(mGuiWorker, "init");
 }
 
 Display::~Display()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "deleteWorker");
-	mGuiThread.wait(1000);
+	qApp->thread()->wait(1000);
 }
 
-trikKernel::LazyMainWidget &Display::graphicsWidget()
+DisplayWidgetInterface &Display::graphicsWidget()
 {
 	return mGuiWorker->graphicsWidget();
 }
 
-void Display::showImage(QString const &fileName)
+void Display::showImage(const QString &fileName)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));
 }
 
-void Display::addLabel(QString const &text, int x, int y)
+void Display::addLabel(const QString &text, int x, int y)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "addLabel", Q_ARG(QString, text), Q_ARG(int, x), Q_ARG(int, y));
 }
@@ -62,7 +69,7 @@ void Display::removeLabels()
 	QMetaObject::invokeMethod(mGuiWorker, "removeLabels");
 }
 
-void Display::setBackground(QString const &color)
+void Display::setBackground(const QString &color)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setBackground", Q_ARG(QString, color));
 }
@@ -75,6 +82,16 @@ void Display::hide()
 void Display::clear()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "clear");
+}
+
+void Display::reset()
+{
+	QMetaObject::invokeMethod(mGuiWorker, "reset");
+}
+
+void Display::redraw()
+{
+	QMetaObject::invokeMethod(mGuiWorker, "redraw");
 }
 
 void Display::drawLine(int x1, int y1, int x2, int y2)
@@ -105,7 +122,7 @@ void Display::drawArc(int x, int y, int width, int height, int startAngle, int s
 			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle));
 }
 
-void Display::setPainterColor(QString const &color)
+void Display::setPainterColor(const QString &color)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setPainterColor", Q_ARG(QString, color));
 }

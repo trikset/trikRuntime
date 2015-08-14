@@ -36,6 +36,18 @@ class ScriptEngineWorker : public QObject
 	Q_OBJECT
 
 public:
+	/// State of a script
+	/// @value ready - worker is waiting for a new script
+	/// @value starting - worker is preparing itself to running a script
+	/// @value resetting - worker has finished execution of a script and returning to ready state
+	/// @value running - worker is executing a script
+	enum State {
+		ready
+		, starting
+		, resetting
+		, running
+	};
+
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
@@ -46,67 +58,85 @@ public:
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
 			, ScriptExecutionControl &scriptControl
-			, QString const &startDirPath);
+			, const QString &startDirPath);
 
-	/// Copies this instance of ScriptEngineWorker and returns a new one. Script engine is copied deeply
-	/// i.e. the current state of the global scripting object is copied recursively.
-	/// Takes ownership via Qt parent-child system.
-	ScriptEngineWorker &clone();
+	/// Create and initialize a new script engine.
+	/// @param supportThreads - true if created engine should support creation of threads.
+	QScriptEngine *createScriptEngine(bool supportThreads = true);
+
+	/// Copies given script engine creating a new one with the same context as existing one.
+	/// Note that functions will not be copied to a new engine due to limitations of Qt Scripting engine,
+	/// they need to be re-evaluated manually.
+	QScriptEngine *copyScriptEngine(const QScriptEngine * const original);
+
+	/// Registers given C++ function as callable from script, with given name.
+	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
-	void completed(QString const &error, int scriptId);
+	void completed(const QString &error, int scriptId);
 
-	/// Emitted when evaluation is being interrupted. Used for stopping child threads when robot reset is requested.
-	void abortEvaluation();
-
-public slots:
-	/// Initializes new QtScript engine.
-	void init();
-
-	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
-	/// called from another thread.
-	void reset();
-
-	/// Executes given script.
-	/// @param script - script to execute.
-	/// @param inEventDrivenMode - shall this script be executed in event-driven mode, i.e. not emit completed() signal
-	///        when it is finished.
-	/// @param function - the name of the function execution must start with. If empty then the script will be
-	/// evaluated as-is, else function call will be appended to @arg script.
-	void run(QString const &script, bool inEventDrivenMode, int scriptId, QString const &function = "main");
-
-	/// Plays "beep" sound.
-	void brickBeep();
-
-signals:
 	/// Emitted when new script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedScript(int scriptId);
+
+public slots:
+	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
+	/// called from another thread. By the end of call to reset() the worker would be in a ready state.
+	void reset();
+
+	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
+	/// completed() signal is emitted upon script abortion or completion.
+	/// It is a caller's responsibility to ensure that ScriptEngineWorker is in ready state before a call to run()
+	/// by calling reset() first.
+	/// @param script - QtScript code to evaluate
+	/// @param scriptId - an id of a script, used to distinguish between different scripts run by a worker
+	void run(const QString &script, int scriptId);
+
+	/// Runs a command in a `current` context. Permits to run a script line by line.
+	/// The command will be executed asynchronously.
+	/// If called when an ordinary script is running, that script would be aborted before evaluation of a command.
+	/// In this mode, threads and messages are unsupported.
+	void runDirect(const QString &command, int scriptId);
+
+	/// Plays "beep" sound.
+	void brickBeep();
 
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
-	/// Kill old script engine, create and reinit a new one.
-	void resetScriptEngine();
+	/// Actually runs given script. Is to be called from a thread owning ScriptEngineWorker.
+	void doRun(const QString &script);
+
+	/// Actually runs given command. Is to be called from a thread owning ScriptEngineWorker.
+	void doRunDirect(const QString &command);
 
 private:
-	void onScriptEvaluated();
+	/// Turns the worker to a starting state, emits startedScript() signal.
+	void startScriptEvaluation(int scriptId);
 
-	/// Has ownership. No smart pointers here because we need to do manual memory managment
-	/// due to complicated mEngine lifecycle (see .cpp for more details).
-	QScriptEngine *mEngine;
+	/// Evaluates "system.js" file in given engine.
+	void evalSystemJs(QScriptEngine * const engine) const;
+
+	/// Part of reset procedure, clears state of brick.
+	void clearBrickState();
+
+	/// Part of reset procedure, clears state of mailbox and gamepad.
+	void clearMailboxAndGamepadStateState();
+
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreadingVariable;
-	QString const mStartDirPath;
-	bool mEngineReset;
+	QScriptEngine *mDirectScriptsEngine;  // Has ownership.
+	const QString mStartDirPath;
 	int mScriptId;
+	State mState;
+	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;
 };
 
 }

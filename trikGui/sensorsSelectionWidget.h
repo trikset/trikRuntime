@@ -44,12 +44,18 @@ class SensorsSelectionWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
+	enum class SensorType {
+		analogSensor
+		, digitalSensor
+		, encoder
+	};
+
 	SensorsSelectionWidget(trikControl::BrickInterface &brick
-			, trikControl::SensorInterface::Type type
+			, SensorType type
 			, QWidget *parent = 0);
 
 	/// Returns main menu entry string for this widget.
-	static QString menuEntry(trikControl::SensorInterface::Type type);
+	static QString menuEntry(SensorType type);
 
 	void renewFocus() override;
 
@@ -63,6 +69,7 @@ private:
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QListWidget mList;
+	const SensorType mSensorType;
 
 	trikControl::BrickInterface &mBrick;
 };

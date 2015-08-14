@@ -39,7 +39,7 @@ public:
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	/// @param communicator - I2C communicator to use to query sensor.
-	PowerMotor(QString const &port, trikKernel::Configurer const &configurer, I2cCommunicator &communicator);
+	PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
 
 	~PowerMotor() override;
 
@@ -53,16 +53,24 @@ public slots:
 	/// Returns currently set power of a motor.
 	int power() const;
 
+	/// Returns currently set period of a motor.
+	int period() const;
+
 	/// Turns off motor. This is not the same as setPower(0), because setPower will
 	/// leave motor on in a break mode, and this method will turn motor off.
 	void powerOff();
 
+	/// Sets current motor period.
+	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses. 
+	void setPeriod(int period);
+
 private:
 	I2cCommunicator &mCommunicator;
 	int mI2cCommandNumber;
-	bool const mInvert;
+	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
+	int mCurrentPeriod;
 };
 
 }

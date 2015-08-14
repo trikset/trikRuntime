@@ -20,13 +20,13 @@
 
 using namespace trikKernel;
 
-LoggingHelper::LoggingHelper(QString const &pathToLog)
+LoggingHelper::LoggingHelper(const QString &pathToLog)
 {
-	QString const correctedPath = pathToLog.endsWith(QDir::separator())
+	const QString correctedPath = pathToLog.endsWith(QDir::separator())
 			? pathToLog
 			: pathToLog + QDir::separator();
 
-	int const maxLogSize = 10 * 1024 * 1024;
+	const int maxLogSize = 10 * 1024 * 1024;
 	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
 	mFileDestination = QsLogging::DestinationFactory::MakeFileDestination(
 			correctedPath + "trik.log"
@@ -36,7 +36,7 @@ LoggingHelper::LoggingHelper(QString const &pathToLog)
 			, QsLogging::TraceLevel);
 
 	mConsoleDestination = QsLogging::DestinationFactory::MakeFunctorDestination(
-			[](QString const &message, QsLogging::Level level) {
+			[](const QString &message, QsLogging::Level level) {
 				if (level >= QsLogging::ErrorLevel) {
 					qDebug() << message;
 				}

@@ -20,28 +20,33 @@
 	#include <QtGui/QWidget>
 	#include <QtGui/QHBoxLayout>
 	#include <QtGui/QLabel>
+	#include <QtGui/QPushButton>
+	#include <QtGui/QMessageBox>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QHBoxLayout>
 	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QPushButton>
+	#include <QtWidgets/QMessageBox>
 #endif
 
 #include "trikGuiDialog.h"
+#include "updateWidget.h"
 
 namespace trikGui {
 
 /// Widget that shows current version of TrikRuntime.
-class VersionWidget : public TrikGuiDialog
+class InformationWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
-	explicit VersionWidget(QWidget *parent = 0);
+	explicit InformationWidget(QWidget *parent = 0);
 
 	/// Destructor.
-	~VersionWidget();
+	~InformationWidget() override;
 
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
@@ -49,9 +54,20 @@ public:
 public slots:
 	void renewFocus() override;
 
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+
+private slots:
+	void updateVersion();
+
 private:
+	/// Returns operating system version.
+	QString osVersion() const;
+
 	/// Main layout of this widget.
-	QHBoxLayout mLayout;
+	QVBoxLayout mLayout;
+
+	QPushButton *mUpdateButton;  // Has ownership.
 };
 
 }

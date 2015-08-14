@@ -32,7 +32,7 @@ class KeysWorker : public QObject
 public:
 	/// Constructor.
 	/// @param keysPath - path to device file that controls brick keys.
-	KeysWorker(QString const &keysPath, DeviceState &state);
+	KeysWorker(const QString &keysPath, DeviceState &state);
 
 	/// Clear data about previous key pressures.
 	void reset();

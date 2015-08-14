@@ -37,7 +37,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
-	ServoMotor(QString const &port, trikKernel::Configurer const &configurer);
+	ServoMotor(const QString &port, const trikKernel::Configurer &configurer);
+	~ServoMotor();
 
 	Status status() const override;
 

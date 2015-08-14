@@ -55,7 +55,7 @@ void setCoreLimits()
 	setrlimit(RLIMIT_CORE, &core_limits);
 }
 
-void trikKernel::coreDumping::initCoreDumping(QString const &dumpDir)
+void trikKernel::coreDumping::initCoreDumping(const QString &dumpDir)
 {
 	dumpDirPath = dumpDir;
 	initSignals();

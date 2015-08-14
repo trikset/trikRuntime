@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2014 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,13 @@
 
 using namespace trikGui;
 
-RunningWidget::RunningWidget(QString const &programName, Controller &controller, QWidget *parent)
-	: trikKernel::MainWidget(parent)
+RunningWidget::RunningWidget(Controller &controller, QWidget *parent)
+	: MainWidget(parent)
 	, mController(controller)
 {
 	setWindowState(Qt::WindowFullScreen);
 
 	mStatusLabel.setWordWrap(true);
-	mStatusLabel.setAlignment(Qt::AlignCenter);
-	mStatusLabel.setText(tr("Running ") + programName);
 
 	mAbortLabel.setWordWrap(true);
 	mAbortLabel.setAlignment(Qt::AlignCenter);
@@ -38,11 +36,22 @@ RunningWidget::RunningWidget(QString const &programName, Controller &controller,
 	setLayout(&mLayout);
 }
 
-void RunningWidget::showError(QString const &error)
+void RunningWidget::showError(const QString &error, int scriptId)
 {
+	if (mScriptId != scriptId) {
+		return;
+	}
+
 	mStatusLabel.setAlignment(Qt::AlignLeft);
 	mStatusLabel.setText(QString("<font color='red'>%1</font>").arg(error));
 	update();
+}
+
+void RunningWidget::setProgram(const QString &programName, int scriptId)
+{
+	mStatusLabel.setAlignment(Qt::AlignCenter);
+	mStatusLabel.setText(tr("Running ") + programName);
+	mScriptId = scriptId;
 }
 
 void RunningWidget::keyPressEvent(QKeyEvent *event)
@@ -50,7 +59,6 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_PowerDown: {
 			mController.abortExecution();
-			mController.doCloseRunningWidget(*this);
 			break;
 		}
 		default: {
@@ -63,4 +71,9 @@ void RunningWidget::keyPressEvent(QKeyEvent *event)
 void RunningWidget::renewFocus()
 {
 	setFocus();
+}
+
+int RunningWidget::scriptId() const
+{
+	return mScriptId;
 }

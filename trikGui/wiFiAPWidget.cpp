@@ -14,7 +14,6 @@
 
 #include "wiFiAPWidget.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QList>
 
 #include <QtNetwork/QNetworkInterface>
@@ -61,24 +60,24 @@ void WiFiAPWidget::renewFocus()
 
 void WiFiAPWidget::getParameters()
 {
-	RcReader const rcReader("/etc/trik/trikrc");
+	const RcReader rcReader("/etc/trik/trikrc");
 
-	QString const ssid = rcReader.value("trik_wifi_ap_ssid");
+	const QString ssid = rcReader.value("trik_wifi_ap_ssid");
 	if (!ssid.isEmpty()) {
 		mNetworkLabel.setText(tr("Name: ") + ssid);
 	}
 
-	QString const passphrase = rcReader.value("trik_wifi_ap_passphrase");
+	const QString passphrase = rcReader.value("trik_wifi_ap_passphrase");
 	if (!passphrase.isEmpty()) {
 		mKeyLabel.setText(tr("Password: ") + passphrase);
 	}
 
-	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-	for (QNetworkInterface const &interface : interfaces) {
+	const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+	for (const QNetworkInterface &interface : interfaces) {
 		if (interface.name() == "wlan0") {
-			QList<QNetworkAddressEntry> const entries = interface.addressEntries();
-			for (QNetworkAddressEntry const &entry : entries) {
-				QHostAddress const ip = entry.ip();
+			const QList<QNetworkAddressEntry> entries = interface.addressEntries();
+			for (const QNetworkAddressEntry &entry : entries) {
+				const QHostAddress ip = entry.ip();
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
 					mIpLabel.setText(tr("IP address: ") + ip.toString());
 					break;

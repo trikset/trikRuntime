@@ -14,10 +14,13 @@
 
 #include "src/rangeSensorWorker.h"
 
+#include <QtCore/QEventLoop>
+
 using namespace trikControl;
 
-RangeSensorWorker::RangeSensorWorker(QString const &eventFile)
+RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state)
 	: mEventFile(eventFile)
+	, mState(state)
 {
 }
 
@@ -34,6 +37,10 @@ void RangeSensorWorker::init()
 }
 
 void RangeSensorWorker::readFile()
+{
+}
+
+void RangeSensorWorker::tryOpenEventFile()
 {
 }
 

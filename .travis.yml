@@ -2,8 +2,8 @@ language: cpp
 compiler: gcc
 
 env:
-  - CONFIG=debug     VERA=true
-  - CONFIG=release   VERA=false
+  - CONFIG=debug     VERA=true    SUFFIX=-d
+  - CONFIG=release   VERA=false   SUFFIX=
 
 install:
   - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
@@ -29,5 +29,12 @@ script:
   - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
   - qmake trikRuntime.pro CONFIG+=$CONFIG
   - make -j2
-  - cd ./bin
+  - cd tests
+  - qmake -r CONFIG+=$CONFIG tests.pro
+  - make -j2
+  - cd minimalCppApp
+  - qmake -r CONFIG+=$CONFIG minimalCppApp.pro
+  - make -j2
+  - cd ../../bin/x86-$CONFIG
   - ls -A
+  - sh -c "./trikScriptRunnerTests-x86$SUFFIX"

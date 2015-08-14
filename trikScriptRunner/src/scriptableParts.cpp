@@ -25,7 +25,7 @@ QScriptValue trikScriptRunner::batteryToScriptValue(QScriptEngine *engine, Batte
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::batteryFromScriptValue(QScriptValue const &object, BatteryInterface* &out)
+void trikScriptRunner::batteryFromScriptValue(const QScriptValue &object, BatteryInterface* &out)
 {
 	out = qobject_cast<BatteryInterface*>(object.toQObject());
 }
@@ -35,7 +35,7 @@ QScriptValue trikScriptRunner::displayToScriptValue(QScriptEngine *engine, Displ
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::displayFromScriptValue(QScriptValue const &object, DisplayInterface* &out)
+void trikScriptRunner::displayFromScriptValue(const QScriptValue &object, DisplayInterface* &out)
 {
 	out = qobject_cast<DisplayInterface*>(object.toQObject());
 }
@@ -45,7 +45,7 @@ QScriptValue trikScriptRunner::encoderToScriptValue(QScriptEngine *engine, Encod
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::encoderFromScriptValue(QScriptValue const &object, EncoderInterface* &out)
+void trikScriptRunner::encoderFromScriptValue(const QScriptValue &object, EncoderInterface* &out)
 {
 	out = qobject_cast<EncoderInterface*>(object.toQObject());
 }
@@ -55,7 +55,7 @@ QScriptValue trikScriptRunner::gamepadToScriptValue(QScriptEngine *engine, Gamep
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::gamepadFromScriptValue(QScriptValue const &object, GamepadInterface* &out)
+void trikScriptRunner::gamepadFromScriptValue(const QScriptValue &object, GamepadInterface* &out)
 {
 	out = qobject_cast<GamepadInterface*>(object.toQObject());
 }
@@ -65,7 +65,7 @@ QScriptValue trikScriptRunner::keysToScriptValue(QScriptEngine *engine, KeysInte
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::keysFromScriptValue(QScriptValue const &object, KeysInterface* &out)
+void trikScriptRunner::keysFromScriptValue(const QScriptValue &object, KeysInterface* &out)
 {
 	out = qobject_cast<KeysInterface*>(object.toQObject());
 }
@@ -75,12 +75,12 @@ QScriptValue trikScriptRunner::ledToScriptValue(QScriptEngine *engine, LedInterf
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::ledFromScriptValue(QScriptValue const &object, LedInterface* &out)
+void trikScriptRunner::ledFromScriptValue(const QScriptValue &object, LedInterface* &out)
 {
 	out = qobject_cast<LedInterface*>(object.toQObject());
 }
 
-void trikScriptRunner::motorFromScriptValue(QScriptValue const &object, MotorInterface* &out)
+void trikScriptRunner::motorFromScriptValue(const QScriptValue &object, MotorInterface* &out)
 {
 	out = qobject_cast<MotorInterface*>(object.toQObject());
 }
@@ -95,7 +95,7 @@ QScriptValue trikScriptRunner::sensorToScriptValue(QScriptEngine *engine, Sensor
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::sensorFromScriptValue(QScriptValue const &object, SensorInterface* &out)
+void trikScriptRunner::sensorFromScriptValue(const QScriptValue &object, SensorInterface* &out)
 {
 	out = qobject_cast<SensorInterface*>(object.toQObject());
 }
@@ -105,7 +105,7 @@ QScriptValue trikScriptRunner::vectorSensorToScriptValue(QScriptEngine *engine, 
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::vectorSensorFromScriptValue(QScriptValue const &object, VectorSensorInterface* &out)
+void trikScriptRunner::vectorSensorFromScriptValue(const QScriptValue &object, VectorSensorInterface* &out)
 {
 	out = qobject_cast<VectorSensorInterface*>(object.toQObject());
 }
@@ -116,7 +116,7 @@ QScriptValue trikScriptRunner::lineSensorToScriptValue(
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::lineSensorFromScriptValue(QScriptValue const &object, LineSensorInterface* &out)
+void trikScriptRunner::lineSensorFromScriptValue(const QScriptValue &object, LineSensorInterface* &out)
 {
 	out = qobject_cast<LineSensorInterface*>(object.toQObject());
 }
@@ -127,7 +127,7 @@ QScriptValue trikScriptRunner::colorSensorToScriptValue(
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::colorSensorFromScriptValue(QScriptValue const &object, ColorSensorInterface* &out)
+void trikScriptRunner::colorSensorFromScriptValue(const QScriptValue &object, ColorSensorInterface* &out)
 {
 	out = qobject_cast<ColorSensorInterface*>(object.toQObject());
 }
@@ -138,7 +138,7 @@ QScriptValue trikScriptRunner::objectSensorToScriptValue(
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::objectSensorFromScriptValue(QScriptValue const &object, ObjectSensorInterface* &out)
+void trikScriptRunner::objectSensorFromScriptValue(const QScriptValue &object, ObjectSensorInterface* &out)
 {
 	out = qobject_cast<ObjectSensorInterface*>(object.toQObject());
 }
@@ -159,7 +159,7 @@ QScriptValue trikScriptRunner::timerToScriptValue(QScriptEngine *engine, QTimer*
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::timerFromScriptValue(QScriptValue const &object, QTimer* &out)
+void trikScriptRunner::timerFromScriptValue(const QScriptValue &object, QTimer* &out)
 {
 	out = qobject_cast<QTimer*>(object.toQObject());
 }
@@ -169,7 +169,17 @@ QScriptValue trikScriptRunner::mailboxToScriptValue(QScriptEngine *engine, Mailb
 	return engine->newQObject(in);
 }
 
-void trikScriptRunner::mailboxFromScriptValue(QScriptValue const &object, MailboxInterface* &out)
+void trikScriptRunner::mailboxFromScriptValue(const QScriptValue &object, MailboxInterface* &out)
 {
 	out = qobject_cast<MailboxInterface*>(object.toQObject());
+}
+
+QScriptValue trikScriptRunner::fifoToScriptValue(QScriptEngine *engine, FifoInterface* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::fifoFromScriptValue(const QScriptValue &object, FifoInterface* &out)
+{
+	out = qobject_cast<FifoInterface*>(object.toQObject());
 }

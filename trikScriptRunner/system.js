@@ -24,11 +24,12 @@ var KeysEnum = {
 
 // Aliases for passing ports without quotes
 var aliases = ["A1", "A2", "A3", "A4", "A5", "A6", "T1", "T2", "T3", "W1", "W2", "W3", "W4"
-        , "D1", "D2", "F1"
+        , "D1", "D2", "D3", "F1"
         , "M1", "M2", "M3", "M4"
         , "B1", "B2", "B3", "B4"
         , "E1", "E2", "E3", "E4"
-        , "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "S13", "S14"
+        , "C1", "C2", "C3"
+        , "SS1", "SS2", "SS3", "SS4", "SS5", "SS6", "SS7", "SS8", "SS9", "SS10", "SS11", "SS12", "SS13", "SS14"
         , "U1_0x11", "U1_0x12", "U1_0x13", "U1_0x14", "U1_0x15", "U1_0x16", "U1_0x17", "U1_0x18", "U1_0x19", "U1_0x1A", "U1_0x1B", "U1_0x1C", "U1_0x1D", "U1_0x1E", "U1_0x1F", "U1_0x20"
         , "U2_0x11", "U2_0x12", "U2_0x13", "U2_0x14", "U2_0x15", "U2_0x16", "U2_0x17", "U2_0x18", "U2_0x19", "U2_0x1A", "U2_0x1B", "U2_0x1C", "U2_0x1D", "U2_0x1E", "U2_0x1F", "U2_0x20"
         , "U3_0x11", "U3_0x12", "U3_0x13", "U3_0x14", "U3_0x15", "U3_0x16", "U3_0x17", "U3_0x18", "U3_0x19", "U3_0x1A", "U3_0x1B", "U3_0x1C", "U3_0x1D", "U3_0x1E", "U3_0x1F", "U3_0x20"
@@ -43,33 +44,36 @@ var aliases = ["A1", "A2", "A3", "A4", "A5", "A6", "T1", "T2", "T3", "W1", "W2",
         , "HUM_DHT11_1", "HUM_DHT11_2", "HUM_DHT11_3", "HUM_DHT11_4", "HUM_DHT11_5", "HUM_DHT11_6", "HUM_DHT11_7"
         , "HUM_DHT11_8", "HUM_DHT11_9", "HUM_DHT11_10", "HUM_DHT11_11", "HUM_DHT11_12", "HUM_DHT11_13", "HUM_DHT11_14"
         , "HUM_DHT22_1", "HUM_DHT22_2", "HUM_DHT22_3", "HUM_DHT22_4", "HUM_DHT22_5", "HUM_DHT22_6", "HUM_DHT22_7"
-        , "HUM_DHT22_8", "HUM_DHT22_9", "HUM_DHT22_10", "HUM_DHT22_11", "HUM_DHT22_12", "HUM_DHT22_13", "HUM_DHT22_14"];
+        , "HUM_DHT22_8", "HUM_DHT22_9", "HUM_DHT22_10", "HUM_DHT22_11", "HUM_DHT22_12", "HUM_DHT22_13", "HUM_DHT22_14"
+        , "S1", "S2", "S3", "S4", "S5", "S6"
+        , "video1", "video2"];
+
 aliases.forEach(function(port) { this[port] = port; });
 
 // String.format function implementation.
 // Taken from http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
 if (!String.prototype.format) {
-  String.prototype.format = function() {
-    var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined'
-        ? args[number]
-        : match
-      ;
-    });
-  };
+    String.prototype.format = function() {
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function(match, number) {
+            return typeof args[number] != 'undefined'
+                ? args[number]
+                : match
+                ;
+        });
+    };
 }
 
 script.repeat = function(mscs, f) {
-  var timer = script.timer(mscs);
-  timer.timeout.connect(f);
+    var timer = script.timer(mscs);
+    timer.timeout.connect(f);
 }
 
 brick.smile = function() {
-  brick.display().showImage('media/trik_smile_normal.png');
+    brick.display().showImage('media/trik_smile_normal.png');
 }
 
 brick.sadSmile = function() {
-  brick.display().showImage('media/trik_smile_sad.png');
+    brick.display().showImage('media/trik_smile_sad.png');
 }
 

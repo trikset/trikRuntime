@@ -22,20 +22,17 @@
 
 using namespace trikControl;
 
-ObjectSensor::ObjectSensor(QString const &port, trikKernel::Configurer const &configurer)
+ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer)
 {
-	QString const &script = configurer.attributeByPort(port, "script");
-	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
-	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
-	qreal const toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
+	const QString &script = configurer.attributeByPort(port, "script");
+	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
+	const QString &outputFile = configurer.attributeByPort(port, "outputFile");
+	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
 	if (!mState.isFailed()) {
 		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
-
 		mObjectSensorWorker->moveToThread(&mWorkerThread);
-
-		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
-
+		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 		mWorkerThread.start();
 	}
 }
@@ -83,8 +80,23 @@ QVector<int>  ObjectSensor::read()
 void ObjectSensor::stop()
 {
 	if (mState.isReady()) {
+		/// @todo Correctly stop starting sensors.
 		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "stop");
-	} else {
-		QLOG_ERROR() << "Trying to call 'stop' when sensor is not ready, ignoring";
 	}
+}
+
+QVector<int> ObjectSensor::getDetectParameters() const
+{
+	if (mState.isReady()) {
+		// Read is called synchronously and only takes prepared value from sensor.
+		return mObjectSensorWorker->getDetectParameters();
+	} else {
+		QLOG_ERROR() << "Trying to call 'read' when sensor is not ready, ignoring";
+		return {};
+	}
+}
+
+void ObjectSensor::onStopped()
+{
+	emit stopped();
 }

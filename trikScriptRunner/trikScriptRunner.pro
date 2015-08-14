@@ -21,23 +21,26 @@ HEADERS += \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
-	$$PWD/src/scriptRunnerProxy.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
+	$$PWD/src/scriptThread.h \
 
 SOURCES += \
 	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptExecutionControl.cpp \
-	$$PWD/src/scriptRunnerProxy.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
+	$$PWD/src/scriptThread.cpp \
 
 OTHER_FILES += \
 	$$PWD/system.js \
 
-TRANSLATIONS += trikScriptRunner_ru.ts
+
+TRANSLATIONS = \
+	$$PWD/../translations/ru/trikScriptRunner_ru.ts \
+	$$PWD/../translations/fr/trikScriptRunner_fr.ts \
 
 QT += script
 
@@ -46,6 +49,3 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 copyToDestdir($$PWD/system.js)
 
 uses(trikKernel trikControl trikNetwork)
-
-RESOURCES += \
-	trikSrciptRunner.qrc

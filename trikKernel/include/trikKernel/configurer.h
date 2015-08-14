@@ -31,26 +31,31 @@ public:
 	/// Constructor.
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
-	Configurer(QString const &systemConfig, QString const &modelConfig);
+	Configurer(const QString &systemConfig, const QString &modelConfig);
 
 	/// Returns value of given attribute of given device.
-	QString attributeByDevice(QString const &deviceType, QString const &attributeName) const;
+	QString attributeByDevice(const QString &deviceType, const QString &attributeName) const;
 
 	/// Returns value of given attribute of a device on given port.
-	QString attributeByPort(QString const &port, QString const &attributeName) const;
+	QString attributeByPort(const QString &port, const QString &attributeName) const;
 
 	/// Returns true if device is enabled in current configuration (either explicitly enabled in model configuration
 	/// or can not be disabled at all).
-	bool isEnabled(QString const deviceName) const;
+	bool isEnabled(const QString deviceName) const;
 
 	/// Ports configured in model config.
 	QStringList ports() const;
 
 	/// Returns class of a device configured on given port.
-	QString deviceClass(QString const &port) const;
+	QString deviceClass(const QString &port) const;
 
 	/// Returns init scripts defined in config files, first from system config then from model config.
 	QStringList initScripts() const;
+
+	/// Changes configuration by configuring given device on given port. Port must be listed in model-config.xml,
+	/// device shall be listed in system-config.xml, and device shall be able to be configured on a port
+	/// (it is also described in system-config.xml).
+	void configure(const QString &portName, const QString &deviceName);
 
 private:
 	struct Device {
@@ -77,12 +82,12 @@ private:
 		QHash<QString, QString> attributes;
 	};
 
-	void parseDeviceClasses(QDomElement const &element);
-	void parseDevicePorts(QDomElement const &element);
-	void parseDeviceTypes(QDomElement const &element);
-	void parseInitScript(QDomElement const &element);
-	void parseAdditionalConfigurations(QDomElement const &element);
-	void parseModelConfig(QDomElement const &element);
+	void parseDeviceClasses(const QDomElement &element);
+	void parseDevicePorts(const QDomElement &element);
+	void parseDeviceTypes(const QDomElement &element);
+	void parseInitScript(const QDomElement &element);
+	void parseAdditionalConfigurations(const QDomElement &element);
+	void parseModelConfig(const QDomElement &element);
 
 	QStringList mInitScripts;
 

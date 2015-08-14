@@ -18,7 +18,8 @@
 
 using namespace trikControl;
 
-VectorSensorWorker::VectorSensorWorker(QString const &controlFile)
+VectorSensorWorker::VectorSensorWorker(const QString &controlFile, DeviceState &state)
+	: mState(state)
 {
 	Q_UNUSED(controlFile)
 }

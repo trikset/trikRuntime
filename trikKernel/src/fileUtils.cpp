@@ -22,7 +22,7 @@
 
 using namespace trikKernel;
 
-QString FileUtils::readFromFile(QString const &fileName)
+QString FileUtils::readFromFile(const QString &fileName)
 {
 	QFile file(fileName);
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -33,18 +33,18 @@ QString FileUtils::readFromFile(QString const &fileName)
 	QTextStream input;
 	input.setDevice(&file);
 	input.setCodec("UTF-8");
-	QString const result = input.readAll();
+	const QString result = input.readAll();
 	file.close();
 
 	return result;
 }
 
-void FileUtils::writeToFile(QString const &fileName, QString const &contents, QString const &dirPath)
+void FileUtils::writeToFile(const QString &fileName, const QString &contents, const QString &dirPath)
 {
 	QDir dir;
 	dir.mkdir(dirPath);
 
-	QString const filePath = dirPath.isEmpty() ? fileName : QString(dirPath + "/" + fileName);
+	const QString filePath = dirPath.isEmpty() ? fileName : QString(dirPath + "/" + fileName);
 
 	QFile file(filePath);
 	file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -58,7 +58,7 @@ void FileUtils::writeToFile(QString const &fileName, QString const &contents, QS
 	file.close();
 }
 
-QDomElement FileUtils::readXmlFile(QString const &fileNameWithPath)
+QDomElement FileUtils::readXmlFile(const QString &fileNameWithPath)
 {
 	QDomDocument document("file");
 	QFile file(fileNameWithPath);

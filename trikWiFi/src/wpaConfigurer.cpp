@@ -29,7 +29,7 @@ struct trikWiFi::NetworkInfo {
 	bool requirePassword;
 };
 
-void WpaConfigurer::configureWpaSupplicant(QString const &configFile, TrikWiFi &wiFi)
+void WpaConfigurer::configureWpaSupplicant(const QString &configFile, TrikWiFi &wiFi)
 {
 	QDomDocument wpaConfig("WPAConfig");
 
@@ -47,9 +47,9 @@ void WpaConfigurer::configureWpaSupplicant(QString const &configFile, TrikWiFi &
 
 	QList<NetworkInfo*> networkList;
 
-	QDomElement const root = wpaConfig.documentElement();
-	QDomNodeList const networks =  root.elementsByTagName("network");
-	int const networksCount = networks.length();
+	const QDomElement root = wpaConfig.documentElement();
+	const QDomNodeList networks =  root.elementsByTagName("network");
+	const int networksCount = networks.length();
 	for (int i = 0; i < networksCount; ++i) {
 		QDomElement network = networks.at(i).toElement();
 
@@ -65,17 +65,17 @@ void WpaConfigurer::configureWpaSupplicant(QString const &configFile, TrikWiFi &
 	qDeleteAll(networkList);
 }
 
-void WpaConfigurer::mergeNetworkConfigurations(QList<NetworkInfo*> const &networksFromConfig, TrikWiFi &wiFi)
+void WpaConfigurer::mergeNetworkConfigurations(const QList<NetworkInfo*> &networksFromConfig, TrikWiFi &wiFi)
 {
-	QList<NetworkConfiguration> const networksFromWpaSupplicant = wiFi.listNetworks();
+	const QList<NetworkConfiguration> networksFromWpaSupplicant = wiFi.listNetworks();
 
 	QHash<QString, int> networksFromWpaSupplicantHash;
-	for (NetworkConfiguration const &networkConfiguration : networksFromWpaSupplicant) {
+	for (const NetworkConfiguration &networkConfiguration : networksFromWpaSupplicant) {
 		networksFromWpaSupplicantHash.insert(networkConfiguration.ssid, networkConfiguration.id);
 	}
 
-	for (NetworkInfo const * const networkInfo : networksFromConfig) {
-		int const id = networksFromWpaSupplicantHash.contains(networkInfo->ssid)
+	for (const NetworkInfo * const networkInfo : networksFromConfig) {
+		const int id = networksFromWpaSupplicantHash.contains(networkInfo->ssid)
 				? networksFromWpaSupplicantHash[networkInfo->ssid]
 				: wiFi.addNetwork();
 

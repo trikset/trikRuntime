@@ -25,7 +25,7 @@
 
 using namespace trikGui;
 
-WiFiModeWidget::WiFiModeWidget(QString const &configPath
+WiFiModeWidget::WiFiModeWidget(const QString &configPath
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mConfigPath(configPath)
@@ -77,7 +77,7 @@ void WiFiModeWidget::setMode(Mode mode)
 {
 	mRcReader.read();
 
-	QString const currentModeText = mRcReader.value("trik_wifi_mode");
+	const QString currentModeText = mRcReader.value("trik_wifi_mode");
 
 	Mode currentMode = unknown;
 	if (currentModeText == "client") {

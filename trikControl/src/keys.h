@@ -38,7 +38,7 @@ class Keys : public KeysInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Keys(trikKernel::Configurer const &configurer);
+	Keys(const trikKernel::Configurer &configurer);
 
 	~Keys() override;
 
@@ -51,10 +51,14 @@ public slots:
 
 	bool isPressed(int code) override;
 
+	int buttonCode(bool wait = true) override;
+
 private slots:
 	void changeButtonState(int code, int value);
 
 private:
+	int pressedButton();
+
 	/// Device state, shared with worker object.
 	DeviceState mState;
 

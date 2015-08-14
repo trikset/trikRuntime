@@ -16,30 +16,36 @@
 
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
-#include <QtCore/QDebug>
 
 #include <QtXml/QDomDocument>
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 #include <trikControl/brickFactory.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/gamepadFactory.h>
-
-#include <QsLog.h>
 
 #include "runningWidget.h"
 
 using namespace trikGui;
 
-int const communicatorPort = 8888;
-int const telemetryPort = 9000;
+const int communicatorPort = 8888;
+const int telemetryPort = 9000;
 
-Controller::Controller(QString const &configPath, QString const &startDirPath)
-	: mBrick(trikControl::BrickFactory::create(*thread(), configPath, startDirPath))
+Controller::Controller(const QString &configPath, const QString &startDirPath)
+	: mBrick(trikControl::BrickFactory::create(configPath, startDirPath))
 	, mStartDirPath(startDirPath)
 {
-	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
+	if (configPath.isEmpty()) {
+		throw trikKernel::InternalErrorException("Config path is empty");
+	}
+
+	auto correctedConfigPath = configPath.endsWith('/') ? configPath : configPath + '/';
+
+	trikKernel::Configurer configurer(correctedConfigPath + "system-config.xml"
+			, correctedConfigPath + "model-config.xml");
+
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
@@ -48,6 +54,8 @@ Controller::Controller(QString const &configPath, QString const &startDirPath)
 			*mBrick, mMailbox.data(), mGamepad.data(), startDirPath));
 
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
+
+	connect(mCommunicator.data(), SIGNAL(stopCommandReceived()), this, SLOT(abortExecution()));
 
 	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
 
@@ -67,7 +75,7 @@ Controller::~Controller()
 {
 }
 
-void Controller::runFile(QString const &filePath)
+void Controller::runFile(const QString &filePath)
 {
 	QFileInfo const fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
@@ -75,9 +83,7 @@ void Controller::runFile(QString const &filePath)
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mScriptRunner->run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
-		QStringList args;
-		args << filePath;
-		QProcess::startDetached("sh", args);
+		QProcess::startDetached("sh", {filePath});
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}
@@ -85,7 +91,7 @@ void Controller::runFile(QString const &filePath)
 
 void Controller::abortExecution()
 {
-	emit closeGraphicsWidget(mBrick->graphicsWidget());
+	emit hideScriptWidgets();
 	mScriptRunner->abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -117,53 +123,19 @@ QString Controller::scriptsDirName() const
 	return mScriptRunner->scriptsDirName();
 }
 
-void Controller::doCloseRunningWidget(trikKernel::MainWidget &widget)
+void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 {
-	widget.releaseKeyboard();
-	emit closeRunningWidget(widget);
+	if (error.isEmpty()) {
+		emit hideRunningWidget(scriptId);
+	} else {
+		mCommunicator->sendMessage("error: " + error);
+		emit showError(error, scriptId);
+	}
 }
 
-void Controller::scriptExecutionCompleted(QString const &error, int scriptId)
+void Controller::scriptExecutionFromFileStarted(const QString &fileName, int scriptId)
 {
-	if (mRunningWidgets.value(scriptId, nullptr) && error.isEmpty()) {
-		doCloseRunningWidget(*mRunningWidgets[scriptId]);
-
-		// Here we can be inside handler of mRunningWidget key press event.
-		mRunningWidgets[scriptId]->deleteLater();
-		mRunningWidgets.remove(scriptId);
-	} else if (!error.isEmpty()) {
-		if (mRunningWidgets[scriptId]->isVisible()) {
-			mRunningWidgets[scriptId]->showError(error);
-			mCommunicator->sendMessage("error: " + error);
-		} else {
-			// It is already closed so all we need is to delete it.
-			mRunningWidgets[scriptId]->deleteLater();
-			mRunningWidgets.remove(scriptId);
-		}
-	}
-
-	emit closeGraphicsWidget(mBrick->graphicsWidget());
-}
-
-void Controller::scriptExecutionFromFileStarted(QString const &fileName, int scriptId)
-{
-	if (mRunningWidgets.value(scriptId, nullptr)) {
-		emit closeRunningWidget(*mRunningWidgets[scriptId]);
-		delete mRunningWidgets[scriptId];
-		mRunningWidgets.remove(scriptId);
-	}
-
-	mRunningWidgets[scriptId] = new RunningWidget(fileName, *this);
-	emit addRunningWidget(*mRunningWidgets[scriptId]);
-
-	// After executing, a script will open a widget for painting with trikControl::Display.
-	// This widget will get all keyboard events and we won't be able to abort execution at Power
-	// key press. So, mRunningWidget should grab the keyboard input. Nevertheless, the script
-	// can get keyboard events using trikControl::Keys class because it works directly
-	// with the keyboard file.
-	mRunningWidgets[scriptId]->grabKeyboard();
-
-	emit addGraphicsWidget(mBrick->graphicsWidget());
+	emit showRunningWidget(fileName, scriptId);
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

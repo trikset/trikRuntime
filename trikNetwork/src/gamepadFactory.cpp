@@ -25,7 +25,7 @@ GamepadInterface *GamepadFactory::create(int port)
 	return new Gamepad(port);
 }
 
-GamepadInterface *GamepadFactory::create(trikKernel::Configurer const &configurer)
+GamepadInterface *GamepadFactory::create(const trikKernel::Configurer &configurer)
 {
 	if (configurer.isEnabled("gamepad")) {
 		return new Gamepad(configurer);

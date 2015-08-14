@@ -38,10 +38,10 @@ public:
 	/// Reads config file and adds networks from it into wpa_supplicant config using TrikWiFi object.
 	/// @param configFile - path to a configuration file.
 	/// @param wiFi - reference to WiFi manager.
-	static void configureWpaSupplicant(QString const &configFile, TrikWiFi &wiFi);
+	static void configureWpaSupplicant(const QString &configFile, TrikWiFi &wiFi);
 
 private:
-	static void mergeNetworkConfigurations(QList<NetworkInfo*> const &networksFromConfig, TrikWiFi &wiFi);
+	static void mergeNetworkConfigurations(const QList<NetworkInfo*> &networksFromConfig, TrikWiFi &wiFi);
 };
 
 }

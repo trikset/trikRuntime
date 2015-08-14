@@ -68,15 +68,16 @@ equal to its class name.
 		<servoMotor period="20000000" invert="false" />
 		<pwmCapture />
 		<powerMotor invert="false" />
-		<analogSensor />
+		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" />
 		<encoder />
 		<rangeSensor commonModule="hcsr04" />
 		<digitalSensor />
+		<fifo />
 		<accelerometer deviceFile="/dev/input/event1" optional="true" />
 		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" optional="true" />
 		<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
-		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" />
+		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
 		<soundSensor script="/etc/init.d/sound-sensor-1.sh" inputFile="/run/sound-sensor.in.fifo" outputFile="/run/sound-sensor.out.fifo" />
 
 		<!-- Device files for LED on a brick. -->
@@ -94,47 +95,47 @@ equal to its class name.
 
 	<devicePorts>
 		<servoMotor
-			port="E1"
+			port="S1"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
 		/>
 		<servoMotor
-			port="E2"
+			port="S2"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
 		/>
 		<servoMotor
-			port="E3"
+			port="S3"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
 		/>
 		<servoMotor
-			port="C1"
+			port="S4"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 		/>
 		<servoMotor
-			port="C2"
+			port="S5"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 		/>
 		<servoMotor
-			port="C3"
+			port="S6"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 		/>
 		<pwmCapture
-			port="C1"
+			port="S4"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
 		<pwmCapture
-			port="C2"
+			port="S5"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
 		/>
 		<pwmCapture
-			port="C3"
+			port="S6"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
@@ -142,20 +143,20 @@ equal to its class name.
 		<powerMotor port="M2" i2cCommandNumber="0x0015" />
 		<powerMotor port="M3" i2cCommandNumber="0x0017" />
 		<powerMotor port="M4" i2cCommandNumber="0x0016" />
-		<powerMotor port="S1" i2cCommandNumber="0x003F" />
-		<powerMotor port="S2" i2cCommandNumber="0x0040" />
-		<powerMotor port="S3" i2cCommandNumber="0x0041" />
-		<powerMotor port="S4" i2cCommandNumber="0x0042" />
-		<powerMotor port="S5" i2cCommandNumber="0x0043" />
-		<powerMotor port="S6" i2cCommandNumber="0x0044" />
-		<powerMotor port="S7" i2cCommandNumber="0x0045" />
-		<powerMotor port="S8" i2cCommandNumber="0x0046" />
-		<powerMotor port="S9" i2cCommandNumber="0x0047" />
-		<powerMotor port="S10" i2cCommandNumber="0x0048" />
-		<powerMotor port="S11" i2cCommandNumber="0x0049" />
-		<powerMotor port="S12" i2cCommandNumber="0x004A" />
-		<powerMotor port="S13" i2cCommandNumber="0x004B" />
-		<powerMotor port="S14" i2cCommandNumber="0x004C" />
+		<powerMotor port="SS1" i2cCommandNumber="0x003F" />
+		<powerMotor port="SS2" i2cCommandNumber="0x0040" />
+		<powerMotor port="SS3" i2cCommandNumber="0x0041" />
+		<powerMotor port="SS4" i2cCommandNumber="0x0042" />
+		<powerMotor port="SS5" i2cCommandNumber="0x0043" />
+		<powerMotor port="SS6" i2cCommandNumber="0x0044" />
+		<powerMotor port="SS7" i2cCommandNumber="0x0045" />
+		<powerMotor port="SS8" i2cCommandNumber="0x0046" />
+		<powerMotor port="SS9" i2cCommandNumber="0x0047" />
+		<powerMotor port="SS10" i2cCommandNumber="0x0048" />
+		<powerMotor port="SS11" i2cCommandNumber="0x0049" />
+		<powerMotor port="SS12" i2cCommandNumber="0x004A" />
+		<powerMotor port="SS13" i2cCommandNumber="0x004B" />
+		<powerMotor port="SS14" i2cCommandNumber="0x004C" />
 		<analogSensor port="A1" i2cCommandNumber="0x0025" />
 		<analogSensor port="A2" i2cCommandNumber="0x0024" />
 		<analogSensor port="A3" i2cCommandNumber="0x0023" />
@@ -341,26 +342,31 @@ equal to its class name.
 		<encoder port="B2" i2cCommandNumber="0x0031" />
 		<encoder port="B3" i2cCommandNumber="0x0032" />
 		<encoder port="B4" i2cCommandNumber="0x0033" />
+		<encoder port="E1" i2cCommandNumber="0x0030" />
+		<encoder port="E2" i2cCommandNumber="0x0031" />
+		<encoder port="E3" i2cCommandNumber="0x0032" />
+		<encoder port="E4" i2cCommandNumber="0x0033" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
-		<digitalSensor port="F1" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" />
-		<lineSensor port="video0" />
+		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
-		<objectSensor port="video0" />
+		<lineSensor port="video2" />
 		<objectSensor port="video1" />
-		<colorSensor port="video0" />
+		<objectSensor port="video2" />
 		<colorSensor port="video1" />
 		<soundSensor port="default" />
 	</devicePorts>
 
 	<deviceTypes>
 		<angularServomotor class="servoMotor" min="600000" max="2200000" zero="1400000" stop="0" type="angular" />
-		<continuousRotationServomotor class="servoMotor" min="600000" max="2200000" zero="1400000" stop="0" type="continuousRotation" />
-		<irSensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" />
+		<!-- <irSensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" /> -->
+		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="continuousRotation" />
+		<sharpGP2Sensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
 		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />
 		<lightSensor class="digitalSensor" min="30000" max="350000" />
 		<volumeSensor class="digitalSensor" min="0" max="100" />
-		<encoder95 class="encoder" ticksInDegree="43.389445" />
+		<!-- <encoder95 class="encoder" ticksInDegree="43.389445" /> -->
+		<encoder95 class="encoder" ticksInDegree="1.569444" />
 		<encoder126 class="encoder" ticksInDegree="32.964168" />
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 	</deviceTypes>

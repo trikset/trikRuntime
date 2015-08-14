@@ -50,7 +50,7 @@ public:
 	/// Constructor
 	/// @param configPath - full path to configuration files.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	WiFiModeWidget(QString const &configPath, QWidget *parent = 0);
+	WiFiModeWidget(const QString &configPath, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -63,7 +63,7 @@ protected:
 private:
 	void setMode(Mode mode);
 
-	QString const &mConfigPath;
+	const QString &mConfigPath;
 	RcReader mRcReader;
 	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;

@@ -15,25 +15,96 @@
 #include "trikScriptRunnerTest.h"
 
 #include <QtCore/QScopedPointer>
+#include <QtCore/QEventLoop>
+#include <QtCore/QFile>
+#include <QtCore/QTimer>
 
-#include <trikControl/brickInterface.h>
+#include <QtScript/QScriptContext>
+#include <QtScript/QScriptEngine>
+#include <QtScript/QScriptValue>
+
 #include <trikControl/brickFactory.h>
+
+#include <trikKernel/fileUtils.h>
 
 using namespace tests;
 
+QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
+{
+	Q_UNUSED(engine);
+
+	if (context->argumentCount() != 1) {
+		ADD_FAILURE() << "'assert' shall have exactly one argument";
+		return {};
+	}
+
+	if (!context->argument(0).toBool()) {
+		ADD_FAILURE() << "Assertion failure at\n"
+				<< QStringList(context->backtrace().mid(1)).join("\n").toStdString();
+	}
+
+	return {};
+}
+
 void TrikScriptRunnerTest::SetUp()
 {
+	mBrick.reset(trikControl::BrickFactory::create("./", "./"));
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr, nullptr, "./"));
+	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
 void TrikScriptRunnerTest::TearDown()
 {
 }
 
+void TrikScriptRunnerTest::run(const QString &script)
+{
+	QEventLoop waitingLoop;
+	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
+	mScriptRunner->run(script);
+
+	waitingLoop.exec();
+}
+
+void TrikScriptRunnerTest::runFromFile(const QString &fileName)
+{
+	const auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
+	run(fileContents);
+}
+
+void TrikScriptRunnerTest::wait(int msec)
+{
+	QEventLoop waitingLoop;
+	QTimer::singleShot(msec, &waitingLoop, SLOT(quit()));
+	waitingLoop.exec();
+}
+
 TEST_F(TrikScriptRunnerTest, sanityCheck)
 {
-	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(*QThread::currentThread(), "./", "./"));
+	run("1 + 1");
+}
 
-	trikScriptRunner::TrikScriptRunner scriptRunner(*brick, nullptr, nullptr, "./");
-	scriptRunner.run("1 + 1");
+TEST_F(TrikScriptRunnerTest, fileTest)
+{
+	runFromFile("file-test.js");
+}
+
+TEST_F(TrikScriptRunnerTest, asyncSystemTest)
+{
+	QFile testFile("test");
+	testFile.remove();
+	ASSERT_FALSE(testFile.exists());
+	runFromFile("async-system-test.js");
+	ASSERT_FALSE(testFile.exists());
+	wait(2100);
+	ASSERT_TRUE(testFile.exists());
+}
+
+TEST_F(TrikScriptRunnerTest, syncSystemTest)
+{
+	QFile testFile("test");
+	testFile.remove();
+	ASSERT_FALSE(testFile.exists());
+	runFromFile("sync-system-test.js");
+	ASSERT_TRUE(testFile.exists());
 }

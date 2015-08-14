@@ -25,7 +25,7 @@ public:
 
 	/// Device status.
 	enum class Status {
-		/// Device can not be turned off due to hardware or configuration failure.
+		/// Device can not be turned on due to hardware or configuration failure.
 		failure
 
 		/// Device is turned off.
@@ -43,9 +43,9 @@ public:
 
 	/// Helper method to return status of a device relying on other device to work. If first device is ready, status of
 	/// a second device is returned, otherwise it is status of a first device.
-	static Status combine(DeviceInterface const &underlying, DeviceInterface::Status const &dependent)
+	static Status combine(const DeviceInterface &underlying, const DeviceInterface::Status &dependent)
 	{
-		DeviceInterface::Status const status = underlying.status();
+		const DeviceInterface::Status status = underlying.status();
 		if (status != DeviceInterface::Status::ready) {
 			return status;
 		}

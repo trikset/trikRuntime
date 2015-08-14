@@ -14,7 +14,6 @@
 
 #include "pwmCapture.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
@@ -24,7 +23,7 @@
 
 using namespace trikControl;
 
-PwmCapture::PwmCapture(QString const &port, trikKernel::Configurer const &configurer)
+PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer)
 	: mFrequencyFile(configurer.attributeByPort(port, "frequencyFile"))
 	, mDutyFile(configurer.attributeByPort(port, "dutyFile"))
 {

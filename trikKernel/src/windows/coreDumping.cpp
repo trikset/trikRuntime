@@ -14,7 +14,7 @@
 
 #include "coreDumping.h"
 
-void trikKernel::coreDumping::initCoreDumping(QString const &dumpDir)
+void trikKernel::coreDumping::initCoreDumping(const QString &dumpDir)
 {
 	Q_UNUSED(dumpDir)
 }

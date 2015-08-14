@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 #include <QtCore/qglobal.h>
 
 #include <QtCore/QString>
+#include <QtCore/QStack>
+#include <QtCore/QScopedPointer>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -30,12 +32,14 @@
 	#include <QtWidgets/QStackedLayout>
 #endif
 
-#include <trikKernel/lazyMainWidget.h>
 #include "controller.h"
 #include "batteryIndicator.h"
 #include "startWidget.h"
+#include "runningWidget.h"
 
 namespace trikGui {
+
+class LazyMainWidget;
 
 /// TrikGui backround widget which is a parent for other trikGui widgets.
 /// It consists of a status bar and a place for one of main widgets which is
@@ -51,24 +55,20 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
 	///        ending with "/").
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
-	explicit BackgroundWidget(QString const &configPath, QString const &startDirPath, QWidget *parent = 0);
+	explicit BackgroundWidget(const QString &configPath, const QString &startDirPath, QWidget *parent = 0);
 
 public slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(trikKernel::MainWidget &widget);
+	void addMainWidget(MainWidget &widget);
 
 	/// Add a RunningWidget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addRunningWidget(trikKernel::MainWidget &widget);
+	void addRunningWidget(MainWidget &widget);
 
 	/// Add a GraphicsWidget to main widgets layout and show RunningWidget.
 	/// @param widget - reference to the widget.
-	void addLazyWidget(trikKernel::LazyMainWidget &widget);
-
-	/// Remove a widget from main widget layout.
-	/// @param widget - reference to the widget.
-	void closeMainWidget(trikKernel::MainWidget &widget);
+	void addLazyWidget(LazyMainWidget &widget);
 
 private slots:
 	void renewFocus();
@@ -78,16 +78,26 @@ private slots:
 
 	/// Show a widget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showMainWidget(trikKernel::MainWidget &widget);
+	void showMainWidget(MainWidget &widget);
 
 	/// Show a RunningWidget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showRunningWidget();
+	void showRunningWidget(const QString &fileName, int scriptId);
+
+	void hideRunningWidget(int scriptId);
+
+	void showError(const QString &error, int scriptId);
+
+	void hideGraphicsWidget();
+
+	void hideScriptWidgets();
+
+	void updateStack(int removedWidget);
 
 private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
-	void resetWidgetLayout(trikKernel::MainWidget &widget);
+	void resetWidgetLayout(MainWidget &widget);
 
 	Controller mController;
 	QVBoxLayout mMainLayout;
@@ -95,8 +105,10 @@ private:
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	StartWidget mStartWidget;
+	RunningWidget mRunningWidget;
+	QScopedPointer<LazyMainWidget> mBrickDisplayWidgetWrapper;
 
-	int mRunWidgetIndex; // Index of RunningWidget from main widgets layout.
+	QStack<int> mMainWidgetIndex;
 };
 
 }

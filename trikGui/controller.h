@@ -16,11 +16,12 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickInterface.h>
-#include <trikKernel/lazyMainWidget.h>
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
+
+#include "lazyMainWidget.h"
 
 namespace trikGui
 {
@@ -37,15 +38,12 @@ public:
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
 	/// @param startDirPath - path to the directory from which the application was executed.
-	Controller(QString const &configPath, QString const &startDirPath);
+	Controller(const QString &configPath, const QString &startDirPath);
 
 	~Controller();
 
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.
-	void runFile(QString const &filePath);
-
-	/// Cancels execution of current program.
-	void abortExecution();
+	void runFile(const QString &filePath);
 
 	/// Returns reference to Brick object, which provides access to robot hardware.
 	trikControl::BrickInterface &brick();
@@ -64,29 +62,36 @@ public:
 	QString scriptsDirName() const;
 
 	/// Asks controller to correctly close given running widget.
-	void doCloseRunningWidget(trikKernel::MainWidget &widget);
+	void doCloseRunningWidget(MainWidget &widget);
+
+public slots:
+	/// Cancels execution of current program.
+	void abortExecution();
 
 signals:
-	/// Emitted when controller created a runningWidget (for scripts) and wants it to be shown.
-	void addRunningWidget(trikKernel::MainWidget &widget);
+	/// Emitted when a new script starts and therefore a running widget must be shown with the script's name.
+	void showRunningWidget(const QString &fileName, int scriptId);
 
-	/// Emitted when controller removed the runningWidget and wants it to be closed.
-	void closeRunningWidget(trikKernel::MainWidget &widget);
+	/// Emitted when running widget for a script with a given id must be closed.
+	void hideRunningWidget(int scriptId);
 
-	/// Emitted when controller wants GraphicsWidget to be shown.
-	void addGraphicsWidget(trikKernel::LazyMainWidget &widget);
+	/// Emitted when a script stops due to an error.
+	void showError(const QString &error, int scriptId);
 
-	/// Emitted when controller wants GraphicsWidget to be closed.
-	void closeGraphicsWidget(trikKernel::MainWidget &widget);
+	/// Emitted when a graphics widget must be closed.
+	void hideGraphicsWidget();
+
+	/// Emitted when both graphics and running widget must be closed.
+	void hideScriptWidgets();
 
 	/// Emitted when brick has finished deferred deinitialization so we need to refresh display to clear possible
 	/// clutter from videosensors.
 	void brickStopped();
 
 private slots:
-	void scriptExecutionCompleted(QString const &error, int scriptId);
+	void scriptExecutionCompleted(const QString &error, int scriptId);
 
-	void scriptExecutionFromFileStarted(QString const &fileName, int scriptId);
+	void scriptExecutionFromFileStarted(const QString &fileName, int scriptId);
 	void directScriptExecutionStarted(int scriptId);
 
 private:
@@ -98,7 +103,7 @@ private:
 	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
-	QString const &mStartDirPath; // Path to the directory from which the application was executed
+	const QString &mStartDirPath; // Path to the directory from which the application was executed
 };
 
 }

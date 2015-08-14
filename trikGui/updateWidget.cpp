@@ -48,7 +48,7 @@ QString UpdateWidget::menuEntry()
 	return QString(tr("Update"));
 }
 
-void UpdateWidget::showStatus(QString const &text, bool isError)
+void UpdateWidget::showStatus(const QString &text, bool isError)
 {
 	mStatusLabel.setAlignment(Qt::AlignCenter);
 	if (isError) {

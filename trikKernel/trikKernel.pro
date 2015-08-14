@@ -21,12 +21,11 @@ HEADERS += \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
-	$$PWD/include/trikKernel/lazyMainWidget.h \
 	$$PWD/include/trikKernel/loggingHelper.h \
-	$$PWD/include/trikKernel/mainWidget.h \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
 	$$PWD/include/trikKernel/exceptions/failedToParseXmlException.h \
+	$$PWD/include/trikKernel/exceptions/internalErrorException.h \
 	$$PWD/include/trikKernel/exceptions/malformedConfigException.h \
 	$$PWD/include/trikKernel/exceptions/trikRuntimeException.h \
 
