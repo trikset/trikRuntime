@@ -88,11 +88,16 @@ void ScriptExecutionControl::quit()
 	emit quitSignal();
 }
 
-void ScriptExecutionControl::system(const QString &command)
+void ScriptExecutionControl::system(const QString &command, bool synchronously)
 {
-	QStringList args{"-c", command};
-	QLOG_INFO() << "Running: " << "sh" << args;
-	QProcess::startDetached("sh", args);
+	if (!synchronously) {
+		QStringList args{"-c", command};
+		QLOG_INFO() << "Running: " << "sh" << args;
+		QProcess::startDetached("sh", args);
+	} else {
+		QLOG_INFO() << "Running synchronously: " << command;
+		::system(command.toStdString().c_str());
+	}
 }
 
 void ScriptExecutionControl::writeToFile(const QString &file, const QString &text)

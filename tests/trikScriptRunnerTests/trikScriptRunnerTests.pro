@@ -30,3 +30,7 @@ OTHER_FILES += \
 uses(trikKernel trikControl trikScriptRunner trikNetwork)
 
 copyToDestdir($$PWD/data/, now)
+
+DISTFILES += \
+    data/sync-system-test.js \
+    data/async-system-test.js
