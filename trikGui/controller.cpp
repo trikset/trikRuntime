@@ -83,9 +83,7 @@ void Controller::runFile(const QString &filePath)
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mScriptRunner->run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
-		QStringList args;
-		args << filePath;
-		QProcess::startDetached("sh", args);
+		QProcess::startDetached("sh", {filePath});
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}

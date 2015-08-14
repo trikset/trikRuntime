@@ -22,6 +22,14 @@
 #include <QtGui/QKeyEvent>
 #include <QtCore/QSettings>
 
+#include <QtCore/qglobal.h>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QMessageBox>
+#else
+	#include <QtWidgets/QMessageBox>
+#endif
+
 using namespace trikGui;
 
 FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
@@ -91,17 +99,20 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		mOpenDeleteBox.showMessage();
-		FileManagerMessageBox::FileState const choice = mOpenDeleteBox.userAnswer();
-		switch (choice) {
-		case FileManagerMessageBox::FileState::Open:
-			mController.runFile(mFileSystemModel.filePath(index));
-			break;
-		case FileManagerMessageBox::FileState::Delete:
+		mController.runFile(mFileSystemModel.filePath(index));
+	}
+}
+
+void FileManagerWidget::remove()
+{
+	const QModelIndex &index = mFileSystemView.currentIndex();
+	if (!mFileSystemModel.isDir(index)) {
+		QMessageBox confirmMessageBox(QMessageBox::Warning, tr("Confirm deletion")
+				, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No);
+		confirmMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+		const int result = confirmMessageBox.exec();
+		if (result == QMessageBox::Yes) {
 			mFileSystemModel.remove(index);
-			break;
-		default:
-			break;
 		}
 	}
 }
@@ -111,6 +122,10 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_Return: {
 			open();
+			break;
+		}
+		case Qt::Key_Right: {
+			remove();
 			break;
 		}
 		default: {

@@ -64,6 +64,14 @@
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>
+    <message>
+        <source>Confirm deletion</source>
+        <translation>Удаление</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete file?</source>
+        <translation>Вы уверены, что хотите удалить файл?</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::InformationWidget</name>
