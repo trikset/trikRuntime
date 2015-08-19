@@ -42,7 +42,6 @@ public:
 		connect(wrappedWidget, SIGNAL(hidden()), this, SIGNAL(hideMe()));
 
 		const auto layout = new QHBoxLayout(this);
-
 		layout->addWidget(wrappedWidget);
 	}
 
