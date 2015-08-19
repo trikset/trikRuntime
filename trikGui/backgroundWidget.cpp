@@ -142,9 +142,6 @@ void BackgroundWidget::hideGraphicsWidget()
 		unexpandMainWidget();
 		mMainWidgetsLayout.setCurrentWidget(&mRunningWidget);
 	}
-
-//	if (mMainWidgetsLayout.currentWidget() == &mController.brick().graphicsWidget()) {
-//	}
 }
 
 void BackgroundWidget::hideScriptWidgets()
