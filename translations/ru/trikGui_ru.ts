@@ -64,6 +64,14 @@
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>
+    <message>
+        <source>Confirm deletion</source>
+        <translation>Удаление</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to delete file?</source>
+        <translation>Вы уверены, что хотите удалить файл?</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::InformationWidget</name>
@@ -98,6 +106,29 @@
     <message>
         <source>Unknown</source>
         <translation>Неизвестна</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::LanguageSelectionWidget</name>
+    <message>
+        <source>Select language:</source>
+        <translation>Выберите язык:</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Язык / Language</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>Внимание</translation>
+    </message>
+    <message>
+        <source>GUI will now restart</source>
+        <translation>Сейчас произойдёт перезапуск</translation>
     </message>
 </context>
 <context>

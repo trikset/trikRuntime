@@ -11,7 +11,7 @@
 <context>
     <name>trikScriptRunner::ScriptThread</name>
     <message>
-        <location filename="src/scriptThread.cpp" line="43"/>
+        <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="47"/>
         <source>Line %1: %2</source>
         <translation>Строка %1: %2</translation>
     </message>
@@ -19,7 +19,7 @@
 <context>
     <name>trikScriptRunner::Threading</name>
     <message>
-        <location filename="src/threading.cpp" line="67"/>
+        <location filename="../../trikScriptRunner/src/threading.cpp" line="69"/>
         <source>Attempt to create a thread with an already occupied id %1</source>
         <translation>Попытка создать поток с уже занятым идентификатором %1</translation>
     </message>

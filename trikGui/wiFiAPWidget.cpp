@@ -60,7 +60,7 @@ void WiFiAPWidget::renewFocus()
 
 void WiFiAPWidget::getParameters()
 {
-	RcReader const rcReader("/etc/trik/trikrc");
+	const RcReader rcReader("/etc/trik/trikrc");
 
 	const QString ssid = rcReader.value("trik_wifi_ap_ssid");
 	if (!ssid.isEmpty()) {
@@ -72,10 +72,10 @@ void WiFiAPWidget::getParameters()
 		mKeyLabel.setText(tr("Password: ") + passphrase);
 	}
 
-	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+	const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
 	for (const QNetworkInterface &interface : interfaces) {
 		if (interface.name() == "wlan0") {
-			QList<QNetworkAddressEntry> const entries = interface.addressEntries();
+			const QList<QNetworkAddressEntry> entries = interface.addressEntries();
 			for (const QNetworkAddressEntry &entry : entries) {
 				const QHostAddress ip = entry.ip();
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {

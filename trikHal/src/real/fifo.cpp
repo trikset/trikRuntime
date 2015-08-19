@@ -19,6 +19,7 @@
 #include <errno.h>
 
 #include <QtCore/QSocketNotifier>
+#include <QtCore/QStringList>
 
 #include <QsLog.h>
 
@@ -31,9 +32,7 @@ Fifo::Fifo()
 
 Fifo::~Fifo()
 {
-	if (mFifoFileDescriptor != -1) {
-		::close(mFifoFileDescriptor);
-	}
+	close();
 }
 
 bool Fifo::open(const QString &fileName)
@@ -79,4 +78,13 @@ void Fifo::readFile()
 	}
 
 	mSocketNotifier->setEnabled(true);
+}
+
+bool Fifo::close()
+{
+	if (mFifoFileDescriptor != -1) {
+		return ::close(mFifoFileDescriptor) == 0;
+	}
+
+	return false;
 }

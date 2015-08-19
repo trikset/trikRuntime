@@ -16,6 +16,8 @@
 
 #include <QtCore/QScopedPointer>
 #include <QtCore/QEventLoop>
+#include <QtCore/QFile>
+#include <QtCore/QTimer>
 
 #include <QtScript/QScriptContext>
 #include <QtScript/QScriptEngine>
@@ -70,6 +72,13 @@ void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 	run(fileContents);
 }
 
+void TrikScriptRunnerTest::wait(int msec)
+{
+	QEventLoop waitingLoop;
+	QTimer::singleShot(msec, &waitingLoop, SLOT(quit()));
+	waitingLoop.exec();
+}
+
 TEST_F(TrikScriptRunnerTest, sanityCheck)
 {
 	run("1 + 1");
@@ -78,4 +87,24 @@ TEST_F(TrikScriptRunnerTest, sanityCheck)
 TEST_F(TrikScriptRunnerTest, fileTest)
 {
 	runFromFile("file-test.js");
+}
+
+TEST_F(TrikScriptRunnerTest, asyncSystemTest)
+{
+	QFile testFile("test");
+	testFile.remove();
+	ASSERT_FALSE(testFile.exists());
+	runFromFile("async-system-test.js");
+	ASSERT_FALSE(testFile.exists());
+	wait(2100);
+	ASSERT_TRUE(testFile.exists());
+}
+
+TEST_F(TrikScriptRunnerTest, syncSystemTest)
+{
+	QFile testFile("test");
+	testFile.remove();
+	ASSERT_FALSE(testFile.exists());
+	runFromFile("sync-system-test.js");
+	ASSERT_TRUE(testFile.exists());
 }
