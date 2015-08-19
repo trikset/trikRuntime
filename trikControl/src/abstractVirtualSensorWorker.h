@@ -100,8 +100,6 @@ private:
 
 	QScopedPointer<trikHal::FifoInterface> mOutputFifo;
 
-//	QScopedPointer<trikHal::
-
 	/// File name (with path) of a script that launches or stops sensor.
 	QString mScript;
 

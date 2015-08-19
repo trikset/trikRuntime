@@ -15,16 +15,18 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QFile>
 #include <QtCore/QScopedPointer>
-
-#include <trikHal/hardwareAbstractionInterface.h>
 
 #include "fifoInterface.h"
 #include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class FifoInterface;
 }
 
 namespace trikControl {

@@ -12,21 +12,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "deviceFile.h"
 
-#include <QtCore/QString>
-#include <QtCore/QTextStream>
+#include <QsLog.h>
 
-namespace trikHal {
+using namespace trikHal;
 
-/// Device file abstraction. Can read from and write to a device file, thus communicating with a device driver.
-class DeviceFileInterface
+DeviceFile::DeviceFile(const QString &fileName)
+	: mFile(fileName)
 {
-public:
-	virtual ~DeviceFileInterface() {}
-	virtual bool open() = 0;
-	virtual void close() = 0;
-	virtual QTextStream &stream() = 0;
-};
+}
 
+DeviceFile::~DeviceFile()
+{
+}
+
+bool DeviceFile::open()
+{
+	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_ERROR() << "File " << mFile.fileName() << " failed to open for reading";
+		return false;
+	}
+
+	mStream.setDevice(&mFile);
+
+	return true;
+}
+
+void DeviceFile::close()
+{
+	mFile.close();
+}
+
+QTextStream &DeviceFile::stream()
+{
+	return mStream;
 }

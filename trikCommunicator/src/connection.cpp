@@ -12,10 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtCore/QThread>
-
 #include <trikKernel/fileUtils.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 

@@ -88,7 +88,7 @@ Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, 
 
 	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
 
-	mLed.reset(new Led(mConfigurer));
+	mLed.reset(new Led(mConfigurer, *mHardwareAbstraction));
 
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");
 	mPlayMp3FileCommand = mConfigurer.attributeByDevice("playMp3File", "command");
@@ -389,7 +389,7 @@ void Brick::createDevice(const QString &port)
 	} else if (deviceClass == "analogSensor") {
 		mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mI2cCommunicator));
 	} else if (deviceClass == "digitalSensor") {
-		mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer));
+		mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "rangeSensor") {
 		mRangeSensors.insert(port, new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
 		/// @todo Range sensor shall be turned on only when needed.

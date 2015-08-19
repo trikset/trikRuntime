@@ -25,6 +25,10 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 namespace trikControl {
 
 /// Implementation of LED control for a real robot.
@@ -35,7 +39,7 @@ class Led : public LedInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Led(const trikKernel::Configurer &configurer);
+	Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Led() override;
 

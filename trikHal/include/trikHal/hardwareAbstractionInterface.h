@@ -14,10 +14,11 @@
 
 #pragma once
 
-#include "i2cInterface.h"
-#include "systemConsoleInterface.h"
+#include "deviceFileInterface.h"
 #include "eventFileInterface.h"
 #include "fifoInterface.h"
+#include "i2cInterface.h"
+#include "systemConsoleInterface.h"
 
 namespace trikHal {
 
@@ -30,6 +31,7 @@ public:
 
 	virtual EventFileInterface *createEventFile() const = 0;
 	virtual FifoInterface *createFifo() const = 0;
+	virtual DeviceFileInterface *createDeviceFile(const QString &fileName) const = 0;
 };
 
 }

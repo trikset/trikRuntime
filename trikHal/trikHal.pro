@@ -29,6 +29,7 @@ HEADERS += \
 	$$PWD/src/real/i2c.h \
 	$$PWD/src/real/systemConsole.h \
 	$$PWD/src/real/eventFile.h \
+	$$PWD/src/real/deviceFile.h \
 	$$PWD/src/real/fifo.h \
 
 SOURCES += \
@@ -37,6 +38,7 @@ SOURCES += \
 	$$PWD/src/real/i2c.cpp \
 	$$PWD/src/real/systemConsole.cpp \
 	$$PWD/src/real/eventFile.cpp \
+	$$PWD/src/real/deviceFile.cpp \
 	$$PWD/src/real/fifo.cpp \
 
 TEMPLATE = lib

@@ -20,7 +20,7 @@
 
 using namespace trikControl;
 
-Led::Led(const trikKernel::Configurer &configurer)
+Led::Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mRedDeviceFile(configurer.attributeByDevice("led", "red"))
 	, mGreenDeviceFile(configurer.attributeByDevice("led", "green"))
 {

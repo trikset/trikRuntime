@@ -14,9 +14,6 @@
 
 #include "trikCommunicator.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QCoreApplication>
-
 #include <trikScriptRunner/trikScriptRunner.h>
 
 #include "src/connection.h"

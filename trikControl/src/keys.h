@@ -19,13 +19,15 @@
 #include <QtCore/QScopedPointer>
 #include <QtCore/QHash>
 
-#include <trikHal/hardwareAbstractionInterface.h>
-
 #include "keysInterface.h"
 #include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
 }
 
 namespace trikControl {

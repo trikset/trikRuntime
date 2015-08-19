@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,24 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtCore/QTextStream>
+#include <QtCore/QFile>
+
+#include "deviceFileInterface.h"
 
 namespace trikHal {
 
-/// Device file abstraction. Can read from and write to a device file, thus communicating with a device driver.
-class DeviceFileInterface
+class DeviceFile : public DeviceFileInterface
 {
 public:
-	virtual ~DeviceFileInterface() {}
-	virtual bool open() = 0;
-	virtual void close() = 0;
-	virtual QTextStream &stream() = 0;
+	DeviceFile(const QString &fileName);
+	~DeviceFile() override;
+	bool open() override;
+	void close() override;
+	QTextStream &stream() override;
+
+private:
+	QFile mFile;
+	QTextStream mStream;
 };
 
 }
