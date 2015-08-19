@@ -67,6 +67,13 @@ BackgroundWidget::BackgroundWidget(const QString &configPath
 	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
 }
 
+BackgroundWidget::~BackgroundWidget()
+{
+	// Disconnect is needed here because QWidget destructor will trigger widgetRemoved signal which will be caught
+	// here by partially deleted object and everything will crash.
+	disconnect(&mMainWidgetsLayout, 0, 0, 0);
+}
+
 void BackgroundWidget::resetWidgetLayout(MainWidget &widget)
 {
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
@@ -170,10 +177,6 @@ void BackgroundWidget::refresh()
 
 void BackgroundWidget::updateStack(int removedWidget)
 {
-	if (mMainWidgetIndex.isEmpty()) {
-		return;
-	}
-
 	if (mMainWidgetIndex.top() == removedWidget) {
 		mMainWidgetIndex.pop();
 		mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());

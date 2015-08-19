@@ -36,18 +36,23 @@ class LazyMainWidgetWrapper : public LazyMainWidget
 public:
 	/// Constructor.
 	LazyMainWidgetWrapper(trikControl::DisplayWidgetInterface *wrappedWidget, QWidget *parent = 0)
-			: LazyMainWidget(parent), mWrappedWidget(wrappedWidget)
+			: LazyMainWidget(parent), mWrappedWidget(wrappedWidget), mLayout(new QHBoxLayout(this))
 	{
 		connect(wrappedWidget, SIGNAL(shown()), this, SLOT(emitShowMe()));
 		connect(wrappedWidget, SIGNAL(hidden()), this, SIGNAL(hideMe()));
 
-		const auto layout = new QHBoxLayout(this);
-		layout->addWidget(wrappedWidget);
+		mLayout->addWidget(mWrappedWidget);
 	}
 
 	void renewFocus() override
 	{
 		mWrappedWidget->setFocus();
+	}
+
+	~LazyMainWidgetWrapper()
+	{
+		mLayout->removeWidget(mWrappedWidget);
+		mWrappedWidget->setParent(nullptr);
 	}
 
 private slots:
@@ -58,7 +63,13 @@ private slots:
 	}
 
 private:
-	QWidget * const mWrappedWidget;  // Does not have ownership.
+	/// Wrapped display widget.
+	/// Does not have ownership.
+	QWidget * const mWrappedWidget;
+
+	/// Layout for correct placement of wrapped widget.
+	/// Has ownership by Qt parent-child system.
+	QHBoxLayout * const mLayout;
 };
 }
 

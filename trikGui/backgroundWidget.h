@@ -57,6 +57,8 @@ public:
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
 	explicit BackgroundWidget(const QString &configPath, const QString &startDirPath, QWidget *parent = 0);
 
+	~BackgroundWidget() override;
+
 private slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
