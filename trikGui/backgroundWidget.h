@@ -57,7 +57,7 @@ public:
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
 	explicit BackgroundWidget(const QString &configPath, const QString &startDirPath, QWidget *parent = 0);
 
-public slots:
+private slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
 	void addMainWidget(MainWidget &widget);
@@ -70,7 +70,7 @@ public slots:
 	/// @param widget - reference to the widget.
 	void addLazyWidget(LazyMainWidget &widget);
 
-private slots:
+	/// Properly sets focus on a current widget.
 	void renewFocus();
 
 	/// Updates all widgets to remove clutter.
@@ -81,7 +81,6 @@ private slots:
 	void showMainWidget(MainWidget &widget);
 
 	/// Show a RunningWidget which is contained in main widgets layout.
-	/// @param widget - reference to the widget.
 	void showRunningWidget(const QString &fileName, int scriptId);
 
 	void hideRunningWidget(int scriptId);
@@ -98,6 +97,14 @@ private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
 	void resetWidgetLayout(MainWidget &widget);
+
+	/// Makes current main widget be shown as something like fullscreen, without layout margins.
+	void expandMainWidget();
+
+	/// Makes current main widget be shown as regular widget, with layout margins.
+	void unexpandMainWidget();
+
+	const QMargins mDefaultMargins{11, 11, 11, 11};
 
 	Controller mController;
 	QVBoxLayout mMainLayout;
