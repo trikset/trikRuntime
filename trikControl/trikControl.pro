@@ -113,8 +113,10 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 
 OTHER_FILES += \
-	model-config.xml \
-	system-config.xml \
+	$$PWD/model-config.xml \
+	$$PWD/system-config.xml \
+	$$PWD/model-config-v6.xml \
+	$$PWD/system-config-v6.xml \
 
 TEMPLATE = lib
 
