@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,26 @@
 
 #pragma once
 
-#include "i2cInterface.h"
+#include <QtCore/QString>
+#include <QtCore/QFile>
+
+#include "outputDeviceFileInterface.h"
 
 namespace trikHal {
+namespace trik {
 
-class I2C : public I2CInterface
+class TrikOutputDeviceFile : public OutputDeviceFileInterface
 {
 public:
-	I2C() = default;
-	~I2C() override;
-
-	void send(const QByteArray &data) override;
-
-	int read(const QByteArray &data) override;
-
-	bool connect(const QString &devicePath, int deviceId) override;
-
-	void disconnect() override;
+	TrikOutputDeviceFile(const QString &fileName);
+	bool open() override;
+	void close() override;
+	void write(const QString &data) override;
+	QString fileName() const override;
 
 private:
-	int mDeviceFileDescriptor = -1;
+	QFile mFile;
 };
 
+}
 }

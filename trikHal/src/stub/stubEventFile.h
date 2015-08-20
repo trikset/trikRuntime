@@ -14,20 +14,23 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include "eventFileInterface.h"
 
 namespace trikHal {
+namespace stub {
 
-/// Output device file abstraction. Can only write to a device file, thus sending commands to a device driver.
-/// Flushes its contents after every write.
-class OutputDeviceFileInterface
+/// Empty implementation of event file, it only logs calls to its methods and doen't emit any signals.
+class StubEventFile : public EventFileInterface
 {
+	Q_OBJECT
+
 public:
-	virtual ~OutputDeviceFileInterface() {}
-	virtual bool open() = 0;
-	virtual void close() = 0;
-	virtual void write(const QString &data) = 0;
-	virtual QString fileName() const = 0;
+	bool open(const QString &fileName) override;
+	bool close() override;
+
+private:
+	QString mFileName;
 };
 
+}
 }

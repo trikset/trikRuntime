@@ -28,7 +28,7 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 
 	mState.start();
 
-	connect(mEventFile.data(), SIGNAL(newEvent(EventType, int, int))
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
 			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
 
 	mEventFile->open(eventFile);

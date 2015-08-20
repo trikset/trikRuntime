@@ -26,23 +26,42 @@ HEADERS += \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
 
 HEADERS += \
-	$$PWD/src/real/hardwareAbstraction.h \
-	$$PWD/src/real/i2c.h \
-	$$PWD/src/real/systemConsole.h \
-	$$PWD/src/real/eventFile.h \
-	$$PWD/src/real/inputDeviceFile.h \
-	$$PWD/src/real/outputDeviceFile.h \
-	$$PWD/src/real/fifo.h \
+	$$PWD/src/trik/trikHardwareAbstraction.h \
+	$$PWD/src/trik/trikI2c.h \
+	$$PWD/src/trik/trikSystemConsole.h \
+	$$PWD/src/trik/trikEventFile.h \
+	$$PWD/src/trik/trikInputDeviceFile.h \
+	$$PWD/src/trik/trikOutputDeviceFile.h \
+	$$PWD/src/trik/trikFifo.h \
+	$$PWD/src/stub/stubHardwareAbstraction.h \
+	$$PWD/src/stub/stubI2c.h \
+	$$PWD/src/stub/stubSystemConsole.h \
+	$$PWD/src/stub/stubEventFile.h \
+	$$PWD/src/stub/stubInputDeviceFile.h \
+	$$PWD/src/stub/stubOutputDeviceFile.h \
+	$$PWD/src/stub/stubFifo.h \
 
 SOURCES += \
-	$$PWD/src/real/hardwareAbstractionFactory.cpp \
-	$$PWD/src/real/hardwareAbstraction.cpp \
-	$$PWD/src/real/i2c.cpp \
-	$$PWD/src/real/systemConsole.cpp \
-	$$PWD/src/real/eventFile.cpp \
-	$$PWD/src/real/inputDeviceFile.cpp \
-	$$PWD/src/real/outputDeviceFile.cpp \
-	$$PWD/src/real/fifo.cpp \
+	$$PWD/src/trik/trikHardwareAbstraction.cpp \
+	$$PWD/src/trik/trikI2c.cpp \
+	$$PWD/src/trik/trikSystemConsole.cpp \
+	$$PWD/src/trik/trikEventFile.cpp \
+	$$PWD/src/trik/trikInputDeviceFile.cpp \
+	$$PWD/src/trik/trikOutputDeviceFile.cpp \
+	$$PWD/src/trik/trikFifo.cpp \
+	$$PWD/src/stub/stubHardwareAbstraction.cpp \
+	$$PWD/src/stub/stubI2c.cpp \
+	$$PWD/src/stub/stubSystemConsole.cpp \
+	$$PWD/src/stub/stubEventFile.cpp \
+	$$PWD/src/stub/stubInputDeviceFile.cpp \
+	$$PWD/src/stub/stubOutputDeviceFile.cpp \
+	$$PWD/src/stub/stubFifo.cpp \
+
+equals(ARCHITECTURE, arm) {
+	SOURCES += $$PWD/src/trik/hardwareAbstractionFactory.cpp
+} else {
+	SOURCES += $$PWD/src/stub/hardwareAbstractionFactory.cpp
+}
 
 TEMPLATE = lib
 

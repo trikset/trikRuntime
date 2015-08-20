@@ -12,40 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "inputDeviceFile.h"
+#include "stubInputDeviceFile.h"
 
 #include <QsLog.h>
 
-using namespace trikHal;
+using namespace trikHal::stub;
 
-InputDeviceFile::InputDeviceFile(const QString &fileName)
+StubInputDeviceFile::StubInputDeviceFile(const QString &fileName)
 	: mFile(fileName)
 {
 }
 
-bool InputDeviceFile::open()
+bool StubInputDeviceFile::open()
 {
-	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "File " << mFile.fileName() << " failed to open for reading";
-		return false;
-	}
-
-	mStream.setDevice(&mFile);
-
+	QLOG_INFO() << "Opening stub input device file" << mFile.fileName();
 	return true;
 }
 
-void InputDeviceFile::close()
+void StubInputDeviceFile::close()
 {
-	mFile.close();
+	QLOG_INFO() << "Closing stub input device file" << mFile.fileName();
 }
 
-QTextStream &InputDeviceFile::stream()
+QTextStream &StubInputDeviceFile::stream()
 {
 	return mStream;
 }
 
-void InputDeviceFile::reset()
+void StubInputDeviceFile::reset()
 {
-	mStream.seek(0);
+	QLOG_INFO() << "Resetting stub input device file" << mFile.fileName();
 }

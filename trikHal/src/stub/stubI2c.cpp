@@ -12,22 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "stubI2c.h"
 
-#include <QtCore/QString>
+#include <QsLog.h>
 
-namespace trikHal {
+using namespace trikHal::stub;
 
-/// Output device file abstraction. Can only write to a device file, thus sending commands to a device driver.
-/// Flushes its contents after every write.
-class OutputDeviceFileInterface
+void StubI2C::send(const QByteArray &data)
 {
-public:
-	virtual ~OutputDeviceFileInterface() {}
-	virtual bool open() = 0;
-	virtual void close() = 0;
-	virtual void write(const QString &data) = 0;
-	virtual QString fileName() const = 0;
-};
+	QLOG_INFO() << "Sending thru I2C stub" << data;
+}
 
+int StubI2C::read(const QByteArray &data)
+{
+	QLOG_INFO() << "Reading from I2C stub" << data;
+	return 0;
+}
+
+bool StubI2C::connect(const QString &devicePath, int deviceId)
+{
+	QLOG_INFO() << "Connecting to I2C stub, devicePath:" << devicePath << "deviceId" << deviceId;
+	return true;
+}
+
+void StubI2C::disconnect()
+{
+	QLOG_INFO() << "Disconnecting from I2C stub";
 }

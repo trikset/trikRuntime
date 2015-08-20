@@ -32,5 +32,7 @@ BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *
 
 void BatteryIndicator::renew()
 {
-	setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+	if (mBrick.battery()->status() == trikControl::DeviceInterface::Status::ready) {
+		setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+	}
 }

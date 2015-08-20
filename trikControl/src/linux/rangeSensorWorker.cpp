@@ -24,7 +24,7 @@ RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &stat
 	, mEventFileName(eventFile)
 	, mState(state)
 {
-	connect(mEventFile.data(), SIGNAL(newEvent(EventType, int, int))
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
 			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
 }
 

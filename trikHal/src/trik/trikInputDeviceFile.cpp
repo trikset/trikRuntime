@@ -12,36 +12,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "trikInputDeviceFile.h"
 
-#include <QtCore/QScopedPointer>
+#include <QsLog.h>
 
-#include "eventFileInterface.h"
+using namespace trikHal::trik;
 
-class QEventLoop;
-class QSocketNotifier;
-
-namespace trikHal {
-
-class EventFile : public EventFileInterface
+TrikInputDeviceFile::TrikInputDeviceFile(const QString &fileName)
+	: mFile(fileName)
 {
-	Q_OBJECT
+}
 
-public:
-	EventFile();
-	~EventFile() override;
-	bool open(const QString &fileName) override;
-	bool close() override;
+bool TrikInputDeviceFile::open()
+{
+	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+		QLOG_ERROR() << "File " << mFile.fileName() << " failed to open for reading";
+		return false;
+	}
 
-private slots:
-	void tryOpenEventFile();
-	void readFile();
+	mStream.setDevice(&mFile);
 
-private:
-	int mEventFileDescriptor;
-	QString mFileName;
-	QScopedPointer<QEventLoop> mInitWaitingLoop;
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
-};
+	return true;
+}
 
+void TrikInputDeviceFile::close()
+{
+	mFile.close();
+}
+
+QTextStream &TrikInputDeviceFile::stream()
+{
+	return mStream;
+}
+
+void TrikInputDeviceFile::reset()
+{
+	mStream.seek(0);
 }

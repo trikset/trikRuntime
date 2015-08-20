@@ -29,10 +29,8 @@ KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		return;
 	}
 
-	connect(mEventFile.data(), SIGNAL(newEvent(EventType, int, int))
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
 			, this, SLOT(readKeysEvent(trikHal::EventFileInterface::EventType, int, int)));
-
-	mState.ready();
 }
 
 void KeysWorker::reset()

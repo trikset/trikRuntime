@@ -12,22 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "hardwareAbstractionFactory.h"
 
-#include <QtCore/QString>
+#include "trikHardwareAbstraction.h"
 
-namespace trikHal {
+using namespace trikHal;
 
-/// Output device file abstraction. Can only write to a device file, thus sending commands to a device driver.
-/// Flushes its contents after every write.
-class OutputDeviceFileInterface
+HardwareAbstractionInterface *HardwareAbstractionFactory::create()
 {
-public:
-	virtual ~OutputDeviceFileInterface() {}
-	virtual bool open() = 0;
-	virtual void close() = 0;
-	virtual void write(const QString &data) = 0;
-	virtual QString fileName() const = 0;
-};
-
+	return new trik::TrikHardwareAbstraction();
 }

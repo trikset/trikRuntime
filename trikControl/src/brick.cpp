@@ -108,6 +108,17 @@ Brick::~Brick()
 	qDeleteAll(mColorSensors);
 	qDeleteAll(mFifos);
 
+	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
+	mI2cCommunicator.reset();
+	mModuleLoader.reset();
+
+	mAccelerometer.reset();
+	mGyroscope.reset();
+	mBattery.reset();
+	mKeys.reset();
+	mDisplay.reset();
+	mLed.reset();
+
 	if (mOwnsHardwareAbstraction) {
 		delete mHardwareAbstraction;
 	}

@@ -12,38 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "stubFifo.h"
 
-#include <QtCore/QScopedPointer>
+#include <QsLog.h>
 
-#include "fifoInterface.h"
+using namespace trikHal::stub;
 
-class QSocketNotifier;
-
-namespace trikHal {
-
-class Fifo : public FifoInterface
+bool StubFifo::open(const QString &fileName)
 {
-	Q_OBJECT
+	mFileName = fileName;
+	QLOG_INFO() << "Opening stub fifo" << mFileName;
+	return true;
+}
 
-public:
-	Fifo();
-	~Fifo() override;
-	bool open(const QString &fileName) override;
-	bool close() override;
-
-private slots:
-	void readFile();
-
-private:
-	/// FIFO file descriptor.
-	int mFifoFileDescriptor;
-
-	/// Notifier for FIFO file that emits a signal when something is changed in it.
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
-
-	/// Buffer with current line being read from FIFO.
-	QString mBuffer;
-};
-
+bool StubFifo::close()
+{
+	QLOG_INFO() << "Closing stub fifo" << mFileName;
+	return true;
 }

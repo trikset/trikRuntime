@@ -20,11 +20,12 @@
 #include "inputDeviceFileInterface.h"
 
 namespace trikHal {
+namespace trik {
 
-class InputDeviceFile : public InputDeviceFileInterface
+class TrikInputDeviceFile : public InputDeviceFileInterface
 {
 public:
-	InputDeviceFile(const QString &fileName);
+	TrikInputDeviceFile(const QString &fileName);
 	bool open() override;
 	void close() override;
 	QTextStream &stream() override;
@@ -35,4 +36,5 @@ private:
 	QTextStream mStream;
 };
 
+}
 }

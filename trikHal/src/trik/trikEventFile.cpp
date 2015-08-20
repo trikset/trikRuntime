@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "eventFile.h"
+#include "trikEventFile.h"
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -27,17 +27,17 @@
 
 #include <QsLog.h>
 
-using namespace trikHal;
+using namespace trikHal::trik;
 
-EventFile::EventFile()
+TrikEventFile::TrikEventFile()
 {
 }
 
-EventFile::~EventFile()
+TrikEventFile::~TrikEventFile()
 {
 }
 
-bool EventFile::open(const QString &fileName)
+bool TrikEventFile::open(const QString &fileName)
 {
 	mFileName = fileName;
 
@@ -68,7 +68,7 @@ bool EventFile::open(const QString &fileName)
 	return true;
 }
 
-void EventFile::tryOpenEventFile()
+void TrikEventFile::tryOpenEventFile()
 {
 	mEventFileDescriptor = ::open(mFileName.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
 
@@ -77,7 +77,7 @@ void EventFile::tryOpenEventFile()
 	}
 }
 
-bool EventFile::close()
+bool TrikEventFile::close()
 {
 	if (mSocketNotifier) {
 		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
@@ -93,7 +93,7 @@ bool EventFile::close()
 	return true;
 }
 
-void EventFile::readFile()
+void TrikEventFile::readFile()
 {
 	struct input_event event;
 	int size = 0;

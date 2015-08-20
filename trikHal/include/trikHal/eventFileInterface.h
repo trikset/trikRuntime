@@ -53,7 +53,7 @@ signals:
 	/// @param eventType - type of an event (unknown, if such event is not listed in EventType enum).
 	/// @param code - low-level event code.
 	/// @param value - low-level event value.
-	void newEvent(EventType eventType, int code, int value);
+	void newEvent(trikHal::EventFileInterface::EventType eventType, int code, int value);
 };
 
 }

@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,13 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "hardwareAbstractionFactory.h"
+#pragma once
 
-#include "hardwareAbstraction.h"
+#include <QtCore/QString>
+#include <QtCore/QFile>
 
-using namespace trikHal;
+#include "outputDeviceFileInterface.h"
 
-HardwareAbstractionInterface *HardwareAbstractionFactory::create()
+namespace trikHal {
+namespace stub {
+
+class StubOutputDeviceFile : public OutputDeviceFileInterface
 {
-	return new HardwareAbstraction();
+public:
+	StubOutputDeviceFile(const QString &fileName);
+	bool open() override;
+	void close() override;
+	void write(const QString &data) override;
+	QString fileName() const override;
+
+private:
+	QFile mFile;
+};
+
+}
 }

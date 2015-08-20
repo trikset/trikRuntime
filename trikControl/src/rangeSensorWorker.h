@@ -16,16 +16,11 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
-#include <QtCore/QSocketNotifier>
-#include <QtCore/QReadWriteLock>
 #include <QtCore/QScopedPointer>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 
 #include "deviceState.h"
-
-class QEventLoop;
 
 namespace trikControl {
 

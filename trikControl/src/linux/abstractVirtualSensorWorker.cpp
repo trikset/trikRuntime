@@ -20,6 +20,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include <trikHal/hardwareAbstractionInterface.h>
+
 #include <QsLog.h>
 
 using namespace trikControl;
@@ -29,8 +31,8 @@ AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, 
 	: mSystemConsole(hardwareAbstraction.systemConsole())
 	, mOutputFifo(hardwareAbstraction.createFifo())
 	, mScript(script)
-	, mInputFile(inputFile)
-	, mOutputFile(outputFile)
+	, mInputFile(hardwareAbstraction.createOutputDeviceFile(inputFile))
+	, mOutputFifoFileName(outputFile)
 	, mState(state)
 {
 }
@@ -58,14 +60,14 @@ void AbstractVirtualSensorWorker::stop()
 
 void AbstractVirtualSensorWorker::init()
 {
-	if (mState.isReady() && mInputFile.exists() && mOutputFile.exists()) {
+	if (mState.isReady() && QFileInfo(mInputFile->fileName()).exists() && QFileInfo(mOutputFifoFileName).exists()) {
 		// Sensor is up and ready.
 		QLOG_ERROR() << "Trying to init video sensor that is already running, ignoring";
 		return;
 	}
 
 	mState.start();
-	if (!mInputFile.exists() || !mOutputFile.exists()) {
+	if (!QFileInfo(mInputFile->fileName()).exists() || !QFileInfo(mOutputFifoFileName).exists()) {
 		// Sensor is down.
 		startVirtualSensor();
 	} else {
@@ -112,29 +114,24 @@ void AbstractVirtualSensorWorker::startVirtualSensor()
 
 void AbstractVirtualSensorWorker::openFifos()
 {
-	if (mInputFile.isOpen()) {
-		mInputFile.close();
-	}
+	mInputFile->close();
 
-	QLOG_INFO() << "Opening" << mOutputFile.fileName();
+	QLOG_INFO() << "Opening" << mOutputFifoFileName;
 
 	connect(mOutputFifo.data(), SIGNAL(newData(QString)), this, SLOT(onNewDataInOutputFifo(QString)));
 
-	if (!mOutputFifo->open(mOutputFile.fileName())) {
+	if (!mOutputFifo->open(mOutputFifoFileName)) {
 		mState.fail();
 		return;
 	}
 
 
-	QLOG_INFO() << "Opening" << mInputFile.fileName();
+	QLOG_INFO() << "Opening" << mInputFile->fileName();
 
-	if (!mInputFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-		QLOG_ERROR() << "Sensor input file" << mInputFile.fileName() << " failed to open";
+	if (!mInputFile->open()) {
 		mState.fail();
 		return;
 	}
-
-	mInputStream.setDevice(&mInputFile);
 
 	QLOG_INFO() << sensorName() + " initialization completed";
 
@@ -153,7 +150,7 @@ void AbstractVirtualSensorWorker::deinitialize()
 		mState.fail();
 	}
 
-	mInputFile.close();
+	mInputFile->close();
 
 	if (!launchSensorScript("stop")) {
 		QLOG_ERROR() << QString("Failed to stop %1 sensor!").arg(sensorName());
@@ -171,8 +168,7 @@ void AbstractVirtualSensorWorker::sync()
 {
 	if (mState.isReady()) {
 		for (const QString &command : mCommandQueue) {
-			mInputStream << command + "\n";
-			mInputStream.flush();
+			mInputFile->write(command + "\n");
 		}
 
 		mCommandQueue.clear();

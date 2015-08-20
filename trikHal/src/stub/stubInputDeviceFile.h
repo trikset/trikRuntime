@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,27 @@
 
 #pragma once
 
-#include "systemConsoleInterface.h"
+#include <QtCore/QString>
+#include <QtCore/QFile>
+
+#include "inputDeviceFileInterface.h"
 
 namespace trikHal {
+namespace stub {
 
-class SystemConsole : public SystemConsoleInterface
+class StubInputDeviceFile : public InputDeviceFileInterface
 {
 public:
-	int system(const QString &command) override;
-	bool startProcess(const QString &processName, const QStringList &arguments) override;
-	bool startProcessSynchronously(const QString &processName, const QStringList &arguments
-			, QString * const output = nullptr) override;
+	StubInputDeviceFile(const QString &fileName);
+	bool open() override;
+	void close() override;
+	QTextStream &stream() override;
+	void reset() override;
+
+private:
+	QFile mFile;
+	QTextStream mStream;
 };
 
+}
 }

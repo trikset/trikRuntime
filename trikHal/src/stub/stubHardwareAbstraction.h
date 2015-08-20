@@ -19,12 +19,13 @@
 #include <QtCore/QScopedPointer>
 
 namespace trikHal {
+namespace stub {
 
-class HardwareAbstraction : public HardwareAbstractionInterface
+class StubHardwareAbstraction : public HardwareAbstractionInterface
 {
 public:
-	HardwareAbstraction();
-	~HardwareAbstraction() override;
+	StubHardwareAbstraction();
+	~StubHardwareAbstraction() override;
 
 	I2CInterface &i2c() override;
 	SystemConsoleInterface &systemConsole() override;
@@ -39,4 +40,5 @@ private:
 	QScopedPointer<SystemConsoleInterface> mSystemConsole;
 };
 
+}
 }

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "i2c.h"
+#include "trikI2c.h"
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -22,7 +22,7 @@
 
 #include <QsLog.h>
 
-using namespace trikHal;
+using namespace trikHal::trik;
 
 static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command
 		, int size, union i2c_smbus_data *data)
@@ -83,12 +83,12 @@ static inline __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value
 	return i2c_smbus_access(file, I2C_SMBUS_WRITE, command, I2C_SMBUS_BYTE_DATA, &data);
 }
 
-I2C::~I2C()
+TrikI2C::~TrikI2C()
 {
 	disconnect();
 }
 
-void I2C::send(const QByteArray &data)
+void TrikI2C::send(const QByteArray &data)
 {
 	if (data.size() == 2) {
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[1]);
@@ -97,7 +97,7 @@ void I2C::send(const QByteArray &data)
 	}
 }
 
-int I2C::read(const QByteArray &data)
+int TrikI2C::read(const QByteArray &data)
 {
 	if (data.size() == 1) {
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
@@ -108,7 +108,7 @@ int I2C::read(const QByteArray &data)
 	}
 }
 
-bool I2C::connect(const QString &devicePath, int deviceId)
+bool TrikI2C::connect(const QString &devicePath, int deviceId)
 {
 	mDeviceFileDescriptor = open(devicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
@@ -124,7 +124,7 @@ bool I2C::connect(const QString &devicePath, int deviceId)
 	return true;
 }
 
-void I2C::disconnect()
+void TrikI2C::disconnect()
 {
 	close(mDeviceFileDescriptor);
 }

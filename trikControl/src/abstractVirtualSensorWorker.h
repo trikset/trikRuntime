@@ -18,15 +18,17 @@
 #include <QtCore/QScopedPointer>
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QString>
-#include <QtCore/QProcess>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtCore/QList>
-
-#include <trikHal/hardwareAbstractionInterface.h>
+#include <QtCore/QStringList>
 
 #include "deviceInterface.h"
 #include "deviceState.h"
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class FifoInterface;
+class OutputDeviceFileInterface;
+class SystemConsoleInterface;
+}
 
 namespace trikControl {
 
@@ -103,17 +105,15 @@ private:
 	/// File name (with path) of a script that launches or stops sensor.
 	QString mScript;
 
-	/// Input fifo.
-	QFile mInputFile;
+	/// Input fifo. It represents input for sensor, so its name may be confusing. TrikControl actually writes data to
+	/// this file.
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mInputFile;
 
-	/// Output fifo.
-	QFile mOutputFile;
-
-	/// File stream for command fifo. Despite its name it is used to output commands. It is input for virtual sensor.
-	QTextStream mInputStream;
+	/// Output fifo name.
+	QString mOutputFifoFileName;
 
 	/// A queue of commands to be passed to input fifo when it is ready.
-	QList<QString> mCommandQueue;
+	QStringList mCommandQueue;
 
 	/// Current state of a device, shared between worker and proxy.
 	DeviceState &mState;
