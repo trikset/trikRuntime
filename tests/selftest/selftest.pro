@@ -20,7 +20,7 @@ SOURCES += \
 	$$PWD/selftest.cpp \
 
 implementationIncludes(trikKernel trikControl trikNetwork)
-links(trikKernel trikControl trikScriptRunner trikNetwork)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal)
 
 OTHER_FILES += \
 	selftest-model-config.xml \

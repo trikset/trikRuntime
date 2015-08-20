@@ -62,6 +62,7 @@ Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, 
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
+	qRegisterMetaType<trikHal::EventFileInterface::EventType>("trikHal::EventFileInterface::EventType");
 
 	for (const QString &initScript : mConfigurer.initScripts()) {
 		if (mHardwareAbstraction->systemConsole().system(initScript) != 0) {

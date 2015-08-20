@@ -29,7 +29,7 @@ Led::Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstra
 		mState.fail();
 	}
 
-	if (!mRedDeviceFile->open()) {
+	if (!mGreenDeviceFile->open()) {
 		mState.fail();
 	}
 
