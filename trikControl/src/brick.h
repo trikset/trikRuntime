@@ -155,7 +155,11 @@ private:
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
 
+	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
+	/// Has or hasn't ownership depending on mOwnsHardwareAbstraction value.
 	trikHal::HardwareAbstractionInterface *mHardwareAbstraction;
+
+	/// True, if hardware abstraction object was created here, false if passed from outside.
 	bool mOwnsHardwareAbstraction;
 
 	trikKernel::Configurer mConfigurer;

@@ -19,6 +19,7 @@
 namespace trikHal {
 namespace stub {
 
+/// Empty implementation of system console. Only logs operations, returns empty string as process output.
 class StubSystemConsole : public SystemConsoleInterface
 {
 public:

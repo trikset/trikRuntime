@@ -19,16 +19,26 @@
 
 namespace trikHal {
 
+/// Abstraction of Linux FIFO used to receive events. To write to FIFO, use OutputDeviceFileInterface.
 class FifoInterface : public QObject
 {
 	Q_OBJECT
 
 public:
+	/// Opens given FIFO file and starts listening for events.
+	/// @returns true, if opened successfully.
 	virtual bool open(const QString &fileName) = 0;
+
+	/// Closes FIFO file and stops listening for events.
+	/// @returns true, if closed successfully.
 	virtual bool close() = 0;
 
 signals:
+	/// Emitted when new data is read from FIFO.
 	void newData(const QString &data);
+
+	/// Emitted when something is wrong with opened FIFO file and reading failed.
+	/// It may be caused, for example, by another process reading from the same FIFO, it may partially read data.
 	void readError();
 };
 

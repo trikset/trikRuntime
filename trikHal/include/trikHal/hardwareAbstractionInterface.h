@@ -23,16 +23,28 @@
 
 namespace trikHal {
 
+/// Hardware abstraction, provides devices that are used to communicate with robot hardware or emulate it.
 class HardwareAbstractionInterface
 {
 public:
 	virtual ~HardwareAbstractionInterface() {}
+
+	/// Returns I2C bus implementation.
 	virtual I2CInterface &i2c() = 0;
+
+	/// Returns system console wrapper, able to execute system command and launch processes.
 	virtual SystemConsoleInterface &systemConsole() = 0;
 
+	/// Creates new event file, passes ownership to a caller.
 	virtual EventFileInterface *createEventFile() const = 0;
+
+	/// Creates new FIFO, passes ownership to a caller.
 	virtual FifoInterface *createFifo() const = 0;
+
+	/// Creates new input event file, passes ownership to a caller.
 	virtual InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const = 0;
+
+	/// Creates new output event file, passes ownership to a caller.
 	virtual OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const = 0;
 };
 

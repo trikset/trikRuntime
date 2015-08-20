@@ -59,6 +59,7 @@ SOURCES += \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/informationWidget.cpp \
 	$$PWD/languageSelectionWidget.cpp \
+	$$PWD/lazyMainWidgetWrapper.cpp \
 	$$PWD/main.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \

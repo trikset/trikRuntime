@@ -18,9 +18,12 @@
 
 namespace trikHal {
 
+/// Abstract factory that creates hardware abstraction object depending on whether we compile for real robot or for
+/// desktop.
 class HardwareAbstractionFactory
 {
 public:
+	/// Returns hardware abstraction object and transfers ownership to the caller.
 	static HardwareAbstractionInterface *create();
 };
 

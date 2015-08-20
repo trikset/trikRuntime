@@ -19,6 +19,7 @@
 namespace trikHal {
 namespace stub {
 
+/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
 class StubI2C : public I2CInterface
 {
 public:

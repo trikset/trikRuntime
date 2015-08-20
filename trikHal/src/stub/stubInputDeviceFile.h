@@ -22,6 +22,7 @@
 namespace trikHal {
 namespace stub {
 
+/// Empty implementation of input device file. Only logs operations, returns empty stream.
 class StubInputDeviceFile : public InputDeviceFileInterface
 {
 public:

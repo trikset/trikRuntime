@@ -23,9 +23,17 @@ class InputDeviceFileInterface
 {
 public:
 	virtual ~InputDeviceFileInterface() {}
+
+	/// Open a file. File name must be set previously.
 	virtual bool open() = 0;
+
+	/// Close a file.
 	virtual void close() = 0;
+
+	/// Returns temporary reference to a stream which can be used to read from a file.
 	virtual QTextStream &stream() = 0;
+
+	/// Resets input file, moving file cursor to the beginning of the file.
 	virtual void reset() = 0;
 };
 

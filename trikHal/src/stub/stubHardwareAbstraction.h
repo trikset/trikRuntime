@@ -21,6 +21,7 @@
 namespace trikHal {
 namespace stub {
 
+/// Hardware abstraction for use without real robot.
 class StubHardwareAbstraction : public HardwareAbstractionInterface
 {
 public:

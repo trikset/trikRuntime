@@ -24,9 +24,17 @@ class OutputDeviceFileInterface
 {
 public:
 	virtual ~OutputDeviceFileInterface() {}
+
+	/// Open a file. File name must be set previously.
 	virtual bool open() = 0;
+
+	/// Close a file.
 	virtual void close() = 0;
+
+	/// Write data to a file using UTF-8 encoding.
 	virtual void write(const QString &data) = 0;
+
+	/// Returns name of a file.
 	virtual QString fileName() const = 0;
 };
 

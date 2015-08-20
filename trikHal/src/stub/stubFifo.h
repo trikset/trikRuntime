@@ -19,6 +19,7 @@
 namespace trikHal {
 namespace stub {
 
+/// Empty implementation of Linux FIFO. Does not emit any events, only logs operations.
 class StubFifo : public FifoInterface
 {
 	Q_OBJECT

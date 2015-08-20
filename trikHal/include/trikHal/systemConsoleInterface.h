@@ -27,8 +27,12 @@ public:
 	/// Executes given command on a system console. Returns return code of a command.
 	virtual int system(const QString &command) = 0;
 
+	/// Asynchronously starts given process with given arguments.
+	/// @returns true, if process was started successfully.
 	virtual bool startProcess(const QString &processName, const QStringList &arguments) = 0;
 
+	/// Synchronously starts given process with given arguments.
+	/// @returns true, if process was started successfully.
 	virtual bool startProcessSynchronously(const QString &processName, const QStringList &arguments
 			, QString * const output = nullptr) = 0;
 };
