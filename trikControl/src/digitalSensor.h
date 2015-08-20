@@ -27,7 +27,7 @@ class Configurer;
 
 namespace trikHal {
 class HardwareAbstractionInterface;
-class DeviceFileInterface;
+class InputDeviceFileInterface;
 }
 
 namespace trikControl {
@@ -56,7 +56,7 @@ public slots:
 private:
 	int mMin;
 	int mMax;
-	QScopedPointer<trikHal::DeviceFileInterface> mDeviceFile;
+	QScopedPointer<trikHal::InputDeviceFileInterface> mDeviceFile;
 	QTextStream mStream;
 	DeviceState mState;
 };

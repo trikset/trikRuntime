@@ -31,7 +31,8 @@ public:
 
 	EventFileInterface *createEventFile() const override;
 	FifoInterface *createFifo() const override;
-	DeviceFileInterface *createDeviceFile(const QString &fileName) const override;
+	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
+	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
 
 private:
 	QScopedPointer<I2CInterface> mI2c;

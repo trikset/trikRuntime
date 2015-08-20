@@ -16,7 +16,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
+#include <QtCore/QScopedPointer>
 
 #include "ledInterface.h"
 #include "deviceState.h"
@@ -27,6 +27,7 @@ class Configurer;
 
 namespace trikHal {
 class HardwareAbstractionInterface;
+class OutputDeviceFileInterface;
 }
 
 namespace trikControl {
@@ -55,8 +56,8 @@ public slots:
 	void off() override;
 
 private:
-	QFile mRedDeviceFile;
-	QFile mGreenDeviceFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mRedDeviceFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mGreenDeviceFile;
 	int mOn;
 	int mOff;
 	DeviceState mState;

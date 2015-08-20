@@ -14,26 +14,19 @@
 
 #pragma once
 
-#include "inputDeviceFileInterface.h"
-#include "outputDeviceFileInterface.h"
-#include "eventFileInterface.h"
-#include "fifoInterface.h"
-#include "i2cInterface.h"
-#include "systemConsoleInterface.h"
+#include <QtCore/QString>
 
 namespace trikHal {
 
-class HardwareAbstractionInterface
+/// Output device file abstraction. Can only write to a device file, thus sending commands to a device driver.
+/// Flushes its contents after every write.
+class OutputDeviceFileInterface
 {
 public:
-	virtual ~HardwareAbstractionInterface() {}
-	virtual I2CInterface &i2c() = 0;
-	virtual SystemConsoleInterface &systemConsole() = 0;
-
-	virtual EventFileInterface *createEventFile() const = 0;
-	virtual FifoInterface *createFifo() const = 0;
-	virtual InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const = 0;
-	virtual OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const = 0;
+	virtual ~OutputDeviceFileInterface() {}
+	virtual bool open() = 0;
+	virtual void close() = 0;
+	virtual void write(const QString &data);
 };
 
 }

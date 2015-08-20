@@ -17,7 +17,8 @@
 #include "i2c.h"
 #include "systemConsole.h"
 #include "eventFile.h"
-#include "deviceFile.h"
+#include "inputDeviceFile.h"
+#include "outputDeviceFile.h"
 #include "fifo.h"
 
 using namespace trikHal;
@@ -47,12 +48,17 @@ EventFileInterface *HardwareAbstraction::createEventFile() const
 	return new EventFile();
 }
 
-DeviceFileInterface *HardwareAbstraction::createDeviceFile(const QString &fileName) const
-{
-	return new DeviceFile(fileName);
-}
-
 FifoInterface *HardwareAbstraction::createFifo() const
 {
 	return new Fifo();
+}
+
+InputDeviceFileInterface *HardwareAbstraction::createInputDeviceFile(const QString &fileName) const
+{
+	return new InputDeviceFile(fileName);
+}
+
+OutputDeviceFileInterface *HardwareAbstraction::createOutputDeviceFile(const QString &fileName) const
+{
+	return new OutputDeviceFile(fileName);
 }

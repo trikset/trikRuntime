@@ -381,9 +381,9 @@ void Brick::createDevice(const QString &port)
 {
 	const QString &deviceClass = mConfigurer.deviceClass(port);
 	if (deviceClass == "servoMotor") {
-		mServoMotors.insert(port, new ServoMotor(port, mConfigurer));
+		mServoMotors.insert(port, new ServoMotor(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "pwmCapture") {
-		mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer));
+		mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "powerMotor") {
 		mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mI2cCommunicator));
 	} else if (deviceClass == "analogSensor") {

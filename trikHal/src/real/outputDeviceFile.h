@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,39 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "deviceFile.h"
+#pragma once
 
-#include <QsLog.h>
+#include <QtCore/QString>
+#include <QtCore/QFile>
 
-using namespace trikHal;
+#include "outputDeviceFileInterface.h"
 
-DeviceFile::DeviceFile(const QString &fileName)
-	: mFile(fileName)
+namespace trikHal {
+
+class OutputDeviceFile : public OutputDeviceFileInterface
 {
-}
+public:
+	OutputDeviceFile(const QString &fileName);
+	bool open() override;
+	void close() override;
+	void write(const QString &data) override;
 
-DeviceFile::~DeviceFile()
-{
-}
+private:
+	QFile mFile;
+};
 
-bool DeviceFile::open()
-{
-	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QLOG_ERROR() << "File " << mFile.fileName() << " failed to open for reading";
-		return false;
-	}
-
-	mStream.setDevice(&mFile);
-
-	return true;
-}
-
-void DeviceFile::close()
-{
-	mFile.close();
-}
-
-QTextStream &DeviceFile::stream()
-{
-	return mStream;
 }

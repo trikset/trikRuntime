@@ -14,13 +14,18 @@
 
 #pragma once
 
-#include <QtCore/QFile>
+#include <QtCore/QScopedPointer>
 
 #include "pwmCaptureInterface.h"
 #include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class InputDeviceFileInterface;
 }
 
 namespace trikControl {
@@ -34,7 +39,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	PwmCapture(const QString &port, const trikKernel::Configurer &configurer);
+	PwmCapture(const QString &port, const trikKernel::Configurer &configurer
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~PwmCapture() override;
 
@@ -48,8 +54,8 @@ public slots:
 	int duty() override;
 
 private:
-	QFile mFrequencyFile;
-	QFile mDutyFile;
+	QScopedPointer<trikHal::InputDeviceFileInterface> mFrequencyFile;
+	QScopedPointer<trikHal::InputDeviceFileInterface> mDutyFile;
 	DeviceState mState;
 };
 

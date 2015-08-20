@@ -14,19 +14,19 @@
 
 #pragma once
 
-#include <QtCore/QString>
 #include <QtCore/QTextStream>
 
 namespace trikHal {
 
-/// Device file abstraction. Can read from and write to a device file, thus communicating with a device driver.
-class DeviceFileInterface
+/// Input device file abstraction. Can read from a device file, thus communicating with a device driver.
+class InputDeviceFileInterface
 {
 public:
-	virtual ~DeviceFileInterface() {}
+	virtual ~InputDeviceFileInterface() {}
 	virtual bool open() = 0;
 	virtual void close() = 0;
 	virtual QTextStream &stream() = 0;
+	virtual void reset() = 0;
 };
 
 }

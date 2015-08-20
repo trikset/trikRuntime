@@ -21,7 +21,8 @@ HEADERS += \
 	$$PWD/include/trikHal/i2cInterface.h \
 	$$PWD/include/trikHal/fifoInterface.h \
 	$$PWD/include/trikHal/eventFileInterface.h \
-	$$PWD/include/trikHal/deviceFileInterface.h \
+	$$PWD/include/trikHal/inputDeviceFileInterface.h \
+	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
 
 HEADERS += \
@@ -29,7 +30,8 @@ HEADERS += \
 	$$PWD/src/real/i2c.h \
 	$$PWD/src/real/systemConsole.h \
 	$$PWD/src/real/eventFile.h \
-	$$PWD/src/real/deviceFile.h \
+	$$PWD/src/real/inputDeviceFile.h \
+	$$PWD/src/real/outputDeviceFile.h \
 	$$PWD/src/real/fifo.h \
 
 SOURCES += \
@@ -38,7 +40,8 @@ SOURCES += \
 	$$PWD/src/real/i2c.cpp \
 	$$PWD/src/real/systemConsole.cpp \
 	$$PWD/src/real/eventFile.cpp \
-	$$PWD/src/real/deviceFile.cpp \
+	$$PWD/src/real/inputDeviceFile.cpp \
+	$$PWD/src/real/outputDeviceFile.cpp \
 	$$PWD/src/real/fifo.cpp \
 
 TEMPLATE = lib

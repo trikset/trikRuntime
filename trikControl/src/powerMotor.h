@@ -16,7 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
 
 #include "motorInterface.h"
 #include "deviceState.h"
@@ -61,7 +60,7 @@ public slots:
 	void powerOff();
 
 	/// Sets current motor period.
-	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses. 
+	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
 	void setPeriod(int period);
 
 private:

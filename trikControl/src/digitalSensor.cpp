@@ -24,7 +24,7 @@ using namespace trikControl;
 
 DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mDeviceFile(hardwareAbstraction.createDeviceFile(configurer.attributeByPort(port, "deviceFile")))
+	: mDeviceFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
 {
 	mMin = ConfigurerHelper::configureInt(configurer, mState, port, "min");
 	mMax = ConfigurerHelper::configureInt(configurer, mState, port, "max");

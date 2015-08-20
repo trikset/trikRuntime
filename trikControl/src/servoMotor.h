@@ -16,7 +16,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
+#include <QtCore/QScopedPointer>
 
 #include "motorInterface.h"
 
@@ -24,6 +24,11 @@
 
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class OutputDeviceFileInterface;
 }
 
 namespace trikControl {
@@ -37,8 +42,10 @@ public:
 	/// Constructor.
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
-	ServoMotor(const QString &port, const trikKernel::Configurer &configurer);
-	~ServoMotor();
+	ServoMotor(const QString &port, const trikKernel::Configurer &configurer
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+
+	~ServoMotor() override;
 
 	Status status() const override;
 
@@ -65,8 +72,8 @@ private:
 		, continiousRotation
 	};
 
-	QFile mDutyFile;
-	QFile mPeriodFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
 	int mPeriod;
 	int mCurrentDutyPercent;
 	int mMin;

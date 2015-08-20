@@ -17,18 +17,18 @@
 #include <QtCore/QString>
 #include <QtCore/QFile>
 
-#include "deviceFileInterface.h"
+#include "inputDeviceFileInterface.h"
 
 namespace trikHal {
 
-class DeviceFile : public DeviceFileInterface
+class InputDeviceFile : public InputDeviceFileInterface
 {
 public:
-	DeviceFile(const QString &fileName);
-	~DeviceFile() override;
+	InputDeviceFile(const QString &fileName);
 	bool open() override;
 	void close() override;
 	QTextStream &stream() override;
+	void reset() override;
 
 private:
 	QFile mFile;
