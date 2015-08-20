@@ -25,7 +25,11 @@ class StubEventFile : public EventFileInterface
 	Q_OBJECT
 
 public:
-	bool open(const QString &fileName) override;
+	/// Constructor.
+	/// @param fileName - file name (with path, relative or absolute) of an event file.
+	StubEventFile(const QString &fileName);
+
+	bool open() override;
 	bool close() override;
 
 private:

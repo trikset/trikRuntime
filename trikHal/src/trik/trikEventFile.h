@@ -24,24 +24,40 @@ class QSocketNotifier;
 namespace trikHal {
 namespace trik {
 
+/// Real implementation of event file.
 class TrikEventFile : public EventFileInterface
 {
 	Q_OBJECT
 
 public:
-	TrikEventFile();
+	/// Constructor.
+	/// @param fileName - file name (with path, relative or absolute) of an event file.
+	TrikEventFile(const QString &fileName);
+
 	~TrikEventFile() override;
-	bool open(const QString &fileName) override;
+
+	bool open() override;
 	bool close() override;
 
 private slots:
+	/// Tries to open event file and if opened successfully stops waiting event loop.
 	void tryOpenEventFile();
+
+	/// Called when there is a new event in a file.
 	void readFile();
 
 private:
+	/// Low-level file descriptor for event file.
 	int mEventFileDescriptor;
-	QString mFileName;
+
+	/// File name of an event file.
+	const QString mFileName;
+
+	/// Waiting loop that is used to retry opening attempt if event file does not exist yet (some drivers take some
+	/// time to init and create event file).
 	QScopedPointer<QEventLoop> mInitWaitingLoop;
+
+	/// Socket notifer that is used to listen for events in a file.
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
 };
 

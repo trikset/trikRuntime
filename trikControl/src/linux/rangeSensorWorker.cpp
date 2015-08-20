@@ -20,8 +20,7 @@ using namespace trikControl;
 
 RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile())
-	, mEventFileName(eventFile)
+	: mEventFile(hardwareAbstraction.createEventFile(eventFile))
 	, mState(state)
 {
 	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
@@ -52,7 +51,7 @@ void RangeSensorWorker::stop()
 void RangeSensorWorker::init()
 {
 	mState.start();
-	mEventFile->open(mEventFileName);
+	mEventFile->open();
 	mState.ready();
 }
 

@@ -21,6 +21,7 @@
 namespace trikHal {
 namespace trik {
 
+/// Hardware abstraction layer for a real robot.
 class TrikHardwareAbstraction : public HardwareAbstractionInterface
 {
 public:
@@ -30,13 +31,16 @@ public:
 	I2CInterface &i2c() override;
 	SystemConsoleInterface &systemConsole() override;
 
-	EventFileInterface *createEventFile() const override;
-	FifoInterface *createFifo() const override;
+	EventFileInterface *createEventFile(const QString &fileName) const override;
+	FifoInterface *createFifo(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
 
 private:
+	/// I2C bus communicator.
 	QScopedPointer<I2CInterface> mI2c;
+
+	/// System console abstraction.
 	QScopedPointer<SystemConsoleInterface> mSystemConsole;
 };
 

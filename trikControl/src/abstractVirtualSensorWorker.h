@@ -98,19 +98,18 @@ private:
 	/// Flushes queued commands to a sensor, if it is ready, otherwise does nothing.
 	void sync();
 
+	/// System console used to launch sensor daemon.
 	trikHal::SystemConsoleInterface &mSystemConsole;
 
+	/// Output FIFO. It represents output of a sensor, so its name may be confusing. It is used to read data.
 	QScopedPointer<trikHal::FifoInterface> mOutputFifo;
 
 	/// File name (with path) of a script that launches or stops sensor.
 	QString mScript;
 
-	/// Input fifo. It represents input for sensor, so its name may be confusing. TrikControl actually writes data to
+	/// Input FIFO. It represents input for sensor, so its name may be confusing. TrikControl actually writes data to
 	/// this file.
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mInputFile;
-
-	/// Output fifo name.
-	QString mOutputFifoFileName;
 
 	/// A queue of commands to be passed to input fifo when it is ready.
 	QStringList mCommandQueue;

@@ -25,11 +25,16 @@ class StubFifo : public FifoInterface
 	Q_OBJECT
 
 public:
-	bool open(const QString &fileName) override;
+	/// Constructor.
+	/// @param fileName - FIFO file name.
+	StubFifo(const QString &fileName);
+
+	bool open() override;
 	bool close() override;
+	QString fileName() override;
 
 public:
-	QString mFileName;
+	const QString mFileName;
 };
 
 }

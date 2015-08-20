@@ -22,17 +22,24 @@
 namespace trikHal {
 namespace trik {
 
+/// Real implementation of input device file (a ordinary file from which we can read, actually).
 class TrikInputDeviceFile : public InputDeviceFileInterface
 {
 public:
+	/// Constructor.
+	/// @param fileName - name of a device file .
 	TrikInputDeviceFile(const QString &fileName);
+
 	bool open() override;
 	void close() override;
 	QTextStream &stream() override;
 	void reset() override;
 
 private:
+	/// Underlying file.
 	QFile mFile;
+
+	/// Stream used to read from a file.
 	QTextStream mStream;
 };
 

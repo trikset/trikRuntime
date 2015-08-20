@@ -18,9 +18,13 @@
 
 using namespace trikHal::stub;
 
-bool StubFifo::open(const QString &fileName)
+StubFifo::StubFifo(const QString &fileName)
+	: mFileName(fileName)
 {
-	mFileName = fileName;
+}
+
+bool StubFifo::open()
+{
 	QLOG_INFO() << "Opening stub fifo" << mFileName;
 	return true;
 }
@@ -29,4 +33,9 @@ bool StubFifo::close()
 {
 	QLOG_INFO() << "Closing stub fifo" << mFileName;
 	return true;
+}
+
+QString StubFifo::fileName()
+{
+	return mFileName;
 }

@@ -36,15 +36,19 @@ public:
 	virtual SystemConsoleInterface &systemConsole() = 0;
 
 	/// Creates new event file, passes ownership to a caller.
-	virtual EventFileInterface *createEventFile() const = 0;
+	/// @param fileName - file name (with path, relative or absolute) of an event file.
+	virtual EventFileInterface *createEventFile(const QString &fileName) const = 0;
 
 	/// Creates new FIFO, passes ownership to a caller.
-	virtual FifoInterface *createFifo() const = 0;
+	/// @param fileName - file name (with path, relative or absolute) of a FIFO file.
+	virtual FifoInterface *createFifo(const QString &fileName) const = 0;
 
-	/// Creates new input event file, passes ownership to a caller.
+	/// Creates new input device file, passes ownership to a caller.
+	/// @param fileName - file name (with path, relative or absolute) of a device file.
 	virtual InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const = 0;
 
-	/// Creates new output event file, passes ownership to a caller.
+	/// Creates new output device file, passes ownership to a caller.
+	/// @param fileName - file name (with path, relative or absolute) of a device file.
 	virtual OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const = 0;
 };
 

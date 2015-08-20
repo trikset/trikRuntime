@@ -19,6 +19,7 @@
 namespace trikHal {
 namespace trik {
 
+/// Real implementation of system console.
 class TrikSystemConsole : public SystemConsoleInterface
 {
 public:

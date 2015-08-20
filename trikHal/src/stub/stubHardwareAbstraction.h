@@ -31,8 +31,8 @@ public:
 	I2CInterface &i2c() override;
 	SystemConsoleInterface &systemConsole() override;
 
-	EventFileInterface *createEventFile() const override;
-	FifoInterface *createFifo() const override;
+	EventFileInterface *createEventFile(const QString &fileName) const override;
+	FifoInterface *createFifo(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
 

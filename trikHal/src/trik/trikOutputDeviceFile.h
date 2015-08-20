@@ -22,16 +22,21 @@
 namespace trikHal {
 namespace trik {
 
+/// Real implementation for output device file (a file to which we can only write).
 class TrikOutputDeviceFile : public OutputDeviceFileInterface
 {
 public:
+	/// Constructor.
+	/// @param fileName - name of a device file .
 	TrikOutputDeviceFile(const QString &fileName);
+
 	bool open() override;
 	void close() override;
 	void write(const QString &data) override;
 	QString fileName() const override;
 
 private:
+	/// Underlying file.
 	QFile mFile;
 };
 

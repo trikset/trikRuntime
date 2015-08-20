@@ -43,7 +43,7 @@ public:
 	/// file) will not receive it. This may lead to race conditions. One event file shall be open by only one listener
 	/// in a given point of time.
 	/// @param fileName - file name (with path, relative or absolute) of an event file.
-	virtual bool open(const QString &fileName) = 0;
+	virtual bool open() = 0;
 
 	/// Closes event file and stops listening for events.
 	virtual bool close() = 0;

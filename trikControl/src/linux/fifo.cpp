@@ -32,14 +32,14 @@ using namespace trikControl;
 
 Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mFifo(hardwareAbstraction.createFifo())
+	: mFifo(hardwareAbstraction.createFifo(configurer.attributeByPort(virtualPort, "file")))
 {
 	mState.start();
 
 	connect(mFifo.data(), SIGNAL(newData(QString)), this, SLOT(onNewData(QString)));
 	connect(mFifo.data(), SIGNAL(readError()), this, SLOT(onReadError()));
 
-	if (mFifo->open(configurer.attributeByPort(virtualPort, "file"))) {
+	if (mFifo->open()) {
 		mState.ready();
 	} else {
 		mState.fail();

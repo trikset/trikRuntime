@@ -23,22 +23,32 @@ class QSocketNotifier;
 namespace trikHal {
 namespace trik {
 
+/// Real implementation of FIFO.
 class TrikFifo : public FifoInterface
 {
 	Q_OBJECT
 
 public:
-	TrikFifo();
+	/// Constructor.
+	/// @param fileName - name of a FIFO file.
+	TrikFifo(const QString &fileName);
+
 	~TrikFifo() override;
-	bool open(const QString &fileName) override;
+
+	bool open() override;
 	bool close() override;
+	QString fileName() override;
 
 private slots:
+	/// Called when there is new data on a FIFO.
 	void readFile();
 
 private:
+	/// Name of a FIFO file.
+	const QString mFileName;
+
 	/// FIFO file descriptor.
-	int mFifoFileDescriptor;
+	int mFileDescriptor;
 
 	/// Notifier for FIFO file that emits a signal when something is changed in it.
 	QScopedPointer<QSocketNotifier> mSocketNotifier;

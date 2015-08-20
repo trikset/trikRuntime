@@ -60,8 +60,8 @@ private slots:
 	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value);
 
 private:
+	/// Event file of a sensor driver.
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
-	QString mEventFileName;
 
 	int mDistance = -1;
 

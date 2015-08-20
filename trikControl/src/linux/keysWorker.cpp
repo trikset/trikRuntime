@@ -20,11 +20,11 @@ using namespace trikControl;
 
 KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mState(state)
+	: mEventFile(hardwareAbstraction.createEventFile(keysPath))
+	, mState(state)
 {
 	mState.start();
-	mEventFile.reset(hardwareAbstraction.createEventFile());
-	if (!mEventFile->open(keysPath)) {
+	if (!mEventFile->open()) {
 		mState.fail();
 		return;
 	}

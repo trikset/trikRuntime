@@ -18,9 +18,13 @@
 
 using namespace trikHal::stub;
 
-bool StubEventFile::open(const QString &fileName)
+StubEventFile::StubEventFile(const QString &fileName)
+	: mFileName(fileName)
 {
-	mFileName = fileName;
+}
+
+bool StubEventFile::open()
+{
 	QLOG_INFO() << "Opening stub:" << mFileName;
 	return true;
 }

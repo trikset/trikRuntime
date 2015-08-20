@@ -44,14 +44,14 @@ SystemConsoleInterface &TrikHardwareAbstraction::systemConsole()
 	return *mSystemConsole.data();
 }
 
-EventFileInterface *TrikHardwareAbstraction::createEventFile() const
+EventFileInterface *TrikHardwareAbstraction::createEventFile(const QString &fileName) const
 {
-	return new TrikEventFile();
+	return new TrikEventFile(fileName);
 }
 
-FifoInterface *TrikHardwareAbstraction::createFifo() const
+FifoInterface *TrikHardwareAbstraction::createFifo(const QString &fileName) const
 {
-	return new TrikFifo();
+	return new TrikFifo(fileName);
 }
 
 InputDeviceFileInterface *TrikHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

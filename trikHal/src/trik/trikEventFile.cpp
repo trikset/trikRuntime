@@ -29,7 +29,8 @@
 
 using namespace trikHal::trik;
 
-TrikEventFile::TrikEventFile()
+TrikEventFile::TrikEventFile(const QString &fileName)
+	: mFileName(fileName)
 {
 }
 
@@ -37,10 +38,8 @@ TrikEventFile::~TrikEventFile()
 {
 }
 
-bool TrikEventFile::open(const QString &fileName)
+bool TrikEventFile::open()
 {
-	mFileName = fileName;
-
 	QLOG_INFO() << "Opening" << mFileName;
 
 	tryOpenEventFile();

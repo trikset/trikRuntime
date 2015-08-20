@@ -25,13 +25,16 @@ class FifoInterface : public QObject
 	Q_OBJECT
 
 public:
-	/// Opens given FIFO file and starts listening for events.
+	/// Opens FIFO file and starts listening for events.
 	/// @returns true, if opened successfully.
-	virtual bool open(const QString &fileName) = 0;
+	virtual bool open() = 0;
 
 	/// Closes FIFO file and stops listening for events.
 	/// @returns true, if closed successfully.
 	virtual bool close() = 0;
+
+	/// Returns file name of a FIFO file.
+	virtual QString fileName() = 0;
 
 signals:
 	/// Emitted when new data is read from FIFO.

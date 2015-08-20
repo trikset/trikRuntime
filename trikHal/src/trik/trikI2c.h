@@ -19,6 +19,7 @@
 namespace trikHal {
 namespace trik {
 
+/// Real implementation of I2C bus communicator.
 class TrikI2C : public I2CInterface
 {
 public:
@@ -26,14 +27,12 @@ public:
 	~TrikI2C() override;
 
 	void send(const QByteArray &data) override;
-
 	int read(const QByteArray &data) override;
-
 	bool connect(const QString &devicePath, int deviceId) override;
-
 	void disconnect() override;
 
 private:
+	/// Low-level descriptor of I2C device file.
 	int mDeviceFileDescriptor = -1;
 };
 

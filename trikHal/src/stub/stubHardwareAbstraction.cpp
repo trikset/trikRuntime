@@ -44,14 +44,14 @@ SystemConsoleInterface &StubHardwareAbstraction::systemConsole()
 	return *mSystemConsole.data();
 }
 
-EventFileInterface *StubHardwareAbstraction::createEventFile() const
+EventFileInterface *StubHardwareAbstraction::createEventFile(const QString &fileName) const
 {
-	return new StubEventFile();
+	return new StubEventFile(fileName);
 }
 
-FifoInterface *StubHardwareAbstraction::createFifo() const
+FifoInterface *StubHardwareAbstraction::createFifo(const QString &fileName) const
 {
-	return new StubFifo();
+	return new StubFifo(fileName);
 }
 
 InputDeviceFileInterface *StubHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

@@ -20,7 +20,7 @@ using namespace trikControl;
 
 VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile())
+	: mEventFile(hardwareAbstraction.createEventFile(eventFile))
 	, mState(state)
 {
 	mReading << 0 << 0 << 0;
@@ -31,7 +31,7 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
 			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
 
-	mEventFile->open(eventFile);
+	mEventFile->open();
 }
 
 void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
