@@ -14,11 +14,6 @@
 
 #include "src/fifo.h"
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <linux/input.h>
-
-#include <QtCore/QSocketNotifier>
 #include <QtCore/QEventLoop>
 
 #include <trikKernel/configurer.h>

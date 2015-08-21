@@ -25,14 +25,18 @@ HEADERS += \
 	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
 
+!win32 {
+	HEADERS += \
+		$$PWD/src/trik/trikHardwareAbstraction.h \
+		$$PWD/src/trik/trikI2c.h \
+		$$PWD/src/trik/trikSystemConsole.h \
+		$$PWD/src/trik/trikEventFile.h \
+		$$PWD/src/trik/trikInputDeviceFile.h \
+		$$PWD/src/trik/trikOutputDeviceFile.h \
+		$$PWD/src/trik/trikFifo.h \
+}
+
 HEADERS += \
-	$$PWD/src/trik/trikHardwareAbstraction.h \
-	$$PWD/src/trik/trikI2c.h \
-	$$PWD/src/trik/trikSystemConsole.h \
-	$$PWD/src/trik/trikEventFile.h \
-	$$PWD/src/trik/trikInputDeviceFile.h \
-	$$PWD/src/trik/trikOutputDeviceFile.h \
-	$$PWD/src/trik/trikFifo.h \
 	$$PWD/src/stub/stubHardwareAbstraction.h \
 	$$PWD/src/stub/stubI2c.h \
 	$$PWD/src/stub/stubSystemConsole.h \
@@ -41,14 +45,18 @@ HEADERS += \
 	$$PWD/src/stub/stubOutputDeviceFile.h \
 	$$PWD/src/stub/stubFifo.h \
 
+!win32 {
+	SOURCES += \
+		$$PWD/src/trik/trikHardwareAbstraction.cpp \
+		$$PWD/src/trik/trikI2c.cpp \
+		$$PWD/src/trik/trikSystemConsole.cpp \
+		$$PWD/src/trik/trikEventFile.cpp \
+		$$PWD/src/trik/trikInputDeviceFile.cpp \
+		$$PWD/src/trik/trikOutputDeviceFile.cpp \
+		$$PWD/src/trik/trikFifo.cpp \
+}
+
 SOURCES += \
-	$$PWD/src/trik/trikHardwareAbstraction.cpp \
-	$$PWD/src/trik/trikI2c.cpp \
-	$$PWD/src/trik/trikSystemConsole.cpp \
-	$$PWD/src/trik/trikEventFile.cpp \
-	$$PWD/src/trik/trikInputDeviceFile.cpp \
-	$$PWD/src/trik/trikOutputDeviceFile.cpp \
-	$$PWD/src/trik/trikFifo.cpp \
 	$$PWD/src/stub/stubHardwareAbstraction.cpp \
 	$$PWD/src/stub/stubI2c.cpp \
 	$$PWD/src/stub/stubSystemConsole.cpp \
