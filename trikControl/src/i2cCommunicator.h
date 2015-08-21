@@ -26,7 +26,7 @@ class Configurer;
 }
 
 namespace trikHal {
-class I2CInterface;
+class MspI2cInterface;
 }
 
 namespace trikControl {
@@ -38,7 +38,7 @@ class I2cCommunicator : public DeviceInterface
 public:
 	/// Constructor.
 	/// @param configurer - contains preparsed XML configuration.
-	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::I2CInterface &i2c);
+	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
 
 	~I2cCommunicator();
 
@@ -55,7 +55,7 @@ private:
 
 	QMutex mLock;
 	DeviceState mState;
-	trikHal::I2CInterface &mI2c;
+	trikHal::MspI2cInterface &mI2c;
 };
 
 }

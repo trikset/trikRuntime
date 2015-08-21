@@ -16,12 +16,12 @@
 
 #include <trikKernel/configurer.h>
 
-#include <trikHal/i2cInterface.h>
+#include <trikHal/mspI2cInterface.h>
 #include <QsLog.h>
 
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::I2CInterface &i2c)
+I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c)
 	: mI2c(i2c)
 {
 	const QString devicePath = configurer.attributeByDevice("i2c", "path");

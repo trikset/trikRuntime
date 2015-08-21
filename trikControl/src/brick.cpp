@@ -71,7 +71,7 @@ Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, 
 		}
 	}
 
-	mI2cCommunicator.reset(new I2cCommunicator(mConfigurer, mHardwareAbstraction->i2c()));
+	mI2cCommunicator.reset(new I2cCommunicator(mConfigurer, mHardwareAbstraction->mspI2c()));
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
 
 	for (const QString &port : mConfigurer.ports()) {
@@ -438,7 +438,7 @@ void Brick::createDevice(const QString &port)
 		/// @todo This will work only in case when there can be only one video sensor launched at a time.
 		connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 	} else if (deviceClass == "soundSensor") {
-		mSoundSensors.insert(port, new SoundSensor(port, mConfigurer));
+		mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
 
 		/// @todo This will work only in case when there can be only one sound sensor launched at a time.
 		connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));

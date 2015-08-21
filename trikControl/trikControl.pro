@@ -70,7 +70,7 @@ HEADERS += \
 	$$PWD/src/vectorSensorWorker.h \
 	$$PWD/src/usbMSP430Interface.h \
 	$$PWD/src/usbMSP430Read.h \
-	$$PWD/src/usbMSP430Defines.h
+	$$PWD/src/usbMSP430Defines.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
 	$$PWD/src/shapes/shape.h \

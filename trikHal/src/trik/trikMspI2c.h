@@ -12,30 +12,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "stubI2c.h"
+#pragma once
 
-#include <QsLog.h>
+#include "mspI2cInterface.h"
 
-using namespace trikHal::stub;
+namespace trikHal {
+namespace trik {
 
-void StubI2C::send(const QByteArray &data)
+/// Real implementation of I2C bus communicator.
+class TrikMspI2c : public MspI2cInterface
 {
-	QLOG_INFO() << "Sending thru I2C stub" << data;
+public:
+	TrikMspI2c() = default;
+	~TrikMspI2c() override;
+
+	void send(const QByteArray &data) override;
+	int read(const QByteArray &data) override;
+	bool connect(const QString &devicePath, int deviceId) override;
+	void disconnect() override;
+
+private:
+	/// Low-level descriptor of I2C device file.
+	int mDeviceFileDescriptor = -1;
+};
+
 }
-
-int StubI2C::read(const QByteArray &data)
-{
-	QLOG_INFO() << "Reading from I2C stub" << data;
-	return 0;
-}
-
-bool StubI2C::connect(const QString &devicePath, int deviceId)
-{
-	QLOG_INFO() << "Connecting to I2C stub, devicePath:" << devicePath << "deviceId" << deviceId;
-	return true;
-}
-
-void StubI2C::disconnect()
-{
-	QLOG_INFO() << "Disconnecting from I2C stub";
 }

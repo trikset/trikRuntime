@@ -24,6 +24,10 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 namespace trikControl {
 
 class SoundSensorWorker;
@@ -37,7 +41,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	SoundSensor(QString const &port, trikKernel::Configurer const &configurer);
+	SoundSensor(QString const &port, trikKernel::Configurer const &configurer
+			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~SoundSensor() override;
 

@@ -23,7 +23,8 @@
 
 namespace trikControl {
 
-/// Worker object that processes sound sensor output and updates stored reading. Meant to be executed in separate thread.
+/// Worker object that processes sound sensor output and updates stored reading.
+/// Meant to be executed in separate thread.
 class SoundSensorWorker : public AbstractVirtualSensorWorker
 {
 	Q_OBJECT
@@ -33,7 +34,8 @@ public:
 	/// @param script - file name of a scrit used to start or stop a sensor.
 	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, DeviceState &state);
+	SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, DeviceState &state
+			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~SoundSensorWorker() override;
 
@@ -42,14 +44,14 @@ public slots:
 	/// @param showOnDisplay - true if we want an image from a DSP to be drawn on robot display.
 	void init(bool showOnDisplay);
 
-	/// Not use
+	/// Not use.
+	/// @todo ???
 	void detect();
 
 	/// Sets volume coefficient
 	void volume(int volCoeff);
 
-	/// Returns angle and volume for both channels
-	/// Can be accessed directly from other thread.
+	/// Returns angle and volume for both channels. Can be accessed directly from other thread.
 	QVector<int> read();
 
 private:

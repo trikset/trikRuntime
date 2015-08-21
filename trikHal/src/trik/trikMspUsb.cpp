@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,22 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "trikMspUsb.h"
 
-#include "i2cInterface.h"
+#include <QsLog.h>
 
-namespace trikHal {
-namespace stub {
+using namespace trikHal::trik;
 
-/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
-class StubI2C : public I2CInterface
+TrikMspUsb::~TrikMspUsb()
 {
-public:
-	void send(const QByteArray &data) override;
-	int read(const QByteArray &data) override;
-	bool connect(const QString &devicePath, int deviceId) override;
-	void disconnect() override;
-};
-
 }
+
+void TrikMspUsb::send(const QByteArray &data)
+{
+}
+
+int TrikMspUsb::read(const QByteArray &data)
+{
+	return 0;
+}
+
+bool TrikMspUsb::connect()
+{
+	return true;
+}
+
+void TrikMspUsb::disconnect()
+{
 }
