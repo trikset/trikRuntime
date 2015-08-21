@@ -127,6 +127,8 @@ OTHER_FILES += \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
 	$$PWD/system-config-v6.xml \
+	$$PWD/model-config-usb.xml \
+	$$PWD/system-config-usb.xml \
 	$$PWD/trikControlExport.pri \
 
 TEMPLATE = lib
@@ -145,7 +147,9 @@ implementationIncludes(trikKernel trikHal)
 copyToDestdir( \
 	$$PWD/model-config.xml  \
 	$$PWD/model-config-v6.xml  \
+	$$PWD/model-config-usb.xml  \
 	$$PWD/system-config.xml  \
 	$$PWD/system-config-v6.xml  \
+	$$PWD/system-config-usb.xml  \
 	$$PWD/../media/ \
 )
