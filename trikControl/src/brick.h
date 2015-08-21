@@ -33,7 +33,7 @@ class ColorSensor;
 class DigitalSensor;
 class Display;
 class Encoder;
-class I2cCommunicator;
+class MspCommunicatorInterface;
 class Keys;
 class Led;
 class LineSensor;
@@ -133,7 +133,7 @@ private:
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
 
-	QScopedPointer<I2cCommunicator> mI2cCommunicator;
+	QScopedPointer<MspCommunicatorInterface> mMspCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;

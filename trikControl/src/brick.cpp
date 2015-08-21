@@ -37,7 +37,7 @@
 #include "servoMotor.h"
 #include "fifo.h"
 
-#include "i2cCommunicator.h"
+#include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
 
 #include <QsLog.h>
@@ -71,14 +71,14 @@ Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, 
 		}
 	}
 
-	mI2cCommunicator.reset(new I2cCommunicator(mConfigurer, mHardwareAbstraction->mspI2c()));
+	mMspCommunicator.reset(MspBusAutoDetector::createCommunicator(mConfigurer, *mHardwareAbstraction));
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
 
 	for (const QString &port : mConfigurer.ports()) {
 		createDevice(port);
 	}
 
-	mBattery.reset(new Battery(*mI2cCommunicator));
+	mBattery.reset(new Battery(*mMspCommunicator));
 
 	if (mConfigurer.isEnabled("accelerometer")) {
 		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction));
@@ -112,7 +112,7 @@ Brick::~Brick()
 	qDeleteAll(mFifos);
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
-	mI2cCommunicator.reset();
+	mMspCommunicator.reset();
 	mModuleLoader.reset();
 
 	mAccelerometer.reset();
@@ -410,9 +410,9 @@ void Brick::createDevice(const QString &port)
 	} else if (deviceClass == "pwmCapture") {
 		mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "powerMotor") {
-		mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mI2cCommunicator));
+		mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
 	} else if (deviceClass == "analogSensor") {
-		mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mI2cCommunicator));
+		mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
 	} else if (deviceClass == "digitalSensor") {
 		mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "rangeSensor") {
@@ -421,7 +421,7 @@ void Brick::createDevice(const QString &port)
 		/// @todo Range sensor shall be turned on only when needed.
 		mRangeSensors[port]->init();
 	} else if (deviceClass == "encoder") {
-		mEncoders.insert(port, new Encoder(port, mConfigurer, *mI2cCommunicator));
+		mEncoders.insert(port, new Encoder(port, mConfigurer, *mMspCommunicator));
 	} else if (deviceClass == "lineSensor") {
 		mLineSensors.insert(port, new LineSensor(port, mConfigurer, *mHardwareAbstraction));
 

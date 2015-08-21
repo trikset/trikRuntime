@@ -17,12 +17,13 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "i2cCommunicator.h"
+#include "mspCommunicatorInterface.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
+AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer
+		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");

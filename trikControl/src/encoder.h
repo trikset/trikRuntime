@@ -24,7 +24,7 @@ class Configurer;
 
 namespace trikControl {
 
-class I2cCommunicator;
+class MspCommunicatorInterface;
 
 /// Implementation of encoder for real robot.
 class Encoder : public EncoderInterface
@@ -36,7 +36,8 @@ public:
 	/// @param port - port on which this encoder is configured.
 	/// @param configurer - configurer object containing preparsed XML files with encoder parameters.
 	/// @param communicator - I2C communicator to use to query encoder.
-	Encoder(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
+	Encoder(const QString &port, const trikKernel::Configurer &configurer
+			, trikControl::MspCommunicatorInterface &communicator);
 
 	Status status() const override;
 
@@ -48,7 +49,7 @@ public slots:
 	void reset() override;
 
 private:
-	I2cCommunicator &mCommunicator;
+	MspCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber;
 	qreal mTicksInDegree;
 	DeviceState mState;

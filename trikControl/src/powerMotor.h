@@ -26,7 +26,7 @@ class Configurer;
 
 namespace trikControl {
 
-class I2cCommunicator;
+class MspCommunicatorInterface;
 
 /// TRIK power motor.
 class PowerMotor : public MotorInterface
@@ -38,7 +38,7 @@ public:
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	/// @param communicator - I2C communicator to use to query sensor.
-	PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
+	PowerMotor(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator);
 
 	~PowerMotor() override;
 
@@ -64,7 +64,7 @@ public slots:
 	void setPeriod(int period);
 
 private:
-	I2cCommunicator &mCommunicator;
+	MspCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;

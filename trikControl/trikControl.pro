@@ -50,7 +50,10 @@ HEADERS += \
 	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
-	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/mspCommunicatorInterface.h \
+	$$PWD/src/mspBusAutoDetector.h \
+	$$PWD/src/mspI2cCommunicator.h \
+	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/keys.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/led.h \
@@ -68,9 +71,6 @@ HEADERS += \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
-	$$PWD/src/usbMSP430Interface.h \
-	$$PWD/src/usbMSP430Read.h \
-	$$PWD/src/usbMSP430Defines.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
 	$$PWD/src/shapes/shape.h \
@@ -110,12 +110,12 @@ SOURCES += \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/fifo.cpp \
-	$$PWD/src/i2cCommunicator.cpp \
+	$$PWD/src/mspBusAutoDetector.cpp \
+	$$PWD/src/mspI2cCommunicator.cpp \
+	$$PWD/src/mspUsbCommunicator.cpp \
 	$$PWD/src/keysWorker.cpp \
 	$$PWD/src/rangeSensorWorker.cpp \
 	$$PWD/src/vectorSensorWorker.cpp \
-	$$PWD/src/usbMSP430Interface.cpp \
-	$$PWD/src/usbMSP430Read.cpp \
 	$$PWD/src/shapes/ellipse.cpp \
 	$$PWD/src/shapes/point.cpp \
 	$$PWD/src/shapes/line.cpp \

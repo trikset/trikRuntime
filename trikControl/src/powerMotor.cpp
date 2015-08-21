@@ -16,12 +16,13 @@
 
 #include <trikKernel/configurer.h>
 
-#include "i2cCommunicator.h"
+#include "mspI2cCommunicator.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
+PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer
+		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)

@@ -12,41 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikMspUsb.h"
+#pragma once
 
-#include "usbMsp/usbMSP430Defines.h"
-#include "usbMsp/usbMSP430Interface.h"
+#include "mspCommunicatorInterface.h"
 
-#include <QsLog.h>
-
-using namespace trikHal::trik;
-
-TrikMspUsb::~TrikMspUsb()
-{
+namespace trikHal {
+class HardwareAbstractionInterface;
 }
 
-void TrikMspUsb::send(const QByteArray &data)
-{
-	send_USBMSP(data);
+namespace trikKernel {
+class Configurer;
 }
 
-int TrikMspUsb::read(const QByteArray &data)
-{
-	return read_USBMSP(data);
-}
+namespace trikControl {
 
-bool TrikMspUsb::connect()
+class MspBusAutoDetector
 {
-	// Connect to USB device
-	if (connect_USBMSP() == DEVICE_ERROR) {
-		QLOG_ERROR() << "Failed to open USB device file " << USB_DEV_NAME;
-		return false;
-	}
+public:
+	/// Factory method that tries to determine which interface is to be used for MSP communication and creates
+	/// corresponding communicator instance. Transfers ownership to a caller.
+	/// @param configurer - contains preparsed XML configuration.
+	static MspCommunicatorInterface *createCommunicator(const trikKernel::Configurer &configurer
+			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+};
 
-	return true;
-}
-
-void TrikMspUsb::disconnect()
-{
-	disconnect_USBMSP();
 }

@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,48 +14,27 @@
 
 #pragma once
 
-#include <QtCore/QString>
 #include <QtCore/QByteArray>
-#include <QtCore/QMutex>
 
 #include "deviceInterface.h"
 #include "deviceState.h"
 
-namespace trikKernel {
-class Configurer;
-}
-
-namespace trikHal {
-class MspI2cInterface;
-}
-
 namespace trikControl {
 
-/// Provides direct interaction with I2C device.
-/// @todo: It shall work in separate thread.
-class I2cCommunicator : public DeviceInterface
+/// Abstract interface for communication with MSP, may be implemented by I2C or USB buses, depending on current MSP
+/// configuration.
+class MspCommunicatorInterface : public DeviceInterface
 {
 public:
-	/// Constructor.
-	/// @param configurer - contains preparsed XML configuration.
-	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
-
-	~I2cCommunicator();
+	virtual ~MspCommunicatorInterface() {}
 
 	/// Send data to current device, if it is connected.
-	void send(const QByteArray &data);
+	virtual void send(const QByteArray &data) = 0;
 
 	/// Reads data by given I2C command number and returns the result.
-	int read(const QByteArray &data);
+	virtual int read(const QByteArray &data) = 0;
 
-	Status status() const override;
-
-private:
-	void disconnect();
-
-	QMutex mLock;
-	DeviceState mState;
-	trikHal::MspI2cInterface &mI2c;
+	virtual Status status() const = 0;
 };
 
 }

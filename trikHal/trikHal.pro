@@ -36,6 +36,9 @@ HEADERS += \
 		$$PWD/src/trik/trikInputDeviceFile.h \
 		$$PWD/src/trik/trikOutputDeviceFile.h \
 		$$PWD/src/trik/trikFifo.h \
+		$$PWD/src/trik/usbMsp/usbMSP430Interface.h \
+		$$PWD/src/trik/usbMsp/usbMSP430Read.h \
+		$$PWD/src/trik/usbMsp/usbMSP430Defines.h \
 }
 
 HEADERS += \
@@ -58,6 +61,8 @@ HEADERS += \
 		$$PWD/src/trik/trikInputDeviceFile.cpp \
 		$$PWD/src/trik/trikOutputDeviceFile.cpp \
 		$$PWD/src/trik/trikFifo.cpp \
+		$$PWD/src/trik/usbMsp/usbMSP430Interface.cpp \
+		$$PWD/src/trik/usbMsp/usbMSP430Read.cpp \
 }
 
 SOURCES += \

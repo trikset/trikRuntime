@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/i2cCommunicator.h"
+#include "src/mspI2cCommunicator.h"
 
 #include <trikKernel/configurer.h>
 
@@ -21,7 +21,7 @@
 
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c)
+MspI2cCommunicator::MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c)
 	: mI2c(i2c)
 {
 	const QString devicePath = configurer.attributeByDevice("i2c", "path");
@@ -41,14 +41,14 @@ I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikH
 	}
 }
 
-I2cCommunicator::~I2cCommunicator()
+MspI2cCommunicator::~MspI2cCommunicator()
 {
 	if (mState.isReady()) {
 		disconnect();
 	}
 }
 
-void I2cCommunicator::send(const QByteArray &data)
+void MspI2cCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
@@ -59,7 +59,7 @@ void I2cCommunicator::send(const QByteArray &data)
 	mI2c.send(data);
 }
 
-int I2cCommunicator::read(const QByteArray &data)
+int MspI2cCommunicator::read(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
@@ -70,12 +70,12 @@ int I2cCommunicator::read(const QByteArray &data)
 	return mI2c.read(data);
 }
 
-DeviceInterface::Status I2cCommunicator::status() const
+DeviceInterface::Status MspI2cCommunicator::status() const
 {
 	return mState.status();
 }
 
-void I2cCommunicator::disconnect()
+void MspI2cCommunicator::disconnect()
 {
 	QMutexLocker lock(&mLock);
 	mI2c.disconnect();
