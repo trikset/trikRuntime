@@ -63,7 +63,536 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<A6>
 		<analogSensor />
 	</A6>
-
+	<!-- Analog sensor ports (I2C NXT temp sensors). -->
+	<T1>
+		<analogSensor />
+	</T1>
+	<T2>
+		<analogSensor />
+	</T2>
+	<T3>
+		<analogSensor />
+	</T3>
+	<!-- Analog sensor ports (I2C ADC MCP3424). -->
+	<W1>
+		<analogSensor />
+	</W1>
+	<W2>
+		<analogSensor />
+	</W2>
+	<W3>
+		<analogSensor />
+	</W3>
+	<W4>
+		<analogSensor />
+	</W4>
+	<!-- DHT11 sensors. -->
+	<TEMP_DHT11_1>
+		<analogSensor />
+	</TEMP_DHT11_1>
+	<TEMP_DHT11_2>
+		<analogSensor />
+	</TEMP_DHT11_2>
+	<TEMP_DHT11_3>
+		<analogSensor />
+	</TEMP_DHT11_3>
+	<TEMP_DHT11_4>
+		<analogSensor />
+	</TEMP_DHT11_4>
+	<TEMP_DHT11_5>
+		<analogSensor />
+	</TEMP_DHT11_5>
+	<TEMP_DHT11_6>
+		<analogSensor />
+	</TEMP_DHT11_6>
+	<TEMP_DHT11_7>
+		<analogSensor />
+	</TEMP_DHT11_7>
+	<TEMP_DHT11_8>
+		<analogSensor />
+	</TEMP_DHT11_8>
+	<TEMP_DHT11_9>
+		<analogSensor />
+	</TEMP_DHT11_9>
+	<TEMP_DHT11_10>
+		<analogSensor />
+	</TEMP_DHT11_10>
+	<TEMP_DHT11_11>
+		<analogSensor />
+	</TEMP_DHT11_11>
+	<TEMP_DHT11_12>
+		<analogSensor />
+	</TEMP_DHT11_12>
+	<TEMP_DHT11_13>
+		<analogSensor />
+	</TEMP_DHT11_13>
+	<TEMP_DHT11_14>
+		<analogSensor />
+	</TEMP_DHT11_14>
+	<HUM_DHT11_1>
+		<analogSensor />
+	</HUM_DHT11_1>
+	<HUM_DHT11_2>
+		<analogSensor />
+	</HUM_DHT11_2>
+	<HUM_DHT11_3>
+		<analogSensor />
+	</HUM_DHT11_3>
+	<HUM_DHT11_4>
+		<analogSensor />
+	</HUM_DHT11_4>
+	<HUM_DHT11_5>
+		<analogSensor />
+	</HUM_DHT11_5>
+	<HUM_DHT11_6>
+		<analogSensor />
+	</HUM_DHT11_6>
+	<HUM_DHT11_7>
+		<analogSensor />
+	</HUM_DHT11_7>
+	<HUM_DHT11_8>
+		<analogSensor />
+	</HUM_DHT11_8>
+	<HUM_DHT11_9>
+		<analogSensor />
+	</HUM_DHT11_9>
+	<HUM_DHT11_10>
+		<analogSensor />
+	</HUM_DHT11_10>
+	<HUM_DHT11_11>
+		<analogSensor />
+	</HUM_DHT11_11>
+	<HUM_DHT11_12>
+		<analogSensor />
+	</HUM_DHT11_12>
+	<HUM_DHT11_13>
+		<analogSensor />
+	</HUM_DHT11_13>
+	<HUM_DHT11_14>
+		<analogSensor />
+	</HUM_DHT11_14>
+	<!-- DHT22 sensors. -->
+	<TEMP_DHT22_1>
+		<analogSensor />
+	</TEMP_DHT22_1>
+	<TEMP_DHT22_2>
+		<analogSensor />
+	</TEMP_DHT22_2>
+	<TEMP_DHT22_3>
+		<analogSensor />
+	</TEMP_DHT22_3>
+	<TEMP_DHT22_4>
+		<analogSensor />
+	</TEMP_DHT22_4>
+	<TEMP_DHT22_5>
+		<analogSensor />
+	</TEMP_DHT22_5>
+	<TEMP_DHT22_6>
+		<analogSensor />
+	</TEMP_DHT22_6>
+	<TEMP_DHT22_7>
+		<analogSensor />
+	</TEMP_DHT22_7>
+	<TEMP_DHT22_8>
+		<analogSensor />
+	</TEMP_DHT22_8>
+	<TEMP_DHT22_9>
+		<analogSensor />
+	</TEMP_DHT22_9>
+	<TEMP_DHT22_10>
+		<analogSensor />
+	</TEMP_DHT22_10>
+	<TEMP_DHT22_11>
+		<analogSensor />
+	</TEMP_DHT22_11>
+	<TEMP_DHT22_12>
+		<analogSensor />
+	</TEMP_DHT22_12>
+	<TEMP_DHT22_13>
+		<analogSensor />
+	</TEMP_DHT22_13>
+	<TEMP_DHT22_14>
+		<analogSensor />
+	</TEMP_DHT22_14>
+	<HUM_DHT22_1>
+		<analogSensor />
+	</HUM_DHT22_1>
+	<HUM_DHT22_2>
+		<analogSensor />
+	</HUM_DHT22_2>
+	<HUM_DHT22_3>
+		<analogSensor />
+	</HUM_DHT22_3>
+	<HUM_DHT22_4>
+		<analogSensor />
+	</HUM_DHT22_4>
+	<HUM_DHT22_5>
+		<analogSensor />
+	</HUM_DHT22_5>
+	<HUM_DHT22_6>
+		<analogSensor />
+	</HUM_DHT22_6>
+	<HUM_DHT22_7>
+		<analogSensor />
+	</HUM_DHT22_7>
+	<HUM_DHT22_8>
+		<analogSensor />
+	</HUM_DHT22_8>
+	<HUM_DHT22_9>
+		<analogSensor />
+	</HUM_DHT22_9>
+	<HUM_DHT22_10>
+		<analogSensor />
+	</HUM_DHT22_10>
+	<HUM_DHT22_11>
+		<analogSensor />
+	</HUM_DHT22_11>
+	<HUM_DHT22_12>
+		<analogSensor />
+	</HUM_DHT22_12>
+	<HUM_DHT22_13>
+		<analogSensor />
+	</HUM_DHT22_13>
+	<HUM_DHT22_14>
+		<analogSensor />
+	</HUM_DHT22_14>
+	<!-- Analog sensor ports (I2C -> UART -> RS485 distance sensor URM04). -->
+	<U1_0x11>
+		<analogSensor />
+	</U1_0x11>
+	<U1_0x12>
+		<analogSensor />
+	</U1_0x12>
+	<U1_0x13>
+		<analogSensor />
+	</U1_0x13>
+	<U1_0x14>
+		<analogSensor />
+	</U1_0x14>
+	<U1_0x15>
+		<analogSensor />
+	</U1_0x15>
+	<U1_0x16>
+		<analogSensor />
+	</U1_0x16>
+	<U1_0x17>
+		<analogSensor />
+	</U1_0x17>
+	<U1_0x18>
+		<analogSensor />
+	</U1_0x18>
+	<U1_0x19>
+		<analogSensor />
+	</U1_0x19>
+	<U1_0x1A>
+		<analogSensor />
+	</U1_0x1A>
+	<U1_0x1B>
+		<analogSensor />
+	</U1_0x1B>
+	<U1_0x1C>
+		<analogSensor />
+	</U1_0x1C>
+	<U1_0x1D>
+		<analogSensor />
+	</U1_0x1D>
+	<U1_0x1E>
+		<analogSensor />
+	</U1_0x1E>
+	<U1_0x1F>
+		<analogSensor />
+	</U1_0x1F>
+	<U1_0x20>
+		<analogSensor />
+	</U1_0x20>
+	<U2_0x11>
+		<analogSensor />
+	</U2_0x11>
+	<U2_0x12>
+		<analogSensor />
+	</U2_0x12>
+	<U2_0x13>
+		<analogSensor />
+	</U2_0x13>
+	<U2_0x14>
+		<analogSensor />
+	</U2_0x14>
+	<U2_0x15>
+		<analogSensor />
+	</U2_0x15>
+	<U2_0x16>
+		<analogSensor />
+	</U2_0x16>
+	<U2_0x17>
+		<analogSensor />
+	</U2_0x17>
+	<U2_0x18>
+		<analogSensor />
+	</U2_0x18>
+	<U2_0x19>
+		<analogSensor />
+	</U2_0x19>
+	<U2_0x1A>
+		<analogSensor />
+	</U2_0x1A>
+	<U2_0x1B>
+		<analogSensor />
+	</U2_0x1B>
+	<U2_0x1C>
+		<analogSensor />
+	</U2_0x1C>
+	<U2_0x1D>
+		<analogSensor />
+	</U2_0x1D>
+	<U2_0x1E>
+		<analogSensor />
+	</U2_0x1E>
+	<U2_0x1F>
+		<analogSensor />
+	</U2_0x1F>
+	<U2_0x20>
+		<analogSensor />
+	</U2_0x20>
+	<U3_0x11>
+		<analogSensor />
+	</U3_0x11>
+	<U3_0x12>
+		<analogSensor />
+	</U3_0x12>
+	<U3_0x13>
+		<analogSensor />
+	</U3_0x13>
+	<U3_0x14>
+		<analogSensor />
+	</U3_0x14>
+	<U3_0x15>
+		<analogSensor />
+	</U3_0x15>
+	<U3_0x16>
+		<analogSensor />
+	</U3_0x16>
+	<U3_0x17>
+		<analogSensor />
+	</U3_0x17>
+	<U3_0x18>
+		<analogSensor />
+	</U3_0x18>
+	<U3_0x19>
+		<analogSensor />
+	</U3_0x19>
+	<U3_0x1A>
+		<analogSensor />
+	</U3_0x1A>
+	<U3_0x1B>
+		<analogSensor />
+	</U3_0x1B>
+	<U3_0x1C>
+		<analogSensor />
+	</U3_0x1C>
+	<U3_0x1D>
+		<analogSensor />
+	</U3_0x1D>
+	<U3_0x1E>
+		<analogSensor />
+	</U3_0x1E>
+	<U3_0x1F>
+		<analogSensor />
+	</U3_0x1F>
+	<U3_0x20>
+		<analogSensor />
+	</U3_0x20>
+	<U4_0x11>
+		<analogSensor />
+	</U4_0x11>
+	<U4_0x12>
+		<analogSensor />
+	</U4_0x12>
+	<U4_0x13>
+		<analogSensor />
+	</U4_0x13>
+	<U4_0x14>
+		<analogSensor />
+	</U4_0x14>
+	<U4_0x15>
+		<analogSensor />
+	</U4_0x15>
+	<U4_0x16>
+		<analogSensor />
+	</U4_0x16>
+	<U4_0x17>
+		<analogSensor />
+	</U4_0x17>
+	<U4_0x18>
+		<analogSensor />
+	</U4_0x18>
+	<U4_0x19>
+		<analogSensor />
+	</U4_0x19>
+	<U4_0x1A>
+		<analogSensor />
+	</U4_0x1A>
+	<U4_0x1B>
+		<analogSensor />
+	</U4_0x1B>
+	<U4_0x1C>
+		<analogSensor />
+	</U4_0x1C>
+	<U4_0x1D>
+		<analogSensor />
+	</U4_0x1D>
+	<U4_0x1E>
+		<analogSensor />
+	</U4_0x1E>
+	<U4_0x1F>
+		<analogSensor />
+	</U4_0x1F>
+	<U4_0x20>
+		<analogSensor />
+	</U4_0x20>
+	<U5_0x11>
+		<analogSensor />
+	</U5_0x11>
+	<U5_0x12>
+		<analogSensor />
+	</U5_0x12>
+	<U5_0x13>
+		<analogSensor />
+	</U5_0x13>
+	<U5_0x14>
+		<analogSensor />
+	</U5_0x14>
+	<U5_0x15>
+		<analogSensor />
+	</U5_0x15>
+	<U5_0x16>
+		<analogSensor />
+	</U5_0x16>
+	<U5_0x17>
+		<analogSensor />
+	</U5_0x17>
+	<U5_0x18>
+		<analogSensor />
+	</U5_0x18>
+	<U5_0x19>
+		<analogSensor />
+	</U5_0x19>
+	<U5_0x1A>
+		<analogSensor />
+	</U5_0x1A>
+	<U5_0x1B>
+		<analogSensor />
+	</U5_0x1B>
+	<U5_0x1C>
+		<analogSensor />
+	</U5_0x1C>
+	<U5_0x1D>
+		<analogSensor />
+	</U5_0x1D>
+	<U5_0x1E>
+		<analogSensor />
+	</U5_0x1E>
+	<U5_0x1F>
+		<analogSensor />
+	</U5_0x1F>
+	<U5_0x20>
+		<analogSensor />
+	</U5_0x20>
+	<U6_0x11>
+		<analogSensor />
+	</U6_0x11>
+	<U6_0x12>
+		<analogSensor />
+	</U6_0x12>
+	<U6_0x13>
+		<analogSensor />
+	</U6_0x13>
+	<U6_0x14>
+		<analogSensor />
+	</U6_0x14>
+	<U6_0x15>
+		<analogSensor />
+	</U6_0x15>
+	<U6_0x16>
+		<analogSensor />
+	</U6_0x16>
+	<U6_0x17>
+		<analogSensor />
+	</U6_0x17>
+	<U6_0x18>
+		<analogSensor />
+	</U6_0x18>
+	<U6_0x19>
+		<analogSensor />
+	</U6_0x19>
+	<U6_0x1A>
+		<analogSensor />
+	</U6_0x1A>
+	<U6_0x1B>
+		<analogSensor />
+	</U6_0x1B>
+	<U6_0x1C>
+		<analogSensor />
+	</U6_0x1C>
+	<U6_0x1D>
+		<analogSensor />
+	</U6_0x1D>
+	<U6_0x1E>
+		<analogSensor />
+	</U6_0x1E>
+	<U6_0x1F>
+		<analogSensor />
+	</U6_0x1F>
+	<U6_0x20>
+		<analogSensor />
+	</U6_0x20>
+	<U7_0x11>
+		<analogSensor />
+	</U7_0x11>
+	<U7_0x12>
+		<analogSensor />
+	</U7_0x12>
+	<U7_0x13>
+		<analogSensor />
+	</U7_0x13>
+	<U7_0x14>
+		<analogSensor />
+	</U7_0x14>
+	<U7_0x15>
+		<analogSensor />
+	</U7_0x15>
+	<U7_0x16>
+		<analogSensor />
+	</U7_0x16>
+	<U7_0x17>
+		<analogSensor />
+	</U7_0x17>
+	<U7_0x18>
+		<analogSensor />
+	</U7_0x18>
+	<U7_0x19>
+		<analogSensor />
+	</U7_0x19>
+	<U7_0x1A>
+		<analogSensor />
+	</U7_0x1A>
+	<U7_0x1B>
+		<analogSensor />
+	</U7_0x1B>
+	<U7_0x1C>
+		<analogSensor />
+	</U7_0x1C>
+	<U7_0x1D>
+		<analogSensor />
+	</U7_0x1D>
+	<U7_0x1E>
+		<analogSensor />
+	</U7_0x1E>
+	<U7_0x1F>
+		<analogSensor />
+	</U7_0x1F>
+	<U7_0x20>
+		<analogSensor />
+	</U7_0x20>
 	<!-- Digital sensor ports. -->
 	<D1>
 		<rangeSensor />
@@ -78,18 +607,22 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	-->
 
 	<!-- Encoder ports. -->
-	<E1>
+
+	<B1>
 		<encoder95 />
-	</E1>
-	<E2>
+	</B1>
+
+	<B2>
 		<encoder95 />
-	</E2>
-	<E3>
+	</B2>
+
+	<B3>
 		<encoder95 />
-	</E3>
-	<E4>
+	</B3>
+
+	<B4>
 		<encoder95 />
-	</E4>
+	</B4>
 
 	<!-- Power motor ports. -->
 	<M1>
@@ -105,6 +638,50 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<powerMotor />
 	</M4>
 
+	<!-- Servo motor ports (software PWMs on new MSP USB firmware). -->
+	<SS1>
+		<powerMotor />
+	</SS1>
+	<SS2>
+		<powerMotor />
+	</SS2>
+	<SS3>
+		<powerMotor />
+	</SS3>
+	<SS4>
+		<powerMotor />
+	</SS4>
+	<SS5>
+		<powerMotor />
+	</SS5>
+	<SS6>
+		<powerMotor />
+	</SS6>
+	<SS7>
+		<powerMotor />
+	</SS7>
+	<SS8>
+		<powerMotor />
+	</SS8>
+	<SS9>
+		<powerMotor />
+	</SS9>
+	<SS10>
+		<powerMotor />
+	</SS10>
+	<SS11>
+		<powerMotor />
+	</SS11>
+	<SS12>
+		<powerMotor />
+	</SS12>
+	<SS13>
+		<powerMotor />
+	</SS13>
+	<SS14>
+		<powerMotor />
+	</SS14>
+
 	<!-- Video sensor ports. -->
 	<video1>
 		<lineSensor />
@@ -113,6 +690,12 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<video2>
 		<colorSensor3x3 />
 	</video2>
+
+	<!-- Sound sensor ports. -->
+	<default>
+		<soundSensor />
+	</default>
+
 
 	<!-- On-board sensors. -->
 	<!-- If model is not using those, they can be turned off to save system resources, by deleting them or

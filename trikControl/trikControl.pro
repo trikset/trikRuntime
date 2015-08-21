@@ -33,6 +33,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
+	$$PWD/include/trikControl/soundSensorInterface.h \
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -58,6 +59,8 @@ HEADERS += \
 	$$PWD/src/moduleLoader.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
+	$$PWD/src/soundSensor.h \
+	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
@@ -65,6 +68,9 @@ HEADERS += \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
+	$$PWD/src/usbMSP430Interface.h \
+	$$PWD/src/usbMSP430Read.h \
+	$$PWD/src/usbMSP430Defines.h
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
 	$$PWD/src/shapes/shape.h \
@@ -95,6 +101,8 @@ SOURCES += \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
+	$$PWD/src/soundSensor.cpp \
+	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
@@ -106,6 +114,8 @@ SOURCES += \
 	$$PWD/src/keysWorker.cpp \
 	$$PWD/src/rangeSensorWorker.cpp \
 	$$PWD/src/vectorSensorWorker.cpp \
+	$$PWD/src/usbMSP430Interface.cpp \
+	$$PWD/src/usbMSP430Read.cpp \
 	$$PWD/src/shapes/ellipse.cpp \
 	$$PWD/src/shapes/point.cpp \
 	$$PWD/src/shapes/line.cpp \

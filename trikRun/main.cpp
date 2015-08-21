@@ -130,5 +130,5 @@ int main(int argc, char *argv[])
 		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
 	}
 
-	return app.exec();
+    return app.exec();
 }
