@@ -1,0 +1,41 @@
+/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#include "stubI2c.h"
+
+#include <QsLog.h>
+
+using namespace trikHal::stub;
+
+void StubI2C::send(const QByteArray &data)
+{
+	QLOG_INFO() << "Sending thru I2C stub" << data;
+}
+
+int StubI2C::read(const QByteArray &data)
+{
+	QLOG_INFO() << "Reading from I2C stub" << data;
+	return 0;
+}
+
+bool StubI2C::connect(const QString &devicePath, int deviceId)
+{
+	QLOG_INFO() << "Connecting to I2C stub, devicePath:" << devicePath << "deviceId" << deviceId;
+	return true;
+}
+
+void StubI2C::disconnect()
+{
+	QLOG_INFO() << "Disconnecting from I2C stub";
+}

@@ -21,11 +21,9 @@
 	#include <QtWidgets/QApplication>
 #endif
 
-#include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QDir>
 #include <QtCore/QDateTime>
-#include <QtXml/QDomDocument>
 
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>

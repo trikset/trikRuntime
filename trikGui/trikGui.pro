@@ -59,6 +59,7 @@ SOURCES += \
 	$$PWD/fileManagerWidget.cpp \
 	$$PWD/informationWidget.cpp \
 	$$PWD/languageSelectionWidget.cpp \
+	$$PWD/lazyMainWidgetWrapper.cpp \
 	$$PWD/main.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
@@ -95,4 +96,6 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
+transitiveIncludes(trikNetwork)
+links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)

@@ -24,6 +24,10 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 namespace trikControl {
 
 class VectorSensorWorker;
@@ -37,7 +41,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer);
+	VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~VectorSensor() override;
 

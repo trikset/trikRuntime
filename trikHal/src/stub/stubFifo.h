@@ -1,4 +1,4 @@
-/* Copyright 2015 CyberTech Labs Ltd.
+/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,44 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/rangeSensorWorker.h"
+#pragma once
 
-#include <QtCore/QEventLoop>
+#include "fifoInterface.h"
 
-using namespace trikControl;
+namespace trikHal {
+namespace stub {
 
-RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state)
-	: mEventFile(eventFile)
-	, mState(state)
+/// Empty implementation of Linux FIFO. Does not emit any events, only logs operations.
+class StubFifo : public FifoInterface
 {
+	Q_OBJECT
+
+public:
+	/// Constructor.
+	/// @param fileName - FIFO file name.
+	StubFifo(const QString &fileName);
+
+	bool open() override;
+	bool close() override;
+	QString fileName() override;
+
+public:
+	const QString mFileName;
+};
+
 }
-
-RangeSensorWorker::~RangeSensorWorker()
-{
-}
-
-void RangeSensorWorker::stop()
-{
-}
-
-void RangeSensorWorker::init()
-{
-}
-
-void RangeSensorWorker::readFile()
-{
-}
-
-void RangeSensorWorker::tryOpenEventFile()
-{
-}
-
-int RangeSensorWorker::read()
-{
-	return 0;
-}
-
-int RangeSensorWorker::readRawData()
-{
-	return 0;
 }

@@ -16,22 +16,23 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
 	qslog \
-	trikCommunicator \
-	trikControl \
-	trikGui \
 	trikKernel \
-	trikNetwork \
-	trikRun \
-	trikScriptRunner \
-	trikServer \
-	trikTelemetry \
 	trikWiFi \
+	trikNetwork \
+	trikHal \
+	trikControl \
+	trikTelemetry \
+	trikCommunicator \
+	trikScriptRunner \
+	trikGui \
+	trikRun \
+	trikServer \
 	translations \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
 trikCommunicator.depends = trikScriptRunner trikNetwork qslog
-trikControl.depends = trikKernel qslog
+trikControl.depends = trikKernel trikHal qslog
 trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
 trikKernel.depends = qslog
 trikNetwork.depends = trikKernel qslog
@@ -40,3 +41,4 @@ trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog
 trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog
+trikHal.depends = qslog

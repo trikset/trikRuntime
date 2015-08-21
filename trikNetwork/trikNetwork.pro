@@ -53,4 +53,4 @@ QT += network
 
 DEFINES += TRIKNETWORK_LIBRARY
 
-uses(trikKernel)
+links(trikKernel)

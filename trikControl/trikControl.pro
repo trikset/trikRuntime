@@ -100,12 +100,12 @@ SOURCES += \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/vectorSensor.cpp \
-	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/fifo.cpp \
-	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
-	$$PWD/src/$$PLATFORM/keysWorker.cpp \
-	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
+	$$PWD/src/abstractVirtualSensorWorker.cpp \
+	$$PWD/src/fifo.cpp \
+	$$PWD/src/i2cCommunicator.cpp \
+	$$PWD/src/keysWorker.cpp \
+	$$PWD/src/rangeSensorWorker.cpp \
+	$$PWD/src/vectorSensorWorker.cpp \
 	$$PWD/src/shapes/ellipse.cpp \
 	$$PWD/src/shapes/point.cpp \
 	$$PWD/src/shapes/line.cpp \
@@ -117,6 +117,7 @@ OTHER_FILES += \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
 	$$PWD/system-config-v6.xml \
+	$$PWD/trikControlExport.pri \
 
 TEMPLATE = lib
 
@@ -128,7 +129,8 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel)
+links(trikKernel trikHal)
+implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
 	$$PWD/model-config.xml  \

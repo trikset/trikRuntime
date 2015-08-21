@@ -28,4 +28,6 @@ QT += network
 
 DEFINES += TRIKTELEMETRY_LIBRARY
 
-uses(trikControl trikNetwork trikKernel)
+interfaceIncludes(trikNetwork)
+implementationIncludes(trikControl)
+links(trikControl trikNetwork trikKernel)

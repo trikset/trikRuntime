@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,23 +12,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/vectorSensorWorker.h"
+#pragma once
 
-#include <QtCore/QDebug>
+#include "i2cInterface.h"
 
-using namespace trikControl;
+namespace trikHal {
+namespace trik {
 
-VectorSensorWorker::VectorSensorWorker(const QString &controlFile, DeviceState &state)
-	: mState(state)
+/// Real implementation of I2C bus communicator.
+class TrikI2C : public I2CInterface
 {
-	Q_UNUSED(controlFile)
+public:
+	TrikI2C() = default;
+	~TrikI2C() override;
+
+	void send(const QByteArray &data) override;
+	int read(const QByteArray &data) override;
+	bool connect(const QString &devicePath, int deviceId) override;
+	void disconnect() override;
+
+private:
+	/// Low-level descriptor of I2C device file.
+	int mDeviceFileDescriptor = -1;
+};
+
 }
-
-void VectorSensorWorker::readFile()
-{
-}
-
-QVector<int> VectorSensorWorker::read()
-{
-	return {};
 }

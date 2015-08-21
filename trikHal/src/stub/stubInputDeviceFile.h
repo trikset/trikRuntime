@@ -12,46 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/fifo.h"
+#pragma once
 
-#include <QtCore/QSocketNotifier>
-#include <QtCore/QEventLoop>
+#include <QtCore/QString>
+#include <QtCore/QFile>
 
-#include <trikKernel/configurer.h>
+#include "inputDeviceFileInterface.h"
 
+namespace trikHal {
+namespace stub {
 
-#include "src/configurerHelper.h"
-
-using namespace trikControl;
-
-Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer)
-	: mFifoFileDescriptor(-1)
+/// Empty implementation of input device file. Only logs operations, returns empty stream.
+class StubInputDeviceFile : public InputDeviceFileInterface
 {
-	Q_UNUSED(virtualPort)
-	Q_UNUSED(configurer)
+public:
+	/// Constructor.
+	/// @param fileName - file name (with path, relative or absolute) of a device file.
+	StubInputDeviceFile(const QString &fileName);
 
-	mState.fail();
+	bool open() override;
+	void close() override;
+	QTextStream &stream() override;
+	void reset() override;
+
+private:
+	QFile mFile;
+	QTextStream mStream;
+};
+
 }
-
-Fifo::~Fifo()
-{
-}
-
-DeviceInterface::Status Fifo::status() const
-{
-	return mState.status();
-}
-
-QString Fifo::read()
-{
-	return "";
-}
-
-bool Fifo::hasData() const
-{
-	return false;
-}
-
-void Fifo::readFile()
-{
 }

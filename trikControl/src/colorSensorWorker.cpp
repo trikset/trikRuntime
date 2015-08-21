@@ -21,8 +21,8 @@
 using namespace trikControl;
 
 ColorSensorWorker::ColorSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-		, int m, int n, DeviceState &state)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
+		, int m, int n, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
 {
 	if (m <= 0) {
 		state.fail();

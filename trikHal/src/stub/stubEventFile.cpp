@@ -1,4 +1,4 @@
-/* Copyright 2014 CyberTech Labs Ltd.
+/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,29 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/keysWorker.h"
+#include "stubEventFile.h"
 
-#include <QtCore/QDebug>
+#include <QsLog.h>
 
-using namespace trikControl;
+using namespace trikHal::stub;
 
-KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state)
-	: mState(state)
-{
-	Q_UNUSED(keysPath)
-}
-
-void KeysWorker::reset()
+StubEventFile::StubEventFile(const QString &fileName)
+	: mFileName(fileName)
 {
 }
 
-bool KeysWorker::wasPressed(int code)
+bool StubEventFile::open()
 {
-	Q_UNUSED(code)
-
-	return false;
+	QLOG_INFO() << "Opening stub:" << mFileName;
+	return true;
 }
 
-void KeysWorker::readKeysEvent()
+bool StubEventFile::close()
 {
+	QLOG_INFO() << "Closing stub:" << mFileName;
+	return true;
 }

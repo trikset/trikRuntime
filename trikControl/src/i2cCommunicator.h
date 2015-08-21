@@ -25,6 +25,10 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class I2CInterface;
+}
+
 namespace trikControl {
 
 /// Provides direct interaction with I2C device.
@@ -34,7 +38,7 @@ class I2cCommunicator : public DeviceInterface
 public:
 	/// Constructor.
 	/// @param configurer - contains preparsed XML configuration.
-	I2cCommunicator(const trikKernel::Configurer &configurer);
+	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::I2CInterface &i2c);
 
 	~I2cCommunicator();
 
@@ -47,17 +51,11 @@ public:
 	Status status() const override;
 
 private:
-	/// Establish connection with current device.
-	void connect();
-
-	/// Disconnect from a device.
 	void disconnect();
 
-	const QString mDevicePath;
-	int mDeviceId = 0;
-	int mDeviceFileDescriptor;
 	QMutex mLock;
 	DeviceState mState;
+	trikHal::I2CInterface &mI2c;
 };
 
 }

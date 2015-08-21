@@ -27,10 +27,11 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/data/file-test.js \
 
-uses(trikKernel trikControl trikScriptRunner trikNetwork)
+implementationIncludes(trikKernel trikControl trikScriptRunner)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal)
 
 copyToDestdir($$PWD/data/, now)
 
 DISTFILES += \
-    data/sync-system-test.js \
-    data/async-system-test.js
+	data/sync-system-test.js \
+	data/async-system-test.js

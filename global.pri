@@ -112,15 +112,31 @@ defineTest(copyToDestdir) {
 	export(QMAKE_POST_LINK)
 }
 
-defineTest(uses) {
+defineTest(interfaceIncludes) {
+	PROJECTS = $$1
+
+	for(PROJECT, PROJECTS) {
+		INCLUDEPATH += $$GLOBAL_PWD/$$PROJECT/include
+	}
+
+	export(INCLUDEPATH)
+}
+
+defineTest(implementationIncludes) {
+	interfaceIncludes($$1)
+}
+
+defineTest(transitiveIncludes) {
+	interfaceIncludes($$1)
+}
+
+defineTest(links) {
 	LIBS += -L$$DESTDIR
 	PROJECTS = $$1
 
 	for(PROJECT, PROJECTS) {
 		LIBS += -l$$PROJECT$$CONFIGURATION_SUFFIX
-		INCLUDEPATH += $$GLOBAL_PWD/$$PROJECT/include
 	}
 
 	export(LIBS)
-	export(INCLUDEPATH)
 }

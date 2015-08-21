@@ -15,16 +15,18 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QFile>
 #include <QtCore/QScopedPointer>
 
 #include "fifoInterface.h"
 #include "deviceState.h"
 
-class QSocketNotifier;
-
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class FifoInterface;
 }
 
 namespace trikControl {
@@ -38,7 +40,8 @@ public:
 	/// Constructor.
 	/// @param virtualPort - port in system-config.xml on which this FIFO file is configured.
 	/// @param configurer - configurer object containing preparsed XML files with parameters.
-	Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer);
+	Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Fifo() override;
 
@@ -52,20 +55,14 @@ public slots:
 	bool hasData() const override;
 
 private slots:
-	void readFile();
+	void onNewData(const QString &data);
+	void onReadError();
 
 private:
 	/// State of a FIFO file as a device.
 	DeviceState mState;
 
-	/// FIFO file descriptor.
-	int mFifoFileDescriptor;
-
-	/// Notifier for FIFO file that emits a signal when something is changed in it.
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
-
-	/// Buffer with current line being read from FIFO.
-	QString mBuffer;
+	QScopedPointer<trikHal::FifoInterface> mFifo;
 
 	/// Last line that was read from FIFO.
 	QString mCurrent;

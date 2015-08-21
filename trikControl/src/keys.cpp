@@ -28,9 +28,9 @@
 
 using namespace trikControl;
 
-Keys::Keys(const trikKernel::Configurer &configurer)
+Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
-	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState));
+	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
 		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SIGNAL(buttonPressed(int, int)));
 		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));

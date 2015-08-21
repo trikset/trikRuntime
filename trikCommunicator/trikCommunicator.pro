@@ -28,4 +28,7 @@ QT += network
 
 DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
-uses(trikScriptRunner trikControl trikKernel trikNetwork)
+interfaceIncludes(trikNetwork)
+implementationIncludes(trikKernel trikScriptRunner)
+
+links(trikScriptRunner trikControl trikKernel trikNetwork)
