@@ -45,19 +45,14 @@ public:
 	Status status() const override;
 
 public slots:
-	/// Sets current motor power to specified value, 0 to stop motor.
-	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
-	void setPower(int power);
+	void setPower(int power, bool constrain = true) override;
 
-	/// Returns currently set power of a motor.
-	int power() const;
+	int power() const override;
+
+	void powerOff() override;
 
 	/// Returns currently set period of a motor.
 	int period() const;
-
-	/// Turns off motor. This is not the same as setPower(0), because setPower will
-	/// leave motor on in a break mode, and this method will turn motor off.
-	void powerOff();
 
 	/// Sets current motor period.
 	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
@@ -65,7 +60,7 @@ public slots:
 
 private:
 	MspCommunicatorInterface &mCommunicator;
-	int mI2cCommandNumber;
+	int mMspCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;

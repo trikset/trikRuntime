@@ -34,7 +34,7 @@ public:
 	/// @param script - file name of a scrit used to start or stop a sensor.
 	/// @param inputFile - sensor input fifo. Note that we will write data here, not read it.
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
-	SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile, DeviceState &state
+	SoundSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile, DeviceState &state
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~SoundSensorWorker() override;

@@ -41,7 +41,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	SoundSensor(QString const &port, trikKernel::Configurer const &configurer
+	SoundSensor(const QString &port, const trikKernel::Configurer &configurer
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~SoundSensor() override;

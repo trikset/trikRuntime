@@ -104,7 +104,7 @@ public slots:
 	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
-	virtual SoundSensorInterface *soundSensor(QString const &port) = 0;
+	virtual SoundSensorInterface *soundSensor(const QString &port) = 0;
 
 	/// Returns encoder on given port.
 	virtual EncoderInterface *encoder(const QString &port) = 0;

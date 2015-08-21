@@ -26,6 +26,7 @@ class Configurer;
 
 namespace trikControl {
 
+/// Service to automatically select USB or I2C MSP communicator. It tries to use USB when possible.
 class MspBusAutoDetector
 {
 public:

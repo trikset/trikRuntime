@@ -327,7 +327,7 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
 
-SoundSensorInterface *Brick::soundSensor(QString const &port)
+SoundSensorInterface *Brick::soundSensor(const QString &port)
 {
 	return mSoundSensors.contains(port) ? mSoundSensors[port] : nullptr;
 }

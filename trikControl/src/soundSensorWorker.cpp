@@ -18,7 +18,7 @@
 
 using namespace trikControl;
 
-SoundSensorWorker::SoundSensorWorker(QString const &script, QString const &inputFile, QString const &outputFile
+SoundSensorWorker::SoundSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
 {
@@ -42,7 +42,6 @@ void SoundSensorWorker::detect()
 void SoundSensorWorker::volume(int volCoeff)
 {
 	sendCommand(QString("volcoeff %1").arg(volCoeff));
-	//qDebug() << QString("volcoeff %1").arg(volCoeff);
 }
 
 QVector<int> SoundSensorWorker::read()
@@ -59,14 +58,14 @@ QString SoundSensorWorker::sensorName() const
 	return "Sound sensor";
 }
 
-void SoundSensorWorker::onNewData(QString const &dataLine)
+void SoundSensorWorker::onNewData(const QString &dataLine)
 {
-	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
+	const QStringList parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
 
 	if (parsedLine[0] == "sound:") {
-		int const angle = parsedLine[1].toInt();
-		int const lvolume = parsedLine[2].toInt();
-		int const rvolume = parsedLine[3].toInt();
+		const int angle = parsedLine[1].toInt();
+		const int lvolume = parsedLine[2].toInt();
+		const int rvolume = parsedLine[3].toInt();
 
 		mLock.lockForWrite();
 		mReading = {angle, lvolume, rvolume};

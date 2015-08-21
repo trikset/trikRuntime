@@ -25,9 +25,9 @@ using namespace trikControl;
 SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
-	QString const &script = configurer.attributeByPort(port, "script");
-	QString const &inputFile = configurer.attributeByPort(port, "inputFile");
-	QString const &outputFile = configurer.attributeByPort(port, "outputFile");
+	const QString script = configurer.attributeByPort(port, "script");
+	const QString inputFile = configurer.attributeByPort(port, "inputFile");
+	const QString outputFile = configurer.attributeByPort(port, "outputFile");
 
 	if (!mState.isFailed()) {
 		mSoundSensorWorker.reset(new SoundSensorWorker(script, inputFile, outputFile, mState, hardwareAbstraction));

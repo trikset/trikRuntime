@@ -94,7 +94,7 @@ void ServoMotor::powerOff()
 	mCurrentPower = 0;
 }
 
-void ServoMotor::setPower(int power)
+void ServoMotor::setPower(int power, bool constrain)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
@@ -103,10 +103,12 @@ void ServoMotor::setPower(int power)
 
 	const int powerBoundary = mMotorType == Type::angular ? 90 : 100;
 
-	if (power > powerBoundary) {
-		power = powerBoundary;
-	} else if (power < -powerBoundary) {
-		power = -powerBoundary;
+	if (constrain) {
+		if (power > powerBoundary) {
+			power = powerBoundary;
+		} else if (power < -powerBoundary) {
+			power = -powerBoundary;
+		}
 	}
 
 	mCurrentPower = power;
