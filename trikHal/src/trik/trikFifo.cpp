@@ -38,16 +38,28 @@ TrikFifo::~TrikFifo()
 
 bool TrikFifo::open()
 {
-	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+
+	qDebug() << "open 0 file desc" << mFileDescriptor;
+
+
+	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_SYNC | O_NONBLOCK | O_RDWR | O_NDELAY);
+
+
+
+	qDebug() << "open 1 file desc" << mFileDescriptor;
+
 	if (mFileDescriptor == -1) {
 		QLOG_ERROR() << "Can't open FIFO file" << mFileName;
 		return false;
 	}
 
-	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this));
+	//mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this));
+	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(true);
+
+	qDebug() << "open 2 file desc" << mFileDescriptor;
 
 	QLOG_INFO() << "Opened FIFO file" << mFileName;
 	return true;
@@ -56,18 +68,39 @@ bool TrikFifo::open()
 void TrikFifo::readFile()
 {
 	char data[4000] = {0};
+	static int counter;
+
+	counter++;
 
 	mSocketNotifier->setEnabled(false);
 
-	if (::read(mFileDescriptor, data, 4000) < 0) {
+	qDebug() << "read 0 file desc" << mFileDescriptor;
+	qDebug() << data;
+	qDebug() << counter;
+
+
+	if (::read(mFileDescriptor, &data, 4000) < 0) {
+		qDebug() << "read 1 file desc" << mFileDescriptor;
+		qDebug() << data;
+		qDebug() << counter;
+
+
 		QLOG_ERROR() << "FIFO read failed: " << strerror(errno);
 		emit readError();
 		return;
 	}
 
+	qDebug() << "read 2 file desc" << mFileDescriptor;
+	qDebug() << data;
+	qDebug() << counter;
+
+
 	mBuffer += data;
 
 	if (mBuffer.contains("\n")) {
+		qDebug() << "read 3 file desc" << mFileDescriptor;
+		qDebug() << data;
+
 		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
 
 		mBuffer = lines.last();
@@ -84,7 +117,10 @@ void TrikFifo::readFile()
 bool TrikFifo::close()
 {
 	if (mFileDescriptor != -1) {
-		return ::close(mFileDescriptor) == 0;
+		qDebug() << "close file desc" << mFileDescriptor;
+		bool result = ::close(mFileDescriptor) == 0;
+		mFileDescriptor = -1;
+		return result;
 	}
 
 	return false;
