@@ -17,6 +17,7 @@
 #include <QtCore/QScopedPointer>
 
 #include <trikHal/hardwareAbstractionInterface.h>
+#include <QsLog.h>
 
 #include "mspI2cCommunicator.h"
 #include "mspUsbCommunicator.h"
@@ -28,8 +29,10 @@ MspCommunicatorInterface *MspBusAutoDetector::createCommunicator(const trikKerne
 {
 	QScopedPointer<MspUsbCommunicator> communicator(new MspUsbCommunicator(hardwareAbstraction.mspUsb()));
 	if (communicator->status() == DeviceInterface::Status::failure) {
+		QLOG_INFO() << "Using I2C MSP communicator";
 		return new MspI2cCommunicator(configurer, hardwareAbstraction.mspI2c());
 	}
 
+	QLOG_INFO() << "Using USB MSP communicator";
 	return communicator.take();
 }
