@@ -22,7 +22,8 @@ OTHER_FILES += \
 
 copyToDestdir($$OTHER_FILES)
 
-uses(trikKernel trikControl trikScriptRunner trikNetwork)
+implementationIncludes(trikKernel trikControl trikScriptRunner trikNetwork)
+links(trikKernel trikControl trikScriptRunner trikNetwork)
 
 TEMPLATE = app
 CONFIG += console

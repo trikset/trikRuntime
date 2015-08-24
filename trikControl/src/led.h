@@ -16,13 +16,18 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
+#include <QtCore/QScopedPointer>
 
 #include "ledInterface.h"
 #include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class OutputDeviceFileInterface;
 }
 
 namespace trikControl {
@@ -35,7 +40,7 @@ class Led : public LedInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Led(const trikKernel::Configurer &configurer);
+	Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Led() override;
 
@@ -51,8 +56,8 @@ public slots:
 	void off() override;
 
 private:
-	QFile mRedDeviceFile;
-	QFile mGreenDeviceFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mRedDeviceFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mGreenDeviceFile;
 	int mOn;
 	int mOff;
 	DeviceState mState;

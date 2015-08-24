@@ -109,7 +109,7 @@ defineTest(uses) {
 }
 
 # Libs and includepathes for trikControl and related.
-uses(trikControl trikKernel qslog)
+uses(trikControl trikKernel qslog trikHal)
 
 # Files to be present in destdir for trikRuntime to work.
 copyToDestdir( \

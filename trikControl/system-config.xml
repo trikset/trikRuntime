@@ -96,48 +96,48 @@ equal to its class name.
 	<devicePorts>
 		<servoMotor
 			port="S1"
-			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
-			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
+			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
+			periodFile="/sys/class/pwm/ecap.2/period_ns"
 		/>
 		<servoMotor
 			port="S2"
-			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
-			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
-		/>
-		<servoMotor
-			port="S3"
-			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
-			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
-		/>
-		<servoMotor
-			port="S4"
-			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
-			periodFile="/sys/class/pwm/ecap.0/period_ns"
-		/>
-		<servoMotor
-			port="S5"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 		/>
 		<servoMotor
-			port="S6"
-			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
-			periodFile="/sys/class/pwm/ecap.2/period_ns"
+			port="S3"
+			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
+			periodFile="/sys/class/pwm/ecap.0/period_ns"
 		/>
-		<pwmCapture
+		<servoMotor
 			port="S4"
-			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
+			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
+		/>
+		<servoMotor
+			port="S5"
+			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
+		/>
+		<servoMotor
+			port="S6"
+			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
 		/>
 		<pwmCapture
-			port="S5"
+			port="S1"
+			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+		/>
+		<pwmCapture
+			port="S2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
 		/>
 		<pwmCapture
-			port="S6"
-			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+			port="S3"
+			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
 		<powerMotor port="M1" i2cCommandNumber="0x0014" />
 		<powerMotor port="M2" i2cCommandNumber="0x0015" />

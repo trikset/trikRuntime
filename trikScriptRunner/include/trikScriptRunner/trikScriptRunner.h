@@ -19,9 +19,14 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
-#include <trikControl/brickInterface.h>
-#include <trikNetwork/mailboxInterface.h>
-#include <trikNetwork/gamepadInterface.h>
+namespace trikNetwork {
+class MailboxInterface;
+class GamepadInterface;
+}
+
+namespace trikControl {
+class BrickInterface;
+}
 
 namespace trikScriptRunner {
 

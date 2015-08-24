@@ -20,7 +20,7 @@
 
 namespace trikControl {
 
-class I2cCommunicator;
+class MspCommunicatorInterface;
 
 /// Implements battery voltage sensor for real hardware.
 class Battery : public BatteryInterface
@@ -30,7 +30,7 @@ class Battery : public BatteryInterface
 public:
 	/// Constructor.
 	/// @param communicator - I2C communicator to use to query battery status.
-	Battery(I2cCommunicator &communicator);
+	Battery(MspCommunicatorInterface &communicator);
 
 	Status status() const override;
 
@@ -40,7 +40,7 @@ public slots:
 	float readRawDataVoltage() override;
 
 private:
-	I2cCommunicator &mCommunicator;
+	MspCommunicatorInterface &mCommunicator;
 };
 
 }

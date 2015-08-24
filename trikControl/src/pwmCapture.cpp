@@ -18,22 +18,22 @@
 #include <QtCore/QTextStream>
 
 #include <trikKernel/configurer.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 
 #include <QsLog.h>
 
 using namespace trikControl;
 
-PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer)
-	: mFrequencyFile(configurer.attributeByPort(port, "frequencyFile"))
-	, mDutyFile(configurer.attributeByPort(port, "dutyFile"))
+PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mFrequencyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "frequencyFile")))
+	, mDutyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "dutyFile")))
 {
-	if (!mFrequencyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open period capture file " << mFrequencyFile.fileName();
+	if (!mFrequencyFile->open()) {
 		mState.fail();
 	}
 
-	if (!mDutyFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open duty capture file " << mDutyFile.fileName();
+	if (!mDutyFile->open()) {
 		mState.fail();
 	}
 
@@ -42,8 +42,6 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 
 PwmCapture::~PwmCapture()
 {
-	mFrequencyFile.close();
-	mDutyFile.close();
 }
 
 PwmCapture::Status PwmCapture::status() const
@@ -57,12 +55,10 @@ QVector<int> PwmCapture::frequency()
 		return {};
 	}
 
-	mFrequencyFile.reset();
-	QByteArray dataText = mFrequencyFile.readAll();
-	QTextStream stream(dataText);
+	mFrequencyFile->reset();
 	QVector<int> data(3);
 	char c = '\0';
-	stream >> data[0] >> c >> data[1] >> c >> data[2] >> c;
+	mFrequencyFile->stream() >> data[0] >> c >> data[1] >> c >> data[2] >> c;
 	return data;
 }
 
@@ -72,11 +68,9 @@ int PwmCapture::duty()
 		return {};
 	}
 
-	mDutyFile.reset();
-	QByteArray dataText = mDutyFile.readAll();
-	QTextStream stream(dataText);
+	mDutyFile->reset();
 	int data = 0;
 	char c = '\0';
-	stream >> data >> c;
+	mDutyFile->stream() >> data >> c;
 	return data;
 }

@@ -26,7 +26,7 @@ class Configurer;
 
 namespace trikControl {
 
-class I2cCommunicator;
+class MspCommunicatorInterface;
 
 /// Analog TRIK sensor.
 class AnalogSensor : public SensorInterface
@@ -38,7 +38,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	/// @param communicator - I2C communicator used to query sensor.
-	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
+	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator);
 
 	Status status() const override;
 
@@ -50,19 +50,19 @@ public slots:
 	int readRawData() override;
 
 private:
-	enum class Type 
+	enum class Type
 	{
 		/// Calibrated IR sensor.
 		sharpGP2
 
 		/// Normalized IR sensor.
-		, analog	
+		, analog
 	};
-	
+
 	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
-	I2cCommunicator &mCommunicator;
+	MspCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber = 0;
 	Type mIRType;
 
@@ -76,14 +76,14 @@ private:
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mL = 0;
 
-	/// Hyperbolical approximation coefficient n. 
+	/// Hyperbolical approximation coefficient n.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mN = 0;
 
 	/// Hyperbolical approximation coefficient s.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mS = 0;
-	
+
 	/// State of a device.
 	DeviceState mState;
 };

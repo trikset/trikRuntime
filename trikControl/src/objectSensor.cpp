@@ -22,7 +22,8 @@
 
 using namespace trikControl;
 
-ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer)
+ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
 	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
@@ -30,7 +31,8 @@ ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &co
 	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
 	if (!mState.isFailed()) {
-		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
+		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState
+				, hardwareAbstraction));
 		mObjectSensorWorker->moveToThread(&mWorkerThread);
 		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 		mWorkerThread.start();

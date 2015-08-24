@@ -17,12 +17,13 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "i2cCommunicator.h"
+#include "mspCommunicatorInterface.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
+AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer
+		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
@@ -36,10 +37,11 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	// To calculate s, l and n we need sensor readings at three distances.
 
 	if (mIRType == Type::sharpGP2){
-		calculateLNS(port, configurer);	
+		calculateLNS(port, configurer);
 	} else {
-		calculateKB(port, configurer);	
+		calculateKB(port, configurer);
 	}
+
 	mState.ready();
 }
 
@@ -52,9 +54,9 @@ int AnalogSensor::read()
 {
 	const auto raw = readRawData();
 	if (mIRType == Type::sharpGP2) {
-		const auto quotient = raw + mL;	
+		const auto quotient = raw + mL;
 		const auto result = quotient != 0 ? mS / quotient + mN : 0;
-		return result;	
+		return result;
 	}
 
 	return mK * raw + mB;
@@ -87,11 +89,12 @@ void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configure
 	const int x3 = result[4].toInt();
 	const int y3 = result[5].toInt();
 
-	// Counted from equations x1 = mS/(y1 + mL) + mN, x2 = mS/(y2 + mL) + mN, x3 = mS/(y3 + mL) + mN 
-	mL = (-x1 * y1 * y3 - x3 * y2 * y3 + x3 * y1 * y3 + x1 * y1 * y2 + x2 * y2 * y3 - x2 * y1 * y2) / 
+	// Counted from equations x1 = mS/(y1 + mL) + mN, x2 = mS/(y2 + mL) + mN, x3 = mS/(y3 + mL) + mN
+	mL = (-x1 * y1 * y3 - x3 * y2 * y3 + x3 * y1 * y3 + x1 * y1 * y2 + x2 * y2 * y3 - x2 * y1 * y2) /
 			(x1 * y3 - x2 * y3 + x2 * y1 - x1 * y2 + x3 * y2 - x3 * y1);
+
 	mS = (x1 - x2) * (y1 + mL) * (y2 + mL) / (y2 - y1);
-	mN = x1 - mS / (y1 + mL);	
+	mN = x1 - mS / (y1 + mL);
 }
 
 void AnalogSensor::calculateKB(const QString &port, const trikKernel::Configurer &configurer)

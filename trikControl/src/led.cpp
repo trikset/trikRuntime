@@ -15,22 +15,21 @@
 #include "led.h"
 
 #include <trikKernel/configurer.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 
 #include <QsLog.h>
 
 using namespace trikControl;
 
-Led::Led(const trikKernel::Configurer &configurer)
-	: mRedDeviceFile(configurer.attributeByDevice("led", "red"))
-	, mGreenDeviceFile(configurer.attributeByDevice("led", "green"))
+Led::Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mRedDeviceFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByDevice("led", "red")))
+	, mGreenDeviceFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByDevice("led", "green")))
 {
-	if (!mRedDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open red led control file " << mRedDeviceFile.fileName();
+	if (!mRedDeviceFile->open()) {
 		mState.fail();
 	}
 
-	if (!mGreenDeviceFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open green led control file " << mGreenDeviceFile.fileName();
+	if (!mGreenDeviceFile->open()) {
 		mState.fail();
 	}
 
@@ -41,8 +40,8 @@ Led::~Led()
 {
 	red();
 
-	mRedDeviceFile.close();
-	mGreenDeviceFile.close();
+	mRedDeviceFile->close();
+	mGreenDeviceFile->close();
 }
 
 Led::Status Led::status() const
@@ -53,43 +52,31 @@ Led::Status Led::status() const
 void Led::red()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile.write("1");
-		mRedDeviceFile.flush();
-
-		mGreenDeviceFile.write("0");
-		mGreenDeviceFile.flush();
+		mRedDeviceFile->write("1");
+		mGreenDeviceFile->write("0");
 	}
 }
 
 void Led::green()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile.write("0");
-		mRedDeviceFile.flush();
-
-		mGreenDeviceFile.write("1");
-		mGreenDeviceFile.flush();
+		mRedDeviceFile->write("0");
+		mGreenDeviceFile->write("1");
 	}
 }
 
 void Led::orange()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile.write("1");
-		mRedDeviceFile.flush();
-
-		mGreenDeviceFile.write("1");
-		mGreenDeviceFile.flush();
+		mRedDeviceFile->write("1");
+		mGreenDeviceFile->write("1");
 	}
 }
 
 void Led::off()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile.write("0");
-		mRedDeviceFile.flush();
-
-		mGreenDeviceFile.write("0");
-		mGreenDeviceFile.flush();
+		mRedDeviceFile->write("0");
+		mGreenDeviceFile->write("0");
 	}
 }

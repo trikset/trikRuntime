@@ -34,8 +34,6 @@ HEADERS += \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 	$$PWD/include/trikControl/soundSensorInterface.h \
-	$$PWD/src/usbMSP430Read.h \
-	$$PWD/src/usbMSP430Defines.h
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -52,7 +50,10 @@ HEADERS += \
 	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
-	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/mspCommunicatorInterface.h \
+	$$PWD/src/mspBusAutoDetector.h \
+	$$PWD/src/mspI2cCommunicator.h \
+	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/keys.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/led.h \
@@ -70,7 +71,6 @@ HEADERS += \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
-	$$PWD/src/usbMSP430Interface.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
 	$$PWD/src/shapes/shape.h \
@@ -108,14 +108,14 @@ SOURCES += \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/vectorSensor.cpp \
-	$$PWD/src/usbMSP430Interface.cpp \
-	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/fifo.cpp \
-	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
-	$$PWD/src/$$PLATFORM/keysWorker.cpp \
-	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
-	$$PWD/src/usbMSP430Read.cpp \
+	$$PWD/src/abstractVirtualSensorWorker.cpp \
+	$$PWD/src/fifo.cpp \
+	$$PWD/src/mspBusAutoDetector.cpp \
+	$$PWD/src/mspI2cCommunicator.cpp \
+	$$PWD/src/mspUsbCommunicator.cpp \
+	$$PWD/src/keysWorker.cpp \
+	$$PWD/src/rangeSensorWorker.cpp \
+	$$PWD/src/vectorSensorWorker.cpp \
 	$$PWD/src/shapes/ellipse.cpp \
 	$$PWD/src/shapes/point.cpp \
 	$$PWD/src/shapes/line.cpp \
@@ -123,8 +123,13 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 
 OTHER_FILES += \
-	model-config.xml \
-	system-config.xml \
+	$$PWD/model-config-i2c.xml \
+	$$PWD/system-config-i2c.xml \
+	$$PWD/model-config.xml \
+	$$PWD/system-config.xml \
+	$$PWD/model-config-v6.xml \
+	$$PWD/system-config-v6.xml \
+	$$PWD/trikControlExport.pri \
 
 TEMPLATE = lib
 
@@ -136,12 +141,15 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel)
+links(trikKernel trikHal)
+implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
 	$$PWD/model-config.xml  \
 	$$PWD/model-config-v6.xml  \
+	$$PWD/model-config-i2c.xml  \
 	$$PWD/system-config.xml  \
 	$$PWD/system-config-v6.xml  \
+	$$PWD/system-config-i2c.xml  \
 	$$PWD/../media/ \
 )

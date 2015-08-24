@@ -24,3 +24,5 @@ Makefile*
 *.pro.user*
 bin/*
 /.project
+object_script.*.Debug
+object_script.*.Release

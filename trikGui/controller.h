@@ -40,7 +40,7 @@ public:
 	/// @param startDirPath - path to the directory from which the application was executed.
 	Controller(const QString &configPath, const QString &startDirPath);
 
-	~Controller();
+	~Controller() override;
 
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.
 	void runFile(const QString &filePath);

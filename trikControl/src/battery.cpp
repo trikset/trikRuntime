@@ -14,11 +14,11 @@
 
 #include "battery.h"
 
-#include "i2cCommunicator.h"
+#include "mspI2cCommunicator.h"
 
 using namespace trikControl;
 
-Battery::Battery(I2cCommunicator &communicator)
+Battery::Battery(MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 {
 }
@@ -31,7 +31,7 @@ float Battery::readVoltage()
 
 	const int parrot = mCommunicator.read(command);
 
-	// TODO: Remove this arcane numbers, or Something may be unexpectedly summoned by them.
+	/// @todo: Remove these arcane numbers, or Something may be unexpectedly summoned by them.
 	return (static_cast<float>(parrot) / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
 }
 

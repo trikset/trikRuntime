@@ -17,8 +17,8 @@
 using namespace trikControl;
 
 LineSensorWorker::LineSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-		, qreal toleranceFactor, DeviceState &state)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state)
+		, qreal toleranceFactor, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
 	, mToleranceFactor(toleranceFactor)
 {
 }

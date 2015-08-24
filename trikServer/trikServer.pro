@@ -17,7 +17,8 @@ include(../global.pri)
 SOURCES += \
 	$$PWD/main.cpp \
 
-uses(trikControl trikCommunicator trikNetwork trikKernel)
+implementationIncludes(trikKernel trikControl trikCommunicator trikNetwork)
+links(trikControl trikCommunicator trikNetwork trikKernel)
 
 TEMPLATE = app
 CONFIG += console

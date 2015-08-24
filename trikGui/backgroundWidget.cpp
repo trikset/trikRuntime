@@ -48,6 +48,7 @@ BackgroundWidget::BackgroundWidget(const QString &configPath
 	addLazyWidget(*mBrickDisplayWidgetWrapper);
 	mMainWidgetsLayout.addWidget(&mRunningWidget);
 
+	mMainLayout.setContentsMargins(mDefaultMargins);
 	mMainLayout.addLayout(&mStatusBarLayout);
 	mMainLayout.addLayout(&mMainWidgetsLayout);
 
@@ -64,6 +65,13 @@ BackgroundWidget::BackgroundWidget(const QString &configPath
 	connect(&mController, SIGNAL(hideScriptWidgets()), this, SLOT(hideScriptWidgets()));
 
 	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
+}
+
+BackgroundWidget::~BackgroundWidget()
+{
+	// Disconnect is needed here because QWidget destructor will trigger widgetRemoved signal which will be caught
+	// here by partially deleted object and everything will crash.
+	disconnect(&mMainWidgetsLayout, 0, 0, 0);
 }
 
 void BackgroundWidget::resetWidgetLayout(MainWidget &widget)
@@ -102,6 +110,10 @@ void BackgroundWidget::addLazyWidget(LazyMainWidget &widget)
 
 void BackgroundWidget::showMainWidget(MainWidget &widget)
 {
+	if (&widget == mBrickDisplayWidgetWrapper.data()) {
+		expandMainWidget();
+	}
+
 	const int index = mMainWidgetsLayout.indexOf(&widget);
 	if (index >= 0) {
 		mMainWidgetsLayout.setCurrentIndex(index);
@@ -133,7 +145,8 @@ void BackgroundWidget::showError(const QString &error, int scriptId)
 
 void BackgroundWidget::hideGraphicsWidget()
 {
-	if (mMainWidgetsLayout.currentWidget() == &mController.brick().graphicsWidget()) {
+	if (mMainWidgetsLayout.currentWidget() == mBrickDisplayWidgetWrapper.data()) {
+		unexpandMainWidget();
 		mMainWidgetsLayout.setCurrentWidget(&mRunningWidget);
 	}
 }
@@ -168,4 +181,18 @@ void BackgroundWidget::updateStack(int removedWidget)
 		mMainWidgetIndex.pop();
 		mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
 	}
+}
+
+void BackgroundWidget::expandMainWidget()
+{
+	mMainLayout.setContentsMargins(0, 0, 0, 0);
+	QMargins margins = mDefaultMargins;
+	margins.setBottom(0);
+	mStatusBarLayout.setContentsMargins(margins);
+}
+
+void BackgroundWidget::unexpandMainWidget()
+{
+	mMainLayout.setContentsMargins(mDefaultMargins);
+	mStatusBarLayout.setContentsMargins(0, 0, 0, 0);
 }

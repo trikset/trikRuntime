@@ -22,7 +22,8 @@
 
 using namespace trikControl;
 
-LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &configurer)
+LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &configurer
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
 	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
@@ -30,7 +31,9 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
 
 	if (!mState.isFailed()) {
-		mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState));
+		mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState
+				, hardwareAbstraction));
+
 		mLineSensorWorker->moveToThread(&mWorkerThread);
 		connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 		mWorkerThread.start();
