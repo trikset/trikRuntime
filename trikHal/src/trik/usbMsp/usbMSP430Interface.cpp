@@ -901,10 +901,25 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		// qDebug() << "Dev address (dht22_humidity): " << (dev_address-HUM_DHT22_1+SENSOR1) << " " << regval;;;
 		return regval;
 	}
-	// HC-SR04 sensors on encoders ports
+	// HC-SR04 sensors
 	else if ((dev_address >= HCSR04_1) && (dev_address <= HCSR04_4))
 	{
+		makeWriteRegPacket(s1, ((dev_address-HCSR04_1)*2+SENSOR7), SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, ((dev_address-HCSR04_1)*2+SENSOR7), SSIDX, HCSR_DIST);
+		sendUSBPacket(s1, s1);
 
+		do
+		{
+			makeReadRegPacket(s1, ((dev_address-HCSR04_1)*2+SENSOR7), SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != ((dev_address-HCSR04_1)*2+SENSOR7)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+
+		alt_func_flag = ALT_HCSR04;
+
+		return regval;
 	}
 	// URM04 sensors
 	else if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU7_0x20))
