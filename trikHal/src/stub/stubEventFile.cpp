@@ -34,3 +34,13 @@ bool StubEventFile::close()
 	QLOG_INFO() << "Closing stub:" << mFileName;
 	return true;
 }
+
+void StubEventFile::cancelWaiting()
+{
+}
+
+QString StubEventFile::fileName() const
+{
+	return mFileName;
+}
+

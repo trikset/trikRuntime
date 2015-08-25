@@ -24,6 +24,7 @@ using namespace trikControl;
 
 Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
+	, mState("Encoder on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mTicksInDegree = ConfigurerHelper::configureReal(configurer, mState, port, "ticksInDegree");

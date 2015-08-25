@@ -23,6 +23,7 @@ using namespace trikControl;
 
 MspUsbCommunicator::MspUsbCommunicator(trikHal::MspUsbInterface &usb)
 	: mUsb(usb)
+	, mState("MSP USB Communicator")
 {
 	if (mUsb.connect()) {
 		mState.ready();

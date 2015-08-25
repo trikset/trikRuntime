@@ -18,6 +18,11 @@
 
 using namespace trikControl;
 
+DeviceState::DeviceState(const QString &deviceName)
+	: mDeviceName(deviceName)
+{
+}
+
 DeviceInterface::Status DeviceState::status() const
 {
 	// Operation is atomic so it does not require locking.
@@ -55,7 +60,7 @@ void DeviceState::start()
 		mStatus = DeviceInterface::Status::starting;
 	} else {
 		mLock.unlock();
-		throw IncorrectStateChangeException(mStatus, DeviceInterface::Status::starting);
+		throw IncorrectStateChangeException(mDeviceName, mStatus, DeviceInterface::Status::starting);
 	}
 
 	mLock.unlock();
@@ -73,7 +78,7 @@ void DeviceState::ready()
 		mStatus = DeviceInterface::Status::ready;
 	} else {
 		mLock.unlock();
-		throw IncorrectStateChangeException(mStatus, DeviceInterface::Status::ready);
+		throw IncorrectStateChangeException(mDeviceName, mStatus, DeviceInterface::Status::ready);
 	}
 
 	mLock.unlock();
@@ -91,7 +96,7 @@ void DeviceState::stop()
 		mStatus = DeviceInterface::Status::stopping;
 	} else {
 		mLock.unlock();
-		throw IncorrectStateChangeException(mStatus, DeviceInterface::Status::stopping);
+		throw IncorrectStateChangeException(mDeviceName, mStatus, DeviceInterface::Status::stopping);
 	}
 
 	mLock.unlock();
@@ -109,7 +114,21 @@ void DeviceState::off()
 		mStatus = DeviceInterface::Status::off;
 	} else {
 		mLock.unlock();
-		throw IncorrectStateChangeException(mStatus, DeviceInterface::Status::off);
+		throw IncorrectStateChangeException(mDeviceName, mStatus, DeviceInterface::Status::off);
+	}
+
+	mLock.unlock();
+}
+
+void DeviceState::resetFailure()
+{
+	mLock.lockForWrite();
+
+	if (mStatus == DeviceInterface::Status::failure) {
+		mStatus = DeviceInterface::Status::off;
+	} else {
+		mLock.unlock();
+		throw IncorrectStateChangeException(mDeviceName, mStatus);
 	}
 
 	mLock.unlock();

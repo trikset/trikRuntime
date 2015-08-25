@@ -51,8 +51,8 @@ private:
 	void disconnect();
 
 	QMutex mLock;
-	DeviceState mState;
 	trikHal::MspUsbInterface &mUsb;
+	DeviceState mState;
 };
 
 }

@@ -63,8 +63,8 @@ private:
 	int mMspCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
-	DeviceState mState;
 	int mCurrentPeriod;
+	DeviceState mState;
 };
 
 }

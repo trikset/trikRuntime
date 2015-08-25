@@ -26,6 +26,7 @@ using namespace trikControl;
 
 RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Range Sensor on " + port)
 {
 	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
 			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))
@@ -62,9 +63,11 @@ RangeSensor::Status RangeSensor::status() const
 
 void RangeSensor::init()
 {
-	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	if (mState.isFailed()) {
+		mState.resetFailure();
 	}
+
+	QMetaObject::invokeMethod(mSensorWorker.data(), "init");
 }
 
 int RangeSensor::read()
