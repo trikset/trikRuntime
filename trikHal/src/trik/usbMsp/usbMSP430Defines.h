@@ -170,20 +170,20 @@
 #define i2cU7_0x1E		0x00C1
 #define i2cU7_0x1F		0x00C2
 #define i2cU7_0x20		0x00C3	// 195 dec
-#define TEMP_DHT11_1		0x0100	// 256 dec
-#define TEMP_DHT11_2		0x0101
-#define TEMP_DHT11_3		0x0102
-#define TEMP_DHT11_4		0x0103
-#define TEMP_DHT11_5		0x0104
-#define TEMP_DHT11_6		0x0105
-#define TEMP_DHT11_7		0x0106
-#define TEMP_DHT11_8		0x0107
-#define TEMP_DHT11_9		0x0108
-#define TEMP_DHT11_10		0x0109
-#define TEMP_DHT11_11		0x010A
-#define TEMP_DHT11_12		0x010B
-#define TEMP_DHT11_13		0x010C
-#define TEMP_DHT11_14		0x010D
+#define TEMP_DHT11_1	0x0100	// 256 dec
+#define TEMP_DHT11_2	0x0101
+#define TEMP_DHT11_3	0x0102
+#define TEMP_DHT11_4	0x0103
+#define TEMP_DHT11_5	0x0104
+#define TEMP_DHT11_6	0x0105
+#define TEMP_DHT11_7	0x0106
+#define TEMP_DHT11_8	0x0107
+#define TEMP_DHT11_9	0x0108
+#define TEMP_DHT11_10	0x0109
+#define TEMP_DHT11_11	0x010A
+#define TEMP_DHT11_12	0x010B
+#define TEMP_DHT11_13	0x010C
+#define TEMP_DHT11_14	0x010D
 #define HUM_DHT11_1		0x010E
 #define HUM_DHT11_2		0x010F
 #define HUM_DHT11_3		0x0110
@@ -193,25 +193,25 @@
 #define HUM_DHT11_7		0x0114
 #define HUM_DHT11_8		0x0115
 #define HUM_DHT11_9		0x0116
-#define HUM_DHT11_10		0x0117
-#define HUM_DHT11_11		0x0118
-#define HUM_DHT11_12		0x0119
-#define HUM_DHT11_13		0x011A
-#define HUM_DHT11_14		0x011B
-#define TEMP_DHT22_1		0x011C
-#define TEMP_DHT22_2		0x011D
-#define TEMP_DHT22_3		0x011E
-#define TEMP_DHT22_4		0x011F
-#define TEMP_DHT22_5		0x0120
-#define TEMP_DHT22_6		0x0121
-#define TEMP_DHT22_7		0x0122
-#define TEMP_DHT22_8		0x0123
-#define TEMP_DHT22_9		0x0124
-#define TEMP_DHT22_10		0x0125
-#define TEMP_DHT22_11		0x0126
-#define TEMP_DHT22_12		0x0127
-#define TEMP_DHT22_13		0x0128
-#define TEMP_DHT22_14		0x0129
+#define HUM_DHT11_10	0x0117
+#define HUM_DHT11_11	0x0118
+#define HUM_DHT11_12	0x0119
+#define HUM_DHT11_13	0x011A
+#define HUM_DHT11_14	0x011B
+#define TEMP_DHT22_1	0x011C
+#define TEMP_DHT22_2	0x011D
+#define TEMP_DHT22_3	0x011E
+#define TEMP_DHT22_4	0x011F
+#define TEMP_DHT22_5	0x0120
+#define TEMP_DHT22_6	0x0121
+#define TEMP_DHT22_7	0x0122
+#define TEMP_DHT22_8	0x0123
+#define TEMP_DHT22_9	0x0124
+#define TEMP_DHT22_10	0x0125
+#define TEMP_DHT22_11	0x0126
+#define TEMP_DHT22_12	0x0127
+#define TEMP_DHT22_13	0x0128
+#define TEMP_DHT22_14	0x0129
 #define HUM_DHT22_1		0x012A
 #define HUM_DHT22_2		0x012B
 #define HUM_DHT22_3		0x012C
@@ -221,11 +221,15 @@
 #define HUM_DHT22_7		0x0130
 #define HUM_DHT22_8		0x0131
 #define HUM_DHT22_9		0x0132
-#define HUM_DHT22_10		0x0133
-#define HUM_DHT22_11		0x0134
-#define HUM_DHT22_12		0x0135
-#define HUM_DHT22_13		0x0136
-#define HUM_DHT22_14		0x0137	// 311 dec
+#define HUM_DHT22_10	0x0133
+#define HUM_DHT22_11	0x0134
+#define HUM_DHT22_12	0x0135
+#define HUM_DHT22_13	0x0136
+#define HUM_DHT22_14	0x0137	// 311 dec
+#define HCSR04_1		0x0200	// 512 dec
+#define HCSR04_2		0x0201	// 513 dec
+#define HCSR04_3		0x0202	// 514 dec
+#define HCSR04_4		0x0203	// 515 dec
 
 /// USB devices addresses
 #define MOTOR1			0x00
@@ -296,7 +300,7 @@
 #define USART5			0x41
 #define USART6			0x42
 #define USART7			0x43
-#define BSL			0xEE
+#define BSL				0xEE
 #define NNONE			0xFF
 
 /// Motor registers
@@ -385,7 +389,7 @@
 #define USART_IRDA1		0x00800000 // USART IrDA 115.2 kbaud mode
 #define USART_IRDA2		0x01000000 // USART IrDA 1.152 Mbaud mode
 #define USART_RS485		0x02000000 // USART RS-485 mode
-#define USART_INVRTS		0x00400000 // USART RTS inverted mode
+#define USART_INVRTS	0x00400000 // USART RTS inverted mode
 #define USART_RXEN		0x00200000 // USART receiver enable
 #define USART_TXEN		0x00100000 // USART transmitter enable
 #define USART_RTS		0x00080000 // USART RTS high level
@@ -403,10 +407,10 @@
 #define MCP3424_CH4		0x0007
 
 /// MCP3424 PGA gain
-#define MCP3424_GAIN1		0x0000
-#define MCP3424_GAIN2		0x0001
-#define MCP3424_GAIN4		0x0002
-#define MCP3424_GAIN8		0x0003
+#define MCP3424_GAIN1	0x0000
+#define MCP3424_GAIN2	0x0001
+#define MCP3424_GAIN4	0x0002
+#define MCP3424_GAIN8	0x0003
 
 /// Software PWM registers
 #define SPPCTL			0x00
@@ -418,11 +422,11 @@
 #define SPWM_ENABLE		0x8000	// SPWM enable
 
 /// Default software PWM period
-#define DEF_SPWM_PER		0x00C8	// Default software PWM period (for servo motors), 50 Hz (20 ms)
+#define DEF_SPWM_PER	0x00C8	// Default software PWM period (for servo motors), 50 Hz (20 ms)
 
 /// Ranges of servo motors PWM duty
-#define MIN_SERV_DUTY		0x0007
-#define MAX_SERV_DUTY		0x0017
+#define MIN_SERV_DUTY	0x0007
+#define MAX_SERV_DUTY	0x0017
 
 #define MAX_STRING_LENGTH	0x20
 
@@ -431,16 +435,16 @@
 
 /// Error defines
 #define NO_ERROR		0x00
-#define FUNC_CODE_ERROR		0x01
-#define REG_ADDR_ERROR		0x02
-#define REG_VAL_ERROR		0x03
+#define FUNC_CODE_ERROR	0x01
+#define REG_ADDR_ERROR	0x02
+#define REG_VAL_ERROR	0x03
 #define SLAVE_ERROR		0x04
 #define SLAVE_BUSY		0x06
-#define DEV_ADDR_ERROR		0x11
+#define DEV_ADDR_ERROR	0x11
 #define CRC_ERROR		0x12
 #define START_ERROR		0x13
-#define LENGTH_ERROR		0x14
-#define REG_INC_ERROR		0x15
+#define LENGTH_ERROR	0x14
+#define REG_INC_ERROR	0x15
 #define UNDEF_ERROR		0xFF
 #define URM04_ERROR		0xFFFFFFFF
 
@@ -449,12 +453,12 @@
 #define NUM_WORD		0x04
 #define NUM_DWORD		0x08
 
-#define RECV_PACK_LEN		0x12
+#define RECV_PACK_LEN	0x12
 
 /// Errors for response
 #define NO_ERROR		0x00
-#define DEVICE_ERROR		0x01
-#define PACKET_ERROR		0x02
+#define DEVICE_ERROR	0x01
+#define PACKET_ERROR	0x02
 
 #define TIME_OUT		0xFFFF
 

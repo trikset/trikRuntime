@@ -777,14 +777,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			|| (dev_address == i2cSENS6)
 			|| (dev_address == i2cBATT))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_I2C)
-				|| (alt_func_flag == ALT_USART)
-				|| (alt_func_flag == ALT_DHTXX))
-		{
-		}
-
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSCTL, SENS_ENABLE + SENS_READ);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], SSIDX, ANALOG_INP);
@@ -811,15 +803,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			|| (dev_address == i2cW3)
 			|| (dev_address == i2cW4))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_ANALOG)
-				|| (alt_func_flag == ALT_ENC)
-				|| (alt_func_flag == ALT_USART)
-				|| (alt_func_flag == ALT_DHTXX))
-		{
-		}
-
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], IICTL, I2C_ENABLE + I2C_SENS);
 		sendUSBPacket(s1, s1);
 		do
@@ -837,15 +820,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	// DHT11 sensors (temperature)
 	else if ((dev_address >= TEMP_DHT11_1) && (dev_address <= TEMP_DHT11_14))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_ANALOG)
-				|| (alt_func_flag == ALT_ENC)
-				|| (alt_func_flag == ALT_USART)
-				|| (alt_func_flag == ALT_I2C))
-		{
-		}
-
 		makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, (dev_address-TEMP_DHT11_1+SENSOR1), SSIDX, DHTXX_TEMP);
@@ -867,15 +841,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	// DHT11 sensors (humidity)
 	else if ((dev_address >= HUM_DHT11_1) && (dev_address <= HUM_DHT11_14))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_ANALOG)
-				|| (alt_func_flag == ALT_ENC)
-				|| (alt_func_flag == ALT_USART)
-				|| (alt_func_flag == ALT_I2C))
-		{
-		}
-
 		makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, (dev_address-HUM_DHT11_1+SENSOR1), SSIDX, DHTXX_HUM);
@@ -888,6 +853,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
 		} while (((devaddr != (dev_address-HUM_DHT11_1+SENSOR1)) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+
 		alt_func_flag = ALT_DHTXX;
 		// qDebug() << "Dev address (dht11_humidity): " << dev_address << " " << regval;
 		// qDebug() << "Dev address (dht11_humidity): " << (dev_address-HUM_DHT11_1+SENSOR1) << " " << regval;
@@ -896,15 +862,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	// DHT22 sensors (temperature)
 	else if ((dev_address >= TEMP_DHT22_1) && (dev_address <= TEMP_DHT22_14))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_ANALOG)
-				|| (alt_func_flag == ALT_ENC)
-				|| (alt_func_flag == ALT_USART)
-				|| (alt_func_flag == ALT_I2C))
-		{
-		}
-
 		makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, (dev_address-TEMP_DHT22_1+SENSOR1), SSIDX, DHTXX_TEMP);
@@ -926,15 +883,6 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	// DHT22 sensors (humidity)
 	else if ((dev_address >= HUM_DHT22_1) && (dev_address <= HUM_DHT22_14))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_ANALOG)
-				|| (alt_func_flag == ALT_ENC)
-				|| (alt_func_flag == ALT_USART)
-				|| (alt_func_flag == ALT_I2C))
-		{
-		}
-
 		makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSCTL, SENS_ENABLE + SENS_READ);
 		sendUSBPacket(s1, s1);
 		makeWriteRegPacket(s1, (dev_address-HUM_DHT22_1+SENSOR1), SSIDX, DHTXX_HUM);
@@ -953,18 +901,14 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		// qDebug() << "Dev address (dht22_humidity): " << (dev_address-HUM_DHT22_1+SENSOR1) << " " << regval;;;
 		return regval;
 	}
+	// HC-SR04 sensors on encoders ports
+	else if ((dev_address >= HCSR04_1) && (dev_address <= HCSR04_4))
+	{
+
+	}
 	// URM04 sensors
 	else if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU7_0x20))
 	{
-		if ((alt_func_flag == ALT_NOTHING)
-				|| (alt_func_flag == ALT_SERVO)
-				|| (alt_func_flag == ALT_ANALOG)
-				|| (alt_func_flag == ALT_ENC)
-				|| (alt_func_flag == ALT_I2C)
-				|| (alt_func_flag == ALT_DHTXX))
-		{
-		}
-
 		if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU1_0x20))
 		{
 			init_URM04(I2C1, USART1);

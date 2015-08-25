@@ -593,6 +593,21 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<U7_0x20>
 		<analogSensor />
 	</U7_0x20>
+
+	<!-- Analog sensor ports (Ultrasonic HC-SR04 sensors). -->
+	<HCSR04_1>
+		<analogSensor />
+	</HCSR04_1>
+	<HCSR04_2>
+		<analogSensor />
+	</HCSR04_2>
+	<HCSR04_3>
+		<analogSensor />
+	</HCSR04_3>
+	<HCSR04_4>
+		<analogSensor />
+	</HCSR04_4>
+
 	<!-- Digital sensor ports. -->
 	<D1>
 		<rangeSensor />

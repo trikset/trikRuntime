@@ -84,7 +84,7 @@ equal to its class name.
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!--Device file for keys on a brick -->
-                <keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
+		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
 
 		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
 		<gamepad port="4444" optional="true" />
@@ -338,6 +338,10 @@ equal to its class name.
 		<analogSensor port="HUM_DHT22_12" i2cCommandNumber="0x0135" />
 		<analogSensor port="HUM_DHT22_13" i2cCommandNumber="0x0136" />
 		<analogSensor port="HUM_DHT22_14" i2cCommandNumber="0x0137" />
+		<analogSensor port="HCSR04_1" i2cCommandNumber="0x0200" />
+		<analogSensor port="HCSR04_2" i2cCommandNumber="0x0201" />
+		<analogSensor port="HCSR04_3" i2cCommandNumber="0x0202" />
+		<analogSensor port="HCSR04_4" i2cCommandNumber="0x0203" />
 		<encoder port="B1" i2cCommandNumber="0x0030" />
 		<encoder port="B2" i2cCommandNumber="0x0031" />
 		<encoder port="B3" i2cCommandNumber="0x0032" />
