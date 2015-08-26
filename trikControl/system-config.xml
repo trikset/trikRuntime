@@ -60,6 +60,9 @@ equal to its class name.
 		stty 921600 -F /dev/ttyACM0 -echo -onlcr
 		stty 921600 -F /dev/ttyACM1 -echo -onlcr
 
+		<!-- Touch screen -->
+		export QWS_MOUSE_PROTO=tslib:/dev/input/event0
+
 		#amixer -q set PCM 127
 	</initScript>
 

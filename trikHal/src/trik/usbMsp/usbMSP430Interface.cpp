@@ -790,8 +790,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		} while (((devaddr != addr_table_i2c_usb[dev_address]) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
 
 		alt_func_flag = ALT_ANALOG;
-		// qDebug() << "Dev address (analog_sensor): " << dev_address << " " << regval;
-		// qDebug() << "Dev address (analog_sensor): " << addr_table_i2c_usb[dev_address] << " " << regval;
+
 		return regval;
 	}
 	// I2C sensors
@@ -931,6 +930,44 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
 			tmout ++;
 		} while (((devaddr != VERSIONCTRL) || (regaddr != MAIN_VER_REG_2)) && (tmout < TIME_OUT));
+
+		return regval;
+	}
+	// MSP430 temperature
+	else if (dev_address == MSPTEMP)
+	{
+		makeWriteRegPacket(s1, SENSOR15, SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, SENSOR15, SSIDX, ANALOG_INP);
+		sendUSBPacket(s1, s1);
+		do
+		{
+			makeReadRegPacket(s1, SENSOR15, SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != SENSOR15) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+
+		alt_func_flag = ALT_ANALOG;
+
+		return regval;
+	}
+	// Motors power consuption (current)
+	else if (dev_address == MOTCURR)
+	{
+		makeWriteRegPacket(s1, SENSOR16, SSCTL, SENS_ENABLE + SENS_READ);
+		sendUSBPacket(s1, s1);
+		makeWriteRegPacket(s1, SENSOR16, SSIDX, ANALOG_INP);
+		sendUSBPacket(s1, s1);
+		do
+		{
+			makeReadRegPacket(s1, SENSOR16, SSVAL);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != SENSOR16) || (regaddr != SSVAL)) && (tmout < TIME_OUT));
+
+		alt_func_flag = ALT_ANALOG;
 
 		return regval;
 	}
