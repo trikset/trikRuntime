@@ -23,6 +23,7 @@ using namespace trikControl;
 
 MspI2cCommunicator::MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c)
 	: mI2c(i2c)
+	, mState("MSP I2C Communicator")
 {
 	const QString devicePath = configurer.attributeByDevice("i2c", "path");
 

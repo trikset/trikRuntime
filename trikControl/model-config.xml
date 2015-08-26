@@ -608,6 +608,21 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<analogSensor />
 	</HCSR04_4>
 
+	<!-- MSP430 firmware version-->
+	<MSPVERSION>
+		<analogSensor />
+	</MSPVERSION>
+
+	<!-- Motor current (power consuption) -->
+	<MOTCURRENT>
+		<analogSensor />
+	</MOTCURRENT>
+
+	<!-- MSP430 CPU temperature -->
+	<TEMPERATURE>
+		<analogSensor />
+	</TEMPERATURE>
+
 	<!-- Digital sensor ports. -->
 	<D1>
 		<rangeSensor />

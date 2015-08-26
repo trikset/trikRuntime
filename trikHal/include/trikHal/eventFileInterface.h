@@ -48,6 +48,12 @@ public:
 	/// Closes event file and stops listening for events.
 	virtual bool close() = 0;
 
+	/// Abort all pending synchronous event loops.
+	virtual void cancelWaiting() = 0;
+
+	/// Returns name of a file.
+	virtual QString fileName() const = 0;
+
 signals:
 	/// Emitted when there is new event in an event file.
 	/// @param eventType - type of an event (unknown, if such event is not listed in EventType enum).

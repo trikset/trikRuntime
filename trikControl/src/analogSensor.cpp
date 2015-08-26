@@ -25,6 +25,7 @@ using namespace trikControl;
 AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer
 		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
+	, mState("Analog Sensor on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;

@@ -27,6 +27,7 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
 	, mCurrentPeriod(0x1000)
+	, mState("Power Motor on" + port)
 {
 	mMspCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mState.ready();

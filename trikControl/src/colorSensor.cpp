@@ -23,6 +23,7 @@ using namespace trikControl;
 
 ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Color Sensor on" + port)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
 	const QString &inputFile = configurer.attributeByPort(port, "inputFile");

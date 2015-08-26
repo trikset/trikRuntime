@@ -123,8 +123,8 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 
 OTHER_FILES += \
-	$$PWD/model-config-i2c.xml \
-	$$PWD/system-config-i2c.xml \
+	$$PWD/model-config-usb.xml \
+	$$PWD/system-config-usb.xml \
 	$$PWD/model-config.xml \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
@@ -147,9 +147,9 @@ implementationIncludes(trikKernel trikHal)
 copyToDestdir( \
 	$$PWD/model-config.xml  \
 	$$PWD/model-config-v6.xml  \
-	$$PWD/model-config-i2c.xml  \
+	$$PWD/model-config-usb.xml  \
 	$$PWD/system-config.xml  \
 	$$PWD/system-config-v6.xml  \
-	$$PWD/system-config-i2c.xml  \
+	$$PWD/system-config-usb.xml  \
 	$$PWD/../media/ \
 )

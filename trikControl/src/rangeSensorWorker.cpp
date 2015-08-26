@@ -43,6 +43,16 @@ void RangeSensorWorker::stop()
 		} else {
 			mState.fail();
 		}
+	} else if (mState.status() == DeviceInterface::Status::starting) {
+		// Maybe event file still waits for a driver to create event file, abort waiting.
+		mEventFile->cancelWaiting();
+
+		// In case of file is already opened --- close it. On unopened file "close" will do nothing.
+		mEventFile->close();
+
+		// Officially shut down sensor.
+		mState.ready();
+		mState.off();
 	} else {
 		QLOG_ERROR() << "Trying to stop range sensor that is not started, ignoring";
 	}
@@ -51,8 +61,17 @@ void RangeSensorWorker::stop()
 void RangeSensorWorker::init()
 {
 	mState.start();
-	mEventFile->open();
-	mState.ready();
+	if (mEventFile->open()) {
+		mState.ready();
+	} else {
+		if (mState.status() == DeviceInterface::Status::off) {
+			// Launching was aborted, do nothing.
+			return;
+		}
+
+		// Sensor launch failed for some reason, assuming permanent failure.
+		mState.fail();
+	}
 }
 
 void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)

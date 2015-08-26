@@ -51,8 +51,8 @@ private:
 	void disconnect();
 
 	QMutex mLock;
-	DeviceState mState;
 	trikHal::MspI2cInterface &mI2c;
+	DeviceState mState;
 };
 
 }

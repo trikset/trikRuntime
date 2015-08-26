@@ -16,7 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QSocketNotifier>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 

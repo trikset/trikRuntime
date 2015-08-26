@@ -24,6 +24,7 @@ using namespace trikControl;
 
 SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Sound Sensor on " + port)
 {
 	const QString script = configurer.attributeByPort(port, "script");
 	const QString inputFile = configurer.attributeByPort(port, "inputFile");
