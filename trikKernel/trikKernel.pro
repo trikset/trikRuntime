@@ -39,3 +39,5 @@ SOURCES += \
 TEMPLATE = lib
 
 DEFINES += TRIKKERNEL_LIBRARY
+
+installs()

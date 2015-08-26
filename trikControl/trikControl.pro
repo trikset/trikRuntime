@@ -14,7 +14,7 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/batteryInterface.h \
 	$$PWD/include/trikControl/brickFactory.h \
 	$$PWD/include/trikControl/brickInterface.h \
@@ -139,3 +139,10 @@ copyToDestdir( \
 	$$PWD/system-config-v6.xml  \
 	$$PWD/../media/ \
 )
+
+installs()
+installAdditionalFiles($$DESTDIR/model-config.xml, /etc/trik/trikRuntime/)
+installAdditionalFiles($$DESTDIR/system-config.xml, /etc/trik/trikRuntime/)
+installAdditionalFiles($$DESTDIR/model-config-v6.xml, /etc/trik/trikRuntime/)
+installAdditionalFiles($$DESTDIR/system-config-v6.xml, /etc/trik/trikRuntime/)
+installAdditionalFiles2($$DESTDIR/media, /usr/share/trikRuntime/)

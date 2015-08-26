@@ -99,3 +99,5 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
 transitiveIncludes(trikNetwork)
 links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+
+installs()

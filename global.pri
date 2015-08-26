@@ -79,11 +79,6 @@ isEmpty(IS_QSLOG) {
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 
-unix {
-	target.path = $$[INSTALL_ROOT]/
-	INSTALLS += target
-}
-
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual
 
@@ -139,4 +134,69 @@ defineTest(links) {
 	}
 
 	export(LIBS)
+}
+
+defineTest(installs) {
+	unix {
+		equals(TEMPLATE, lib) {
+			target.path = $$INSTALL_ROOT/usr/lib/
+			isEmpty(PUBLIC_HEADERS) {
+				headers.files = $$HEADERS
+				headers.path = $$INSTALL_ROOT/usr/include/$$PROJECT_NAME/
+			} else {
+				headers.files = $$PUBLIC_HEADERS
+				headers.path = $$INSTALL_ROOT/usr/include/$$PROJECT_NAME/
+			}
+		}
+
+		equals(TEMPLATE, app) {
+			target.path = $$INSTALL_ROOT/usr/bin/
+		}
+
+		INSTALLS += target
+		export(target.path)
+
+		equals(TEMPLATE, lib) {
+			INSTALLS += headers
+			export(headers.files)
+			export(headers.path)
+		}
+
+		export(INSTALLS)
+	}
+
+	HEADERS += $$PUBLIC_HEADERS
+	export(HEADERS)
+}
+
+defineTest(installAdditionalFiles) {
+	FILES = $$1
+	PATH = $$2
+
+	unix {
+		additionalFiles.files += $$FILES
+		additionalFiles.path = $$INSTALL_ROOT/$$PATH
+
+		INSTALLS += additionalFiles
+
+		export(additionalFiles.path)
+		export(additionalFiles.files)
+		export(INSTALLS)
+	}
+}
+
+defineTest(installAdditionalFiles2) {
+	FILES = $$1
+	PATH = $$2
+
+	unix {
+		additionalFiles2.files += $$FILES
+		additionalFiles2.path = $$INSTALL_ROOT/$$PATH
+
+		INSTALLS += additionalFiles2
+
+		export(additionalFiles2.path)
+		export(additionalFiles2.files)
+		export(INSTALLS)
+	}
 }

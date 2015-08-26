@@ -14,8 +14,10 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikCommunicator/trikCommunicator.h \
+
+HEADERS += \
 	$$PWD/src/connection.h \
 
 SOURCES += \
@@ -32,3 +34,5 @@ interfaceIncludes(trikNetwork)
 implementationIncludes(trikKernel trikScriptRunner)
 
 links(trikScriptRunner trikControl trikKernel trikNetwork)
+
+installs()
