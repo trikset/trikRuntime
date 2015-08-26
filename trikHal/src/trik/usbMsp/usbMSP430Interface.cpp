@@ -921,6 +921,19 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 
 		return regval;
 	}
+	// MSP430 firmware version
+	else if (dev_address == MSPVER)
+	{
+		do
+		{
+			makeReadRegPacket(s1, VERSIONCTRL, MAIN_VER_REG_2);
+			errcode = sendUSBPacket(s1, s2);
+			errcode = decodeReceivedPacket(s2, devaddr, funccode, regaddr, regval);
+			tmout ++;
+		} while (((devaddr != VERSIONCTRL) || (regaddr != MAIN_VER_REG_2)) && (tmout < TIME_OUT));
+
+		return regval;
+	}
 	// URM04 sensors
 	else if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU7_0x20))
 	{

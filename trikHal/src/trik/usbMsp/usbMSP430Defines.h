@@ -230,6 +230,9 @@
 #define HCSR04_2		0x0201	// 513 dec
 #define HCSR04_3		0x0202	// 514 dec
 #define HCSR04_4		0x0203	// 515 dec
+#define MSPVER			0x0300	// 768 dec
+#define MSPTEMP			0x0301	// 769 dec
+#define MOTCURR			0x0302	// 770 dec
 
 /// USB devices addresses
 #define MOTOR1			0x00
@@ -448,6 +451,21 @@
 #define REG_INC_ERROR	0x15
 #define UNDEF_ERROR		0xFF
 #define URM04_ERROR		0xFFFFFFFF
+
+/// Version registers adresses defines
+#define MAIN_VER_REG_1	0x00
+#define MAIN_VER_REG_2	0x01
+#define MOT_VER_REG		0x02
+#define SENS_VER_REG	0x03
+#define ENC_VER_REG		0x04
+#define PORT_VER_REG	0x05
+#define PWM_VER_REG		0x06
+#define ATMR_VER_REG	0x07
+#define TOUCH_VER_REG	0x08
+#define I2C_VER_REG		0x09
+#define BSL_VER_REG		0x0A
+#define SPWM_VER_REG	0x0B
+#define USART_VER_REG	0x0C
 
 /// HEX number sizes
 #define NUM_BYTE		0x02
