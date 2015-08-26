@@ -72,14 +72,47 @@ void SoundSensor::detect()
 	}
 }
 
-void SoundSensor::volume(int volCoeff)
+void SoundSensor::set_volCoeff(unsigned int volCoeff)
 {
 	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "volume", Q_ARG(int, volCoeff));
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "set_volCoeff", Q_ARG(unsigned int, volCoeff));
 	}
 	else
 	{
-		QLOG_ERROR() << "Trying to call 'volume' when sensor is not ready, ignoring";
+		QLOG_ERROR() << "Trying to call 'volcoeff' when sensor is not ready, ignoring";
+	}
+}
+
+void SoundSensor::set_micDistance(unsigned int micDist)
+{
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "set_micDistance", Q_ARG(unsigned int, micDist));
+	}
+	else
+	{
+		QLOG_ERROR() << "Trying to call 'micdist' when sensor is not ready, ignoring";
+	}
+}
+
+void SoundSensor::set_winSize(unsigned int winSize)
+{
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "set_winSize", Q_ARG(unsigned int, winSize));
+	}
+	else
+	{
+		QLOG_ERROR() << "Trying to call 'winsize' when sensor is not ready, ignoring";
+	}
+}
+
+void SoundSensor::set_numSamples(unsigned int numSamples)
+{
+	if (mState.isReady()) {
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "set_numSamples", Q_ARG(unsigned int, numSamples));
+	}
+	else
+	{
+		QLOG_ERROR() << "Trying to call 'numsamples' when sensor is not ready, ignoring";
 	}
 }
 

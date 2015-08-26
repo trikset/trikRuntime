@@ -53,7 +53,13 @@ public slots:
 
 	void detect() override;
 
-	void volume(int volCoeff) override;
+	void set_volCoeff(unsigned int volCoeff) override;
+
+	void set_winSize(unsigned int winSize) override;
+
+	void set_micDistance(unsigned int micDist) override;
+
+	void set_numSamples(unsigned int numSamples) override;
 
 	QVector<int> read() override;
 

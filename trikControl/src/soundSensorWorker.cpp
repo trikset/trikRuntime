@@ -39,9 +39,24 @@ void SoundSensorWorker::detect()
 	sendCommand("detect");
 }
 
-void SoundSensorWorker::volume(int volCoeff)
+void SoundSensorWorker::set_volCoeff(unsigned int volCoeff)
 {
 	sendCommand(QString("volcoeff %1").arg(volCoeff));
+}
+
+void SoundSensorWorker::set_winSize(unsigned int winSize)
+{
+	sendCommand(QString("winsize %1").arg(winSize));
+}
+
+void SoundSensorWorker::set_micDistance(unsigned int micDist)
+{
+	sendCommand(QString("micdist %1").arg(micDist));
+}
+
+void SoundSensorWorker::set_numSamples(unsigned int numSamples)
+{
+	sendCommand(QString("numsamples %1").arg(numSamples));
 }
 
 QVector<int> SoundSensorWorker::read()

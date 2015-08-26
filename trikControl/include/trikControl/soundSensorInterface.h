@@ -41,7 +41,16 @@ public slots:
 	virtual void detect() = 0;
 
 	/// Sets volume coefficient
-	virtual void volume(int volCoeff) = 0;
+	virtual void set_volCoeff(unsigned int volCoeff) = 0;
+
+	/// Sets window size (for correlation)
+	virtual void set_winSize(unsigned int winSize) = 0;
+
+	/// Sets distance between microphones
+	virtual void set_micDistance(unsigned int micDist) = 0;
+
+	/// Sets number of smaples to be processed
+	virtual void set_numSamples(unsigned int numSamples) = 0;
 
 	/// Returns angle and volume for both channels
 	virtual QVector<int> read() = 0;

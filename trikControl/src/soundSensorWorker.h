@@ -49,7 +49,16 @@ public slots:
 	void detect();
 
 	/// Sets volume coefficient
-	void volume(int volCoeff);
+	void set_volCoeff(unsigned int volCoeff);
+
+	/// Sets window size (for correlation)
+	void set_winSize(unsigned int winSize);
+
+	/// Sets distance between microphones
+	void set_micDistance(unsigned int micDist);
+
+	/// Sets number of smaples to be processed
+	void set_numSamples(unsigned int numSamples);
 
 	/// Returns angle and volume for both channels. Can be accessed directly from other thread.
 	QVector<int> read();
