@@ -14,7 +14,8 @@
 
 #include "trikHardwareAbstraction.h"
 
-#include "trikI2c.h"
+#include "trikMspI2c.h"
+#include "trikMspUsb.h"
 #include "trikSystemConsole.h"
 #include "trikEventFile.h"
 #include "trikInputDeviceFile.h"
@@ -25,7 +26,8 @@ using namespace trikHal;
 using namespace trikHal::trik;
 
 TrikHardwareAbstraction::TrikHardwareAbstraction()
-	: mI2c(new TrikI2C())
+	: mI2c(new TrikMspI2c())
+	, mUsb(new TrikMspUsb())
 	, mSystemConsole(new TrikSystemConsole())
 {
 }
@@ -34,9 +36,14 @@ TrikHardwareAbstraction::~TrikHardwareAbstraction()
 {
 }
 
-I2CInterface &TrikHardwareAbstraction::i2c()
+MspI2cInterface &TrikHardwareAbstraction::mspI2c()
 {
 	return *mI2c.data();
+}
+
+MspUsbInterface &TrikHardwareAbstraction::mspUsb()
+{
+	return *mUsb.data();
 }
 
 SystemConsoleInterface &TrikHardwareAbstraction::systemConsole()

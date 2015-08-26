@@ -33,6 +33,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
+	$$PWD/include/trikControl/soundSensorInterface.h \
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -49,7 +50,10 @@ HEADERS += \
 	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
-	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/mspCommunicatorInterface.h \
+	$$PWD/src/mspBusAutoDetector.h \
+	$$PWD/src/mspI2cCommunicator.h \
+	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/keys.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/led.h \
@@ -58,6 +62,8 @@ HEADERS += \
 	$$PWD/src/moduleLoader.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
+	$$PWD/src/soundSensor.h \
+	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
@@ -95,6 +101,8 @@ SOURCES += \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
+	$$PWD/src/soundSensor.cpp \
+	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
@@ -102,7 +110,9 @@ SOURCES += \
 	$$PWD/src/vectorSensor.cpp \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/fifo.cpp \
-	$$PWD/src/i2cCommunicator.cpp \
+	$$PWD/src/mspBusAutoDetector.cpp \
+	$$PWD/src/mspI2cCommunicator.cpp \
+	$$PWD/src/mspUsbCommunicator.cpp \
 	$$PWD/src/keysWorker.cpp \
 	$$PWD/src/rangeSensorWorker.cpp \
 	$$PWD/src/vectorSensorWorker.cpp \
@@ -113,6 +123,8 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 
 OTHER_FILES += \
+	$$PWD/model-config-usb.xml \
+	$$PWD/system-config-usb.xml \
 	$$PWD/model-config.xml \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
@@ -135,7 +147,9 @@ implementationIncludes(trikKernel trikHal)
 copyToDestdir( \
 	$$PWD/model-config.xml  \
 	$$PWD/model-config-v6.xml  \
+	$$PWD/model-config-usb.xml  \
 	$$PWD/system-config.xml  \
 	$$PWD/system-config-v6.xml  \
+	$$PWD/system-config-usb.xml  \
 	$$PWD/../media/ \
 )

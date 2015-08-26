@@ -143,6 +143,17 @@ void trikScriptRunner::objectSensorFromScriptValue(const QScriptValue &object, O
 	out = qobject_cast<ObjectSensorInterface*>(object.toQObject());
 }
 
+QScriptValue trikScriptRunner::soundSensorToScriptValue(
+		QScriptEngine *engine, trikControl::SoundSensorInterface* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::soundSensorFromScriptValue(QScriptValue const &object, SoundSensorInterface* &out)
+{
+	out = qobject_cast<SoundSensorInterface*>(object.toQObject());
+}
+
 QScriptValue trikScriptRunner::timerToScriptValue(QScriptEngine *engine, QTimer* const &in)
 {
 	return engine->newQObject(in);

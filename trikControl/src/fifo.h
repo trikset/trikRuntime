@@ -59,13 +59,13 @@ private slots:
 	void onReadError();
 
 private:
-	/// State of a FIFO file as a device.
-	DeviceState mState;
-
 	QScopedPointer<trikHal::FifoInterface> mFifo;
 
 	/// Last line that was read from FIFO.
 	QString mCurrent;
+
+	/// State of a FIFO file as a device.
+	DeviceState mState;
 };
 
 }

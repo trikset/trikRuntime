@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,29 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "stubMspUsb.h"
 
-#include "i2cInterface.h"
+#include <QsLog.h>
 
-namespace trikHal {
-namespace trik {
+using namespace trikHal::stub;
 
-/// Real implementation of I2C bus communicator.
-class TrikI2C : public I2CInterface
+void StubMspUsb::send(const QByteArray &data)
 {
-public:
-	TrikI2C() = default;
-	~TrikI2C() override;
-
-	void send(const QByteArray &data) override;
-	int read(const QByteArray &data) override;
-	bool connect(const QString &devicePath, int deviceId) override;
-	void disconnect() override;
-
-private:
-	/// Low-level descriptor of I2C device file.
-	int mDeviceFileDescriptor = -1;
-};
-
+	QLOG_INFO() << "Sending thru MSP USB stub" << data;
 }
+
+int StubMspUsb::read(const QByteArray &data)
+{
+	QLOG_INFO() << "Reading from MSP USB stub" << data;
+	return 0;
+}
+
+bool StubMspUsb::connect()
+{
+	QLOG_INFO() << "Connecting to MSP USB stub";
+	return true;
+}
+
+void StubMspUsb::disconnect()
+{
+	QLOG_INFO() << "Disconnecting from MSP USB stub";
 }

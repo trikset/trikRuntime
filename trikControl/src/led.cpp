@@ -24,6 +24,7 @@ using namespace trikControl;
 Led::Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mRedDeviceFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByDevice("led", "red")))
 	, mGreenDeviceFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByDevice("led", "green")))
+	, mState("Led")
 {
 	if (!mRedDeviceFile->open()) {
 		mState.fail();

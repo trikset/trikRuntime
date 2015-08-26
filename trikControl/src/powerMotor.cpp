@@ -16,18 +16,20 @@
 
 #include <trikKernel/configurer.h>
 
-#include "i2cCommunicator.h"
+#include "mspI2cCommunicator.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
+PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer
+		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
 	, mCurrentPeriod(0x1000)
+	, mState("Power Motor on" + port)
 {
-	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+	mMspCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mState.ready();
 }
 
@@ -43,21 +45,25 @@ PowerMotor::Status PowerMotor::status() const
 	return combine(mCommunicator, mState.status());
 }
 
-void PowerMotor::setPower(int power)
+void PowerMotor::setPower(int power, bool constrain)
 {
-	if (power > 100) {
-		power = 100;
-	} else if (power < -100) {
-		power = -100;
+	if (constrain) {
+		if (power > 100)
+		{
+			power = 100;
+		} else if (power < -100) {
+			power = -100;
+		}
 	}
 
 	mCurrentPower = power;
 
 	power = mInvert ? -power : power;
 
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	command[1] = static_cast<char>(power & 0xFF);
+	QByteArray command(3, '\0');
+	command[0] = static_cast<char>(mMspCommandNumber & 0xFF);
+	command[1] = static_cast<char>((mMspCommandNumber >> 8) & 0xFF);
+	command[2] = static_cast<char>(power & 0xFF);
 
 	mCommunicator.send(command);
 }
@@ -81,7 +87,7 @@ void PowerMotor::setPeriod(int period)
 {
 	mCurrentPeriod = period;
 	QByteArray command(3, '\0');
-	command[0] = static_cast<char>((mI2cCommandNumber - 4) & 0xFF);
+	command[0] = static_cast<char>((mMspCommandNumber - 4) & 0xFF);
 	command[1] = static_cast<char>(period && 0xFF);
 	command[2] = static_cast<char>(period >> 8);
 	mCommunicator.send(command);

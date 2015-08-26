@@ -149,10 +149,10 @@ int main(int argc, char *argv[])
 	trikKernel::coreDumping::initCoreDumping(startDirPath);
 
 #ifdef Q_WS_QWS
-	QWSServer * const server = QWSServer::instance();
-	if (server) {
-		server->setCursorVisible(false);
-	}
+//	QWSServer * const server = QWSServer::instance();
+//	if (server) {
+//		server->setCursorVisible(false);
+//	}
 #endif
 
 	if (QDir::current().exists("scripts")) {

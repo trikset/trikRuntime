@@ -33,12 +33,13 @@ class ColorSensor;
 class DigitalSensor;
 class Display;
 class Encoder;
-class I2cCommunicator;
+class MspCommunicatorInterface;
 class Keys;
 class Led;
 class LineSensor;
 class ModuleLoader;
 class ObjectSensor;
+class SoundSensor;
 class PowerMotor;
 class PwmCapture;
 class RangeSensor;
@@ -108,6 +109,8 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
+	SoundSensorInterface *soundSensor(const QString &port) override;
+
 	EncoderInterface *encoder(const QString &port) override;
 
 	BatteryInterface *battery() override;
@@ -130,7 +133,7 @@ private:
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
 
-	QScopedPointer<I2cCommunicator> mI2cCommunicator;
+	QScopedPointer<MspCommunicatorInterface> mMspCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;
@@ -150,6 +153,7 @@ private:
 	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
+	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
 	QHash<QString, Fifo *> mFifos;  // Has ownership.
 
 	QString mPlayWavFileCommand;

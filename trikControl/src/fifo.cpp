@@ -28,6 +28,7 @@ using namespace trikControl;
 Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFifo(hardwareAbstraction.createFifo(configurer.attributeByPort(virtualPort, "file")))
+	, mState("Fifo on " + virtualPort)
 {
 	mState.start();
 

@@ -38,6 +38,8 @@ public:
 
 	bool open() override;
 	bool close() override;
+	void cancelWaiting() override;
+	QString fileName() const override;
 
 private slots:
 	/// Tries to open event file and if opened successfully stops waiting event loop.

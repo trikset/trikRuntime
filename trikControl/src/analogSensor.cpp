@@ -17,13 +17,15 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "i2cCommunicator.h"
+#include "mspCommunicatorInterface.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
+AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer
+		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
+	, mState("Analog Sensor on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;
@@ -67,8 +69,9 @@ int AnalogSensor::readRawData()
 		return 0;
 	}
 
-	QByteArray command(1, '\0');
+	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
 
 	return mCommunicator.read(command);
 }

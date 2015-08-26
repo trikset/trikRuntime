@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,20 @@
 
 namespace trikHal {
 
-/// Communicates with MSP processor over I2C bus.
-class I2CInterface
+/// Communicates with MSP processor over USB bus.
+class MspUsbInterface
 {
 public:
-	virtual ~I2CInterface() {}
+	virtual ~MspUsbInterface() {}
 
-	/// Send data to a device.
+	/// Send data to MSP.
 	virtual void send(const QByteArray &data) = 0;
 
-	/// Reads data by given I2C command number and returns the result.
+	/// Reads data by given MSP command number and returns the result.
 	virtual int read(const QByteArray &data) = 0;
 
-	/// Establish connection with MSP over I2C bus.
-	virtual bool connect(const QString &devicePath, int deviceId) = 0;
+	/// Establish connection with MSP over USB bus.
+	virtual bool connect() = 0;
 
 	/// Disconnect from MSP.
 	virtual void disconnect() = 0;

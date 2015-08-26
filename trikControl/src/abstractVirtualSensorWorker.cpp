@@ -65,6 +65,12 @@ void AbstractVirtualSensorWorker::init()
 		return;
 	}
 
+	if (mState.status() == DeviceInterface::Status::starting) {
+		// Sensor is already starting.
+		QLOG_ERROR() << "Trying to start a sensor that is already starting, ignoring";
+		return;
+	}
+
 	mState.start();
 	if (!QFileInfo(mInputFile->fileName()).exists() || !QFileInfo(mOutputFifo->fileName()).exists()) {
 		// Sensor is down.

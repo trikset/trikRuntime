@@ -19,6 +19,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 #include <QsLog.h>
 

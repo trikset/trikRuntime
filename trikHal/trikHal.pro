@@ -18,27 +18,32 @@ HEADERS += \
 	$$PWD/include/trikHal/declSpec.h \
 	$$PWD/include/trikHal/hardwareAbstractionInterface.h \
 	$$PWD/include/trikHal/hardwareAbstractionFactory.h \
-	$$PWD/include/trikHal/i2cInterface.h \
 	$$PWD/include/trikHal/fifoInterface.h \
 	$$PWD/include/trikHal/eventFileInterface.h \
 	$$PWD/include/trikHal/inputDeviceFileInterface.h \
+	$$PWD/include/trikHal/mspI2cInterface.h \
+	$$PWD/include/trikHal/mspUsbInterface.h \
 	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
 
 !win32 {
 	HEADERS += \
 		$$PWD/src/trik/trikHardwareAbstraction.h \
-		$$PWD/src/trik/trikI2c.h \
+		$$PWD/src/trik/trikMspI2c.h \
+		$$PWD/src/trik/trikMspUsb.h \
 		$$PWD/src/trik/trikSystemConsole.h \
 		$$PWD/src/trik/trikEventFile.h \
 		$$PWD/src/trik/trikInputDeviceFile.h \
 		$$PWD/src/trik/trikOutputDeviceFile.h \
 		$$PWD/src/trik/trikFifo.h \
+		$$PWD/src/trik/usbMsp/usbMSP430Interface.h \
+		$$PWD/src/trik/usbMsp/usbMSP430Defines.h \
 }
 
 HEADERS += \
 	$$PWD/src/stub/stubHardwareAbstraction.h \
-	$$PWD/src/stub/stubI2c.h \
+	$$PWD/src/stub/stubMspI2c.h \
+	$$PWD/src/stub/stubMspUsb.h \
 	$$PWD/src/stub/stubSystemConsole.h \
 	$$PWD/src/stub/stubEventFile.h \
 	$$PWD/src/stub/stubInputDeviceFile.h \
@@ -48,17 +53,20 @@ HEADERS += \
 !win32 {
 	SOURCES += \
 		$$PWD/src/trik/trikHardwareAbstraction.cpp \
-		$$PWD/src/trik/trikI2c.cpp \
+		$$PWD/src/trik/trikMspI2c.cpp \
+		$$PWD/src/trik/trikMspUsb.cpp \
 		$$PWD/src/trik/trikSystemConsole.cpp \
 		$$PWD/src/trik/trikEventFile.cpp \
 		$$PWD/src/trik/trikInputDeviceFile.cpp \
 		$$PWD/src/trik/trikOutputDeviceFile.cpp \
 		$$PWD/src/trik/trikFifo.cpp \
+		$$PWD/src/trik/usbMsp/usbMSP430Interface.cpp \
 }
 
 SOURCES += \
 	$$PWD/src/stub/stubHardwareAbstraction.cpp \
-	$$PWD/src/stub/stubI2c.cpp \
+	$$PWD/src/stub/stubMspI2c.cpp \
+	$$PWD/src/stub/stubMspUsb.cpp \
 	$$PWD/src/stub/stubSystemConsole.cpp \
 	$$PWD/src/stub/stubEventFile.cpp \
 	$$PWD/src/stub/stubInputDeviceFile.cpp \
