@@ -54,4 +54,4 @@ links(trikKernel trikControl trikNetwork)
 implementationIncludes(trikKernel trikControl trikNetwork)
 
 installs()
-installAdditionalFiles($$DESTDIR/system.js, /usr/share/trikRuntime)
+installAdditionalSharedFiles($$DESTDIR/system.js)

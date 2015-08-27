@@ -17,11 +17,15 @@ include(../global.pri)
 QT += widgets xml
 
 HEADERS += \
+	$$PWD/include/trikKernel/applicationInitHelper.h \
 	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
 	$$PWD/include/trikKernel/fileUtils.h \
 	$$PWD/include/trikKernel/loggingHelper.h \
+	$$PWD/include/trikKernel/parametersHelper.h \
+	$$PWD/include/trikKernel/rcReader.h \
+	$$PWD/include/trikKernel/translationsHelper.h \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
 	$$PWD/include/trikKernel/exceptions/failedToParseXmlException.h \
@@ -30,10 +34,14 @@ HEADERS += \
 	$$PWD/include/trikKernel/exceptions/trikRuntimeException.h \
 
 SOURCES += \
+	$$PWD/src/applicationInitHelper.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/loggingHelper.cpp \
+	$$PWD/src/parametersHelper.cpp \
+	$$PWD/src/rcReader.cpp \
+	$$PWD/src/translationsHelper.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 
 TEMPLATE = lib

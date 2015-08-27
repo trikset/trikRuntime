@@ -141,8 +141,8 @@ copyToDestdir( \
 )
 
 installs()
-installAdditionalFiles($$DESTDIR/model-config.xml, /etc/trik/trikRuntime/)
-installAdditionalFiles($$DESTDIR/system-config.xml, /etc/trik/trikRuntime/)
-installAdditionalFiles($$DESTDIR/model-config-v6.xml, /etc/trik/trikRuntime/)
-installAdditionalFiles($$DESTDIR/system-config-v6.xml, /etc/trik/trikRuntime/)
-installAdditionalFiles2($$DESTDIR/media, /usr/share/trikRuntime/)
+installAdditionalConfigs($$DESTDIR/model-config.xml)
+installAdditionalConfigs($$DESTDIR/system-config.xml)
+installAdditionalConfigs($$DESTDIR/model-config-v6.xml)
+installAdditionalConfigs($$DESTDIR/system-config-v6.xml)
+installAdditionalSharedFiles($$DESTDIR/media)

@@ -79,7 +79,7 @@ isEmpty(IS_QSLOG) {
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++1y
 QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual
 
 GLOBAL_PWD = $$PWD
@@ -169,34 +169,32 @@ defineTest(installs) {
 	export(HEADERS)
 }
 
-defineTest(installAdditionalFiles) {
+defineTest(installAdditionalConfigs) {
 	FILES = $$1
-	PATH = $$2
 
 	unix {
-		additionalFiles.files += $$FILES
-		additionalFiles.path = $$INSTALL_ROOT/$$PATH
+		additionalConfigs.files += $$FILES
+		additionalConfigs.path = $$INSTALL_ROOT/etc/trik/trikRuntime/
 
-		INSTALLS += additionalFiles
+		INSTALLS += additionalConfigs
 
-		export(additionalFiles.path)
-		export(additionalFiles.files)
+		export(additionalConfigs.path)
+		export(additionalConfigs.files)
 		export(INSTALLS)
 	}
 }
 
-defineTest(installAdditionalFiles2) {
+defineTest(installAdditionalSharedFiles) {
 	FILES = $$1
-	PATH = $$2
 
 	unix {
-		additionalFiles2.files += $$FILES
-		additionalFiles2.path = $$INSTALL_ROOT/$$PATH
+		additionalSharedFiles.files += $$FILES
+		additionalSharedFiles.path = $$INSTALL_ROOT/usr/share/trikRuntime/
 
-		INSTALLS += additionalFiles2
+		INSTALLS += additionalSharedFiles
 
-		export(additionalFiles2.path)
-		export(additionalFiles2.files)
+		export(additionalSharedFiles.path)
+		export(additionalSharedFiles.files)
 		export(INSTALLS)
 	}
 }

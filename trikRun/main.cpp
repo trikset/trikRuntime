@@ -21,16 +21,18 @@
 	#include <QtWidgets/QApplication>
 #endif
 
-#include <QtCore/QStringList>
-#include <QtCore/QDir>
 #include <QtCore/QDateTime>
+#include <QtCore/QDir>
 
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
 #include <trikKernel/configurer.h>
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/fileUtils.h>
-#include <trikKernel/loggingHelper.h>
+#include <trikKernel/applicationInitHelper.h>
+#include <trikKernel/translationsHelper.h>
+#include <trikKernel/parametersHelper.h>
+#include <trikKernel/version.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikNetwork/gamepadFactory.h>
 #include <trikNetwork/gamepadInterface.h>
@@ -39,95 +41,45 @@
 
 #include <QsLog.h>
 
-void printUsage()
-{
-	qDebug() << "Usage: trikRun -qws <QtScript file name> [-c <config file name>] [-d <working directory name>]";
-	qDebug() << "Usage: trikRun -qws -s \"<your script>\" [-c <config file name>] [-d <working directory name>]";
-}
-
 int main(int argc, char *argv[])
 {
-	qsrand(QDateTime::currentMSecsSinceEpoch());
 	QApplication app(argc, argv);
-	QStringList args = app.arguments();
 
-	if (args.count() < 2) {
-		printUsage();
-		return 1;
+	trikKernel::ApplicationInitHelper initHelper(app);
+
+	app.setApplicationName("TrikRun");
+
+	initHelper.parametersHelper().addOption("s", "script"
+			, QObject::tr("Script to be executed directly from command line.\n")
+					+ QObject::tr("Example: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
+
+	initHelper.parametersHelper().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
+
+	if (!initHelper.parseCommandLine()) {
+		return 0;
 	}
 
-	QString configPath = "./";
-	if (app.arguments().contains("-c")) {
-		const int index = app.arguments().indexOf("-c");
-		if (app.arguments().count() <= index + 1) {
-			printUsage();
-			return 1;
-		}
-
-		configPath = app.arguments()[index + 1];
-		if (configPath.right(1) != "/") {
-			configPath += "/";
-		}
-	}
-
-	QString startDirPath = QDir::currentPath();
-	if (app.arguments().contains("-d")) {
-		const int index = app.arguments().indexOf("-d");
-		if (app.arguments().count() <= index + 1) {
-			printUsage();
-			return 1;
-		}
-
-		startDirPath = app.arguments()[index + 1];
-	}
-
-	if (startDirPath.right(1) != "/") {
-		startDirPath += "/";
-	}
-
-	trikKernel::coreDumping::initCoreDumping(startDirPath);
-
-#ifdef Q_WS_QWS
-	QWSServer * const server = QWSServer::instance();
-	if (server) {
-		server->setCursorVisible(false);
-	}
-#endif
-
-	trikKernel::LoggingHelper loggingHelper(startDirPath);
-	Q_UNUSED(loggingHelper);
+	initHelper.init();
 
 	QLOG_INFO() << "TrikRun started";
 
-	QScopedPointer<trikControl::BrickInterface> brick(trikControl::BrickFactory::create(configPath, startDirPath));
+	QScopedPointer<trikControl::BrickInterface> brick(
+			trikControl::BrickFactory::create(initHelper.configPath(), initHelper.startDirPath())
+			);
 
-	trikKernel::Configurer configurer(configPath + "/system-config.xml", configPath + "/model-config.xml");
+	trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
+			, initHelper.configPath() + "/model-config.xml");
+
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
-	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data(), startDirPath);
+	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data(), initHelper.startDirPath());
 
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
 
-	if (app.arguments().contains("-s")) {
-		runner.run(args[app.arguments().indexOf("-s") + 1]);
+	if (initHelper.parametersHelper().isSet("s")) {
+		runner.run(initHelper.parametersHelper().value("s"));
 	} else {
-		args.removeAll("-qws");
-		if (args.contains("-c")) {
-			args.removeAt(args.indexOf("-c") + 1);
-			args.removeAll("-c");
-		}
-
-		if (args.contains("-d")) {
-			args.removeAt(args.indexOf("-d") + 1);
-			args.removeAll("-d");
-		}
-
-		if (args.count() != 2) {
-			printUsage();
-			return 1;
-		}
-
-		runner.run(trikKernel::FileUtils::readFromFile(args[1]));
+		runner.run(trikKernel::FileUtils::readFromFile(initHelper.parametersHelper().positionalArgs()[0]));
 	}
 
 	return app.exec();

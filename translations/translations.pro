@@ -30,4 +30,4 @@ OTHER_FILES += \
 	$$PWD/ru/locale.ini \
 	$$PWD/fr/locale.ini \
 
-installAdditionalFiles($$DESTDIR/translations, /usr/share/trikRuntime)
+installAdditionalSharedFiles($$DESTDIR/translations)

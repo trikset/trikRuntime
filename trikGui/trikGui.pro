@@ -31,7 +31,6 @@ HEADERS += \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
 	$$PWD/numberSelectionWidget.h \
-	$$PWD/rcReader.h \
 	$$PWD/communicationSettingsWidget.h \
 	$$PWD/runningWidget.h \
 	$$PWD/sensorIndicator.h \
@@ -64,7 +63,6 @@ SOURCES += \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/numberSelectionWidget.cpp \
-	$$PWD/rcReader.cpp \
 	$$PWD/runningWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
 	$$PWD/sensorsSelectionWidget.cpp \

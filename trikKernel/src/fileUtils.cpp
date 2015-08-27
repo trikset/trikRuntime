@@ -78,3 +78,13 @@ QDomElement FileUtils::readXmlFile(const QString &fileNameWithPath)
 
 	return document.documentElement();
 }
+
+QString FileUtils::normalizePath(const QString &path)
+{
+	QString result = QDir(path).absolutePath();
+	if (result.right(1) != "/") {
+		result += "/";
+	}
+
+	return result;
+}
