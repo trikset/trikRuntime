@@ -33,8 +33,6 @@ int main(int argc, char *argv[])
 
 	Q_UNUSED(app);
 
-	trikKernel::coreDumping::initCoreDumping(".");
-
 	trikKernel::LoggingHelper loggingHelper(".");
 	Q_UNUSED(loggingHelper);
 

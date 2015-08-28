@@ -50,7 +50,8 @@ void TranslationsHelper::initLocale(bool localizationDisabled)
 	QString locale = settings.value("locale", "").toString();
 	const QString lastLocale = locale;
 
-	if (locale.isEmpty() && QFileInfo::exists(trikKernel::Paths::trikRcName())) {
+	QFileInfo trikRc(trikKernel::Paths::trikRcName());
+	if (locale.isEmpty() && trikRc.exists()) {
 		const RcReader rcReader(trikKernel::Paths::trikRcName());
 		locale = rcReader.value("locale");
 	}

@@ -17,12 +17,14 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFileInfo>
 
+#include "fileUtils.h"
+
 using namespace trikKernel;
 
 QString Paths::path(const Resource resource)
 {
 	QString defaultPath;
-	const QString currentPath = QCoreApplication::applicationDirPath();
+	const QString currentPath = FileUtils::normalizePath(QCoreApplication::applicationDirPath());
 
 	switch (resource) {
 	case Resource::configs:
@@ -51,7 +53,8 @@ QString Paths::path(const Resource resource)
 		break;
 	}
 
-	if (QFileInfo::exists(currentPath + "/system-config.xml")) {
+	QFileInfo fileInfo(currentPath + "/system-config.xml");
+	if (fileInfo.exists()) {
 		return currentPath;
 	} else {
 		return defaultPath;

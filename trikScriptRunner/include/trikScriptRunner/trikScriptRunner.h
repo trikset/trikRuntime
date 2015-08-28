@@ -108,7 +108,9 @@ private slots:
 
 private:
 	QScopedPointer<ScriptExecutionControl> mScriptController;
-	QScopedPointer<ScriptEngineWorker> mScriptEngineWorker;
+
+	/// Has ownership, memory is managed by thread and deleteLater().
+	ScriptEngineWorker *mScriptEngineWorker;
 	QThread mWorkerThread;
 
 	int mMaxScriptId;

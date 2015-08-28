@@ -39,7 +39,6 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
-//	QDir::setCurrent(trikKernel::Paths::userScriptsPath());
 	QDir dir(trikKernel::Paths::userScriptsPath());
 	dir.mkdir(trikKernel::Paths::userScriptsDirectoryName());
 	QDir::setCurrent(trikKernel::Paths::userScriptsPath() + trikKernel::Paths::userScriptsDirectoryName());

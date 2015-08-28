@@ -32,13 +32,13 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController))
 	, mMaxScriptId(0)
 {
-	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker.data(), SLOT(deleteLater()));
+	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
-	connect(mScriptEngineWorker.data(), SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-	connect(mScriptEngineWorker.data(), SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
+	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
 
 	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
 
@@ -59,7 +59,7 @@ void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::
 
 void TrikScriptRunner::brickBeep()
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker.data(), "brickBeep");
+	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
 }
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)

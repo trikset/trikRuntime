@@ -41,6 +41,9 @@ int main(int argc, char *argv[])
 
 	trikKernel::ApplicationInitHelper initHelper(app);
 
+	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
+			+ " " + QObject::tr("(optional of -s option is specified)"));
+
 	initHelper.commandLineParser().addOption("s", "script"
 			, QObject::tr("Script to be executed directly from command line.") + "\n"
 					+ QObject::tr("\tExample: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
@@ -55,24 +58,32 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikRun started";
 
-	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
-			);
+	const auto run = [&](const QString &script) {
+		QScopedPointer<trikControl::BrickInterface> brick(
+				trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
+				);
 
-	trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
-			, initHelper.configPath() + "/model-config.xml");
+		trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
+				, initHelper.configPath() + "/model-config.xml");
 
-	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
-	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
-	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data());
+		QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
+		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data(), gamepad.data());
 
-	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
+		QObject::connect(&result, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
+		result.run(script);
+		return app.exec();
+	};
 
 	if (initHelper.commandLineParser().isSet("s")) {
-		runner.run(initHelper.commandLineParser().value("s"));
+		return run(initHelper.commandLineParser().value("s"));
 	} else {
-		runner.run(trikKernel::FileUtils::readFromFile(initHelper.commandLineParser().positionalArgs()[0]));
+		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
+		if (positionalArgs.size() == 1) {
+			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]));
+		} else {
+			initHelper.commandLineParser().showHelp();
+			return 1;
+		}
 	}
-
-	return app.exec();
 }

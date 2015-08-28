@@ -55,7 +55,8 @@ DisplayWidgetInterface &Display::graphicsWidget()
 
 void Display::showImage(const QString &fileName)
 {
-	const QString correctedFileName = QFileInfo::exists(fileName) ? fileName : mMediaPath + fileName;
+	QFileInfo imageFile(fileName);
+	const QString correctedFileName = imageFile.exists() ? fileName : mMediaPath + fileName;
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, correctedFileName));
 }
 

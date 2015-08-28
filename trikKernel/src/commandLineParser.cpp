@@ -46,7 +46,8 @@ bool CommandLineParser::process(const QCoreApplication &app)
 	mApplicationName = app.applicationName();
 	mApplicationVersion = app.applicationVersion();
 
-	const QStringList args = app.arguments();
+	QStringList args = app.arguments();
+	args.removeFirst();
 
 	int currentArgCounter = 0;
 	for (const QString &arg : args) {
@@ -99,31 +100,36 @@ bool CommandLineParser::process(const QCoreApplication &app)
 
 void CommandLineParser::showHelp() const
 {
+	const auto print = [](const QString &str) {
+		qDebug("%s", str.toUtf8().constData());
+	};
+
 	const QString generalInfo = mApplicationName
 			+ (mApplicationVersion.isEmpty() ? "" : (" (v " + mApplicationVersion + ")"));
 
-	qDebug() << generalInfo.toStdString().c_str();
-
-	qDebug() << mApplicationDescription.toStdString().c_str();
+	print(generalInfo);
+	print(mApplicationDescription);
 
 	if (!mPositionalArgNames.isEmpty()) {
-		qDebug() << QObject::tr("Positional arguments:");
+		print(QObject::tr("Positional arguments:"));
 		for (int i = 0; i < mPositionalArgNames.size(); ++i) {
-			qDebug() << mPositionalArgNames[i] << ": " << mPositionalArgDescriptions[i];
+			print(mPositionalArgNames[i] + ": " + mPositionalArgDescriptions[i]);
 		}
 	}
 
-	const auto printInfo = [](auto &&descriptions, auto &&longNames, auto &&help) {
+	const auto printInfo = [&print](const QHash<QString, QString> &descriptions
+			, const QHash<QString, QString> &longNames
+			, const QString &help)
+	{
 		if (!descriptions.isEmpty()) {
-			qDebug() << (QString(help) + ":").toStdString().c_str();
+			print(help + ":");
 			for (const QString &optionShortName : descriptions.keys()) {
 				const QString option = "-" + optionShortName
 						+ (longNames.key(optionShortName).isEmpty()
 								? ""
 								: " (--" + longNames.key(optionShortName) + ")");
 
-				qDebug() << (option + ":").toStdString().c_str()
-						<< descriptions[optionShortName].toStdString().c_str();
+				print(option + ": " + descriptions[optionShortName]);
 			}
 		}
 	};
