@@ -71,6 +71,9 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 INCLUDEPATH += \
 	$$PWD/qslog \
 
+PRECOMPILED_HEADER = $$PWD/pch.h
+CONFIG += precompile_header
+
 LIBS += -L$$DESTDIR
 
 IS_QSLOG = $$find(PROJECT_NAME, [qQ]s[lL]og)
@@ -197,4 +200,11 @@ defineTest(installAdditionalSharedFiles) {
 		export(additionalSharedFiles.files)
 		export(INSTALLS)
 	}
+}
+
+defineTest(noPch) {
+	CONFIG -= precompiled_header
+	PRECOMPILED_HEADER =
+	export(CONFIG)
+	export(PRECOMPILED_HEADER)
 }
