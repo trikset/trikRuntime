@@ -156,10 +156,6 @@ void Brick::playSound(const QString &soundFileName)
 	QLOG_INFO() << "Playing " << soundFileName;
 
 	QFileInfo fileInfo(soundFileName);
-	if (fileInfo.isRelative()) {
-		fileInfo.setFile("../" + soundFileName);
-	}
-
 	QString command;
 
 	if (fileInfo.suffix() == "wav") {
