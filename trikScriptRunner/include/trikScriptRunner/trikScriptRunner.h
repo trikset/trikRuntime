@@ -50,12 +50,6 @@ public:
 
 	~TrikScriptRunner() override;
 
-	/// Returns path to the directory in which scripts must be saved.
-	QString scriptsDirPath() const;
-
-	/// Returns name of the directory in which scripts must be saved
-//	QString scriptsDirName() const;
-
 	/// Registers given C++ function as callable from script, with given name.
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
 

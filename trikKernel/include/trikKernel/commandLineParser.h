@@ -22,21 +22,45 @@
 
 namespace trikKernel {
 
-/// Parser of command-line parameters.
+/// Parser of command-line parameters. Here "positional argument" is an argument that must be passed to an application
+/// in some order, "option" is an argument that must appear in command line in arbitrary order (after last positional
+/// argument) and must be preceded by its key (short or long form), and flag is like option, but does not have value
+/// and can only be set (when it appears in command line) and unset (when it is omitted).
+/// For example, "./trikRun file.js --config ./configs --no-locale" has one positional argument ("file.js"),
+/// one option ("--config" with value "./configs") and one flag ("--no-locale).
+/// Options and flags in short form are detected by "-" prefix, and in long form --- by "--", so if some positional
+/// argument starts with "-" it must be quoted.
 class CommandLineParser
 {
 public:
-	/// Add application description string.
+	/// Adds application description string.
 	void addApplicationDescription(const QString &description);
+
+	/// Adds new positional argument with its description.
 	void addPositionalArgument(const QString &name, const QString &description);
+
+	/// Add new option with short and long forms and descriptions. Forms must be passed without "-" prefixes.
+	/// For example, addOption("c", "config", tr("Path to a config file"));
 	void addOption(const QString &shortName, const QString &longName, const QString &description);
+
+	/// Add new flag with short and long forms and descriptions. Forms must be passed without "-" prefixes.
+	/// For example, addFlag("h", "help", tr("Print this help message"));
 	void addFlag(const QString &shortName, const QString &longName, const QString &description);
 
+	/// Parse command line arguments of given application.
+	/// @returns true if parsing is successful. Does not report errors.
 	bool process(const QCoreApplication &app);
+
+	/// Shows application info and descriptions of all command line arguments.
 	void showHelp() const;
 
+	/// Returns a list of positional arguments in order in which they appeared in command line.
 	QStringList positionalArgs() const;
+
+	/// Returns true, if option or flag appeared in command line.
 	bool isSet(const QString &optionShortName) const;
+
+	/// Returns value of an option or an empty string if it is not set.
 	QString value(const QString optionShortName) const;
 
 private:

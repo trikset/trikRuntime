@@ -17,6 +17,7 @@
 
 #include "src/connection.h"
 
+#include <trikKernel/paths.h>
 #include <QsLog.h>
 
 using namespace trikCommunicator;
@@ -46,12 +47,12 @@ void Connection::processData(const QByteArray &data)
 
 		const QString fileName = command.left(separatorPosition);
 		const QString fileContents = command.mid(separatorPosition + 1);
-		trikKernel::FileUtils::writeToFile(fileName, fileContents, mTrikScriptRunner.scriptsDirPath());
+		trikKernel::FileUtils::writeToFile(fileName, fileContents, trikKernel::Paths::userScriptsPath());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "brickBeep");
 	} else if (command.startsWith("run:")) {
 		command.remove(0, QString("run:").length());
 		const QString fileContents = trikKernel::FileUtils::readFromFile(
-				mTrikScriptRunner.scriptsDirPath() + "/" + command);
+				trikKernel::Paths::userScriptsPath() + command);
 
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents), Q_ARG(QString, command));
 	} else if (command == "stop") {

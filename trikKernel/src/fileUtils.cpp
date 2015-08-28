@@ -44,7 +44,9 @@ void FileUtils::writeToFile(const QString &fileName, const QString &contents, co
 	QDir dir;
 	dir.mkdir(dirPath);
 
-	const QString filePath = dirPath.isEmpty() ? fileName : QString(dirPath + "/" + fileName);
+	const QString normalizedDirPath = normalizePath(dirPath);
+
+	const QString filePath = dirPath.isEmpty() ? fileName : QString(normalizedDirPath + fileName);
 
 	QFile file(filePath);
 	file.open(QIODevice::WriteOnly | QIODevice::Text);

@@ -18,18 +18,39 @@
 
 namespace trikKernel {
 
+/// Service that provides information about file paths used by system.
+/// If there is "system-config.xml" file in a folder with launched binary, this service assumes that everything
+/// is stored near binary (as in old "copy" deployment style), if not, it uses common Linux conventions for file
+/// locations (configs in /etc/trik/trikRuntime/, media in /usr/share/trikRuntime/ and so on).
+/// All methods returning paths return them ending with "/".
 class Paths
 {
 public:
+	/// Path to a directory with trikControl config files.
 	static QString configsPath();
+
+	/// Where to put core dump if something goes wrong.
 	static QString coreDumpPath();
+
+	/// Where to put log files.
 	static QString logsPath();
+
+	/// Path to a directory containing "media" folder (with images and sounds).
 	static QString mediaPath();
+
+	/// Path to a directory with "system.js" file.
 	static QString systemScriptsPath();
+
+	/// Where to put script files sent by TRIK Studio and written by user.
 	static QString userScriptsPath();
 
+	/// Name of a directory with user scripts (without path).
 	static QString userScriptsDirectoryName();
+
+	/// Name (with path) of trikrc file.
 	static QString trikRcName();
+
+	/// Name (with path) of .ini file with local settings like locale and hull number.
 	static QString localSettings();
 
 private:

@@ -18,10 +18,12 @@
 
 namespace trikKernel {
 
-/// Helper for loading translations corresponding to current locale settings.
+/// Service for loading translations corresponding to current locale settings.
 class TranslationsHelper
 {
 public:
+	/// Initializes locale and loads translations.
+	/// @param localizationDisabled - if true, no translations will be loaded and default English locale will be used.
 	static void initLocale(bool localizationDisabled);
 
 private:

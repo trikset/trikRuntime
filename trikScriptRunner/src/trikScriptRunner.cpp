@@ -52,16 +52,6 @@ TrikScriptRunner::~TrikScriptRunner()
 	mWorkerThread.wait(1000);
 }
 
-QString TrikScriptRunner::scriptsDirPath() const
-{
-	return trikKernel::Paths::userScriptsPath();
-}
-
-//QString TrikScriptRunner::scriptsDirName() const
-//{
-//	return "scripts";
-//}
-
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
 	mScriptEngineWorker->registerUserFunction(name, function);
