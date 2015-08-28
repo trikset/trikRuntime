@@ -29,3 +29,5 @@ else {
 OTHER_FILES += \
 	$$PWD/ru/locale.ini \
 	$$PWD/fr/locale.ini \
+
+installAdditionalSharedFiles($$DESTDIR/translations)

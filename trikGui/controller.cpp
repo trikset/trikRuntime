@@ -21,6 +21,7 @@
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/paths.h>
 #include <trikKernel/exceptions/internalErrorException.h>
 #include <trikControl/brickFactory.h>
 #include <trikNetwork/mailboxFactory.h>
@@ -33,9 +34,8 @@ using namespace trikGui;
 const int communicatorPort = 8888;
 const int telemetryPort = 9000;
 
-Controller::Controller(const QString &configPath, const QString &startDirPath)
-	: mBrick(trikControl::BrickFactory::create(configPath, startDirPath))
-	, mStartDirPath(startDirPath)
+Controller::Controller(const QString &configPath)
+	: mBrick(trikControl::BrickFactory::create(configPath, trikKernel::Paths::mediaPath()))
 {
 	if (configPath.isEmpty()) {
 		throw trikKernel::InternalErrorException("Config path is empty");
@@ -50,8 +50,7 @@ Controller::Controller(const QString &configPath, const QString &startDirPath)
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
 
-	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(
-			*mBrick, mMailbox.data(), mGamepad.data(), startDirPath));
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox.data(), mGamepad.data()));
 
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
 
@@ -106,21 +105,6 @@ trikControl::BrickInterface &Controller::brick()
 trikNetwork::MailboxInterface *Controller::mailbox()
 {
 	return mMailbox.data();
-}
-
-QString Controller::startDirPath() const
-{
-	return mStartDirPath;
-}
-
-QString Controller::scriptsDirPath() const
-{
-	return mScriptRunner->scriptsDirPath();
-}
-
-QString Controller::scriptsDirName() const
-{
-	return mScriptRunner->scriptsDirName();
 }
 
 void Controller::scriptExecutionCompleted(const QString &error, int scriptId)

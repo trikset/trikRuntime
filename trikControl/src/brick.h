@@ -56,18 +56,16 @@ public:
 	/// Constructor.
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
-	Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath);
+	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
+	Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
 
 	/// Secondary constructor, takes explicit hardware abstraction object.
 	/// @param hardwareAbstraction - hardware abstraction layer implementation.
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
+	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
 	Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig
-			, const QString &modelConfig, const QString &startDirPath);
+			, const QString &modelConfig, const QString &mediaPath);
 
 	~Brick() override;
 
@@ -122,7 +120,7 @@ public slots:
 
 private:
 	Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
-			, const QString &modelConfig, const QString &startDirPath, bool ownsHardwareAbstraction);
+			, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction);
 
 	/// Deinitializes and properly shuts down device on a given port.
 	void shutdownDevice(const QString &port);

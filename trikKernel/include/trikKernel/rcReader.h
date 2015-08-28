@@ -19,7 +19,9 @@
 #include <QtCore/QHash>
 #include <QtCore/QFile>
 
-/// trikrc file parser.
+namespace trikKernel {
+
+/// Simple trikrc file parser.
 class RcReader : public QObject
 {
 	Q_OBJECT
@@ -42,3 +44,5 @@ private:
 	QHash<QString, QString> mVariables;
 	QFile mRcFile;
 };
+
+}

@@ -31,7 +31,6 @@ HEADERS += \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
 	$$PWD/numberSelectionWidget.h \
-	$$PWD/rcReader.h \
 	$$PWD/communicationSettingsWidget.h \
 	$$PWD/runningWidget.h \
 	$$PWD/sensorIndicator.h \
@@ -60,11 +59,10 @@ SOURCES += \
 	$$PWD/informationWidget.cpp \
 	$$PWD/languageSelectionWidget.cpp \
 	$$PWD/lazyMainWidgetWrapper.cpp \
-	$$PWD/main.cpp \
+	$$PWD/trikGuiMain.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/numberSelectionWidget.cpp \
-	$$PWD/rcReader.cpp \
 	$$PWD/runningWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
 	$$PWD/sensorsSelectionWidget.cpp \
@@ -99,3 +97,5 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
 transitiveIncludes(trikNetwork)
 links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+
+installs()

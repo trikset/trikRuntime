@@ -30,6 +30,8 @@
 	#include <QtWidgets/QMessageBox>
 #endif
 
+#include <trikKernel/paths.h>
+
 using namespace trikGui;
 
 FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
@@ -37,16 +39,15 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	: TrikGuiDialog(parent)
 	, mController(controller)
 {
+	QDir dir(trikKernel::Paths::userScriptsPath());
+	dir.mkdir(trikKernel::Paths::userScriptsDirectoryName());
+	QDir::setCurrent(trikKernel::Paths::userScriptsPath() + trikKernel::Paths::userScriptsDirectoryName());
+
 	if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
 		mRootDirPath = QDir::rootPath();
 	} else { // if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir)
-		mRootDirPath = mController.scriptsDirPath();
+		mRootDirPath = trikKernel::Paths::userScriptsPath() + trikKernel::Paths::userScriptsDirectoryName();
 	}
-
-	QDir::setCurrent(mController.startDirPath());
-	QDir dir;
-	dir.mkdir(mController.scriptsDirName());
-	QDir::setCurrent(mController.scriptsDirPath());
 
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);

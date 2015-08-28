@@ -16,8 +16,10 @@ TEMPLATE = lib
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+
+HEADERS += \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
@@ -50,3 +52,6 @@ copyToDestdir($$PWD/system.js)
 
 links(trikKernel trikControl trikNetwork)
 implementationIncludes(trikKernel trikControl trikNetwork)
+
+installs()
+installAdditionalSharedFiles($$DESTDIR/system.js)

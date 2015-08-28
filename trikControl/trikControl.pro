@@ -14,7 +14,7 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/batteryInterface.h \
 	$$PWD/include/trikControl/brickFactory.h \
 	$$PWD/include/trikControl/brickInterface.h \
@@ -112,11 +112,14 @@ SOURCES += \
 	$$PWD/src/shapes/rectangle.cpp \
 	$$PWD/src/shapes/arc.cpp \
 
-OTHER_FILES += \
+CONFIGS += \
 	$$PWD/model-config.xml \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
 	$$PWD/system-config-v6.xml \
+
+OTHER_FILES += \
+	$$CONFIGS \
 	$$PWD/trikControlExport.pri \
 
 TEMPLATE = lib
@@ -133,9 +136,12 @@ links(trikKernel trikHal)
 implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
-	$$PWD/model-config.xml  \
-	$$PWD/model-config-v6.xml  \
-	$$PWD/system-config.xml  \
-	$$PWD/system-config-v6.xml  \
+	$$CONFIGS \
 	$$PWD/../media/ \
 )
+
+installs()
+
+installAdditionalConfigs($$CONFIGS)
+
+installAdditionalSharedFiles($$DESTDIR/media)

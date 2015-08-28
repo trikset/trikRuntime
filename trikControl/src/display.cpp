@@ -14,13 +14,12 @@
 
 #include "display.h"
 
+#include <QtCore/QFileInfo>
+#include <qglobal.h>
+
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QStackedLayout>
-	#include <QtGui/QLabel>
 	#include <QtGui/QApplication>
 #else
-	#include <QtWidgets/QStackedLayout>
-	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QApplication>
 #endif
 
@@ -30,8 +29,8 @@
 
 using namespace trikControl;
 
-Display::Display(const QString &startDirPath)
-	: mStartDirPath(startDirPath)
+Display::Display(const QString &mediaPath)
+	: mMediaPath(mediaPath)
 	, mGuiWorker(new GuiWorker())
 {
 	if (!qApp) {
@@ -56,7 +55,9 @@ DisplayWidgetInterface &Display::graphicsWidget()
 
 void Display::showImage(const QString &fileName)
 {
-	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, mStartDirPath + fileName));
+	QFileInfo imageFile(fileName);
+	const QString correctedFileName = imageFile.exists() ? fileName : mMediaPath + fileName;
+	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, correctedFileName));
 }
 
 void Display::addLabel(const QString &text, int x, int y)

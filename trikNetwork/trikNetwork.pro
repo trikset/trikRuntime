@@ -14,7 +14,7 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikNetwork/connection.h \
 	$$PWD/include/trikNetwork/declSpec.h \
 	$$PWD/include/trikNetwork/gamepadFactory.h \
@@ -54,3 +54,5 @@ QT += network
 DEFINES += TRIKNETWORK_LIBRARY
 
 links(trikKernel)
+
+installs()

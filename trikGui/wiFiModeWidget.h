@@ -30,7 +30,7 @@
 
 #include <QtCore/QString>
 
-#include "rcReader.h"
+#include <trikKernel/rcReader.h>
 #include "trikGuiDialog.h"
 
 namespace trikGui {
@@ -64,7 +64,7 @@ private:
 	void setMode(Mode mode);
 
 	const QString &mConfigPath;
-	RcReader mRcReader;
+	trikKernel::RcReader mRcReader;
 	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
 	QLabel mTitle;

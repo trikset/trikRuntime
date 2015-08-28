@@ -31,7 +31,7 @@ public:
 	/// @param methodName - name of a method to be logged
 	Debugger(const QString &methodName);
 
-	~Debugger();
+	~Debugger() override;
 
 private:
 	const QString mMethodName;

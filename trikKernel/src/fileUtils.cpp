@@ -44,7 +44,9 @@ void FileUtils::writeToFile(const QString &fileName, const QString &contents, co
 	QDir dir;
 	dir.mkdir(dirPath);
 
-	const QString filePath = dirPath.isEmpty() ? fileName : QString(dirPath + "/" + fileName);
+	const QString normalizedDirPath = normalizePath(dirPath);
+
+	const QString filePath = dirPath.isEmpty() ? fileName : QString(normalizedDirPath + fileName);
 
 	QFile file(filePath);
 	file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -77,4 +79,14 @@ QDomElement FileUtils::readXmlFile(const QString &fileNameWithPath)
 	file.close();
 
 	return document.documentElement();
+}
+
+QString FileUtils::normalizePath(const QString &path)
+{
+	QString result = QDir(path).absolutePath();
+	if (!result.endsWith(QDir::separator())) {
+		result += QDir::separator();
+	}
+
+	return result;
 }
