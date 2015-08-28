@@ -15,7 +15,7 @@
 include(../global.pri)
 
 SOURCES += \
-	$$PWD/main.cpp \
+	$$PWD/trikRunMain.cpp \
 
 OTHER_FILES += \
 	$$PWD/test.qts \

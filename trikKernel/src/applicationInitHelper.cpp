@@ -27,16 +27,18 @@
 
 #include <QsLog.h>
 
-#include "loggingHelper.h"
 #include "translationsHelper.h"
 #include "version.h"
 #include "fileUtils.h"
 #include "coreDumping.h"
+#include "loggingHelper.h"
+#include "paths.h"
 
 using namespace trikKernel;
 
 ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 	: mApp(app)
+	, mLoggingHelper(new LoggingHelper(Paths::logsPath()))
 {
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 	mApp.setApplicationVersion(trikKernel::version);
@@ -51,21 +53,14 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 		guiApp->setFont(font);
 	}
 
-	trikKernel::LoggingHelper loggingHelper(".");
-	Q_UNUSED(loggingHelper);
-
-	mParametersHelper.addFlag("h", "help", QObject::tr("Print this help text."));
-	mParametersHelper.addFlag("no-locale", "no-locale"
+	mCommandLineParser.addFlag("h", "help", QObject::tr("Print this help text."));
+	mCommandLineParser.addFlag("no-locale", "no-locale"
 			, QObject::tr("Ignore all locale options and use English language"));
 
-	mParametersHelper.addOption("c", "config-path"
+	mCommandLineParser.addOption("c", "config-path"
 			, QObject::tr("Path to a directory where all configs for TRIK runtime are stored. Config files are\n"
-			"config.xml (configuration of robot hardware for trikControl library) and wpa-config.xml\n"
-			"(configuration of known WiFi networks). Default value for this parameter is current directory.")
-			);
-
-	mParametersHelper.addOption("d", "resources-directory"
-			, QObject::tr("Path to a directory where images, example scripts and system.js file are stored.")
+			"system-config.xml (system-wide configuration of robot hardware for trikControl library) and\n"
+			"model-config.xml (configuration of current model).")
 			);
 
 #ifdef Q_WS_QWS
@@ -76,15 +71,19 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 #endif
 }
 
-trikKernel::ParametersHelper &ApplicationInitHelper::parametersHelper()
+ApplicationInitHelper::~ApplicationInitHelper()
 {
-	return mParametersHelper;
+}
+
+trikKernel::CommandLineParser &ApplicationInitHelper::commandLineParser()
+{
+	return mCommandLineParser;
 }
 
 bool ApplicationInitHelper::parseCommandLine()
 {
-	if (!mParametersHelper.process(mApp) || mParametersHelper.isSet("h")) {
-		mParametersHelper.showHelp();
+	if (!mCommandLineParser.process(mApp) || mCommandLineParser.isSet("h")) {
+		mCommandLineParser.showHelp();
 		return false;
 	}
 
@@ -93,16 +92,11 @@ bool ApplicationInitHelper::parseCommandLine()
 
 void ApplicationInitHelper::init()
 {
-	trikKernel::coreDumping::initCoreDumping(".");
+	trikKernel::coreDumping::initCoreDumping();
 
-	mConfigPath = QDir::currentPath() + "/";
-	if (mParametersHelper.isSet("c")) {
-		mConfigPath = trikKernel::FileUtils::normalizePath(mParametersHelper.value("c"));
-	}
-
-	mStartDirPath = QDir::currentPath();
-	if (mParametersHelper.isSet("d")) {
-		mStartDirPath = trikKernel::FileUtils::normalizePath(mParametersHelper.value("d"));
+	mConfigPath = Paths::configsPath();
+	if (mCommandLineParser.isSet("c")) {
+		mConfigPath = trikKernel::FileUtils::normalizePath(mCommandLineParser.value("c"));
 	}
 
 	QLOG_INFO() << "====================================================================";
@@ -111,9 +105,4 @@ void ApplicationInitHelper::init()
 QString ApplicationInitHelper::configPath() const
 {
 	return mConfigPath;
-}
-
-QString ApplicationInitHelper::startDirPath() const
-{
-	return mStartDirPath;
 }

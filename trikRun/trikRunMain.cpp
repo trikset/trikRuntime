@@ -15,24 +15,17 @@
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWSServer>
 	#include <QtGui/QApplication>
 #else
 	#include <QtWidgets/QApplication>
 #endif
 
-#include <QtCore/QDateTime>
-#include <QtCore/QDir>
-
-#include <trikControl/brickFactory.h>
-#include <trikControl/brickInterface.h>
 #include <trikKernel/configurer.h>
-#include <trikKernel/coreDumping.h>
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/applicationInitHelper.h>
-#include <trikKernel/translationsHelper.h>
-#include <trikKernel/parametersHelper.h>
-#include <trikKernel/version.h>
+#include <trikKernel/paths.h>
+#include <trikControl/brickFactory.h>
+#include <trikControl/brickInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikNetwork/gamepadFactory.h>
 #include <trikNetwork/gamepadInterface.h>
@@ -44,16 +37,15 @@
 int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
+	app.setApplicationName("TrikRun");
 
 	trikKernel::ApplicationInitHelper initHelper(app);
 
-	app.setApplicationName("TrikRun");
-
-	initHelper.parametersHelper().addOption("s", "script"
+	initHelper.commandLineParser().addOption("s", "script"
 			, QObject::tr("Script to be executed directly from command line.\n")
 					+ QObject::tr("Example: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
 
-	initHelper.parametersHelper().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
+	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;
@@ -64,7 +56,7 @@ int main(int argc, char *argv[])
 	QLOG_INFO() << "TrikRun started";
 
 	QScopedPointer<trikControl::BrickInterface> brick(
-			trikControl::BrickFactory::create(initHelper.configPath(), initHelper.startDirPath())
+			trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
 			);
 
 	trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
@@ -72,14 +64,14 @@ int main(int argc, char *argv[])
 
 	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
-	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data(), initHelper.startDirPath());
+	trikScriptRunner::TrikScriptRunner runner(*brick, mailbox.data(), gamepad.data());
 
 	QObject::connect(&runner, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
 
-	if (initHelper.parametersHelper().isSet("s")) {
-		runner.run(initHelper.parametersHelper().value("s"));
+	if (initHelper.commandLineParser().isSet("s")) {
+		runner.run(initHelper.commandLineParser().value("s"));
 	} else {
-		runner.run(trikKernel::FileUtils::readFromFile(initHelper.parametersHelper().positionalArgs()[0]));
+		runner.run(trikKernel::FileUtils::readFromFile(initHelper.commandLineParser().positionalArgs()[0]));
 	}
 
 	return app.exec();

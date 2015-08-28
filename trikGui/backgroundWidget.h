@@ -52,10 +52,8 @@ public:
 	/// Constructor.
 	/// @param configPath - path to a directory with config files (config.xml and so on). It is expected to be
 	///        ending with "/".
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
-	explicit BackgroundWidget(const QString &configPath, const QString &startDirPath, QWidget *parent = 0);
+	explicit BackgroundWidget(const QString &configPath, QWidget *parent = 0);
 
 	~BackgroundWidget() override;
 

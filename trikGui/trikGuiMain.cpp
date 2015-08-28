@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
 	app.setApplicationName("TrikGui");
 
-	initHelper.parametersHelper().addApplicationDescription(
+	initHelper.commandLineParser().addApplicationDescription(
 			QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
 			);
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikGui started";
 
-	BackgroundWidget w(initHelper.configPath(), initHelper.startDirPath());
+	BackgroundWidget w(initHelper.configPath());
 	w.show();
 
 	return app.exec();

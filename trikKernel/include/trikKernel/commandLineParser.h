@@ -23,7 +23,7 @@
 namespace trikKernel {
 
 /// Helper for working with command-line parameters.
-class ParametersHelper
+class CommandLineParser
 {
 public:
 	void addApplicationDescription(const QString &description);

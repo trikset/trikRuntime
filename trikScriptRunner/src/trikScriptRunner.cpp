@@ -15,6 +15,7 @@
 #include "include/trikScriptRunner/trikScriptRunner.h"
 
 #include <trikKernel/fileUtils.h>
+#include <trikKernel/paths.h>
 
 #include "src/scriptEngineWorker.h"
 #include "src/scriptExecutionControl.h"
@@ -23,25 +24,21 @@
 
 using namespace trikScriptRunner;
 
-// name of the directory in which scripts must be saved
-const QString constScriptsDirName = "scripts";
-
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, const QString &startDirPath)
+		)
 	: mScriptController(new ScriptExecutionControl())
-	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController, startDirPath))
-	, mStartDirPath(startDirPath)
+	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController))
 	, mMaxScriptId(0)
 {
-	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
+	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker.data(), SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
-	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+	connect(mScriptEngineWorker.data(), SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
+	connect(mScriptEngineWorker.data(), SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
 
 	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
 
@@ -57,13 +54,13 @@ TrikScriptRunner::~TrikScriptRunner()
 
 QString TrikScriptRunner::scriptsDirPath() const
 {
-	return QString(mStartDirPath + constScriptsDirName);
+	return trikKernel::Paths::userScriptsPath();
 }
 
-QString TrikScriptRunner::scriptsDirName() const
-{
-	return constScriptsDirName;
-}
+//QString TrikScriptRunner::scriptsDirName() const
+//{
+//	return "scripts";
+//}
 
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
@@ -72,7 +69,7 @@ void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::
 
 void TrikScriptRunner::brickBeep()
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
+	QMetaObject::invokeMethod(mScriptEngineWorker.data(), "brickBeep");
 }
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)

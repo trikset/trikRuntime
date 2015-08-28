@@ -19,7 +19,7 @@
 namespace trikKernel {
 
 namespace coreDumping {
-	void initCoreDumping(const QString &dumpDir);
+	void initCoreDumping();
 }
 
 }

@@ -59,7 +59,7 @@ SOURCES += \
 	$$PWD/informationWidget.cpp \
 	$$PWD/languageSelectionWidget.cpp \
 	$$PWD/lazyMainWidgetWrapper.cpp \
-	$$PWD/main.cpp \
+	$$PWD/trikGuiMain.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/numberSelectionWidget.cpp \

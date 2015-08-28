@@ -15,7 +15,7 @@
 include(../global.pri)
 
 SOURCES += \
-	$$PWD/main.cpp \
+	$$PWD/trikServerMain.cpp \
 
 implementationIncludes(trikKernel trikControl trikCommunicator trikNetwork)
 links(trikControl trikCommunicator trikNetwork trikKernel)

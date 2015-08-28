@@ -15,27 +15,33 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtCore/QSharedPointer>
-
-namespace QsLogging {
-class Destination;
-}
 
 namespace trikKernel {
 
-/// Helper for working with QsLog library.
-class LoggingHelper
+class Paths
 {
 public:
-	/// Constructor. Initializes logger with default settings, supposed to be alive until program finishes (RAII idiom).
-	/// @param pathToLog - path to "trik.log" file that will be created or appended by logger. Supposed to end with "/".
-	LoggingHelper(const QString &pathToLog);
+	static QString configsPath();
+	static QString coreDumpPath();
+	static QString logsPath();
+	static QString mediaPath();
+	static QString systemScriptsPath();
+	static QString userScriptsPath();
 
-	~LoggingHelper();
+	static QString userScriptsDirectoryName();
 
 private:
-	QSharedPointer<QsLogging::Destination> mFileDestination;
-	QSharedPointer<QsLogging::Destination> mConsoleDestination;
+	enum class Resource {
+		configs
+		, translations
+		, media
+		, logs
+		, coreDump
+		, userScripts
+		, systemScripts
+	};
+
+	static QString path(const Resource resource);
 };
 
 }

@@ -16,22 +16,30 @@
 
 #include <QtCore/QDir>
 
+#include <trikKernel/fileUtils.h>
+
 #include "brick.h"
 
 using namespace trikControl;
 
 BrickInterface *BrickFactory::create(const QString &systemConfig
-		, const QString &modelConfig, const QString &startDirPath)
+		, const QString &modelConfig, const QString &mediaPath)
 {
-	return new Brick(systemConfig, modelConfig, startDirPath);
+	return new Brick(systemConfig, modelConfig, mediaPath);
 }
 
-BrickInterface *BrickFactory::create(const QString &configFilesPath, const QString &startDirPath)
+BrickInterface *BrickFactory::create(const QString &configFilesPath, const QString &mediaPath)
 {
-	const QString correctedPath = configFilesPath.endsWith(QDir::separator())
-			? configFilesPath
-			: configFilesPath + QDir::separator();
+	const QString correctedPath = trikKernel::FileUtils::normalizePath(configFilesPath);
+	return new Brick(correctedPath + "system-config.xml", correctedPath + "model-config.xml", mediaPath);
+}
 
-	return new Brick(correctedPath + "system-config.xml", correctedPath + "model-config.xml", startDirPath);
+BrickInterface *BrickFactory::create(
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction
+		, const QString &systemConfig
+		, const QString &modelConfig
+		, const QString &mediaPath)
+{
+	return new Brick(hardwareAbstraction, systemConfig, modelConfig, mediaPath);
 }
 

@@ -15,31 +15,52 @@
 #pragma once
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QScopedPointer>
 
-#include "parametersHelper.h"
+#include "commandLineParser.h"
 
 namespace trikKernel {
 
+class LoggingHelper;
+
 /// Helper class for correct initialization of trikRuntime applications --- TrikRun, TrikGui and TrikServer.
+/// Usage scenario is to creae application object, create this helper, get command line parser from it and add
+/// needed additional command line options, then call "parseCommandLine", then, if it is successful, call "init",
+/// then take configPath, if needed.
 class ApplicationInitHelper
 {
 public:
-	ApplicationInitHelper(QCoreApplication &app);
+	/// Constructor.
+	/// @param app - application object, with filled applicationName field.
+	explicit ApplicationInitHelper(QCoreApplication &app);
 
-	trikKernel::ParametersHelper &parametersHelper();
+	~ApplicationInitHelper();
 
+	/// Returns temporary reference to command line options parser.
+	trikKernel::CommandLineParser &commandLineParser();
+
+	/// Parses command line arguments.
+	/// @returns true, if parsing is successful. All errors will be reported by command line parser itself.
 	bool parseCommandLine();
 
+	/// Continues initialization of the application after the command line is parsed.
 	void init();
 
+	/// Returns path to a directory with config files, which is possibly received from command line.
 	QString configPath() const;
-	QString startDirPath() const;
 
 private:
+	/// Reference to an application being initialized.
 	QCoreApplication &mApp;
-	trikKernel::ParametersHelper mParametersHelper;
+
+	/// Command line arguments parser.
+	trikKernel::CommandLineParser mCommandLineParser;
+
+	/// Path to a directory with config files.
 	QString mConfigPath;
-	QString mStartDirPath;
+
+	/// Initializer for logging system.
+	QScopedPointer<LoggingHelper> mLoggingHelper;
 };
 
 }

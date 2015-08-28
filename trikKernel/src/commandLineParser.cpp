@@ -12,36 +12,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "parametersHelper.h"
+#include "commandLineParser.h"
 
 #include <QtCore/QDebug>
 
 using namespace trikKernel;
 
-void ParametersHelper::addApplicationDescription(const QString &description)
+void CommandLineParser::addApplicationDescription(const QString &description)
 {
 	mApplicationDescription = description;
 }
 
-void ParametersHelper::addPositionalArgument(const QString &name, const QString &description)
+void CommandLineParser::addPositionalArgument(const QString &name, const QString &description)
 {
 	mPositionalArgNames << name;
 	mPositionalArgDescriptions << description;
 }
 
-void ParametersHelper::addOption(const QString &shortName, const QString &longName, const QString &description)
+void CommandLineParser::addOption(const QString &shortName, const QString &longName, const QString &description)
 {
 	mOptionDescriptions.insert(shortName, description);
 	mOptionLongNames.insert(longName, shortName);
 }
 
-void ParametersHelper::addFlag(const QString &shortName, const QString &longName, const QString &description)
+void CommandLineParser::addFlag(const QString &shortName, const QString &longName, const QString &description)
 {
 	mFlagDescriptions.insert(shortName, description);
 	mFlagLongNames.insert(longName, shortName);
 }
 
-bool ParametersHelper::process(const QCoreApplication &app)
+bool CommandLineParser::process(const QCoreApplication &app)
 {
 	mApplicationName = app.applicationName();
 	mApplicationVersion = app.applicationVersion();
@@ -97,7 +97,7 @@ bool ParametersHelper::process(const QCoreApplication &app)
 	return true;
 }
 
-void ParametersHelper::showHelp() const
+void CommandLineParser::showHelp() const
 {
 	const QString generalInfo = mApplicationName
 			+ (mApplicationVersion.isEmpty() ? "" : (" (v " + mApplicationVersion + ")"));
@@ -129,17 +129,17 @@ void ParametersHelper::showHelp() const
 	printInfo(mFlagDescriptions, mFlagLongNames, "Flags");
 }
 
-QStringList ParametersHelper::positionalArgs() const
+QStringList CommandLineParser::positionalArgs() const
 {
 	return mPositionalArgValues;
 }
 
-bool ParametersHelper::isSet(const QString &optionShortName) const
+bool CommandLineParser::isSet(const QString &optionShortName) const
 {
 	return mOptionValues.contains(optionShortName) || mSetFlags.contains(optionShortName);
 }
 
-QString ParametersHelper::value(const QString optionShortName) const
+QString CommandLineParser::value(const QString optionShortName) const
 {
 	return mOptionValues.value(optionShortName);
 }

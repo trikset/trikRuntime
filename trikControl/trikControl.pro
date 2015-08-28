@@ -112,11 +112,14 @@ SOURCES += \
 	$$PWD/src/shapes/rectangle.cpp \
 	$$PWD/src/shapes/arc.cpp \
 
-OTHER_FILES += \
+CONFIGS += \
 	$$PWD/model-config.xml \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
 	$$PWD/system-config-v6.xml \
+
+OTHER_FILES += \
+	$$CONFIGS \
 	$$PWD/trikControlExport.pri \
 
 TEMPLATE = lib
@@ -133,16 +136,12 @@ links(trikKernel trikHal)
 implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
-	$$PWD/model-config.xml  \
-	$$PWD/model-config-v6.xml  \
-	$$PWD/system-config.xml  \
-	$$PWD/system-config-v6.xml  \
+	$$CONFIGS \
 	$$PWD/../media/ \
 )
 
 installs()
-installAdditionalConfigs($$DESTDIR/model-config.xml)
-installAdditionalConfigs($$DESTDIR/system-config.xml)
-installAdditionalConfigs($$DESTDIR/model-config-v6.xml)
-installAdditionalConfigs($$DESTDIR/system-config-v6.xml)
+
+installAdditionalConfigs($$CONFIGS)
+
 installAdditionalSharedFiles($$DESTDIR/media)
