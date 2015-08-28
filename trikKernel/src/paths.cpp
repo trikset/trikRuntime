@@ -31,6 +31,9 @@ QString Paths::path(const Resource resource)
 	case Resource::coreDump:
 		defaultPath = ".";
 		break;
+	case Resource::localSettings:
+		defaultPath = "/home/root/.config/trikRuntime/";
+		break;
 	case Resource::logs:
 		defaultPath = "/var/log/trikRuntime/";
 		break;
@@ -88,4 +91,14 @@ QString Paths::coreDumpPath()
 QString Paths::userScriptsDirectoryName()
 {
 	return "scripts/";
+}
+
+QString Paths::trikRcName()
+{
+	return "/etc/trik/trikrc";
+}
+
+QString Paths::localSettings()
+{
+	return path(Resource::localSettings) + "localSettings.ini";
 }

@@ -29,12 +29,15 @@ public:
 	static QString userScriptsPath();
 
 	static QString userScriptsDirectoryName();
+	static QString trikRcName();
+	static QString localSettings();
 
 private:
 	enum class Resource {
 		configs
 		, translations
 		, media
+		, localSettings
 		, logs
 		, coreDump
 		, userScripts

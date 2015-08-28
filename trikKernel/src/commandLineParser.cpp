@@ -102,10 +102,12 @@ void CommandLineParser::showHelp() const
 	const QString generalInfo = mApplicationName
 			+ (mApplicationVersion.isEmpty() ? "" : (" (v " + mApplicationVersion + ")"));
 
-	qDebug() << generalInfo;
+	qDebug() << generalInfo.toStdString().c_str();
+
+	qDebug() << mApplicationDescription.toStdString().c_str();
 
 	if (!mPositionalArgNames.isEmpty()) {
-		qDebug() << "Positional arguments:";
+		qDebug() << QObject::tr("Positional arguments:");
 		for (int i = 0; i < mPositionalArgNames.size(); ++i) {
 			qDebug() << mPositionalArgNames[i] << ": " << mPositionalArgDescriptions[i];
 		}
@@ -113,20 +115,21 @@ void CommandLineParser::showHelp() const
 
 	const auto printInfo = [](auto &&descriptions, auto &&longNames, auto &&help) {
 		if (!descriptions.isEmpty()) {
-			qDebug() << help << ":";
+			qDebug() << (QString(help) + ":").toStdString().c_str();
 			for (const QString &optionShortName : descriptions.keys()) {
 				const QString option = "-" + optionShortName
-						+ (longNames.value(optionShortName).isEmpty()
+						+ (longNames.key(optionShortName).isEmpty()
 								? ""
-								: "(--" + longNames[optionShortName] + ")");
+								: " (--" + longNames.key(optionShortName) + ")");
 
-				qDebug() << option << ": " << descriptions[optionShortName];
+				qDebug() << (option + ":").toStdString().c_str()
+						<< descriptions[optionShortName].toStdString().c_str();
 			}
 		}
 	};
 
-	printInfo(mOptionDescriptions, mOptionLongNames, "Options");
-	printInfo(mFlagDescriptions, mFlagLongNames, "Flags");
+	printInfo(mOptionDescriptions, mOptionLongNames, QObject::tr("Options"));
+	printInfo(mFlagDescriptions, mFlagLongNames, QObject::tr("Flags"));
 }
 
 QStringList CommandLineParser::positionalArgs() const

@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 	trikKernel::ApplicationInitHelper initHelper(app);
 
 	initHelper.commandLineParser().addOption("s", "script"
-			, QObject::tr("Script to be executed directly from command line.\n")
-					+ QObject::tr("Example: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
+			, QObject::tr("Script to be executed directly from command line.") + "\n"
+					+ QObject::tr("\tExample: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
 
 	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
 

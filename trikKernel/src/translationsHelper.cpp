@@ -21,6 +21,7 @@
 #include <QtCore/QTranslator>
 #include <QtCore/QCoreApplication>
 
+#include "paths.h"
 #include "rcReader.h"
 
 using namespace trikKernel;
@@ -45,12 +46,19 @@ void TranslationsHelper::initLocale(bool localizationDisabled)
 		return;
 	}
 
-	QSettings settings("localSettings.ini", QSettings::IniFormat);
-	const QString lastLocale = settings.value("locale", "").toString();
+	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
+	QString locale = settings.value("locale", "").toString();
+	const QString lastLocale = locale;
 
-	const RcReader rcReader("/etc/trik/trikrc");
-	const QString localeInSettings = rcReader.value("locale");
-	const QString locale = !lastLocale.isEmpty() ? lastLocale : !localeInSettings.isEmpty() ? localeInSettings : "ru";
+	if (locale.isEmpty() && QFileInfo::exists(trikKernel::Paths::trikRcName())) {
+		const RcReader rcReader(trikKernel::Paths::trikRcName());
+		locale = rcReader.value("locale");
+	}
+
+	if (locale.isEmpty()) {
+		locale = "ru";
+	}
+
 	if (lastLocale != locale) {
 		settings.setValue("locale", locale);
 	}

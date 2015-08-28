@@ -59,8 +59,8 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 
 	mCommandLineParser.addOption("c", "config-path"
 			, QObject::tr("Path to a directory where all configs for TRIK runtime are stored. Config files are\n"
-			"system-config.xml (system-wide configuration of robot hardware for trikControl library) and\n"
-			"model-config.xml (configuration of current model).")
+			"\tsystem-config.xml (system-wide configuration of robot hardware for trikControl library) and\n"
+			"\tmodel-config.xml (configuration of current model).")
 			);
 
 #ifdef Q_WS_QWS

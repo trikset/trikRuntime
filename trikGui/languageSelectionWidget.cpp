@@ -31,13 +31,15 @@
 
 #include <QtGui/QKeyEvent>
 
+#include <trikKernel/paths.h>
+
 using namespace trikGui;
 
 LanguageSelectionWidget::LanguageSelectionWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("Select language:"))
 {
-	QSettings settings(QApplication::applicationDirPath() + "/localSettings.ini", QSettings::IniFormat);
+	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 	const QString lastLocale = settings.value("locale", "").toString();
 
 	int lastLocaleIndex = 0;
@@ -85,7 +87,7 @@ void LanguageSelectionWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_Return: {
 			const QString selectedLocale = mLanguages.currentItem()->data(Qt::UserRole).toString();
-			QSettings settings(QApplication::applicationDirPath() + "/localSettings.ini", QSettings::IniFormat);
+			QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 			settings.setValue("locale", selectedLocale);
 			settings.sync();
 
