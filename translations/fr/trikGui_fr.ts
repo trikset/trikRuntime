@@ -48,37 +48,19 @@
     </message>
 </context>
 <context>
-    <name>trikGui::FileManagerMessageBox</name>
-    <message>
-        <location filename="../../trikGui/fileManagerMessageBox.cpp" line="37"/>
-        <source>Do you want to open or delete the file?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/fileManagerMessageBox.cpp" line="39"/>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/fileManagerMessageBox.cpp" line="40"/>
-        <source>Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="78"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="86"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="102"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="110"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="103"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="111"/>
         <source>Are you sure you want to delete file?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -328,22 +310,27 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="59"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="60"/>
         <source>IP:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="62"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="63"/>
+        <source>Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="68"/>
         <source>Available networks:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="143"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="153"/>
         <source>connecting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="148"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="158"/>
         <source>no connection</source>
         <translation type="unfinished"></translation>
     </message>

@@ -29,6 +29,7 @@
 	#include <QtWidgets/QScrollBar>
 #endif
 
+#include <trikKernel/fileUtils.h>
 #include <trikWiFi/trikWiFi.h>
 #include <trikWiFi/wpaConfigurer.h>
 
@@ -59,6 +60,11 @@ WiFiClientWidget::WiFiClientWidget(const QString &configPath, QWidget *parent)
 	mIpLabel.setText(tr("IP:"));
 	mIpLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+	mNameLabel.setText(tr("Name:"));
+	mNameLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	const QString name = trikKernel::FileUtils::readFromFile("/etc/hostname").trimmed();
+	mNameValueLabel.setText(name);
+
 	mAvailableNetworksLabel.setText(tr("Available networks:"));
 
 	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
@@ -68,7 +74,11 @@ WiFiClientWidget::WiFiClientWidget(const QString &configPath, QWidget *parent)
 	mIpAddressLayout.addWidget(&mIpLabel);
 	mIpAddressLayout.addWidget(&mIpValueLabel);
 
+	mNameLayout.addWidget(&mNameLabel);
+	mNameLayout.addWidget(&mNameValueLabel);
+
 	mMainLayout.addLayout(&mIpAddressLayout);
+	mMainLayout.addLayout(&mNameLayout);
 	mMainLayout.addWidget(&mAvailableNetworksLabel);
 	mMainLayout.addWidget(&mAvailableNetworksView);
 	setLayout(&mMainLayout);

@@ -21,6 +21,8 @@
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QAbstractSocket>
 
+#include <trikKernel/fileUtils.h>
+
 #include "rcReader.h"
 
 using namespace trikGui;
@@ -60,12 +62,12 @@ void WiFiAPWidget::renewFocus()
 
 void WiFiAPWidget::getParameters()
 {
-	const RcReader rcReader("/etc/trik/trikrc");
-
-	const QString ssid = rcReader.value("trik_wifi_ap_ssid");
-	if (!ssid.isEmpty()) {
-		mNetworkLabel.setText(tr("Name: ") + ssid);
+	const QString name = trikKernel::FileUtils::readFromFile("/etc/hostname").trimmed();
+	if (!name.isEmpty()) {
+		mNetworkLabel.setText(tr("Name: ") + name);
 	}
+
+	const RcReader rcReader("/etc/trik/trikrc");
 
 	const QString passphrase = rcReader.value("trik_wifi_ap_passphrase");
 	if (!passphrase.isEmpty()) {
