@@ -30,3 +30,4 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 }
 
 installs()
+noPch()

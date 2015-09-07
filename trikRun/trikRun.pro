@@ -39,3 +39,4 @@ TRANSLATIONS = \
 	$$PWD/../translations/fr/trikRun_fr.ts \
 
 installs()
+noPch()

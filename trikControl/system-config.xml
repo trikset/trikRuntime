@@ -69,7 +69,7 @@ equal to its class name.
 		<rangeSensor commonModule="hcsr04" />
 		<digitalSensor />
 		<fifo />
-		<accelerometer deviceFile="/dev/input/event1" optional="true" />
+		<accelerometer deviceFile="/dev/input/by-path/platform-i2c_davinci.2-event" optional="true" />
 		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" optional="true" />
 		<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
