@@ -34,3 +34,5 @@ HEADERS += \
 SOURCES += \
 	$$files(gtest/src/*.cc) \
 	$$files(src/*.cc) \
+
+noPch()

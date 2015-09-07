@@ -35,3 +35,4 @@ implementationIncludes(trikControl)
 links(trikControl trikNetwork trikKernel)
 
 installs()
+noPch()

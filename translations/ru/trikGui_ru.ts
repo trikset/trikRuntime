@@ -54,15 +54,15 @@
     <name>trikGui::FileManagerMessageBox</name>
     <message>
         <source>Do you want to open or delete the file?</source>
-        <translation type="vanished">Вы хотите открыть или удалить файл?</translation>
+        <translation type="obsolete">Вы хотите открыть или удалить файл?</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="vanished">Открыть</translation>
+        <translation type="obsolete">Открыть</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="vanished">Удалить</translation>
+        <translation type="obsolete">Удалить</translation>
     </message>
 </context>
 <context>
@@ -324,6 +324,10 @@
     <message>
         <source>no connection</source>
         <translation>нет соединения</translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation>Имя:</translation>
     </message>
 </context>
 <context>

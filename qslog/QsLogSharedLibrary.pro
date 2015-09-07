@@ -16,3 +16,4 @@ TEMPLATE = lib
 DEFINES += QSLOG_IS_SHARED_LIBRARY
 
 installs()
+noPch()

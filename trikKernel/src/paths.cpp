@@ -105,3 +105,8 @@ QString Paths::localSettings()
 {
 	return path(Resource::localSettings) + "localSettings.ini";
 }
+
+QString Paths::hostnameName()
+{
+	return "/etc/hostname";
+}

@@ -34,3 +34,4 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
 
 installs()
+noPch()

@@ -79,11 +79,14 @@ private:
 	QLabel mConnectionIconLabel;
 	QLabel mIpLabel;
 	QLabel mIpValueLabel;
+	QLabel mNameLabel;
+	QLabel mNameValueLabel;
 	QLabel mAvailableNetworksLabel;
 	QListView mAvailableNetworksView;
 	QStandardItemModel mAvailableNetworksModel;
 	QVBoxLayout mMainLayout;
 	QHBoxLayout mIpAddressLayout;
+	QHBoxLayout mNameLayout;
 	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
 	QString mCurrentSsid;
 	QHash<QString, int> mNetworksAvailableForConnection;
