@@ -28,7 +28,8 @@ public:
 	StubHardwareAbstraction();
 	~StubHardwareAbstraction() override;
 
-	I2CInterface &i2c() override;
+	MspI2cInterface &mspI2c() override;
+	MspUsbInterface &mspUsb() override;
 	SystemConsoleInterface &systemConsole() override;
 
 	EventFileInterface *createEventFile(const QString &fileName) const override;
@@ -37,7 +38,8 @@ public:
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
 
 private:
-	QScopedPointer<I2CInterface> mI2c;
+	QScopedPointer<MspI2cInterface> mMspI2cBus;
+	QScopedPointer<MspUsbInterface> mMspUsbBus;
 	QScopedPointer<SystemConsoleInterface> mSystemConsole;
 };
 

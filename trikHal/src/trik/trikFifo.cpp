@@ -38,13 +38,14 @@ TrikFifo::~TrikFifo()
 
 bool TrikFifo::open()
 {
-	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_RDONLY, O_NONBLOCK);
+
 	if (mFileDescriptor == -1) {
 		QLOG_ERROR() << "Can't open FIFO file" << mFileName;
 		return false;
 	}
 
-	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this));
+	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
 
 	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 	mSocketNotifier->setEnabled(true);
@@ -59,7 +60,7 @@ void TrikFifo::readFile()
 
 	mSocketNotifier->setEnabled(false);
 
-	if (::read(mFileDescriptor, data, 4000) < 0) {
+	if (::read(mFileDescriptor, &data, 4000) < 0) {
 		QLOG_ERROR() << "FIFO read failed: " << strerror(errno);
 		emit readError();
 		return;
@@ -84,7 +85,9 @@ void TrikFifo::readFile()
 bool TrikFifo::close()
 {
 	if (mFileDescriptor != -1) {
-		return ::close(mFileDescriptor) == 0;
+		bool result = ::close(mFileDescriptor) == 0;
+		mFileDescriptor = -1;
+		return result;
 	}
 
 	return false;

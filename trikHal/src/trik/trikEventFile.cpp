@@ -78,6 +78,10 @@ void TrikEventFile::tryOpenEventFile()
 
 bool TrikEventFile::close()
 {
+	if (mEventFileDescriptor == -1) {
+		return false;
+	}
+
 	if (mSocketNotifier) {
 		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
 		mSocketNotifier->setEnabled(false);
@@ -90,6 +94,16 @@ bool TrikEventFile::close()
 
 	mEventFileDescriptor = -1;
 	return true;
+}
+
+void TrikEventFile::cancelWaiting()
+{
+	mInitWaitingLoop->quit();
+}
+
+QString TrikEventFile::fileName() const
+{
+	return mFileName;
 }
 
 void TrikEventFile::readFile()
@@ -141,3 +155,4 @@ void TrikEventFile::readFile()
 
 	mSocketNotifier->setEnabled(true);
 }
+

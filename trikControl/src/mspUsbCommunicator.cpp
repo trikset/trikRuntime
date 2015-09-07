@@ -1,4 +1,4 @@
-/* Copyright 2013 Yurii Litvinov
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,43 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "src/i2cCommunicator.h"
+#include "src/mspUsbCommunicator.h"
 
 #include <trikKernel/configurer.h>
+#include <trikHal/mspUsbInterface.h>
 
-#include <trikHal/i2cInterface.h>
 #include <QsLog.h>
 
 using namespace trikControl;
 
-I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::I2CInterface &i2c)
-	: mI2c(i2c)
+MspUsbCommunicator::MspUsbCommunicator(trikHal::MspUsbInterface &usb)
+	: mUsb(usb)
+	, mState("MSP USB Communicator")
 {
-	const QString devicePath = configurer.attributeByDevice("i2c", "path");
-
-	bool ok = false;
-	const int deviceId = configurer.attributeByDevice("i2c", "deviceId").toInt(&ok, 0);
-	if (!ok) {
-		QLOG_ERROR() << "Incorrect I2C device id" << configurer.attributeByDevice("i2c", "deviceId");
-		mState.fail();
-		return;
-	}
-
-	if (mI2c.connect(devicePath, deviceId)) {
+	if (mUsb.connect()) {
 		mState.ready();
 	} else {
 		mState.fail();
 	}
 }
 
-I2cCommunicator::~I2cCommunicator()
+MspUsbCommunicator::~MspUsbCommunicator()
 {
 	if (mState.isReady()) {
 		disconnect();
 	}
 }
 
-void I2cCommunicator::send(const QByteArray &data)
+void MspUsbCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
@@ -56,10 +47,10 @@ void I2cCommunicator::send(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	mI2c.send(data);
+	mUsb.send(data);
 }
 
-int I2cCommunicator::read(const QByteArray &data)
+int MspUsbCommunicator::read(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
@@ -67,17 +58,18 @@ int I2cCommunicator::read(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	return mI2c.read(data);
+	return mUsb.read(data);
 }
 
-DeviceInterface::Status I2cCommunicator::status() const
+DeviceInterface::Status MspUsbCommunicator::status() const
 {
 	return mState.status();
 }
 
-void I2cCommunicator::disconnect()
+void MspUsbCommunicator::disconnect()
 {
+	mState.stop();
 	QMutexLocker lock(&mLock);
-	mI2c.disconnect();
+	mUsb.disconnect();
 	mState.off();
 }

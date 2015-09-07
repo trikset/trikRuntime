@@ -26,6 +26,7 @@
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
+#include <trikControl/soundSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
 #include <trikControl/fifoInterface.h>
@@ -67,6 +68,9 @@ void motorFromScriptValue(const QScriptValue &object, trikControl::MotorInterfac
 
 QScriptValue objectSensorToScriptValue(QScriptEngine *engine, trikControl::ObjectSensorInterface* const &in);
 void objectSensorFromScriptValue(const QScriptValue &object, trikControl::ObjectSensorInterface* &out);
+
+QScriptValue soundSensorToScriptValue(QScriptEngine *engine, trikControl::SoundSensorInterface* const &in);
+void soundSensorFromScriptValue(QScriptValue const &object, trikControl::SoundSensorInterface* &out);
 
 QScriptValue timerToScriptValue(QScriptEngine *engine, QTimer* const &in);
 void timerFromScriptValue(const QScriptValue &object, QTimer* &out);

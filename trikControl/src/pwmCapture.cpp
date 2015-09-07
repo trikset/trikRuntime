@@ -28,6 +28,7 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFrequencyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "frequencyFile")))
 	, mDutyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "dutyFile")))
+	, mState("PWM Capture on " + port)
 {
 	if (!mFrequencyFile->open()) {
 		mState.fail();

@@ -25,6 +25,8 @@ TrikInputDeviceFile::TrikInputDeviceFile(const QString &fileName)
 
 bool TrikInputDeviceFile::open()
 {
+	QLOG_INFO() << "Opening input device file" << mFile.fileName();
+
 	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "File " << mFile.fileName() << " failed to open for reading";
 		return false;
@@ -37,6 +39,7 @@ bool TrikInputDeviceFile::open()
 
 void TrikInputDeviceFile::close()
 {
+	QLOG_INFO() << "Closing input device file" << mFile.fileName();
 	mFile.close();
 }
 

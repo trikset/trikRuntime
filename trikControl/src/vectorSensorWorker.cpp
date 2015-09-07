@@ -51,8 +51,8 @@ void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType event
 			emit newData(mReading);
 			break;
 		default:
-			QLOG_ERROR() << "Unknown event type in vector sensor event file:" << static_cast<int>(eventType)
-					<< code << value;
+			QLOG_ERROR() << "Unknown event type in vector sensor event file"<< mEventFile->fileName() << " :"
+					<< static_cast<int>(eventType) << code << value;
 	}
 }
 

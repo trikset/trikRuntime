@@ -14,7 +14,8 @@
 
 #include "stubHardwareAbstraction.h"
 
-#include "stubI2c.h"
+#include "stubMspI2c.h"
+#include "stubMspUsb.h"
 #include "stubSystemConsole.h"
 #include "stubEventFile.h"
 #include "stubInputDeviceFile.h"
@@ -25,7 +26,8 @@ using namespace trikHal;
 using namespace trikHal::stub;
 
 StubHardwareAbstraction::StubHardwareAbstraction()
-	: mI2c(new StubI2C())
+	: mMspI2cBus(new StubMspI2C())
+	, mMspUsbBus(new StubMspUsb())
 	, mSystemConsole(new StubSystemConsole())
 {
 }
@@ -34,9 +36,14 @@ StubHardwareAbstraction::~StubHardwareAbstraction()
 {
 }
 
-I2CInterface &StubHardwareAbstraction::i2c()
+MspI2cInterface &StubHardwareAbstraction::mspI2c()
 {
-	return *mI2c.data();
+	return *mMspI2cBus.data();
+}
+
+MspUsbInterface &StubHardwareAbstraction::mspUsb()
+{
+	return *mMspUsbBus.data();
 }
 
 SystemConsoleInterface &StubHardwareAbstraction::systemConsole()

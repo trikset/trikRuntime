@@ -64,7 +64,9 @@ public slots:
 	/// a motor.
 	/// @param power - for angular servos --- servo shaft angle, allowed values are from -90 to 90, for continious
 	///        rotation servos --- power, allowed values are from -100 to 100.
-	void setPower(int power) override;
+	/// @param constrain - if true, power will be constrained in an interval [-100, 100], if false, "power" value
+	///        will be sent to a motor unaltered.
+	void setPower(int power, bool constrain = true) override;
 
 private:
 	enum class Type {

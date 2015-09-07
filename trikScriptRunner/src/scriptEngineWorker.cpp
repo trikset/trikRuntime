@@ -27,6 +27,7 @@
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
+#include <trikControl/soundSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -53,6 +54,7 @@ Q_DECLARE_METATYPE(LineSensorInterface*)
 Q_DECLARE_METATYPE(MailboxInterface*)
 Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
+Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(FifoInterface*)
@@ -223,6 +225,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
 	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
@@ -230,6 +233,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+
 	if (mMailbox) {
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
 	}
