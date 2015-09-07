@@ -14,19 +14,20 @@
 
 #include "battery.h"
 
-#include "i2cCommunicator.h"
+#include "mspI2cCommunicator.h"
 
 using namespace trikControl;
 
-Battery::Battery(I2cCommunicator &communicator)
+Battery::Battery(MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 {
 }
 
 float Battery::readVoltage()
 {
-	QByteArray command(1, '\0');
+	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(0x26);
+	command[1] = static_cast<char>(0x00);
 
 	const int parrot = mCommunicator.read(command);
 
@@ -36,8 +37,9 @@ float Battery::readVoltage()
 
 float Battery::readRawDataVoltage()
 {
-	QByteArray command(1, '\0');
+	QByteArray command(2, '\0');
 	command[0] = static_cast<char>(0x26);
+	command[1] = static_cast<char>(0x00);
 
 	return mCommunicator.read(command);
 }

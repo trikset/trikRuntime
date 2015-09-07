@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,38 +15,35 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtCore/QByteArray>
 #include <QtCore/QMutex>
 
-#include "deviceInterface.h"
-#include "deviceState.h"
+#include "mspCommunicatorInterface.h"
 
 namespace trikKernel {
 class Configurer;
 }
 
 namespace trikHal {
-class I2CInterface;
+class MspUsbInterface;
 }
 
 namespace trikControl {
 
 /// Provides direct interaction with I2C device.
-/// @todo: It shall work in separate thread.
-class I2cCommunicator : public DeviceInterface
+class MspUsbCommunicator : public MspCommunicatorInterface
 {
 public:
 	/// Constructor.
-	/// @param configurer - contains preparsed XML configuration.
-	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::I2CInterface &i2c);
+	/// @param usb - USB bus communicator.
+	MspUsbCommunicator(trikHal::MspUsbInterface &usb);
 
-	~I2cCommunicator();
+	~MspUsbCommunicator() override;
 
 	/// Send data to current device, if it is connected.
-	void send(const QByteArray &data);
+	void send(const QByteArray &data) override;
 
 	/// Reads data by given I2C command number and returns the result.
-	int read(const QByteArray &data);
+	int read(const QByteArray &data) override;
 
 	Status status() const override;
 
@@ -54,8 +51,8 @@ private:
 	void disconnect();
 
 	QMutex mLock;
+	trikHal::MspUsbInterface &mUsb;
 	DeviceState mState;
-	trikHal::I2CInterface &mI2c;
 };
 
 }

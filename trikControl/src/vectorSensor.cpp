@@ -22,6 +22,7 @@ using namespace trikControl;
 
 VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState(deviceName)
 {
 	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
 			, hardwareAbstraction));

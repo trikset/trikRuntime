@@ -29,6 +29,7 @@
 using namespace trikControl;
 
 Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Keys")
 {
 	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState, hardwareAbstraction));
 	if (!mState.isFailed()) {

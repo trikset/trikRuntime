@@ -24,6 +24,7 @@ using namespace trikControl;
 
 ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Object Sensor on" + port)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
 	const QString &inputFile = configurer.attributeByPort(port, "inputFile");

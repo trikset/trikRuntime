@@ -18,7 +18,8 @@
 #include "outputDeviceFileInterface.h"
 #include "eventFileInterface.h"
 #include "fifoInterface.h"
-#include "i2cInterface.h"
+#include "mspI2cInterface.h"
+#include "mspUsbInterface.h"
 #include "systemConsoleInterface.h"
 
 namespace trikHal {
@@ -29,8 +30,11 @@ class HardwareAbstractionInterface
 public:
 	virtual ~HardwareAbstractionInterface() {}
 
-	/// Returns I2C bus implementation.
-	virtual I2CInterface &i2c() = 0;
+	/// Returns MSP I2C bus implementation.
+	virtual MspI2cInterface &mspI2c() = 0;
+
+	/// Returns MSP USB bus implementation.
+	virtual MspUsbInterface &mspUsb() = 0;
 
 	/// Returns system console wrapper, able to execute system command and launch processes.
 	virtual SystemConsoleInterface &systemConsole() = 0;

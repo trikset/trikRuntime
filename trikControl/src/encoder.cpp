@@ -17,13 +17,14 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "i2cCommunicator.h"
+#include "mspI2cCommunicator.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator)
+Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
+	, mState("Encoder on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mTicksInDegree = ConfigurerHelper::configureReal(configurer, mState, port, "ticksInDegree");
@@ -39,9 +40,10 @@ Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, 
 void Encoder::reset()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(2, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber);
-		command[1] = static_cast<char>(0x00);
+		QByteArray command(3, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
+		command[2] = static_cast<char>(0x00);
 
 		mCommunicator.send(command);
 	}
@@ -54,21 +56,16 @@ Encoder::Status Encoder::status() const
 
 int Encoder::read()
 {
-	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(2, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber);
-		const int data = mCommunicator.read(command);
-		return data / mTicksInDegree;
-	} else {
-		return 0;
-	}
+	return readRawData() / mTicksInDegree;
 }
 
 int Encoder::readRawData()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(2, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber);
+		QByteArray command(3, '\0');
+		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
+		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
+		command[2] = static_cast<char>(0x00);
 
 		return mCommunicator.read(command);
 	} else {

@@ -14,19 +14,26 @@
 
 #pragma once
 
-#include "i2cInterface.h"
+#include "mspI2cInterface.h"
 
 namespace trikHal {
-namespace stub {
+namespace trik {
 
-/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
-class StubI2C : public I2CInterface
+/// Real implementation of I2C bus communicator.
+class TrikMspI2c : public MspI2cInterface
 {
 public:
+	TrikMspI2c() = default;
+	~TrikMspI2c() override;
+
 	void send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
 	bool connect(const QString &devicePath, int deviceId) override;
 	void disconnect() override;
+
+private:
+	/// Low-level descriptor of I2C device file.
+	int mDeviceFileDescriptor = -1;
 };
 
 }
