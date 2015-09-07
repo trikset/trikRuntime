@@ -20,13 +20,18 @@ QT += xml
 
 DEFINES += TRIKWIFI_LIBRARY
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
 	$$PWD/include/trikWiFi/wpaConfigurer.h \
 	$$PWD/include/trikWiFi/declSpec.h \
+
+HEADERS += \
 	$$PWD/src/wpaSupplicantCommunicator.h \
 
 SOURCES += \
 	$$PWD/src/trikWiFi.cpp \
 	$$PWD/src/wpaConfigurer.cpp \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
+
+installs()
+noPch()

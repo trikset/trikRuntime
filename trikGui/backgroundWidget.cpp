@@ -14,8 +14,6 @@
 
 #include "backgroundWidget.h"
 
-#include <QtCore/QDebug>
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 #else
@@ -27,11 +25,11 @@
 
 using namespace trikGui;
 
-BackgroundWidget::BackgroundWidget(const QString &configPath
-		, const QString &startDirPath
+BackgroundWidget::BackgroundWidget(
+		const QString &configPath
 		, QWidget *parent)
 	: QWidget(parent)
-	, mController(configPath, startDirPath)
+	, mController(configPath)
 	, mBatteryIndicator(mController.brick())
 	, mStartWidget(mController, configPath)
 	, mRunningWidget(mController)

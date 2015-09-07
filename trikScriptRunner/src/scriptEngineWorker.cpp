@@ -19,7 +19,7 @@
 #include <QtCore/QTextStream>
 
 #include <trikKernel/fileUtils.h>
-
+#include <trikKernel/paths.h>
 #include <trikControl/batteryInterface.h>
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
@@ -82,14 +82,14 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &scriptControl
-		, const QString &startDirPath)
+		)
 	: mBrick(brick)
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
 	, mThreadingVariable(this, scriptControl)
 	, mDirectScriptsEngine(nullptr)
-	, mStartDirPath(startDirPath)
+	, mScriptId(0)
 	, mState(ready)
 {
 	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
@@ -99,7 +99,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick.playSound(mStartDirPath + "media/beep_soft.wav");
+	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
 }
 
 void ScriptEngineWorker::reset()
@@ -274,15 +274,16 @@ void ScriptEngineWorker::registerUserFunction(const QString &name, QScriptEngine
 
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 {
-	if (QFile::exists(mStartDirPath + "system.js")) {
-		engine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
+	if (QFile::exists(systemJsPath)) {
+		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
 		if (engine->hasUncaughtException()) {
 			const int line = engine->uncaughtExceptionLineNumber();
 			const QString message = engine->uncaughtException().toString();
 			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
 		}
 	} else {
-		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
+		QLOG_ERROR() << "system.js not found, path:" << systemJsPath;
 	}
 
 	for (const auto &functionName : mRegisteredUserFunctions.keys()) {

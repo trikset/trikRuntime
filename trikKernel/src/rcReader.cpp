@@ -18,6 +18,8 @@
 
 #include <QsLog.h>
 
+using namespace trikKernel;
+
 RcReader::RcReader(const QString &rcFilePath, QObject *parent)
 	: QObject(parent)
 	, mRcFile(rcFilePath)
@@ -30,20 +32,14 @@ void RcReader::read()
 	mVariables.clear();
 
 	if (!mRcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open trikrc file";
-		qDebug() << "Can't open trikrc file";
+		QLOG_ERROR() << "Can't open file:" << mRcFile.fileName();
 		return;
 	}
 
-	forever {
-		QString line = mRcFile.readLine();
-		if (line.isEmpty()) {
-			break;
-		}
-
-		if (line[line.size() - 1] == '\n') {
-			line.chop(1);
-		}
+	QTextStream stream(&mRcFile);
+	while (!stream.atEnd())
+	{
+		QString line = stream.readLine();
 
 		const int commentStart = line.indexOf('#');
 		if (commentStart >= 0) {

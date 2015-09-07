@@ -43,19 +43,12 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
-	/// @param startDirPath - path to the directory from which the application was executed.
 	TrikScriptRunner(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
-			, const QString &startDirPath);
+			);
 
 	~TrikScriptRunner() override;
-
-	/// Returns path to the directory in which scripts must be saved
-	QString scriptsDirPath() const;
-
-	/// Returns name of the directory in which scripts must be saved
-	QString scriptsDirName() const;
 
 	/// Registers given C++ function as callable from script, with given name.
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
@@ -115,10 +108,10 @@ private slots:
 
 private:
 	QScopedPointer<ScriptExecutionControl> mScriptController;
-	ScriptEngineWorker *mScriptEngineWorker;  // Has ownership.
-	QThread mWorkerThread;
 
-	QString mStartDirPath;
+	/// Has ownership, memory is managed by thread and deleteLater().
+	ScriptEngineWorker *mScriptEngineWorker;
+	QThread mWorkerThread;
 
 	int mMaxScriptId;
 

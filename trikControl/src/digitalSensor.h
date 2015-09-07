@@ -16,7 +16,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QTextStream>
 
 #include "deviceState.h"
 #include "sensorInterface.h"
@@ -57,7 +56,6 @@ private:
 	int mMin;
 	int mMax;
 	QScopedPointer<trikHal::InputDeviceFileInterface> mDeviceFile;
-	QTextStream mStream;
 	DeviceState mState;
 };
 

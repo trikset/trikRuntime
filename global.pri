@@ -71,6 +71,9 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 INCLUDEPATH += \
 	$$PWD/qslog \
 
+PRECOMPILED_HEADER = $$PWD/pch.h
+CONFIG += precompile_header
+
 LIBS += -L$$DESTDIR
 
 IS_QSLOG = $$find(PROJECT_NAME, [qQ]s[lL]og)
@@ -79,12 +82,7 @@ isEmpty(IS_QSLOG) {
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 
-unix {
-	target.path = $$[INSTALL_ROOT]/
-	INSTALLS += target
-}
-
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++1y
 QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual
 
 GLOBAL_PWD = $$PWD
@@ -139,4 +137,74 @@ defineTest(links) {
 	}
 
 	export(LIBS)
+}
+
+defineTest(installs) {
+	unix {
+		equals(TEMPLATE, lib) {
+			target.path = $$INSTALL_ROOT/usr/lib/
+			isEmpty(PUBLIC_HEADERS) {
+				headers.files = $$HEADERS
+				headers.path = $$INSTALL_ROOT/usr/include/$$PROJECT_NAME/
+			} else {
+				headers.files = $$PUBLIC_HEADERS
+				headers.path = $$INSTALL_ROOT/usr/include/$$PROJECT_NAME/
+			}
+		}
+
+		equals(TEMPLATE, app) {
+			target.path = $$INSTALL_ROOT/usr/bin/
+		}
+
+		INSTALLS += target
+		export(target.path)
+
+		equals(TEMPLATE, lib) {
+			INSTALLS += headers
+			export(headers.files)
+			export(headers.path)
+		}
+
+		export(INSTALLS)
+	}
+
+	HEADERS += $$PUBLIC_HEADERS
+	export(HEADERS)
+}
+
+defineTest(installAdditionalConfigs) {
+	FILES = $$1
+
+	unix {
+		additionalConfigs.files += $$FILES
+		additionalConfigs.path = $$INSTALL_ROOT/etc/trik/trikRuntime/
+
+		INSTALLS += additionalConfigs
+
+		export(additionalConfigs.path)
+		export(additionalConfigs.files)
+		export(INSTALLS)
+	}
+}
+
+defineTest(installAdditionalSharedFiles) {
+	FILES = $$1
+
+	unix {
+		additionalSharedFiles.files += $$FILES
+		additionalSharedFiles.path = $$INSTALL_ROOT/usr/share/trikRuntime/
+
+		INSTALLS += additionalSharedFiles
+
+		export(additionalSharedFiles.path)
+		export(additionalSharedFiles.files)
+		export(INSTALLS)
+	}
+}
+
+defineTest(noPch) {
+	CONFIG -= precompiled_header
+	PRECOMPILED_HEADER =
+	export(CONFIG)
+	export(PRECOMPILED_HEADER)
 }

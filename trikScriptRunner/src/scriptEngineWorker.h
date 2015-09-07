@@ -36,29 +36,16 @@ class ScriptEngineWorker : public QObject
 	Q_OBJECT
 
 public:
-	/// State of a script
-	/// @value ready - worker is waiting for a new script
-	/// @value starting - worker is preparing itself to running a script
-	/// @value resetting - worker has finished execution of a script and returning to ready state
-	/// @value running - worker is executing a script
-	enum State {
-		ready
-		, starting
-		, resetting
-		, running
-	};
-
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
 	/// @param scriptControl - reference to script execution control object.
-	/// @param startDirPath - path to the directory from which the application was executed.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
 			, ScriptExecutionControl &scriptControl
-			, const QString &startDirPath);
+			);
 
 	/// Create and initialize a new script engine.
 	/// @param supportThreads - true if created engine should support creation of threads.
@@ -115,6 +102,18 @@ private slots:
 	void doRunDirect(const QString &command);
 
 private:
+	/// State of a script
+	/// @value ready - worker is waiting for a new script
+	/// @value starting - worker is preparing itself to running a script
+	/// @value resetting - worker has finished execution of a script and returning to ready state
+	/// @value running - worker is executing a script
+	enum State {
+		ready
+		, starting
+		, resetting
+		, running
+	};
+
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);
 
@@ -133,7 +132,6 @@ private:
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreadingVariable;
 	QScriptEngine *mDirectScriptsEngine;  // Has ownership.
-	const QString mStartDirPath;
 	int mScriptId;
 	State mState;
 	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;

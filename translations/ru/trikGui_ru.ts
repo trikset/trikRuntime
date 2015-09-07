@@ -2,6 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>QObject</name>
+    <message>
+        <source>Graphical user interface, TRIK Studio runtime environment and script runner of a robot</source>
+        <translation>Графический интерфейс, среда времени выполнения для TRIK Studio и исполнитель скриптов на роботе</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::CommunicationSettingsWidget</name>
     <message>
         <source>&lt;b&gt;Comm settings&lt;/b&gt;</source>
@@ -47,15 +54,15 @@
     <name>trikGui::FileManagerMessageBox</name>
     <message>
         <source>Do you want to open or delete the file?</source>
-        <translation>Вы хотите открыть или удалить файл?</translation>
+        <translation type="vanished">Вы хотите открыть или удалить файл?</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation>Открыть</translation>
+        <translation type="vanished">Открыть</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Удалить</translation>
+        <translation type="vanished">Удалить</translation>
     </message>
 </context>
 <context>
@@ -216,7 +223,7 @@
     <name>trikGui::SystemSettingsWidget</name>
     <message>
         <source>Directory &apos;Files&apos; is ...</source>
-        <translation>Папка &apos;Файлы&apos; - это:</translation>
+        <translation>Папка &apos;Файлы&apos; - это ...</translation>
     </message>
     <message>
         <source>System Settings</source>
@@ -243,15 +250,15 @@
     </message>
     <message>
         <source>Update is failed</source>
-        <translation>Во время обновления (update) произошла ошибка.</translation>
+        <translation>Во время обновления (update) произошла ошибка</translation>
     </message>
     <message>
         <source>Update and Upgrade is successfully finished</source>
-        <translation>Обновление успешно завершено.</translation>
+        <translation>Обновление успешно завершено</translation>
     </message>
     <message>
         <source>Upgrade is failed</source>
-        <translation>Во время обновления (upgrade) произошла ошибка.</translation>
+        <translation>Во время обновления (upgrade) произошла ошибка</translation>
     </message>
 </context>
 <context>

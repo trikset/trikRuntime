@@ -45,19 +45,19 @@
 using namespace trikControl;
 
 Brick::Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, const QString &systemConfig, const QString &modelConfig, const QString &startDirPath)
-	: Brick(&hardwareAbstraction, systemConfig, modelConfig, startDirPath, false)
+		, const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+	: Brick(&hardwareAbstraction, systemConfig, modelConfig, mediaPath, false)
 {
 }
 
-Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath)
-	: Brick(trikHal::HardwareAbstractionFactory::create(), systemConfig, modelConfig, startDirPath, true)
+Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+	: Brick(trikHal::HardwareAbstractionFactory::create(), systemConfig, modelConfig, mediaPath, true)
 {
 }
 
 Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
-		, const QString &modelConfig, const QString &startDirPath, bool ownsHardwareAbstraction)
-	: mDisplay(new Display(startDirPath))
+		, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction)
+	: mDisplay(new Display(mediaPath))
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mOwnsHardwareAbstraction(ownsHardwareAbstraction)
 	, mConfigurer(systemConfig, modelConfig)
@@ -158,10 +158,6 @@ void Brick::playSound(const QString &soundFileName)
 	QLOG_INFO() << "Playing " << soundFileName;
 
 	QFileInfo fileInfo(soundFileName);
-	if (fileInfo.isRelative()) {
-		fileInfo.setFile("../" + soundFileName);
-	}
-
 	QString command;
 
 	if (fileInfo.suffix() == "wav") {

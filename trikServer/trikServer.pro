@@ -15,7 +15,7 @@
 include(../global.pri)
 
 SOURCES += \
-	$$PWD/main.cpp \
+	$$PWD/trikServerMain.cpp \
 
 implementationIncludes(trikKernel trikControl trikCommunicator trikNetwork)
 links(trikControl trikCommunicator trikNetwork trikKernel)
@@ -28,3 +28,6 @@ QT += gui
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
+
+installs()
+noPch()

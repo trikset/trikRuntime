@@ -14,7 +14,7 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/declSpec.h \
 	$$PWD/include/trikHal/hardwareAbstractionInterface.h \
 	$$PWD/include/trikHal/hardwareAbstractionFactory.h \
@@ -86,3 +86,5 @@ DEFINES += TRIKHAL_LIBRARY
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
+
+installs()

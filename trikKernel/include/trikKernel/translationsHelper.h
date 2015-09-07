@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,16 @@
 
 namespace trikKernel {
 
-namespace coreDumping {
-	/// Installs signal handler and initializes core dump in a location specified by trikKernel::Paths.
-	void initCoreDumping();
-}
+/// Service for loading translations corresponding to current locale settings.
+class TranslationsHelper
+{
+public:
+	/// Initializes locale and loads translations.
+	/// @param localizationDisabled - if true, no translations will be loaded and default English locale will be used.
+	static void initLocale(bool localizationDisabled);
+
+private:
+	static void loadTranslators(const QString &locale);
+};
 
 }

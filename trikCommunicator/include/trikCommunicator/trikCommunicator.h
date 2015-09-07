@@ -57,7 +57,7 @@ public:
 	TrikCommunicator(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
-			, const QString &startDirPath);
+			);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);

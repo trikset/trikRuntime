@@ -32,9 +32,8 @@ class Display : public DisplayInterface
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
-	explicit Display(const QString &startDirPath);
+	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
+	explicit Display(const QString &mediaPath);
 
 	~Display() override;
 
@@ -62,7 +61,7 @@ public slots:
 	void redraw() override;
 
 private:
-	const QString mStartDirPath;
+	const QString mMediaPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

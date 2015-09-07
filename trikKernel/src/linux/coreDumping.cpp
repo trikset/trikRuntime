@@ -19,18 +19,19 @@
 #include <sys/resource.h>
 #include <signal.h>
 
+#include "paths.h"
+
 void (*oldHandler)(int);
-QString dumpDirPath = "/home/root/trik";
 
 void dumpHandler(int signal)
 {
-	QDir::setCurrent(dumpDirPath);
+	QDir::setCurrent(trikKernel::Paths::coreDumpPath());
 	oldHandler(signal);
 }
 
 void initSignals()
 {
-	QList<int> const signalsList({ SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGBUS, SIGSYS, SIGTRAP, SIGXCPU, SIGXFSZ
+	QList<int> const signalsList({SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGBUS, SIGSYS, SIGTRAP, SIGXCPU, SIGXFSZ
 			, SIGIOT});
 
 	struct sigaction oldAction;
@@ -55,9 +56,8 @@ void setCoreLimits()
 	setrlimit(RLIMIT_CORE, &core_limits);
 }
 
-void trikKernel::coreDumping::initCoreDumping(const QString &dumpDir)
+void trikKernel::coreDumping::initCoreDumping()
 {
-	dumpDirPath = dumpDir;
 	initSignals();
 	setCoreLimits();
 }
