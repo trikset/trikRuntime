@@ -53,6 +53,9 @@ public:
 	/// Name (with path) of .ini file with local settings like locale and hull number.
 	static QString localSettings();
 
+	/// Name (with path) of hostname file.
+	static QString hostnameName();
+
 private:
 	enum class Resource {
 		configs
