@@ -123,6 +123,8 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 
 CONFIGS += \
+	$$PWD/model-config-usb.xml \
+	$$PWD/system-config-usb.xml \
 	$$PWD/model-config.xml \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \

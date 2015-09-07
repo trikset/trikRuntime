@@ -61,7 +61,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<analogSensor />
 	</A5>
 	<A6>
-		<analogSensor />
+		<touchSensor />
 	</A6>
 
 	<!-- Digital sensor ports. -->
