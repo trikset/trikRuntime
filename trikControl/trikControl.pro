@@ -14,7 +14,7 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/batteryInterface.h \
 	$$PWD/include/trikControl/brickFactory.h \
 	$$PWD/include/trikControl/brickInterface.h \
@@ -24,6 +24,7 @@ HEADERS += \
 	$$PWD/include/trikControl/displayInterface.h \
 	$$PWD/include/trikControl/displayWidgetInterface.h \
 	$$PWD/include/trikControl/encoderInterface.h \
+	$$PWD/include/trikControl/fifoInterface.h \
 	$$PWD/include/trikControl/keysInterface.h \
 	$$PWD/include/trikControl/ledInterface.h \
 	$$PWD/include/trikControl/lineSensorInterface.h \
@@ -32,6 +33,7 @@ HEADERS += \
 	$$PWD/include/trikControl/pwmCaptureInterface.h \
 	$$PWD/include/trikControl/sensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
+	$$PWD/include/trikControl/soundSensorInterface.h \
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -45,9 +47,13 @@ HEADERS += \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
+	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
-	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/mspCommunicatorInterface.h \
+	$$PWD/src/mspBusAutoDetector.h \
+	$$PWD/src/mspI2cCommunicator.h \
+	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/keys.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/led.h \
@@ -56,6 +62,8 @@ HEADERS += \
 	$$PWD/src/moduleLoader.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/objectSensorWorker.h \
+	$$PWD/src/soundSensor.h \
+	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
@@ -65,6 +73,12 @@ HEADERS += \
 	$$PWD/src/vectorSensorWorker.h \
 	$$PWD/src/exceptions/incorrectStateChangeException.h \
 	$$PWD/src/exceptions/incorrectDeviceConfigurationException.h \
+	$$PWD/src/shapes/shape.h \
+	$$PWD/src/shapes/ellipse.h \
+	$$PWD/src/shapes/point.h \
+	$$PWD/src/shapes/line.h \
+	$$PWD/src/shapes/rectangle.h \
+	$$PWD/src/shapes/arc.h \
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -87,20 +101,40 @@ SOURCES += \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/objectSensorWorker.cpp \
+	$$PWD/src/soundSensor.cpp \
+	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/vectorSensor.cpp \
-	$$PWD/src/$$PLATFORM/abstractVirtualSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/i2cCommunicator.cpp \
-	$$PWD/src/$$PLATFORM/keysWorker.cpp \
-	$$PWD/src/$$PLATFORM/rangeSensorWorker.cpp \
-	$$PWD/src/$$PLATFORM/vectorSensorWorker.cpp \
+	$$PWD/src/abstractVirtualSensorWorker.cpp \
+	$$PWD/src/fifo.cpp \
+	$$PWD/src/mspBusAutoDetector.cpp \
+	$$PWD/src/mspI2cCommunicator.cpp \
+	$$PWD/src/mspUsbCommunicator.cpp \
+	$$PWD/src/keysWorker.cpp \
+	$$PWD/src/rangeSensorWorker.cpp \
+	$$PWD/src/vectorSensorWorker.cpp \
+	$$PWD/src/shapes/ellipse.cpp \
+	$$PWD/src/shapes/point.cpp \
+	$$PWD/src/shapes/line.cpp \
+	$$PWD/src/shapes/rectangle.cpp \
+	$$PWD/src/shapes/arc.cpp \
+
+CONFIGS += \
+	$$PWD/model-config-usb.xml \
+	$$PWD/system-config-usb.xml \
+	$$PWD/model-config.xml \
+	$$PWD/system-config.xml \
+	$$PWD/model-config-v6.xml \
+	$$PWD/system-config-v6.xml \
+	$$PWD/model-config-usb.xml  \
+	$$PWD/system-config-usb.xml  \
 
 OTHER_FILES += \
-	model-config.xml \
-	system-config.xml \
+	$$CONFIGS \
+	$$PWD/trikControlExport.pri \
 
 TEMPLATE = lib
 
@@ -112,10 +146,16 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel)
+links(trikKernel trikHal)
+implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
-	$$PWD/model-config.xml  \
-	$$PWD/system-config.xml  \
+	$$CONFIGS \
 	$$PWD/../media/ \
 )
+
+installs()
+
+installAdditionalConfigs($$CONFIGS)
+
+installAdditionalSharedFiles($$DESTDIR/media)

@@ -19,6 +19,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 #include <QsLog.h>
 
@@ -64,6 +65,15 @@ qint64 ScriptExecutionControl::time() const
 	return QDateTime::currentMSecsSinceEpoch();
 }
 
+int ScriptExecutionControl::random(int from, int to) const
+{
+	if (from > to) {
+		qSwap(from, to);
+	}
+
+	return qrand() % (to - from + 1) + from;
+}
+
 void ScriptExecutionControl::run()
 {
 	mInEventDrivenMode = true;
@@ -79,10 +89,45 @@ void ScriptExecutionControl::quit()
 	emit quitSignal();
 }
 
-void ScriptExecutionControl::system(const QString &command)
+void ScriptExecutionControl::system(const QString &command, bool synchronously)
 {
-	QStringList args{"-c", command};
-	QLOG_INFO() << "Running: " << "sh" << args;
-	qDebug() << "Running:" << "sh" << args;
-	QProcess::startDetached("sh", args);
+	if (!synchronously) {
+		QStringList args{"-c", command};
+		QLOG_INFO() << "Running: " << "sh" << args;
+		QProcess::startDetached("sh", args);
+	} else {
+		QLOG_INFO() << "Running synchronously: " << command;
+		::system(command.toStdString().c_str());
+	}
+}
+
+void ScriptExecutionControl::writeToFile(const QString &file, const QString &text)
+{
+	QFile out(file);
+	out.open(QIODevice::WriteOnly | QIODevice::Append);
+	out.write(text.toUtf8());
+}
+
+QStringList ScriptExecutionControl::readAll(const QString &file) const
+{
+	QFile in(file);
+	if (!in.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		QLOG_INFO() << "Trying to read from file" << file << "failed";
+		return {};
+	}
+
+	QStringList result;
+
+	while (!in.atEnd()) {
+		const auto line = in.readLine();
+		result << QString::fromUtf8(line);
+	}
+
+	return result;
+}
+
+void ScriptExecutionControl::removeFile(const QString &file)
+{
+	QFile out(file);
+	out.remove();
 }

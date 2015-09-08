@@ -35,7 +35,6 @@
 
 #include "controller.h"
 #include "trikGuiDialog.h"
-#include "fileManagerMessageBox.h"
 
 namespace trikGui {
 
@@ -65,11 +64,13 @@ protected:
 private slots:
 	void onDirectoryLoaded(const QString &path);
 	void renewCurrentIndex();
+	void onSelectionChanged(QModelIndex current, QModelIndex previous);
 
 private:
 	void showCurrentDir();
 	void open();
-	QString showCurrentPath();
+	void remove();
+	QString currentPath();
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
@@ -77,8 +78,7 @@ private:
 	QFileSystemModel mFileSystemModel;
 	Controller &mController;
 	QString mRootDirPath;
-
-	FileManagerMessageBox mOpenDeleteBox;
+	QString mLastSelectedFile;
 };
 
 }

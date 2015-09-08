@@ -16,15 +16,18 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QSocketNotifier>
 #include <QtCore/QString>
-#include <QtCore/QProcess>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtCore/QList>
+#include <QtCore/QStringList>
 
 #include "deviceInterface.h"
 #include "deviceState.h"
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class FifoInterface;
+class OutputDeviceFileInterface;
+class SystemConsoleInterface;
+}
 
 namespace trikControl {
 
@@ -43,7 +46,7 @@ public:
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param state - shared state of a sensor.
 	AbstractVirtualSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-			, DeviceState &state);
+			, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~AbstractVirtualSensorWorker() override;
 
@@ -66,7 +69,7 @@ protected:
 
 private slots:
 	/// Updates current reading when new value is ready.
-	void readFile();
+	void onNewDataInOutputFifo(const QString &data);
 
 private:
 	/// Provides user-friendly name of a sensor used in debug output.
@@ -94,32 +97,21 @@ private:
 	/// Flushes queued commands to a sensor, if it is ready, otherwise does nothing.
 	void sync();
 
-	/// Listener for output fifo.
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	/// System console used to launch sensor daemon.
+	trikHal::SystemConsoleInterface &mSystemConsole;
+
+	/// Output FIFO. It represents output of a sensor, so its name may be confusing. It is used to read data.
+	QScopedPointer<trikHal::FifoInterface> mOutputFifo;
 
 	/// File name (with path) of a script that launches or stops sensor.
 	QString mScript;
 
-	/// File descriptor for output fifo.
-	int mOutputFileDescriptor = -1;
-
-	/// Virtual sensor process.
-	QProcess mSensorProcess;
-
-	/// Input fifo.
-	QFile mInputFile;
-
-	/// Output fifo.
-	QFile mOutputFile;
-
-	/// File stream for command fifo. Despite its name it is used to output commands. It is input for virtual sensor.
-	QTextStream mInputStream;
+	/// Input FIFO. It represents input for sensor, so its name may be confusing. TrikControl actually writes data to
+	/// this file.
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mInputFile;
 
 	/// A queue of commands to be passed to input fifo when it is ready.
-	QList<QString> mCommandQueue;
-
-	/// Buffer with current line being read from FIFO.
-	QString mBuffer;
+	QStringList mCommandQueue;
 
 	/// Current state of a device, shared between worker and proxy.
 	DeviceState &mState;

@@ -19,6 +19,7 @@
 #include <QtNetwork/QNetworkInterface>
 #include <QtCore/QSettings>
 
+#include <trikKernel/paths.h>
 #include <QsLog.h>
 
 using namespace trikNetwork;
@@ -37,6 +38,23 @@ MailboxServer::MailboxServer(int port)
 	}
 
 	loadSettings();
+}
+
+bool MailboxServer::isConnected()
+{
+	bool result = false;
+	mKnownRobotsLock.lockForRead();
+	for (const auto &endpoint : mKnownRobots.values()) {
+		Connection * const connection = this->connection(endpoint.ip, endpoint.port);
+		MailboxConnection * const mailboxConnection = dynamic_cast<MailboxConnection *>(connection);
+		if (mailboxConnection && mailboxConnection->isConnected()) {
+			result = true;
+			break;
+		}
+	}
+
+	mKnownRobotsLock.unlock();
+	return result;
 }
 
 int MailboxServer::hullNumber() const
@@ -348,7 +366,7 @@ QString MailboxServer::receive()
 void MailboxServer::loadSettings()
 {
 	mAuxiliaryInformationLock.lockForWrite();
-	QSettings settings("localSettings.ini", QSettings::IniFormat);
+	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 	mHullNumber = settings.value("hullNumber", 0).toInt();
 	mServerIp = QHostAddress(settings.value("server", mMyIp.toString()).toString());
 	mServerPort = settings.value("serverPort", mMyPort).toInt();
@@ -358,7 +376,7 @@ void MailboxServer::loadSettings()
 void MailboxServer::saveSettings()
 {
 	mAuxiliaryInformationLock.lockForRead();
-	QSettings settings("localSettings.ini", QSettings::IniFormat);
+	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 	settings.setValue("hullNumber", mHullNumber);
 	settings.setValue("server", mServerIp.toString());
 	settings.setValue("serverPort", mServerPort);

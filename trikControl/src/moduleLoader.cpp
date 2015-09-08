@@ -14,20 +14,22 @@
 
 #include "src/moduleLoader.h"
 
-#include <QtCore/QDebug>
-
 #include <QsLog.h>
 
 using namespace trikControl;
 
-/// Loads given module using modprobe.
+ModuleLoader::ModuleLoader(trikHal::SystemConsoleInterface &console)
+	: mConsole(console)
+{
+}
+
 bool ModuleLoader::load(const QString &module)
 {
 	if (mLoadedModules.contains(module)) {
 		return true;
 	}
 
-	if (::system(QString("modprobe %1").arg(module).toStdString().c_str()) != 0) {
+	if (mConsole.system(QString("modprobe %1").arg(module)) != 0) {
 		QLOG_ERROR() << "modprobe" << module << "failed";
 		return false;
 	}

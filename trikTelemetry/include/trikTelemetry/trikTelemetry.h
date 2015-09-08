@@ -14,9 +14,12 @@
 
 #pragma once
 
-#include <trikControl/brickInterface.h>
 #include <trikNetwork/trikServer.h>
 #include <trikNetwork/gamepadInterface.h>
+
+namespace trikControl {
+class BrickInterface;
+}
 
 namespace trikTelemetry {
 

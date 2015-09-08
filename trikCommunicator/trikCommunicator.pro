@@ -14,8 +14,10 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikCommunicator/trikCommunicator.h \
+
+HEADERS += \
 	$$PWD/src/connection.h \
 
 SOURCES += \
@@ -28,4 +30,9 @@ QT += network
 
 DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
-uses(trikScriptRunner trikControl trikKernel trikNetwork)
+interfaceIncludes(trikNetwork)
+implementationIncludes(trikKernel trikScriptRunner)
+
+links(trikScriptRunner trikControl trikKernel trikNetwork)
+
+installs()

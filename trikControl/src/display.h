@@ -32,44 +32,36 @@ class Display : public DisplayInterface
 public:
 	/// Constructor.
 	/// @param guiThread - GUI thread of an application.
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
-	explicit Display(const QString &startDirPath);
+	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
+	explicit Display(const QString &mediaPath);
 
 	~Display() override;
 
 	DisplayWidgetInterface &graphicsWidget() override;
 
 public slots:
+	void setBackground(const QString &color) override;
 	void showImage(const QString &fileName) override;
 
 	void addLabel(const QString &text, int x, int y) override;
-
 	void removeLabels() override;
 
 	void setPainterColor(const QString &color) override;
-
 	void setPainterWidth(int penWidth) override;
 
 	void drawLine(int x1, int y1, int x2, int y2) override;
-
 	void drawPoint(int x, int y) override;
-
 	void drawRect(int x, int y, int width, int height) override;
-
 	void drawEllipse(int x, int y, int width, int height) override;
-
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle) override;
 
-	void setBackground(const QString &color) override;
-
 	void hide() override;
-
 	void clear() override;
+	void reset() override;
+	void redraw() override;
 
 private:
-//	QThread &mGuiThread;
-	const QString mStartDirPath;
+	const QString mMediaPath;
 	GuiWorker *mGuiWorker;  // Has ownership.
 };
 

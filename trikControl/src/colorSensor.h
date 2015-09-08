@@ -26,6 +26,10 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 namespace trikControl {
 
 class ColorSensorWorker;
@@ -39,7 +43,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	ColorSensor(const QString &port, const trikKernel::Configurer &configurer);
+	ColorSensor(const QString &port, const trikKernel::Configurer &configurer
+			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~ColorSensor() override;
 
@@ -51,6 +56,9 @@ public slots:
 	QVector<int> read(int m, int n) override;
 
 	void stop() override;
+
+private slots:
+	void onStopped();
 
 private:
 	/// State of a sensor. Shared with worker object.

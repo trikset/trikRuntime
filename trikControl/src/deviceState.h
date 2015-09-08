@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QString>
 
 #include "deviceInterface.h"
 
@@ -25,6 +26,10 @@ namespace trikControl {
 class DeviceState
 {
 public:
+	/// Constructor.
+	/// @param deviceName - name of the device, used for debug output.
+	DeviceState(const QString &deviceName);
+
 	/// Returns current device state.
 	DeviceInterface::Status status() const;
 
@@ -51,12 +56,18 @@ public:
 	/// Set "off" state. Possible only from "ready" and "stopping" states.
 	void off();
 
+	/// Clears "failed" state and returns state to "off"
+	void resetFailure();
+
 private:
 	/// Current state of a device.
 	DeviceInterface::Status mStatus = DeviceInterface::Status::off;
 
 	/// Lock to provide thread-safe modification of device state.
 	QReadWriteLock mLock;
+
+	/// Name of the device, used for debug output.
+	QString mDeviceName;
 };
 
 }

@@ -14,23 +14,24 @@
 
 #include "servoMotor.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 #include <QsLog.h>
 
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &configurer)
-	: mDutyFile(configurer.attributeByPort(port, "deviceFile"))
-	, mPeriodFile(configurer.attributeByPort(port, "periodFile"))
+ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &configurer
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mDutyFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
+	, mPeriodFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "periodFile")))
 	, mCurrentDutyPercent(0)
 	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
+	, mState("Servomotor on " + port)
 {
-	auto configure = [this, &port, &configurer](const QString &parameterName) {
+	const auto configure = [this, &port, &configurer](const QString &parameterName) {
 		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
 	};
 
@@ -42,18 +43,25 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 
 	mMotorType = configurer.attributeByPort(port, "type") == "angular" ? Type::angular : Type::continiousRotation;
 
-	if (!mPeriodFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open motor period file " << mPeriodFile.fileName();
+	if (!mPeriodFile->open()) {
 		mState.fail();
 		return;
 	}
 
 	const QString command = QString::number(mPeriod);
 
-	mPeriodFile.write(command.toLatin1());
-	mPeriodFile.close();
+	mPeriodFile->write(command);
+	mPeriodFile->close();
 
-	mState.ready();
+	if (!mDutyFile->open()) {
+		mState.fail();
+	} else {
+		mState.ready();
+	}
+}
+
+ServoMotor::~ServoMotor()
+{
 }
 
 ServoMotor::Status ServoMotor::status() const
@@ -83,19 +91,11 @@ void ServoMotor::powerOff()
 		return;
 	}
 
-	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open motor duty file " << mDutyFile.fileName();
-		mState.fail();
-		return;
-	}
-
-	mDutyFile.write(QString::number(mStop).toLatin1());
-	mDutyFile.close();
-
+	mDutyFile->write(QString::number(mStop));
 	mCurrentPower = 0;
 }
 
-void ServoMotor::setPower(int power)
+void ServoMotor::setPower(int power, bool constrain)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
@@ -104,10 +104,12 @@ void ServoMotor::setPower(int power)
 
 	const int powerBoundary = mMotorType == Type::angular ? 90 : 100;
 
-	if (power > powerBoundary) {
-		power = powerBoundary;
-	} else if (power < -powerBoundary) {
-		power = -powerBoundary;
+	if (constrain) {
+		if (power > powerBoundary) {
+			power = powerBoundary;
+		} else if (power < -powerBoundary) {
+			power = -powerBoundary;
+		}
 	}
 
 	mCurrentPower = power;
@@ -121,12 +123,5 @@ void ServoMotor::setPower(int power)
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 
-	if (!mDutyFile.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
-		QLOG_ERROR() << "Can't open motor control file " << mDutyFile.fileName();
-		mState.fail();
-		return;
-	}
-
-	mDutyFile.write(command.toLatin1());
-	mDutyFile.close();
+	mDutyFile->write(command);
 }

@@ -16,7 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
 
 #include "motorInterface.h"
 #include "deviceState.h"
@@ -27,7 +26,7 @@ class Configurer;
 
 namespace trikControl {
 
-class I2cCommunicator;
+class MspCommunicatorInterface;
 
 /// TRIK power motor.
 class PowerMotor : public MotorInterface
@@ -39,29 +38,32 @@ public:
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	/// @param communicator - I2C communicator to use to query sensor.
-	PowerMotor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
+	PowerMotor(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator);
 
 	~PowerMotor() override;
 
 	Status status() const override;
 
 public slots:
-	/// Sets current motor power to specified value, 0 to stop motor.
-	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
-	void setPower(int power);
+	void setPower(int power, bool constrain = true) override;
 
-	/// Returns currently set power of a motor.
-	int power() const;
+	int power() const override;
 
-	/// Turns off motor. This is not the same as setPower(0), because setPower will
-	/// leave motor on in a break mode, and this method will turn motor off.
-	void powerOff();
+	void powerOff() override;
+
+	/// Returns currently set period of a motor.
+	int period() const;
+
+	/// Sets current motor period.
+	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
+	void setPeriod(int period);
 
 private:
-	I2cCommunicator &mCommunicator;
-	int mI2cCommandNumber;
+	MspCommunicatorInterface &mCommunicator;
+	int mMspCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
+	int mCurrentPeriod;
 	DeviceState mState;
 };
 

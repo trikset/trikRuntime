@@ -55,7 +55,10 @@ public:
 	Q_INVOKABLE void sendMessage(const QString &threadId, const QScriptValue &message);
 
 	/// Designed to be called from a thread receiving a message.
-	Q_INVOKABLE QScriptValue receiveMessage();
+	Q_INVOKABLE QScriptValue receiveMessage(bool waitForMessage = true);
+
+	/// Stops given thread.
+	Q_INVOKABLE void killThread(const QString &threadId);
 
 	/// Wait until all threads finish execution.
 	void waitForAll();
@@ -68,6 +71,9 @@ public:
 
 	/// Designed to be called from a thread that's finished execution.
 	void threadFinished(const QString &id);
+
+	/// Returns true if the script is being evaluated in event-driven mode.
+	bool inEventDrivenMode() const;
 
 private:
 	/// Starts a thread with given threadId
@@ -84,6 +90,7 @@ private:
 
 	QHash<QString, ScriptThread *> mThreads;
 	QSet<QString> mFinishedThreads;
+	QSet<QString> mPreventFromStart;
 	QMutex mThreadsMutex;
 	QString mErrorMessage;
 

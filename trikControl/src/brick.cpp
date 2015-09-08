@@ -14,11 +14,10 @@
 
 #include "brick.h"
 
-#include <QtCore/QDebug>
-#include <QtCore/QDateTime>
-#include <QtCore/QCoreApplication>
-#include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
+
+#include <trikHal/hardwareAbstractionInterface.h>
+#include <trikHal/hardwareAbstractionFactory.h>
 
 #include "analogSensor.h"
 #include "display.h"
@@ -33,48 +32,65 @@
 #include "led.h"
 #include "lineSensor.h"
 #include "objectSensor.h"
+#include "soundSensor.h"
 #include "colorSensor.h"
 #include "servoMotor.h"
+#include "fifo.h"
 
-#include "i2cCommunicator.h"
+#include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
 
 #include <QsLog.h>
 
 using namespace trikControl;
 
-Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath)
-	: mDisplay(new Display(startDirPath))
+Brick::Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction
+		, const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+	: Brick(&hardwareAbstraction, systemConfig, modelConfig, mediaPath, false)
+{
+}
+
+Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+	: Brick(trikHal::HardwareAbstractionFactory::create(), systemConfig, modelConfig, mediaPath, true)
+{
+}
+
+Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
+		, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction)
+	: mDisplay(new Display(mediaPath))
+	, mHardwareAbstraction(hardwareAbstraction)
+	, mOwnsHardwareAbstraction(ownsHardwareAbstraction)
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
+	qRegisterMetaType<trikHal::EventFileInterface::EventType>("trikHal::EventFileInterface::EventType");
 
 	for (const QString &initScript : mConfigurer.initScripts()) {
-		if (::system(initScript.toStdString().c_str()) != 0) {
+		if (mHardwareAbstraction->systemConsole().system(initScript) != 0) {
 			QLOG_ERROR() << "Init script failed";
 		}
 	}
 
-	mI2cCommunicator.reset(new I2cCommunicator(mConfigurer));
-	mModuleLoader.reset(new ModuleLoader());
+	mMspCommunicator.reset(MspBusAutoDetector::createCommunicator(mConfigurer, *mHardwareAbstraction));
+	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
 
 	for (const QString &port : mConfigurer.ports()) {
 		createDevice(port);
 	}
 
-	mBattery.reset(new Battery(*mI2cCommunicator));
+	mBattery.reset(new Battery(*mMspCommunicator));
 
 	if (mConfigurer.isEnabled("accelerometer")) {
-		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer));
+		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction));
 	}
 
 	if (mConfigurer.isEnabled("gyroscope")) {
-		mGyroscope.reset(new VectorSensor("gyroscope", mConfigurer));
+		mGyroscope.reset(new VectorSensor("gyroscope", mConfigurer, *mHardwareAbstraction));
 	}
 
-	mKeys.reset(new Keys(mConfigurer));
+	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
 
-	mLed.reset(new Led(mConfigurer));
+	mLed.reset(new Led(mConfigurer, *mHardwareAbstraction));
 
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");
 	mPlayMp3FileCommand = mConfigurer.attributeByDevice("playMp3File", "command");
@@ -91,7 +107,24 @@ Brick::~Brick()
 	qDeleteAll(mRangeSensors);
 	qDeleteAll(mLineSensors);
 	qDeleteAll(mObjectSensors);
+	qDeleteAll(mSoundSensors);
 	qDeleteAll(mColorSensors);
+	qDeleteAll(mFifos);
+
+	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
+	mMspCommunicator.reset();
+	mModuleLoader.reset();
+
+	mAccelerometer.reset();
+	mGyroscope.reset();
+	mBattery.reset();
+	mKeys.reset();
+	mDisplay.reset();
+	mLed.reset();
+
+	if (mOwnsHardwareAbstraction) {
+		delete mHardwareAbstraction;
+	}
 }
 
 DisplayWidgetInterface &Brick::graphicsWidget()
@@ -112,7 +145,7 @@ void Brick::reset()
 {
 	stop();
 	mKeys->reset();
-	mDisplay->clear();
+	mDisplay->reset();
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
 	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
@@ -125,10 +158,6 @@ void Brick::playSound(const QString &soundFileName)
 	QLOG_INFO() << "Playing " << soundFileName;
 
 	QFileInfo fileInfo(soundFileName);
-	if (fileInfo.isRelative()) {
-		fileInfo.setFile("../" + soundFileName);
-	}
-
 	QString command;
 
 	if (fileInfo.suffix() == "wav") {
@@ -137,7 +166,7 @@ void Brick::playSound(const QString &soundFileName)
 		command = mPlayMp3FileCommand.arg(fileInfo.absoluteFilePath());
 	}
 
-	if (command.isEmpty() || ::system(command.toStdString().c_str()) != 0) {
+	if (command.isEmpty() || mHardwareAbstraction->systemConsole().system(command) != 0) {
 		QLOG_ERROR() << "Play sound failed";
 	}
 }
@@ -145,7 +174,7 @@ void Brick::playSound(const QString &soundFileName)
 void Brick::say(const QString &text)
 {
 	QStringList args{"-c", "espeak -v russian_test -s 100 \"" + text + "\""};
-	QProcess::startDetached("sh", args);
+	mHardwareAbstraction->systemConsole().startProcess("sh", args);
 }
 
 void Brick::stop()
@@ -179,6 +208,12 @@ void Brick::stop()
 	for (ObjectSensor * const objectSensor : mObjectSensors) {
 		if (objectSensor->status() == DeviceInterface::Status::ready) {
 			objectSensor->stop();
+		}
+	}
+
+	for (SoundSensor * const soundSensor : mSoundSensors) {
+		if (soundSensor->status() == DeviceInterface::Status::ready) {
+			soundSensor->stop();
 		}
 	}
 
@@ -288,6 +323,11 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
 
+SoundSensorInterface *Brick::soundSensor(const QString &port)
+{
+	return mSoundSensors.contains(port) ? mSoundSensors[port] : nullptr;
+}
+
 KeysInterface* Brick::keys()
 {
 	return mKeys.data();
@@ -306,6 +346,11 @@ DisplayInterface *Brick::display()
 LedInterface *Brick::led()
 {
 	return mLed.data();
+}
+
+FifoInterface *Brick::fifo(const QString &port)
+{
+	return mFifos[port];
 }
 
 void Brick::shutdownDevice(const QString &port)
@@ -347,6 +392,9 @@ void Brick::shutdownDevice(const QString &port)
 		mColorSensors[port]->stop();
 		delete mColorSensors[port];
 		mColorSensors.remove(port);
+	} else if (deviceClass == "fifo") {
+		delete mFifos[port];
+		mFifos.remove(port);
 	}
 }
 
@@ -354,35 +402,43 @@ void Brick::createDevice(const QString &port)
 {
 	const QString &deviceClass = mConfigurer.deviceClass(port);
 	if (deviceClass == "servoMotor") {
-		mServoMotors.insert(port, new ServoMotor(port, mConfigurer));
+		mServoMotors.insert(port, new ServoMotor(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "pwmCapture") {
-		mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer));
+		mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "powerMotor") {
-		mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mI2cCommunicator));
+		mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
 	} else if (deviceClass == "analogSensor") {
-		mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mI2cCommunicator));
+		mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
 	} else if (deviceClass == "digitalSensor") {
-		mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer));
+		mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 	} else if (deviceClass == "rangeSensor") {
-		mRangeSensors.insert(port, new RangeSensor(port, mConfigurer, *mModuleLoader));
+		mRangeSensors.insert(port, new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
+
 		/// @todo Range sensor shall be turned on only when needed.
 		mRangeSensors[port]->init();
 	} else if (deviceClass == "encoder") {
-		mEncoders.insert(port, new Encoder(port, mConfigurer, *mI2cCommunicator));
+		mEncoders.insert(port, new Encoder(port, mConfigurer, *mMspCommunicator));
 	} else if (deviceClass == "lineSensor") {
-		mLineSensors.insert(port, new LineSensor(port, mConfigurer));
+		mLineSensors.insert(port, new LineSensor(port, mConfigurer, *mHardwareAbstraction));
 
 		/// @todo This will work only in case when there can be only one video sensor launched at a time.
 		connect(mLineSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 	} else if (deviceClass == "objectSensor") {
-		mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer));
+		mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer, *mHardwareAbstraction));
 
 		/// @todo This will work only in case when there can be only one video sensor launched at a time.
 		connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 	} else if (deviceClass == "colorSensor") {
-		mColorSensors.insert(port, new ColorSensor(port, mConfigurer));
+		mColorSensors.insert(port, new ColorSensor(port, mConfigurer, *mHardwareAbstraction));
 
 		/// @todo This will work only in case when there can be only one video sensor launched at a time.
 		connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+	} else if (deviceClass == "soundSensor") {
+		mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
+
+		/// @todo This will work only in case when there can be only one sound sensor launched at a time.
+		connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+	} else if (deviceClass == "fifo") {
+		mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
 	}
 }

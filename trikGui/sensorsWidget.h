@@ -35,7 +35,7 @@ class BrickInterface;
 
 namespace trikGui {
 
-class SensorIndicator;
+class AbstractIndicator;
 
 /// Widget that shows current readings of selected sensors.
 class SensorsWidget : public TrikGuiDialog
@@ -43,8 +43,14 @@ class SensorsWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
+	enum class SensorType {
+		analogOrDigitalSensor
+		, encoder
+	};
+
 	/// Constructor.
-	explicit SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports, QWidget *parent = 0);
+	explicit SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports
+			, SensorType sensorType, QWidget *parent = 0);
 
 	~SensorsWidget() override;
 
@@ -58,9 +64,11 @@ protected:
 	void goHome();
 
 private:
+	AbstractIndicator *produceIndicator(const QString &port, SensorType sensorType);
+
 	trikControl::BrickInterface &mBrick;
 	QVBoxLayout mLayout;
-	QVector<SensorIndicator *> mIndicators;  // Has ownership.
+	QVector<AbstractIndicator *> mIndicators;  // Has ownership.
 	const int mInterval;
 	QTimer mTimer;
 };

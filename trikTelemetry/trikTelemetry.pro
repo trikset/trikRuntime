@@ -14,8 +14,10 @@
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikTelemetry/trikTelemetry.h \
+
+HEADERS += \
 	$$PWD/src/connection.h \
 
 SOURCES += \
@@ -28,4 +30,9 @@ QT += network
 
 DEFINES += TRIKTELEMETRY_LIBRARY
 
-uses(trikControl trikNetwork trikKernel)
+interfaceIncludes(trikNetwork)
+implementationIncludes(trikControl)
+links(trikControl trikNetwork trikKernel)
+
+installs()
+noPch()

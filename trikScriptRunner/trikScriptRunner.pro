@@ -16,8 +16,10 @@ TEMPLATE = lib
 
 include(../global.pri)
 
-HEADERS += \
+PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+
+HEADERS += \
 	$$PWD/src/scriptableParts.h \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
@@ -37,7 +39,10 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/system.js \
 
-TRANSLATIONS += trikScriptRunner_ru.ts
+
+TRANSLATIONS = \
+	$$PWD/../translations/ru/trikScriptRunner_ru.ts \
+	$$PWD/../translations/fr/trikScriptRunner_fr.ts \
 
 QT += script
 
@@ -45,7 +50,8 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir($$PWD/system.js)
 
-uses(trikKernel trikControl trikNetwork)
+links(trikKernel trikControl trikNetwork)
+implementationIncludes(trikKernel trikControl trikNetwork)
 
-RESOURCES += \
-	trikSrciptRunner.qrc
+installs()
+installAdditionalSharedFiles($$DESTDIR/system.js)

@@ -17,10 +17,16 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
+#include <QtScript/QScriptEngine>
 
-#include <trikControl/brickInterface.h>
-#include <trikNetwork/mailboxInterface.h>
-#include <trikNetwork/gamepadInterface.h>
+namespace trikNetwork {
+class MailboxInterface;
+class GamepadInterface;
+}
+
+namespace trikControl {
+class BrickInterface;
+}
 
 namespace trikScriptRunner {
 
@@ -37,19 +43,15 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
-	/// @param startDirPath - path to the directory from which the application was executed.
 	TrikScriptRunner(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
 			, trikNetwork::GamepadInterface * const gamepad
-			, const QString &startDirPath);
+			);
 
 	~TrikScriptRunner() override;
 
-	/// Returns path to the directory in which scripts must be saved
-	QString scriptsDirPath() const;
-
-	/// Returns name of the directory in which scripts must be saved
-	QString scriptsDirName() const;
+	/// Registers given C++ function as callable from script, with given name.
+	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
 
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
@@ -98,15 +100,18 @@ signals:
 	/// @param scriptId - unique id of executed script assigned when script started.
 	void startedDirectScript(int scriptId);
 
+	/// Emitted when a message must be sent to a desktop.
+	void sendMessage(const QString &text);
+
 private slots:
 	void onScriptStart(int scriptId);
 
 private:
 	QScopedPointer<ScriptExecutionControl> mScriptController;
-	ScriptEngineWorker *mScriptEngineWorker;  // Has ownership.
-	QThread mWorkerThread;
 
-	QString mStartDirPath;
+	/// Has ownership, memory is managed by thread and deleteLater().
+	ScriptEngineWorker *mScriptEngineWorker;
+	QThread mWorkerThread;
 
 	int mMaxScriptId;
 

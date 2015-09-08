@@ -64,6 +64,7 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikNetwork::MailboxInt
 
 	setLayout(&mLayout);
 
+	mConnectButton.setAutoFillBackground(true);
 	connect(&mConnectButton, SIGNAL(clicked()), this, SLOT(onConnectButtonClicked()));
 	connect(&mConnectButton, SIGNAL(upPressed()), this, SLOT(focusUp()));
 	connect(&mConnectButton, SIGNAL(downPressed()), this, SLOT(focusDown()));
@@ -84,6 +85,14 @@ QString CommunicationSettingsWidget::menuEntry()
 
 void CommunicationSettingsWidget::renewFocus()
 {
+	const QColor buttonColor = mMailbox.isConnected()
+			? QColor(Qt::green)
+			: QPalette().color(QPalette::Background);
+	QPalette palette;
+	palette.setColor(QPalette::Background, buttonColor);
+	palette.setColor(QPalette::Base, buttonColor);
+	palette.setColor(QPalette::Button, buttonColor);
+	mConnectButton.setPalette(palette);
 }
 
 void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
@@ -121,8 +130,8 @@ void CommunicationSettingsWidget::onConnectButtonClicked()
 	const QString ipSelectorValue = QString("%1").arg(mServerIpSelector.value(), 6, 10, QChar('0'));
 	const QString thirdPart = ipSelectorValue.left(3).replace(QRegExp("^0+"), "");
 	const QString fourthPart = ipSelectorValue.mid(3).replace(QRegExp("^0+"), "");
-	result[2] = thirdPart;
-	result[3] = fourthPart;
+	result[2] = thirdPart.isEmpty() ? "0" : thirdPart;
+	result[3] = fourthPart.isEmpty() ? "0" : fourthPart;
 	mMailbox.connect(result.join("."));
 }
 

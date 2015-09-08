@@ -61,7 +61,11 @@ LIBS += -L$$TRIK_RUNTIME_BIN_DIR
 
 LIBS += -lqslog$$CONFIGURATION_SUFFIX
 
-CONFIG += c++11
+if (equals(QT_MAJOR_VERSION, 5)) {
+	CONFIG += c++11
+} else {
+	QMAKE_CXXFLAGS += -std=c++11
+}
 
 defineTest(copyToDestdir) {
 	FILES = $$1
@@ -105,7 +109,7 @@ defineTest(uses) {
 }
 
 # Libs and includepathes for trikControl and related.
-uses(trikControl trikKernel qslog)
+uses(trikControl trikKernel qslog trikHal)
 
 # Files to be present in destdir for trikRuntime to work.
 copyToDestdir( \

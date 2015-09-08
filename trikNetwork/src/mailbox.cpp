@@ -46,6 +46,11 @@ Mailbox::~Mailbox()
 	}
 }
 
+bool Mailbox::isConnected() const
+{
+	return mWorker->isConnected();
+}
+
 void Mailbox::setHullNumber(int hullNumber)
 {
 	if (isEnabled()) {
@@ -106,13 +111,13 @@ bool Mailbox::hasMessages()
 	return mWorker->hasMessages();
 }
 
-QString Mailbox::receive()
+QString Mailbox::receive(bool wait)
 {
 	QString result;
 
 	QEventLoop loop;
 	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()));
-	if (!mWorker->hasMessages()) {
+	if (!mWorker->hasMessages() && wait) {
 		loop.exec();
 	}
 

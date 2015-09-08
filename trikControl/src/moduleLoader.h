@@ -17,6 +17,8 @@
 #include <QtCore/QString>
 #include <QtCore/QSet>
 
+#include <trikHal/systemConsoleInterface.h>
+
 namespace trikControl {
 
 /// Some devices like range sensor require kernel modules to work. This class keeps track of loaded kernel modules and
@@ -24,11 +26,16 @@ namespace trikControl {
 class ModuleLoader
 {
 public:
+	/// Constructor.
+	/// @param console - system console that is used to issue "modprobe" command.
+	ModuleLoader(trikHal::SystemConsoleInterface &console);
+
 	/// Loads given module using modprobe. Returns true if module is loaded.
 	bool load(const QString &module);
 
 private:
 	QSet<QString> mLoadedModules;
+	trikHal::SystemConsoleInterface &mConsole;
 };
 
 }

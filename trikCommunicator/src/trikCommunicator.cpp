@@ -14,9 +14,6 @@
 
 #include "trikCommunicator.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QCoreApplication>
-
 #include <trikScriptRunner/trikScriptRunner.h>
 
 #include "src/connection.h"
@@ -26,8 +23,8 @@ using namespace trikCommunicator;
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
-		, const QString &startDirPath)
-	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad, startDirPath), true)
+		)
+	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad), true)
 {
 }
 
@@ -42,6 +39,8 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const ru
 	, mHasScriptRunnerOwnership(hasScriptRunnerOwnership)
 {
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
+
+	connect(runner, SIGNAL(sendMessage(QString)), this, SLOT(sendPrintMessage(QString)));
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -56,4 +55,9 @@ Connection *TrikCommunicator::connectionFactory()
 	Connection *connection = new Connection(*mTrikScriptRunner);
 	connect(connection, SIGNAL(stopCommandReceived()), this, SIGNAL(stopCommandReceived()));
 	return connection;
+}
+
+void TrikCommunicator::sendPrintMessage(const QString &text)
+{
+	sendMessage("print: " + text);
 }

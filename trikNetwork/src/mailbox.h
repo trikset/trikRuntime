@@ -47,6 +47,8 @@ public:
 
 	~Mailbox() override;
 
+	bool isConnected() const override;
+
 	void setHullNumber(int myHullNumber) override;
 
 	QHostAddress serverIp() const override;
@@ -68,7 +70,7 @@ public slots:
 
 	bool hasMessages() override;
 
-	QString receive() override;
+	QString receive(bool wait = true) override;
 
 	int myHullNumber() const override;
 

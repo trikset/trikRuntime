@@ -27,12 +27,22 @@ class IncorrectStateChangeException : public trikKernel::TrikRuntimeException
 {
 public:
 	/// Constructor.
+	/// @param deviceName - name of the device.
 	/// @param from - status from which we tried to change.
 	/// @param to - status to which we tried to change.
-	IncorrectStateChangeException(DeviceInterface::Status from, DeviceInterface::Status to)
+	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from, DeviceInterface::Status to)
 	{
-		QLOG_ERROR() << QString("Incorrect device state change from \"%1\" to \"%2\"")
+		QLOG_ERROR() << deviceName << QString(": incorrect device state change from \"%1\" to \"%2\"")
 				.arg(statusToString(from)).arg(statusToString(to));
+	}
+
+	/// Constructor, used to report incorrect resetting of failure state.
+	/// @param deviceName - name of the device.
+	/// @param from - status from which we tried to change.
+	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from)
+	{
+		QLOG_ERROR() << deviceName << QString(": incorrect attempt to reset failure from \"%1\"")
+				.arg(statusToString(from));
 	}
 
 private:

@@ -21,8 +21,6 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QFontMetrics>
 
-#include "graphicsWidget.h"
-
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
 	#include <QtGui/QLabel>
@@ -30,6 +28,9 @@
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QLabel>
 #endif
+
+#include "graphicsWidget.h"
+#include "shapes/shape.h"
 
 namespace trikControl {
 
@@ -49,14 +50,14 @@ public slots:
 	/// for better performance.
 	void showImage(const QString &fileName);
 
-	/// Add a label to the specific position of the screen. If there already is a label in these coordinates, its
-	/// contents will be updated.
+	/// Add a label to the specific position of the screen without redrawing it.
+	/// If there already is a label in these coordinates, its contents will be updated.
 	/// @param text - label text.
 	/// @param x - label x coordinate.
 	/// @param y - label y coordinate.
 	void addLabel(const QString &text, int x, int y);
 
-	/// Remove all labels from the screen.
+	/// Remove all labels from the screen and redraws it.
 	void removeLabels();
 
 	/// Queues worker object for deletion. It is actually deleted when control flow returns to event loop.
@@ -78,33 +79,36 @@ public slots:
 	/// Clear everything painted with this object.
 	void clear();
 
-	/// Draw point on the widget.
+	/// Returns a display in a blank state.
+	void reset();
+
+	/// Draw point on the widget without redrawing it.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	void drawPoint(int x, int y);
 
-	/// Draw line on the widget.
+	/// Draw line on the widget without redrawing it.
 	/// @param x1 - first point's x coordinate.
 	/// @param y1 - first point's y coordinate.
 	/// @param x2 - second point's x coordinate.
 	/// @param y2 - second point's y coordinate.
 	void drawLine(int x1, int y1, int x2, int y2);
 
-	/// Draw rect on the widget.
+	/// Draw rect on the widget without redrawing it.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
 	void drawRect(int x, int y, int width, int height);
 
-	/// Draw ellipse.
+	/// Draw ellipse without redrawing the screen.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
 	void drawEllipse(int x, int y, int width, int height);
 
-	/// Draw arc on the widget.
+	/// Draw arc on the widget without redrawing it.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width rect forming an arc.
@@ -116,17 +120,19 @@ public slots:
 	/// Initializes widget. Shall be called when widget is moved to correct thread. Not supposed to be called from .qts.
 	void init();
 
+	/// Updates painted picture on the robot`s screen.
+	/// @warning This operation is pretty slow, so it shouldn`t be called without need.
+	void redraw();
+
 private:
 	void resetBackground();
 
-	/// Returns existing label with given coordinates or nullptr if no such label exists.
-	QLabel *findLabel(int x, int y) const;
+	void repaintGraphicsWidget();
+
+	static QColor colorByName(const QString &name);
 
 	QScopedPointer<GraphicsWidget> mImageWidget;
-	QScopedPointer<QLabel> mImageLabel;
 	QHash<QString, QPixmap> mImagesCache;
-	QMultiHash<int, QLabel *> mLabels; // Has ownership.
-	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }

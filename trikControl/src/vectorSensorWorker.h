@@ -15,10 +15,11 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QSocketNotifier>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QVector>
 #include <QtCore/QReadWriteLock>
+
+#include <trikHal/hardwareAbstractionInterface.h>
 
 #include "deviceState.h"
 
@@ -31,9 +32,10 @@ class VectorSensorWorker : public QObject
 
 public:
 	/// Constructor.
-	/// @param deviceFile - device file for this sensor.
+	/// @param eventFile - device file for this sensor.
 	/// @param state - state of a device.
-	VectorSensorWorker(const QString &deviceFile, DeviceState &state);
+	VectorSensorWorker(const QString &eventFile, DeviceState &state
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 signals:
 	/// Emitted when new sensor reading is ready.
@@ -44,16 +46,15 @@ public slots:
 	QVector<int> read();
 
 private slots:
-	/// Updates current reading when new value is ready.
-	void readFile();
+	/// Updates current reading when new value is ready in event file.
+	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value);
 
 private:
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 
 	QVector<int> mReading;
 	QVector<int> mReadingUnsynced;
 
-	int mDeviceFileDescriptor;
 	QReadWriteLock mLock;
 
 	/// Device state, shared between worker and proxy.

@@ -43,7 +43,7 @@ qreal ConfigurerHelper::configureReal(const trikKernel::Configurer &configurer, 
 		, const QString &parameterName)
 {
 	bool ok = false;
-	int parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
+	const qreal parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
 	if (!ok) {
 		QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
 				.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));

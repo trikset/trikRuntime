@@ -15,68 +15,73 @@
 include(../global.pri)
 
 HEADERS += \
+	$$PWD/abstractIndicator.h \
 	$$PWD/backgroundWidget.h \
 	$$PWD/batteryIndicator.h \
 	$$PWD/connectButton.h \
 	$$PWD/controller.h \
 	$$PWD/digitSelector.h \
+	$$PWD/encoderIndicator.h \
 	$$PWD/fileManagerWidget.h \
+	$$PWD/informationWidget.h \
+	$$PWD/languageSelectionWidget.h \
 	$$PWD/lazyMainWidget.h \
 	$$PWD/lazyMainWidgetWrapper.h \
 	$$PWD/mainWidget.h \
 	$$PWD/motorLever.h \
 	$$PWD/motorsWidget.h \
 	$$PWD/numberSelectionWidget.h \
-	$$PWD/rcReader.h \
 	$$PWD/communicationSettingsWidget.h \
 	$$PWD/runningWidget.h \
 	$$PWD/sensorIndicator.h \
 	$$PWD/sensorsSelectionWidget.h \
 	$$PWD/sensorsWidget.h \
 	$$PWD/startWidget.h \
+	$$PWD/systemSettingsWidget.h \
 	$$PWD/trikGuiApplication.h \
 	$$PWD/trikGuiDialog.h \
 	$$PWD/trikGuiMessageBox.h \
+	$$PWD/updateWidget.h \
 	$$PWD/wiFiAPWidget.h \
 	$$PWD/wiFiClientWidget.h \
 	$$PWD/wiFiInitWidget.h \
 	$$PWD/wiFiModeWidget.h \
-	$$PWD/informationWidget.h \
-	$$PWD/fileManagerMessageBox.h \
-	$$PWD/updateWidget.h \
-	$$PWD/systemSettingsWidget.h \
 
 SOURCES += \
-	$$PWD/digitSelector.cpp \
-	$$PWD/fileManagerWidget.cpp \
-	$$PWD/runningWidget.cpp \
+	$$PWD/backgroundWidget.cpp \
+	$$PWD/batteryIndicator.cpp \
+	$$PWD/communicationSettingsWidget.cpp \
 	$$PWD/connectButton.cpp \
-	$$PWD/wiFiClientWidget.cpp \
-	$$PWD/sensorsSelectionWidget.cpp \
-	$$PWD/startWidget.cpp \
-	$$PWD/trikGuiApplication.cpp \
 	$$PWD/controller.cpp \
-	$$PWD/main.cpp \
+	$$PWD/digitSelector.cpp \
+	$$PWD/encoderIndicator.cpp \
+	$$PWD/fileManagerWidget.cpp \
+	$$PWD/informationWidget.cpp \
+	$$PWD/languageSelectionWidget.cpp \
+	$$PWD/lazyMainWidgetWrapper.cpp \
+	$$PWD/trikGuiMain.cpp \
 	$$PWD/motorLever.cpp \
 	$$PWD/motorsWidget.cpp \
 	$$PWD/numberSelectionWidget.cpp \
+	$$PWD/runningWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
+	$$PWD/sensorsSelectionWidget.cpp \
 	$$PWD/sensorsWidget.cpp \
-	$$PWD/wiFiModeWidget.cpp \
-	$$PWD/wiFiInitWidget.cpp \
-	$$PWD/wiFiAPWidget.cpp \
-	$$PWD/rcReader.cpp \
-	$$PWD/communicationSettingsWidget.cpp \
-	$$PWD/trikGuiMessageBox.cpp \
-	$$PWD/trikGuiDialog.cpp \
-	$$PWD/backgroundWidget.cpp \
-	$$PWD/batteryIndicator.cpp \
-	$$PWD/informationWidget.cpp \
-	$$PWD/fileManagerMessageBox.cpp \
-	$$PWD/updateWidget.cpp \
+	$$PWD/startWidget.cpp \
 	$$PWD/systemSettingsWidget.cpp \
+	$$PWD/trikGuiApplication.cpp \
+	$$PWD/trikGuiDialog.cpp \
+	$$PWD/trikGuiMessageBox.cpp \
+	$$PWD/updateWidget.cpp \
+	$$PWD/wiFiAPWidget.cpp \
+	$$PWD/wiFiClientWidget.cpp \
+	$$PWD/wiFiInitWidget.cpp \
+	$$PWD/wiFiModeWidget.cpp \
 
-TRANSLATIONS = trikGui_ru.ts
+TRANSLATIONS = \
+	$$PWD/../translations/ru/trikGui_ru.ts \
+	$$PWD/../translations/fr/trikGui_fr.ts \
+
 RESOURCES = trikGui.qrc
 
 copyToDestdir($$PWD/wpa-config.xml)
@@ -89,4 +94,8 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-uses(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
+transitiveIncludes(trikNetwork)
+links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+
+installs()

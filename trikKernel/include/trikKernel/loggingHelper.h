@@ -27,7 +27,7 @@ namespace trikKernel {
 class LoggingHelper
 {
 public:
-	/// Constructor. Initializes logger with default settings, supposed to be used in main() (RAII idiom).
+	/// Constructor. Initializes logger with default settings, supposed to be alive until program finishes (RAII idiom).
 	/// @param pathToLog - path to "trik.log" file that will be created or appended by logger. Supposed to end with "/".
 	LoggingHelper(const QString &pathToLog);
 

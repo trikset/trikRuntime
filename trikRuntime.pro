@@ -1,4 +1,4 @@
-# Copyright 2013-2014 Yurii Litvinov, CyberTech Labs Ltd.
+# Copyright 2013-2015 Yurii Litvinov, CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
 	qslog \
-	trikCommunicator \
-	trikControl \
-	trikGui \
 	trikKernel \
-	trikNetwork \
-	trikRun \
-	trikScriptRunner \
-	trikServer \
-	trikTelemetry \
 	trikWiFi \
+	trikNetwork \
+	trikHal \
+	trikControl \
+	trikTelemetry \
+	trikCommunicator \
+	trikScriptRunner \
+	trikGui \
+	trikRun \
+	trikServer \
+	translations \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
 trikCommunicator.depends = trikScriptRunner trikNetwork qslog
-trikControl.depends = trikKernel qslog
+trikControl.depends = trikKernel trikHal qslog
 trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
 trikKernel.depends = qslog
 trikNetwork.depends = trikKernel qslog
@@ -39,3 +41,4 @@ trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog
 trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog
+trikHal.depends = qslog

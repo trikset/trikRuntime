@@ -35,31 +35,25 @@ class LazyMainWidgetWrapper : public LazyMainWidget
 
 public:
 	/// Constructor.
-	LazyMainWidgetWrapper(trikControl::DisplayWidgetInterface *wrappedWidget, QWidget *parent = 0)
-			: LazyMainWidget(parent), mWrappedWidget(wrappedWidget)
-	{
-		connect(wrappedWidget, SIGNAL(shown()), this, SLOT(emitShowMe()));
-		connect(wrappedWidget, SIGNAL(hidden()), this, SIGNAL(hideMe()));
+	/// @param wrappedWidget - widget to be wrapped into LazyMainWidget interface. Does not take ownership.
+	/// @param parent - parent of this wrapper in Qt Widgets parent/child system.
+	LazyMainWidgetWrapper(trikControl::DisplayWidgetInterface *wrappedWidget, QWidget *parent = nullptr);
 
-		const auto layout = new QHBoxLayout(this);
-
-		layout->addWidget(wrappedWidget);
-	}
-
-	void renewFocus() override
-	{
-		mWrappedWidget->setFocus();
-	}
+	~LazyMainWidgetWrapper() override;
+	void renewFocus() override;
 
 private slots:
 	/// Helper slot to re-emit a signal with correct parameter (life without Qt5 is pain).
-	void emitShowMe()
-	{
-		emit showMe(*this);
-	}
+	void emitShowMe();
 
 private:
-	QWidget * const mWrappedWidget;  // Does not have ownership.
+	/// Wrapped display widget.
+	/// Does not have ownership.
+	QWidget * const mWrappedWidget;
+
+	/// Layout for correct placement of wrapped widget.
+	/// Has ownership by Qt parent-child system.
+	QHBoxLayout * const mLayout;
 };
 }
 

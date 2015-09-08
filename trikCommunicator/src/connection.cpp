@@ -12,16 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtCore/QDebug>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtCore/QThread>
-
 #include <trikKernel/fileUtils.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 
 #include "src/connection.h"
 
+#include <trikKernel/paths.h>
 #include <QsLog.h>
 
 using namespace trikCommunicator;
@@ -38,7 +34,6 @@ void Connection::processData(const QByteArray &data)
 
 	if (!command.startsWith("keepalive")) {
 		// Discard "keepalive" output.
-		qDebug() << "Command: " << command;
 		QLOG_INFO() << "Command: " << command;
 	}
 
@@ -46,21 +41,18 @@ void Connection::processData(const QByteArray &data)
 		command.remove(0, QString("file:").length());
 		const int separatorPosition = command.indexOf(':');
 		if (separatorPosition == -1) {
-
-			qDebug() << "Malformed 'file' command";
 			QLOG_ERROR() << "Malformed 'file' command";
-
 			return;
 		}
 
 		const QString fileName = command.left(separatorPosition);
 		const QString fileContents = command.mid(separatorPosition + 1);
-		trikKernel::FileUtils::writeToFile(fileName, fileContents, mTrikScriptRunner.scriptsDirPath());
+		trikKernel::FileUtils::writeToFile(fileName, fileContents, trikKernel::Paths::userScriptsPath());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "brickBeep");
 	} else if (command.startsWith("run:")) {
 		command.remove(0, QString("run:").length());
 		const QString fileContents = trikKernel::FileUtils::readFromFile(
-				mTrikScriptRunner.scriptsDirPath() + "/" + command);
+				trikKernel::Paths::userScriptsPath() + command);
 
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run", Q_ARG(QString, fileContents), Q_ARG(QString, command));
 	} else if (command == "stop") {

@@ -39,6 +39,8 @@ void Threading::startMainThread(const QString &script)
 {
 	mScript = script;
 	mErrorMessage.clear();
+	mFinishedThreads.clear();
+	mPreventFromStart.clear();
 
 	QRegExp const mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
 	bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
@@ -71,9 +73,20 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 		return;
 	}
 
+	if (mPreventFromStart.contains(threadId)) {
+		QLOG_INFO() << "Threading: attempt to create a thread which must be killed" << threadId;
+		mPreventFromStart.remove(threadId);
+		mFinishedThreads.insert(threadId);
+		mThreadsMutex.unlock();
+		mResetMutex.unlock();
+		return;
+	}
+
 	QLOG_INFO() << "Starting new thread" << threadId << "with engine" << engine;
 	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
+	connect(&mScriptControl, SIGNAL(quitSignal()), thread, SIGNAL(stopRunning()), Qt::DirectConnection);
 	mThreads[threadId] = thread;
+	mFinishedThreads.remove(threadId);
 	mThreadsMutex.unlock();
 
 	engine->moveToThread(thread);
@@ -175,17 +188,19 @@ void Threading::reset()
 
 void Threading::threadFinished(const QString &id)
 {
-	QLOG_INFO() << "Threading: finishing thread" <<	id;
+	QLOG_INFO() << "Finishing thread" << id;
 
+	mResetMutex.lock();
 	mThreadsMutex.lock();
 	if (!mThreads[id]->error().isEmpty() && mErrorMessage.isEmpty()) {
 		mErrorMessage = mThreads[id]->error();
 	}
 
-	QLOG_INFO() << "Threading: thread" << id << "has finished, thread object" << mThreads[id];
+	QLOG_INFO() << "Thread" << id << "has finished, thread object" << mThreads[id];
 	mThreads.remove(id);
 	mFinishedThreads.insert(id);
 	mThreadsMutex.unlock();
+	mResetMutex.unlock();
 
 	if (!mErrorMessage.isEmpty()) {
 		reset();
@@ -211,7 +226,7 @@ void Threading::sendMessage(const QString &threadId, const QScriptValue &message
 	mResetMutex.unlock();
 }
 
-QScriptValue Threading::receiveMessage()
+QScriptValue Threading::receiveMessage(bool waitForMessage)
 {
 	if (!tryLockReset()) {
 		return QScriptValue();
@@ -232,8 +247,14 @@ QScriptValue Threading::receiveMessage()
 	mutex->lock();
 	if (queue.isEmpty()) {
 		mResetMutex.unlock();
+		if (!waitForMessage) {
+			mutex->unlock();
+			return QScriptValue("");
+		}
+
 		condition->wait(mutex);
 		if (!tryLockReset()) {
+			mutex->unlock();
 			return QScriptValue();
 		}
 	}
@@ -242,6 +263,30 @@ QScriptValue Threading::receiveMessage()
 	QScriptValue result = queue.dequeue();
 	mResetMutex.unlock();
 	return result;
+}
+
+void Threading::killThread(const QString &threadId)
+{
+	if (!tryLockReset()) {
+		return;
+	}
+
+	mThreadsMutex.lock();
+	if (!mThreads.contains(threadId)) {
+		if (!mFinishedThreads.contains(threadId)) {
+			QLOG_INFO() << "Threading: killing thread that is not started yet," << threadId
+					<< "will be prevented from running";
+			mPreventFromStart.insert(threadId);
+		} else {
+			QLOG_INFO() << "Threading: killing already finished thread, ignoring";
+		}
+	} else {
+		QLOG_INFO() << "Threading: killing thread" << threadId;
+		mThreads[threadId]->abort();
+	}
+
+	mThreadsMutex.unlock();
+	mResetMutex.unlock();
 }
 
 QString Threading::errorMessage() const
@@ -257,4 +302,9 @@ bool Threading::tryLockReset()
 	}
 
 	return !mResetStarted;
+}
+
+bool Threading::inEventDrivenMode() const
+{
+	return mScriptControl.isInEventDrivenMode();
 }

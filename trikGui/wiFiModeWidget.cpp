@@ -17,11 +17,12 @@
 #include <QtGui/QKeyEvent>
 #include <QtCore/QDebug>
 
+#include <trikKernel/paths.h>
+#include <QsLog.h>
+
 #include "wiFiClientWidget.h"
 #include "wiFiAPWidget.h"
 #include "wiFiInitWidget.h"
-
-#include <QsLog.h>
 
 using namespace trikGui;
 
@@ -29,7 +30,7 @@ WiFiModeWidget::WiFiModeWidget(const QString &configPath
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mConfigPath(configPath)
-	, mRcReader("/etc/trik/trikrc")
+	, mRcReader(trikKernel::Paths::trikRcName())
 	, mTitle(tr("Choose mode:"))
 {
 	mModes.addItem(tr("Wi-Fi client"));

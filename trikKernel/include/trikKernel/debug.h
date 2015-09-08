@@ -18,7 +18,6 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtCore/QHash>
-#include <QtCore/QDebug>
 
 namespace trikKernel {
 
@@ -32,7 +31,7 @@ public:
 	/// @param methodName - name of a method to be logged
 	Debugger(const QString &methodName);
 
-	~Debugger();
+	~Debugger() override;
 
 private:
 	const QString mMethodName;

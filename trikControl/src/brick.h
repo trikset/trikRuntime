@@ -21,6 +21,10 @@
 
 #include "brickInterface.h"
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 namespace trikControl {
 
 class AnalogSensor;
@@ -29,17 +33,19 @@ class ColorSensor;
 class DigitalSensor;
 class Display;
 class Encoder;
-class I2cCommunicator;
+class MspCommunicatorInterface;
 class Keys;
 class Led;
 class LineSensor;
 class ModuleLoader;
 class ObjectSensor;
+class SoundSensor;
 class PowerMotor;
 class PwmCapture;
 class RangeSensor;
 class ServoMotor;
 class VectorSensor;
+class Fifo;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -49,13 +55,18 @@ class Brick : public BrickInterface
 
 public:
 	/// Constructor.
-	/// @param guiThread - thread in which an application has started. Can be obtaned in main() by code like
-	///        QApplication app; app.thread();.
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
-	/// @param startDirPath - path to the directory from which the application was executed (it is expected to be
-	///        ending with "/").
-	Brick(const QString &systemConfig, const QString &modelConfig, const QString &startDirPath);
+	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
+	Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
+
+	/// Secondary constructor, takes explicit hardware abstraction object.
+	/// @param hardwareAbstraction - hardware abstraction layer implementation.
+	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
+	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
+	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
+	Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig
+			, const QString &modelConfig, const QString &mediaPath);
 
 	~Brick() override;
 
@@ -96,6 +107,8 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
+	SoundSensorInterface *soundSensor(const QString &port) override;
+
 	EncoderInterface *encoder(const QString &port) override;
 
 	BatteryInterface *battery() override;
@@ -106,14 +119,19 @@ public slots:
 
 	LedInterface *led() override;
 
+	FifoInterface *fifo(const QString &port) override;
+
 private:
+	Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
+			, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction);
+
 	/// Deinitializes and properly shuts down device on a given port.
 	void shutdownDevice(const QString &port);
 
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
 
-	QScopedPointer<I2cCommunicator> mI2cCommunicator;
+	QScopedPointer<MspCommunicatorInterface> mMspCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;
@@ -133,9 +151,18 @@ private:
 	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
+	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
+	QHash<QString, Fifo *> mFifos;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
+
+	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
+	/// Has or hasn't ownership depending on mOwnsHardwareAbstraction value.
+	trikHal::HardwareAbstractionInterface *mHardwareAbstraction;
+
+	/// True, if hardware abstraction object was created here, false if passed from outside.
+	bool mOwnsHardwareAbstraction;
 
 	trikKernel::Configurer mConfigurer;
 };

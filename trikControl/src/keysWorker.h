@@ -15,10 +15,11 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QSocketNotifier>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QSet>
 #include <QtCore/QReadWriteLock>
+
+#include <trikHal/hardwareAbstractionInterface.h>
 
 #include "deviceState.h"
 
@@ -32,7 +33,8 @@ class KeysWorker : public QObject
 public:
 	/// Constructor.
 	/// @param keysPath - path to device file that controls brick keys.
-	KeysWorker(const QString &keysPath, DeviceState &state);
+	KeysWorker(const QString &keysPath, DeviceState &state
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	/// Clear data about previous key pressures.
 	void reset();
@@ -42,7 +44,7 @@ public slots:
 	bool wasPressed(int code);
 
 private slots:
-	void readKeysEvent();
+	void readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value);
 
 signals:
 	/// Triggered when button state changed (pressed or released).
@@ -51,8 +53,7 @@ signals:
 	void buttonPressed(int code, int value);
 
 private:
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
-	int mKeysFileDescriptor;
+	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 	int mButtonCode;
 	int mButtonValue;
 	QSet<int> mWasPressed;

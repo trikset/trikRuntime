@@ -16,6 +16,7 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QStackedLayout>
+	#include <QtGui/QApplication>
 #else
 	#include <QtWidgets/QStackedLayout>
 	#include <QtWidgets/QPushButton>
@@ -23,8 +24,6 @@
 	#include <QtWidgets/QDialog>
 #endif
 
-#include <QtCore/QDebug>
-#include <QtCore/QThread>
 #include <QtGui/QPixmap>
 
 using namespace trikControl;
@@ -35,18 +34,12 @@ GuiWorker::GuiWorker()
 
 void GuiWorker::init()
 {
-	mImageLabel.reset(new QLabel());
 	mImageWidget.reset(new GraphicsWidget());
-	mFontMetrics.reset(new QFontMetrics(mImageWidget->font()));
-
-	QHBoxLayout * const layout = new QHBoxLayout();
-	mImageLabel->setScaledContents(true);
-	layout->addWidget(mImageLabel.data());
-	mImageWidget->setLayout(layout);
 	mImageWidget->setWindowState(Qt::WindowFullScreen);
 	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
 	resetBackground();
 }
+
 
 DisplayWidgetInterface &GuiWorker::graphicsWidget()
 {
@@ -61,37 +54,19 @@ void GuiWorker::showImage(const QString &fileName)
 		mImagesCache.insert(fileName, pixmap);
 	}
 
-	mImageLabel->setPixmap(mImagesCache.value(fileName));
-	mImageWidget->showCommand();
+	mImageWidget->setPixmap(mImagesCache[fileName]);
+	repaintGraphicsWidget();
 }
 
 void GuiWorker::addLabel(const QString &text, int x, int y)
 {
-	QLabel *label = findLabel(x, y);
-	label = label ? label : new QLabel(mImageWidget.data());
-	label->setText(text);
-	label->setStyleSheet(QString("color: %1").arg(mImageWidget->currentPenColor().name()));
-
-	// There is no layout for the label, so its size cannot be set automatically. We set
-	// it with QFontMetrics.
-	label->setGeometry(x, y, mFontMetrics->width(text), mFontMetrics->height());
-
-	label->show();
-	if (!mLabels.contains(x ^ y, label)) {
-		mLabels.insertMulti(x ^ y, label);
-	}
-
-	mImageWidget->showCommand();
+	mImageWidget->addLabel(text, x, y);
 }
 
 void GuiWorker::removeLabels()
 {
-	for (QLabel * const label : mLabels.values()) {
-		label->close();
-		delete label;
-	}
-
-	mLabels.clear();
+	mImageWidget->deleteLabels();
+	repaintGraphicsWidget();
 }
 
 void GuiWorker::deleteWorker()
@@ -102,45 +77,7 @@ void GuiWorker::deleteWorker()
 void GuiWorker::setBackground(const QString &color)
 {
 	QPalette palette = mImageWidget->palette();
-
-	if (color == tr("white")) {
-		palette.setColor(QPalette::Window, Qt::white);
-	} else if (color == tr("black")) {
-		palette.setColor(QPalette::Window, Qt::black);
-	} else if (color == tr("red")) {
-		palette.setColor(QPalette::Window, Qt::red);
-	} else if (color == tr("darkRed")) {
-		palette.setColor(QPalette::Window, Qt::darkRed);
-	} else if (color == tr("green")) {
-		palette.setColor(QPalette::Window, Qt::green);
-	} else if (color == tr("darkGreen")) {
-		palette.setColor(QPalette::Window, Qt::darkGreen);
-	} else if (color == tr("blue")) {
-		palette.setColor(QPalette::Window, Qt::blue);
-	} else if (color == tr("darkBlue")) {
-		palette.setColor(QPalette::Window, Qt::darkBlue);
-	} else if (color == tr("cyan")) {
-		palette.setColor(QPalette::Window, Qt::cyan);
-	} else if (color == tr("darkCyan")) {
-		palette.setColor(QPalette::Window, Qt::darkCyan);
-	} else if (color == tr("magenta")) {
-		palette.setColor(QPalette::Window, Qt::magenta);
-	} else if (color == tr("darkMagenta")) {
-		palette.setColor(QPalette::Window, Qt::darkMagenta);
-	} else if (color == tr("yellow")) {
-		palette.setColor(QPalette::Window, Qt::yellow);
-	} else if (color == tr("darkYellow")) {
-		palette.setColor(QPalette::Window, Qt::darkYellow);
-	} else if (color == tr("gray")) {
-		palette.setColor(QPalette::Window, Qt::gray);
-	} else if (color == tr("darkGray")) {
-		palette.setColor(QPalette::Window, Qt::darkGray);
-	} else if (color == tr("lightGray")) {
-		palette.setColor(QPalette::Window, Qt::lightGray);
-	} else {
-		palette.setColor(QPalette::Window, QColor(color));
-	}
-
+	palette.setColor(QPalette::Window, colorByName(color));
 	mImageWidget->setPalette(palette);
 	mImageWidget->showCommand();
 }
@@ -148,13 +85,13 @@ void GuiWorker::setBackground(const QString &color)
 void GuiWorker::resetBackground()
 {
 	QPalette palette = mImageWidget->palette();
-	palette.setColor(QPalette::Window, Qt::lightGray);
+	palette.setColor(QPalette::Window, Qt::transparent);
 	mImageWidget->setPalette(palette);
 }
 
 void GuiWorker::setPainterColor(const QString &color)
 {
-	mImageWidget->setPainterColor(color);
+	mImageWidget->setPainterColor(colorByName(color));
 }
 
 void GuiWorker::setPainterWidth(int penWidth)
@@ -168,9 +105,14 @@ void GuiWorker::clear()
 	mImageWidget->setPainterColor("black");
 	mImageWidget->setPainterWidth(1);
 	mImageWidget->hideCommand();
-	removeLabels();
-	mImageLabel->setPixmap(QPixmap());
 	resetBackground();
+}
+
+void GuiWorker::reset()
+{
+	QApplication::removePostedEvents(this, QEvent::MetaCall);
+	QApplication::removePostedEvents(mImageWidget.data(), QEvent::Paint);
+	clear();
 }
 
 void GuiWorker::hide()
@@ -178,48 +120,79 @@ void GuiWorker::hide()
 	mImageWidget->hideCommand();
 }
 
-QLabel *GuiWorker::findLabel(int x, int y) const
-{
-	for (QLabel * const label : mLabels.values(x ^ y)) {
-		if (label->x() == x && label->y() == y) {
-			return label;
-		}
-	}
-
-	return nullptr;
-}
-
 void GuiWorker::drawPoint(int x, int y)
 {
 	mImageWidget->drawPoint(x, y);
-	mImageWidget->update();
-	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 {
 	mImageWidget->drawLine(x1, y1, x2, y2);
-	mImageWidget->update();
-	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawRect(int x, int y, int width, int height)
 {
 	mImageWidget->drawRect(x, y, width, height);
-	mImageWidget->update();
-	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawEllipse(int x, int y, int width, int height)
 {
 	mImageWidget->drawEllipse(x, y, width, height);
-	mImageWidget->update();
-	mImageWidget->showCommand();
 }
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	mImageWidget->drawArc(x, y, width, height, startAngle, spanAngle);
+}
+
+void GuiWorker::redraw()
+{
+	repaintGraphicsWidget();
+}
+
+void GuiWorker::repaintGraphicsWidget()
+{
 	mImageWidget->update();
 	mImageWidget->showCommand();
+}
+
+QColor GuiWorker::colorByName(const QString &name)
+{
+	if (name == tr("white")) {
+		return Qt::white;
+	} else if (name == tr("black")) {
+		return Qt::black;
+	} else if (name == tr("red")) {
+		return Qt::red;
+	} else if (name == tr("darkRed")) {
+		return Qt::darkRed;
+	} else if (name == tr("green")) {
+		return Qt::green;
+	} else if (name == tr("darkGreen")) {
+		return Qt::darkGreen;
+	} else if (name == tr("blue")) {
+		return Qt::blue;
+	} else if (name == tr("darkBlue")) {
+		return Qt::darkBlue;
+	} else if (name == tr("cyan")) {
+		return Qt::cyan;
+	} else if (name == tr("darkCyan")) {
+		return Qt::darkCyan;
+	} else if (name == tr("magenta")) {
+		return Qt::magenta;
+	} else if (name == tr("darkMagenta")) {
+		return Qt::darkMagenta;
+	} else if (name == tr("yellow")) {
+		return Qt::yellow;
+	} else if (name == tr("darkYellow")) {
+		return Qt::darkYellow;
+	} else if (name == tr("gray")) {
+		return Qt::gray;
+	} else if (name == tr("darkGray")) {
+		return Qt::darkGray;
+	} else if (name == tr("lightGray")) {
+		return Qt::lightGray;
+	} else {
+		return QColor(name);
+	}
 }

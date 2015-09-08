@@ -31,6 +31,9 @@ public:
 
 	/// Reads given XML file and returns root element, throws exception if something went wrong.
 	static QDomElement readXmlFile(const QString &fileNameWithPath);
+
+	/// Returns absolute path by given path, adds "/" to the right if needed.
+	static QString normalizePath(const QString &path);
 };
 
 }

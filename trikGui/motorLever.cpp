@@ -37,7 +37,6 @@ MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, 
 	, mPowerStep(10)
 	, mPower(0)
 	, mNameLabel(port)
-	, mPowerLabel("0")
 	, mOnOffLabel(tr("off"))
 {
 	mMotor.powerOff();
@@ -46,27 +45,24 @@ MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, 
 	mPowerBar.setMinimum(mMinPower);
 	mPowerBar.setMaximum(mMaxPower);
 	mPowerBar.setValue(0);
-	mPowerBar.setTextVisible(false);
+	mPowerBar.setTextVisible(true);
+	mPowerBar.setFormat("%v");
 
 	mNameLabel.setAlignment(Qt::AlignCenter);
 	mPowerBar.setAlignment(Qt::AlignCenter);
-	mPowerLabel.setAlignment(Qt::AlignCenter);
 	mOnOffLabel.setAlignment(Qt::AlignCenter);
 
-	// mPowerLabel and mOnOffLabel can change their widths during work. It will cause mPowerBar
-	// width change. To prevent it, we set fixed widths for mPowerLabel and mOnOffLabel.
-	// They are equal to maximum widths of the widgets. For mPowerLabel it is when the label text
-	// is "-100", for mOnOffLabel - "off".
-	mPowerLabel.setFixedWidth(40);
+	// mOnOffLabel can change its width during work. It will cause mPowerBar
+	// width change. To prevent it, we set fixed width it.
 	mOnOffLabel.setFixedWidth(48);
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mPowerBar);
-	mLayout.addWidget(&mPowerLabel);
 	mLayout.addWidget(&mOnOffLabel);
 	setLayout(&mLayout);
 
 	setFocusPolicy(Qt::StrongFocus);
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::QSizePolicy::MinimumExpanding);
 }
 
 MotorLever::~MotorLever()
@@ -116,7 +112,6 @@ void MotorLever::setPower(int power)
 
 	mPower = power;
 	mPowerBar.setValue(power);
-	mPowerLabel.setText(QString::number(power));
 	if (mIsOn) {
 		mMotor.setPower(power);
 	}

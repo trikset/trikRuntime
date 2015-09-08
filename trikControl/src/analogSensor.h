@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Nikita Batov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Nikita Batov, Kseniya Gonta and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class Configurer;
 
 namespace trikControl {
 
-class I2cCommunicator;
+class MspCommunicatorInterface;
 
 /// Analog TRIK sensor.
 class AnalogSensor : public SensorInterface
@@ -38,7 +38,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	/// @param communicator - I2C communicator used to query sensor.
-	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, I2cCommunicator &communicator);
+	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator);
 
 	Status status() const override;
 
@@ -50,14 +50,39 @@ public slots:
 	int readRawData() override;
 
 private:
-	I2cCommunicator &mCommunicator;
+	enum class Type
+	{
+		/// Calibrated IR sensor.
+		sharpGP2
+
+		/// Normalized IR sensor.
+		, analog
+	};
+
+	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
+	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
+
+	MspCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber = 0;
+	Type mIRType;
 
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mK = 0;
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
 	qreal mB = 0;
+
+	/// Hyperbolical approximation coefficient l.
+	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
+	int mL = 0;
+
+	/// Hyperbolical approximation coefficient n.
+	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
+	int mN = 0;
+
+	/// Hyperbolical approximation coefficient s.
+	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
+	int mS = 0;
 
 	/// State of a device.
 	DeviceState mState;

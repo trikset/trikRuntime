@@ -16,9 +16,10 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QVector>
+#include <QtCore/QTextStream>
 
 #include <trikKernel/fileUtils.h>
-
+#include <trikKernel/paths.h>
 #include <trikControl/batteryInterface.h>
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
@@ -26,6 +27,7 @@
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
+#include <trikControl/soundSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -52,47 +54,82 @@ Q_DECLARE_METATYPE(LineSensorInterface*)
 Q_DECLARE_METATYPE(MailboxInterface*)
 Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
+Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
+
+QScriptValue print(QScriptContext *context, QScriptEngine *engine)
+{
+	QString result;
+	for (int i = 0; i < context->argumentCount(); ++i) {
+		if (i > 0) {
+			result.append(" ");
+		}
+
+		result.append(context->argument(i).toString());
+	}
+
+	QTextStream(stdout) << result << "\n";
+	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
+
+	return engine->toScriptValue(result);
+}
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &scriptControl
-		, const QString &startDirPath)
+		)
 	: mBrick(brick)
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
 	, mThreadingVariable(this, scriptControl)
 	, mDirectScriptsEngine(nullptr)
-	, mStartDirPath(startDirPath)
+	, mScriptId(0)
 	, mState(ready)
 {
 	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
+
+	registerUserFunction("print", print);
 }
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick.playSound(mStartDirPath + "media/beep_soft.wav");
+	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
 }
 
 void ScriptEngineWorker::reset()
 {
-	if (mState == resetting || mState == ready) {
+	if (mState == resetting) {
 		return;
 	}
 
-	QLOG_INFO() << "ScriptEngineWorker: reset started";
 	while (mState == starting) {
 		QThread::yieldCurrentThread();
 	}
 
+	if (mState == ready) {
+		/// Engine is ready for execution, but we need to clear brick state before we go.
+		QLOG_INFO() << "ScriptEngineWorker: 'soft' reset";
+		mState = resetting;
+		clearMailboxAndGamepadStateState();
+		clearBrickState();
+		mState = ready;
+		return;
+	}
+
+	QLOG_INFO() << "ScriptEngineWorker: reset started";
+
 	mState = resetting;
-	mBrick.reset();
+
 	mScriptControl.reset();
+
+	clearMailboxAndGamepadStateState();
+
 	mThreadingVariable.reset();
 
 	if (mDirectScriptsEngine) {
@@ -105,14 +142,7 @@ void ScriptEngineWorker::reset()
 		mDirectScriptsEngine = nullptr;
 	}
 
-	if (mMailbox) {
-		mMailbox->reset();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
-	}
-
+	clearBrickState();
 	mState = ready;
 	QLOG_INFO() << "ScriptEngineWorker: reset complete";
 }
@@ -128,9 +158,10 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mThreadingVariable.startMainThread(script);
 	mState = running;
 	mThreadingVariable.waitForAll();
-	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << mThreadingVariable.errorMessage();
-	emit completed(mThreadingVariable.errorMessage(), mScriptId);
+	const QString error = mThreadingVariable.errorMessage();
 	reset();
+	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	emit completed(error, mScriptId);
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
@@ -194,11 +225,15 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
+	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
+	qScriptRegisterSequenceMetaType<QStringList>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+
 	if (mMailbox) {
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
 	}
@@ -232,16 +267,44 @@ QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const 
 	return result;
 }
 
+void ScriptEngineWorker::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
+{
+	mRegisteredUserFunctions[name] = function;
+}
+
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 {
-	if (QFile::exists(mStartDirPath + "system.js")) {
-		engine->evaluate(trikKernel::FileUtils::readFromFile(mStartDirPath + "system.js"));
+	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
+	if (QFile::exists(systemJsPath)) {
+		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
 		if (engine->hasUncaughtException()) {
 			const int line = engine->uncaughtExceptionLineNumber();
 			const QString message = engine->uncaughtException().toString();
 			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
 		}
 	} else {
-		QLOG_ERROR() << "system.js not found, path:" << mStartDirPath;
+		QLOG_ERROR() << "system.js not found, path:" << systemJsPath;
+	}
+
+	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
+		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);
+		engine->globalObject().setProperty(functionName, functionValue);
 	}
 }
+
+void ScriptEngineWorker::clearBrickState()
+{
+	mBrick.reset();
+}
+
+void ScriptEngineWorker::clearMailboxAndGamepadStateState()
+{
+	if (mMailbox) {
+		mMailbox->reset();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
+	}
+}
+

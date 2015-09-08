@@ -14,15 +14,24 @@
 
 #include "keys.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
+#include <unistd.h>
+
 #include <trikKernel/configurer.h>
 
 #include "keysWorker.h"
 
 using namespace trikControl;
 
-Keys::Keys(const trikKernel::Configurer &configurer)
+Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Keys")
 {
-	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState));
+	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
 		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SIGNAL(buttonPressed(int, int)));
 		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));
@@ -63,4 +72,32 @@ bool Keys::isPressed(int code)
 void Keys::changeButtonState(int code, int value)
 {
 	mKeysPressed[code] = value;
+}
+
+int Keys::buttonCode(bool wait)
+{
+	if (!wait) {
+		return pressedButton();
+	}
+
+	while (true) {
+		int code = pressedButton();
+		if (code == -1) {
+			usleep(20);
+			QApplication::processEvents();
+		} else {
+			return code;
+		}
+	}
+}
+
+int Keys::pressedButton()
+{
+	for (int button : mKeysPressed.keys()) {
+		if (mKeysPressed[button]) {
+			return button;
+		}
+	}
+
+	return -1;
 }

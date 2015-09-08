@@ -25,9 +25,11 @@
 #include "lineSensorInterface.h"
 #include "motorInterface.h"
 #include "objectSensorInterface.h"
+#include "soundSensorInterface.h"
 #include "pwmCaptureInterface.h"
 #include "sensorInterface.h"
 #include "vectorSensorInterface.h"
+#include "fifoInterface.h"
 
 #include "declSpec.h"
 
@@ -101,6 +103,9 @@ public slots:
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
 	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
+	/// Returns high-level sound detector sensor using microphones.
+	virtual SoundSensorInterface *soundSensor(const QString &port) = 0;
+
 	/// Returns encoder on given port.
 	virtual EncoderInterface *encoder(const QString &port) = 0;
 
@@ -115,6 +120,9 @@ public slots:
 
 	/// Returns LED control class.
 	virtual LedInterface *led() = 0;
+
+	/// Returns custom FIFO file which can be used as sensor.
+	virtual FifoInterface *fifo(const QString &port) = 0;
 
 signals:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no

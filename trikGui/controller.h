@@ -23,8 +23,7 @@
 
 #include "lazyMainWidget.h"
 
-namespace trikGui
-{
+namespace trikGui {
 
 class RunningWidget;
 
@@ -37,10 +36,9 @@ public:
 
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
-	/// @param startDirPath - path to the directory from which the application was executed.
-	Controller(const QString &configPath, const QString &startDirPath);
+	explicit Controller(const QString &configPath);
 
-	~Controller();
+	~Controller() override;
 
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.
 	void runFile(const QString &filePath);
@@ -51,15 +49,6 @@ public:
 	/// Returns reference to Mailbox object, which provides access to robot-to-robot communications.
 	/// Does not pass ownership to the caller.
 	trikNetwork::MailboxInterface *mailbox();
-
-	/// Returns mStartDirPath (path to the directory from which the application was executed)
-	QString startDirPath() const;
-
-	/// Returns path to the directory in which scripts must be saved
-	QString scriptsDirPath() const;
-
-	/// Returns name of the directory in which scripts must be saved
-	QString scriptsDirName() const;
 
 	/// Asks controller to correctly close given running widget.
 	void doCloseRunningWidget(MainWidget &widget);
@@ -103,7 +92,6 @@ private:
 	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
-	const QString &mStartDirPath; // Path to the directory from which the application was executed
 };
 
 }

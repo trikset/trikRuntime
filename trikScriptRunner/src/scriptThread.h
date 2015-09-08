@@ -25,6 +25,7 @@ class Threading;
 class ScriptThread : public QThread
 {
 	Q_OBJECT
+
 public:
 	/// Constructor
 	/// @param threading - threading manager for this thread
@@ -46,12 +47,18 @@ public:
 	/// @returns true if the script engine is evaluating a script at the moment
 	bool isEvaluating() const;
 
+signals:
+	/// Emitted when event loop must be stopped.
+	void stopRunning();
+
 protected:
 	void run() override;
 
 private:
 	QString mId;
-	QScriptEngine *mEngine;  // Takes ownership
+
+	/// Has ownership (thru deleteLater() call).
+	QScriptEngine *mEngine;
 	QString mScript;
 
 	Threading &mThreading;

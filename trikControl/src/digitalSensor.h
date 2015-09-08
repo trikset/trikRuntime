@@ -15,14 +15,18 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
+#include <QtCore/QScopedPointer>
 
 #include "deviceState.h"
 #include "sensorInterface.h"
 
 namespace trikKernel {
 class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class InputDeviceFileInterface;
 }
 
 namespace trikControl {
@@ -36,7 +40,10 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	DigitalSensor(const QString &port, const trikKernel::Configurer &configurer);
+	DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+
+	~DigitalSensor() override;
 
 public slots:
 	int read() override;
@@ -48,8 +55,7 @@ public slots:
 private:
 	int mMin;
 	int mMax;
-	QFile mDeviceFile;
-	QTextStream mStream;
+	QScopedPointer<trikHal::InputDeviceFileInterface> mDeviceFile;
 	DeviceState mState;
 };
 

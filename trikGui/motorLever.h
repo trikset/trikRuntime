@@ -72,7 +72,6 @@ private:
 	QHBoxLayout mLayout;
 	QLabel mNameLabel;
 	QProgressBar mPowerBar;
-	QLabel mPowerLabel;
 	QLabel mOnOffLabel;
 };
 

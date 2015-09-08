@@ -34,6 +34,7 @@
 #include "communicationSettingsWidget.h"
 #include "informationWidget.h"
 #include "systemSettingsWidget.h"
+#include "languageSelectionWidget.h"
 
 using namespace trikGui;
 
@@ -57,10 +58,13 @@ StartWidget::StartWidget(Controller &controller, const QString &configPath, QWid
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 
 	settingsItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
 
 	settingsItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
+
+	settingsItem->appendRow(new QStandardItem(
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
 	if (mController.mailbox()) {
 		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
@@ -68,6 +72,8 @@ StartWidget::StartWidget(Controller &controller, const QString &configPath, QWid
 
 	settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+
+	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -119,12 +125,28 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::analogSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::analogSensor);
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
+				SensorsSelectionWidget::SensorType::analogSensor))
+		{
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+					, SensorsSelectionWidget::SensorType::analogSensor);
+
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(SensorInterface::Type::digitalSensor)) {
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick(), SensorInterface::Type::digitalSensor);
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
+				SensorsSelectionWidget::SensorType::digitalSensor))
+		{
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+					, SensorsSelectionWidget::SensorType::digitalSensor);
+
+			emit newWidget(sensorsSelectionWidget);
+			result = sensorsSelectionWidget.exec();
+		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
+				SensorsSelectionWidget::SensorType::encoder))
+		{
+			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+					, SensorsSelectionWidget::SensorType::encoder);
+
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
@@ -146,6 +168,10 @@ void StartWidget::launch()
 
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
+		} else if (currentItemText == LanguageSelectionWidget::menuEntry()) {
+			LanguageSelectionWidget languageSelectionWidget;
+			emit newWidget(languageSelectionWidget);
+			result = languageSelectionWidget.exec();
 		}
 
 		if (result == TrikGuiDialog::goHomeExit) {

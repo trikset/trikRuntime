@@ -26,6 +26,10 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 namespace trikControl {
 
 class KeysWorker;
@@ -38,7 +42,7 @@ class Keys : public KeysInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Keys(const trikKernel::Configurer &configurer);
+	Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Keys() override;
 
@@ -51,10 +55,14 @@ public slots:
 
 	bool isPressed(int code) override;
 
+	int buttonCode(bool wait = true) override;
+
 private slots:
 	void changeButtonState(int code, int value);
 
 private:
+	int pressedButton();
+
 	/// Device state, shared with worker object.
 	DeviceState mState;
 

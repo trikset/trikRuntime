@@ -15,14 +15,15 @@
 include(../global.pri)
 
 SOURCES += \
-	$$PWD/main.cpp \
+	$$PWD/trikRunMain.cpp \
 
 OTHER_FILES += \
 	$$PWD/test.qts \
 
 copyToDestdir($$OTHER_FILES)
 
-uses(trikKernel trikControl trikScriptRunner trikNetwork)
+implementationIncludes(trikKernel trikControl trikScriptRunner trikNetwork)
+links(trikKernel trikControl trikScriptRunner trikNetwork)
 
 TEMPLATE = app
 CONFIG += console
@@ -32,3 +33,10 @@ QT += gui
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
+
+TRANSLATIONS = \
+	$$PWD/../translations/ru/trikRun_ru.ts \
+	$$PWD/../translations/fr/trikRun_fr.ts \
+
+installs()
+noPch()

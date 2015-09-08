@@ -14,19 +14,19 @@
 
 #include "digitalSensor.h"
 
-#include <QtCore/QDebug>
-
 #include <trikKernel/configurer.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 #include <QsLog.h>
 
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer)
-	: mDeviceFile(configurer.attributeByPort(port, "deviceFile"))
+DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mDeviceFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
+	, mState("Digital Sensor on" + port)
 {
-
 	mMin = ConfigurerHelper::configureInt(configurer, mState, port, "min");
 	mMax = ConfigurerHelper::configureInt(configurer, mState, port, "max");
 
@@ -36,28 +36,25 @@ DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &
 	read();
 }
 
+DigitalSensor::~DigitalSensor()
+{
+}
+
 int DigitalSensor::read()
 {
 	if (!mState.isReady()) {
 		return 0;
 	}
 
-	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QLOG_ERROR() << "File " << mDeviceFile.fileName() << " failed to open for reading";
-		mState.fail();
+	int value = readRawData();
+
+	if (mState.isFailed()) {
 		return 0;
 	}
-
-	mStream.setDevice(&mDeviceFile);
 
 	if (mMax == mMin) {
 		return mMin;
 	}
-
-	int value = 0;
-	mStream >> value;
-
-	mDeviceFile.close();
 
 	value = qMin(value, mMax);
 	value = qMax(value, mMin);
@@ -75,18 +72,15 @@ int DigitalSensor::readRawData()
 		return 0;
 	}
 
-	if (!mDeviceFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QLOG_ERROR() << "File " << mDeviceFile.fileName() << " failed to open for reading";
+	if (!mDeviceFile->open()) {
 		mState.fail();
 		return 0;
 	}
 
-	mStream.setDevice(&mDeviceFile);
-
 	int value = 0;
-	mStream >> value;
+	mDeviceFile->stream() >> value;
 
-	mDeviceFile.close();
+	mDeviceFile->close();
 
 	return value;
 }

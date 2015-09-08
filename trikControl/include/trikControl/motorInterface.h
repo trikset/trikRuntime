@@ -35,8 +35,10 @@ public:
 
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
-	/// @param power Power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
-	virtual void setPower(int power) = 0;
+	/// @param power - power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
+	/// @param constrain - if true, power will be constrained in an interval [-100, 100], if false, "power" value
+	///        will be sent to a motor unaltered.
+	virtual void setPower(int power, bool constrain = true) = 0;
 
 	/// Returns currently set power of a motor.
 	virtual int power() const = 0;

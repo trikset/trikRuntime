@@ -19,7 +19,8 @@
 namespace trikKernel {
 
 namespace coreDumping {
-	void initCoreDumping(const QString &dumpDir);
+	/// Installs signal handler and initializes core dump in a location specified by trikKernel::Paths.
+	void initCoreDumping();
 }
 
 }

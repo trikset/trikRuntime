@@ -16,10 +16,22 @@ include(../../global.pri)
 
 include(../common.pri)
 
+QT += script
+
 HEADERS += \
 	$$PWD/trikScriptRunnerTest.h \
 
 SOURCES += \
 	$$PWD/trikScriptRunnerTest.cpp \
 
-uses(trikKernel trikControl trikScriptRunner trikNetwork)
+OTHER_FILES += \
+	$$PWD/data/file-test.js \
+
+implementationIncludes(trikKernel trikControl trikScriptRunner)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal)
+
+copyToDestdir($$PWD/data/, now)
+
+DISTFILES += \
+	data/sync-system-test.js \
+	data/async-system-test.js

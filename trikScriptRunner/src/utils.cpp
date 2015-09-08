@@ -18,8 +18,6 @@
 #include <QtCore/QRegExp>
 #include <QtScript/QScriptValueIterator>
 
-#include <QtCore/QDebug>
-
 using namespace trikScriptRunner;
 
 QScriptValue Utils::clone(const QScriptValue &prototype, QScriptEngine * const engine)

@@ -16,14 +16,11 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QFile>
-#include <QtCore/QSocketNotifier>
-#include <QtCore/QReadWriteLock>
 #include <QtCore/QScopedPointer>
 
-#include "deviceState.h"
+#include <trikHal/hardwareAbstractionInterface.h>
 
-class QEventLoop;
+#include "deviceState.h"
 
 namespace trikControl {
 
@@ -36,7 +33,8 @@ class RangeSensorWorker : public QObject
 public:
 	/// Constructor.
 	/// @param eventFile - event file for this sensor.
-	RangeSensorWorker(const QString &eventFile, DeviceState &state);
+	RangeSensorWorker(const QString &eventFile, DeviceState &state
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~RangeSensorWorker() override;
 
@@ -58,32 +56,19 @@ public slots:
 	void stop();
 
 private slots:
-	/// Updates current reading when new value is ready.
-	void readFile();
-
-	void tryOpenEventFile();
+	/// Updates current reading when new value is ready in event file.
+	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value);
 
 private:
-	void onNewData(const QString &dataLine);
-
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
-
-	int mEventFileDescriptor = -1;
-
-	QFile mEventFile;
+	/// Event file of a sensor driver.
+	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 
 	int mDistance = -1;
 
 	int mRawDistance = -1;
 
-	/// Lock for a thread to disallow reading sensor values at the same time as updating them.
-	QReadWriteLock mLock;
-
 	/// State of a sensor, shared with proxy.
 	DeviceState &mState;
-
-	QScopedPointer<QEventLoop> mInitWaitingLoop;
-
 };
 
 }

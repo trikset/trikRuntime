@@ -24,7 +24,9 @@
 
 using namespace trikControl;
 
-RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader)
+RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Range Sensor on " + port)
 {
 	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
 			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))
@@ -34,7 +36,8 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 		return;
 	}
 
-	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState));
+	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState
+			, hardwareAbstraction));
 
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);
@@ -60,9 +63,11 @@ RangeSensor::Status RangeSensor::status() const
 
 void RangeSensor::init()
 {
-	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	if (mState.isFailed()) {
+		mState.resetFailure();
 	}
+
+	QMetaObject::invokeMethod(mSensorWorker.data(), "init");
 }
 
 int RangeSensor::read()
@@ -71,7 +76,7 @@ int RangeSensor::read()
 		// Read is called synchronously and only takes prepared value from sensor.
 		return mSensorWorker->read();
 	} else {
-		return 0;
+		return -1;
 	}
 }
 
@@ -81,7 +86,7 @@ int RangeSensor::readRawData()
 		// Read is called synchronously and only takes prepared value from sensor.
 		return mSensorWorker->readRawData();
 	} else {
-		return 0;
+		return -1;
 	}
 }
 
