@@ -109,7 +109,7 @@ void Display::drawEllipse(int x, int y, int width, int height)
 void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawArc", Q_ARG(int, x), Q_ARG(int, y)
-			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle));
+			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle * 16), Q_ARG(int, spanAngle * 16));
 }
 
 void Display::setPainterColor(const QString &color)
