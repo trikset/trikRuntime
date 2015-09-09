@@ -142,7 +142,7 @@ void GuiWorker::drawEllipse(int x, int y, int width, int height)
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	mImageWidget->drawArc(x, y, width, height, startAngle, spanAngle);
+	mImageWidget->drawArc(x, y, width, height, startAngle * 16, spanAngle * 16);
 }
 
 void GuiWorker::redraw()
