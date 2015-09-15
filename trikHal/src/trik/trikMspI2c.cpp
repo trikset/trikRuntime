@@ -90,16 +90,17 @@ TrikMspI2c::~TrikMspI2c()
 
 void TrikMspI2c::send(const QByteArray &data)
 {
-	if (data.size() == 2) {
-		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[1]);
+	qDebug() << "TrikMspI2c::send" << (int)data[0] << (int)data[1] << (int)data[2];
+	if (data.size() == 3) {
+		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
 	} else {
-		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[1] | (data[2] << 8));
+		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[2] | (data[3] << 8));
 	}
 }
 
 int TrikMspI2c::read(const QByteArray &data)
 {
-	if (data.size() == 1) {
+	if (data.size() == 2) {
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
 	} else {
 		__u8 buffer[4] = {0};
