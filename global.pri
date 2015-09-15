@@ -17,6 +17,8 @@
 # CONFIGURATION_SUFFIX variable that shall be consistently used in TARGET and LIBS variables in all projects.
 # copyToDestdir function to copy arbitrary files and directories to DESTDIR
 # uses function to automatically add a library to INCLUDEPATH and LIBS.
+#
+# Uses environment variable INSTALL_ROOT as a root of a file structure for install rules.
 
 COMPILER = $$(CXX)
 
