@@ -116,7 +116,7 @@ void ScriptEngineWorker::reset()
 		/// Engine is ready for execution, but we need to clear brick state before we go.
 		QLOG_INFO() << "ScriptEngineWorker: 'soft' reset";
 		mState = resetting;
-		clearMailboxAndGamepadStateState();
+		clearMailboxAndGamepadState();
 		clearBrickState();
 		mState = ready;
 		return;
@@ -128,9 +128,8 @@ void ScriptEngineWorker::reset()
 
 	mScriptControl.reset();
 
-	clearMailboxAndGamepadStateState();
-
 	mThreadingVariable.reset();
+	clearMailboxAndGamepadState();
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();
@@ -297,7 +296,7 @@ void ScriptEngineWorker::clearBrickState()
 	mBrick.reset();
 }
 
-void ScriptEngineWorker::clearMailboxAndGamepadStateState()
+void ScriptEngineWorker::clearMailboxAndGamepadState()
 {
 	if (mMailbox) {
 		mMailbox->reset();

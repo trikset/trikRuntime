@@ -124,7 +124,7 @@ private:
 	void clearBrickState();
 
 	/// Part of reset procedure, clears state of mailbox and gamepad.
-	void clearMailboxAndGamepadStateState();
+	void clearMailboxAndGamepadState();
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
