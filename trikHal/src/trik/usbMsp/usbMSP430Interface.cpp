@@ -24,11 +24,12 @@
 #include <errno.h>
 #include <termios.h>
 
-#include <QByteArray>
-#include <QDebug>
-#include <QString>
-#include <QObject>
-#include <QThread>
+#include <QtCore/QByteArray>
+#include <QtCore/QString>
+#include <QtCore/QObject>
+#include <QtCore/QThread>
+
+#include <QsLog.h>
 
 #include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
@@ -137,7 +138,7 @@ uint32_t init_USBTTYDevice()
 
 	if (tcgetattr(usb_out_descr, &usb_tty) != 0)
 	{
-		qDebug() << "Error " << errno << " from tcgetattr: " << strerror(errno);
+		QLOG_ERROR() << "Error " << errno << " from tcgetattr: " << strerror(errno);
 		return DEVICE_ERROR;
 	}
 
@@ -162,7 +163,7 @@ uint32_t init_USBTTYDevice()
 
 	if (tcsetattr(usb_out_descr, TCSANOW, &usb_tty) != 0)
 	{
-		qDebug() << "Error " << errno << " from tcsetattr";
+		QLOG_ERROR() << "Error " << errno << " from tcsetattr";
 		return DEVICE_ERROR;
 	}
 
@@ -181,17 +182,17 @@ uint32_t sendUSBPacket(char *in_msp_packet
 
 	if (usb_out_descr < 0)
 	{
-		qDebug() << "Error device descriptor" << errno << " : " << strerror (errno);
+		QLOG_ERROR() << "Error device descriptor" << errno << " : " << strerror (errno);
 		return DEVICE_ERROR;
 	}
 
 	// Write packet
 	n_write = strlen(in_msp_packet);
-	sprintf(s1, in_msp_packet);
+	strcpy(s1, in_msp_packet);
 	n_written = write(usb_out_descr, s1, n_write);
 	if (n_written != strlen(s1))
 	{
-		qDebug() << "Error writing: " << strerror(errno);
+		QLOG_ERROR() << "Error writing: " << strerror(errno);
 		return PACKET_ERROR;
 	}
 	tcflush(usb_out_descr, TCOFLUSH);
@@ -208,7 +209,7 @@ uint32_t sendUSBPacket(char *in_msp_packet
 
 	if ((n_read != RECV_PACK_LEN) || (tout == TIME_OUT))
 	{
-		qDebug() << "Error reading: " << strerror(errno);
+		QLOG_ERROR() << "Error reading: " << strerror(errno);
 		out_msp_packet[0] = 0x00;
 		out_msp_packet[1] = 0x00;
 		return PACKET_ERROR;
@@ -437,7 +438,7 @@ uint32_t connect_USBMSP()
 	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY);
 	if (usb_out_descr < 0)
 	{
-		qDebug() << "Error " << errno << " opening " << USB_DEV_NAME << ": " << strerror (errno);
+		QLOG_INFO() << "Error " << errno << " opening " << USB_DEV_NAME << ": " << strerror (errno);
 		return DEVICE_ERROR;
 	}
 
@@ -473,7 +474,7 @@ uint32_t disconnect_USBMSP()
 {
 	if (usb_out_descr < 0)
 	{
-		qDebug() << "Error device descriptor" << errno << " : " << strerror (errno);
+		QLOG_ERROR() << "Error device descriptor" << errno << " : " << strerror (errno);
 		return DEVICE_ERROR;
 	}
 	close(usb_out_descr);
@@ -616,12 +617,12 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
-	    ||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
+		||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		// qDebug() << "Dev address (reset_encoder): " << dev_address << " " << reg_value;
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
-		    || (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
+			|| (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
+			|| (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
 		{
 		}
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
@@ -655,15 +656,15 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
-	    ||  (dev_address == i2cENC3) || (dev_address == i2cENC4))
+		||  (dev_address == i2cENC3) || (dev_address == i2cENC4))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-		    || (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
-		    || (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
+			|| (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
+			|| (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
 		{
 		}
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
-				    EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+					EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
 		sendUSBPacket(s1, s1);
 		do
 		{
