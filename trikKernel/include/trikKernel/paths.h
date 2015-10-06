@@ -47,6 +47,9 @@ public:
 	/// Name of a directory with user scripts (without path).
 	static QString userScriptsDirectoryName();
 
+	/// Name of a directory containing "translations" folder.
+	static QString translationsPath();
+
 	/// Name (with path) of trikrc file.
 	static QString trikRcName();
 
