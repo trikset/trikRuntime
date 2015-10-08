@@ -19,6 +19,8 @@
 #include <QtCore/QHash>
 #include <QtCore/QDebug>
 
+#include <QsLog.h>
+
 #include "trikWiFi.h"
 
 using namespace trikWiFi;
@@ -35,11 +37,11 @@ void WpaConfigurer::configureWpaSupplicant(const QString &configFile, TrikWiFi &
 
 	QFile file(configFile);
 	if (!file.open(QIODevice::ReadOnly)) {
-		qDebug() << "Failed to open " << configFile << "for reading";
+		QLOG_ERROR() << "Failed to open " << configFile << "for reading";
 		throw "Failed to open WPA config file for reading";
 	} if (!wpaConfig.setContent(&file)) {
 		file.close();
-		qDebug() << configFile << "parsing failed";
+		QLOG_ERROR() << configFile << "parsing failed";
 		throw "WPA config file parsing failed";
 	}
 

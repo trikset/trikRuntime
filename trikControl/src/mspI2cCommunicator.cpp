@@ -51,17 +51,12 @@ MspI2cCommunicator::~MspI2cCommunicator()
 
 void MspI2cCommunicator::send(const QByteArray &data)
 {
-	qDebug() << "MspI2cCommunicator::send";
-
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
 		return;
 	}
 
 	QMutexLocker lock(&mLock);
-
-	qDebug() << "MspI2cCommunicator::send --- sending";
-
 	mI2c.send(data);
 }
 

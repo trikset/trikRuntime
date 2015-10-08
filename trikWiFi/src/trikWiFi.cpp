@@ -18,6 +18,8 @@
 #include <QtNetwork/QNetworkInterface>
 #include <QtCore/QDebug>
 
+#include <QsLog.h>
+
 #include "wpaSupplicantCommunicator.h"
 
 using namespace trikWiFi;
@@ -35,7 +37,7 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 		mMonitorFileSocketNotifier.reset(new QSocketNotifier(monitorFileDesc, QSocketNotifier::Read));
 		QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
 	} else {
-		qDebug() << "Can not get monitor file descriptor";
+		QLOG_ERROR() << "Can not get monitor file descriptor";
 	}
 }
 

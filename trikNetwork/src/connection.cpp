@@ -129,7 +129,7 @@ void Connection::processBuffer()
 					bool ok;
 					mExpectedBytes = length.toInt(&ok);
 					if (!ok) {
-						qDebug() << "Malformed message, can not determine message length from this:" << length;
+						QLOG_ERROR() << "Malformed message, can not determine message length from this:" << length;
 						mExpectedBytes = 0;
 					}
 				}

@@ -33,8 +33,7 @@ MailboxServer::MailboxServer(int port)
 	qRegisterMetaType<QHostAddress>("QHostAddress");
 
 	if (mMyIp.isNull()) {
-		qDebug() << "Self IP address is invalid, connect to a network and restart trikGui";
-		QLOG_ERROR() << "Self IP address is invalid";
+		QLOG_ERROR() << "Self IP address is invalid, connect to a network and restart trikGui";
 	}
 
 	loadSettings();
@@ -215,7 +214,6 @@ Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 
 	if (targetEndpoint.ip.isNull()) {
 		QLOG_ERROR() << "Trying to connect to unknown robot, IP:" << ip;
-		qDebug() << "Trying to connect to unknown robot, IP:" << ip;
 		return nullptr;
 	}
 
@@ -266,7 +264,6 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 		mKnownRobotsLock.unlock();
 	} else {
 		QLOG_ERROR() << "Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
-		qDebug() << "Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
 		return;
 	}
 
@@ -393,8 +390,6 @@ void MailboxServer::forEveryConnection(std::function<void(Connection *)> method,
 		const auto connection = prepareConnection(endpoint.ip);
 		if (connection == nullptr) {
 			QLOG_ERROR() << "Connection to" << endpoint.ip << ":" << endpoint.port << "is dead at the moment, message"
-					<< "is not delivered. Will try to reestablish connection on next send.";
-			qDebug() << "Connection to" << endpoint.ip << ":" << endpoint.port << "is dead at the moment, message"
 					<< "is not delivered. Will try to reestablish connection on next send.";
 		} else {
 			method(connection);

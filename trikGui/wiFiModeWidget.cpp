@@ -112,7 +112,6 @@ void WiFiModeWidget::setMode(Mode mode)
 		}
 		case unknown: {
 			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
-			qDebug() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
 			break;
 		}
 	}
