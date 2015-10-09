@@ -19,6 +19,7 @@
 #include <QtCore/QDebug>
 
 #include "wpaSupplicantCommunicator.h"
+#include "QsLog.h"
 
 using namespace trikWiFi;
 
@@ -26,9 +27,28 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 		, const QString &daemonFile
 		, QObject *parent)
 	: QObject(parent)
-	, mControlInterface(new WpaSupplicantCommunicator(interfaceFilePrefix + "ctrl", daemonFile))
-	, mMonitorInterface(new WpaSupplicantCommunicator(interfaceFilePrefix + "mon", daemonFile))
+	, mInterfaceFile(interfaceFilePrefix)
+	, mDaemonFile(daemonFile)
 {
+	reinit();
+}
+
+TrikWiFi::~TrikWiFi()
+{
+	mMonitorInterface->detach();
+}
+
+void TrikWiFi::reinit()
+{
+	QLOG_INFO() << "Reinitializing WiFi";
+
+	if (!mMonitorInterface.isNull()) {
+		mMonitorInterface->detach();
+	}
+
+	mControlInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "ctrl", mDaemonFile));
+	mMonitorInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "mon", mDaemonFile));\
+
 	mMonitorInterface->attach();
 	const int monitorFileDesc = mMonitorInterface->fileDescriptor();
 	if (monitorFileDesc >= 0) {
@@ -37,11 +57,18 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	} else {
 		qDebug() << "Can not get monitor file descriptor";
 	}
+
+	QLOG_INFO() << "WiFi initialized";
 }
 
-TrikWiFi::~TrikWiFi()
+void TrikWiFi::dispose()
 {
-	mMonitorInterface->detach();
+	if (!mMonitorInterface.isNull()) {
+		mMonitorInterface->detach();
+	}
+
+	mControlInterface.reset(nullptr);
+	mMonitorInterface.reset(nullptr);
 }
 
 int TrikWiFi::connect(int id)

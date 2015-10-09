@@ -38,23 +38,23 @@ using namespace trikGui;
 
 using namespace trikWiFi;
 
-WiFiClientWidget::WiFiClientWidget(const QString &configPath, QWidget *parent)
+WiFiClientWidget::WiFiClientWidget(const QString &configPath, TrikWiFi &trikWiFi, QWidget *parent)
 	: TrikGuiDialog(parent)
-	, mWiFi(new TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this))
+	, mWiFi(trikWiFi)
 	, mConnectionState(notConnected)
 {
-	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", *mWiFi);
+	WpaConfigurer::configureWpaSupplicant(configPath + "wpa-config.xml", mWiFi);
 
-	const QList<NetworkConfiguration> networksFromWpaSupplicant = mWiFi->listNetworks();
+	const QList<NetworkConfiguration> networksFromWpaSupplicant = mWiFi.listNetworks();
 	for (const NetworkConfiguration &networkConfiguration : networksFromWpaSupplicant) {
 		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
 	}
 
-	connect(mWiFi.data(), SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDoneSlot()));
-	connect(mWiFi.data(), SIGNAL(connected()), this, SLOT(connectedSlot()));
-	connect(mWiFi.data(), SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
+	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDoneSlot()));
+	connect(&mWiFi, SIGNAL(connected()), this, SLOT(connectedSlot()));
+	connect(&mWiFi, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
 
-	mWiFi->scan();
+	mWiFi.scan();
 
 	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -84,7 +84,7 @@ WiFiClientWidget::WiFiClientWidget(const QString &configPath, QWidget *parent)
 	mMainLayout.addWidget(&mAvailableNetworksView);
 	setLayout(&mMainLayout);
 
-	Status const connectionStatus = mWiFi->status();
+	Status const connectionStatus = mWiFi.status();
 	mConnectionState = connectionStatus.connected ? connected : notConnected;
 	setConnectionStatus(connectionStatus);
 }
@@ -101,7 +101,7 @@ void WiFiClientWidget::renewFocus()
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
-	for (const ScanResult &result : mWiFi->scanResults()) {
+	for (const ScanResult &result : mWiFi.scanResults()) {
 		mAvailableNetworksModel.appendRow(new QStandardItem(result.ssid));
 	}
 
@@ -111,7 +111,7 @@ void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 void WiFiClientWidget::connectedSlot()
 {
 	mConnectionState = connected;
-	setConnectionStatus(mWiFi->status());
+	setConnectionStatus(mWiFi.status());
 }
 
 void WiFiClientWidget::disconnectedSlot()
@@ -120,10 +120,10 @@ void WiFiClientWidget::disconnectedSlot()
 		mConnectionState = notConnected;
 	}
 
-	setConnectionStatus(mWiFi->status());
+	setConnectionStatus(mWiFi.status());
 
 	// Now to determine reason of disconnect --- maybe the network is out of range now.
-	mWiFi->scan();
+	mWiFi.scan();
 }
 
 void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
@@ -210,5 +210,5 @@ void WiFiClientWidget::connectToSelectedNetwork()
 
 	setConnectionStatus(Status());
 
-	mWiFi->connect(mNetworksAvailableForConnection[ssid]);
+	mWiFi.connect(mNetworksAvailableForConnection[ssid]);
 }

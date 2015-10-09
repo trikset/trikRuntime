@@ -59,6 +59,9 @@ public:
 
 	void renewFocus() override;
 
+signals:
+	void wiFiModeChanged(WiFiModeWidget::Mode mode, bool connected);
+
 private slots:
 	/// Change current FilesManegerRoot
 	void changeFileManagerRoot(MainWidget::FileManagerRootType const& path);

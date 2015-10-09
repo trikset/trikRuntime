@@ -20,6 +20,7 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
+#include <trikWiFi/trikWiFi.h>
 
 #include "lazyMainWidget.h"
 
@@ -50,6 +51,8 @@ public:
 	/// Does not pass ownership to the caller.
 	trikNetwork::MailboxInterface *mailbox();
 
+	trikWiFi::TrikWiFi &wiFi();
+
 	/// Asks controller to correctly close given running widget.
 	void doCloseRunningWidget(MainWidget &widget);
 
@@ -77,6 +80,10 @@ signals:
 	/// clutter from videosensors.
 	void brickStopped();
 
+	void wiFiConnected();
+
+	void wiFiDisconnected();
+
 private slots:
 	void scriptExecutionCompleted(const QString &error, int scriptId);
 
@@ -90,6 +97,7 @@ private:
 	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
 	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;
 	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
+	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
 };

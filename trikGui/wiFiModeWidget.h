@@ -31,6 +31,7 @@
 #include <QtCore/QString>
 
 #include <trikKernel/rcReader.h>
+#include <trikWiFi/trikWiFi.h>
 #include "trikGuiDialog.h"
 
 namespace trikGui {
@@ -50,12 +51,15 @@ public:
 	/// Constructor
 	/// @param configPath - full path to configuration files.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	WiFiModeWidget(const QString &configPath, QWidget *parent = 0);
+	WiFiModeWidget(const QString &configPath, trikWiFi::TrikWiFi &wiFi, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
 
 	void renewFocus() override;
+
+signals:
+	void modeChanged(Mode mode, bool connected);
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
@@ -64,6 +68,7 @@ private:
 	void setMode(Mode mode);
 
 	const QString &mConfigPath;
+	trikWiFi::TrikWiFi &mWiFi;
 	trikKernel::RcReader mRcReader;
 	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;

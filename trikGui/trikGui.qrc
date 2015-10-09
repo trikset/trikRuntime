@@ -6,5 +6,8 @@
         <file>resources/connectedToNetwork.png</file>
         <file>resources/connectionToNetworkImpossible.png</file>
         <file>resources/notConnectedToNetwork.png</file>
+        <file>resources/wifipoint.png</file>
+        <file>resources/wifion.png</file>
+        <file>resources/wifioff.png</file>
     </qresource>
 </RCC>
