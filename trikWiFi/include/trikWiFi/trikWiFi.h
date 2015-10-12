@@ -115,8 +115,10 @@ public:
 	/// Returns a list of networks from wpa_supplicant config.
 	QList<NetworkConfiguration> listNetworks();
 
+	/// Disposes an old connection to wpa_supplicant and creates a new one.
 	void reinit();
 
+	/// Closes the connection to wpa_supplicant.
 	void dispose();
 
 signals:

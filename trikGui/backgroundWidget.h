@@ -94,8 +94,6 @@ private slots:
 
 	void updateStack(int removedWidget);
 
-	void updateWiFiIndicator();
-
 private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
@@ -115,7 +113,6 @@ private:
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	WiFiIndicator mWiFiIndicator;
-	QTimer mWiFiUpdateTimer;
 	StartWidget mStartWidget;
 	RunningWidget mRunningWidget;
 	QScopedPointer<LazyMainWidget> mBrickDisplayWidgetWrapper;

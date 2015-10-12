@@ -100,7 +100,9 @@ void WiFiModeWidget::setMode(Mode mode)
 
 	switch (mode) {
 		case client: {
-			mWiFi.reinit();
+			if (currentMode != mode) {
+				mWiFi.reinit();
+			}
 			WiFiClientWidget wiFiClientWidget(mConfigPath, mWiFi);
 			emit newWidget(wiFiClientWidget);
 			returnValue = wiFiClientWidget.exec();
