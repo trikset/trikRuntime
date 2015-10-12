@@ -58,9 +58,6 @@ public:
 
 	void renewFocus() override;
 
-signals:
-	void modeChanged(Mode mode, bool connected);
-
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 

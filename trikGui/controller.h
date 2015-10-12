@@ -80,8 +80,10 @@ signals:
 	/// clutter from videosensors.
 	void brickStopped();
 
+	/// Emitted when a robot is connected to a network.
 	void wiFiConnected();
 
+	/// Emitted when a robot is disconnected from a network.
 	void wiFiDisconnected();
 
 private slots:

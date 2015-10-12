@@ -32,6 +32,7 @@ BackgroundWidget::BackgroundWidget(
 	: QWidget(parent)
 	, mController(configPath)
 	, mBatteryIndicator(mController.brick())
+	, mWiFiIndicator(mController)
 	, mStartWidget(mController, configPath)
 	, mRunningWidget(mController)
 {
@@ -41,11 +42,8 @@ BackgroundWidget::BackgroundWidget(
 
 	mBatteryIndicator.setStyleSheet("font: 12px");
 
-	updateWiFiIndicator();
-	connect(&mWiFiUpdateTimer, SIGNAL(timeout()), this, SLOT(updateWiFiIndicator()));
-	mWiFiUpdateTimer.start(7000);
-
 	mStatusBarLayout.addWidget(&mBatteryIndicator);
+	mStatusBarLayout.addStretch();
 	mStatusBarLayout.addWidget(&mWiFiIndicator);
 	addMainWidget(mStartWidget);
 	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(&mController.brick().graphicsWidget()));
@@ -67,10 +65,6 @@ BackgroundWidget::BackgroundWidget(
 	connect(&mController, SIGNAL(hideRunningWidget(int)), this, SLOT(hideRunningWidget(int)));
 	connect(&mController, SIGNAL(hideGraphicsWidget()), this, SLOT(hideGraphicsWidget()));
 	connect(&mController, SIGNAL(hideScriptWidgets()), this, SLOT(hideScriptWidgets()));
-	connect(&mController, SIGNAL(wiFiConnected()), &mWiFiIndicator, SLOT(setOn()));
-	connect(&mController, SIGNAL(wiFiDisconnected()), &mWiFiIndicator, SLOT(setOff()));
-	connect(&mStartWidget, SIGNAL(wiFiModeChanged(WiFiModeWidget::Mode,bool))
-			, &mWiFiIndicator, SLOT(changeMode(WiFiModeWidget::Mode,bool)));
 
 	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
 }
@@ -189,22 +183,6 @@ void BackgroundWidget::updateStack(int removedWidget)
 		mMainWidgetIndex.pop();
 		mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
 	}
-}
-
-void BackgroundWidget::updateWiFiIndicator()
-{
-	trikKernel::RcReader rcReader(trikKernel::Paths::trikRcName());
-	rcReader.read();
-	WiFiModeWidget::Mode wiFiMode;
-	if (rcReader.value("trik_wifi_mode") == "ap") {\
-		wiFiMode = WiFiModeWidget::accessPoint;
-	} else if (rcReader.value("trik_wifi_mode") == "client") {
-		wiFiMode = WiFiModeWidget::client;
-	} else {
-		wiFiMode = WiFiModeWidget::unknown;
-	}
-
-	mWiFiIndicator.changeMode(wiFiMode, wiFiMode == WiFiModeWidget::client && mController.wiFi().status().connected);
 }
 
 void BackgroundWidget::expandMainWidget()

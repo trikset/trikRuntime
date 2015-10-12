@@ -49,7 +49,7 @@ void TrikWiFi::reinit()
 	}
 
 	mControlInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "ctrl", mDaemonFile));
-	mMonitorInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "mon", mDaemonFile));\
+	mMonitorInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "mon", mDaemonFile));
 
 	mMonitorInterface->attach();
 	const int monitorFileDesc = mMonitorInterface->fileDescriptor();
