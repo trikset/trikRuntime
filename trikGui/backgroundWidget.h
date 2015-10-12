@@ -34,6 +34,7 @@
 
 #include "controller.h"
 #include "batteryIndicator.h"
+#include "wiFiIndicator.h"
 #include "startWidget.h"
 #include "runningWidget.h"
 
@@ -93,6 +94,8 @@ private slots:
 
 	void updateStack(int removedWidget);
 
+	void updateWiFiIndicator();
+
 private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
@@ -111,6 +114,8 @@ private:
 	QHBoxLayout mStatusBarLayout;
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
+	WiFiIndicator mWiFiIndicator;
+	QTimer mWiFiUpdateTimer;
 	StartWidget mStartWidget;
 	RunningWidget mRunningWidget;
 	QScopedPointer<LazyMainWidget> mBrickDisplayWidgetWrapper;

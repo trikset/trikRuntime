@@ -54,6 +54,10 @@ Controller::Controller(const QString &configPath)
 
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner));
 
+	mWiFi.reset(new trikWiFi::TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this));
+	connect(mWiFi.data(), SIGNAL(connected()), this, SIGNAL(wiFiConnected()));
+	connect(mWiFi.data(), SIGNAL(disconnected()), this, SIGNAL(wiFiDisconnected()));
+
 	connect(mCommunicator.data(), SIGNAL(stopCommandReceived()), this, SLOT(abortExecution()));
 
 	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
@@ -105,6 +109,11 @@ trikControl::BrickInterface &Controller::brick()
 trikNetwork::MailboxInterface *Controller::mailbox()
 {
 	return mMailbox.data();
+}
+
+trikWiFi::TrikWiFi &Controller::wiFi()
+{
+	return *mWiFi;
 }
 
 void Controller::scriptExecutionCompleted(const QString &error, int scriptId)

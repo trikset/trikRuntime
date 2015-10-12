@@ -27,9 +27,10 @@
 using namespace trikGui;
 
 WiFiModeWidget::WiFiModeWidget(const QString &configPath
-		, QWidget *parent)
+		, trikWiFi::TrikWiFi &wiFi, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mConfigPath(configPath)
+	, mWiFi(wiFi)
 	, mRcReader(trikKernel::Paths::trikRcName())
 	, mTitle(tr("Choose mode:"))
 {
@@ -99,12 +100,14 @@ void WiFiModeWidget::setMode(Mode mode)
 
 	switch (mode) {
 		case client: {
-			WiFiClientWidget wiFiClientWidget(mConfigPath);
+			mWiFi.reinit();
+			WiFiClientWidget wiFiClientWidget(mConfigPath, mWiFi);
 			emit newWidget(wiFiClientWidget);
 			returnValue = wiFiClientWidget.exec();
 			break;
 		}
 		case accessPoint: {
+			mWiFi.dispose();
 			WiFiAPWidget wiFiAPWidget;
 			emit newWidget(wiFiAPWidget);
 			returnValue = wiFiAPWidget.exec();

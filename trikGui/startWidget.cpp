@@ -114,7 +114,9 @@ void StartWidget::launch()
 			emit newWidget(fileManagerWidget);
 			result = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
-			WiFiModeWidget wiFiModeWidget(mConfigPath);
+			WiFiModeWidget wiFiModeWidget(mConfigPath, mController.wiFi());
+			connect (&wiFiModeWidget, SIGNAL(modeChanged(WiFiModeWidget::Mode, bool))
+					, this, SIGNAL(wiFiModeChanged(WiFiModeWidget::Mode, bool)));
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
