@@ -81,6 +81,9 @@ signals:
 	/// handler for newMessage() is used simultaneously, message will be delivered twice --- first for receive(), then
 	/// to handler (or handlers).
 	void newMessage(int sender, const QString &message);
+
+	/// Emitted when a mailbox either receives the first connection (connected == true) or loses the last one.
+	void connectionStatusChanged(bool connected);
 };
 
 }

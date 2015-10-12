@@ -56,6 +56,9 @@ public:
 	/// Asks controller to correctly close given running widget.
 	void doCloseRunningWidget(MainWidget &widget);
 
+	/// Returns communicator connection status (whether or not both Telemetry and Communicator servers are connected).
+	bool communicatorConnectionStatus();
+
 public slots:
 	/// Cancels execution of current program.
 	void abortExecution();
@@ -86,11 +89,20 @@ signals:
 	/// Emitted when a robot is disconnected from a network.
 	void wiFiDisconnected();
 
+	/// Emitted when Telemetry and Communicator servers' status changes.
+	/// @param status - true if both servers are connected.
+	void communicatorStatusChanged(bool status);
+
+	/// Emitted when Mailbox server's status changes.
+	void mailboxStatusChanged(bool connected);
+
 private slots:
 	void scriptExecutionCompleted(const QString &error, int scriptId);
 
 	void scriptExecutionFromFileStarted(const QString &fileName, int scriptId);
 	void directScriptExecutionStarted(int scriptId);
+
+	void updateCommunicatorStatus();
 
 private:
 	QScopedPointer<trikControl::BrickInterface> mBrick;
