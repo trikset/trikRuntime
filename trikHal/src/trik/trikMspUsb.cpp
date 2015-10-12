@@ -39,7 +39,7 @@ bool TrikMspUsb::connect()
 {
 	// Connect to USB device
 	if (connect_USBMSP() == DEVICE_ERROR) {
-		QLOG_ERROR() << "Failed to open USB device file " << USB_DEV_NAME;
+		QLOG_INFO() << "Failed to open USB device file " << USB_DEV_NAME;
 		return false;
 	}
 

@@ -91,6 +91,11 @@ QString Paths::coreDumpPath()
 	return path(Resource::coreDump);
 }
 
+QString Paths::translationsPath()
+{
+	return path(Resource::translations);
+}
+
 QString Paths::userScriptsDirectoryName()
 {
 	return "scripts/";

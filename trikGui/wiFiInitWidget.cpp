@@ -65,7 +65,6 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 		}
 		case WiFiModeWidget::unknown: {
 			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiInitWidget::init()";
-			qDebug() << "Error: unknown WiFi mode in WiFiInitWidget::init()";
 			return fail;
 		}
 	}
@@ -127,7 +126,6 @@ void WiFiInitWidget::onProcessError(QProcess::ProcessError error)
 	disconnect(&mProcess);
 
 	QLOG_ERROR() << "set_wifi_mode.sh process error: " << error;
-	qDebug() << "set_wifi_mode.sh process error: " << error;
 
 	if (mProcess.state() != QProcess::NotRunning) {
 		mProcess.kill();

@@ -42,7 +42,7 @@ MspUsbCommunicator::~MspUsbCommunicator()
 void MspUsbCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
-		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
+		QLOG_ERROR() << "Trying to send data through USB I2C communicator which is not ready, ignoring";
 		return;
 	}
 
@@ -53,7 +53,7 @@ void MspUsbCommunicator::send(const QByteArray &data)
 int MspUsbCommunicator::read(const QByteArray &data)
 {
 	if (!mState.isReady()) {
-		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
+		QLOG_ERROR() << "Trying to read data from USB I2C communicator which is not ready, ignoring";
 		return 0;
 	}
 

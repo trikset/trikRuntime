@@ -26,6 +26,11 @@ LoggingHelper::LoggingHelper(const QString &pathToLog)
 			? pathToLog
 			: pathToLog + QDir::separator();
 
+	QDir logDir(correctedPath);
+	if (!logDir.exists()) {
+		logDir.mkpath(correctedPath);
+	}
+
 	const int maxLogSize = 10 * 1024 * 1024;
 	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
 	mFileDestination = QsLogging::DestinationFactory::MakeFileDestination(

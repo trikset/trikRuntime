@@ -50,7 +50,7 @@ private slots:
 
 private:
 	/// Low-level file descriptor for event file.
-	int mEventFileDescriptor;
+	int mEventFileDescriptor = -1;
 
 	/// File name of an event file.
 	const QString mFileName;

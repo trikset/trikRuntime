@@ -21,6 +21,8 @@
 #include <QtCore/QTranslator>
 #include <QtCore/QCoreApplication>
 
+#include <QsLog.h>
+
 #include "paths.h"
 #include "rcReader.h"
 
@@ -28,7 +30,10 @@ using namespace trikKernel;
 
 void TranslationsHelper::loadTranslators(const QString &locale)
 {
-	const QDir translationsDirectory(QCoreApplication::applicationDirPath() + "/translations/" + locale);
+	const QDir translationsDirectory(Paths::translationsPath() + "/translations/" + locale);
+
+	QLOG_INFO() << "Loading translations from" << translationsDirectory.absolutePath();
+
 	QDirIterator directories(translationsDirectory, QDirIterator::Subdirectories);
 	while (directories.hasNext()) {
 		for (const QFileInfo &translatorFile : QDir(directories.next()).entryInfoList(QDir::Files)) {
@@ -50,7 +55,7 @@ void TranslationsHelper::initLocale(bool localizationDisabled)
 	QString locale = settings.value("locale", "").toString();
 	const QString lastLocale = locale;
 
-	QFileInfo trikRc(trikKernel::Paths::trikRcName());
+	const QFileInfo trikRc(trikKernel::Paths::trikRcName());
 	if (locale.isEmpty() && trikRc.exists()) {
 		const RcReader rcReader(trikKernel::Paths::trikRcName());
 		locale = rcReader.value("locale");

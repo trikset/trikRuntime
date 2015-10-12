@@ -90,7 +90,6 @@ TrikMspI2c::~TrikMspI2c()
 
 void TrikMspI2c::send(const QByteArray &data)
 {
-	qDebug() << "TrikMspI2c::send" << (int)data[0] << (int)data[1] << (int)data[2];
 	if (data.size() == 3) {
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
 	} else {

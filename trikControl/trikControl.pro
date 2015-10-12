@@ -157,5 +157,4 @@ copyToDestdir( \
 installs()
 
 installAdditionalConfigs($$CONFIGS)
-
-installAdditionalSharedFiles($$DESTDIR/media)
+installAdditionalSharedFiles($$PWD/../media)
