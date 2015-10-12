@@ -26,6 +26,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/gamepadFactory.h>
+#include <trikWiFi/trikWiFi.h>
 
 #include "runningWidget.h"
 

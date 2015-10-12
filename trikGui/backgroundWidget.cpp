@@ -22,7 +22,6 @@
 
 #include "lazyMainWidget.h"
 #include "lazyMainWidgetWrapper.h"
-#include <trikKernel/paths.h>
 
 using namespace trikGui;
 

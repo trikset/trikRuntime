@@ -20,9 +20,12 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
-#include <trikWiFi/trikWiFi.h>
 
 #include "lazyMainWidget.h"
+
+namespace trikWiFi {
+class TrikWiFi;
+}
 
 namespace trikGui {
 
@@ -51,6 +54,7 @@ public:
 	/// Does not pass ownership to the caller.
 	trikNetwork::MailboxInterface *mailbox();
 
+	/// Reference to WiFi manager.
 	trikWiFi::TrikWiFi &wiFi();
 
 	/// Asks controller to correctly close given running widget.
