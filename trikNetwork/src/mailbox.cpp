@@ -133,9 +133,16 @@ void Mailbox::init(int port)
 	mWorker.reset(new MailboxServer(port));
 	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
 	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaiting()));
+	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SLOT(updateConnectionStatus()));
+	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SLOT(updateConnectionStatus()));
 
 	mWorker->moveToThread(&mWorkerThread);
 	mWorkerThread.start();
 
 	QMetaObject::invokeMethod(mWorker.data(), "start", Qt::QueuedConnection);
+}
+
+void Mailbox::updateConnectionStatus()
+{
+	emit connectionStatusChanged(mWorker->activeConnections() > 0);
 }

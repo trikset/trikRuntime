@@ -78,6 +78,9 @@ signals:
 	/// Used to interrupt waiting for new message.
 	void stopWaiting();
 
+private slots:
+	void updateConnectionStatus();
+
 private:
 	/// Starts mailbox listening given port.
 	void init(int port);

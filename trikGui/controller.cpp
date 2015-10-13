@@ -60,6 +60,11 @@ Controller::Controller(const QString &configPath)
 	connect(mWiFi.data(), SIGNAL(disconnected()), this, SIGNAL(wiFiDisconnected()));
 
 	connect(mCommunicator.data(), SIGNAL(stopCommandReceived()), this, SLOT(abortExecution()));
+	connect(mCommunicator.data(), SIGNAL(connected()), this, SLOT(updateCommunicatorStatus()));
+	connect(mCommunicator.data(), SIGNAL(disconnected()), this, SLOT(updateCommunicatorStatus()));
+	connect(mTelemetry.data(), SIGNAL(connected()), this, SLOT(updateCommunicatorStatus()));
+	connect(mTelemetry.data(), SIGNAL(disconnected()), this, SLOT(updateCommunicatorStatus()));
+	connect(mMailbox.data(), SIGNAL(connectionStatusChanged(bool)), this, SIGNAL(mailboxStatusChanged(bool)));
 
 	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
 
@@ -115,6 +120,16 @@ trikNetwork::MailboxInterface *Controller::mailbox()
 trikWiFi::TrikWiFi &Controller::wiFi()
 {
 	return *mWiFi;
+}
+
+bool Controller::communicatorConnectionStatus()
+{
+	return mTelemetry->activeConnections() > 0 && mCommunicator->activeConnections() > 0;
+}
+
+void Controller::updateCommunicatorStatus()
+{
+	emit communicatorStatusChanged(communicatorConnectionStatus());
 }
 
 void Controller::scriptExecutionCompleted(const QString &error, int scriptId)

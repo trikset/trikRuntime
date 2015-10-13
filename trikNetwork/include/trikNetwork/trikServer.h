@@ -51,6 +51,13 @@ public:
 	/// Starts listening given port on all network interfaces.
 	Q_INVOKABLE void startServer(const int &port);
 
+signals:
+	/// Emitted when we get the first connection established.
+	void connected();
+
+	/// Emitted when the last connection closes.
+	void disconnected();
+
 protected:
 	void incomingConnection(qintptr socketDescriptor) override;
 

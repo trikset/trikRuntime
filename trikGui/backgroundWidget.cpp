@@ -32,6 +32,12 @@ BackgroundWidget::BackgroundWidget(
 	, mController(configPath)
 	, mBatteryIndicator(mController.brick())
 	, mWiFiIndicator(mController)
+	, mMailboxIndicator("://resources/mailboxConnected.png"
+			, "://resources/mailboxNotConnected.png"
+			, mController.mailbox()->isConnected())
+	, mCommunicatorIndicator("://resources/communicatorConnected.png"
+			, "://resources/communicatorNotConnected.png"
+			, mController.communicatorConnectionStatus())
 	, mStartWidget(mController, configPath)
 	, mRunningWidget(mController)
 {
@@ -43,6 +49,8 @@ BackgroundWidget::BackgroundWidget(
 
 	mStatusBarLayout.addWidget(&mBatteryIndicator);
 	mStatusBarLayout.addStretch();
+	mStatusBarLayout.addWidget(&mMailboxIndicator);
+	mStatusBarLayout.addWidget(&mCommunicatorIndicator);
 	mStatusBarLayout.addWidget(&mWiFiIndicator);
 	addMainWidget(mStartWidget);
 	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(&mController.brick().graphicsWidget()));
@@ -64,6 +72,9 @@ BackgroundWidget::BackgroundWidget(
 	connect(&mController, SIGNAL(hideRunningWidget(int)), this, SLOT(hideRunningWidget(int)));
 	connect(&mController, SIGNAL(hideGraphicsWidget()), this, SLOT(hideGraphicsWidget()));
 	connect(&mController, SIGNAL(hideScriptWidgets()), this, SLOT(hideScriptWidgets()));
+
+	connect(&mController, SIGNAL(communicatorStatusChanged(bool)), &mCommunicatorIndicator, SLOT(changeStatus(bool)));
+	connect(&mController, SIGNAL(mailboxStatusChanged(bool)), &mMailboxIndicator, SLOT(changeStatus(bool)));
 
 	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
 }

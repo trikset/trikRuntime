@@ -27,6 +27,8 @@
 #include <QtCore/QString>
 #include <QtCore/QDebug>
 
+#include "QsLog.h"
+
 using namespace trikWiFi;
 
 WpaSupplicantCommunicator::WpaSupplicantCommunicator(
@@ -140,8 +142,6 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 		return -1;
 	}
 
-	qDebug() << "Command: " << command;
-
 	forever {
 		fd_set rfds;
 		FD_ZERO(&rfds);
@@ -163,7 +163,6 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 			} else {
 				buffer[replyLen] = '\0';
 				reply = buffer;
-				qDebug() << "Reply: " << reply;
 				return 0;
 			}
 		} else {

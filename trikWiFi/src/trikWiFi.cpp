@@ -142,15 +142,11 @@ QList<ScanResult> TrikWiFi::scanResults()
 	forever {
 		const QString command = "BSS " + QString::number(index++);
 
-		qDebug() << command;
-
 		QString reply;
 
 		if (mControlInterface->request(command, reply) < 0) {
 			break;
 		}
-
-		qDebug() << reply;
 
 		QHash<QString, QString> parsedReply = parseReply(reply);
 

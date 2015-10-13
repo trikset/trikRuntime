@@ -81,9 +81,14 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 
 	connectionWorker->moveToThread(connectionThread);
 
+	const bool firstConnection = mConnections.isEmpty();
 	mConnections.insert(connectionThread, connectionWorker);
 
 	connectionThread->start();
+
+	if (firstConnection) {
+		emit connected();
+	}
 }
 
 Connection *TrikServer::connection(const QHostAddress &ip, int port) const
@@ -116,4 +121,8 @@ void TrikServer::onConnectionClosed()
 	delete mConnections.value(thread);
 
 	mConnections.remove(thread);
+
+	if (mConnections.isEmpty()) {
+		emit disconnected();
+	}
 }
