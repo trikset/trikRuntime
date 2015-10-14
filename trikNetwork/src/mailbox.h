@@ -55,9 +55,11 @@ public:
 
 	QHostAddress myIp() const override;
 
-	void reset() override;
+	void clearQueue() override;
 
 	bool isEnabled() override;
+
+	void stopWaiting() override;
 
 public slots:
 	void connect(const QString &ip, int port) override;
@@ -76,7 +78,7 @@ public slots:
 
 signals:
 	/// Used to interrupt waiting for new message.
-	void stopWaiting();
+	void stopWaitingSignal();
 
 private slots:
 	void updateConnectionStatus();
