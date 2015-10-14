@@ -56,6 +56,7 @@ void Threading::startThread(const QScriptValue &threadId, const QScriptValue &fu
 void Threading::startThread(const QString &threadId, QScriptEngine *engine, const QString &script)
 {
 	mResetMutex.lock();
+
 	if (mResetStarted) {
 		QLOG_INFO() << "Threading: can't start new thread" << threadId << "with engine" << engine << "due to reset";
 		delete engine;
@@ -92,10 +93,6 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	engine->moveToThread(thread);
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 	thread->start();
-
-	while (!thread->isEvaluating()) {
-		QThread::yieldCurrentThread();
-	}
 
 	// wait until script actually start to avoid problems with multiple starts and resets
 	// TODO: efficient AND safe solution
