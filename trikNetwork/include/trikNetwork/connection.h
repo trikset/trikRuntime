@@ -76,11 +76,15 @@ private slots:
 	/// New data is ready on a socket.
 	void onReadyRead();
 
+	void onConnect();
+
 	/// Socket is closed for some reason.
 	void onDisconnect();
 
 	/// Socket is failed to connect or some other error occured.
 	void onError(QAbstractSocket::SocketError error);
+
+	void onTimeout();
 
 private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
@@ -103,6 +107,8 @@ private:
 	int mExpectedBytes = 0;
 
 	Protocol mProtocol;
+
+	QTimer mKeepAliveTimer;
 };
 
 }
