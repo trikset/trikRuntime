@@ -75,9 +75,7 @@ protected:
 
 private slots:
 	/// Called when connection thread finishes.
-	void onConnectionClosed();
-
-	void keepAlive();
+	void onConnectionClosed(Connection *connection);
 
 private:
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
@@ -85,8 +83,6 @@ private:
 
 	/// Function that provides actual connection objects.
 	std::function<Connection *()> mConnectionFactory;
-
-	QTimer mKeepAliveTimer;
 };
 
 }

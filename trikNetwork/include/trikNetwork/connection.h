@@ -16,6 +16,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QTimer>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 
@@ -63,7 +64,7 @@ public:
 
 signals:
 	/// Emitted after connection becomes closed.
-	void disconnected();
+	void disconnected(Connection *self);
 
 protected:
 	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
@@ -76,6 +77,7 @@ private slots:
 	/// New data is ready on a socket.
 	void onReadyRead();
 
+	/// Socket is opened.
 	void onConnect();
 
 	/// Socket is closed for some reason.
@@ -84,7 +86,8 @@ private slots:
 	/// Socket is failed to connect or some other error occured.
 	void onError(QAbstractSocket::SocketError error);
 
-	void onTimeout();
+	/// Sends "keepalive" packet.
+	void keepAlive();
 
 private:
 	/// Processes received data. Shall be implemented in concrete connection classes.
@@ -93,9 +96,14 @@ private:
 	/// Handles incoming data: sending version or processing received data.
 	void handleIncomingData(const QByteArray &data);
 
+	/// Connects all slots of this object to the appropriate signals.
 	void connectSlots();
 
+	/// Parses current buffer content and splits it on complete messages.
 	void processBuffer();
+
+	/// Helper method that notifies everyone about disconnect and closes connection gracefully.
+	void doDisconnect();
 
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;
@@ -106,8 +114,10 @@ private:
 	/// Declared size of a current message.
 	int mExpectedBytes = 0;
 
+	/// Protocol selected for this connection.
 	Protocol mProtocol;
 
+	/// Timer that is used to send keepailve packets.
 	QTimer mKeepAliveTimer;
 };
 

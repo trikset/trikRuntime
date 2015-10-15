@@ -19,15 +19,15 @@
 
 #include "connection.h"
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-
 using namespace trikNetwork;
+
+const int keepaliveRate = 500;
 
 Connection::Connection(Protocol connectionProtocol)
 	: mProtocol(connectionProtocol)
 {
+	connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
+	mKeepAliveTimer.setSingleShot(false);
 }
 
 bool Connection::isConnected() const
@@ -65,7 +65,7 @@ void Connection::init(const QHostAddress &ip, int port)
 
 	if (!mSocket->waitForConnected()) {
 		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
-		emit disconnected();
+		emit disconnected(this);
 		thread()->quit();
 	}
 }
@@ -79,11 +79,16 @@ void Connection::send(const QByteArray &data)
 
 	QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 
-	QByteArray const message = mProtocol == Protocol::messageLength
+	/// Reset keepalive timer to avoid spamming with keepalive packets.
+	mKeepAliveTimer.start(keepaliveRate);
+
+	const QByteArray message = mProtocol == Protocol::messageLength
 			? QByteArray::number(data.size()) + ':' + data
 			: data + '\n';
 
-	qint64 const sentBytes = mSocket->write(message);
+	const qint64 sentBytes = mSocket->write(message);
+	mSocket->flush();
+	mSocket->waitForBytesWritten(1000);
 	if (sentBytes != message.size()) {
 		QLOG_ERROR() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 	}
@@ -107,7 +112,8 @@ void Connection::onReadyRead()
 		return;
 	}
 
-	mKeepAliveTimer.start(2000);
+	/// Reset keepalive timer to avoid spamming with keepalive packets.
+	mKeepAliveTimer.start(keepaliveRate);
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
 
@@ -129,9 +135,9 @@ void Connection::processBuffer()
 					// We did not receive full message length yet.
 					return;
 				} else {
-					QByteArray const length = mBuffer.left(delimiterIndex);
+					const QByteArray length = mBuffer.left(delimiterIndex);
 					mBuffer = mBuffer.mid(delimiterIndex + 1);
-					bool ok;
+					bool ok = false;
 					mExpectedBytes = length.toInt(&ok);
 					if (!ok) {
 						QLOG_ERROR() << "Malformed message, can not determine message length from this:" << length;
@@ -169,7 +175,9 @@ void Connection::processBuffer()
 
 void Connection::handleIncomingData(const QByteArray &data)
 {
-	if (data == "version") {
+	if (data == "keepalive") {
+		return;
+	} if (data == "version") {
 		send(QString("version: " + trikKernel::version).toUtf8());
 	} else {
 		processData(data);
@@ -178,16 +186,14 @@ void Connection::handleIncomingData(const QByteArray &data)
 
 void Connection::onConnect()
 {
-	mKeepAliveTimer.start(2000);
+	mKeepAliveTimer.start(keepaliveRate);
 }
 
 void Connection::onDisconnect()
 {
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
-	emit disconnected();
-
-	thread()->quit();
+	doDisconnect();
 }
 
 void Connection::onError(QAbstractSocket::SocketError error)
@@ -198,14 +204,13 @@ void Connection::onError(QAbstractSocket::SocketError error)
 		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored.";
 	}
 
-	emit disconnected();
-
-	thread()->quit();
+	doDisconnect();
 }
 
-void Connection::onTimeout()
+void Connection::keepAlive()
 {
-	mSocket->disconnectFromHost();
+	qDebug() << "keepalive";
+	send("keepalive");
 }
 
 void Connection::connectSlots()
@@ -215,5 +220,13 @@ void Connection::connectSlots()
 	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(onDisconnect()));
 	connect(mSocket.data(), SIGNAL(error(QAbstractSocket::SocketError))
 			, this, SLOT(onError(QAbstractSocket::SocketError)));
-	connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+}
+
+void Connection::doDisconnect()
+{
+	mKeepAliveTimer.stop();
+
+	emit disconnected(this);
+
+	thread()->quit();
 }
