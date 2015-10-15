@@ -16,6 +16,7 @@ include(../global.pri)
 
 HEADERS += \
 	$$PWD/abstractIndicator.h \
+	$$PWD/autoRunner.h \
 	$$PWD/backgroundWidget.h \
 	$$PWD/batteryIndicator.h \
 	$$PWD/connectButton.h \
@@ -50,6 +51,7 @@ HEADERS += \
 	$$PWD/openSocketIndicator.h \
 
 SOURCES += \
+	$$PWD/autoRunner.cpp \
 	$$PWD/backgroundWidget.cpp \
 	$$PWD/batteryIndicator.cpp \
 	$$PWD/communicationSettingsWidget.cpp \

@@ -30,6 +30,7 @@ class TrikWiFi;
 namespace trikGui {
 
 class RunningWidget;
+class AutoRunner;
 
 /// Provides backend features like Qt Script runner for frontend.
 class Controller : public QObject
@@ -116,6 +117,7 @@ private:
 	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;
 	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
 	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
+	QScopedPointer<AutoRunner> mAutoRunner;
 
 	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
 };

@@ -14,29 +14,34 @@
 
 #pragma once
 
-#include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
+#include <QtCore/QObject>
+#include <QtCore/QTimer>
 
 namespace trikGui {
 
-/// Base class for a widget that can show some reading from sensor, encoder and so on.
-class AbstractIndicator : public QWidget
+class Controller;
+
+/// Launches "autorun.js" file in "scripts" directory if it exists.
+class AutoRunner : QObject
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	explicit AbstractIndicator(QWidget *parent = 0) : QWidget(parent) {}
+	explicit AutoRunner(Controller &controller);
 
-public slots:
-	/// Rereads sensor and updates widget contents.
-	virtual void renew() = 0;
+private slots:
+	void doLaunch();
+
+private:
+	static QString fileName();
+
+	Controller &mController;
+
+	/// Timer that is needed to wait for trikControl to initialize.
+	/// @todo Make underlying components emit signal when they are ready for script execution.
+//	QTimer mInitTimer;
 };
 
 }
