@@ -19,6 +19,10 @@
 
 #include "connection.h"
 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+
 using namespace trikNetwork;
 
 Connection::Connection(Protocol connectionProtocol)
@@ -103,6 +107,7 @@ void Connection::onReadyRead()
 		return;
 	}
 
+	mKeepAliveTimer.start(2000);
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
 
@@ -171,6 +176,11 @@ void Connection::handleIncomingData(const QByteArray &data)
 	}
 }
 
+void Connection::onConnect()
+{
+	mKeepAliveTimer.start(2000);
+}
+
 void Connection::onDisconnect()
 {
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
@@ -193,10 +203,17 @@ void Connection::onError(QAbstractSocket::SocketError error)
 	thread()->quit();
 }
 
+void Connection::onTimeout()
+{
+	mSocket->disconnectFromHost();
+}
+
 void Connection::connectSlots()
 {
 	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+	connect(mSocket.data(), SIGNAL(connected()), this, SLOT(onConnect()));
 	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(onDisconnect()));
 	connect(mSocket.data(), SIGNAL(error(QAbstractSocket::SocketError))
 			, this, SLOT(onError(QAbstractSocket::SocketError)));
+	connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 }

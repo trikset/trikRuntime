@@ -25,6 +25,8 @@ using namespace trikNetwork;
 TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	: mConnectionFactory(connectionFactory)
 {
+	connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
+	mKeepAliveTimer.start(1000);
 }
 
 TrikServer::~TrikServer()
@@ -125,4 +127,9 @@ void TrikServer::onConnectionClosed()
 	if (mConnections.isEmpty()) {
 		emit disconnected();
 	}
+}
+
+void TrikServer::keepAlive()
+{
+	sendMessage("#");
 }

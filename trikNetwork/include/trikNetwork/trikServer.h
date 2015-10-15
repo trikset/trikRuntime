@@ -77,12 +77,16 @@ private slots:
 	/// Called when connection thread finishes.
 	void onConnectionClosed();
 
+	void keepAlive();
+
 private:
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
 	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.
 
 	/// Function that provides actual connection objects.
 	std::function<Connection *()> mConnectionFactory;
+
+	QTimer mKeepAliveTimer;
 };
 
 }
