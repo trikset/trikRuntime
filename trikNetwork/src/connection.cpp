@@ -28,16 +28,6 @@ Connection::Connection(Protocol connectionProtocol, Heartbeat useHeartbeat)
 	: mProtocol(connectionProtocol)
 	, mUseHeartbeat(useHeartbeat == Heartbeat::use)
 {
-	if (mUseHeartbeat) {
-		connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
-		connect(&mHeartbeatTimer, SIGNAL(timeout()), this, SLOT(onHeartbeatTimeout()));
-
-		mKeepAliveTimer.setSingleShot(false);
-		mHeartbeatTimer.setSingleShot(false);
-
-		mKeepAliveTimer.setInterval(keepaliveTime);
-		mHeartbeatTimer.setInterval(heartbeatTime);
-	}
 }
 
 bool Connection::isConnected() const
@@ -73,13 +63,15 @@ void Connection::init(const QHostAddress &ip, int port)
 
 	mSocket->connectToHost(ip, port);
 
+	initKeepalive();
+
 	if (!mSocket->waitForConnected()) {
 		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
 		doDisconnect();
 	} else {
 		if (mUseHeartbeat) {
-			mKeepAliveTimer.start();
-			mHeartbeatTimer.start();
+			mKeepAliveTimer->start();
+			mHeartbeatTimer->start();
 		}
 
 		emit connected(this);
@@ -97,7 +89,7 @@ void Connection::send(const QByteArray &data)
 
 	if (mUseHeartbeat) {
 		/// Reset keepalive timer to avoid spamming with keepalive packets.
-		mKeepAliveTimer.start();
+		mKeepAliveTimer->start();
 	}
 
 	const QByteArray message = mProtocol == Protocol::messageLength
@@ -105,8 +97,6 @@ void Connection::send(const QByteArray &data)
 			: data + '\n';
 
 	const qint64 sentBytes = mSocket->write(message);
-	mSocket->flush();
-	mSocket->waitForBytesWritten(1000);
 	if (sentBytes != message.size()) {
 		QLOG_ERROR() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 	}
@@ -116,6 +106,8 @@ void Connection::init(int socketDescriptor)
 {
 	mSocket.reset(new QTcpSocket());
 
+	initKeepalive();
+
 	if (!mSocket->setSocketDescriptor(socketDescriptor)) {
 		QLOG_ERROR() << "Failed to set socket descriptor" << socketDescriptor;
 		return;
@@ -124,8 +116,8 @@ void Connection::init(int socketDescriptor)
 	connectSlots();
 
 	if (mUseHeartbeat) {
-		mKeepAliveTimer.start();
-		mHeartbeatTimer.start();
+		mKeepAliveTimer->start();
+		mHeartbeatTimer->start();
 	}
 }
 
@@ -137,7 +129,7 @@ void Connection::onReadyRead()
 
 	if (mUseHeartbeat) {
 		/// Reset heartbeat timer, we received something, so connection is up.
-		mHeartbeatTimer.start();
+		mHeartbeatTimer->start();
 	}
 
 	const QByteArray &data = mSocket->readAll();
@@ -213,8 +205,8 @@ void Connection::handleIncomingData(const QByteArray &data)
 void Connection::onConnect()
 {
 	if (mUseHeartbeat) {
-		mKeepAliveTimer.start();
-		mHeartbeatTimer.start();
+		mKeepAliveTimer->start();
+		mHeartbeatTimer->start();
 	}
 }
 
@@ -263,8 +255,8 @@ void Connection::doDisconnect()
 	}
 
 	if (mUseHeartbeat) {
-		mKeepAliveTimer.stop();
-		mHeartbeatTimer.stop();
+		mKeepAliveTimer->stop();
+		mHeartbeatTimer->stop();
 	}
 
 	mDisconnectReported = true;
@@ -272,4 +264,21 @@ void Connection::doDisconnect()
 	emit disconnected(this);
 
 	thread()->quit();
+}
+
+void Connection::initKeepalive()
+{
+	if (mUseHeartbeat) {
+		mKeepAliveTimer.reset(new QTimer);
+		mHeartbeatTimer.reset(new QTimer);
+
+		connect(mKeepAliveTimer.data(), SIGNAL(timeout()), this, SLOT(keepAlive()));
+		connect(mHeartbeatTimer.data(), SIGNAL(timeout()), this, SLOT(onHeartbeatTimeout()));
+
+		mKeepAliveTimer->setSingleShot(false);
+		mHeartbeatTimer->setSingleShot(false);
+
+		mKeepAliveTimer->setInterval(keepaliveTime);
+		mHeartbeatTimer->setInterval(heartbeatTime);
+	}
 }

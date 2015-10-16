@@ -123,6 +123,9 @@ private:
 	/// Helper method that notifies everyone about disconnect and closes connection gracefully.
 	void doDisconnect();
 
+	/// Initializes keepalive and heartbeat timers.
+	void initKeepalive();
+
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;
 
@@ -136,10 +139,10 @@ private:
 	Protocol mProtocol;
 
 	/// Timer that is used to send keepalive packets.
-	QTimer mKeepAliveTimer;
+	QScopedPointer<QTimer> mKeepAliveTimer;
 
 	/// Timer that is used to check that keepalive packets from other end of the line were properly received.
-	QTimer mHeartbeatTimer;
+	QScopedPointer<QTimer> mHeartbeatTimer;
 
 	/// Flag that ensures that "disconnected" signal will be sent only once.
 	bool mDisconnectReported = false;
