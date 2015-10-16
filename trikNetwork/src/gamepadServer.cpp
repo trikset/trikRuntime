@@ -21,6 +21,7 @@ using namespace trikNetwork;
 GamepadServer::GamepadServer()
 	: TrikServer([this] () { return connectionFactory(); })
 {
+	setObjectName("GamepadServer");
 }
 
 Connection *GamepadServer::connectionFactory()

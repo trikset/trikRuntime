@@ -23,7 +23,7 @@
 using namespace trikCommunicator;
 
 Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
-	: trikNetwork::Connection(trikNetwork::Protocol::messageLength)
+	: trikNetwork::Connection(trikNetwork::Protocol::messageLength, trikNetwork::Heartbeat::use)
 	, mTrikScriptRunner(trikScriptRunner)
 {
 }

@@ -21,13 +21,23 @@
 
 using namespace trikNetwork;
 
-const int keepaliveRate = 500;
+const int keepaliveTime = 3000;
+const int heartbeatTime = 5000;
 
-Connection::Connection(Protocol connectionProtocol)
+Connection::Connection(Protocol connectionProtocol, Heartbeat useHeartbeat)
 	: mProtocol(connectionProtocol)
+	, mUseHeartbeat(useHeartbeat == Heartbeat::use)
 {
-	connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
-	mKeepAliveTimer.setSingleShot(false);
+	if (mUseHeartbeat) {
+		connect(&mKeepAliveTimer, SIGNAL(timeout()), this, SLOT(keepAlive()));
+		connect(&mHeartbeatTimer, SIGNAL(timeout()), this, SLOT(onHeartbeatTimeout()));
+
+		mKeepAliveTimer.setSingleShot(false);
+		mHeartbeatTimer.setSingleShot(false);
+
+		mKeepAliveTimer.setInterval(keepaliveTime);
+		mHeartbeatTimer.setInterval(heartbeatTime);
+	}
 }
 
 bool Connection::isConnected() const
@@ -65,8 +75,14 @@ void Connection::init(const QHostAddress &ip, int port)
 
 	if (!mSocket->waitForConnected()) {
 		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
-		emit disconnected(this);
-		thread()->quit();
+		doDisconnect();
+	} else {
+		if (mUseHeartbeat) {
+			mKeepAliveTimer.start();
+			mHeartbeatTimer.start();
+		}
+
+		emit connected(this);
 	}
 }
 
@@ -79,8 +95,10 @@ void Connection::send(const QByteArray &data)
 
 	QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 
-	/// Reset keepalive timer to avoid spamming with keepalive packets.
-	mKeepAliveTimer.start(keepaliveRate);
+	if (mUseHeartbeat) {
+		/// Reset keepalive timer to avoid spamming with keepalive packets.
+		mKeepAliveTimer.start();
+	}
 
 	const QByteArray message = mProtocol == Protocol::messageLength
 			? QByteArray::number(data.size()) + ':' + data
@@ -104,6 +122,11 @@ void Connection::init(int socketDescriptor)
 	}
 
 	connectSlots();
+
+	if (mUseHeartbeat) {
+		mKeepAliveTimer.start();
+		mHeartbeatTimer.start();
+	}
 }
 
 void Connection::onReadyRead()
@@ -112,8 +135,11 @@ void Connection::onReadyRead()
 		return;
 	}
 
-	/// Reset keepalive timer to avoid spamming with keepalive packets.
-	mKeepAliveTimer.start(keepaliveRate);
+	if (mUseHeartbeat) {
+		/// Reset heartbeat timer, we received something, so connection is up.
+		mHeartbeatTimer.start();
+	}
+
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
 
@@ -186,7 +212,10 @@ void Connection::handleIncomingData(const QByteArray &data)
 
 void Connection::onConnect()
 {
-	mKeepAliveTimer.start(keepaliveRate);
+	if (mUseHeartbeat) {
+		mKeepAliveTimer.start();
+		mHeartbeatTimer.start();
+	}
 }
 
 void Connection::onDisconnect()
@@ -209,8 +238,13 @@ void Connection::onError(QAbstractSocket::SocketError error)
 
 void Connection::keepAlive()
 {
-	qDebug() << "keepalive";
 	send("keepalive");
+}
+
+void Connection::onHeartbeatTimeout()
+{
+	/// We did not receive anything for some time, assuming connection is down and closing socket.
+	mSocket->disconnectFromHost();
 }
 
 void Connection::connectSlots()
@@ -224,7 +258,16 @@ void Connection::connectSlots()
 
 void Connection::doDisconnect()
 {
-	mKeepAliveTimer.stop();
+	if (mDisconnectReported) {
+		return;
+	}
+
+	if (mUseHeartbeat) {
+		mKeepAliveTimer.stop();
+		mHeartbeatTimer.stop();
+	}
+
+	mDisconnectReported = true;
 
 	emit disconnected(this);
 
