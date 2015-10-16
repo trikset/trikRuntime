@@ -10,8 +10,6 @@
         <file>resources/wifion.png</file>
         <file>resources/wifioff.png</file>
         <file>resources/communicatorConnected.png</file>
-        <file>resources/communicatorNotConnected.png</file>
         <file>resources/mailboxConnected.png</file>
-        <file>resources/mailboxNotConnected.png</file>
     </qresource>
 </RCC>
