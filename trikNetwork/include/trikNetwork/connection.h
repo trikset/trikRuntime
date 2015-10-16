@@ -16,6 +16,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QTimer>
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 

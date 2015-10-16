@@ -205,6 +205,7 @@ void Connection::onError(QAbstractSocket::SocketError error)
 
 void Connection::onTimeout()
 {
+	QLOG_INFO() << "Connection" << this << "," << mSocket->socketDescriptor() << "timed out";
 	mSocket->disconnectFromHost();
 }
 

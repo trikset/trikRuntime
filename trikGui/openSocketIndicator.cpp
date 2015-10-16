@@ -16,33 +16,17 @@
 
 using namespace trikGui;
 
-OpenSocketIndicator::OpenSocketIndicator(
-		const QString &openFile
-		, const QString &closedFile
+OpenSocketIndicator::OpenSocketIndicator(const QString &openPicFile
 		, bool status
 		, QWidget *parent)
 	: QLabel(parent)
-	, mOpenPic(openFile)
-	, mClosedPic(closedFile)
-	, mStatus(status)
+	, mOpenPic(openPicFile)
 {
-	if (status) {
-		setPixmap(openFile);
-	} else {
-		setPixmap(closedFile);
-	}
+	setPixmap(openPicFile);
+	status ? show() : hide();
 }
 
 void OpenSocketIndicator::changeStatus(bool status)
 {
-	if (mStatus == status) {
-		return;
-	}
-
-	mStatus = status;
-	if (status) {
-		setPixmap(mOpenPic);
-	} else {
-		setPixmap(mClosedPic);
-	}
+	status ? show() : hide();
 }

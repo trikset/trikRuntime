@@ -19,6 +19,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QThread>
 #include <QtNetwork/QTcpServer>
+#include <QtCore/QTimer>
 
 #include "declSpec.h"
 
