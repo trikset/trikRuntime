@@ -21,6 +21,7 @@ using namespace trikNetwork;
 GamepadServer::GamepadServer()
 	: TrikServer([this] () { return connectionFactory(); })
 {
+	setObjectName("GamepadServer");
 }
 
 Connection *GamepadServer::connectionFactory()
@@ -31,12 +32,12 @@ Connection *GamepadServer::connectionFactory()
 	connect(connection, SIGNAL(pad(int,int,int)),this, SIGNAL(pad(int,int,int)));
 	connect(connection, SIGNAL(padUp(int)),this, SIGNAL(padUp(int)));
 	connect(connection, SIGNAL(wheel(int)),this, SIGNAL(wheel(int)));
-	connect(connection, SIGNAL(disconnected()),this, SLOT(onConnectionClosed()));
+	connect(connection, SIGNAL(disconnected(Connection *)),this, SLOT(onGamepadConnectionClosed()));
 
 	return connection;
 }
 
-void GamepadServer::onConnectionClosed()
+void GamepadServer::onGamepadConnectionClosed()
 {
 	if (activeConnections() == 0) {
 		emit disconnect();

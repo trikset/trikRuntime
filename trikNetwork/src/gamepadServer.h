@@ -59,7 +59,7 @@ signals:
 	void disconnect();
 
 private slots:
-	void onConnectionClosed();
+	void onGamepadConnectionClosed();
 
 private:
 	Connection *connectionFactory();

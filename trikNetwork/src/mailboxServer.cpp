@@ -30,6 +30,7 @@ MailboxServer::MailboxServer(int port)
 	, mMyIp(determineMyIp())
 	, mMyPort(port)
 {
+	setObjectName("MailboxServer");
 	qRegisterMetaType<QHostAddress>("QHostAddress");
 
 	if (mMyIp.isNull()) {

@@ -38,10 +38,6 @@ private:
 	static QString fileName();
 
 	Controller &mController;
-
-	/// Timer that is needed to wait for trikControl to initialize.
-	/// @todo Make underlying components emit signal when they are ready for script execution.
-//	QTimer mInitTimer;
 };
 
 }
