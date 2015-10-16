@@ -49,6 +49,8 @@ protected:
 
 	virtual void goHome();
 
+	void powerDownHandler() override;
+
 private:
 	QEventLoop mEventLoop;
 };

@@ -59,6 +59,9 @@ public:
 
 	void renewFocus() override;
 
+protected:
+	void powerDownHandler() override;
+
 private slots:
 	/// Change current FilesManegerRoot
 	void changeFileManagerRoot(MainWidget::FileManagerRootType const& path);

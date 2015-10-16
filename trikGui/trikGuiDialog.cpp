@@ -36,15 +36,16 @@ void TrikGuiDialog::keyPressEvent(QKeyEvent *event)
 			exit();
 			break;
 		}
-		case Qt::Key_PowerDown: {
-			goHome();
-			break;
-		}
 		default: {
-			QWidget::keyPressEvent(event);
+			MainWidget::keyPressEvent(event);
 			break;
 		}
 	}
+}
+
+void TrikGuiDialog::powerDownHandler()
+{
+	goHome();
 }
 
 void TrikGuiDialog::exit()

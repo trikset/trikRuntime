@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
+#include <QtCore/QTimer>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -37,7 +38,7 @@ public:
 
 	/// Constructor.
 	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
-	MainWidget(QWidget *parent) : QWidget(parent) {}
+	MainWidget(QWidget *parent);
 
 	/// Set focus properly on this widget or one of its children.
 	virtual void renewFocus() = 0;
@@ -45,5 +46,16 @@ public:
 signals:
 	/// Emitted when the widget created a new one and wants it to be shown.
 	void newWidget(MainWidget &widget);
+
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+	void keyReleaseEvent(QKeyEvent *event) override;
+	virtual void powerDownHandler();
+
+private slots:
+	void shutdown();
+
+private:
+	QTimer mPowerDownTimer;
 };
 }

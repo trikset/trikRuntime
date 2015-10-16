@@ -49,12 +49,13 @@ void TrikGuiMessageBox::keyPressEvent(QKeyEvent *event)
 			mEventLoop.quit();
 			break;
 		}
-		case Qt::Key_PowerDown: {
-			close();
-			mEventLoop.exit(1);
-		}
-
+		default:
+			MainWidget::keyPressEvent(event);
 	}
+}
 
-
+void TrikGuiMessageBox::powerDownHandler()
+{
+	close();
+	mEventLoop.exit(1);
 }

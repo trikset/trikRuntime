@@ -54,18 +54,9 @@ void RunningWidget::setProgram(const QString &programName, int scriptId)
 	mScriptId = scriptId;
 }
 
-void RunningWidget::keyPressEvent(QKeyEvent *event)
+void RunningWidget::powerDownHandler()
 {
-	switch (event->key()) {
-		case Qt::Key_PowerDown: {
-			mController.abortExecution();
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-			break;
-		}
-	}
+	mController.abortExecution();
 }
 
 void RunningWidget::renewFocus()

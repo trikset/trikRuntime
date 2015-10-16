@@ -62,7 +62,7 @@ signals:
 	void hideMe(int scriptId);
 
 protected:
-	void keyPressEvent(QKeyEvent *event);
+	void powerDownHandler() override;
 
 private:
 	QVBoxLayout mLayout;

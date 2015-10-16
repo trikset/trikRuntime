@@ -57,7 +57,8 @@ signals:
 	void currentFilesDirPath(MainWidget::FileManagerRootType const& path);
 
 protected:
-	virtual void keyPressEvent(QKeyEvent *event);
+	void keyPressEvent(QKeyEvent *event) override;
+	void powerDownHandler() override;
 
 private:
 	void changeDefaultButton();

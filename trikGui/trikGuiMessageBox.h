@@ -52,6 +52,7 @@ public:
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
+	void powerDownHandler() override;
 
 private:
 	QVBoxLayout mLayout;
