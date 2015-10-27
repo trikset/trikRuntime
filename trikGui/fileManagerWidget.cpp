@@ -31,6 +31,7 @@
 #endif
 
 #include <trikKernel/paths.h>
+#include <trikKernel/exceptions/trikRuntimeException.h>
 
 using namespace trikGui;
 
@@ -40,13 +41,19 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	, mController(controller)
 {
 	QDir dir(trikKernel::Paths::userScriptsPath());
-	dir.mkdir(trikKernel::Paths::userScriptsDirectoryName());
-	QDir::setCurrent(trikKernel::Paths::userScriptsPath() + trikKernel::Paths::userScriptsDirectoryName());
+	if (!dir.exists()) {
+		const bool result = dir.mkpath(dir.canonicalPath());
+		if (!result) {
+			throw trikKernel::TrikRuntimeException();
+		}
+	}
+
+	QDir::setCurrent(trikKernel::Paths::userScriptsPath());
 
 	if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
 		mRootDirPath = QDir::rootPath();
 	} else { // if (fileManagerRoot == MainWidget::FileManagerRootType::scriptsDir)
-		mRootDirPath = trikKernel::Paths::userScriptsPath() + trikKernel::Paths::userScriptsDirectoryName();
+		mRootDirPath = trikKernel::Paths::userScriptsPath();
 	}
 
 	mFileSystemModel.setRootPath(mRootDirPath);

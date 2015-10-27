@@ -30,4 +30,8 @@ OTHER_FILES += \
 	$$PWD/ru/locale.ini \
 	$$PWD/fr/locale.ini \
 
+OTHER_FILES += \
+	$$PWD/ru/*.ts \
+	$$PWD/fr/*.ts \
+
 installAdditionalSharedFiles($$DESTDIR/translations)

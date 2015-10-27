@@ -42,5 +42,5 @@ void AutoRunner::doLaunch()
 
 QString AutoRunner::fileName()
 {
-	return trikKernel::Paths::userScriptsPath() + trikKernel::Paths::userScriptsDirectoryName() + "autorun.js";
+	return trikKernel::Paths::userScriptsPath() + "autorun.js";
 }
