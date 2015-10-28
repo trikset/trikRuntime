@@ -169,7 +169,7 @@ void FileManagerWidget::showCurrentDir()
 	mCurrentPathLabel.setText(currentPath());
 
 	QDir::Filters filters = mFileSystemModel.filter();
-	if (QDir::currentPath() == mRootDirPath) {
+	if (QFileInfo(QDir::currentPath()) == QFileInfo(mRootDirPath)) {
 		filters |= QDir::NoDotDot;
 	} else {
 		filters &= ~QDir::NoDotDot;
