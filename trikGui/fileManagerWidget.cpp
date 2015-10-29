@@ -152,7 +152,7 @@ void FileManagerWidget::onSelectionChanged(QModelIndex current, QModelIndex prev
 
 QString FileManagerWidget::currentPath()
 {
-	QString result = QDir::currentPath();
+	QString result = QDir(QDir::currentPath()).canonicalPath();
 	if (mRootDirPath != "/") {
 		result.replace(0, mRootDirPath.length(), "");
 	}

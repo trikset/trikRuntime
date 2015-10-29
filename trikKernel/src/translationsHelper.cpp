@@ -30,7 +30,7 @@ using namespace trikKernel;
 
 void TranslationsHelper::loadTranslators(const QString &locale)
 {
-	const QDir translationsDirectory(Paths::translationsPath() + "/translations/" + locale);
+	const QDir translationsDirectory(Paths::translationsPath() + locale);
 
 	QLOG_INFO() << "Loading translations from" << translationsDirectory.absolutePath();
 

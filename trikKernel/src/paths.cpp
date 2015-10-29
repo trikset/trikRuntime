@@ -46,7 +46,7 @@ QString Paths::path(const Resource resource)
 		defaultPath = "/usr/share/trikRuntime/";
 		break;
 	case Resource::translations:
-		defaultPath = "/usr/share/trikRuntime/";
+		defaultPath = "/usr/share/trikRuntime/translations/";
 		break;
 	case Resource::userScripts:
 		defaultPath = "/home/root/scripts/";
@@ -57,6 +57,8 @@ QString Paths::path(const Resource resource)
 	if (fileInfo.exists()) {
 		if (resource == Resource::userScripts) {
 			return currentPath + "scripts/";
+		} else if (resource == Resource::translations) {
+			return currentPath + "translations/";
 		} else {
 			return currentPath;
 		}

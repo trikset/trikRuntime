@@ -108,7 +108,7 @@ void LanguageSelectionWidget::keyPressEvent(QKeyEvent *event)
 
 void LanguageSelectionWidget::loadLocales()
 {
-	const QDir translationsDirectory(QApplication::applicationDirPath() + "/translations/");
+	const QDir translationsDirectory(trikKernel::Paths::translationsPath());
 	QDirIterator directories(translationsDirectory);
 	while (directories.hasNext()) {
 		const QFileInfo localeInfo(directories.next() + "/locale.ini");
