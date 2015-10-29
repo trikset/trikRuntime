@@ -35,9 +35,6 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 
 PowerMotor::~PowerMotor()
 {
-	if (mState.isReady()) {
-		powerOff();
-	}
 }
 
 PowerMotor::Status PowerMotor::status() const
