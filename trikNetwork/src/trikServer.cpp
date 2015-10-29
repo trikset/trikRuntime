@@ -77,7 +77,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	QThread * const connectionThread = new QThread();
 
 	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
-	connect(connectionThread, SIGNAL(finished()), this, SLOT(onConnectionClosed()));
+	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)));
 
 	connectionWorker->moveToThread(connectionThread);
 
@@ -87,6 +87,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connectionThread->start();
 
 	if (firstConnection) {
+		/// @todo: Emit "connected" signal only when socket is actually connected.
 		emit connected();
 	}
 }
@@ -113,12 +114,12 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 	return nullptr;
 }
 
-void TrikServer::onConnectionClosed()
+void TrikServer::onConnectionClosed(Connection *connection)
 {
-	QThread * const thread = static_cast<QThread *>(sender());
+	QThread * const thread = mConnections.key(connection);
 
 	// Thread shall already be finished here.
-	delete mConnections.value(thread);
+	connection->deleteLater();
 
 	mConnections.remove(thread);
 

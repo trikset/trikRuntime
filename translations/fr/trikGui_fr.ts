@@ -50,7 +50,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="127"/>
+        <location filename="../../trikGui/controller.cpp" line="155"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -58,17 +58,17 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="87"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="94"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="111"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="118"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="112"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="119"/>
         <source>Are you sure you want to delete file?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -245,7 +245,7 @@
     </message>
     <message>
         <location filename="../../trikGui/systemSettingsWidget.cpp" line="74"/>
-        <source>System Settings</source>
+        <source>System settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -363,7 +363,7 @@ for break</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiInitWidget.cpp" line="116"/>
+        <location filename="../../trikGui/wiFiInitWidget.cpp" line="115"/>
         <source>Network initialization
 failed</source>
         <translation type="unfinished"></translation>
@@ -372,23 +372,23 @@ failed</source>
 <context>
     <name>trikGui::WiFiModeWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="34"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="35"/>
         <source>Choose mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="36"/>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="63"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="37"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="64"/>
         <source>Wi-Fi client</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="37"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="38"/>
         <source>Wi-Fi access point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="51"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="52"/>
         <source>Network Config</source>
         <translation type="unfinished"></translation>
     </message>

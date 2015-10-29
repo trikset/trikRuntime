@@ -19,6 +19,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QThread>
 #include <QtNetwork/QTcpServer>
+#include <QtCore/QTimer>
 
 #include "declSpec.h"
 
@@ -75,7 +76,7 @@ protected:
 
 private slots:
 	/// Called when connection thread finishes.
-	void onConnectionClosed();
+	void onConnectionClosed(Connection *connection);
 
 private:
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.

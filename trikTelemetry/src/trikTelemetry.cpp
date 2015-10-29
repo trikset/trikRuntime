@@ -23,6 +23,7 @@ TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick, trikNetwork::Ga
 	, mBrick(brick)
 	, mGamepad(gamepad)
 {
+	setObjectName("TrikTelemetry");
 }
 
 Connection * TrikTelemetry::connectionFactory()

@@ -44,9 +44,6 @@ public:
 	/// Where to put script files sent by TRIK Studio and written by user.
 	static QString userScriptsPath();
 
-	/// Name of a directory with user scripts (without path).
-	static QString userScriptsDirectoryName();
-
 	/// Name of a directory containing "translations" folder.
 	static QString translationsPath();
 

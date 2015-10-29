@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,30 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include <QtCore/QObject>
+#include <QtCore/QTimer>
 
-namespace trikKernel {
+namespace trikGui {
 
-const QString version = "3.1.2";
+class Controller;
+
+/// Launches "autorun.js" file in "scripts" directory if it exists.
+class AutoRunner : QObject
+{
+	Q_OBJECT
+
+public:
+	/// Constructor.
+	/// @param parent - parent of this widget in Qt widget parent-child system.
+	explicit AutoRunner(Controller &controller);
+
+private slots:
+	void doLaunch();
+
+private:
+	static QString fileName();
+
+	Controller &mController;
+};
 
 }

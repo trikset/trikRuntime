@@ -49,13 +49,17 @@ QString Paths::path(const Resource resource)
 		defaultPath = "/usr/share/trikRuntime/";
 		break;
 	case Resource::userScripts:
-		defaultPath = "/home/root/";
+		defaultPath = "/home/root/scripts/";
 		break;
 	}
 
 	QFileInfo fileInfo(currentPath + "/system-config.xml");
 	if (fileInfo.exists()) {
-		return currentPath;
+		if (resource == Resource::userScripts) {
+			return currentPath + "scripts/";
+		} else {
+			return currentPath;
+		}
 	} else {
 		return defaultPath;
 	}
@@ -94,11 +98,6 @@ QString Paths::coreDumpPath()
 QString Paths::translationsPath()
 {
 	return path(Resource::translations);
-}
-
-QString Paths::userScriptsDirectoryName()
-{
-	return "scripts/";
 }
 
 QString Paths::trikRcName()

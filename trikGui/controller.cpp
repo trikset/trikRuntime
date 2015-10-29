@@ -29,6 +29,7 @@
 #include <trikWiFi/trikWiFi.h>
 
 #include "runningWidget.h"
+#include "autoRunner.h"
 
 using namespace trikGui;
 
@@ -78,6 +79,8 @@ Controller::Controller(const QString &configPath)
 
 	mCommunicator->startServer(communicatorPort);
 	mTelemetry->startServer(telemetryPort);
+
+	mAutoRunner.reset(new AutoRunner(*this));
 }
 
 Controller::~Controller()

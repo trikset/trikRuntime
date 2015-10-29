@@ -32,12 +32,8 @@ BackgroundWidget::BackgroundWidget(
 	, mController(configPath)
 	, mBatteryIndicator(mController.brick())
 	, mWiFiIndicator(mController)
-	, mMailboxIndicator("://resources/mailboxConnected.png"
-			, "://resources/mailboxNotConnected.png"
-			, mController.mailbox()->isConnected())
-	, mCommunicatorIndicator("://resources/communicatorConnected.png"
-			, "://resources/communicatorNotConnected.png"
-			, mController.communicatorConnectionStatus())
+	, mMailboxIndicator("://resources/mailboxConnected.png", mController.mailbox()->isConnected())
+	, mCommunicatorIndicator("://resources/communicatorConnected.png", mController.communicatorConnectionStatus())
 	, mStartWidget(mController, configPath)
 	, mRunningWidget(mController)
 {

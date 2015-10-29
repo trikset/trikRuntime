@@ -19,7 +19,7 @@
 using namespace trikTelemetry;
 
 Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad)
-	: trikNetwork::Connection(trikNetwork::Protocol::messageLength)
+	: trikNetwork::Connection(trikNetwork::Protocol::messageLength, trikNetwork::Heartbeat::use)
 	, mBrick(brick)
 	, mGamepad(gamepad)
 {

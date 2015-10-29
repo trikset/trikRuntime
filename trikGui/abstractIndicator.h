@@ -32,7 +32,7 @@ class AbstractIndicator : public QWidget
 public:
 	/// Constructor.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	AbstractIndicator(QWidget *parent = 0) : QWidget(parent) {}
+	explicit AbstractIndicator(QWidget *parent = 0) : QWidget(parent) {}
 
 public slots:
 	/// Rereads sensor and updates widget contents.

@@ -21,7 +21,7 @@
 using namespace trikNetwork;
 
 GamepadConnection::GamepadConnection()
-	: Connection(Protocol::endOfLineSeparator)
+	: Connection(Protocol::endOfLineSeparator, Heartbeat::dontUse)
 {
 }
 
