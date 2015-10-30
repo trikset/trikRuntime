@@ -160,8 +160,11 @@ void FileManagerWidget::onSelectionChanged(QModelIndex current, QModelIndex prev
 QString FileManagerWidget::currentPath()
 {
 	QString result = QDir(QDir::currentPath()).canonicalPath();
+
 	if (mRootDirPath != "/") {
-		result.replace(0, mRootDirPath.length(), "");
+		/// @todo: fix this.
+		const auto prefixLength = result.indexOf("scripts") + QString("scripts").length();
+		result = result.replace(0, prefixLength, "");
 	}
 
 	if (result.isEmpty()) {
