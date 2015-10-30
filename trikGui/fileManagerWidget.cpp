@@ -32,6 +32,7 @@
 
 #include <trikKernel/paths.h>
 #include <trikKernel/exceptions/trikRuntimeException.h>
+#include <QsLog.h>
 
 using namespace trikGui;
 
@@ -41,14 +42,20 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	, mController(controller)
 {
 	QDir dir(trikKernel::Paths::userScriptsPath());
+
 	if (!dir.exists()) {
-		const bool result = dir.mkpath(dir.canonicalPath());
+		const bool result = dir.mkpath(trikKernel::Paths::userScriptsPath());
 		if (!result) {
-			throw trikKernel::TrikRuntimeException();
+			QLOG_ERROR() << "Incorrect user scripts directory";
 		}
 	}
 
-	QDir::setCurrent(trikKernel::Paths::userScriptsPath());
+	if (dir.exists()) {
+		QDir::setCurrent(trikKernel::Paths::userScriptsPath());
+	} else {
+		// Fallback directory, if user scripts are unavailable for some reason.
+		QDir::setCurrent("/home/root/");
+	}
 
 	if (fileManagerRoot == MainWidget::FileManagerRootType::allFS) {
 		mRootDirPath = QDir::rootPath();
