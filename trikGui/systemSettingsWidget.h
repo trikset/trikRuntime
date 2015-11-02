@@ -58,7 +58,6 @@ signals:
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
-	void powerDownHandler() override;
 
 private:
 	void changeDefaultButton();

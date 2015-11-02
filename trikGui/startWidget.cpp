@@ -224,6 +224,10 @@ void StartWidget::goHome()
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
+		case Qt::Key_PowerDown: {
+			goHome();
+			break;
+		}
 		case Qt::Key_Escape: {
 			QStandardItem const * const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
 			if (rootItem == nullptr) {
@@ -242,9 +246,4 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 	}
-}
-
-void StartWidget::powerDownHandler()
-{
-	goHome();
 }

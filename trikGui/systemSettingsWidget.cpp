@@ -82,6 +82,11 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 			exit();
 			break;
 		}
+		case Qt::Key_PowerDown: {
+			emitCheckedDirPath();
+			goHome();
+			break;
+		}
 		case Qt::Key_Left:
 		case Qt::Key_Up:
 		case Qt::Key_Down:
@@ -94,12 +99,6 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 	}
-}
-
-void SystemSettingsWidget::powerDownHandler()
-{
-	emitCheckedDirPath();
-	goHome();
 }
 
 void SystemSettingsWidget::changeDefaultButton()
