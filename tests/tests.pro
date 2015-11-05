@@ -15,12 +15,15 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+	minimalCppApp \
 	selftest \
 	thirdparty \
+	trikKernelTests \
 	trikScriptRunnerTests \
-	minimalCppApp \
+	readerWriterTest \
 
 thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
 
+trikKernelTests.depends = thirdparty
 trikScriptRunnerTests.depends = thirdparty
 selftest.depends = thirdparty

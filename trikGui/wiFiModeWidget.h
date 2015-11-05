@@ -49,9 +49,8 @@ public:
 	};
 
 	/// Constructor
-	/// @param configPath - full path to configuration files.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	WiFiModeWidget(const QString &configPath, trikWiFi::TrikWiFi &wiFi, QWidget *parent = 0);
+	explicit WiFiModeWidget(trikWiFi::TrikWiFi &wiFi, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -64,7 +63,6 @@ protected:
 private:
 	void setMode(Mode mode);
 
-	const QString &mConfigPath;
 	trikWiFi::TrikWiFi &mWiFi;
 	trikKernel::RcReader mRcReader;
 	QEventLoop mEventLoop;

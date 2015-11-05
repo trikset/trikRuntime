@@ -18,6 +18,7 @@ QT += widgets xml
 
 HEADERS += \
 	$$PWD/include/trikKernel/applicationInitHelper.h \
+	$$PWD/include/trikKernel/bufferedVar.h \
 	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \

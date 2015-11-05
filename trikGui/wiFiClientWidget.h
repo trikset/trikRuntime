@@ -53,8 +53,7 @@ class WiFiClientWidget : public TrikGuiDialog
 public:
 	/// Constructor.
 	/// @param parent - parent QObject.
-	/// @param configPath - path to wpa-config.xml.
-	explicit WiFiClientWidget(const QString &configPath, trikWiFi::TrikWiFi &trikWiFi, QWidget *parent = 0);
+	explicit WiFiClientWidget(trikWiFi::TrikWiFi &trikWiFi, QWidget *parent = 0);
 
 	/// Destructor.
 	~WiFiClientWidget();
@@ -68,6 +67,10 @@ private slots:
 	void scanForAvailableNetworksDoneSlot();
 	void connectedSlot();
 	void disconnectedSlot();
+
+	void statusReadySlot();
+	void listNetworksReadySlot();
+	void errorSlot(const QString &message);
 
 private:
 	enum ConnectionState {

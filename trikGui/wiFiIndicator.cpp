@@ -83,5 +83,5 @@ void WiFiIndicator::updateStatus()
 		wiFiMode = WiFiModeWidget::unknown;
 	}
 
-	changeMode(wiFiMode, wiFiMode == WiFiModeWidget::client && mController.wiFi().status().connected);
+	changeMode(wiFiMode, wiFiMode == WiFiModeWidget::client && mController.wiFi().statusResult().connected);
 }
