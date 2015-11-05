@@ -114,6 +114,7 @@ void ScriptEngineWorker::stopScript()
 		return;
 	}
 
+
 	while (mState == starting) {
 		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
 		QThread::yieldCurrentThread();
@@ -125,8 +126,11 @@ void ScriptEngineWorker::stopScript()
 
 	mScriptControl.reset();
 
+	if (mMailbox) {
+		mMailbox->stopWaiting();
+	}
+
 	mThreading.reset();
-	mMailbox->stopWaiting();
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();

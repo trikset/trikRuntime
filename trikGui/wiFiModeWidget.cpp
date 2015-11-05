@@ -15,7 +15,6 @@
 #include "wiFiModeWidget.h"
 
 #include <QtGui/QKeyEvent>
-#include <QtCore/QDebug>
 
 #include <trikKernel/paths.h>
 #include <QsLog.h>

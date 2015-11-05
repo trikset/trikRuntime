@@ -160,8 +160,8 @@ void Threading::reset()
 	}
 
 	mMessageMutex.unlock();
-
 	mThreadsMutex.lock();
+
 	for (ScriptThread *thread : mThreads.values()) {
 		mScriptControl.reset();  // TODO: find more sophisticated solution to prevent waiting after abortion
 		thread->abort();
@@ -169,8 +169,8 @@ void Threading::reset()
 
 	mFinishedThreads.clear();
 	mThreadsMutex.unlock();
-
 	mScriptControl.reset();
+
 	waitForAll();
 
 	qDeleteAll(mMessageQueueMutexes);

@@ -14,7 +14,6 @@
 
 #include "scriptExecutionControl.h"
 
-#include <QtCore/QDebug>
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>

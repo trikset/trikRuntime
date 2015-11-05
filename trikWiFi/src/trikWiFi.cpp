@@ -16,7 +16,6 @@
 
 #include <QtCore/QStringList>
 #include <QtNetwork/QNetworkInterface>
-#include <QtCore/QDebug>
 
 #include <QsLog.h>
 

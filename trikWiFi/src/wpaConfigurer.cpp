@@ -17,7 +17,6 @@
 #include <QtXml/QDomDocument>
 #include <QtCore/QFile>
 #include <QtCore/QHash>
-#include <QtCore/QDebug>
 
 #include <QsLog.h>
 

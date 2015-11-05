@@ -16,8 +16,6 @@
 
 #include <QtCore/QStringList>
 
-#include <QtCore/QDebug>
-
 #include <QsLog.h>
 
 using namespace trikNetwork;

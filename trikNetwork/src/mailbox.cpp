@@ -120,7 +120,8 @@ QString Mailbox::receive(bool wait)
 	QString result;
 
 	QEventLoop loop;
-	QObject::connect(this, SIGNAL(stopWaitingSignal()), &loop, SLOT(quit()));
+	QObject::connect(this, SIGNAL(stopWaitingSignal()), &loop, SLOT(quit()), Qt::QueuedConnection);
+
 	if (!mWorker->hasMessages() && wait) {
 		loop.exec();
 	}

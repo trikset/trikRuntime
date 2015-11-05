@@ -41,6 +41,7 @@ void ScriptThread::run()
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 
 	mEngine->evaluate(mScript);
+
 	if (mEngine->hasUncaughtException()) {
 		const int line = mEngine->uncaughtExceptionLineNumber();
 		const QString message = mEngine->uncaughtException().toString();
@@ -48,7 +49,7 @@ void ScriptThread::run()
 		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
 	} else if (mThreading.inEventDrivenMode()) {
 		QEventLoop loop;
-		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::DirectConnection);
+		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::QueuedConnection);
 		loop.exec();
 	}
 
