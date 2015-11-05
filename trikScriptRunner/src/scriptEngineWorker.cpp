@@ -128,6 +128,10 @@ void ScriptEngineWorker::stopScript()
 
 	if (mMailbox) {
 		mMailbox->stopWaiting();
+		/// @todo: here script will continue to execute and may execute some statements before it will eventually
+		/// be stopped by mThreading.reset(). But if we do mThreading.reset() before mMailbox->stopWaiting(),
+		/// we will get deadlock, since mMailbox->stopWaiting() shall be executed in already stopped thread.
+		/// Actually we shall stop script engines here, do mMailbox->stopWaiting(), then stop threads.
 	}
 
 	mThreading.reset();
