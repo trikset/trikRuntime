@@ -143,6 +143,16 @@ void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 		mCommunicator->sendMessage("error: " + error);
 		emit showError(error, scriptId);
 	}
+
+	mBrick->reset();
+
+	if (mMailbox) {
+		mMailbox->clearQueue();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
+	}
 }
 
 void Controller::scriptExecutionFromFileStarted(const QString &fileName, int scriptId)

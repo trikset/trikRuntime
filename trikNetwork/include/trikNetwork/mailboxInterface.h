@@ -45,8 +45,11 @@ public:
 	/// Returns our IP address, or empty QHostAddress if we are not connected.
 	virtual QHostAddress myIp() const = 0;
 
-	/// Stops waiting for messages, clears message queue.
-	virtual void reset() = 0;
+	/// Clears message queue.
+	virtual void clearQueue() = 0;
+
+	/// Stops waiting for messages.
+	virtual void stopWaiting() = 0;
 
 	/// Returns true if mailbox is enabled in current configuration.
 	virtual bool isEnabled() = 0;

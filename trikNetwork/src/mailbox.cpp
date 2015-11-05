@@ -73,12 +73,16 @@ QHostAddress Mailbox::myIp() const
 	return mWorker->myIp();
 }
 
-void Mailbox::reset()
+void Mailbox::clearQueue()
 {
-	emit stopWaiting();
 	while (mWorker->hasMessages()) {
 		mWorker->receive();
 	}
+}
+
+void Mailbox::stopWaiting()
+{
+	emit stopWaitingSignal();
 }
 
 bool Mailbox::isEnabled()
@@ -116,7 +120,7 @@ QString Mailbox::receive(bool wait)
 	QString result;
 
 	QEventLoop loop;
-	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()));
+	QObject::connect(this, SIGNAL(stopWaitingSignal()), &loop, SLOT(quit()));
 	if (!mWorker->hasMessages() && wait) {
 		loop.exec();
 	}
@@ -132,7 +136,7 @@ void Mailbox::init(int port)
 {
 	mWorker.reset(new MailboxServer(port));
 	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaiting()));
+	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaitingSignal()));
 	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SLOT(updateConnectionStatus()));
 	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SLOT(updateConnectionStatus()));
 
