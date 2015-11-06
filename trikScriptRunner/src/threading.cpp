@@ -42,8 +42,8 @@ void Threading::startMainThread(const QString &script)
 	mFinishedThreads.clear();
 	mPreventFromStart.clear();
 
-	QRegExp const mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
-	bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
+	const QRegExp mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
+	const bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
 
 	startThread("main", mScriptWorker->createScriptEngine(), needCallMain ? script + "\nmain();" : script);
 }
@@ -84,7 +84,7 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	}
 
 	QLOG_INFO() << "Starting new thread" << threadId << "with engine" << engine;
-	ScriptThread *thread = new ScriptThread(*this, threadId, engine, script);
+	ScriptThread * const thread = new ScriptThread(*this, threadId, engine, script);
 	connect(&mScriptControl, SIGNAL(quitSignal()), thread, SIGNAL(stopRunning()), Qt::DirectConnection);
 	mThreads[threadId] = thread;
 	mFinishedThreads.remove(threadId);
