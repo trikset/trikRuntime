@@ -127,7 +127,7 @@ void TrikWiFiWorker::statusRequest()
 	mStatus.sync();
 }
 
-Status TrikWiFiWorker::statusResult() const
+Status TrikWiFiWorker::statusResult()
 {
 	return mStatus.get();
 }
@@ -166,9 +166,9 @@ void TrikWiFiWorker::processScanResults()
 	emit scanFinished();
 }
 
-QList<ScanResult> TrikWiFiWorker::scanResult() const
+QList<ScanResult> TrikWiFiWorker::scanResult()
 {
-	return *mScanResult;
+	return mScanResult.get();
 }
 
 void TrikWiFiWorker::listNetworksRequest()
@@ -195,16 +195,16 @@ void TrikWiFiWorker::listNetworksRequest()
 		}
 
 		currentNetwork.ssid = values[1];
-		mNetworksListBuffer->append(currentNetwork);
+//		mNetworksListBuffer->append(currentNetwork);
 	}
 
-	mNetworksList.swap(mNetworksListBuffer);
-	mNetworksListBuffer->clear();
+//	mNetworksList.swap(mNetworksListBuffer);
+//	mNetworksListBuffer->clear();
 }
 
 QList<NetworkConfiguration> TrikWiFiWorker::listNetworksResult() const
 {
-	return *mNetworksList;
+	return {}; //*mNetworksList;
 }
 
 void TrikWiFiWorker::processMessage(const QString &message)

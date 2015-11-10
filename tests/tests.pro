@@ -20,7 +20,6 @@ SUBDIRS = \
 	thirdparty \
 	trikKernelTests \
 	trikScriptRunnerTests \
-	readerWriterTest \
 
 thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
 

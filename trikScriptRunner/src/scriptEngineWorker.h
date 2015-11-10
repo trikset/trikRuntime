@@ -59,6 +59,13 @@ public:
 	/// Registers given C++ function as callable from script, with given name.
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
 
+	/// Clears execution state and stops robot.
+	void resetBrick();
+
+	/// Stops script execution and resets script engine. Can be called from another thread. By the end of call the
+	/// worker would be in a ready state.
+	void stopScript();
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
@@ -70,10 +77,6 @@ signals:
 	void startedScript(int scriptId);
 
 public slots:
-	/// Stops script execution and resets execution state (including script engine and trikControl itself). Can be
-	/// called from another thread. By the end of call to reset() the worker would be in a ready state.
-	void reset();
-
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
 	/// It is a caller's responsibility to ensure that ScriptEngineWorker is in ready state before a call to run()
@@ -110,7 +113,7 @@ private:
 	enum State {
 		ready
 		, starting
-		, resetting
+		, stopping
 		, running
 	};
 
@@ -120,17 +123,11 @@ private:
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * const engine) const;
 
-	/// Part of reset procedure, clears state of brick.
-	void clearBrickState();
-
-	/// Part of reset procedure, clears state of mailbox and gamepad.
-	void clearMailboxAndGamepadState();
-
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
-	Threading mThreadingVariable;
+	Threading mThreading;
 	QScriptEngine *mDirectScriptsEngine;  // Has ownership.
 	int mScriptId;
 	State mState;

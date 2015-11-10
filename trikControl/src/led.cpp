@@ -39,8 +39,6 @@ Led::Led(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstra
 
 Led::~Led()
 {
-	red();
-
 	mRedDeviceFile->close();
 	mGreenDeviceFile->close();
 }

@@ -16,7 +16,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QDebug>
 
 #include <QtGui/QKeyEvent>
 

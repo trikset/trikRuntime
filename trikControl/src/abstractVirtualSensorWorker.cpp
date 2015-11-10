@@ -29,10 +29,11 @@ using namespace trikControl;
 AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile
 		, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mSystemConsole(hardwareAbstraction.systemConsole())
-	, mOutputFifo(hardwareAbstraction.createFifo(outputFile))
 	, mScript(script)
 	, mInputFile(hardwareAbstraction.createOutputDeviceFile(inputFile))
 	, mState(state)
+	, mHardwareAbstraction(hardwareAbstraction)
+	, mOutputFile(outputFile)
 {
 }
 
@@ -59,6 +60,8 @@ void AbstractVirtualSensorWorker::stop()
 
 void AbstractVirtualSensorWorker::init()
 {
+	mOutputFifo.reset(mHardwareAbstraction.createFifo(mOutputFile));
+
 	if (mState.isReady() && QFileInfo(mInputFile->fileName()).exists() && QFileInfo(mOutputFifo->fileName()).exists()) {
 		// Sensor is up and ready.
 		QLOG_ERROR() << "Trying to init video sensor that is already running, ignoring";

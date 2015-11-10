@@ -14,8 +14,6 @@
 
 #include "soundSensorWorker.h"
 
-#include <QtCore/QDebug>
-
 using namespace trikControl;
 
 SoundSensorWorker::SoundSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile

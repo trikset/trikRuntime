@@ -47,7 +47,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 
 TrikScriptRunner::~TrikScriptRunner()
 {
-	mScriptEngineWorker->reset();
+	mScriptEngineWorker->stopScript();
 	QMetaObject::invokeMethod(&mWorkerThread, "quit");
 	mWorkerThread.wait(1000);
 }
@@ -66,7 +66,7 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
 	const int scriptId = mMaxScriptId++;
 	QLOG_INFO() << "TrikScriptRunner: new script" << scriptId << "from file" << fileName;
-	mScriptEngineWorker->reset();
+	mScriptEngineWorker->stopScript();
 
 	if (!fileName.isEmpty()) {
 		mScriptFileNames[scriptId] = fileName;
@@ -83,7 +83,9 @@ void TrikScriptRunner::runDirectCommand(const QString &command)
 
 void TrikScriptRunner::abort()
 {
-	mScriptEngineWorker->reset();
+	mScriptEngineWorker->stopScript();
+	mScriptEngineWorker->resetBrick();
+
 }
 
 void TrikScriptRunner::onScriptStart(int scriptId)

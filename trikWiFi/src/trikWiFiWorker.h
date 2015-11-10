@@ -64,9 +64,9 @@ public:
 	QList<NetworkConfiguration> listNetworksResult() const;
 
 	/// Returns last known connection status. To refresh, use statusRequest() method.
-	Status statusResult() const;
+	Status statusResult();
 
-	QList<ScanResult> scanResult() const;
+	QList<ScanResult> scanResult();
 
 signals:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available

@@ -87,7 +87,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mMailbox(mailbox)
 	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
-	, mThreadingVariable(this, scriptControl)
+	, mThreading(this, scriptControl)
 	, mDirectScriptsEngine(nullptr)
 	, mScriptId(0)
 	, mState(ready)
@@ -102,48 +102,73 @@ void ScriptEngineWorker::brickBeep()
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
 }
 
-void ScriptEngineWorker::reset()
+void ScriptEngineWorker::stopScript()
 {
-	if (mState == resetting) {
+	if (mState == stopping) {
+		// Already stopping, so we can do nothing.
 		return;
-	}
-
-	while (mState == starting) {
-		QThread::yieldCurrentThread();
 	}
 
 	if (mState == ready) {
-		/// Engine is ready for execution, but we need to clear brick state before we go.
-		QLOG_INFO() << "ScriptEngineWorker: 'soft' reset";
-		mState = resetting;
-		clearMailboxAndGamepadState();
-		clearBrickState();
-		mState = ready;
+		// Engine is ready for execution.
 		return;
 	}
 
-	QLOG_INFO() << "ScriptEngineWorker: reset started";
 
-	mState = resetting;
+	while (mState == starting) {
+		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
+		QThread::yieldCurrentThread();
+	}
+
+	QLOG_INFO() << "ScriptEngineWorker: stopping script";
+
+	mState = stopping;
 
 	mScriptControl.reset();
 
-	mThreadingVariable.reset();
-	clearMailboxAndGamepadState();
+	if (mMailbox) {
+		mMailbox->stopWaiting();
+		/// @todo: here script will continue to execute and may execute some statements before it will eventually
+		/// be stopped by mThreading.reset(). But if we do mThreading.reset() before mMailbox->stopWaiting(),
+		/// we will get deadlock, since mMailbox->stopWaiting() shall be executed in already stopped thread.
+		/// Actually we shall stop script engines here, do mMailbox->stopWaiting(), then stop threads.
+	}
+
+	mThreading.reset();
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();
 		QLOG_INFO() << "ScriptEngineWorker : ending interpretation";
 		emit completed(mDirectScriptsEngine->hasUncaughtException()
-				? mDirectScriptsEngine->uncaughtException().toString()
-				: "", mScriptId);
+						? mDirectScriptsEngine->uncaughtException().toString()
+						: ""
+				, mScriptId);
+
 		mDirectScriptsEngine->deleteLater();
 		mDirectScriptsEngine = nullptr;
 	}
 
-	clearBrickState();
 	mState = ready;
-	QLOG_INFO() << "ScriptEngineWorker: reset complete";
+
+	/// @todo: is it actually stopped?
+
+	QLOG_INFO() << "ScriptEngineWorker: stopping complete";
+}
+
+void ScriptEngineWorker::resetBrick()
+{
+	QLOG_INFO() << "Stopping robot";
+
+	if (mMailbox) {
+		mMailbox->stopWaiting();
+		mMailbox->clearQueue();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
+	}
+
+	mBrick.reset();
 }
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)
@@ -154,11 +179,10 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 
 void ScriptEngineWorker::doRun(const QString &script)
 {
-	mThreadingVariable.startMainThread(script);
+	mThreading.startMainThread(script);
 	mState = running;
-	mThreadingVariable.waitForAll();
-	const QString error = mThreadingVariable.errorMessage();
-	reset();
+	mThreading.waitForAll();
+	const QString error = mThreading.errorMessage();
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
 	emit completed(error, mScriptId);
 }
@@ -167,7 +191,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
 	if (!mScriptControl.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
-		reset();
+		stopScript();
 		startScriptEvaluation(scriptId);
 		mDirectScriptsEngine = createScriptEngine(false);
 		mScriptControl.run();
@@ -182,7 +206,12 @@ void ScriptEngineWorker::doRunDirect(const QString &command)
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->evaluate(command);
 		if (mDirectScriptsEngine->hasUncaughtException()) {
-			reset();
+			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
+			emit completed(mDirectScriptsEngine->hasUncaughtException()
+					? mDirectScriptsEngine->uncaughtException().toString()
+					: "", mScriptId);
+			mDirectScriptsEngine->deleteLater();
+			mDirectScriptsEngine = nullptr;
 		}
 	}
 }
@@ -203,7 +232,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 		mScriptControl.run();
 	}
 
-	reset();
+	stopScript();
 }
 
 QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
@@ -242,7 +271,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	}
 
 	if (supportThreads) {
-		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreadingVariable));
+		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreading));
 	}
 
 	evalSystemJs(engine);
@@ -290,20 +319,3 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 		engine->globalObject().setProperty(functionName, functionValue);
 	}
 }
-
-void ScriptEngineWorker::clearBrickState()
-{
-	mBrick.reset();
-}
-
-void ScriptEngineWorker::clearMailboxAndGamepadState()
-{
-	if (mMailbox) {
-		mMailbox->reset();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
-	}
-}
-

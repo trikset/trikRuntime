@@ -38,7 +38,7 @@ class Threading : public QObject
 public:
 	/// Constructs a Threading object with given script worker as a parent.
 	explicit Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl);
-	~Threading();
+	~Threading() override;
 
 	/// Starts the main thread of a script
 	void startMainThread(const QString &script);

@@ -115,6 +115,12 @@ private:
 
 	/// Current state of a device, shared between worker and proxy.
 	DeviceState &mState;
+
+	/// Reference to hardware abstraction needed to create FIFO objects in correct thread.
+	trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+
+	/// Name of an output file.
+	const QString mOutputFile;
 };
 
 }
