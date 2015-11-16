@@ -92,8 +92,10 @@ RESOURCES = trikGui.qrc
 
 OTHER_FILES += \
 	$$PWD/wpa-config.xml \
+	$$PWD/trikGui.sh \
 
 copyToDestdir($$PWD/wpa-config.xml)
+copyToDestdir($$PWD/trikGui.sh)
 
 TEMPLATE = app
 
