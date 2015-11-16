@@ -32,12 +32,20 @@ using namespace trikGui;
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
+	connect(&mPowerDownTimer, SIGNAL(timeout()), this, SLOT(shutdown()));
 }
 
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
 		refreshWidgets();
+		if (dynamic_cast<QKeyEvent *>(event)->key() == Qt::Key_PowerDown && !mPowerDownTimer.isActive()) {
+			mPowerDownTimer.start(1000);
+		}
+	} else if (event->type() == QEvent::KeyRelease) {
+		if (dynamic_cast<QKeyEvent *>(event)->key() == Qt::Key_PowerDown) {
+			mPowerDownTimer.stop();
+		}
 	}
 
 	return QApplication::notify(receiver, event);
@@ -50,4 +58,9 @@ void TrikGuiApplication::refreshWidgets()
 			widget->update();
 		}
 	}
+}
+
+void TrikGuiApplication::shutdown()
+{
+	::system("halt");
 }

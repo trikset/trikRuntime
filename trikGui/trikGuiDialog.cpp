@@ -32,16 +32,16 @@ int TrikGuiDialog::exec()
 void TrikGuiDialog::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Escape: {
-			exit();
-			break;
-		}
 		case Qt::Key_PowerDown: {
 			goHome();
 			break;
 		}
+		case Qt::Key_Escape: {
+			exit();
+			break;
+		}
 		default: {
-			QWidget::keyPressEvent(event);
+			MainWidget::keyPressEvent(event);
 			break;
 		}
 	}
