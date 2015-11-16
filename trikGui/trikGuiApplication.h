@@ -48,7 +48,8 @@ private slots:
 	void shutdown();
 
 private:
-	QTimer mPowerDownTimer;
+	QTimer mPowerButtonPressedTimer;
+	bool mIsShuttingDown = false;
 };
 
 }
