@@ -69,6 +69,10 @@ private:
 
 	/// State of a sensor, shared with proxy.
 	DeviceState &mState;
+
+	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+
+	const QString mEventFileName;
 };
 
 }
