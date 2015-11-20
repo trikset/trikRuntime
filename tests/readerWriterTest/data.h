@@ -14,3 +14,32 @@
  *
  * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
+
+#include <QtCore/QVector>
+
+template<int size>
+class Data
+{
+public:
+	Data()
+	{
+		mData.resize(size);
+	}
+
+	Data(const Data &data)
+	{
+		for (int i = 0; i < size; ++i) {
+			write(i, data.read(i));
+		}
+	}
+
+	void write(int item, int value)
+	{
+		mData[item] = value;
+	}
+
+	int read(int item) const;
+
+private:
+	QVector<int> mData;
+};

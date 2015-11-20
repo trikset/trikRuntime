@@ -15,11 +15,16 @@
  * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
 
+#include <QtCore/QObject>
+
 #include <trikKernel/bufferedVar.h>
 
-class Writer {
+#include "data.h"
+
+class Writer : public QObject
+{
 public:
-	Writer(trikKernel::BufferedVar &buffer);
+	Writer(trikKernel::BufferedVar &buffer, int generationRate);
 
 private:
 	trikKernel::BufferedVar &mBuffer;

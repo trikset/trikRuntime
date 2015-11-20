@@ -14,3 +14,17 @@
  *
  * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
+
+#include <QtCore/QObject>
+#include <trikKernel/bufferedVar.h>
+
+#include "data.h"
+
+class Reader : public QObject
+{
+public:
+	Reader(trikKernel::BufferedVar &buffer, int consumptionRate);
+
+private:
+	trikKernel::BufferedVar &mBuffer;
+};
