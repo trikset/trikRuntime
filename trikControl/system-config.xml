@@ -88,7 +88,7 @@ equal to its class name.
 		<mailbox port="8889" optional="true" />
 
 		<!-- Settings for GPS device. Commented out as it is a stub, not implemented yet -->
-		<gps deviceFile="/dev/ttyUSB0" optional="true" />
+		<!-- <gps deviceFile="/dev/ttyUSB0" optional="true" /> -->
 	</deviceClasses>
 
 	<devicePorts>
