@@ -36,6 +36,7 @@
 #include "colorSensor.h"
 #include "servoMotor.h"
 #include "fifo.h"
+#include "gps.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -86,6 +87,10 @@ Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, 
 
 	if (mConfigurer.isEnabled("gyroscope")) {
 		mGyroscope.reset(new VectorSensor("gyroscope", mConfigurer, *mHardwareAbstraction));
+	}
+
+	if (mConfigurer.isEnabled("gps")) {
+		mGps.reset(new Gps(mConfigurer, *mHardwareAbstraction));
 	}
 
 	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
@@ -351,6 +356,11 @@ LedInterface *Brick::led()
 FifoInterface *Brick::fifo(const QString &port)
 {
 	return mFifos[port];
+}
+
+GpsInterface *Brick::gps()
+{
+	return mGps.data();
 }
 
 void Brick::shutdownDevice(const QString &port)

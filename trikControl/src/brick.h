@@ -46,6 +46,7 @@ class RangeSensor;
 class ServoMotor;
 class VectorSensor;
 class Fifo;
+class Gps;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -121,6 +122,8 @@ public slots:
 
 	FifoInterface *fifo(const QString &port) override;
 
+	GpsInterface *gps() override;
+
 private:
 	Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
 			, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction);
@@ -140,6 +143,7 @@ private:
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;
 	QScopedPointer<Led> mLed;
+	QScopedPointer<Gps> mGps;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.

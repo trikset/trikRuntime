@@ -128,4 +128,8 @@ Note that device, even if listed here, may fail by itself, then it also will not
 <!--	<soundSensor>
 		<fifo />
 	</soundSensor>-->
+
+	<!-- Example of GPS tracker config. It is not yet implemented, so will not work even if uncommented. -->
+<!--	<gps /> -->
+
 </config>

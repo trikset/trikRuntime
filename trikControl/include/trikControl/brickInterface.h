@@ -30,6 +30,7 @@
 #include "sensorInterface.h"
 #include "vectorSensorInterface.h"
 #include "fifoInterface.h"
+#include "gpsInterface.h"
 
 #include "declSpec.h"
 
@@ -123,6 +124,9 @@ public slots:
 
 	/// Returns custom FIFO file which can be used as sensor.
 	virtual FifoInterface *fifo(const QString &port) = 0;
+
+	/// Returns GPS sensor.
+	virtual GpsInterface *gps() = 0;
 
 signals:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no

@@ -86,6 +86,9 @@ equal to its class name.
 
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
+
+		<!-- Settings for GPS device. Commented out as it is a stub, not implemented yet -->
+		<gps deviceFile="/dev/ttyUSB0" optional="true" />
 	</deviceClasses>
 
 	<devicePorts>
