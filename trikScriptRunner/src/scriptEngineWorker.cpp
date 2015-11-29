@@ -58,6 +58,7 @@ Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(FifoInterface*)
+Q_DECLARE_METATYPE(GpsInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -256,6 +257,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
 	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
+	qScriptRegisterMetaType(engine, gpsToScriptValue, gpsFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 

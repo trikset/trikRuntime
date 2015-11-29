@@ -30,6 +30,7 @@
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
 #include <trikControl/fifoInterface.h>
+#include <trikControl/gpsInterface.h>
 
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -83,5 +84,8 @@ void vectorSensorFromScriptValue(const QScriptValue &object, trikControl::Vector
 
 QScriptValue fifoToScriptValue(QScriptEngine *engine, trikControl::FifoInterface* const &in);
 void fifoFromScriptValue(const QScriptValue &object, trikControl::FifoInterface* &out);
+
+QScriptValue gpsToScriptValue(QScriptEngine *engine, trikControl::GpsInterface* const &in);
+void gpsFromScriptValue(const QScriptValue &object, trikControl::GpsInterface* &out);
 
 }
