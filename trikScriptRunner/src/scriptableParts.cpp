@@ -184,12 +184,12 @@ void trikScriptRunner::fifoFromScriptValue(const QScriptValue &object, FifoInter
 	out = qobject_cast<FifoInterface*>(object.toQObject());
 }
 
-QScriptValue gpsToScriptValue(QScriptEngine *engine, GpsInterface* const &in)
+QScriptValue trikScriptRunner::gpsToScriptValue(QScriptEngine *engine, GpsInterface* const &in)
 {
 	return engine->newQObject(in);
 }
 
-void gpsFromScriptValue(const QScriptValue &object, GpsInterface* &out)
+void trikScriptRunner::gpsFromScriptValue(const QScriptValue &object, GpsInterface* &out)
 {
 	out = qobject_cast<GpsInterface*>(object.toQObject());
 }

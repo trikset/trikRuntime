@@ -21,6 +21,7 @@
 
 namespace trikControl {
 
+/// External GPS sensor.
 class GpsInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
