@@ -95,7 +95,7 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		default: {
-			QWidget::keyPressEvent(event);
+			MainWidget::keyPressEvent(event);
 			break;
 		}
 	}

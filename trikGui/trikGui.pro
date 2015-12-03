@@ -90,6 +90,11 @@ TRANSLATIONS = \
 
 RESOURCES = trikGui.qrc
 
+OTHER_FILES += \
+	$$PWD/trikGui.sh \
+
+copyToDestdir($$PWD/trikGui.sh)
+
 TEMPLATE = app
 
 QT += network xml

@@ -44,6 +44,12 @@ private slots:
 	/// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update
 	/// all GUI to remove clutter on a screen.
 	void refreshWidgets();
+
+	void shutdown();
+
+private:
+	QTimer mPowerButtonPressedTimer;
+	bool mIsShuttingDown = false;
 };
 
 }

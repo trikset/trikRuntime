@@ -195,16 +195,16 @@ void TrikWiFiWorker::listNetworksRequest()
 		}
 
 		currentNetwork.ssid = values[1];
-//		mNetworksListBuffer->append(currentNetwork);
+		mNetworkConfiguration->append(currentNetwork);
 	}
 
-//	mNetworksList.swap(mNetworksListBuffer);
-//	mNetworksListBuffer->clear();
+	mNetworkConfiguration.sync();
+	mNetworkConfiguration->clear();
 }
 
-QList<NetworkConfiguration> TrikWiFiWorker::listNetworksResult() const
+QList<NetworkConfiguration> TrikWiFiWorker::listNetworksResult()
 {
-	return {}; //*mNetworksList;
+	return mNetworkConfiguration.get();
 }
 
 void TrikWiFiWorker::processMessage(const QString &message)
@@ -212,10 +212,7 @@ void TrikWiFiWorker::processMessage(const QString &message)
 	if (message.contains("CTRL-EVENT-SCAN-RESULTS")) {
 		processScanResults();
 	} else if (message.contains("CTRL-EVENT-CONNECTED")) {
-		int result = system("udhcpc -i wlan0");
-		if (result == 0) {
-			emit connected();
-		}
+		emit connected();
 	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
 		emit disconnected();
 	}

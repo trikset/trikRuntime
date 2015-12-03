@@ -27,9 +27,7 @@
 
 #include "src/guiWorker.h"
 
-using namespace trikControl;
-
-Display::Display(const QString &mediaPath)
+trikControl::Display::Display(const QString &mediaPath)
 	: mMediaPath(mediaPath)
 	, mGuiWorker(new GuiWorker())
 {
@@ -42,93 +40,93 @@ Display::Display(const QString &mediaPath)
 	QMetaObject::invokeMethod(mGuiWorker, "init");
 }
 
-Display::~Display()
+trikControl::Display::~Display()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "deleteWorker");
 	qApp->thread()->wait(1000);
 }
 
-DisplayWidgetInterface &Display::graphicsWidget()
+trikControl::DisplayWidgetInterface &trikControl::Display::graphicsWidget()
 {
 	return mGuiWorker->graphicsWidget();
 }
 
-void Display::showImage(const QString &fileName)
+void trikControl::Display::showImage(const QString &fileName)
 {
 	QFileInfo imageFile(fileName);
 	const QString correctedFileName = imageFile.exists() ? fileName : mMediaPath + fileName;
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, correctedFileName));
 }
 
-void Display::addLabel(const QString &text, int x, int y)
+void trikControl::Display::addLabel(const QString &text, int x, int y)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "addLabel", Q_ARG(QString, text), Q_ARG(int, x), Q_ARG(int, y));
 }
 
-void Display::removeLabels()
+void trikControl::Display::removeLabels()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "removeLabels");
 }
 
-void Display::setBackground(const QString &color)
+void trikControl::Display::setBackground(const QString &color)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setBackground", Q_ARG(QString, color));
 }
 
-void Display::hide()
+void trikControl::Display::hide()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "hide");
 }
 
-void Display::clear()
+void trikControl::Display::clear()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "clear");
 }
 
-void Display::reset()
+void trikControl::Display::reset()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "reset");
 }
 
-void Display::redraw()
+void trikControl::Display::redraw()
 {
 	QMetaObject::invokeMethod(mGuiWorker, "redraw");
 }
 
-void Display::drawLine(int x1, int y1, int x2, int y2)
+void trikControl::Display::drawLine(int x1, int y1, int x2, int y2)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawLine", Q_ARG(int, x1), Q_ARG(int, y1), Q_ARG(int, x2), Q_ARG(int, y2));
 }
 
-void Display::drawPoint(int x, int y)
+void trikControl::Display::drawPoint(int x, int y)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawPoint", Q_ARG(int, x), Q_ARG(int, y));
 }
 
-void Display::drawRect(int x, int y, int width, int height)
+void trikControl::Display::drawRect(int x, int y, int width, int height)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawRect", Q_ARG(int, x), Q_ARG(int, y)
 			, Q_ARG(int, width), Q_ARG(int, height));
 }
 
-void Display::drawEllipse(int x, int y, int width, int height)
+void trikControl::Display::drawEllipse(int x, int y, int width, int height)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawEllipse", Q_ARG(int, x), Q_ARG(int, y)
 			, Q_ARG(int, width), Q_ARG(int, height));
 }
 
-void Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
+void trikControl::Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawArc", Q_ARG(int, x), Q_ARG(int, y)
 			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(int, startAngle), Q_ARG(int, spanAngle));
 }
 
-void Display::setPainterColor(const QString &color)
+void trikControl::Display::setPainterColor(const QString &color)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setPainterColor", Q_ARG(QString, color));
 }
 
-void Display::setPainterWidth(int penWidth)
+void trikControl::Display::setPainterWidth(int penWidth)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "setPainterWidth", Q_ARG(int, penWidth));
 }

@@ -15,39 +15,39 @@
 #pragma once
 
 #include <QtCore/QScopedPointer>
+#include <QtCore/QReadWriteLock>
 
 #include "commandLineParser.h"
 
 namespace trikKernel {
 
-/// Helper template for syncing reader and writer without monitors. Compound value can be written to buffer using
+/// Helper template for syncing reader and writer. Compound value can be written to buffer using
 /// "->" operator, then, when "sync" is called, it is swapped with current value, which can be accessed using "get".
 /// For example,
-/// BufferedVar<Point> var;
+/// SynchronizedVar<Point> var;
 /// var->x = 10;
 /// var.sync();
 /// var->x = 20;
 /// EXPECT_EQ(10, var.get().x);
 /// var.sync();
 /// EXPECT_EQ(20, var.get().x);
-template<typename T> class BufferedVar
+template<typename T> class SynchronizedVar
 {
 public:
 	/// Constructor. Creates var with default buffer and value.
-	BufferedVar()
-		: mBuffer(new T())
-		, mValue(new T())
+	SynchronizedVar()
+		: mValue(new T())
+		, mBuffer(new T())
 	{
 	}
 
-	/// Returns current synced value.
-	/// May be called from reader thread.
+	/// Returns synced value. May be called from reader thread.
 	inline T get()
 	{
-//		QScopedPointer<T> temp(new T());
-//		temp.swap(mValue);
-//		return *temp;
-		return *mValue;
+		mLock.lockForRead();
+		T temp = *mValue;
+		mLock.unlock();
+		return temp;
 	}
 
 	/// Returns pointer to unsynced buffer.
@@ -61,23 +61,30 @@ public:
 	/// Shall be called from writer thread.
 	inline void sync()
 	{
+		mLock.lockForWrite();
 		mValue.swap(mBuffer);
+		mLock.unlock();
 	}
 
 	/// Resets buffer to initial state.
 	/// Shall be called from writer thread.
 	inline void reset()
 	{
+		mLock.lockForWrite();
 		mValue.reset(new T());
 		mBuffer.reset(new T());
+		mLock.unlock();
 	}
 
 private:
-	/// Current unsynced buffer.
+	/// Synced value.
+	QScopedPointer<T> mValue;
+
+	/// Unsynced buffer.
 	QScopedPointer<T> mBuffer;
 
-	/// Current synced value.
-	QScopedPointer<T> mValue;
+	/// Read-write lock that protects the value.
+	QReadWriteLock mLock;
 };
 
 }

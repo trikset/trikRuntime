@@ -16,15 +16,15 @@
  * project. See git revision history for detailed changes. */
 
 #include <QtCore/QObject>
-#include <trikKernel/bufferedVar.h>
+#include <trikKernel/synchronizedVar.h>
 
 #include "data.h"
 
 class Reader : public QObject
 {
 public:
-	Reader(trikKernel::BufferedVar &buffer, int consumptionRate);
+	Reader(trikKernel::SynchronizedVar &buffer, int consumptionRate);
 
 private:
-	trikKernel::BufferedVar &mBuffer;
+	trikKernel::SynchronizedVar &mBuffer;
 };

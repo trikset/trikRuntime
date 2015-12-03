@@ -18,7 +18,6 @@ QT += widgets xml
 
 HEADERS += \
 	$$PWD/include/trikKernel/applicationInitHelper.h \
-	$$PWD/include/trikKernel/bufferedVar.h \
 	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
@@ -27,6 +26,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/commandLineParser.h \
 	$$PWD/include/trikKernel/paths.h \
 	$$PWD/include/trikKernel/rcReader.h \
+	$$PWD/include/trikKernel/synchronizedVar.h \
 	$$PWD/include/trikKernel/translationsHelper.h \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \

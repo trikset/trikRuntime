@@ -18,6 +18,7 @@
 #include "trikGuiApplication.h"
 
 #include <QtGui/QKeyEvent>
+#include <QtCore/QProcess>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QWidget>
@@ -32,12 +33,20 @@ using namespace trikGui;
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
+	connect(&mPowerButtonPressedTimer, SIGNAL(timeout()), this, SLOT(shutdown()));
 }
 
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
 		refreshWidgets();
+		if (static_cast<QKeyEvent *>(event)->key() == Qt::Key_PowerDown && !mPowerButtonPressedTimer.isActive()) {
+			mPowerButtonPressedTimer.start(3000);
+		}
+	} else if (event->type() == QEvent::KeyRelease) {
+		if (dynamic_cast<QKeyEvent *>(event)->key() == Qt::Key_PowerDown) {
+			mPowerButtonPressedTimer.stop();
+		}
 	}
 
 	return QApplication::notify(receiver, event);
@@ -49,5 +58,13 @@ void TrikGuiApplication::refreshWidgets()
 		for (const auto widget : QApplication::allWidgets()) {
 			widget->update();
 		}
+	}
+}
+
+void TrikGuiApplication::shutdown()
+{
+	if (!mIsShuttingDown) {
+		QProcess::startDetached("/bin/sh", {"-c", "halt"});
+		mIsShuttingDown = true;
 	}
 }

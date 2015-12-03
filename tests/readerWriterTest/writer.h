@@ -17,15 +17,15 @@
 
 #include <QtCore/QObject>
 
-#include <trikKernel/bufferedVar.h>
+#include <trikKernel/synchronizedVar.h>
 
 #include "data.h"
 
 class Writer : public QObject
 {
 public:
-	Writer(trikKernel::BufferedVar &buffer, int generationRate);
+	Writer(trikKernel::SynchronizedVar &buffer, int generationRate);
 
 private:
-	trikKernel::BufferedVar &mBuffer;
+	trikKernel::SynchronizedVar &mBuffer;
 };

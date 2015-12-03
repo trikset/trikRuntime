@@ -22,7 +22,7 @@
 
 COMPILER = $$(CXX)
 
-COMPILER_IS_ARM = $$find(COMPILER, arm-oe.*)
+COMPILER_IS_ARM = $$find(COMPILER, arm-.*)
 
 count(COMPILER_IS_ARM, 1) {
 	ARCHITECTURE = arm

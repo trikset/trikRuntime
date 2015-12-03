@@ -20,7 +20,7 @@
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QHash>
 
-#include <trikKernel/bufferedVar.h>
+#include <trikKernel/synchronizedVar.h>
 
 #include "networkStructs.h"
 
@@ -61,7 +61,7 @@ public:
 
 	Q_INVOKABLE void scanRequest();
 
-	QList<NetworkConfiguration> listNetworksResult() const;
+	QList<NetworkConfiguration> listNetworksResult();
 
 	/// Returns last known connection status. To refresh, use statusRequest() method.
 	Status statusResult();
@@ -101,17 +101,11 @@ private:
 
 	void processScanResults();
 
-	trikKernel::BufferedVar<Status> mStatus;
-//	QScopedPointer<Status> mStatus;
-//	QScopedPointer<Status> mStatusBuffer;
+	trikKernel::SynchronizedVar<Status> mStatus;
 
-	trikKernel::BufferedVar<QList<NetworkConfiguration>> mNetworkConfiguration;
-//	QScopedPointer<QList<NetworkConfiguration>> mNetworksList;
-//	QScopedPointer<QList<NetworkConfiguration>> mNetworksListBuffer;
+	trikKernel::SynchronizedVar<QList<NetworkConfiguration>> mNetworkConfiguration;
 
-	trikKernel::BufferedVar<QList<ScanResult>> mScanResult;
-//	QScopedPointer<QList<ScanResult>> mScanResult;
-//	QScopedPointer<QList<ScanResult>> mScanResultBuffer;
+	trikKernel::SynchronizedVar<QList<ScanResult>> mScanResult;
 };
 
 }

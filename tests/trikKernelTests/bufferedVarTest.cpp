@@ -13,7 +13,7 @@
  * limitations under the License. */
 
 #include "bufferedVarTest.h"
-#include <trikKernel/bufferedVar.h>
+#include <trikKernel/synchronizedVar.h>
 
 #include <QtCore/QList>
 
@@ -28,7 +28,7 @@ struct Point
 
 TEST_F(BufferedVarTest, structTest)
 {
-	BufferedVar<Point> var;
+	SynchronizedVar<Point> var;
 	var->x = 10;
 	var->y = 10;
 	var.sync();
@@ -60,7 +60,7 @@ TEST_F(BufferedVarTest, listTest)
 
 TEST_F(BufferedVarTest, resetTest)
 {
-	BufferedVar<QList<Point>> list;
+	SynchronizedVar<QList<Point>> list;
 	list->append({10, 10});
 
 	list.sync();
