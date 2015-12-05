@@ -28,6 +28,7 @@ SUBDIRS = \
 	trikRun \
 	trikServer \
 	translations \
+	trikUtils \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
