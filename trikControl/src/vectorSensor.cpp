@@ -28,7 +28,9 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 			, hardwareAbstraction));
 
 	if (!mState.isFailed()) {
-		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>)), this, SIGNAL(newData(QVector<int>)));
+		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikUtils::TimeVal))
+		, this, SIGNAL(newData(QVector<int>,trikUtils::TimeVal)));
+
 		mVectorSensorWorker->moveToThread(&mWorkerThread);
 		mWorkerThread.start();
 

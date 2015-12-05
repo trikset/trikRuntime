@@ -146,8 +146,8 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-links(trikKernel trikHal)
-implementationIncludes(trikKernel trikHal)
+links(trikKernel trikHal trikUtils)
+implementationIncludes(trikKernel trikHal trikUtils)
 
 copyToDestdir( \
 	$$CONFIGS \

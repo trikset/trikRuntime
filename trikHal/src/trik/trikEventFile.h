@@ -21,6 +21,10 @@
 class QEventLoop;
 class QSocketNotifier;
 
+namespace trikUtils {
+class TimeVal;
+}
+
 namespace trikHal {
 namespace trik {
 
