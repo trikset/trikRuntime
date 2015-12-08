@@ -16,21 +16,39 @@
 
 namespace trikUtils {
 
+/// Structure of a time value in a convenient format.
 class TimeVal
 {
 
 public:
 
+	TimeVal();
+
+	/// Constructor. Parameters represent time in the format - (sec * 10^6 + mcsec) msces.
+	/// Constructor translates this value to the new format - 1 unit of a new value(mTime) is equal to 16 mcsec.
+	/// Note that after these conversions value in microseconds becomes rounded, but we can neglect this fact
+	/// in most cases.
+	/// Formula for translation : mTime = (sec * 10^6 + mcsec) << 6 = sec * 10^6 << mShift + mcsec << mShift =
+	/// = sec * mSecConst + mcsec << mShift
 	TimeVal(int sec, int mcsec);
 
-	int toMSec() const;
+	/// Translates an interior format to mcsec.
+	int toMcSec() const;
+
+	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right)
+	{
+		const int deltaTime = left.mTime - right.mTime;
+		return TimeVal(deltaTime);
+	}
 
 private:
 
+	TimeVal(int bobtailTime);
+
 	int mTime;
 
-	static const int mSecConst = 62500;
-	static const int mShift = 4;
+	static const int mSecConst = 15625;
+	static const int mShift = 6;
 
 };
 

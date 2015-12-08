@@ -15,6 +15,7 @@
 #include "vectorSensor.h"
 
 #include <trikKernel/configurer.h>
+#include <trikUtils/timeVal.h>
 
 #include "vectorSensorWorker.h"
 
@@ -28,6 +29,7 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 			, hardwareAbstraction));
 
 	if (!mState.isFailed()) {
+		qRegisterMetaType<trikUtils::TimeVal>("trikUtils::TimeVal");
 		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikUtils::TimeVal))
 		, this, SIGNAL(newData(QVector<int>,trikUtils::TimeVal)));
 
