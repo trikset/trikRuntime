@@ -26,3 +26,7 @@ bin/*
 /.project
 object_script.*.Debug
 object_script.*.Release
+
+# project-specific
+**/.build
+tests/minimalCppApp/*
