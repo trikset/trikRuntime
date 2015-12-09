@@ -136,6 +136,10 @@ void WiFiClientWidget::listNetworksReadySlot()
 void WiFiClientWidget::errorSlot(const QString &message)
 {
 	QLOG_ERROR() << message;
+	if (message == "statusRequest") {
+		mConnectionState = errored;
+		setConnectionStatus(trikWiFi::Status());
+	}
 }
 
 void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
@@ -169,6 +173,11 @@ void WiFiClientWidget::setConnectionStatus(const trikWiFi::Status &status)
 	case notConnected:
 		pixmap.load("://resources/notConnected.png");
 		mIpValueLabel.setText(tr("no connection"));
+		mCurrentSsid = "";
+		break;
+	case errored:
+		pixmap.load("://resources/notConnected.png");
+		mIpValueLabel.setText(tr("error"));
 		mCurrentSsid = "";
 		break;
 	}

@@ -77,6 +77,7 @@ private:
 		notConnected
 		, connecting
 		, connected
+		, errored
 	};
 
 	QLabel mConnectionIconLabel;

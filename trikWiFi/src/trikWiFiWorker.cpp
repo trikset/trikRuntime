@@ -58,6 +58,10 @@ void TrikWiFiWorker::reinit()
 		QLOG_ERROR() << "Can not get monitor file descriptor";
 	}
 
+	statusRequest();
+	listNetworksRequest();
+	scanRequest();
+
 	QLOG_INFO() << "WiFi initialized";
 }
 

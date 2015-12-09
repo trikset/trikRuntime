@@ -40,5 +40,5 @@ trikRun.depends = trikScriptRunner trikKernel qslog
 trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog
 trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
-trikWiFi.depends = qslog
+trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog

@@ -55,18 +55,26 @@ public:
 	/// Closes the connection to wpa_supplicant.
 	Q_INVOKABLE void dispose();
 
-	Q_INVOKABLE void listNetworksRequest();
-
+	/// Gets conection status and connection information such as SSID and IP. Emits statusReady when
+	/// done, then status can be obtained by statusResult() call.
 	Q_INVOKABLE void statusRequest();
-
-	Q_INVOKABLE void scanRequest();
-
-	QList<NetworkConfiguration> listNetworksResult();
 
 	/// Returns last known connection status. To refresh, use statusRequest() method.
 	Status statusResult();
 
+	/// Scans for available WiFi networks. When done, sends scanFinished() signal, then scan results
+	/// can be obtained via scanResult() method.
+	Q_INVOKABLE void scanRequest();
+
+	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
 	QList<ScanResult> scanResult();
+
+	/// Gets registered networks from wpa_supplicant. When ready, listNetworksReady() signal and results
+	/// can be received by listNetworksResult() method. wpa_supplicant can connect only to registered networks.
+	Q_INVOKABLE void listNetworksRequest();
+
+	/// Returns a current list of registered networks. Use listNetworksRequest() method to refresh.
+	QList<NetworkConfiguration> listNetworksResult();
 
 signals:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
@@ -76,14 +84,19 @@ signals:
 	/// Emitted when wpa_supplicant connects to WiFi network. SSID of this network can be retrieved by status() method.
 	void connected();
 
-	void error(const QString &message);
-
 	/// Emitted when wpa_supplicant disconnects from current network.
 	void disconnected();
 
+	/// Emitted when connection status requested by statusRequest() is ready and results can be obtained by
+	/// statusResult() method.
 	void statusReady();
 
+	/// Emitted when list of known networks requested by listNetworksRequest() is ready and its results can be obtained
+	/// by listNetworksResult() method.
 	void listNetworksReady();
+
+	/// Emitted when something goes wrong.
+	void error(const QString &message);
 
 private slots:
 	void receiveMessages();
