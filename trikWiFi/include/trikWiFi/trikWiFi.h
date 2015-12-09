@@ -52,8 +52,6 @@ public:
 
 	/// Asynchronously scans for available WiFi networks. When done, sends scanFinished signal, then scan results
 	/// can be obtained via scanResults method.
-	void scan();
-
 	void statusRequest();
 
 	/// Returns last known connection status. To refresh, use statusRequest() method.

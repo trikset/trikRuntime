@@ -68,11 +68,6 @@ void TrikWiFi::disconnect()
 	QMetaObject::invokeMethod(mWorker.data(), "disconnect");
 }
 
-void TrikWiFi::scan()
-{
-	QMetaObject::invokeMethod(mWorker.data(), "scan");
-}
-
 void TrikWiFi::statusRequest()
 {
 	QMetaObject::invokeMethod(mWorker.data(), "statusRequest");

@@ -125,6 +125,7 @@ void TrikWiFiWorker::statusRequest()
 	}
 
 	mStatus.sync();
+	emit statusReady();
 }
 
 Status TrikWiFiWorker::statusResult()

@@ -80,7 +80,7 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	setLayout(&mMainLayout);
 
 	mWiFi.statusRequest();
-	mWiFi.scan();
+	mWiFi.scanRequest();
 }
 
 WiFiClientWidget::~WiFiClientWidget()
@@ -115,7 +115,7 @@ void WiFiClientWidget::disconnectedSlot()
 	mWiFi.statusRequest();
 
 	// Now to determine reason of disconnect --- maybe the network is out of range now.
-	mWiFi.scan();
+	mWiFi.scanRequest();
 }
 
 void WiFiClientWidget::statusReadySlot()
