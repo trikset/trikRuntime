@@ -12,7 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "bufferedVarTest.h"
+#include "synchronizedVarTest.h"
+
 #include <trikKernel/synchronizedVar.h>
 
 #include <QtCore/QList>
@@ -26,7 +27,7 @@ struct Point
 	int y;
 };
 
-TEST_F(BufferedVarTest, structTest)
+TEST_F(SynchronizedVarTest, structTest)
 {
 	SynchronizedVar<Point> var;
 	var->x = 10;
@@ -42,9 +43,9 @@ TEST_F(BufferedVarTest, structTest)
 	EXPECT_EQ(20, var.get().x);
 }
 
-TEST_F(BufferedVarTest, listTest)
+TEST_F(SynchronizedVarTest, listTest)
 {
-	BufferedVar<QList<Point>> list;
+	SynchronizedVar<QList<Point>> list;
 	EXPECT_TRUE(list.get().isEmpty());
 
 	const Point point{10, 10};
@@ -58,7 +59,7 @@ TEST_F(BufferedVarTest, listTest)
 	EXPECT_EQ(10, list.get().at(0).x);
 }
 
-TEST_F(BufferedVarTest, resetTest)
+TEST_F(SynchronizedVarTest, resetTest)
 {
 	SynchronizedVar<QList<Point>> list;
 	list->append({10, 10});

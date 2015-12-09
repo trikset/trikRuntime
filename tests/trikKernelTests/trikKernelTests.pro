@@ -17,10 +17,10 @@ include(../../global.pri)
 include(../common.pri)
 
 HEADERS += \
-	$$PWD/bufferedVarTest.h \
+	$$PWD/synchronizedVarTest.h \
 
 SOURCES += \
-	$$PWD/bufferedVarTest.cpp \
+	$$PWD/synchronizedVarTest.cpp \
 
 implementationIncludes(trikKernel)
 links(trikKernel)
