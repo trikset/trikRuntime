@@ -50,7 +50,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="155"/>
+        <location filename="../../trikGui/controller.cpp" line="165"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -58,17 +58,17 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="94"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="101"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="118"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="125"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="119"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="126"/>
         <source>Are you sure you want to delete file?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -216,12 +216,12 @@
 <context>
     <name>trikGui::StartWidget</name>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="50"/>
+        <location filename="../../trikGui/startWidget.cpp" line="49"/>
         <source>TRIK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="55"/>
+        <location filename="../../trikGui/startWidget.cpp" line="54"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -318,52 +318,57 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="61"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="56"/>
         <source>IP:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="64"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="59"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="69"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="64"/>
         <source>Available networks:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="154"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="169"/>
         <source>connecting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="159"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="174"/>
         <source>no connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="179"/>
+        <source>error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>trikGui::WiFiInitWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiInitWidget.cpp" line="31"/>
+        <location filename="../../trikGui/wiFiInitWidget.cpp" line="30"/>
         <source>Network initialization
 in process</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiInitWidget.cpp" line="33"/>
+        <location filename="../../trikGui/wiFiInitWidget.cpp" line="32"/>
         <source>Please wait</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiInitWidget.cpp" line="34"/>
+        <location filename="../../trikGui/wiFiInitWidget.cpp" line="33"/>
         <source>Press Escape
 for break</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiInitWidget.cpp" line="115"/>
+        <location filename="../../trikGui/wiFiInitWidget.cpp" line="114"/>
         <source>Network initialization
 failed</source>
         <translation type="unfinished"></translation>
@@ -372,23 +377,23 @@ failed</source>
 <context>
     <name>trikGui::WiFiModeWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="35"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="32"/>
         <source>Choose mode:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="37"/>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="64"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="34"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="61"/>
         <source>Wi-Fi client</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="38"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="35"/>
         <source>Wi-Fi access point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiModeWidget.cpp" line="52"/>
+        <location filename="../../trikGui/wiFiModeWidget.cpp" line="49"/>
         <source>Network Config</source>
         <translation type="unfinished"></translation>
     </message>

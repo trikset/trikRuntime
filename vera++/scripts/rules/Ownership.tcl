@@ -17,11 +17,11 @@ proc CheckOwnership { fileName } {
   set lineCount 1
   set previousComment ""
   foreach line [getAllLines $fileName] {
-    if { [regexp {.*\* [\w]*;} $line] } {
+    if { [regexp {^\t+[a-zA-Z<>& ]*\* [\w]*;} $line] } {
       report $fileName $lineCount "'*' shall be attached to identifier, not type"
     }
 
-    if { [regexp {.* \*[\w]*;} $line] } {
+    if { [regexp {^\t+[a-zA-Z<>& ]* \*[\w]*;} $line] } {
       if { ![regexp {ownership} [string tolower $line] ] &&  ![regexp {ownership} [string tolower $previousComment] ] } {
         report $fileName $lineCount "Raw pointers must have a comment with ownership information - does object have ownership over pointed object or not (so will it delete pointed object itself or not)"
       }

@@ -26,6 +26,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/commandLineParser.h \
 	$$PWD/include/trikKernel/paths.h \
 	$$PWD/include/trikKernel/rcReader.h \
+	$$PWD/include/trikKernel/synchronizedVar.h \
 	$$PWD/include/trikKernel/translationsHelper.h \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
