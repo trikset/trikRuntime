@@ -7,12 +7,12 @@ trikUtils::TimeVal::TimeVal() :
 
 trikUtils::TimeVal::TimeVal(int sec, int mcsec)
 {
-	mTime = sec * mSecConst + (mcsec << mShift);
+	mTime = ((sec * mSecConst) >> (mShift - 6))  + (mcsec >> mShift);
 }
 
 int trikUtils::TimeVal::toMcSec() const
 {
-	return mTime >> mShift;
+	return (mTime << mShift);
 }
 
 trikUtils::TimeVal::TimeVal(int bobtailTime) :

@@ -25,15 +25,17 @@ public:
 	TimeVal();
 
 	/// Constructor. Parameters represent time in the format - (sec * 10^6 + mcsec) msces.
-	/// Constructor translates this value to the new format - 1 unit of a new value(mTime) is equal to 16 mcsec.
+	/// Constructor translates this value to the new format - 1 unit of a new value(mTime) is equal to 256 mcsec.
 	/// Note that after these conversions value in microseconds becomes rounded, but we can neglect this fact
 	/// in most cases.
-	/// Formula for translation : mTime = (sec * 10^6 + mcsec) << 6 = sec * 10^6 << mShift + mcsec << mShift =
-	/// = sec * mSecConst + mcsec << mShift
+	/// Formula for translation : mTime = (sec * 10^6 + mcsec) << 8 = sec * 10^6 << mShift + mcsec << mShift =
+	/// = sec * mSecConst << (mShift - 6) + mcsec << mShift
 	TimeVal(int sec, int mcsec);
 
 	/// Translates an interior format to mcsec.
 	int toMcSec() const;
+
+	TimeVal(int bobtailTime);
 
 	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right)
 	{
@@ -41,14 +43,18 @@ public:
 		return TimeVal(deltaTime);
 	}
 
-private:
+	TimeVal & operator=(const TimeVal &timeVal)
+	{
+		mTime = timeVal.mTime;
+		return *this;
+	}
 
-	TimeVal(int bobtailTime);
+private:
 
 	int mTime;
 
 	static const int mSecConst = 15625;
-	static const int mShift = 6;
+	static const int mShift = 8;
 
 };
 
