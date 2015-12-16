@@ -25,5 +25,3 @@ TEMPLATE = lib
 DEFINES += TRIKUTILS_LIBRARY
 
 installs()
-
-

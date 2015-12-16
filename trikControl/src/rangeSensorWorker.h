@@ -41,7 +41,7 @@ public:
 
 signals:
 	/// Emitted when new data is received from a sensor.
-	void newData(int distance, int rawDistance, trikUtils::TimeVal eventTime);
+	void newData(int distance, int rawDistance, const trikUtils::TimeVal &eventTime);
 
 public slots:
 	/// Initializes sensor and begins receiving events from it.
@@ -59,7 +59,7 @@ public slots:
 private slots:
 	/// Updates current reading when new value is ready in event file.
 	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikUtils::TimeVal &eventTime);
+		, trikUtils::TimeVal eventTime);
 
 private:
 	/// Event file of a sensor driver.
