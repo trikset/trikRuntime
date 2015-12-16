@@ -19,6 +19,10 @@
 #include "sensorInterface.h"
 #include "deviceState.h"
 
+namespace trikUtils {
+class TimeVal;
+}
+
 namespace trikHal {
 class HardwareAbstractionInterface;
 }
@@ -50,7 +54,7 @@ public:
 
 signals:
 	/// Emitted when new data is received from a sensor.
-	void newData(int distance, int rawDistance);
+	void newData(int distance, int rawDistance, trikUtils::TimeVal eventTime);
 
 public slots:
 	/// Initializes sensor and begins receiving events from it.
