@@ -54,7 +54,7 @@ public:
 
 signals:
 	/// Emitted when new data is received from a sensor.
-	void newData(int distance, int rawDistance, trikUtils::TimeVal eventTime);
+	void newData(int distance, int rawDistance, const trikUtils::TimeVal &eventTime);
 
 public slots:
 	/// Initializes sensor and begins receiving events from it.

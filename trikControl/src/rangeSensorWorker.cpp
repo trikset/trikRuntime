@@ -80,7 +80,7 @@ void RangeSensorWorker::init()
 }
 
 void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-		, trikUtils::TimeVal eventTime)
+		, const trikUtils::TimeVal &eventTime)
 {
 	if (!mState.isReady()) {
 		return;

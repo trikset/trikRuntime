@@ -5,6 +5,11 @@ trikUtils::TimeVal::TimeVal() :
 {
 }
 
+trikUtils::TimeVal::TimeVal(const TimeVal &timeVal) :
+	mTime(timeVal.mTime)
+{
+}
+
 trikUtils::TimeVal::TimeVal(int sec, int mcsec)
 {
 	mTime = ((sec * mSecConst) >> (mShift - 6))  + (mcsec >> mShift);
@@ -13,9 +18,4 @@ trikUtils::TimeVal::TimeVal(int sec, int mcsec)
 int trikUtils::TimeVal::toMcSec() const
 {
 	return (mTime << mShift);
-}
-
-trikUtils::TimeVal::TimeVal(int bobtailTime) :
-	mTime(bobtailTime)
-{
 }
