@@ -37,18 +37,14 @@ public:
 	/// Translates an interior format to mcsec.
 	int toMcSec() const;
 
-	friend const TimeVal &operator-(const TimeVal &left, const TimeVal &right)
+	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right)
 	{
-		TimeVal timeVal;
-		timeVal.mTime = left.mTime - right.mTime;
-		return timeVal;
+		TimeVal deltaTime;
+		deltaTime.mTime	= left.mTime - right.mTime;
+		return deltaTime;
 	}
 
-	TimeVal &operator=(const TimeVal &timeVal)
-	{
-		mTime = timeVal.mTime;
-		return *this;
-	}
+	TimeVal &operator=(const TimeVal &timeVal);
 
 private:
 

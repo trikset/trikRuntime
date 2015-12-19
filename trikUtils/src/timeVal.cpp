@@ -8,6 +8,7 @@ trikUtils::TimeVal::TimeVal() :
 trikUtils::TimeVal::TimeVal(const TimeVal &timeVal) :
 	mTime(timeVal.mTime)
 {
+
 }
 
 trikUtils::TimeVal::TimeVal(int sec, int mcsec)
@@ -18,4 +19,10 @@ trikUtils::TimeVal::TimeVal(int sec, int mcsec)
 int trikUtils::TimeVal::toMcSec() const
 {
 	return (mTime << mShift);
+}
+
+trikUtils::TimeVal &trikUtils::TimeVal::operator=(const trikUtils::TimeVal &timeVal)
+{
+	mTime = timeVal.mTime;
+	return *this;
 }
