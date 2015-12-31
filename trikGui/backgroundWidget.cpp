@@ -34,7 +34,7 @@ BackgroundWidget::BackgroundWidget(
 	, mWiFiIndicator(mController)
 	, mMailboxIndicator("://resources/mailboxConnected.png", mController.mailbox()->isConnected())
 	, mCommunicatorIndicator("://resources/communicatorConnected.png", mController.communicatorConnectionStatus())
-	, mStartWidget(mController, configPath)
+	, mStartWidget(mController)
 	, mRunningWidget(mController)
 {
 	setWindowState(Qt::WindowFullScreen);

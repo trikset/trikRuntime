@@ -22,16 +22,20 @@ DEFINES += TRIKWIFI_LIBRARY
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
-	$$PWD/include/trikWiFi/wpaConfigurer.h \
+	$$PWD/include/trikWiFi/networkStructs.h \
 	$$PWD/include/trikWiFi/declSpec.h \
 
 HEADERS += \
 	$$PWD/src/wpaSupplicantCommunicator.h \
+	$$PWD/src/trikWiFiWorker.h \
 
 SOURCES += \
 	$$PWD/src/trikWiFi.cpp \
-	$$PWD/src/wpaConfigurer.cpp \
+	$$PWD/src/trikWiFiWorker.cpp \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
+
+implementationIncludes(trikKernel)
+links(trikKernel)
 
 installs()
 noPch()

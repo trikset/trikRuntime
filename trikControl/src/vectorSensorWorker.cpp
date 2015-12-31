@@ -57,6 +57,7 @@ void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType event
 	}
 }
 
+/// @todo: vector copying is not atomic, so we may receive evSyn right in the middle of "return mReading".
 QVector<int> VectorSensorWorker::read()
 {
 	if (mState.isReady()) {

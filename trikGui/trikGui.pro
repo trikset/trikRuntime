@@ -91,10 +91,8 @@ TRANSLATIONS = \
 RESOURCES = trikGui.qrc
 
 OTHER_FILES += \
-	$$PWD/wpa-config.xml \
 	$$PWD/trikGui.sh \
 
-copyToDestdir($$PWD/wpa-config.xml)
 copyToDestdir($$PWD/trikGui.sh)
 
 TEMPLATE = app
@@ -110,4 +108,3 @@ transitiveIncludes(trikNetwork)
 links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
 
 installs()
-installAdditionalConfigs($$PWD/wpa-config.xml)

@@ -1,4 +1,4 @@
-/* Copyright 2013 Roman Kurbatov, Yurii Litvinov
+/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +15,21 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QThread>
+#include <QtCore/QString>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QSocketNotifier>
+#include <QtCore/QHash>
+
+#include <trikKernel/synchronizedVar.h>
 
 #include "networkStructs.h"
 
-#include "declSpec.h"
-
 namespace trikWiFi {
 
-class TrikWiFiWorker;
+class WpaSupplicantCommunicator;
 
-/// Class for WiFi management. Allows to connect and disconnect to/from WPA-PSK network (using wpa-supplicant utility),
-/// to scan for available networks and to alter configuration of wpa-supplicant.
-class TRIKWIFI_EXPORT TrikWiFi : public QObject
+/// Worker object for TrikWiFi, supposed to be runned in its own thread.
+class TrikWiFiWorker : public QObject
 {
 	Q_OBJECT
 
@@ -38,48 +39,46 @@ public:
 	///        with wpa_supplicant.
 	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
 	///        /run/wpa_supplicant/wlan0.
-	/// @param parent - parent QObject.
-	TrikWiFi(const QString &interfaceFilePrefix, const QString &daemonFile, QObject *parent = nullptr);
+	TrikWiFiWorker(const QString &interfaceFilePrefix, const QString &daemonFile);
 
-	/// Destructor.
-	~TrikWiFi() override;
+	~TrikWiFiWorker() override;
 
 	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
-	void connect(int id);
+	Q_INVOKABLE void connect(int id);
 
 	/// Disconnect from network if we are currently connected to one.
-	void disconnect();
-
-	/// Asynchronously gets conection status and connection information such as SSID and IP. Emits statusReady when
-	/// done, then status can be obtained by statusResult() call.
-	void statusRequest();
-
-	/// Returns last known connection status. To refresh, use statusRequest() method.
-	Status statusResult() const;
-
-	/// Asynchronously scans for available WiFi networks. When done, sends scanFinished() signal, then scan results
-	/// can be obtained via scanResult() method.
-	void scanRequest();
-
-	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
-	QList<ScanResult> scanResult() const;
-
-	/// Asynchronously gets registered networks from wpa_supplicant. When ready, listNetworksReady() signal and results
-	/// can be received by listNetworksResult() method. wpa_supplicant can connect only to registered networks.
-	void listNetworksRequest();
-
-	/// Returns a current list of registered networks. Use listNetworksRequest() method to refresh.
-	QList<NetworkConfiguration> listNetworksResult() const;
+	Q_INVOKABLE void disconnect();
 
 	/// Disposes an old connection to wpa_supplicant and creates a new one.
-	void reinit();
+	Q_INVOKABLE void reinit();
 
 	/// Closes the connection to wpa_supplicant.
-	void dispose();
+	Q_INVOKABLE void dispose();
+
+	/// Gets conection status and connection information such as SSID and IP. Emits statusReady when
+	/// done, then status can be obtained by statusResult() call.
+	Q_INVOKABLE void statusRequest();
+
+	/// Returns last known connection status. To refresh, use statusRequest() method.
+	Status statusResult();
+
+	/// Scans for available WiFi networks. When done, sends scanFinished() signal, then scan results
+	/// can be obtained via scanResult() method.
+	Q_INVOKABLE void scanRequest();
+
+	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
+	QList<ScanResult> scanResult();
+
+	/// Gets registered networks from wpa_supplicant. When ready, listNetworksReady() signal and results
+	/// can be received by listNetworksResult() method. wpa_supplicant can connect only to registered networks.
+	Q_INVOKABLE void listNetworksRequest();
+
+	/// Returns a current list of registered networks. Use listNetworksRequest() method to refresh.
+	QList<NetworkConfiguration> listNetworksResult();
 
 signals:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
-	/// and ready to be obtained by scanResults() method.
+	/// and ready to be obtained by scanResults method.
 	void scanFinished();
 
 	/// Emitted when wpa_supplicant connects to WiFi network. SSID of this network can be retrieved by status() method.
@@ -99,12 +98,27 @@ signals:
 	/// Emitted when something goes wrong.
 	void error(const QString &message);
 
-private:
-	/// Worker in separate thread that communicates with wpa_supplicant.
-	QScopedPointer<TrikWiFiWorker> mWorker;
+private slots:
+	void receiveMessages();
 
-	/// Thread for worker.
-	QThread mWorkerThread;
+private:
+	QString mInterfaceFile;
+	QString mDaemonFile;
+	QScopedPointer<WpaSupplicantCommunicator> mControlInterface;
+	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
+	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
+
+	static QHash<QString, QString> parseReply(const QString &reply);
+
+	void processMessage(const QString &message);
+
+	void processScanResults();
+
+	trikKernel::SynchronizedVar<Status> mStatus;
+
+	trikKernel::SynchronizedVar<QList<NetworkConfiguration>> mNetworkConfiguration;
+
+	trikKernel::SynchronizedVar<QList<ScanResult>> mScanResult;
 };
 
 }

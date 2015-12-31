@@ -41,10 +41,9 @@ using namespace trikGui;
 using trikControl::MotorInterface;
 using trikControl::SensorInterface;
 
-StartWidget::StartWidget(Controller &controller, const QString &configPath, QWidget *parent)
+StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	: MainWidget(parent)
 	, mController(controller)
-	, mConfigPath(configPath)
 	, mFileManagerRoot(MainWidget::FileManagerRootType::scriptsDir)
 {
 	mTitleLabel.setText(tr("TRIK"));
@@ -114,7 +113,7 @@ void StartWidget::launch()
 			emit newWidget(fileManagerWidget);
 			result = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
-			WiFiModeWidget wiFiModeWidget(mConfigPath, mController.wiFi());
+			WiFiModeWidget wiFiModeWidget(mController.wiFi());
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {

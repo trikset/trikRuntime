@@ -42,6 +42,9 @@ public slots:
 	/// Waits given amount of time in milliseconds and returns.
 	void wait(const int &milliseconds);
 
+	/// Waits given amount of time in milliseconds of Luchin Time and returns.
+	void waitLuchin(const int &luchinMs);
+
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
 	qint64 time() const;
 

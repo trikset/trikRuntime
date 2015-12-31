@@ -117,7 +117,7 @@ void ServoMotor::setPower(int power, bool constrain)
 	power = mInvert ? -power : power;
 
 	const int range = power <= 0 ? mZero - mMin : mMax - mZero;
-	const qreal powerFactor = static_cast<qreal>(range) / 90;
+	const qreal powerFactor = static_cast<qreal>(range) / powerBoundary;
 	int duty = static_cast<int>(mZero + power * powerFactor);
 	const QString command = QString::number(duty);
 

@@ -198,7 +198,5 @@ int WpaSupplicantCommunicator::receive(QString &message)
 	buffer[messageLen] = '\0';
 	message = buffer;
 
-	qDebug() << "Message: " << message;
-
 	return 0;
 }
