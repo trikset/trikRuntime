@@ -22,8 +22,11 @@ class TimeVal
 
 public:
 
+	/// Constructor.
 	TimeVal();
 
+	/// Copy constructor.
+	/// @param timeVal - an object, a copy of which is created.
 	TimeVal(const TimeVal &timeVal);
 
 	/// Constructor. Parameters represent time in the format - (sec * 10^6 + mcsec) msces.
@@ -37,6 +40,9 @@ public:
 	/// Translates an interior format to mcsec.
 	int toMcSec() const;
 
+	/// Overloaded "minus" operator.
+	/// @param left - a value before sign.
+	/// @param right - a value after sign.
 	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right)
 	{
 		TimeVal deltaTime;
@@ -44,6 +50,8 @@ public:
 		return deltaTime;
 	}
 
+	/// Overloaded "is equal" operator.
+	/// @param timeVal - a value, which is assigned to a variable.
 	TimeVal &operator=(const TimeVal &timeVal);
 
 private:
