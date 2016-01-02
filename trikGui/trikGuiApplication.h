@@ -38,9 +38,9 @@ public:
 	/// Constructor with command-line arguments.
 	TrikGuiApplication(int &argc, char **argv);
 
-	bool notify(QObject *receiver, QEvent *event) override;
-
 	~TrikGuiApplication() override;
+
+	bool notify(QObject *receiver, QEvent *event) override;
 
 private slots:
 	/// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update

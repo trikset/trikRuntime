@@ -224,12 +224,19 @@ unix:equals(ARCHITECTURE, "x86") {
 			QMAKE_LFLAGS += -fsanitize=address
 		}
 		CONFIG(sanitize-undefined) {
+			# UBSan does not play well with precompiled headers for some reason.
+			noPch()
 			QMAKE_CXXFLAGS += -fsanitize=undefined
 			QMAKE_LFLAGS += -fsanitize=undefined
 		}
 		CONFIG(sanitize-thread) {
 			QMAKE_CXXFLAGS += -fsanitize=thread
 			QMAKE_LFLAGS += -fsanitize=thread
+			LIBS += -ltsan
 		}
 	}
+}
+
+CONFIG(noPch) {
+	noPch()
 }
