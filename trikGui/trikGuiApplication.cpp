@@ -36,6 +36,17 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	connect(&mPowerButtonPressedTimer, SIGNAL(timeout()), this, SLOT(shutdown()));
 }
 
+TrikGuiApplication::~TrikGuiApplication()
+{
+	// Do a zero-timed event loop to process all pending deferred deinitializations (mainly "deleteLater" calls).
+	QEventLoop loop;
+	QTimer t;
+	connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
+	t.setSingleShot(true);
+	t.start(0);
+	loop.exec();
+}
+
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {

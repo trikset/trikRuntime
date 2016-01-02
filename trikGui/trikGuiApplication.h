@@ -40,6 +40,8 @@ public:
 
 	bool notify(QObject *receiver, QEvent *event) override;
 
+	~TrikGuiApplication() override;
+
 private slots:
 	/// Temporary measure for some demo models which do not use QWS to draw their graphics, so we need to update
 	/// all GUI to remove clutter on a screen.

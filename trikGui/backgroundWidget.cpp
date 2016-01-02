@@ -37,7 +37,9 @@ BackgroundWidget::BackgroundWidget(
 	, mStartWidget(mController)
 	, mRunningWidget(mController)
 {
+#ifdef Q_WS_QWS
 	setWindowState(Qt::WindowFullScreen);
+#endif
 
 	mMainLayout.setSpacing(10);
 
