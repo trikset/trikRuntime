@@ -117,3 +117,25 @@ copyToDestdir( \
 	$$PWD/system-config.xml  \
 	$$PWD/../media/ \
 )
+
+# Compiler swithces to enable Google Sanitizers support.
+unix:equals(ARCHITECTURE, "x86") {
+	CONFIG(debug) {
+		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
+		CONFIG(sanitize-address) {
+			QMAKE_CXXFLAGS += -fsanitize=address
+			QMAKE_LFLAGS += -fsanitize=address
+		}
+		CONFIG(sanitize-undefined) {
+			# UBSan does not play well with precompiled headers for some reason.
+			noPch()
+			QMAKE_CXXFLAGS += -fsanitize=undefined
+			QMAKE_LFLAGS += -fsanitize=undefined
+		}
+		CONFIG(sanitize-thread) {
+			QMAKE_CXXFLAGS += -fsanitize=thread
+			QMAKE_LFLAGS += -fsanitize=thread
+			LIBS += -ltsan
+		}
+	}
+}

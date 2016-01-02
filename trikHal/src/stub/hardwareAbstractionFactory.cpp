@@ -18,7 +18,7 @@
 
 using namespace trikHal;
 
-HardwareAbstractionInterface *HardwareAbstractionFactory::create()
+QSharedPointer<HardwareAbstractionInterface> HardwareAbstractionFactory::create()
 {
-	return new stub::StubHardwareAbstraction();
+	return QSharedPointer<stub::StubHardwareAbstraction>::create();
 }

@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <QtCore/QSharedPointer>
+
 #include "hardwareAbstractionInterface.h"
 
 namespace trikHal {
@@ -23,8 +25,8 @@ namespace trikHal {
 class HardwareAbstractionFactory
 {
 public:
-	/// Returns hardware abstraction object and transfers ownership to the caller.
-	static HardwareAbstractionInterface *create();
+	/// Returns pointer to hardware abstraction object.
+	static QSharedPointer<HardwareAbstractionInterface> create();
 };
 
 }

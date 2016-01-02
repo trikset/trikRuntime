@@ -21,6 +21,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
+	$$PWD/include/trikKernel/differentOwnerPointer.h \
 	$$PWD/include/trikKernel/fileUtils.h \
 	$$PWD/include/trikKernel/loggingHelper.h \
 	$$PWD/include/trikKernel/commandLineParser.h \
