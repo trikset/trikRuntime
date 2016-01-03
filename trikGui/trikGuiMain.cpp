@@ -20,6 +20,7 @@
 #include <QtCore/QDir>
 
 #include <trikKernel/applicationInitHelper.h>
+#include <trikKernel/deinitializationHelper.h>
 #include <QsLog.h>
 
 #include "trikGuiApplication.h"
@@ -30,6 +31,9 @@ using namespace trikGui;
 int main(int argc, char *argv[])
 {
 	TrikGuiApplication app(argc, argv);
+
+	trikKernel::DeinitializationHelper helper;
+	Q_UNUSED(helper);
 
 	trikKernel::ApplicationInitHelper initHelper(app);
 

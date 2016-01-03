@@ -16,6 +16,7 @@
 
 #include <trikControl/brickInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikKernel/deinitializationHelper.h>
 
 #include <gtest/gtest.h>
 
@@ -33,6 +34,10 @@ protected:
 	static void wait(int msec);
 
 private:
+	/// Does nothing, but ensures event processing at the time of destruction of test suite, to avoid
+	/// deleteLater()-related memleaks.
+	trikKernel::DeinitializationHelper mHelper;
+
 	QScopedPointer<trikControl::BrickInterface> mBrick;
 	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
 };

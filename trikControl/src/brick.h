@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2016 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 #include <QtCore/QScopedPointer>
 
 #include <trikKernel/configurer.h>
+#include <trikKernel/differentOwnerPointer.h>
 
 #include "brickInterface.h"
 
@@ -122,14 +123,20 @@ public slots:
 	FifoInterface *fifo(const QString &port) override;
 
 private:
-	Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
-			, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction);
+	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
+			, const QString &systemConfig
+			, const QString &modelConfig
+			, const QString &mediaPath);
 
 	/// Deinitializes and properly shuts down device on a given port.
 	void shutdownDevice(const QString &port);
 
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
+
+	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
+	/// Has or hasn't ownership depending on whether it was created by Brick itself or passed from outside.
+	trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> mHardwareAbstraction;
 
 	QScopedPointer<MspCommunicatorInterface> mMspCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
@@ -156,13 +163,6 @@ private:
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
-
-	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
-	/// Has or hasn't ownership depending on mOwnsHardwareAbstraction value.
-	trikHal::HardwareAbstractionInterface *mHardwareAbstraction;
-
-	/// True, if hardware abstraction object was created here, false if passed from outside.
-	bool mOwnsHardwareAbstraction;
 
 	trikKernel::Configurer mConfigurer;
 };

@@ -1,4 +1,4 @@
-# Copyright 2014 - 2015 CyberTech Co. Ltd.
+# Copyright 2014 - 2016 CyberTech Co. Ltd., Yurii Litvinov.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@
 # uses function to automatically add a library to INCLUDEPATH and LIBS.
 #
 # Uses environment variable INSTALL_ROOT as a root of a file structure for install rules.
+#
+# Uses CONFIG variable to control support for Google Sanitizers (in linux-x86 debug mode only):
+# - CONFIG+=sanitize-address will enable address sanitizer
+# - CONFIG+=sanitize-undefined will enable undefined behavior sanitizer
+# - CONFIG+=sanitize-thread will enable thread sanitizer
 
 COMPILER = $$(CXX)
 
@@ -209,4 +214,29 @@ defineTest(noPch) {
 	PRECOMPILED_HEADER =
 	export(CONFIG)
 	export(PRECOMPILED_HEADER)
+}
+
+unix:equals(ARCHITECTURE, "x86") {
+	CONFIG(debug) {
+		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
+		CONFIG(sanitize-address) {
+			QMAKE_CXXFLAGS += -fsanitize=address
+			QMAKE_LFLAGS += -fsanitize=address
+		}
+		CONFIG(sanitize-undefined) {
+			# UBSan does not play well with precompiled headers for some reason.
+			noPch()
+			QMAKE_CXXFLAGS += -fsanitize=undefined
+			QMAKE_LFLAGS += -fsanitize=undefined
+		}
+		CONFIG(sanitize-thread) {
+			QMAKE_CXXFLAGS += -fsanitize=thread
+			QMAKE_LFLAGS += -fsanitize=thread
+			LIBS += -ltsan
+		}
+	}
+}
+
+CONFIG(noPch) {
+	noPch()
 }

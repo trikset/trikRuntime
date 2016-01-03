@@ -43,23 +43,26 @@
 #include <QsLog.h>
 
 using namespace trikControl;
+using namespace trikKernel;
+using namespace trikHal;
 
 Brick::Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction
 		, const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
-	: Brick(&hardwareAbstraction, systemConfig, modelConfig, mediaPath, false)
+	: Brick(createDifferentOwnerPointer(hardwareAbstraction), systemConfig, modelConfig, mediaPath)
 {
 }
 
 Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
-	: Brick(trikHal::HardwareAbstractionFactory::create(), systemConfig, modelConfig, mediaPath, true)
+	: Brick(createDifferentOwnerPointer(HardwareAbstractionFactory::create()), systemConfig, modelConfig, mediaPath)
 {
 }
 
-Brick::Brick(trikHal::HardwareAbstractionInterface * const hardwareAbstraction, const QString &systemConfig
-		, const QString &modelConfig, const QString &mediaPath, bool ownsHardwareAbstraction)
-	: mDisplay(new Display(mediaPath))
-	, mHardwareAbstraction(hardwareAbstraction)
-	, mOwnsHardwareAbstraction(ownsHardwareAbstraction)
+Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
+		, const QString &systemConfig
+		, const QString &modelConfig
+		, const QString &mediaPath)
+	: mHardwareAbstraction(hardwareAbstraction)
+	, mDisplay(new Display(mediaPath))
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -121,10 +124,6 @@ Brick::~Brick()
 	mKeys.reset();
 	mDisplay.reset();
 	mLed.reset();
-
-	if (mOwnsHardwareAbstraction) {
-		delete mHardwareAbstraction;
-	}
 }
 
 DisplayWidgetInterface &Brick::graphicsWidget()
@@ -348,7 +347,7 @@ LedInterface *Brick::led()
 	return mLed.data();
 }
 
-FifoInterface *Brick::fifo(const QString &port)
+trikControl::FifoInterface *Brick::fifo(const QString &port)
 {
 	return mFifos[port];
 }

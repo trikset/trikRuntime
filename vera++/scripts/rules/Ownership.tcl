@@ -22,7 +22,7 @@ proc CheckOwnership { fileName } {
     }
 
     if { [regexp {^\t+[a-zA-Z<>& ]* \*[\w]*;} $line] } {
-      if { ![regexp {ownership} [string tolower $line] ] &&  ![regexp {ownership} [string tolower $previousComment] ] } {
+      if { ![regexp {ownership} [string tolower $line] ] &&  ![regexp {ownership} [string tolower $previousComment] ] && ![regexp {return} $line ] } {
         report $fileName $lineCount "Raw pointers must have a comment with ownership information - does object have ownership over pointed object or not (so will it delete pointed object itself or not)"
       }
     }

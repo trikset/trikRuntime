@@ -21,6 +21,7 @@ HEADERS += \
 
 SOURCES += \
 	$$PWD/synchronizedVarTest.cpp \
+	$$PWD/differentOwnedPointerTest.cpp \
 
 implementationIncludes(trikKernel)
 links(trikKernel)

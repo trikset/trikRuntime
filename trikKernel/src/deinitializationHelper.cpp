@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2016 Yurii Litvinov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,13 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "hardwareAbstractionFactory.h"
+#include "deinitializationHelper.h"
 
-#include "stubHardwareAbstraction.h"
+#include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
 
-using namespace trikHal;
+using namespace trikKernel;
 
-QSharedPointer<HardwareAbstractionInterface> HardwareAbstractionFactory::create()
+DeinitializationHelper::~DeinitializationHelper()
 {
-	return QSharedPointer<stub::StubHardwareAbstraction>::create();
+	QEventLoop loop;
+	QTimer t;
+	QObject::connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
+	t.setSingleShot(true);
+	t.start(0);
+	loop.exec();
 }

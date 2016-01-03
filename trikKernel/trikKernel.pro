@@ -1,4 +1,4 @@
-# Copyright 2014 - 2015 CyberTech Labs Ltd.
+# Copyright 2014 - 2016 CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ HEADERS += \
 	$$PWD/include/trikKernel/configurer.h \
 	$$PWD/include/trikKernel/coreDumping.h \
 	$$PWD/include/trikKernel/debug.h \
+	$$PWD/include/trikKernel/deinitializationHelper.h \
+	$$PWD/include/trikKernel/differentOwnerPointer.h \
 	$$PWD/include/trikKernel/fileUtils.h \
 	$$PWD/include/trikKernel/loggingHelper.h \
 	$$PWD/include/trikKernel/commandLineParser.h \
@@ -39,6 +41,7 @@ SOURCES += \
 	$$PWD/src/applicationInitHelper.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/debug.cpp \
+	$$PWD/src/deinitializationHelper.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/loggingHelper.cpp \
 	$$PWD/src/commandLineParser.cpp \

@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2016 Yurii Litvinov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,13 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "hardwareAbstractionFactory.h"
+#pragma once
 
-#include "stubHardwareAbstraction.h"
+namespace trikKernel {
 
-using namespace trikHal;
-
-QSharedPointer<HardwareAbstractionInterface> HardwareAbstractionFactory::create()
+/// RAII-style helper class that performs deferred deinitialization, intended to be used in main programs or test cases
+/// (with Q_UNUSED macro). Runs zero-time event loop that processes all deleteLater() requests and so on, then
+/// shuts down.
+class DeinitializationHelper
 {
-	return QSharedPointer<stub::StubHardwareAbstraction>::create();
+public:
+	/// Here is all the magic - runs zero-time event loop when this object is destroyed.
+	~DeinitializationHelper();
+};
+
 }

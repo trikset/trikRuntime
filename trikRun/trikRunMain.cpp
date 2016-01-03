@@ -20,7 +20,11 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include <QtCore/QTimer>
+#include <QtCore/QEventLoop>
+
 #include <trikKernel/configurer.h>
+#include <trikKernel/deinitializationHelper.h>
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/applicationInitHelper.h>
 #include <trikKernel/paths.h>
@@ -38,6 +42,10 @@ int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 	app.setApplicationName("TrikRun");
+
+	// RAII-style code to ensure that after brick gets destroyed there will be an event loop that cleans it up.
+	trikKernel::DeinitializationHelper helper;
+	Q_UNUSED(helper);
 
 	trikKernel::ApplicationInitHelper initHelper(app);
 
