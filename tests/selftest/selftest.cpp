@@ -19,6 +19,7 @@
 #include <trikControl/brickInterface.h>
 #include <trikControl/brickFactory.h>
 #include <trikKernel/configurer.h>
+#include <trikKernel/deinitializationHelper.h>
 #include <trikNetwork/gamepadFactory.h>
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
@@ -31,24 +32,10 @@ using namespace testing;
 using namespace trikControl;
 using namespace trikNetwork;
 
-class DeinitializationHelper
-{
-public:
-	~DeinitializationHelper()
-	{
-		QEventLoop loop;
-		QTimer t;
-		QObject::connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
-		t.setSingleShot(true);
-		t.start(0);
-		loop.exec();
-	}
-};
-
 TEST(selftest, brickCheck)
 {
 	// RAII-style code to ensure that after brick gets destroyed there will be an event loop that cleans it up.
-	DeinitializationHelper helper;
+	trikKernel::DeinitializationHelper helper;
 	Q_UNUSED(helper);
 	QScopedPointer<BrickInterface> brick(BrickFactory::create("./system-config.xml"
 			, "./selftest-model-config.xml", "./"));

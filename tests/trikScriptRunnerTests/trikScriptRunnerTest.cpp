@@ -18,13 +18,11 @@
 #include <QtCore/QEventLoop>
 #include <QtCore/QFile>
 #include <QtCore/QTimer>
-
 #include <QtScript/QScriptContext>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 
 #include <trikControl/brickFactory.h>
-
 #include <trikKernel/fileUtils.h>
 
 using namespace tests;
