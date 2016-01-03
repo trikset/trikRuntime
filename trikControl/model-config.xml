@@ -52,16 +52,16 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<sharpGP2Sensor />
 	</A2>
 	<A3>
-		<sharpGP2Sensor />
+		<touchSensor />
 	</A3>
 	<A4>
-		<analogSensor />
+		<touchSensor />
 	</A4>
 	<A5>
 		<analogSensor />
 	</A5>
 	<A6>
-		<touchSensor />
+		<analogSensor />
 	</A6>
 
 	<!-- Digital sensor ports. -->
