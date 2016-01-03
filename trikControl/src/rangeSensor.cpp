@@ -20,6 +20,7 @@
 #include <trikKernel/timeVal.h>
 #include <QsLog.h>
 
+#include "configurerHelper.h"
 #include "rangeSensorWorker.h"
 #include "moduleLoader.h"
 
@@ -36,6 +37,9 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 		mState.fail();
 		return;
 	}
+
+	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
+	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
 	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState
 			, hardwareAbstraction));
@@ -97,4 +101,14 @@ void RangeSensor::stop()
 	if (!mState.isFailed()) {
 		QMetaObject::invokeMethod(mSensorWorker.data(), "stop");
 	}
+}
+
+int RangeSensor::minValue() const
+{
+	return mMinValue;
+}
+
+int RangeSensor::maxValue() const
+{
+	return mMaxValue;
 }

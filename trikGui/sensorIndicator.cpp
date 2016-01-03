@@ -33,14 +33,12 @@ SensorIndicator::SensorIndicator(const QString &port
 		, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mSensor(sensor)
-	, mMaxValue(100)
-	, mMinValue(0)
 	, mNameLabel(port)
 	, mValueLabel("0")
 {
 	mValueBar.setOrientation(Qt::Horizontal);
-	mValueBar.setMaximum(mMaxValue);
-	mValueBar.setMinimum(mMinValue);
+	mValueBar.setMaximum(sensor.maxValue());
+	mValueBar.setMinimum(sensor.minValue());
 	mValueBar.setValue(0);
 	mValueBar.setTextVisible(false);
 
@@ -63,7 +61,9 @@ SensorIndicator::SensorIndicator(const QString &port
 
 void SensorIndicator::renew()
 {
-	const int value = mSensor.read();
+	int value = mSensor.read();
 	mValueLabel.setText(QString::number(value));
+	value = std::max(value, mValueBar.minimum());
+	value = std::min(value, mValueBar.maximum());
 	mValueBar.setValue(value);
 }

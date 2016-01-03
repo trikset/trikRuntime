@@ -42,6 +42,10 @@ public:
 
 	Status status() const override;
 
+	int minValue() const override;
+
+	int maxValue() const override;
+
 public slots:
 	/// Returns current reading of a sensor.
 	int read();
@@ -83,6 +87,12 @@ private:
 	/// Hyperbolical approximation coefficient s.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
 	int mS = 0;
+
+	/// Minimal possible normalized value returned by sensor.
+	int mMinValue = 0;
+
+	/// Maximal possible normalized value returned by sensor.
+	int mMaxValue = 0;
 
 	/// State of a device.
 	DeviceState mState;

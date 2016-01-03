@@ -89,3 +89,13 @@ DigitalSensor::Status DigitalSensor::status() const
 {
 	return mState.status();
 }
+
+int DigitalSensor::minValue() const
+{
+	return 0;
+}
+
+int DigitalSensor::maxValue() const
+{
+	return 100;
+}

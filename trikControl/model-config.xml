@@ -66,10 +66,10 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Digital sensor ports. -->
 	<D1>
-		<rangeSensor />
+		<sonarSensor />
 	</D1>
 	<D2>
-		<rangeSensor />
+		<sonarSensor />
 	</D2>
 	<!--
 	<D3>

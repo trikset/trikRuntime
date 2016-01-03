@@ -68,9 +68,9 @@ equal to its class name.
 		<servoMotor period="20000000" invert="false" />
 		<pwmCapture />
 		<powerMotor invert="false" />
-		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" />
+		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
 		<encoder />
-		<rangeSensor commonModule="hcsr04" />
+		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
 		<digitalSensor />
 		<fifo />
 		<accelerometer deviceFile="/dev/input/event1" optional="true" />
@@ -84,7 +84,7 @@ equal to its class name.
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!--Device file for keys on a brick -->
-                <keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
+				<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
 
 		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
 		<gamepad port="4444" optional="true" />
@@ -362,7 +362,7 @@ equal to its class name.
 		<!-- <irSensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" /> -->
 		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="continuousRotation" />
 		<sharpGP2Sensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
-		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" />
+		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" minValue="0" maxValue="400" />
 		<lightSensor class="digitalSensor" min="30000" max="350000" />
 		<volumeSensor class="digitalSensor" min="0" max="100" />
 		<!-- <encoder95 class="encoder" ticksInDegree="43.389445" /> -->

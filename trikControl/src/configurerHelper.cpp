@@ -17,6 +17,8 @@
 #include <QtCore/QString>
 
 #include <trikKernel/configurer.h>
+#include <trikKernel/exceptions/malformedConfigException.h>
+
 #include <QsLog.h>
 
 #include "deviceState.h"
@@ -26,31 +28,41 @@ using namespace trikControl;
 int ConfigurerHelper::configureInt(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
 		, const QString &parameterName)
 {
-	bool ok = false;
-	int parameter = configurer.attributeByPort(port, parameterName).toInt(&ok, 0);
-	if (!ok) {
-		QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
-				.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
+	try {
+		bool ok = false;
+		int parameter = configurer.attributeByPort(port, parameterName).toInt(&ok, 0);
+		if (!ok) {
+			QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
+					.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
 
+			state.fail();
+			return 0;
+		}
+
+		return parameter;
+	} catch (trikKernel::MalformedConfigException &) {
 		state.fail();
 		return 0;
 	}
-
-	return parameter;
 }
 
 qreal ConfigurerHelper::configureReal(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
 		, const QString &parameterName)
 {
-	bool ok = false;
-	const qreal parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
-	if (!ok) {
-		QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
-				.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
+	try {
+		bool ok = false;
+		const qreal parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
+		if (!ok) {
+			QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
+					.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
 
+			state.fail();
+			return 0;
+		}
+
+		return parameter;
+	} catch (trikKernel::MalformedConfigException &) {
 		state.fail();
 		return 0;
 	}
-
-	return parameter;
 }

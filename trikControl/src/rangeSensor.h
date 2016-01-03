@@ -52,6 +52,10 @@ public:
 
 	Status status() const override;
 
+	int minValue() const override;
+
+	int maxValue() const override;
+
 signals:
 	/// Emitted when new data is received from a sensor.
 	void newData(int distance, int rawDistance, const trikKernel::TimeVal &eventTime);
@@ -78,6 +82,12 @@ private:
 
 	/// Worker thread.
 	QThread mWorkerThread;
+
+	/// Minimal possible normalized value returned by sensor.
+	int mMinValue = 0;
+
+	/// Maximal possible normalized value returned by sensor.
+	int mMaxValue = 0;
 };
 
 }

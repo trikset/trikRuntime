@@ -45,6 +45,10 @@ public:
 
 	~DigitalSensor() override;
 
+	int minValue() const override;
+
+	int maxValue() const override;
+
 public slots:
 	int read() override;
 

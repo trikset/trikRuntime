@@ -29,6 +29,9 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;
+	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
+	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
+
 	// We use linear subjection to normalize common analog sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
@@ -113,4 +116,14 @@ void AnalogSensor::calculateKB(const QString &port, const trikKernel::Configurer
 		mK = static_cast<qreal>(normalizedValue2 - normalizedValue1) / (rawValue2 - rawValue1);
 		mB = normalizedValue1 - mK * rawValue1;
 	}
+}
+
+int AnalogSensor::minValue() const
+{
+	return mMinValue;
+}
+
+int AnalogSensor::maxValue() const
+{
+	return mMaxValue;
 }

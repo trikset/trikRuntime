@@ -34,11 +34,17 @@ public:
 		, specialSensor
 	};
 
+	/// Gets minimal possible value for sensor reading received by read() slot.
+	virtual int minValue() const = 0;
+
+	/// Gets maximal possible value for sensor reading received by read() slot.
+	virtual int maxValue() const = 0;
+
 public slots:
-	/// Returns current raw reading of a sensor.
+	/// Returns current reading of a sensor.
 	virtual int read() = 0;
 
-	/// Returns current real raw reading of a sensor.
+	/// Returns current raw reading of a sensor.
 	virtual int readRawData() = 0;
 };
 
