@@ -63,8 +63,8 @@ void RangeSensorWorker::init()
 
 	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
-			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikUtils::TimeVal))
+			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikUtils::TimeVal)));
 
 	if (mEventFile->open()) {
 		mState.ready();
@@ -79,7 +79,8 @@ void RangeSensorWorker::init()
 	}
 }
 
-void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
+void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
+		, const trikUtils::TimeVal &eventTime)
 {
 	if (!mState.isReady()) {
 		return;
@@ -93,7 +94,7 @@ void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventT
 			mRawDistance = value;
 			break;
 		case trikHal::EventFileInterface::EventType::evSyn:
-			emit newData(mDistance, mRawDistance);
+			emit newData(mDistance, mRawDistance, eventTime);
 			break;
 		default:
 			QLOG_ERROR() << "Unknown event in range sensor event file:" << static_cast<int>(eventType) << code << value;

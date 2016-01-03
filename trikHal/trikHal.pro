@@ -83,6 +83,9 @@ TEMPLATE = lib
 
 DEFINES += TRIKHAL_LIBRARY
 
+links(trikUtils) 
+implementationIncludes(trikUtils)
+
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }

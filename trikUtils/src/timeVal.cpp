@@ -12,33 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#pragma once
+#include "timeVal.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QVector>
-
-#include "deviceInterface.h"
-
-#include "declSpec.h"
-
-namespace trikUtils {
-class TimeVal;
+trikUtils::TimeVal::TimeVal() :
+	mTime(0)
+{
 }
 
-namespace trikControl {
-
-/// Sensor that returns a vector.
-class TRIKCONTROL_EXPORT VectorSensorInterface : public QObject, public DeviceInterface
+trikUtils::TimeVal::TimeVal(const TimeVal &timeVal) :
+	mTime(timeVal.mTime)
 {
-	Q_OBJECT
+}
 
-signals:
-	/// Emitted when new sensor reading is ready.
-	void newData(QVector<int> reading, const trikUtils::TimeVal &eventTime);
+trikUtils::TimeVal::TimeVal(int sec, int mcsec)
+{
+	mTime = ((sec * mSecConst) >> (mShift - 6))  + (mcsec >> mShift);
+}
 
-public slots:
-	/// Returns current raw reading of a sensor.
-	virtual QVector<int> read() const = 0;
-};
+int trikUtils::TimeVal::toMcSec() const
+{
+	return (mTime << mShift);
+}
 
+trikUtils::TimeVal &trikUtils::TimeVal::operator=(const trikUtils::TimeVal &timeVal)
+{
+	mTime = timeVal.mTime;
+	return *this;
 }

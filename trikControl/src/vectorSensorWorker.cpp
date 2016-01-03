@@ -28,13 +28,14 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 
 	mState.start();
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
-			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int)));
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType,int,int,trikUtils::TimeVal))
+			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType,int,int,trikUtils::TimeVal)));
 
 	mEventFile->open();
 }
 
-void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
+void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
+		, const trikUtils::TimeVal &eventTime)
 {
 	switch (eventType) {
 		case trikHal::EventFileInterface::EventType::evAbsX:
@@ -48,7 +49,7 @@ void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType event
 			break;
 		case trikHal::EventFileInterface::EventType::evSyn:
 			mReading.swap(mReadingUnsynced);
-			emit newData(mReading);
+			emit newData(mReading, eventTime);
 			break;
 		default:
 			QLOG_ERROR() << "Unknown event type in vector sensor event file"<< mEventFile->fileName() << " :"
