@@ -38,8 +38,6 @@ public:
 	/// Constructor with command-line arguments.
 	TrikGuiApplication(int &argc, char **argv);
 
-	~TrikGuiApplication() override;
-
 	bool notify(QObject *receiver, QEvent *event) override;
 
 private slots:
