@@ -26,7 +26,7 @@
 #include <QtCore/QSocketNotifier>
 
 #include <QsLog.h>
-#include <trikUtils/timeVal.h>
+#include <trikKernel/timeVal.h>
 
 using namespace trikHal::trik;
 
@@ -151,7 +151,7 @@ void TrikEventFile::readFile()
 				break;
 		}
 
-		trikUtils::TimeVal eventTime(event.time.tv_sec, event.time.tv_usec);
+		trikKernel::TimeVal eventTime(event.time.tv_sec, event.time.tv_usec);
 		emit newEvent(eventType, event.code, event.value, eventTime);
 	}
 

@@ -1,4 +1,4 @@
-/* Copyright 2015 CyberTech Labs Ltd.
+/* Copyright 2015 - 2016 Anastasiia Kornilova.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
 
 #pragma once
 
-namespace trikUtils {
+namespace trikKernel {
 
 /// Structure of a time value in a convenient format.
 class TimeVal
 {
-
 public:
-
 	/// Constructor.
-	TimeVal();
+	TimeVal() = default;
 
 	/// Copy constructor.
 	/// @param timeVal - an object, a copy of which is created.
@@ -43,24 +41,28 @@ public:
 	/// Overloaded "minus" operator.
 	/// @param left - a value before sign.
 	/// @param right - a value after sign.
-	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right)
-	{
-		TimeVal deltaTime;
-		deltaTime.mTime	= left.mTime - right.mTime;
-		return deltaTime;
-	}
+	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right);
 
 	/// Overloaded "is equal" operator.
 	/// @param timeVal - a value, which is assigned to a variable.
 	TimeVal &operator=(const TimeVal &timeVal);
 
 private:
-
-	int mTime;
+	int mTime = 0;
 
 	static const int mSecConst = 15625;
 	static const int mShift = 8;
 
 };
+
+/// Overloaded "minus" operator.
+/// @param left - a value before sign.
+/// @param right - a value after sign.
+inline const TimeVal operator-(const TimeVal &left, const TimeVal &right)
+{
+	TimeVal deltaTime;
+	deltaTime.mTime	= left.mTime - right.mTime;
+	return deltaTime;
+}
 
 }

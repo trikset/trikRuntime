@@ -17,7 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QObject>
 
-namespace trikUtils {
+namespace trikKernel {
 class TimeVal;
 }
 
@@ -64,7 +64,7 @@ signals:
 	/// @param code - low-level event code.
 	/// @param value - low-level event value.
 	void newEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikUtils::TimeVal &eventTime);
+			, const trikKernel::TimeVal &eventTime);
 };
 
 }

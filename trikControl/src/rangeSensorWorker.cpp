@@ -63,8 +63,8 @@ void RangeSensorWorker::init()
 
 	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikUtils::TimeVal))
-			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikUtils::TimeVal)));
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
+			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
 
 	if (mEventFile->open()) {
 		mState.ready();
@@ -80,7 +80,7 @@ void RangeSensorWorker::init()
 }
 
 void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-		, const trikUtils::TimeVal &eventTime)
+		, const trikKernel::TimeVal &eventTime)
 {
 	if (!mState.isReady()) {
 		return;

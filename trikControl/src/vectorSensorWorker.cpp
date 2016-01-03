@@ -28,14 +28,14 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 
 	mState.start();
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType,int,int,trikUtils::TimeVal))
-			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType,int,int,trikUtils::TimeVal)));
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
+			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
 
 	mEventFile->open();
 }
 
 void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-		, const trikUtils::TimeVal &eventTime)
+		, const trikKernel::TimeVal &eventTime)
 {
 	switch (eventType) {
 		case trikHal::EventFileInterface::EventType::evAbsX:

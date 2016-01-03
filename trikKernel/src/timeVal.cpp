@@ -1,4 +1,4 @@
-/* Copyright 2015 CyberTech Labs Ltd.
+/* Copyright 2015 - 2016 Anastasiia Kornilova.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,24 @@
 
 #include "timeVal.h"
 
-trikUtils::TimeVal::TimeVal() :
-	mTime(0)
+using namespace trikKernel;
+
+TimeVal::TimeVal(const TimeVal &timeVal)
+	: mTime(timeVal.mTime)
 {
 }
 
-trikUtils::TimeVal::TimeVal(const TimeVal &timeVal) :
-	mTime(timeVal.mTime)
+TimeVal::TimeVal(int sec, int mcsec)
 {
+	mTime = ((sec * mSecConst) >> (mShift - 6)) + (mcsec >> mShift);
 }
 
-trikUtils::TimeVal::TimeVal(int sec, int mcsec)
+int TimeVal::toMcSec() const
 {
-	mTime = ((sec * mSecConst) >> (mShift - 6))  + (mcsec >> mShift);
+	return mTime << mShift;
 }
 
-int trikUtils::TimeVal::toMcSec() const
-{
-	return (mTime << mShift);
-}
-
-trikUtils::TimeVal &trikUtils::TimeVal::operator=(const trikUtils::TimeVal &timeVal)
+TimeVal &TimeVal::operator=(const TimeVal &timeVal)
 {
 	mTime = timeVal.mTime;
 	return *this;

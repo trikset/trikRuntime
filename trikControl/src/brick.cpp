@@ -18,6 +18,7 @@
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikHal/hardwareAbstractionFactory.h>
+#include <trikKernel/timeVal.h>
 
 #include "analogSensor.h"
 #include "display.h"
@@ -66,6 +67,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
+	qRegisterMetaType<trikKernel::TimeVal>("trikUtils::TimeVal");
 	qRegisterMetaType<trikHal::EventFileInterface::EventType>("trikHal::EventFileInterface::EventType");
 
 	for (const QString &initScript : mConfigurer.initScripts()) {

@@ -29,6 +29,7 @@ HEADERS += \
 	$$PWD/include/trikKernel/paths.h \
 	$$PWD/include/trikKernel/rcReader.h \
 	$$PWD/include/trikKernel/synchronizedVar.h \
+	$$PWD/include/trikKernel/timeVal.h \
 	$$PWD/include/trikKernel/translationsHelper.h \
 	$$PWD/include/trikKernel/version.h \
 	$$PWD/include/trikKernel/exceptions/failedToOpenFileException.h \
@@ -39,14 +40,15 @@ HEADERS += \
 
 SOURCES += \
 	$$PWD/src/applicationInitHelper.cpp \
+	$$PWD/src/commandLineParser.cpp \
 	$$PWD/src/configurer.cpp \
 	$$PWD/src/debug.cpp \
 	$$PWD/src/deinitializationHelper.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/loggingHelper.cpp \
-	$$PWD/src/commandLineParser.cpp \
 	$$PWD/src/paths.cpp \
 	$$PWD/src/rcReader.cpp \
+	$$PWD/src/timeVal.cpp \
 	$$PWD/src/translationsHelper.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 

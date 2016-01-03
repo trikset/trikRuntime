@@ -21,7 +21,7 @@
 
 #include "declSpec.h"
 
-namespace trikUtils {
+namespace trikKernel {
 class TimeVal;
 }
 
@@ -34,7 +34,7 @@ class TRIKCONTROL_EXPORT VectorSensorInterface : public QObject, public DeviceIn
 
 signals:
 	/// Emitted when new sensor reading is ready.
-	void newData(QVector<int> reading, const trikUtils::TimeVal &eventTime);
+	void newData(QVector<int> reading, const trikKernel::TimeVal &eventTime);
 
 public slots:
 	/// Returns current raw reading of a sensor.

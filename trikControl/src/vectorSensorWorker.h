@@ -23,7 +23,7 @@
 
 #include "deviceState.h"
 
-namespace trikUtils {
+namespace trikKernel {
 class TimeVal;
 }
 
@@ -43,7 +43,7 @@ public:
 
 signals:
 	/// Emitted when new sensor reading is ready.
-	void newData(QVector<int> reading, const trikUtils::TimeVal &eventTime);
+	void newData(QVector<int> reading, const trikKernel::TimeVal &eventTime);
 
 public slots:
 	/// Returns current raw reading of a sensor.
@@ -52,7 +52,7 @@ public slots:
 private slots:
 	/// Updates current reading when new value is ready in event file.
 	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikUtils::TimeVal &eventTime);
+			, const trikKernel::TimeVal &eventTime);
 
 private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
