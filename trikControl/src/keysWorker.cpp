@@ -29,8 +29,8 @@ KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		return;
 	}
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int))
-			, this, SLOT(readKeysEvent(trikHal::EventFileInterface::EventType, int, int)));
+	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
+			, this, SLOT(readKeysEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
 }
 
 void KeysWorker::reset()
@@ -55,8 +55,11 @@ bool KeysWorker::wasPressed(int code)
 	return result;
 }
 
-void KeysWorker::readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value)
+void KeysWorker::readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
+		, const trikKernel::TimeVal &eventTime)
 {
+	Q_UNUSED(eventTime);
+
 	switch (eventType)
 	{
 	case trikHal::EventFileInterface::EventType::evKey:

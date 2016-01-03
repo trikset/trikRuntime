@@ -44,7 +44,8 @@ public slots:
 	bool wasPressed(int code);
 
 private slots:
-	void readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value);
+	void readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
+			, const trikKernel::TimeVal &eventTime);
 
 signals:
 	/// Triggered when button state changed (pressed or released).

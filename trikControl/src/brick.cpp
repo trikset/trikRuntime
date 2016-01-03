@@ -67,7 +67,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
-	qRegisterMetaType<trikKernel::TimeVal>("trikUtils::TimeVal");
+	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 	qRegisterMetaType<trikHal::EventFileInterface::EventType>("trikHal::EventFileInterface::EventType");
 
 	for (const QString &initScript : mConfigurer.initScripts()) {
