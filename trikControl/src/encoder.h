@@ -52,6 +52,7 @@ private:
 	MspCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber;
 	qreal mTicksInDegree;
+	const bool mInvert;
 	DeviceState mState;
 };
 

@@ -69,7 +69,7 @@ equal to its class name.
 		<pwmCapture />
 		<powerMotor invert="false" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
-		<encoder />
+		<encoder invert="false" />
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
 		<digitalSensor />
 		<fifo />

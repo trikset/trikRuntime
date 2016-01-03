@@ -24,6 +24,7 @@ using namespace trikControl;
 
 Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
+	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mState("Encoder on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
@@ -56,7 +57,7 @@ Encoder::Status Encoder::status() const
 
 int Encoder::read()
 {
-	return readRawData() / mTicksInDegree;
+	return readRawData() / mTicksInDegree * (mInvert ? -1 : 1);
 }
 
 int Encoder::readRawData()

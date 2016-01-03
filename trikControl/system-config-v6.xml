@@ -65,7 +65,7 @@ equal to its class name.
 		<pwmCapture />
 		<powerMotor invert="false" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
-		<encoder />
+		<encoder invert="false" />
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100"/>
 		<digitalSensor />
 		<fifo />
@@ -145,8 +145,8 @@ equal to its class name.
 		<analogSensor port="A5" i2cCommandNumber="0x21" />
 		<analogSensor port="A6" i2cCommandNumber="0x20" />
 		<encoder port="B1" i2cCommandNumber="0x30" />
-		<encoder port="B2" i2cCommandNumber="0x31" />
-		<encoder port="B3" i2cCommandNumber="0x32" />
+		<encoder port="B2" i2cCommandNumber="0x31" invert="true" />
+		<encoder port="B3" i2cCommandNumber="0x32" invert="true" />
 		<encoder port="B4" i2cCommandNumber="0x33" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
