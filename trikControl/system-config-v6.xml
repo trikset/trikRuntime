@@ -61,7 +61,7 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
-		<servoMotor period="20000000" invert="false" />
+		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor invert="false" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
@@ -118,6 +118,8 @@ equal to its class name.
 			port="C3"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
+			controlMin="0"
+			controlMax="100"
 		/>
 		<pwmCapture
 			port="C1"
@@ -161,9 +163,10 @@ equal to its class name.
 	</devicePorts>
 
 	<deviceTypes>
-		<angularServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="angular" />
-		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="continuousRotation" />
-		<sharpGP2Sensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
+		<angularServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" />
+		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" controlMin="-100" controlMax="100" />
+		<sharpGP2Sensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100"
+				type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
 		<sonarSensor class="rangeSensor" minValue="0" maxValue="400" />
 		<lightSensor class="digitalSensor" min="30000" max="350000" />
 		<volumeSensor class="digitalSensor" min="0" max="100" />

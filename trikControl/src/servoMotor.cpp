@@ -40,8 +40,8 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 	mMax = configure("max");
 	mZero = configure("zero");
 	mStop = configure("stop");
-
-	mMotorType = configurer.attributeByPort(port, "type") == "angular" ? Type::angular : Type::continiousRotation;
+	mMinControlRange = configure("controlMin");
+	mMaxControlRange = configure("controlMax");
 
 	if (!mPeriodFile->open()) {
 		mState.fail();
@@ -102,23 +102,24 @@ void ServoMotor::setPower(int power, bool constrain)
 		return;
 	}
 
-	const int powerBoundary = mMotorType == Type::angular ? 90 : 100;
-
 	if (constrain) {
-		if (power > powerBoundary) {
-			power = powerBoundary;
-		} else if (power < -powerBoundary) {
-			power = -powerBoundary;
+		if (power > mMaxControlRange) {
+			power = mMaxControlRange;
+		} else if (power < mMinControlRange) {
+			power = mMinControlRange;
 		}
 	}
 
 	mCurrentPower = power;
 
-	power = mInvert ? -power : power;
+	const int meanControlRange = (mMaxControlRange + mMinControlRange) / 2;
 
-	const int range = power <= 0 ? mZero - mMin : mMax - mZero;
-	const qreal powerFactor = static_cast<qreal>(range) / powerBoundary;
-	int duty = static_cast<int>(mZero + power * powerFactor);
+	power = (mInvert ? -1 : 1) * (power - meanControlRange) + meanControlRange;
+
+	const int range = power <= meanControlRange ? mZero - mMin : mMax - mZero;
+
+	const qreal powerFactor = static_cast<qreal>(range) / (mMaxControlRange - mMinControlRange) * 2;
+	const int duty = static_cast<int>(mZero + (power - meanControlRange) * powerFactor);
 	const QString command = QString::number(duty);
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;

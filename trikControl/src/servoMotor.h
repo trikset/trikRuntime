@@ -69,11 +69,6 @@ public slots:
 	void setPower(int power, bool constrain = true) override;
 
 private:
-	enum class Type {
-		angular
-		, continiousRotation
-	};
-
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
 	int mPeriod;
@@ -82,10 +77,11 @@ private:
 	int mMax;
 	int mZero;
 	int mStop;
+	int mMinControlRange;
+	int mMaxControlRange;
 	bool mInvert;
 	int mCurrentPower;
 	DeviceState mState;
-	Type mMotorType;
 };
 
 }
