@@ -44,8 +44,8 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	scrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
 	const auto leversWidget = new QWidget(this);
-	const auto innerLayout = new QVBoxLayout(this);
-	const auto outerLayout = new QHBoxLayout(this);
+	const auto innerLayout = new QVBoxLayout();
+	const auto outerLayout = new QHBoxLayout();
 
 	mPorts.sort();
 
@@ -60,7 +60,6 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	leversWidget->setLayout(innerLayout);
 
 	outerLayout->addWidget(scrollArea);
-	delete this->layout();
 	this->setLayout(outerLayout);
 	scrollArea->setWidget(leversWidget);
 

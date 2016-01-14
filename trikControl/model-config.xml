@@ -41,7 +41,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<angularServomotor />
 	</S5>
 	<S6>
-		<angularServomotor />
+		<manipulatorServomotor />
 	</S6>
 
 	<!-- Analog sensor ports. -->
