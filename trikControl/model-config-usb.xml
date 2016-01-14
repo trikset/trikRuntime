@@ -41,7 +41,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<angularServomotor />
 	</S5>
 	<S6>
-		<angularServomotor />
+		<manipulatorServomotor />
 	</S6>
 
 	<!-- Analog sensor ports. -->
@@ -52,17 +52,18 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<sharpGP2Sensor />
 	</A2>
 	<A3>
-		<sharpGP2Sensor />
+		<touchSensor />
 	</A3>
 	<A4>
-		<analogSensor />
+		<touchSensor />
 	</A4>
 	<A5>
-		<analogSensor />
+		<lightSensor />
 	</A5>
 	<A6>
-		<analogSensor />
+		<lightSensor />
 	</A6>
+
 	<!-- Analog sensor ports (I2C NXT temp sensors). -->
 	<T1>
 		<analogSensor />
@@ -595,10 +596,10 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</U7_0x20>
 	<!-- Digital sensor ports. -->
 	<D1>
-		<rangeSensor />
+		<sonarSensor />
 	</D1>
 	<D2>
-		<rangeSensor />
+		<sonarSensor />
 	</D2>
 	<!--
 	<D3>
@@ -607,22 +608,18 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	-->
 
 	<!-- Encoder ports. -->
-
-	<B1>
+	<E1>
 		<encoder95 />
-	</B1>
-
-	<B2>
+	</E1>
+	<E2>
 		<encoder95 />
-	</B2>
-
-	<B3>
+	</E2>
+	<E3>
 		<encoder95 />
-	</B3>
-
-	<B4>
+	</E3>
+	<E4>
 		<encoder95 />
-	</B4>
+	</E4>
 
 	<!-- Power motor ports. -->
 	<M1>
@@ -688,7 +685,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</video1>
 
 	<video2>
-		<colorSensor3x3 />
+		<lineSensor />
 	</video2>
 
 	<!-- Sound sensor ports. -->
@@ -708,7 +705,9 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<mailbox />
 
 	<!-- Example of custom FIFO sensor -->
-<!--	<soundSensor>
+	<!--
+	<soundSensor>
 		<fifo />
-	</soundSensor>-->
+	</soundSensor>
+	-->
 </config>

@@ -26,13 +26,13 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Servomotor or PWM capture ports. -->
 	<E1>
-		<angularServomotor />
+		<manipulatorServomotor />
 	</E1>
 	<E2>
-		<angularServomotor invert="false" />
+		<angularServomotor />
 	</E2>
 	<E3>
-		<angularServomotor min="600000" max="2200000" zero="1400000" stop="0" invert="false" />
+		<angularServomotor />
 	</E3>
 	<C1>
 		<angularServomotor />
@@ -52,16 +52,16 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<sharpGP2Sensor />
 	</A2>
 	<A3>
-		<sharpGP2Sensor />
+		<touchSensor />
 	</A3>
 	<A4>
-		<analogSensor />
+		<touchSensor />
 	</A4>
 	<A5>
-		<analogSensor />
+		<lightSensor />
 	</A5>
 	<A6>
-		<analogSensor />
+		<lightSensor />
 	</A6>
 
 	<!-- Digital sensor ports. -->
@@ -85,7 +85,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<encoder95 />
 	</B2>
 	<B3>
-		<encoder126 />
+		<encoder95 />
 	</B3>
 	<B4>
 		<encoder95 />
@@ -96,7 +96,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<powerMotor />
 	</M1>
 	<M2>
-		<powerMotor invert="true" />
+		<powerMotor />
 	</M2>
 	<M3>
 		<powerMotor />
@@ -111,7 +111,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</video0>
 
 	<video1>
-		<colorSensor3x3 />
+		<lineSensor />
 	</video1>
 
 	<!-- On-board sensors. -->
@@ -125,7 +125,9 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<mailbox />
 
 	<!-- Example of custom FIFO sensor -->
-<!--	<soundSensor>
+	<!--
+	<soundSensor>
 		<fifo />
-	</soundSensor>-->
+	</soundSensor>
+	-->
 </config>

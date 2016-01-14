@@ -56,7 +56,7 @@ equal to its class name.
 
 		echo 1 > /sys/devices/virtual/input/input1/enable_device
 
-		<!-- It is very important to initialize MSP430 USB devices with this parameters -->
+		<!-- It is very important to initialize MSP430 USB devices with these parameters -->
 		stty 921600 -F /dev/ttyACM0 -echo -onlcr
 		stty 921600 -F /dev/ttyACM1 -echo -onlcr
 
@@ -73,18 +73,18 @@ equal to its class name.
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
 		<digitalSensor />
 		<fifo />
-		<accelerometer deviceFile="/dev/input/event1" optional="true" />
+		<accelerometer deviceFile="/dev/input/by-path/platform-i2c_davinci.2-event" optional="true" />
 		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" optional="true" />
-		<lineSensor script="/etc/init.d/line-sensor-ov7670.sh" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
-		<objectSensor script="/etc/init.d/object-sensor-ov7670.sh" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
-		<colorSensor script="/etc/init.d/mxn-sensor-ov7670.sh" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
+		<lineSensor script="/etc/init.d/line-sensor-ov7670" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
+		<objectSensor script="/etc/init.d/object-sensor-ov7670" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
+		<colorSensor script="/etc/init.d/mxn-sensor-ov7670" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
 		<soundSensor script="/etc/init.d/sound-sensor-1.sh" inputFile="/run/sound-sensor.in.fifo" outputFile="/run/sound-sensor.out.fifo" />
 
 		<!-- Device files for LED on a brick. -->
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!--Device file for keys on a brick -->
-				<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
+		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
 
 		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
 		<gamepad port="4444" optional="true" />
@@ -141,10 +141,10 @@ equal to its class name.
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x0014" />
+		<powerMotor port="M1" i2cCommandNumber="0x0014" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x0015" />
-		<powerMotor port="M3" i2cCommandNumber="0x0017" />
-		<powerMotor port="M4" i2cCommandNumber="0x0016" />
+		<powerMotor port="M3" i2cCommandNumber="0x0016" />
+		<powerMotor port="M4" i2cCommandNumber="0x0017" />
 		<powerMotor port="SS1" i2cCommandNumber="0x003F" />
 		<powerMotor port="SS2" i2cCommandNumber="0x0040" />
 		<powerMotor port="SS3" i2cCommandNumber="0x0041" />
@@ -345,8 +345,8 @@ equal to its class name.
 		<encoder port="B3" i2cCommandNumber="0x0032" />
 		<encoder port="B4" i2cCommandNumber="0x0033" />
 		<encoder port="E1" i2cCommandNumber="0x0030" />
-		<encoder port="E2" i2cCommandNumber="0x0031" />
-		<encoder port="E3" i2cCommandNumber="0x0032" />
+		<encoder port="E2" i2cCommandNumber="0x0031" invert="true" />
+		<encoder port="E3" i2cCommandNumber="0x0032" invert="true" />
 		<encoder port="E4" i2cCommandNumber="0x0033" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
@@ -356,20 +356,37 @@ equal to its class name.
 		<objectSensor port="video1" />
 		<objectSensor port="video2" />
 		<colorSensor port="video1" />
+		<colorSensor port="video2" />
+		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 		<soundSensor port="default" />
 	</devicePorts>
 
 	<deviceTypes>
-		<angularServomotor class="servoMotor" min="600000" max="2200000" zero="1400000" stop="0" type="angular" />
-		<!-- <irSensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" /> -->
-		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0" type="continuousRotation" controlMin="-100" controlMax="100" />
-		<sharpGP2Sensor class="analogSensor" rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
-		<sonarSensor class="rangeSensor" rawValue1="750" rawValue2="400" normalizedValue1="10" normalizedValue2="20" minValue="0" maxValue="400" />
-		<lightSensor class="digitalSensor" min="30000" max="350000" />
+		<angularServomotor class="servoMotor" min="700000" max="2150000" zero="1425000" stop="0"
+				controlMin="-90" controlMax="90" />
+
+		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0"
+				controlMin="-100" controlMax="100" />
+
+		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
+				controlMin="0" controlMax="100" />
+
+		<sharpGP2Sensor class="analogSensor" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
+
+		<touchSensor class="analogSensor" rawValue1="100" rawValue2="1023" normalizedValue1="1" normalizedValue2="0"
+				minValue="0" maxValue="1" />
+
+		<sonarSensor class="rangeSensor" minValue="0" maxValue="400" />
+
+		<lightSensor class="analogSensor" rawValue1="30" rawValue2="1023" normalizedValue1="0" normalizedValue2="100"
+				minValue="0" maxValue="100" />
+
 		<volumeSensor class="digitalSensor" min="0" max="100" />
-		<!-- <encoder95 class="encoder" ticksInDegree="43.389445" /> -->
+
 		<encoder95 class="encoder" ticksInDegree="1.569444" />
+
 		<encoder126 class="encoder" ticksInDegree="32.964168" />
+
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 	</deviceTypes>
 
