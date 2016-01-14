@@ -152,6 +152,7 @@ implementationIncludes(trikKernel trikHal)
 copyToDestdir( \
 	$$CONFIGS \
 	$$PWD/../media/ \
+	, now \
 )
 
 installs()

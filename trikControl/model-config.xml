@@ -58,10 +58,10 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<touchSensor />
 	</A4>
 	<A5>
-		<analogSensor />
+		<lightSensor />
 	</A5>
 	<A6>
-		<analogSensor />
+		<lightSensor />
 	</A6>
 
 	<!-- Digital sensor ports. -->
@@ -111,7 +111,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</video1>
 
 	<video2>
-		<colorSensor3x3 />
+		<lineSensor />
 	</video2>
 
 	<!-- On-board sensors. -->
@@ -125,7 +125,9 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<mailbox />
 
 	<!-- Example of custom FIFO sensor -->
-<!--	<soundSensor>
+	<!--
+	<soundSensor>
 		<fifo />
-	</soundSensor>-->
+	</soundSensor>
+	-->
 </config>
