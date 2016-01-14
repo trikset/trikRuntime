@@ -42,3 +42,10 @@ trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog trikKernel
+
+OTHER_FILES += \
+	$$PWD/changelog.txt \
+
+include($$PWD/global.pri)
+
+copyToDestdir($$PWD/changelog.txt, now)
