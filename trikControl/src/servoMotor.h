@@ -49,6 +49,10 @@ public:
 
 	Status status() const override;
 
+	int minControl() const override;
+
+	int maxControl() const override;
+
 public slots:
 	int power() const override;
 

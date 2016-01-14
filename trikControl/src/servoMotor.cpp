@@ -69,6 +69,16 @@ ServoMotor::Status ServoMotor::status() const
 	return mState.status();
 }
 
+int ServoMotor::minControl() const
+{
+	return mMinControlRange;
+}
+
+int ServoMotor::maxControl() const
+{
+	return mMaxControlRange;
+}
+
 int ServoMotor::power() const
 {
 	return mCurrentPower;

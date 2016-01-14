@@ -33,6 +33,12 @@ public:
 		, servoMotor
 	};
 
+	/// Returns minimal value of control accepted by a motor (-90..90, 0..100, for example).
+	virtual int minControl() const = 0;
+
+	/// Returns maximal value of control accepted by a motor (-90..90, 0..100, for example).
+	virtual int maxControl() const = 0;
+
 public slots:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power - power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.

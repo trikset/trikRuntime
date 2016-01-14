@@ -21,6 +21,9 @@
 
 using namespace trikControl;
 
+static const int maxControlValue = 100;
+static const int minControlValue = -100;
+
 PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer
 		, MspCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
@@ -45,11 +48,10 @@ PowerMotor::Status PowerMotor::status() const
 void PowerMotor::setPower(int power, bool constrain)
 {
 	if (constrain) {
-		if (power > 100)
-		{
-			power = 100;
-		} else if (power < -100) {
-			power = -100;
+		if (power > maxControlValue) {
+			power = maxControlValue;
+		} else if (power < minControlValue) {
+			power = minControlValue;
 		}
 	}
 
@@ -88,4 +90,14 @@ void PowerMotor::setPeriod(int period)
 	command[1] = static_cast<char>(period && 0xFF);
 	command[2] = static_cast<char>(period >> 8);
 	mCommunicator.send(command);
+}
+
+int PowerMotor::minControl() const
+{
+	return minControlValue;
+}
+
+int PowerMotor::maxControl() const
+{
+	return maxControlValue;
 }

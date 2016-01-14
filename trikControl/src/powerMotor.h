@@ -44,6 +44,10 @@ public:
 
 	Status status() const override;
 
+	int minControl() const override;
+
+	int maxControl() const override;
+
 public slots:
 	void setPower(int power, bool constrain = true) override;
 
