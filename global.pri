@@ -129,6 +129,7 @@ defineTest(copyToDestdir) {
 			}
 
 			unix:!macx {
+				system("mkdir -p $$DDIR")
 				system("cp -r -f $$FILE $$DDIR")
 			}
 
