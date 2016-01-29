@@ -16,44 +16,46 @@
 
 #include <trikScriptRunner/trikScriptRunner.h>
 
+#include <trikControl/brickInterface.h>
+
 #include "src/connection.h"
 
 using namespace trikCommunicator;
+using namespace trikKernel;
 
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, trikNetwork::GamepadInterface * const gamepad
 		)
-	: TrikCommunicator(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad), true)
+	: TrikCommunicator(createDifferentOwnerPointer(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad))
+			, brick.configVersion())
 {
 }
 
-TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner)
-	: TrikCommunicator(&runner, false)
+TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner, const QString &configVersion)
+	: TrikCommunicator(createDifferentOwnerPointer(runner), configVersion)
 {
 }
 
-TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership)
+TrikCommunicator::TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikScriptRunner::TrikScriptRunner> &runner
+		, const QString &configVersion)
 	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
 	, mTrikScriptRunner(runner)
-	, mHasScriptRunnerOwnership(hasScriptRunnerOwnership)
+	, mConfigVersion(configVersion)
 {
 	setObjectName("TrikCommunicator");
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-	connect(runner, SIGNAL(sendMessage(QString)), this, SLOT(sendPrintMessage(QString)));
+	connect(runner.data(), SIGNAL(sendMessage(QString)), this, SLOT(sendPrintMessage(QString)));
 }
 
 TrikCommunicator::~TrikCommunicator()
 {
-	if (mHasScriptRunnerOwnership) {
-		delete mTrikScriptRunner;
-	}
 }
 
 Connection *TrikCommunicator::connectionFactory()
 {
-	Connection *connection = new Connection(*mTrikScriptRunner);
+	Connection * const connection = new Connection(*mTrikScriptRunner, mConfigVersion);
 	connect(connection, SIGNAL(stopCommandReceived()), this, SIGNAL(stopCommandReceived()));
 	return connection;
 }

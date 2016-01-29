@@ -57,6 +57,9 @@ public:
 	/// (it is also described in system-config.xml).
 	void configure(const QString &portName, const QString &deviceName);
 
+	/// Returns version of the config file which shall correspond to casing model.
+	QString version() const;
+
 private:
 	struct Device {
 		QString name;
@@ -105,6 +108,9 @@ private:
 
 	/// Maps device type name to its configuration.
 	QHash<QString, AdditionalModelConfigurationElement> mAdditionalModelConfiguration;
+
+	/// Version of the config file which shall correspond to casing model.
+	QString mVersion;
 };
 
 }

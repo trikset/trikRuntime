@@ -1,31 +1,29 @@
-# Copyright 2014
+# Copyright 2016 CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = subdirs
+include(../../global.pri)
 
-SUBDIRS = \
-	minimalCppApp \
-	selftest \
-	thirdparty \
-	trikCommunicatorTests \
-	trikKernelTests \
-	trikScriptRunnerTests \
-	utils \
+TEMPLATE = lib
 
-thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
+DEFINES += UTILS_LIBRARY
 
-trikKernelTests.depends = thirdparty utils
-trikScriptRunnerTests.depends = thirdparty utils
-trikCommunicatorTests.depends = thirdparty utils
-selftest.depends = thirdparty utils
+QT += network
+
+HEADERS += \
+	$$PWD/tcpClientSimulator.h \
+	$$PWD/wait.h \
+
+SOURCES += \
+	$$PWD/tcpClientSimulator.cpp \
+	$$PWD/wait.cpp \

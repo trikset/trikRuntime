@@ -22,9 +22,10 @@
 
 using namespace trikCommunicator;
 
-Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner)
+Connection::Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner, const QString &configVersion)
 	: trikNetwork::Connection(trikNetwork::Protocol::messageLength, trikNetwork::Heartbeat::use)
 	, mTrikScriptRunner(trikScriptRunner)
+	, mConfigVersion(configVersion)
 {
 }
 
@@ -64,5 +65,7 @@ void Connection::processData(const QByteArray &data)
 		command.remove(0, QString("directScript:").length());
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run"
 				, Q_ARG(QString, command));
+	} else if (command == "configVersion") {
+		send(mConfigVersion.toUtf8());
 	}
 }

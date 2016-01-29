@@ -20,7 +20,7 @@ parameters, it may be not listed in "device types" section, it is assumed that i
 equal to its class name.
 -->
 
-<config version="model-2015" >
+<config version="model-test" >
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
 		echo 1 > /sys/class/gpio/gpio62/value

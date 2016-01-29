@@ -15,12 +15,9 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtCore/QHash>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QThread>
-#include <QtNetwork/QTcpServer>
-#include <QtNetwork/QTcpSocket>
 
+#include <trikKernel/differentOwnerPointer.h>
 #include <trikNetwork/trikServer.h>
 
 namespace trikScriptRunner {
@@ -60,7 +57,10 @@ public:
 			);
 
 	/// Constructor that accepts external script runner and issues commands to it.
-	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner);
+	/// @param runner - script runner that shall be used to execute commands.
+	/// @param configVersion - version of system config file that can be used to check that client and runtime configs
+	///        match.
+	explicit TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner, const QString &configVersion);
 
 	~TrikCommunicator() override;
 
@@ -73,17 +73,17 @@ signals:
 	void stopCommandReceived();
 
 private:
-	TrikCommunicator(trikScriptRunner::TrikScriptRunner * const runner, bool hasScriptRunnerOwnership);
+	TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikScriptRunner::TrikScriptRunner> &runner
+			, const QString &configVersion);
 
 	Connection *connectionFactory();
 
 	/// Script runner object common to all connections.
-	/// Ownership depends on mHasScriptRunnerOwnership flag, if we received runner belonging to other object or created
-	/// our own.
-	trikScriptRunner::TrikScriptRunner *mTrikScriptRunner;
+	trikKernel::DifferentOwnerPointer<trikScriptRunner::TrikScriptRunner> mTrikScriptRunner;
 
-	/// True, if we created our own script runner, false if we got it from someone.
-	const bool mHasScriptRunnerOwnership;
+	/// Version of system configuration file. Must correspond to casing model, used to allow clients to check that
+	/// their expectations of configuration match actual one.
+	const QString mConfigVersion;
 };
 
 }

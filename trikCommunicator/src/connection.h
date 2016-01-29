@@ -41,7 +41,8 @@ class Connection : public trikNetwork::Connection
 public:
 	/// Constructor.
 	/// @param trikScriptRunner - instance of script runner object.
-	explicit Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner);
+	/// @param configVersion - version of a system configuration file, must match controller casing.
+	explicit Connection(trikScriptRunner::TrikScriptRunner &trikScriptRunner, const QString &configVersion);
 
 	/// Writes a given message to inner socket.
 	void sendMessage(const QString &message);
@@ -55,6 +56,9 @@ private:
 
 	/// Common script runner object, located in another thread.
 	trikScriptRunner::TrikScriptRunner &mTrikScriptRunner;
+
+	/// Version of a system configuration file.
+	const QString &mConfigVersion;
 };
 
 }

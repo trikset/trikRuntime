@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include($$PWD/../global.pri)
+
 TEMPLATE = app
 
 QT += widgets
@@ -28,3 +30,10 @@ LIBS += -lgmock$$CONFIGURATION_SUFFIX
 SOURCES = $$PWD/mainTest.cpp
 
 QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+
+OTHER_FILES += \
+	$$PWD/test-system-config.xml \
+	$$PWD/test-model-config.xml \
+
+copyToDestdir($$PWD/test-system-config.xml)
+copyToDestdir($$PWD/test-model-config.xml)
