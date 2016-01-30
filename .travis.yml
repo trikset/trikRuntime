@@ -46,4 +46,4 @@ script:
   - cd ../..
 
 after_success:
-  - if [ "$CONFIG" = "debug" ]; codecov; fi
+  - if [ "$CONFIG" = "debug" ]; then codecov; fi
