@@ -14,25 +14,18 @@
 
 #pragma once
 
-#include <trikNetwork/connection.h>
+#include "declSpec.h"
 
 namespace tests {
 namespace utils {
 
-/// Utility class that can simulate TCP network activity according to protocols used by TrikRuntime.
-class TcpClientSimulator : public trikNetwork::Connection
+/// Utility class that provides event loop based waiting.
+class UTILS_EXPORT Wait
 {
-	Q_OBJECT
-
 public:
-	TcpClientSimulator(const QString &ip, int port);
-
-	QString latestResponse() const;
-
-private:
-	void processData(const QByteArray &data) override;
-
-	QString mLatestResponse;
+	/// Wait for given amount of milliseconds. Launches event loop so thread is not blocked and can still process
+	/// messages.
+	static void wait(int msecs);
 };
 
 }

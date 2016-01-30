@@ -1,4 +1,4 @@
-/* Copyright 2016 CyberTech Labs Ltd.
+/* Copyright 2016 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,12 @@
 
 #pragma once
 
-namespace tests {
-namespace utils {
+#include <QtCore/qglobal.h>
 
-/// Utility class that provides event loop based waiting.
-class Wait
-{
-public:
-	/// Wait for given amount of milliseconds. Launches event loop so thread is not blocked and can still process
-	/// messages.
-	static void wait(int msecs);
-};
-
-}
-}
+#ifndef UTILS_EXPORT
+#  if defined(UTILS_LIBRARY)
+#    define UTILS_EXPORT Q_DECL_EXPORT
+#  else
+#    define UTILS_EXPORT Q_DECL_IMPORT
+#  endif
+#endif

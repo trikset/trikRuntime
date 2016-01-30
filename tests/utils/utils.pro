@@ -21,11 +21,13 @@ DEFINES += UTILS_LIBRARY
 QT += network
 
 interfaceIncludes(trikNetwork)
+links(trikNetwork)
 
 HEADERS += \
-	$$PWD/tcpClientSimulator.h \
-	$$PWD/wait.h \
+	$$PWD/include/utils/tcpClientSimulator.h \
+	$$PWD/include/utils/wait.h \
+	$$PWD/include/utils/declSpec.h \
 
 SOURCES += \
-	$$PWD/tcpClientSimulator.cpp \
-	$$PWD/wait.cpp \
+	$$PWD/src/tcpClientSimulator.cpp \
+	$$PWD/src/wait.cpp \

@@ -15,8 +15,8 @@
 #include "trikCommunicatorTest.h"
 
 #include <trikControl/brickFactory.h>
-#include <tcpClientSimulator.h>
-#include <wait.h>
+#include <utils/tcpClientSimulator.h>
+#include <utils/wait.h>
 
 using namespace tests;
 

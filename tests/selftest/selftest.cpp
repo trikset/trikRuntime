@@ -28,6 +28,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <utils/wait.h>
+
 using namespace testing;
 using namespace trikControl;
 using namespace trikNetwork;
@@ -42,11 +44,7 @@ TEST(selftest, brickCheck)
 
 	// Give devices some time to initialize.
 	/// @todo: it shall not be here, use asynchronous initialization instead.
-	QEventLoop loop;
-	QTimer t;
-	QObject::connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
-	t.start(100);
-	loop.exec();
+	tests::utils::Wait::wait(100);
 
 	EXPECT_TRUE(brick->battery() != nullptr);
 	if (brick->battery() != nullptr) {
