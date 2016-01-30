@@ -19,6 +19,7 @@
 #include <testUtils/wait.h>
 
 using namespace tests;
+using namespace tests::utils;
 
 static const int port = 8888;
 
@@ -37,8 +38,8 @@ void TrikCommunicatorTest::TearDown()
 
 TEST_F(TrikCommunicatorTest, configVersionTest)
 {
-	utils::TcpClientSimulator client("127.0.0.1", port);
+	TcpClientSimulator client("127.0.0.1", port);
 	client.send("configVersion");
-	utils::Wait::wait(100);
+	Wait::wait(100);
 	ASSERT_EQ("model-test", client.latestResponse());
 }

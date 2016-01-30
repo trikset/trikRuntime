@@ -18,6 +18,7 @@
 
 #include <trikControl/brickFactory.h>
 #include <trikKernel/fileUtils.h>
+#include <testUtils/wait.h>
 
 using namespace tests;
 
@@ -64,13 +65,6 @@ void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 	run(fileContents);
 }
 
-void TrikScriptRunnerTest::wait(int msec)
-{
-	QEventLoop waitingLoop;
-	QTimer::singleShot(msec, &waitingLoop, SLOT(quit()));
-	waitingLoop.exec();
-}
-
 TEST_F(TrikScriptRunnerTest, sanityCheck)
 {
 	run("1 + 1");
@@ -88,7 +82,7 @@ TEST_F(TrikScriptRunnerTest, asyncSystemTest)
 	ASSERT_FALSE(testFile.exists());
 	runFromFile("async-system-test.js");
 	ASSERT_FALSE(testFile.exists());
-	wait(2100);
+	tests::utils::Wait::wait(2100);
 	ASSERT_TRUE(testFile.exists());
 }
 

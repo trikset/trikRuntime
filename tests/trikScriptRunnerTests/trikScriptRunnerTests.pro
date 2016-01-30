@@ -25,8 +25,8 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/data/file-test.js \
 
-implementationIncludes(trikKernel trikControl trikScriptRunner)
-links(trikKernel trikControl trikScriptRunner trikNetwork trikHal)
+implementationIncludes(trikKernel trikControl trikScriptRunner tests/testUtils)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
 copyToDestdir($$PWD/data/, now)
 

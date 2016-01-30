@@ -31,7 +31,6 @@ protected:
 
 	void run(const QString &script);
 	void runFromFile(const QString &fileName);
-	static void wait(int msec);
 
 private:
 	/// Does nothing, but ensures event processing at the time of destruction of test suite, to avoid
