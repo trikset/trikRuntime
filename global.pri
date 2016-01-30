@@ -44,6 +44,8 @@ win32 {
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
+	QMAKE_CXXFLAGS += -coverage
+	QMAKE_LFLAGS += -coverage
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
 	equals(ARCHITECTURE, "arm") {

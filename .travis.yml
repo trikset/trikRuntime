@@ -5,6 +5,9 @@ env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
 
+before_install:
+  - pip install --user codecov
+
 install:
   - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
   - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
@@ -38,3 +41,6 @@ script:
   - cd ../../bin/x86-$CONFIG
   - ls -A
   - sh -c "./trikScriptRunnerTests-x86$SUFFIX"
+
+after_success:
+  - codecov
