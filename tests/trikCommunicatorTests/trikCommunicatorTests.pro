@@ -1,4 +1,4 @@
-# Copyright 2014 - 2015 CyberTech Labs Ltd.
+# Copyright 2016 CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,22 +14,14 @@
 
 include(../common.pri)
 
-QT += script
+QT += network
 
 HEADERS += \
-	$$PWD/trikScriptRunnerTest.h \
+	$$PWD/trikCommunicatorTest.h \
 
 SOURCES += \
-	$$PWD/trikScriptRunnerTest.cpp \
+	$$PWD/trikCommunicatorTest.cpp \
 
-OTHER_FILES += \
-	$$PWD/data/file-test.js \
-
-implementationIncludes(trikKernel trikControl trikScriptRunner tests/testUtils)
-links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
-
-copyToDestdir($$PWD/data/, now)
-
-DISTFILES += \
-	data/sync-system-test.js \
-	data/async-system-test.js
+implementationIncludes(trikKernel trikControl trikScriptRunner trikCommunicator tests/testUtils)
+transitiveIncludes(trikNetwork)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal trikCommunicator testUtils)

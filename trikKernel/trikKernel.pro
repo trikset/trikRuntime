@@ -46,11 +46,21 @@ SOURCES += \
 	$$PWD/src/deinitializationHelper.cpp \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/loggingHelper.cpp \
-	$$PWD/src/paths.cpp \
 	$$PWD/src/rcReader.cpp \
 	$$PWD/src/timeVal.cpp \
 	$$PWD/src/translationsHelper.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
+
+OTHER_FILES += \
+	$$PWD/stubTrikRc \
+
+equals(ARCHITECTURE, arm) {
+	SOURCES += $$PWD/src/trik/paths.cpp
+} else {
+	SOURCES += $$PWD/src/stub/paths.cpp
+
+	copyToDestdir($$PWD/stubTrikRc, now)
+}
 
 TEMPLATE = lib
 

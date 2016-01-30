@@ -49,6 +49,9 @@ public:
 	/// Returns a widget on which display output is drawn.
 	virtual DisplayWidgetInterface &graphicsWidget() = 0;
 
+	/// Returns version of system configuration file.
+	virtual QString configVersion() const = 0;
+
 public slots:
 	/// Configures given device on given port. Port must be listed in model-config.xml, device shall be listed
 	/// in system-config.xml, and device shall be able to be configured on a port (it is also described

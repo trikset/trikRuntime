@@ -75,6 +75,8 @@ public:
 
 	DisplayWidgetInterface &graphicsWidget() override;
 
+	QString configVersion() const override;
+
 public slots:
 	void configure(const QString &portName, const QString &deviceName) override;
 

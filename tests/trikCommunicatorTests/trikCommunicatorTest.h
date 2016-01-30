@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2016 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,19 @@
 #pragma once
 
 #include <trikControl/brickInterface.h>
-#include <trikScriptRunner/trikScriptRunner.h>
+#include <trikCommunicator/trikCommunicator.h>
 #include <trikKernel/deinitializationHelper.h>
 
 #include <gtest/gtest.h>
 
 namespace tests {
 
-/// Test suite for script runner.
-class TrikScriptRunnerTest : public testing::Test
+/// Test suite for communicator.
+class TrikCommunicatorTest : public testing::Test
 {
 protected:
 	void SetUp() override;
 	void TearDown() override;
-
-	void run(const QString &script);
-	void runFromFile(const QString &fileName);
 
 private:
 	/// Does nothing, but ensures event processing at the time of destruction of test suite, to avoid
@@ -38,7 +35,7 @@ private:
 	trikKernel::DeinitializationHelper mHelper;
 
 	QScopedPointer<trikControl::BrickInterface> mBrick;
-	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
+	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;
 };
 
 }

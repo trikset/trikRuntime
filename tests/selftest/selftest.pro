@@ -12,15 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../../global.pri)
-
 include(../common.pri)
 
 SOURCES += \
 	$$PWD/selftest.cpp \
 
-implementationIncludes(trikKernel trikControl trikNetwork)
-links(trikKernel trikControl trikScriptRunner trikNetwork trikHal)
+implementationIncludes(trikKernel trikControl trikNetwork tests/testUtils)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
 OTHER_FILES += \
 	selftest-model-config.xml \

@@ -18,11 +18,14 @@ SUBDIRS = \
 	minimalCppApp \
 	selftest \
 	thirdparty \
+	trikCommunicatorTests \
 	trikKernelTests \
 	trikScriptRunnerTests \
+	testUtils \
 
 thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
 
-trikKernelTests.depends = thirdparty
-trikScriptRunnerTests.depends = thirdparty
-selftest.depends = thirdparty
+trikKernelTests.depends = thirdparty testUtils
+trikScriptRunnerTests.depends = thirdparty testUtils
+trikCommunicatorTests.depends = thirdparty testUtils
+selftest.depends = thirdparty testUtils

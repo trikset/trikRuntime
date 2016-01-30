@@ -45,6 +45,12 @@ Configurer::Configurer(const QString &systemConfigFileName, const QString &model
 		action(section.at(0).toElement());
 	};
 
+	if (systemConfig.tagName() != "config") {
+		throw MalformedConfigException("'config' tag shall be the root attribute of system config");
+	}
+
+	mVersion = systemConfig.attribute("version", "");
+
 	parseSection("deviceClasses", [this](const QDomElement &element) { parseDeviceClasses(element); });
 	parseSection("devicePorts", [this](const QDomElement &element) { parseDevicePorts(element); });
 	parseSection("deviceTypes", [this](const QDomElement &element) { parseDeviceTypes(element); });
@@ -192,6 +198,11 @@ QStringList Configurer::initScripts() const
 void Configurer::configure(const QString &portName, const QString &deviceName)
 {
 	mModelConfiguration[portName] = { portName, deviceName, {}};
+}
+
+QString Configurer::version() const
+{
+	return mVersion;
 }
 
 void Configurer::parseDeviceClasses(const QDomElement &element)

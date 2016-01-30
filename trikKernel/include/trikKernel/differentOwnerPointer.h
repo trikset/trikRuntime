@@ -66,6 +66,12 @@ public:
 		return *mPointer;
 	}
 
+	/// Returns raw pointer to an object, does not transfer ownership.
+	inline T *data() const
+	{
+		return mPointer;
+	}
+
 	/// Assignment operator to provide value semantics.
 	inline DifferentOwnerPointer<T> &operator =(const DifferentOwnerPointer<T> &other) = default;
 

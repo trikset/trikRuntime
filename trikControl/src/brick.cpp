@@ -18,6 +18,7 @@
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikHal/hardwareAbstractionFactory.h>
+#include <trikKernel/exceptions/malformedConfigException.h>
 #include <trikKernel/timeVal.h>
 
 #include "analogSensor.h"
@@ -131,6 +132,11 @@ Brick::~Brick()
 DisplayWidgetInterface &Brick::graphicsWidget()
 {
 	return mDisplay->graphicsWidget();
+}
+
+QString Brick::configVersion() const
+{
+	return mConfigurer.version();
 }
 
 void Brick::configure(const QString &portName, const QString &deviceName)
@@ -401,45 +407,50 @@ void Brick::shutdownDevice(const QString &port)
 
 void Brick::createDevice(const QString &port)
 {
-	const QString &deviceClass = mConfigurer.deviceClass(port);
-	if (deviceClass == "servoMotor") {
-		mServoMotors.insert(port, new ServoMotor(port, mConfigurer, *mHardwareAbstraction));
-	} else if (deviceClass == "pwmCapture") {
-		mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
-	} else if (deviceClass == "powerMotor") {
-		mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
-	} else if (deviceClass == "analogSensor") {
-		mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
-	} else if (deviceClass == "digitalSensor") {
-		mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
-	} else if (deviceClass == "rangeSensor") {
-		mRangeSensors.insert(port, new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
+	try {
+		const QString &deviceClass = mConfigurer.deviceClass(port);
+		if (deviceClass == "servoMotor") {
+			mServoMotors.insert(port, new ServoMotor(port, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "pwmCapture") {
+			mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "powerMotor") {
+			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
+		} else if (deviceClass == "analogSensor") {
+			mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
+		} else if (deviceClass == "digitalSensor") {
+			mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "rangeSensor") {
+			mRangeSensors.insert(port, new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
 
-		/// @todo Range sensor shall be turned on only when needed.
-		mRangeSensors[port]->init();
-	} else if (deviceClass == "encoder") {
-		mEncoders.insert(port, new Encoder(port, mConfigurer, *mMspCommunicator));
-	} else if (deviceClass == "lineSensor") {
-		mLineSensors.insert(port, new LineSensor(port, mConfigurer, *mHardwareAbstraction));
+			/// @todo Range sensor shall be turned on only when needed.
+			mRangeSensors[port]->init();
+		} else if (deviceClass == "encoder") {
+			mEncoders.insert(port, new Encoder(port, mConfigurer, *mMspCommunicator));
+		} else if (deviceClass == "lineSensor") {
+			mLineSensors.insert(port, new LineSensor(port, mConfigurer, *mHardwareAbstraction));
 
-		/// @todo This will work only in case when there can be only one video sensor launched at a time.
-		connect(mLineSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
-	} else if (deviceClass == "objectSensor") {
-		mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer, *mHardwareAbstraction));
+			/// @todo This will work only in case when there can be only one video sensor launched at a time.
+			connect(mLineSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+		} else if (deviceClass == "objectSensor") {
+			mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer, *mHardwareAbstraction));
 
-		/// @todo This will work only in case when there can be only one video sensor launched at a time.
-		connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
-	} else if (deviceClass == "colorSensor") {
-		mColorSensors.insert(port, new ColorSensor(port, mConfigurer, *mHardwareAbstraction));
+			/// @todo This will work only in case when there can be only one video sensor launched at a time.
+			connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+		} else if (deviceClass == "colorSensor") {
+			mColorSensors.insert(port, new ColorSensor(port, mConfigurer, *mHardwareAbstraction));
 
-		/// @todo This will work only in case when there can be only one video sensor launched at a time.
-		connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
-	} else if (deviceClass == "soundSensor") {
-		mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
+			/// @todo This will work only in case when there can be only one video sensor launched at a time.
+			connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+		} else if (deviceClass == "soundSensor") {
+			mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
 
-		/// @todo This will work only in case when there can be only one sound sensor launched at a time.
-		connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
-	} else if (deviceClass == "fifo") {
-		mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
+			/// @todo This will work only in case when there can be only one sound sensor launched at a time.
+			connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+		} else if (deviceClass == "fifo") {
+			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
+		}
+	} catch (MalformedConfigException &e) {
+		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();
+		QLOG_ERROR() << "Ignoring device";
 	}
 }
