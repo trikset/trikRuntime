@@ -41,6 +41,9 @@ script:
   - cd ../../bin/x86-$CONFIG
   - ls -A
   - sh -c "./trikScriptRunnerTests-x86$SUFFIX"
+  - sh -c "./trikCommunicatorTests-x86$SUFFIX"
+  - sh -c "./trikKernelTests-x86$SUFFIX"
+  - cd ../..
 
 after_success:
-  - codecov
+  - if [ "$CONFIG" = "debug" ]; codecov; fi
