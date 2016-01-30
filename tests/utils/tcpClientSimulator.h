@@ -14,41 +14,25 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtCore/QScopedPointer>
-
-class QTcpSocket;
+#include <trikNetwork/connection.h>
 
 namespace tests {
 namespace utils {
 
-/// Utility class that can simulate TCP network activity.
-class TcpClientSimulator : QObject
+/// Utility class that can simulate TCP network activity according to protocols used by TrikRuntime.
+class TcpClientSimulator : public trikNetwork::Connection
 {
 	Q_OBJECT
 
 public:
 	TcpClientSimulator(const QString &ip, int port);
 
-	~TcpClientSimulator() override;
-
-	void send(const QString &data);
-
 	QString latestResponse() const;
 
-signals:
-	void newData(const QString &data);
-
-private slots:
-	void onReadyRead();
-
 private:
-	QScopedPointer<QTcpSocket> mSocket;
+	void processData(const QByteArray &data) override;
 
 	QString mLatestResponse;
-
-	const QString mIp;
-	const int mPort;
 };
 
 }

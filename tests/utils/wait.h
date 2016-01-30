@@ -17,9 +17,12 @@
 namespace tests {
 namespace utils {
 
+/// Utility class that provides event loop based waiting.
 class Wait
 {
 public:
+	/// Wait for given amount of milliseconds. Launches event loop so thread is not blocked and can still process
+	/// messages.
 	static void wait(int msecs);
 };
 

@@ -14,44 +14,21 @@
 
 #include "tcpClientSimulator.h"
 
-#include <QtNetwork/QTcpSocket>
-
 using namespace tests::utils;
+using namespace trikNetwork;
 
 TcpClientSimulator::TcpClientSimulator(const QString &ip, int port)
-	: mIp(ip)
-	, mPort(port)
+	: Connection(Protocol::messageLength, Heartbeat::dontUse)
 {
-	mSocket.reset(new QTcpSocket());
-	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-	mSocket->connectToHost(ip, port);
+	init(QHostAddress(ip), port);
 }
 
-TcpClientSimulator::~TcpClientSimulator()
+void TcpClientSimulator::processData(const QByteArray &data)
 {
-	mSocket->close();
-	if (mSocket->isOpen()) {
-		mSocket->waitForDisconnected();
-	}
-}
-
-void TcpClientSimulator::send(const QString &data)
-{
-	mSocket->write(data.toUtf8());
-	mSocket->waitForBytesWritten(2000);
+	mLatestResponse = QString::fromUtf8(data);
 }
 
 QString TcpClientSimulator::latestResponse() const
 {
 	return mLatestResponse;
-}
-
-void TcpClientSimulator::onReadyRead()
-{
-	const QString data = QString::fromUtf8(mSocket->readAll());
-	if (data != "keepalive") {
-		mLatestResponse = data;
-	}
-
-	emit newData(data);
 }

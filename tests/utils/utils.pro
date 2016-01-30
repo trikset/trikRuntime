@@ -20,6 +20,8 @@ DEFINES += UTILS_LIBRARY
 
 QT += network
 
+interfaceIncludes(trikNetwork)
+
 HEADERS += \
 	$$PWD/tcpClientSimulator.h \
 	$$PWD/wait.h \
