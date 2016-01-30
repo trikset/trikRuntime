@@ -1,4 +1,4 @@
-/* Copyright 2016 CyberTech Labs Ltd.
+/* Copyright 2016 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ namespace tests {
 namespace utils {
 
 /// Utility class that can simulate TCP network activity according to protocols used by TrikRuntime.
-class UTILS_EXPORT TcpClientSimulator : public trikNetwork::Connection
+class TESTUTILS_EXPORT TcpClientSimulator : public trikNetwork::Connection
 {
 	Q_OBJECT
 

@@ -7,24 +7,24 @@ working properly, it tests only that runtime can interact with them).
 	<initScript>
 	</initScript>
 
-	<E1>
+	<S1>
 		<angularServomotor />
-	</E1>
-	<E2>
+	</S1>
+	<S2>
 		<angularServomotor />
-	</E2>
-	<E3>
+	</S2>
+	<S3>
 		<angularServomotor  />
-	</E3>
-	<C1>
+	</S3>
+	<S4>
 		<angularServomotor />
-	</C1>
-	<C2>
+	</S4>
+	<S5>
 		<angularServomotor />
-	</C2>
-	<C3>
+	</S5>
+	<S6>
 		<angularServomotor />
-	</C3>
+	</S6>
 
 	<A1>
 		<sharpGP2Sensor />
@@ -58,18 +58,18 @@ working properly, it tests only that runtime can interact with them).
 	-->
 
 	<!-- Encoder ports. -->
-	<B1>
+	<E1>
 		<encoder95 />
-	</B1>
-	<B2>
+	</E1>
+	<E2>
 		<encoder95 />
-	</B2>
-	<B3>
+	</E2>
+	<E3>
 		<encoder95 />
-	</B3>
-	<B4>
+	</E3>
+	<E4>
 		<encoder95 />
-	</B4>
+	</E4>
 
 	<!-- Power motor ports. -->
 	<M1>

@@ -17,8 +17,8 @@ include(../common.pri)
 SOURCES += \
 	$$PWD/selftest.cpp \
 
-implementationIncludes(trikKernel trikControl trikNetwork tests/utils)
-links(trikKernel trikControl trikScriptRunner trikNetwork trikHal utils)
+implementationIncludes(trikKernel trikControl trikNetwork tests/testUtils)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
 OTHER_FILES += \
 	selftest-model-config.xml \

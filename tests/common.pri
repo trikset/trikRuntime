@@ -35,5 +35,5 @@ OTHER_FILES += \
 	$$PWD/test-system-config.xml \
 	$$PWD/test-model-config.xml \
 
-copyToDestdir($$PWD/test-system-config.xml)
-copyToDestdir($$PWD/test-model-config.xml)
+copyToDestdir($$PWD/test-system-config.xml, now)
+copyToDestdir($$PWD/test-model-config.xml, now)

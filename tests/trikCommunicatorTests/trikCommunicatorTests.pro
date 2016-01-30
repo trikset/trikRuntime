@@ -22,6 +22,6 @@ HEADERS += \
 SOURCES += \
 	$$PWD/trikCommunicatorTest.cpp \
 
-implementationIncludes(trikKernel trikControl trikScriptRunner trikCommunicator tests/utils)
+implementationIncludes(trikKernel trikControl trikScriptRunner trikCommunicator tests/testUtils)
 transitiveIncludes(trikNetwork)
-links(trikKernel trikControl trikScriptRunner trikNetwork trikHal trikCommunicator utils)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal trikCommunicator testUtils)

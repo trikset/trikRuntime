@@ -15,8 +15,8 @@
 #include "trikCommunicatorTest.h"
 
 #include <trikControl/brickFactory.h>
-#include <utils/tcpClientSimulator.h>
-#include <utils/wait.h>
+#include <testUtils/tcpClientSimulator.h>
+#include <testUtils/wait.h>
 
 using namespace tests;
 
@@ -38,10 +38,7 @@ void TrikCommunicatorTest::TearDown()
 TEST_F(TrikCommunicatorTest, configVersionTest)
 {
 	utils::TcpClientSimulator client("127.0.0.1", port);
-
 	client.send("configVersion");
-
 	utils::Wait::wait(100);
-
 	ASSERT_EQ("model-test", client.latestResponse());
 }

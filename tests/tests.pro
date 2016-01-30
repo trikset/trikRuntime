@@ -21,11 +21,11 @@ SUBDIRS = \
 	trikCommunicatorTests \
 	trikKernelTests \
 	trikScriptRunnerTests \
-	utils \
+	testUtils \
 
 thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
 
-trikKernelTests.depends = thirdparty utils
-trikScriptRunnerTests.depends = thirdparty utils
-trikCommunicatorTests.depends = thirdparty utils
-selftest.depends = thirdparty utils
+trikKernelTests.depends = thirdparty testUtils
+trikScriptRunnerTests.depends = thirdparty testUtils
+trikCommunicatorTests.depends = thirdparty testUtils
+selftest.depends = thirdparty testUtils

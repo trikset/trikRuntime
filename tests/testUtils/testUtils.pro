@@ -16,7 +16,7 @@ include(../../global.pri)
 
 TEMPLATE = lib
 
-DEFINES += UTILS_LIBRARY
+DEFINES += TESTUTILS_LIBRARY
 
 QT += network
 
@@ -24,9 +24,9 @@ interfaceIncludes(trikNetwork)
 links(trikNetwork)
 
 HEADERS += \
-	$$PWD/include/utils/tcpClientSimulator.h \
-	$$PWD/include/utils/wait.h \
-	$$PWD/include/utils/declSpec.h \
+	$$PWD/include/testUtils/tcpClientSimulator.h \
+	$$PWD/include/testUtils/wait.h \
+	$$PWD/include/testUtils/declSpec.h \
 
 SOURCES += \
 	$$PWD/src/tcpClientSimulator.cpp \

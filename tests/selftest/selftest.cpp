@@ -28,7 +28,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <utils/wait.h>
+#include <testUtils/wait.h>
 
 using namespace testing;
 using namespace trikControl;
