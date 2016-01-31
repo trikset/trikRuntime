@@ -16,7 +16,9 @@ include($$PWD/../global.pri)
 
 TEMPLATE = app
 
-QT += widgets
+if (equals(QT_MAJOR_VERSION, 5)) {
+	QT += widgets
+}
 
 INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \

@@ -1,43 +1,55 @@
-sudo: required
-dist: trusty
+sudo: false
+
+git:
+  depth: 1
 
 language: cpp
 compiler: gcc
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - ubuntu-sdk-team
+     packages:
+      - g++-5
+      - qdbus
+      - xbitmaps
+      - xterm
+      - xvfb
+      - qmlscene
+      - libqt4-dev
+      - libqt4-script
+      - libqt4-svg
+      - qt4-qmake
+      - tcl
+
 env:
-  - CONFIG=debug     VERA=true    SUFFIX=-d
+  - CONFIG=debug     VERA=false   SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
 
 before_install:
   - pip install --user codecov
 
 install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - sudo apt-get install g++-5 -y
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 50
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50
-  - sudo add-apt-repository ppa:smspillaz/verapp-latest -y
-  - sudo apt-get update
-  - sudo apt-get install libboost-system-dev libboost-wave-dev tcl -y
-  - sudo apt-get install vera++ -y
-  - sudo apt-get install qdbus qmlscene qt5-default qt5-qmake qtbase5-dev-tools qtchooser qtdeclarative5-dev xbitmaps xterm libqt5svg5-dev qttools5-dev qtscript5-dev -y
-  - sudo apt-get install xvfb -y
+  - export CC=/usr/bin/gcc-5
+  - export CXX=/usr/bin/g++-5
   - Xvfb :0 &
   - export DISPLAY=:0
 
 script:
-  - gcc --version
-  - qmake --version
+  - $CXX --version
+  - qmake-qt4 --version
+  - export QMAKE_FLAGS="QMAKE_CXX=$CXX QMAKE_LINK=$CXX QMAKE_LINK_SHLIB=$CXX"
   - if [ "$VERA" = "true" ]; then tclsh vera++/generatePaths.tcl; fi
   - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
-  - qmake trikRuntime.pro CONFIG+=$CONFIG
+  - qmake-qt4 -r $QMAKE_FLAGS trikRuntime.pro CONFIG+=$CONFIG
   - make -j2
   - cd tests
-  - qmake -r CONFIG+=$CONFIG tests.pro
+  - qmake-qt4 -r $QMAKE_FLAGS CONFIG+=$CONFIG tests.pro
   - make -j2
   - cd minimalCppApp
-  - qmake -r CONFIG+=$CONFIG minimalCppApp.pro
+  - qmake-qt4 -r $QMAKE_FLAGS CONFIG+=$CONFIG minimalCppApp.pro
   - make -j2
   - cd ../../bin/x86-$CONFIG
   - ls -A
@@ -47,4 +59,4 @@ script:
   - cd ../..
 
 after_success:
-  - if [ "$CONFIG" = "debug" ]; then codecov; fi
+  - if [ "$CONFIG" = "debug" ]; then codecov --gcov-exec gcov-5; fi
