@@ -25,6 +25,7 @@ addons:
       - libqt4-script
       - libqt4-svg
       - qt4-qmake
+      - liblua5.1-0-dev
 
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
