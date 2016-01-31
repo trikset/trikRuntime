@@ -12,9 +12,7 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-5
-    sources:
-      - trusty
-    packages:
+     packages:
       - libboost-system-dev
       - libboost-wave-dev
       - tcl
@@ -23,13 +21,13 @@ addons:
       - qt5-default
       - qt5-qmake
       - qtbase5-dev-tools
-      - qtchooser
+#      - qtchooser
       - qtdeclarative5-dev
       - xbitmaps
       - xterm
       - libqt5svg5-dev
       - qttools5-dev
-      - qtscript5-dev
+#      - qtscript5-dev
       - xvfb
 
 env:
@@ -48,6 +46,7 @@ install:
 script:
   - $CXX --version
   - qmake --version
+  - ls /usr/bin
   - if [ "$VERA" = "true" ]; then tclsh vera++/generatePaths.tcl; fi
   - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
   - qmake -r QMAKE_CXX=$CXX trikRuntime.pro CONFIG+=$CONFIG
