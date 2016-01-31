@@ -1,4 +1,4 @@
-trikRuntime  [![Build Status](https://travis-ci.org/trikset/trikRuntime.svg?branch=master)](https://travis-ci.org/trikset/trikRuntime)
+trikRuntime  [![Build Status](https://travis-ci.org/trikset/trikRuntime.svg?branch=master)](https://travis-ci.org/trikset/trikRuntime) [![codecov.io](https://codecov.io/github/trikset/trikRuntime/coverage.svg?branch=master)](https://codecov.io/github/trikset/trikRuntime?branch=master)
 ===========
 
 Runtime for TRIK controller.
