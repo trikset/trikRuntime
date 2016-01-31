@@ -27,7 +27,7 @@ addons:
       - qt4-qmake
 
 env:
-  - CONFIG=debug     VERA=false    SUFFIX=-d
+  - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
 
 before_install:
@@ -38,6 +38,13 @@ install:
   - export CXX=/usr/bin/g++-5
   - Xvfb :0 &
   - export DISPLAY=:0
+  - git clone https://bitbucket.org/verateam/vera.git
+  - cd vera
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j
+  - make install
 
 script:
   - $CXX --version
