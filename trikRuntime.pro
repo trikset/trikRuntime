@@ -45,6 +45,7 @@ trikHal.depends = qslog trikKernel
 
 OTHER_FILES += \
 	$$PWD/changelog.txt \
+	$$PWD/.travis.yml \
 
 include($$PWD/global.pri)
 
