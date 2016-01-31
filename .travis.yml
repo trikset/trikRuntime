@@ -8,23 +8,23 @@ compiler: gcc
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - ubuntu-sdk-team
-    packages:
-      - g++-5
-      - libboost-system-dev
-      - libboost-wave-dev
-      - tcl
-      - qdbus
-      - xbitmaps
-      - xterm
-      - xvfb
-      - qmlscene
-      - libqt4-dev
-      - libqt4-script
-      - libqt4-svg
-      - qt4-qmake
+	sources:
+	  - ubuntu-toolchain-r-test
+	  - ubuntu-sdk-team
+	packages:
+	  - g++-5
+	  - libboost-system-dev
+	  - libboost-wave-dev
+	  - tcl-dev
+	  - qdbus
+	  - xbitmaps
+	  - xterm
+	  - xvfb
+	  - qmlscene
+	  - libqt4-dev
+	  - libqt4-script
+	  - libqt4-svg
+	  - qt4-qmake
 
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
