@@ -26,7 +26,7 @@ addons:
       - libqt4-svg
       - qt4-qmake
       - liblua5.1-0-dev
-
+      - libluabind-dev
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
