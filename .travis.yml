@@ -20,16 +20,11 @@ addons:
       - xbitmaps
       - xterm
       - xvfb
-      - qdbus
       - qmlscene
-      - qt5-default
-      - qt5-qmake
-      - qtbase5-dev-tools
-      - qtchooser
-      - qtdeclarative5-dev
-      - libqt5svg5-dev
-      - qttools5-dev
-      - qtscript5-dev
+      - libqt4-dev
+      - libqt4-script
+      - libqt4-svg
+      - qt4-qmake
 
 env:
   - CONFIG=debug     VERA=false    SUFFIX=-d
@@ -46,17 +41,17 @@ install:
 
 script:
   - $CXX --version
-  - qmake --version
+  - qmake-qt4 --version
   - ls /usr/bin
   - if [ "$VERA" = "true" ]; then tclsh vera++/generatePaths.tcl; fi
   - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
-  - qmake -r QMAKE_CXX=$CXX trikRuntime.pro CONFIG+=$CONFIG
+  - qmake-qt4 -r QMAKE_CXX=$CXX trikRuntime.pro CONFIG+=$CONFIG
   - make -j2
   - cd tests
-  - qmake -r QMAKE_CXX=$CXX CONFIG+=$CONFIG tests.pro
+  - qmake-qt4 -r QMAKE_CXX=$CXX CONFIG+=$CONFIG tests.pro
   - make -j2
   - cd minimalCppApp
-  - qmake -r QMAKE_CXX=$CXX CONFIG+=$CONFIG minimalCppApp.pro
+  - qmake-qt4 -r QMAKE_CXX=$CXX CONFIG+=$CONFIG minimalCppApp.pro
   - make -j2
   - cd ../../bin/x86-$CONFIG
   - ls -A
