@@ -1,10 +1,16 @@
 sudo: required
 
+git:
+  depth: 1
+
 language: cpp
 
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
+
+before_install:
+  - if [ "$CONFIG" = "debug" ]; then pip install --user codecov; fi
 
 services:
   - docker
@@ -14,6 +20,8 @@ install:
 
 script:
   - docker run -d -v `pwd`:`pwd` -w `pwd` --name builder yuriilitvinov/trikruntime-builder Xvfb :0
+  - if [ "$VERA" = "true" ]; then docker exec builder tclsh vera++/generatePaths.tcl; fi
+  - if [ "$VERA" = "true" ]; then docker exec builder vera++ --error -p allRules --root vera++ <vera++/params; fi
   - docker exec builder qmake -r CONFIG+=$CONFIG
   - docker exec builder make -j2
   - docker exec builder sh -c "cd tests && qmake -r CONFIG+=$CONFIG"
@@ -25,3 +33,6 @@ script:
   - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikCommunicatorTests-x86$SUFFIX"
   - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikKernelTests-x86$SUFFIX"
   - docker stop builder
+
+after_success:
+  - if [ "$CONFIG" = "debug" ]; then codecov; fi
