@@ -4,7 +4,6 @@ MAINTAINER Yurii Litvinov <yurii.litvinov@gmail.com>
 
 RUN apt-get update
 RUN apt-get install build-essential -y
-RUN apt-get install git -y
 RUN apt-get install libboost-system-dev libboost-wave-dev tcl vera++ -y
 RUN apt-get install xvfb -y
 RUN apt-get install mesa-common-dev libglu1-mesa-dev -y
