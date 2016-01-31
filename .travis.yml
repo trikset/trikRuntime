@@ -11,8 +11,7 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
       - ubuntu-sdk-team
-      - r-packages-trusty
-    packages:
+     packages:
       - g++-5
       - qdbus
       - xbitmaps
@@ -24,9 +23,9 @@ addons:
       - libqt4-svg
       - qt4-qmake
       - tcl
-      - vera++=1.2.1-2
+
 env:
-  - CONFIG=debug     VERA=true    SUFFIX=-d
+  - CONFIG=debug     VERA=false   SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
 
 before_install:
