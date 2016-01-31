@@ -8,6 +8,9 @@ env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
 
+before_install:
+  - pip install --user codecov
+
 install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -qq
@@ -42,7 +45,6 @@ script:
   - sh -c "./trikCommunicatorTests-x86$SUFFIX"
   - sh -c "./trikKernelTests-x86$SUFFIX"
   - cd ../..
-  - if [ "$CONFIG" = "debug" ]; then find . -type f -name '*.gcno' -exec gcov -pb {} +; fi
 
 after_success:
-  - if [ "$CONFIG" = "debug" ]; then bash <(curl -s https://codecov.io/bash); fi
+  - if [ "$CONFIG" = "debug" ]; then codecov; fi
