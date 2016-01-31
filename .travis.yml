@@ -24,7 +24,7 @@ addons:
       - libqt4-svg
       - qt4-qmake
       - tcl
-      - vera++
+      - vera++=1.2.1-2
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
