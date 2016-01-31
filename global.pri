@@ -44,8 +44,8 @@ win32 {
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
-	QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage -coverage
-	QMAKE_LFLAGS += -fprofile-arcs -coverage
+	QMAKE_CXXFLAGS += -coverage
+	QMAKE_LFLAGS += -coverage
 	# Address sanitizer is on by default
 	# CONFIG += sanitize-address
 } else {
