@@ -42,16 +42,16 @@ install:
 script:
   - $CXX --version
   - qmake-qt4 --version
-  - ls /usr/bin
+  - export QMAKE_FLAGS="QMAKE_CXX=$CXX QMAKE_LINK=$CXX QMAKE_LINK_SHLIB=$CXX"
   - if [ "$VERA" = "true" ]; then tclsh vera++/generatePaths.tcl; fi
   - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
-  - qmake-qt4 -r QMAKE_CXX=$CXX trikRuntime.pro CONFIG+=$CONFIG
+  - qmake-qt4 -r $QMAKE_FLAGS trikRuntime.pro CONFIG+=$CONFIG
   - make -j2
   - cd tests
-  - qmake-qt4 -r QMAKE_CXX=$CXX CONFIG+=$CONFIG tests.pro
+  - qmake-qt4 -r $QMAKE_FLAGS CONFIG+=$CONFIG tests.pro
   - make -j2
   - cd minimalCppApp
-  - qmake-qt4 -r QMAKE_CXX=$CXX CONFIG+=$CONFIG minimalCppApp.pro
+  - qmake-qt4 -r $QMAKE_FLAGS CONFIG+=$CONFIG minimalCppApp.pro
   - make -j2
   - cd ../../bin/x86-$CONFIG
   - ls -A
