@@ -11,6 +11,7 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
       - ubuntu-sdk-team
+      - r-packages-trusty
     packages:
       - g++-5
       - qdbus
