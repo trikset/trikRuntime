@@ -22,6 +22,7 @@ addons:
       - libqt4-script
       - libqt4-svg
       - qt4-qmake
+      - tcl
       - vera++
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
