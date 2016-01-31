@@ -13,4 +13,16 @@ install:
   - docker pull yuriilitvinov/trikruntime-builder
 
 script:
-  - docker run yuriilitvinov/trikruntime-builder /bin/sh -c "cd ~ && git clone https://github.com/trikset/trikRuntime && cd trikRuntime && qmake CONFIG+=$CONFIG && make -j2"
+  - docker run -d -v `pwd`:`pwd` -w `pwd` --name builder yuriilitvinov/trikruntime-builder Xvfb :0
+  - docker exec builder export DISPLAY=:0
+  - docker exec builder qmake -r CONFIG+=$CONFIG
+  - docker exec builder make -j2
+  - docker exec builder sh -c "cd tests && qmake -r CONFIG+=$CONFIG"
+  - docker exec builder sh -c "cd tests && make -j2"
+  - docker exec builder sh -c "cd tests/minimalCppApp && qmake -r CONFIG+=$CONFIG"
+  - docker exec builder sh -c "cd tests/minimalCppApp && make -j2"
+  - docker exec builder sh -c "cd bin/x86-$CONFIG && ls"
+  - docker exec builder sh -c "cd bin/x86-$CONFIG && ./trikScriptRunnerTests-x86$SUFFIX"
+  - docker exec builder sh -c "cd bin/x86-$CONFIG && ./trikCommunicatorTests-x86$SUFFIX"
+  - docker exec builder sh -c "cd bin/x86-$CONFIG && ./trikKernelTests-x86$SUFFIX"
+  - docker stop builder
