@@ -21,7 +21,7 @@ install:
 script:
   - docker run -d -v `pwd`:`pwd` -w `pwd` --name builder yuriilitvinov/trikruntime-builder Xvfb :0
   - if [ "$VERA" = "true" ]; then docker exec builder tclsh vera++/generatePaths.tcl; fi
-  - if [ "$VERA" = "true" ]; then docker exec builder vera++ --error -p allRules --root vera++ <vera++/params; fi
+  - if [ "$VERA" = "true" ]; then docker exec -i builder vera++ --error -p allRules --root vera++ <vera++/params; fi
   - docker exec builder qmake -r CONFIG+=$CONFIG
   - docker exec builder make -j2
   - docker exec builder sh -c "cd tests && qmake -r CONFIG+=$CONFIG"
