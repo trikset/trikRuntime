@@ -21,6 +21,7 @@
 
 namespace trikKernel {
 
+/// Debug helper that logs function entry and exit.
 class Debugger : public QObject
 {
 	Q_OBJECT
