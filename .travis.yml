@@ -1,50 +1,36 @@
 sudo: required
-dist: trusty
+
+git:
+  depth: 1
 
 language: cpp
-compiler: gcc
 
 env:
   - CONFIG=debug     VERA=true    SUFFIX=-d
   - CONFIG=release   VERA=false   SUFFIX=
 
 before_install:
-  - pip install --user codecov
+  - if [ "$CONFIG" = "debug" ]; then pip install --user codecov; fi
+
+services:
+  - docker
 
 install:
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - sudo apt-get install g++-5 -y
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 50
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 50
-  - sudo add-apt-repository ppa:smspillaz/verapp-latest -y
-  - sudo apt-get update
-  - sudo apt-get install libboost-system-dev libboost-wave-dev tcl -y
-  - sudo apt-get install vera++ -y
-  - sudo apt-get install qdbus qmlscene qt5-default qt5-qmake qtbase5-dev-tools qtchooser qtdeclarative5-dev xbitmaps xterm libqt5svg5-dev qttools5-dev qtscript5-dev -y
-  - sudo apt-get install xvfb -y
-  - Xvfb :0 &
-  - export DISPLAY=:0
+  - docker pull yuriilitvinov/trikruntime-builder
 
 script:
-  - gcc --version
-  - qmake --version
-  - if [ "$VERA" = "true" ]; then tclsh vera++/generatePaths.tcl; fi
-  - if [ "$VERA" = "true" ]; then vera++ --error -p allRules --root vera++ <vera++/params; fi
-  - qmake trikRuntime.pro CONFIG+=$CONFIG
-  - make -j2
-  - cd tests
-  - qmake -r CONFIG+=$CONFIG tests.pro
-  - make -j2
-  - cd minimalCppApp
-  - qmake -r CONFIG+=$CONFIG minimalCppApp.pro
-  - make -j2
-  - cd ../../bin/x86-$CONFIG
-  - ls -A
-  - sh -c "./trikScriptRunnerTests-x86$SUFFIX"
-  - sh -c "./trikCommunicatorTests-x86$SUFFIX"
-  - sh -c "./trikKernelTests-x86$SUFFIX"
-  - cd ../..
+  - docker run -d -v `pwd`:`pwd` -w `pwd` --name builder yuriilitvinov/trikruntime-builder Xvfb :0
+  - if [ "$VERA" = "true" ]; then docker exec builder tclsh vera++/generatePaths.tcl; fi
+  - if [ "$VERA" = "true" ]; then docker exec -i builder vera++ --error -p allRules --root vera++ <vera++/params; fi
+  - docker exec builder qmake -r CONFIG+=$CONFIG
+  - docker exec builder make -j2
+  - docker exec builder sh -c "cd tests && qmake -r CONFIG+=$CONFIG"
+  - docker exec builder sh -c "cd tests && make -j2"
+  - docker exec builder sh -c "cd bin/x86-$CONFIG && ls"
+  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests-x86$SUFFIX"
+  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikCommunicatorTests-x86$SUFFIX"
+  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikKernelTests-x86$SUFFIX"
+  - docker stop builder
 
 after_success:
   - if [ "$CONFIG" = "debug" ]; then codecov; fi
