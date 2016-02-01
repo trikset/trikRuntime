@@ -25,7 +25,7 @@ class TESTUTILS_EXPORT Wait
 public:
 	/// Wait for given amount of milliseconds. Launches event loop so thread is not blocked and can still process
 	/// messages.
-	static void wait(int msecs);
+	static TESTUTILS_EXPORT void wait(int msecs);
 };
 
 }

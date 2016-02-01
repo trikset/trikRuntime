@@ -17,7 +17,7 @@
 #include <QtCore/qglobal.h>
 
 #ifndef TESTUTILS_EXPORT
-#  if defined(UTILS_LIBRARY)
+#  if defined(TESTUTILS_LIBRARY)
 #    define TESTUTILS_EXPORT Q_DECL_EXPORT
 #  else
 #    define TESTUTILS_EXPORT Q_DECL_IMPORT
