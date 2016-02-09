@@ -15,6 +15,7 @@
 #include "colorSensor.h"
 
 #include <trikKernel/configurer.h>
+#include <QsLog.h>
 
 #include "colorSensorWorker.h"
 #include "configurerHelper.h"
@@ -36,6 +37,8 @@ ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &conf
 	mColorSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
+
+	QLOG_INFO() << "Starting ColorSensor worker thread" << &mWorkerThread;
 
 	mWorkerThread.start();
 }

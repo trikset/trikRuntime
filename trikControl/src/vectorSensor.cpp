@@ -16,6 +16,7 @@
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/timeVal.h>
+#include <QsLog.h>
 
 #include "vectorSensorWorker.h"
 
@@ -34,6 +35,9 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 				, this, SIGNAL(newData(QVector<int>, trikKernel::TimeVal)));
 
 		mVectorSensorWorker->moveToThread(&mWorkerThread);
+
+		QLOG_INFO() << "Starting VectorSensor worker thread" << &mWorkerThread;
+
 		mWorkerThread.start();
 
 		mState.ready();

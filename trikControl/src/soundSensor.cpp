@@ -37,6 +37,8 @@ SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &conf
 
 		connect(mSoundSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
 
+		QLOG_INFO() << "Starting SoundSensor worker thread" << &mWorkerThread;
+
 		mWorkerThread.start();
 	}
 }

@@ -50,6 +50,8 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 		connect(mSensorWorker.data(), SIGNAL(newData(int, int, trikKernel::TimeVal))
 				, this, SIGNAL(newData(int, int, trikKernel::TimeVal)));
 
+		QLOG_INFO() << "Starting RangeSensor worker thread" << &mWorkerThread;
+
 		mWorkerThread.start();
 	}
 }
