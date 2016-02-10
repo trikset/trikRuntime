@@ -66,6 +66,6 @@ void Connection::processData(const QByteArray &data)
 		QMetaObject::invokeMethod(&mTrikScriptRunner, "run"
 				, Q_ARG(QString, command));
 	} else if (command == "configVersion") {
-		send(mConfigVersion.toUtf8());
+		send("configVersion: " + mConfigVersion.toUtf8());
 	}
 }

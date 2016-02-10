@@ -74,6 +74,7 @@ void WiFiIndicator::updateStatus()
 {
 	trikKernel::RcReader rcReader(trikKernel::Paths::trikRcName());
 	rcReader.read();
+
 	WiFiModeWidget::Mode wiFiMode;
 	if (rcReader.value("trik_wifi_mode") == "ap") {
 		wiFiMode = WiFiModeWidget::accessPoint;

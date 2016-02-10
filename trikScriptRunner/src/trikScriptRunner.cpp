@@ -42,6 +42,8 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 
 	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
 
+	QLOG_INFO() << "Starting TrikScriptRunner worker thread" << &mWorkerThread;
+
 	mWorkerThread.start();
 }
 

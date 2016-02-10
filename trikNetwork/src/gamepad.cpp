@@ -101,6 +101,9 @@ void Gamepad::init(int port)
 	connect(mWorker.data(), SIGNAL(disconnect()),this, SIGNAL(disconnect()));
 
 	mWorker->moveToThread(&mWorkerThread);
+
+	QLOG_INFO() << "Starting Gamepad worker thread" << &mWorkerThread;
+
 	mWorkerThread.start();
 
 	QMetaObject::invokeMethod(mWorker.data(), "startServer", Qt::QueuedConnection, Q_ARG(int, port));

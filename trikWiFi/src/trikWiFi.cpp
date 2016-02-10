@@ -14,6 +14,8 @@
 
 #include "trikWiFi.h"
 
+#include <QsLog.h>
+
 #include "trikWiFiWorker.h"
 
 using namespace trikWiFi;
@@ -34,6 +36,8 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	QObject::connect(mWorker.data(), SIGNAL(listNetworksReady()), this, SIGNAL(listNetworksReady()));
 
 	QObject::connect(mWorker.data(), SIGNAL(error(QString)), this, SIGNAL(error(QString)));
+
+	QLOG_INFO() << "Starting TrikWiFi worker thread" << &mWorkerThread;
 
 	mWorkerThread.start();
 

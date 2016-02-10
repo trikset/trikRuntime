@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <QtCore/QThread>
 #include <QtCore/QString>
 
 #include "declSpec.h"

@@ -36,6 +36,9 @@ ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &co
 				, hardwareAbstraction));
 		mObjectSensorWorker->moveToThread(&mWorkerThread);
 		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
+
+		QLOG_INFO() << "Starting ObjectSensor worker thread" << &mWorkerThread;
+
 		mWorkerThread.start();
 	}
 }
