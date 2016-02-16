@@ -192,21 +192,24 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 	if (!mScriptControl.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
 		stopScript();
+	}
+
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command), Q_ARG(int, scriptId));
+}
+
+void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
+{
+	if (!mScriptControl.isInEventDrivenMode() && !mDirectScriptsEngine) {
 		startScriptEvaluation(scriptId);
 		mDirectScriptsEngine = createScriptEngine(false);
 		mScriptControl.run();
 		mState = running;
 	}
 
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
-}
-
-void ScriptEngineWorker::doRunDirect(const QString &command)
-{
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->evaluate(command);
 
-		/// If script was stopped by quit(), engine will already be deleted in ScriptEngineWorker::stopScript.
+		/// If script was stopped by quit(), engine will already be reset to nullptr in ScriptEngineWorker::stopScript.
 		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
 			emit completed(mDirectScriptsEngine->hasUncaughtException()

@@ -59,19 +59,24 @@ void TrikScriptRunnerTest::run(const QString &script)
 	waitingLoop.exec();
 }
 
-void TrikScriptRunnerTest::runDirect(const QString &script)
+void TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
-//	QEventLoop waitingLoop;
-//	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
+	QEventLoop waitingLoop;
+	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
 	mScriptRunner->runDirectCommand(script);
 
-//	waitingLoop.exec();
+	waitingLoop.exec();
 }
 
 void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 {
 	const auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
 	run(fileContents);
+}
+
+trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
+{
+	return *mScriptRunner;
 }
 
 TEST_F(TrikScriptRunnerTest, sanityCheck)
@@ -109,9 +114,22 @@ TEST_F(TrikScriptRunnerTest, directCommandTest)
 	QFile testFile("test");
 	testFile.remove();
 	ASSERT_FALSE(testFile.exists());
-	runDirect("script.system('echo 123 > test', true);");
+	scriptRunner().runDirectCommand("script.system('echo 123 > test', true);");
 	tests::utils::Wait::wait(100);
 	ASSERT_TRUE(testFile.exists());
-//	runDirect("script.system('rm test', true); script.quit();");
-//	ASSERT_FALSE(testFile.exists());
+	scriptRunner().runDirectCommand("script.system('rm test', true);");
+	tests::utils::Wait::wait(100);
+	ASSERT_FALSE(testFile.exists());
+	scriptRunner().runDirectCommand("script.quit();");
+}
+
+TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
+{
+	QFile testFile("test");
+	testFile.remove();
+	ASSERT_FALSE(testFile.exists());
+	runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
+	ASSERT_TRUE(testFile.exists());
+	runDirectCommandAndWaitForQuit("script.system('rm test', true); script.quit();");
+	ASSERT_FALSE(testFile.exists());
 }

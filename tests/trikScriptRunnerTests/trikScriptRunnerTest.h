@@ -30,8 +30,10 @@ protected:
 	void TearDown() override;
 
 	void run(const QString &script);
-	void runDirect(const QString &script);
+	void runDirectCommandAndWaitForQuit(const QString &script);
 	void runFromFile(const QString &fileName);
+
+	trikScriptRunner::TrikScriptRunner &scriptRunner();
 
 private:
 	/// Does nothing, but ensures event processing at the time of destruction of test suite, to avoid
