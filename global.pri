@@ -47,7 +47,7 @@ CONFIG(debug, debug | release) {
 	QMAKE_CXXFLAGS += -coverage
 	QMAKE_LFLAGS += -coverage
 	# Address sanitizer is on by default
-	# CONFIG += sanitize-address
+	 CONFIG += sanitize-address
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
 	equals(ARCHITECTURE, "arm") {

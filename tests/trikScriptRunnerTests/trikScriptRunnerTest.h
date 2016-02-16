@@ -30,6 +30,7 @@ protected:
 	void TearDown() override;
 
 	void run(const QString &script);
+	void runDirect(const QString &script);
 	void runFromFile(const QString &fileName);
 
 private:

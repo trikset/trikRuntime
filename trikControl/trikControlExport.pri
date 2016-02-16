@@ -46,6 +46,7 @@ win32 {
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
+	CONFIG += sanitize-address
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
 	equals(ARCHITECTURE, "arm") {

@@ -205,7 +205,9 @@ void ScriptEngineWorker::doRunDirect(const QString &command)
 {
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->evaluate(command);
-		if (mDirectScriptsEngine->hasUncaughtException()) {
+
+		/// If script was stopped by quit(), engine will already be deleted in ScriptEngineWorker::stopScript.
+		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
 			emit completed(mDirectScriptsEngine->hasUncaughtException()
 					? mDirectScriptsEngine->uncaughtException().toString()

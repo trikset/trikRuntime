@@ -59,6 +59,15 @@ void TrikScriptRunnerTest::run(const QString &script)
 	waitingLoop.exec();
 }
 
+void TrikScriptRunnerTest::runDirect(const QString &script)
+{
+//	QEventLoop waitingLoop;
+//	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
+	mScriptRunner->runDirectCommand(script);
+
+//	waitingLoop.exec();
+}
+
 void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 {
 	const auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
@@ -82,7 +91,7 @@ TEST_F(TrikScriptRunnerTest, asyncSystemTest)
 	ASSERT_FALSE(testFile.exists());
 	runFromFile("async-system-test.js");
 	ASSERT_FALSE(testFile.exists());
-	tests::utils::Wait::wait(2100);
+	tests::utils::Wait::wait(2500);
 	ASSERT_TRUE(testFile.exists());
 }
 
@@ -93,4 +102,16 @@ TEST_F(TrikScriptRunnerTest, syncSystemTest)
 	ASSERT_FALSE(testFile.exists());
 	runFromFile("sync-system-test.js");
 	ASSERT_TRUE(testFile.exists());
+}
+
+TEST_F(TrikScriptRunnerTest, directCommandTest)
+{
+	QFile testFile("test");
+	testFile.remove();
+	ASSERT_FALSE(testFile.exists());
+	runDirect("script.system('echo 123 > test', true);");
+	tests::utils::Wait::wait(100);
+	ASSERT_TRUE(testFile.exists());
+//	runDirect("script.system('rm test', true); script.quit();");
+//	ASSERT_FALSE(testFile.exists());
 }
