@@ -102,7 +102,7 @@ private slots:
 	void doRun(const QString &script);
 
 	/// Actually runs given command. Is to be called from a thread owning ScriptEngineWorker.
-	void doRunDirect(const QString &command);
+	void doRunDirect(const QString &command, int scriptId);
 
 private:
 	/// State of a script

@@ -45,9 +45,11 @@ trikHal.depends = qslog trikKernel
 
 OTHER_FILES += \
 	$$PWD/changelog.txt \
+	$$PWD/asan.supp \
 	$$PWD/.travis.yml \
 	$$PWD/docker/Dockerfile \
 
 include($$PWD/global.pri)
 
 copyToDestdir($$PWD/changelog.txt, now)
+copyToDestdir($$PWD/asan.supp, now)
