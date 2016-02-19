@@ -133,3 +133,11 @@ TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
 	runDirectCommandAndWaitForQuit("script.system('rm test', true); script.quit();");
 	ASSERT_FALSE(testFile.exists());
 }
+
+TEST_F(TrikScriptRunnerTest, twoProgramsTest)
+{
+	scriptRunner().run("script.wait(500);");
+	tests::utils::Wait::wait(100);
+	scriptRunner().run("script.wait(500);");
+	tests::utils::Wait::wait(600);
+}
