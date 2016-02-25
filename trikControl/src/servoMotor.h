@@ -75,6 +75,7 @@ public slots:
 private:
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
+    QScopedPointer<trikHal::OutputDeviceFileInterface> mRunFile;
 	int mPeriod;
 	int mCurrentDutyPercent;
 	int mMin;
@@ -85,6 +86,7 @@ private:
 	int mMaxControlRange;
 	bool mInvert;
 	int mCurrentPower;
+    bool mRun;
 	DeviceState mState;
 };
 

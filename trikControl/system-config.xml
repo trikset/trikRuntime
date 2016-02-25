@@ -93,33 +93,37 @@ equal to its class name.
 			port="S1"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
+			runFile="/sys/class/pwm/ecap.2/run"
 		/>
 		<servoMotor
 			port="S2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
+			runFile="/sys/class/pwm/ecap.1/run"
 		/>
 		<servoMotor
 			port="S3"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
+			runFile="/sys/class/pwm/ecap.0/run"
 		/>
 		<servoMotor
 			port="S4"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.0:1/run"
 		/>
 		<servoMotor
 			port="S5"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.1:0/run"
 		/>
 		<servoMotor
 			port="S6"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
-			controlMin="0"
-			controlMax="100"
+			runFile="/sys/class/pwm/ehrpwm.1:1/run"
 		/>
 		<pwmCapture
 			port="S1"
@@ -168,6 +172,10 @@ equal to its class name.
 
 		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0"
 				controlMin="-100" controlMax="100" />
+
+		<quadroMotor class="ServoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
+				controlMin="0" controlMax="100" />
+
 
 		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
 				controlMin="0" controlMax="100" />
