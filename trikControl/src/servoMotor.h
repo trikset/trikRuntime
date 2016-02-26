@@ -75,6 +75,8 @@ public slots:
 private:
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mRunFile;
+	bool mRun;
 	int mPeriod;
 	int mCurrentDutyPercent;
 	int mMin;

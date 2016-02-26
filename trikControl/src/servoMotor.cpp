@@ -26,6 +26,8 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mDutyFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
 	, mPeriodFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "periodFile")))
+	, mRunFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "runFile")))
+	, mRun(false)
 	, mCurrentDutyPercent(0)
 	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
@@ -46,6 +48,13 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 	if (!mPeriodFile->open()) {
 		mState.fail();
 		return;
+	}
+
+	if (!mRunFile->open()) {
+		mState.fail();
+		return;
+	} else {
+		mRunFile->write(QString::number(mRun));
 	}
 
 	const QString command = QString::number(mPeriod);
@@ -103,6 +112,9 @@ void ServoMotor::powerOff()
 
 	mDutyFile->write(QString::number(mStop));
 	mCurrentPower = 0;
+
+	mRun = false;
+	mRunFile->write(QString::number(mRun));
 }
 
 void ServoMotor::setPower(int power, bool constrain)
@@ -110,6 +122,11 @@ void ServoMotor::setPower(int power, bool constrain)
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
 		return;
+	}
+
+	if (!mRun) {
+		mRun = true;
+		mRunFile->write(QString::number(mRun));
 	}
 
 	if (constrain) {
