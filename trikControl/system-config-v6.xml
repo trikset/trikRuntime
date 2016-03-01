@@ -136,7 +136,7 @@ equal to its class name.
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x14 invert="true" />
+		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
 		<powerMotor port="M3" i2cCommandNumber="0x17" />
 		<powerMotor port="M4" i2cCommandNumber="0x16" />
