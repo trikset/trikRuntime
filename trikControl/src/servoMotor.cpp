@@ -26,11 +26,11 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mDutyFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
 	, mPeriodFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "periodFile")))
-    , mRunFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "runFile")))
+	, mRunFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "runFile")))
 	, mCurrentDutyPercent(0)
 	, mInvert(configurer.attributeByPort(port, "invert") == "true")
 	, mCurrentPower(0)
-    , mRun(false)
+	, mRun(false)
 	, mState("Servomotor on " + port)
 {
 	const auto configure = [this, &port, &configurer](const QString &parameterName) {
@@ -50,12 +50,12 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 		return;
 	}
 
-    if (!mRunFile->open()) {
-        mState.fail();
-        return;
-    } else {
-        mRunFile->write(QString::number(0));
-    }
+	if (!mRunFile->open()) {
+		mState.fail();
+		return;
+	} else {
+		mRunFile->write(QString::number(mRun ? 1 : 0));
+	}
 
 	const QString command = QString::number(mPeriod);
 
@@ -111,9 +111,12 @@ void ServoMotor::powerOff()
 	}
 
 	mDutyFile->write(QString::number(mStop));
-    mRunFile->write(QString::number(0));
-    mRun = false;
+	mRunFile->write(QString::number(0));
+	mRun = false;
 	mCurrentPower = 0;
+
+	mRun = false;
+	mRunFile->write(QString::number(mRun));
 }
 
 void ServoMotor::setPower(int power, bool constrain)
@@ -121,6 +124,11 @@ void ServoMotor::setPower(int power, bool constrain)
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to turn on motor which is not ready, ignoring";
 		return;
+	}
+
+	if (!mRun) {
+		mRun = true;
+		mRunFile->write(QString::number(mRun));
 	}
 
 	if (constrain) {
@@ -145,9 +153,9 @@ void ServoMotor::setPower(int power, bool constrain)
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 
-    if (!mRun) {
-        mRunFile->write(QString::number(1));
-        mRun = true;
-    }
+	if (!mRun) {
+		mRunFile->write(QString::number(1));
+		mRun = true;
+	}
 	mDutyFile->write(command);
 }
