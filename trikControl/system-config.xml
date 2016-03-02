@@ -169,9 +169,8 @@ equal to its class name.
 		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0"
 				controlMin="-100" controlMax="100" />
 
-		<quadroMotor class="ServoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
+		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
 				controlMin="0" controlMax="100" />
-
 
 		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
 				controlMin="0" controlMax="100" />
