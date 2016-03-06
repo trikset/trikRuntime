@@ -126,11 +126,6 @@ void ServoMotor::setPower(int power, bool constrain)
 		return;
 	}
 
-	if (!mRun) {
-		mRun = true;
-		mRunFile->write(QString::number(mRun));
-	}
-
 	if (constrain) {
 		if (power > mMaxControlRange) {
 			power = mMaxControlRange;
@@ -158,4 +153,9 @@ void ServoMotor::setPower(int power, bool constrain)
 		mRun = true;
 	}
 	mDutyFile->write(command);
+
+	if (!mRun) {
+		mRun = true;
+		mRunFile->write(QString::number(mRun));
+	}
 }
