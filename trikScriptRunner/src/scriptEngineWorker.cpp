@@ -24,6 +24,7 @@
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
+#include <trikControl/eventDeviceInterface.h>
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
@@ -42,11 +43,12 @@ using namespace trikScriptRunner;
 using namespace trikControl;
 using namespace trikNetwork;
 
-Q_DECLARE_METATYPE(Threading*)
-Q_DECLARE_METATYPE(ColorSensorInterface*)
 Q_DECLARE_METATYPE(BatteryInterface*)
+Q_DECLARE_METATYPE(ColorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(DisplayInterface*)
 Q_DECLARE_METATYPE(EncoderInterface*)
+Q_DECLARE_METATYPE(EventDeviceInterface*)
 Q_DECLARE_METATYPE(GamepadInterface*)
 Q_DECLARE_METATYPE(KeysInterface*)
 Q_DECLARE_METATYPE(LedInterface*)
@@ -56,8 +58,8 @@ Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
+Q_DECLARE_METATYPE(Threading*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
-Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -246,21 +248,22 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
 	qScriptRegisterMetaType(engine, batteryToScriptValue, batteryFromScriptValue);
+	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, displayToScriptValue, displayFromScriptValue);
 	qScriptRegisterMetaType(engine, encoderToScriptValue, encoderFromScriptValue);
+	qScriptRegisterMetaType(engine, eventDeviceToScriptValue, eventDeviceFromScriptValue);
 	qScriptRegisterMetaType(engine, gamepadToScriptValue, gamepadFromScriptValue);
+	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
 	qScriptRegisterMetaType(engine, keysToScriptValue, keysFromScriptValue);
 	qScriptRegisterMetaType(engine, ledToScriptValue, ledFromScriptValue);
+	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, mailboxToScriptValue, mailboxFromScriptValue);
 	qScriptRegisterMetaType(engine, motorToScriptValue, motorFromScriptValue);
-	qScriptRegisterMetaType(engine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(engine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
+	qScriptRegisterMetaType(engine, sensorToScriptValue, sensorFromScriptValue);
 	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
 	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
-	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
+	qScriptRegisterMetaType(engine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 

@@ -21,6 +21,8 @@
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
+#include <trikControl/eventDeviceInterface.h>
+#include <trikControl/fifoInterface.h>
 #include <trikControl/keysInterface.h>
 #include <trikControl/ledInterface.h>
 #include <trikControl/lineSensorInterface.h>
@@ -29,7 +31,6 @@
 #include <trikControl/soundSensorInterface.h>
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
-#include <trikControl/fifoInterface.h>
 
 #include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -47,6 +48,9 @@ void displayFromScriptValue(const QScriptValue &object, trikControl::DisplayInte
 
 QScriptValue encoderToScriptValue(QScriptEngine *engine, trikControl::EncoderInterface* const &in);
 void encoderFromScriptValue(const QScriptValue &object, trikControl::EncoderInterface* &out);
+
+QScriptValue eventDeviceToScriptValue(QScriptEngine *engine, trikControl::EventDeviceInterface* const &in);
+void eventDeviceFromScriptValue(const QScriptValue &object, trikControl::EventDeviceInterface* &out);
 
 QScriptValue gamepadToScriptValue(QScriptEngine *engine, trikNetwork::GamepadInterface* const &in);
 void gamepadFromScriptValue(const QScriptValue &object, trikNetwork::GamepadInterface* &out);

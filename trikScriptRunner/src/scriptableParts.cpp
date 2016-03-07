@@ -50,6 +50,16 @@ void trikScriptRunner::encoderFromScriptValue(const QScriptValue &object, Encode
 	out = qobject_cast<EncoderInterface*>(object.toQObject());
 }
 
+QScriptValue trikScriptRunner::eventDeviceToScriptValue(QScriptEngine *engine, EventDeviceInterface* const &in)
+{
+	return engine->newQObject(in);
+}
+
+void trikScriptRunner::eventDeviceFromScriptValue(const QScriptValue &object, EventDeviceInterface* &out)
+{
+	out = qobject_cast<EventDeviceInterface*>(object.toQObject());
+}
+
 QScriptValue trikScriptRunner::gamepadToScriptValue(QScriptEngine *engine, GamepadInterface* const &in)
 {
 	return engine->newQObject(in);

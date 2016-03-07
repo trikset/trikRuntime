@@ -34,6 +34,8 @@ class ColorSensor;
 class DigitalSensor;
 class Display;
 class Encoder;
+class EventDevice;
+class Fifo;
 class MspCommunicatorInterface;
 class Keys;
 class Led;
@@ -46,7 +48,6 @@ class PwmCapture;
 class RangeSensor;
 class ServoMotor;
 class VectorSensor;
-class Fifo;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -124,6 +125,10 @@ public slots:
 
 	FifoInterface *fifo(const QString &port) override;
 
+	EventDeviceInterface *eventDevice(const QString &deviceFile) override;
+
+	void stopEventDevice(const QString &deviceFile) override;
+
 private:
 	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
 			, const QString &systemConfig
@@ -162,6 +167,7 @@ private:
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
 	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
 	QHash<QString, Fifo *> mFifos;  // Has ownership.
+	QHash<QString, EventDeviceInterface *> mEventDevices;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;

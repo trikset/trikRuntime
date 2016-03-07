@@ -32,6 +32,8 @@ DEFINES += TRIKTELEMETRY_LIBRARY
 
 interfaceIncludes(trikNetwork)
 implementationIncludes(trikControl)
+transitiveIncludes(trikKernel)
+
 links(trikControl trikNetwork trikKernel)
 
 installs()
