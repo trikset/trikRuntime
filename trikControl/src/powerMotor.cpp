@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,14 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	, mCurrentPower(0)
 	, mCurrentPeriod(0x1000)
 	, mState("Power Motor on" + port)
+	, mLinearised(configurer.attributeByPort(port, "linearised") == "true")
 {
 	mMspCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+
+	if (mLinearised) {
+		lineariseMotor(port, configurer);
+	}
+
 	mState.ready();
 }
 
@@ -56,6 +62,10 @@ void PowerMotor::setPower(int power, bool constrain)
 	}
 
 	mCurrentPower = power;
+
+	if (mLinearised) {
+		power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
+	}
 
 	power = mInvert ? -power : power;
 
@@ -90,6 +100,42 @@ void PowerMotor::setPeriod(int period)
 	command[1] = static_cast<char>(period && 0xFF);
 	command[2] = static_cast<char>(period >> 8);
 	mCommunicator.send(command);
+}
+
+void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configurer &configurer)
+{
+	QVector<QPair<double, double> > powerDepedences;
+	for (const QString &str : configurer.attributeByPort(port, "measures").split(")")) {
+		if (str != "")
+		{
+			QPair<double, double> temp;
+			temp.first = str.mid(1).split(";").at(0).toInt();
+			temp.second = str.mid(1).split(";").at(1).toInt();
+			powerDepedences.append(temp);
+		}
+	}
+
+	const int dependencesLength = powerDepedences.size();
+	const int maxValue = powerDepedences[dependencesLength - 1].second;
+	for (int i = 0; i < dependencesLength; i++) {
+		powerDepedences[i].second *= 100;
+		powerDepedences[i].second /= maxValue;
+	}
+
+	for (int i = 0; i <= 100; i++)
+	{
+		int k = 0;
+		while (i > powerDepedences[k].second)
+		{
+			k++;
+		}
+		k--;
+
+		const double koef = (powerDepedences[k+1].first - powerDepedences[k].first)
+				/ (powerDepedences[k+1].second - powerDepedences[k].second);
+		const int power = powerDepedences[k].first + koef * (i - powerDepedences[k].second);
+		mPowerMap.append(power);
+	}
 }
 
 int PowerMotor::minControl() const

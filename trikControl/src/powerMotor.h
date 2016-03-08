@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QString>
+#include <QtCore/QVector>
 
 #include "motorInterface.h"
 #include "deviceState.h"
@@ -63,12 +63,16 @@ public slots:
 	void setPeriod(int period);
 
 private:
+	void lineariseMotor(const QString &port, const trikKernel::Configurer &configurer);
+
 	MspCommunicatorInterface &mCommunicator;
 	int mMspCommandNumber;
 	const bool mInvert;
 	int mCurrentPower;
 	int mCurrentPeriod;
 	DeviceState mState;
+	bool mLinearised;
+	QVector<int> mPowerMap;
 };
 
 }
