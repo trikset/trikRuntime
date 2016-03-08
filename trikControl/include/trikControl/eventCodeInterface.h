@@ -17,28 +17,22 @@
 #include <QtCore/QObject>
 
 #include "deviceInterface.h"
-#include "eventInterface.h"
 
 #include "declSpec.h"
 
 namespace trikControl {
 
-/// Generic event device.
-class TRIKCONTROL_EXPORT EventDeviceInterface : public QObject, public DeviceInterface
+/// Class that emits events from event device with specific event type and event code. Allows to selectively listen
+/// to events.
+class TRIKCONTROL_EXPORT EventCodeInterface : public QObject
 {
 	Q_OBJECT
 
-public slots:
-	/// Returns object that allows to selectively subscribe only to event with given code.
-	virtual EventInterface *onEvent(int eventType) = 0;
-
 signals:
-	/// Emitted when there is new event in an event file.
-	/// @param event - type of the event.
-	/// @param code - code of the event inside a type.
+	/// Emitted when there is new event with specific type and code in an event file.
 	/// @param value - value sent with the event.
 	/// @param eventTime - time stamp of the event, in milliseconds from start of the Unix time (modulo 2^32).
-	void on(int onEvent, int code, int value, int eventTime);
+	void on(int value, int eventTime);
 };
 
 }

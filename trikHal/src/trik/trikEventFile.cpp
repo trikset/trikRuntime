@@ -161,4 +161,3 @@ void TrikEventFile::readFile()
 
 	mSocketNotifier->setEnabled(true);
 }
-

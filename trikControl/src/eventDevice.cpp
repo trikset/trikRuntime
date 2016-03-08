@@ -17,6 +17,7 @@
 #include <QsLog.h>
 
 #include "eventDeviceWorker.h"
+#include "event.h"
 
 using namespace trikControl;
 
@@ -25,8 +26,7 @@ EventDevice::EventDevice(const QString &eventFile, const trikHal::HardwareAbstra
 {
 	mWorker.reset(new EventDeviceWorker(eventFile, mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
-		connect(mWorker.data(), SIGNAL(newEvent(int, int, int, int))
-				, this, SIGNAL(newEvent(int, int, int, int))
+		connect(mWorker.data(), SIGNAL(newEvent(int, int, int, int)), this, SIGNAL(on(int, int, int, int))
 				, Qt::QueuedConnection);
 
 		mWorker->moveToThread(&mWorkerThread);
@@ -44,6 +44,17 @@ EventDevice::~EventDevice()
 		mWorkerThread.quit();
 		mWorkerThread.wait();
 	}
+}
+
+EventInterface *EventDevice::onEvent(int eventType)
+{
+	if (!mEvents.contains(eventType)) {
+		const QSharedPointer<Event> event(new Event(eventType));
+		connect(this, SIGNAL(on(int, int, int, int)), event.data(), SLOT(onEvent(int, int, int, int)));
+		mEvents.insert(eventType, event);
+	}
+
+	return mEvents.value(eventType).data();
 }
 
 EventDevice::Status EventDevice::status() const

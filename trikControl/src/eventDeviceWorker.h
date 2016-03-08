@@ -42,7 +42,7 @@ signals:
 	/// @param code - code of the event inside a type.
 	/// @param value - value sent with the event.
 	/// @param eventTime - time stamp of the event, in msecs form start of the epoch.
-	void newEvent(int event, int code, int value, int eventTime);
+	void newEvent(int onEvent, int code, int value, int eventTime);
 
 private slots:
 	/// Called every time underlying event file produces an event.

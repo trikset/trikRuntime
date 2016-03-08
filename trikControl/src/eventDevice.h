@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <QtCore/QSharedPointer>
+
 #include "eventDeviceInterface.h"
 #include "deviceState.h"
 
@@ -38,6 +40,8 @@ public:
 
 	~EventDevice() override;
 
+	EventInterface *onEvent(int eventType) override;
+
 	Status status() const override;
 
 private:
@@ -49,6 +53,10 @@ private:
 
 	/// State of event device.
 	DeviceState mState;
+
+	/// A storage for created event objects. They will listen to the events from the moment of first reference
+	/// until event device is shut down.
+	QHash<int, QSharedPointer<EventInterface>> mEvents;
 };
 
 }

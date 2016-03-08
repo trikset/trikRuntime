@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2016 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
+#include <trikControl/eventCodeInterface.h>
 #include <trikControl/eventDeviceInterface.h>
+#include <trikControl/eventInterface.h>
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
@@ -34,7 +36,7 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikNetwork/gamepadInterface.h>
 
-#include "scriptableParts.h"
+#include "scriptable.h"
 #include "utils.h"
 
 #include <QsLog.h>
@@ -48,7 +50,9 @@ Q_DECLARE_METATYPE(ColorSensorInterface*)
 Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(DisplayInterface*)
 Q_DECLARE_METATYPE(EncoderInterface*)
+Q_DECLARE_METATYPE(EventCodeInterface*)
 Q_DECLARE_METATYPE(EventDeviceInterface*)
+Q_DECLARE_METATYPE(EventInterface*)
 Q_DECLARE_METATYPE(GamepadInterface*)
 Q_DECLARE_METATYPE(KeysInterface*)
 Q_DECLARE_METATYPE(LedInterface*)
@@ -247,23 +251,26 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	QScriptEngine *engine = new QScriptEngine();
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
-	qScriptRegisterMetaType(engine, batteryToScriptValue, batteryFromScriptValue);
-	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, displayToScriptValue, displayFromScriptValue);
-	qScriptRegisterMetaType(engine, encoderToScriptValue, encoderFromScriptValue);
-	qScriptRegisterMetaType(engine, eventDeviceToScriptValue, eventDeviceFromScriptValue);
-	qScriptRegisterMetaType(engine, gamepadToScriptValue, gamepadFromScriptValue);
-	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
-	qScriptRegisterMetaType(engine, keysToScriptValue, keysFromScriptValue);
-	qScriptRegisterMetaType(engine, ledToScriptValue, ledFromScriptValue);
-	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, mailboxToScriptValue, mailboxFromScriptValue);
-	qScriptRegisterMetaType(engine, motorToScriptValue, motorFromScriptValue);
-	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
-	qScriptRegisterMetaType(engine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
+	Scriptable<BatteryInterface>::registerMetatype(engine);
+	Scriptable<ColorSensorInterface>::registerMetatype(engine);
+	Scriptable<DisplayInterface>::registerMetatype(engine);
+	Scriptable<EncoderInterface>::registerMetatype(engine);
+	Scriptable<EventCodeInterface>::registerMetatype(engine);
+	Scriptable<EventDeviceInterface>::registerMetatype(engine);
+	Scriptable<EventInterface>::registerMetatype(engine);
+	Scriptable<GamepadInterface>::registerMetatype(engine);
+	Scriptable<FifoInterface>::registerMetatype(engine);
+	Scriptable<KeysInterface>::registerMetatype(engine);
+	Scriptable<LedInterface>::registerMetatype(engine);
+	Scriptable<LineSensorInterface>::registerMetatype(engine);
+	Scriptable<MailboxInterface>::registerMetatype(engine);
+	Scriptable<MotorInterface>::registerMetatype(engine);
+	Scriptable<ObjectSensorInterface>::registerMetatype(engine);
+	Scriptable<SensorInterface>::registerMetatype(engine);
+	Scriptable<SoundSensorInterface>::registerMetatype(engine);
+	Scriptable<QTimer>::registerMetatype(engine);
+	Scriptable<VectorSensorInterface>::registerMetatype(engine);
+
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 
