@@ -72,7 +72,6 @@ private:
 	int mCurrentPower;
 	int mCurrentPeriod;
 	DeviceState mState;
-	bool mLinearised;
 	QVector<int> mPowerMap;
 };
 

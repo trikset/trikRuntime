@@ -31,13 +31,11 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	, mCurrentPower(0)
 	, mCurrentPeriod(0x1000)
 	, mState("Power Motor on" + port)
-	, mLinearised(configurer.attributeByPort(port, "linearised") == "true")
 {
 	mMspCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 
-	if (mLinearised) {
-		lineariseMotor(port, configurer);
-	}
+	mPowerMap.reserve(101);
+	lineariseMotor(port, configurer);
 
 	mState.ready();
 }
@@ -63,9 +61,7 @@ void PowerMotor::setPower(int power, bool constrain)
 
 	mCurrentPower = power;
 
-	if (mLinearised) {
-		power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
-	}
+	power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
 
 	power = mInvert ? -power : power;
 
@@ -104,36 +100,36 @@ void PowerMotor::setPeriod(int period)
 
 void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configurer &configurer)
 {
-	QVector<QPair<double, double> > powerDepedences;
+	QVector<QPair<double, double> > powerAddiction;
 	for (const QString &str : configurer.attributeByPort(port, "measures").split(")")) {
 		if (str != "")
 		{
 			QPair<double, double> temp;
 			temp.first = str.mid(1).split(";").at(0).toInt();
 			temp.second = str.mid(1).split(";").at(1).toInt();
-			powerDepedences.append(temp);
+			powerAddiction.append(temp);
 		}
 	}
 
-	const int dependencesLength = powerDepedences.size();
-	const int maxValue = powerDepedences[dependencesLength - 1].second;
-	for (int i = 0; i < dependencesLength; i++) {
-		powerDepedences[i].second *= 100;
-		powerDepedences[i].second /= maxValue;
+	const int addictionLength = powerAddiction.size();
+	const int maxValue = powerAddiction[addictionLength - 1].second;
+	for (int i = 0; i < addictionLength; i++) {
+		powerAddiction[i].second *= 100;
+		powerAddiction[i].second /= maxValue;
 	}
 
 	for (int i = 0; i <= 100; i++)
 	{
 		int k = 0;
-		while (i > powerDepedences[k].second)
+		while (i > powerAddiction[k].second)
 		{
 			k++;
 		}
 		k--;
 
-		const double koef = (powerDepedences[k+1].first - powerDepedences[k].first)
-				/ (powerDepedences[k+1].second - powerDepedences[k].second);
-		const int power = powerDepedences[k].first + koef * (i - powerDepedences[k].second);
+		const double koef = (powerAddiction[k+1].first - powerAddiction[k].first)
+				/ (powerAddiction[k+1].second - powerAddiction[k].second);
+		const int power = powerAddiction[k].first + koef * (i - powerAddiction[k].second);
 		mPowerMap.append(power);
 	}
 }

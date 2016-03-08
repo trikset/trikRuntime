@@ -57,7 +57,7 @@ equal to its class name.
 	<deviceClasses>
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
-		<powerMotor invert="false" linearised="false" />
+		<powerMotor invert="false" measures="(0;0)(100;100)" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
 		<encoder invert="false" />
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
@@ -137,7 +137,7 @@ equal to its class name.
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
 		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
-		<powerMotor port="M2" i2cCommandNumber="0x15" linearised="true" measures="(0;0)(5;0)(10;482)(15;1076)(20;1441)(25;1678)(30;1840)(35;1954)(40;2045)(45;2104)(50;2156)(55;2199)(60;2235)(65;2264)(70;2288)(75;2310)(80;2330)(85;2342)(90;2361)(95;2383)(100;2405)" />
+		<powerMotor port="M2" i2cCommandNumber="0x15" measures="(0;0)(5;0)(10;482)(15;1076)(20;1441)(25;1678)(30;1840)(35;1954)(40;2045)(45;2104)(50;2156)(55;2199)(60;2235)(65;2264)(70;2288)(75;2310)(80;2330)(85;2342)(90;2361)(95;2383)(100;2405)" />
 		<powerMotor port="M3" i2cCommandNumber="0x16" />
 		<powerMotor port="M4" i2cCommandNumber="0x17" />
 		<analogSensor port="A1" i2cCommandNumber="0x25" />
