@@ -87,7 +87,6 @@ void TrikScriptRunner::abort()
 {
 	mScriptEngineWorker->stopScript();
 	mScriptEngineWorker->resetBrick();
-
 }
 
 void TrikScriptRunner::onScriptStart(int scriptId)

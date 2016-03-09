@@ -171,6 +171,7 @@ private:
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
+	QString mMediaPath;
 
 	trikKernel::Configurer mConfigurer;
 };

@@ -110,6 +110,8 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::stopScript()
 {
+	QMutexLocker locker(&mScriptStateMutex);
+
 	if (mState == stopping) {
 		// Already stopping, so we can do nothing.
 		return;
@@ -119,7 +121,6 @@ void ScriptEngineWorker::stopScript()
 		// Engine is ready for execution.
 		return;
 	}
-
 
 	while (mState == starting) {
 		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
@@ -179,6 +180,7 @@ void ScriptEngineWorker::resetBrick()
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
+	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
 	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
 }
@@ -195,8 +197,10 @@ void ScriptEngineWorker::doRun(const QString &script)
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
+	QMutexLocker locker(&mScriptStateMutex);
 	if (!mScriptControl.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
+		locker.unlock();
 		stopScript();
 	}
 
@@ -239,7 +243,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	if (!mScriptControl.isInEventDrivenMode()) {
 		// Somebody erroneously called script.quit() before entering event loop, so we must force event loop for script
-		// and only then quit, to send properly completed() signal.
+		// and only then quit, to send completed() signal properly.
 		mScriptControl.run();
 	}
 

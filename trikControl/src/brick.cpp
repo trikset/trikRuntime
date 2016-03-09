@@ -66,6 +66,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		, const QString &mediaPath)
 	: mHardwareAbstraction(hardwareAbstraction)
 	, mDisplay(new Display(mediaPath))
+	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -167,6 +168,11 @@ void Brick::playSound(const QString &soundFileName)
 	QLOG_INFO() << "Playing " << soundFileName;
 
 	QFileInfo fileInfo(soundFileName);
+
+	if (!fileInfo.exists()) {
+		fileInfo = QFileInfo(mMediaPath + soundFileName);
+	}
+
 	QString command;
 
 	if (fileInfo.suffix() == "wav") {

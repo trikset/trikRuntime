@@ -48,22 +48,27 @@ public:
 			);
 
 	/// Create and initialize a new script engine.
+	/// Can be safely called from other threads.
 	/// @param supportThreads - true if created engine should support creation of threads.
 	QScriptEngine *createScriptEngine(bool supportThreads = true);
 
 	/// Copies given script engine creating a new one with the same context as existing one.
 	/// Note that functions will not be copied to a new engine due to limitations of Qt Scripting engine,
 	/// they need to be re-evaluated manually.
+	/// Can be safely called from other threads (to some extent. Original engine shall not simultaneously evaluate).
 	QScriptEngine *copyScriptEngine(const QScriptEngine * const original);
 
 	/// Registers given C++ function as callable from script, with given name.
+	/// Can be safely called from other threads (but it shall not be called simultaneously with engine creation).
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
 
 	/// Clears execution state and stops robot.
+	/// Can be safely called from other threads.
 	void resetBrick();
 
 	/// Stops script execution and resets script engine. Can be called from another thread. By the end of call the
 	/// worker would be in a ready state.
+	/// Can be safely called from other threads.
 	void stopScript();
 
 signals:
@@ -83,15 +88,18 @@ public slots:
 	/// by calling reset() first.
 	/// @param script - QtScript code to evaluate
 	/// @param scriptId - an id of a script, used to distinguish between different scripts run by a worker
+	/// Can be safely called from other threads.
 	void run(const QString &script, int scriptId);
 
 	/// Runs a command in a `current` context. Permits to run a script line by line.
 	/// The command will be executed asynchronously.
 	/// If called when an ordinary script is running, that script would be aborted before evaluation of a command.
 	/// In this mode, threads and messages are unsupported.
+	/// Can be safely called from other threads.
 	void runDirect(const QString &command, int scriptId);
 
 	/// Plays "beep" sound.
+	/// Can be safely called from other threads.
 	void brickBeep();
 
 private slots:
@@ -128,10 +136,14 @@ private:
 	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreading;
-	QScriptEngine *mDirectScriptsEngine;  // Has ownership.
-	int mScriptId;
-	State mState;
+	QScriptEngine *mDirectScriptsEngine = nullptr;  // Has ownership.
+	int mScriptId = 0;
+	State mState = State::ready;
 	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;
+
+	/// Ensures that there is only one instance of StopScript running at any given time, to prevent unpredicted
+	/// behavior when programs are started and stopped actively.
+	QMutex mScriptStateMutex;
 };
 
 }
