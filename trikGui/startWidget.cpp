@@ -49,30 +49,31 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
+    ///mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
+
+    settingsItem->appendRow(new QStandardItem(
+            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
+
+    if (mController.mailbox()) {
+        settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
+    }
+
+    settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
+    settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
+    settingsItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
+    settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 
-	settingsItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
-
-	settingsItem->appendRow(new QStandardItem(
+    settingsItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
 
 	settingsItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
-	if (mController.mailbox()) {
-		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
-	}
-
-	settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
-	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
-
-	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
+    mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -246,3 +247,4 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 		}
 	}
 }
+
