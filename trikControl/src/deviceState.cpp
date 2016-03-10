@@ -133,3 +133,8 @@ void DeviceState::resetFailure()
 
 	mLock.unlock();
 }
+
+QString DeviceState::deviceName() const
+{
+	return mDeviceName;
+}

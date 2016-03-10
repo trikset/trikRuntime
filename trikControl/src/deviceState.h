@@ -59,6 +59,9 @@ public:
 	/// Clears "failed" state and returns state to "off"
 	void resetFailure();
 
+	/// Returns name of the device for debug purposes.
+	QString deviceName() const;
+
 private:
 	/// Current state of a device.
 	DeviceInterface::Status mStatus = DeviceInterface::Status::off;

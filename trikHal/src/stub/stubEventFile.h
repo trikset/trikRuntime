@@ -33,6 +33,7 @@ public:
 	bool close() override;
 	void cancelWaiting() override;
 	QString fileName() const override;
+	bool isOpened() const override;
 
 private:
 	QString mFileName;

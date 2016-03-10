@@ -58,6 +58,9 @@ public:
 	/// Returns name of a file.
 	virtual QString fileName() const = 0;
 
+	/// Returns true if a file is opened.
+	virtual bool isOpened() const = 0;
+
 signals:
 	/// Emitted when there is new event in an event file.
 	/// @param eventType - type of an event (unknown, if such event is not listed in EventType enum).
