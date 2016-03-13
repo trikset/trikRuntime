@@ -29,10 +29,12 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mCurrentPower(0)
-	, mCurrentPeriod(0x1000)
 	, mState("Power Motor on" + port)
 {
 	mMspCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+
+	mCurrentPeriod = ConfigurerHelper::configureInt(configurer, mState, port, "period");
+	setPeriod(mCurrentPeriod);
 
 	mPowerMap.reserve(101);
 	lineariseMotor(port, configurer);
