@@ -162,3 +162,7 @@ void TrikEventFile::readFile()
 	mSocketNotifier->setEnabled(true);
 }
 
+bool TrikEventFile::isOpened() const
+{
+	return mEventFileDescriptor == -1;
+}

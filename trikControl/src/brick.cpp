@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2016 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,22 +22,23 @@
 #include <trikKernel/timeVal.h>
 
 #include "analogSensor.h"
-#include "display.h"
-#include "powerMotor.h"
-#include "digitalSensor.h"
-#include "rangeSensor.h"
-#include "pwmCapture.h"
-#include "encoder.h"
 #include "battery.h"
-#include "vectorSensor.h"
+#include "colorSensor.h"
+#include "digitalSensor.h"
+#include "display.h"
+#include "encoder.h"
+#include "eventDevice.h"
+#include "fifo.h"
 #include "keys.h"
 #include "led.h"
 #include "lineSensor.h"
 #include "objectSensor.h"
-#include "soundSensor.h"
-#include "colorSensor.h"
+#include "powerMotor.h"
+#include "pwmCapture.h"
+#include "rangeSensor.h"
 #include "servoMotor.h"
-#include "fifo.h"
+#include "soundSensor.h"
+#include "vectorSensor.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -65,6 +66,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		, const QString &mediaPath)
 	: mHardwareAbstraction(hardwareAbstraction)
 	, mDisplay(new Display(mediaPath))
+	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
@@ -116,6 +118,7 @@ Brick::~Brick()
 	qDeleteAll(mSoundSensors);
 	qDeleteAll(mColorSensors);
 	qDeleteAll(mFifos);
+	qDeleteAll(mEventDevices);
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
 	mMspCommunicator.reset();
@@ -165,6 +168,11 @@ void Brick::playSound(const QString &soundFileName)
 	QLOG_INFO() << "Playing " << soundFileName;
 
 	QFileInfo fileInfo(soundFileName);
+
+	if (!fileInfo.exists()) {
+		fileInfo = QFileInfo(mMediaPath + soundFileName);
+	}
+
 	QString command;
 
 	if (fileInfo.suffix() == "wav") {
@@ -227,6 +235,9 @@ void Brick::stop()
 	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
 		rangeSensor->stop();
 	}
+
+	qDeleteAll(mEventDevices);
+	mEventDevices.clear();
 }
 
 MotorInterface *Brick::motor(const QString &port)
@@ -358,6 +369,26 @@ LedInterface *Brick::led()
 trikControl::FifoInterface *Brick::fifo(const QString &port)
 {
 	return mFifos[port];
+}
+
+EventDeviceInterface *Brick::eventDevice(const QString &deviceFile)
+{
+	if (!mEventDevices.contains(deviceFile)) {
+		EventDeviceInterface * const eventDevice = new EventDevice(deviceFile, *mHardwareAbstraction);
+		if (eventDevice->status() != EventDeviceInterface::Status::failure) {
+			mEventDevices.insert(deviceFile, eventDevice);
+		}
+	}
+
+	return mEventDevices[deviceFile];
+}
+
+void Brick::stopEventDevice(const QString &deviceFile)
+{
+	if (mEventDevices.contains(deviceFile)) {
+		mEventDevices[deviceFile]->deleteLater();
+		mEventDevices.remove(deviceFile);
+	}
 }
 
 void Brick::shutdownDevice(const QString &port)

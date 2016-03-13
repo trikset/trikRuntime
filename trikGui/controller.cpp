@@ -79,10 +79,13 @@ Controller::Controller(const QString &configPath)
 	mTelemetry->startServer(telemetryPort);
 
 	mAutoRunner.reset(new AutoRunner(*this));
+
+	mBrick->led()->green();
 }
 
 Controller::~Controller()
 {
+	mBrick->led()->orange();
 }
 
 void Controller::runFile(const QString &filePath)

@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QVector>
+#include <QtCore/QTimer>
 #include <QtCore/QReadWriteLock>
 
 #include <trikHal/hardwareAbstractionInterface.h>
@@ -49,10 +50,17 @@ public slots:
 	/// Returns current raw reading of a sensor.
 	QVector<int> read();
 
+	/// Shuts down sensor.
+	void deinitialize();
+
 private slots:
 	/// Updates current reading when new value is ready in event file.
 	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
 			, const trikKernel::TimeVal &eventTime);
+
+	/// Called when there are no events from event file for too long (1 second hardcoded). Attempts to reopen
+	/// event file.
+	void onSensorHanged();
 
 private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
@@ -64,6 +72,9 @@ private:
 
 	/// Device state, shared between worker and proxy.
 	DeviceState &mState;
+
+	/// Timer that reopens event file when there are no events for too long (1 second hardcoded).
+	QTimer mLastEventTimer;
 };
 
 }

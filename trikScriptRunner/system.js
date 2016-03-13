@@ -22,6 +22,48 @@ var KeysEnum = {
     Esc : 1
 };
 
+var Events = {
+    Sync : 0,
+    Key : 1,
+    Absolute : 3,
+    Misc : 4,
+};
+
+var PadEventCodes = {
+    BtnA : 304,
+    BtnB : 305,
+    BtnC : 306,
+    BtnX : 307,
+    BtnY : 308,
+    BtnZ : 309,
+
+    BtnTL : 310,
+    BtnTR : 311,
+    BtnTL2 : 312,
+    BtnTR2 : 313,
+    BtnSelect : 314,
+    BtnStart : 315,
+
+    X : 0,
+    Y : 1,
+    Z : 2,
+    Rx : 3,
+    Ry : 4,
+    Rz : 5,
+
+    Throttle : 6,
+    Rudder : 7,
+    Wheel : 8,
+    Gas : 9,
+    Break : 10,
+
+    Hat0X : 16,
+    Hat0Y : 17,
+    Hat1X : 18,
+    Hat1Y : 19
+};
+
+
 // Aliases for passing ports without quotes
 var aliases = ["A1", "A2", "A3", "A4", "A5", "A6", "T1", "T2", "T3", "W1", "W2", "W3", "W4"
         , "D1", "D2", "D3", "F1"

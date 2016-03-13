@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov, CyberTech Labs Ltd.
+/* Copyright 2013 - 2016 Yurii Litvinov, CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
+#include <trikControl/eventCodeInterface.h>
+#include <trikControl/eventDeviceInterface.h>
+#include <trikControl/eventInterface.h>
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
@@ -33,7 +36,7 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikNetwork/gamepadInterface.h>
 
-#include "scriptableParts.h"
+#include "scriptable.h"
 #include "utils.h"
 
 #include <QsLog.h>
@@ -42,11 +45,14 @@ using namespace trikScriptRunner;
 using namespace trikControl;
 using namespace trikNetwork;
 
-Q_DECLARE_METATYPE(Threading*)
-Q_DECLARE_METATYPE(ColorSensorInterface*)
 Q_DECLARE_METATYPE(BatteryInterface*)
+Q_DECLARE_METATYPE(ColorSensorInterface*)
+Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(DisplayInterface*)
 Q_DECLARE_METATYPE(EncoderInterface*)
+Q_DECLARE_METATYPE(EventCodeInterface*)
+Q_DECLARE_METATYPE(EventDeviceInterface*)
+Q_DECLARE_METATYPE(EventInterface*)
 Q_DECLARE_METATYPE(GamepadInterface*)
 Q_DECLARE_METATYPE(KeysInterface*)
 Q_DECLARE_METATYPE(LedInterface*)
@@ -56,8 +62,8 @@ Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SoundSensorInterface*)
 Q_DECLARE_METATYPE(SensorInterface*)
+Q_DECLARE_METATYPE(Threading*)
 Q_DECLARE_METATYPE(VectorSensorInterface*)
-Q_DECLARE_METATYPE(FifoInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
 
@@ -104,6 +110,8 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::stopScript()
 {
+	QMutexLocker locker(&mScriptStateMutex);
+
 	if (mState == stopping) {
 		// Already stopping, so we can do nothing.
 		return;
@@ -113,7 +121,6 @@ void ScriptEngineWorker::stopScript()
 		// Engine is ready for execution.
 		return;
 	}
-
 
 	while (mState == starting) {
 		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
@@ -173,6 +180,7 @@ void ScriptEngineWorker::resetBrick()
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
+	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
 	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
 }
@@ -189,8 +197,10 @@ void ScriptEngineWorker::doRun(const QString &script)
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
+	QMutexLocker locker(&mScriptStateMutex);
 	if (!mScriptControl.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
+		locker.unlock();
 		stopScript();
 	}
 
@@ -233,7 +243,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	if (!mScriptControl.isInEventDrivenMode()) {
 		// Somebody erroneously called script.quit() before entering event loop, so we must force event loop for script
-		// and only then quit, to send properly completed() signal.
+		// and only then quit, to send completed() signal properly.
 		mScriptControl.run();
 	}
 
@@ -245,22 +255,26 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	QScriptEngine *engine = new QScriptEngine();
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
-	qScriptRegisterMetaType(engine, batteryToScriptValue, batteryFromScriptValue);
-	qScriptRegisterMetaType(engine, displayToScriptValue, displayFromScriptValue);
-	qScriptRegisterMetaType(engine, encoderToScriptValue, encoderFromScriptValue);
-	qScriptRegisterMetaType(engine, gamepadToScriptValue, gamepadFromScriptValue);
-	qScriptRegisterMetaType(engine, keysToScriptValue, keysFromScriptValue);
-	qScriptRegisterMetaType(engine, ledToScriptValue, ledFromScriptValue);
-	qScriptRegisterMetaType(engine, mailboxToScriptValue, mailboxFromScriptValue);
-	qScriptRegisterMetaType(engine, motorToScriptValue, motorFromScriptValue);
-	qScriptRegisterMetaType(engine, sensorToScriptValue, sensorFromScriptValue);
-	qScriptRegisterMetaType(engine, vectorSensorToScriptValue, vectorSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, lineSensorToScriptValue, lineSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, colorSensorToScriptValue, colorSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, objectSensorToScriptValue, objectSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, soundSensorToScriptValue, soundSensorFromScriptValue);
-	qScriptRegisterMetaType(engine, timerToScriptValue, timerFromScriptValue);
-	qScriptRegisterMetaType(engine, fifoToScriptValue, fifoFromScriptValue);
+	Scriptable<BatteryInterface>::registerMetatype(engine);
+	Scriptable<ColorSensorInterface>::registerMetatype(engine);
+	Scriptable<DisplayInterface>::registerMetatype(engine);
+	Scriptable<EncoderInterface>::registerMetatype(engine);
+	Scriptable<EventCodeInterface>::registerMetatype(engine);
+	Scriptable<EventDeviceInterface>::registerMetatype(engine);
+	Scriptable<EventInterface>::registerMetatype(engine);
+	Scriptable<GamepadInterface>::registerMetatype(engine);
+	Scriptable<FifoInterface>::registerMetatype(engine);
+	Scriptable<KeysInterface>::registerMetatype(engine);
+	Scriptable<LedInterface>::registerMetatype(engine);
+	Scriptable<LineSensorInterface>::registerMetatype(engine);
+	Scriptable<MailboxInterface>::registerMetatype(engine);
+	Scriptable<MotorInterface>::registerMetatype(engine);
+	Scriptable<ObjectSensorInterface>::registerMetatype(engine);
+	Scriptable<SensorInterface>::registerMetatype(engine);
+	Scriptable<SoundSensorInterface>::registerMetatype(engine);
+	Scriptable<QTimer>::registerMetatype(engine);
+	Scriptable<VectorSensorInterface>::registerMetatype(engine);
+
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 

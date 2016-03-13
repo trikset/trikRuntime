@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2016 CyberTech Labs Ltd.
+/* Copyright 2016 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
-#include <QtCore/QSet>
-#include <QtCore/QReadWriteLock>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 
@@ -25,45 +23,35 @@
 
 namespace trikControl {
 
-/// Watches for keys on a brick, intended to work in separate thread.
-class KeysWorker : public QObject
+/// Worker for generic event device that uses HAL device file to listen to events. Meant to be run in separate thread.
+class EventDeviceWorker : public QObject
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param keysPath - path to device file that controls brick keys.
+	/// @param deviceFilePath - path to device file that will provide events.
 	/// @param state - device state, worker sets it to "failed" if it can not open file.
 	/// @param hardwareAbstraction - interface to TRIK hardware.
-	KeysWorker(const QString &keysPath, DeviceState &state
+	EventDeviceWorker(const QString &deviceFilePath, DeviceState &state
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	/// Clear data about previous key pressures.
-	void reset();
-
-public slots:
-	/// Returns true if a key with given code was pressed.
-	bool wasPressed(int code);
+signals:
+	/// Emitted when there is new event in an event file.
+	/// @param event - type of the event.
+	/// @param code - code of the event inside a type.
+	/// @param value - value sent with the event.
+	/// @param eventTime - time stamp of the event, in msecs form start of the epoch.
+	void newEvent(int onEvent, int code, int value, int eventTime);
 
 private slots:
-	void readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
+	/// Called every time underlying event file produces an event.
+	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
 			, const trikKernel::TimeVal &eventTime);
 
-signals:
-	/// Triggered when button state changed (pressed or released).
-	/// @param code - key code.
-	/// @param value - key state.
-	void buttonPressed(int code, int value);
-
 private:
+	/// Underlying event file that watches actual event file from operating system.
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
-	int mButtonCode;
-	int mButtonValue;
-	QSet<int> mWasPressed;
-	QReadWriteLock mLock;
-
-	/// Device state object, shared between worker and proxy.
-	DeviceState &mState;
 };
 
 }

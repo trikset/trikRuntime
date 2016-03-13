@@ -1,4 +1,4 @@
-# Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+# Copyright 2013 - 2016 Yurii Litvinov and CyberTech Labs Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/displayInterface.h \
 	$$PWD/include/trikControl/displayWidgetInterface.h \
 	$$PWD/include/trikControl/encoderInterface.h \
+	$$PWD/include/trikControl/eventCodeInterface.h \
+	$$PWD/include/trikControl/eventDeviceInterface.h \
+	$$PWD/include/trikControl/eventInterface.h \
 	$$PWD/include/trikControl/fifoInterface.h \
 	$$PWD/include/trikControl/keysInterface.h \
 	$$PWD/include/trikControl/ledInterface.h \
@@ -47,6 +50,10 @@ HEADERS += \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
+	$$PWD/src/event.h \
+	$$PWD/src/eventCode.h \
+	$$PWD/src/eventDevice.h \
+	$$PWD/src/eventDeviceWorker.h \
 	$$PWD/src/fifo.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
@@ -92,6 +99,10 @@ SOURCES += \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \
+	$$PWD/src/event.cpp \
+	$$PWD/src/eventCode.cpp \
+	$$PWD/src/eventDevice.cpp \
+	$$PWD/src/eventDeviceWorker.cpp \
 	$$PWD/src/graphicsWidget.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/keys.cpp \

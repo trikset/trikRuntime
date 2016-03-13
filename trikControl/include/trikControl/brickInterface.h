@@ -1,4 +1,4 @@
-/* Copyright 2015 CyberTech Labs Ltd.
+/* Copyright 2015 - 2016 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,17 @@
 #include "colorSensorInterface.h"
 #include "displayInterface.h"
 #include "encoderInterface.h"
+#include "eventDeviceInterface.h"
+#include "fifoInterface.h"
 #include "keysInterface.h"
 #include "ledInterface.h"
 #include "lineSensorInterface.h"
 #include "motorInterface.h"
 #include "objectSensorInterface.h"
-#include "soundSensorInterface.h"
 #include "pwmCaptureInterface.h"
 #include "sensorInterface.h"
+#include "soundSensorInterface.h"
 #include "vectorSensorInterface.h"
-#include "fifoInterface.h"
 
 #include "declSpec.h"
 
@@ -126,6 +127,14 @@ public slots:
 
 	/// Returns custom FIFO file which can be used as sensor.
 	virtual FifoInterface *fifo(const QString &port) = 0;
+
+	/// Returns custom event device that can be used as a sensor, for example, for custom gamepad support.
+	/// Creates new event device on first access to a file, then returns already opened device.
+	/// Ownership retained by brick.
+	virtual EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
+
+	/// Stops listening given event device and destroys its watcher object.
+	virtual void stopEventDevice(const QString &deviceFile) = 0;
 
 signals:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no

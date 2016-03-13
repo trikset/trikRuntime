@@ -16,6 +16,8 @@
 
 #include <QsLog.h>
 
+static const int maxEventDelay = 1000;
+
 using namespace trikControl;
 
 VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &state
@@ -23,20 +25,31 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	: mEventFile(hardwareAbstraction.createEventFile(eventFile))
 	, mState(state)
 {
+	mState.start();
+
 	mReading << 0 << 0 << 0;
 	mReadingUnsynced = mReading;
 
-	mState.start();
+	mLastEventTimer.setInterval(maxEventDelay);
+	mLastEventTimer.setSingleShot(false);
 
 	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
 			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
 
+	connect(&mLastEventTimer, SIGNAL(timeout()), this, SLOT(onSensorHanged()));
+
 	mEventFile->open();
+
+	if (mEventFile->isOpened()) {
+		mLastEventTimer.start();
+	}
 }
 
 void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
 		, const trikKernel::TimeVal &eventTime)
 {
+	mLastEventTimer.start();
+
 	switch (eventType) {
 		case trikHal::EventFileInterface::EventType::evAbsX:
 			mReadingUnsynced[0] = value;
@@ -52,7 +65,7 @@ void VectorSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType event
 			emit newData(mReading, eventTime);
 			break;
 		default:
-			QLOG_ERROR() << "Unknown event type in vector sensor event file"<< mEventFile->fileName() << " :"
+			QLOG_ERROR() << "Unknown event type in vector sensor event file" << mEventFile->fileName() << " :"
 					<< static_cast<int>(eventType) << code << value;
 	}
 }
@@ -64,5 +77,26 @@ QVector<int> VectorSensorWorker::read()
 		return mReading;
 	} else {
 		return {};
+	}
+}
+
+void VectorSensorWorker::deinitialize()
+{
+	mLastEventTimer.stop();
+}
+
+void VectorSensorWorker::onSensorHanged()
+{
+	QLOG_WARN() << "Sensor" << mState.deviceName() << "hanged, reopening device file...";
+	mLastEventTimer.stop();
+
+	mEventFile->close();
+	mEventFile->open();
+
+	if (!mEventFile->isOpened()) {
+		mState.fail();
+	} else {
+		QLOG_INFO() << "Sensor" << mState.deviceName() << ", device file reopened.";
+		mLastEventTimer.start();
 	}
 }

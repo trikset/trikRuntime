@@ -47,6 +47,7 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 VectorSensor::~VectorSensor()
 {
 	if (mWorkerThread.isRunning()) {
+		QMetaObject::invokeMethod(mVectorSensorWorker.data(), "deinitialize");
 		mWorkerThread.quit();
 		mWorkerThread.wait();
 	}

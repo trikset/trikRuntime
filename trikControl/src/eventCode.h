@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2016 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,30 @@
 
 #pragma once
 
-#include "eventFileInterface.h"
+#include <QtCore/QObject>
 
-namespace trikHal {
-namespace stub {
+#include "eventCodeInterface.h"
 
-/// Empty implementation of event file, it only logs calls to its methods and doen't emit any signals.
-class StubEventFile : public EventFileInterface
+namespace trikControl {
+
+/// Implementation of event code filter for event devices.
+class EventCode : public EventCodeInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param fileName - file name (with path, relative or absolute) of an event file.
-	StubEventFile(const QString &fileName);
+	/// @param code - code of the event to filter, see evtest output for a list of codes for specific device.
+	explicit EventCode(int code);
 
-	bool open() override;
-	bool close() override;
-	void cancelWaiting() override;
-	QString fileName() const override;
-	bool isOpened() const override;
+public slots:
+	/// Supposed to be called by event type filter when new event is emitted. Filters events of this
+	/// type by code and re-emits signal.
+	void onEvent(int code, int value, int eventTime);
 
 private:
-	QString mFileName;
+	/// Code of event to filter.
+	int mEventCode = 0;
 };
 
-}
 }

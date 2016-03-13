@@ -20,7 +20,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 
 HEADERS += \
-	$$PWD/src/scriptableParts.h \
+	$$PWD/src/scriptable.h \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/threading.h \
@@ -28,7 +28,6 @@ HEADERS += \
 	$$PWD/src/scriptThread.h \
 
 SOURCES += \
-	$$PWD/src/scriptableParts.cpp \
 	$$PWD/src/scriptExecutionControl.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
