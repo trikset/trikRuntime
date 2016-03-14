@@ -37,6 +37,8 @@ void KeysWorker::reset()
 {
 	mLock.lockForWrite();
 	mWasPressed.clear();
+	mButtonCode = 0;
+	mButtonValue = 0;
 	mLock.unlock();
 }
 
@@ -67,13 +69,16 @@ void KeysWorker::readKeysEvent(trikHal::EventFileInterface::EventType eventType,
 		mButtonValue = value;
 		break;
 	case trikHal::EventFileInterface::EventType::evSyn:
-		if (mButtonValue) {
+		if (mButtonCode && mButtonValue) {
 			mLock.lockForWrite();
 			mWasPressed.insert(mButtonCode);
 			mLock.unlock();
 		}
 
 		emit buttonPressed(mButtonCode, mButtonValue);
+
+		mButtonCode = 0;
+		mButtonValue = 0;
 		break;
 	default:
 		QLOG_ERROR() << "Event of unknown type in keys device file";

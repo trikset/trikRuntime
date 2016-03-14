@@ -57,8 +57,8 @@ signals:
 
 private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
-	int mButtonCode;
-	int mButtonValue;
+	int mButtonCode = 0;
+	int mButtonValue = 0;
 	QSet<int> mWasPressed;
 	QReadWriteLock mLock;
 
