@@ -187,6 +187,9 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 
 void ScriptEngineWorker::doRun(const QString &script)
 {
+	/// When starting script execution (by any means), clear button states.
+	mBrick.keys()->reset();
+
 	mThreading.startMainThread(script);
 	mState = running;
 	mThreading.waitForAll();
