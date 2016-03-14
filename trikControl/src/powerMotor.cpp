@@ -15,6 +15,7 @@
 #include "powerMotor.h"
 
 #include <trikKernel/configurer.h>
+#include <trikKernel/exceptions/malformedConfigException.h>
 
 #include "mspI2cCommunicator.h"
 #include "configurerHelper.h"
@@ -104,8 +105,7 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 {
 	QVector<QPair<double, double> > powerAddiction;
 	for (const QString &str : configurer.attributeByPort(port, "measures").split(")")) {
-		if (str != "")
-		{
+		if (str != "") {
 			QPair<double, double> temp;
 			temp.first = str.mid(1).split(";").at(0).toInt();
 			temp.second = str.mid(1).split(";").at(1).toInt();
@@ -115,25 +115,32 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 
 	const int addictionLength = powerAddiction.size();
 	const int maxValue = powerAddiction[addictionLength - 1].second;
+
 	for (int i = 0; i < addictionLength; i++) {
 		powerAddiction[i].second *= 100;
 		powerAddiction[i].second /= maxValue;
 	}
 
-	for (int i = 0; i <= 100; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		int k = 0;
-		while (i > powerAddiction[k].second)
-		{
+		while (i >= powerAddiction[k].second) {
 			k++;
 		}
 		k--;
 
-		const double koef = (powerAddiction[k+1].first - powerAddiction[k].first)
-				/ (powerAddiction[k+1].second - powerAddiction[k].second);
+		const double measureDifference = powerAddiction[k+1].second - powerAddiction[k].second;
+		const double axeDifferenece = powerAddiction[k+1].first - powerAddiction[k].first;
+
+		if (measureDifference < 0 || axeDifferenece < 0) {
+			throw trikKernel::MalformedConfigException("Nonmonotonic function");
+		}
+
+		const double koef = axeDifferenece / measureDifference;
 		const int power = powerAddiction[k].first + koef * (i - powerAddiction[k].second);
 		mPowerMap.append(power);
 	}
+	mPowerMap.append(100);
 }
 
 int PowerMotor::minControl() const
