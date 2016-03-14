@@ -18,6 +18,9 @@
 
 using namespace trikControl;
 
+static const int evSyn = 0;
+static const int evKey = 1;
+
 KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mEventFile(hardwareAbstraction.createEventFile(keysPath))
@@ -29,8 +32,8 @@ KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		return;
 	}
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
-			, this, SLOT(readKeysEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
+	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
+			, this, SLOT(readKeysEvent(int, int, int, trikKernel::TimeVal)));
 }
 
 void KeysWorker::reset()
@@ -57,18 +60,18 @@ bool KeysWorker::wasPressed(int code)
 	return result;
 }
 
-void KeysWorker::readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
+void KeysWorker::readKeysEvent(int eventType, int code, int value
 		, const trikKernel::TimeVal &eventTime)
 {
 	Q_UNUSED(eventTime);
 
 	switch (eventType)
 	{
-	case trikHal::EventFileInterface::EventType::evKey:
+	case evKey:
 		mButtonCode = code;
 		mButtonValue = value;
 		break;
-	case trikHal::EventFileInterface::EventType::evSyn:
+	case evSyn:
 		if (mButtonCode && mButtonValue) {
 			mLock.lockForWrite();
 			mWasPressed.insert(mButtonCode);

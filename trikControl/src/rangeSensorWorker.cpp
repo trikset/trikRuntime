@@ -16,6 +16,11 @@
 
 #include <QsLog.h>
 
+static const int evSyn = 0;
+static const int evAbs = 3;
+static const int absDistance = 0x19;
+static const int absMisc = 0x28;
+
 using namespace trikControl;
 
 RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
@@ -63,8 +68,8 @@ void RangeSensorWorker::init()
 
 	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
-			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
+	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
+			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));
 
 	if (mEventFile->open()) {
 		mState.ready();
@@ -79,25 +84,30 @@ void RangeSensorWorker::init()
 	}
 }
 
-void RangeSensorWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-		, const trikKernel::TimeVal &eventTime)
+void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
 {
 	if (!mState.isReady()) {
 		return;
 	}
 
 	switch (eventType) {
-		case trikHal::EventFileInterface::EventType::evAbsDistance:
+	case evAbs:
+		switch (code) {
+		case absDistance:
 			mDistance = value;
 			break;
-		case trikHal::EventFileInterface::EventType::evAbsMisc:
+		case absMisc:
 			mRawDistance = value;
 			break;
-		case trikHal::EventFileInterface::EventType::evSyn:
-			emit newData(mDistance, mRawDistance, eventTime);
-			break;
 		default:
-			QLOG_ERROR() << "Unknown event in range sensor event file:" << static_cast<int>(eventType) << code << value;
+			QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;
+		}
+		break;
+	case evSyn:
+		emit newData(mDistance, mRawDistance, eventTime);
+		break;
+	default:
+		QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;
 	}
 }
 

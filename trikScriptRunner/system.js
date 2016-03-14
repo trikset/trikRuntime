@@ -25,8 +25,19 @@ var KeysEnum = {
 var Events = {
     Sync : 0,
     Key : 1,
+    Relative : 2,
     Absolute : 3,
     Misc : 4,
+};
+
+var MouseEventCodes = {
+    X : 0,
+    Y : 1,
+    Wheel : 8,
+
+    LeftBtn : 272,
+    RightBtn : 273,
+    MiddleBtn : 274
 };
 
 var PadEventCodes = {

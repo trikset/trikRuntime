@@ -46,8 +46,7 @@ signals:
 
 private slots:
 	/// Called every time underlying event file produces an event.
-	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikKernel::TimeVal &eventTime);
+	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 private:
 	/// Underlying event file that watches actual event file from operating system.

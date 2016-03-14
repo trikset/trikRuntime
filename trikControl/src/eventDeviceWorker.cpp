@@ -28,12 +28,11 @@ EventDeviceWorker::EventDeviceWorker(const QString &deviceFilePath, DeviceState 
 		return;
 	}
 
-	connect(mEventFile.data(), SIGNAL(newEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal))
-			, this, SLOT(onNewEvent(trikHal::EventFileInterface::EventType, int, int, trikKernel::TimeVal)));
+	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
+			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));
 }
 
-void EventDeviceWorker::onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-		, const trikKernel::TimeVal &eventTime)
+void EventDeviceWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
 {
-	emit newEvent(static_cast<int>(eventType), code, value, eventTime.toMcSec());
+	emit newEvent(eventType, code, value, eventTime.toMcSec());
 }

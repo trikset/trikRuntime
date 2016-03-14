@@ -55,8 +55,7 @@ public slots:
 
 private slots:
 	/// Updates current reading when new value is ready in event file.
-	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikKernel::TimeVal &eventTime);
+	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 	/// Called when there are no events from event file for too long (1 second hardcoded). Attempts to reopen
 	/// event file.
