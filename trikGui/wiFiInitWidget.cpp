@@ -50,7 +50,7 @@ WiFiInitWidget::WiFiInitWidget(QWidget *parent)
 
 WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 {
-	QString command = "/etc/trik/set_wifi_mode.sh";
+	const QString command = "/etc/trik/set_wifi_mode.sh";
 	QStringList arguments;
 
 	switch (mode) {
@@ -91,7 +91,7 @@ void WiFiInitWidget::renewFocus()
 void WiFiInitWidget::keyPressEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {
-		disconnect(&mProcess);
+		mProcess.disconnect();
 		mProcess.kill();
 		mEventLoop.exit(1);
 	} else {
@@ -101,7 +101,7 @@ void WiFiInitWidget::keyPressEvent(QKeyEvent *event)
 
 void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 {
-	disconnect(&mProcess);
+	mProcess.disconnect();
 
 	switch (exitStatus) {
 		case QProcess::NormalExit: {
@@ -122,7 +122,7 @@ void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 
 void WiFiInitWidget::onProcessError(QProcess::ProcessError error)
 {
-	disconnect(&mProcess);
+	mProcess.disconnect();
 
 	QLOG_ERROR() << "set_wifi_mode.sh process error: " << error;
 
