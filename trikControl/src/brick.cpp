@@ -204,7 +204,6 @@ void Brick::stop()
 		powerMotor->powerOff();
 	}
 
-	mLed->red();
 	mDisplay->hide();
 
 	/// @todo: Also be able to stop initializing sensor.

@@ -164,5 +164,5 @@ void TrikEventFile::readFile()
 
 bool TrikEventFile::isOpened() const
 {
-	return mEventFileDescriptor == -1;
+	return mEventFileDescriptor != -1;
 }

@@ -154,6 +154,8 @@ void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 	if (mGamepad) {
 		mGamepad->reset();
 	}
+
+	mBrick->led()->green();
 }
 
 void Controller::scriptExecutionFromFileStarted(const QString &fileName, int scriptId)

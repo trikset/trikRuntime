@@ -62,19 +62,28 @@ private slots:
 	/// event file.
 	void onSensorHanged();
 
+	/// Called when timeout for another try to reestablish connection with a device is expired. Tries to reopen
+	/// event file.
+	void onTryReopen();
+
 private:
+	/// Event file for that sensor.
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 
+	/// Current reading that will be returned on read() call.
 	QVector<int> mReading;
-	QVector<int> mReadingUnsynced;
 
-	QReadWriteLock mLock;
+	/// Current partial reading, will be copied to mReading on SYNC signal.
+	QVector<int> mReadingUnsynced;
 
 	/// Device state, shared between worker and proxy.
 	DeviceState &mState;
 
 	/// Timer that reopens event file when there are no events for too long (1 second hardcoded).
 	QTimer mLastEventTimer;
+
+	/// Timer that initiates attempts to reopen device file if there is a hangup.
+	QTimer mTryReopenTimer;
 };
 
 }
