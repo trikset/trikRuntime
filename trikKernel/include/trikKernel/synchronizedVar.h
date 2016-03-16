@@ -57,6 +57,13 @@ public:
 		return mBuffer.data();
 	}
 
+	/// Returns contents of unsynced buffer.
+	/// Shall be called only from writer thread.
+	inline const T &operator*() const
+	{
+		return *mBuffer;
+	}
+
 	/// Copies value from buffer to synced value, invalidates buffer.
 	/// Shall be called from writer thread.
 	inline void sync()

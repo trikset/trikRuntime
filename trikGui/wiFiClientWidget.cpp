@@ -42,13 +42,12 @@ using namespace trikWiFi;
 WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mWiFi(trikWiFi)
-	, mConnectionState(notConnected)
+	, mConnectionState(ConnectionState::notConnected)
 {
 	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDoneSlot()));
 	connect(&mWiFi, SIGNAL(connected()), this, SLOT(connectedSlot()));
 	connect(&mWiFi, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
 	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(statusReadySlot()));
-	connect(&mWiFi, SIGNAL(listNetworksReady()), this, SLOT(listNetworksReadySlot()));
 	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(errorSlot(const QString &)));
 
 	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -65,6 +64,10 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 
 	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
 	mAvailableNetworksView.setSelectionMode(QAbstractItemView::SingleSelection);
+
+	const auto scanning = new QStandardItem(tr("Scanning..."));
+	scanning->setIcon(QIcon("://resources/wait.png"));
+	mAvailableNetworksModel.appendRow(scanning);
 
 	mIpAddressLayout.addWidget(&mConnectionIconLabel);
 	mIpAddressLayout.addWidget(&mIpLabel);
@@ -95,8 +98,18 @@ void WiFiClientWidget::renewFocus()
 void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 {
 	mAvailableNetworksModel.clear();
+	mNetworks.clear();
+
 	for (const ScanResult &result : mWiFi.scanResult()) {
-		mAvailableNetworksModel.appendRow(new QStandardItem(result.ssid));
+		NetworkInfo network{result.ssid, result.networkId, result.security};
+		/// If two networks have te same ssid, only last one will be shown. Some routers boadcast ssids on different
+		/// channels and they will be shown as different networks if we do not filter them here. It is perceived as a
+		/// bug by users, so we sacrifice correctness in sake of simplicity.
+		mNetworks.insert(network.ssid, network);
+	}
+
+	for (const NetworkInfo &network : mNetworks.values()) {
+		mAvailableNetworksModel.appendRow(new QStandardItem(network.ssid));
 	}
 
 	updateConnectionStatusesInNetworkList();
@@ -104,13 +117,13 @@ void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 
 void WiFiClientWidget::connectedSlot()
 {
-	mConnectionState = connected;
+	mConnectionState = ConnectionState::connected;
 	setConnectionStatus(mWiFi.statusResult());
 }
 
 void WiFiClientWidget::disconnectedSlot()
 {
-	mConnectionState = notConnected;
+	mConnectionState = ConnectionState::notConnected;
 
 	mWiFi.statusRequest();
 
@@ -121,23 +134,15 @@ void WiFiClientWidget::disconnectedSlot()
 void WiFiClientWidget::statusReadySlot()
 {
 	const Status connectionStatus = mWiFi.statusResult();
-	mConnectionState = connectionStatus.connected ? connected : notConnected;
+	mConnectionState = connectionStatus.connected ? ConnectionState::connected : ConnectionState::notConnected;
 	setConnectionStatus(connectionStatus);
-}
-
-void WiFiClientWidget::listNetworksReadySlot()
-{
-	const QList<NetworkConfiguration> networksFromWpaSupplicant = mWiFi.listNetworksResult();
-	for (const NetworkConfiguration &networkConfiguration : networksFromWpaSupplicant) {
-		mNetworksAvailableForConnection.insert(networkConfiguration.ssid, networkConfiguration.id);
-	}
 }
 
 void WiFiClientWidget::errorSlot(const QString &message)
 {
 	QLOG_ERROR() << message;
 	if (message == "statusRequest") {
-		mConnectionState = errored;
+		mConnectionState = ConnectionState::errored;
 		setConnectionStatus(trikWiFi::Status());
 	}
 }
@@ -160,22 +165,22 @@ void WiFiClientWidget::setConnectionStatus(const trikWiFi::Status &status)
 {
 	QPixmap pixmap;
 	switch (mConnectionState) {
-	case connected:
+	case ConnectionState::connected:
 		pixmap.load("://resources/connected.png");
 		mIpValueLabel.setText(status.ipAddress);
 		mCurrentSsid = status.ssid;
 		break;
-	case connecting:
+	case ConnectionState::connecting:
 		pixmap.load("://resources/unknownConnectionStatus.png");
 		mIpValueLabel.setText(tr("connecting..."));
 		mCurrentSsid = "";
 		break;
-	case notConnected:
+	case ConnectionState::notConnected:
 		pixmap.load("://resources/notConnected.png");
 		mIpValueLabel.setText(tr("no connection"));
 		mCurrentSsid = "";
 		break;
-	case errored:
+	case ConnectionState::errored:
 		pixmap.load("://resources/notConnected.png");
 		mIpValueLabel.setText(tr("error"));
 		mCurrentSsid = "";
@@ -190,17 +195,23 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 {
 	for (int i = 0; i < mAvailableNetworksModel.rowCount(); ++i) {
 		QStandardItem * const item = mAvailableNetworksModel.item(i);
+		if (item->text() == tr("Scanning...")) {
+			return;
+		}
+
 		QFont font = item->font();
 		font.setBold(false);
 		item->setFont(font);
 		if (item->text() == mCurrentSsid) {
-			item->setIcon(QIcon("://resources/connectedToNetwork.png"));
+			item->setIcon(QIcon("://resources/connectedWifi.png"));
 			font.setBold(true);
 			item->setFont(font);
-		} else if (mNetworksAvailableForConnection.contains(item->text())) {
-			item->setIcon(QIcon("://resources/notConnectedToNetwork.png"));
+		} else if (mNetworks[item->text()].wpaSupplicantId != -1) {
+			item->setIcon(QIcon("://resources/knownWifi.png"));
+		} else if (mNetworks[item->text()].security == Security::none) {
+			item->setIcon(QIcon("://resources/openWifi.png"));
 		} else {
-			item->setIcon(QIcon("://resources/connectionToNetworkImpossible.png"));
+			item->setIcon(QIcon("://resources/passwordedWifi.png"));
 		}
 	}
 
@@ -213,7 +224,7 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 
 void WiFiClientWidget::connectToSelectedNetwork()
 {
-	QModelIndexList const selected = mAvailableNetworksView.selectionModel()->selectedIndexes();
+	const QModelIndexList selected = mAvailableNetworksView.selectionModel()->selectedIndexes();
 	if (selected.size() != 1) {
 		return;
 	}
@@ -223,13 +234,17 @@ void WiFiClientWidget::connectToSelectedNetwork()
 		return;
 	}
 
-	if (!mNetworksAvailableForConnection.contains(ssid)) {
+	if (!mNetworks.contains(ssid)) {
 		return;
 	}
 
-	mConnectionState = connecting;
+	mConnectionState = ConnectionState::connecting;
 
 	setConnectionStatus(Status());
 
-	mWiFi.connect(mNetworksAvailableForConnection[ssid]);
+	if (mNetworks[ssid].wpaSupplicantId != -1) {
+		mWiFi.connect(mNetworks[ssid].wpaSupplicantId);
+	} else {
+		mWiFi.connectToOpenNetwork(ssid);
+	}
 }

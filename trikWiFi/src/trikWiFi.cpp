@@ -67,6 +67,11 @@ void TrikWiFi::connect(int id)
 	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(int, id));
 }
 
+void TrikWiFi::connectToOpenNetwork(const QString &ssid)
+{
+	QMetaObject::invokeMethod(mWorker.data(), "connectToOpenNetwork", Q_ARG(QString, ssid));
+}
+
 void TrikWiFi::disconnect()
 {
 	QMetaObject::invokeMethod(mWorker.data(), "disconnect");

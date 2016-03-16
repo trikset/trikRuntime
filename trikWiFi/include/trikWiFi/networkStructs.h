@@ -18,6 +18,19 @@
 
 namespace trikWiFi {
 
+/// Enum with possible network security
+enum class Security
+{
+	/// Uses some kind of WPA security algorithm. Authorization required.
+	wpa
+
+	/// Uses some kind of WEP security algorithm. Authorization may be required.
+	, wep
+
+	/// It is an open network.
+	, none
+};
+
 /// Contains info about current connection.
 struct Status
 {
@@ -39,6 +52,12 @@ struct ScanResult
 
 	/// Channel of a network.
 	int frequency;
+
+	/// Security algorithm used in that network.
+	Security security;
+
+	/// Id of a network in wpa_supplicant.conf or -1 if the network is not in config file.
+	int networkId;
 };
 
 /// Contains configuration entry from wpa-supplicant config.

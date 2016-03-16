@@ -46,6 +46,9 @@ public:
 	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
 	Q_INVOKABLE void connect(int id);
 
+	/// Connect to an open network with given ssid.
+	Q_INVOKABLE void connectToOpenNetwork(const QString &ssid);
+
 	/// Disconnect from network if we are currently connected to one.
 	Q_INVOKABLE void disconnect();
 
@@ -102,23 +105,35 @@ private slots:
 	void receiveMessages();
 
 private:
+	/// Parses BSS record into (key, value) parts.
+	static QHash<QString, QString> parseReply(const QString &reply);
+
+	/// Dispatcher for wpa_supplicant events.
+	void processMessage(const QString &message);
+
+	/// Iterates through BSS records prepared by SCAN command and gets information about available access points.
+	void processScanResults();
+
+	/// Adds an open network with given SSID into wpa_supplicant.conf.
+	int addOpenNetwork(const QString &ssid);
+
+	/// Returns id of a network in a list of networks with known configuration or -1 if the network is unknown.
+	int findNetworkId(const QString &ssid) const;
+
 	QString mInterfaceFile;
 	QString mDaemonFile;
 	QScopedPointer<WpaSupplicantCommunicator> mControlInterface;
 	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
 	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
 
-	static QHash<QString, QString> parseReply(const QString &reply);
-
-	void processMessage(const QString &message);
-
-	void processScanResults();
-
 	trikKernel::SynchronizedVar<Status> mStatus;
 
 	trikKernel::SynchronizedVar<QList<NetworkConfiguration>> mNetworkConfiguration;
 
 	trikKernel::SynchronizedVar<QList<ScanResult>> mScanResult;
+
+	bool mIgnoreScanResults = true;
+	bool mIgnoreDisconnect = false;
 };
 
 }

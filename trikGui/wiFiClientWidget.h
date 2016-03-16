@@ -35,11 +35,12 @@
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 
+#include <trikWiFi/networkStructs.h>
+
 #include "trikGuiDialog.h"
 
 namespace trikWiFi {
 class TrikWiFi;
-struct Status;
 }
 
 namespace trikGui {
@@ -69,15 +70,20 @@ private slots:
 	void disconnectedSlot();
 
 	void statusReadySlot();
-	void listNetworksReadySlot();
 	void errorSlot(const QString &message);
 
 private:
-	enum ConnectionState {
+	enum class ConnectionState {
 		notConnected
 		, connecting
 		, connected
 		, errored
+	};
+
+	struct NetworkInfo {
+		QString ssid;
+		int wpaSupplicantId;
+		trikWiFi::Security security;
 	};
 
 	QLabel mConnectionIconLabel;
@@ -93,7 +99,7 @@ private:
 	QHBoxLayout mNameLayout;
 	trikWiFi::TrikWiFi &mWiFi;
 	QString mCurrentSsid;
-	QHash<QString, int> mNetworksAvailableForConnection;
+	QHash<QString, NetworkInfo> mNetworks;
 	ConnectionState mConnectionState;
 
 	void setConnectionStatus(const trikWiFi::Status &status);
