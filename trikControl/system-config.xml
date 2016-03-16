@@ -43,7 +43,7 @@ equal to its class name.
 	<deviceClasses>
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
-		<powerMotor period="0x1000" invert="false" measures="(0;0)(100;100)" />
+		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
 		<encoder invert="false" />
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
@@ -122,7 +122,7 @@ equal to its class name.
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x14" measures="(0;0)(5;0)(10;482)(15;1076)(20;1441)(25;1678)(30;1840)(35;1954)(40;2045)(45;2104)(50;2156)(55;2199)(60;2235)(65;2264)(70;2288)(75;2310)(80;2330)(85;2342)(90;2361)(95;2383)(100;2405)"/>
+		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
 		<powerMotor port="M3" i2cCommandNumber="0x16" />
 		<powerMotor port="M4" i2cCommandNumber="0x17" />
@@ -157,6 +157,8 @@ equal to its class name.
 
 		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
 				controlMin="0" controlMax="100" />
+
+		<jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
 
 		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
 				controlMin="0" controlMax="100" />

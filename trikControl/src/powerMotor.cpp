@@ -16,6 +16,7 @@
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/exceptions/malformedConfigException.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 
 #include "mspI2cCommunicator.h"
 #include "configurerHelper.h"
@@ -37,7 +38,7 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	mCurrentPeriod = ConfigurerHelper::configureInt(configurer, mState, port, "period");
 	setPeriod(mCurrentPeriod);
 
-	mPowerMap.reserve(101);
+	mPowerMap.reserve(maxControlValue + 1);
 	lineariseMotor(port, configurer);
 
 	mState.ready();
@@ -54,12 +55,8 @@ PowerMotor::Status PowerMotor::status() const
 
 void PowerMotor::setPower(int power, bool constrain)
 {
-	if (constrain) {
-		if (power > maxControlValue) {
-			power = maxControlValue;
-		} else if (power < minControlValue) {
-			power = minControlValue;
-		}
+	if (!constrain) {
+		throw trikKernel::InternalErrorException("Invalid argument");
 	}
 
 	mCurrentPower = power;
@@ -117,11 +114,11 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 	const int maxValue = powerAddiction[addictionLength - 1].second;
 
 	for (int i = 0; i < addictionLength; i++) {
-		powerAddiction[i].second *= 100;
+		powerAddiction[i].second *= maxControlValue;
 		powerAddiction[i].second /= maxValue;
 	}
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < maxControlValue; i++)
 	{
 		int k = 0;
 		while (i >= powerAddiction[k].second) {
@@ -140,7 +137,7 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 		const int power = powerAddiction[k].first + koef * (i - powerAddiction[k].second);
 		mPowerMap.append(power);
 	}
-	mPowerMap.append(100);
+	mPowerMap.append(maxControlValue);
 }
 
 int PowerMotor::minControl() const
