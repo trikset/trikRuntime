@@ -16,7 +16,6 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
 #include <linux/input.h>
 
 #include <QtCore/QFileInfo>
@@ -121,38 +120,8 @@ void TrikEventFile::readFile()
 	while ((size = ::read(mEventFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
 			== static_cast<int>(sizeof(event)))
 	{
-		EventType eventType = EventType::unknown;
-		switch (event.type) {
-			case EV_ABS:
-				switch (event.code) {
-				case ABS_DISTANCE:
-					eventType = EventType::evAbsDistance;
-					break;
-				case ABS_MISC:
-					eventType = EventType::evAbsMisc;
-					break;
-				case ABS_X:
-					eventType = EventType::evAbsX;
-					break;
-				case ABS_Y:
-					eventType = EventType::evAbsY;
-					break;
-				case ABS_Z:
-					eventType = EventType::evAbsZ;
-					break;
-				}
-
-				break;
-			case EV_KEY:
-				eventType = EventType::evKey;
-				break;
-			case EV_SYN:
-				eventType = EventType::evSyn;
-				break;
-		}
-
 		trikKernel::TimeVal eventTime(event.time.tv_sec, event.time.tv_usec);
-		emit newEvent(eventType, event.code, event.value, eventTime);
+		emit newEvent(event.type, event.code, event.value, eventTime);
 	}
 
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {
@@ -164,5 +133,5 @@ void TrikEventFile::readFile()
 
 bool TrikEventFile::isOpened() const
 {
-	return mEventFileDescriptor == -1;
+	return mEventFileDescriptor != -1;
 }

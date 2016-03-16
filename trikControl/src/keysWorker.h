@@ -46,8 +46,7 @@ public slots:
 	bool wasPressed(int code);
 
 private slots:
-	void readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikKernel::TimeVal &eventTime);
+	void readKeysEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 signals:
 	/// Triggered when button state changed (pressed or released).
@@ -57,8 +56,8 @@ signals:
 
 private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
-	int mButtonCode;
-	int mButtonValue;
+	int mButtonCode = 0;
+	int mButtonValue = 0;
 	QSet<int> mWasPressed;
 	QReadWriteLock mLock;
 

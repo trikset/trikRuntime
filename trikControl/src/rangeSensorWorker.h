@@ -58,8 +58,7 @@ public slots:
 
 private slots:
 	/// Updates current reading when new value is ready in event file.
-	void onNewEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikKernel::TimeVal &eventTime);
+	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 private:
 	/// Event file of a sensor driver.

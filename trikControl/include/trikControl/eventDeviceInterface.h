@@ -38,7 +38,7 @@ signals:
 	/// @param code - code of the event inside a type.
 	/// @param value - value sent with the event.
 	/// @param eventTime - time stamp of the event, in milliseconds from start of the Unix time (modulo 2^32).
-	void on(int onEvent, int code, int value, int eventTime);
+	void on(int event, int code, int value, int eventTime);
 };
 
 }

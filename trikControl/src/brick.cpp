@@ -71,7 +71,6 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-	qRegisterMetaType<trikHal::EventFileInterface::EventType>("trikHal::EventFileInterface::EventType");
 
 	for (const QString &initScript : mConfigurer.initScripts()) {
 		if (mHardwareAbstraction->systemConsole().system(initScript) != 0) {
@@ -204,7 +203,6 @@ void Brick::stop()
 		powerMotor->powerOff();
 	}
 
-	mLed->red();
 	mDisplay->hide();
 
 	/// @todo: Also be able to stop initializing sensor.
