@@ -199,6 +199,8 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 			return;
 		}
 
+		qDebug() << item->text() << ":" << mNetworks[item->text()].wpaSupplicantId << (int)mNetworks[item->text()].security;
+
 		QFont font = item->font();
 		font.setBold(false);
 		item->setFont(font);
@@ -220,6 +222,8 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 			mAvailableNetworksModel.index(0, 0)
 			, QItemSelectionModel::ClearAndSelect
 			);
+
+	mAvailableNetworksView.setCurrentIndex(mAvailableNetworksModel.index(0, 0));
 }
 
 void WiFiClientWidget::connectToSelectedNetwork()
@@ -244,7 +248,7 @@ void WiFiClientWidget::connectToSelectedNetwork()
 
 	if (mNetworks[ssid].wpaSupplicantId != -1) {
 		mWiFi.connect(mNetworks[ssid].wpaSupplicantId);
-	} else {
+	} else if (mNetworks[ssid].security == Security::none) {
 		mWiFi.connectToOpenNetwork(ssid);
 	}
 }

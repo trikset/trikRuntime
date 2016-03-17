@@ -46,7 +46,10 @@ class TrikWiFi;
 namespace trikGui {
 
 /// Widget that shows current IP address and a list of available WiFi networks.
-/// Network is available only when it is listed in networks.cfg file and is physically available.
+/// Network is available when it is listed in /etc/wpa_supplicant.conf or it is open network without security.
+///
+/// Protocol of communication between this widget and underlying WiFi controller is highly asynchronous due to
+/// use of wpa_supplicant, which uses asynchronous message passing to communicate with client software.
 class WiFiClientWidget : public TrikGuiDialog
 {
 	Q_OBJECT

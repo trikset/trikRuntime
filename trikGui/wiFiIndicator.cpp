@@ -32,6 +32,7 @@ WiFiIndicator::WiFiIndicator(Controller &controller, QWidget *parent)
 
 void WiFiIndicator::setOn()
 {
+	qDebug() << "WiFiIndicator::setOn()";
 	if (mMode == WiFiModeWidget::client) {
 		QPixmap icon("://resources/wifion.png");
 		setPixmap(icon);
@@ -40,6 +41,7 @@ void WiFiIndicator::setOn()
 
 void WiFiIndicator::setOff()
 {
+	qDebug() << "WiFiIndicator::setOff()";
 	QPixmap icon("://resources/wifioff.png");
 	setPixmap(icon);
 }

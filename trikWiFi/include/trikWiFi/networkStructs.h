@@ -50,24 +50,11 @@ struct ScanResult
 	/// SSID of a network.
 	QString ssid;
 
-	/// Channel of a network.
-	int frequency;
-
 	/// Security algorithm used in that network.
 	Security security;
 
 	/// Id of a network in wpa_supplicant.conf or -1 if the network is not in config file.
 	int networkId;
-};
-
-/// Contains configuration entry from wpa-supplicant config.
-struct NetworkConfiguration
-{
-	/// Some unique id of a network.
-	int id;
-
-	/// SSID of a network.
-	QString ssid;
 };
 
 }

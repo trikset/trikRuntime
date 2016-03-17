@@ -72,13 +72,6 @@ public:
 	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
 	QList<ScanResult> scanResult();
 
-	/// Gets registered networks from wpa_supplicant. When ready, listNetworksReady() signal and results
-	/// can be received by listNetworksResult() method. wpa_supplicant can connect only to registered networks.
-	Q_INVOKABLE void listNetworksRequest();
-
-	/// Returns a current list of registered networks. Use listNetworksRequest() method to refresh.
-	QList<NetworkConfiguration> listNetworksResult();
-
 signals:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
 	/// and ready to be obtained by scanResults method.
@@ -94,17 +87,24 @@ signals:
 	/// statusResult() method.
 	void statusReady();
 
-	/// Emitted when list of known networks requested by listNetworksRequest() is ready and its results can be obtained
-	/// by listNetworksResult() method.
-	void listNetworksReady();
-
 	/// Emitted when something goes wrong.
 	void error(const QString &message);
 
 private slots:
+	/// Slot that processes messages from wpa_supplicant.
 	void receiveMessages();
 
 private:
+	/// Contains configuration entry from wpa-supplicant config.
+	struct NetworkConfiguration
+	{
+		/// Some unique id of a network.
+		int id;
+
+		/// SSID of a network.
+		QString ssid;
+	};
+
 	/// Parses BSS record into (key, value) parts.
 	static QHash<QString, QString> parseReply(const QString &reply);
 
@@ -118,7 +118,10 @@ private:
 	int addOpenNetwork(const QString &ssid);
 
 	/// Returns id of a network in a list of networks with known configuration or -1 if the network is unknown.
-	int findNetworkId(const QString &ssid) const;
+	int findNetworkId(const QString &ssid);
+
+	/// Gets registered networks from wpa_supplicant.
+	void listKnownNetworks();
 
 	QString mInterfaceFile;
 	QString mDaemonFile;

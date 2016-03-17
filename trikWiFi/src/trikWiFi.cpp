@@ -33,7 +33,6 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 
 	QObject::connect(mWorker.data(), SIGNAL(statusReady()), this, SIGNAL(statusReady()));
-	QObject::connect(mWorker.data(), SIGNAL(listNetworksReady()), this, SIGNAL(listNetworksReady()));
 
 	QObject::connect(mWorker.data(), SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 
@@ -95,14 +94,4 @@ void TrikWiFi::scanRequest()
 QList<ScanResult> TrikWiFi::scanResult() const
 {
 	return mWorker->scanResult();
-}
-
-void TrikWiFi::listNetworksRequest()
-{
-	QMetaObject::invokeMethod(mWorker.data(), "listNetworksRequest");
-}
-
-QList<NetworkConfiguration> TrikWiFi::listNetworksResult() const
-{
-	return mWorker->listNetworksResult();
 }
