@@ -31,11 +31,17 @@ enum class Security
 	, none
 };
 
+enum class DisconnectReason
+{
+	planned
+	, unplanned
+};
+
 /// Contains info about current connection.
 struct Status
 {
 	/// True, if there is active WiFi connection. All other fields are meaningless if this field is false.
-	bool connected;
+	bool connected = false;
 
 	/// SSID of currently connected network.
 	QString ssid;

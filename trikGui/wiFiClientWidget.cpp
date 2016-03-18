@@ -25,8 +25,10 @@
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QScrollBar>
+	#include <QtGui/QMessageBox>
 #else
 	#include <QtWidgets/QScrollBar>
+	#include <QtWidgets/QMessageBox>
 #endif
 
 #include <trikKernel/fileUtils.h>
@@ -36,19 +38,20 @@
 #include <QsLog.h>
 
 using namespace trikGui;
-
 using namespace trikWiFi;
+
+static const int connectionTimeout = 3000;
 
 WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mWiFi(trikWiFi)
 	, mConnectionState(ConnectionState::notConnected)
 {
-	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(scanForAvailableNetworksDoneSlot()));
-	connect(&mWiFi, SIGNAL(connected()), this, SLOT(connectedSlot()));
-	connect(&mWiFi, SIGNAL(disconnected()), this, SLOT(disconnectedSlot()));
-	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(statusReadySlot()));
-	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(errorSlot(const QString &)));
+	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(onNetworksInfoUpdated()));
+	connect(&mWiFi, SIGNAL(connected()), this, SLOT(onConnected()));
+	connect(&mWiFi, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(onStatusUpdated()));
+	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(onError(const QString &)));
 
 	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -65,9 +68,7 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	mAvailableNetworksView.setModel(&mAvailableNetworksModel);
 	mAvailableNetworksView.setSelectionMode(QAbstractItemView::SingleSelection);
 
-	const auto scanning = new QStandardItem(tr("Scanning..."));
-	scanning->setIcon(QIcon("://resources/wait.png"));
-	mAvailableNetworksModel.appendRow(scanning);
+	showScanning();
 
 	mIpAddressLayout.addWidget(&mConnectionIconLabel);
 	mIpAddressLayout.addWidget(&mIpLabel);
@@ -82,6 +83,11 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	mMainLayout.addWidget(&mAvailableNetworksView);
 	setLayout(&mMainLayout);
 
+	mConnectionTimeoutTimer.setInterval(connectionTimeout);
+	mConnectionTimeoutTimer.setSingleShot(true);
+
+	connect(&mConnectionTimeoutTimer, SIGNAL(timeout()), this, SLOT(onConnectionTimeout()));
+
 	mWiFi.statusRequest();
 	mWiFi.scanRequest();
 }
@@ -95,7 +101,7 @@ void WiFiClientWidget::renewFocus()
 	mAvailableNetworksView.setFocus();
 }
 
-void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
+void WiFiClientWidget::onNetworksInfoUpdated()
 {
 	mAvailableNetworksModel.clear();
 	mNetworks.clear();
@@ -115,36 +121,50 @@ void WiFiClientWidget::scanForAvailableNetworksDoneSlot()
 	updateConnectionStatusesInNetworkList();
 }
 
-void WiFiClientWidget::connectedSlot()
+void WiFiClientWidget::onConnected()
 {
-	mConnectionState = ConnectionState::connected;
-	setConnectionStatus(mWiFi.statusResult());
+	mConnectionTimeoutTimer.stop();
+	const trikWiFi::Status connectionStatus = mWiFi.statusResult();
+	setConnectionStatus(ConnectionState::connected, connectionStatus.ipAddress, connectionStatus.ssid);
 }
 
-void WiFiClientWidget::disconnectedSlot()
+void WiFiClientWidget::onDisconnected(DisconnectReason reason)
 {
-	mConnectionState = ConnectionState::notConnected;
+	if (reason == DisconnectReason::unplanned) {
+		// Maybe disconnect was caused by network going out of range, so we need to rescan networks to determine
+		// what networks are left.
+		mWiFi.scanRequest();
+		showScanning();
+	}
 
-	mWiFi.statusRequest();
-
-	// Now to determine reason of disconnect --- maybe the network is out of range now.
-	mWiFi.scanRequest();
+	// Anyway, we are disconnected, so if we are already connecting, we will probably be connected sometime, in other
+	// cases we shall report disconnect.
+	setConnectionStatus(
+			mConnectionState == ConnectionState::connecting
+					? mConnectionState
+					: ConnectionState::notConnected
+			, ""
+			, "");
 }
 
-void WiFiClientWidget::statusReadySlot()
+void WiFiClientWidget::onStatusUpdated()
 {
-	const Status connectionStatus = mWiFi.statusResult();
-	mConnectionState = connectionStatus.connected ? ConnectionState::connected : ConnectionState::notConnected;
-	setConnectionStatus(connectionStatus);
+	const trikWiFi::Status connectionStatus = mWiFi.statusResult();
+	setConnectionStatus(connectionStatus.connected ? ConnectionState::connected : ConnectionState::notConnected
+			, connectionStatus.ipAddress, connectionStatus.ssid);
 }
 
-void WiFiClientWidget::errorSlot(const QString &message)
+void WiFiClientWidget::onError(const QString &message)
 {
 	QLOG_ERROR() << message;
 	if (message == "statusRequest") {
-		mConnectionState = ConnectionState::errored;
-		setConnectionStatus(trikWiFi::Status());
+		setConnectionStatus(ConnectionState::errored, "", "");
 	}
+}
+
+void WiFiClientWidget::onConnectionTimeout()
+{
+	setConnectionStatus(ConnectionState::errored, "", "");
 }
 
 void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
@@ -161,29 +181,29 @@ void WiFiClientWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-void WiFiClientWidget::setConnectionStatus(const trikWiFi::Status &status)
+void WiFiClientWidget::setConnectionStatus(ConnectionState state, const QString &ip, const QString &ssid)
 {
 	QPixmap pixmap;
+	mConnectionState = state;
+	mCurrentSsid = "";
+
 	switch (mConnectionState) {
 	case ConnectionState::connected:
 		pixmap.load("://resources/connected.png");
-		mIpValueLabel.setText(status.ipAddress);
-		mCurrentSsid = status.ssid;
+		mIpValueLabel.setText(ip);
+		mCurrentSsid = ssid;
 		break;
 	case ConnectionState::connecting:
 		pixmap.load("://resources/unknownConnectionStatus.png");
 		mIpValueLabel.setText(tr("connecting..."));
-		mCurrentSsid = "";
 		break;
 	case ConnectionState::notConnected:
 		pixmap.load("://resources/notConnected.png");
 		mIpValueLabel.setText(tr("no connection"));
-		mCurrentSsid = "";
 		break;
 	case ConnectionState::errored:
 		pixmap.load("://resources/notConnected.png");
 		mIpValueLabel.setText(tr("error"));
-		mCurrentSsid = "";
 		break;
 	}
 
@@ -198,8 +218,6 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 		if (item->text() == tr("Scanning...")) {
 			return;
 		}
-
-		qDebug() << item->text() << ":" << mNetworks[item->text()].wpaSupplicantId << (int)mNetworks[item->text()].security;
 
 		QFont font = item->font();
 		font.setBold(false);
@@ -239,16 +257,31 @@ void WiFiClientWidget::connectToSelectedNetwork()
 	}
 
 	if (!mNetworks.contains(ssid)) {
+		// Trying to connect to "Scanning..." label, for example.
 		return;
 	}
 
-	mConnectionState = ConnectionState::connecting;
-
-	setConnectionStatus(Status());
+	setConnectionStatus(ConnectionState::connecting, "", "");
 
 	if (mNetworks[ssid].wpaSupplicantId != -1) {
 		mWiFi.connect(mNetworks[ssid].wpaSupplicantId);
 	} else if (mNetworks[ssid].security == Security::none) {
-		mWiFi.connectToOpenNetwork(ssid);
+		QMessageBox confirmMessageBox(QMessageBox::Warning, tr("Confirm connection")
+				, tr("Are you sure you want to connect to open WiFi network?"), QMessageBox::Yes | QMessageBox::No);
+		confirmMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
+		const int result = confirmMessageBox.exec();
+		if (result == QMessageBox::Yes) {
+			mWiFi.connectToOpenNetwork(ssid);
+		}
 	}
+
+	mConnectionTimeoutTimer.start();
+}
+
+void WiFiClientWidget::showScanning()
+{
+	const auto scanning = new QStandardItem(tr("Scanning..."));
+	scanning->setIcon(QIcon("://resources/wait.png"));
+	mAvailableNetworksModel.clear();
+	mAvailableNetworksModel.appendRow(scanning);
 }

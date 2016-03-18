@@ -45,8 +45,9 @@ void TrikWiFiWorker::reinit()
 	mControlInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "ctrl", mDaemonFile));
 	mMonitorInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "mon", mDaemonFile));
 
+	mNetworkConfiguration.clear();
+
 	mStatus.reset();
-	mNetworkConfiguration.reset();
 	mScanResult.reset();
 
 	mMonitorInterface->attach();
@@ -60,7 +61,6 @@ void TrikWiFiWorker::reinit()
 
 	listKnownNetworks();
 	statusRequest();
-	scanRequest();
 
 	QLOG_INFO() << "WiFi initialized";
 }
@@ -77,6 +77,8 @@ void TrikWiFiWorker::dispose()
 
 void TrikWiFiWorker::connect(int id)
 {
+	mPlannedDisconnect = true;
+
 	QString reply;
 	int result = mControlInterface->request("DISCONNECT", reply);
 	if (result < 0 || reply != "OK\n") {
@@ -93,16 +95,6 @@ void TrikWiFiWorker::connect(int id)
 
 void TrikWiFiWorker::connectToOpenNetwork(const QString &ssid)
 {
-	// Disconnecting from previous network.
-	QString reply;
-	mIgnoreDisconnect = true;
-
-	int result = mControlInterface->request("DISCONNECT", reply);
-	if (result < 0 || reply != "OK\n") {
-		emit error("connect");
-		return;
-	}
-
 	// At first checking if we already have this network in configuration.
 	int networkId = findNetworkId(ssid);
 
@@ -113,19 +105,17 @@ void TrikWiFiWorker::connectToOpenNetwork(const QString &ssid)
 
 	if (networkId == -1) {
 		// wpa_supplicant failed for some reason.
-		return;
-	}
-
-	// Now connect to the selected network.
-	result = mControlInterface->request("SELECT_NETWORK " + QString::number(networkId), reply);
-	if (result < 0 || reply != "OK\n") {
 		emit error("connect");
 		return;
 	}
+
+	connect(networkId);
 }
 
 void TrikWiFiWorker::disconnect()
 {
+	mPlannedDisconnect = true;
+
 	QString reply;
 	const int result = mControlInterface->request("DISCONNECT", reply);
 	if (result != 0 || reply != "OK\n") {
@@ -164,6 +154,9 @@ void TrikWiFiWorker::statusRequest()
 	if (mStatus->connected) {
 		mStatus->ipAddress = parsedReply["ip_address"];
 		mStatus->ssid = parsedReply["ssid"];
+	} else {
+		mStatus->ipAddress = "";
+		mStatus->ssid = "";
 	}
 
 	mStatus.sync();
@@ -172,7 +165,6 @@ void TrikWiFiWorker::statusRequest()
 
 Status TrikWiFiWorker::statusResult()
 {
-	qDebug() << "TrikWiFiWorker::statusResult()";
 	return mStatus.get();
 }
 
@@ -248,11 +240,13 @@ void TrikWiFiWorker::listKnownNetworks()
 
 	qDebug() << reply;
 
+	mNetworkConfiguration.clear();
+
 	const QStringList lines = reply.split('\n');
 	for (const QString &line : lines) {
-		QStringList const values = line.split('\t');
+		const QStringList values = line.split('\t');
 		if (values.size() != 4) {
-			qDebug() << "Ololo, can't parse" << line;
+			qDebug() << "Can't parse" << line;
 			continue;
 		}
 
@@ -264,11 +258,8 @@ void TrikWiFiWorker::listKnownNetworks()
 		}
 
 		currentNetwork.ssid = values[1];
-		mNetworkConfiguration->append(currentNetwork);
+		mNetworkConfiguration.insert(currentNetwork.ssid, currentNetwork);
 	}
-
-	mNetworkConfiguration.sync();
-	mNetworkConfiguration->clear();
 }
 
 void TrikWiFiWorker::processMessage(const QString &message)
@@ -276,12 +267,12 @@ void TrikWiFiWorker::processMessage(const QString &message)
 	if (message.contains("CTRL-EVENT-SCAN-RESULTS") && !mIgnoreScanResults) {
 		processScanResults();
 	} else if (message.contains("CTRL-EVENT-CONNECTED")) {
-		// Refresh network configuration.
+		// Refresh connection status.
 		statusRequest();
-		scanRequest();
+		mPlannedDisconnect = false;
 		emit connected();
-	} else if (message.contains("CTRL-EVENT-DISCONNECTED") && !mIgnoreDisconnect) {
-		emit disconnected();
+	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
+		emit disconnected(mPlannedDisconnect ? DisconnectReason::planned : DisconnectReason::unplanned);
 	}
 }
 
@@ -326,24 +317,23 @@ QHash<QString, QString> TrikWiFiWorker::parseReply(const QString &reply)
 int TrikWiFiWorker::addOpenNetwork(const QString &ssid)
 {
 	QString reply;
+
 	mControlInterface->request("ADD_NETWORK", reply);
-
 	qDebug() << reply;
-
-	if (reply.startsWith("FAIL")) {
+	if (reply != "OK\n") {
 		return -1;
 	}
 
 	bool ok = false;
 	const int id = reply.toInt(&ok);
 	if (ok) {
-		mControlInterface->request("SET_NETWORK " + QString::number(id) + " ssid \"" + ssid + "\"", reply);
+		mControlInterface->request(QString("SET_NETWORK %1 ssid \"%2\"").arg(id).arg(ssid), reply);
 		qDebug() << reply;
 		if (reply != "OK\n") {
 			return -1;
 		}
 
-		mControlInterface->request("SET_NETWORK " + QString::number(id) + " key_mgmt NONE", reply);
+		mControlInterface->request(QString("SET_NETWORK %1 key_mgmt NONE").arg(id), reply);
 		qDebug() << reply;
 		if (reply != "OK\n") {
 			return -1;
@@ -362,8 +352,7 @@ int TrikWiFiWorker::addOpenNetwork(const QString &ssid)
 			return -1;
 		}
 
-		// Refresh known networks from config.
-		listKnownNetworks();
+		mNetworkConfiguration.insert(ssid, {id, ssid});
 
 		return id;
 	} else {
@@ -371,16 +360,7 @@ int TrikWiFiWorker::addOpenNetwork(const QString &ssid)
 	}
 }
 
-int TrikWiFiWorker::findNetworkId(const QString &ssid)
+int TrikWiFiWorker::findNetworkId(const QString &ssid) const
 {
-	for (const NetworkConfiguration &network : mNetworkConfiguration.get()) {
-
-		qDebug() << "TrikWiFiWorker::findNetworkId" << network.ssid << ssid;
-
-		if (network.ssid == ssid) {
-			return network.id;
-		}
-	}
-
-	return -1;
+	return mNetworkConfiguration.value(ssid, {-1, ""}).id;
 }

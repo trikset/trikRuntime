@@ -82,7 +82,7 @@ signals:
 	void connected();
 
 	/// Emitted when wpa_supplicant disconnects from current network.
-	void disconnected();
+	void disconnected(DisconnectReason reason);
 
 	/// Emitted when connection status requested by statusRequest() is ready and results can be obtained by
 	/// statusResult() method.

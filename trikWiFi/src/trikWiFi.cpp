@@ -26,11 +26,13 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	: QObject(parent)
 	, mWorker(new TrikWiFiWorker(interfaceFilePrefix, daemonFile))
 {
+	qRegisterMetaType<trikWiFi::DisconnectReason>("trikWiFi::DisconnectReason");
 	mWorker->moveToThread(&mWorkerThread);
 
 	QObject::connect(mWorker.data(), SIGNAL(scanFinished()), this, SIGNAL(scanFinished()));
 	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SIGNAL(connected()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+	QObject::connect(mWorker.data(), SIGNAL(disconnected(DisconnectReason))
+			, this, SIGNAL(disconnected(DisconnectReason)));
 
 	QObject::connect(mWorker.data(), SIGNAL(statusReady()), this, SIGNAL(statusReady()));
 

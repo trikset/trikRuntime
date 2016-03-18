@@ -81,7 +81,7 @@ signals:
 	void connected();
 
 	/// Emitted when wpa_supplicant disconnects from current network.
-	void disconnected();
+	void disconnected(DisconnectReason reason);
 
 	/// Emitted when connection status requested by statusRequest() is ready and results can be obtained by
 	/// statusResult() method.
@@ -118,7 +118,7 @@ private:
 	int addOpenNetwork(const QString &ssid);
 
 	/// Returns id of a network in a list of networks with known configuration or -1 if the network is unknown.
-	int findNetworkId(const QString &ssid);
+	int findNetworkId(const QString &ssid) const;
 
 	/// Gets registered networks from wpa_supplicant.
 	void listKnownNetworks();
@@ -129,14 +129,19 @@ private:
 	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
 	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
 
-	trikKernel::SynchronizedVar<Status> mStatus;
+	/// Networks listed in /etc/wpa_supplicant.conf hashed by SSID.
+	QHash<QString, NetworkConfiguration> mNetworkConfiguration;
 
-	trikKernel::SynchronizedVar<QList<NetworkConfiguration>> mNetworkConfiguration;
+	trikKernel::SynchronizedVar<Status> mStatus;
 
 	trikKernel::SynchronizedVar<QList<ScanResult>> mScanResult;
 
+	/// wpa_supplicant may send several CTRL-EVENT-SCAN-RESULTS messages for one scan request for some reason,
+	/// we need only one and then ignore all others until we explicitly request scan again.
 	bool mIgnoreScanResults = true;
-	bool mIgnoreDisconnect = false;
+
+	/// Flag that is set when we are disconnecting by our own choice and reset when we become connected.
+	bool mPlannedDisconnect = false;
 };
 
 }
