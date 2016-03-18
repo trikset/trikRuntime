@@ -28,6 +28,9 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	, mSensorType(type)
 	, mBrick(brick)
 {
+    QListWidgetItem *item = new QListWidgetItem(tr("Start testing"), &mList);
+    item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+
 	QStringList ports;
 
 	switch (type) {
@@ -52,9 +55,6 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 		item->setCheckState(Qt::Checked);
 	}
-
-	QListWidgetItem *item = new QListWidgetItem(tr("Start testing"), &mList);
-	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
 
 	mList.setSelectionMode(QAbstractItemView::SingleSelection);
 	mList.setFocusPolicy(Qt::StrongFocus);
