@@ -120,8 +120,9 @@ private:
 		/// SSID of the network.
 		QString ssid;
 
-		/// Internal id of the network in wpa_supplicant. Used to determine if we know this network or not.
-		int wpaSupplicantId;
+		/// Is this network known (listed in /etc/wpa_supplicant.conf), so it has all configuration parameters
+		/// required to connect.
+		bool isKnown;
 
 		/// Type of security algorithm used by this network.
 		trikWiFi::Security security;

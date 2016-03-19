@@ -107,8 +107,8 @@ void WiFiClientWidget::onNetworksInfoUpdated()
 	mNetworks.clear();
 
 	for (const ScanResult &result : mWiFi.scanResult()) {
-		NetworkInfo network{result.ssid, result.networkId, result.security};
-		/// If two networks have te same ssid, only last one will be shown. Some routers boadcast ssids on different
+		NetworkInfo network{result.ssid, result.known, result.security};
+		/// If two networks have the same ssid, only last one will be shown. Some routers boadcast ssids on different
 		/// channels and they will be shown as different networks if we do not filter them here. It is perceived as a
 		/// bug by users, so we sacrifice correctness in sake of simplicity.
 		mNetworks.insert(network.ssid, network);
@@ -226,7 +226,7 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 			item->setIcon(QIcon("://resources/connectedWifi.png"));
 			font.setBold(true);
 			item->setFont(font);
-		} else if (mNetworks[item->text()].wpaSupplicantId != -1) {
+		} else if (mNetworks[item->text()].isKnown) {
 			item->setIcon(QIcon("://resources/knownWifi.png"));
 		} else if (mNetworks[item->text()].security == Security::none) {
 			item->setIcon(QIcon("://resources/openWifi.png"));
@@ -263,15 +263,15 @@ void WiFiClientWidget::connectToSelectedNetwork()
 
 	setConnectionStatus(ConnectionState::connecting, "", "");
 
-	if (mNetworks[ssid].wpaSupplicantId != -1) {
-		mWiFi.connect(mNetworks[ssid].wpaSupplicantId);
+	if (mNetworks[ssid].isKnown) {
+		mWiFi.connect(ssid);
 	} else if (mNetworks[ssid].security == Security::none) {
 		QMessageBox confirmMessageBox(QMessageBox::Warning, tr("Confirm connection")
 				, tr("Are you sure you want to connect to open WiFi network?"), QMessageBox::Yes | QMessageBox::No);
 		confirmMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 		const int result = confirmMessageBox.exec();
 		if (result == QMessageBox::Yes) {
-			mWiFi.connectToOpenNetwork(ssid);
+			mWiFi.connect(ssid);
 		}
 	}
 

@@ -44,11 +44,8 @@ public:
 	/// Destructor.
 	~TrikWiFi() override;
 
-	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
-	void connect(int id);
-
-	/// Connect to an open network with given ssid.
-	void connectToOpenNetwork(const QString &ssid);
+	/// Connect to a network with given ssid.
+	void connect(const QString &ssid);
 
 	/// Disconnect from network if we are currently connected to one.
 	void disconnect();

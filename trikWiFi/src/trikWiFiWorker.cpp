@@ -75,30 +75,14 @@ void TrikWiFiWorker::dispose()
 	mMonitorInterface.reset();
 }
 
-void TrikWiFiWorker::connect(int id)
+void TrikWiFiWorker::connect(const QString &ssid)
 {
 	mPlannedDisconnect = true;
 
-	QString reply;
-	int result = mControlInterface->request("DISCONNECT", reply);
-	if (result < 0 || reply != "OK\n") {
-		emit error("connect");
-		return;
-	}
-
-	result = mControlInterface->request("SELECT_NETWORK " + QString::number(id), reply);
-	if (result < 0 || reply != "OK\n") {
-		emit error("connect");
-		return;
-	}
-}
-
-void TrikWiFiWorker::connectToOpenNetwork(const QString &ssid)
-{
-	// At first checking if we already have this network in configuration.
+	// At first checking if we have this network in configuration.
 	int networkId = findNetworkId(ssid);
 
-	// If not, adding it.
+	// If not, adding it, assuming that it is open wifi network.
 	if (networkId == -1) {
 		networkId = addOpenNetwork(ssid);
 	}
@@ -109,7 +93,18 @@ void TrikWiFiWorker::connectToOpenNetwork(const QString &ssid)
 		return;
 	}
 
-	connect(networkId);
+	QString reply;
+	int result = mControlInterface->request("DISCONNECT", reply);
+	if (result < 0 || reply != "OK\n") {
+		emit error("connect");
+		return;
+	}
+
+	result = mControlInterface->request("SELECT_NETWORK " + QString::number(networkId), reply);
+	if (result < 0 || reply != "OK\n") {
+		emit error("connect");
+		return;
+	}
 }
 
 void TrikWiFiWorker::disconnect()
@@ -213,7 +208,7 @@ void TrikWiFiWorker::processScanResults()
 
 		qDebug() << "Searching for network id in known networks list";
 
-		currentResult.networkId = findNetworkId(currentResult.ssid);
+		currentResult.known = findNetworkId(currentResult.ssid) != -1;
 
 		mScanResult->append(currentResult);
 	}

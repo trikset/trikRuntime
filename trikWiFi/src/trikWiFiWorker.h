@@ -43,11 +43,8 @@ public:
 
 	~TrikWiFiWorker() override;
 
-	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
-	Q_INVOKABLE void connect(int id);
-
-	/// Connect to an open network with given ssid.
-	Q_INVOKABLE void connectToOpenNetwork(const QString &ssid);
+	/// Connect to a network with given ssid.
+	Q_INVOKABLE void connect(const QString &ssid);
 
 	/// Disconnect from network if we are currently connected to one.
 	Q_INVOKABLE void disconnect();
@@ -134,6 +131,7 @@ private:
 
 	trikKernel::SynchronizedVar<Status> mStatus;
 
+	/// Result of the last scan for networks in range.
 	trikKernel::SynchronizedVar<QList<ScanResult>> mScanResult;
 
 	/// wpa_supplicant may send several CTRL-EVENT-SCAN-RESULTS messages for one scan request for some reason,

@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2015 - 2016 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,13 @@ enum class Security
 	, none
 };
 
+/// Enum with possible reasons of "disconnect" message.
 enum class DisconnectReason
 {
+	/// Disconnected ourselves.
 	planned
+
+	/// Disconnected for some external reason.
 	, unplanned
 };
 
@@ -59,8 +63,8 @@ struct ScanResult
 	/// Security algorithm used in that network.
 	Security security;
 
-	/// Id of a network in wpa_supplicant.conf or -1 if the network is not in config file.
-	int networkId;
+	/// Is this network known --- listed in /etc/wpa_supplicant.conf.
+	bool known;
 };
 
 }
