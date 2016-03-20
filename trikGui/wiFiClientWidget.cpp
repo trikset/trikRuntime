@@ -49,7 +49,8 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 {
 	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(onNetworksInfoUpdated()));
 	connect(&mWiFi, SIGNAL(connected()), this, SLOT(onConnected()));
-	connect(&mWiFi, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
+	connect(&mWiFi, SIGNAL(disconnected(trikWiFi::DisconnectReason))
+			, this, SLOT(onDisconnected(trikWiFi::DisconnectReason)));
 	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(onStatusUpdated()));
 	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(onError(const QString &)));
 
@@ -261,21 +262,24 @@ void WiFiClientWidget::connectToSelectedNetwork()
 		return;
 	}
 
-	setConnectionStatus(ConnectionState::connecting, "", "");
+	const auto doConnect = [&]() {
+		setConnectionStatus(ConnectionState::connecting, "", "");
+		mWiFi.connect(ssid);
+		mConnectionTimeoutTimer.start();
+	};
 
 	if (mNetworks[ssid].isKnown) {
-		mWiFi.connect(ssid);
+		doConnect();
 	} else if (mNetworks[ssid].security == Security::none) {
 		QMessageBox confirmMessageBox(QMessageBox::Warning, tr("Confirm connection")
 				, tr("Are you sure you want to connect to open WiFi network?"), QMessageBox::Yes | QMessageBox::No);
 		confirmMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 		const int result = confirmMessageBox.exec();
 		if (result == QMessageBox::Yes) {
-			mWiFi.connect(ssid);
+			doConnect();
+			mNetworks[ssid].isKnown = true;
 		}
 	}
-
-	mConnectionTimeoutTimer.start();
 }
 
 void WiFiClientWidget::showScanning()

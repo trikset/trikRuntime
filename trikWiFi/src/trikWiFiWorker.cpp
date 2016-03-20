@@ -27,6 +27,7 @@ TrikWiFiWorker::TrikWiFiWorker(const QString &interfaceFilePrefix
 	: mInterfaceFile(interfaceFilePrefix)
 	, mDaemonFile(daemonFile)
 {
+	qRegisterMetaType<DisconnectReason>("DisconnectReason");
 }
 
 TrikWiFiWorker::~TrikWiFiWorker()
@@ -122,8 +123,6 @@ void TrikWiFiWorker::scanRequest()
 {
 	QString reply;
 
-	qDebug() << "TrikWiFiWorker::scanRequest()";
-
 	mIgnoreScanResults = false;
 	const int result = mControlInterface->request("SCAN", reply);
 	if (result != 0 || reply != "OK\n") {
@@ -140,8 +139,6 @@ void TrikWiFiWorker::statusRequest()
 		emit error("statusRequest");
 		return;
 	}
-
-	qDebug() << "STATUS: " << reply;
 
 	const QHash<QString, QString> parsedReply = parseReply(reply);
 
@@ -171,20 +168,15 @@ void TrikWiFiWorker::processScanResults()
 
 	forever {
 		const QString command = "BSS " + QString::number(index++);
-
-		qDebug() << "================ Sending:" << command;
-
 		QString reply;
 
 		if (mControlInterface->request(command, reply) < 0) {
-			qDebug() << "Incorrect reply, stopping";
 			break;
 		}
 
 		const QHash<QString, QString> parsedReply = parseReply(reply);
 
 		if (parsedReply.isEmpty()) {
-			qDebug() << "Empty reply, stopping";
 			break;
 		}
 
@@ -205,8 +197,6 @@ void TrikWiFiWorker::processScanResults()
 		} else {
 			currentResult.security = Security::none;
 		}
-
-		qDebug() << "Searching for network id in known networks list";
 
 		currentResult.known = findNetworkId(currentResult.ssid) != -1;
 
@@ -233,15 +223,12 @@ void TrikWiFiWorker::listKnownNetworks()
 		return;
 	}
 
-	qDebug() << reply;
-
 	mNetworkConfiguration.clear();
 
 	const QStringList lines = reply.split('\n');
 	for (const QString &line : lines) {
 		const QStringList values = line.split('\t');
 		if (values.size() != 4) {
-			qDebug() << "Can't parse" << line;
 			continue;
 		}
 
@@ -276,7 +263,6 @@ void TrikWiFiWorker::receiveMessages()
 	while (mMonitorInterface->isPending()) {
 		QString message;
 		if (mMonitorInterface->receive(message) == 0) {
-			qDebug() << "==================== MESSAGE" << message;
 			processMessage(message);
 		}
 	}
@@ -289,8 +275,6 @@ QHash<QString, QString> TrikWiFiWorker::parseReply(const QString &reply)
 	if (reply.isEmpty() || reply.startsWith("FAIL")) {
 		return result;
 	}
-
-	qDebug() << reply;
 
 	const QStringList lines = reply.split('\n');
 
@@ -314,8 +298,7 @@ int TrikWiFiWorker::addOpenNetwork(const QString &ssid)
 	QString reply;
 
 	mControlInterface->request("ADD_NETWORK", reply);
-	qDebug() << reply;
-	if (reply != "OK\n") {
+	if (reply.startsWith("FAIL")) {
 		return -1;
 	}
 
@@ -323,26 +306,22 @@ int TrikWiFiWorker::addOpenNetwork(const QString &ssid)
 	const int id = reply.toInt(&ok);
 	if (ok) {
 		mControlInterface->request(QString("SET_NETWORK %1 ssid \"%2\"").arg(id).arg(ssid), reply);
-		qDebug() << reply;
 		if (reply != "OK\n") {
 			return -1;
 		}
 
 		mControlInterface->request(QString("SET_NETWORK %1 key_mgmt NONE").arg(id), reply);
-		qDebug() << reply;
 		if (reply != "OK\n") {
 			return -1;
 		}
 
 		// Enable all networks before saving config, to avoid accidentally turning off known networks.
 		mControlInterface->request("ENABLE_NETWORK all", reply);
-		qDebug() << reply;
 		if (reply != "OK\n") {
 			return -1;
 		}
 
 		mControlInterface->request("SAVE_CONFIG", reply);
-		qDebug() << reply;
 		if (reply != "OK\n") {
 			return -1;
 		}

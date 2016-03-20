@@ -25,7 +25,6 @@
 #include <sys/un.h>
 
 #include <QtCore/QString>
-#include <QtCore/QDebug>
 
 #include "QsLog.h"
 
@@ -134,8 +133,6 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 	if (mSocket < 0) {
 		return -1;
 	}
-
-	qDebug() << "=== Sending:" << command;
 
 	char const *commandAscii = command.toStdString().c_str();
 	if (send(mSocket, commandAscii, strlen(commandAscii) + 1, 0) < 0) {

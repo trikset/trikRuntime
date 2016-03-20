@@ -31,8 +31,8 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 
 	QObject::connect(mWorker.data(), SIGNAL(scanFinished()), this, SIGNAL(scanFinished()));
 	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SIGNAL(connected()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected(DisconnectReason))
-			, this, SIGNAL(disconnected(DisconnectReason)));
+	QObject::connect(mWorker.data(), SIGNAL(disconnected(trikWiFi::DisconnectReason))
+			, this, SIGNAL(disconnected(trikWiFi::DisconnectReason)));
 
 	QObject::connect(mWorker.data(), SIGNAL(statusReady()), this, SIGNAL(statusReady()));
 
