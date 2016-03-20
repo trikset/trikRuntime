@@ -148,10 +148,6 @@ void ServoMotor::setPower(int power, bool constrain)
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 
-	if (!mRun) {
-		mRunFile->write(QString::number(1));
-		mRun = true;
-	}
 	mDutyFile->write(command);
 
 	if (!mRun) {
