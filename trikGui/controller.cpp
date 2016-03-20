@@ -56,7 +56,7 @@ Controller::Controller(const QString &configPath)
 
 	mWiFi.reset(new trikWiFi::TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this));
 	connect(mWiFi.data(), SIGNAL(connected()), this, SIGNAL(wiFiConnected()));
-	connect(mWiFi.data(), SIGNAL(disconnected()), this, SIGNAL(wiFiDisconnected()));
+	connect(mWiFi.data(), SIGNAL(disconnected(trikWiFi::DisconnectReason)), this, SIGNAL(wiFiDisconnected()));
 
 	connect(mCommunicator.data(), SIGNAL(stopCommandReceived()), this, SLOT(abortExecution()));
 	connect(mCommunicator.data(), SIGNAL(connected()), this, SLOT(updateCommunicatorStatus()));

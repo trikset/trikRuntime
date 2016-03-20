@@ -43,8 +43,8 @@ public:
 
 	~TrikWiFiWorker() override;
 
-	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
-	Q_INVOKABLE void connect(int id);
+	/// Connect to a network with given ssid.
+	Q_INVOKABLE void connect(const QString &ssid);
 
 	/// Disconnect from network if we are currently connected to one.
 	Q_INVOKABLE void disconnect();
@@ -69,13 +69,6 @@ public:
 	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
 	QList<ScanResult> scanResult();
 
-	/// Gets registered networks from wpa_supplicant. When ready, listNetworksReady() signal and results
-	/// can be received by listNetworksResult() method. wpa_supplicant can connect only to registered networks.
-	Q_INVOKABLE void listNetworksRequest();
-
-	/// Returns a current list of registered networks. Use listNetworksRequest() method to refresh.
-	QList<NetworkConfiguration> listNetworksResult();
-
 signals:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
 	/// and ready to be obtained by scanResults method.
@@ -85,40 +78,68 @@ signals:
 	void connected();
 
 	/// Emitted when wpa_supplicant disconnects from current network.
-	void disconnected();
+	void disconnected(trikWiFi::DisconnectReason reason);
 
 	/// Emitted when connection status requested by statusRequest() is ready and results can be obtained by
 	/// statusResult() method.
 	void statusReady();
 
-	/// Emitted when list of known networks requested by listNetworksRequest() is ready and its results can be obtained
-	/// by listNetworksResult() method.
-	void listNetworksReady();
-
 	/// Emitted when something goes wrong.
 	void error(const QString &message);
 
 private slots:
+	/// Slot that processes messages from wpa_supplicant.
 	void receiveMessages();
 
 private:
+	/// Contains configuration entry from wpa-supplicant config.
+	struct NetworkConfiguration
+	{
+		/// Some unique id of a network.
+		int id;
+
+		/// SSID of a network.
+		QString ssid;
+	};
+
+	/// Parses BSS record into (key, value) parts.
+	static QHash<QString, QString> parseReply(const QString &reply);
+
+	/// Dispatcher for wpa_supplicant events.
+	void processMessage(const QString &message);
+
+	/// Iterates through BSS records prepared by SCAN command and gets information about available access points.
+	void processScanResults();
+
+	/// Adds an open network with given SSID into wpa_supplicant.conf.
+	int addOpenNetwork(const QString &ssid);
+
+	/// Returns id of a network in a list of networks with known configuration or -1 if the network is unknown.
+	int findNetworkId(const QString &ssid) const;
+
+	/// Gets registered networks from wpa_supplicant.
+	void listKnownNetworks();
+
 	QString mInterfaceFile;
 	QString mDaemonFile;
 	QScopedPointer<WpaSupplicantCommunicator> mControlInterface;
 	QScopedPointer<WpaSupplicantCommunicator> mMonitorInterface;
 	QScopedPointer<QSocketNotifier> mMonitorFileSocketNotifier;
 
-	static QHash<QString, QString> parseReply(const QString &reply);
-
-	void processMessage(const QString &message);
-
-	void processScanResults();
+	/// Networks listed in /etc/wpa_supplicant.conf hashed by SSID.
+	QHash<QString, NetworkConfiguration> mNetworkConfiguration;
 
 	trikKernel::SynchronizedVar<Status> mStatus;
 
-	trikKernel::SynchronizedVar<QList<NetworkConfiguration>> mNetworkConfiguration;
-
+	/// Result of the last scan for networks in range.
 	trikKernel::SynchronizedVar<QList<ScanResult>> mScanResult;
+
+	/// wpa_supplicant may send several CTRL-EVENT-SCAN-RESULTS messages for one scan request for some reason,
+	/// we need only one and then ignore all others until we explicitly request scan again.
+	bool mIgnoreScanResults = true;
+
+	/// Flag that is set when we are disconnecting by our own choice and reset when we become connected.
+	bool mPlannedDisconnect = false;
 };
 
 }

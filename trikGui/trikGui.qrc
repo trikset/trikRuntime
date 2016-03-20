@@ -3,13 +3,15 @@
         <file>resources/connected.png</file>
         <file>resources/notConnected.png</file>
         <file>resources/unknownConnectionStatus.png</file>
-        <file>resources/connectedToNetwork.png</file>
-        <file>resources/connectionToNetworkImpossible.png</file>
-        <file>resources/notConnectedToNetwork.png</file>
         <file>resources/wifipoint.png</file>
         <file>resources/wifion.png</file>
         <file>resources/wifioff.png</file>
         <file>resources/communicatorConnected.png</file>
         <file>resources/mailboxConnected.png</file>
+        <file>resources/connectedWifi.png</file>
+        <file>resources/knownWifi.png</file>
+        <file>resources/openWifi.png</file>
+        <file>resources/passwordedWifi.png</file>
+        <file>resources/wait.png</file>
     </qresource>
 </RCC>
