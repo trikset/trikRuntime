@@ -333,6 +333,18 @@
         <source>error</source>
         <translation>ошибка</translation>
     </message>
+    <message>
+        <source>Scanning...</source>
+        <translation>Поиск...</translation>
+    </message>
+    <message>
+        <source>Confirm connection</source>
+        <translation>Подтверждение</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to connect to open WiFi network?</source>
+        <translation>Вы действительно хотите подключиться к незащищённой сети?</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::WiFiInitWidget</name>

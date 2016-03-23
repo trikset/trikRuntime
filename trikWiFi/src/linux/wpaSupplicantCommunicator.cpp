@@ -25,7 +25,6 @@
 #include <sys/un.h>
 
 #include <QtCore/QString>
-#include <QtCore/QDebug>
 
 #include "QsLog.h"
 
