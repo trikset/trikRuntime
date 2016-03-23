@@ -30,9 +30,9 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 			, hardwareAbstraction));
 
 	if (!mState.isFailed()) {
-		qRegisterMetaType<trikKernel::TimeVal>("trikUtils::TimeVal");
-		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>, trikKernel::TimeVal))
-				, this, SIGNAL(newData(QVector<int>, trikKernel::TimeVal)));
+		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
+		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
+				, this, SIGNAL(newData(QVector<int>,trikKernel::TimeVal)));
 
 		mVectorSensorWorker->moveToThread(&mWorkerThread);
 

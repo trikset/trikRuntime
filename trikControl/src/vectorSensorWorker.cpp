@@ -90,6 +90,7 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 			default:
 				reportError();
 			}
+			break;
 		case evSyn:
 			mReading.swap(mReadingUnsynced);
 			emit newData(mReading, eventTime);
