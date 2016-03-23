@@ -22,7 +22,7 @@
 using namespace trikControl;
 
 EventDevice::EventDevice(const QString &eventFile, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mState("EventDevide: " + eventFile)
+	: mState("EventDevice: " + eventFile)
 {
 	mWorker.reset(new EventDeviceWorker(eventFile, mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
