@@ -50,40 +50,39 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
 
-    QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
+	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
 
-    QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
-    settingsItem->appendRow(testingItem);
+	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
+	settingsItem->appendRow(testingItem);
 
-    testingItem->appendRow(new QStandardItem(
-                               SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
+	testingItem->appendRow(new QStandardItem(
+							   SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
 
-    testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
-    testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
+	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
+	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
 
-    testingItem->appendRow(new QStandardItem(
-            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
+	testingItem->appendRow(new QStandardItem(
+							   SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
 
-    testingItem->appendRow(new QStandardItem(
-            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
+	testingItem->appendRow(new QStandardItem(
+							   SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
-    QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
-    settingsItem->appendRow(networkItem);
+	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
+	settingsItem->appendRow(networkItem);
 
-    if (mController.mailbox()) {
-        networkItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
-    }
+	if (mController.mailbox()) {
+		networkItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
+	}
 
-    networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
+	networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 
-    QStandardItem * const systemItem = new QStandardItem(tr("System"));
-    settingsItem->appendRow(systemItem);
-    systemItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
-    systemItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
+	QStandardItem * const systemItem = new QStandardItem(tr("System"));
+	settingsItem->appendRow(systemItem);
+	systemItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+	systemItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 
-
-    mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
+	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 

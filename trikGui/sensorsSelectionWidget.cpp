@@ -28,8 +28,8 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	, mSensorType(type)
 	, mBrick(brick)
 {
-    QListWidgetItem *item = new QListWidgetItem(tr("Start testing"), &mList);
-    item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
+	QListWidgetItem *item = new QListWidgetItem(tr("Start testing"), &mList);
+	item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
 
 	QStringList ports;
 

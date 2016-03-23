@@ -66,7 +66,7 @@ void InformationWidget::renewFocus()
 
 QString InformationWidget::menuEntry()
 {
-    return QString(tr("Version and update"));
+	return QString(tr("Version and update"));
 }
 
 void InformationWidget::keyPressEvent(QKeyEvent *event)
