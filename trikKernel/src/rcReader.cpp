@@ -14,8 +14,6 @@
 
 #include "rcReader.h"
 
-#include <QtCore/QDebug>
-
 #include <QsLog.h>
 
 using namespace trikKernel;

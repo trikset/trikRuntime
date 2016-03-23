@@ -85,7 +85,9 @@ void Connection::send(const QByteArray &data)
 		return;
 	}
 
-	QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
+	if (data != "keepalive") {
+		QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
+	}
 
 	if (mUseHeartbeat) {
 		/// Reset keepalive timer to avoid spamming with keepalive packets.
@@ -135,7 +137,9 @@ void Connection::onReadyRead()
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
 
-	QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
+	if (mBuffer != "9:keepalive") {
+		QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
+	}
 
 	processBuffer();
 }

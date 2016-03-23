@@ -85,10 +85,10 @@ void PowerMotor::powerOff()
 void PowerMotor::setPeriod(int period)
 {
 	mCurrentPeriod = period;
-	QByteArray command(3, '\0');
+	QByteArray command(4, '\0');
 	command[0] = static_cast<char>((mMspCommandNumber - 4) & 0xFF);
-	command[1] = static_cast<char>(period && 0xFF);
-	command[2] = static_cast<char>(period >> 8);
+	command[2] = static_cast<char>(period & 0xFF);
+	command[3] = static_cast<char>(period >> 8);
 	mCommunicator.send(command);
 }
 

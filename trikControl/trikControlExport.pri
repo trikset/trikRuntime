@@ -59,6 +59,13 @@ CONFIG(debug, debug | release) {
 	}
 }
 
+equals(TEMPLATE, app) {
+	!macx {
+		QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
+	}
+}
+
 TRIK_RUNTIME_BIN_DIR = $$TRIK_RUNTIME_DIR/bin/$$CONFIGURATION
 
 LIBS += -L$$TRIK_RUNTIME_BIN_DIR

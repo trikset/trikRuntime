@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2014 - 2016 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@ class KeysWorker : public QObject
 public:
 	/// Constructor.
 	/// @param keysPath - path to device file that controls brick keys.
+	/// @param state - device state, worker sets it to "failed" if it can not open file.
+	/// @param hardwareAbstraction - interface to TRIK hardware.
 	KeysWorker(const QString &keysPath, DeviceState &state
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
@@ -44,8 +46,7 @@ public slots:
 	bool wasPressed(int code);
 
 private slots:
-	void readKeysEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikKernel::TimeVal &eventTime);
+	void readKeysEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 signals:
 	/// Triggered when button state changed (pressed or released).
@@ -55,12 +56,12 @@ signals:
 
 private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
-	int mButtonCode;
-	int mButtonValue;
+	int mButtonCode = 0;
+	int mButtonValue = 0;
 	QSet<int> mWasPressed;
 	QReadWriteLock mLock;
 
-	/// Device state object, shared between worker and proxy,
+	/// Device state object, shared between worker and proxy.
 	DeviceState &mState;
 };
 

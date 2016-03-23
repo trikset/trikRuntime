@@ -26,14 +26,15 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	: QObject(parent)
 	, mWorker(new TrikWiFiWorker(interfaceFilePrefix, daemonFile))
 {
+	qRegisterMetaType<trikWiFi::DisconnectReason>("trikWiFi::DisconnectReason");
 	mWorker->moveToThread(&mWorkerThread);
 
 	QObject::connect(mWorker.data(), SIGNAL(scanFinished()), this, SIGNAL(scanFinished()));
 	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SIGNAL(connected()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SIGNAL(disconnected()));
+	QObject::connect(mWorker.data(), SIGNAL(disconnected(trikWiFi::DisconnectReason))
+			, this, SIGNAL(disconnected(trikWiFi::DisconnectReason)));
 
 	QObject::connect(mWorker.data(), SIGNAL(statusReady()), this, SIGNAL(statusReady()));
-	QObject::connect(mWorker.data(), SIGNAL(listNetworksReady()), this, SIGNAL(listNetworksReady()));
 
 	QObject::connect(mWorker.data(), SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 
@@ -62,9 +63,9 @@ void TrikWiFi::dispose()
 	QMetaObject::invokeMethod(mWorker.data(), "dispose");
 }
 
-void TrikWiFi::connect(int id)
+void TrikWiFi::connect(const QString &ssid)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(int, id));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ssid));
 }
 
 void TrikWiFi::disconnect()
@@ -90,14 +91,4 @@ void TrikWiFi::scanRequest()
 QList<ScanResult> TrikWiFi::scanResult() const
 {
 	return mWorker->scanResult();
-}
-
-void TrikWiFi::listNetworksRequest()
-{
-	QMetaObject::invokeMethod(mWorker.data(), "listNetworksRequest");
-}
-
-QList<NetworkConfiguration> TrikWiFi::listNetworksResult() const
-{
-	return mWorker->listNetworksResult();
 }

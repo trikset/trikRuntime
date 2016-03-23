@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<TS version="2.1" language="fr_FR">
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../trikGui/trikGuiMain.cpp" line="39"/>
+        <location filename="../../trikGui/trikGuiMain.cpp" line="43"/>
         <source>Graphical user interface, TRIK Studio runtime environment and script runner of a robot</source>
         <translation type="unfinished"></translation>
     </message>
@@ -50,7 +50,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="165"/>
+        <location filename="../../trikGui/controller.cpp" line="168"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -102,7 +102,7 @@
     </message>
     <message>
         <location filename="../../trikGui/informationWidget.cpp" line="69"/>
-        <source>Information</source>
+        <source>Version and update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -161,12 +161,12 @@
 <context>
     <name>trikGui::MotorsWidget</name>
     <message>
-        <location filename="../../trikGui/motorsWidget.cpp" line="79"/>
+        <location filename="../../trikGui/motorsWidget.cpp" line="78"/>
         <source>Test power motors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/motorsWidget.cpp" line="82"/>
+        <location filename="../../trikGui/motorsWidget.cpp" line="81"/>
         <source>Test servo motors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -192,7 +192,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="56"/>
+        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="31"/>
         <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="114"/>
         <source>Start testing</source>
         <translation type="unfinished"></translation>
@@ -221,8 +221,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="54"/>
+        <location filename="../../trikGui/startWidget.cpp" line="53"/>
         <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="56"/>
+        <source>Testing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="71"/>
+        <source>Network and connectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="80"/>
+        <source>System</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -318,33 +333,49 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="56"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="59"/>
         <source>IP:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="59"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="62"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="64"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="67"/>
         <source>Available networks:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="169"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="199"/>
         <source>connecting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="174"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="203"/>
         <source>no connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="179"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="207"/>
         <source>error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="219"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="287"/>
+        <source>Scanning...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="274"/>
+        <source>Confirm connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="275"/>
+        <source>Are you sure you want to connect to open WiFi network?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

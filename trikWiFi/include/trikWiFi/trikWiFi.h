@@ -44,8 +44,8 @@ public:
 	/// Destructor.
 	~TrikWiFi() override;
 
-	/// Connect to a network with given id. Available ids can be obtained by listNetworks method.
-	void connect(int id);
+	/// Connect to a network with given ssid.
+	void connect(const QString &ssid);
 
 	/// Disconnect from network if we are currently connected to one.
 	void disconnect();
@@ -64,13 +64,6 @@ public:
 	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
 	QList<ScanResult> scanResult() const;
 
-	/// Asynchronously gets registered networks from wpa_supplicant. When ready, listNetworksReady() signal and results
-	/// can be received by listNetworksResult() method. wpa_supplicant can connect only to registered networks.
-	void listNetworksRequest();
-
-	/// Returns a current list of registered networks. Use listNetworksRequest() method to refresh.
-	QList<NetworkConfiguration> listNetworksResult() const;
-
 	/// Disposes an old connection to wpa_supplicant and creates a new one.
 	void reinit();
 
@@ -86,15 +79,11 @@ signals:
 	void connected();
 
 	/// Emitted when wpa_supplicant disconnects from current network.
-	void disconnected();
+	void disconnected(trikWiFi::DisconnectReason reason);
 
 	/// Emitted when connection status requested by statusRequest() is ready and results can be obtained by
 	/// statusResult() method.
 	void statusReady();
-
-	/// Emitted when list of known networks requested by listNetworksRequest() is ready and its results can be obtained
-	/// by listNetworksResult() method.
-	void listNetworksReady();
 
 	/// Emitted when something goes wrong.
 	void error(const QString &message);

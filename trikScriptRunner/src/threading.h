@@ -94,15 +94,15 @@ private:
 	QMutex mThreadsMutex;
 	QString mErrorMessage;
 
-	QHash<QString, QQueue<QScriptValue> > mMessageQueues;
+	QHash<QString, QQueue<QScriptValue>> mMessageQueues;
 	QMutex mMessageMutex;
 	QHash<QString, QMutex *> mMessageQueueMutexes;
 	QHash<QString, QWaitCondition *> mMessageQueueConditions;
 
-	bool mResetStarted;
+	bool mResetStarted = false;
 	QMutex mResetMutex;
 
-	ScriptEngineWorker *mScriptWorker;  // Doesn't have ownership.
+	ScriptEngineWorker * const mScriptWorker;  // Doesn't have ownership.
 	ScriptExecutionControl &mScriptControl;
 	QString mScript;
 };

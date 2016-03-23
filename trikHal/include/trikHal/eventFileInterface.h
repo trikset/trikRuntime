@@ -29,24 +29,7 @@ class EventFileInterface : public QObject
 	Q_OBJECT
 
 public:
-	/// Enum with all event types known to TRIK runtime library. Hides Linux event codes defined in linux/input.h
-	/// to be able to work with event file simulators on other operating systems.
-	enum class EventType {
-		unknown
-		, evAbsDistance
-		, evAbsMisc
-		, evAbsX
-		, evAbsY
-		, evAbsZ
-		, evSyn
-		, evKey
-	};
-
 	/// Opens event file and starts listening for events.
-	/// Note that it will take event from file, so any other application (or other code that works with the same event
-	/// file) will not receive it. This may lead to race conditions. One event file shall be open by only one listener
-	/// in a given point of time.
-	/// @param fileName - file name (with path, relative or absolute) of an event file.
 	virtual bool open() = 0;
 
 	/// Closes event file and stops listening for events.
@@ -55,16 +38,18 @@ public:
 	/// Abort all pending synchronous event loops.
 	virtual void cancelWaiting() = 0;
 
-	/// Returns name of a file.
+	/// Returns name of an event file.
 	virtual QString fileName() const = 0;
+
+	/// Returns true if a file is opened.
+	virtual bool isOpened() const = 0;
 
 signals:
 	/// Emitted when there is new event in an event file.
-	/// @param eventType - type of an event (unknown, if such event is not listed in EventType enum).
+	/// @param eventType - low-level type of an event.
 	/// @param code - low-level event code.
 	/// @param value - low-level event value.
-	void newEvent(trikHal::EventFileInterface::EventType eventType, int code, int value
-			, const trikKernel::TimeVal &eventTime);
+	void newEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 };
 
 }

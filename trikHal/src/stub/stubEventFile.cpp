@@ -44,3 +44,7 @@ QString StubEventFile::fileName() const
 	return mFileName;
 }
 
+bool StubEventFile::isOpened() const
+{
+	return true;
+}

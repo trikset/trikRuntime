@@ -52,7 +52,6 @@ private:
 
 	static const int mSecConst = 15625;
 	static const int mShift = 8;
-
 };
 
 /// Overloaded "minus" operator.
