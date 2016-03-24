@@ -59,6 +59,12 @@ void PowerMotor::setPower(int power, bool constrain)
 		throw trikKernel::InternalErrorException("Invalid argument");
 	}
 
+	if (power > maxControlValue) {
+		power = maxControlValue;
+	} else if (power < minControlValue) {
+		power = minControlValue;
+	}
+
 	mCurrentPower = power;
 
 	power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
