@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
+/* Copyright 2013 - 2016 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,43 +106,44 @@ void PowerMotor::setPeriod(int period)
 
 void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configurer &configurer)
 {
-	QVector<QPair<double, double> > powerAddiction;
+	QVector<QPair<double, double>> powerGraph;
 	for (const QString &str : configurer.attributeByPort(port, "measures").split(")")) {
 		if (str != "") {
 			QPair<double, double> temp;
 			temp.first = str.mid(1).split(";").at(0).toInt();
 			temp.second = str.mid(1).split(";").at(1).toInt();
-			powerAddiction.append(temp);
+			powerGraph.append(temp);
 		}
 	}
 
-	const int addictionLength = powerAddiction.size();
-	const int maxValue = powerAddiction[addictionLength - 1].second;
+	const int addictionLength = powerGraph.size();
+	const int maxValue = powerGraph[addictionLength - 1].second;
 
 	for (int i = 0; i < addictionLength; i++) {
-		powerAddiction[i].second *= maxControlValue;
-		powerAddiction[i].second /= maxValue;
+		powerGraph[i].second *= maxControlValue;
+		powerGraph[i].second /= maxValue;
 	}
 
-	for (int i = 0; i < maxControlValue; i++)
-	{
+	for (int i = 0; i < maxControlValue; i++) {
 		int k = 0;
-		while (i >= powerAddiction[k].second) {
+		while (i >= powerGraph[k].second) {
 			k++;
 		}
+
 		k--;
 
-		const double measureDifference = powerAddiction[k+1].second - powerAddiction[k].second;
-		const double axeDifferenece = powerAddiction[k+1].first - powerAddiction[k].first;
+		const double measureDifference = powerGraph[k + 1].second - powerGraph[k].second;
+		const double axeDifferenece = powerGraph[k + 1].first - powerGraph[k].first;
 
 		if (measureDifference < 0 || axeDifferenece < 0) {
 			throw trikKernel::MalformedConfigException("Nonmonotonic function");
 		}
 
-		const double koef = axeDifferenece / measureDifference;
-		const int power = powerAddiction[k].first + koef * (i - powerAddiction[k].second);
+		const double coef = axeDifferenece / measureDifference;
+		const int power = powerGraph[k].first + coef * (i - powerGraph[k].second);
 		mPowerMap.append(power);
 	}
+
 	mPowerMap.append(maxControlValue);
 }
 
