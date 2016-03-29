@@ -108,7 +108,7 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 {
 	QVector<QPair<double, double>> powerGraph;
 	for (const QString &str : configurer.attributeByPort(port, "measures").split(")")) {
-		if (str != "") {
+		if (!str.isEmpty()) {
 			QPair<double, double> temp;
 			temp.first = str.mid(1).split(";").at(0).toInt();
 			temp.second = str.mid(1).split(";").at(1).toInt();
@@ -116,10 +116,10 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 		}
 	}
 
-	const int addictionLength = powerGraph.size();
-	const int maxValue = powerGraph[addictionLength - 1].second;
+	const int graphLength = powerGraph.size();
+	const int maxValue = powerGraph[graphLength - 1].second;
 
-	for (int i = 0; i < addictionLength; i++) {
+	for (int i = 0; i < graphLength; i++) {
 		powerGraph[i].second *= maxControlValue;
 		powerGraph[i].second /= maxValue;
 	}
