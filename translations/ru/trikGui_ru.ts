@@ -99,8 +99,8 @@
         <translation>MAC-адрес</translation>
     </message>
     <message>
-        <source>Information</source>
-        <translation>Информация</translation>
+        <source>Version and update</source>
+        <translation>Версия и обновление</translation>
     </message>
     <message>
         <source>Do you really want to update current version?</source>
@@ -217,6 +217,18 @@
     <message>
         <source>Settings</source>
         <translation>Настройки</translation>
+    </message>
+    <message>
+        <source>Testing</source>
+        <translation>Тестирование</translation>
+    </message>
+    <message>
+        <source>Network and connectivity</source>
+        <translation>Сеть и подключение</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Система</translation>
     </message>
 </context>
 <context>

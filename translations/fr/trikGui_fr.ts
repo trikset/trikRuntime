@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<TS version="2.1" language="fr_FR">
 <context>
     <name>QObject</name>
     <message>
@@ -102,7 +102,7 @@
     </message>
     <message>
         <location filename="../../trikGui/informationWidget.cpp" line="69"/>
-        <source>Information</source>
+        <source>Version and update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -192,7 +192,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="56"/>
+        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="31"/>
         <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="114"/>
         <source>Start testing</source>
         <translation type="unfinished"></translation>
@@ -221,8 +221,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="54"/>
+        <location filename="../../trikGui/startWidget.cpp" line="53"/>
         <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="56"/>
+        <source>Testing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="71"/>
+        <source>Network and connectivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="80"/>
+        <source>System</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -349,7 +364,7 @@
     </message>
     <message>
         <location filename="../../trikGui/wiFiClientWidget.cpp" line="219"/>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="286"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="287"/>
         <source>Scanning...</source>
         <translation type="unfinished"></translation>
     </message>
