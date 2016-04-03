@@ -239,7 +239,7 @@
     </message>
     <message>
         <source>System settings</source>
-        <translation>Системные настройки</translation>
+        <translation>Настройки системы</translation>
     </message>
     <message>
         <source>full file system</source>
