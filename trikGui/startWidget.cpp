@@ -49,28 +49,38 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 
 	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
 	mMenuModel.appendRow(settingsItem);
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
-	settingsItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 
-	settingsItem->appendRow(new QStandardItem(
+	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
+	settingsItem->appendRow(testingItem);
+
+	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
 
-	settingsItem->appendRow(new QStandardItem(
+	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
+	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
+
+	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
 
-	settingsItem->appendRow(new QStandardItem(
+	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
+	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
+	settingsItem->appendRow(networkItem);
+
 	if (mController.mailbox()) {
-		settingsItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
+		networkItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 
-	settingsItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
-	settingsItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+	networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
+
+	QStandardItem * const systemItem = new QStandardItem(tr("System"));
+	settingsItem->appendRow(systemItem);
+	systemItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+	systemItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 
 	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
@@ -246,3 +256,4 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 		}
 	}
 }
+

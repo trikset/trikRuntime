@@ -99,8 +99,8 @@
         <translation>MAC-адрес</translation>
     </message>
     <message>
-        <source>Information</source>
-        <translation>Информация</translation>
+        <source>Version and update</source>
+        <translation>Версия и обновление</translation>
     </message>
     <message>
         <source>Do you really want to update current version?</source>
@@ -218,6 +218,18 @@
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
+    <message>
+        <source>Testing</source>
+        <translation>Тестирование</translation>
+    </message>
+    <message>
+        <source>Network and connectivity</source>
+        <translation>Сеть и подключение</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>Система</translation>
+    </message>
 </context>
 <context>
     <name>trikGui::SystemSettingsWidget</name>
@@ -227,7 +239,7 @@
     </message>
     <message>
         <source>System settings</source>
-        <translation>Системные настройки</translation>
+        <translation>Настройки системы</translation>
     </message>
     <message>
         <source>full file system</source>
