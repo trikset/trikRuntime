@@ -57,16 +57,16 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	settingsItem->appendRow(testingItem);
 
 	testingItem->appendRow(new QStandardItem(
-							   SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
 
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
 
 	testingItem->appendRow(new QStandardItem(
-							   SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
 
 	testingItem->appendRow(new QStandardItem(
-							   SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
+			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
 	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
 	settingsItem->appendRow(networkItem);
