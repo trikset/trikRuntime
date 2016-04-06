@@ -49,9 +49,9 @@ HEADERS += \
 	$$PWD/wiFiModeWidget.h \
 	$$PWD/wiFiIndicator.h \
 	$$PWD/openSocketIndicator.h \
-    commandSettingsWidget.h \
-    commandsListWidget.h \
-    programmingWidget.h
+    	$$PWD/commandSettingsWidget.h \
+    	$$PWD/commandsListWidget.h \
+    	$$PWD/programmingWidget.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -86,9 +86,9 @@ SOURCES += \
 	$$PWD/wiFiModeWidget.cpp \
 	$$PWD/wiFiIndicator.cpp \
 	$$PWD/openSocketIndicator.cpp \
-    commandSettingsWidget.cpp \
-    commandsListWidget.cpp \
-    programmingWidget.cpp
+    	$$PWD/commandSettingsWidget.cpp \
+    	$$PWD/commandsListWidget.cpp \
+    	$$PWD/programmingWidget.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \
