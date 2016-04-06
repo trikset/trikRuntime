@@ -102,6 +102,10 @@ void Controller::runFile(const QString &filePath)
 	}
 }
 
+void Controller::runScript(QString script) {
+    mScriptRunner->run(script);
+}
+
 void Controller::abortExecution()
 {
 	emit hideScriptWidgets();

@@ -87,7 +87,9 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
                 mCommands.currentItem()->setText(value);
 
                 if (value == "< add command >") {
-                    mEmptyCommandsCounter++;
+                    if (text != "< add command >") {
+                        mEmptyCommandsCounter++;
+                    }
                 } else if (text == "< add command >") {
                     mEmptyCommandsCounter--;
                 }
