@@ -78,7 +78,7 @@ private slots:
 private:
 	QLabel mTitle;
 	QListWidget mCommands;
-	QPushButton *mRunButton;
+	QPushButton *mRunButton;  // Has ownership.
 	Controller &mController;
 
 	/// Counter of empty commands.
