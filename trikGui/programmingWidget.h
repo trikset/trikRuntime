@@ -17,21 +17,21 @@
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    #include <QtGui/QWidget>
-    #include <QtGui/QLabel>
-    #include <QtGui/QVBoxLayout>
-    #include <QtGui/QListWidget>
-    #include <QtGui/QPushButton>
-    #include <QtGui/QMessageBox>
-    #include <QtGui/QScrollArea>
+	#include <QtGui/QWidget>
+	#include <QtGui/QLabel>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QListWidget>
+	#include <QtGui/QPushButton>
+	#include <QtGui/QMessageBox>
+	#include <QtGui/QScrollArea>
 #else
-    #include <QtWidgets/QWidget>
-    #include <QtWidgets/QLabel>
-    #include <QtWidgets/QVBoxLayout>
-    #include <QtWidgets/QListWidget>
-    #include <QtWidgets/QPushButton>
-    #include <QtWidgets/QMessageBox>
-    #include <QtWidgets/QScrollArea>
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QListWidget>
+	#include <QtWidgets/QPushButton>
+	#include <QtWidgets/QMessageBox>
+	#include <QtWidgets/QScrollArea>
 #endif
 
 #include <QtCore/QString>
@@ -42,50 +42,50 @@
 namespace trikGui {
 
 const std::string script =
-        "var __interpretation_started_timestamp__;\n"
-        "var pi = 3.14159265;\n\n"
-        "var main = function()\n"
-        "{\n"
-        "    __interpretation_started_timestamp__ = Date.now();\n";
+	"var __interpretation_started_timestamp__;\n"
+	"var pi = 3.14159265;\n\n"
+	"var main = function()\n"
+	"{\n"
+	"    __interpretation_started_timestamp__ = Date.now();\n";
 
 /// Widget which allows to write simple programs for robot.
 class ProgrammingWidget : public TrikGuiDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    /// Constructor
-    /// @param controller - controller which needed to run script.
-    /// @param parent - parent of this widget in Qt object hierarchy.
-    explicit ProgrammingWidget(Controller &controller, QWidget *parent = 0);
+	/// Constructor
+	/// @param controller - controller which needed to run script.
+	/// @param parent - parent of this widget in Qt object hierarchy.
+	explicit ProgrammingWidget(Controller &controller, QWidget *parent = 0);
 
-    /// Returns menu entry for this widget.
-    static QString menuEntry();
+	/// Returns menu entry for this widget.
+	static QString menuEntry();
 
-    void renewFocus() override;
+	void renewFocus() override;
 
-    ~ProgrammingWidget() override;
+	~ProgrammingWidget() override;
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
+	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
-    /// Adds new command to script.
-    /// @param command - string with command for robot.
-    /// @param data - necessary information for command.
-    void addToScript(QString command, int data);
+	/// Adds new command to script.
+	/// @param command - string with command for robot.
+	/// @param data - necessary information for command.
+	void addToScript(QString command, int data);
 
 private:
-    QLabel mTitle;
-    QListWidget mCommands;
-    QPushButton *mRunButton;
-    Controller &mController;
+	QLabel mTitle;
+	QListWidget mCommands;
+	QPushButton *mRunButton;
+	Controller &mController;
 
-    /// Counter of empty commands.
-    int mEmptyCommandsCounter;
+	/// Counter of empty commands.
+	int mEmptyCommandsCounter;
 
-    /// Contains string with program for robot.
-    QString mScript;
+	/// Contains string with program for robot.
+	QString mScript;
 };
 
 }

@@ -23,75 +23,75 @@
 using namespace trikGui;
 
 CommandsListWidget::CommandsListWidget(const QString &name, QWidget *parent)
-    : TrikGuiDialog(parent)
-    , mTitle(tr("Choose command:"))
-    , mData(0)
-    , mValue(name)
+	: TrikGuiDialog(parent)
+	, mTitle(tr("Choose command:"))
+	, mData(0)
+	, mValue(name)
 {
-    mCommands.addItem(tr("Play Tone"));
-    mCommands.addItem(tr("Timer"));
-    mCommands.addItem(tr("Clear"));
+	mCommands.addItem(tr("Play Tone"));
+	mCommands.addItem(tr("Timer"));
+	mCommands.addItem(tr("Clear"));
 
-    mLayout.addWidget(&mTitle);
-    mLayout.addWidget(&mCommands);
+	mLayout.addWidget(&mTitle);
+	mLayout.addWidget(&mCommands);
 
-    mCommands.selectionModel()->select(
-        mCommands.model()->index(0, 0)
-        , QItemSelectionModel::ClearAndSelect
-    );
+	mCommands.selectionModel()->select(
+		mCommands.model()->index(0, 0)
+		, QItemSelectionModel::ClearAndSelect
+	);
 
-    setLayout(&mLayout);
+	setLayout(&mLayout);
 }
 
 QString CommandsListWidget::menuEntry()
 {
-    return tr("Commands List");
+	return tr("Commands List");
 }
 
 void CommandsListWidget::renewFocus()
 {
-    mCommands.setFocus();
+	mCommands.setFocus();
 }
 
 void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-        case Qt::Key_Return: {
-            switch (mCommands.currentRow()) {
-                case 0: {
-                    mValue = QString("Play Tone");
-                    break;
-                }
-                case 1: {
-                    char title[] = "Choose waiting time (ms):";
-                    CommandSettingsWidget commandSettingsWidget(title);
-                    emit newWidget(commandSettingsWidget);
-                    commandSettingsWidget.exec();
+	switch (event->key()) {
+		case Qt::Key_Return: {
+			switch (mCommands.currentRow()) {
+				case 0: {
+					mValue = QString("Play Tone");
+					break;
+				}
+				case 1: {
+					char title[] = "Choose waiting time (ms):";
+					CommandSettingsWidget commandSettingsWidget(title);
+					emit newWidget(commandSettingsWidget);
+					commandSettingsWidget.exec();
 
-                    mData = commandSettingsWidget.getValue();
-                    std::string res = "Delay " + std::to_string(mData) + " ms";
-                    mValue = QString(res.c_str());
-                    break;
-                }
-                default: {
-                    mValue = QString("< add command >");
-                    break;
-                }
-            }
-            exit();
-            break;
-        }
-        default: {
-            TrikGuiDialog::keyPressEvent(event);
-            break;
-        }
-    }
+					mData = commandSettingsWidget.getValue();
+					std::string res = "Delay " + std::to_string(mData) + " ms";
+					mValue = QString(res.c_str());
+					break;
+				}
+				default: {
+					mValue = QString("< add command >");
+					break;
+				}
+			}
+			exit();
+			break;
+		}
+		default: {
+			TrikGuiDialog::keyPressEvent(event);
+			break;
+		}
+	}
 }
 
 QString CommandsListWidget::getValue() {
-    return mValue;
+	return mValue;
 }
 
 int CommandsListWidget::getData() {
-    return mData;
+	return mData;
 }

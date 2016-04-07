@@ -17,15 +17,15 @@
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    #include <QtGui/QWidget>
-    #include <QtGui/QLabel>
-    #include <QtGui/QVBoxLayout>
-    #include <QtGui/QListWidget>
+	#include <QtGui/QWidget>
+	#include <QtGui/QLabel>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QListWidget>
 #else
-    #include <QtWidgets/QWidget>
-    #include <QtWidgets/QLabel>
-    #include <QtWidgets/QVBoxLayout>
-    #include <QtWidgets/QListWidget>
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QListWidget>
 #endif
 
 #include <QtCore/QString>
@@ -37,36 +37,36 @@ namespace trikGui {
 /// Widget which allows to choose commands for robot.
 class CommandsListWidget : public TrikGuiDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    /// Constructor
-    /// @param name - name of command which was specified before.
-    /// @param parent - parent of this widget in Qt object hierarchy.
-    explicit CommandsListWidget(const QString &name, QWidget *parent = 0);
+	/// Constructor
+	/// @param name - name of command which was specified before.
+	/// @param parent - parent of this widget in Qt object hierarchy.
+	explicit CommandsListWidget(const QString &name, QWidget *parent = 0);
 
-    /// Returns menu entry for this widget.
-    static QString menuEntry();
+	/// Returns menu entry for this widget.
+	static QString menuEntry();
 
-    void renewFocus() override;
+	void renewFocus() override;
 
-    /// Returns string with new name of command.
-    QString getValue();
+	/// Returns string with new name of command.
+	QString getValue();
 
-    /// Returns necessary data.
-    int getData();
+	/// Returns necessary data.
+	int getData();
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
+	void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    QVBoxLayout mLayout;
-    QLabel mTitle;
-    QListWidget mCommands;
-    int mData;
+	QVBoxLayout mLayout;
+	QLabel mTitle;
+	QListWidget mCommands;
+	int mData;
 
-    /// Contains string with current name of command.
-    QString mValue;
+	/// Contains string with current name of command.
+	QString mValue;
 };
 
 }

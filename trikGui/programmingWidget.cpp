@@ -23,100 +23,100 @@
 using namespace trikGui;
 
 ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
-    : TrikGuiDialog(parent)
-    , mTitle(tr("Add commands to list"))
-    , mRunButton(nullptr)
-    , mController(controller)
-    , mEmptyCommandsCounter(1)
-    , mScript(script.c_str())
+	: TrikGuiDialog(parent)
+	, mTitle(tr("Add commands to list"))
+	, mRunButton(nullptr)
+	, mController(controller)
+	, mEmptyCommandsCounter(1)
+	, mScript(script.c_str())
 {
-    const auto scrollArea = new QScrollArea(this);
-    scrollArea->setFrameStyle(QFrame::NoFrame);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+	const auto scrollArea = new QScrollArea(this);
+	scrollArea->setFrameStyle(QFrame::NoFrame);
+	scrollArea->setWidgetResizable(true);
+	scrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
-    const auto leversWidget = new QWidget(this);
-    const auto innerLayout = new QVBoxLayout();
-    const auto outerLayout = new QHBoxLayout();
+	const auto leversWidget = new QWidget(this);
+	const auto innerLayout = new QVBoxLayout();
+	const auto outerLayout = new QHBoxLayout();
 
-    mCommands.addItem(tr("< add command >"));
+	mCommands.addItem(tr("< add command >"));
 
-    innerLayout->addWidget(&mTitle);
-    innerLayout->addWidget(&mCommands);
+	innerLayout->addWidget(&mTitle);
+	innerLayout->addWidget(&mCommands);
 
-    mCommands.selectionModel()->select(
-        mCommands.model()->index(0, 0)
-        , QItemSelectionModel::ClearAndSelect
-    );
+	mCommands.selectionModel()->select(
+		mCommands.model()->index(0, 0)
+		, QItemSelectionModel::ClearAndSelect
+	);
 
-    mRunButton = new QPushButton(tr("Run program"));
-    innerLayout->addWidget(mRunButton);
-    mRunButton->setDefault(false);
+	mRunButton = new QPushButton(tr("Run program"));
+	innerLayout->addWidget(mRunButton);
+	mRunButton->setDefault(false);
 
-    leversWidget->setLayout(innerLayout);
-    outerLayout->addWidget(scrollArea);
-    setLayout(outerLayout);
-    scrollArea->setWidget(leversWidget);
+	leversWidget->setLayout(innerLayout);
+	outerLayout->addWidget(scrollArea);
+	setLayout(outerLayout);
+	scrollArea->setWidget(leversWidget);
 }
 
 ProgrammingWidget::~ProgrammingWidget() {
-    delete mRunButton;
+	delete mRunButton;
 }
 
 QString ProgrammingWidget::menuEntry()
 {
-    return tr("Programming");
+	return tr("Programming");
 }
 
 void ProgrammingWidget::renewFocus()
 {
-    mCommands.setFocus();
+	mCommands.setFocus();
 }
 
 void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-        case Qt::Key_Return: {
-            if (mCommands.hasFocus()) {
-                QString text(mCommands.currentItem()->text());
-                CommandsListWidget commandsListWidget(text);
-                emit newWidget(commandsListWidget);
-                commandsListWidget.exec();
+	switch (event->key()) {
+		case Qt::Key_Return: {
+			if (mCommands.hasFocus()) {
+				QString text(mCommands.currentItem()->text());
+				CommandsListWidget commandsListWidget(text);
+				emit newWidget(commandsListWidget);
+				commandsListWidget.exec();
 
-                QString value(commandsListWidget.getValue());
-                mCommands.currentItem()->setText(value);
+				QString value(commandsListWidget.getValue());
+				mCommands.currentItem()->setText(value);
 
-                if (value == "< add command >") {
-                    if (text != "< add command >") {
-                        mEmptyCommandsCounter++;
-                    }
-                } else if (text == "< add command >") {
-                    mEmptyCommandsCounter--;
-                }
+				if (value == "< add command >") {
+					if (text != "< add command >") {
+						mEmptyCommandsCounter++;
+					}
+				} else if (text == "< add command >") {
+					mEmptyCommandsCounter--;
+				}
 
-                if (mEmptyCommandsCounter == 0) {
-                    mCommands.addItem(tr("< add command >"));
-                    mEmptyCommandsCounter++;
-                    addToScript(value, commandsListWidget.getData());
-                }
-            } else if (mRunButton->hasFocus()) {
-                mScript.append(QString("    return;\n}"));
-                mController.runScript(mScript);
-            }
-            break;
-        }
-        default: {
-            TrikGuiDialog::keyPressEvent(event);
-            break;
-        }
-    }
+				if (mEmptyCommandsCounter == 0) {
+					mCommands.addItem(tr("< add command >"));
+					mEmptyCommandsCounter++;
+					addToScript(value, commandsListWidget.getData());
+				}
+			} else if (mRunButton->hasFocus()) {
+				mScript.append(QString("    return;\n}"));
+				mController.runScript(mScript);
+			}
+			break;
+		}
+		default: {
+			TrikGuiDialog::keyPressEvent(event);
+			break;
+		}
+	}
 }
 
 void ProgrammingWidget::addToScript(QString command, int data) {
-    if (command.startsWith("Play Tone")) {
-        mScript.append(QString("    brick.playSound(\"media/beep.wav\");\n"));
-    } else if (command.startsWith("Delay")) {
-        std::string res("    script.wait(" + std::to_string(data) + ");\n");
-        mScript.append(QString(res.c_str()));
-    }
+	if (command.startsWith("Play Tone")) {
+		mScript.append(QString("    brick.playSound(\"media/beep.wav\");\n"));
+	} else if (command.startsWith("Delay")) {
+		std::string res("    script.wait(" + std::to_string(data) + ");\n");
+		mScript.append(QString(res.c_str()));
+	}
 }

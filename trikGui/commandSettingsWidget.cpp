@@ -21,79 +21,79 @@
 using namespace trikGui;
 
 CommandSettingsWidget::CommandSettingsWidget(char title[], QWidget *parent)
-    : TrikGuiDialog(parent)
-    , mTitle(tr(title))
-    , mValueSelector(0, 5, 5, 35, this)
+	: TrikGuiDialog(parent)
+	, mTitle(tr(title))
+	, mValueSelector(0, 5, 5, 35, this)
 {
-    mContinueButton.setText(tr("Continue"));
-    mValueSelector.setFocus();
+	mContinueButton.setText(tr("Continue"));
+	mValueSelector.setFocus();
 
-    mLayout.addWidget(&mTitle);
-    mLayout.addWidget(&mValueSelector);
-    mLayout.addWidget(&mContinueButton);
+	mLayout.addWidget(&mTitle);
+	mLayout.addWidget(&mValueSelector);
+	mLayout.addWidget(&mContinueButton);
 
-    setLayout(&mLayout);
+	setLayout(&mLayout);
 
-    mContinueButton.setAutoFillBackground(true);
-    connect(&mContinueButton, SIGNAL(clicked()), this, SLOT(onConnectButtonClicked()));
-    connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
-    connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
+	mContinueButton.setAutoFillBackground(true);
+	connect(&mContinueButton, SIGNAL(clicked()), this, SLOT(onConnectButtonClicked()));
+	connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
+	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
 
-    connect(&mValueSelector, SIGNAL(upPressed()), this, SLOT(focus()));
-    connect(&mValueSelector, SIGNAL(downPressed()), this, SLOT(focus()));
+	connect(&mValueSelector, SIGNAL(upPressed()), this, SLOT(focus()));
+	connect(&mValueSelector, SIGNAL(downPressed()), this, SLOT(focus()));
 }
 
 QString CommandSettingsWidget::menuEntry()
 {
-    return QString(tr("Command Settings"));
+	return QString(tr("Command Settings"));
 }
 
 void CommandSettingsWidget::renewFocus()
 {
-    const QColor buttonColor = QPalette().color(QPalette::Background);
-    QPalette palette;
-    palette.setColor(QPalette::Background, buttonColor);
-    palette.setColor(QPalette::Base, buttonColor);
-    palette.setColor(QPalette::Button, buttonColor);
+	const QColor buttonColor = QPalette().color(QPalette::Background);
+	QPalette palette;
+	palette.setColor(QPalette::Background, buttonColor);
+	palette.setColor(QPalette::Base, buttonColor);
+	palette.setColor(QPalette::Button, buttonColor);
 
-    mContinueButton.setPalette(palette);
+	mContinueButton.setPalette(palette);
 }
 
 void CommandSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-        case Qt::Key_Up: {
-            focus();
-            event->accept();
-            break;
-        }
-        case Qt::Key_Down: {
-            focus();
-            event->accept();
-            break;
-        }
-        case Qt::Key_Return: {
-            mContinueButton.animateClick();
-            event->accept();
-            exit();
-            break;
-        }
-        default: {
-            TrikGuiDialog::keyPressEvent(event);
-            break;
-        }
-    }
+	switch (event->key()) {
+		case Qt::Key_Up: {
+			focus();
+			event->accept();
+			break;
+		}
+		case Qt::Key_Down: {
+			focus();
+			event->accept();
+			break;
+		}
+		case Qt::Key_Return: {
+			mContinueButton.animateClick();
+			event->accept();
+			exit();
+			break;
+		}
+		default: {
+			TrikGuiDialog::keyPressEvent(event);
+			break;
+		}
+	}
 }
 
 int CommandSettingsWidget::getValue() {
-    return mValueSelector.value();
+	return mValueSelector.value();
 }
 
 void CommandSettingsWidget::focus()
 {
-    if (mValueSelector.hasFocusInside()) {
-        mContinueButton.setFocus();
-    } else {
-        mValueSelector.setFocus();
-    }
+	if (mValueSelector.hasFocusInside()) {
+		mContinueButton.setFocus();
+	} else {
+		mValueSelector.setFocus();
+	}
 }

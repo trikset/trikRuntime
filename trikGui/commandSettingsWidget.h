@@ -17,15 +17,15 @@
 #include <QtCore/qglobal.h>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    #include <QtGui/QWidget>
-    #include <QtGui/QLabel>
-    #include <QtGui/QVBoxLayout>
-    #include <QtGui/QListWidget>
+	#include <QtGui/QWidget>
+	#include <QtGui/QLabel>
+	#include <QtGui/QVBoxLayout>
+	#include <QtGui/QListWidget>
 #else
-    #include <QtWidgets/QWidget>
-    #include <QtWidgets/QLabel>
-    #include <QtWidgets/QVBoxLayout>
-    #include <QtWidgets/QListWidget>
+	#include <QtWidgets/QWidget>
+	#include <QtWidgets/QLabel>
+	#include <QtWidgets/QVBoxLayout>
+	#include <QtWidgets/QListWidget>
 #endif
 
 #include <QtCore/QString>
@@ -39,39 +39,39 @@ namespace trikGui {
 /// Widget which allows to change settings of robot command.
 class CommandSettingsWidget : public TrikGuiDialog
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    /// Constructor
-    /// @param title - information for user in the top of the page.
-    /// @param parent - parent of this widget in Qt object hierarchy.
-    explicit CommandSettingsWidget(char title[], QWidget *parent = 0);
+	/// Constructor
+	/// @param title - information for user in the top of the page.
+	/// @param parent - parent of this widget in Qt object hierarchy.
+	explicit CommandSettingsWidget(char title[], QWidget *parent = 0);
 
-    /// Returns menu entry for this widget.
-    static QString menuEntry();
+	/// Returns menu entry for this widget.
+	static QString menuEntry();
 
-    void renewFocus() override;
+	void renewFocus() override;
 
-    /// Returns value of selector.
-    int getValue();
+	/// Returns value of selector.
+	int getValue();
 
 protected:
-    void keyPressEvent(QKeyEvent *event) override;
+	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
-    /// Called by child widgets when they need to move input focus up or down.
-    void focus();
+	/// Called by child widgets when they need to move input focus up or down.
+	void focus();
 
 private:
-    QEventLoop mEventLoop;
-    QVBoxLayout mLayout;
-    QLabel mTitle;
+	QEventLoop mEventLoop;
+	QVBoxLayout mLayout;
+	QLabel mTitle;
 
-    /// Selector that allows to select 5 digits.
-    NumberSelectionWidget mValueSelector;
+	/// Selector that allows to select 5 digits.
+	NumberSelectionWidget mValueSelector;
 
-    /// Button that returns to previous screen.
-    ConnectButton mContinueButton;
+	/// Button that returns to previous screen.
+	ConnectButton mContinueButton;
 };
 
 }
