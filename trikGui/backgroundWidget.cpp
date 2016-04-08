@@ -51,7 +51,7 @@ BackgroundWidget::BackgroundWidget(
 	mStatusBarLayout.addWidget(&mCommunicatorIndicator);
 	mStatusBarLayout.addWidget(&mWiFiIndicator);
 	addMainWidget(mStartWidget);
-	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(&mController.brick().graphicsWidget()));
+	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(mController.brick().graphicsWidget()));
 	addLazyWidget(*mBrickDisplayWidgetWrapper);
 	mMainWidgetsLayout.addWidget(&mRunningWidget);
 

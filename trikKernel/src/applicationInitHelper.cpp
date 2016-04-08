@@ -64,9 +64,11 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 			);
 
 #ifdef Q_WS_QWS
-	QWSServer * const server = QWSServer::instance();
-	if (server) {
-		server->setCursorVisible(false);
+	if (!app.arguments().contains("--no-display") && !!app.arguments().contains("-no-display")) {
+		QWSServer * const server = QWSServer::instance();
+		if (server) {
+			server->setCursorVisible(false);
+		}
 	}
 #endif
 }

@@ -14,6 +14,12 @@
 
 #include "brick.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QApplication>
+#else
+	#include <QtWidgets/QApplication>
+#endif
+
 #include <QtCore/QFileInfo>
 
 #include <trikHal/hardwareAbstractionInterface.h>
@@ -65,12 +71,19 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		, const QString &modelConfig
 		, const QString &mediaPath)
 	: mHardwareAbstraction(hardwareAbstraction)
-	, mDisplay(new Display(mediaPath))
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
+
+	const bool hasGui = (qobject_cast<QApplication *>(QCoreApplication::instance()) != nullptr);
+
+	if (hasGui) {
+		mDisplay.reset(new Display(mediaPath));
+	} else {
+		QLOG_INFO() << "Running in no GUI mode";
+	}
 
 	for (const QString &initScript : mConfigurer.initScripts()) {
 		if (mHardwareAbstraction->systemConsole().system(initScript) != 0) {
@@ -131,9 +144,13 @@ Brick::~Brick()
 	mLed.reset();
 }
 
-DisplayWidgetInterface &Brick::graphicsWidget()
+DisplayWidgetInterface *Brick::graphicsWidget()
 {
-	return mDisplay->graphicsWidget();
+	if (mDisplay) {
+		return &mDisplay->graphicsWidget();
+	} else {
+		return nullptr;
+	}
 }
 
 QString Brick::configVersion() const
@@ -154,7 +171,9 @@ void Brick::reset()
 {
 	stop();
 	mKeys->reset();
-	mDisplay->reset();
+	if (mDisplay) {
+		mDisplay->reset();
+	}
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
 	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
@@ -203,7 +222,9 @@ void Brick::stop()
 		powerMotor->powerOff();
 	}
 
-	mDisplay->hide();
+	if (mDisplay) {
+		mDisplay->hide();
+	}
 
 	/// @todo: Also be able to stop initializing sensor.
 	for (LineSensor * const lineSensor : mLineSensors) {

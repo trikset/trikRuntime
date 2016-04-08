@@ -74,7 +74,7 @@ public:
 
 	void reset() override;
 
-	DisplayWidgetInterface &graphicsWidget() override;
+	DisplayWidgetInterface *graphicsWidget() override;
 
 	QString configVersion() const override;
 

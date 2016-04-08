@@ -21,6 +21,7 @@
 #endif
 
 #include <QtCore/QTimer>
+#include <QtCore/QCoreApplication>
 #include <QtCore/QEventLoop>
 
 #include <trikKernel/configurer.h>
@@ -40,14 +41,26 @@
 
 int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv);
-	app.setApplicationName("TrikRun");
+	QStringList params;
+	for (int i = 1; i < argc; ++i) {
+		params << QString(argv[i]);
+	}
+
+	QScopedPointer<QCoreApplication> app;
+
+	if (params.contains("--no-display") || params.contains("-no-display")) {
+		app.reset(new QCoreApplication(argc, argv));
+	} else {
+		app.reset(new QApplication(argc, argv));
+	}
+
+	app->setApplicationName("TrikRun");
 
 	// RAII-style code to ensure that after brick gets destroyed there will be an event loop that cleans it up.
 	trikKernel::DeinitializationHelper helper;
 	Q_UNUSED(helper);
 
-	trikKernel::ApplicationInitHelper initHelper(app);
+	trikKernel::ApplicationInitHelper initHelper(*app);
 
 	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
 			+ " " + QObject::tr("(optional of -s option is specified)"));
@@ -55,6 +68,10 @@ int main(int argc, char *argv[])
 	initHelper.commandLineParser().addOption("s", "script"
 			, QObject::tr("Script to be executed directly from command line.") + "\n"
 					+ QObject::tr("\tExample: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
+
+	initHelper.commandLineParser().addFlag("no-display", "no-display"
+			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
+						  "physical display"));
 
 	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
 
@@ -78,9 +95,9 @@ int main(int argc, char *argv[])
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data(), gamepad.data());
 
-		QObject::connect(&result, SIGNAL(completed(QString, int)), &app, SLOT(quit()));
+		QObject::connect(&result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
 		result.run(script);
-		return app.exec();
+		return app->exec();
 	};
 
 	if (initHelper.commandLineParser().isSet("s")) {

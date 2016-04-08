@@ -48,7 +48,7 @@ public:
 	virtual void reset() = 0;
 
 	/// Returns a widget on which display output is drawn.
-	virtual DisplayWidgetInterface &graphicsWidget() = 0;
+	virtual DisplayWidgetInterface *graphicsWidget() = 0;
 
 	/// Returns version of system configuration file.
 	virtual QString configVersion() const = 0;
