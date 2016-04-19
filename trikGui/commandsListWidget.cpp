@@ -38,7 +38,7 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 	mCommands.addItem(tr("Sad Smile"));
 	mCommands.addItem(tr("Timer"));
 	mCommands.addItem(tr("Motor Forward"));
-	//mCommands.addItem(tr("Motor Backward"));
+	// mCommands.addItem(tr("Motor Backward"));
 	mCommands.addItem(tr("Motors Stop"));
 	mCommands.addItem(tr("Wait for Light"));
 	mCommands.addItem(tr("Wait for Ultrasonic Distance"));
