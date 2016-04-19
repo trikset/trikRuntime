@@ -12,43 +12,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "commandSettingsWidget.h"
+#include "sensorSettingsWidget.h"
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	#include <QtGui/QScrollArea>
+#else
+	#include <QtWidgets/QScrollArea>
+#endif
 
 #include <QtGui/QKeyEvent>
 #include <trikKernel/paths.h>
 #include <QsLog.h>
 
 using namespace trikGui;
+using trikControl::MotorInterface;
 
-CommandSettingsWidget::CommandSettingsWidget(const QString &title, const int digits, QWidget *parent)
+SensorSettingsWidget::SensorSettingsWidget(const QString &port, QWidget *parent)
 	: TrikGuiDialog(parent)
-	, mTitle(title)
-	, mValueSelector(0, digits, digits, 35, this)
+	, mPort(port)
 {
-	mContinueButton.setText(tr("Continue"));
-	mValueSelector.setFocus();
+	QLabel* const powerLabel = new QLabel(tr("Select distance ") + ": \n");
+	powerLabel->setAlignment(Qt::AlignTop);
+	powerLabel->setMaximumHeight(20);
+	mLayout.addWidget(powerLabel);
 
-	mLayout.addWidget(&mTitle);
-	mLayout.addWidget(&mValueSelector);
+	mLever = new SensorLever(mPort, this);
+	mLever->setMaximumHeight(50);
+	mLayout.addWidget(mLever);
+
+	mContinueButton.setText(tr("Continue"));
+	mContinueButton.setAutoFillBackground(true);
 	mLayout.addWidget(&mContinueButton);
 
 	setLayout(&mLayout);
-
-	mContinueButton.setAutoFillBackground(true);
-	connect(&mContinueButton, SIGNAL(clicked()), this, SLOT(onContinueButtonClicked()));
-	connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
-
-	connect(&mValueSelector, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mValueSelector, SIGNAL(downPressed()), this, SLOT(focus()));
 }
 
-QString CommandSettingsWidget::menuEntry()
+SensorSettingsWidget::~SensorSettingsWidget()
 {
-	return QString(tr("Command Settings"));
+	delete(mLever);
 }
 
-void CommandSettingsWidget::renewFocus()
+QString SensorSettingsWidget::menuEntry()
+{
+	return QString(tr("Sensor Settings"));
+}
+
+void SensorSettingsWidget::renewFocus()
 {
 	const QColor buttonColor = QPalette().color(QPalette::Background);
 	QPalette palette;
@@ -59,19 +68,9 @@ void CommandSettingsWidget::renewFocus()
 	mContinueButton.setPalette(palette);
 }
 
-void CommandSettingsWidget::keyPressEvent(QKeyEvent *event)
+void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-	case Qt::Key_Up: {
-		focus();
-		event->accept();
-		break;
-	}
-	case Qt::Key_Down: {
-		focus();
-		event->accept();
-		break;
-	}
 	case Qt::Key_Return: {
 		mContinueButton.animateClick();
 		event->accept();
@@ -85,16 +84,12 @@ void CommandSettingsWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-int CommandSettingsWidget::value()
+QString SensorSettingsWidget::createScript()
 {
-	return mValueSelector.value();
-}
-
-void CommandSettingsWidget::focus()
-{
-	if (mValueSelector.hasFocusInside()) {
-		mContinueButton.setFocus();
-	} else {
-		mValueSelector.setFocus();
+	QString sign(">");
+	if (!mLever->isGrater()) {
+		sign = "<";
 	}
+	return QString("    while (!(brick.sensor(%1).read() %2 %3)) {\n"
+		"        script.wait(10);\n    }\n").arg(mPort).arg(sign).arg(mLever->distance());
 }

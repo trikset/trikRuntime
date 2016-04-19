@@ -1,4 +1,4 @@
-/* Copyright 2014 Roman Kurbatov
+/* Copyright 2016 Mikhail Kita
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,52 +30,49 @@
 
 #include <QtCore/QString>
 
-namespace trikControl {
-	class MotorInterface;
-}
-
 namespace trikGui {
 
-/// Widget that allows to set power value of a motor and turn it on and off.
-/// It is designed to use as a part of MotorsWidget.
-class MotorLever : public QWidget
+/// Widget that allows to set distance value of a sensor.
+class SensorLever : public QWidget
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param port - name of a port which the motor is connected to.
-	/// @param motor - pointer to an instance representing the motor.
+	/// @param port - name of a port which the sensor is connected to.
 	/// @param parent - pointer to a parent widget.
-	MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent = 0);
+	SensorLever(const QString &port, QWidget *parent = 0);
 
-	/// Returns power value of this lever.
-	int power();
+	/// Returns distance value of this lever.
+	int distance();
 
-	/// Destructor.
-	~MotorLever() override;
+	/// Returns sign of command.
+	bool isGrater();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 	void paintEvent(QPaintEvent *) override;
 
+private slots:
+	/// Sets the distance which is necessary to trigger sensor.
+	/// @param distance - required distance.
+	void setDistance(int distance);
+
+	/// Changes sign of this lever.
+	void changeSign();
+
 private:
-	void setPower(int power);
-
-	void turnOnOff();
-
-	trikControl::MotorInterface &mMotor;
-	bool mIsOn;
-	const int mMaxPower;
-	const int mMinPower;
-	const int mPowerStep;
-	int mPower;
+	bool mIsGrater;
+	const int mMaxDistance;
+	const int mMinDistance;
+	const int mDistanceStep;
+	int mDistance;
 
 	QHBoxLayout mLayout;
 	QLabel mNameLabel;
-	QProgressBar mPowerBar;
-	QLabel mOnOffLabel;
+	QProgressBar mDistanceBar;
+	QLabel mSignLabel;
 };
 
 }

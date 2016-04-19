@@ -44,8 +44,9 @@ class CommandSettingsWidget : public TrikGuiDialog
 public:
 	/// Constructor
 	/// @param title - information for user in the top of the page.
+	/// @param digits - amount of digits which selector should show.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit CommandSettingsWidget(char title[], QWidget *parent = 0);
+	explicit CommandSettingsWidget(const QString &title, const int digits, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -53,7 +54,7 @@ public:
 	void renewFocus() override;
 
 	/// Returns value of selector.
-	int getValue();
+	int value();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
@@ -67,10 +68,10 @@ private:
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 
-	/// Selector that allows to select 5 digits.
+	/// Selector that allows to select some digits.
 	NumberSelectionWidget mValueSelector;
 
-	/// Button that returns to previous screen.
+	/// Button that returns focus to the previous screen.
 	ConnectButton mContinueButton;
 };
 

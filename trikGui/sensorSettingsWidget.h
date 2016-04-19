@@ -21,68 +21,57 @@
 	#include <QtGui/QLabel>
 	#include <QtGui/QVBoxLayout>
 	#include <QtGui/QListWidget>
-	#include <QtGui/QMessageBox>
-	#include <QtGui/QScrollArea>
 #else
 	#include <QtWidgets/QWidget>
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QVBoxLayout>
 	#include <QtWidgets/QListWidget>
-	#include <QtWidgets/QMessageBox>
-	#include <QtWidgets/QScrollArea>
 #endif
 
 #include <QtCore/QString>
 
+#include <trikControl/brickInterface.h>
+
 #include "trikGuiDialog.h"
-#include "controller.h"
+#include "sensorLever.h"
 #include "connectButton.h"
 
 namespace trikGui {
 
-const std::string script =
-	"var __interpretation_started_timestamp__;\n"
-	"var pi = 3.14159265;\n\n"
-	"var main = function()\n"
-	"{\n"
-	"    __interpretation_started_timestamp__ = Date.now();\n";
-
-/// Widget which allows to write simple programs via the robot interface.
-class ProgrammingWidget : public TrikGuiDialog
+/// Widget which allows to change settings of the robot sensors.
+class SensorSettingsWidget : public TrikGuiDialog
 {
 	Q_OBJECT
 
 public:
 	/// Constructor
-	/// @param controller - reference to controller object which provides access to low-level functionality.
+	/// @param title - information for user in the top of the page.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit ProgrammingWidget(Controller &controller, QWidget *parent = 0);
+	explicit SensorSettingsWidget(const QString &port, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
 
 	void renewFocus() override;
 
+	/// Adds new command to script.
+	QString createScript();
+
+	/// Destructor.
+	~SensorSettingsWidget();
+
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
-	/// Adds command to the execution list.
-	void addCommand();
-
 private:
-	QLabel mTitle;
+	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
-	QListWidget mCommands;
-	Controller &mController;
+	QString mPort;
 
-	ConnectButton mRunButton;
+	SensorLever *mLever;  // Has ownership.
 
-	/// Counter of empty commands.
-	int mEmptyCommandsCounter;
-
-	/// Contains string with program for robot.
-	QString mScript;
+	/// Button that returns to previous screen.
+	ConnectButton mContinueButton;
 };
 
 }

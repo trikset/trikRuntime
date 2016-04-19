@@ -115,3 +115,12 @@ void MotorsWidget::fixLeversPosition()
 	focusNextChild();
 	focusPreviousChild();
 }
+
+const std::vector<int> MotorsWidget::data()
+{
+	std::vector<int> data;
+	for (int i = 0; i < mPorts.size(); ++i) {
+		data.push_back(mLevers[i]->power());
+	}
+	return data;
+}

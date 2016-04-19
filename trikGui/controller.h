@@ -49,7 +49,7 @@ public:
 	void runFile(const QString &filePath);
 
 	/// Executes given script.
-	void runScript(QString script);
+	void runScript(QString &script);
 
 	/// Returns reference to Brick object, which provides access to robot hardware.
 	trikControl::BrickInterface &brick();

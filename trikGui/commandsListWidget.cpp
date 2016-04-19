@@ -19,18 +19,30 @@
 #include <QsLog.h>
 
 #include "commandSettingsWidget.h"
+#include "sensorSettingsWidget.h"
+#include "motorsWidget.h"
 
 using namespace trikGui;
+using trikControl::MotorInterface;
 
-CommandsListWidget::CommandsListWidget(const QString &name, QWidget *parent)
+CommandsListWidget::CommandsListWidget(Controller &controller, const QString &name, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("Choose command:"))
-	, mData(0)
+	, mController(controller)
 	, mValue(name)
+	, mScript("")
 {
-	mCommands.addItem(tr("Play Tone"));
-	mCommands.addItem(tr("Timer"));
 	mCommands.addItem(tr("Clear"));
+	mCommands.addItem(tr("Play Tone"));
+	mCommands.addItem(tr("Smile"));
+	mCommands.addItem(tr("Sad Smile"));
+	mCommands.addItem(tr("Timer"));
+	mCommands.addItem(tr("Motor Forward"));
+	//mCommands.addItem(tr("Motor Backward"));
+	mCommands.addItem(tr("Motors Stop"));
+	mCommands.addItem(tr("Wait for Light"));
+	mCommands.addItem(tr("Wait for Ultrasonic Distance"));
+	mCommands.addItem(tr("Wait for Infrared Distance"));
 
 	mLayout.addWidget(&mTitle);
 	mLayout.addWidget(&mCommands);
@@ -56,42 +68,109 @@ void CommandsListWidget::renewFocus()
 void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return: {
-			switch (mCommands.currentRow()) {
-				case 0: {
-					mValue = QString("Play Tone");
-					break;
-				}
-				case 1: {
-					char title[] = "Choose waiting time (ms):";
-					CommandSettingsWidget commandSettingsWidget(title);
-					emit newWidget(commandSettingsWidget);
-					commandSettingsWidget.exec();
+	case Qt::Key_Return: {
+		if (mCommands.currentItem()->text() == "Play Tone") {
+			mValue = mCommands.currentItem()->text();
+			mScript = QString("    brick.playSound(\"media/beep.wav\");\n");
 
-					mData = commandSettingsWidget.getValue();
-					std::string res = "Delay " + std::to_string(mData) + " ms";
-					mValue = QString(res.c_str());
-					break;
-				}
-				default: {
-					mValue = QString("< add command >");
-					break;
-				}
+		} else if (mCommands.currentItem()->text() == "Smile") {
+			mValue = mCommands.currentItem()->text();
+			mScript = QString("    brick.smile();\n");
+
+		} else if (mCommands.currentItem()->text() == "Sad Smile") {
+			mValue = mCommands.currentItem()->text();
+			mScript = QString("    brick.sadSmile();\n");
+
+		} else if (mCommands.currentItem()->text() == "Timer") {
+			QString title("Choose waiting time (ms):");
+			CommandSettingsWidget commandSettingsWidget(title, 5);
+			emit newWidget(commandSettingsWidget);
+			commandSettingsWidget.exec();
+
+			const int value = commandSettingsWidget.value();
+			mValue = QString("Delay %1 ms").arg(value);
+			mScript = QString("    script.wait(%1);\n").arg(value);
+
+		} else if (mCommands.currentItem()->text() == "Motors Stop") {
+			mValue = mCommands.currentItem()->text();
+			mScript = QString("");
+
+			for (int i = 0; i < 4; ++i) {
+				mScript.append(QString("    brick.motor(M%1).powerOff();\n").arg(i + 1));
 			}
-			exit();
-			break;
+
+		} else if (mCommands.currentItem()->text().startsWith("Motor")) {
+			// TODO: choose the best variant.
+			motorBehaviour1();
+			// motorBehaviour2();
+
+		} else if (mCommands.currentItem()->text().startsWith("Wait")) {
+			QString port("A1");
+			if (mCommands.currentItem()->text() == "Wait for Ultrasonic Distance") {
+				port = "D1";
+			}
+
+			SensorSettingsWidget sensorSettingsWidget(port);
+			emit newWidget(sensorSettingsWidget);
+			sensorSettingsWidget.exec();
+
+			mValue = mCommands.currentItem()->text();
+			mScript = sensorSettingsWidget.createScript();
+
+		} else {
+			mValue = QString("< add command >");
 		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
+		exit();
+		break;
+	}
+	default: {
+		TrikGuiDialog::keyPressEvent(event);
+		break;
+	}
 	}
 }
 
-QString CommandsListWidget::getValue() {
+const QString CommandsListWidget::value() 
+{
 	return mValue;
 }
 
-int CommandsListWidget::getData() {
-	return mData;
+const QString CommandsListWidget::script()
+{
+	return mScript;
+}
+
+void CommandsListWidget::motorBehaviour1()
+{
+	MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
+	emit newWidget(motorsWidget);
+	motorsWidget.exec();
+
+	mValue = mCommands.currentItem()->text();
+	std::vector<int> data = motorsWidget.data();
+	mScript = QString("");
+
+	for (int i = 0; i < 4; ++i) {
+		mScript.append(QString("    brick.motor(M%1).setPower(%2);\n").arg(i + 1).arg(data[i]));
+	}
+}
+
+void CommandsListWidget::motorBehaviour2()
+{
+	QString title("Choose motors power (%): ");
+	CommandSettingsWidget commandSettingsWidget(title, 2);
+	emit newWidget(commandSettingsWidget);
+	commandSettingsWidget.exec();
+
+	mValue = mCommands.currentItem()->text();
+
+	int data = commandSettingsWidget.value();
+	if (mCommands.currentItem()->text() == "Motor Backward") {
+		data *= -1;
+	}
+	mScript = QString("");
+
+	for (int i = 0; i < 4; ++i) {
+		mScript.append(QString("    brick.motor(M%1).setPower(%2);\n").arg(i + 1).arg(data));
+	}
 }
