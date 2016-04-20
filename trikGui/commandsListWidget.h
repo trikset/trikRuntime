@@ -63,10 +63,7 @@ protected:
 
 private slots:
 	/// Defines behaviour for command "Motor Forward".
-	void motorBehaviour1();
-
-	/// Defines behaviour for command "Motor Forward".
-	void motorBehaviour2();
+	void motorBehaviour();
 
 private:
 	QVBoxLayout mLayout;

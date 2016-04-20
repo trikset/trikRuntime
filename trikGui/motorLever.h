@@ -49,9 +49,6 @@ public:
 	/// @param parent - pointer to a parent widget.
 	MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent = 0);
 
-	/// Returns power value of this lever.
-	int power();
-
 	/// Destructor.
 	~MotorLever() override;
 

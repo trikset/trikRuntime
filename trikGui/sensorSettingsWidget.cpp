@@ -31,7 +31,7 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mPort(port)
 {
-	QLabel* const powerLabel = new QLabel(tr("Select distance ") + ": \n");
+	QLabel* const powerLabel = new QLabel(tr("Select distance:") + ": \n");
 	powerLabel->setAlignment(Qt::AlignTop);
 	powerLabel->setMaximumHeight(20);
 	mLayout.addWidget(powerLabel);

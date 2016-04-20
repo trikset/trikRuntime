@@ -67,6 +67,10 @@ void ProgrammingWidget::renewFocus()
 void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
+	case Qt::Key_PowerDown: {
+		mController.abortExecution();
+		break;
+	}
 	case Qt::Key_Return: {
 		if (mCommands.hasFocus()) {
 			addCommand();
@@ -94,11 +98,7 @@ void ProgrammingWidget::addCommand()
 	QString value(commandsListWidget.value());
 	mCommands.currentItem()->setText(value);
 
-	if (value == "< add command >") {
-		if (text != "< add command >") {
-			mEmptyCommandsCounter++;
-		}
-	} else if (text == "< add command >") {
+	if (text == tr("< add command >")) {
 		mEmptyCommandsCounter--;
 	}
 

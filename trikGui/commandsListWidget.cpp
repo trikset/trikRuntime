@@ -32,13 +32,12 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 	, mValue(name)
 	, mScript("")
 {
-	mCommands.addItem(tr("Clear"));
 	mCommands.addItem(tr("Play Tone"));
 	mCommands.addItem(tr("Smile"));
 	mCommands.addItem(tr("Sad Smile"));
 	mCommands.addItem(tr("Timer"));
 	mCommands.addItem(tr("Motor Forward"));
-	// mCommands.addItem(tr("Motor Backward"));
+	mCommands.addItem(tr("Motor Backward"));
 	mCommands.addItem(tr("Motors Stop"));
 	mCommands.addItem(tr("Wait for Light"));
 	mCommands.addItem(tr("Wait for Ultrasonic Distance"));
@@ -69,29 +68,29 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 	case Qt::Key_Return: {
-		if (mCommands.currentItem()->text() == "Play Tone") {
+		if (mCommands.currentItem()->text() == tr("Play Tone")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.playSound(\"media/beep.wav\");\n");
 
-		} else if (mCommands.currentItem()->text() == "Smile") {
+		} else if (mCommands.currentItem()->text() == tr("Smile")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.smile();\n");
 
-		} else if (mCommands.currentItem()->text() == "Sad Smile") {
+		} else if (mCommands.currentItem()->text() == tr("Sad Smile")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.sadSmile();\n");
 
-		} else if (mCommands.currentItem()->text() == "Timer") {
-			QString title("Choose waiting time (ms):");
+		} else if (mCommands.currentItem()->text() == tr("Timer")) {
+			QString title(tr("Choose waiting time (ms):"));
 			CommandSettingsWidget commandSettingsWidget(title, 5);
 			emit newWidget(commandSettingsWidget);
 			commandSettingsWidget.exec();
 
 			const int value = commandSettingsWidget.value();
-			mValue = QString("Delay %1 ms").arg(value);
+			mValue = tr("Delay %1 ms").arg(value);
 			mScript = QString("    script.wait(%1);\n").arg(value);
 
-		} else if (mCommands.currentItem()->text() == "Motors Stop") {
+		} else if (mCommands.currentItem()->text() == tr("Motors Stop")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("");
 
@@ -99,14 +98,12 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 				mScript.append(QString("    brick.motor(M%1).powerOff();\n").arg(i + 1));
 			}
 
-		} else if (mCommands.currentItem()->text().startsWith("Motor")) {
-			// TODO: choose the best variant.
-			motorBehaviour1();
-			// motorBehaviour2();
+		} else if (mCommands.currentItem()->text().startsWith(tr("Motor"))) {
+			motorBehaviour();
 
-		} else if (mCommands.currentItem()->text().startsWith("Wait")) {
+		} else if (mCommands.currentItem()->text().startsWith(tr("Wait"))) {
 			QString port("A1");
-			if (mCommands.currentItem()->text() == "Wait for Ultrasonic Distance") {
+			if (mCommands.currentItem()->text() == tr("Wait for Ultrasonic Distance")) {
 				port = "D1";
 			}
 
@@ -118,7 +115,7 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 			mScript = sensorSettingsWidget.createScript();
 
 		} else {
-			mValue = QString("< add command >");
+			mValue = tr("< add command >");
 		}
 		exit();
 		break;
@@ -140,24 +137,9 @@ const QString CommandsListWidget::script()
 	return mScript;
 }
 
-void CommandsListWidget::motorBehaviour1()
+void CommandsListWidget::motorBehaviour()
 {
-	MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
-	emit newWidget(motorsWidget);
-	motorsWidget.exec();
-
-	mValue = mCommands.currentItem()->text();
-	std::vector<int> data = motorsWidget.data();
-	mScript = QString("");
-
-	for (int i = 0; i < 4; ++i) {
-		mScript.append(QString("    brick.motor(M%1).setPower(%2);\n").arg(i + 1).arg(data[i]));
-	}
-}
-
-void CommandsListWidget::motorBehaviour2()
-{
-	QString title("Choose motors power (%): ");
+	QString title(tr("Choose motors power (%): "));
 	CommandSettingsWidget commandSettingsWidget(title, 2);
 	emit newWidget(commandSettingsWidget);
 	commandSettingsWidget.exec();
@@ -165,9 +147,10 @@ void CommandsListWidget::motorBehaviour2()
 	mValue = mCommands.currentItem()->text();
 
 	int data = commandSettingsWidget.value();
-	if (mCommands.currentItem()->text() == "Motor Backward") {
+	if (mCommands.currentItem()->text() == tr("Motor Backward")) {
 		data *= -1;
 	}
+
 	mScript = QString("");
 
 	for (int i = 0; i < 4; ++i) {

@@ -58,9 +58,6 @@ public:
 	/// Title for this widget in a main menu.
 	static QString menuEntry(trikControl::MotorInterface::Type type);
 
-	/// Returns power value for each lever.
-	const std::vector<int> data();
-
 	void renewFocus() override;
 
 protected:

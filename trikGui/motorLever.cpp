@@ -128,8 +128,3 @@ void MotorLever::turnOnOff()
 		mMotor.powerOff();
 	}
 }
-
-int MotorLever::power()
-{
-	return mPower;
-}

@@ -1,11 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru_RU">
+<TS version="2.0" language="ru_RU">
 <context>
     <name>QObject</name>
     <message>
         <source>Graphical user interface, TRIK Studio runtime environment and script runner of a robot</source>
         <translation>Графический интерфейс, среда времени выполнения для TRIK Studio и исполнитель скриптов на роботе</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::CommandSettingsWidget</name>
+    <message>
+        <source>Continue</source>
+        <translation>Продолжить</translation>
+    </message>
+    <message>
+        <source>Command Settings</source>
+        <translation>Настройки команды</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::CommandsListWidget</name>
+    <message>
+        <source>Choose command:</source>
+        <translation>Выберите команду:</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Очистить</translation>
+    </message>
+    <message>
+        <source>Play Tone</source>
+        <translation>Играть звук</translation>
+    </message>
+    <message>
+        <source>Smile</source>
+        <translation>Смайлик</translation>
+    </message>
+    <message>
+        <source>Sad Smile</source>
+        <translation>Грустный смайлик</translation>
+    </message>
+    <message>
+        <source>Timer</source>
+        <translation>Таймер</translation>
+    </message>
+    <message>
+        <source>Motor Forward</source>
+        <translation>Моторы вперёд</translation>
+    </message>
+    <message>
+        <source>Motor Backward</source>
+        <translation>Моторы назад</translation>
+    </message>
+    <message>
+        <source>Motors Stop</source>
+        <translation>Моторы стоп</translation>
+    </message>
+    <message>
+        <source>Wait for Light</source>
+        <translation>Ждать свет</translation>
+    </message>
+    <message>
+        <source>Wait for Ultrasonic Distance</source>
+        <translation>Ждать УЗ датчик</translation>
+    </message>
+    <message>
+        <source>Wait for Infrared Distance</source>
+        <translation>Ждать ИК датчик</translation>
+    </message>
+    <message>
+        <source>Commands List</source>
+        <translation>Список команд</translation>
+    </message>
+    <message>
+        <source>Choose waiting time (ms):</source>
+        <translation>Выберите время ожидания
+(в миллисекундах):</translation>
+    </message>
+    <message>
+        <source>Delay %1 ms</source>
+        <translation>Задержка %1 мс</translation>
+    </message>
+    <message>
+        <source>Motor</source>
+        <translation>Мотор</translation>
+    </message>
+    <message>
+        <source>Wait</source>
+        <translation>Ждать</translation>
+    </message>
+    <message>
+        <source>&lt; add command &gt;</source>
+        <translation>&lt; добавить команду &gt;</translation>
+    </message>
+    <message>
+        <source>Choose motors power (%): </source>
+        <translation>Выберите мощность моторов
+(в процентах):</translation>
     </message>
 </context>
 <context>
@@ -161,6 +253,25 @@
     </message>
 </context>
 <context>
+    <name>trikGui::ProgrammingWidget</name>
+    <message>
+        <source>Add commands to list</source>
+        <translation>Добавьте команду в список</translation>
+    </message>
+    <message>
+        <source>&lt; add command &gt;</source>
+        <translation>&lt; добавить команду &gt;</translation>
+    </message>
+    <message>
+        <source>Run program</source>
+        <translation>Запустить программу</translation>
+    </message>
+    <message>
+        <source>Programming</source>
+        <translation>Программирование</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::RunningWidget</name>
     <message>
         <source>Running:</source>
@@ -179,6 +290,32 @@
     <message>
         <source>Press Power to abort</source>
         <translation>Нажмите кнопку Питание для выхода</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::SensorLever</name>
+    <message>
+        <source>&gt;</source>
+        <translation>&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;</source>
+        <translation>&lt;</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::SensorSettingsWidget</name>
+    <message>
+        <source>Select distance:</source>
+        <translation>Выберите расстояние:</translation>
+    </message>
+    <message>
+        <source>Continue</source>
+        <translation>Продолжить</translation>
+    </message>
+    <message>
+        <source>Sensor Settings</source>
+        <translation>Настройки датчиков</translation>
     </message>
 </context>
 <context>
