@@ -41,7 +41,12 @@ void GamepadConnection::processData(const QByteArray &data)
 		}
 	} else if (commandName == "btn") {
 		const int buttonCode = cmd.at(1).trimmed().toInt();
-		emit button(buttonCode, 1);
+		int state = 1;
+		if (cmd.length() > 2) {
+			state = cmd.at(2) == "down" ? 1 : 0;
+		}
+
+		emit button(buttonCode, state);
 	} else if (commandName == "wheel") {
 		const int perc = cmd.at(1).trimmed().toInt();
 		emit wheel(perc);
@@ -49,4 +54,3 @@ void GamepadConnection::processData(const QByteArray &data)
 		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
 	}
 }
-
