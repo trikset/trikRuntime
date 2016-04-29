@@ -48,6 +48,8 @@ void Connection::processData(const QByteArray &data)
 					.arg(mBrick.sensor(port)->readRawData());
 		};
 
+		answer = "allData:";
+
 		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor)) {
 			reportSensorReading(port);
 		}
