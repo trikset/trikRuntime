@@ -45,9 +45,10 @@ class SensorSettingsWidget : public TrikGuiDialog
 
 public:
 	/// Constructor
-	/// @param title - information for user in the top of the page.
+	/// @param port - name of port for this sensor
+	/// @param isEncoder - flag that shows whether this sensor is encoder
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit SensorSettingsWidget(const QString &port, QWidget *parent = 0);
+	explicit SensorSettingsWidget(const QString &port, bool isEncoder, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -67,6 +68,7 @@ private:
 	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
 	QString mPort;
+	bool mIsEncoder;
 
 	SensorLever *mLever;  // Has ownership.
 

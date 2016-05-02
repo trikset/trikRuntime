@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Clear</source>
-        <translation>Очистить</translation>
+        <translation type="obsolete">Очистить</translation>
     </message>
     <message>
         <source>Play Tone</source>
@@ -98,6 +98,10 @@
         <source>Choose motors power (%): </source>
         <translation>Выберите мощность моторов
 (в процентах):</translation>
+    </message>
+    <message>
+        <source>Wait for Encoder</source>
+        <translation>Ждать энкодер</translation>
     </message>
 </context>
 <context>
@@ -307,7 +311,7 @@
     <name>trikGui::SensorSettingsWidget</name>
     <message>
         <source>Select distance:</source>
-        <translation>Выберите расстояние:</translation>
+        <translation type="obsolete">Выберите расстояние:</translation>
     </message>
     <message>
         <source>Continue</source>
@@ -316,6 +320,16 @@
     <message>
         <source>Sensor Settings</source>
         <translation>Настройки датчиков</translation>
+    </message>
+    <message>
+        <source>Select distance:
+</source>
+        <translation>Выберите расстояние:</translation>
+    </message>
+    <message>
+        <source>Select tacho limit:
+</source>
+        <translation>Выберите предел оборотов:</translation>
     </message>
 </context>
 <context>

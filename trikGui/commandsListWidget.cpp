@@ -42,6 +42,7 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 	mCommands.addItem(tr("Wait for Light"));
 	mCommands.addItem(tr("Wait for Ultrasonic Distance"));
 	mCommands.addItem(tr("Wait for Infrared Distance"));
+	mCommands.addItem(tr("Wait for Encoder"));
 
 	mLayout.addWidget(&mTitle);
 	mLayout.addWidget(&mCommands);
@@ -103,11 +104,16 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 
 		} else if (mCommands.currentItem()->text().startsWith(tr("Wait"))) {
 			QString port("A1");
+			bool isEncoder = false;
+
 			if (mCommands.currentItem()->text() == tr("Wait for Ultrasonic Distance")) {
 				port = "D1";
+			} else if (mCommands.currentItem()->text() == tr("Wait for Encoder")) {
+				port = "B1";
+				isEncoder = true;
 			}
 
-			SensorSettingsWidget sensorSettingsWidget(port);
+			SensorSettingsWidget sensorSettingsWidget(port, isEncoder);
 			emit newWidget(sensorSettingsWidget);
 			sensorSettingsWidget.exec();
 

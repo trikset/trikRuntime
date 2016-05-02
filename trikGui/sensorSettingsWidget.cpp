@@ -27,11 +27,15 @@
 using namespace trikGui;
 using trikControl::MotorInterface;
 
-SensorSettingsWidget::SensorSettingsWidget(const QString &port, QWidget *parent)
+SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mPort(port)
+	, mIsEncoder(isEncoder)
 {
-	QLabel* const powerLabel = new QLabel(tr("Select distance:") + ": \n");
+	QLabel* powerLabel = new QLabel(tr("Select distance:\n"));
+	if (isEncoder) {
+		powerLabel = new QLabel(tr("Select tacho limit:\n"));
+	}
 	powerLabel->setAlignment(Qt::AlignTop);
 	powerLabel->setMaximumHeight(20);
 	mLayout.addWidget(powerLabel);
@@ -86,10 +90,15 @@ void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 QString SensorSettingsWidget::createScript()
 {
+	QString name("sensor");
+	if (mIsEncoder) {
+		name = "encoder";
+	}
+
 	QString sign(">");
 	if (!mLever->isGrater()) {
 		sign = "<";
 	}
-	return QString("    while (!(brick.sensor(%1).read() %2 %3)) {\n"
-		"        script.wait(10);\n    }\n").arg(mPort).arg(sign).arg(mLever->distance());
+	return QString("    while (!(brick.%1(%2).read() %3 %4)) {\n"
+		"        script.wait(10);\n    }\n").arg(name).arg(mPort).arg(sign).arg(mLever->distance());
 }
