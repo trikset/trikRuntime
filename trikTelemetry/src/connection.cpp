@@ -16,7 +16,6 @@
 
 #include "QsLog.h"
 
-
 using namespace trikTelemetry;
 
 Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad)
@@ -26,7 +25,6 @@ Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadI
 {
 }
 
-quint64 old;
 void Connection::processData(const QByteArray &data)
 {
 	QString command(data);
@@ -42,7 +40,7 @@ void Connection::processData(const QByteArray &data)
 	QString answer;
 	if (command.startsWith(dataRequested)) {
 		auto reportSensorReading = [this, &answer] (const QString &port) {
-			answer += QString("%1=%2:%3;")
+			answer += QString("%1:%2:%3;")
 					.arg(port)
 					.arg(mBrick.sensor(port)->read())
 					.arg(mBrick.sensor(port)->readRawData());
@@ -63,31 +61,34 @@ void Connection::processData(const QByteArray &data)
 		}
 
 		for (const QString &port : mBrick.encoderPorts()) {
-			reportSensorReading(port);
+			answer += QString("%1:%2:%3;")
+					.arg(port)
+					.arg(mBrick.encoder(port)->read())
+					.arg(mBrick.encoder(port)->readRawData());
 		}
 
-		answer += "accelerometer=" + serializeVector(mBrick.accelerometer()->read()) + ";";
-		answer += "gyroscope=" + serializeVector(mBrick.gyroscope()->read())+ ";";
+		answer += "AccelerometerPort:" + serializeVector(mBrick.accelerometer()->read()) + ";";
+		answer += "GyroscopePort:" + serializeVector(mBrick.gyroscope()->read())+ ";";
 
-		answer += "GamepadButton1Port=" + QString::number(mGamepad.buttonIsPressed(1)) + ';';
-		answer += "GamepadButton2Port=" + QString::number(mGamepad.buttonIsPressed(2)) + ';';
-		answer += "GamepadButton3Port=" + QString::number(mGamepad.buttonIsPressed(3)) + ';';
-		answer += "GamepadButton4Port=" + QString::number(mGamepad.buttonIsPressed(4)) + ';';
-		answer += "GamepadButton5Port=" + QString::number(mGamepad.buttonIsPressed(5)) + ';';
-		answer += "GamepadWheelPort=" + QString::number(mGamepad.wheel()) + ';';
-		answer += "GamepadConnectionIndicatorPort=" + QString::number(mGamepad.isConnected()) + ';';
-		answer += "GamepadPad1PressedPort=" + QString::number(mGamepad.isPadPressed(1)) + ';';
-		answer += "GamepadPad2PressedPort=" + QString::number(mGamepad.isPadPressed(2)) + ';';
-		answer += "GamepadPad1PosPort=" + QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1)) + ';';
-		answer += "GamepadPad2PosPort=" + QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2)) + ';';
+		answer += "GamepadButton1Port:" + QString::number(mGamepad.buttonIsPressed(1)) + ';';
+		answer += "GamepadButton2Port:" + QString::number(mGamepad.buttonIsPressed(2)) + ';';
+		answer += "GamepadButton3Port:" + QString::number(mGamepad.buttonIsPressed(3)) + ';';
+		answer += "GamepadButton4Port:" + QString::number(mGamepad.buttonIsPressed(4)) + ';';
+		answer += "GamepadButton5Port:" + QString::number(mGamepad.buttonIsPressed(5)) + ';';
+		answer += "GamepadWheelPort:" + QString::number(mGamepad.wheel()) + ';';
+		answer += "GamepadConnectionIndicatorPort:" + QString::number(mGamepad.isConnected()) + ';';
+		answer += "GamepadPad1PressedPort:" + QString::number(mGamepad.isPadPressed(1)) + ';';
+		answer += "GamepadPad2PressedPort:" + QString::number(mGamepad.isPadPressed(2)) + ';';
+		answer += "GamepadPad1PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1)) + ';';
+		answer += "GamepadPad2PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2)) + ';';
 
-		answer += "Left=" + QString::number(mBrick.keys()->isPressed(105)) + ';';
-		answer += "Up=" + QString::number(mBrick.keys()->isPressed(103)) + ';';
-		answer += "Down=" + QString::number(mBrick.keys()->isPressed(108)) + ';';
-		answer += "Enter=" + QString::number(mBrick.keys()->isPressed(28)) + ';';
-		answer += "Right=" + QString::number(mBrick.keys()->isPressed(106)) + ';';
-		answer += "Power=" + QString::number(mBrick.keys()->isPressed(116)) + ';';
-		answer += "Esc=" + QString::number(mBrick.keys()->isPressed(1));
+		answer += "Left:" + QString::number(mBrick.keys()->isPressed(105)) + ';';
+		answer += "Up:" + QString::number(mBrick.keys()->isPressed(103)) + ';';
+		answer += "Down:" + QString::number(mBrick.keys()->isPressed(108)) + ';';
+		answer += "Enter:" + QString::number(mBrick.keys()->isPressed(28)) + ';';
+		answer += "Right:" + QString::number(mBrick.keys()->isPressed(106)) + ';';
+		answer += "Power:" + QString::number(mBrick.keys()->isPressed(116)) + ';';
+		answer += "Esc:" + QString::number(mBrick.keys()->isPressed(1));
 
 	} else if (command.startsWith(portsRequested)) {
 		answer = "ports:";
