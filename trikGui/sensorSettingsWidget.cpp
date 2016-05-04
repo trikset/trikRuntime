@@ -48,6 +48,9 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	mContinueButton.setAutoFillBackground(true);
 	mLayout.addWidget(&mContinueButton);
 
+	connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
+	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
+
 	setLayout(&mLayout);
 }
 
@@ -63,21 +66,21 @@ QString SensorSettingsWidget::menuEntry()
 
 void SensorSettingsWidget::renewFocus()
 {
-	const QColor buttonColor = QPalette().color(QPalette::Background);
-	QPalette palette;
-	palette.setColor(QPalette::Background, buttonColor);
-	palette.setColor(QPalette::Base, buttonColor);
-	palette.setColor(QPalette::Button, buttonColor);
-
-	mContinueButton.setPalette(palette);
 }
 
 void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
+		case Qt::Key_Up: {
+		focus();
+		break;
+	}
+	case Qt::Key_Down: {
+		focus();
+		break;
+	}
 	case Qt::Key_Return: {
 		mContinueButton.animateClick();
-		event->accept();
 		exit();
 		break;
 	}
@@ -85,6 +88,15 @@ void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 		TrikGuiDialog::keyPressEvent(event);
 		break;
 	}
+	}
+}
+
+void SensorSettingsWidget::focus()
+{
+	if (mLever->hasFocus()) {
+		mContinueButton.setFocus();
+	} else {
+		mLever->setFocus();
 	}
 }
 

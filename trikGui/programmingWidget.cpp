@@ -44,6 +44,12 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 	mRunButton.setAutoFillBackground(true);
 	mLayout.addWidget(&mRunButton);
 
+	connect(&mRunButton, SIGNAL(upPressed()), this, SLOT(focus()));
+	connect(&mRunButton, SIGNAL(downPressed()), this, SLOT(focus()));
+
+	connect(&mCommands, SIGNAL(upPressed()), this, SLOT(focus()));
+	connect(&mCommands, SIGNAL(downPressed()), this, SLOT(focus()));
+
 	setLayout(&mLayout);
 }
 
@@ -54,13 +60,6 @@ QString ProgrammingWidget::menuEntry()
 
 void ProgrammingWidget::renewFocus()
 {
-	const QColor buttonColor = QPalette().color(QPalette::Background);
-	QPalette palette;
-	palette.setColor(QPalette::Background, buttonColor);
-	palette.setColor(QPalette::Base, buttonColor);
-	palette.setColor(QPalette::Button, buttonColor);
-
-	mRunButton.setPalette(palette);
 	mCommands.setFocus();
 }
 
@@ -71,10 +70,19 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 		mController.abortExecution();
 		break;
 	}
+	case Qt::Key_Up: {
+		focus();
+		break;
+	}
+	case Qt::Key_Down: {
+		focus();
+		break;
+	}
 	case Qt::Key_Return: {
 		if (mCommands.hasFocus()) {
 			addCommand();
 		} else if (mRunButton.hasFocus()) {
+			mRunButton.animateClick();
 			QString temp = mScript;
 			temp.append(QString("    return;\n}"));
 			mController.runScript(temp);
@@ -98,7 +106,7 @@ void ProgrammingWidget::addCommand()
 	QString value(commandsListWidget.value());
 	mCommands.currentItem()->setText(value);
 
-	if (text == tr("< add command >")) {
+	if (text == tr("< add command >") && value != text) {
 		mEmptyCommandsCounter--;
 	}
 
@@ -106,5 +114,14 @@ void ProgrammingWidget::addCommand()
 		mCommands.addItem(tr("< add command >"));
 		mEmptyCommandsCounter++;
 		mScript.append(commandsListWidget.script());
+	}
+}
+
+void ProgrammingWidget::focus()
+{
+	if (mCommands.hasFocus()) {
+		mRunButton.setFocus();
+	} else {
+		mCommands.setFocus();
 	}
 }

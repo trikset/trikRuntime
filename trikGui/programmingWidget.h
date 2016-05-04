@@ -70,6 +70,9 @@ private slots:
 	/// Adds command to the execution list.
 	void addCommand();
 
+	/// Called by child widgets when they need to move input focus up or down.
+	void focus();
+
 private:
 	QLabel mTitle;
 	QVBoxLayout mLayout;

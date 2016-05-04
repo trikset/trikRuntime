@@ -35,7 +35,6 @@ CommandSettingsWidget::CommandSettingsWidget(const QString &title, const int dig
 	setLayout(&mLayout);
 
 	mContinueButton.setAutoFillBackground(true);
-	connect(&mContinueButton, SIGNAL(clicked()), this, SLOT(onContinueButtonClicked()));
 	connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
 	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
 
@@ -50,13 +49,6 @@ QString CommandSettingsWidget::menuEntry()
 
 void CommandSettingsWidget::renewFocus()
 {
-	const QColor buttonColor = QPalette().color(QPalette::Background);
-	QPalette palette;
-	palette.setColor(QPalette::Background, buttonColor);
-	palette.setColor(QPalette::Base, buttonColor);
-	palette.setColor(QPalette::Button, buttonColor);
-
-	mContinueButton.setPalette(palette);
 }
 
 void CommandSettingsWidget::keyPressEvent(QKeyEvent *event)
@@ -64,17 +56,14 @@ void CommandSettingsWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 	case Qt::Key_Up: {
 		focus();
-		event->accept();
 		break;
 	}
 	case Qt::Key_Down: {
 		focus();
-		event->accept();
 		break;
 	}
 	case Qt::Key_Return: {
 		mContinueButton.animateClick();
-		event->accept();
 		exit();
 		break;
 	}
