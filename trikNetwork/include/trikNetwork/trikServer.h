@@ -43,14 +43,15 @@ public:
 
 	~TrikServer() override;
 
-	/// Broadcasts message across all opened connections.
-	void sendMessage(const QString &message);
-
 	/// Returns number of connections currently opened.
 	int activeConnections() const;
 
 	/// Starts listening given port on all network interfaces.
 	Q_INVOKABLE void startServer(const int &port);
+
+public slots:
+	/// Broadcasts message across all opened connections.
+	void sendMessage(const QString &message);
 
 signals:
 	/// Emitted when we get the first connection established.

@@ -79,7 +79,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	}
 
 	QTextStream(stdout) << result << "\n";
-	engine->evaluate(QString("script.sendMessage(\"%1\");").arg(result));
+	engine->evaluate(QString("script.sendMessage(\"print: %1\");").arg(result));
 
 	return engine->toScriptValue(result);
 }
