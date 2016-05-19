@@ -40,13 +40,6 @@
 
 namespace trikGui {
 
-const std::string script =
-	"var __interpretation_started_timestamp__;\n"
-	"var pi = 3.14159265;\n\n"
-	"var main = function()\n"
-	"{\n"
-	"    __interpretation_started_timestamp__ = Date.now();\n";
-
 /// Widget which allows to write simple programs via the robot interface.
 class ProgrammingWidget : public TrikGuiDialog
 {
@@ -70,22 +63,25 @@ private slots:
 	/// Adds command to the execution list.
 	void addCommand();
 
-	/// Called by child widgets when they need to move input focus up or down.
-	void focus();
-
 private:
 	QLabel mTitle;
 	QVBoxLayout mLayout;
 	QListWidget mCommands;
 	Controller &mController;
 
-	ConnectButton mRunButton;
-
 	/// Counter of empty commands.
 	int mEmptyCommandsCounter;
 
-	/// Contains string with program for robot.
-	QString mScript;
+	/// Contais number of commands in the list.
+	int mCommandsCounter;
+
+	/// Contains string with main part of program for robot.
+	const QString mScript =
+		"var __interpretation_started_timestamp__;\n"
+		"var pi = 3.14159265;\n\n"
+		"var main = function()\n"
+		"{\n"
+		"    __interpretation_started_timestamp__ = Date.now();\n";
 };
 
 }

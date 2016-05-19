@@ -28,7 +28,7 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 	, mTitle(tr("Add commands to list"))
 	, mController(controller)
 	, mEmptyCommandsCounter(1)
-	, mScript(script.c_str())
+	, mCommandsCounter(1)
 {
 	mLayout.addWidget(&mTitle);
 
@@ -37,18 +37,9 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 		mCommands.model()->index(0, 0)
 		, QItemSelectionModel::ClearAndSelect
 	);
+	mCommands.addItem(tr("Run program"));
 	mCommands.setFocus();
 	mLayout.addWidget(&mCommands);
-
-	mRunButton.setText(tr("Run program"));
-	mRunButton.setAutoFillBackground(true);
-	mLayout.addWidget(&mRunButton);
-
-	connect(&mRunButton, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mRunButton, SIGNAL(downPressed()), this, SLOT(focus()));
-
-	connect(&mCommands, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mCommands, SIGNAL(downPressed()), this, SLOT(focus()));
 
 	setLayout(&mLayout);
 }
@@ -70,22 +61,16 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 		mController.abortExecution();
 		break;
 	}
-	case Qt::Key_Up: {
-		focus();
-		break;
-	}
-	case Qt::Key_Down: {
-		focus();
-		break;
-	}
 	case Qt::Key_Return: {
-		if (mCommands.hasFocus()) {
+		if (mCommands.currentItem()->text() == tr("Run program")) {
+			QString script = mScript;
+			for (int i = 0; i < mCommands.count(); ++i) {
+				script.append(mCommands.item(i)->whatsThis());
+			}
+			script.append(QString("    return;\n}"));
+			mController.runScript(script);
+		} else {
 			addCommand();
-		} else if (mRunButton.hasFocus()) {
-			mRunButton.animateClick();
-			QString temp = mScript;
-			temp.append(QString("    return;\n}"));
-			mController.runScript(temp);
 		}
 		break;
 	}
@@ -105,23 +90,16 @@ void ProgrammingWidget::addCommand()
 
 	QString value(commandsListWidget.value());
 	mCommands.currentItem()->setText(value);
+	mCommands.currentItem()->setWhatsThis(commandsListWidget.script());
 
 	if (text == tr("< add command >") && value != text) {
 		mEmptyCommandsCounter--;
 	}
 
 	if (mEmptyCommandsCounter == 0) {
-		mCommands.addItem(tr("< add command >"));
+		mCommands.item(mCommandsCounter)->setText(tr("< add command >"));
+		mCommands.addItem(tr("Run program"));
+		mCommandsCounter++;
 		mEmptyCommandsCounter++;
-		mScript.append(commandsListWidget.script());
-	}
-}
-
-void ProgrammingWidget::focus()
-{
-	if (mCommands.hasFocus()) {
-		mRunButton.setFocus();
-	} else {
-		mCommands.setFocus();
 	}
 }
