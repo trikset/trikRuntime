@@ -34,6 +34,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 {
 	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
+	connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
@@ -100,4 +101,13 @@ void TrikScriptRunner::onScriptStart(int scriptId)
 	} else {
 		emit startedDirectScript(scriptId);
 	}
+}
+
+
+void TrikScriptRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
+{
+	emit sendMessage(QString("mail: sender: %1 contents: %2")
+			.arg(QString::number(senderNumber))
+			.arg(message)
+	);
 }
