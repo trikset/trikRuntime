@@ -51,8 +51,9 @@ SystemConsoleInterface &StubHardwareAbstraction::systemConsole()
 	return *mSystemConsole.data();
 }
 
-EventFileInterface *StubHardwareAbstraction::createEventFile(const QString &fileName) const
+EventFileInterface *StubHardwareAbstraction::createEventFile(const QString &fileName, QThread &thread) const
 {
+	Q_UNUSED(thread)
 	return new StubEventFile(fileName);
 }
 

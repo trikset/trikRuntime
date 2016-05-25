@@ -32,7 +32,7 @@ public:
 	MspUsbInterface &mspUsb() override;
 	SystemConsoleInterface &systemConsole() override;
 
-	EventFileInterface *createEventFile(const QString &fileName) const override;
+	EventFileInterface *createEventFile(const QString &fileName, QThread &thread) const override;
 	FifoInterface *createFifo(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
