@@ -14,6 +14,7 @@
 
 #include "src/keysWorker.h"
 
+#include <QtCore/QThread>
 #include <QsLog.h>
 
 using namespace trikControl;
@@ -23,7 +24,7 @@ static const int evKey = 1;
 
 KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile(keysPath))
+	: mEventFile(hardwareAbstraction.createEventFile(keysPath, *QThread::currentThread()))
 	, mState(state)
 {
 	mState.start();

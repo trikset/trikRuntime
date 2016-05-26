@@ -14,6 +14,7 @@
 
 #include "src/rangeSensorWorker.h"
 
+#include <QtCore/QThread>
 #include <QsLog.h>
 
 static const int evSyn = 0;
@@ -66,7 +67,7 @@ void RangeSensorWorker::init()
 {
 	mState.start();
 
-	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
+	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName, *QThread::currentThread()));
 
 	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
 			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));

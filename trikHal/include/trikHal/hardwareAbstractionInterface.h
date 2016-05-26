@@ -41,7 +41,8 @@ public:
 
 	/// Creates new event file, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of an event file.
-	virtual EventFileInterface *createEventFile(const QString &fileName) const = 0;
+	/// @param thread - background thread where all socket events will be processed.
+	virtual EventFileInterface *createEventFile(const QString &fileName, QThread &thread) const = 0;
 
 	/// Creates new FIFO, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of a FIFO file.

@@ -39,8 +39,10 @@ public:
 	/// Constructor.
 	/// @param eventFile - device file for this sensor.
 	/// @param state - state of a device.
+	/// @param thread - background thread where all socket events will be processed.
 	VectorSensorWorker(const QString &eventFile, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+			, QThread &thread);
 
 signals:
 	/// Emitted when new sensor reading is ready.
