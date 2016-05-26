@@ -86,8 +86,8 @@ HEADERS += \
 	$$PWD/src/shapes/line.h \
 	$$PWD/src/shapes/rectangle.h \
 	$$PWD/src/shapes/arc.h \
-        $$PWD/src/audioSynthDevices.h \
-        $$PWD/src/tonePlayer.h
+	$$PWD/src/audioSynthDevices.h \
+	$$PWD/src/tonePlayer.h
 
 SOURCES += \
 	$$PWD/src/analogSensor.cpp \
@@ -134,8 +134,8 @@ SOURCES += \
 	$$PWD/src/shapes/line.cpp \
 	$$PWD/src/shapes/rectangle.cpp \
 	$$PWD/src/shapes/arc.cpp \
-        $$PWD/src/audioSynthDevices.cpp \
-        $$PWD/src/tonePlayer.cpp
+	$$PWD/src/audioSynthDevices.cpp \
+	$$PWD/src/tonePlayer.cpp
 
 CONFIGS += \
 	$$PWD/model-config-usb.xml \
