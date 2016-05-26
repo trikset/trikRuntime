@@ -84,7 +84,7 @@ public slots:
 
 	void playSound(const QString &soundFileName) override;
 
-    void playTone(int hzFreq, int msDuration);
+	void playTone(int hzFreq, int msDuration);
 
 	void say(const QString &text) override;
 
@@ -157,7 +157,7 @@ private:
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;
 	QScopedPointer<Led> mLed;
-    QScopedPointer<TonePlayer> mTonePlayer;
+	QScopedPointer<TonePlayer> mTonePlayer;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
