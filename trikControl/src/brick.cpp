@@ -44,6 +44,7 @@
 #include "rangeSensor.h"
 #include "servoMotor.h"
 #include "soundSensor.h"
+#include "tonePlayer.h"
 #include "vectorSensor.h"
 
 #include "mspBusAutoDetector.h"
@@ -71,6 +72,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		, const QString &modelConfig
 		, const QString &mediaPath)
 	: mHardwareAbstraction(hardwareAbstraction)
+    , mTonePlayer(new TonePlayer())
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
@@ -202,6 +204,24 @@ void Brick::playSound(const QString &soundFileName)
 	if (command.isEmpty() || mHardwareAbstraction->systemConsole().system(command) != 0) {
 		QLOG_ERROR() << "Play sound failed";
 	}
+}
+
+
+void Brick::playTone(int hzFreq, int msDuration)
+{
+    QLOG_INFO() << "Playing tone (" << hzFreq << "," << msDuration << ")";
+    if (msDuration < 0)
+        return;
+    if (msDuration < 10)
+        return;
+    //if (msDuration > 300)
+    //    return;
+    if (hzFreq > 8000)
+        return;
+    if (hzFreq <  20)
+        return;
+    //mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
+    mTonePlayer->play(hzFreq, msDuration);
 }
 
 void Brick::say(const QString &text)

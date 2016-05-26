@@ -47,6 +47,7 @@ class PowerMotor;
 class PwmCapture;
 class RangeSensor;
 class ServoMotor;
+class TonePlayer;
 class VectorSensor;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
@@ -82,6 +83,8 @@ public slots:
 	void configure(const QString &portName, const QString &deviceName) override;
 
 	void playSound(const QString &soundFileName) override;
+
+    void playTone(int hzFreq, int msDuration);
 
 	void say(const QString &text) override;
 
@@ -154,6 +157,7 @@ private:
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;
 	QScopedPointer<Led> mLed;
+    QScopedPointer<TonePlayer> mTonePlayer;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
