@@ -129,9 +129,10 @@ void StartWidget::launch()
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == ProgrammingWidget::menuEntry()) {
-			// ProgrammingWidget programmingWidget(mController);
-			// emit newWidget(programmingWidget);
-			mProgrammingWidget.show();
+			ProgrammingWidget programmingWidget(mController);
+			emit newWidget(programmingWidget);
+			result = programmingWidget.exec();
+			// mProgrammingWidget.show();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
 			emit newWidget(motorsWidget);
