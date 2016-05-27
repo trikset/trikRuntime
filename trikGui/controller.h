@@ -64,6 +64,9 @@ public:
 	/// Returns communicator connection status (whether or not both Telemetry and Communicator servers are connected).
 	bool communicatorConnectionStatus();
 
+	/// Returns gamepad connection status.
+	bool gamepadConnectionStatus();
+
 public slots:
 	/// Cancels execution of current program.
 	void abortExecution();

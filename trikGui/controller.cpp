@@ -131,6 +131,11 @@ bool Controller::communicatorConnectionStatus()
 	return mTelemetry->activeConnections() > 0 && mCommunicator->activeConnections() > 0;
 }
 
+bool Controller::gamepadConnectionStatus()
+{
+	return mGamepad->isConnected();
+}
+
 void Controller::updateCommunicatorStatus()
 {
 	emit communicatorStatusChanged(communicatorConnectionStatus());

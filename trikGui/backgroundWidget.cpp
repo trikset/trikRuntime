@@ -32,6 +32,7 @@ BackgroundWidget::BackgroundWidget(
 	, mController(configPath)
 	, mBatteryIndicator(mController.brick())
 	, mWiFiIndicator(mController)
+	, mGamepadIndicator(mController, mController.gamepadConnectionStatus())
 	, mMailboxIndicator("://resources/mailboxConnected.png", mController.mailbox()->isConnected())
 	, mCommunicatorIndicator("://resources/communicatorConnected.png", mController.communicatorConnectionStatus())
 	, mStartWidget(mController)
@@ -50,6 +51,7 @@ BackgroundWidget::BackgroundWidget(
 	mStatusBarLayout.addWidget(&mMailboxIndicator);
 	mStatusBarLayout.addWidget(&mCommunicatorIndicator);
 	mStatusBarLayout.addWidget(&mWiFiIndicator);
+	mStatusBarLayout.addWidget(&mGamepadIndicator);
 	addMainWidget(mStartWidget);
 	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(mController.brick().graphicsWidget()));
 	addLazyWidget(*mBrickDisplayWidgetWrapper);
