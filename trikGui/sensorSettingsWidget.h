@@ -75,6 +75,7 @@ private:
 	bool mIsEncoder;
 
 	SensorLever *mLever;  // Has ownership.
+	QLabel *mPowerLabel;  // Has ownership.
 
 	/// Button that returns to previous screen.
 	ConnectButton mContinueButton;

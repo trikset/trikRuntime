@@ -31,23 +31,22 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 	, mController(controller)
 	, mValue(name)
 {
-	const int commandsAmount = 11;
-	std::string cmd[commandsAmount] = {
-		"Play Tone"
-		, "Smile"
-		, "Sad Smile"
-		, "Timer"
-		, "Motor Forward"
-		, "Motor Backward"
-		, "Motors Stop"
-		, "Wait for Light"
-		, "Wait for Ultrasonic Distance"
-		, "Wait for Infrared Distance"
-		, "Wait for Encoder"};
+	QStringList cmd;
+	cmd << "Play Tone"
+		<< "Smile"
+		<< "Sad Smile"
+		<< "Timer"
+		<< "Motor Forward"
+		<< "Motor Backward"
+		<< "Motors Stop"
+		<< "Wait for Light"
+		<< "Wait for Ultrasonic Distance"
+		<< "Wait for Infrared Distance"
+		<< "Wait for Encoder";
 
-	for (int i = 0; i < commandsAmount; ++i) {
-		mCommands.addItem(tr(cmd[i].c_str()));
-		mCommands.item(i)->setData(Qt::UserRole, QString(cmd[i].c_str()));
+	for (int i = 0; i < cmd.size(); ++i) {
+		mCommands.addItem(tr(cmd.at(i).toLocal8Bit().constData()));
+		mCommands.item(i)->setData(Qt::UserRole, cmd.at(i));
 	}
 
 	mLayout.addWidget(&mTitle);

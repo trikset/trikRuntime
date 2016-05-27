@@ -92,7 +92,7 @@
     </message>
     <message>
         <source>&lt; add command &gt;</source>
-        <translation>&lt; новая команду &gt;</translation>
+        <translation>&lt; новая команда &gt;</translation>
     </message>
     <message>
         <source>Choose motors power (%): </source>
@@ -264,7 +264,7 @@
     </message>
     <message>
         <source>&lt; add command &gt;</source>
-        <translation>&lt; новая команду &gt;</translation>
+        <translation>&lt; новая команда &gt;</translation>
     </message>
     <message>
         <source>Run program</source>

@@ -73,7 +73,6 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 		} else {
 			addCommand();
 		}
-
 		break;
 	}
 	default: {

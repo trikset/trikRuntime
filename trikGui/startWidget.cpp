@@ -129,10 +129,15 @@ void StartWidget::launch()
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == ProgrammingWidget::menuEntry()) {
-			ProgrammingWidget programmingWidget(mController);
-			emit newWidget(programmingWidget);
-			result = programmingWidget.exec();
-			// mProgrammingWidget.show();
+			const auto keepProgramInMemoryWhenNotInProgrammingMode = false;
+			if (keepProgramInMemoryWhenNotInProgrammingMode) {
+				mProgrammingWidget.show();
+			} else {
+				ProgrammingWidget programmingWidget(mController);
+				emit newWidget(programmingWidget);
+				result = programmingWidget.exec();
+			}
+
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
 			emit newWidget(motorsWidget);

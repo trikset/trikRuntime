@@ -32,13 +32,12 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	, mPort(port)
 	, mIsEncoder(isEncoder)
 {
-	QLabel* powerLabel = new QLabel(tr("Select distance:\n"));
-	if (isEncoder) {
-		powerLabel = new QLabel(tr("Select tacho limit:\n"));
-	}
-	powerLabel->setAlignment(Qt::AlignTop);
-	powerLabel->setMaximumHeight(20);
-	mLayout.addWidget(powerLabel);
+	isEncoder ? mPowerLabel = new QLabel(tr("Select tacho limit:\n"))
+		: mPowerLabel = new QLabel(tr("Select distance:\n"));
+
+	mPowerLabel->setAlignment(Qt::AlignTop);
+	mPowerLabel->setMaximumHeight(20);
+	mLayout.addWidget(mPowerLabel);
 
 	mLever = new SensorLever(mPort, this);
 	mLever->setMaximumHeight(50);
@@ -57,6 +56,7 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 SensorSettingsWidget::~SensorSettingsWidget()
 {
 	delete(mLever);
+	delete(mPowerLabel);
 }
 
 QString SensorSettingsWidget::menuEntry()
