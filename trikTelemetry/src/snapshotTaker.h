@@ -26,7 +26,7 @@
 
 namespace trikTelemetry {
 
-/// Provides an opportunity to get a png snapshot of framebuffer.
+/// Provides a possibility to get a png snapshot of framebuffer.
 class SnapshotTaker
 {
 
