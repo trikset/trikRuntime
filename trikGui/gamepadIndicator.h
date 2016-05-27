@@ -47,7 +47,7 @@ public slots:
 	/// Requests connection info from the controller and updates the status.
 	void updateStatus();
 
-	///Updates the status according to connected parameters.
+	/// Updates the status according to connected parameters.
 	void connected(bool connected);
 
 private:
