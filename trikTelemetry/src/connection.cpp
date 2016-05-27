@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2014 - 2016 CyberTech Labs Ltd., Grigorii Zimin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 #include "connection.h"
 
 #include "QsLog.h"
+
+#include <QStringBuilder>
 
 using namespace trikTelemetry;
 
@@ -67,28 +69,30 @@ void Connection::processData(const QByteArray &data)
 					.arg(mBrick.encoder(port)->readRawData());
 		}
 
-		answer += "AccelerometerPort:" + serializeVector(mBrick.accelerometer()->read()) + ";";
-		answer += "GyroscopePort:" + serializeVector(mBrick.gyroscope()->read())+ ";";
+		const QString semicolon = ";";
 
-		answer += "GamepadButton1Port:" + QString::number(mGamepad.buttonIsPressed(1)) + ';';
-		answer += "GamepadButton2Port:" + QString::number(mGamepad.buttonIsPressed(2)) + ';';
-		answer += "GamepadButton3Port:" + QString::number(mGamepad.buttonIsPressed(3)) + ';';
-		answer += "GamepadButton4Port:" + QString::number(mGamepad.buttonIsPressed(4)) + ';';
-		answer += "GamepadButton5Port:" + QString::number(mGamepad.buttonIsPressed(5)) + ';';
-		answer += "GamepadWheelPort:" + QString::number(mGamepad.wheel()) + ';';
-		answer += "GamepadConnectionIndicatorPort:" + QString::number(mGamepad.isConnected()) + ';';
-		answer += "GamepadPad1PressedPort:" + QString::number(mGamepad.isPadPressed(1)) + ';';
-		answer += "GamepadPad2PressedPort:" + QString::number(mGamepad.isPadPressed(2)) + ';';
-		answer += "GamepadPad1PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1)) + ';';
-		answer += "GamepadPad2PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2)) + ';';
+		answer += QString("AccelerometerPort:") % serializeVector(mBrick.accelerometer()->read()) % semicolon
+				% "GyroscopePort:" % serializeVector(mBrick.gyroscope()->read()) % semicolon
 
-		answer += "Left:" + QString::number(mBrick.keys()->isPressed(105)) + ';';
-		answer += "Up:" + QString::number(mBrick.keys()->isPressed(103)) + ';';
-		answer += "Down:" + QString::number(mBrick.keys()->isPressed(108)) + ';';
-		answer += "Enter:" + QString::number(mBrick.keys()->isPressed(28)) + ';';
-		answer += "Right:" + QString::number(mBrick.keys()->isPressed(106)) + ';';
-		answer += "Power:" + QString::number(mBrick.keys()->isPressed(116)) + ';';
-		answer += "Esc:" + QString::number(mBrick.keys()->isPressed(1));
+				% "GamepadButton1Port:" + QString::number(mGamepad.buttonIsPressed(1)) % semicolon
+				% "GamepadButton2Port:" + QString::number(mGamepad.buttonIsPressed(2)) % semicolon
+				% "GamepadButton3Port:" + QString::number(mGamepad.buttonIsPressed(3)) % semicolon
+				% "GamepadButton4Port:" + QString::number(mGamepad.buttonIsPressed(4)) % semicolon
+				% "GamepadButton5Port:" + QString::number(mGamepad.buttonIsPressed(5)) % semicolon
+				% "GamepadWheelPort:" + QString::number(mGamepad.wheel()) % semicolon
+				% "GamepadConnectionIndicatorPort:" + QString::number(mGamepad.isConnected()) % semicolon
+				% "GamepadPad1PressedPort:" + QString::number(mGamepad.isPadPressed(1)) % semicolon
+				% "GamepadPad2PressedPort:" + QString::number(mGamepad.isPadPressed(2)) % semicolon
+				% "GamepadPad1PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1)) % semicolon
+				% "GamepadPad2PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2)) % semicolon
+
+		% "Left:" + QString::number(mBrick.keys()->isPressed(105)) % semicolon
+		% "Up:" + QString::number(mBrick.keys()->isPressed(103)) % semicolon
+		% "Down:" + QString::number(mBrick.keys()->isPressed(108)) % semicolon
+		% "Enter:" + QString::number(mBrick.keys()->isPressed(28)) % semicolon
+		% "Right:" + QString::number(mBrick.keys()->isPressed(106)) % semicolon
+		% "Power:" + QString::number(mBrick.keys()->isPressed(116)) % semicolon
+		% "Esc:" + QString::number(mBrick.keys()->isPressed(1));
 
 	} else if (command.startsWith(portsRequested)) {
 		answer = "ports:";

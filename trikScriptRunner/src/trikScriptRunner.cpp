@@ -107,7 +107,7 @@ void TrikScriptRunner::onScriptStart(int scriptId)
 void TrikScriptRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
 {
 	emit sendMessage(QString("mail: sender: %1 contents: %2")
-			.arg(QString::number(senderNumber))
+			.arg(senderNumber)
 			.arg(message)
 	);
 }
