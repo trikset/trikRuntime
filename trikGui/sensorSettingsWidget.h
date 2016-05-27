@@ -55,7 +55,7 @@ public:
 
 	void renewFocus() override;
 
-	/// Adds new command to script.
+	/// Generates new command for script and returns it.
 	QString createScript();
 
 	/// Destructor.

@@ -46,7 +46,7 @@ public:
 	/// @param title - information for user in the top of the page.
 	/// @param digits - amount of digits which selector should show.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit CommandSettingsWidget(const QString &title, const int digits, QWidget *parent = 0);
+	CommandSettingsWidget(const QString &title, const int digits, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -54,7 +54,7 @@ public:
 	void renewFocus() override;
 
 	/// Returns value of selector.
-	int value();
+	int value() const;
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

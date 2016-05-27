@@ -52,8 +52,8 @@ HEADERS += \
 	$$PWD/commandSettingsWidget.h \
 	$$PWD/commandsListWidget.h \
 	$$PWD/programmingWidget.h \
-    sensorSettingsWidget.h \
-    sensorLever.h
+	$$PWD/sensorSettingsWidget.h \
+	$$PWD/sensorLever.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -91,8 +91,8 @@ SOURCES += \
 	$$PWD/commandSettingsWidget.cpp \
 	$$PWD/commandsListWidget.cpp \
 	$$PWD/programmingWidget.cpp \
-    sensorSettingsWidget.cpp \
-    sensorLever.cpp
+	$$PWD/sensorSettingsWidget.cpp \
+	$$PWD/sensorLever.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

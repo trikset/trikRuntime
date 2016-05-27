@@ -29,7 +29,6 @@
 
 #include "fileManagerWidget.h"
 #include "wiFiModeWidget.h"
-#include "programmingWidget.h"
 #include "motorsWidget.h"
 #include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
@@ -46,6 +45,7 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	: MainWidget(parent)
 	, mController(controller)
 	, mFileManagerRoot(MainWidget::FileManagerRootType::scriptsDir)
+	, mProgrammingWidget(controller)
 {
 	mTitleLabel.setText(tr("TRIK"));
 
@@ -129,9 +129,9 @@ void StartWidget::launch()
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == ProgrammingWidget::menuEntry()) {
-			ProgrammingWidget programmingWidget(mController);
-			emit newWidget(programmingWidget);
-			result = programmingWidget.exec();
+			// ProgrammingWidget programmingWidget(mController);
+			// emit newWidget(programmingWidget);
+			mProgrammingWidget.show();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
 			emit newWidget(motorsWidget);
@@ -140,6 +140,7 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
+
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::analogSensor))
 		{

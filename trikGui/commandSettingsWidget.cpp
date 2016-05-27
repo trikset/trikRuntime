@@ -74,16 +74,13 @@ void CommandSettingsWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-int CommandSettingsWidget::value()
+int CommandSettingsWidget::value() const
 {
 	return mValueSelector.value();
 }
 
 void CommandSettingsWidget::focus()
 {
-	if (mValueSelector.hasFocusInside()) {
-		mContinueButton.setFocus();
-	} else {
-		mValueSelector.setFocus();
-	}
+	mValueSelector.hasFocusInside() ?
+		mContinueButton.setFocus() : mValueSelector.setFocus();
 }

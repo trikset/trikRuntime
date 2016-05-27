@@ -29,7 +29,7 @@ using namespace trikGui;
 
 SensorLever::SensorLever(const QString &port, QWidget *parent)
 	: QWidget(parent)
-	, mIsGrater(true)
+	, mIsGreater(true)
 	, mMaxDistance(100)
 	, mMinDistance(0)
 	, mDistanceStep(5)
@@ -95,24 +95,20 @@ void SensorLever::paintEvent(QPaintEvent *)
 	}
 }
 
-void SensorLever::setDistance(int Distance)
+void SensorLever::setDistance(int distance)
 {
-	if (Distance > mMaxDistance || Distance < mMinDistance) {
+	if (distance > mMaxDistance || distance < mMinDistance) {
 		return;
 	}
 
-	mDistance = Distance;
-	mDistanceBar.setValue(Distance);
+	mDistance = distance;
+	mDistanceBar.setValue(distance);
 }
 
 void SensorLever::changeSign()
 {
-	mIsGrater = !mIsGrater;
-	if (mIsGrater) {
-		mSignLabel.setText(tr(">"));
-	} else {
-		mSignLabel.setText(tr("<"));
-	}
+	mIsGreater = !mIsGreater;
+	mIsGreater ? mSignLabel.setText(tr(">")) : mSignLabel.setText(tr("<"));
 }
 
 int SensorLever::distance()
@@ -122,5 +118,5 @@ int SensorLever::distance()
 
 bool SensorLever::isGrater()
 {
-	return mIsGrater;
+	return mIsGreater;
 }

@@ -30,19 +30,25 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 	, mTitle(tr("Choose command:"))
 	, mController(controller)
 	, mValue(name)
-	, mScript("")
 {
-	mCommands.addItem(tr("Play Tone"));
-	mCommands.addItem(tr("Smile"));
-	mCommands.addItem(tr("Sad Smile"));
-	mCommands.addItem(tr("Timer"));
-	mCommands.addItem(tr("Motor Forward"));
-	mCommands.addItem(tr("Motor Backward"));
-	mCommands.addItem(tr("Motors Stop"));
-	mCommands.addItem(tr("Wait for Light"));
-	mCommands.addItem(tr("Wait for Ultrasonic Distance"));
-	mCommands.addItem(tr("Wait for Infrared Distance"));
-	mCommands.addItem(tr("Wait for Encoder"));
+	const int commandsAmount = 11;
+	std::string cmd[commandsAmount] = {
+		"Play Tone"
+		, "Smile"
+		, "Sad Smile"
+		, "Timer"
+		, "Motor Forward"
+		, "Motor Backward"
+		, "Motors Stop"
+		, "Wait for Light"
+		, "Wait for Ultrasonic Distance"
+		, "Wait for Infrared Distance"
+		, "Wait for Encoder"};
+
+	for (int i = 0; i < commandsAmount; ++i) {
+		mCommands.addItem(tr(cmd[i].c_str()));
+		mCommands.item(i)->setData(Qt::UserRole, QString(cmd[i].c_str()));
+	}
 
 	mLayout.addWidget(&mTitle);
 	mLayout.addWidget(&mCommands);
@@ -69,19 +75,19 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 	case Qt::Key_Return: {
-		if (mCommands.currentItem()->text() == tr("Play Tone")) {
+		if (mCommands.currentItem()->data(Qt::UserRole) == QString("Play Tone")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.playSound(\"media/beep.wav\");\n");
 
-		} else if (mCommands.currentItem()->text() == tr("Smile")) {
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Smile")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.smile();\n");
 
-		} else if (mCommands.currentItem()->text() == tr("Sad Smile")) {
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Sad Smile")) {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.sadSmile();\n");
 
-		} else if (mCommands.currentItem()->text() == tr("Timer")) {
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Timer")) {
 			QString title(tr("Choose waiting time (ms):"));
 			CommandSettingsWidget commandSettingsWidget(title, 5);
 			emit newWidget(commandSettingsWidget);
@@ -91,25 +97,29 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 			mValue = tr("Delay %1 ms").arg(value);
 			mScript = QString("    script.wait(%1);\n").arg(value);
 
-		} else if (mCommands.currentItem()->text() == tr("Motors Stop")) {
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Motors Stop")) {
 			mValue = mCommands.currentItem()->text();
-			mScript = QString("");
+			mScript = QString();
 
 			for (int i = 0; i < 4; ++i) {
 				mScript.append(QString("    brick.motor(M%1).powerOff();\n").arg(i + 1));
 			}
 
-		} else if (mCommands.currentItem()->text().startsWith(tr("Motor"))) {
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Motor Forward")
+				|| mCommands.currentItem()->data(Qt::UserRole) == QString("Motor Backward")) {
 			motorBehaviour();
 
-		} else if (mCommands.currentItem()->text().startsWith(tr("Wait"))) {
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Wait for Light")
+				|| mCommands.currentItem()->data(Qt::UserRole) == QString("Wait for Ultrasonic Distance")
+				|| mCommands.currentItem()->data(Qt::UserRole) == QString("Wait for Infrared Distance")
+				|| mCommands.currentItem()->data(Qt::UserRole) == QString("Wait for Encoder")) {
 			QString port("A1");
 			bool isEncoder = false;
 
-			if (mCommands.currentItem()->text() == tr("Wait for Ultrasonic Distance")) {
+			if (mCommands.currentItem()->data(Qt::UserRole) == QString("Wait for Ultrasonic Distance")) {
 				port = "D1";
-			} else if (mCommands.currentItem()->text() == tr("Wait for Encoder")) {
-				port = "B1";
+			} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Wait for Encoder")) {
+				port = "E1";
 				isEncoder = true;
 			}
 
@@ -123,6 +133,7 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 		} else {
 			mValue = tr("< add command >");
 		}
+
 		exit();
 		break;
 	}
@@ -153,11 +164,11 @@ void CommandsListWidget::motorBehaviour()
 	mValue = mCommands.currentItem()->text();
 
 	int data = commandSettingsWidget.value();
-	if (mCommands.currentItem()->text() == tr("Motor Backward")) {
+	if (mCommands.currentItem()->data(Qt::UserRole) == QString("Motor Backward")) {
 		data *= -1;
 	}
 
-	mScript = QString("");
+	mScript = QString();
 
 	for (int i = 0; i < 4; ++i) {
 		mScript.append(QString("    brick.motor(M%1).setPower(%2);\n").arg(i + 1).arg(data));

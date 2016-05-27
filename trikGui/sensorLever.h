@@ -63,7 +63,7 @@ private slots:
 	void changeSign();
 
 private:
-	bool mIsGrater;
+	bool mIsGreater;
 	const int mMaxDistance;
 	const int mMinDistance;
 	const int mDistanceStep;
