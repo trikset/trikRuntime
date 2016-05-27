@@ -19,10 +19,12 @@ PUBLIC_HEADERS += \
 
 HEADERS += \
 	$$PWD/src/connection.h \
+	$$PWD/src/snapshotTaker.h \
 
 SOURCES += \
 	$$PWD/src/trikTelemetry.cpp \
 	$$PWD/src/connection.cpp \
+	$$PWD/src/snapshotTaker.cpp \
 
 TEMPLATE = lib
 

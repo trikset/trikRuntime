@@ -14,6 +14,8 @@
 
 #include "connection.h"
 
+#include "snapshotTaker.h"
+
 #include "QsLog.h"
 
 using namespace trikTelemetry;
@@ -36,6 +38,7 @@ void Connection::processData(const QByteArray &data)
 	const QString accelerometerRequested("AccelerometerPort");
 	const QString gyroscopeRequested("GyroscopePort");
 	const QString gamepadRequested("Gamepad");
+	const QString snapshotRequested("takeSnapshot");
 
 	QString answer;
 
@@ -127,6 +130,24 @@ void Connection::processData(const QByteArray &data)
 			command.remove(0, buttonRequested.length());
 			answer = "sensor:" + command + ":" + (isButtonPressed(command) ? "1" : "0");
 		}
+	} else if (command.startsWith(snapshotRequested)) {
+		char *bp = static_cast<char *>(malloc(1024 * 100 / 7));
+		size_t *size = (size_t*) malloc(sizeof(size_t));
+
+		SnapshotTaker abc = SnapshotTaker();
+		if (!abc.takeSnapshot(&bp, size)) {
+			free(bp);
+			free(size);
+			return;
+		}
+
+		QByteArray snapshot = QByteArray(bp, (int)*size);
+
+		send(QByteArray("snapshot:").append(snapshot.toBase64().constData()));
+
+		free(bp);
+		free(size);
+		return;
 	}
 
 	send(answer.toUtf8());
