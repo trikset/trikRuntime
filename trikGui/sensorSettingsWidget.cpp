@@ -108,7 +108,7 @@ QString SensorSettingsWidget::createScript()
 	}
 
 	QString sign(">");
-	if (!mLever->isGrater()) {
+	if (!mLever->isGreater()) {
 		sign = "<";
 	}
 	return QString("    while (!(brick.%1(%2).read() %3 %4)) {\n"

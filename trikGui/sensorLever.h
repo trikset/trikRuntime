@@ -47,7 +47,7 @@ public:
 	int distance();
 
 	/// Returns sign of command.
-	bool isGrater();
+	bool isGreater();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

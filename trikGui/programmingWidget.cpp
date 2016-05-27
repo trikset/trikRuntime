@@ -69,9 +69,11 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 			}
 			script.append(QString("    return;\n}"));
 			mController.runScript(script);
+			close();
 		} else {
 			addCommand();
 		}
+
 		break;
 	}
 	default: {
@@ -83,23 +85,23 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 
 void ProgrammingWidget::addCommand()
 {
-	QString text(mCommands.currentItem()->text());
+	const QString text(mCommands.currentItem()->text());
 	CommandsListWidget commandsListWidget(mController, text);
 	emit newWidget(commandsListWidget);
 	commandsListWidget.exec();
 
-	QString value(commandsListWidget.value());
+	const QString value(commandsListWidget.value());
 	mCommands.currentItem()->setText(value);
 	mCommands.currentItem()->setWhatsThis(commandsListWidget.script());
 
 	if (text == tr("< add command >") && value != text) {
-		mEmptyCommandsCounter--;
+		--mEmptyCommandsCounter;
 	}
 
 	if (mEmptyCommandsCounter == 0) {
 		mCommands.item(mCommandsCounter)->setText(tr("< add command >"));
 		mCommands.addItem(tr("Run program"));
-		mCommandsCounter++;
-		mEmptyCommandsCounter++;
+		++mCommandsCounter;
+		++mEmptyCommandsCounter;
 	}
 }

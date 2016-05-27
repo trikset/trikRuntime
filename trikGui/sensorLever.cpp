@@ -116,7 +116,7 @@ int SensorLever::distance()
 	return mDistance;
 }
 
-bool SensorLever::isGrater()
+bool SensorLever::isGreater()
 {
 	return mIsGreater;
 }
