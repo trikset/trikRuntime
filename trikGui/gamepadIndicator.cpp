@@ -31,8 +31,8 @@ GamepadIndicator::GamepadIndicator(Controller &controller, bool status, QWidget 
 
 void GamepadIndicator::setOn()
 {
-		QPixmap icon("://resources/gamepad_on.png");
-		setPixmap(icon);
+	QPixmap icon("://resources/gamepad_on.png");
+	setPixmap(icon);
 }
 
 void GamepadIndicator::setOff()
