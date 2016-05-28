@@ -49,6 +49,8 @@ Controller::Controller(const QString &configPath)
 			, correctedConfigPath + "model-config.xml");
 
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
+	connect(mGamepad.data(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
+
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox.data(), mGamepad.data()));

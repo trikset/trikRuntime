@@ -23,6 +23,7 @@ GamepadIndicator::GamepadIndicator(Controller &controller, bool status, QWidget 
 	, mController(controller)
 {
 	status ? setOn() : setOff();
+	connect(&mController, SIGNAL(gamepadDisconnected()), this, SLOT(setOff()));
 
 	updateStatus();
 	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateStatus()));

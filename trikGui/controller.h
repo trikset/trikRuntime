@@ -91,6 +91,9 @@ signals:
 	/// clutter from videosensors.
 	void brickStopped();
 
+	/// Emitted when a robot is disconnected to a gamepad.
+	void gamepadDisconnected();
+
 	/// Emitted when a robot is connected to a network.
 	void wiFiConnected();
 
