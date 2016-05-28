@@ -58,9 +58,6 @@ public:
 	/// Generates new command for script and returns it.
 	QString createScript();
 
-	/// Destructor.
-	~SensorSettingsWidget();
-
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
@@ -73,9 +70,9 @@ private:
 	QVBoxLayout mLayout;
 	QString mPort;
 	bool mIsEncoder;
+	QLabel mPowerLabel;
 
-	SensorLever *mLever;  // Has ownership.
-	QLabel *mPowerLabel;  // Has ownership.
+	QSharedPointer<SensorLever> mLever;
 
 	/// Button that returns to previous screen.
 	ConnectButton mContinueButton;

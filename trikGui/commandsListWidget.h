@@ -45,7 +45,7 @@ public:
 	/// @param controller - reference to controller object which provides access to low-level functionality.
 	/// @param name - name of command which was specified before.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	explicit CommandsListWidget(Controller &controller, const QString &name, QWidget *parent = 0);
+	CommandsListWidget(Controller &controller, const QString &name, QWidget *parent = 0);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -62,7 +62,7 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
-	/// Defines behaviour for command "Motor Forward".
+	/// Defines behaviour for commands "Motor Forward" and "Motor Backward".
 	void motorBehaviour();
 
 private:

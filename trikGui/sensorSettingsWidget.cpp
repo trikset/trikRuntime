@@ -31,17 +31,15 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	: TrikGuiDialog(parent)
 	, mPort(port)
 	, mIsEncoder(isEncoder)
+	, mPowerLabel(isEncoder ? tr("Select tacho limit:\n") : tr("Select distance:\n"))
 {
-	isEncoder ? mPowerLabel = new QLabel(tr("Select tacho limit:\n"))
-		: mPowerLabel = new QLabel(tr("Select distance:\n"));
+	mPowerLabel.setAlignment(Qt::AlignTop);
+	mPowerLabel.setMaximumHeight(20);
+	mLayout.addWidget(&mPowerLabel);
 
-	mPowerLabel->setAlignment(Qt::AlignTop);
-	mPowerLabel->setMaximumHeight(20);
-	mLayout.addWidget(mPowerLabel);
-
-	mLever = new SensorLever(mPort, this);
-	mLever->setMaximumHeight(50);
-	mLayout.addWidget(mLever);
+	mLever = QSharedPointer<SensorLever>(new SensorLever(mPort, this));
+	mLever.data()->setMaximumHeight(50);
+	mLayout.addWidget(mLever.data());
 
 	mContinueButton.setText(tr("Continue"));
 	mContinueButton.setAutoFillBackground(true);
@@ -51,12 +49,6 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
 
 	setLayout(&mLayout);
-}
-
-SensorSettingsWidget::~SensorSettingsWidget()
-{
-	delete(mLever);
-	delete(mPowerLabel);
 }
 
 QString SensorSettingsWidget::menuEntry()
@@ -71,7 +63,7 @@ void SensorSettingsWidget::renewFocus()
 void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Up: {
+	case Qt::Key_Up: {
 		focus();
 		break;
 	}
@@ -93,11 +85,7 @@ void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 void SensorSettingsWidget::focus()
 {
-	if (mLever->hasFocus()) {
-		mContinueButton.setFocus();
-	} else {
-		mLever->setFocus();
-	}
+	mLever->hasFocus() ? mContinueButton.setFocus() : mLever->setFocus();
 }
 
 QString SensorSettingsWidget::createScript()
@@ -111,6 +99,7 @@ QString SensorSettingsWidget::createScript()
 	if (!mLever->isGreater()) {
 		sign = "<";
 	}
+
 	return QString("    while (!(brick.%1(%2).read() %3 %4)) {\n"
 		"        script.wait(10);\n    }\n").arg(name).arg(mPort).arg(sign).arg(mLever->distance());
 }

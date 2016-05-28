@@ -38,6 +38,7 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 		, QItemSelectionModel::ClearAndSelect
 	);
 	mCommands.addItem(tr("Run program"));
+	mCommands.item(1)->setData(Qt::UserRole, QString("Run program"));
 	mCommands.setFocus();
 	mLayout.addWidget(&mCommands);
 
@@ -62,14 +63,16 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	}
 	case Qt::Key_Return: {
-		if (mCommands.currentItem()->text() == tr("Run program")) {
+		if (mCommands.currentItem()->data(Qt::UserRole) == QString("Run program")) {
 			QString script = mScript;
 			for (int i = 0; i < mCommands.count(); ++i) {
 				script.append(mCommands.item(i)->whatsThis());
 			}
+
 			script.append(QString("    return;\n}"));
 			mController.runScript(script);
 			close();
+
 		} else {
 			addCommand();
 		}
@@ -93,14 +96,16 @@ void ProgrammingWidget::addCommand()
 	mCommands.currentItem()->setText(value);
 	mCommands.currentItem()->setWhatsThis(commandsListWidget.script());
 
-	if (text == tr("< add command >") && value != text) {
+	if (text.startsWith("<") && value != text) {
 		--mEmptyCommandsCounter;
 	}
 
 	if (mEmptyCommandsCounter == 0) {
 		mCommands.item(mCommandsCounter)->setText(tr("< add command >"));
 		mCommands.addItem(tr("Run program"));
+		mCommands.item(mCommandsCounter)->setData(Qt::UserRole, QString());
 		++mCommandsCounter;
+		mCommands.item(mCommandsCounter)->setData(Qt::UserRole, QString("Run program"));
 		++mEmptyCommandsCounter;
 	}
 }
