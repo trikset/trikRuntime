@@ -84,11 +84,11 @@
     </message>
     <message>
         <source>Motor</source>
-        <translation>Мотор</translation>
+        <translation type="obsolete">Мотор</translation>
     </message>
     <message>
         <source>Wait</source>
-        <translation>Ждать</translation>
+        <translation type="obsolete">Ждать</translation>
     </message>
     <message>
         <source>&lt; add command &gt;</source>
@@ -273,6 +273,10 @@
     <message>
         <source>Programming</source>
         <translation>Программирование</translation>
+    </message>
+    <message>
+        <source>Clear list</source>
+        <translation>Очистить список</translation>
     </message>
 </context>
 <context>

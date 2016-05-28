@@ -40,7 +40,6 @@
 #include "wiFiModeWidget.h"
 #include "mainWidget.h"
 #include "controller.h"
-#include "programmingWidget.h"
 
 namespace trikGui {
 
@@ -82,9 +81,6 @@ private:
 
 	/// Stores index of item which was selected in a submenu after a last visit.
 	QMap<QPersistentModelIndex, QPersistentModelIndex> mSelections;
-
-	/// Contains instance of programming widget.
-	ProgrammingWidget mProgrammingWidget;
 };
 
 }

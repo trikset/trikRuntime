@@ -19,6 +19,7 @@
 #include <trikKernel/paths.h>
 #include <QsLog.h>
 
+#include "scriptHolder.h"
 #include "commandsListWidget.h"
 
 using namespace trikGui;
@@ -28,9 +29,14 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 	, mTitle(tr("Add commands to list"))
 	, mController(controller)
 	, mEmptyCommandsCounter(1)
-	, mCommandsCounter(1)
 {
 	mLayout.addWidget(&mTitle);
+
+	ScriptHolder* holder = ScriptHolder::instance();
+	for (int i = 0; i < holder->titles.length(); ++i) {
+		mCommands.addItem(tr(holder->titles.at(i).toLocal8Bit().constData()));
+		mCommands.item(i)->setData(Qt::UserRole, holder->data.at(i));
+	}
 
 	mCommands.addItem(tr("< add command >"));
 	mCommands.selectionModel()->select(
@@ -38,7 +44,9 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 		, QItemSelectionModel::ClearAndSelect
 	);
 	mCommands.addItem(tr("Run program"));
-	mCommands.item(1)->setData(Qt::UserRole, QString("Run program"));
+	mCommands.item(mCommands.count() - 1)->setData(Qt::UserRole, QString("Run program"));
+	mCommands.addItem(tr("Clear list"));
+	mCommands.item(mCommands.count() - 1)->setData(Qt::UserRole, QString("Clear list"));
 	mCommands.setFocus();
 	mLayout.addWidget(&mCommands);
 
@@ -57,21 +65,38 @@ void ProgrammingWidget::renewFocus()
 
 void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 {
+	ScriptHolder* holder = ScriptHolder::instance();
+
 	switch (event->key()) {
 	case Qt::Key_PowerDown: {
 		mController.abortExecution();
 		break;
 	}
+	case Qt::Key_Escape: {
+		holder->titles.clear();
+		holder->data.clear();
+		for (int i = 0; i < mCommands.count() - 3; ++i) {
+			holder->titles.push_back(mCommands.item(i)->text());
+			holder->data.push_back(mCommands.item(i)->data(Qt::UserRole).toString());
+		}
+		goHome();
+		break;
+	}
 	case Qt::Key_Return: {
 		if (mCommands.currentItem()->data(Qt::UserRole) == QString("Run program")) {
 			QString script = mScript;
-			for (int i = 0; i < mCommands.count(); ++i) {
-				script.append(mCommands.item(i)->whatsThis());
+			for (int i = 0; i < mCommands.count() - 2; ++i) {
+				script.append((mCommands.item(i)->data(Qt::UserRole)).toString());
 			}
 
 			script.append(QString("    return;\n}"));
 			mController.runScript(script);
 			close();
+
+		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Clear list")) {
+			holder->titles.clear();
+			holder->data.clear();
+			goHome();
 
 		} else {
 			addCommand();
@@ -94,18 +119,19 @@ void ProgrammingWidget::addCommand()
 
 	const QString value(commandsListWidget.value());
 	mCommands.currentItem()->setText(value);
-	mCommands.currentItem()->setWhatsThis(commandsListWidget.script());
+	mCommands.currentItem()->setData(Qt::UserRole, commandsListWidget.script());
 
 	if (text.startsWith("<") && value != text) {
 		--mEmptyCommandsCounter;
 	}
 
 	if (mEmptyCommandsCounter == 0) {
-		mCommands.item(mCommandsCounter)->setText(tr("< add command >"));
-		mCommands.addItem(tr("Run program"));
-		mCommands.item(mCommandsCounter)->setData(Qt::UserRole, QString());
-		++mCommandsCounter;
-		mCommands.item(mCommandsCounter)->setData(Qt::UserRole, QString("Run program"));
+		mCommands.item(mCommands.count() - 2)->setText(tr("< add command >"));
+		mCommands.item(mCommands.count() - 2)->setData(Qt::UserRole, QString());
+		mCommands.item(mCommands.count() - 1)->setText(tr("Run program"));
+		mCommands.item(mCommands.count() - 1)->setData(Qt::UserRole, QString("Run program"));
+		mCommands.addItem(tr("Clear list"));
+		mCommands.item(mCommands.count() - 1)->setData(Qt::UserRole, QString("Clear list"));
 		++mEmptyCommandsCounter;
 	}
 }

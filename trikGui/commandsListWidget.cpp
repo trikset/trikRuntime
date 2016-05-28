@@ -103,8 +103,8 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 			mValue = mCommands.currentItem()->text();
 			mScript = QString();
 
-			for (int i = 0; i < 4; ++i) {
-				mScript.append(QString("    brick.motor(M%1).powerOff();\n").arg(i + 1));
+			for (int i = 1; i < 5; ++i) {
+				mScript.append(QString("    brick.motor(M%1).powerOff();\n").arg(i));
 			}
 
 		} else if (data == QString("Motor Forward")
@@ -112,25 +112,20 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 			motorBehaviour();
 
 		} else if (data == QString("Wait for Light")
-				|| data == QString("Wait for Ultrasonic Distance")
-				|| data == QString("Wait for Infrared Distance")
-				|| data == QString("Wait for Encoder")) {
+				|| data == QString("Wait for Infrared Distance")) {
 			QString port("A1");
 			bool isEncoder = false;
+			sensorBehaviour(port, isEncoder);
 
-			if (data == QString("Wait for Ultrasonic Distance")) {
-				port = "D1";
-			} else if (data == QString("Wait for Encoder")) {
-				port = mController.brick().encoderPorts().first();
-				isEncoder = true;
-			}
+		} else if (data == QString("Wait for Ultrasonic Distance")) {
+			QString port("D1");
+			bool isEncoder = false;
+			sensorBehaviour(port, isEncoder);
 
-			SensorSettingsWidget sensorSettingsWidget(port, isEncoder);
-			emit newWidget(sensorSettingsWidget);
-			sensorSettingsWidget.exec();
-
-			mValue = mCommands.currentItem()->text();
-			mScript = sensorSettingsWidget.createScript();
+		} else if (data == QString("Wait for Encoder")) {
+			QString port = mController.brick().encoderPorts().first();
+			bool isEncoder = true;
+			sensorBehaviour(port, isEncoder);
 
 		} else {
 			mValue = tr("< add command >");
@@ -171,8 +166,17 @@ void CommandsListWidget::motorBehaviour()
 	}
 
 	mScript = QString();
-
 	for (int i = 0; i < 4; ++i) {
 		mScript.append(QString("    brick.motor(M%1).setPower(%2);\n").arg(i + 1).arg(power));
 	}
+}
+
+void CommandsListWidget::sensorBehaviour(const QString &port, bool isEncoder)
+{
+	SensorSettingsWidget sensorSettingsWidget(port, isEncoder);
+	emit newWidget(sensorSettingsWidget);
+	sensorSettingsWidget.exec();
+
+	mValue = mCommands.currentItem()->text();
+	mScript = sensorSettingsWidget.createScript();
 }

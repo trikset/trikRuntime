@@ -72,9 +72,6 @@ private:
 	/// Counter of empty commands.
 	int mEmptyCommandsCounter;
 
-	/// Contais number of commands in the list.
-	int mCommandsCounter;
-
 	/// Contains string with main part of program for robot.
 	const QString mScript =
 		"var __interpretation_started_timestamp__;\n"

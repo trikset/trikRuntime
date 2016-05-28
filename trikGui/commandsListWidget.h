@@ -65,6 +65,11 @@ private slots:
 	/// Defines behaviour for commands "Motor Forward" and "Motor Backward".
 	void motorBehaviour();
 
+	/// Defines behaviour for commands related to sensors.
+	/// @param port - name of port for given sensor.
+	/// @param isEncoder - flag which shows whether it is encoder.
+	void sensorBehaviour(const QString &port, bool isEncoder);
+
 private:
 	QVBoxLayout mLayout;
 	QLabel mTitle;

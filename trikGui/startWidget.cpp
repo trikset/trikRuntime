@@ -35,6 +35,7 @@
 #include "informationWidget.h"
 #include "systemSettingsWidget.h"
 #include "languageSelectionWidget.h"
+#include "programmingWidget.h"
 
 using namespace trikGui;
 
@@ -45,7 +46,6 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	: MainWidget(parent)
 	, mController(controller)
 	, mFileManagerRoot(MainWidget::FileManagerRootType::scriptsDir)
-	, mProgrammingWidget(controller)
 {
 	mTitleLabel.setText(tr("TRIK"));
 
@@ -129,15 +129,9 @@ void StartWidget::launch()
 			emit newWidget(wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == ProgrammingWidget::menuEntry()) {
-			const auto keepProgramInMemoryWhenNotInProgrammingMode = false;
-			if (keepProgramInMemoryWhenNotInProgrammingMode) {
-				mProgrammingWidget.show();
-			} else {
-				ProgrammingWidget programmingWidget(mController);
-				emit newWidget(programmingWidget);
-				result = programmingWidget.exec();
-			}
-
+			ProgrammingWidget programmingWidget(mController);
+			emit newWidget(programmingWidget);
+			result = programmingWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
 			emit newWidget(motorsWidget);
