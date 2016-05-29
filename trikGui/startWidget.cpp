@@ -140,7 +140,6 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::analogSensor))
 		{

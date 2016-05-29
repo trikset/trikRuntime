@@ -54,7 +54,7 @@ HEADERS += \
 	$$PWD/programmingWidget.h \
 	$$PWD/sensorSettingsWidget.h \
 	$$PWD/sensorLever.h \
-	$$PWD/scriptHolder.h
+	$$PWD/scriptHolder.h \
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -94,7 +94,7 @@ SOURCES += \
 	$$PWD/programmingWidget.cpp \
 	$$PWD/sensorSettingsWidget.cpp \
 	$$PWD/sensorLever.cpp \
-	$$PWD/scriptHolder.cpp
+	$$PWD/scriptHolder.cpp \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

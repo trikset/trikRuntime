@@ -27,15 +27,32 @@ public:
 	/// Creates instance of ScriptHolder.
 	static ScriptHolder* instance();
 
-	QStringList titles;
-	QStringList data;
+	/// Returns list which contains titles of commands.
+	QStringList titles() const;
+
+	/// Returns list which contains scripts for commands.
+	QStringList commands() const;
+
+	/// Returns number of stored commands.
+	int size() const;
+
+	/// Adds given strings to appropriate list.
+	/// @param title - new string for titles list.
+	/// @param command - new string for commands list.
+	void setData(const QString& title, const QString& command);
+
+	/// Clears all stored data.
+	void clear();
 
 private:
-	/// Constructor
+	/// Constructor.
 	ScriptHolder() {}
 
-	ScriptHolder(ScriptHolder const&);
-	ScriptHolder& operator=(ScriptHolder const&);
+	ScriptHolder(ScriptHolder const&) = delete;
+	ScriptHolder& operator=(ScriptHolder const&) = delete;
+
+	QStringList mTitles;
+	QStringList mCommands;
 };
 
 }

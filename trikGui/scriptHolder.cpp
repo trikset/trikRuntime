@@ -24,3 +24,30 @@ ScriptHolder* ScriptHolder::instance()
 	static ScriptHolder* holder = new ScriptHolder();
 	return holder;
 }
+
+QStringList ScriptHolder::titles() const
+{
+	return mTitles;
+}
+
+QStringList ScriptHolder::commands() const
+{
+	return mCommands;
+}
+
+int ScriptHolder::size() const
+{
+	return mTitles.length();
+}
+
+void ScriptHolder::setData(const QString& title, const QString& command)
+{
+	mTitles.push_back(title);
+	mCommands.push_back(command);
+}
+
+void ScriptHolder::clear()
+{
+	mTitles.clear();
+	mCommands.clear();
+}

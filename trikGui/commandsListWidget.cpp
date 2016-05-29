@@ -33,21 +33,21 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 {
 	QStringList commandsList;
 	commandsList
-		<< "Play Tone"
-		<< "Smile"
-		<< "Sad Smile"
-		<< "Timer"
-		<< "Motor Forward"
-		<< "Motor Backward"
-		<< "Motors Stop"
-		<< "Wait for Light"
-		<< "Wait for Ultrasonic Distance"
-		<< "Wait for Infrared Distance"
-		<< "Wait for Encoder";
+		<< tr("Play Tone")
+		<< tr("Smile")
+		<< tr("Sad Smile")
+		<< tr("Timer")
+		<< tr("Motor Forward")
+		<< tr("Motor Backward")
+		<< tr("Motors Stop")
+		<< tr("Wait for Light")
+		<< tr("Wait for Ultrasonic Distance")
+		<< tr("Wait for Infrared Distance")
+		<< tr("Wait for Encoder");
 
 	for (int i = 0; i < commandsList.size(); ++i) {
-		mCommands.addItem(tr(commandsList.at(i).toLocal8Bit().constData()));
-		mCommands.item(i)->setData(Qt::UserRole, commandsList.at(i));
+		mCommands.addItem(commandsList.at(i).toLocal8Bit().constData());
+		mCommands.item(i)->setData(Qt::UserRole, i);
 	}
 
 	mLayout.addWidget(&mTitle);
@@ -77,19 +77,23 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 	case Qt::Key_Return: {
 		const QVariant data = mCommands.currentItem()->data(Qt::UserRole);
 
-		if (data == QString("Play Tone")) {
+		switch(data.toInt()) {
+		case 0: {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.playSound(\"media/beep.wav\");\n");
-
-		} else if (data == QString("Smile")) {
+			break;
+		}
+		case 1: {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.smile();\n");
-
-		} else if (data == QString("Sad Smile")) {
+			break;
+		}
+		case 2: {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.sadSmile();\n");
-
-		} else if (data == QString("Timer")) {
+			break;
+		}
+		case 3: {
 			const QString title(tr("Choose waiting time (ms):"));
 			CommandSettingsWidget commandSettingsWidget(title, 5);
 			emit newWidget(commandSettingsWidget);
@@ -98,8 +102,17 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 			const int value = commandSettingsWidget.value();
 			mValue = tr("Delay %1 ms").arg(value);
 			mScript = QString("    script.wait(%1);\n").arg(value);
-
-		} else if (data == QString("Motors Stop")) {
+			break;
+		}
+		case 4: {
+			motorBehaviour();
+			break;
+		}
+		case 5: {
+			motorBehaviour();
+			break;
+		}
+		case 6: {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString();
 
@@ -107,28 +120,29 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 				mScript.append(QString("    brick.motor(M%1).powerOff();\n").arg(i));
 			}
 
-		} else if (data == QString("Motor Forward")
-				|| data == QString("Motor Backward")) {
-			motorBehaviour();
-
-		} else if (data == QString("Wait for Light")
-				|| data == QString("Wait for Infrared Distance")) {
-			QString port("A1");
-			bool isEncoder = false;
-			sensorBehaviour(port, isEncoder);
-
-		} else if (data == QString("Wait for Ultrasonic Distance")) {
-			QString port("D1");
-			bool isEncoder = false;
-			sensorBehaviour(port, isEncoder);
-
-		} else if (data == QString("Wait for Encoder")) {
-			QString port = mController.brick().encoderPorts().first();
-			bool isEncoder = true;
-			sensorBehaviour(port, isEncoder);
-
-		} else {
+			break;
+		}
+		case 7: {
+			sensorBehaviour(QString("A1"), false);
+			break;
+		}
+		case 8: {
+			sensorBehaviour(QString("D1"), false);
+			break;
+		}
+		case 9: {
+			sensorBehaviour(QString("A1"), false);
+			break;
+		}
+		case 10: {
+			const QString port = mController.brick().encoderPorts().first();
+			sensorBehaviour(port, true);
+			break;
+		}
+		default: {
 			mValue = tr("< add command >");
+			break;
+		}
 		}
 
 		exit();
@@ -141,12 +155,12 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-const QString CommandsListWidget::value() 
+QString CommandsListWidget::value() const
 {
 	return mValue;
 }
 
-const QString CommandsListWidget::script()
+QString CommandsListWidget::script() const
 {
 	return mScript;
 }

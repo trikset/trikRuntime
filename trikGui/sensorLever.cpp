@@ -24,7 +24,6 @@
 	#include <QtWidgets/QStyleOptionFocusRect>
 #endif
 
-
 using namespace trikGui;
 
 SensorLever::SensorLever(const QString &port, QWidget *parent)
@@ -35,7 +34,7 @@ SensorLever::SensorLever(const QString &port, QWidget *parent)
 	, mDistanceStep(5)
 	, mDistance(0)
 	, mNameLabel(port)
-	, mSignLabel(tr(">"))
+	, mSignLabel(QString(">"))
 {
 	mDistanceBar.setOrientation(Qt::Horizontal);
 	mDistanceBar.setMinimum(mMinDistance);
@@ -108,15 +107,15 @@ void SensorLever::setDistance(int distance)
 void SensorLever::changeSign()
 {
 	mIsGreater = !mIsGreater;
-	mIsGreater ? mSignLabel.setText(tr(">")) : mSignLabel.setText(tr("<"));
+	mIsGreater ? mSignLabel.setText(QString(">")) : mSignLabel.setText(QString("<"));
 }
 
-int SensorLever::distance()
+int SensorLever::distance() const
 {
 	return mDistance;
 }
 
-bool SensorLever::isGreater()
+bool SensorLever::isGreater() const
 {
 	return mIsGreater;
 }

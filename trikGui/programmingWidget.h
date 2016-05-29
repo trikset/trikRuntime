@@ -37,6 +37,7 @@
 #include "trikGuiDialog.h"
 #include "controller.h"
 #include "connectButton.h"
+#include "scriptHolder.h"
 
 namespace trikGui {
 
@@ -79,6 +80,9 @@ private:
 		"var main = function()\n"
 		"{\n"
 		"    __interpretation_started_timestamp__ = Date.now();\n";
+
+	/// Contains instance of ScriptHolder.
+	ScriptHolder* mHolder;  // Has ownership.
 };
 
 }

@@ -81,6 +81,6 @@ int CommandSettingsWidget::value() const
 
 void CommandSettingsWidget::focus()
 {
-	mValueSelector.hasFocusInside() ?
-		mContinueButton.setFocus() : mValueSelector.setFocus();
+	mValueSelector.hasFocusInside()
+		? mContinueButton.setFocus() : mValueSelector.setFocus();
 }

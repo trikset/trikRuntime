@@ -53,10 +53,10 @@ public:
 	void renewFocus() override;
 
 	/// Returns string with new name of command.
-	const QString value();
+	QString value() const;
 
 	/// Returns string with part of script.
-	const QString script();
+	QString script() const;
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

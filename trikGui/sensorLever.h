@@ -44,10 +44,10 @@ public:
 	SensorLever(const QString &port, QWidget *parent = 0);
 
 	/// Returns distance value of this lever.
-	int distance();
+	int distance() const;
 
 	/// Returns sign of command.
-	bool isGreater();
+	bool isGreater() const;
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

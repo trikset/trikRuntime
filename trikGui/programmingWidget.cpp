@@ -19,7 +19,6 @@
 #include <trikKernel/paths.h>
 #include <QsLog.h>
 
-#include "scriptHolder.h"
 #include "commandsListWidget.h"
 
 using namespace trikGui;
@@ -29,13 +28,13 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 	, mTitle(tr("Add commands to list"))
 	, mController(controller)
 	, mEmptyCommandsCounter(1)
+	, mHolder(ScriptHolder::instance())
 {
 	mLayout.addWidget(&mTitle);
 
-	ScriptHolder* holder = ScriptHolder::instance();
-	for (int i = 0; i < holder->titles.length(); ++i) {
-		mCommands.addItem(tr(holder->titles.at(i).toLocal8Bit().constData()));
-		mCommands.item(i)->setData(Qt::UserRole, holder->data.at(i));
+	for (int i = 0; i < mHolder->size(); ++i) {
+		mCommands.addItem(tr(mHolder->titles().at(i).toLocal8Bit().constData()));
+		mCommands.item(i)->setData(Qt::UserRole, mHolder->commands().at(i));
 	}
 
 	mCommands.addItem(tr("< add command >"));
@@ -65,20 +64,17 @@ void ProgrammingWidget::renewFocus()
 
 void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 {
-	ScriptHolder* holder = ScriptHolder::instance();
-
 	switch (event->key()) {
 	case Qt::Key_PowerDown: {
 		mController.abortExecution();
 		break;
 	}
 	case Qt::Key_Escape: {
-		holder->titles.clear();
-		holder->data.clear();
+		mHolder->clear();
 		for (int i = 0; i < mCommands.count() - 3; ++i) {
-			holder->titles.push_back(mCommands.item(i)->text());
-			holder->data.push_back(mCommands.item(i)->data(Qt::UserRole).toString());
+			mHolder->setData(mCommands.item(i)->text(), mCommands.item(i)->data(Qt::UserRole).toString());
 		}
+
 		goHome();
 		break;
 	}
@@ -92,15 +88,13 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 			script.append(QString("    return;\n}"));
 			mController.runScript(script);
 			close();
-
 		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Clear list")) {
-			holder->titles.clear();
-			holder->data.clear();
+			mHolder->clear();
 			goHome();
-
 		} else {
 			addCommand();
 		}
+
 		break;
 	}
 	default: {
