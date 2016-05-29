@@ -18,8 +18,6 @@
 #include <qmath.h>
 #include <QsLog.h>
 
-
-
 AudioSynthDeviceBuffered::AudioSynthDeviceBuffered(QObject *parent, int sampleRate, int sampleSize)
 	: QIODevice(parent)
 	, mBuffer(0)
