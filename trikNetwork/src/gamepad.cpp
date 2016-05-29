@@ -98,6 +98,7 @@ void Gamepad::init(int port)
 	connect(mWorker.data(), SIGNAL(pad(int,int,int)),this, SLOT(onPad(int,int,int)));
 	connect(mWorker.data(), SIGNAL(padUp(int)),this, SLOT(onPadUp(int)));
 	connect(mWorker.data(), SIGNAL(wheel(int)),this, SLOT(onWheel(int)));
+	connect(mWorker.data(), SIGNAL(connected()),this, SIGNAL(connected()));
 	connect(mWorker.data(), SIGNAL(disconnect()),this, SIGNAL(disconnect()));
 
 	mWorker->moveToThread(&mWorkerThread);
