@@ -47,6 +47,7 @@ Controller::Controller(const QString &configPath)
 
 	trikKernel::Configurer configurer(correctedConfigPath + "system-config.xml"
 			, correctedConfigPath + "model-config.xml");
+	//configurer.attributeByDevice("gamepad", "optional");
 
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
 	connect(mGamepad.data(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
@@ -136,7 +137,10 @@ bool Controller::communicatorConnectionStatus()
 
 bool Controller::gamepadConnectionStatus() const
 {
-	return mGamepad->isConnected();
+	if (mGamepad != nullptr){
+		return mGamepad->isConnected();
+	}
+	return false;
 }
 
 void Controller::updateCommunicatorStatus()
