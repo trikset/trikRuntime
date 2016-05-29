@@ -80,9 +80,6 @@ private:
 		"var main = function()\n"
 		"{\n"
 		"    __interpretation_started_timestamp__ = Date.now();\n";
-
-	/// Contains instance of ScriptHolder.
-	ScriptHolder* mHolder;  // Has ownership.
 };
 
 }

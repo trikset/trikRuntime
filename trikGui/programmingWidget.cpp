@@ -28,13 +28,13 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 	, mTitle(tr("Add commands to list"))
 	, mController(controller)
 	, mEmptyCommandsCounter(1)
-	, mHolder(ScriptHolder::instance())
 {
 	mLayout.addWidget(&mTitle);
 
-	for (int i = 0; i < mHolder->size(); ++i) {
-		mCommands.addItem(tr(mHolder->titles().at(i).toLocal8Bit().constData()));
-		mCommands.item(i)->setData(Qt::UserRole, mHolder->commands().at(i));
+	ScriptHolder* holder = ScriptHolder::instance();
+	for (int i = 0; i < holder->size(); ++i) {
+		mCommands.addItem(tr(holder->titles().at(i).toLocal8Bit().constData()));
+		mCommands.item(i)->setData(Qt::UserRole, holder->commands().at(i));
 	}
 
 	mCommands.addItem(tr("< add command >"));
@@ -64,15 +64,17 @@ void ProgrammingWidget::renewFocus()
 
 void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 {
+	ScriptHolder* holder = ScriptHolder::instance();
+
 	switch (event->key()) {
 	case Qt::Key_PowerDown: {
 		mController.abortExecution();
 		break;
 	}
 	case Qt::Key_Escape: {
-		mHolder->clear();
+		holder->clear();
 		for (int i = 0; i < mCommands.count() - 3; ++i) {
-			mHolder->setData(mCommands.item(i)->text(), mCommands.item(i)->data(Qt::UserRole).toString());
+			holder->setData(mCommands.item(i)->text(), mCommands.item(i)->data(Qt::UserRole).toString());
 		}
 
 		goHome();
@@ -89,7 +91,7 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 			mController.runScript(script);
 			close();
 		} else if (mCommands.currentItem()->data(Qt::UserRole) == QString("Clear list")) {
-			mHolder->clear();
+			holder->clear();
 			goHome();
 		} else {
 			addCommand();
