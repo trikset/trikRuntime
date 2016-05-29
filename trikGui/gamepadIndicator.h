@@ -1,4 +1,4 @@
-/* Copyright 2015 CyberTech Labs Ltd.
+/* Copyright 2016 Anna Kudryashova
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,13 @@
 
 namespace trikGui {
 
-/// A label that shows wifi connection status.
+/// A label that shows gamepad connection status.
 class GamepadIndicator : public QLabel
 {
 	Q_OBJECT
 public:
-	/// @param controller is used to get the current network info
-	explicit GamepadIndicator(Controller &controller, bool status, QWidget *parent = 0);
-
-signals:
+	/// @param controller is used to get the current gamepad info
+	explicit GamepadIndicator(Controller &controller, QWidget *parent = 0);
 
 public slots:
 	/// Updates the status to 'connect'.

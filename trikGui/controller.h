@@ -65,7 +65,7 @@ public:
 	bool communicatorConnectionStatus();
 
 	/// Returns gamepad connection status.
-	bool gamepadConnectionStatus();
+	bool gamepadConnectionStatus() const;
 
 public slots:
 	/// Cancels execution of current program.
@@ -91,8 +91,11 @@ signals:
 	/// clutter from videosensors.
 	void brickStopped();
 
-	/// Emitted when a robot is disconnected to a gamepad.
+	/// Emitted when a robot is disconnected from a gamepad.
 	void gamepadDisconnected();
+
+	/// Emitted when a robot is connected to a gamepad.
+	void gamepadConnected();
 
 	/// Emitted when a robot is connected to a network.
 	void wiFiConnected();

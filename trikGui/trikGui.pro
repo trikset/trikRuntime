@@ -49,7 +49,7 @@ HEADERS += \
 	$$PWD/wiFiModeWidget.h \
 	$$PWD/wiFiIndicator.h \
 	$$PWD/openSocketIndicator.h \
-    gamepadIndicator.h
+        $$PWD/gamepadIndicator.h \
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -84,7 +84,7 @@ SOURCES += \
 	$$PWD/wiFiModeWidget.cpp \
 	$$PWD/wiFiIndicator.cpp \
 	$$PWD/openSocketIndicator.cpp \
-    gamepadIndicator.cpp
+        $$PWD/gamepadIndicator.cpp \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

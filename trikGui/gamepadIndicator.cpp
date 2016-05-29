@@ -1,4 +1,4 @@
-/* Copyright 2015 CyberTech Labs Ltd.
+/* Copyright 2016 Anna Kudryashova
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
 
 using namespace trikGui;
 
-GamepadIndicator::GamepadIndicator(Controller &controller, bool status, QWidget *parent)
+GamepadIndicator::GamepadIndicator(Controller &controller, QWidget *parent)
 	: QLabel(parent)
 	, mController(controller)
 {
-	status ? setOn() : setOff();
 	connect(&mController, SIGNAL(gamepadDisconnected()), this, SLOT(setOff()));
+	connect(&mController, SIGNAL(gamepadConnected()), this, SLOT(setOn()));
 
 	updateStatus();
 	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -38,8 +38,7 @@ void GamepadIndicator::setOn()
 
 void GamepadIndicator::setOff()
 {
-	QPixmap icon("://resources/gamepad_off.png");
-	setPixmap(icon);
+	hide();
 }
 
 void GamepadIndicator::connected(bool connected)

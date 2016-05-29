@@ -50,6 +50,7 @@ Controller::Controller(const QString &configPath)
 
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
 	connect(mGamepad.data(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
+	connect(mGamepad.data(), SIGNAL(connected()), this, SIGNAL(gamepadConnected()));
 
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
@@ -133,7 +134,7 @@ bool Controller::communicatorConnectionStatus()
 	return mTelemetry->activeConnections() > 0 && mCommunicator->activeConnections() > 0;
 }
 
-bool Controller::gamepadConnectionStatus()
+bool Controller::gamepadConnectionStatus() const
 {
 	return mGamepad->isConnected();
 }
