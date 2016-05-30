@@ -28,10 +28,10 @@ public:
 	static ScriptHolder* instance();
 
 	/// Returns list which contains titles of commands.
-	QStringList titles() const;
+	const QStringList &titles() const;
 
 	/// Returns list which contains scripts for commands.
-	QStringList commands() const;
+	const QStringList &commands() const;
 
 	/// Returns number of stored commands.
 	int size() const;
@@ -39,7 +39,7 @@ public:
 	/// Adds given strings to appropriate list.
 	/// @param title - new string for titles list.
 	/// @param command - new string for commands list.
-	void setData(const QString& title, const QString& command);
+	void setData(const QString &title, const QString &command);
 
 	/// Clears all stored data.
 	void clear();

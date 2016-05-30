@@ -31,7 +31,7 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 {
 	mLayout.addWidget(&mTitle);
 
-	ScriptHolder* holder = ScriptHolder::instance();
+	const ScriptHolder * const holder = ScriptHolder::instance();
 	for (int i = 0; i < holder->size(); ++i) {
 		mCommands.addItem(tr(holder->titles().at(i).toLocal8Bit().constData()));
 		mCommands.item(i)->setData(Qt::UserRole, holder->commands().at(i));
@@ -64,7 +64,7 @@ void ProgrammingWidget::renewFocus()
 
 void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 {
-	ScriptHolder* holder = ScriptHolder::instance();
+	ScriptHolder * const holder = ScriptHolder::instance();
 
 	switch (event->key()) {
 	case Qt::Key_PowerDown: {

@@ -33,10 +33,11 @@
 #include <trikControl/brickInterface.h>
 
 #include "trikGuiDialog.h"
-#include "sensorLever.h"
-#include "connectButton.h"
 
 namespace trikGui {
+
+class SensorLever;
+class ConnectButton;
 
 /// Widget which allows to change settings of the robot sensors.
 class SensorSettingsWidget : public TrikGuiDialog
@@ -49,6 +50,8 @@ public:
 	/// @param isEncoder - flag that shows whether this sensor is encoder
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit SensorSettingsWidget(const QString &port, bool isEncoder, QWidget *parent = 0);
+
+	~SensorSettingsWidget();
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();
@@ -72,10 +75,10 @@ private:
 	bool mIsEncoder;
 	QLabel mPowerLabel;
 
-	QSharedPointer<SensorLever> mLever;
+	QScopedPointer<SensorLever> mLever;
 
 	/// Button that returns to previous screen.
-	ConnectButton mContinueButton;
+	QScopedPointer<ConnectButton> mContinueButton;
 };
 
 }

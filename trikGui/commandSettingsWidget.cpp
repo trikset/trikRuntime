@@ -15,6 +15,7 @@
 #include "commandSettingsWidget.h"
 
 #include <QtGui/QKeyEvent>
+
 #include <trikKernel/paths.h>
 #include <QsLog.h>
 

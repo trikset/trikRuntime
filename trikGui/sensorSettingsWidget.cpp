@@ -21,8 +21,12 @@
 #endif
 
 #include <QtGui/QKeyEvent>
+
 #include <trikKernel/paths.h>
 #include <QsLog.h>
+
+#include "sensorLever.h"
+#include "connectButton.h"
 
 using namespace trikGui;
 using trikControl::MotorInterface;
@@ -32,23 +36,28 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	, mPort(port)
 	, mIsEncoder(isEncoder)
 	, mPowerLabel(isEncoder ? tr("Select tacho limit:\n") : tr("Select distance:\n"))
+	, mContinueButton(new ConnectButton())
 {
 	mPowerLabel.setAlignment(Qt::AlignTop);
 	mPowerLabel.setMaximumHeight(20);
 	mLayout.addWidget(&mPowerLabel);
 
-	mLever = QSharedPointer<SensorLever>(new SensorLever(mPort, this));
-	mLever.data()->setMaximumHeight(50);
+	mLever.reset(new SensorLever(mPort, this));
+	mLever->setMaximumHeight(50);
 	mLayout.addWidget(mLever.data());
 
-	mContinueButton.setText(tr("Continue"));
-	mContinueButton.setAutoFillBackground(true);
-	mLayout.addWidget(&mContinueButton);
+	mContinueButton->setText(tr("Continue"));
+	mContinueButton->setAutoFillBackground(true);
+	mLayout.addWidget(mContinueButton.data());
 
-	connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
+	connect(mContinueButton.data(), SIGNAL(upPressed()), this, SLOT(focus()));
+	connect(mContinueButton.data(), SIGNAL(downPressed()), this, SLOT(focus()));
 
 	setLayout(&mLayout);
+}
+
+SensorSettingsWidget::~SensorSettingsWidget()
+{
 }
 
 QString SensorSettingsWidget::menuEntry()
@@ -72,7 +81,7 @@ void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 		break;
 	}
 	case Qt::Key_Return: {
-		mContinueButton.animateClick();
+		mContinueButton->animateClick();
 		exit();
 		break;
 	}
@@ -85,7 +94,7 @@ void SensorSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 void SensorSettingsWidget::focus()
 {
-	mLever->hasFocus() ? mContinueButton.setFocus() : mLever->setFocus();
+	mLever->hasFocus() ? mContinueButton->setFocus() : mLever->setFocus();
 }
 
 QString SensorSettingsWidget::createScript()

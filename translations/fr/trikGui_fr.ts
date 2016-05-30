@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<TS version="2.1" language="fr_FR">
 <context>
     <name>QObject</name>
     <message>
@@ -17,7 +17,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandSettingsWidget.cpp" line="48"/>
+        <location filename="../../trikGui/commandSettingsWidget.cpp" line="47"/>
         <source>Command Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -30,100 +30,82 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="35"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="72"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="36"/>
         <source>Play Tone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="36"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="76"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="37"/>
         <source>Smile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="37"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="80"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="38"/>
         <source>Sad Smile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="38"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="84"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="39"/>
         <source>Timer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="39"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="40"/>
         <source>Motor Forward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="40"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="156"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="41"/>
         <source>Motor Backward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="41"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="94"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="42"/>
         <source>Motors Stop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="42"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="43"/>
         <source>Wait for Light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="43"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="109"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="44"/>
         <source>Wait for Ultrasonic Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="44"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="45"/>
         <source>Wait for Infrared Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="45"/>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="111"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="46"/>
         <source>Wait for Encoder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="60"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="66"/>
         <source>Commands List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="85"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="97"/>
         <source>Choose waiting time (ms):</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="91"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="103"/>
         <source>Delay %1 ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="102"/>
-        <source>Motor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="105"/>
-        <source>Wait</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="124"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="143"/>
         <source>&lt; add command &gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="148"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="170"/>
         <source>Choose motors power (%): </source>
         <translation type="unfinished"></translation>
     </message>
@@ -298,19 +280,25 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/programmingWidget.cpp" line="35"/>
-        <location filename="../../trikGui/programmingWidget.cpp" line="101"/>
-        <location filename="../../trikGui/programmingWidget.cpp" line="106"/>
+        <location filename="../../trikGui/programmingWidget.cpp" line="40"/>
+        <location filename="../../trikGui/programmingWidget.cpp" line="125"/>
         <source>&lt; add command &gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/programmingWidget.cpp" line="43"/>
+        <location filename="../../trikGui/programmingWidget.cpp" line="45"/>
+        <location filename="../../trikGui/programmingWidget.cpp" line="127"/>
         <source>Run program</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/programmingWidget.cpp" line="52"/>
+        <location filename="../../trikGui/programmingWidget.cpp" line="47"/>
+        <location filename="../../trikGui/programmingWidget.cpp" line="129"/>
+        <source>Clear list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/programmingWidget.cpp" line="57"/>
         <source>Programming</source>
         <translation type="unfinished"></translation>
     </message>
@@ -329,40 +317,26 @@
     </message>
 </context>
 <context>
-    <name>trikGui::SensorLever</name>
-    <message>
-        <location filename="../../trikGui/sensorLever.cpp" line="38"/>
-        <location filename="../../trikGui/sensorLever.cpp" line="112"/>
-        <source>&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/sensorLever.cpp" line="114"/>
-        <source>&lt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>trikGui::SensorSettingsWidget</name>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="35"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="34"/>
         <source>Select distance:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="37"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="34"/>
         <source>Select tacho limit:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="47"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="44"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="61"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="56"/>
         <source>Sensor Settings</source>
         <translation type="unfinished"></translation>
     </message>

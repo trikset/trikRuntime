@@ -46,7 +46,7 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 		<< tr("Wait for Encoder");
 
 	for (int i = 0; i < commandsList.size(); ++i) {
-		mCommands.addItem(commandsList.at(i).toLocal8Bit().constData());
+		mCommands.addItem(commandsList.at(i));
 		mCommands.item(i)->setData(Qt::UserRole, i);
 	}
 
@@ -77,7 +77,7 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 	case Qt::Key_Return: {
 		const QVariant data = mCommands.currentItem()->data(Qt::UserRole);
 
-		switch(data.toInt()) {
+		switch (data.toInt()) {
 		case 0: {
 			mValue = mCommands.currentItem()->text();
 			mScript = QString("    brick.playSound(\"media/beep.wav\");\n");

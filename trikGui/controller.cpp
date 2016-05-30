@@ -90,7 +90,7 @@ Controller::~Controller()
 
 void Controller::runFile(const QString &filePath)
 {
-	QFileInfo const fileInfo(filePath);
+	const QFileInfo fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
 		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {

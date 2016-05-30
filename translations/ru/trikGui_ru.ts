@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru_RU">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>QObject</name>
     <message>
@@ -75,7 +75,8 @@
     </message>
     <message>
         <source>Choose waiting time (ms):</source>
-        <translation>Выберите время ожидания
+        <translation>Выберите время
+ожидания
 (в миллисекундах):</translation>
     </message>
     <message>
@@ -96,7 +97,8 @@
     </message>
     <message>
         <source>Choose motors power (%): </source>
-        <translation>Выберите мощность моторов
+        <translation>Выберите мощность
+ моторов
 (в процентах):</translation>
     </message>
     <message>
@@ -260,7 +262,8 @@
     <name>trikGui::ProgrammingWidget</name>
     <message>
         <source>Add commands to list</source>
-        <translation>Добавьте команду в список</translation>
+        <translation>Добавьте команду
+в список</translation>
     </message>
     <message>
         <source>&lt; add command &gt;</source>
@@ -304,11 +307,11 @@
     <name>trikGui::SensorLever</name>
     <message>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="vanished">&gt;</translation>
     </message>
     <message>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="vanished">&lt;</translation>
     </message>
 </context>
 <context>

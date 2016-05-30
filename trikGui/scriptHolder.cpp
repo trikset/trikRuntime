@@ -25,12 +25,12 @@ ScriptHolder* ScriptHolder::instance()
 	return holder;
 }
 
-QStringList ScriptHolder::titles() const
+const QStringList &ScriptHolder::titles() const
 {
 	return mTitles;
 }
 
-QStringList ScriptHolder::commands() const
+const QStringList &ScriptHolder::commands() const
 {
 	return mCommands;
 }
@@ -40,7 +40,7 @@ int ScriptHolder::size() const
 	return mTitles.length();
 }
 
-void ScriptHolder::setData(const QString& title, const QString& command)
+void ScriptHolder::setData(const QString &title, const QString &command)
 {
 	mTitles.push_back(title);
 	mCommands.push_back(command);
