@@ -16,10 +16,10 @@ include(../global.pri)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikTelemetry/trikTelemetry.h \
+	$$PWD/include/trikTelemetry/snapshotTaker.h \
 
 HEADERS += \
 	$$PWD/src/connection.h \
-	$$PWD/src/snapshotTaker.h \
 
 SOURCES += \
 	$$PWD/src/trikTelemetry.cpp \

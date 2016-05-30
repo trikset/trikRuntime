@@ -24,7 +24,19 @@ Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadI
 	: trikNetwork::Connection(trikNetwork::Protocol::messageLength, trikNetwork::Heartbeat::use)
 	, mBrick(brick)
 	, mGamepad(gamepad)
+	, mTakeSnapshotTimer(nullptr)
 {
+	mSnapshotTaker.reset(new SnapshotTaker);
+}
+
+void Connection::init(int socketDescriptor) {
+	trikNetwork::Connection::init(socketDescriptor);
+	initTakeSnapshotTimer();
+}
+
+void Connection::init(const QHostAddress &ip, int port) {
+	trikNetwork::Connection::init(ip, port);
+	initTakeSnapshotTimer();
 }
 
 void Connection::processData(const QByteArray &data)
@@ -39,6 +51,7 @@ void Connection::processData(const QByteArray &data)
 	const QString gyroscopeRequested("GyroscopePort");
 	const QString gamepadRequested("Gamepad");
 	const QString snapshotRequested("takeSnapshot");
+	const QString stopTakingSnapshots("stopTakingSnapshots");
 
 	QString answer;
 
@@ -131,22 +144,11 @@ void Connection::processData(const QByteArray &data)
 			answer = "sensor:" + command + ":" + (isButtonPressed(command) ? "1" : "0");
 		}
 	} else if (command.startsWith(snapshotRequested)) {
-		char *bp = static_cast<char *>(malloc(1024 * 100 / 7));
-		size_t *size = (size_t*) malloc(sizeof(size_t));
-
-		SnapshotTaker abc = SnapshotTaker();
-		if (!abc.takeSnapshot(&bp, size)) {
-			free(bp);
-			free(size);
-			return;
-		}
-
-		QByteArray snapshot = QByteArray(bp, (int)*size);
-
-		send(QByteArray("snapshot:").append(snapshot.toBase64().constData()));
-
-		free(bp);
-		free(size);
+		takeSnapshot();
+		mTakeSnapshotTimer->start(1000);
+		return;
+	} else if (command.startsWith(stopTakingSnapshots)) {
+		mTakeSnapshotTimer->stop();
 		return;
 	}
 
@@ -181,5 +183,30 @@ bool Connection::isButtonPressed(const QString &buttonName)
 		return mBrick.keys()->isPressed(1);
 	} else {
 		return false;
+	}
+}
+
+void Connection::initTakeSnapshotTimer() {
+	mTakeSnapshotTimer.reset(new QTimer);
+	connect(mTakeSnapshotTimer.data(), &QTimer::timeout, this, &Connection::takeSnapshot);
+	connect(this, &Connection::disconnected, mTakeSnapshotTimer.data(), &QTimer::stop);
+}
+
+void Connection::takeSnapshot() {
+	if (isConnected()) {
+		std::vector<unsigned char> snapshotVector = mSnapshotTaker->takeSnapshot();
+
+		if (snapshotVector.size() == 0) {
+			mTakeSnapshotTimer->stop();
+			return;
+		}
+
+		QByteArray snapshot(reinterpret_cast<char *>(snapshotVector.data()), snapshotVector.size());
+
+		send(QByteArray("snapshot:").append(snapshot.toBase64().constData()));
+
+		snapshotVector.clear();
+	} else {
+		mTakeSnapshotTimer->stop();
 	}
 }

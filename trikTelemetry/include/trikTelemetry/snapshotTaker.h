@@ -22,9 +22,13 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <zlib.h>
-
+#include <vector>
+#include <QScopedPointer>
+#include <QString>
 
 namespace trikTelemetry {
+
+void PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length);
 
 /// Provides a possibility to get a png snapshot of framebuffer.
 class SnapshotTaker
@@ -33,36 +37,40 @@ class SnapshotTaker
 public:
 	SnapshotTaker();
 
-	/// @param bufferPointer - in case of succeess function returns true
-	/// and it contains the address of the buffer containing framebuffer png image.
-	/// @param sizePointer - in case of succeess function returns true and it contains the
-	/// bufferPointer length.
-	bool takeSnapshot(char **bufferPointer, size_t *sizePointer);
+	~SnapshotTaker();
+
+	/// Returns vector containing PNG framebuffer image in case of success
+	/// or empty vector otherwise.
+	std::vector<unsigned char> takeSnapshot();
 
 private:
+	/// Initialisation of data that will not be changed in runtime.
+	bool init();
+
 	bool mapFramebuffer();
 
-	bool initImageBuffer(char **bufferPointer, size_t *sizePointer);
+	bool initImageBuffer();
 
-	bool writePngToImageBuffer();
+	bool writeImageToBuffer();
 
-	/// Initial value of png buffer size. If it is not enougth, the
-	/// buffer will be reallocated automatically.
-	const size_t mImageSize;
+	/// Setted true after successfull initialisation. False otherwise.
+	bool mInitSuccessfull = false;
 
-	char const *mFrameBufferPath;
-
-	FILE *mImagePointer;
+	const QByteArray mFrameBufferPath;
 
 	fb_fix_screeninfo mFixedFrameBufferInfo;
 
 	fb_var_screeninfo mVariableFrameBufferInfo;
 
-	uint8_t *mMappedFrameBufferPointer;
+	QScopedPointer<uint8_t> mMappedFrameBufferPointer;
 
 	png_structp mPngWriteStructPointer;
 
 	png_infop mPngInfoStructPointer;
+
+	int mFrameBufferFileDescriptor = -1;
+
+	QScopedPointer<std::vector<unsigned char>> mPngImage;
 };
 
 }
