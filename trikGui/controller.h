@@ -48,6 +48,9 @@ public:
 	/// Executes specified file as Qt Script, if it has .qts extension, or as a program otherwise.
 	void runFile(const QString &filePath);
 
+	/// Executes given script.
+	void runScript(const QString &script);
+
 	/// Returns reference to Brick object, which provides access to robot hardware.
 	trikControl::BrickInterface &brick();
 
