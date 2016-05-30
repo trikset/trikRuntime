@@ -83,18 +83,18 @@ bool SnapshotTaker::initImageBuffer() {
 	/// Allocating PNG write struct.
 	mPngWriteStructPointer = png_create_write_struct(
 				PNG_LIBPNG_VER_STRING
-				, NULL
-				, NULL
-				, NULL
+				, nullptr
+				, nullptr
+				, nullptr
 	);
-	if (mPngWriteStructPointer == NULL) {
+	if (mPngWriteStructPointer == nullptr) {
 		/// Failed to allocate PNG write struct.
 		return false;
 	}
 
 	/// Allocating PNG info struct.
 	mPngInfoStructPointer = png_create_info_struct(mPngWriteStructPointer);
-	if (mPngInfoStructPointer == NULL) {
+	if (mPngInfoStructPointer == nullptr) {
 		/// Failed to allocate PNG info struct.
 		return false;
 	}
@@ -102,7 +102,7 @@ bool SnapshotTaker::initImageBuffer() {
 	mPngImage.reset(new std::vector<unsigned char>(mFixedFrameBufferInfo.smem_len));
 
 	/// Setting custom function for writing a PNG stream.
-	png_set_write_fn(mPngWriteStructPointer, mPngImage.data(), PngWriteCallback, NULL);
+	png_set_write_fn(mPngWriteStructPointer, mPngImage.data(), PngWriteCallback, nullptr);
 
 	/// Set image header information.
 	png_set_IHDR(
@@ -161,7 +161,7 @@ bool SnapshotTaker::writeImageToBuffer() {
 		png_write_row(mPngWriteStructPointer, pngBuffer.data());
 	}
 
-	png_write_end(mPngWriteStructPointer, NULL);
+	png_write_end(mPngWriteStructPointer, nullptr);
 
 	pngBuffer.clear();
 

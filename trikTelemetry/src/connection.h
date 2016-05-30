@@ -40,6 +40,9 @@ public:
 	/// @param gamepad - gamepad object used to report state of Android gamepad.
 	explicit Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad);
 
+	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
+	/// thread.
+	/// @param socketDescriptor - native socket descriptor.
 	Q_INVOKABLE void init(int socketDescriptor);
 
 protected:
