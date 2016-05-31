@@ -14,6 +14,8 @@
 
 include(../global.pri)
 
+unix|win32: LIBS += -lpng
+
 PUBLIC_HEADERS += \
 	$$PWD/include/trikTelemetry/trikTelemetry.h \
 	$$PWD/include/trikTelemetry/snapshotTaker.h \
