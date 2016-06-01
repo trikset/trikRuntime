@@ -35,6 +35,7 @@
 #include "controller.h"
 #include "batteryIndicator.h"
 #include "wiFiIndicator.h"
+#include "gamepadIndicator.h"
 #include "openSocketIndicator.h"
 #include "startWidget.h"
 #include "runningWidget.h"
@@ -114,6 +115,7 @@ private:
 	QStackedLayout mMainWidgetsLayout;
 	BatteryIndicator mBatteryIndicator;
 	WiFiIndicator mWiFiIndicator;
+	GamepadIndicator mGamepadIndicator;
 	OpenSocketIndicator mMailboxIndicator;
 	OpenSocketIndicator mCommunicatorIndicator;
 	StartWidget mStartWidget;
