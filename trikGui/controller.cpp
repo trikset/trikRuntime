@@ -49,6 +49,9 @@ Controller::Controller(const QString &configPath)
 			, correctedConfigPath + "model-config.xml");
 
 	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
+	connect(mGamepad.data(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
+	connect(mGamepad.data(), SIGNAL(connected()), this, SIGNAL(gamepadConnected()));
+
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox.data(), mGamepad.data()));
@@ -90,7 +93,7 @@ Controller::~Controller()
 
 void Controller::runFile(const QString &filePath)
 {
-	QFileInfo const fileInfo(filePath);
+	const QFileInfo fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
 		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
@@ -100,6 +103,11 @@ void Controller::runFile(const QString &filePath)
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}
+}
+
+void Controller::runScript(const QString &script)
+{
+	mScriptRunner->run(script);
 }
 
 void Controller::abortExecution()
@@ -129,6 +137,15 @@ trikWiFi::TrikWiFi &Controller::wiFi()
 bool Controller::communicatorConnectionStatus()
 {
 	return mTelemetry->activeConnections() > 0 && mCommunicator->activeConnections() > 0;
+}
+
+bool Controller::gamepadConnectionStatus() const
+{
+	if (mGamepad != nullptr) {
+		return mGamepad->isConnected();
+	} else {
+		return false;
+	}
 }
 
 void Controller::updateCommunicatorStatus()

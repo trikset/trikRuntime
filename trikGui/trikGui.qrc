@@ -13,5 +13,7 @@
         <file>resources/openWifi.png</file>
         <file>resources/passwordedWifi.png</file>
         <file>resources/wait.png</file>
+        <file>resources/gamepad_off.png</file>
+        <file>resources/gamepad_on.png</file>
     </qresource>
 </RCC>
