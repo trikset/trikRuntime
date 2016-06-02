@@ -20,7 +20,8 @@ namespace trikTelemetry {
 SnapshotTaker::SnapshotTaker() : mFrameBufferPath("/dev/fb0") {
 }
 
-SnapshotTaker::~SnapshotTaker() {
+SnapshotTaker::~SnapshotTaker()
+{
 	if (mFrameBufferFileDescriptor != -1) {
 		close(mFrameBufferFileDescriptor);
 	}
@@ -29,13 +30,16 @@ SnapshotTaker::~SnapshotTaker() {
 		png_destroy_write_struct(&mPngWriteStructPointer, &mPngInfoStructPointer);
 	}
 
-	if (!mPngImage.isNull()) {
-		mPngImage->clear();
+	if (mMappedFrameBufferPointer != nullptr) {
+		munmap(mMappedFrameBufferPointer, mFixedFrameBufferInfo.smem_len);
 	}
+
+	delete mPngImagePointer;
 }
 
-bool SnapshotTaker::init() {
 
+bool SnapshotTaker::init()
+{
 	if (mFrameBufferFileDescriptor == -1) {
 		mFrameBufferFileDescriptor = open(mFrameBufferPath.data(), O_RDWR);
 	}
@@ -54,8 +58,8 @@ bool SnapshotTaker::init() {
 	return true;
 }
 
-bool SnapshotTaker::mapFramebuffer() {
-
+bool SnapshotTaker::mapFramebuffer()
+{
 	/// Reading framebuffer variable information.
 	if (ioctl(mFrameBufferFileDescriptor, FBIOGET_VSCREENINFO, &mVariableFrameBufferInfo) == -1) {
 		/// Failed to read framebuffer variable information.
@@ -63,14 +67,14 @@ bool SnapshotTaker::mapFramebuffer() {
 	}
 
 	/// Mapping framebuffer to memory.
-	mMappedFrameBufferPointer.reset(
+	mMappedFrameBufferPointer =
 			static_cast<uint8_t *>(mmap(0
 										, mFixedFrameBufferInfo.smem_len
 										, PROT_READ | PROT_WRITE
 										, MAP_SHARED
 										, mFrameBufferFileDescriptor
-										, 0)));
-	if (mMappedFrameBufferPointer.data() == MAP_FAILED) {
+										, 0));
+	if (mMappedFrameBufferPointer == MAP_FAILED) {
 		/// Failed to map framebuffer device to memory.
 		return false;
 	}
@@ -78,8 +82,8 @@ bool SnapshotTaker::mapFramebuffer() {
 	return true;
 }
 
-bool SnapshotTaker::initImageBuffer() {
-
+bool SnapshotTaker::initImageBuffer()
+{
 	/// Allocating PNG write struct.
 	mPngWriteStructPointer = png_create_write_struct(
 				PNG_LIBPNG_VER_STRING
@@ -99,10 +103,10 @@ bool SnapshotTaker::initImageBuffer() {
 		return false;
 	}
 
-	mPngImage.reset(new std::vector<unsigned char>(mFixedFrameBufferInfo.smem_len));
+	mPngImagePointer = new QByteArray();
 
-	/// Setting custom function for writing a PNG stream.
-	png_set_write_fn(mPngWriteStructPointer, mPngImage.data(), PngWriteCallback, nullptr);
+	/// Setting custom function for writing a PNG.
+	png_set_write_fn(mPngWriteStructPointer, mPngImagePointer, PngWriteCallback, nullptr);
 
 	/// Set image header information.
 	png_set_IHDR(
@@ -123,9 +127,9 @@ bool SnapshotTaker::initImageBuffer() {
 	return true;
 }
 
-bool SnapshotTaker::writeImageToBuffer() {
-
-	std::vector<unsigned char> pngBuffer(mVariableFrameBufferInfo.xres * 3 * sizeof(png_byte));
+bool SnapshotTaker::writeImageToBuffer()
+{
+	QVector<unsigned char> pngBuffer(mVariableFrameBufferInfo.xres * 3 * sizeof(png_byte));
 
 	int redMask = (1 << mVariableFrameBufferInfo.red.length) - 1;
 	int greenMask = (1 << mVariableFrameBufferInfo.green.length) - 1;
@@ -135,19 +139,17 @@ bool SnapshotTaker::writeImageToBuffer() {
 
 	unsigned int y = 0;
 
-	for (y = 0; y < mVariableFrameBufferInfo.yres; y++)
-	{
+	for (y = 0; y < mVariableFrameBufferInfo.yres; y++) {
 		unsigned int x;
 
-		for (x = 0; x < mVariableFrameBufferInfo.xres; x++)
-		{
+		for (x = 0; x < mVariableFrameBufferInfo.xres; x++) {
 			int pngBufferOffset = 3 * x;
 
 			size_t frameBufferOffset = x * (bytesPerPixel) + y * mFixedFrameBufferInfo.line_length;
 
 			uint32_t pixel = 0;
 
-			pixel = *(reinterpret_cast<uint32_t *>(mMappedFrameBufferPointer.data() + frameBufferOffset));
+			pixel = *(reinterpret_cast<uint32_t *>(mMappedFrameBufferPointer + frameBufferOffset));
 
 			png_byte red = (pixel >> mVariableFrameBufferInfo.red.offset) & redMask;
 			png_byte green = (pixel >> mVariableFrameBufferInfo.green.offset) & greenMask;
@@ -168,41 +170,45 @@ bool SnapshotTaker::writeImageToBuffer() {
 	return true;
 }
 
-std::vector<unsigned char> SnapshotTaker::takeSnapshot() {
+QByteArray *SnapshotTaker::takeSnapshot()
+{
 
 	if (!mInitSuccessfull) {
 		if (!(mInitSuccessfull = init())) {
-			mPngImage->clear();
-			return *(mPngImage.data());
+			return nullptr;
 		}
 	}
 
 	if (!mapFramebuffer()) {
-		mPngImage->clear();
-		return *(mPngImage.data());
+		return nullptr;
 	}
 
 	if (!initImageBuffer()) {
-		mPngImage->clear();
-		return *(mPngImage.data());
+		delete mPngImagePointer;
+		mPngImagePointer = nullptr;
+		return nullptr;
 	}
 
 	if (!writeImageToBuffer()) {
-		mPngImage->clear();
-		return *(mPngImage.data());
+		delete mPngImagePointer;
+		mPngImagePointer = nullptr;
+		return nullptr;
 	}
 
 	png_destroy_write_struct(&mPngWriteStructPointer, &mPngInfoStructPointer);
 
-	munmap(mMappedFrameBufferPointer.data(), mFixedFrameBufferInfo.smem_len);
-	mMappedFrameBufferPointer.reset(nullptr);
+	munmap(mMappedFrameBufferPointer, mFixedFrameBufferInfo.smem_len);
+	mMappedFrameBufferPointer = nullptr;
 
-	return *(mPngImage.data());
+	QByteArray *tempPngImagePointer = mPngImagePointer;
+	mPngImagePointer = nullptr;
+	return tempPngImagePointer;
 }
 
-void PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length) {
-	std::vector<unsigned char> *pngImage = (std::vector<unsigned char>*)png_get_io_ptr(pngPtr);
-	pngImage->insert(pngImage->end(), data, data + length);
+void PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length)
+{
+	QByteArray *pngImage = (QByteArray *)png_get_io_ptr(pngPtr);
+	pngImage->append(reinterpret_cast<char *>(data), length);
 }
 
 }

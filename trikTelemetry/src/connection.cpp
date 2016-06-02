@@ -13,7 +13,6 @@
  * limitations under the License. */
 
 #include "connection.h"
-
 #include "snapshotTaker.h"
 
 #include "QsLog.h"
@@ -29,12 +28,14 @@ Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadI
 	mSnapshotTaker.reset(new SnapshotTaker);
 }
 
-void Connection::init(int socketDescriptor) {
+void Connection::init(int socketDescriptor)
+{
 	trikNetwork::Connection::init(socketDescriptor);
 	initTakeSnapshotTimer();
 }
 
-void Connection::init(const QHostAddress &ip, int port) {
+void Connection::init(const QHostAddress &ip, int port)
+{
 	trikNetwork::Connection::init(ip, port);
 	initTakeSnapshotTimer();
 }
@@ -155,7 +156,8 @@ void Connection::processData(const QByteArray &data)
 	send(answer.toUtf8());
 }
 
-QString Connection::serializeVector(const QVector<int> &vector) {
+QString Connection::serializeVector(const QVector<int> &vector)
+{
 	QString result = "(";
 	for (int coord : vector) {
 		result += QString::number(coord) + ",";
@@ -186,26 +188,20 @@ bool Connection::isButtonPressed(const QString &buttonName)
 	}
 }
 
-void Connection::initTakeSnapshotTimer() {
+void Connection::initTakeSnapshotTimer()
+{
 	mTakeSnapshotTimer.reset(new QTimer);
 	connect(mTakeSnapshotTimer.data(), &QTimer::timeout, this, &Connection::takeSnapshot);
 	connect(this, &Connection::disconnected, mTakeSnapshotTimer.data(), &QTimer::stop);
 }
 
-void Connection::takeSnapshot() {
-	if (isConnected()) {
-		std::vector<unsigned char> snapshotVector = mSnapshotTaker->takeSnapshot();
+void Connection::takeSnapshot()
+{
+	QByteArray *snapshot = mSnapshotTaker->takeSnapshot();
 
-		if (snapshotVector.size() == 0) {
-			mTakeSnapshotTimer->stop();
-			return;
-		}
-
-		QByteArray snapshot(reinterpret_cast<char *>(snapshotVector.data()), snapshotVector.size());
-
-		send(QByteArray("snapshot:").append(snapshot.toBase64().constData()));
-
-		snapshotVector.clear();
+	if (snapshot != nullptr) {
+		send(QByteArray("snapshot:").append(snapshot->toBase64().constData()));
+		delete snapshot;
 	} else {
 		mTakeSnapshotTimer->stop();
 	}

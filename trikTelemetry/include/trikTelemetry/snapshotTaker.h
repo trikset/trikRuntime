@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <cstdlib>
 #include <stdint.h>
 #include <fcntl.h>
 #include <png.h>
@@ -22,12 +21,12 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <zlib.h>
-#include <vector>
-#include <QScopedPointer>
 #include <QString>
+#include <QVector>
 
 namespace trikTelemetry {
 
+/// Custom function for writing a PNG.
 void PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length);
 
 /// Provides a possibility to get a png snapshot of framebuffer.
@@ -39,9 +38,9 @@ public:
 
 	~SnapshotTaker();
 
-	/// Returns vector containing PNG framebuffer image in case of success
-	/// or empty vector otherwise.
-	std::vector<unsigned char> takeSnapshot();
+	/// Returns pointer to PNG framebuffer image in case of success
+	/// or nullptr otherwise.
+	QByteArray *takeSnapshot();
 
 private:
 	/// Initialisation of data that will not be changed in runtime.
@@ -62,7 +61,7 @@ private:
 
 	fb_var_screeninfo mVariableFrameBufferInfo;
 
-	QScopedPointer<uint8_t> mMappedFrameBufferPointer;
+	uint8_t *mMappedFrameBufferPointer; // Has ownership.
 
 	png_structp mPngWriteStructPointer;
 
@@ -70,7 +69,7 @@ private:
 
 	int mFrameBufferFileDescriptor = -1;
 
-	QScopedPointer<std::vector<unsigned char>> mPngImage;
+	QByteArray *mPngImagePointer; // Does not have ownership.
 };
 
 }
