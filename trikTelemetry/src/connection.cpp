@@ -16,7 +16,7 @@
 
 #include "QsLog.h"
 
-#include <QStringBuilder>
+#include <QtCore/QStringBuilder>
 
 using namespace trikTelemetry;
 
