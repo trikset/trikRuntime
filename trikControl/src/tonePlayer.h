@@ -1,4 +1,4 @@
-/* Copyright 2016 Sharganov Artem
+/* Copyright 2016 Artem Sharganov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,12 @@ public:
 public slots:
 
 	/// Play sound
-	void play(int freqHz,int durationMs);
+	void play(int freqHz, int durationMs);
 
 private:
 	QAudioFormat mFormat;
 
-	AudioSynthDeviceBuffered *mDevice; // Has ownership.
+	AudioSynthDevice *mDevice; // Has ownership.
 
 	QAudioOutput *mOutput; // Has ownership.
 

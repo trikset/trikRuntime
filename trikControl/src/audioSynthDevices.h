@@ -1,4 +1,4 @@
-/* Copyright 2016 Sharganov Artem
+/* Copyright 2016 Artem Sharganov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,18 +17,17 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QIODevice>
 #include <QtMultimedia/QAudioFormat>
-#include <qmath.h>
 
 /// QIODevice that synthesize sine wave values
-class AudioSynthDeviceBuffered : public QIODevice
+class AudioSynthDevice : public QIODevice
 {
 	Q_OBJECT
 
 public:
 	/// Constructor
-	AudioSynthDeviceBuffered(QObject *parent, int sampleRate, int sampleSize);
+	AudioSynthDevice(QObject *parent, int sampleRate, int sampleSize);
 
-	~AudioSynthDeviceBuffered();
+	~AudioSynthDevice();
 
 	/// Provides reading from device
 	qint64 readData(char *data, qint64 maxlen);
@@ -65,6 +64,7 @@ private:
 	/// Mode of device
 	bool mBuffered = false;
 
+	/// New call of playTone(...), not readData(...) call
 	bool newCall = true;
 };
 

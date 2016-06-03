@@ -1,4 +1,4 @@
-/* Copyright 2016 Sharganov Artem
+/* Copyright 2016 Artem Sharganov
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,14 @@
 
 #include "tonePlayer.h"
 
-#include <QsLog.h>
 
 namespace trikControl{
 
 TonePlayer::TonePlayer()
 {
-
 	mTimer.setSingleShot(true);
 	initializeAudio();
-	mDevice = new AudioSynthDeviceBuffered(this, mFormat.sampleRate(), mFormat.sampleSize());
+	mDevice = new AudioSynthDevice(this, mFormat.sampleRate(), mFormat.sampleSize());
 	mOutput = new QAudioOutput(mFormat, this);
 }
 
@@ -32,7 +30,7 @@ void TonePlayer::initializeAudio()
 {
 
 	mFormat.setChannelCount(1);
-	mFormat.setSampleRate(44100);
+	mFormat.setSampleRate(16000);
 	mFormat.setSampleSize(16);
 	mFormat.setSampleType(QAudioFormat::SampleType::SignedInt);
 	mFormat.setCodec("audio/pcm");
@@ -47,7 +45,6 @@ void TonePlayer::initializeAudio()
 
 void TonePlayer::play(int hzFreq, int msDuration)
 {
-
 	mOutput->reset();
 	switch (mOutput->state()) {
 		case QAudio::IdleState: break;

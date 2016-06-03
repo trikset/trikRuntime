@@ -1,4 +1,4 @@
-/* Copyright 2016 Sharganov Artem and iakov
+/* Copyright 2016 Artem Sharganov and Iakov Kirilenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,8 @@
 #include "audioSynthDevices.h"
 
 #include <QtMultimedia/QAudioDeviceInfo>
-#include <QsLog.h>
 
-AudioSynthDeviceBuffered::AudioSynthDeviceBuffered(QObject *parent, int sampleRate, int sampleSize)
+AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSize)
 	: QIODevice(parent)
 	, mBuffer(0)
 	, mPos(0)
@@ -27,12 +26,12 @@ AudioSynthDeviceBuffered::AudioSynthDeviceBuffered(QObject *parent, int sampleRa
 
 }
 
-AudioSynthDeviceBuffered::~AudioSynthDeviceBuffered()
+AudioSynthDevice::~AudioSynthDevice()
 {
 
 }
 
-void AudioSynthDeviceBuffered::start(int hzFreq)
+void AudioSynthDevice::start(int hzFreq)
 {
 	open(QIODevice::ReadOnly);
 	if(mBuffered) {
@@ -41,9 +40,10 @@ void AudioSynthDeviceBuffered::start(int hzFreq)
 		generate(mBuffer.data(), length, hzFreq);
 	}
 	else mHzFreq = hzFreq;
+
 }
 
-void AudioSynthDeviceBuffered::stop()
+void AudioSynthDevice::stop()
 {
 	newCall = true;
 	mPos = 0;
@@ -51,27 +51,29 @@ void AudioSynthDeviceBuffered::stop()
 }
 
 // Modefied coupled first-order form algorithm with fixed point arithmetic
-int AudioSynthDeviceBuffered::generate(char *data, int length, int hzFreq)
+int AudioSynthDevice::generate(char *data, int length, int hzFreq)
 {
 	const int channelBytes = mSampleSize / 8;
 
 	qint64 maxlen = length/channelBytes;
 
-	static const int M = 1 << 16;
-	const float w = hzFreq * M_PI / mSampleRate;
-	const long b1 = 2.0 * cos(w)*M;
-	static const int AMPLITUDE = (1 << (mSampleSize - 1))>>1;
+	static const int M = 1 << 30;
+	const auto w = hzFreq * M_PI / mSampleRate;
+	const long long b1 = 2.0 * cos(w)*M;
+	static const int AMPLITUDE = (1 << (mSampleSize - 1)) - 1;
 
 	unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
 
-	static int y1;
-	static int y2;
-	static int y0;
+
+	// Need to save values between readData(...) calls, so static
+	static long long  y0 = 0;
+	static decltype(y0) y1 = 0;
+	static decltype(y0) y2 = 0;
 
 	if(newCall)
 	{
-		y1 = M * qSin(w);
-		y2 = M * qSin(2*w);
+		y1 = M * std::sin(-w);
+		y2 = M * std::sin(-2*w);
 		newCall = false;
 	}
 
@@ -94,10 +96,11 @@ int AudioSynthDeviceBuffered::generate(char *data, int length, int hzFreq)
 
 		ptr+=channelBytes;
 	}
+
 	return i*channelBytes;
 }
 
-qint64 AudioSynthDeviceBuffered::readData(char *data, qint64 len)
+qint64 AudioSynthDevice::readData(char *data, qint64 len)
 {
 	if(mBuffered) {
 		qint64 total = 0;
@@ -112,7 +115,7 @@ qint64 AudioSynthDeviceBuffered::readData(char *data, qint64 len)
 		return generate(data, len, mHzFreq);
 }
 
-qint64 AudioSynthDeviceBuffered::writeData(const char *data, qint64 len)
+qint64 AudioSynthDevice::writeData(const char *data, qint64 len)
 {
 	Q_UNUSED(data);
 	Q_UNUSED(len);
@@ -120,7 +123,7 @@ qint64 AudioSynthDeviceBuffered::writeData(const char *data, qint64 len)
 	return 0;
 }
 
-qint64 AudioSynthDeviceBuffered::bytesAvailable() const
+qint64 AudioSynthDevice::bytesAvailable() const
 {
 	return mBuffer.size() + QIODevice::bytesAvailable();
 }
