@@ -17,10 +17,10 @@
 #include <trikNetwork/connection.h>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/gamepadInterface.h>
-#include "snapshotTaker.h"
-
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTimer>
+
+#include <snapshotTaker.h>
 
 namespace trikTelemetry {
 

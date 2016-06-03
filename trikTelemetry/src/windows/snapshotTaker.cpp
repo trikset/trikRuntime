@@ -17,45 +17,9 @@
 
 namespace trikTelemetry {
 
-SnapshotTaker::SnapshotTaker() : mFrameBufferPath() 
+QByteArray SnapshotTaker::takeSnapshot()
 {
-}
-
-SnapshotTaker::~SnapshotTaker()
-{
-}
-
-bool SnapshotTaker::init()
-{
-	return false;
-}
-
-bool SnapshotTaker::mapFramebuffer()
-{
-	return false;
-}
-
-bool SnapshotTaker::initImageBuffer()
-{
-	return false;
-}
-
-bool SnapshotTaker::writeImageToBuffer()
-{
-	return false;
-}
-
-QByteArray *SnapshotTaker::takeSnapshot()
-{
-
 	return new QByteArray();
-}
-
-void SnapshotTaker::PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length)
-{
-	Q_UNUSED(pngPtr);
-	Q_UNUSED(data);
-	Q_UNUSED(length);
 }
 
 }

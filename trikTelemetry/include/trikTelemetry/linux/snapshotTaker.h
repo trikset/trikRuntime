@@ -26,9 +26,6 @@
 
 namespace trikTelemetry {
 
-/// Custom function for writing a PNG.
-void pngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length);
-
 /// Provides a possibility to get a png snapshot of framebuffer.
 class SnapshotTaker
 {
@@ -62,7 +59,7 @@ private:
 
 	fb_var_screeninfo mVariableFrameBufferInfo;
 
-	uint8_t *mMappedFrameBufferPointer; // Has ownership.
+	uint8_t *mMappedFrameBufferPointer;  // Has ownership.
 
 	png_structp mPngWriteStructPointer;
 
@@ -70,7 +67,7 @@ private:
 
 	int mFrameBufferFileDescriptor = -1;
 
-	QByteArray *mPngImagePointer; // Does not have ownership.
+	QByteArray *mPngImagePointer;  // Does not have ownership.
 };
 
 }
