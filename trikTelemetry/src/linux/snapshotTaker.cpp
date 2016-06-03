@@ -1,4 +1,4 @@
-/* Copyright 2016 Evgeny Sergeev
+/* Copyright 2016 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 
 namespace trikTelemetry {
 
-SnapshotTaker::SnapshotTaker() : mFrameBufferPath("/dev/fb0") {
+SnapshotTaker::SnapshotTaker() : mFrameBufferPath("/dev/fb0")
+{
 }
 
 SnapshotTaker::~SnapshotTaker()
@@ -69,17 +70,12 @@ bool SnapshotTaker::mapFramebuffer()
 	/// Mapping framebuffer to memory.
 	mMappedFrameBufferPointer =
 			static_cast<uint8_t *>(mmap(0
-										, mFixedFrameBufferInfo.smem_len
-										, PROT_READ | PROT_WRITE
-										, MAP_SHARED
-										, mFrameBufferFileDescriptor
-										, 0));
-	if (mMappedFrameBufferPointer == MAP_FAILED) {
-		/// Failed to map framebuffer device to memory.
-		return false;
-	}
-
-	return true;
+					, mFixedFrameBufferInfo.smem_len
+					, PROT_READ | PROT_WRITE
+					, MAP_SHARED
+					, mFrameBufferFileDescriptor
+					, 0));
+	return mMappedFrameBufferPointer != MAP_FAILED;
 }
 
 bool SnapshotTaker::initImageBuffer()
@@ -137,19 +133,13 @@ bool SnapshotTaker::writeImageToBuffer()
 
 	int bytesPerPixel = mVariableFrameBufferInfo.bits_per_pixel / 8;
 
-	unsigned int y = 0;
-
-	for (y = 0; y < mVariableFrameBufferInfo.yres; y++) {
-		unsigned int x;
-
-		for (x = 0; x < mVariableFrameBufferInfo.xres; x++) {
+	for (unsigned int y = 0; y < mVariableFrameBufferInfo.yres; y++) {
+		for (unsigned int x = 0; x < mVariableFrameBufferInfo.xres; x++) {
 			int pngBufferOffset = 3 * x;
 
 			size_t frameBufferOffset = x * (bytesPerPixel) + y * mFixedFrameBufferInfo.line_length;
 
-			uint32_t pixel = 0;
-
-			pixel = *(reinterpret_cast<uint32_t *>(mMappedFrameBufferPointer + frameBufferOffset));
+			uint32_t pixel = *(reinterpret_cast<uint32_t *>(mMappedFrameBufferPointer + frameBufferOffset));
 
 			png_byte red = (pixel >> mVariableFrameBufferInfo.red.offset) & redMask;
 			png_byte green = (pixel >> mVariableFrameBufferInfo.green.offset) & greenMask;
@@ -170,28 +160,29 @@ bool SnapshotTaker::writeImageToBuffer()
 	return true;
 }
 
-QByteArray *SnapshotTaker::takeSnapshot()
+QByteArray SnapshotTaker::takeSnapshot()
 {
 	if (!mInitSuccessfull) {
-		if (!(mInitSuccessfull = init())) {
-			return nullptr;
+		mInitSuccessfull = init();
+		if (!mInitSuccessfull) {
+			return QByteArray();
 		}
 	}
 
 	if (!mapFramebuffer()) {
-		return nullptr;
+		return QByteArray();
 	}
 
 	if (!initImageBuffer()) {
 		delete mPngImagePointer;
 		mPngImagePointer = nullptr;
-		return nullptr;
+		return QByteArray();
 	}
 
 	if (!writeImageToBuffer()) {
 		delete mPngImagePointer;
 		mPngImagePointer = nullptr;
-		return nullptr;
+		return QByteArray();
 	}
 
 	png_destroy_write_struct(&mPngWriteStructPointer, &mPngInfoStructPointer);
@@ -199,7 +190,7 @@ QByteArray *SnapshotTaker::takeSnapshot()
 	munmap(mMappedFrameBufferPointer, mFixedFrameBufferInfo.smem_len);
 	mMappedFrameBufferPointer = nullptr;
 
-	QByteArray *tempPngImagePointer = mPngImagePointer;
+	QByteArray tempPngImagePointer = *mPngImagePointer;
 	mPngImagePointer = nullptr;
 	return tempPngImagePointer;
 }

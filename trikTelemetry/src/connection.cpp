@@ -28,17 +28,6 @@ Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadI
 	mSnapshotTaker.reset(new SnapshotTaker);
 }
 
-void Connection::init(int socketDescriptor)
-{
-	trikNetwork::Connection::init(socketDescriptor);
-	initTakeSnapshotTimer();
-}
-
-void Connection::init(const QHostAddress &ip, int port)
-{
-	trikNetwork::Connection::init(ip, port);
-	initTakeSnapshotTimer();
-}
 
 void Connection::processData(const QByteArray &data)
 {
@@ -145,6 +134,10 @@ void Connection::processData(const QByteArray &data)
 			answer = "sensor:" + command + ":" + (isButtonPressed(command) ? "1" : "0");
 		}
 	} else if (command.startsWith(snapshotRequested)) {
+		if (mTakeSnapshotTimer.isNull()) {
+			initTakeSnapshotTimer();
+		}
+
 		takeSnapshot();
 		mTakeSnapshotTimer->start(1000);
 		return;
@@ -197,11 +190,10 @@ void Connection::initTakeSnapshotTimer()
 
 void Connection::takeSnapshot()
 {
-	QByteArray *snapshot = mSnapshotTaker->takeSnapshot();
+	QByteArray snapshot = mSnapshotTaker->takeSnapshot();
 
-	if (snapshot != nullptr) {
-		send(QByteArray("snapshot:").append(snapshot->toBase64().constData()));
-		delete snapshot;
+	if (!snapshot.isNull()) {
+		send(QByteArray("snapshot:").append(snapshot.toBase64().constData()));
 	} else {
 		mTakeSnapshotTimer->stop();
 	}

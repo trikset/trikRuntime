@@ -26,7 +26,7 @@ HEADERS += \
 SOURCES += \
 	$$PWD/src/trikTelemetry.cpp \
 	$$PWD/src/connection.cpp \
-	$$PWD/src/snapshotTaker.cpp \
+	$$PWD/src/$$PLATFORM/snapshotTaker.cpp \
 
 TEMPLATE = lib
 

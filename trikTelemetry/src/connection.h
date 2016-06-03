@@ -17,7 +17,7 @@
 #include <trikNetwork/connection.h>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/gamepadInterface.h>
-#include <snapshotTaker.h>
+#include "snapshotTaker.h"
 
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTimer>
@@ -39,14 +39,6 @@ public:
 	/// @param brick - a Brick used to respond to clients.
 	/// @param gamepad - gamepad object used to report state of Android gamepad.
 	explicit Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad);
-
-	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
-	/// thread.
-	/// @param socketDescriptor - native socket descriptor.
-	Q_INVOKABLE void init(int socketDescriptor);
-
-protected:
-	void init(const QHostAddress &ip, int port);
 
 private slots:
 	void takeSnapshot();

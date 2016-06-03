@@ -1,4 +1,4 @@
-/* Copyright 2016 CyberTech Labs Ltd.
+/* Copyright 2016 Evgeny Sergeev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,26 +21,25 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <zlib.h>
-#include <QString>
-#include <QVector>
+#include <QtCore/QString>
+#include <QtCore/QVector>
 
 namespace trikTelemetry {
 
 /// Custom function for writing a PNG.
-void PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length);
+void pngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length);
 
 /// Provides a possibility to get a png snapshot of framebuffer.
 class SnapshotTaker
 {
-
 public:
 	SnapshotTaker();
 
 	~SnapshotTaker();
 
 	/// Returns pointer to PNG framebuffer image in case of success
-	/// or nullptr otherwise.
-	QByteArray *takeSnapshot();
+	/// or null QByteArray otherwise.
+	QByteArray takeSnapshot();
 
 private:
 	/// Initialisation of data that will not be changed in runtime.
