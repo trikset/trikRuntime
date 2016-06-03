@@ -19,7 +19,7 @@ namespace trikTelemetry {
 
 QByteArray SnapshotTaker::takeSnapshot()
 {
-	return new QByteArray();
+	return QByteArray();
 }
 
 }
