@@ -51,7 +51,7 @@ QByteArray *SnapshotTaker::takeSnapshot()
 	return new QByteArray();
 }
 
-void PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length)
+void SnapshotTaker::PngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length)
 {
 	Q_UNUSED(pngPtr);
 	Q_UNUSED(data);

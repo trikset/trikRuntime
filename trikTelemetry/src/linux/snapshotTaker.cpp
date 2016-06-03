@@ -195,9 +195,9 @@ QByteArray SnapshotTaker::takeSnapshot()
 	return tempPngImagePointer;
 }
 
-void pngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length)
+void SnapshotTaker::pngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length)
 {
-	QByteArray *pngImage = (QByteArray *)png_get_io_ptr(pngPtr);
+	QByteArray *pngImage = reinterpret_cast<QByteArray *>(png_get_io_ptr(pngPtr));
 	pngImage->append(reinterpret_cast<char *>(data), length);
 }
 

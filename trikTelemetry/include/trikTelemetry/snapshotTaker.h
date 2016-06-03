@@ -42,6 +42,8 @@ public:
 	QByteArray takeSnapshot();
 
 private:
+	static void pngWriteCallback(png_structp pngPtr, png_bytep data, png_size_t length);
+
 	/// Initialisation of data that will not be changed in runtime.
 	bool init();
 
