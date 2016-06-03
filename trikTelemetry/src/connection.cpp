@@ -28,7 +28,6 @@ Connection::Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadI
 	mSnapshotTaker.reset(new SnapshotTaker);
 }
 
-
 void Connection::processData(const QByteArray &data)
 {
 	QString command(data);
