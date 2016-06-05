@@ -45,14 +45,40 @@ public:
 public slots:
 	/// Initializes a camera.
 	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
-	void init(bool showOnDisplay);
+    /// @param returnHSV - true if we want get back hsv color format.
+    void init(bool showOnDisplay, bool returnHSV);
 
-	/// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale.
+    /// Returns index of color in given cell of a grid:
+    /// Black   == 0
+    /// Red     == 1
+    /// Yellow  == 2
+    /// Green   == 3
+    /// Cyan    == 4
+    /// Blue    == 5
+    /// Magenta == 6
+    /// White   == 7
+    int read(int m, int n);
+
+    /// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale or
+    /// a vector [H, S, V] in HSV color scale.
 	/// If m or n are out of range, returns [-1; -1; -1].
 	/// Can be accessed directly from other thread.
-	QVector<int> read(int m, int n);
+    QVector<int> readRaw(int m, int n);
 
 private:
+    enum ColorName
+    {
+        Black, // == 0
+        Red,
+        Yellow,
+        Green,
+        Cyan,
+        Blue,
+        Magenta,
+        White, // == 7
+        COUNT_COLORS // count colors
+    };
+
 	QString sensorName() const override;
 
 	void onNewData(const QString &dataLine) override;
@@ -66,6 +92,9 @@ private:
 
 	/// True, if video stream from camera shall be shown on robot display.
 	bool mShowOnDisplay = true;
+
+    /// True, if need return hsv color format
+    bool mReturnHSV = false;
 };
 
 }

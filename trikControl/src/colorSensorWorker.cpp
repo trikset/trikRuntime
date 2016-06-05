@@ -52,13 +52,17 @@ ColorSensorWorker::~ColorSensorWorker()
 {
 }
 
-void ColorSensorWorker::init(bool showOnDisplay)
+void ColorSensorWorker::init(bool showOnDisplay, bool returnHSV)
 {
-	AbstractVirtualSensorWorker::init();
-	sendCommand(QString("video_out %1").arg(showOnDisplay ? 1 : 0));
+    AbstractVirtualSensorWorker::init();
+    sendCommand(QString("video_out %1").arg(showOnDisplay ? 1 : 0));
+    if (returnHSV)
+    {
+        sendCommand("hsv");
+    }
 }
 
-QVector<int> ColorSensorWorker::read(int m, int n)
+QVector<int> ColorSensorWorker::readRaw(int m, int n)
 {
 	if(m > mReading.size() || n > mReading[0].size() || m <= 0 || n <= 0) {
 		QLOG_WARN() << QString("Incorrect parameters for ColorSensorWorker::read: m = %1, n = %2").arg(m).arg(n);
@@ -66,6 +70,20 @@ QVector<int> ColorSensorWorker::read(int m, int n)
 	}
 
 	return mReading[m - 1][n - 1];
+}
+
+int ColorSensorWorker::read(int m, int n)
+{
+    int H = mReading[m - 1][n - 1][0] * 360 / 255;
+    int S = mReading[m - 1][n - 1][1] * 100 / 255;
+    int V = mReading[m - 1][n - 1][2] * 100 / 255;
+
+    int segment = 360 / (COUNT_COLORS - 2);
+
+    if (V > 90 && S < 10) return 7; //return white
+    else if (V < 15 && S < 15) return 0; //return black
+
+    return ((H + segment / 2) / segment);
 }
 
 QString ColorSensorWorker::sensorName() const
@@ -88,10 +106,11 @@ void ColorSensorWorker::onNewData(const QString &dataLine)
 		for (int i = 0; i < mReadingBuffer.size(); ++i) {
 			for (int j = 0; j < mReadingBuffer[i].size(); ++j) {
 				unsigned const int colorValue = parsedLine[i * mReadingBuffer.size() + j + 1].toUInt();
-				const int r = (colorValue >> 16) & 0xFF;
-				const int g = (colorValue >> 8) & 0xFF;
-				const int b = colorValue & 0xFF;
-				mReadingBuffer[i][j] = {r, g, b};
+                const int C1 = (colorValue >> 16) & 0xFF;
+                const int C2 = (colorValue >> 8) & 0xFF;
+                const int C3 = colorValue & 0xFF;
+
+                mReadingBuffer[i][j] = {C1, C2, C3};
 			}
 		}
 

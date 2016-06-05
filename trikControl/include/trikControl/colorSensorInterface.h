@@ -35,10 +35,14 @@ signals:
 public slots:
 	/// Initializes a camera.
 	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
-	virtual void init(bool showOnDisplay) = 0;
+    /// @param returnHSV - true if we want get back hsv color format.
+    virtual void init(bool showOnDisplay, bool returnHSV) = 0;
 
-	/// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale.
-	virtual QVector<int> read(int m, int n) = 0;
+    /// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale
+    /// or vector [H; S; V] in HSV color scale.
+    virtual QVector<int> readRaw(int m, int n) = 0;
+
+    virtual int read(int m, int n) = 0;
 
 	/// Stops detection until init() will be called again.
 	virtual void stop() = 0;
