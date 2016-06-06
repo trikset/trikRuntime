@@ -152,11 +152,11 @@ void ColorSensorWorker::onNewData(const QString &dataLine)
 		for (int i = 0; i < mReadingBuffer.size(); ++i) {
 			for (int j = 0; j < mReadingBuffer[i].size(); ++j) {
 				unsigned const int colorValue = parsedLine[i * mReadingBuffer.size() + j + 1].toUInt();
-                const int C1 = (colorValue >> 16) & 0xFF;
-                const int C2 = (colorValue >> 8) & 0xFF;
-                const int C3 = colorValue & 0xFF;
-
-                mReadingBuffer[i][j] = {C1, C2, C3};
+				const int C1 = (colorValue >> 16) & 0xFF;
+				const int C2 = (colorValue >> 8) & 0xFF;
+				const int C3 = colorValue & 0xFF;
+ 
+				mReadingBuffer[i][j] = {C1, C2, C3};
 			}
 		}
 
