@@ -131,7 +131,7 @@ int ColorSensorWorker::getColor(int m, int n)
     if (V > 90 && S < 10) return 7; //return white
     else if ((V < 15) || (V < 30 && S < 20)) return 0; //return black
 
-    return ((H + segment / 2) / segment);
+    return (((H + segment / 2) / segment) + 1);
 }
 
 QString ColorSensorWorker::sensorName() const

@@ -70,7 +70,7 @@ QVector<int> ColorSensor::read(int m, int n)
 int ColorSensor::getColor(int m, int n)
 {
     // Read is called synchronously and only takes prepared value from sensor.
-    return mColorSensorWorker->getColorName(m, n);
+    return mColorSensorWorker->getColor(m, n);
 }
 
 void ColorSensor::stop()
