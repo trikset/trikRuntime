@@ -60,20 +60,68 @@ void ColorSensorWorker::init(bool showOnDisplay, bool returnHSV)
     {
         sendCommand("hsv");
     }
+    mReturnHSV = returnHSV;
 }
 
-QVector<int> ColorSensorWorker::readRaw(int m, int n)
+QVector<int> ColorSensorWorker::read(int m, int n)
 {
 	if(m > mReading.size() || n > mReading[0].size() || m <= 0 || n <= 0) {
 		QLOG_WARN() << QString("Incorrect parameters for ColorSensorWorker::read: m = %1, n = %2").arg(m).arg(n);
 		return {-1, -1, -1};
 	}
 
-	return mReading[m - 1][n - 1];
+    return hsvToRgb(mReading[m - 1][n - 1]);
 }
 
-int ColorSensorWorker::read(int m, int n)
+QVector<int> ColorSensorWorker::hsvToRgb(QVector<int> hsv)
 {
+    const int pos = 100;
+
+    int H = hsv[0];
+    int S = hsv[1];
+    int V = hsv[2];
+
+    QVector<int> resultRGB({0, 0, 0});
+
+    float r = 0;
+    float g = 0;
+    float b = 0;
+
+    float h = H / 255.0f;
+    float s = S / 255.0f;
+    float v = V / 255.0f;
+
+    v = v < 0.2 ? 0 : v;
+    s = s < 0.2 ? 0 : 1;
+
+    int i = h*6;
+    float f = h*6-i;
+    float p = v * (1 - s);
+    float q = v * (1 - f * s);
+    double t = v * (1 - (1 - f) * s);
+
+    switch(i % 6) {
+       case 0: r = v; g = t; b = p; break;
+       case 1: r = q; g = v; b = p; break;
+       case 2: r = p; g = v; b = t; break;
+       case 3: r = p; g = q; b = v; break;
+       case 4: r = t; g = p; b = v; break;
+       case 5: r = v; g = p; b = q; break;
+    }
+
+    int ri = r*255;
+    int gi = g*255;
+    int bi = b*255;
+
+    resultRGB = {ri, gi, bi};
+
+    return resultRGB;
+}
+
+int ColorSensorWorker::getColor(int m, int n)
+{
+    if (!mReturnHSV) return -1;
+
     int H = mReading[m - 1][n - 1][0] * 360 / 255;
     int S = mReading[m - 1][n - 1][1] * 100 / 255;
     int V = mReading[m - 1][n - 1][2] * 100 / 255;
@@ -81,7 +129,7 @@ int ColorSensorWorker::read(int m, int n)
     int segment = 360 / (COUNT_COLORS - 2);
 
     if (V > 90 && S < 10) return 7; //return white
-    else if (V < 15 && S < 15) return 0; //return black
+    else if ((V < 15) || (V < 30 && S < 20)) return 0; //return black
 
     return ((H + segment / 2) / segment);
 }

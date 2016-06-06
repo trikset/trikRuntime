@@ -61,16 +61,16 @@ void ColorSensor::init(bool showOnDisplay, bool returnHSV)
     QMetaObject::invokeMethod(mColorSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay), Q_ARG(bool, returnHSV));
 }
 
-QVector<int> ColorSensor::readRaw(int m, int n)
+QVector<int> ColorSensor::read(int m, int n)
 {
 	// Read is called synchronously and only takes prepared value from sensor.
-    return mColorSensorWorker->readRaw(m, n);
+    return mColorSensorWorker->read(m, n);
 }
 
-int ColorSensor::read(int m, int n)
+int ColorSensor::getColor(int m, int n)
 {
     // Read is called synchronously and only takes prepared value from sensor.
-    return mColorSensorWorker->read(m, n);
+    return mColorSensorWorker->getColorName(m, n);
 }
 
 void ColorSensor::stop()

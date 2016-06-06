@@ -40,9 +40,9 @@ public slots:
 
     /// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale
     /// or vector [H; S; V] in HSV color scale.
-    virtual QVector<int> readRaw(int m, int n) = 0;
+    virtual QVector<int> read(int m, int n) = 0;
 
-    virtual int read(int m, int n) = 0;
+    virtual int getColor(int m, int n) = 0;
 
 	/// Stops detection until init() will be called again.
 	virtual void stop() = 0;

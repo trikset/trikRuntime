@@ -57,13 +57,13 @@ public slots:
     /// Blue    == 5
     /// Magenta == 6
     /// White   == 7
-    int read(int m, int n);
+    int getColor(int m, int n);
 
     /// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale or
     /// a vector [H, S, V] in HSV color scale.
 	/// If m or n are out of range, returns [-1; -1; -1].
 	/// Can be accessed directly from other thread.
-    QVector<int> readRaw(int m, int n);
+    QVector<int> read(int m, int n);
 
 private:
     enum ColorName
@@ -82,6 +82,8 @@ private:
 	QString sensorName() const override;
 
 	void onNewData(const QString &dataLine) override;
+
+    QVector<int> hsvToRgb(QVector<int> hsv);
 
 	/// Current stored reading of a sensor. First two vectors are m*n matrix, inner vector contains 3 values --- red,
 	/// green and blue components of a dominant color in this cell.
