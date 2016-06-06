@@ -51,11 +51,11 @@ public:
 	Status status() const override;
 
 public slots:
-    void init(bool showOnDisplay, bool returnHSV) override;
+	void init(bool showOnDisplay, bool returnHSV) override;
 
-    QVector<int> read(int m, int n) override;
+	QVector<int> read(int m, int n) override;
 
-    int getColor(int m, int n) override;
+	int getColor(int m, int n) override;
 
 	void stop() override;
 

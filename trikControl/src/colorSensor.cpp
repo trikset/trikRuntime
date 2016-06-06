@@ -58,19 +58,19 @@ ColorSensor::Status ColorSensor::status() const
 
 void ColorSensor::init(bool showOnDisplay, bool returnHSV)
 {
-    QMetaObject::invokeMethod(mColorSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay), Q_ARG(bool, returnHSV));
+	QMetaObject::invokeMethod(mColorSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay), Q_ARG(bool, returnHSV));
 }
 
 QVector<int> ColorSensor::read(int m, int n)
 {
 	// Read is called synchronously and only takes prepared value from sensor.
-    return mColorSensorWorker->read(m, n);
+	return mColorSensorWorker->read(m, n);
 }
 
 int ColorSensor::getColor(int m, int n)
 {
-    // Read is called synchronously and only takes prepared value from sensor.
-    return mColorSensorWorker->getColor(m, n);
+	// Read is called synchronously and only takes prepared value from sensor.
+	return mColorSensorWorker->getColor(m, n);
 }
 
 void ColorSensor::stop()
