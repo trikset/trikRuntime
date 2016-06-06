@@ -155,7 +155,7 @@ void ColorSensorWorker::onNewData(const QString &dataLine)
 				const int C1 = (colorValue >> 16) & 0xFF;
 				const int C2 = (colorValue >> 8) & 0xFF;
 				const int C3 = colorValue & 0xFF;
- 
+
 				mReadingBuffer[i][j] = {C1, C2, C3};
 			}
 		}
