@@ -65,7 +65,6 @@ private:
 
 	trikWiFi::TrikWiFi &mWiFi;
 	trikKernel::RcReader mRcReader;
-	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QListWidget mModes;
