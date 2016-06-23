@@ -60,12 +60,12 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
 private:
+	QEventLoop mEventLoop;
 	QVBoxLayout mLayout;
 	QLabel mInitMessage;
 	QLabel mWaitMessage;
 	QLabel mBreakMessage;
 	QProcess mProcess;
-	QEventLoop mEventLoop;
 
 private slots:
 	void onProcessFinished(int, QProcess::ExitStatus exitStatus);
