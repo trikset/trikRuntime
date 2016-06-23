@@ -38,7 +38,7 @@ void BatteryIndicator::renew()
 		if (voltage > mSanityThreshold && voltage < mShutdownThreshold) {
 			QProcess::startDetached("/bin/sh", {"-c", "halt"});
 		} else if (voltage > mSanityThreshold && voltage < mWarningThreshold) {
-			mBrick.playTone(800, 1000);
+			mBrick.playTone(800, mRenewInterval/2);
 		}
 
 		setText(QString::number(voltage, 'f', 1) + " V");

@@ -44,7 +44,7 @@ private slots:
 private:
 	trikControl::BrickInterface &mBrick;
 	QTimer mRenewTimer;
-	const int mRenewInterval = 1000;
+	const int mRenewInterval = 60*1000;
 
 	const float mWarningThreshold = 11.2;
 	const float mShutdownThreshold = 10.5;
