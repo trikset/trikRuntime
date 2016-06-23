@@ -126,9 +126,6 @@ private:
 	/// Initializes keepalive and heartbeat timers.
 	void initKeepalive();
 
-	/// Socket for this connection.
-	QScopedPointer<QTcpSocket> mSocket;
-
 	/// Buffer to accumulate parts of a message.
 	QByteArray mBuffer;
 
@@ -149,6 +146,9 @@ private:
 
 	/// Use or don;t use heartbeat method of connection loss detection.
 	bool mUseHeartbeat = false;
+
+	/// Socket for this connection.
+	QScopedPointer<QTcpSocket> mSocket;
 };
 
 }
