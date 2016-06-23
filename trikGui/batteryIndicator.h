@@ -45,6 +45,10 @@ private:
 	trikControl::BrickInterface &mBrick;
 	QTimer mRenewTimer;
 	const int mRenewInterval = 1000;
+
+	const float mWarningThreshold = 11.2;
+	const float mShutdownThreshold = 10.5;
+	const float mSanityThreshold = 1.0;
 };
 
 }

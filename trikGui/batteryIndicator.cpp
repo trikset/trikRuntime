@@ -15,6 +15,7 @@
 #include "batteryIndicator.h"
 
 #include <QtCore/QString>
+#include <QtCore/QProcess>
 
 using namespace trikGui;
 
@@ -33,6 +34,13 @@ BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *
 void BatteryIndicator::renew()
 {
 	if (mBrick.battery()->status() == trikControl::DeviceInterface::Status::ready) {
-		setText(QString::number(mBrick.battery()->readVoltage(), 'f', 1) + " V");
+		const auto voltage = mBrick.battery()->readVoltage();
+		if (voltage > mSanityThreshold && voltage < mShutdownThreshold) {
+			QProcess::startDetached("/bin/sh", {"-c", "halt"});
+		} else if (voltage > mSanityThreshold && voltage < mWarningThreshold) {
+			mBrick.playTone(800, 1000);
+		}
+
+		setText(QString::number(voltage, 'f', 1) + " V");
 	}
 }

@@ -65,6 +65,9 @@ public slots:
 	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
 	virtual void playSound(const QString &soundFileName) = 0;
 
+	/// Generates sound with given frequency and given duration, plays it on a speaker.
+	virtual void playTone(int hzFreq, int msDuration) = 0;
+
 	/// Uses text synthesis to say given text on a speaker.
 	virtual void say(const QString &text) = 0;
 

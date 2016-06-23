@@ -84,7 +84,7 @@ public slots:
 
 	void playSound(const QString &soundFileName) override;
 
-	void playTone(int hzFreq, int msDuration);
+	void playTone(int hzFreq, int msDuration) override;
 
 	void say(const QString &text) override;
 
