@@ -45,24 +45,27 @@ void TonePlayer::initializeAudio()
 
 void TonePlayer::play(int hzFreq, int msDuration)
 {
-	mOutput->reset();
+  mDevice->start(hzFreq);
 	switch (mOutput->state()) {
-		case QAudio::IdleState: break;
-		default:break;
+    case QAudio::ActiveState:
+      mOutput->suspend();
+      mDevice->reset();
+      mOutput->resume();
+      break;
+    case QAudio::SuspendedState: mOutput->resume(); break;
+		case QAudio::StoppedState:   mOutput->start(mDevice); break;
+		case QAudio::IdleState:      mOutput->start(mDevice); break;
+		default: break;
 	}
 
 	mTimer.setInterval(msDuration);
-	mDevice->start(hzFreq);
 	mTimer.start();
-	mOutput->start(mDevice);
 }
 
 void TonePlayer::stop()
 {
 	mDevice->stop();
 	mTimer.stop();
-	mOutput->stop();
-
 }
 }
 
