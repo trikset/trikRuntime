@@ -21,7 +21,7 @@ AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSi
 	: QIODevice(parent)
 	, mBuffer(0)
 	, mPos(0)
-  , mHzFreq(0)
+	, mHzFreq(0)
 	, mSampleRate(sampleRate)
 	, mSampleSize(sampleSize)
 {
@@ -48,7 +48,7 @@ void AudioSynthDevice::start(int hzFreq)
 
 void AudioSynthDevice::stop()
 {
-  reset();
+	reset();
 	mHzFreq = 0;
 }
 
