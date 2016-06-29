@@ -45,7 +45,7 @@ void TonePlayer::initializeAudio()
 
 void TonePlayer::play(int hzFreq, int msDuration)
 {
-  mDevice->start(hzFreq);
+	mDevice->start(hzFreq);
 	switch (mOutput->state()) {
 		case QAudio::ActiveState:
 			mOutput->suspend();
