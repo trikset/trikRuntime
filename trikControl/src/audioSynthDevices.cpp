@@ -36,12 +36,17 @@ void AudioSynthDevice::start(int hzFreq)
 {
 	reset();
 	mPos = 0;
-	newCall = true;
 	mHzFreq = hzFreq;
+
+        mOmega = mHzFreq * M_PI / mSampleRate;
+        mY1 = -std::sin(mOmega) * M;
+        mY2 = -std::sin(2 * mOmega) * M;
+        mB = 2.0 * cos(mOmega) * M;
+
 	if (mBuffered) {
 		const qint64 length = (mSampleRate * (mSampleSize / 8));
 		mBuffer.resize(length);
-		generate(mBuffer.data(), length, hzFreq);
+		generate(mBuffer.data(), length);
 	}
 	emit readyRead();
 }
@@ -52,39 +57,28 @@ void AudioSynthDevice::stop()
 	mHzFreq = 0;
 }
 
-// Modefied coupled first-order form algorithm with fixed point arithmetic
-int AudioSynthDevice::generate(char *data, int length, int hzFreq)
+// Modified coupled first-order form algorithm with fixed point arithmetic
+int AudioSynthDevice::generate(char *data, int length)
 {
-	if(hzFreq == 0) return 0;
-  
+	if(mHzFreq == 0)
+                return 0;
+
 	const int channelBytes = mSampleSize / 8;
 
-	qint64 maxlen = length / channelBytes;
+	const qint64 maxlen = length / channelBytes;
 
-	static const int M = 1 << 30;
-	const auto w = hzFreq * M_PI / mSampleRate;
-	const long long b1 = 2.0 * cos(w) * M;
-	static const int AMPLITUDE = (1 << (mSampleSize - 1)) - 1;
+	const int AMPLITUDE = (1 << (mSampleSize - 1)) - 1;
 
 	unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
 
-	// Need to save values between readData(...) calls, so static
-	static long long y0 = 0;
-	static decltype(y0) y1 = 0;
-	static decltype(y0) y2 = 0;
-
-	if (newCall) {
-		y1 = M * std::sin(-w);
-		y2 = M * std::sin(-2 * w);
-		newCall = false;
-	}
+        long long y0;
 
 	int i = 0;
 
 	for (i = 0; i < maxlen; ++i) {
-		y0 = b1 * y1 / M - y2;
-		y2 = b1 * y0 / M - y1;
-		y1 = b1 * y2 / M - y0;
+		y0 = mB * mY1 / M - mY2;
+		mY2 = mB * y0 / M - mY1;
+		mY1 = mB * mY2 / M - y0;
 
 		if (mSampleSize == 8) {
 			const qint8 val = static_cast<qint8>(y0 * AMPLITUDE / M);
@@ -113,7 +107,7 @@ qint64 AudioSynthDevice::readData(char *data, qint64 len)
 
 		return total;
 	} else {
-		return generate(data, len, mHzFreq);
+		return generate(data, len);
 	}
 }
 

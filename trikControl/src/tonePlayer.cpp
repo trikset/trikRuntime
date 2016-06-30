@@ -48,10 +48,10 @@ void TonePlayer::play(int hzFreq, int msDuration)
 	mDevice->start(hzFreq);
 	switch (mOutput->state()) {
 		case QAudio::ActiveState:
-			mOutput->suspend();
-			mDevice->reset();
-      			mOutput->resume();
-      			break;
+                        mOutput->suspend();
+                        mDevice->reset();
+                        mOutput->resume();
+                        break;
 		case QAudio::SuspendedState: mOutput->resume(); break;
 		case QAudio::StoppedState:   mOutput->start(mDevice); break;
 		case QAudio::IdleState:      mOutput->start(mDevice); break;

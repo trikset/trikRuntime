@@ -51,6 +51,7 @@ private:
 	void initializeAudio();
 
 public slots:
+        /// Stop playing
 	void stop();
 };
 }
