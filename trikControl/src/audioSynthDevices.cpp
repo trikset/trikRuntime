@@ -38,10 +38,10 @@ void AudioSynthDevice::start(int hzFreq)
 	mPos = 0;
 	mHzFreq = hzFreq;
 
-        mOmega = mHzFreq * M_PI / mSampleRate;
-        mY1 = -std::sin(mOmega) * M;
-        mY2 = -std::sin(2 * mOmega) * M;
-        mB = 2.0 * cos(mOmega) * M;
+	mOmega = mHzFreq * M_PI / mSampleRate;
+	mY1 = -std::sin(mOmega) * M;
+	mY2 = -std::sin(2 * mOmega) * M;
+	mB = 2.0 * cos(mOmega) * M;
 
 	if (mBuffered) {
 		const qint64 length = (mSampleRate * (mSampleSize / 8));
@@ -61,7 +61,7 @@ void AudioSynthDevice::stop()
 int AudioSynthDevice::generate(char *data, int length)
 {
 	if(mHzFreq == 0)
-                return 0;
+		return 0;
 
 	const int channelBytes = mSampleSize / 8;
 
@@ -71,7 +71,7 @@ int AudioSynthDevice::generate(char *data, int length)
 
 	unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
 
-        long long y0;
+	long long y0;
 
 	int i = 0;
 

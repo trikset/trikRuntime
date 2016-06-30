@@ -64,14 +64,14 @@ private:
 	/// Mode of device
 	const bool mBuffered = false;
 
-        long long mY1 = 0;
+	long long mY1 = 0;
 
-        long long mY2 = 0;
+	long long mY2 = 0;
 
-        long long mB = 0;
+	long long mB = 0;
 
-        static const int M = 1 << 30;
+	static const int M = 1 << 30;
 
-        double mOmega;
+	double mOmega;
 };
 

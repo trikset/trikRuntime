@@ -228,6 +228,8 @@ void Brick::stop()
 {
 	QLOG_INFO() << "Stopping brick";
 
+	mTonePlayer->stop();
+
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
 	}
