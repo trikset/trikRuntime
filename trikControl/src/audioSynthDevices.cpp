@@ -21,9 +21,11 @@ AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSi
 	: QIODevice(parent)
 	, mBuffer(0)
 	, mPos(0)
+	, mHzFreq(0)
 	, mSampleRate(sampleRate)
 	, mSampleSize(sampleSize)
 {
+	open(QIODevice::ReadOnly);
 }
 
 AudioSynthDevice::~AudioSynthDevice()
@@ -32,26 +34,29 @@ AudioSynthDevice::~AudioSynthDevice()
 
 void AudioSynthDevice::start(int hzFreq)
 {
-	open(QIODevice::ReadOnly);
+	reset();
+	mPos = 0;
+	newCall = true;
+	mHzFreq = hzFreq;
 	if (mBuffered) {
 		const qint64 length = (mSampleRate * (mSampleSize / 8));
 		mBuffer.resize(length);
 		generate(mBuffer.data(), length, hzFreq);
-	} else {
-		mHzFreq = hzFreq;
 	}
+	emit readyRead();
 }
 
 void AudioSynthDevice::stop()
 {
-	newCall = true;
-	mPos = 0;
-	close();
+	reset();
+	mHzFreq = 0;
 }
 
 // Modefied coupled first-order form algorithm with fixed point arithmetic
 int AudioSynthDevice::generate(char *data, int length, int hzFreq)
 {
+	if(hzFreq == 0) return 0;
+  
 	const int channelBytes = mSampleSize / 8;
 
 	qint64 maxlen = length / channelBytes;
