@@ -1,4 +1,4 @@
-/* Copyright 2016 Artem Sharganov
+/* Copyright 2016 Artem Sharganov, Iakov Kirilenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public:
 
 private:
 	/// Sythesize sine wave values
-	int generate(char *data, int length, int hzFreq);
+	int generate(char *data, int lengthBytes);
 
 private:
 
@@ -62,9 +62,16 @@ private:
 	const int mSampleSize;
 
 	/// Mode of device
-	bool mBuffered = false;
+	const bool mBuffered = false;
 
-	/// New call of playTone(...), not readData(...) call
-	bool newCall = true;
+	long long mY1 = 0;
+
+	long long mY2 = 0;
+
+	long long mB = 0;
+
+	static const int M = 1 << 30;
+
+	double mOmega;
 };
 

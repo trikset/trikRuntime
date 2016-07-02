@@ -211,14 +211,10 @@ void Brick::playTone(int hzFreq, int msDuration)
 {
 	QLOG_INFO() << "Playing tone (" << hzFreq << "," << msDuration << ")";
 
-	if (msDuration < 10)
+	if (hzFreq < 0 || msDuration < 0)
 		return;
-	if (hzFreq > 8000)
-		return;
-	if (hzFreq <  20)
-		return;
-	//mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
-	//mTonePlayer->play(hzFreq, msDuration);
+	// mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
+	// mTonePlayer->play(hzFreq, msDuration);
 	QMetaObject::invokeMethod(mTonePlayer.data(), "play", Q_ARG(int, hzFreq), Q_ARG(int, msDuration));
 }
 
@@ -231,6 +227,8 @@ void Brick::say(const QString &text)
 void Brick::stop()
 {
 	QLOG_INFO() << "Stopping brick";
+
+	mTonePlayer->stop();
 
 	for (ServoMotor * const servoMotor : mServoMotors.values()) {
 		servoMotor->powerOff();
