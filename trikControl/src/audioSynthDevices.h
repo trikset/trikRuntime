@@ -16,7 +16,6 @@
 
 #include <QtCore/QByteArray>
 #include <QtCore/QIODevice>
-#include <QtMultimedia/QAudioFormat>
 
 /// QIODevice that synthesize sine wave values
 class AudioSynthDevice : public QIODevice

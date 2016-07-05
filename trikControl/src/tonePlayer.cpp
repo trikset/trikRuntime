@@ -12,59 +12,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-
 #include "tonePlayer.h"
 
+using namespace trikControl;
 
-namespace trikControl{
+// This file is temporary commented out to remove dependence from QtMumtimedia.
+// TODO: Restore is as quickly as possible
 
 TonePlayer::TonePlayer()
+	: mDevice(nullptr)
 {
 	mTimer.setSingleShot(true);
 	initializeAudio();
-	mDevice = new AudioSynthDevice(this, mFormat.sampleRate(), mFormat.sampleSize());
-	mOutput = new QAudioOutput(mFormat, this);
+//	mDevice = new AudioSynthDevice(this, mFormat.sampleRate(), mFormat.sampleSize());
+//	mOutput = new QAudioOutput(mFormat, this);
 }
 
 void TonePlayer::initializeAudio()
 {
+//	mFormat.setChannelCount(1);
+//	mFormat.setSampleRate(16000);
+//	mFormat.setSampleSize(16);
+//	mFormat.setSampleType(QAudioFormat::SampleType::SignedInt);
+//	mFormat.setCodec("audio/pcm");
 
-	mFormat.setChannelCount(1);
-	mFormat.setSampleRate(16000);
-	mFormat.setSampleSize(16);
-	mFormat.setSampleType(QAudioFormat::SampleType::SignedInt);
-	mFormat.setCodec("audio/pcm");
+//	connect(&mTimer, SIGNAL(timeout()), this, SLOT(stop()));
 
-	connect(&mTimer, SIGNAL(timeout()), this, SLOT(stop()));
-
-	QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-	if (!info.isFormatSupported(mFormat)) {
-		mFormat = info.nearestFormat(mFormat);
-	}
+//	QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+//	if (!info.isFormatSupported(mFormat)) {
+//		mFormat = info.nearestFormat(mFormat);
+//	}
 }
 
+#include<QDebug>
 void TonePlayer::play(int hzFreq, int msDuration)
 {
-	mDevice->start(hzFreq);
-	switch (mOutput->state()) {
-		case QAudio::ActiveState:
-			mOutput->suspend();
-			mDevice->reset();
-			mOutput->resume();
-			break;
-		case QAudio::SuspendedState: mOutput->resume(); break;
-		case QAudio::StoppedState:   mOutput->start(mDevice); break;
-		case QAudio::IdleState:      mOutput->start(mDevice); break;
-		default: break;
-	}
+	Q_UNUSED(hzFreq)
+	Q_UNUSED(msDuration)
+	qWarning() << "Sorry, brick::playTone is not implemented yet!";
+//	mDevice->start(hzFreq);
+//	switch (mOutput->state()) {
+//		case QAudio::ActiveState:
+//			mOutput->suspend();
+//			mDevice->reset();
+//			mOutput->resume();
+//			break;
+//		case QAudio::SuspendedState: mOutput->resume(); break;
+//		case QAudio::StoppedState:   mOutput->start(mDevice); break;
+//		case QAudio::IdleState:      mOutput->start(mDevice); break;
+//		default: break;
+//	}
 
-	mTimer.setInterval(msDuration);
-	mTimer.start();
+//	mTimer.setInterval(msDuration);
+//	mTimer.start();
 }
 
 void TonePlayer::stop()
 {
-	mDevice->stop();
-	mTimer.stop();
-}
+//	mDevice->stop();
+//	mTimer.stop();
 }

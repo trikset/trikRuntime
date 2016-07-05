@@ -14,7 +14,6 @@
 
 #include "audioSynthDevices.h"
 
-#include <QtMultimedia/QAudioDeviceInfo>
 #include <qmath.h>
 
 AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSize)

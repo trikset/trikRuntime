@@ -18,9 +18,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
-#include <QtMultimedia/QAudioOutput>
-
-
+//#include <QtMultimedia/QAudioOutput>
 
 namespace trikControl {
 
@@ -30,21 +28,17 @@ class TonePlayer : public QObject
 	Q_OBJECT
 
 public:
-
 	/// Constructor
 	TonePlayer();
 
 public slots:
-
 	/// Play sound
 	void play(int freqHz, int durationMs);
 
 private:
-	QAudioFormat mFormat;
-
+//	QAudioFormat mFormat;
 	AudioSynthDevice *mDevice; // Has ownership.
-
-	QAudioOutput *mOutput; // Has ownership.
+//	QAudioOutput *mOutput; // Has ownership.
 
 	QTimer mTimer;
 
