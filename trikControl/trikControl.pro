@@ -156,7 +156,7 @@ TEMPLATE = lib
 DEFINES += TRIKCONTROL_LIBRARY
 
 QT += xml gui
-QT += multimedia
+#QT += multimedia
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
