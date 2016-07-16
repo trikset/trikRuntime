@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2014 - 2016 CyberTech Labs Ltd., Grigorii Zimin
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 #include "connection.h"
 
 #include "QsLog.h"
+
+#include <QtCore/QStringBuilder>
 
 using namespace trikTelemetry;
 
@@ -38,45 +40,60 @@ void Connection::processData(const QByteArray &data)
 	const QString gamepadRequested("Gamepad");
 
 	QString answer;
-
 	if (command.startsWith(dataRequested)) {
 		auto reportSensorReading = [this, &answer] (const QString &port) {
-			answer += QString("%1=%2:%3,")
+			answer += QString("%1:%2:%3;")
 					.arg(port)
 					.arg(mBrick.sensor(port)->read())
 					.arg(mBrick.sensor(port)->readRawData());
 		};
 
-		answer = "data:";
-		answer += "analog:";
+		answer = "allData:";
+
 		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor)) {
 			reportSensorReading(port);
 		}
 
-		answer[answer.length() - 1] = ';';
-		answer += "digital:";
 		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor)) {
 			reportSensorReading(port);
 		}
 
-		answer[answer.length() - 1] = ';';
-		answer += "special:";
 		for (const QString &port : mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor)) {
 			reportSensorReading(port);
 		}
 
-		answer[answer.length() - 1] = ';';
-		answer += "encoders:";
 		for (const QString &port : mBrick.encoderPorts()) {
-			answer += QString("%1=%2:%3,")
+			answer += QString("%1:%2:%3;")
 					.arg(port)
 					.arg(mBrick.encoder(port)->read())
 					.arg(mBrick.encoder(port)->readRawData());
 		}
 
-		answer[answer.length() - 1] = ';';
-		answer += "accelerometer:" + serializeVector(mBrick.accelerometer()->read()) + ";";
-		answer += "gyroscope:" + serializeVector(mBrick.gyroscope()->read());
+		const QString semicolon = ";";
+
+		answer += QString("AccelerometerPort:") % serializeVector(mBrick.accelerometer()->read()) % semicolon
+				% "GyroscopePort:" % serializeVector(mBrick.gyroscope()->read()) % semicolon
+
+				% "GamepadButton1Port:" + QString::number(mGamepad.buttonIsPressed(1)) % semicolon
+				% "GamepadButton2Port:" + QString::number(mGamepad.buttonIsPressed(2)) % semicolon
+				% "GamepadButton3Port:" + QString::number(mGamepad.buttonIsPressed(3)) % semicolon
+				% "GamepadButton4Port:" + QString::number(mGamepad.buttonIsPressed(4)) % semicolon
+				% "GamepadButton5Port:" + QString::number(mGamepad.buttonIsPressed(5)) % semicolon
+				% "GamepadWheelPort:" + QString::number(mGamepad.wheel()) % semicolon
+				% "GamepadConnectionIndicatorPort:" + QString::number(mGamepad.isConnected()) % semicolon
+				% "GamepadPad1PressedPort:" + QString::number(mGamepad.isPadPressed(1)) % semicolon
+				% "GamepadPad2PressedPort:" + QString::number(mGamepad.isPadPressed(2)) % semicolon
+				% "GamepadPad1PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(1)).arg(mGamepad.padY(1)) % semicolon
+				% "GamepadPad2PosPort:" + QString("(%1,%2)").arg(mGamepad.padX(2)).arg(mGamepad.padY(2)) % semicolon
+
+		% "Left:" + QString::number(mBrick.keys()->isPressed(105)) % semicolon
+		% "Up:" + QString::number(mBrick.keys()->isPressed(103)) % semicolon
+		% "Down:" + QString::number(mBrick.keys()->isPressed(108)) % semicolon
+		% "Enter:" + QString::number(mBrick.keys()->isPressed(28)) % semicolon
+		% "Right:" + QString::number(mBrick.keys()->isPressed(106)) % semicolon
+		% "Power:" + QString::number(mBrick.keys()->isPressed(116)) % semicolon
+		% "Esc:" + QString::number(mBrick.keys()->isPressed(1));
+
 	} else if (command.startsWith(portsRequested)) {
 		answer = "ports:";
 		answer += "analog:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).join(",") + ";";

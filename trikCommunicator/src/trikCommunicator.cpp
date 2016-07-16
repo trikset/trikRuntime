@@ -46,7 +46,7 @@ TrikCommunicator::TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikS
 	setObjectName("TrikCommunicator");
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-	connect(runner.data(), SIGNAL(sendMessage(QString)), this, SLOT(sendPrintMessage(QString)));
+	connect(runner.data(), SIGNAL(sendMessage(QString)), this, SLOT(sendMessage(QString)));
 }
 
 TrikCommunicator::~TrikCommunicator()
@@ -58,9 +58,4 @@ Connection *TrikCommunicator::connectionFactory()
 	Connection * const connection = new Connection(*mTrikScriptRunner, mConfigVersion);
 	connect(connection, SIGNAL(stopCommandReceived()), this, SIGNAL(stopCommandReceived()));
 	return connection;
-}
-
-void TrikCommunicator::sendPrintMessage(const QString &text)
-{
-	sendMessage("print: " + text);
 }

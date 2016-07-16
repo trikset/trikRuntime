@@ -105,6 +105,9 @@ signals:
 private slots:
 	void onScriptStart(int scriptId);
 
+	/// Sends message to host machine from mailbox via wifi.
+	void sendMessageFromMailBox(int senderNumber, const QString &message);
+
 private:
 	QScopedPointer<ScriptExecutionControl> mScriptController;
 
