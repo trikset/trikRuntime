@@ -23,7 +23,7 @@ class Rectangle : public Shape
 {
 public:
 	/// Rectangle defined by top left corner (x,y), width and height.
-	Rectangle(int x, int y, int width, int height, QColor color, int penWidth);
+	Rectangle(int x, int y, int width, int height, QColor color, int penWidth, bool filled);
 
 	void draw(QPainter *painter) override;
 
@@ -31,6 +31,7 @@ public:
 
 private:
 	QRect mRect;
+	bool mFilled;
 };
 
 }

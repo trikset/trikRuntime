@@ -66,7 +66,7 @@ public:
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	void drawRect(int x, int y, int width, int height);
+	void drawRect(int x, int y, int width, int height, bool filled);
 
 	/// Draw ellipse.
 	/// @param x - x coordinate.

@@ -99,7 +99,7 @@ public slots:
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	void drawRect(int x, int y, int width, int height);
+	void drawRect(int x, int y, int width, int height, bool filled);
 
 	/// Draw ellipse without redrawing the screen.
 	/// @param x - x coordinate.

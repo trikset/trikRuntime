@@ -71,7 +71,7 @@ public slots:
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	virtual void drawRect(int x, int y, int width, int height) = 0;
+	virtual void drawRect(int x, int y, int width, int height, bool filled) = 0;
 
 	/// Draw ellipse without redrawing display.
 	/// @param x - x coordinate.

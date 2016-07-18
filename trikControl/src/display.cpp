@@ -103,10 +103,10 @@ void trikControl::Display::drawPoint(int x, int y)
 	QMetaObject::invokeMethod(mGuiWorker, "drawPoint", Q_ARG(int, x), Q_ARG(int, y));
 }
 
-void trikControl::Display::drawRect(int x, int y, int width, int height)
+void trikControl::Display::drawRect(int x, int y, int width, int height, bool filled)
 {
 	QMetaObject::invokeMethod(mGuiWorker, "drawRect", Q_ARG(int, x), Q_ARG(int, y)
-			, Q_ARG(int, width), Q_ARG(int, height));
+			, Q_ARG(int, width), Q_ARG(int, height), Q_ARG(bool, filled));
 }
 
 void trikControl::Display::drawEllipse(int x, int y, int width, int height)
