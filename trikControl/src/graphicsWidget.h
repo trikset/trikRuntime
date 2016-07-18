@@ -66,14 +66,16 @@ public:
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	void drawRect(int x, int y, int width, int height);
+	/// @param filled - rect's filling.
+	void drawRect(int x, int y, int width, int height, bool filled = false);
 
 	/// Draw ellipse.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
-	void drawEllipse(int x, int y, int width, int height);
+	/// @param filled - filling of ellipse.
+	void drawEllipse(int x, int y, int width, int height, bool filled = false);
 
 	/// Draw arc on the widget.
 	/// @param x - x coordinate.

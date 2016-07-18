@@ -16,18 +16,26 @@
 
 using namespace trikControl;
 
-Ellipse::Ellipse(int x, int y, int width, int height, QColor color, int penWidth)
+Ellipse::Ellipse(int x, int y, int width, int height, QColor color, int penWidth, bool filled)
 	: Shape(color, penWidth)
 	, mCenter(x, y)
 	, mWidth(width)
 	, mHeight(height)
+	, mFilled(filled)
 {
 }
 
 void Ellipse::draw(QPainter *painter)
 {
 	painter->setPen(QPen(mColor, mPenWidth, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-	painter->drawEllipse(mCenter, mWidth, mHeight);
+	if (mFilled) {
+		const QBrush painterBrush = painter->brush();
+		painter->setBrush(mColor);
+		painter->drawEllipse(mCenter, mWidth, mHeight);
+		painter->setBrush(painterBrush);
+	} else {
+		painter->drawEllipse(mCenter, mWidth, mHeight);
+	}
 }
 
 bool Ellipse::equals(const Shape *other) const

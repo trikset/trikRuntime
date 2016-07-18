@@ -130,14 +130,14 @@ void GuiWorker::drawLine(int x1, int y1, int x2, int y2)
 	mImageWidget->drawLine(x1, y1, x2, y2);
 }
 
-void GuiWorker::drawRect(int x, int y, int width, int height)
+void GuiWorker::drawRect(int x, int y, int width, int height, bool filled)
 {
-	mImageWidget->drawRect(x, y, width, height);
+	mImageWidget->drawRect(x, y, width, height, filled);
 }
 
-void GuiWorker::drawEllipse(int x, int y, int width, int height)
+void GuiWorker::drawEllipse(int x, int y, int width, int height, bool filled)
 {
-	mImageWidget->drawEllipse(x, y, width, height);
+	mImageWidget->drawEllipse(x, y, width, height, filled);
 }
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)

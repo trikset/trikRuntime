@@ -106,14 +106,14 @@ void GraphicsWidget::drawLine(int x1, int y1, int x2, int y2)
 	addShape(new Line(x1, y1, x2, y2, mCurrentPenColor, mCurrentPenWidth));
 }
 
-void GraphicsWidget::drawRect(int x, int y, int width, int height)
+void GraphicsWidget::drawRect(int x, int y, int width, int height, bool filled)
 {
-	addShape(new Rectangle(x, y, width, height, mCurrentPenColor, mCurrentPenWidth));
+	addShape(new Rectangle(x, y, width, height, mCurrentPenColor, mCurrentPenWidth, filled));
 }
 
-void GraphicsWidget::drawEllipse(int x, int y, int width, int height)
+void GraphicsWidget::drawEllipse(int x, int y, int width, int height, bool filled)
 {
-	addShape(new Ellipse(x, y, width, height, mCurrentPenColor, mCurrentPenWidth));
+	addShape(new Ellipse(x, y, width, height, mCurrentPenColor, mCurrentPenWidth, filled));
 }
 
 void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)

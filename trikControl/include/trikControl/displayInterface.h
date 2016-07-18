@@ -71,14 +71,16 @@ public slots:
 	/// @param y - y coordinate.
 	/// @param width - rect's width.
 	/// @param height - rect's height.
-	virtual void drawRect(int x, int y, int width, int height) = 0;
+	/// @param filled - rect's filling.
+	virtual void drawRect(int x, int y, int width, int height, bool filled = false) = 0;
 
 	/// Draw ellipse without redrawing display.
 	/// @param x - x coordinate.
 	/// @param y - y coordinate.
 	/// @param width - width of ellipse.
 	/// @param height - height of ellipse.
-	virtual void drawEllipse(int x, int y, int width, int height) = 0;
+	/// @param filled - filling of ellipse.
+	virtual void drawEllipse(int x, int y, int width, int height, bool filled = false) = 0;
 
 	/// Draw arc on the widget without redrawing it without redrawing it.
 	/// @param x - x coordinate.
