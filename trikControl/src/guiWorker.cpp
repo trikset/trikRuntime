@@ -135,9 +135,9 @@ void GuiWorker::drawRect(int x, int y, int width, int height, bool filled)
 	mImageWidget->drawRect(x, y, width, height, filled);
 }
 
-void GuiWorker::drawEllipse(int x, int y, int width, int height)
+void GuiWorker::drawEllipse(int x, int y, int width, int height, bool filled)
 {
-	mImageWidget->drawEllipse(x, y, width, height);
+	mImageWidget->drawEllipse(x, y, width, height, filled);
 }
 
 void GuiWorker::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)

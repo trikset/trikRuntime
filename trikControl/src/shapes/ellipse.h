@@ -23,7 +23,7 @@ class Ellipse : public Shape
 {
 public:
 	/// Ellipse defined by center (x,y) with given semiaxes lengths.
-	Ellipse(int x, int y, int width, int height, QColor color, int penWidth);
+	Ellipse(int x, int y, int width, int height, QColor color, int penWidth, bool filled);
 
 	void draw(QPainter *painter) override;
 
@@ -33,6 +33,7 @@ private:
 	QPoint mCenter;
 	int mWidth;
 	int mHeight;
+	bool mFilled;
 };
 
 }
