@@ -214,7 +214,8 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 	QStringList sortedPorts = ports();
 	sortedPorts.sort();
 
-	foreach (const QString &port, sortedPorts) {
+	for (int i = 0; i < sortedPorts.length(); i++) {
+		QString port = sortedPorts[i];
 		ModelConfigurationElement currentElement = mModelConfiguration[port];
 
 		content += indent + "<" + port + ">" + '\n';
@@ -225,9 +226,11 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 		if (sortedAttributes.length() != 0)
 			content += '\n';
 
-		foreach (const QString &name, sortedAttributes)
+		for (int i = 0; i < sortedAttributes.length(); i++) {
+			QString name = sortedAttributes[i];
 			if (mDeviceTypes[currentElement.deviceType].attributes[name] != currentElement.attributes[name])
 				content += indent + indent + indent + name + "=\"" + currentElement.attributes[name] + "\"" + '\n';
+		}
 
 		if (sortedAttributes.length() != 0)
 			content += indent + indent + "/>" + '\n';
@@ -240,7 +243,8 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 	QStringList sortedDeviceClasses = mAdditionalModelConfiguration.keys();
 	sortedDeviceClasses.sort();
 
-	foreach (const QString &deviceClassName, sortedDeviceClasses) {
+	for (int i = 0; i < sortedDeviceClasses.length(); i++) {
+		QString deviceClassName = sortedDeviceClasses[i];
 		AdditionalModelConfigurationElement currentElement = mAdditionalModelConfiguration[deviceClassName];
 		content += indent + "<" + deviceClassName;
 
@@ -249,9 +253,11 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 		if (sortedAttributes.length() != 0)
 			content += '\n';
 
-		foreach (const QString &name, sortedAttributes)
+		for (int i = 0; i < sortedAttributes.length(); i++) {
+			QString name = sortedAttributes[i];
 			if (mDevices[deviceClassName].attributes[name] != currentElement.attributes[name])
 				content += indent + indent + name + "=\"" + currentElement.attributes[name] + "\"" + '\n';
+		}
 
 		if (sortedAttributes.length() != 0)
 			content += indent + "/>" + '\n';
@@ -264,7 +270,8 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 	FileUtils::writeToFile(fileName, content, dirPath);
 }
 
-void Configurer::changeAttributeByPort(const QString &port, const QString &attributeName, const QString &newAttributeValue)
+void Configurer::changeAttributeByPort(const QString &port, const QString &attributeName,
+									   const QString &newAttributeValue)
 {
 	if (!mModelConfiguration.contains(port)) {
 		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
@@ -305,10 +312,10 @@ void Configurer::changeAttributeByPort(const QString &port, const QString &attri
 
 void Configurer::parseDeviceClasses(const QDomElement &element)
 {
-    const QDomNodeList deviceClasses = element.childNodes();
-    for (int i = 0; i < deviceClasses.size(); ++i) {
-        const QDomElement deviceNode = deviceClasses.item(i).toElement();
-        if (!deviceNode.isNull()) {
+	const QDomNodeList deviceClasses = element.childNodes();
+	for (int i = 0; i < deviceClasses.size(); ++i) {
+		const QDomElement deviceNode = deviceClasses.item(i).toElement();
+		if (!deviceNode.isNull()) {
 			Device device;
 			device.name = deviceNode.tagName();
 			device.isOptional = deviceNode.attribute("optional", "false") == "true";
