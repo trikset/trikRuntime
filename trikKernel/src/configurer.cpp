@@ -81,7 +81,7 @@ QString Configurer::attributeByDevice(const QString &deviceType, const QString &
 			return mDeviceTypes[deviceType].attributes[attributeName];
 		}
 
-        const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
+		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
 		if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
 			return mDevices[deviceClass].attributes[attributeName];
 		}
