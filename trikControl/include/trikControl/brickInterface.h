@@ -54,15 +54,15 @@ public:
 	virtual QString configVersion() const = 0;
 
 public slots:
-	/// Configures given device on given port. Port must be listed in model-config.xml, device shall be listed
-	/// in system-config.xml, and device shall be able to be configured on a port (it is also described
-	/// in system-config.xml). Previously configured device is properly shut down, and new device is created
-	/// and initialized on a port. Method blocks caller thread until device is created. Note that this method does not
-	/// initialize devices like camera sensors, "init" shall be called for them separately when they are configured
-	/// (it is consistent with Brick constructor behavior).
-	virtual void configure(const QString &portName, const QString &deviceName) = 0;
+    /// Configures given device on given port. Port must be listed in model-config.xml, device shall be listed
+    /// in system-config.xml, and device shall be able to be configured on a port (it is also described
+    /// in system-config.xml). Previously configured device is properly shut down, and new device is created
+    /// and initialized on a port. Method blocks caller thread until device is created. Note that this method does not
+    /// initialize devices like camera sensors, "init" shall be called for them separately when they are configured
+    /// (it is consistent with Brick constructor behavior).
+    virtual void configure(const QString &portName, const QString &deviceName) = 0;
 
-	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
+    /// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
 	virtual void playSound(const QString &soundFileName) = 0;
 
 	/// Generates sound with given frequency and given duration, plays it on a speaker.
