@@ -62,7 +62,7 @@ public slots:
 	/// (it is consistent with Brick constructor behavior).
 	virtual void configure(const QString &portName, const QString &deviceName) = 0;
 
-    /// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
+	/// Plays given music file on a speaker (in format accepted by aplay or cvlc utilities).
 	virtual void playSound(const QString &soundFileName) = 0;
 
 	/// Generates sound with given frequency and given duration, plays it on a speaker.
