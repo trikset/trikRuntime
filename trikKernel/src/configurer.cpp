@@ -329,7 +329,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 				const QDomElement device = devices.item(0).toElement();
 				if (!device.isNull()) {
 					port.deviceType = device.tagName();
-					const QDomNamedNodeMap &attributes = tag.attributes();
+                    const QDomNamedNodeMap &attributes = device.attributes();
 					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 						const QDomAttr &attribute = attributes.item(j).toAttr();
 						port.attributes.insert(attribute.name(), attribute.value());
