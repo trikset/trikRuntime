@@ -208,16 +208,13 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 {
 	QString content = "";
 	QString indent = "    ";
-
 	content += "<config version = \"" + version() + "\">" + '\n';
-
 	QStringList sortedPorts = ports();
 	sortedPorts.sort();
 
 	for (int i = 0; i < sortedPorts.length(); i++) {
 		QString port = sortedPorts[i];
 		ModelConfigurationElement currentElement = mModelConfiguration[port];
-
 		content += indent + "<" + port + ">" + '\n';
 		content += indent + indent + "<" + currentElement.deviceType;
 
@@ -236,13 +233,11 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 			content += indent + indent + "/>" + '\n';
 		else
 			content += QString(" ") + "/>" + '\n';
-
 		content += indent + "</" + port + ">" + '\n';
 	}
 
 	QStringList sortedDeviceClasses = mAdditionalModelConfiguration.keys();
 	sortedDeviceClasses.sort();
-
 	for (int i = 0; i < sortedDeviceClasses.length(); i++) {
 		QString deviceClassName = sortedDeviceClasses[i];
 		AdditionalModelConfigurationElement currentElement = mAdditionalModelConfiguration[deviceClassName];
@@ -264,9 +259,7 @@ void Configurer::generateConfigFile(const QString &fileName, const QString &dirP
 		else
 			content += " />" + '\n';
 	}
-
 	content += "</config>";
-
 	FileUtils::writeToFile(fileName, content, dirPath);
 }
 
@@ -276,19 +269,16 @@ void Configurer::changeAttributeByPort(const QString &port, const QString &attri
 	if (!mModelConfiguration.contains(port)) {
 		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
 	}
-
 	if (mModelConfiguration[port].attributes.contains(attributeName))
 	{
 		mModelConfiguration[port].attributes[attributeName] = newAttributeValue;
 	}
 
 	const QString &deviceType = mModelConfiguration.value(port).deviceType;
-
 	if (mDeviceTypes.contains(deviceType)) {
 		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
 			mModelConfiguration[port].attributes.insert(attributeName, newAttributeValue);
 		}
-
 		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
 		if (mDevices.contains(deviceClass)) {
 			const Device &device = mDevices[deviceClass];
@@ -296,7 +286,6 @@ void Configurer::changeAttributeByPort(const QString &port, const QString &attri
 			if (device.attributes.contains(attributeName)) {
 				if (!mAdditionalModelConfiguration.contains(device.name)){
 					AdditionalModelConfigurationElement element;
-
 					element.deviceType = device.name;
 					mAdditionalModelConfiguration.insert(device.name, element);
 				}
