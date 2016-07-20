@@ -64,31 +64,31 @@ Configurer::Configurer(const QString &systemConfigFileName, const QString &model
 
 QString Configurer::attributeByDevice(const QString &deviceType, const QString &attributeName) const
 {
-	if (mAdditionalModelConfiguration.contains(deviceType)
-			&& mAdditionalModelConfiguration[deviceType].attributes.contains(attributeName))
+    if (mAdditionalModelConfiguration.contains(deviceType)
+            && mAdditionalModelConfiguration[deviceType].attributes.contains(attributeName))
 	{
-		return mAdditionalModelConfiguration[deviceType].attributes[attributeName];
+        return mAdditionalModelConfiguration[deviceType].attributes[attributeName];
 	}
 
-	if (mAdditionalConfiguration.contains(deviceType)
-			&& mAdditionalConfiguration[deviceType].attributes.contains(attributeName))
+    if (mAdditionalConfiguration.contains(deviceType)
+            && mAdditionalConfiguration[deviceType].attributes.contains(attributeName))
 	{
-		return mAdditionalConfiguration[deviceType].attributes[attributeName];
+        return mAdditionalConfiguration[deviceType].attributes[attributeName];
 	}
 
-	if (mDeviceTypes.contains(deviceType)) {
-		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
-			return mDeviceTypes[deviceType].attributes[attributeName];
-		}
+    if (mDeviceTypes.contains(deviceType)) {
+        if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
+            return mDeviceTypes[deviceType].attributes[attributeName];
+        }
 
-		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
-		if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
-			return mDevices[deviceClass].attributes[attributeName];
-		}
-	}
+        const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
+        if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
+            return mDevices[deviceClass].attributes[attributeName];
+        }
+    }
 
-	if (mDevices.contains(deviceType) && mDevices[deviceType].attributes.contains(attributeName)) {
-		return mDevices[deviceType].attributes[attributeName];
+    if (mDevices.contains(deviceType) && mDevices[deviceType].attributes.contains(attributeName)) {
+        return mDevices[deviceType].attributes[attributeName];
 	}
 
 	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceType));
@@ -203,105 +203,6 @@ void Configurer::configure(const QString &portName, const QString &deviceName)
 QString Configurer::version() const
 {
 	return mVersion;
-}
-
-void Configurer::generateConfigFile(const QString &fileName, const QString &dirPath) const
-{
-    QString content = "";
-    QString indent = "    ";
-
-    content += "<config version = \"" + version() + "\">" + '\n';
-
-    QStringList sortedPorts = ports();
-    sortedPorts.sort();
-
-    foreach (const QString &port, sortedPorts) {
-        ModelConfigurationElement currentElement = mModelConfiguration[port];
-
-        content += indent + "<" + port + ">" + '\n';
-        content += indent + indent + "<" + currentElement.deviceType;
-
-        QStringList sortedAttributes = currentElement.attributes.keys();
-        sortedAttributes.sort();
-        if (sortedAttributes.length() != 0)
-            content += '\n';
-
-        foreach (const QString &name, sortedAttributes)
-            if (mDeviceTypes[currentElement.deviceType].attributes[name] != currentElement.attributes[name])
-                content += indent + indent + indent + name + "=\"" + currentElement.attributes[name] + "\"" + '\n';
-
-        if (sortedAttributes.length() != 0)
-            content += indent + indent + "/>" + '\n';
-        else
-            content += QString(" ") + "/>" + '\n';
-
-        content += indent + "</" + port + ">" + '\n';
-    }
-
-    QStringList sortedDeviceClasses = mAdditionalModelConfiguration.keys();
-    sortedDeviceClasses.sort();
-
-    foreach (const QString &deviceClassName, sortedDeviceClasses) {
-        AdditionalModelConfigurationElement currentElement = mAdditionalModelConfiguration[deviceClassName];
-        content += indent + "<" + deviceClassName;
-
-        QStringList sortedAttributes = currentElement.attributes.keys();
-        sortedAttributes.sort();
-        if (sortedAttributes.length() != 0)
-            content += '\n';
-
-        foreach (const QString &name, sortedAttributes)
-            if (mDevices[deviceClassName].attributes[name] != currentElement.attributes[name])
-                content += indent + indent + name + "=\"" + currentElement.attributes[name] + "\"" + '\n';
-
-        if (sortedAttributes.length() != 0)
-            content += indent + "/>" + '\n';
-        else
-            content += " />" + '\n';
-    }
-
-    content += "</config>";
-
-    FileUtils::writeToFile(fileName, content, dirPath);
-}
-
-void Configurer::changeAttributeByPort(const QString &port, const QString &attributeName, const QString &newAttributeValue)
-{
-    if (!mModelConfiguration.contains(port)) {
-        throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
-    }
-
-    if (mModelConfiguration[port].attributes.contains(attributeName))
-    {
-        mModelConfiguration[port].attributes[attributeName] = newAttributeValue;
-    }
-
-    const QString &deviceType = mModelConfiguration.value(port).deviceType;
-
-    if (mDeviceTypes.contains(deviceType)) {
-        if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
-            mModelConfiguration[port].attributes.insert(attributeName, newAttributeValue);
-        }
-
-        const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
-        if (mDevices.contains(deviceClass)) {
-            const Device &device = mDevices[deviceClass];
-
-            if (device.attributes.contains(attributeName)) {
-                if (!mAdditionalModelConfiguration.contains(device.name)){
-                    AdditionalModelConfigurationElement element;
-
-                    element.deviceType = device.name;
-                    mAdditionalModelConfiguration.insert(device.name, element);
-                }
-
-                if (!mAdditionalModelConfiguration[device.name].attributes.contains(attributeName))
-                    mAdditionalModelConfiguration[device.name].attributes.insert(attributeName, newAttributeValue);
-                else
-                    mAdditionalModelConfiguration[device.name].attributes[attributeName] = newAttributeValue;
-            }
-        }
-    }
 }
 
 void Configurer::parseDeviceClasses(const QDomElement &element)
