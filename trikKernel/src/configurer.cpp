@@ -81,7 +81,7 @@ QString Configurer::attributeByDevice(const QString &deviceType, const QString &
 			return mDeviceTypes[deviceType].attributes[attributeName];
 		}
 
-		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
+        const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
 		if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
 			return mDevices[deviceClass].attributes[attributeName];
 		}
@@ -338,7 +338,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 					mModelConfiguration.insert(port.port, port);
 				}
 			} else {
-				AdditionalModelConfigurationElement element;
+                AdditionalModelConfigurationElement element;
                 element.deviceClass = tag.tagName();
                 if (!mDevices.contains(element.deviceClass)) {
 					throw MalformedConfigException(
