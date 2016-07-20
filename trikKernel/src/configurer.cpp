@@ -71,7 +71,7 @@ QString Configurer::attributeByDevice(const QString &deviceType, const QString &
 	}
 
     if (mAdditionalConfiguration.contains(deviceType)
-            && mAdditionalConfiguration[deviceType].attributes.contains(attributeName))
+        && mAdditionalConfiguration[deviceType].attributes.contains(attributeName))
 	{
         return mAdditionalConfiguration[deviceType].attributes[attributeName];
 	}
@@ -207,10 +207,10 @@ QString Configurer::version() const
 
 void Configurer::parseDeviceClasses(const QDomElement &element)
 {
-	const QDomNodeList deviceClasses = element.childNodes();
-	for (int i = 0; i < deviceClasses.size(); ++i) {
-		const QDomElement deviceNode = deviceClasses.item(i).toElement();
-		if (!deviceNode.isNull()) {
+    const QDomNodeList deviceClasses = element.childNodes();
+    for (int i = 0; i < deviceClasses.size(); ++i) {
+        const QDomElement deviceNode = deviceClasses.item(i).toElement();
+        if (!deviceNode.isNull()) {
 			Device device;
 			device.name = deviceNode.tagName();
 			device.isOptional = deviceNode.attribute("optional", "false") == "true";
