@@ -64,23 +64,24 @@ Configurer::Configurer(const QString &systemConfigFileName, const QString &model
 
 QString Configurer::attributeByDevice(const QString &deviceClass, const QString &attributeName) const
 {
-    if (mAdditionalModelConfiguration.contains(deviceClass)
-            && mAdditionalModelConfiguration[deviceClass].attributes.contains(attributeName))
+	if (mAdditionalModelConfiguration.contains(deviceClass)
+			&& mAdditionalModelConfiguration[deviceClass].attributes.contains(attributeName))
 	{
-        return mAdditionalModelConfiguration[deviceClass].attributes[attributeName];
+		return mAdditionalModelConfiguration[deviceClass].attributes[attributeName];
 	}
 
-    if (mAdditionalConfiguration.contains(deviceClass)
-            && mAdditionalConfiguration[deviceClass].attributes.contains(attributeName))
+	if (mAdditionalConfiguration.contains(deviceClass)
+			&& mAdditionalConfiguration[deviceClass].attributes.contains(attributeName))
 	{
-        return mAdditionalConfiguration[deviceClass].attributes[attributeName];
+		return mAdditionalConfiguration[deviceClass].attributes[attributeName];
 	}
 
-    if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
-        return mDevices[deviceClass].attributes[attributeName];
+	if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
+		return mDevices[deviceClass].attributes[attributeName];
 	}
 
-    throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceClass));
+	throw MalformedConfigException(
+				QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceClass));
 }
 
 QString Configurer::attributeByPort(const QString &port, const QString &attributeName) const
