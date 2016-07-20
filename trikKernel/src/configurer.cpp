@@ -186,7 +186,7 @@ QStringList Configurer::initScripts() const
 
 void Configurer::configure(const QString &portName, const QString &deviceName)
 {
-	mModelConfiguration[portName] = { portName, deviceName, {}};
+    mModelConfiguration[portName] = { portName, deviceName, {}};
 }
 
 QString Configurer::version() const

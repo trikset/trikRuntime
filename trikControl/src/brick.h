@@ -80,9 +80,9 @@ public:
 	QString configVersion() const override;
 
 public slots:
-	void configure(const QString &portName, const QString &deviceName) override;
+    void configure(const QString &portName, const QString &deviceName) override;
 
-	void playSound(const QString &soundFileName) override;
+    void playSound(const QString &soundFileName) override;
 
 	void playTone(int hzFreq, int msDuration) override;
 
