@@ -162,11 +162,11 @@ QString Brick::configVersion() const
 
 void Brick::configure(const QString &portName, const QString &deviceName)
 {
-    shutdownDevice(portName);
+	shutdownDevice(portName);
 
-    mConfigurer.configure(portName, deviceName);
+	mConfigurer.configure(portName, deviceName);
 
-    createDevice(portName);
+	createDevice(portName);
 }
 
 void Brick::reset()

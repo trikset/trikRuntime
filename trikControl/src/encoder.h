@@ -51,8 +51,8 @@ public slots:
 private:
 	MspCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber;
-    int mPassedTicks;
-    int mPassedDegrees;
+	int mPassedTicks;
+	int mPassedDegrees;
 	const bool mInvert;
 	DeviceState mState;
 };
