@@ -329,7 +329,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 				const QDomElement device = devices.item(0).toElement();
 				if (!device.isNull()) {
 					port.deviceType = device.tagName();
-                    const QDomNamedNodeMap &attributes = device.attributes();
+					const QDomNamedNodeMap &attributes = device.attributes();
 					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 						const QDomAttr &attribute = attributes.item(j).toAttr();
 						port.attributes.insert(attribute.name(), attribute.value());
@@ -338,9 +338,9 @@ void Configurer::parseModelConfig(const QDomElement &element)
 					mModelConfiguration.insert(port.port, port);
 				}
 			} else {
-                AdditionalModelConfigurationElement element;
-                element.deviceClass = tag.tagName();
-                if (!mDevices.contains(element.deviceClass)) {
+				AdditionalModelConfigurationElement element;
+				element.deviceClass = tag.tagName();
+				if (!mDevices.contains(element.deviceClass)) {
 					throw MalformedConfigException(
 							"Device shall be listed in 'deviceClasses' section in system config", tag);
 				}
@@ -352,7 +352,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 						element.attributes.insert(attribute.name(), attribute.value());
 					}
 
-                    mAdditionalModelConfiguration.insert(element.deviceClass, element);
+					mAdditionalModelConfiguration.insert(element.deviceClass, element);
 				}
 			}
 		}

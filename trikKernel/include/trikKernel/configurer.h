@@ -81,7 +81,7 @@ private:
 	};
 
 	struct AdditionalModelConfigurationElement {
-        QString deviceClass;
+		QString deviceClass;
 		QHash<QString, QString> attributes;
 	};
 
