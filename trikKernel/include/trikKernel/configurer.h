@@ -34,7 +34,7 @@ public:
 	Configurer(const QString &systemConfig, const QString &modelConfig);
 
 	/// Returns value of given attribute of given device.
-	QString attributeByDevice(const QString &deviceType, const QString &attributeName) const;
+	QString attributeByDevice(const QString &deviceClass, const QString &attributeName) const;
 
 	/// Returns value of given attribute of a device on given port.
 	QString attributeByPort(const QString &port, const QString &attributeName) const;
