@@ -204,6 +204,7 @@ QString Configurer::version() const
 {
 	return mVersion;
 }
+
 void Configurer::generateConfigFile(const QString &fileName, const QString &dirPath) const
 {
 	QString content = "<config version = \"" + version() + "\">" + '\n';
@@ -274,15 +275,18 @@ void Configurer::changeAttributeByPort(const QString &port, const QString &attri
 	if (!mModelConfiguration.contains(port)) {
 		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
 	}
+
 	if (mModelConfiguration[port].attributes.contains(attributeName))
 	{
 		mModelConfiguration[port].attributes[attributeName] = newAttributeValue;
+		return;
 	}
 
 	const QString &deviceType = mModelConfiguration.value(port).deviceType;
 	if (mDeviceTypes.contains(deviceType)) {
 		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
 			mModelConfiguration[port].attributes.insert(attributeName, newAttributeValue);
+			return;
 		}
 
 		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
@@ -302,9 +306,18 @@ void Configurer::changeAttributeByPort(const QString &port, const QString &attri
 				else {
 					mAdditionalModelConfiguration[device.name].attributes[attributeName] = newAttributeValue;
 				}
+				return;
 			}
 		}
+		else {
+			throw MalformedConfigException(
+					QString("Device type '%1' has device class '%2' which is not listed in 'deviceClasses' section.")
+						.arg(deviceType).arg(deviceClass));
+		}
 	}
+
+	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2' on port '%3'")
+			.arg(attributeName).arg(deviceType).arg(port));
 }
 
 void Configurer::parseDeviceClasses(const QDomElement &element)
