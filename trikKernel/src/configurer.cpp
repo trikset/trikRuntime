@@ -444,8 +444,8 @@ void Configurer::parseModelConfig(const QDomElement &element)
 				}
 			} else {
 				AdditionalModelConfigurationElement element;
-				element.deviceClass = tag.tagName();
-				if (!mDevices.contains(element.deviceClass)) {
+				element.deviceType = tag.tagName();
+				if (!mDevices.contains(element.deviceType)) {
 					throw MalformedConfigException(
 							"Device shall be listed in 'deviceClasses' section in system config", tag);
 				}
@@ -457,7 +457,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 						element.attributes.insert(attribute.name(), attribute.value());
 					}
 
-					mAdditionalModelConfiguration.insert(element.deviceClass, element);
+					mAdditionalModelConfiguration.insert(element.deviceType, element);
 				}
 			}
 		}
