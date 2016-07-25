@@ -62,36 +62,26 @@ Configurer::Configurer(const QString &systemConfigFileName, const QString &model
 	parseModelConfig(modelConfig);
 }
 
-QString Configurer::attributeByDevice(const QString &deviceType, const QString &attributeName) const
+QString Configurer::attributeByDevice(const QString &deviceClass, const QString &attributeName) const
 {
-	if (mAdditionalModelConfiguration.contains(deviceType)
-			&& mAdditionalModelConfiguration[deviceType].attributes.contains(attributeName))
+	if (mAdditionalModelConfiguration.contains(deviceClass)
+			&& mAdditionalModelConfiguration[deviceClass].attributes.contains(attributeName))
 	{
-		return mAdditionalModelConfiguration[deviceType].attributes[attributeName];
+		return mAdditionalModelConfiguration[deviceClass].attributes[attributeName];
 	}
 
-	if (mAdditionalConfiguration.contains(deviceType)
-			&& mAdditionalConfiguration[deviceType].attributes.contains(attributeName))
+	if (mAdditionalConfiguration.contains(deviceClass)
+			&& mAdditionalConfiguration[deviceClass].attributes.contains(attributeName))
 	{
-		return mAdditionalConfiguration[deviceType].attributes[attributeName];
+		return mAdditionalConfiguration[deviceClass].attributes[attributeName];
 	}
 
-	if (mDeviceTypes.contains(deviceType)) {
-		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
-			return mDeviceTypes[deviceType].attributes[attributeName];
-		}
-
-		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
-		if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
-			return mDevices[deviceClass].attributes[attributeName];
-		}
+	if (mDevices.contains(deviceClass) && mDevices[deviceClass].attributes.contains(attributeName)) {
+		return mDevices[deviceClass].attributes[attributeName];
 	}
 
-	if (mDevices.contains(deviceType) && mDevices[deviceType].attributes.contains(attributeName)) {
-		return mDevices[deviceType].attributes[attributeName];
-	}
-
-	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceType));
+	throw MalformedConfigException(
+				QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceClass));
 }
 
 QString Configurer::attributeByPort(const QString &port, const QString &attributeName) const
@@ -444,7 +434,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 				const QDomElement device = devices.item(0).toElement();
 				if (!device.isNull()) {
 					port.deviceType = device.tagName();
-					const QDomNamedNodeMap &attributes = tag.attributes();
+					const QDomNamedNodeMap &attributes = device.attributes();
 					for (QDomNamedNodeMapLengthType j = 0; j < attributes.length(); ++j) {
 						const QDomAttr &attribute = attributes.item(j).toAttr();
 						port.attributes.insert(attribute.name(), attribute.value());
@@ -454,8 +444,8 @@ void Configurer::parseModelConfig(const QDomElement &element)
 				}
 			} else {
 				AdditionalModelConfigurationElement element;
-				element.deviceType = tag.tagName();
-				if (!mDevices.contains(element.deviceType)) {
+				element.deviceClass = tag.tagName();
+				if (!mDevices.contains(element.deviceClass)) {
 					throw MalformedConfigException(
 							"Device shall be listed in 'deviceClasses' section in system config", tag);
 				}
@@ -467,7 +457,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 						element.attributes.insert(attribute.name(), attribute.value());
 					}
 
-					mAdditionalModelConfiguration.insert(element.deviceType, element);
+					mAdditionalModelConfiguration.insert(element.deviceClass, element);
 				}
 			}
 		}
