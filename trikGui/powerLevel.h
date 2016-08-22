@@ -28,7 +28,7 @@ public:
 		sixVolt
 
 		/// Voltage settings for 12V scheme (default).
-		, twentyVolt
+		, twelveVolt
 	};
 
 	/// Retuns currently selected voltage threshold level by querying GPIO pin 56.

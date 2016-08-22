@@ -34,7 +34,7 @@ PowerLevel::Level PowerLevel::currentLevel()
 			return Level::sixVolt;
 		} else if (currentValue == "1") {
 			QLOG_INFO() << "Current low power threshold is set to 12V";
-			return Level::twentyVolt;
+			return Level::twelveVolt;
 		} else {
 			QLOG_ERROR() << "Invalid value in GPIO file '" << powerLevelGpioPath << "'. Value can be 0 or 1, but was '"
 					<< currentValue << "'. Something is wrong with Linux kernel itself. Defaulting to 6V scheme.";

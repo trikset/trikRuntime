@@ -48,10 +48,10 @@ void BatteryIndicator::renew()
 
 float BatteryIndicator::warningThreshold() const
 {
-	return mCurrentLevel == PowerLevel::Level::twentyVolt ? m12VWarningThreshold : m6VWarningThreshold;
+	return mCurrentLevel == PowerLevel::Level::twelveVolt ? m12VWarningThreshold : m6VWarningThreshold;
 }
 
 float BatteryIndicator::shutdownThreshold() const
 {
-	return mCurrentLevel == PowerLevel::Level::twentyVolt ? m12VShutdownThreshold : m6VShutdownThreshold;
+	return mCurrentLevel == PowerLevel::Level::twelveVolt ? m12VShutdownThreshold : m6VShutdownThreshold;
 }
