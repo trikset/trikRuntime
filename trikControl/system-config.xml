@@ -178,9 +178,9 @@ equal to its class name.
 
 		<volumeSensor class="digitalSensor" min="0" max="100" />
 
-		<encoder95 class="encoder" ticksInDegree="1.569444" />
+		<encoder95 class="encoder" ticks="157" degrees="100" />
 
-		<encoder126 class="encoder" ticksInDegree="32.964168" />
+		<encoder126 class="encoder" ticks="3296" degrees="1000" />
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 	</deviceTypes>

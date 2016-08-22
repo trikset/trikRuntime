@@ -28,10 +28,11 @@ Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, 
 	, mState("Encoder on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mTicksInDegree = ConfigurerHelper::configureReal(configurer, mState, port, "ticksInDegree");
+	mPassedTicks= ConfigurerHelper::configureInt(configurer, mState, port, "ticks");
+	mPassedDegrees= ConfigurerHelper::configureInt(configurer, mState, port, "degrees");
 
-	if (qFuzzyCompare(mTicksInDegree, static_cast<qreal>(0.0))) {
-		QLOG_ERROR() << "'ticksInDegree' parameter can not be 0";
+	if (mPassedTicks == 0) {
+		QLOG_ERROR() << "'ticks' parameter can not be 0";
 		mState.fail();
 	}
 
@@ -57,7 +58,7 @@ Encoder::Status Encoder::status() const
 
 int Encoder::read()
 {
-	return readRawData() / mTicksInDegree * (mInvert ? -1 : 1);
+	return readRawData() * mPassedDegrees / mPassedTicks * (mInvert ? -1 : 1);
 }
 
 int Encoder::readRawData()
