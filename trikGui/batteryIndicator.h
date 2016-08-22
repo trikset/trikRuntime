@@ -24,6 +24,7 @@
 #endif
 
 #include <trikControl/brickInterface.h>
+#include "powerLevel.h"
 
 namespace trikGui {
 
@@ -42,12 +43,42 @@ private slots:
 	void renew();
 
 private:
-	trikControl::BrickInterface &mBrick;
-	QTimer mRenewTimer;
-	const int mRenewInterval = 60*1000;
+	/// Provides current low voltage warning threshold (in volts) based on currently selected power level.
+	float warningThreshold() const;
 
-	const float mWarningThreshold = 11.2;
-	const float mShutdownThreshold = 10.5;
+	/// Provides current low voltage shutdown threshold (in volts) based on currently selected power level.
+	float shutdownThreshold() const;
+
+	/// Reference to an underlying Brick object which provides access to a battery voltage.
+	trikControl::BrickInterface &mBrick;
+
+	/// Timer that renews battery status once in a while.
+	QTimer mRenewTimer;
+
+	/// Battery status renewal interval.
+	const int mRenewInterval = 60 * 1000;
+
+	/// Currently selected low power threshold level on a board.
+	PowerLevel::Level mCurrentLevel;
+
+	/// Warning voltage threshold for 12V mode (robot begins to beep like mad if battery voltage is lower than
+	/// this value).
+	const float m12VWarningThreshold = 11.2;
+
+	/// Shutdown voltage threshold for 12V mode (robot turns off correctly if battery voltage is lower than
+	/// this value).
+	const float m12VShutdownThreshold = 10.5;
+
+	/// Warning voltage threshold for 6V mode (robot begins to beep like mad if battery voltage is lower than
+	/// this value).
+	const float m6VWarningThreshold = 6.8;
+
+	/// Shutdown voltage threshold for 6V mode (robot turns off correctly if battery voltage is lower than
+	/// this value).
+	const float m6VShutdownThreshold = 6.3;
+
+	/// Voltage threshold that defines lowest possible voltage reading that is considered correct. So if for some
+	/// reason battery voltage is not available, indicator will not panic and turn off robot.
 	const float mSanityThreshold = 1.0;
 };
 

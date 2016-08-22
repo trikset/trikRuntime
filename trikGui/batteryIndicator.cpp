@@ -22,6 +22,7 @@ using namespace trikGui;
 BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent)
 	: QLabel(parent)
 	, mBrick(brick)
+	, mCurrentLevel(PowerLevel::currentLevel())
 {
 	renew();
 
@@ -35,12 +36,22 @@ void BatteryIndicator::renew()
 {
 	if (mBrick.battery()->status() == trikControl::DeviceInterface::Status::ready) {
 		const auto voltage = mBrick.battery()->readVoltage();
-		if (voltage > mSanityThreshold && voltage < mShutdownThreshold) {
+		if (voltage > mSanityThreshold && voltage < shutdownThreshold()) {
 			QProcess::startDetached("/bin/sh", {"-c", "halt"});
-		} else if (voltage > mSanityThreshold && voltage < mWarningThreshold) {
-			mBrick.playTone(800, mRenewInterval/2);
+		} else if (voltage > mSanityThreshold && voltage < warningThreshold()) {
+			mBrick.playTone(800, mRenewInterval / 2);
 		}
 
 		setText(QString::number(voltage, 'f', 1) + " V");
 	}
+}
+
+float BatteryIndicator::warningThreshold() const
+{
+	return mCurrentLevel == PowerLevel::Level::twentyVolt ? m12VWarningThreshold : m6VWarningThreshold;
+}
+
+float BatteryIndicator::shutdownThreshold() const
+{
+	return mCurrentLevel == PowerLevel::Level::twentyVolt ? m12VShutdownThreshold : m6VShutdownThreshold;
 }
