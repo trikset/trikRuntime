@@ -28,7 +28,7 @@ void TrikCommunicatorTest::SetUp()
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
 			, "./test-model-config.xml", "./"));
 
-	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mBrick, nullptr, nullptr));
+	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mBrick, nullptr));
 	mCommunicator->startServer(port);
 }
 

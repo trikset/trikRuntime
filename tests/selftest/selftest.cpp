@@ -20,8 +20,6 @@
 #include <trikControl/brickFactory.h>
 #include <trikKernel/configurer.h>
 #include <trikKernel/deinitializationHelper.h>
-#include <trikNetwork/gamepadFactory.h>
-#include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -200,12 +198,4 @@ TEST(selftest, mailboxCheck)
 	trikKernel::Configurer configurer("./system-config.xml", "./selftest-model-config.xml");
 	QScopedPointer<MailboxInterface> mailbox(MailboxFactory::create(configurer));
 	ASSERT_FALSE(mailbox.isNull());
-}
-
-
-TEST(selftest, gamepadCheck)
-{
-	trikKernel::Configurer configurer("./system-config.xml", "./selftest-model-config.xml");
-	QScopedPointer<GamepadInterface> gamepad(GamepadFactory::create(configurer));
-	ASSERT_FALSE(gamepad.isNull());
 }

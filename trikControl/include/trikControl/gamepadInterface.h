@@ -20,7 +20,7 @@
 
 namespace trikControl {
 
-/// Remote control of a robot wia Android gamepad.
+/// Remote control of a robot via Android gamepad.
 class TRIKCONTROL_EXPORT GamepadInterface : public QObject
 {
 	Q_OBJECT
