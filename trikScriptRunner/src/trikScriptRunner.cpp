@@ -26,10 +26,9 @@ using namespace trikScriptRunner;
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
-		, trikNetwork::GamepadInterface * const gamepad
 		)
 	: mScriptController(new ScriptExecutionControl())
-	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, gamepad, *mScriptController))
+	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
 	, mMaxScriptId(0)
 {
 	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));

@@ -28,6 +28,7 @@
 #include <trikControl/eventCodeInterface.h>
 #include <trikControl/eventDeviceInterface.h>
 #include <trikControl/eventInterface.h>
+#include <trikControl/gamepadInterface.h>
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
@@ -35,7 +36,6 @@
 #include <trikControl/sensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
 #include <trikNetwork/mailboxInterface.h>
-#include <trikNetwork/gamepadInterface.h>
 
 #include "scriptable.h"
 #include "utils.h"
@@ -88,12 +88,10 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
-		, trikNetwork::GamepadInterface * const gamepad
 		, ScriptExecutionControl &scriptControl
 		)
 	: mBrick(brick)
 	, mMailbox(mailbox)
-	, mGamepad(gamepad)
 	, mScriptControl(scriptControl)
 	, mThreading(this, scriptControl)
 	, mDirectScriptsEngine(nullptr)
@@ -171,10 +169,6 @@ void ScriptEngineWorker::resetBrick()
 	if (mMailbox) {
 		mMailbox->stopWaiting();
 		mMailbox->clearQueue();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
 	}
 
 	mBrick.reset();
@@ -305,8 +299,10 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
 	}
 
-	if (mGamepad) {
-		engine->globalObject().setProperty("gamepad", engine->newQObject(mGamepad));
+	// Gamepad can still be accessed from script as brick.gamepad(), 'gamepad' variable is here for backwards
+	// compatibility.
+	if (mBrick.gamepad()) {
+		engine->globalObject().setProperty("gamepad", engine->newQObject(mBrick.gamepad()));
 	}
 
 	if (supportThreads) {

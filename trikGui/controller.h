@@ -16,7 +16,6 @@
 
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickInterface.h>
-#include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
@@ -123,7 +122,6 @@ private slots:
 
 private:
 	QScopedPointer<trikControl::BrickInterface> mBrick;
-	QScopedPointer<trikNetwork::GamepadInterface> mGamepad;
 	QScopedPointer<trikNetwork::MailboxInterface> mMailbox;
 	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
 	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;

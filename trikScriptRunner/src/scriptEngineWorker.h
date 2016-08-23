@@ -20,7 +20,6 @@
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
-#include <trikNetwork/gamepadInterface.h>
 
 #include "scriptExecutionControl.h"
 #include "threading.h"
@@ -39,11 +38,9 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
 	/// @param scriptControl - reference to script execution control object.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
-			, trikNetwork::GamepadInterface * const gamepad
 			, ScriptExecutionControl &scriptControl
 			);
 
@@ -133,7 +130,6 @@ private:
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
-	trikNetwork::GamepadInterface * const mGamepad;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreading;
 	QScriptEngine *mDirectScriptsEngine = nullptr;  // Has ownership.

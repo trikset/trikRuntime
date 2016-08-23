@@ -28,8 +28,6 @@
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
-#include <trikNetwork/gamepadFactory.h>
-#include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -60,10 +58,9 @@ int main(int argc, char *argv[])
 			, initHelper.configPath() + "/model-config.xml"
 			);
 
-	QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 
-	trikCommunicator::TrikCommunicator communicator(*brick, mailbox.data(), gamepad.data());
+	trikCommunicator::TrikCommunicator communicator(*brick, mailbox.data());
 	communicator.startServer(port);
 
 	return app.exec();

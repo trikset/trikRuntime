@@ -25,8 +25,13 @@ public:
 
 	/// Device status.
 	enum class Status {
-		/// Device can not be turned on due to hardware or configuration failure.
-		failure
+		/// Device can not be turned on due to hardware or configuration failure that will likely not be fixed at least
+		/// until reboot.
+		permanentFailure
+
+		/// Device is not ready due to a hardware or software failure that can fix itself at some time in the future,
+		/// so the device will try to reinitialize itself from time to time.
+		, temporaryFailure
 
 		/// Device is turned off.
 		, off

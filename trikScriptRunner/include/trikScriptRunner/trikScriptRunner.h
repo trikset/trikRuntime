@@ -21,7 +21,6 @@
 
 namespace trikNetwork {
 class MailboxInterface;
-class GamepadInterface;
 }
 
 namespace trikControl {
@@ -42,10 +41,8 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
 	TrikScriptRunner(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
-			, trikNetwork::GamepadInterface * const gamepad
 			);
 
 	~TrikScriptRunner() override;

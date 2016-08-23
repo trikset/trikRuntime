@@ -32,8 +32,6 @@
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
-#include <trikNetwork/gamepadFactory.h>
-#include <trikNetwork/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -91,9 +89,8 @@ int main(int argc, char *argv[])
 		trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
 				, initHelper.configPath() + "/model-config.xml");
 
-		QScopedPointer<trikNetwork::GamepadInterface> gamepad(trikNetwork::GamepadFactory::create(configurer));
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
-		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data(), gamepad.data());
+		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
 
 		QObject::connect(&result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
 		result.run(script);

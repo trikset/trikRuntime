@@ -18,12 +18,10 @@
 
 #include "declSpec.h"
 
-namespace trikNetwork {
+namespace trikControl {
 
-class TcpConnector;
-
-/// Class to support remote control of a robot using TCP client.
-class TRIKNETWORK_EXPORT GamepadInterface : public QObject
+/// Remote control of a robot wia Android gamepad.
+class TRIKCONTROL_EXPORT GamepadInterface : public QObject
 {
 	Q_OBJECT
 

@@ -25,9 +25,8 @@ using namespace trikKernel;
 
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
-		, trikNetwork::GamepadInterface * const gamepad
 		)
-	: TrikCommunicator(createDifferentOwnerPointer(new trikScriptRunner::TrikScriptRunner(brick, mailbox, gamepad))
+	: TrikCommunicator(createDifferentOwnerPointer(new trikScriptRunner::TrikScriptRunner(brick, mailbox))
 			, brick.configVersion())
 {
 }

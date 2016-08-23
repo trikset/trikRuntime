@@ -35,6 +35,7 @@
 #include "encoder.h"
 #include "eventDevice.h"
 #include "fifo.h"
+#include "gamepad.h"
 #include "keys.h"
 #include "led.h"
 #include "lineSensor.h"
@@ -114,6 +115,10 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 
 	mLed.reset(new Led(mConfigurer, *mHardwareAbstraction));
 
+	if (mConfigurer.isEnabled("gamepad")) {
+		mGamepad.reset(new Gamepad("gamepad", mConfigurer, *mHardwareAbstraction));
+	}
+
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");
 	mPlayMp3FileCommand = mConfigurer.attributeByDevice("playMp3File", "command");
 }
@@ -144,6 +149,7 @@ Brick::~Brick()
 	mKeys.reset();
 	mDisplay.reset();
 	mLed.reset();
+	mGamepad.reset();
 }
 
 DisplayWidgetInterface *Brick::graphicsWidget()
@@ -175,6 +181,10 @@ void Brick::reset()
 	mKeys->reset();
 	if (mDisplay) {
 		mDisplay->reset();
+	}
+
+	if (mGamepad) {
+		mGamepad->reset();
 	}
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
@@ -401,6 +411,11 @@ LedInterface *Brick::led()
 	return mLed.data();
 }
 
+GamepadInterface *Brick::gamepad()
+{
+	return mGamepad.data();
+}
+
 trikControl::FifoInterface *Brick::fifo(const QString &port)
 {
 	return mFifos[port];
@@ -410,7 +425,7 @@ EventDeviceInterface *Brick::eventDevice(const QString &deviceFile)
 {
 	if (!mEventDevices.contains(deviceFile)) {
 		EventDeviceInterface * const eventDevice = new EventDevice(deviceFile, *mHardwareAbstraction);
-		if (eventDevice->status() != EventDeviceInterface::Status::failure) {
+		if (eventDevice->status() != EventDeviceInterface::Status::permanentFailure) {
 			mEventDevices.insert(deviceFile, eventDevice);
 		}
 	}

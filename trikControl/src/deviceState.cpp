@@ -38,20 +38,20 @@ bool DeviceState::isReady() const
 bool DeviceState::isFailed() const
 {
 	// Read operation is atomic here, so it does not require locking.
-	return mStatus == DeviceInterface::Status::failure;
+	return mStatus == DeviceInterface::Status::permanentFailure;
 }
 
 void DeviceState::fail()
 {
 	mLock.lockForWrite();
-	mStatus = DeviceInterface::Status::failure;
+	mStatus = DeviceInterface::Status::permanentFailure;
 	mLock.unlock();
 }
 
 void DeviceState::start()
 {
 	mLock.lockForWrite();
-	if (mStatus == DeviceInterface::Status::failure) {
+	if (mStatus == DeviceInterface::Status::permanentFailure) {
 		mLock.unlock();
 		return;
 	}
@@ -69,7 +69,7 @@ void DeviceState::start()
 void DeviceState::ready()
 {
 	mLock.lockForWrite();
-	if (mStatus == DeviceInterface::Status::failure) {
+	if (mStatus == DeviceInterface::Status::permanentFailure) {
 		mLock.unlock();
 		return;
 	}
@@ -87,7 +87,7 @@ void DeviceState::ready()
 void DeviceState::stop()
 {
 	mLock.lockForWrite();
-	if (mStatus == DeviceInterface::Status::failure) {
+	if (mStatus == DeviceInterface::Status::permanentFailure) {
 		mLock.unlock();
 		return;
 	}
@@ -105,7 +105,7 @@ void DeviceState::stop()
 void DeviceState::off()
 {
 	mLock.lockForWrite();
-	if (mStatus == DeviceInterface::Status::failure) {
+	if (mStatus == DeviceInterface::Status::permanentFailure) {
 		mLock.unlock();
 		return;
 	}
@@ -124,7 +124,7 @@ void DeviceState::resetFailure()
 {
 	mLock.lockForWrite();
 
-	if (mStatus == DeviceInterface::Status::failure) {
+	if (mStatus == DeviceInterface::Status::permanentFailure) {
 		mStatus = DeviceInterface::Status::off;
 	} else {
 		mLock.unlock();

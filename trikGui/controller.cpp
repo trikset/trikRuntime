@@ -25,7 +25,6 @@
 #include <trikKernel/exceptions/internalErrorException.h>
 #include <trikControl/brickFactory.h>
 #include <trikNetwork/mailboxFactory.h>
-#include <trikNetwork/gamepadFactory.h>
 #include <trikWiFi/trikWiFi.h>
 
 #include "runningWidget.h"
@@ -48,13 +47,12 @@ Controller::Controller(const QString &configPath)
 	trikKernel::Configurer configurer(correctedConfigPath + "system-config.xml"
 			, correctedConfigPath + "model-config.xml");
 
-	mGamepad.reset(trikNetwork::GamepadFactory::create(configurer));
-	connect(mGamepad.data(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
-	connect(mGamepad.data(), SIGNAL(connected()), this, SIGNAL(gamepadConnected()));
+	connect(mBrick->gamepad(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
+	connect(mBrick->gamepad(), SIGNAL(connected()), this, SIGNAL(gamepadConnected()));
 
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
-	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick, *mGamepad));
-	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox.data(), mGamepad.data()));
+	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick));
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox.data()));
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner, configurer.version()));
 
 	mWiFi.reset(new trikWiFi::TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this));
@@ -141,8 +139,8 @@ bool Controller::communicatorConnectionStatus()
 
 bool Controller::gamepadConnectionStatus() const
 {
-	if (mGamepad != nullptr) {
-		return mGamepad->isConnected();
+	if (mBrick->gamepad() != nullptr) {
+		return mBrick->gamepad()->isConnected();
 	} else {
 		return false;
 	}
@@ -166,10 +164,6 @@ void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 
 	if (mMailbox) {
 		mMailbox->clearQueue();
-	}
-
-	if (mGamepad) {
-		mGamepad->reset();
 	}
 
 	mBrick->led()->green();
