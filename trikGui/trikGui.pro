@@ -56,6 +56,7 @@ HEADERS += \
 	$$PWD/sensorLever.h \
 	$$PWD/scriptHolder.h \
 	$$PWD/gamepadIndicator.h \
+	$$PWD/powerLevel.h \
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -97,6 +98,7 @@ SOURCES += \
 	$$PWD/sensorLever.cpp \
 	$$PWD/scriptHolder.cpp \
 	$$PWD/gamepadIndicator.cpp \
+	$$PWD/$$PLATFORM/powerLevel.cpp \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

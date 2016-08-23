@@ -28,11 +28,11 @@ Connection *GamepadServer::connectionFactory()
 {
 	GamepadConnection * const connection = new GamepadConnection();
 
-	connect(connection, SIGNAL(button(int,int)),this, SIGNAL(button(int,int)));
-	connect(connection, SIGNAL(pad(int,int,int)),this, SIGNAL(pad(int,int,int)));
-	connect(connection, SIGNAL(padUp(int)),this, SIGNAL(padUp(int)));
-	connect(connection, SIGNAL(wheel(int)),this, SIGNAL(wheel(int)));
-	connect(connection, SIGNAL(disconnected(Connection *)),this, SLOT(onGamepadConnectionClosed()));
+	connect(connection, SIGNAL(button(int, int)), this, SIGNAL(button(int, int)));
+	connect(connection, SIGNAL(pad(int, int, int)), this, SIGNAL(pad(int, int, int)));
+	connect(connection, SIGNAL(padUp(int)), this, SIGNAL(padUp(int)));
+	connect(connection, SIGNAL(wheel(int)), this, SIGNAL(wheel(int)));
+	connect(connection, SIGNAL(disconnected(Connection *)), this, SLOT(onGamepadConnectionClosed()));
 
 	return connection;
 }
