@@ -25,36 +25,16 @@ equal to its class name.
 	<initScript>
 		echo 1 > /sys/class/gpio/gpio62/value
 
-		i2cset -y 2 0x48 0x10 0x1000 w
-		i2cset -y 2 0x48 0x11 0x1000 w
-		i2cset -y 2 0x48 0x12 0x1000 w
-		i2cset -y 2 0x48 0x13 0x1000 w
-
 		echo 1 > /sys/class/pwm/ehrpwm.1:1/request
-		echo 1 > /sys/class/pwm/ehrpwm.1:1/run
-
 		echo 1 > /sys/class/pwm/ehrpwm.1:0/request
-		echo 1 > /sys/class/pwm/ehrpwm.1:0/run
-
 		echo 1 > /sys/class/pwm/ehrpwm.0:1/request
-		echo 1 > /sys/class/pwm/ehrpwm.0:1/run
-
 		echo 1 > /sys/class/pwm/ecap.0/request
-		echo 1 > /sys/class/pwm/ecap.0/run
-
 		echo 1 > /sys/class/pwm/ecap.1/request
-		echo 1 > /sys/class/pwm/ecap.1/run
-
 		echo 1 > /sys/class/pwm/ecap.2/request
-		echo 1 > /sys/class/pwm/ecap.2/run
 
 		#cat /sys/class/pwm/ecap_cap.0/config > /dev/null
-
 		#cat /sys/class/pwm/ecap_cap.1/config > /dev/null
-
 		#cat /sys/class/pwm/ecap_cap.2/config > /dev/null
-
-		echo 1 > /sys/devices/virtual/input/input1/enable_device
 
 		#amixer -q set PCM 127
 	</initScript>
@@ -63,7 +43,7 @@ equal to its class name.
 	<deviceClasses>
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
-		<powerMotor invert="false" />
+		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
 		<encoder invert="false" />
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
@@ -81,11 +61,10 @@ equal to its class name.
 		<!--Device file for keys on a brick -->
 		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
 
-		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
-		<gamepad port="4444" optional="true" />
-
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
+
+		<gamepad file="/home/root/trik/gamepad.fifo" />
 	</deviceClasses>
 
 	<devicePorts>
@@ -93,31 +72,37 @@ equal to its class name.
 			port="S1"
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
+			runFile="/sys/class/pwm/ecap.2/run"
 		/>
 		<servoMotor
 			port="S2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
+			runFile="/sys/class/pwm/ecap.1/run"
 		/>
 		<servoMotor
 			port="S3"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
+			runFile="/sys/class/pwm/ecap.0/run"
 		/>
 		<servoMotor
 			port="S4"
 			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.0:1/run"
 		/>
 		<servoMotor
 			port="S5"
 			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.1:0/run"
 		/>
 		<servoMotor
 			port="S6"
 			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
 			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.1:1/run"
 			controlMin="0"
 			controlMax="100"
 		/>
@@ -169,7 +154,15 @@ equal to its class name.
 		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0"
 				controlMin="-100" controlMax="100" />
 
+		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
+				controlMin="0" controlMax="100" />
+
+		<jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+
 		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
+				controlMin="0" controlMax="100" />
+
+		<quadroEsc class="servoMotor" min="1100000" max="1900000" zero="1500000" stop="0"
 				controlMin="0" controlMax="100" />
 
 		<sharpGP2Sensor class="analogSensor" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
@@ -184,9 +177,9 @@ equal to its class name.
 
 		<volumeSensor class="digitalSensor" min="0" max="100" />
 
-		<encoder95 class="encoder" ticksInDegree="1.569444" />
+		<encoder95 class="encoder" ticks="157" degrees="100" />
 
-		<encoder126 class="encoder" ticksInDegree="32.964168" />
+		<encoder126 class="encoder" ticks="3296" degrees="1000" />
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 	</deviceTypes>

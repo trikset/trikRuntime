@@ -37,11 +37,17 @@ class Fifo: public FifoInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
+	/// Constructor. Creates FIFO device by a description in config file.
 	/// @param virtualPort - port in system-config.xml on which this FIFO file is configured.
 	/// @param configurer - configurer object containing preparsed XML files with parameters.
+	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+
+	/// Constructor. Creates FIFO device programmatically by file name.
+	/// @param fileName - name of a FIFO file.
+	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
+	Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Fifo() override;
 

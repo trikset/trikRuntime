@@ -18,9 +18,9 @@
 
 using namespace trikControl;
 
-Gamepad::Gamepad(const QString &virtualPort, const trikKernel::Configurer &configurer
+Gamepad::Gamepad(const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mUnderlyingFifo(virtualPort, configurer, hardwareAbstraction)
+	: mUnderlyingFifo(configurer.attributeByDevice("gamepad", "file"), hardwareAbstraction)
 {
 	connect(&mUnderlyingFifo, SIGNAL(newData(QString)), this, SLOT(onNewData(QString)));
 }

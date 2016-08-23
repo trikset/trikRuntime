@@ -116,7 +116,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	mLed.reset(new Led(mConfigurer, *mHardwareAbstraction));
 
 	if (mConfigurer.isEnabled("gamepad")) {
-		mGamepad.reset(new Gamepad("gamepad", mConfigurer, *mHardwareAbstraction));
+		mGamepad.reset(new Gamepad(mConfigurer, *mHardwareAbstraction));
 	}
 
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");

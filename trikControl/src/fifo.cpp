@@ -27,8 +27,13 @@ using namespace trikControl;
 
 Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mFifo(hardwareAbstraction.createFifo(configurer.attributeByPort(virtualPort, "file")))
-	, mState("Fifo on " + virtualPort)
+	: Fifo(configurer.attributeByPort(virtualPort, "file"), hardwareAbstraction)
+{
+}
+
+Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mFifo(hardwareAbstraction.createFifo(fileName))
+	, mState("Fifo on '" + fileName + "'")
 {
 	mState.start();
 

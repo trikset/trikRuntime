@@ -36,7 +36,7 @@ class Gamepad : public GamepadInterface, public DeviceInterface
 
 public:
 	/// Constructor.
-	Gamepad(const QString &virtualPort, const trikKernel::Configurer &configurer
+	Gamepad(const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Gamepad() override;

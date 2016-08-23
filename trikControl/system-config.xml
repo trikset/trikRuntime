@@ -63,6 +63,8 @@ equal to its class name.
 
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
+
+		<gamepad file="/home/root/trik/gamepad.fifo" optional="true" />
 	</deviceClasses>
 
 	<devicePorts>
@@ -143,7 +145,6 @@ equal to its class name.
 		<colorSensor port="video1" />
 		<colorSensor port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
-		<fifo port="gamepad" file="/home/root/trik/gamepad.fifo" />
 	</devicePorts>
 
 	<deviceTypes>

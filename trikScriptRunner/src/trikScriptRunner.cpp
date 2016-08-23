@@ -33,7 +33,9 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 {
 	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
-	connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
+	if (mailbox) {
+		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
+	}
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
