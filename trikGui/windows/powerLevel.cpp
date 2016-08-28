@@ -18,5 +18,5 @@ using namespace trikGui;
 
 PowerLevel::Level PowerLevel::currentLevel()
 {
-	return Level::twentyVolt;
+	return Level::twelveVolt;
 }
