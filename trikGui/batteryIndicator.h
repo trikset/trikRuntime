@@ -63,19 +63,19 @@ private:
 
 	/// Warning voltage threshold for 12V mode (robot begins to beep like mad if battery voltage is lower than
 	/// this value).
-	const float m12VWarningThreshold = 11.2;
+	const float m12VWarningThreshold = 10.9;
 
 	/// Shutdown voltage threshold for 12V mode (robot turns off correctly if battery voltage is lower than
 	/// this value).
-	const float m12VShutdownThreshold = 10.5;
+	const float m12VShutdownThreshold = 10.4;
 
 	/// Warning voltage threshold for 6V mode (robot begins to beep like mad if battery voltage is lower than
 	/// this value).
-	const float m6VWarningThreshold = 6.8;
+	const float m6VWarningThreshold = 7.1;
 
 	/// Shutdown voltage threshold for 6V mode (robot turns off correctly if battery voltage is lower than
 	/// this value).
-	const float m6VShutdownThreshold = 6.3;
+	const float m6VShutdownThreshold = 6.8;
 
 	/// Voltage threshold that defines lowest possible voltage reading that is considered correct. So if for some
 	/// reason battery voltage is not available, indicator will not panic and turn off robot.
