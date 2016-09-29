@@ -100,6 +100,10 @@ void Controller::runFile(const QString &filePath)
 		mScriptRunner->run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
 		QProcess::startDetached("sh", {filePath});
+	} else if (fileInfo.suffix() == "exe") {
+		QProcess::startDetached("mono", {filePath});
+	} else if (fileInfo.suffix() == "py") {
+		QProcess::startDetached("python", {filePath});
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}
