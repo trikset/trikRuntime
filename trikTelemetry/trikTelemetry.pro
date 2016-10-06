@@ -14,8 +14,11 @@
 
 include(../global.pri)
 
+unix|win32: LIBS += -lpng
+
 PUBLIC_HEADERS += \
 	$$PWD/include/trikTelemetry/trikTelemetry.h \
+	$$PWD/include/trikTelemetry/snapshotTaker.h \
 
 HEADERS += \
 	$$PWD/src/connection.h \
@@ -23,6 +26,7 @@ HEADERS += \
 SOURCES += \
 	$$PWD/src/trikTelemetry.cpp \
 	$$PWD/src/connection.cpp \
+	$$PWD/src/snapshotTaker.cpp \
 
 TEMPLATE = lib
 
