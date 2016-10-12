@@ -82,7 +82,7 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 			exit();
 			break;
 		}
-		case Qt::Key_PowerDown: {
+		case Qt::Key_PowerOff: {
 			emitCheckedDirPath();
 			goHome();
 			break;

@@ -43,7 +43,7 @@ void TrikGuiMessageBox::renewFocus()
 void TrikGuiMessageBox::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerDown: {
+		case Qt::Key_PowerOff: {
 			close();
 			mEventLoop.exit(1);
 			break;

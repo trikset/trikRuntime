@@ -57,7 +57,7 @@ void RunningWidget::setProgram(const QString &programName, int scriptId)
 void RunningWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerDown: {
+		case Qt::Key_PowerOff: {
 			mController.abortExecution();
 			break;
 		}

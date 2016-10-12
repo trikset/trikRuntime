@@ -239,7 +239,7 @@ void StartWidget::goHome()
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerDown: {
+		case Qt::Key_PowerOff: {
 			goHome();
 			break;
 		}
