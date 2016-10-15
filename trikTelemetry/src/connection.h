@@ -17,6 +17,10 @@
 #include <trikNetwork/connection.h>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/gamepadInterface.h>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QTimer>
+
+#include <snapshotTaker.h>
 
 namespace trikTelemetry {
 
@@ -36,7 +40,14 @@ public:
 	/// @param gamepad - gamepad object used to report state of Android gamepad.
 	explicit Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad);
 
+private slots:
+	void takeSnapshot();
+
 private:
+	/// It should not be called in constructor because in this case
+	/// the timer would live in the thread in which constructor was called.
+	void initTakeSnapshotTimer();
+
 	void processData(const QByteArray &data) override;
 
 	static QString serializeVector(const QVector<int> &vector);
@@ -48,6 +59,12 @@ private:
 
 	/// A Gamepad object which is used by Connections to respond to requests about gamepad state.
 	trikNetwork::GamepadInterface &mGamepad;
+
+	/// Timer that is used to send framebuffer snapshots.
+	QScopedPointer<QTimer> mTakeSnapshotTimer;
+
+	/// Provides possibility to take PNG snapshots of framebuffer.
+	QScopedPointer<SnapshotTaker> mSnapshotTaker;
 };
 
 }

@@ -14,8 +14,11 @@
 
 include(../global.pri)
 
+unix|win32: LIBS += -lpng
+
 PUBLIC_HEADERS += \
 	$$PWD/include/trikTelemetry/trikTelemetry.h \
+	$$PWD/include/trikTelemetry/$$PLATFORM/snapshotTaker.h \
 
 HEADERS += \
 	$$PWD/src/connection.h \
@@ -23,12 +26,15 @@ HEADERS += \
 SOURCES += \
 	$$PWD/src/trikTelemetry.cpp \
 	$$PWD/src/connection.cpp \
+	$$PWD/src/$$PLATFORM/snapshotTaker.cpp \
 
 TEMPLATE = lib
 
 QT += network
 
 DEFINES += TRIKTELEMETRY_LIBRARY
+
+INCLUDEPATH += $$PWD/include/trikTelemetry/$$PLATFORM/
 
 interfaceIncludes(trikNetwork)
 implementationIncludes(trikControl)
