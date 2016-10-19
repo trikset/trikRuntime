@@ -67,7 +67,7 @@ void ProgrammingWidget::keyPressEvent(QKeyEvent *event)
 	ScriptHolder * const holder = ScriptHolder::instance();
 
 	switch (event->key()) {
-	case Qt::Key_PowerDown: {
+	case Qt::Key_PowerOff: {
 		mController.abortExecution();
 		break;
 	}

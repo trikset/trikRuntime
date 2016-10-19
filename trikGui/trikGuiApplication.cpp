@@ -40,11 +40,13 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
 		refreshWidgets();
-		if (static_cast<QKeyEvent *>(event)->key() == Qt::Key_PowerDown && !mPowerButtonPressedTimer.isActive()) {
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		if (keyEvent->key() == Qt::Key_PowerOff && keyEvent->isAutoRepeat() && !mPowerButtonPressedTimer.isActive()) {
 			mPowerButtonPressedTimer.start(3000);
 		}
 	} else if (event->type() == QEvent::KeyRelease) {
-		if (dynamic_cast<QKeyEvent *>(event)->key() == Qt::Key_PowerDown) {
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		if (keyEvent->key() == Qt::Key_PowerOff && !keyEvent->isAutoRepeat()) {
 			mPowerButtonPressedTimer.stop();
 		}
 	}

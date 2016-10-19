@@ -32,7 +32,7 @@ int TrikGuiDialog::exec()
 void TrikGuiDialog::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerDown: {
+		case Qt::Key_PowerOff: {
 			goHome();
 			break;
 		}
