@@ -60,8 +60,13 @@ public:
 
 	void renewFocus() override;
 
+	bool eventFilter(QObject *, QEvent *event) override;
+
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
+
+private:
+	void ensureFocusedWidgetVisible();
 
 private slots:
 	/// Hack to work around odd QScrollArea behavior which incorrectly positions inner widget when there is no need for
@@ -72,6 +77,7 @@ private:
 	trikControl::BrickInterface &mBrick;
 	QStringList mPorts;
 	QVector<MotorLever *> mLevers; // Has ownership.
+	QScrollArea *mScrollArea; // Has ownership.
 };
 
 }

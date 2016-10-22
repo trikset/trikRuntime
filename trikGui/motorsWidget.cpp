@@ -16,6 +16,7 @@
 
 #include <QtCore/QTimer>
 #include <QtGui/QKeyEvent>
+#include <QDebug>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QVBoxLayout>
@@ -36,14 +37,15 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	, mBrick(brick)
 	, mPorts(mBrick.motorPorts(type))
 	, mLevers(mPorts.size())
+	, mScrollArea(new QScrollArea(this))
 {
-	const auto scrollArea = new QScrollArea(this);
-	scrollArea->setFrameStyle(QFrame::NoFrame);
-	scrollArea->setWidgetResizable(true);
-	scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	scrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+	mScrollArea->setFrameStyle(QFrame::NoFrame);
+	mScrollArea->setWidgetResizable(true);
+	mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	mScrollArea->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+	mScrollArea->installEventFilter(this);
 
-	const auto leversWidget = new QWidget(this);
+	const auto leversWidget = new QWidget(mScrollArea);
 	const auto innerLayout = new QVBoxLayout();
 	const auto outerLayout = new QHBoxLayout();
 
@@ -51,17 +53,15 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 
 	int i = 0;
 	for (const QString &port : mPorts) {
-		MotorLever *lever = new MotorLever(port, *mBrick.motor(port), this);
+		MotorLever *lever = new MotorLever(port, *mBrick.motor(port), leversWidget);
 		innerLayout->addWidget(lever);
 		mLevers[i] = lever;
 		++i;
 	}
-
 	leversWidget->setLayout(innerLayout);
-
-	outerLayout->addWidget(scrollArea);
+	outerLayout->addWidget(mScrollArea);
 	this->setLayout(outerLayout);
-	scrollArea->setWidget(leversWidget);
+	mScrollArea->setWidget(leversWidget);
 
 	QTimer::singleShot(0, this, SLOT(fixLeversPosition()));
 }
@@ -92,26 +92,43 @@ void MotorsWidget::renewFocus()
 	}
 }
 
-void MotorsWidget::keyPressEvent(QKeyEvent *event)
+bool MotorsWidget::eventFilter(QObject *, QEvent *event)
 {
-	switch (event->key()) {
-		case Qt::Key_Up: {
-			focusPreviousChild();
-			break;
-		}
-		case Qt::Key_Down: {
-			focusNextChild();
-			break;
-		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
+	if(event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+
+		switch (keyEvent->key()) {
+			case Qt::Key_Up: {
+				focusPreviousChild();
+				ensureFocusedWidgetVisible();
+				break;
+			}
+			case Qt::Key_Down: {
+				focusNextChild();
+				ensureFocusedWidgetVisible();
+				break;
+			}
 		}
 	}
+
+	return false;
+}
+
+
+void MotorsWidget::keyPressEvent(QKeyEvent *event)
+{
+	TrikGuiDialog::keyPressEvent(event);
 }
 
 void MotorsWidget::fixLeversPosition()
 {
 	focusNextChild();
 	focusPreviousChild();
+}
+
+void MotorsWidget::ensureFocusedWidgetVisible()
+{
+	QWidget *focusedWidget = qApp->focusWidget();
+	mScrollArea->ensureWidgetVisible(focusedWidget);
 }
