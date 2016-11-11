@@ -17,26 +17,17 @@ include(../global.pri)
 PUBLIC_HEADERS += \
 	$$PWD/include/trikNetwork/connection.h \
 	$$PWD/include/trikNetwork/declSpec.h \
-	$$PWD/include/trikNetwork/gamepadFactory.h \
-	$$PWD/include/trikNetwork/gamepadInterface.h \
 	$$PWD/include/trikNetwork/mailboxFactory.h \
 	$$PWD/include/trikNetwork/mailboxInterface.h \
 	$$PWD/include/trikNetwork/trikServer.h \
 
 HEADERS += \
-	$$PWD/src/gamepad.h \
-	$$PWD/src/gamepadConnection.h \
-	$$PWD/src/gamepadServer.h \
 	$$PWD/src/mailbox.h \
 	$$PWD/src/mailboxConnection.h \
 	$$PWD/src/mailboxServer.h \
 
 SOURCES += \
 	$$PWD/src/connection.cpp \
-	$$PWD/src/gamepad.cpp \
-	$$PWD/src/gamepadConnection.cpp \
-	$$PWD/src/gamepadFactory.cpp \
-	$$PWD/src/gamepadServer.cpp \
 	$$PWD/src/mailbox.cpp \
 	$$PWD/src/mailboxConnection.cpp \
 	$$PWD/src/mailboxFactory.cpp \

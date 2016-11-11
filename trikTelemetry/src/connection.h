@@ -16,7 +16,6 @@
 
 #include <trikNetwork/connection.h>
 #include <trikControl/brickInterface.h>
-#include <trikNetwork/gamepadInterface.h>
 
 namespace trikTelemetry {
 
@@ -34,7 +33,7 @@ public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients.
 	/// @param gamepad - gamepad object used to report state of Android gamepad.
-	explicit Connection(trikControl::BrickInterface &brick, trikNetwork::GamepadInterface &gamepad);
+	explicit Connection(trikControl::BrickInterface &brick);
 
 private:
 	void processData(const QByteArray &data) override;
@@ -45,9 +44,6 @@ private:
 
 	/// A Brick which is used by Connections to respond to clients' requests
 	trikControl::BrickInterface &mBrick;
-
-	/// A Gamepad object which is used by Connections to respond to requests about gamepad state.
-	trikNetwork::GamepadInterface &mGamepad;
 };
 
 }

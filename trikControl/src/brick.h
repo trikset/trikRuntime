@@ -36,6 +36,7 @@ class Display;
 class Encoder;
 class EventDevice;
 class Fifo;
+class Gamepad;
 class MspCommunicatorInterface;
 class Keys;
 class Led;
@@ -52,6 +53,7 @@ class VectorSensor;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
+/// Is NOT thread-safe.
 class Brick : public BrickInterface
 {
 	Q_OBJECT
@@ -126,6 +128,8 @@ public slots:
 
 	LedInterface *led() override;
 
+	GamepadInterface *gamepad() override;
+
 	FifoInterface *fifo(const QString &port) override;
 
 	EventDeviceInterface *eventDevice(const QString &deviceFile) override;
@@ -157,6 +161,7 @@ private:
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;
 	QScopedPointer<Led> mLed;
+	QScopedPointer<Gamepad> mGamepad;
 	QScopedPointer<TonePlayer> mTonePlayer;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.

@@ -29,7 +29,7 @@ MspCommunicatorInterface *MspBusAutoDetector::createCommunicator(const trikKerne
 {
 	QLOG_INFO() << "Checking USB MSP communicator for availability";
 	QScopedPointer<MspUsbCommunicator> communicator(new MspUsbCommunicator(hardwareAbstraction.mspUsb()));
-	if (communicator->status() == DeviceInterface::Status::failure) {
+	if (communicator->status() == DeviceInterface::Status::permanentFailure) {
 		QLOG_INFO() << "Using I2C MSP communicator";
 		return new MspI2cCommunicator(configurer, hardwareAbstraction.mspI2c());
 	}

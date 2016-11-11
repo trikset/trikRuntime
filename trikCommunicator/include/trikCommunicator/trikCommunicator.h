@@ -30,7 +30,6 @@ class BrickInterface;
 
 namespace trikNetwork {
 class MailboxInterface;
-class GamepadInterface;
 }
 
 namespace trikCommunicator {
@@ -49,11 +48,9 @@ public:
 	/// Constructor that creates its own instance of a script runner.
 	/// @param brick - reference to robot brick.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	/// @param gamepad - gamepad object used to interact with TRIK Gamepad on Android device.
 	/// @param startDirPath - path to the directory from which the application was executed.
 	TrikCommunicator(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * const mailbox
-			, trikNetwork::GamepadInterface * const gamepad
 			);
 
 	/// Constructor that accepts external script runner and issues commands to it.

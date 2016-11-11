@@ -81,9 +81,6 @@ equal to its class name.
 		<!--Device file for keys on a brick -->
 		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
 
-		<!-- Settings for gamepad TCP server to communicate with Android "TRIK Gamepad" application -->
-		<gamepad port="4444" optional="true" />
-
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
 	</deviceClasses>
@@ -160,6 +157,7 @@ equal to its class name.
 		<colorSensor port="video0" />
 		<colorSensor port="video1" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
+		<fifo port="gamepad" file="/home/root/trik/gamepad.fifo" />
 	</devicePorts>
 
 	<deviceTypes>

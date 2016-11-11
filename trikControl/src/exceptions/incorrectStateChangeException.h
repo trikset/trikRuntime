@@ -49,8 +49,10 @@ private:
 	/// Helper method to convert status enum value to string.
 	static QString statusToString(DeviceInterface::Status status) {
 		switch (status) {
-		case DeviceInterface::Status::failure:
-			return "failure";
+		case DeviceInterface::Status::permanentFailure:
+			return "permanent failure";
+		case DeviceInterface::Status::temporaryFailure:
+			return "temporary failure";
 		case DeviceInterface::Status::off:
 			return "off";
 		case DeviceInterface::Status::ready:

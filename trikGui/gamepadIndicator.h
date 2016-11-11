@@ -23,7 +23,6 @@
 #endif
 
 #include <controller.h>
-#include <trikNetwork/gamepadInterface.h>
 
 namespace trikGui {
 

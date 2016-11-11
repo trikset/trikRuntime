@@ -22,6 +22,7 @@
 #include "encoderInterface.h"
 #include "eventDeviceInterface.h"
 #include "fifoInterface.h"
+#include "gamepadInterface.h"
 #include "keysInterface.h"
 #include "ledInterface.h"
 #include "lineSensorInterface.h"
@@ -127,6 +128,9 @@ public slots:
 
 	/// Returns LED control class.
 	virtual LedInterface *led() = 0;
+
+	/// Returns handler for Android gamepad.
+	virtual GamepadInterface *gamepad() = 0;
 
 	/// Returns custom FIFO file which can be used as sensor.
 	virtual FifoInterface *fifo(const QString &port) = 0;

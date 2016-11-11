@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2016 Matvey Bryksin, Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,29 +21,27 @@
 #include <QtCore/QTimer>
 
 #include <trikKernel/configurer.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 
-#include "include/trikNetwork/gamepadInterface.h"
+#include "deviceInterface.h"
+#include "fifo.h"
+#include "gamepadInterface.h"
 
-namespace trikNetwork {
-
-class GamepadServer;
+namespace trikControl {
 
 /// Implementation of remote control interface.
-class Gamepad : public GamepadInterface
+class Gamepad : public GamepadInterface, public DeviceInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param port - TCP port of a gamepad server.
-	Gamepad(int port);
+	Gamepad(const trikKernel::Configurer &configurer
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	/// Constructor.
-	/// @param configurer - configurer object that contains preparsed XML config.
-	Gamepad(const trikKernel::Configurer &configurer);
-
-	/// Destructor declared here for QScopedPointer to be able to clean up forward-declared TcpConnector.
 	~Gamepad() override;
+
+	Status status() const override;
 
 public slots:
 	void reset() override;
@@ -63,21 +61,12 @@ public slots:
 	bool isConnected() const override;
 
 private slots:
-	void onPadUp(int padId);
-
-	void onWheel(int percent);
-
-	void onPad(int padId, int x, int y);
-
-	void onButton(int button, int pressed);
+	void onNewData(const QString &data);
 
 	void onButtonStateClearTimerTimeout();
 
 private:
 	Q_DISABLE_COPY(Gamepad)
-
-	/// Does object initialization.
-	void init(int port);
 
 	struct PadStatus {
 		int x;
@@ -85,22 +74,26 @@ private:
 		bool isPressed;
 	};
 
+	void handlePadUp(int padId);
+
+	void handleWheel(int percent);
+
+	void handlePad(int padId, int x, int y);
+
+	void handleButton(int button, int pressed);
+
+	Fifo mUnderlyingFifo;
+
 	QSet<int> mButtonWasPressed;
 	QHash<int, bool> mButtonState;
 
 	/// Hack for the fact that gamepad does not send button press events, only releases. We count button as "pressed"
 	/// if it was released within 500 milliseconds from this moment. So actually button becomes "pressed" when it is
 	/// released and stays pressed for 500 milliseconds.
-	QHash<int, QTimer *> mButtonStateClearTimers;
+	QHash<int, QSharedPointer<QTimer>> mButtonStateClearTimers;
 
 	QHash<int, PadStatus> mPads;
 	int mWheelPercent = -101;
-
-	/// Server that works in separate thread.
-	QScopedPointer<GamepadServer> mWorker;
-
-	/// Worker thread.
-	QThread mWorkerThread;
 };
 
 }
