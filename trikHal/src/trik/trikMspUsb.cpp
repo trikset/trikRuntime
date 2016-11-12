@@ -37,6 +37,9 @@ int TrikMspUsb::read(const QByteArray &data)
 
 bool TrikMspUsb::connect()
 {
+#ifndef I_UNDERSTAND_ALL_RISKS
+	return false;
+#else
 	// Connect to USB device
 	if (connect_USBMSP() == DEVICE_ERROR) {
 		QLOG_INFO() << "Failed to open USB device file " << USB_DEV_NAME;
@@ -44,6 +47,7 @@ bool TrikMspUsb::connect()
 	}
 
 	return true;
+#endif /* I_UNDERSTAND_ALL_RISKS */
 }
 
 void TrikMspUsb::disconnect()
