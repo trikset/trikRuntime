@@ -37,6 +37,7 @@ class Encoder;
 class EventDevice;
 class Fifo;
 class Gamepad;
+class GyroSensor;
 class MspCommunicatorInterface;
 class Keys;
 class Led;
@@ -108,7 +109,7 @@ public slots:
 
 	VectorSensorInterface *accelerometer() override;
 
-	VectorSensorInterface *gyroscope() override;
+	GyroSensorInterface *gyroscope() override;
 
 	LineSensorInterface *lineSensor(const QString &port) override;
 
@@ -156,7 +157,7 @@ private:
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;
-	QScopedPointer<VectorSensor> mGyroscope;
+	QScopedPointer<GyroSensor> mGyroscope;
 	QScopedPointer<Battery> mBattery;
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;

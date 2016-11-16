@@ -35,7 +35,7 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 {
 	mState.start();
 
-	mReading << 0 << 0 << 0;
+	mReading << 0 << 0 << 0 << 0 << 0 << 0;
 	mReadingUnsynced = mReading;
 
 	moveToThread(&thread);
