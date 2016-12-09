@@ -47,6 +47,8 @@ public:
 	/// @param timeVal - a value, which is assigned to a variable.
 	TimeVal &operator=(const TimeVal &timeVal);
 
+	int getRawData() const;
+
 private:
 	int mTime = 0;
 

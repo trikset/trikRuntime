@@ -14,7 +14,7 @@ using namespace trikControl;
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(deviceName)
-	, mIsCalibrated(true)
+	, mIsCalibrated(false)
 	, mQ(QQuaternion(1, 0, 0, 0))
 	, mGyroCounter(0)
 {
@@ -23,17 +23,17 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 
 	mBias << 0 << 0 << 0;
 	mGyroSum << 0 << 0 << 0;
+	for (int i = 0; i < 7; i++)
+		mResult << 0;
 
 	mCalibrationTimer.moveToThread(&mWorkerThread);
 	mCalibrationTimer.setSingleShot(true);
 
 	if (!mState.isFailed()) {
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-				, this, SLOT(countTilt(QVector<int>,trikKernel::TimeVal)));
 
 		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-				, this, SLOT(sumBias(QVector<int>,trikKernel::TimeVal)));
+				, this, SLOT(countTilt(QVector<int>,trikKernel::TimeVal)));
 
 		connect(&mCalibrationTimer, SIGNAL(timeout()), this, SLOT(initBias()));
 
@@ -59,17 +59,16 @@ GyroSensor::Status GyroSensor::status() const
 
 QVector<int> GyroSensor::read() const
 {
-	QVector<int> gyro = mVectorSensorWorker->read();
-	gyro[3] = getPitch(mQ) * 100;
-	gyro[4] = getRoll(mQ) * 100;
-	gyro[5] = getYaw(mQ) * 100;
-
-	return gyro;
+	return mResult;
 }
 
 void GyroSensor::calibrate(int msec)
 {
 	mCalibrationTimer.start(msec);
+
+	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
+			, this, SLOT(sumBias(QVector<int>,trikKernel::TimeVal)));
+
 	mIsCalibrated = false;
 }
 
@@ -80,6 +79,11 @@ bool GyroSensor::isCalibrated() const
 
 void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 {
+	mResult[0] = gyroData[0];
+	mResult[1] = gyroData[1];
+	mResult[2] = gyroData[2];
+	mResult[3] = t.getRawData();
+
 	static bool timeInited = false;
 	if (!timeInited) {
 		timeInited = true;
@@ -111,18 +115,22 @@ void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 		mQ.normalize();
 
 		mLastUpdate = t;
+
+		mResult[4] = getPitch(mQ);
+		mResult[5] = getRoll(mQ);
+		mResult[6] = getYaw(mQ);
+
+		emit newData(mResult, t);
 	}
 }
 
 void GyroSensor::sumBias(QVector<int> gyroData, trikKernel::TimeVal)
 {
-	if (!mIsCalibrated) {
-		mGyroSum[0] += gyroData[0];
-		mGyroSum[1] += gyroData[1];
-		mGyroSum[2] += gyroData[2];
+	mGyroSum[0] += gyroData[0];
+	mGyroSum[1] += gyroData[1];
+	mGyroSum[2] += gyroData[2];
 
-		mGyroCounter++;
-	}
+	mGyroCounter++;
 }
 
 double GyroSensor::getPitch(const QQuaternion &q) const
@@ -144,15 +152,17 @@ double GyroSensor::getYaw(const QQuaternion &q) const
 
 void GyroSensor::initBias()
 {
+	disconnect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
+			, this, SLOT(sumBias(QVector<int>,trikKernel::TimeVal)));
+
 	if (mGyroCounter != 0) {
-		for (int i = 0; i <= 2; i++) {
+		for (int i = 0; i < 3; i++) {
 			mBias[i] = mGyroSum[i] / mGyroCounter;
-			qDebug() << mBias[i];
 			mGyroSum[i] = 0;
 		}
-
-		mGyroCounter = 0;
-		mIsCalibrated = true;
-		mQ = QQuaternion(1, 0, 0, 0);
 	}
+
+	mGyroCounter = 0;
+	mIsCalibrated = true;
+	mQ = QQuaternion(1, 0, 0, 0);
 }

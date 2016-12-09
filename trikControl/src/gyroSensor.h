@@ -72,6 +72,7 @@ private:
 
 	QVector<int> mBias;
 	QVector<int> mGyroSum;
+	QVector<int> mResult;
 	int mGyroCounter;
 
 	trikKernel::TimeVal mLastUpdate;

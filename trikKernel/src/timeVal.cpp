@@ -36,3 +36,8 @@ TimeVal &TimeVal::operator=(const TimeVal &timeVal)
 	mTime = timeVal.mTime;
 	return *this;
 }
+
+int TimeVal::getRawData() const
+{
+	return mTime;
+}
