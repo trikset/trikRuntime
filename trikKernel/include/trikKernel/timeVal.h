@@ -20,12 +20,6 @@ namespace trikKernel {
 class TimeVal
 {
 public:
-	/// Constructor.
-	TimeVal() = default;
-
-	/// Copy constructor.
-	/// @param timeVal - an object, a copy of which is created.
-	TimeVal(const TimeVal &timeVal);
 
 	/// Constructor. Parameters represent time in the format - (sec * 10^6 + mcsec) msces.
 	/// Constructor translates this value to the new format - 1 unit of a new value(mTime) is equal to 256 mcsec.
@@ -36,12 +30,7 @@ public:
 	TimeVal(int sec, int mcsec);
 
 	/// Translates an interior format to mcsec.
-	int toMcSec() const;
-
-	/// Overloaded "minus" operator.
-	/// @param left - a value before sign.
-	/// @param right - a value after sign.
-	friend const TimeVal operator-(const TimeVal &left, const TimeVal &right);
+	int microseconds() const;
 
 	/// Overloaded "is equal" operator.
 	/// @param timeVal - a value, which is assigned to a variable.
@@ -49,21 +38,31 @@ public:
 
 	int getRawData() const;
 
-private:
-	int mTime = 0;
+	int packedUInt32() const;
 
-	static const int mSecConst = 15625;
-	static const int mShift = 8;
+	static TimeVal fromPackedUInt32(int packedTime);
+
+	friend void *qMetaTypeConstructHelper<TimeVal>(const TimeVal *t);
+
+private:
+
+	TimeVal() = default;
+
+	explicit TimeVal(int packedTime);
+
+	uint32_t mTime = 0;
+
+	static const uint32_t mSecConst = 15625;
+	static const uint32_t mShift = 8;
 };
 
 /// Overloaded "minus" operator.
 /// @param left - a value before sign.
 /// @param right - a value after sign.
-inline const TimeVal operator-(const TimeVal &left, const TimeVal &right)
+inline TimeVal operator-(const TimeVal &left, const TimeVal &right)
 {
-	TimeVal deltaTime;
-	deltaTime.mTime	= left.mTime - right.mTime;
-	return deltaTime;
+	auto deltaTime	= left.packedUInt32() - right.packedUInt32();
+	return TimeVal::fromPackedUInt32(deltaTime);
 }
 
 }

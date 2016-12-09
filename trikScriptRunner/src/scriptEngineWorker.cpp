@@ -256,7 +256,7 @@ void ScriptEngineWorker::onScriptRequestingToQuit()
 static QScriptValue timeValToScriptValue(QScriptEngine *engine, const trikKernel::TimeVal &in)
 {
 	QScriptValue obj = engine->newObject();
-	obj.setProperty("mcsec", in.toMcSec());
+	obj.setProperty("mcsec", in.packedUInt32());
 	return obj;
 }
 

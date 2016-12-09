@@ -36,5 +36,5 @@ EventDeviceWorker::EventDeviceWorker(const QString &deviceFilePath, DeviceState 
 
 void EventDeviceWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
 {
-	emit newEvent(eventType, code, value, eventTime.toMcSec());
+	emit newEvent(eventType, code, value, eventTime.packedUInt32());
 }
