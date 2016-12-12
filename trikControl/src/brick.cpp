@@ -36,6 +36,7 @@
 #include "eventDevice.h"
 #include "fifo.h"
 #include "gamepad.h"
+#include "gyroSensor.h"
 #include "keys.h"
 #include "led.h"
 #include "lineSensor.h"
@@ -108,7 +109,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	}
 
 	if (mConfigurer.isEnabled("gyroscope")) {
-		mGyroscope.reset(new VectorSensor("gyroscope", mConfigurer, *mHardwareAbstraction));
+		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction));
 	}
 
 	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
@@ -366,7 +367,7 @@ VectorSensorInterface *Brick::accelerometer()
 	return mAccelerometer.data();
 }
 
-VectorSensorInterface *Brick::gyroscope()
+GyroSensorInterface *Brick::gyroscope()
 {
 	return mGyroscope.data();
 }
