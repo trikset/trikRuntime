@@ -21,11 +21,6 @@ TimeVal::TimeVal(int sec, int mcsec)
 	mTime = ((sec * mSecConst) >> (mShift - 6)) + (mcsec >> mShift);
 }
 
-int TimeVal::microseconds() const
-{
-	return mTime << mShift;
-}
-
 TimeVal &TimeVal::operator=(const TimeVal &timeVal)
 {
 	mTime = timeVal.mTime;
@@ -45,6 +40,11 @@ int TimeVal::packedUInt32() const
 TimeVal TimeVal::fromPackedUInt32(int packedTime)
 {
 	return TimeVal(packedTime);
+}
+
+int TimeVal::timeInterval(int packedTimeLeft, int packedTimeRight)
+{
+	return (packedTimeLeft - packedTimeRight) << mShift;
 }
 
 TimeVal::TimeVal(int packedTime)

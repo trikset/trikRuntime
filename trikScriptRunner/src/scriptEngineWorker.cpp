@@ -88,6 +88,12 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	return engine->toScriptValue(result);
 }
 
+QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
+{
+	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInteger(), context->argument(1).toInteger());
+	return engine->toScriptValue(result);
+}
+
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, ScriptExecutionControl &scriptControl
@@ -103,6 +109,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
 
 	registerUserFunction("print", print);
+	registerUserFunction("timeInterval", timeInterval);
 }
 
 void ScriptEngineWorker::brickBeep()

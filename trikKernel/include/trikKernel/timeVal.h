@@ -21,7 +21,7 @@ class TimeVal
 {
 public:
 
-	/// Constructor. Parameters represent time in the format - (sec * 10^6 + mcsec) msces.
+	/// Constructor. Parameters represent time in the format - (sec * 10^6 + mcsec) mcsec.
 	/// Constructor translates this value to the new format - 1 unit of a new value(mTime) is equal to 256 mcsec.
 	/// Note that after these conversions value in microseconds becomes rounded, but we can neglect this fact
 	/// in most cases.
@@ -29,23 +29,32 @@ public:
 	/// = sec * mSecConst << (mShift - 6) + mcsec << mShift
 	TimeVal(int sec, int mcsec);
 
-	/// Translates an interior format to mcsec.
-	int microseconds() const;
-
 	/// Overloaded "is equal" operator.
 	/// @param timeVal - a value, which is assigned to a variable.
 	TimeVal &operator=(const TimeVal &timeVal);
 
+<<<<<<< 1e189c72cf924ecb88a1a0de99d767772b59505e
 	int getRawData() const;
 
+=======
+	///Returns packed data that shifted to the left on mShift bits.
+>>>>>>> added function to count time interval in js using packed data, added comments
 	int packedUInt32() const;
 
+	///Creates TimeVal using packed data.
+	/// It needs for hiding one argument constructor of TimeVal from packed data.
 	static TimeVal fromPackedUInt32(int packedTime);
 
+	///Counts time interval between two packed data of time
+	static int timeInterval(int packedTimeLeft, int packedTimeRight);
+
+	///This method is used in qRegisterMetaType() method and needs default constructor.
+	/// It is a friend method for hiding default constructor.
 	friend void *qMetaTypeConstructHelper<TimeVal>(const TimeVal *t);
 
-private:
+	friend int operator-(const TimeVal &left, const TimeVal &right);
 
+private:
 	TimeVal() = default;
 
 	explicit TimeVal(int packedTime);
@@ -56,13 +65,12 @@ private:
 	static const uint32_t mShift = 8;
 };
 
-/// Overloaded "minus" operator.
+/// "Minus" operator is for computing time interval between two timestamps, returns value in microsends.
 /// @param left - a value before sign.
 /// @param right - a value after sign.
-inline TimeVal operator-(const TimeVal &left, const TimeVal &right)
+inline int operator-(const TimeVal &left, const TimeVal &right)
 {
-	auto deltaTime	= left.packedUInt32() - right.packedUInt32();
-	return TimeVal::fromPackedUInt32(deltaTime);
+	return (left.mTime - right.mTime) << TimeVal::mShift;
 }
 
 }
