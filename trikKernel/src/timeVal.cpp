@@ -27,11 +27,6 @@ TimeVal &TimeVal::operator=(const TimeVal &timeVal)
 	return *this;
 }
 
-int TimeVal::getRawData() const
-{
-	return mTime;
-}
-
 int TimeVal::packedUInt32() const
 {
 	return mTime;

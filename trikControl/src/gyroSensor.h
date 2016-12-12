@@ -42,23 +42,44 @@ public:
 public slots:
 	QVector<int> read() const override;
 
+	QVector<int> readRawData() const override;
+
 	void calibrate(int msec) override;
 
 	bool isCalibrated() const override;
 
 private slots:
-
+	///Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
+	/// and packed time of current event
 	void countTilt(QVector<int> gyroData, trikKernel::TimeVal t);
 
+	///Sums values of bias
 	void sumBias(QVector<int> gyroData, trikKernel::TimeVal);
 
-	double getPitch(const QQuaternion &q) const;
-	double getRoll(const QQuaternion &q) const;
-	double getYaw(const QQuaternion &q) const;
-
+	///Calculates average mean of bias and reset other tilt parameters
 	void initBias();
 
 private:
+	template <typename T>
+	static T getPitch(const QQuaternion &q)
+	{
+		return atan2(2 * q.y()*q.z() + 2 * q.scalar() * q.x()
+				, 1 - 2 * q.x() * q.x() - 2 * q.y() * q.y());
+	}
+
+	template <typename T>
+	static T getRoll(const QQuaternion &q)
+	{
+		return asin(2 * q.scalar() * q.y() - 2 * q.x() * q.y());
+	}
+
+	template <typename T>
+	static T getYaw(const QQuaternion &q)
+	{
+		return atan2(2 * q.x() * q.y() + 2 * q.scalar() * q.z()
+				, 1 - 2 * q.y() * q.y() - 2 * q.z() * q.z());
+	}
+
 	/// Device state, shared with worker.
 	DeviceState mState;
 
@@ -68,13 +89,28 @@ private:
 	QTimer mCalibrationTimer;
 	bool mIsCalibrated;
 
+	///Quaternion that presented current rotation
 	QQuaternion mQ;
 
+	///Vector of average means of bias (3-axis)
 	QVector<int> mBias;
+
+	///Vector for collecting bias sums
 	QVector<int> mGyroSum;
-	QVector<int> mResult;
+
+	///Counter for bias sums
 	int mGyroCounter;
 
+	///Result vector consists of:
+	/// [0-2] parameters - angular velocities (3-axis)
+	/// [3] parameter - packed data of evet time
+	/// [4-6] parameters - tilts (3-axis)
+	QVector<int> mResult;
+
+	///Raw values of gyroscope data
+	QVector<int> mRawData;
+
+	///Timestamp of last gyroscope data
 	trikKernel::TimeVal mLastUpdate;
 };
 

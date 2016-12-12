@@ -33,12 +33,7 @@ public:
 	/// @param timeVal - a value, which is assigned to a variable.
 	TimeVal &operator=(const TimeVal &timeVal);
 
-<<<<<<< 1e189c72cf924ecb88a1a0de99d767772b59505e
-	int getRawData() const;
-
-=======
 	///Returns packed data that shifted to the left on mShift bits.
->>>>>>> added function to count time interval in js using packed data, added comments
 	int packedUInt32() const;
 
 	///Creates TimeVal using packed data.
