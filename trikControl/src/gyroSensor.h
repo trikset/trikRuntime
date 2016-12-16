@@ -1,3 +1,17 @@
+/* Copyright 2016 Anastasiya Kornilova.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #pragma once
 
 #include <QtCore/QScopedPointer>
@@ -49,14 +63,14 @@ public slots:
 	bool isCalibrated() const override;
 
 private slots:
-	///Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
+	/// Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
 	/// and packed time of current event
 	void countTilt(QVector<int> gyroData, trikKernel::TimeVal t);
 
-	///Sums values of bias
+	/// Sums values of bias
 	void sumBias(QVector<int> gyroData, trikKernel::TimeVal);
 
-	///Calculates average mean of bias and reset other tilt parameters
+	/// Calculates average mean of bias and reset other tilt parameters
 	void initBias();
 
 private:
@@ -89,28 +103,28 @@ private:
 	QTimer mCalibrationTimer;
 	bool mIsCalibrated;
 
-	///Quaternion that presented current rotation
+	/// Quaternion that presented current rotation
 	QQuaternion mQ;
 
-	///Vector of average means of bias (3-axis)
+	/// Vector of average means of bias (3-axis)
 	QVector<int> mBias;
 
-	///Vector for collecting bias sums
+	/// Vector for collecting bias sums
 	QVector<int> mGyroSum;
 
-	///Counter for bias sums
+	/// Counter for bias sums
 	int mGyroCounter;
 
-	///Result vector consists of:
+	/// Result vector consists of:
 	/// [0-2] parameters - angular velocities (3-axis)
 	/// [3] parameter - packed data of evet time
 	/// [4-6] parameters - tilts (3-axis)
 	QVector<int> mResult;
 
-	///Raw values of gyroscope data
+	/// Raw values of gyroscope data
 	QVector<int> mRawData;
 
-	///Timestamp of last gyroscope data
+	/// Timestamp of last gyroscope data
 	trikKernel::TimeVal mLastUpdate;
 };
 

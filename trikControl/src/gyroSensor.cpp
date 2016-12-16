@@ -1,3 +1,17 @@
+/* Copyright 2016 Anastasiya Kornilova.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "gyroSensor.h"
 
 #include <trikKernel/configurer.h>
@@ -99,7 +113,7 @@ void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 
 		mResult[0] = (gyroData[0] - mBias[0]) * GYRO_250DPS;
 		mResult[1] = (gyroData[1] - mBias[1]) * GYRO_250DPS;
-		mResult[2] = (gyroData[2] - mBias[2]) * GYRO_250DPS;
+		mResult[2] = (gyroData[2] - mBias[2]) * GYRO_250MDPS;
 		mResult[3] = t.packedUInt32();
 
 		const auto deltaConst = M_PI / 180 / 1000 / 1000000;

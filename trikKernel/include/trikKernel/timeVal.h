@@ -33,17 +33,17 @@ public:
 	/// @param timeVal - a value, which is assigned to a variable.
 	TimeVal &operator=(const TimeVal &timeVal);
 
-	///Returns packed data that shifted to the left on mShift bits.
+	/// Returns packed data that shifted to the left on mShift bits.
 	int packedUInt32() const;
 
-	///Creates TimeVal using packed data.
+	/// Creates TimeVal using packed data.
 	/// It needs for hiding one argument constructor of TimeVal from packed data.
 	static TimeVal fromPackedUInt32(int packedTime);
 
-	///Counts time interval between two packed data of time
+	/// Counts time interval between two packed data of time
 	static int timeInterval(int packedTimeLeft, int packedTimeRight);
 
-	///This method is used in qRegisterMetaType() method and needs default constructor.
+	/// This method is used in qRegisterMetaType() method and needs default constructor.
 	/// It is a friend method for hiding default constructor.
 	friend void *qMetaTypeConstructHelper<TimeVal>(const TimeVal *t);
 
