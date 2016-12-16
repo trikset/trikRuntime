@@ -24,6 +24,7 @@ equal to its class name.
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
 		echo 0 > /sys/class/misc/l3g42xxd/fs_selection
+		echo 2 > /sys/class/misc/l3g42xxd/odr_selection
 
 		echo 1 > /sys/class/gpio/gpio62/value
 

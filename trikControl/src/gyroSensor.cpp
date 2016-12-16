@@ -113,7 +113,7 @@ void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 
 		mResult[0] = (gyroData[0] - mBias[0]) * GYRO_250DPS;
 		mResult[1] = (gyroData[1] - mBias[1]) * GYRO_250DPS;
-		mResult[2] = (gyroData[2] - mBias[2]) * GYRO_250MDPS;
+		mResult[2] = (gyroData[2] - mBias[2]) * GYRO_250DPS;
 		mResult[3] = t.packedUInt32();
 
 		const auto deltaConst = M_PI / 180 / 1000 / 1000000;
