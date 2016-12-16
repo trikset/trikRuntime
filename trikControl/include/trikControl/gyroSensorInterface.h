@@ -17,17 +17,17 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
+#include <trikKernel/timeVal.h>
 #include "vectorSensorInterface.h"
 
 #include "declSpec.h"
-
 namespace trikKernel {
 class TimeVal;
 }
 
-/// Class that returns raw and processed data from the gyroscope.
 namespace trikControl {
 
+/// Class that returns raw and processed data from the gyroscope.
 class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
 {
 	Q_OBJECT

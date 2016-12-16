@@ -42,11 +42,17 @@ public:
 
 	/// Counts time interval between two packed data of time
 	static int timeInterval(int packedTimeLeft, int packedTimeRight);
-
+#if QT_VERSION < 0x050000
 	/// This method is used in qRegisterMetaType() method and needs default constructor.
 	/// It is a friend method for hiding default constructor.
 	friend void *qMetaTypeConstructHelper<TimeVal>(const TimeVal *t);
+#else
+	friend class QtMetaTypePrivate::QMetaTypeFunctionHelper<TimeVal>;
+#endif
 
+	/// "Minus" operator is for computing time interval between two timestamps, returns value in microsends.
+	/// @param left - a value before sign, usually "time after event".
+	/// @param right - a value after sign, usually "time before event".
 	friend int operator-(const TimeVal &left, const TimeVal &right);
 
 private:
@@ -60,9 +66,6 @@ private:
 	static const uint32_t mShift = 8;
 };
 
-/// "Minus" operator is for computing time interval between two timestamps, returns value in microsends.
-/// @param left - a value before sign.
-/// @param right - a value after sign.
 inline int operator-(const TimeVal &left, const TimeVal &right)
 {
 	return (left.mTime - right.mTime) << TimeVal::mShift;
