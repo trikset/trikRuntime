@@ -25,7 +25,7 @@ namespace trikKernel {
 class TimeVal;
 }
 
-///Class that returns raw and processed data from the gyroscope
+/// Class that returns raw and processed data from the gyroscope.
 namespace trikControl {
 
 class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
@@ -34,15 +34,16 @@ class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
 
 signals:
 
-	/// Emites when average mean of bias is counted
+	/// Emites when average mean of bias is counted.
 	void biasInited();
 
 public slots:
-	/// Calibrates bias value of sensor, sets new bias value, resets other values include tilt values
+	/// Calibrates bias value of sensor, sets new bias value, resets other values include tilt values.
+	/// Preffered duration of calibration -- 15-20 seconds.
 	/// @param msec - duration of calibration in milliseconds
 	virtual void calibrate(int msec) = 0;
 
-	/// Checks if bias is counted or not
+	/// Checks if bias is counted or not.
 	virtual bool isCalibrated() const = 0;
 
 	/// Returns current raw reading of a sensor.
