@@ -95,9 +95,10 @@ isEmpty(IS_QSLOG) {
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 
-QMAKE_CXXFLAGS += -std=c++1y
-QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual
-
+QMAKE_CXXFLAGS += -fno-elide-constructors -pedantic-errors -ansi -std=c++11
+#I whant -Werror to be turned on, but Qt has problems
+QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual -Wuninitialized -Winit-self
+#-Wold-style-cast -Wmissing-declarations 
 GLOBAL_PWD = $$PWD
 
 # Useful function to copy additional files to destination,

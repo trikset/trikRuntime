@@ -13,7 +13,7 @@
  * limitations under the License. */
 
 #pragma once
-
+#include <QtCore/qmetatype.h>
 namespace trikKernel {
 
 /// Structure of a time value in a convenient format.

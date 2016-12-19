@@ -102,7 +102,8 @@ void ScriptExecutionControl::system(const QString &command, bool synchronously)
 		QProcess::startDetached("sh", args);
 	} else {
 		QLOG_INFO() << "Running synchronously: " << command;
-		::system(command.toStdString().c_str());
+		auto rc = ::system(command.toStdString().c_str());
+		QLOG_INFO() << "System result code: " << rc;
 	}
 }
 

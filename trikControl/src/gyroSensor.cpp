@@ -23,8 +23,9 @@
 
 using namespace trikControl;
 
-static const int GYRO_250DPS = 8.75;
-static const float RAD_TO_MDEG = 1000 * 180 / M_PI;
+static constexpr float GYRO_250DPS = 8.75;
+static constexpr double pi() { return std::acos(-1); }  
+static constexpr float RAD_TO_MDEG = 1000 * 180 / pi();
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
@@ -116,19 +117,19 @@ void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 		mResult[2] = (gyroData[2] - mBias[2]) * GYRO_250DPS;
 		mResult[3] = t.packedUInt32();
 
-		const auto deltaConst = M_PI / 180 / 1000 / 1000000;
+		constexpr auto deltaConst = pi() / 180 / 1000 / 1000000;
 		const auto dt = (t - mLastUpdate) * deltaConst;
 
 		const auto x = mResult[0] * dt;
 		const auto y = mResult[1] * dt;
 		const auto z = mResult[2] * dt;
 
-		const auto c1 = cos(x / 2);
-		const auto s1 = sin(x / 2);
-		const auto c2 = cos(y / 2);
-		const auto s2 = sin(y / 2);
-		const auto c3 = cos(z / 2);
-		const auto s3 = sin(z / 2);
+		const auto c1 = std::cos(x / 2);
+		const auto s1 = std::sin(x / 2);
+		const auto c2 = std::cos(y / 2);
+		const auto s2 = std::sin(y / 2);
+		const auto c3 = std::cos(z / 2);
+		const auto s3 = std::sin(z / 2);
 
 		QQuaternion deltaQ;
 		deltaQ.setScalar(c1 * c2 * c3 + s1 * s2 * s3);

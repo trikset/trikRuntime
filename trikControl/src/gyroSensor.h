@@ -18,7 +18,7 @@
 #include <QtCore/QThread>
 #include <QQuaternion>
 #include <QTimer>
-
+#include <cmath>
 #include <trikKernel/timeVal.h>
 
 #include "gyroSensorInterface.h"
@@ -26,7 +26,6 @@
 
 namespace trikKernel {
 class Configurer;
-class TimeVal;
 }
 
 namespace trikHal {
@@ -77,20 +76,20 @@ private:
 	template <typename T>
 	static T getPitch(const QQuaternion &q)
 	{
-		return atan2(2 * q.y()*q.z() + 2 * q.scalar() * q.x()
+		return std::atan2(2 * q.y()*q.z() + 2 * q.scalar() * q.x()
 				, 1 - 2 * q.x() * q.x() - 2 * q.y() * q.y());
 	}
 
 	template <typename T>
 	static T getRoll(const QQuaternion &q)
 	{
-		return asin(2 * q.scalar() * q.y() - 2 * q.x() * q.y());
+		return std::asin(2 * q.scalar() * q.y() - 2 * q.x() * q.y());
 	}
 
 	template <typename T>
 	static T getYaw(const QQuaternion &q)
 	{
-		return atan2(2 * q.x() * q.y() + 2 * q.scalar() * q.z()
+		return std::atan2(2 * q.x() * q.y() + 2 * q.scalar() * q.z()
 				, 1 - 2 * q.y() * q.y() - 2 * q.z() * q.z());
 	}
 
