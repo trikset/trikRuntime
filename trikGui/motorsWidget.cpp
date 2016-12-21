@@ -26,6 +26,8 @@
 	#include <QtWidgets/QScrollArea>
 #endif
 
+#include <QApplication> 
+
 #include "motorLever.h"
 
 using namespace trikGui;

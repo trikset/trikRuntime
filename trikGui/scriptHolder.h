@@ -17,7 +17,7 @@
 #include <QtCore/qglobal.h>
 
 #include <QtCore/QString>
-
+#include <QtCore/QStringList>
 namespace trikGui {
 
 /// Class which contains program from programming widget.

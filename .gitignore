@@ -21,6 +21,7 @@
 moc_*.cpp
 ui_*.h
 qrc_*.cpp
+Thumbs.db
 Makefile*
 *.pro.user*
 bin/*
@@ -31,3 +32,4 @@ object_script.*.Release
 # project-specific
 **/.build
 tests/minimalCppApp/*
+.qmake.stash

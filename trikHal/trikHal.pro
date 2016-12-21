@@ -26,7 +26,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
 
-!win32 {
+!win32:!macx {
 	HEADERS += \
 		$$PWD/src/trik/trikHardwareAbstraction.h \
 		$$PWD/src/trik/trikMspI2c.h \
@@ -50,7 +50,7 @@ HEADERS += \
 	$$PWD/src/stub/stubOutputDeviceFile.h \
 	$$PWD/src/stub/stubFifo.h \
 
-!win32 {
+!win32:!macx {
 	SOURCES += \
 		$$PWD/src/trik/trikHardwareAbstraction.cpp \
 		$$PWD/src/trik/trikMspI2c.cpp \

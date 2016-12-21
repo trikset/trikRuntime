@@ -29,7 +29,17 @@ LIBS += -lgmock$$CONFIGURATION_SUFFIX
 
 SOURCES = $$PWD/mainTest.cpp
 
-QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+CONFIG(clang) {
+	QMAKE_CXXFLAGS += -Wno-unused-local-typedef
+} else {
+	QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+} 
+
+
+QMAKE_CXXFLAGS += -Wno-error=pedantic 
+
+DEFINES += GTEST_USE_OWN_TR1_TUPLE
+
 
 OTHER_FILES += \
 	$$PWD/test-system-config.xml \

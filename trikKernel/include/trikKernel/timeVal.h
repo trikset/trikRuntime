@@ -47,7 +47,7 @@ public:
 	/// It is a friend method for hiding default constructor.
 	friend void *qMetaTypeConstructHelper<TimeVal>(const TimeVal *t);
 #else
-	friend class QtMetaTypePrivate::QMetaTypeFunctionHelper<TimeVal>;
+	friend struct QtMetaTypePrivate::QMetaTypeFunctionHelper<TimeVal>;
 #endif
 
 	/// "Minus" operator is for computing time interval between two timestamps, returns value in microsends.

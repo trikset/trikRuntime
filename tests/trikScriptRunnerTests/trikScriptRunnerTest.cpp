@@ -15,6 +15,7 @@
 #include "trikScriptRunnerTest.h"
 
 #include <QtCore/QEventLoop>
+#include <QtCore/QFile>
 
 #include <trikControl/brickFactory.h>
 #include <trikKernel/fileUtils.h>

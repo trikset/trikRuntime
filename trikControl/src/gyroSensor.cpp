@@ -24,7 +24,7 @@
 using namespace trikControl;
 
 static constexpr float GYRO_250DPS = 8.75;
-static constexpr double pi() { return std::acos(-1); }  
+static constexpr double pi() { return 3.14159265358979323846;}
 static constexpr float RAD_TO_MDEG = 1000 * 180 / pi();
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer

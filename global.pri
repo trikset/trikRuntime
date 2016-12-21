@@ -1,10 +1,10 @@
-# Copyright 2014 - 2016 CyberTech Co. Ltd., Yurii Litvinov.
+# Copyright 2014 - 2016 CyberTech Co. Ltd., Yurii Litvinov, Iakov Kirilenko
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,7 +20,7 @@
 #
 # Uses environment variable INSTALL_ROOT as a root of a file structure for install rules.
 #
-# Uses CONFIG variable to control support for Google Sanitizers (in linux-x86 debug mode only):
+# Uses CONFIG variable to control support for Google Sanitizers:
 # - CONFIG+=sanitize-address will enable address sanitizer
 # - CONFIG+=sanitize-undefined will enable undefined behavior sanitizer
 # - CONFIG+=sanitize-thread will enable thread sanitizer
@@ -37,8 +37,14 @@ count(COMPILER_IS_ARM, 1) {
 
 win32 {
 	PLATFORM = windows
-} else {
+}
+
+unix:!macx {
 	PLATFORM = linux
+}
+
+macx {
+	PLATFORM = mac
 }
 
 CONFIG(debug, debug | release) {
@@ -47,7 +53,7 @@ CONFIG(debug, debug | release) {
 	QMAKE_CXXFLAGS += -coverage
 	QMAKE_LFLAGS += -coverage
 	# Address sanitizer is on by default
-	!CONFIG(no-sanitizers) {
+	!CONFIG(nosanitizers) {
 		CONFIG += sanitize-address
 	}
 } else {
@@ -64,19 +70,81 @@ DESTDIR = $$PWD/bin/$$CONFIGURATION
 PROJECT_BASENAME = $$basename(_PRO_FILE_)
 PROJECT_NAME = $$section(PROJECT_BASENAME, ".", 0, 0)
 
-TARGET = $$PROJECT_NAME$$CONFIGURATION_SUFFIX
+isEmpty(TARGET) {
+	TARGET = $$PROJECT_NAME$$CONFIGURATION_SUFFIX
+} else {
+	TARGET = $$TARGET$$CONFIGURATION_SUFFIX
+}
 
 equals(TEMPLATE, app) {
-	!macx {
-		QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+	unix:!macx {
 		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
+		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,.
 	}
 }
 
-OBJECTS_DIR = .build/$$CONFIGURATION/.obj
-MOC_DIR = .build/$$CONFIGURATION/.moc
-RCC_DIR = .build/$$CONFIGURATION/.rcc
-UI_DIR = .build/$$CONFIGURATION/.ui
+macx-clang {
+	QMAKE_CXXFLAGS += -stdlib=libc++
+	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@executable_path/../../../
+}
+
+unix:!CONFIG(nosanitizers) {
+
+	# seems like we want USan always, but are afraid of ....
+	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
+		# Ubsan is turned on by default
+		CONFIG += sanitizer sanitize_undefined
+	}
+
+	CONFIG(debug, debug | release):!CONFIG(sanitize_address):!macx-clang { CONFIG += sanitize_leak }
+
+	CONFIG(sanitize_leak) {
+		#LSan can be used without performance degrade even in release build
+		QMAKE_CFLAGS += -fsanitize=leak
+		QMAKE_CXXFLAGS += -fsanitize=leak
+		QMAKE_LFLAGS += -fsanitize=leak
+	}
+
+	CONFIG(sanitize_undefined):macx-clang {
+		# sometimes runtime is missing in clang. this hack allows to avoid runtime dependency.
+		QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
+		QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
+		QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
+	}
+
+
+	!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<5\\.[0-9]\\+\\.\' ){
+		CONFIG(sanitize_undefined){
+		# Ubsan has (had at least) known issues with false errors about calls of methods of the base class.
+		# That must be disabled. Variables for confguring ubsan are taken from here:
+		# https://codereview.qt-project.org/#/c/43420/17/mkspecs/common/sanitize.conf
+		# They can change in some version of Qt, keep track of it.
+		# By the way, simply setting QMAKE_CFLAGS, QMAKE_CXXFLAGS and QMAKE_LFLAGS instead of those used below
+		# will not work due to arguments order ("-fsanitize=undefined" must be declared before "-fno-sanitize=vptr").
+			QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fno-sanitize=vptr
+			QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fno-sanitize=vptr
+			QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fno-sanitize=vptr
+		}
+	}
+
+	CONFIG(release, debug | release){
+		!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<4\\.[0-9]\\+\\.\' ){
+			message("Too old compiler: $$QMAKE_CXX")
+		} else {
+			QMAKE_CFLAGS += -fsanitize-recover=all
+			QMAKE_CXXFLAGS += -fsanitize-recover=all
+		}
+	}
+
+}
+
+OBJECTS_DIR = .build/$$CONFIGURATION/obj
+MOC_DIR = .build/$$CONFIGURATION/moc
+RCC_DIR = .build/$$CONFIGURATION/rcc
+UI_DIR = .build/$$CONFIGURATION/ui
+
+PRECOMPILED_HEADER = $$PWD/pch.h
+CONFIG += precompile_header
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
@@ -84,8 +152,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 INCLUDEPATH += \
 	$$PWD/qslog \
 
-PRECOMPILED_HEADER = $$PWD/pch.h
-CONFIG += precompile_header
+
 
 LIBS += -L$$DESTDIR
 
@@ -95,10 +162,12 @@ isEmpty(IS_QSLOG) {
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 
-QMAKE_CXXFLAGS += -fno-elide-constructors -pedantic-errors -ansi -std=c++11
+CONFIG += c++11
+QMAKE_CXXFLAGS += -fno-elide-constructors -pedantic-errors -Werror=pedantic -ansi -std=c++11
 #I whant -Werror to be turned on, but Qt has problems
 QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual -Wuninitialized -Winit-self
 #-Wold-style-cast -Wmissing-declarations 
+
 GLOBAL_PWD = $$PWD
 
 # Useful function to copy additional files to destination,
@@ -109,26 +178,26 @@ defineTest(copyToDestdir) {
 
 	for(FILE, FILES) {
 		DESTDIR_SUFFIX =
+		AFTER_SLASH = $$section(FILE, "/", -1, -1)
 		isEmpty(QMAKE_SH) {
 		# This ugly code is needed because xcopy requires to add source directory name to target directory name when copying directories
 			win32 {
-				AFTER_SLASH = $$section(FILE, "/", -1, -1)
 				BASE_NAME = $$section(FILE, "/", -2, -2)
 				equals(AFTER_SLASH, ""):DESTDIR_SUFFIX = /$$BASE_NAME
 
 				FILE ~= s,/$,,g
 
-				FILE ~= s,/,\,g
+				FILE ~= s,/,\\,g
 			}
 			DDIR = $$DESTDIR$$DESTDIR_SUFFIX/$$3
-			win32:DDIR ~= s,/,\,g
+			win32:DDIR ~= s,/,\\,g
 		} else {
 			DDIR = $$DESTDIR$$DESTDIR_SUFFIX/$$3
 		}
 
 		isEmpty(NOW) {
 			# In case this is directory add "*" to copy contents of a directory instead of directory itself under linux.
-			!win32:equals(AFTER_SLASH, ""):FILE = $$FILE*
+			!win32:equals(AFTER_SLASH, ""):FILE = $$FILE'.'
 			QMAKE_POST_LINK += $(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
 		} else {
 			win32 {
@@ -142,7 +211,7 @@ defineTest(copyToDestdir) {
 			}
 
 			macx {
-				system("cp -R $$FILE $$DDIR/$$FILE")
+				system("cp -af $$FILE $$DDIR/")
 			}
 		}
 	}
@@ -249,20 +318,21 @@ defineTest(noPch) {
 	export(PRECOMPILED_HEADER)
 }
 
+#seems obsolete, atleast for qmake-qt5
 unix:equals(ARCHITECTURE, "x86") {
 	CONFIG(debug) {
 		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
-		CONFIG(sanitize-address) {
+		CONFIG(sanitize_address) {
 			QMAKE_CXXFLAGS += -fsanitize=address
 			QMAKE_LFLAGS += -fsanitize=address
 		}
-		CONFIG(sanitize-undefined) {
+		CONFIG(sanitize_undefined) {
 			# UBSan does not play well with precompiled headers for some reason.
 			noPch()
 			QMAKE_CXXFLAGS += -fsanitize=undefined
 			QMAKE_LFLAGS += -fsanitize=undefined
 		}
-		CONFIG(sanitize-thread) {
+		CONFIG(sanitize_thread) {
 			QMAKE_CXXFLAGS += -fsanitize=thread
 			QMAKE_LFLAGS += -fsanitize=thread
 			LIBS += -ltsan

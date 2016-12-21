@@ -48,7 +48,7 @@ public:
 
 public slots:
 	/// Returns current reading of a sensor.
-	int read();
+	int read() override;
 
 	/// Returns current raw reading of a sensor.
 	int readRawData() override;

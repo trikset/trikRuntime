@@ -19,6 +19,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QTimer>
 #include <QtCore/QReadWriteLock>
+#include <QtCore/QThread>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 

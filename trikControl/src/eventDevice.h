@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QSharedPointer>
+#include <QThread>
 
 #include "eventDeviceInterface.h"
 #include "deviceState.h"
