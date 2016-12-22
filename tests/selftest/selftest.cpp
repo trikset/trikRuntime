@@ -47,28 +47,28 @@ TEST(selftest, brickCheck)
 	EXPECT_TRUE(brick->battery() != nullptr);
 	if (brick->battery() != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->battery()->status());
-		EXPECT_THAT(0.0, Not(DoubleEq(brick->battery()->readVoltage())));
+		EXPECT_THAT(0.0, (DoubleEq(brick->battery()->readVoltage())));
 	}
 
 
-	EXPECT_TRUE(brick->encoder("B1") != nullptr);
-	if (brick->encoder("B1") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("B1")->status());
+	EXPECT_TRUE(brick->encoder("E1") != nullptr);
+	if (brick->encoder("E1") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("E1")->status());
 	}
 
-	EXPECT_TRUE(brick->encoder("B2") != nullptr);
-	if (brick->encoder("B2") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("B2")->status());
+	EXPECT_TRUE(brick->encoder("E2") != nullptr);
+	if (brick->encoder("E2") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("E2")->status());
 	}
 
-	EXPECT_TRUE(brick->encoder("B3") != nullptr);
-	if (brick->encoder("B3") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("B3")->status());
+	EXPECT_TRUE(brick->encoder("E3") != nullptr);
+	if (brick->encoder("E3") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("E3")->status());
 	}
 
-	EXPECT_TRUE(brick->encoder("B4") != nullptr);
-	if (brick->encoder("B4") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("B4")->status());
+	EXPECT_TRUE(brick->encoder("E4") != nullptr);
+	if (brick->encoder("E4") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("E4")->status());
 	}
 
 
@@ -104,34 +104,34 @@ TEST(selftest, brickCheck)
 	}
 
 
-	EXPECT_TRUE(brick->motor("E1") != nullptr);
-	if (brick->motor("E1") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("E1")->status());
+	EXPECT_TRUE(brick->motor("S1") != nullptr);
+	if (brick->motor("S1") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S1")->status());
 	}
 
-	EXPECT_TRUE(brick->motor("E2") != nullptr);
-	if (brick->motor("E2") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("E2")->status());
+	EXPECT_TRUE(brick->motor("S2") != nullptr);
+	if (brick->motor("S2") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S2")->status());
 	}
 
-	EXPECT_TRUE(brick->motor("E3") != nullptr);
-	if (brick->motor("E3") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("E3")->status());
+	EXPECT_TRUE(brick->motor("S3") != nullptr);
+	if (brick->motor("S3") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S3")->status());
 	}
 
-	EXPECT_TRUE(brick->motor("C1") != nullptr);
-	if (brick->motor("C1") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("C1")->status());
+	EXPECT_TRUE(brick->motor("S4") != nullptr);
+	if (brick->motor("S4") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S4")->status());
 	}
 
-	EXPECT_TRUE(brick->motor("C2") != nullptr);
-	if (brick->motor("C2") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("C2")->status());
+	EXPECT_TRUE(brick->motor("S5") != nullptr);
+	if (brick->motor("S5") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S5")->status());
 	}
 
-	EXPECT_TRUE(brick->motor("C3") != nullptr);
-	if (brick->motor("C3") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("C3")->status());
+	EXPECT_TRUE(brick->motor("S6") != nullptr);
+	if (brick->motor("S6") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S6")->status());
 	}
 
 

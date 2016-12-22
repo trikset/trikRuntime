@@ -50,11 +50,9 @@ macx {
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
-	QMAKE_CXXFLAGS += -coverage
-	QMAKE_LFLAGS += -coverage
-	# Address sanitizer is on by default
-	!CONFIG(nosanitizers) {
-		CONFIG += sanitize-address
+	unix {
+		QMAKE_CXXFLAGS += -coverage
+		QMAKE_LFLAGS += -coverage
 	}
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
@@ -88,7 +86,12 @@ macx-clang {
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@executable_path/../../../
 }
 
-unix:!CONFIG(nosanitizers) {
+unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
+
+	CONFIG(debug, debug | release) {
+		CONFIG += sanitize-address sanitize-undefined
+		CONFIG += sanitize sanitize_address sanitize_undefined
+	}
 
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
@@ -96,10 +99,12 @@ unix:!CONFIG(nosanitizers) {
 		CONFIG += sanitizer sanitize_undefined
 	}
 
+
+	#LSan can be used without performance degrade even in release build
+	#But at the moment we can not, because of Qt  problems
 	CONFIG(debug, debug | release):!CONFIG(sanitize_address):!macx-clang { CONFIG += sanitize_leak }
 
 	CONFIG(sanitize_leak) {
-		#LSan can be used without performance degrade even in release build
 		QMAKE_CFLAGS += -fsanitize=leak
 		QMAKE_CXXFLAGS += -fsanitize=leak
 		QMAKE_LFLAGS += -fsanitize=leak

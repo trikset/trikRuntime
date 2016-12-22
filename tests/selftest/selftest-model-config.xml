@@ -1,100 +1,118 @@
 <!--
-Config for robot self-test, checks availability of all devices on operating system level (does not test that they are
-working properly, it tests only that runtime can interact with them).
+Configuration file for a model. Meant to be edited automatically via TRIKStudio or TRIKGui and can be different
+for each model. File below is an example of possible configuration.
+
+Devices have properties depending on a port to which device is plugged and device class (IR Sensor, Servomotor
+and so on), such as device file, and properties common for some devices of given class regardless of port (for example,
+we may have two different types of angular servos that have common control interface but different parameters).
+So we distinguish "device class" and "device type". "device class" is a class of device as in underlying C++ code
+(basically, a logic of communication with particular kind of device), "device type" is a set of parameters for
+each device class. Device class can have many device types associated with it (for instance, for different kinds of
+servomotors from example above). Device classes are hard-coded, device types are defined in system config. Every
+parameter for device type may be overridden here, in model config, to allow to fine-tune devices for particular purpose
+(ability to set the maximum and minimum angles of angular servo proven to be especially useful).
+
+Model config maps ports to device types and allows to override default parameters defined in a type. Every port or
+device type for a port may be omitted, it means that no device is configured on that port and it not be available from
+scripts or GUI (will return null reference to scripts).
+
+Note that device, even if listed here, may fail by itself, then it also will not be available.
 -->
 
 <config>
+	<!-- Initialization sh script, will be executed when runtime is launched, but after system initialization script. -->
 	<initScript>
 	</initScript>
 
-	<E1>
+	<!-- Servomotor or PWM capture ports. -->
+	<S1>
 		<angularServomotor />
-	</E1>
-	<E2>
+	</S1>
+	<S2>
 		<angularServomotor />
-	</E2>
-	<E3>
-		<angularServomotor  />
-	</E3>
-	<C1>
+	</S2>
+	<S3>
 		<angularServomotor />
-	</C1>
-	<C2>
+	</S3>
+	<S4>
 		<angularServomotor />
-	</C2>
-	<C3>
+	</S4>
+	<S5>
 		<angularServomotor />
-	</C3>
+	</S5>
+	<S6>
+		<manipulatorServomotor />
+	</S6>
 
+	<!-- Analog sensor ports. -->
 	<A1>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A1>
 	<A2>
-		<irSensor />
+		<sharpGP2Sensor />
 	</A2>
 	<A3>
-		<irSensor />
+		<touchSensor />
 	</A3>
 	<A4>
-		<irSensor />
+		<touchSensor />
 	</A4>
 	<A5>
-		<irSensor />
+		<lightSensor />
 	</A5>
 	<A6>
-		<irSensor />
+		<lightSensor />
 	</A6>
 
+	<!-- Digital sensor ports. -->
 	<D1>
-		<rangeSensor />
+		<sonarSensor />
 	</D1>
 	<D2>
-		<rangeSensor />
+		<sonarSensor />
 	</D2>
 	<!--
-	<F1>
+	<D3>
 		<volumeSensor />
-	</F1>
+	</D3>
 	-->
 
 	<!-- Encoder ports. -->
-	<B1>
+	<E1>
 		<encoder95 />
-	</B1>
-	<B2>
+	</E1>
+	<E2>
 		<encoder95 />
-	</B2>
-	<B3>
+	</E2>
+	<E3>
 		<encoder95 />
-	</B3>
-	<B4>
+	</E3>
+	<E4>
 		<encoder95 />
-	</B4>
+	</E4>
 
 	<!-- Power motor ports. -->
 	<M1>
-		<powerMotor />
+		<jga25-371 />
 	</M1>
 	<M2>
-		<powerMotor />
+		<jga25-371 />
 	</M2>
 	<M3>
-		<powerMotor />
+		<jga25-371 />
 	</M3>
 	<M4>
-		<powerMotor />
+		<jga25-371 />
 	</M4>
 
 	<!-- Video sensor ports. -->
-	<!--
-	<video0>
-		<lineSensor />
-	</video0>
-
 	<video1>
-		<colorSensor3x3 />
+		<lineSensor />
 	</video1>
-	-->
+
+	<video2>
+		<lineSensor />
+	</video2>
 
 	<!-- On-board sensors. -->
 	<!-- If model is not using those, they can be turned off to save system resources, by deleting them or
@@ -105,4 +123,11 @@ working properly, it tests only that runtime can interact with them).
 	<!-- Optional modules -->
 	<gamepad />
 	<mailbox />
+
+	<!-- Example of custom FIFO sensor -->
+	<!--
+	<soundSensor>
+		<fifo />
+	</soundSensor>
+	-->
 </config>
