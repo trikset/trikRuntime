@@ -47,8 +47,9 @@ CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
 	# Address sanitizer is on by default
-	!CONFIG(no-sanitizers) {
+	!CONFIG(no-sanitizers):!CONFIG(nosanitizers) {
 		CONFIG += sanitize-address
+		CONFIG += sanitize sanitize_address
 	}
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
@@ -74,9 +75,9 @@ LIBS += -lqslog$$CONFIGURATION_SUFFIX
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	CONFIG += c++11
-} else {
-	QMAKE_CXXFLAGS += -std=c++11
-}
+} 
+
+QMAKE_CXXFLAGS += -std=c++11
 
 defineTest(copyToDestdir) {
 	FILES = $$1
@@ -89,9 +90,9 @@ defineTest(copyToDestdir) {
 
 		win32:FILE ~= s,/$,,g
 
-		win32:FILE ~= s,/,\,g
+		win32:FILE ~= s,/,\\,g
 		DDIR = $$DESTDIR
-		win32:DDIR ~= s,/,\,g
+		win32:DDIR ~= s,/,\\,g
 
 		QMAKE_POST_LINK += $(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
 	}
@@ -106,10 +107,17 @@ defineTest(uses) {
 		LIBS += -l$$PROJECT$$CONFIGURATION_SUFFIX
 		INCLUDEPATH += $$TRIK_RUNTIME_DIR/$$PROJECT/include
 		!win32 {
-			copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so)
-			copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so.1)
-			copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so.1.0)
-			copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so.1.0.0)
+			macx {
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.dylib)
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.1.dylib)
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.1.0.dylib)
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.1.0.0.dylib)
+			} else {
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so)
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so.1)
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so.1.0)
+				copyToDestdir($$TRIK_RUNTIME_BIN_DIR/lib$$PROJECT$${CONFIGURATION_SUFFIX}.so.1.0.0)
+			}
 		} else {
 			copyToDestdir($$TRIK_RUNTIME_BIN_DIR/$$PROJECT$${CONFIGURATION_SUFFIX}.dll)
 		}

@@ -18,6 +18,8 @@ TEMPLATE = lib
 
 CONFIG += warn_off
 
+DEFINES += GTEST_USE_OWN_TR1_TUPLE
+
 INCLUDEPATH += \
 	. \
 	include \
