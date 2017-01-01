@@ -88,11 +88,6 @@ macx-clang {
 
 unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 
-	CONFIG(debug, debug | release) {
-		CONFIG += sanitize-address sanitize-undefined
-		CONFIG += sanitize sanitize_address sanitize_undefined
-	}
-
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
 		# Ubsan is turned on by default
