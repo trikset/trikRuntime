@@ -67,7 +67,7 @@ equal to its class name.
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
 
-		<gamepad file="/home/root/trik/gamepad.fifo" optional="true" />
+		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
 	</deviceClasses>
 
 	<devicePorts>

@@ -80,7 +80,7 @@ equals(TEMPLATE, app) {
 		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,.
 	}
 	macx:!CONFIG(no_rpath) {
-		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
+		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
 	}
 }
 
