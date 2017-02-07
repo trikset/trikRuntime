@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+#	  http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -89,6 +89,12 @@ macx-clang {
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
 }
 
+CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
+!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') {
+    warning("Disabled sanitizers, failed to detect compiler version or too old compiler: $$QMAKE_CXX")
+    CONFIG += nosanitizers
+}
+
 unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 
 	# seems like we want USan always, but are afraid of ....
@@ -115,8 +121,8 @@ unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 		QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
 	}
 
-
-	!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<5\\.[0-9]\\+\\.\' ){
+	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
+	!clang:gcc:*-g++*:system($$CHECK_GCC_VERSION_5){
 		CONFIG(sanitize_undefined){
 		# Ubsan has (had at least) known issues with false errors about calls of methods of the base class.
 		# That must be disabled. Variables for confguring ubsan are taken from here:
@@ -131,12 +137,8 @@ unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 	}
 
 	CONFIG(release, debug | release){
-		!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<4\\.[0-9]\\+\\.\' ){
-			message("Too old compiler: $$QMAKE_CXX")
-		} else {
 			QMAKE_CFLAGS += -fsanitize-recover=all
 			QMAKE_CXXFLAGS += -fsanitize-recover=all
-		}
 	}
 
 }
