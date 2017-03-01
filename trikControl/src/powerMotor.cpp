@@ -55,19 +55,17 @@ PowerMotor::Status PowerMotor::status() const
 
 void PowerMotor::setPower(int power, bool constrain)
 {
-	if (!constrain) {
-		throw trikKernel::InternalErrorException("Invalid argument");
-	}
-
-	if (power > maxControlValue) {
-		power = maxControlValue;
-	} else if (power < minControlValue) {
-		power = minControlValue;
+	if (constrain) {
+		if (power > maxControlValue) {
+			power = maxControlValue;
+		} else if (power < minControlValue) {
+			power = minControlValue;
+		}
+		power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
 	}
 
 	mCurrentPower = power;
 
-	power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
 
 	power = mInvert ? -power : power;
 
