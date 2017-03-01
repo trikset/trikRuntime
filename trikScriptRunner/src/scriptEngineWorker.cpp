@@ -17,6 +17,7 @@
 #include <QtCore/QFile>
 #include <QtCore/QVector>
 #include <QtCore/QTextStream>
+#include <QtCore/QSignalMapper>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -83,7 +84,17 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	}
 
 	QTextStream(stdout) << result << "\n";
-	engine->evaluate(QString("script.sendMessage(\"print: %1\");").arg(result));
+	auto scriptValue = engine->globalObject().property("script");
+	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());
+	if (script) {
+		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
+//		If this does not work then it can be workarrounded:
+//		QSignalMapper *mapper = new QSignalMapper();
+//		QObject::connect(mapper, SIGNAL(mapped(QString)), script, SIGNAL(sendMessage(QString)), Qt::DirectConnection);
+//		mapper->setMapping(nullptr, QString("print: %1").arg(result));
+//		mapper->map(nullptr);
+//		delete mapper;
+	}
 
 	return engine->toScriptValue(result);
 }
