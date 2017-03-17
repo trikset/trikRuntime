@@ -49,9 +49,12 @@ public slots:
 	/// Returns currently set power of a motor.
 	virtual int power() const = 0;
 
-	/// Turns off motor. This is not the same as setPower(0), because setPower will
+	/// Turns off motor. This is not the same as setPower(0), because setPower can
 	/// leave motor on in a break mode, and this method will turn motor off.
 	virtual void powerOff() = 0;
+
+	/// Force break state for durationMs and then powerOff()
+	virtual void forceBreak(int durationMs = 300) = 0;
 };
 
 }

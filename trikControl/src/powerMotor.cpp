@@ -17,7 +17,7 @@
 #include <trikKernel/configurer.h>
 #include <trikKernel/exceptions/malformedConfigException.h>
 #include <trikKernel/exceptions/internalErrorException.h>
-
+#include <QTimer>
 #include "mspI2cCommunicator.h"
 #include "configurerHelper.h"
 
@@ -89,7 +89,15 @@ int PowerMotor::period() const
 
 void PowerMotor::powerOff()
 {
-	setPower(0);
+	setPower(0, false); // ignore power units translation (linearisation)
+}
+
+void PowerMotor::forceBreak(int durationMs)
+{
+	if (durationMs <= 0)
+		forceBreak();
+	setPower(0xff, false);
+	QTimer::singleShot(durationMs, this, SLOT(powerOff()));
 }
 
 void PowerMotor::setPeriod(int period)

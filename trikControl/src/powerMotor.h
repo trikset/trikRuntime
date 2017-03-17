@@ -63,6 +63,8 @@ public slots:
 	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
 	void setPeriod(int period);
 
+	void forceBreak(int durationMs = 300);
+
 private:
 	void lineariseMotor(const QString &port, const trikKernel::Configurer &configurer);
 

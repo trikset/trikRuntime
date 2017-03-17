@@ -72,6 +72,8 @@ public slots:
 	///        will be sent to a motor unaltered.
 	void setPower(int power, bool constrain = true) override;
 
+	void forceBreak(int = 0) { /** Makes no sense, neither for angular servo nor for rotational */}
+
 private:
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
