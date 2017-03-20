@@ -319,6 +319,10 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreading));
 	}
 
+	for (const auto &step : mCustomInitSteps) {
+		step(engine);
+	}
+
 	evalSystemJs(engine);
 
 	engine->setProcessEventsInterval(1);
@@ -343,6 +347,11 @@ QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const 
 void ScriptEngineWorker::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
 	mRegisteredUserFunctions[name] = function;
+}
+
+void ScriptEngineWorker::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
+{
+	mCustomInitSteps.append(step);
 }
 
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
