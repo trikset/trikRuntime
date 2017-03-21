@@ -162,7 +162,7 @@ equal to its class name.
 
 		<jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
 
-		<motor350 class="powerMotor" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
+		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
 
 		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
 				controlMin="0" controlMax="100" />
