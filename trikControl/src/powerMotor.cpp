@@ -96,7 +96,7 @@ void PowerMotor::forceBreak(int durationMs)
 {
 	if (durationMs <= 0)
 		forceBreak();
-	setPower(0xff, false);
+	setPower(0x7f, false);
 	QTimer::singleShot(durationMs, this, SLOT(powerOff()));
 }
 
