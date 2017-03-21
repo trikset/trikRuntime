@@ -61,6 +61,11 @@ void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::
 	mScriptEngineWorker->registerUserFunction(name, function);
 }
 
+void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
+{
+	mScriptEngineWorker->addCustomEngineInitStep(step);
+}
+
 void TrikScriptRunner::brickBeep()
 {
 	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");

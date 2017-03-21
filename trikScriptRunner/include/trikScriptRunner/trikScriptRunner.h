@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
@@ -49,6 +51,9 @@ public:
 
 	/// Registers given C++ function as callable from script, with given name.
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
+
+	/// Adds custom initialization steps when creating script engine (useful when used from outside of the TrikRuntime).
+	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step);
 
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.

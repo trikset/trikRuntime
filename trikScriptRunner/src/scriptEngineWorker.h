@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
@@ -58,6 +60,9 @@ public:
 	/// Registers given C++ function as callable from script, with given name.
 	/// Can be safely called from other threads (but it shall not be called simultaneously with engine creation).
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function);
+
+	/// Helper for adding custom initialization steps when creating script engine from outside of the TrikRuntime.
+	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step);
 
 	/// Clears execution state and stops robot.
 	/// Can be safely called from other threads.
@@ -136,6 +141,7 @@ private:
 	int mScriptId = 0;
 	State mState = State::ready;
 	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;
+	QVector<std::function<void (QScriptEngine *)>> mCustomInitSteps;
 
 	/// Ensures that there is only one instance of StopScript running at any given time, to prevent unpredicted
 	/// behavior when programs are started and stopped actively.
