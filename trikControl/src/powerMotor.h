@@ -63,6 +63,7 @@ public slots:
 	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
 	void setPeriod(int period);
 
+	/// Forced break for a short period of time followed by power off
 	void forceBreak(int durationMs = 300);
 
 private:
