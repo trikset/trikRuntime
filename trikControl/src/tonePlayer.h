@@ -20,8 +20,6 @@
 #include <QtCore/QTimer>
 #include <QtMultimedia/QAudioOutput>
 
-
-
 namespace trikControl {
 
 /// Tone player. Play tones

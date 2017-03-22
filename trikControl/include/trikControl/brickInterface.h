@@ -24,6 +24,7 @@
 #include "fifoInterface.h"
 #include "gamepadInterface.h"
 #include "gyroSensorInterface.h"
+#include "headingSensorInterface.h"
 #include "keysInterface.h"
 #include "ledInterface.h"
 #include "lineSensorInterface.h"
@@ -102,6 +103,8 @@ public slots:
 
 	/// Returns on-board gyroscope.
 	virtual GyroSensorInterface *gyroscope() = 0;
+
+	virtual HeadingSensorInterface *heading() = 0;
 
 	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
 	virtual LineSensorInterface *lineSensor(const QString &port) = 0;
