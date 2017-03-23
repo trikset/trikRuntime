@@ -110,7 +110,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	}
 
 	if (mConfigurer.isEnabled("gyroscope")) {
-		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction));
+		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()));
 	}
 
 	mHeading.reset(new HeadingSensor(mGyroscope.data(), mAccelerometer.data()));

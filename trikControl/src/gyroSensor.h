@@ -46,11 +46,13 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer);
 
 	~GyroSensor() override;
 
 	Status status() const override;
+
+	const QQuaternion & Q() const override;
 
 public slots:
 	QVector<int> read() const override;
@@ -70,7 +72,9 @@ private slots:
 	void sumBias(const QVector<int> &gyroData, trikKernel::TimeVal);
 
 	/// Calculates average mean of bias and reset other tilt parameters.
-	void initBias();
+	void initParams();
+
+	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &);
 
 private:
 	template <typename T>
@@ -125,6 +129,13 @@ private:
 
 	/// Timestamp of last gyroscope data.
 	trikKernel::TimeVal mLastUpdate;
+
+	VectorSensorInterface *mAccelerometer;
+
+	QVector<int> mAccelerometerVector;
+	QVector<int> mAccelerometerSum;
+	int mAccelerometerCounter;
+	QQuaternion mDeltaQ;
 };
 
 }

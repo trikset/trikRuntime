@@ -60,6 +60,8 @@ private:
 
 	QVector<int> mResult;
 
+	QQuaternion mDeltaQ;
+
 };
 
 }

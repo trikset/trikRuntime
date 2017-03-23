@@ -68,6 +68,20 @@ void HeadingSensor::initAccelerometer()
 		}
 	}
 
+	QVector3D acc(mAccelerometerVector[0], mAccelerometerVector[1], mAccelerometerVector[2]);
+	acc.normalize();
+
+	QVector3D gravity(0, 0, 1);
+	QVector3D half = acc+gravity;
+	half.normalize();
+
+	auto dot = QVector3D::dotProduct(acc, half);
+	QVector3D cross = QVector3D::crossProduct(acc, half);
+
+	mDeltaQ = QQuaternion::fromAxisAndAngle(cross, dot);
+
+	qDebug() << "QQuternion(" << mDeltaQ.scalar() << "," << mDeltaQ.x() << "," << mDeltaQ.y() << "," << mDeltaQ.z() << ")";
+
 	mAccelerometerCounter = 0;
 	mIsCalibrated = true;
 }
@@ -83,6 +97,5 @@ void HeadingSensor::sumAccelerometer(const QVector<int> &accelerometerData, cons
 
 void HeadingSensor::recountTilt(const QVector<int> &gyroData, const trikKernel::TimeVal &timestamp)
 {
-	mResult = gyroData;
 	emit newData(mResult, timestamp);
 }
