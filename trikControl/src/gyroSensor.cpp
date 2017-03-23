@@ -84,11 +84,6 @@ GyroSensor::Status GyroSensor::status() const
 	return mState.status();
 }
 
-const QQuaternion &GyroSensor::Q() const
-{
-	return mQ;
-}
-
 QVector<int> GyroSensor::read() const
 {
 	return mResult;
@@ -188,51 +183,43 @@ void GyroSensor::initParams()
 	disconnect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
 			, this, SLOT(sumBias(QVector<int>,trikKernel::TimeVal)));
 
-	disconnect(mAccelerometer, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
-
 	if (mGyroCounter != 0) {
 		for (int i = 0; i < 3; i++) {
 			mBias[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
 			mGyroSum[i] = 0;
 		}
 	}
-
 	mGyroCounter = 0;
-	mIsCalibrated = true;
-	mQ = QQuaternion(1, 0, 0, 0);
+
+	disconnect(mAccelerometer, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
+			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
 
 	if (mAccelerometerCounter != 0) {
 		for (int i = 0; i < 3; i++) {
 			mAccelerometerVector[i] = mAccelerometerSum[i] / mAccelerometerCounter;
-			qDebug() << mAccelerometerVector[i];
 			mAccelerometerSum[i] = 0;
 		}
 	}
 	mAccelerometerCounter = 0;
 
-	QVector3D acc(mAccelerometerVector[0], mAccelerometerVector[1], mAccelerometerVector[2]);
+	mIsCalibrated = true;
+
+	QVector3D acc(-mAccelerometerVector[0], mAccelerometerVector[1], mAccelerometerVector[2]);
 	acc.normalize();
-	qDebug() << acc.x() << ";" << acc.y() << ";" << acc.z();
 
 	QVector3D gravity(0, 0, 1);
-
 	float dot = QVector3D::dotProduct(acc, gravity);
 	QVector3D cross = QVector3D::crossProduct(acc, gravity);
-//	qDebug() << cross.x() << ";" << cross.y() << ";" << cross.z();
-//	qDebug() << dot;
-	double t = sqrt(2) / 2;
-//	mQ = QQuaternion(t, 0, -t, 0);
-//	mQ.normalize();
-	qDebug() << mQ.scalar() << ";" << mQ.x() << ";" << mQ.y() << ";" << mQ.z();
+
+	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / pi());
 }
 
 void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &)
 {
-//	qDebug() << "a";
 	mAccelerometerSum[0] += accelerometerData[0];
 	mAccelerometerSum[1] += accelerometerData[1];
 	mAccelerometerSum[2] += accelerometerData[2];
+
 	mAccelerometerCounter++;
 }
 

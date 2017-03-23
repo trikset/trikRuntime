@@ -52,8 +52,6 @@ public:
 
 	Status status() const override;
 
-	const QQuaternion & Q() const override;
-
 public slots:
 	QVector<int> read() const override;
 
