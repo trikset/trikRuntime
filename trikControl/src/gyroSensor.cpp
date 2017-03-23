@@ -23,9 +23,10 @@
 
 using namespace trikControl;
 
-static constexpr float GYRO_250DPS = 8.75;
+static constexpr int GYRO_ARITHM_PRECISION = 8;
+static constexpr double GYRO_250DPS = 8.75 / (1 << GYRO_ARITHM_PRECISION) ;
 static constexpr double pi() { return 3.14159265358979323846;}
-static constexpr float RAD_TO_MDEG = 1000 * 180 / pi();
+static constexpr double RAD_TO_MDEG = 1000 * 180 / pi();
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
@@ -99,7 +100,7 @@ bool GyroSensor::isCalibrated() const
 	return mIsCalibrated;
 }
 
-void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
+void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 {
 	mRawData[0] = gyroData[0];
 	mRawData[1] = gyroData[1];
@@ -112,24 +113,27 @@ void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 		mLastUpdate = t;
 	} else {
 
-		mResult[0] = (gyroData[0] - mBias[0]) * GYRO_250DPS;
-		mResult[1] = (gyroData[1] - mBias[1]) * GYRO_250DPS;
-		mResult[2] = (gyroData[2] - mBias[2]) * GYRO_250DPS;
+		const auto r0 = ((gyroData[0]<<GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
+		const auto r1 = ((gyroData[1]<<GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
+		const auto r2 = ((gyroData[2]<<GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
+		mResult[0] = r0;
+		mResult[1] = r1;
+		mResult[2] = r2;
 		mResult[3] = t.packedUInt32();
 
-		constexpr auto deltaConst = pi() / 180 / 1000 / 1000000;
+		constexpr auto deltaConst = pi() / 180 / 1000 / 1000000 / 2;
 		const auto dt = (t - mLastUpdate) * deltaConst;
 
-		const auto x = mResult[0] * dt;
-		const auto y = mResult[1] * dt;
-		const auto z = mResult[2] * dt;
+		const auto x = r0 * dt;
+		const auto y = r1 * dt;
+		const auto z = r2 * dt;
 
-		const auto c1 = std::cos(x / 2);
-		const auto s1 = std::sin(x / 2);
-		const auto c2 = std::cos(y / 2);
-		const auto s2 = std::sin(y / 2);
-		const auto c3 = std::cos(z / 2);
-		const auto s3 = std::sin(z / 2);
+		const auto c1 = std::cos(x);
+		const auto s1 = std::sin(x);
+		const auto c2 = std::cos(y);
+		const auto s2 = std::sin(y);
+		const auto c3 = std::cos(z);
+		const auto s3 = std::sin(z);
 
 		QQuaternion deltaQ;
 		deltaQ.setScalar(c1 * c2 * c3 + s1 * s2 * s3);
@@ -142,15 +146,15 @@ void GyroSensor::countTilt(QVector<int> gyroData, trikKernel::TimeVal t)
 
 		mLastUpdate = t;
 
-		mResult[4] = getPitch<float>(mQ) * RAD_TO_MDEG;
-		mResult[5] = getRoll<float>(mQ) * RAD_TO_MDEG;
-		mResult[6] = getYaw<float>(mQ) * RAD_TO_MDEG;
+		mResult[4] = getPitch<double>(mQ) * RAD_TO_MDEG;
+		mResult[5] = getRoll<double>(mQ) * RAD_TO_MDEG;
+		mResult[6] = getYaw<double>(mQ) * RAD_TO_MDEG;
 
 		emit newData(mResult, t);
 	}
 }
 
-void GyroSensor::sumBias(QVector<int> gyroData, trikKernel::TimeVal)
+void GyroSensor::sumBias(const QVector<int> &gyroData, trikKernel::TimeVal)
 {
 	mGyroSum[0] += gyroData[0];
 	mGyroSum[1] += gyroData[1];
@@ -166,7 +170,7 @@ void GyroSensor::initBias()
 
 	if (mGyroCounter != 0) {
 		for (int i = 0; i < 3; i++) {
-			mBias[i] = mGyroSum[i] / mGyroCounter;
+			mBias[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
 			mGyroSum[i] = 0;
 		}
 	}

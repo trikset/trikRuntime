@@ -64,10 +64,10 @@ public slots:
 private slots:
 	/// Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
 	/// and packed time of current event.
-	void countTilt(QVector<int> gyroData, trikKernel::TimeVal t);
+	void countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t);
 
 	/// Sums values of bias.
-	void sumBias(QVector<int> gyroData, trikKernel::TimeVal);
+	void sumBias(const QVector<int> &gyroData, trikKernel::TimeVal);
 
 	/// Calculates average mean of bias and reset other tilt parameters.
 	void initBias();
