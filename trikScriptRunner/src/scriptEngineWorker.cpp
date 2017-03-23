@@ -330,11 +330,11 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 		engine->globalObject().setProperty("Threading", engine->newQObject(&mThreading));
 	}
 
+	evalSystemJs(engine);
+
 	for (const auto &step : mCustomInitSteps) {
 		step(engine);
 	}
-
-	evalSystemJs(engine);
 
 	engine->setProcessEventsInterval(1);
 	return engine;
