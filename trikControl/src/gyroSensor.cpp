@@ -222,7 +222,7 @@ void GyroSensor::initParams()
 //	qDebug() << cross.x() << ";" << cross.y() << ";" << cross.z();
 //	qDebug() << dot;
 	double t = sqrt(2) / 2;
-	mQ = QQuaternion(t, 0, -t, 0);
+//	mQ = QQuaternion(t, 0, -t, 0);
 //	mQ.normalize();
 	qDebug() << mQ.scalar() << ";" << mQ.x() << ";" << mQ.y() << ";" << mQ.z();
 }
