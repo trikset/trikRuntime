@@ -83,7 +83,7 @@ private:
 	template <typename T>
 	static T getRoll(const QQuaternion &q)
 	{
-		return std::asin(2 * q.scalar() * q.y() - 2 * q.x() * q.y());
+		return std::asin(2 * q.scalar() * q.y() - 2 * q.x() * q.z());
 	}
 
 	template <typename T>
