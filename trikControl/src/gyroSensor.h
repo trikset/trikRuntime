@@ -76,11 +76,13 @@ private slots:
 
 	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &);
 
+	QVector3D getEulerAngles();
+
 private:
 	template <typename T>
 	static T getPitch(const QQuaternion &q)
 	{
-		return std::atan2(2 * q.y()*q.z() + 2 * q.scalar() * q.x()
+		return std::atan2(2 * q.y() * q.z() + 2 * q.scalar() * q.x()
 				, 1 - 2 * q.x() * q.x() - 2 * q.y() * q.y());
 	}
 

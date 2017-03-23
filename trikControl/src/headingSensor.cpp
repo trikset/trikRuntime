@@ -17,8 +17,8 @@ HeadingSensor::HeadingSensor(GyroSensorInterface *gyroscope, VectorSensorInterfa
 	mResult.resize(7);
 
 	connect(&mCalibrationTimer, SIGNAL(timeout()), this, SLOT(initAccelerometer()));
-	connect(mGyroscope, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-			, this, SLOT(recountTilt(QVector<int>,trikKernel::TimeVal)));
+//	connect(mGyroscope, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
+//			, this, SLOT(recountTilt(QVector<int>,trikKernel::TimeVal)));
 }
 
 HeadingSensor::~HeadingSensor()
@@ -63,7 +63,7 @@ void HeadingSensor::initAccelerometer()
 	if (mAccelerometerCounter != 0) {
 		for (int i = 0; i < 3; i++) {
 			mAccelerometerVector[i] = mAccelerometerSum[i] / mAccelerometerCounter;
-			qDebug() << mAccelerometerVector[i];
+//			qDebug() << mAccelerometerVector[i];
 			mAccelerometerSum[i] = 0;
 		}
 	}
