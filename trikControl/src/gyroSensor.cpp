@@ -36,6 +36,7 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	, mGyroCounter(0)
 	, mLastUpdate(trikKernel::TimeVal(0, 0))
 	, mAccelerometer(accelerometer)
+	, mAxesSwapped(false)
 {
 	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
 			, hardwareAbstraction, mWorkerThread));
@@ -121,9 +122,9 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mLastUpdate = t;
 	} else {
 
-		const auto r0 = ((gyroData[0]<<GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
-		const auto r1 = ((gyroData[1]<<GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
-		const auto r2 = ((gyroData[2]<<GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
+		const auto r0 = ((mRawData[0]<<GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
+		const auto r1 = ((mRawData[1]<<GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
+		const auto r2 = ((mRawData[2]<<GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
 		mResult[0] = r0;
 		mResult[1] = r1;
 		mResult[2] = r2;
@@ -132,9 +133,11 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		constexpr auto deltaConst = pi() / 180 / 1000 / 1000000 / 2;
 		const auto dt = (t - mLastUpdate) * deltaConst;
 
-		const auto x = r0 * dt;
-		const auto y = r1 * dt;
-		const auto z = r2 * dt;
+		auto x = r0 * dt;
+		auto y = r1 * dt;
+		auto z = r2 * dt;
+
+		std::swap(x, z);
 
 		const auto c1 = std::cos(z);
 		const auto s1 = std::sin(z);
@@ -193,6 +196,9 @@ void GyroSensor::initParameters()
 	acc.normalize();
 
 	QVector3D gravity(0, 0, 1);
+	QVector3D delta = gravity - acc;
+	mAxesSwapped = (delta.length() < 0.01);
+
 	float dot = QVector3D::dotProduct(acc, gravity);
 	QVector3D cross = QVector3D::crossProduct(acc, gravity);
 
