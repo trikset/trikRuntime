@@ -161,8 +161,8 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 		const QVector3D euler = getEulerAngles(mQ);
 		mResult[4] = euler.x();
-		mResult[5] = euler.y();
-		mResult[6] = euler.z();
+		mResult[5] = euler.z();
+		mResult[6] = -euler.y();
 
 		emit newData(mResult, t);
 	}
