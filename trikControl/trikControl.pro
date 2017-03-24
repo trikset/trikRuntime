@@ -39,7 +39,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/soundSensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
-	$$PWD/include/trikControl/headingSensorInterface.h \
+#	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
@@ -93,7 +93,7 @@ HEADERS += \
 	$$PWD/src/shapes/rectangle.h \
 	$$PWD/src/shapes/shape.h \
 	$$PWD/src/gyroSensor.h \
-	$$PWD/src/headingSensor.h \
+#	$$PWD/src/headingSensor.h \
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -144,7 +144,7 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 	$$PWD/src/audioSynthDevices.cpp \
 	$$PWD/src/gyroSensor.cpp \
-	$$PWD/src/headingSensor.cpp \
+#	$$PWD/src/headingSensor.cpp \
 
 CONFIGS += \
 	$$PWD/model-config-usb.xml \
