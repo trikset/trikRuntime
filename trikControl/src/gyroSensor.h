@@ -115,6 +115,8 @@ private:
 	QVector<int> mAccelerometerVector;
 	QVector<int> mAccelerometerSum;
 	int mAccelerometerCounter;
+
+	bool mAxesSwapped;
 };
 
 }
