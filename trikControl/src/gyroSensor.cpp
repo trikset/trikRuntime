@@ -137,7 +137,9 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		auto y = r1 * dt;
 		auto z = r2 * dt;
 
-		std::swap(x, z);
+		if (mAxesSwapped) {
+			std::swap(x, z);
+		}
 
 		const auto c1 = std::cos(z);
 		const auto s1 = std::sin(z);
@@ -159,8 +161,8 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 		const QVector3D euler = getEulerAngles(mQ);
 		mResult[4] = euler.x();
-		mResult[5] = euler.y();
-		mResult[6] = euler.z();
+		mResult[5] = euler.z();
+		mResult[6] = -euler.y();
 
 		emit newData(mResult, t);
 	}
@@ -197,6 +199,7 @@ void GyroSensor::initParameters()
 
 	QVector3D gravity(0, 0, 1);
 	QVector3D delta = gravity - acc;
+
 	mAxesSwapped = (delta.length() < 0.01);
 
 	float dot = QVector3D::dotProduct(acc, gravity);
