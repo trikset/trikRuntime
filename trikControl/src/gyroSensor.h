@@ -67,14 +67,14 @@ private slots:
 	void countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t);
 
 	/// Calculates average mean of bias and reset other tilt parameters.
-	void initParams();
+	void initParameters();
 
 	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &);
 
 	/// Sums values of bias.
 	void sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &);
 
-	void updateEulerAngles();
+	QVector3D getEulerAngles(const QQuaternion &q);
 
 private:
 	/// Device state, shared with worker.

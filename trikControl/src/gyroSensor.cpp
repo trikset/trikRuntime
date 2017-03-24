@@ -14,8 +14,6 @@
 
 #include "gyroSensor.h"
 
-#include <qmath.h>
-
 #include <trikKernel/configurer.h>
 #include <trikKernel/timeVal.h>
 #include <QsLog.h>
@@ -94,7 +92,6 @@ QVector<int> GyroSensor::readRawData() const
 
 void GyroSensor::calibrate(int msec)
 {
-	qDebug() << "calib";
 	mCalibrationTimer.start(msec);
 
 	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
@@ -157,7 +154,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 		mLastUpdate = t;
 
-		const QVector3D euler = getEulerAngles();
+		const QVector3D euler = getEulerAngles(mQ);
 		mResult[4] = euler.x();
 		mResult[5] = euler.y();
 		mResult[6] = euler.z();
@@ -166,7 +163,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 	}
 }
 
-void GyroSensor::initParameters	()
+void GyroSensor::initParameters()
 {
 	disconnect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
 			, this, SLOT(sumGyroscope(QVector<int>,trikKernel::TimeVal)));
@@ -192,7 +189,7 @@ void GyroSensor::initParameters	()
 
 	mIsCalibrated = true;
 
-	QVector3D acc(-mAccelerometerVector[0], -mAccelerometerVector[1], mAccelerometerVector[2]);
+	QVector3D acc(mAccelerometerVector[0], mAccelerometerVector[1], mAccelerometerVector[2]);
 	acc.normalize();
 
 	QVector3D gravity(0, 0, 1);
@@ -219,26 +216,26 @@ void GyroSensor::sumGyroscope(const QVector<int> &gyroData, const trikKernel::Ti
 	mGyroCounter++;
 }
 
-QVector3D GyroSensor::getEulerAngles()
+QVector3D GyroSensor::getEulerAngles(const QQuaternion &q)
 {
 	float pitch = 0.0;
 	float roll = 0.0;
 	float yaw = 0.0;
 
-	const float x = mQ.x();
-	const float y = mQ.y();
-	const float z = mQ.z();
-	const float w = mQ.scalar();
+	const float x = q.x();
+	const float y = q.y();
+	const float z = q.z();
+	const float w = q.scalar();
 
-	const float xx = x * x;
-	const float xy = x * y;
-	const float xz = x * z;
-	const float xw = x * w;
-	const float yy = y * y;
-	const float yz = y * z;
-	const float yw = y * w;
-	const float zz = z * z;
-	const float zw = z * w;
+	float xx = x * x;
+	float xy = x * y;
+	float xz = x * z;
+	float xw = x * w;
+	float yy = y * y;
+	float yz = y * z;
+	float yw = y * w;
+	float zz = z * z;
+	float zw = z * w;
 
 	const float squaredLength = xx + yy + zz + w * w;
 	if (!qFuzzyIsNull(squaredLength - 1.0f) && !qFuzzyIsNull(squaredLength)) {

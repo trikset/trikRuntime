@@ -367,7 +367,7 @@ VectorSensorInterface *Brick::accelerometer()
 	return mAccelerometer.data();
 }
 
-VectorSensorInterface *Brick::gyroscope()
+GyroSensorInterface *Brick::gyroscope()
 {
 	return mGyroscope.data();
 }
