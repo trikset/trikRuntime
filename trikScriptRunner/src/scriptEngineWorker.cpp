@@ -31,7 +31,6 @@
 #include <trikControl/eventInterface.h>
 #include <trikControl/gamepadInterface.h>
 #include <trikControl/gyroSensorInterface.h>
-#include <trikControl/headingSensorInterface.h>
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
@@ -59,7 +58,6 @@ Q_DECLARE_METATYPE(EventDeviceInterface*)
 Q_DECLARE_METATYPE(EventInterface*)
 Q_DECLARE_METATYPE(GamepadInterface*)
 Q_DECLARE_METATYPE(GyroSensorInterface*)
-Q_DECLARE_METATYPE(HeadingSensorInterface*)
 Q_DECLARE_METATYPE(KeysInterface*)
 Q_DECLARE_METATYPE(LedInterface*)
 Q_DECLARE_METATYPE(LineSensorInterface*)
@@ -299,7 +297,6 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	Scriptable<EventInterface>::registerMetatype(engine);
 	Scriptable<GamepadInterface>::registerMetatype(engine);
 	Scriptable<GyroSensorInterface>::registerMetatype(engine);
-	Scriptable<HeadingSensorInterface>::registerMetatype(engine);
 	Scriptable<FifoInterface>::registerMetatype(engine);
 	Scriptable<KeysInterface>::registerMetatype(engine);
 	Scriptable<LedInterface>::registerMetatype(engine);

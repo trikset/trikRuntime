@@ -32,10 +32,6 @@ class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
 {
 	Q_OBJECT
 
-public:
-
-	virtual const QQuaternion & Q() const = 0;
-
 signals:
 
 	/// Emites when average mean of bias is counted.

@@ -66,37 +66,17 @@ private slots:
 	/// and packed time of current event.
 	void countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t);
 
-	/// Sums values of bias.
-	void sumBias(const QVector<int> &gyroData, trikKernel::TimeVal);
-
 	/// Calculates average mean of bias and reset other tilt parameters.
 	void initParams();
 
 	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &);
 
-	QVector3D getEulerAngles();
+	/// Sums values of bias.
+	void sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &);
+
+	void updateEulerAngles();
 
 private:
-	template <typename T>
-	static T getPitch(const QQuaternion &q)
-	{
-		return std::atan2(2 * q.y() * q.z() + 2 * q.scalar() * q.x()
-				, 1 - 2 * q.x() * q.x() - 2 * q.y() * q.y());
-	}
-
-	template <typename T>
-	static T getRoll(const QQuaternion &q)
-	{
-		return std::asin(2 * q.scalar() * q.y() - 2 * q.x() * q.z());
-	}
-
-	template <typename T>
-	static T getYaw(const QQuaternion &q)
-	{
-		return std::atan2(2 * q.x() * q.y() + 2 * q.scalar() * q.z()
-				, 1 - 2 * q.y() * q.y() - 2 * q.z() * q.z());
-	}
-
 	/// Device state, shared with worker.
 	DeviceState mState;
 
@@ -135,7 +115,6 @@ private:
 	QVector<int> mAccelerometerVector;
 	QVector<int> mAccelerometerSum;
 	int mAccelerometerCounter;
-	QQuaternion mDeltaQ;
 };
 
 }

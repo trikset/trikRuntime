@@ -38,7 +38,6 @@ class EventDevice;
 class Fifo;
 class Gamepad;
 class GyroSensor;
-class HeadingSensor;
 class MspCommunicatorInterface;
 class Keys;
 class Led;
@@ -112,8 +111,6 @@ public slots:
 
 	GyroSensorInterface *gyroscope() override;
 
-	HeadingSensorInterface *heading() override;
-
 	LineSensorInterface *lineSensor(const QString &port) override;
 
 	ColorSensorInterface *colorSensor(const QString &port) override;
@@ -161,7 +158,6 @@ private:
 
 	QScopedPointer<VectorSensor> mAccelerometer;
 	QScopedPointer<GyroSensor> mGyroscope;
-	QScopedPointer<HeadingSensor> mHeading;
 	QScopedPointer<Battery> mBattery;
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;
