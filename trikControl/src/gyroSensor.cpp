@@ -200,8 +200,7 @@ void GyroSensor::initParameters()
 	QVector3D gravity(0, 0, 1);
 	QVector3D delta = gravity - acc;
 
-	mAxesSwapped = (delta.length() < 0.01);
-
+	mAxesSwapped = (delta.length() < 0.1);
 	float dot = QVector3D::dotProduct(acc, gravity);
 	QVector3D cross = QVector3D::crossProduct(acc, gravity);
 
