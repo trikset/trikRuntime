@@ -92,10 +92,10 @@ void PowerMotor::powerOff()
 	setPower(0, false); // ignore power units translation (linearisation)
 }
 
-void PowerMotor::forceBreak(int durationMs)
+void PowerMotor::brake(int durationMs)
 {
 	if (durationMs <= 0)
-		forceBreak();
+		brake();
 	setPower(0x7f, false);
 	QTimer::singleShot(durationMs, this, SLOT(powerOff()));
 }

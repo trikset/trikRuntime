@@ -137,6 +137,7 @@ public slots:
 
 	void stopEventDevice(const QString &deviceFile) override;
 
+   void setMotorPower(const QVector<int> &pwr) override;
 private:
 	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
 			, const QString &systemConfig

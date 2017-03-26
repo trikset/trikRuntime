@@ -53,8 +53,8 @@ public slots:
 	/// leave motor on in a break mode, and this method will turn motor off.
 	virtual void powerOff() = 0;
 
-	/// Force break state for durationMs and then powerOff()
-	virtual void forceBreak(int durationMs = 300) = 0;
+	/// Force brake state for durationMs and then powerOff()
+	virtual void brake(int durationMs = 500) = 0;
 };
 
 }
