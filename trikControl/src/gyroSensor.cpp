@@ -25,8 +25,9 @@ using namespace trikControl;
 
 static constexpr int GYRO_ARITHM_PRECISION = 0;
 static constexpr double GYRO_250DPS = 8.75 / (1 << GYRO_ARITHM_PRECISION) ;
-static constexpr double pi() { return 3.14159265358979323846;}
-static constexpr double RAD_TO_MDEG = 1000 * 180 / pi();
+static constexpr double PI = 3.14159265358979323846;
+static constexpr double PI_2 = 1.57079632679489661923;
+static constexpr double RAD_TO_MDEG = 1000 * 180 / PI;
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer)
@@ -130,7 +131,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mResult[2] = r2;
 		mResult[3] = t.packedUInt32();
 
-		constexpr auto deltaConst = pi() / 180 / 1000 / 1000000 / 2;
+		constexpr auto deltaConst = PI / 180 / 1000 / 1000000 / 2;
 		const auto dt = (t - mLastUpdate) * deltaConst;
 
 		auto x = r0 * dt;
@@ -204,7 +205,7 @@ void GyroSensor::initParameters()
 	float dot = QVector3D::dotProduct(acc, gravity);
 	QVector3D cross = QVector3D::crossProduct(acc, gravity);
 
-	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / pi());
+	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / PI);
 }
 
 void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &)
@@ -259,8 +260,8 @@ QVector3D GyroSensor::getEulerAngles(const QQuaternion &q)
 	   }
 
 	   pitch = std::asin(-2.0f * (yz - xw));
-	   if (pitch < M_PI_2) {
-		   if (pitch > -M_PI_2) {
+	   if (pitch < PI_2) {
+		   if (pitch > -PI_2) {
 			   yaw = std::atan2(2.0f * (xz + yw), 1.0f - 2.0f * (xx + yy));
 			   roll = std::atan2(2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz));
 		   } else {
