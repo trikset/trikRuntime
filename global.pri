@@ -63,6 +63,15 @@ CONFIG(debug, debug | release) {
 	}
 }
 
+#	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
+#	!clang:gcc:*-g++*:system($$CHECK_GCC_VERSION_5){
+
+#CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
+#!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<5\\.[0-9]\\+\\.\' ){ CONFIG += gcc5 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<4\\.[0-9]\\+\\.\' ){ CONFIG += gcc4 }
+
+
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
 PROJECT_BASENAME = $$basename(_PRO_FILE_)
@@ -85,14 +94,13 @@ equals(TEMPLATE, app) {
 }
 
 macx-clang {
-	QMAKE_CXXFLAGS += -stdlib=libc++
+	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
 }
 
-CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
-!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') {
-    warning("Disabled sanitizers, failed to detect compiler version or too old compiler: $$QMAKE_CXX")
-    CONFIG += nosanitizers
+!CONFIG(nosanitizers):!clang:gcc:*-g++*:gcc4{
+	warning("Disabled sanitizers, failed to detect compiler version or too old compiler: $$QMAKE_CXX")
+	CONFIG += nosanitizers
 }
 
 unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
@@ -121,8 +129,7 @@ unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 		QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
 	}
 
-	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
-	!clang:gcc:*-g++*:system($$CHECK_GCC_VERSION_5){
+	!clang:gcc:*-g++*:gcc5{
 		CONFIG(sanitize_undefined){
 		# Ubsan has (had at least) known issues with false errors about calls of methods of the base class.
 		# That must be disabled. Variables for confguring ubsan are taken from here:
@@ -168,10 +175,14 @@ isEmpty(IS_QSLOG) {
 }
 
 CONFIG += c++11
-QMAKE_CXXFLAGS += -pedantic-errors -Werror=pedantic -ansi -std=c++11
-#I whant -Werror to be turned on, but Qt has problems
-QMAKE_CXXFLAGS += -Wextra -Wcast-qual -Wwrite-strings -Wredundant-decls -Wunreachable-code -Wnon-virtual-dtor -Woverloaded-virtual -Wuninitialized -Winit-self
-#-Wold-style-cast -Wmissing-declarations 
+QMAKE_CXXFLAGS += -pedantic-errors -ansi -std=c++11 -Wextra
+QMAKE_CXXFLAGS += -Wextra -Werror=cast-qual -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
+			-Werror=non-virtual-dtor -Wno-error=overloaded-virtual \
+			-Werror=uninitialized -Werror=init-self
+
+CONFIG(gcc5) {
+	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
+}
 
 GLOBAL_PWD = $$PWD
 
