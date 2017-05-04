@@ -175,14 +175,17 @@ isEmpty(IS_QSLOG) {
 }
 
 CONFIG += c++11
+
 QMAKE_CXXFLAGS += -pedantic-errors -ansi -std=c++11 -Wextra
-QMAKE_CXXFLAGS += -Wextra -Werror=cast-qual -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
+
+CONFIG(gcc5) | clang {
+	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
+}
+
+QMAKE_CXXFLAGS += -Werror=cast-qual -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
 			-Werror=non-virtual-dtor -Wno-error=overloaded-virtual \
 			-Werror=uninitialized -Werror=init-self
 
-CONFIG(gcc5) {
-	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
-}
 
 GLOBAL_PWD = $$PWD
 
