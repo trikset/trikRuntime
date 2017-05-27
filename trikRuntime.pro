@@ -28,6 +28,7 @@ SUBDIRS = \
 	trikRun \
 	trikServer \
 	translations \
+	trikPythonRunner \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
@@ -42,6 +43,7 @@ trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog trikKernel
+trikPythonRunner.depends = trikKernel trikControl
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \
