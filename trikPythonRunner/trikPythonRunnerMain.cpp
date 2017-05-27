@@ -11,12 +11,10 @@ int main(int argc, char *argv[])
 {
 	QApplication qapp(argc, argv);
 
-	PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
+	PythonQt::init(PythonQt::IgnoreSiteModule);
 
 
 	PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
-//	mainContext.addObject("PyTrikControl");
-	PythonQtScriptingConsole console(NULL, mainContext);
 
 //	PythonQt::self()->addDecorators(new PyExampleDecorators());
 	PythonQt_init_PyTrikControl(mainContext);
@@ -33,8 +31,6 @@ int main(int argc, char *argv[])
 
 	mainContext.evalFile("example.py");
 
-	console.appendCommandPrompt();
-	console.show();
 
 	return qapp.exec();
 }
