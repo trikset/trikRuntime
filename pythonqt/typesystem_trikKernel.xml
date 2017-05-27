@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<typesystem package="PyTrikKernel" >
+ <load-typesystem name="typesystem_core.xml" generate="no" />
+ <load-typesystem name="typesystem_gui.xml" generate="no" />
+ <!--<interface-type name="BrickInterface" />-->
+  <!--<interface-type name="EventInterface" />-->
+ <!--<object-type name="Event"/>-->
+ <!--<interface-type name="DeviceInterface" />-->
+ <!--<interface-type name="BatteryInterface" />-->
+
+    <!--<namespace-type name="trikKernel"/>
+    <object-type name="trikKernel"/>
+    <object-type name="trikKernel::QHexSpinBox"/>
+    <object-type name="trikKernel::version"/>-->
+ <namespace-type name="trikKernel"/>
+ <object-type name="trikKernel::trikKernel"/>
+ <!--<value-type name="trikKernel::version"/>-->
+ <object-type name="trikKernel::TimeVal"/>
+
+ <!--<namespace-type name="trikKernel">
+ <include file-name="version" location="global"/>
+ <include file-name="QHexSpinBox" location="global"/>
+ </namespace-type>-->
+
+</typesystem>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<typesystem package="PyTrikHal" >
+ <load-typesystem name="typesystem_core.xml" generate="no" />
+ <load-typesystem name="typesystem_gui.xml"  generate="no" />
+
+ <namespace-type name="trikControl"/>
+ <object-type name="trikControl" />
+ <!--<object-type name="trikHal"/>-->
+ <!--<interface-type name="trikHal::FifoInterface" create-shell="no"/>-->
+
+ <!--<object-type name="trik"/>-->
+ <interface-type name="trikControl::KeysInterface" create-shell="no"/>
+ <interface-type name="trikControl::DeviceInterface" create-shell="no"/>
+ <interface-type name="trikControl::BrickInterface" create-shell="no"/>
+
+ <object-type name="trikControl::BrickFactory" />
+</typesystem>
