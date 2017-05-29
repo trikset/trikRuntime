@@ -15,6 +15,7 @@
 TEMPLATE = lib
 
 include(../global.pri)
+include(./include/PyTrikControl/PyTrikControl.pri)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
@@ -37,6 +38,18 @@ SOURCES += \
 
 OTHER_FILES += \
 	$$PWD/system.js \
+
+# Python
+INCLUDEPATH += \
+        /home/columpio/CLionProjects/pp2/src \
+        /usr/include/python2.7/ \
+        ./include/PyTrikControl \
+        ../trikControl/src \
+        ../trikControl/include/trikControl \
+
+LIBS += \
+        -L/home/columpio/CLionProjects/pp2/lib -lPythonQt \
+        -lpython2.7 -lpthread -ldl -lutil -lm \
 
 
 TRANSLATIONS = \
