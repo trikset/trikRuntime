@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "include/trikScriptRunner/trikScriptRunner.h"
+#include "trikScriptRunner.h"
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
