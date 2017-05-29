@@ -38,5 +38,10 @@ TRANSLATIONS = \
 	$$PWD/../translations/ru/trikRun_ru.ts \
 	$$PWD/../translations/fr/trikRun_fr.ts \
 
+# Python
+INCLUDEPATH += \
+        /home/columpio/CLionProjects/pp2/src \
+        /usr/include/python2.7/ \
+
 installs()
 noPch()
