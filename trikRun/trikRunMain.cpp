@@ -33,6 +33,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
 #include <trikScriptRunner/trikScriptRunner.h>
+#include <trikScriptRunner/trikPythonRunner.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -68,11 +69,15 @@ int main(int argc, char *argv[])
             , QObject::tr("JavaScript Script to be executed directly from command line.") + "\n"
                     + QObject::tr("\tExample: ./trikRun -js \"brick.smile(); script.wait(2000);\""));
 
+    initHelper.commandLineParser().addOption("py", "py-script"
+            , QObject::tr("Python Script to be executed directly from command line.") + "\n"
+                    + QObject::tr("\tExample: ./trikRun -py \"brick.smile(); script.wait(2000);\"")); // FIXME: example
+
 	initHelper.commandLineParser().addFlag("no-display", "no-display"
 			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
 						  "physical display"));
 
-	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
+    initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript and Python files."));
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;
@@ -84,6 +89,7 @@ int main(int argc, char *argv[])
 
     enum ScriptType {
         JAVASCRIPT,
+        PYTHON
     };
 
     const auto run = [&](const QString &script, ScriptType stype) {
@@ -101,6 +107,9 @@ int main(int argc, char *argv[])
             case JAVASCRIPT:
                 result = new trikScriptRunner::TrikScriptRunner(*brick, mailbox.data());
                 break;
+            case PYTHON:
+                result = new trikScriptRunner::TrikPythonRunner(*brick, mailbox.data());
+                break;
             default:
                 QLOG_ERROR() << "No such script engine";
                 return 1;
@@ -113,6 +122,8 @@ int main(int argc, char *argv[])
 
     if (initHelper.commandLineParser().isSet("js")) {
         return run(initHelper.commandLineParser().value("js"), JAVASCRIPT);
+    } else if (initHelper.commandLineParser().isSet("py")) {
+        return run(initHelper.commandLineParser().value("py"), PYTHON);
     } else {
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
@@ -121,6 +132,8 @@ int main(int argc, char *argv[])
 
             if (fileInfo.suffix() == "js" || fileInfo.suffix() == "qts") {
                 stype = JAVASCRIPT;
+            } else if (fileInfo.suffix() == "py") {
+                stype = PYTHON;
             } else {
                 QLOG_ERROR() << "No such script engine";
                 return 1;
