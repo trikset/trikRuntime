@@ -20,6 +20,7 @@ include(./include/PyTrikControl/PyTrikControl.pri)
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
         $$PWD/include/trikScriptRunner/trikScriptRunnerInterface.h \
+        $$PWD/include/trikScriptRunner/trikPythonRunner.h \
 
 HEADERS += \
 	$$PWD/src/scriptable.h \
@@ -33,6 +34,7 @@ SOURCES += \
 	$$PWD/src/scriptExecutionControl.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
+        $$PWD/src/trikPythonRunner.cpp \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
