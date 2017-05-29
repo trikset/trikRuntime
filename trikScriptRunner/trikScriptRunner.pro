@@ -27,8 +27,8 @@ HEADERS += \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
 	$$PWD/src/threading.h \
-	$$PWD/src/utils.h \
-	$$PWD/src/scriptThread.h \
+        $$PWD/src/utils.h \
+        $$PWD/src/scriptThread.h \
 
 SOURCES += \
 	$$PWD/src/scriptExecutionControl.cpp \
