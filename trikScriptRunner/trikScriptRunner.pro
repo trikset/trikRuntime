@@ -19,6 +19,7 @@ include(./include/PyTrikControl/PyTrikControl.pri)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
+        $$PWD/include/trikScriptRunner/trikScriptRunnerInterface.h \
 
 HEADERS += \
 	$$PWD/src/scriptable.h \
