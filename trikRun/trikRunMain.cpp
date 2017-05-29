@@ -23,6 +23,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QEventLoop>
+#include <QtCore/QFileInfo>
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/deinitializationHelper.h>
@@ -63,9 +64,9 @@ int main(int argc, char *argv[])
 	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
 			+ " " + QObject::tr("(optional of -s option is specified)"));
 
-	initHelper.commandLineParser().addOption("s", "script"
-			, QObject::tr("Script to be executed directly from command line.") + "\n"
-					+ QObject::tr("\tExample: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
+    initHelper.commandLineParser().addOption("js", "js-script"
+            , QObject::tr("JavaScript Script to be executed directly from command line.") + "\n"
+                    + QObject::tr("\tExample: ./trikRun -js \"brick.smile(); script.wait(2000);\""));
 
 	initHelper.commandLineParser().addFlag("no-display", "no-display"
 			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
@@ -81,7 +82,11 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikRun started";
 
-	const auto run = [&](const QString &script) {
+    enum ScriptType {
+        JAVASCRIPT,
+    };
+
+    const auto run = [&](const QString &script, ScriptType stype) {
 		QScopedPointer<trikControl::BrickInterface> brick(
 				trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
 				);
@@ -90,19 +95,37 @@ int main(int argc, char *argv[])
 				, initHelper.configPath() + "/model-config.xml");
 
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
-		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
 
-		QObject::connect(&result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
-		result.run(script);
+        trikScriptRunner::TrikScriptRunnerInterface * result;
+        switch (stype) {
+            case JAVASCRIPT:
+                result = new trikScriptRunner::TrikScriptRunner(*brick, mailbox.data());
+                break;
+            default:
+                QLOG_ERROR() << "No such script engine";
+                return 1;
+        }
+
+        QObject::connect(result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
+        result->run(script);
 		return app->exec();
 	};
 
-	if (initHelper.commandLineParser().isSet("s")) {
-		return run(initHelper.commandLineParser().value("s"));
-	} else {
+    if (initHelper.commandLineParser().isSet("js")) {
+        return run(initHelper.commandLineParser().value("js"), JAVASCRIPT);
+    } else {
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
-			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]));
+            const QFileInfo fileInfo(positionalArgs[0]);
+            ScriptType stype;
+
+            if (fileInfo.suffix() == "js" || fileInfo.suffix() == "qts") {
+                stype = JAVASCRIPT;
+            } else {
+                QLOG_ERROR() << "No such script engine";
+                return 1;
+            }
+            return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]), stype);
 		} else {
 			initHelper.commandLineParser().showHelp();
 			return 1;
