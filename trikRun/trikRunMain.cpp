@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	trikKernel::ApplicationInitHelper initHelper(*app);
 
 	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
-			+ " " + QObject::tr("(optional of -s option is specified)"));
+            + " " + QObject::tr("(optional of -js or -py option is specified)"));
 
     initHelper.commandLineParser().addOption("js", "js-script"
             , QObject::tr("JavaScript Script to be executed directly from command line.") + "\n"
