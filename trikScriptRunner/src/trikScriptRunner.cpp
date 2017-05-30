@@ -25,8 +25,8 @@
 using namespace trikScriptRunner;
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface * const mailbox
-		)
+								   , trikNetwork::MailboxInterface * const mailbox
+								   )
 	: mScriptController(new ScriptExecutionControl())
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
 	, mMaxScriptId(0)
@@ -113,7 +113,7 @@ void TrikScriptRunner::onScriptStart(int scriptId)
 void TrikScriptRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
 {
 	emit sendMessage(QString("mail: sender: %1 contents: %2")
-			.arg(senderNumber)
-			.arg(message)
-	);
+					 .arg(senderNumber)
+					 .arg(message)
+					 );
 }

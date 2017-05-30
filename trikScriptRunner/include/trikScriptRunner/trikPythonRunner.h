@@ -29,54 +29,54 @@ namespace trikScriptRunner {
 
 class TrikPythonRunner : public TrikScriptRunnerInterface
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    /// Constructor.
-    /// @param brick - reference to trikControl::Brick instance.
-    /// @param mailbox - mailbox object used to communicate with other robots.
-    TrikPythonRunner(trikControl::BrickInterface &brick
-            , trikNetwork::MailboxInterface * const mailbox
-            );
+	/// Constructor.
+	/// @param brick - reference to trikControl::Brick instance.
+	/// @param mailbox - mailbox object used to communicate with other robots.
+	TrikPythonRunner(trikControl::BrickInterface &brick
+					 , trikNetwork::MailboxInterface * const mailbox
+					 );
 
-    ~TrikPythonRunner();
+	~TrikPythonRunner();
 
-    void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
-    void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
+	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
+	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
 
 public slots:
-    void run(const QString &script, const QString &fileName = "") override;
-    void runDirectCommand(const QString &command) override;
-    void abort() override;
-    void brickBeep() override;
+	void run(const QString &script, const QString &fileName = "") override;
+	void runDirectCommand(const QString &command) override;
+	void abort() override;
+	void brickBeep() override;
 
 signals:
-    /// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
-    /// or was aborted).
-    /// @param error - localized error message if any error occured during script execution or empty string
-    /// if everything is fine.
-    /// @param scriptId - unique identifier of a script completed
-    void completed(const QString &error, int scriptId);
+	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
+	/// or was aborted).
+	/// @param error - localized error message if any error occured during script execution or empty string
+	/// if everything is fine.
+	/// @param scriptId - unique identifier of a script completed
+	void completed(const QString &error, int scriptId);
 
-    /// Emitted when new script from file started.
-    /// @param fileName - name of a file from where the script was loaded.
-    /// @param scriptId - unique id of executed script assigned when script started.
-    void startedScript(const QString &fileName, int scriptId);
+	/// Emitted when new script from file started.
+	/// @param fileName - name of a file from where the script was loaded.
+	/// @param scriptId - unique id of executed script assigned when script started.
+	void startedScript(const QString &fileName, int scriptId);
 
-    /// Emitted when new direct script started.
-    /// @param scriptId - unique id of executed script assigned when script started.
-    void startedDirectScript(int scriptId);
+	/// Emitted when new direct script started.
+	/// @param scriptId - unique id of executed script assigned when script started.
+	void startedDirectScript(int scriptId);
 
-    /// Emitted when a message must be sent to a desktop.
-    void sendMessage(const QString &text);
+	/// Emitted when a message must be sent to a desktop.
+	void sendMessage(const QString &text);
 
 private slots:
-    void onScriptStart(int scriptId);
+	void onScriptStart(int scriptId);
 
-    /// Sends message to host machine from mailbox via wifi.
-    void sendMessageFromMailBox(int senderNumber, const QString &message);
+	/// Sends message to host machine from mailbox via wifi.
+	void sendMessageFromMailBox(int senderNumber, const QString &message);
 
 private:
-    PythonQtObjectPtr mainContext;
+	PythonQtObjectPtr mainContext;
 };
 
 }

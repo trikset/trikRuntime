@@ -40,8 +40,8 @@ TRANSLATIONS = \
 
 # Python
 INCLUDEPATH += \
-        /home/columpio/CLionProjects/pp2/src \
-        /usr/include/python2.7/ \
+	/home/columpio/CLionProjects/pp2/src \
+	/usr/include/python2.7/ \
 
 installs()
 noPch()

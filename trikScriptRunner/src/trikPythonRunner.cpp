@@ -9,20 +9,20 @@ void PythonQt_init_PyTrikControl(PyObject* module);
 using namespace trikScriptRunner;
 
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
-            , trikNetwork::MailboxInterface * const mailbox
-            ) {
-    PythonQt::init(PythonQt::IgnoreSiteModule);
-    mainContext = PythonQt::self()->getMainModule();
-    PythonQt_init_PyTrikControl(mainContext);
-    mainContext.addObject("brick", &brick);
+								   , trikNetwork::MailboxInterface * const mailbox
+								   ) {
+	PythonQt::init(PythonQt::IgnoreSiteModule);
+	mainContext = PythonQt::self()->getMainModule();
+	PythonQt_init_PyTrikControl(mainContext);
+	mainContext.addObject("brick", &brick);
 }
 
 TrikPythonRunner::~TrikPythonRunner() {}
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
 {
-    mainContext.evalScript(script);
-    mainContext.evalScript("raise SystemExit"); // force exit
+	mainContext.evalScript(script);
+	mainContext.evalScript("raise SystemExit"); // force exit
 }
 
 void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) {}
