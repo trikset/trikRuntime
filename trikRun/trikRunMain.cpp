@@ -32,8 +32,9 @@
 #include <trikKernel/paths.h>
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
-#include <trikScriptRunner/trikScriptRunner.h>
-#include <trikScriptRunner/trikPythonRunner.h>
+#include "trikScriptRunner/trikScriptRunnerInterface.h"
+#include "trikScriptRunner/trikScriptRunner.h"
+#include "trikScriptRunner/trikPythonRunner.h"
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
