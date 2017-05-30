@@ -15,6 +15,7 @@
 #pragma once
 
 #include "trikScriptRunnerInterface.h"
+#include <QFileInfo>
 
 namespace trikNetwork {
 class MailboxInterface;
@@ -26,10 +27,13 @@ class BrickInterface;
 
 namespace trikScriptRunner {
 
-class ScriptEngineWorker;
-class ScriptExecutionControl;
+enum ScriptType { // must be 0, 1, ..
+	JAVASCRIPT,
+	PYTHON,
 
-/// Executes scripts in Qt Scripting Engine.
+	ScriptTypeLength // should always be the last
+};
+
 class TrikScriptRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
@@ -52,20 +56,16 @@ public:
 
 public slots:
 	void run(const QString &script, const QString &fileName = "") override;
+	void run(const QString &script, const ScriptType &stype, const QString &fileName = "");
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
 	void brickBeep() override;
 
 private:
-	QScopedPointer<ScriptExecutionControl> mScriptController;
-
-	/// Has ownership, memory is managed by thread and deleteLater().
-	ScriptEngineWorker *mScriptEngineWorker;
-	QThread mWorkerThread;
-
-	int mMaxScriptId;
-
-	QHash<int, QString> mScriptFileNames;
+	trikControl::BrickInterface &brick;
+	trikNetwork::MailboxInterface * mailbox;
+	TrikScriptRunnerInterface * mScriptRunnerArray[ScriptTypeLength] = {NULL};
+	ScriptType mLastRunner;
 };
 
 }

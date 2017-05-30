@@ -23,7 +23,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QEventLoop>
-#include <QtCore/QFileInfo>
+#include <QFileInfo>
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/deinitializationHelper.h>
@@ -32,9 +32,7 @@
 #include <trikKernel/paths.h>
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
-#include "trikScriptRunner/trikScriptRunnerInterface.h"
 #include "trikScriptRunner/trikScriptRunner.h"
-#include "trikScriptRunner/trikPythonRunner.h"
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -88,12 +86,7 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikRun started";
 
-	enum ScriptType {
-		JAVASCRIPT,
-		PYTHON
-	};
-
-	const auto run = [&](const QString &script, ScriptType stype) {
+	const auto run = [&](const QString &script, const QString &fileName, trikScriptRunner::ScriptType stype) {
 		QScopedPointer<trikControl::BrickInterface> brick(
 					trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
 					);
@@ -102,44 +95,27 @@ int main(int argc, char *argv[])
 										  , initHelper.configPath() + "/model-config.xml");
 
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
 
-		trikScriptRunner::TrikScriptRunnerInterface * result;
-		switch (stype) {
-		case JAVASCRIPT:
-			result = new trikScriptRunner::TrikScriptRunner(*brick, mailbox.data());
-			break;
-		case PYTHON:
-			result = new trikScriptRunner::TrikPythonRunner(*brick, mailbox.data());
-			break;
-		default:
-			QLOG_ERROR() << "No such script engine";
-			return 1;
+		QObject::connect(&result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
+
+		if (fileName.isEmpty()) { // from command line
+			result.run(script, stype);
+		} else { // from file
+			result.run(script, fileName);
 		}
 
-		QObject::connect(result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
-		result->run(script);
 		return app->exec();
 	};
 
 	if (initHelper.commandLineParser().isSet("js")) {
-		return run(initHelper.commandLineParser().value("js"), JAVASCRIPT);
+		return run(initHelper.commandLineParser().value("js"), "", trikScriptRunner::JAVASCRIPT);
 	} else if (initHelper.commandLineParser().isSet("py")) {
-		return run(initHelper.commandLineParser().value("py"), PYTHON);
+		return run(initHelper.commandLineParser().value("py"), "", trikScriptRunner::PYTHON);
 	} else {
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
-			const QFileInfo fileInfo(positionalArgs[0]);
-			ScriptType stype;
-
-			if (fileInfo.suffix() == "js" || fileInfo.suffix() == "qts") {
-				stype = JAVASCRIPT;
-			} else if (fileInfo.suffix() == "py") {
-				stype = PYTHON;
-			} else {
-				QLOG_ERROR() << "No such script engine";
-				return 1;
-			}
-			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]), stype);
+			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]), positionalArgs[0], trikScriptRunner::JAVASCRIPT);
 		} else {
 			initHelper.commandLineParser().showHelp();
 			return 1;
