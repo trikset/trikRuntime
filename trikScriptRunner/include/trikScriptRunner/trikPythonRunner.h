@@ -27,9 +27,6 @@ class BrickInterface;
 
 namespace trikScriptRunner {
 
-class ScriptEngineWorker;
-class ScriptExecutionControl;
-
 class TrikPythonRunner : public TrikScriptRunnerInterface
 {
     Q_OBJECT

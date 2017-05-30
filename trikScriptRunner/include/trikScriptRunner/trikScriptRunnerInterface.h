@@ -23,9 +23,6 @@
 
 namespace trikScriptRunner {
 
-class ScriptEngineWorker;
-class ScriptExecutionControl;
-
 class TrikScriptRunnerInterface : public QObject
 {
     Q_OBJECT
