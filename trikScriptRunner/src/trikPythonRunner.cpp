@@ -23,6 +23,7 @@ void TrikPythonRunner::run(const QString &script, const QString &fileName)
 {
 	mainContext.evalScript(script);
 	mainContext.evalScript("raise SystemExit"); // force exit
+	emit completed("", 0);
 }
 
 void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) {}
