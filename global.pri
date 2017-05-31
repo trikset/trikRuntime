@@ -49,18 +49,13 @@ macx {
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
-	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
+	CONFIGURATION_SUFFIX = -d
 	unix {
 		QMAKE_CXXFLAGS += -coverage
 		QMAKE_LFLAGS += -coverage
 	}
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
-	equals(ARCHITECTURE, "arm") {
-		CONFIGURATION_SUFFIX =
-	} else {
-		CONFIGURATION_SUFFIX = -$$ARCHITECTURE
-	}
 }
 
 #	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
