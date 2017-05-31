@@ -18,4 +18,6 @@ include(../global.pri)
 
 SUBDIRS += PythonQt \
 
+QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
+
 PythonQt.file = PythonQt/PythonQt.pro
