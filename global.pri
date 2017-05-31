@@ -71,6 +71,9 @@ CONFIG(debug, debug | release) {
 !clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<5\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc5 }
 !clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<4\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc4 }
 
+CONFIG += link_pkgconfig
+PKGCONFIG += python-2.7
+
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
 PROJECT_BASENAME = $$basename(_PRO_FILE_)
@@ -248,6 +251,11 @@ defineTest(implementationIncludes) {
 
 defineTest(transitiveIncludes) {
 	interfaceIncludes($$1)
+}
+
+defineTest(PythonQtIncludes) {
+	INCLUDEPATH += $$GLOBAL_PWD/PythonQt/PythonQt/src
+	export(INCLUDEPATH)
 }
 
 defineTest(links) {

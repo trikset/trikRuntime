@@ -32,7 +32,8 @@ DEFINES += TRIKCOMMUNICATOR_LIBRARY
 
 interfaceIncludes(trikNetwork)
 implementationIncludes(trikKernel trikScriptRunner trikControl)
+PythonQtIncludes()
 
-links(trikScriptRunner trikControl trikKernel trikNetwork)
+links(trikScriptRunner trikControl trikKernel trikNetwork PythonQt)
 
 installs()

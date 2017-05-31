@@ -23,7 +23,8 @@ OTHER_FILES += \
 copyToDestdir($$OTHER_FILES)
 
 implementationIncludes(trikKernel trikControl trikScriptRunner trikNetwork)
-links(trikKernel trikControl trikScriptRunner trikNetwork)
+PythonQtIncludes()
+links(trikKernel trikControl trikScriptRunner trikNetwork PythonQt)
 
 TEMPLATE = app
 CONFIG += console
@@ -37,11 +38,6 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikRun_ru.ts \
 	$$PWD/../translations/fr/trikRun_fr.ts \
-
-# Python
-INCLUDEPATH += \
-	/home/columpio/CLionProjects/pp2/src \
-	/usr/include/python2.7/ \
 
 installs()
 noPch()
