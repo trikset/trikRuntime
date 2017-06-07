@@ -39,6 +39,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/soundSensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
+	$$PWD/include/trikControl/markerInterface.h \
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \

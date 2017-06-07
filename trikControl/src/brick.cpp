@@ -422,6 +422,11 @@ trikControl::FifoInterface *Brick::fifo(const QString &port)
 	return mFifos[port];
 }
 
+MarkerInterface *Brick::marker()
+{
+	return nullptr;
+}
+
 EventDeviceInterface *Brick::eventDevice(const QString &deviceFile)
 {
 	if (!mEventDevices.contains(deviceFile)) {
