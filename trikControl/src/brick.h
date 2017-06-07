@@ -133,6 +133,8 @@ public slots:
 
 	FifoInterface *fifo(const QString &port) override;
 
+	MarkerInterface *marker() override;
+
 	EventDeviceInterface *eventDevice(const QString &deviceFile) override;
 
 	void stopEventDevice(const QString &deviceFile) override;

@@ -28,6 +28,7 @@
 #include "ledInterface.h"
 #include "lineSensorInterface.h"
 #include "motorInterface.h"
+#include "markerInterface.h"
 #include "objectSensorInterface.h"
 #include "pwmCaptureInterface.h"
 #include "sensorInterface.h"
@@ -135,6 +136,9 @@ public slots:
 
 	/// Returns custom FIFO file which can be used as sensor.
 	virtual FifoInterface *fifo(const QString &port) = 0;
+
+	/// Returns marker.
+	virtual MarkerInterface *marker() = 0;
 
 	/// Returns custom event device that can be used as a sensor, for example, for custom gamepad support.
 	/// Creates new event device on first access to a file, then returns already opened device.
