@@ -110,7 +110,7 @@ private:
 	/// Timestamp of last gyroscope data.
 	trikKernel::TimeVal mLastUpdate;
 
-	VectorSensorInterface *mAccelerometer;
+	VectorSensorInterface *mAccelerometer;  // Has no ownership
 
 	QVector<int> mAccelerometerVector;
 	QVector<int> mAccelerometerSum;
