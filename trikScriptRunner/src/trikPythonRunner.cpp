@@ -1,37 +1,78 @@
 #include <QsLog.h>
 
-#include "PythonQt.h"
 #include "trikPythonRunner.h"
-#include "PyTrikControl0.h"
 
-void PythonQt_init_PyTrikControl(PyObject* module);
+#include "src/pythonEngineWorker.h"
 
 using namespace trikScriptRunner;
 
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
-								   ) {
-	PythonQt::init(PythonQt::IgnoreSiteModule);
-	mainContext = PythonQt::self()->getMainModule();
-	PythonQt_init_PyTrikControl(mainContext);
-	mainContext.addObject("brick", &brick);
+								   )
+	: mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
+{
+	if (mailbox) {
+		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
+	}
+
+	mScriptEngineWorker->moveToThread(&mWorkerThread);
+
+	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
+	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+
+	mWorkerThread.start();
+
+	QMetaObject::invokeMethod(mScriptEngineWorker, "initPythonQt"); /// create Python main module
+
+	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 }
 
-TrikPythonRunner::~TrikPythonRunner() {}
+TrikPythonRunner::~TrikPythonRunner()
+{
+	mScriptEngineWorker->stopScript();
+	mScriptEngineWorker->deleteLater();
+
+	QMetaObject::invokeMethod(&mWorkerThread, "quit");
+	mWorkerThread.wait(1000);
+
+	mWorkerThread.deleteLater();
+}
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
 {
-	mainContext.evalScript(script);
-	mainContext.evalScript("raise SystemExit"); // force exit
-	emit completed("", 0);
+	mScriptEngineWorker->stopScript();
+	mScriptEngineWorker->run(script);
 }
 
 void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) {}
 void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) {}
 
-void TrikPythonRunner::runDirectCommand(const QString &command) {}
-void TrikPythonRunner::abort() {}
-void TrikPythonRunner::brickBeep() {}
+void TrikPythonRunner::brickBeep()
+{
+	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
+}
 
-void TrikPythonRunner::onScriptStart(int scriptId) {}
-void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &message) {}
+void TrikPythonRunner::runDirectCommand(const QString &command)
+{
+	QLOG_INFO() << "TrikPythonRunner: new direct command" << command;
+	mScriptEngineWorker->runDirect(command);
+}
+
+void TrikPythonRunner::abort()
+{
+	mScriptEngineWorker->stopScript();
+	mScriptEngineWorker->resetBrick();
+}
+
+void TrikPythonRunner::onScriptStart(int scriptId)
+{
+	emit startedDirectScript(scriptId);
+}
+
+void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
+{
+	emit sendMessage(QString("mail: sender: %1 contents: %2")
+					 .arg(senderNumber)
+					 .arg(message)
+					 );
+}

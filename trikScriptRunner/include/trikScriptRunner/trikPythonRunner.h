@@ -15,7 +15,7 @@
 #pragma once
 
 #include "trikScriptRunnerInterface.h"
-#include "PythonQt.h"
+#include "trikPythonRunner.h"
 
 namespace trikNetwork {
 class MailboxInterface;
@@ -25,7 +25,10 @@ namespace trikControl {
 class BrickInterface;
 }
 
+
 namespace trikScriptRunner {
+
+class PythonEngineWorker;
 
 class TrikPythonRunner : public TrikScriptRunnerInterface
 {
@@ -56,7 +59,8 @@ private slots:
 	void sendMessageFromMailBox(int senderNumber, const QString &message);
 
 private:
-	PythonQtObjectPtr mainContext;
+	PythonEngineWorker * mScriptEngineWorker;
+	QThread mWorkerThread;
 };
 
 }
