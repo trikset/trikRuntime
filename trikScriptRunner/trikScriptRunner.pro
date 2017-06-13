@@ -24,6 +24,7 @@ HEADERS += \
 	$$PWD/src/scriptable.h \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
+	$$PWD/src/pythonEngineWorker.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 	$$PWD/src/scriptThread.h \
@@ -34,6 +35,7 @@ HEADERS += \
 SOURCES += \
 	$$PWD/src/scriptExecutionControl.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
+	$$PWD/src/pythonEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/trikPythonRunner.cpp \
 	$$PWD/src/trikJavaScriptRunner.cpp \
