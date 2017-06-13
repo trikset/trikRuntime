@@ -49,13 +49,10 @@ QStringList TrikScriptRunner::knownMethodNames() const
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
-	if (fileName.isEmpty() || fileName.endsWith(".js") || fileName.endsWith(".qts")) { // default JS
-		run(script, JAVASCRIPT, fileName);
-	} else if (fileName.endsWith(".py")) {
+	if (fileName.endsWith(".py")) {
 		run(script, PYTHON, fileName);
-	} else {
-		QLOG_ERROR() << "Can't handle file with unrecognized extension: " << fileName;
-		return;
+	} else { // default JS
+		run(script, JAVASCRIPT, fileName);
 	}
 }
 
