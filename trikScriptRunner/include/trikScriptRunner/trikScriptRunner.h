@@ -34,6 +34,7 @@ enum ScriptType { // must be 0, 1, ..
 	ScriptTypeLength // should always be the last
 };
 
+/// General wrapper for other executors (such as Python, JavaScript)
 class TrikScriptRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
@@ -64,7 +65,7 @@ public slots:
 private:
 	trikControl::BrickInterface &brick;
 	trikNetwork::MailboxInterface * mailbox;
-	TrikScriptRunnerInterface * mScriptRunnerArray[ScriptTypeLength] = {NULL};
+	TrikScriptRunnerInterface * mScriptRunnerArray[ScriptTypeLength] = {nullptr};
 	ScriptType mLastRunner;
 };
 

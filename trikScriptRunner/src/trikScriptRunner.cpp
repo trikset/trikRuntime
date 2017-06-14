@@ -32,7 +32,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 TrikScriptRunner::~TrikScriptRunner()
 {
 	for (size_t i = 0; i < ScriptTypeLength; i++) { // stop and delete all working interpretators
-		if (mScriptRunnerArray[i] != NULL) {
+		if (mScriptRunnerArray[i] != nullptr) {
 			mScriptRunnerArray[i]->abort();
 			delete mScriptRunnerArray[i];
 		}
@@ -59,11 +59,11 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const QString &fileName)
 {
 	for (size_t i = 0; i < ScriptTypeLength; i++) { // stop all working interpretators
-		if (mScriptRunnerArray[i] != NULL) {
+		if (mScriptRunnerArray[i] != nullptr) {
 			mScriptRunnerArray[i]->abort();
 		}
 	}
-	if (mScriptRunnerArray[stype] == NULL) { // lazy creation
+	if (mScriptRunnerArray[stype] == nullptr) { // lazy creation
 		switch (stype) {
 			case JAVASCRIPT:
 				mScriptRunnerArray[stype] = new TrikJavaScriptRunner(brick, mailbox);
@@ -76,10 +76,14 @@ void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const
 				return;
 		}
 		// subscribe on wrapped objects signals
-		connect(mScriptRunnerArray[stype], SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-		connect(mScriptRunnerArray[stype], SIGNAL(startedScript(const QString &, int)), this, SIGNAL(startedScript(const QString &, int)));
-		connect(mScriptRunnerArray[stype], SIGNAL(startedDirectScript(int)), this, SIGNAL(startedDirectScript(int)));
-		connect(mScriptRunnerArray[stype], SIGNAL(sendMessage(const QString &)), this, SIGNAL(sendMessage(const QString &)));
+		connect(mScriptRunnerArray[stype], SIGNAL(completed(QString, int)),
+				this, SIGNAL(completed(QString, int)));
+		connect(mScriptRunnerArray[stype], SIGNAL(startedScript(const QString &, int)),
+				this, SIGNAL(startedScript(const QString &, int)));
+		connect(mScriptRunnerArray[stype], SIGNAL(startedDirectScript(int)),
+				this, SIGNAL(startedDirectScript(int)));
+		connect(mScriptRunnerArray[stype], SIGNAL(sendMessage(const QString &)),
+				this, SIGNAL(sendMessage(const QString &)));
 	}
 
 	mScriptRunnerArray[stype]->run(script, fileName);

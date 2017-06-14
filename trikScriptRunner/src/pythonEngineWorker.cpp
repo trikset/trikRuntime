@@ -128,3 +128,6 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 	}
 	mMainContext.evalScript(command);
 }
+
+void PythonEngineWorker::onScriptRequestingToQuit()
+{}

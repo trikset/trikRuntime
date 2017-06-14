@@ -15,6 +15,7 @@ void PythonQt_init_PyTrikControl(PyObject* module);
 namespace trikScriptRunner
 {
 
+/// Worker object to be run in a separate thread for Python execution.
 class PythonEngineWorker : public QObject
 {
 	Q_OBJECT

@@ -30,6 +30,7 @@ namespace trikScriptRunner {
 
 class PythonEngineWorker;
 
+/// Executes scripts in Python Engine.
 class TrikPythonRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
@@ -59,7 +60,7 @@ private slots:
 	void sendMessageFromMailBox(int senderNumber, const QString &message);
 
 private:
-	PythonEngineWorker * mScriptEngineWorker;
+	PythonEngineWorker *mScriptEngineWorker;
 	QThread mWorkerThread;
 };
 

@@ -23,6 +23,7 @@
 
 namespace trikScriptRunner {
 
+/// Interface for all script executors.
 class TrikScriptRunnerInterface : public QObject
 {
 	Q_OBJECT
