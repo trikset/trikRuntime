@@ -37,3 +37,7 @@ object_script.*.Release
 **/.build
 tests/minimalCppApp/*
 .qmake.stash
+
+# PKG config
+pkg-config_wrapper.sh
+
