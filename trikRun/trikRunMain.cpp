@@ -62,19 +62,21 @@ int main(int argc, char *argv[])
 	trikKernel::ApplicationInitHelper initHelper(*app);
 
 	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
-														 + " " + QObject::tr("(optional of -js or -py option is specified)"));
+			+ " " + QObject::tr("(optional of -js or -py option is specified)"));
 
 	initHelper.commandLineParser().addOption("js", "js-script"
-											 , QObject::tr("JavaScript Script to be executed directly from command line.") + "\n"
-											 + QObject::tr("\tExample: ./trikRun -js \"brick.smile(); script.wait(2000);\""));
+			, QObject::tr("JavaScript Script to be executed directly from command line.") + "\n"
+							+ QObject::tr("\tExample: ./trikRun -js \"brick.smile(); script.wait(2000);\""));
 
 	initHelper.commandLineParser().addOption("py", "py-script"
-											 , QObject::tr("Python Script to be executed directly from command line.") + "\n"
-											 + QObject::tr("\tExample: ./trikRun -py \"brick.smile(); script.wait(2000);\"")); // FIXME: example
+			, QObject::tr("Python Script to be executed directly from command line.") + "\n"
+							+ QObject::tr("\tExample: ./trikRun -py \""
+										  "brick.display().showImage('media/trik_smile_normal.png'); "
+										  "__import__('time').sleep(2)\""));
 
 	initHelper.commandLineParser().addFlag("no-display", "no-display"
-										   , QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
-														 "physical display"));
+			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
+								"physical display"));
 
 	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript and Python files."));
 
@@ -115,7 +117,8 @@ int main(int argc, char *argv[])
 	} else {
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
-			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]), positionalArgs[0], trikScriptRunner::JAVASCRIPT);
+			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]),
+					positionalArgs[0], trikScriptRunner::JAVASCRIPT);
 		} else {
 			initHelper.commandLineParser().showHelp();
 			return 1;
