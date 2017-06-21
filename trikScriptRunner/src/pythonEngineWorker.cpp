@@ -130,4 +130,6 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 }
 
 void PythonEngineWorker::onScriptRequestingToQuit()
-{}
+{
+	throw "Not implemented";
+}

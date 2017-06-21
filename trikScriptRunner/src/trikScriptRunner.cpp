@@ -39,8 +39,15 @@ TrikScriptRunner::~TrikScriptRunner()
 	}
 }
 
-void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) {}
-void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) {}
+void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
+{
+	throw "Not implemented";
+}
+
+void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
+{
+	throw "Not implemented";
+}
 
 QStringList TrikScriptRunner::knownMethodNames() const
 {
