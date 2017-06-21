@@ -100,6 +100,15 @@ void TrikScriptRunner::abort()
 	mScriptRunnerArray[mLastRunner]->abort();
 }
 
+void TrikScriptRunner::abortAll()
+{
+	for (size_t i = 0; i < ScriptTypeLength; i++) {
+		if (mScriptRunnerArray[i] != nullptr) {
+			mScriptRunnerArray[i]->abort();
+		}
+	}
+}
+
 void TrikScriptRunner::brickBeep()
 {
 	mScriptRunnerArray[mLastRunner]->brickBeep();

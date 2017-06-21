@@ -72,6 +72,8 @@ public slots:
 	void run(const QString &script, const ScriptType &stype, const QString &fileName = "");
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
+	/// Aborts all scripts from all engines.
+	void abortAll();
 	void brickBeep() override;
 
 private:
