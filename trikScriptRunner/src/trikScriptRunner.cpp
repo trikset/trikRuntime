@@ -56,13 +56,8 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 	}
 }
 
-void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const QString &fileName)
+TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(const ScriptType &stype)
 {
-	for (size_t i = 0; i < ScriptTypeLength; i++) { // stop all working interpretators
-		if (mScriptRunnerArray[i] != nullptr) {
-			mScriptRunnerArray[i]->abort();
-		}
-	}
 	if (mScriptRunnerArray[stype] == nullptr) { // lazy creation
 		switch (stype) {
 			case JAVASCRIPT:
@@ -73,7 +68,7 @@ void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const
 				break;
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << stype;
-				return;
+				return nullptr;
 		}
 		// subscribe on wrapped objects signals
 		connect(mScriptRunnerArray[stype], SIGNAL(completed(QString, int)),
@@ -86,18 +81,26 @@ void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const
 				this, SIGNAL(sendMessage(const QString &)));
 	}
 
-	mScriptRunnerArray[stype]->run(script, fileName);
 	mLastRunner = stype;
+
+	return mScriptRunnerArray[stype];
+}
+
+void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const QString &fileName)
+{
+	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
+
+	fetchRunner(stype)->run(script, fileName);
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
 {
-	mScriptRunnerArray[mLastRunner]->runDirectCommand(command);
+	fetchRunner(mLastRunner)->runDirectCommand(command);
 }
 
 void TrikScriptRunner::abort()
 {
-	mScriptRunnerArray[mLastRunner]->abort();
+	fetchRunner(mLastRunner)->abort();
 }
 
 void TrikScriptRunner::abortAll()
@@ -111,5 +114,5 @@ void TrikScriptRunner::abortAll()
 
 void TrikScriptRunner::brickBeep()
 {
-	mScriptRunnerArray[mLastRunner]->brickBeep();
+	fetchRunner(mLastRunner)->brickBeep();
 }

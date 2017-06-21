@@ -77,6 +77,8 @@ public slots:
 	void brickBeep() override;
 
 private:
+	TrikScriptRunnerInterface * fetchRunner(const ScriptType &stype);
+
 	trikControl::BrickInterface &brick;
 	trikNetwork::MailboxInterface * mailbox;
 	TrikScriptRunnerInterface * mScriptRunnerArray[ScriptTypeLength] = {nullptr};
