@@ -87,6 +87,7 @@ void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const
 	}
 
 	mScriptRunnerArray[stype]->run(script, fileName);
+	mLastRunner = stype;
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
