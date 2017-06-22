@@ -65,14 +65,14 @@ int main(int argc, char *argv[])
 			+ " " + QObject::tr("(optional of -js or -py option is specified)"));
 
 	initHelper.commandLineParser().addOption("js", "js-script"
-			, QObject::tr("JavaScript Script to be executed directly from command line.") + "\n"
-							+ QObject::tr("\tExample: ./trikRun -js \"brick.smile(); script.wait(2000);\""));
+			, QObject::tr("JavaScript script to be executed directly from command line.") + "\n\t"
+							+ QObject::tr("Example:") + " ./trikRun -js \"brick.smile(); script.wait(2000);\"");
 
 	initHelper.commandLineParser().addOption("py", "py-script"
-			, QObject::tr("Python Script to be executed directly from command line.") + "\n"
-							+ QObject::tr("\tExample: ./trikRun -py \""
+			, QObject::tr("Python script to be executed directly from command line.") + "\n\t"
+							+ QObject::tr("Example:") + " ./trikRun -py \""
 										  "brick.display().showImage('media/trik_smile_normal.png'); "
-										  "__import__('time').sleep(2)\""));
+										  "script.wait(2000)\"");
 
 	initHelper.commandLineParser().addFlag("no-display", "no-display"
 			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
