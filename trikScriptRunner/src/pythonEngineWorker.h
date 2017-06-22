@@ -65,9 +65,10 @@ public slots:
 
 	/// Initializes PythonQt and creates new main module, which will be used by user
 	/// Must be invoked (called by the same thread as `run` or `runDirect`)
-	void initPythonQt();
+	/// Calls initTrik()
+	void init();
 
-	/// Recreates Main Context made by initPythonQt
+	/// Recreates Main Context made by init
 	void recreateContext();
 
 	/// Plays "beep" sound.

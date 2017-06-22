@@ -15,8 +15,9 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 	, mState(ready)
 {}
 
-void PythonEngineWorker::initPythonQt()
+void PythonEngineWorker::init()
 {
+	// init PythonQt
 	PythonQt::init(PythonQt::IgnoreSiteModule);
 	mMainContext = PythonQt::self()->getMainModule();
 
@@ -25,7 +26,7 @@ void PythonEngineWorker::initPythonQt()
 
 void PythonEngineWorker::recreateContext()
 {
-	/// Delete current __main__ and create a new one
+	// Delete current __main__ and create a new one (hack)
 	mMainContext.evalScript("import sys");
 	mMainContext.evalScript("del sys.modules[__name__]");
 	mMainContext = PythonQt::self()->createModuleFromScript("__main__", "");
