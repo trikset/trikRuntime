@@ -34,10 +34,23 @@ void PythonEngineWorker::recreateContext()
 	initTrik();
 }
 
+void PythonEngineWorker::evalSystemPy()
+{
+	const QString systemPyPath = trikKernel::Paths::systemScriptsPath() + "system.py";
+
+	if (QFile::exists(systemPyPath)) {
+		mMainContext.evalFile(systemPyPath);
+	} else {
+		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
+	}
+}
+
 void PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
+
+	evalSystemPy();
 }
 
 void PythonEngineWorker::resetBrick()

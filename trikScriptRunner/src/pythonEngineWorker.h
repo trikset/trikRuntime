@@ -101,6 +101,9 @@ private:
 		, running
 	};
 
+	/// Evaluates "system.py" file in the current context.
+	void evalSystemPy();
+
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);
 

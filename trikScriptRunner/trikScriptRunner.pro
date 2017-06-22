@@ -45,6 +45,7 @@ SOURCES += \
 
 OTHER_FILES += \
 	$$PWD/system.js \
+	$$PWD/system.py \
 
 INCLUDEPATH += \
         ./include/PyTrikControl \
@@ -61,6 +62,7 @@ QT += script
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir($$PWD/system.js)
+copyToDestdir($$PWD/system.py)
 
 links(trikKernel trikControl trikNetwork PythonQt)
 implementationIncludes(trikKernel trikControl trikNetwork)
@@ -68,3 +70,4 @@ PythonQtIncludes()
 
 installs()
 installAdditionalSharedFiles($$PWD/system.js)
+installAdditionalSharedFiles($$PWD/system.py)
