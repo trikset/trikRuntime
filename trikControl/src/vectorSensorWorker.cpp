@@ -126,7 +126,7 @@ void VectorSensorWorker::deinitialize()
 
 void VectorSensorWorker::onSensorHanged()
 {
-	QLOG_WARN() << "Sensor" << mState.deviceName() << "hanged, reopening device file...";
+	QLOG_WARN() << "Sensor" << mState.deviceName() << "hanged for " << maxEventDelay << "ms, reopening device file...";
 	mState.fail();
 	mLastEventTimer.stop();
 

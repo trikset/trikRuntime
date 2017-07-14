@@ -94,7 +94,7 @@ QVector<int> GyroSensor::readRawData() const
 
 void GyroSensor::calibrate(int msec)
 {
-	mCalibrationTimer.start(msec);
+	QMetaObject::invokeMethod(&mCalibrationTimer, "start", Qt::QueuedConnection, Q_ARG(int, msec));
 
 	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
 			, this, SLOT(sumGyroscope(QVector<int>,trikKernel::TimeVal)));
@@ -179,8 +179,8 @@ void GyroSensor::initParameters()
 			mBias[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
 			mGyroSum[i] = 0;
 		}
+		mGyroCounter = 0;
 	}
-	mGyroCounter = 0;
 
 	disconnect(mAccelerometer, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
 			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
@@ -190,13 +190,14 @@ void GyroSensor::initParameters()
 			mAccelerometerVector[i] = mAccelerometerSum[i] / mAccelerometerCounter;
 			mAccelerometerSum[i] = 0;
 		}
+		mAccelerometerCounter = 0;
 	}
-	mAccelerometerCounter = 0;
 
-	mIsCalibrated = true;
+	QLOG_INFO() << "Gyro bias(raw): " << mBias;
 
 	QVector3D acc(mAccelerometerVector[0], mAccelerometerVector[1], mAccelerometerVector[2]);
 	acc.normalize();
+	QLOG_INFO() << "Calibrated accelerometer: " << acc;
 
 	QVector3D gravity(0, 0, 1);
 	QVector3D delta = gravity - acc;
@@ -206,6 +207,9 @@ void GyroSensor::initParameters()
 	QVector3D cross = QVector3D::crossProduct(acc, gravity);
 
 	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / PI);
+	QLOG_INFO() << "Calibrated orientation sensor: Q = " << mQ;
+
+	mIsCalibrated = true;
 }
 
 void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &)
