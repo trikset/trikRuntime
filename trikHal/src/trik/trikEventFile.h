@@ -34,8 +34,7 @@ public:
 	/// @param fileName - file name (with path, relative or absolute) of an event file.
 	/// @param thread - background thread where all socket events will be processed.
 	TrikEventFile(const QString &fileName, QThread &thread);
-
-	~TrikEventFile() override;
+	~TrikEventFile() override {}
 
 	bool open() override;
 	bool close() override;

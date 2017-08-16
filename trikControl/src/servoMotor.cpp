@@ -57,10 +57,7 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 		mRunFile->write(QString::number(mRun ? 1 : 0));
 	}
 
-	const QString command = QString::number(mPeriod);
-
-	mPeriodFile->write(command);
-	mPeriodFile->close();
+	setPeriod(mPeriod / 1000);
 
 	if (!mDutyFile->open()) {
 		mState.fail();
@@ -117,6 +114,12 @@ void ServoMotor::powerOff()
 
 	mRun = false;
 	mRunFile->write(QString::number(mRun));
+}
+
+void ServoMotor::setPeriod(int uSec)
+{
+	const QString command = QString::number(uSec * 1000);
+	mPeriodFile->write(command);
 }
 
 void ServoMotor::setPower(int power, bool constrain)

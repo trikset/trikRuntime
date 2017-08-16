@@ -36,10 +36,6 @@ TrikEventFile::TrikEventFile(const QString &fileName, QThread &thread)
 	moveToThread(&thread);
 }
 
-TrikEventFile::~TrikEventFile()
-{
-}
-
 bool TrikEventFile::open()
 {
 	QLOG_INFO() << "Opening" << mFileName;

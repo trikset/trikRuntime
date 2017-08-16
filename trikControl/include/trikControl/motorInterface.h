@@ -55,6 +55,10 @@ public slots:
 
 	/// Force brake state for durationMs and then powerOff()
 	virtual void brake(int durationMs = 500) = 0;
+
+	/// Set period for PWM generator
+	/// @param uSec - microseconds
+	virtual void setPeriod(int uSec = 20000) = 0;
 };
 
 }
