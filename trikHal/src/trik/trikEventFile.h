@@ -15,11 +15,11 @@
 #pragma once
 
 #include <QtCore/QScopedPointer>
+#include <QEventLoop>
+#include <QSocketNotifier>
 
 #include "eventFileInterface.h"
 
-class QEventLoop;
-class QSocketNotifier;
 
 namespace trikHal {
 namespace trik {
