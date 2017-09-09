@@ -158,41 +158,5 @@ void GuiWorker::repaintGraphicsWidget()
 
 QColor GuiWorker::colorByName(const QString &name)
 {
-	if (name == tr("white")) {
-		return Qt::white;
-	} else if (name == tr("black")) {
-		return Qt::black;
-	} else if (name == tr("red")) {
-		return Qt::red;
-	} else if (name == tr("darkRed")) {
-		return Qt::darkRed;
-	} else if (name == tr("green")) {
-		return Qt::green;
-	} else if (name == tr("darkGreen")) {
-		return Qt::darkGreen;
-	} else if (name == tr("blue")) {
-		return Qt::blue;
-	} else if (name == tr("darkBlue")) {
-		return Qt::darkBlue;
-	} else if (name == tr("cyan")) {
-		return Qt::cyan;
-	} else if (name == tr("darkCyan")) {
-		return Qt::darkCyan;
-	} else if (name == tr("magenta")) {
-		return Qt::magenta;
-	} else if (name == tr("darkMagenta")) {
-		return Qt::darkMagenta;
-	} else if (name == tr("yellow")) {
-		return Qt::yellow;
-	} else if (name == tr("darkYellow")) {
-		return Qt::darkYellow;
-	} else if (name == tr("gray")) {
-		return Qt::gray;
-	} else if (name == tr("darkGray")) {
-		return Qt::darkGray;
-	} else if (name == tr("lightGray")) {
-		return Qt::lightGray;
-	} else {
-		return QColor(name);
-	}
+	return QColor(name.toLower());
 }
