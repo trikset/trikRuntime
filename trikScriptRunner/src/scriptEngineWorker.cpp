@@ -62,6 +62,7 @@ Q_DECLARE_METATYPE(KeysInterface*)
 Q_DECLARE_METATYPE(LedInterface*)
 Q_DECLARE_METATYPE(LineSensorInterface*)
 Q_DECLARE_METATYPE(MailboxInterface*)
+Q_DECLARE_METATYPE(MarkerInterface*)
 Q_DECLARE_METATYPE(MotorInterface*)
 Q_DECLARE_METATYPE(ObjectSensorInterface*)
 Q_DECLARE_METATYPE(SoundSensorInterface*)
@@ -302,6 +303,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	Scriptable<LedInterface>::registerMetatype(engine);
 	Scriptable<LineSensorInterface>::registerMetatype(engine);
 	Scriptable<MailboxInterface>::registerMetatype(engine);
+	Scriptable<MarkerInterface>::registerMetatype(engine);
 	Scriptable<MotorInterface>::registerMetatype(engine);
 	Scriptable<ObjectSensorInterface>::registerMetatype(engine);
 	Scriptable<SensorInterface>::registerMetatype(engine);
