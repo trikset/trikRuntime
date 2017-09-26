@@ -30,17 +30,17 @@ class TRIKCONTROL_EXPORT MarkerInterface : public QObject, public DeviceInterfac
 
 public:
 	/// Moves the marker down to the floor.
-	Q_INVOKABLE virtual void down(const QString &color) = 0;
+	virtual void down(const QString &color) = 0;
 
 	/// Lifts the robots marker up.
 	/// The robot stops drawing its trace on the floor after that.
-	Q_INVOKABLE virtual void up() = 0;
+	virtual void up() = 0;
 
 	/// Returns true if marker is currently active or false if not.
-	Q_INVOKABLE virtual bool isDown() const = 0;
+	virtual bool isDown() const = 0;
 
 	/// Calls down() with black color if \a isDown is true or up() otherwise.
-	Q_INVOKABLE virtual void setDown(bool isDown) = 0;
+	virtual void setDown(bool isDown) = 0;
 };
 
 }
