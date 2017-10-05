@@ -18,6 +18,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QTextStream>
 #include <QtCore/QSignalMapper>
+#include <QtCore/QMetaMethod>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -48,30 +49,48 @@ using namespace trikScriptRunner;
 using namespace trikControl;
 using namespace trikNetwork;
 
-Q_DECLARE_METATYPE(BatteryInterface*)
-Q_DECLARE_METATYPE(ColorSensorInterface*)
-Q_DECLARE_METATYPE(FifoInterface*)
-Q_DECLARE_METATYPE(DisplayInterface*)
-Q_DECLARE_METATYPE(EncoderInterface*)
-Q_DECLARE_METATYPE(EventCodeInterface*)
-Q_DECLARE_METATYPE(EventDeviceInterface*)
-Q_DECLARE_METATYPE(EventInterface*)
-Q_DECLARE_METATYPE(GamepadInterface*)
-Q_DECLARE_METATYPE(GyroSensorInterface*)
-Q_DECLARE_METATYPE(KeysInterface*)
-Q_DECLARE_METATYPE(LedInterface*)
-Q_DECLARE_METATYPE(LineSensorInterface*)
-Q_DECLARE_METATYPE(MailboxInterface*)
-Q_DECLARE_METATYPE(MarkerInterface*)
-Q_DECLARE_METATYPE(MotorInterface*)
-Q_DECLARE_METATYPE(ObjectSensorInterface*)
-Q_DECLARE_METATYPE(SoundSensorInterface*)
-Q_DECLARE_METATYPE(SensorInterface*)
-Q_DECLARE_METATYPE(Threading*)
-Q_DECLARE_METATYPE(VectorSensorInterface*)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(trikKernel::TimeVal)
 Q_DECLARE_METATYPE(QTimer*)
+
+#define DECLARE_METATYPE_TEMPLATE(TYPE) \
+	Q_DECLARE_METATYPE(TYPE*)
+
+#define REGISTER_METATYPE_FOR_ENGINE(TYPE) \
+	Scriptable<TYPE>::registerMetatype(engine);
+
+#define REGISTER_METATYPE(TYPE) \
+	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
+
+/// Here we define a convenient template that registers all devices used in trik.
+/// When creating a new device(interface), you should append it to this list.
+/// So it lets you write the device just one time rather than append appropriate line to each place
+/// that uses devices.
+/// ATTENTION: do not forget to append newly created device to this list!
+#define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
+	TEMPLATE(BatteryInterface) \
+	TEMPLATE(ColorSensorInterface) \
+	TEMPLATE(FifoInterface) \
+	TEMPLATE(DisplayInterface) \
+	TEMPLATE(EncoderInterface) \
+	TEMPLATE(EventCodeInterface) \
+	TEMPLATE(EventDeviceInterface) \
+	TEMPLATE(EventInterface) \
+	TEMPLATE(GamepadInterface) \
+	TEMPLATE(GyroSensorInterface) \
+	TEMPLATE(KeysInterface) \
+	TEMPLATE(LedInterface) \
+	TEMPLATE(LineSensorInterface) \
+	TEMPLATE(MailboxInterface) \
+	TEMPLATE(MarkerInterface) \
+	TEMPLATE(MotorInterface) \
+	TEMPLATE(ObjectSensorInterface) \
+	TEMPLATE(SoundSensorInterface) \
+	TEMPLATE(SensorInterface) \
+	TEMPLATE(Threading) \
+	TEMPLATE(VectorSensorInterface)
+
+REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_TEMPLATE)
 
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
@@ -122,6 +141,8 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);
+
+	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -181,6 +202,19 @@ void ScriptEngineWorker::stopScript()
 	/// @todo: is it actually stopped?
 
 	QLOG_INFO() << "ScriptEngineWorker: stopping complete";
+}
+
+QStringList ScriptEngineWorker::knownMethodNames() const
+{
+	QSet<QString> result = {"brick", "script", "threading"};
+	collectMethodNames(result, mBrick.metaObject());
+	collectMethodNames(result, mScriptControl.metaObject());
+	if (mMailbox) {
+		result.insert("mailbox");
+		collectMethodNames(result, mMailbox->metaObject());
+	}
+	collectMethodNames(result, mThreading.metaObject());
+	return result.toList();
 }
 
 void ScriptEngineWorker::resetBrick()
@@ -289,29 +323,11 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	QScriptEngine *engine = new QScriptEngine();
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
-	Scriptable<BatteryInterface>::registerMetatype(engine);
-	Scriptable<ColorSensorInterface>::registerMetatype(engine);
-	Scriptable<DisplayInterface>::registerMetatype(engine);
-	Scriptable<EncoderInterface>::registerMetatype(engine);
-	Scriptable<EventCodeInterface>::registerMetatype(engine);
-	Scriptable<EventDeviceInterface>::registerMetatype(engine);
-	Scriptable<EventInterface>::registerMetatype(engine);
-	Scriptable<GamepadInterface>::registerMetatype(engine);
-	Scriptable<GyroSensorInterface>::registerMetatype(engine);
-	Scriptable<FifoInterface>::registerMetatype(engine);
-	Scriptable<KeysInterface>::registerMetatype(engine);
-	Scriptable<LedInterface>::registerMetatype(engine);
-	Scriptable<LineSensorInterface>::registerMetatype(engine);
-	Scriptable<MailboxInterface>::registerMetatype(engine);
-	Scriptable<MarkerInterface>::registerMetatype(engine);
-	Scriptable<MotorInterface>::registerMetatype(engine);
-	Scriptable<ObjectSensorInterface>::registerMetatype(engine);
-	Scriptable<SensorInterface>::registerMetatype(engine);
-	Scriptable<SoundSensorInterface>::registerMetatype(engine);
+
+	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE_FOR_ENGINE)
+
 	Scriptable<QTimer>::registerMetatype(engine);
 	qScriptRegisterMetaType(engine, timeValToScriptValue, timeValFromScriptValue);
-	Scriptable<VectorSensorInterface>::registerMetatype(engine);
-
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 
@@ -384,5 +400,25 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
 		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);
 		engine->globalObject().setProperty(functionName, functionValue);
+	}
+}
+
+void ScriptEngineWorker::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) const
+{
+	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
+		const QMetaMethod metaMethod = obj->method(i);
+		const QString methodName = QString::fromLatin1(metaMethod.name());
+		result.insert(methodName);
+
+		QString methodReturnType = QString::fromLatin1(metaMethod.typeName());
+		if (methodReturnType.endsWith('*')) {
+			methodReturnType.chop(1);
+		}
+
+		const int typeId = QMetaType::type(methodReturnType.toLatin1());
+		const QMetaObject *newObj = QMetaType::metaObjectForType(typeId);
+		if (newObj) {
+			collectMethodNames(result, newObj);
+		}
 	}
 }
