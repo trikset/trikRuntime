@@ -28,7 +28,7 @@ class TRIKCONTROL_EXPORT MarkerInterface : public QObject, public DeviceInterfac
 {
 	Q_OBJECT
 
-public:
+public slots:
 	/// Moves the marker down to the floor.
 	virtual void down(const QString &color) = 0;
 

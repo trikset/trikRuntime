@@ -66,6 +66,11 @@ void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScript
 	mScriptEngineWorker->addCustomEngineInitStep(step);
 }
 
+QStringList TrikScriptRunner::knownMethodNames() const
+{
+	return mScriptEngineWorker->knownMethodNames();
+}
+
 void TrikScriptRunner::brickBeep()
 {
 	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");

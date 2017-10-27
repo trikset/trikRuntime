@@ -73,6 +73,11 @@ public:
 	/// Can be safely called from other threads.
 	void stopScript();
 
+
+	/// Gets all method names from executive objects (brick, script, etc.) from ScriptEngineWorker
+	/// (useful when used from outside of the TrikRuntime).
+	QStringList knownMethodNames() const;
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
@@ -132,6 +137,11 @@ private:
 
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * const engine) const;
+
+	/// Collects all methods names from given metaObject.
+	/// If the returnType of given method name is registered in metaobject system,
+	/// newMetaObject is constructed and procedure is called recursively for it.
+	void collectMethodNames(QSet<QString> &result, const QMetaObject *obj) const;
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.

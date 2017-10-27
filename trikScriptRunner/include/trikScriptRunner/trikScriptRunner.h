@@ -55,6 +55,10 @@ public:
 	/// Adds custom initialization steps when creating script engine (useful when used from outside of the TrikRuntime).
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step);
 
+	/// Gets all method names from executive objects (brick, script, etc.) from ScriptEngineWorker
+	/// (useful when used from outside of the TrikRuntime).
+	QStringList knownMethodNames() const;
+
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// For event-driven mode (where script has brick.run() command) script counts as finished
