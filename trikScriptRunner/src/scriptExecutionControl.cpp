@@ -59,12 +59,6 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 	loop.exec();
 }
 
-void ScriptExecutionControl::waitLuchin(const int &luchinMs)
-{
-	const int twoHours = 2 * 60 * 60 * 1000;
-	wait(luchinMs + qrand() % twoHours);
-}
-
 qint64 ScriptExecutionControl::time() const
 {
 	return QDateTime::currentMSecsSinceEpoch();
