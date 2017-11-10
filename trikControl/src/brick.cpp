@@ -21,6 +21,9 @@
 #endif
 
 #include <QtCore/QFileInfo>
+#include <QtMultimedia/QCamera>
+#include <QtMultimedia/QCameraImageCapture>
+#include <QtMultimedia/QCameraInfo>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikHal/hardwareAbstractionFactory.h>
@@ -53,6 +56,7 @@
 #include "moduleLoader.h"
 
 #include <QsLog.h>
+
 
 using namespace trikControl;
 using namespace trikKernel;
@@ -386,6 +390,77 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 {
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
+
+QVector<uint8_t> Brick::getStillImage(const QString &port)
+{
+	QScopedPointer<QCamera> camera;
+	QLOG_INFO() << "Available cameras:" << QCameraInfo::availableCameras().count();
+	for (auto & cameraInfo : QCameraInfo::availableCameras())
+	{
+		if (cameraInfo.deviceName() == port)
+		{
+				QScopedPointer<QCamera>(new QCamera(cameraInfo)).swap(camera);
+				break;
+		}
+	}
+
+	QScopedPointer<QCameraImageCapture> imageCapture (new QCameraImageCapture(camera.data()));
+
+	imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+
+	const auto & formats = imageCapture->supportedBufferFormats();
+	QLOG_INFO() << "Supported buffer formats: " << formats;
+
+	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged, [this, &imageCapture, &camera](bool ready)
+		{
+			if (ready)
+			{
+				camera->searchAndLock();
+				imageCapture->capture(mMediaPath + "photo.jpg");
+				camera->unlock();
+			}
+		}
+	);
+
+	QVector<uint8_t> imageByteVector;
+
+	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured, [&imageByteVector] (int, const QImage &imgOrig)
+		{
+			// Some possible formats:
+
+			// QImage::Format_RGB32
+			// QImage::Format_RGB16
+			// QImage::Format_Grayscale8
+			// QImage::Format_Mono
+			constexpr auto DESIRED_FORMAT = QImage::Format_RGB32;
+
+			constexpr auto SIZE_X = 320;
+			constexpr auto SIZE_Y = 240;
+
+			const QImage &img = imgOrig.format() == DESIRED_FORMAT ? imgOrig : imgOrig.convertToFormat(DESIRED_FORMAT);
+			const QImage &scaledImg = img.height() == SIZE_X && img.width() == SIZE_Y ? img : img.scaled(SIZE_X, SIZE_Y); //, Qt::KeepAspectRatioByExpanding
+			auto cb = scaledImg.constBits();
+			imageByteVector.resize(scaledImg.byteCount());
+			std::copy(cb, cb + scaledImg.byteCount(), imageByteVector.begin());
+			// need reinterpret_cast, because QByteArray constructor needs const char*, but img.constBits() returns const uchar*
+			// imageByteArray = std::move(QByteArray(reinterpret_cast<const char*>(img.constBits()), img.byteCount()));
+		}
+	);
+
+	camera->setCaptureMode(QCamera::CaptureStillImage);
+	camera->start();
+	while ( imageByteVector.isEmpty() )
+	{
+		QEventLoop eventLoop;
+		QObject::connect(imageCapture.data(), &QCameraImageCapture::imageAvailable, [&eventLoop](int, const QVideoFrame &){
+				eventLoop.quit();
+			}
+		);
+		eventLoop.exec();
+	}
+	return imageByteVector;
+}
+
 
 SoundSensorInterface *Brick::soundSensor(const QString &port)
 {

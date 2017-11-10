@@ -117,6 +117,8 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
+	QVector<uint8_t> getStillImage(const QString &port) override;
+
 	SoundSensorInterface *soundSensor(const QString &port) override;
 
 	EncoderInterface *encoder(const QString &port) override;

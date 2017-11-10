@@ -49,6 +49,7 @@ using namespace trikScriptRunner;
 using namespace trikControl;
 using namespace trikNetwork;
 
+Q_DECLARE_METATYPE(QVector<uint8_t>)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(trikKernel::TimeVal)
 Q_DECLARE_METATYPE(QTimer*)
@@ -125,6 +126,42 @@ QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 	return engine->toScriptValue(result);
 }
 
+QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
+{
+	QScriptValue brickValue = engine->globalObject().property("brick");
+	QObject *qObjBrick = brickValue.toQObject();
+	if (qObjBrick)
+	{
+		BrickInterface *brick = qobject_cast<BrickInterface*>(qObjBrick);
+		if (brick)
+		{
+			auto port = context->argumentCount() > 0 ? context->argument(0).toString()
+				: QString("/dev/video0");
+			auto data = brick->getStillImage(port);
+			QList<int> result;
+			result.reserve(data.count());
+			std::for_each(data.begin(), data.end(),
+				[&result](char byteValue)
+				{
+					result.push_back(static_cast<unsigned int>(byteValue));
+				}
+			);
+			return engine->toScriptValue(result);
+		}
+		else
+		{
+			QLOG_ERROR() << "script getPhoto failed at downcasting qObject to Brick";
+			return QScriptValue();
+		}
+	}
+	else
+	{
+		QLOG_ERROR() << "script getPhoto failed to get brick Obj";
+		return QScriptValue();
+	}
+
+}
+
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, ScriptExecutionControl &scriptControl
@@ -141,6 +178,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);
+	registerUserFunction("getPhoto", getPhoto);
 
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 }
@@ -330,6 +368,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterMetaType(engine, timeValToScriptValue, timeValFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
+	qScriptRegisterSequenceMetaType<QVector<uint8_t>>(engine);
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
