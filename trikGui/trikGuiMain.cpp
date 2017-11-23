@@ -39,6 +39,12 @@ int main(int argc, char *argv[])
 
 	app.setApplicationName("TrikGui");
 
+	QFile File(":/resources/stylesheet.qss");
+	File.open(QFile::ReadOnly);
+	QString styleSheet = QLatin1String(File.readAll());
+	app.setStyleSheet(styleSheet);
+
+
 	initHelper.commandLineParser().addApplicationDescription(
 			QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
 			);
