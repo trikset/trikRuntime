@@ -46,8 +46,8 @@ int main(int argc, char *argv[])
 
 
 	initHelper.commandLineParser().addApplicationDescription(
-			QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
-			);
+				QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
+				);
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;

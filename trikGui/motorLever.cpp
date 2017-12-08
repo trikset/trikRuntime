@@ -48,13 +48,13 @@ MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, 
 	mPowerBar.setTextVisible(true);
 	mPowerBar.setFormat("%v");
 
-	mNameLabel.setAlignment(Qt::AlignCenter);
+	mNameLabel.setAlignment(Qt::AlignLeft);
 	mPowerBar.setAlignment(Qt::AlignCenter);
-	mOnOffLabel.setAlignment(Qt::AlignCenter);
+	mOnOffLabel.setAlignment(Qt::AlignRight);
 
 	// mOnOffLabel can change its width during work. It will cause mPowerBar
 	// width change. To prevent it, we set fixed width it.
-	mOnOffLabel.setFixedWidth(48);
+	mOnOffLabel.setFixedWidth(std::max(fontMetrics().width(tr("off")),fontMetrics().width(tr("on"))));
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mPowerBar);

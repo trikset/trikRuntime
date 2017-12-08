@@ -41,18 +41,18 @@ SensorIndicator::SensorIndicator(const QString &port
 	mValueBar.setMinimum(sensor.minValue());
 	mValueBar.setValue(0);
 	mValueBar.setTextVisible(false);
+	mValueBar.setAlignment(Qt::AlignRight);
 
-	mNameLabel.setAlignment(Qt::AlignCenter);
-	mValueLabel.setAlignment(Qt::AlignCenter);
-
+	mNameLabel.setAlignment(Qt::AlignLeft);
+	mValueLabel.setAlignment(Qt::AlignRight);
 	// mValueLabel can change its width during work. It will cause mValueBar
 	// width change. To prevent it, we set fixed width for mValueLabel.
 	// It is equal to maximum width of the widget which it achieves
 	// when the label text is set to "100".
-	mValueLabel.setFixedWidth(41);
+	mValueLabel.setFixedWidth(fontMetrics().width("WWWW"));
 
 	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mValueBar, 0, Qt::AlignCenter);
+	mLayout.addWidget(&mValueBar);
 	mLayout.addWidget(&mValueLabel);
 	setLayout(&mLayout);
 

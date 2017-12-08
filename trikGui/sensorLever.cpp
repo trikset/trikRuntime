@@ -49,7 +49,7 @@ SensorLever::SensorLever(const QString &port, QWidget *parent)
 
 	// mSignLabel can change its width during work. It will cause mDistanceBar
 	// width change. To prevent it, we set fixed width it.
-	mSignLabel.setFixedWidth(48);
+	mSignLabel.setFixedWidth(fontMetrics().width("WWWW"));
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mDistanceBar);

@@ -22,6 +22,7 @@
 
 #include "lazyMainWidget.h"
 #include "lazyMainWidgetWrapper.h"
+#include <QScreen>
 
 using namespace trikGui;
 
@@ -38,10 +39,7 @@ BackgroundWidget::BackgroundWidget(
 	, mStartWidget(mController)
 	, mRunningWidget(mController)
 {
-#ifdef Q_WS_QWS
-	setWindowState(Qt::WindowFullScreen);
-#endif
-
+	setFixedSize(qApp->primaryScreen()->availableSize());
 	mMainLayout.setSpacing(10);
 
 	mBatteryIndicator.setStyleSheet("font: 12px");
