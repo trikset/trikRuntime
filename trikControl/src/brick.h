@@ -51,6 +51,7 @@ class RangeSensor;
 class ServoMotor;
 class TonePlayer;
 class VectorSensor;
+class CameraDeviceInterface;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -117,7 +118,7 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	QVector<uint8_t> getStillImage(const QString &port) override;
+    QVector<uint8_t> getStillImage() override;
 
 	SoundSensorInterface *soundSensor(const QString &port) override;
 
@@ -168,6 +169,7 @@ private:
 	QScopedPointer<Led> mLed;
 	QScopedPointer<Gamepad> mGamepad;
 	QScopedPointer<TonePlayer> mTonePlayer;
+    QScopedPointer<CameraDeviceInterface> mCamera;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.

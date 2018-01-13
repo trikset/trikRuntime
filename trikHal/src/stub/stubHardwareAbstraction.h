@@ -36,6 +36,7 @@ public:
 	FifoInterface *createFifo(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
+	QVector<uint8_t> captureV4l2StillImage(const QString &port) const override;
 
 private:
 	QScopedPointer<MspI2cInterface> mMspI2cBus;

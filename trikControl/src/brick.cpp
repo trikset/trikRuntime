@@ -51,6 +51,8 @@
 #include "soundSensor.h"
 #include "tonePlayer.h"
 #include "vectorSensor.h"
+#include "cameraDeviceInterface.h"
+#include "cameraDevice.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -391,74 +393,12 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
 
-QVector<uint8_t> Brick::getStillImage(const QString &port)
+QVector<uint8_t> Brick::getStillImage()
 {
-	QScopedPointer<QCamera> camera;
-	QLOG_INFO() << "Available cameras:" << QCameraInfo::availableCameras().count();
-	for (auto & cameraInfo : QCameraInfo::availableCameras())
-	{
-		if (cameraInfo.deviceName() == port)
-		{
-				QScopedPointer<QCamera>(new QCamera(cameraInfo)).swap(camera);
-				break;
-		}
-	}
-
-	QScopedPointer<QCameraImageCapture> imageCapture (new QCameraImageCapture(camera.data()));
-
-	imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
-
-	const auto & formats = imageCapture->supportedBufferFormats();
-	QLOG_INFO() << "Supported buffer formats: " << formats;
-
-	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged, [this, &imageCapture, &camera](bool ready)
-		{
-			if (ready)
-			{
-				camera->searchAndLock();
-				imageCapture->capture(mMediaPath + "photo.jpg");
-				camera->unlock();
-			}
-		}
-	);
-
-	QVector<uint8_t> imageByteVector;
-
-	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured, [&imageByteVector] (int, const QImage &imgOrig)
-		{
-			// Some possible formats:
-
-			// QImage::Format_RGB32
-			// QImage::Format_RGB16
-			// QImage::Format_Grayscale8
-			// QImage::Format_Mono
-			constexpr auto DESIRED_FORMAT = QImage::Format_RGB32;
-
-			constexpr auto SIZE_X = 320;
-			constexpr auto SIZE_Y = 240;
-
-			const QImage &img = imgOrig.format() == DESIRED_FORMAT ? imgOrig : imgOrig.convertToFormat(DESIRED_FORMAT);
-			const QImage &scaledImg = img.height() == SIZE_X && img.width() == SIZE_Y ? img : img.scaled(SIZE_X, SIZE_Y); //, Qt::KeepAspectRatioByExpanding
-			auto cb = scaledImg.constBits();
-			imageByteVector.resize(scaledImg.byteCount());
-			std::copy(cb, cb + scaledImg.byteCount(), imageByteVector.begin());
-			// need reinterpret_cast, because QByteArray constructor needs const char*, but img.constBits() returns const uchar*
-			// imageByteArray = std::move(QByteArray(reinterpret_cast<const char*>(img.constBits()), img.byteCount()));
-		}
-	);
-
-	camera->setCaptureMode(QCamera::CaptureStillImage);
-	camera->start();
-	while ( imageByteVector.isEmpty() )
-	{
-		QEventLoop eventLoop;
-		QObject::connect(imageCapture.data(), &QCameraImageCapture::imageAvailable, [&eventLoop](int, const QVideoFrame &){
-				eventLoop.quit();
-			}
-		);
-		eventLoop.exec();
-	}
-	return imageByteVector;
+    if (!mCamera)
+        return QVector<uint8_t>();
+    else
+        return mCamera->getPhoto();
 }
 
 
@@ -610,7 +550,10 @@ void Brick::createDevice(const QString &port)
 			connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
-		}
+        } else if (deviceClass == "camera") {
+			QScopedPointer<CameraDeviceInterface> tmp (new CameraDevice(mMediaPath, mConfigurer, *mHardwareAbstraction));
+			mCamera.swap(tmp);
+        }
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();
 		QLOG_ERROR() << "Ignoring device";

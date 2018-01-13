@@ -174,9 +174,9 @@ isEmpty(IS_QSLOG) {
 	LIBS += -lqslog$$CONFIGURATION_SUFFIX
 }
 
-CONFIG += c++11
+CONFIG += c++14
 
-QMAKE_CXXFLAGS += -pedantic-errors -ansi -std=c++11 -Wextra
+QMAKE_CXXFLAGS += -pedantic-errors -ansi -std=c++1y -Wextra
 
 CONFIG(gcc5) | clang {
 	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete

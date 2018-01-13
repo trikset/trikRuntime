@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "QtCore/QVector"
 #include "inputDeviceFileInterface.h"
 #include "outputDeviceFileInterface.h"
 #include "eventFileInterface.h"
@@ -55,6 +56,10 @@ public:
 	/// Creates new output device file, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of a device file.
 	virtual OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const = 0;
+
+	/// Returns QVector with info about picture pixels
+	/// @param port - port name for
+	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port) const = 0;
 };
 
 }

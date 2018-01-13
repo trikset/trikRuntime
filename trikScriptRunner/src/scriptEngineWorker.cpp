@@ -137,7 +137,7 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 		{
 			auto port = context->argumentCount() > 0 ? context->argument(0).toString()
 				: QString("/dev/video0");
-			auto data = brick->getStillImage(port);
+			auto data = brick->getStillImage();
 			QList<int> result;
 			result.reserve(data.count());
 			std::for_each(data.begin(), data.end(),

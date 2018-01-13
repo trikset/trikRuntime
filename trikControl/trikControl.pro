@@ -14,11 +14,14 @@
 
 include(../global.pri)
 
+#QT += multimediawidgets 
+
 PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/batteryInterface.h \
 	$$PWD/include/trikControl/brickFactory.h \
 	$$PWD/include/trikControl/brickInterface.h \
-	$$PWD/include/trikControl/colorSensorInterface.h \
+        $$PWD/include/trikControl/cameraDeviceInterface.h \
+        $$PWD/include/trikControl/colorSensorInterface.h \
 	$$PWD/include/trikControl/declSpec.h \
 	$$PWD/include/trikControl/deviceInterface.h \
 	$$PWD/include/trikControl/displayInterface.h \
@@ -48,7 +51,9 @@ HEADERS += \
 	$$PWD/src/audioSynthDevices.h \
 	$$PWD/src/battery.h \
 	$$PWD/src/brick.h \
-	$$PWD/src/colorSensor.h \
+        $$PWD/src/cameraDevice.h \
+        $$PWD/src/cameraImplementationInterface.h \
+        $$PWD/src/colorSensor.h \
 	$$PWD/src/colorSensorWorker.h \
 	$$PWD/src/configurerHelper.h \
 	$$PWD/src/deviceState.h \
@@ -94,6 +99,8 @@ HEADERS += \
 	$$PWD/src/shapes/rectangle.h \
 	$$PWD/src/shapes/shape.h \
 	$$PWD/src/gyroSensor.h \
+        $$PWD/src/qtCameraImplementation.h \
+        $$PWD/src/v4l2CameraImplementation.h
 #	$$PWD/src/headingSensor.h \
 
 SOURCES += \
@@ -145,7 +152,11 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 	$$PWD/src/audioSynthDevices.cpp \
 	$$PWD/src/gyroSensor.cpp \
+        $$PWD/src/cameraDevice.cpp \
+        $$PWD/src/qtCameraImplementation.cpp \
+        $$PWD/src/v4l2CameraImplementation.cpp
 #	$$PWD/src/headingSensor.cpp \
+
 
 CONFIGS += \
 	$$PWD/model-config-usb.xml \

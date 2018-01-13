@@ -44,6 +44,8 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
+                <!-- URI protocol: v4l2, file, qtmultimedia  -->
+                <camera type="qtmultimedia" src="/dev/video0" />
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
@@ -147,6 +149,8 @@ equal to its class name.
 		<objectSensor port="video2" />
 		<colorSensor port="video1" />
 		<colorSensor port="video2" />
+                <camera port="video1" />
+                <camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 	</devicePorts>
 
@@ -187,6 +191,8 @@ equal to its class name.
 		<encoder126 class="encoder" ticks="3296" degrees="1000" />
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
+
+                <photo class="camera" type="v4l2" src="/dev/video0" />
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->

@@ -21,7 +21,7 @@ class DeviceInterface
 {
 
 public:
-	virtual ~DeviceInterface() {}
+	virtual ~DeviceInterface() = default;
 
 	/// Device status.
 	enum class Status {

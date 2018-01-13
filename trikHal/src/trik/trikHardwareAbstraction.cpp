@@ -21,6 +21,7 @@
 #include "trikInputDeviceFile.h"
 #include "trikOutputDeviceFile.h"
 #include "trikFifo.h"
+#include "QsLog.h"
 
 using namespace trikHal;
 using namespace trikHal::trik;
@@ -69,4 +70,10 @@ InputDeviceFileInterface *TrikHardwareAbstraction::createInputDeviceFile(const Q
 OutputDeviceFileInterface *TrikHardwareAbstraction::createOutputDeviceFile(const QString &fileName) const
 {
 	return new TrikOutputDeviceFile(fileName);
+}
+
+QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &port) const
+{
+	QLOG_INFO() << "Call stub HAL captureV4l2StillImage on port " + port;
+	return QVector<uint8_t>();
 }

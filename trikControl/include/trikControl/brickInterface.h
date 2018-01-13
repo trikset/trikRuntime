@@ -34,6 +34,7 @@
 #include "sensorInterface.h"
 #include "soundSensorInterface.h"
 #include "vectorSensorInterface.h"
+#include "cameraDeviceInterface.h"
 
 #include "declSpec.h"
 
@@ -113,8 +114,8 @@ public slots:
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
 	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
-	/// Returns QByteArray with image using camera on given port (video0 or video1).
-	virtual QVector<uint8_t> getStillImage(const QString &port) = 0;
+    /// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
+    virtual QVector<uint8_t> getStillImage() = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
 	virtual SoundSensorInterface *soundSensor(const QString &port) = 0;
