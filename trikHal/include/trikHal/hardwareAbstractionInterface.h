@@ -58,8 +58,9 @@ public:
 	virtual OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const = 0;
 
 	/// Returns QVector with info about picture pixels
-	/// @param port - port name for
-	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port) const = 0;
+	/// @param port - port name for device
+	/// @param pathToPic - path to picture
+	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port, const QString &pathToPic) const = 0;
 };
 
 }

@@ -1,4 +1,5 @@
 #include <QtCore/QScopedPointer>
+#include <QtCore/QEventLoop>
 #include <QtMultimedia/QCamera>
 #include <QtMultimedia/QCameraImageCapture>
 #include <QtMultimedia/QCameraInfo>

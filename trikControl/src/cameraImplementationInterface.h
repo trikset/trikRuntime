@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtCore/QScopedPointer>
-
+#include <QtCore/QString>
 #include "declSpec.h"
 
 namespace trikControl {

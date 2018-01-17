@@ -36,7 +36,7 @@ public:
 	FifoInterface *createFifo(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
-	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port) const override;
+	QVector<uint8_t> captureV4l2StillImage(const QString &port, const QString &pathToPic) const override;
 
 private:
 	/// I2C bus communicator.
