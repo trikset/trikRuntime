@@ -38,7 +38,7 @@ namespace trikGui {
 
 /// Widget that allows to set power value of a motor and turn it on and off.
 /// It is designed to use as a part of MotorsWidget.
-class MotorLever : public QWidget
+class MotorLever : public QFrame
 {
 	Q_OBJECT
 
@@ -54,8 +54,6 @@ public:
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
-
-	void paintEvent(QPaintEvent *) override;
 
 private:
 	void setPower(int power);

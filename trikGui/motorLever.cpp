@@ -29,7 +29,7 @@
 using namespace trikGui;
 
 MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent)
-	: QWidget(parent)
+	: QFrame(parent)
 	, mMotor(motor)
 	, mIsOn(false)
 	, mMaxPower(motor.maxControl())
@@ -88,19 +88,6 @@ void MotorLever::keyPressEvent(QKeyEvent *event)
 		default: {
 			QWidget::keyPressEvent(event);
 		}
-	}
-}
-
-void MotorLever::paintEvent(QPaintEvent *)
-{
-	QStylePainter painter(this);
-
-	if (hasFocus()) {
-		QStyleOptionFocusRect option;
-		option.initFrom(this);
-		option.backgroundColor = palette().color(QPalette::Background);
-
-		painter.drawPrimitive(QStyle::PE_FrameFocusRect, option);
 	}
 }
 

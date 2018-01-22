@@ -1,2 +1,3 @@
 QListView::item:selected:active { background: white;  color:black; border: 3px solid black }
+trikGui--MotorsWidget trikGui--MotorLever:focus { border: 3px solid black }
 QProgressBar::chunk:horizontal { background: green; margin-right: 1%; width: 5%; }
