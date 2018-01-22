@@ -14,6 +14,8 @@
 
 include(../global.pri)
 
+LIBS += -lv4l2
+
 PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/declSpec.h \
 	$$PWD/include/trikHal/hardwareAbstractionInterface.h \

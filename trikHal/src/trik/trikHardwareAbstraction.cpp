@@ -80,9 +80,9 @@ QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &p
 	TrikV4l2VideoDevice device(port);
 
 	QLOG_INFO() << "Start open v4l2 device" << port;
-	auto result =  device.getFrame();
+	auto result =  device.makeShot();
 
-	QLOG_INFO() << "End capturing v4l2 from port" + port;
+	QLOG_INFO() << "End capturing v4l2 from port" << port;
 
 	return result;
 }
