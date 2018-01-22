@@ -8,12 +8,21 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <libv4l2.h>
-
+#include <QtCore/QEventLoop>
+#include <QtCore/QTimer>
 #include "QsLog.h"
+
+#define v4l2_open open
+#define v4l2_close close
+#define v4l2_mmap mmap
+#define v4l2_unmap unmap
+#define v4l2_ioctl ioctl
+template <typename T> void reset(T &x) { ::memset(&x, 0, sizeof(x)); }
 
 TrikV4l2VideoDevice::TrikV4l2VideoDevice(const QString &inputFile)
 	: fileDevicePath(inputFile)
 {
+	reset(mFormat);
 	openDevice();
 	setFormat();
 }
@@ -46,7 +55,7 @@ void TrikV4l2VideoDevice::openDevice()
 	mFileDescriptor = ::v4l2_open(fileDevicePath.toStdString().c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
 
 	if (mFileDescriptor < 0) {
-		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "'";
+		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor ;
 	} else {
 		QLOG_INFO() << "Open v4l2 camera device" <<  fileDevicePath << ",fd =" << mFileDescriptor;
 	}
@@ -77,7 +86,8 @@ void TrikV4l2VideoDevice::setFormat()
 	// warn if format is emulated
 	
 	for (size_t fmtIdx = 0; ; ++fmtIdx) {
-		struct v4l2_fmtdesc fmtDesc {};
+		struct v4l2_fmtdesc fmtDesc;
+		reset(fmtDesc);
 		fmtDesc.index = fmtIdx;
 		fmtDesc.type = mFormat.type;
 		if (xioctl(VIDIOC_ENUM_FMT, &fmtDesc, "V4l2 VIDIOC_ENUM_FMT failed: " )) {
@@ -123,6 +133,10 @@ QVector<uint8_t> TrikV4l2VideoDevice::makeShot()
 	QEventLoop loop;
 
 	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()));
+	QTimer::singleShot(1000, [&loop]() {
+			QLOG_WARN() << "V4l2 makeShot termitated by watchdog timer";
+			loop.quit();
+		});
 	loop.exec();
 	auto res = getFrame();
 
@@ -134,7 +148,8 @@ QVector<uint8_t> TrikV4l2VideoDevice::makeShot()
 
 void TrikV4l2VideoDevice::initMMAP()
 {
-	struct v4l2_requestbuffers req {};
+	v4l2_requestbuffers req;
+	reset(req);
 
 	req.count = 3; // as in sensors
 	req.type = mFormat.type;
@@ -149,7 +164,8 @@ void TrikV4l2VideoDevice::initMMAP()
 	buffers.resize(req.count);
 
 	for (int i = 0; i < buffers.size(); ++i) {
-		struct v4l2_buffer buf {};
+		v4l2_buffer buf;
+		reset(buf);
 		buf.type = mFormat.type;
 		buf.index = i;
 		buf.memory = V4L2_MEMORY_MMAP;
@@ -174,7 +190,8 @@ void TrikV4l2VideoDevice::initMMAP()
 void TrikV4l2VideoDevice::startCapturing()
 {
 	for(int i = 0; i < buffers.size(); ++i) {
-		struct v4l2_buffer buf {};
+		v4l2_buffer buf;
+		reset(buf);
 		buf.type = mFormat.type;
 		buf.memory = V4L2_MEMORY_MMAP;
 		buf.index = i;
@@ -203,7 +220,8 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	}
 
 
-	v4l2_buffer buf {};
+	v4l2_buffer buf;
+	reset(buf);
 	buf.type = mFormat.type;
 	buf.memory = V4L2_MEMORY_MMAP;
 
