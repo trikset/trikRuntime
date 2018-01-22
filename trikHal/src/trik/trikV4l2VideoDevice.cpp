@@ -25,7 +25,7 @@ TrikV4l2VideoDevice::~TrikV4l2VideoDevice()
 	closeDevice();
 }
 
-int TrikV4l2VideoDevice::xioctl(int request, void *arg, const QString &possibleError)
+int TrikV4l2VideoDevice::xioctl(long request, void *arg, const QString &possibleError)
 {
 	int r = ioctl (fd, request, arg);
 
@@ -57,7 +57,7 @@ void TrikV4l2VideoDevice::openDevice()
 
 void TrikV4l2VideoDevice::setFormat()
 {
-	struct v4l2_format fmt = {};
+	v4l2_format fmt {};
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	fmt.fmt.pix.width = 320;
 	fmt.fmt.pix.height = 240;
@@ -109,7 +109,6 @@ QVector<uint8_t> TrikV4l2VideoDevice::getFrame()
 		if (b.length > 0) {
 			res.resize(b.length);
 			std::copy(b.start, b.start + b.length, res.begin());
-			printf("SHIT %d %d\n", bufNum, b.length);
 			QLOG_INFO() << "V4l2 captured " << b.length << "bytes into buf #" << bufNum;
 		}
 	}
@@ -123,7 +122,7 @@ QVector<uint8_t> TrikV4l2VideoDevice::getFrame()
 
 void TrikV4l2VideoDevice::initMMAP()
 {
-	struct v4l2_requestbuffers req = {};
+	struct v4l2_requestbuffers req {};
 
 	req.count = 4;
 	req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
@@ -137,8 +136,8 @@ void TrikV4l2VideoDevice::initMMAP()
 
 	buffers.resize(req.count);
 
-	for (size_t i = 0; i < buffers.size(); ++i) {
-		struct v4l2_buffer buf = {};
+	for (int i = 0; i < buffers.size(); ++i) {
+		struct v4l2_buffer buf {};
 		buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		buf.index = 0;
 		buf.memory = V4L2_MEMORY_MMAP;
@@ -162,7 +161,7 @@ void TrikV4l2VideoDevice::initMMAP()
 
 void TrikV4l2VideoDevice::startCapturing()
 {
-	struct v4l2_buffer buf = {};
+	struct v4l2_buffer buf {};
 	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	buf.memory = V4L2_MEMORY_MMAP;
 	buf.index = 0;
@@ -182,7 +181,7 @@ void TrikV4l2VideoDevice::startCapturing()
 
 int TrikV4l2VideoDevice::readFrame()
 {
-	v4l2_buffer buf = {};
+	v4l2_buffer buf {};
 	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	buf.memory = V4L2_MEMORY_MMAP;
 

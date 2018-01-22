@@ -74,46 +74,9 @@ OutputDeviceFileInterface *TrikHardwareAbstraction::createOutputDeviceFile(const
 	return new TrikOutputDeviceFile(fileName);
 }
 
-/*----------------------------------------------------------------------------------------------------*/
-/* code for checking v4l2 realization */
-
-constexpr int PIC_WIDTH = 320;
-constexpr int PIC_HEIGHT = 240;
-
-#include <fstream>
-#include <iostream>
-static void takeGreyScaleFromYUYV(const QString &inputFile, unsigned char *g_intensities)
-{
-	std::ifstream fromPic;
-
-	fromPic.open(inputFile.toStdString().c_str(), std::ios::binary | std::ios::in);
-	if ( (fromPic.rdstate() & std::ifstream::failbit ) != 0 )
-	{
-		QLOG_ERROR() << "Error opening file";
-		exit(1);
-	}
-	fromPic >> std::noskipws;
-	//g_pic.unsetf(std::ios::skipws);
-
-	unsigned char tmp;
-
-	for (int i = 0; i < PIC_HEIGHT; i ++)
-	{
-		for (int j = 0; j < PIC_WIDTH; j ++)
-		{
-			g_intensities[i * PIC_HEIGHT +  j] = fromPic.get();
-			tmp = fromPic.get(); // skip color byte;
-		}
-	}
-
-	fromPic.close();
-}
-
-/*----------------------------------------------------------------------------------------------------*/
-/* code for checking v4l2 realization END */
-
 QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &port, const QString &pathToPic) const
 {
+	Q_UNUSED(pathToPic);
 	TrikV4l2VideoDevice device(port);
 
 	QLOG_INFO() << "Start open v4l2 device" << port;

@@ -14,7 +14,7 @@ public:
 	void setFormat();
 
 private:
-	int xioctl(int request, void *arg, const QString &possibleError);
+	int xioctl(long request, void *arg, const QString &possibleError);
 	void initMMAP();
 	void startCapturing();
 	int readFrame();
