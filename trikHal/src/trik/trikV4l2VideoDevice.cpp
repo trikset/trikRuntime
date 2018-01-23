@@ -7,7 +7,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <libv4l2.h>
 #include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
 #include "QsLog.h"
@@ -15,7 +14,7 @@
 #define v4l2_open open
 #define v4l2_close close
 #define v4l2_mmap mmap
-#define v4l2_unmap unmap
+#define v4l2_munmap munmap
 #define v4l2_ioctl ioctl
 template <typename T> void reset(T &x) { ::memset(&x, 0, sizeof(x)); }
 
@@ -58,6 +57,14 @@ void TrikV4l2VideoDevice::openDevice()
 		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor ;
 	} else {
 		QLOG_INFO() << "Open v4l2 camera device" <<  fileDevicePath << ",fd =" << mFileDescriptor;
+		v4l2_capability cap;
+		reset(cap);
+		unsigned requested = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE;
+		if(!xioctl(VIDIOC_QUERYCAP, &cap, "VIDIOC_QUERYCAP failed")
+			&& (((cap.capabilities & V4L2_CAP_DEVICE_CAPS)? cap.device_caps : cap.capabilities) & requested) != requested) {
+			QLOG_ERROR() << "V4l2: The device does not handle single-planar video capture with streamingdevice_caps="<< QString("%1").arg(cap.device_caps, 0, 16);
+			closeDevice();
+		}
 	}
 
 }
@@ -82,8 +89,6 @@ void TrikV4l2VideoDevice::setFormat()
 	if (xioctl (VIDIOC_S_FMT, &mFormat, "VIDIOC_S_FMT in TrikV4l2VideoDevice::setFormat() failed")) {
 		return;
 	}
-	// on return, fmt contains actually used image format
-	// warn if format is emulated
 	
 	for (size_t fmtIdx = 0; ; ++fmtIdx) {
 		struct v4l2_fmtdesc fmtDesc;
@@ -94,11 +99,11 @@ void TrikV4l2VideoDevice::setFormat()
 			// either fault or unknown format
 			break; // just warn, do not fail
 		}
-	
+		char fourcc[5] = {0};
+		strncpy(fourcc, (char*)&mFormat.fmt.pix.pixelformat, 4);
+		QLOG_INFO() << "V4l2: available format:" << fourcc;
 		if (fmtDesc.pixelformat == mFormat.fmt.pix.pixelformat) {
 			if (fmtDesc.flags & V4L2_FMT_FLAG_EMULATED) {
-				char fourcc[5] = {0};
-				strncpy(fourcc, (char*)&mFormat.fmt.pix.pixelformat, 4);
 				QLOG_WARN() << "V4L2 format " << fourcc << "  is emulated, performance will be degraded";
 				break;
 	  		}
@@ -128,14 +133,15 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 {
 	QEventLoop loop;
 	QTimer watchdog;
-	watchdog.setInterval(1000);
 	watchdog.setSingleShot(true);
-	connect(&watchdog, SIGNAL(timeout()), [&loop] {
+	watchdog.setInterval(1000);
+	connect(&watchdog, &QTimer::timeout, &loop, [&]() {
 			QLOG_WARN() << "V4l2 makeShot termitated by watchdog timer";
 			loop.quit();
-		});
+		}, Qt::QueuedConnection);
 
-	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()));
+	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()),Qt::QueuedConnection);
+	watchdog.start();
 
 	initMMAP();
 	startCapturing();
@@ -154,7 +160,7 @@ void TrikV4l2VideoDevice::initMMAP()
 	v4l2_requestbuffers req;
 	reset(req);
 
-	req.count = 3; // as in sensors
+	req.count = 1;
 	req.type = mFormat.type;
 	req.memory = V4L2_MEMORY_MMAP;
  
@@ -212,8 +218,7 @@ void TrikV4l2VideoDevice::startCapturing()
 	}
 	QLOG_INFO() << "V4l2 camera: start capturing";
 	mNotifier = new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this);
-	connect(mNotifier, SIGNAL(activated(int)), this, SLOT(readFrameData(int)));
-	connect(mNotifier, &QSocketNotifier::activated, [](){printf("Frame!");});
+	connect(mNotifier, SIGNAL(activated(int)), this, SLOT(readFrameData(int)), Qt::QueuedConnection);
 }
 
 void TrikV4l2VideoDevice::readFrameData(int fd) {
@@ -222,7 +227,7 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 		return;
 	}
 
-
+	mNotifier->setEnabled(false);
 	v4l2_buffer buf;
 	reset(buf);
 	buf.type = mFormat.type;
@@ -246,7 +251,6 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 		if (b.length > 0) {
 			res.resize(b.length);
 			std::copy(b.start, b.start + b.length, res.begin());
-			QLOG_INFO() << "V4l2 captured " << b.length << "bytes into buf #" << buf.index;
 		}
 		mFrame.swap(res);
 		emit dataReady();

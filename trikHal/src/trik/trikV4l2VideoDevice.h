@@ -1,7 +1,8 @@
 #pragma once
-
+#include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QVector>
+#include <QtCore/QSocketNotifier>
 #include <linux/videodev2.h>
 
 class TrikV4l2VideoDevice: QObject
