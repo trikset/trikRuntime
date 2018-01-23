@@ -10,7 +10,7 @@ class TrikV4l2VideoDevice: QObject
 public:
 	explicit TrikV4l2VideoDevice(const QString &inputFile);
 	~TrikV4l2VideoDevice();
-	QVector<uint8_t> makeShot();
+	const QVector<uint8_t> & makeShot();
 	const QVector<uint8_t> & getFrame() const { return mFrame; }
 
 signals:

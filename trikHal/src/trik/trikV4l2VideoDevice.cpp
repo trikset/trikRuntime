@@ -124,26 +124,29 @@ void TrikV4l2VideoDevice::closeDevice()
 }
 
 
-QVector<uint8_t> TrikV4l2VideoDevice::makeShot()
+const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 {
-	initMMAP();
-
-	startCapturing();
-
 	QEventLoop loop;
-
-	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()));
-	QTimer::singleShot(1000, [&loop]() {
+	QTimer watchdog;
+	watchdog.setInterval(1000);
+	watchdog.setSingleShot(true);
+	connect(&watchdog, SIGNAL(timeout()), [&loop] {
 			QLOG_WARN() << "V4l2 makeShot termitated by watchdog timer";
 			loop.quit();
 		});
+
+	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()));
+
+	initMMAP();
+	startCapturing();
+
 	loop.exec();
-	auto res = getFrame();
+	watchdog.stop();
 
 	stopCapturing();
 	freeMMAP();
 
-	return res;
+	return getFrame();
 }
 
 void TrikV4l2VideoDevice::initMMAP()
