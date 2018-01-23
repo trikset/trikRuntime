@@ -243,14 +243,14 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	//}
 
 	xioctl(VIDIOC_DQBUF, &buf, "V4l2 VIDIOC_DQBUF failed");
-	QLOG_INFO() << "V4l2 captured" << buf.bytesused << "bytes into buf #" << buf.index;
 	QVector<uint8_t> res;
 
 	if (buf.index < buffers.size()) {
 		auto & b = buffers[buf.index];
-		if (b.length > 0) {
-			res.resize(b.length);
-			std::copy(b.start, b.start + b.length, res.begin());
+		if (buf.bytesused > 0) {
+			res.resize(buf.bytesused);
+			std::copy(b.start, b.start + buf.bytesused, res.begin());
+			QLOG_INFO() << "V4l2 captured " << buf.bytesused << "bytes into buf #" << buf.index;
 		}
 		mFrame.swap(res);
 		emit dataReady();

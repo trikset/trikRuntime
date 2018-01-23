@@ -1,5 +1,6 @@
 #pragma once
-#include <QtCore/QObject>
+#include <QObject>
+#include <QSocketNotifier>
 #include <QtCore/QString>
 #include <QtCore/QVector>
 #include <QtCore/QSocketNotifier>
