@@ -31,7 +31,7 @@ TrikV4l2VideoDevice::~TrikV4l2VideoDevice()
 	closeDevice();
 }
 
-int TrikV4l2VideoDevice::xioctl(long request, void *arg, const QString &possibleError)
+int TrikV4l2VideoDevice::xioctl(unsigned long request, void *arg, const QString &possibleError)
 {
 	int r = ::v4l2_ioctl (mFileDescriptor, request, arg);
 

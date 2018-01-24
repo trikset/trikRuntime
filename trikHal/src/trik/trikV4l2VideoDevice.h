@@ -23,7 +23,7 @@ private:
 	void closeDevice();
 	void setFormat();
 	void openDevice();
-	int xioctl(long request, void *arg, const QString &possibleError);
+	int xioctl(unsigned long request, void *arg, const QString &possibleError);
 	void initMMAP();
 	void startCapturing();
 	int readFrame();
