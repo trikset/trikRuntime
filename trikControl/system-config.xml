@@ -23,6 +23,7 @@ equal to its class name.
 <config version="model-2015" >
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
+		/etc/trik/init-ov7670-320x240.sh 0
 		echo 0 > /sys/class/misc/l3g42xxd/fs_selection
 		echo 2 > /sys/class/misc/l3g42xxd/odr_selection
 

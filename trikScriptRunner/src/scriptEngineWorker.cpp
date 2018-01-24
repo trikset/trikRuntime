@@ -128,7 +128,7 @@ QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 
 QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 {
-	QScriptValue brickValue = engine->globalObject().property("brick");
+	const QScriptValue & brickValue = engine->globalObject().property("brick");
 	QObject *qObjBrick = brickValue.toQObject();
 	if (qObjBrick)
 	{
@@ -139,13 +139,8 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 				: QString("/dev/video0");
 			auto data = brick->getStillImage();
 			QList<int> result;
-			result.reserve(data.count());
-			std::for_each(data.begin(), data.end(),
-				[&result](char byteValue)
-				{
-					result.push_back(static_cast<unsigned int>(byteValue));
-				}
-			);
+			result.reserve(data.size());
+			std::copy(data.begin(), data.end(), std::back_inserter(result));
 			return engine->toScriptValue(result);
 		}
 		else
