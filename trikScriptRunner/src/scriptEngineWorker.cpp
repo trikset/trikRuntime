@@ -137,11 +137,15 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 		{
 			auto port = context->argumentCount() > 0 ? context->argument(0).toString()
 				: QString("/dev/video0");
+			QLOG_INFO() << "Calling getStillImage()";
 			auto data = brick->getStillImage();
 			QList<int> result;
 			result.reserve(data.size());
 			std::copy(data.begin(), data.end(), std::back_inserter(result));
-			return engine->toScriptValue(result);
+			QLOG_INFO() << "Constructed result of getStillImage()";
+			auto val = engine->toScriptValue(result);
+			QLOG_INFO() << "Result of getStillImage() converted to JS value";
+			return val;
 		}
 		else
 		{
