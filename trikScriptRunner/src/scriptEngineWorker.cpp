@@ -139,9 +139,32 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 				: QString("/dev/video0");
 			QLOG_INFO() << "Calling getStillImage()";
 			auto data = brick->getStillImage();
-			QList<int> result;
-			result.reserve(data.size());
-			std::copy(data.begin(), data.end(), std::back_inserter(result));
+			QList<int32_t> result;
+			result.reserve(data.size() / 3); //Repack RGB88 from 3 x uint8_t into int32_t
+			constexpr auto IMAGE_WIDTH = 320;
+			constexpr auto IMAGE_HEIGHT = 240;
+			for(int row = 0; row < IMAGE_HEIGHT; row += 2) {
+				for(int col = 0; col < IMAGE_WIDTH; col+=2) {
+					auto row1 = &data[(row*IMAGE_WIDTH+col)*3];
+					auto row2 = row1 + IMAGE_WIDTH*3;
+					auto r1 = row1[0];
+					auto g1 = row1[1];
+					auto b1 = row1[2];
+					auto r2 = row1[3];
+					auto g2 = row1[4];
+					auto b2 = row1[5];
+					auto r3 = row2[0];
+					auto g3 = row2[1];
+					auto b3 = row2[2];
+					auto r4 = row2[3];
+					auto g4 = row2[4];
+					auto b4 = row2[5];
+					result.push_back(((r1 + r2 + r3 + r4) << 14)
+						| ((g1 + g2 + g3 + g4) << 6)
+						| (( b1 + b2 +b3 +b4)>> 2));
+				}
+			}
+
 			QLOG_INFO() << "Constructed result of getStillImage()";
 			auto val = engine->toScriptValue(result);
 			QLOG_INFO() << "Result of getStillImage() converted to JS value";
