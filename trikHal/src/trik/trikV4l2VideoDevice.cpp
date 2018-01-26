@@ -89,7 +89,7 @@ void TrikV4l2VideoDevice::setFormat()
 	if (xioctl (VIDIOC_S_FMT, &mFormat, "VIDIOC_S_FMT in TrikV4l2VideoDevice::setFormat() failed")) {
 		return;
 	}
-	
+#if 0
 	for (size_t fmtIdx = 0; ; ++fmtIdx) {
 		struct v4l2_fmtdesc fmtDesc;
 		reset(fmtDesc);
@@ -106,9 +106,10 @@ void TrikV4l2VideoDevice::setFormat()
 			if (fmtDesc.flags & V4L2_FMT_FLAG_EMULATED) {
 				QLOG_WARN() << "V4L2 format " << fourcc << "  is emulated, performance will be degraded";
 				break;
-	  		}
+			}
 		}
 	}
+#endif
 }
 
 void TrikV4l2VideoDevice::closeDevice()
@@ -163,7 +164,7 @@ void TrikV4l2VideoDevice::initMMAP()
 	req.count = 1;
 	req.type = mFormat.type;
 	req.memory = V4L2_MEMORY_MMAP;
- 
+
 	if (xioctl(VIDIOC_REQBUFS, &req, "V4l2 VIDIOC_REQBUFS failed")){
 		return;
 	}
@@ -204,11 +205,11 @@ void TrikV4l2VideoDevice::startCapturing()
 		buf.type = mFormat.type;
 		buf.memory = V4L2_MEMORY_MMAP;
 		buf.index = i;
-	
+
 		if (xioctl(VIDIOC_QBUF, &buf, "V4l2 VIDIOC_QBUF failed")) {
-			continue;//???	
+			continue;//???
 		}
-	
+
 	}
 
 	v4l2_buf_type type {static_cast<v4l2_buf_type> (mFormat.type)};
@@ -233,19 +234,10 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	buf.type = mFormat.type;
 	buf.memory = V4L2_MEMORY_MMAP;
 
-	//int res = EAGAIN;
-	//for(int i = 0; EAGAIN == res && i < 5; res = xioctl(VIDIOC_DQBUF, &buf, "V4l2 VIDIOC_DQBUF failed"),++i) {
-	//	QLOG_INFO() << "V4l2: ReadFrame attempt";
-	//}
-
-	//if (res) {
-	//	return -1;
-	//}
-
 	xioctl(VIDIOC_DQBUF, &buf, "V4l2 VIDIOC_DQBUF failed");
 	QVector<uint8_t> res;
 
-	if (buf.index < buffers.size()) {
+	if (buf.index < static_cast<decltype(buf.index)>(buffers.size())) {
 		auto & b = buffers[buf.index];
 		if (buf.bytesused > 0) {
 			res.resize(buf.bytesused);
@@ -271,7 +263,7 @@ void TrikV4l2VideoDevice::stopCapturing()
 
 void TrikV4l2VideoDevice::freeMMAP()
 {
-	for(auto & b : buffers) { 
+	for(auto & b : buffers) {
 		if (b.start != MAP_FAILED && ::v4l2_munmap(b.start, b.length)) {
 			QLOG_ERROR() << "Free MMAP error in TrikV4l2VideoDevice::freeMMAP() for buffer";
 		}
