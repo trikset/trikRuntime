@@ -126,6 +126,19 @@ QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 	return engine->toScriptValue(result);
 }
 
+static inline int32_t getMedian(uint8_t &a, uint8_t &b, uint8_t &c, uint8_t &d)
+{
+	if (std::min(a, b) == b)
+		std::swap(a, b);
+	if (std::min(c, d) == d)
+		std::swap(c, d);
+	if (std::min(a, c) == c)
+		std::swap(a, c);
+	if (std::min(b, d) == d)
+		std::swap(b, d);
+	return static_cast<int32_t>((b + c) / 2);
+}
+
 QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 {
 	const QScriptValue & brickValue = engine->globalObject().property("brick");
@@ -160,9 +173,10 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 						auto r4 = row2[3];
 						auto g4 = row2[4];
 						auto b4 = row2[5];
-						result.push_back(((r1 + r2 + r3 + r4) << 14)
-							| ((g1 + g2 + g3 + g4) << 6)
-							| (( b1 + b2 +b3 +b4)>> 2));
+
+						result.push_back((getMedian(r1, r2, r3, r4) << 16)
+							| (getMedian(g1, g2, g3, g4) << 8)
+							| getMedian(b1, b2, b3, b4));
 					}
 				}
 			}
