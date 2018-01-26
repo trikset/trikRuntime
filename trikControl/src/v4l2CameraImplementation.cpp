@@ -1,3 +1,4 @@
+#include <QImage>
 #include "v4l2CameraImplementation.h"
 #include "QsLog.h"
 using namespace trikControl;
