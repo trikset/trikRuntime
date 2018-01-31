@@ -53,7 +53,7 @@ void TrikServer::startServer(const int &port)
 void TrikServer::sendMessage(const QString &message)
 {
 	for (Connection * const connection : mConnections.values()) {
-		connection->send(message.toUtf8());
+		QMetaObject::invokeMethod(connection, "send", Q_ARG(QByteArray, message.toUtf8()));
 	}
 }
 
