@@ -25,7 +25,9 @@ equal to its class name.
 	<initScript>
 		/etc/trik/init-ov7670-320x240.sh 0
 		echo 0 > /sys/class/misc/l3g42xxd/fs_selection
-		echo 2 > /sys/class/misc/l3g42xxd/odr_selection
+		echo 1 > /sys/class/misc/l3g42xxd/odr_selection
+		echo 5 > /sys/class/misc/mma845x/odr_selection
+		echo 0 > /sys/class/misc/mma845x/fs_selection
 
 		echo 1 > /sys/class/gpio/gpio62/value
 
