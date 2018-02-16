@@ -39,10 +39,15 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
-		refreshWidgets();
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() == Qt::Key_PowerOff && keyEvent->isAutoRepeat() && !mPowerButtonPressedTimer.isActive()) {
-			mPowerButtonPressedTimer.start(3000);
+		if (keyEvent->key() == Qt::Key_PowerOff) {
+			if (keyEvent->isAutoRepeat()) {
+				if (!mPowerButtonPressedTimer.isActive()) {
+					mPowerButtonPressedTimer.start(3000);
+				}
+			} else {
+				refreshWidgets(); // refresh display if not auto-repeat
+			}
 		}
 	} else if (event->type() == QEvent::KeyRelease) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
@@ -66,7 +71,9 @@ void TrikGuiApplication::refreshWidgets()
 void TrikGuiApplication::shutdown()
 {
 	if (!mIsShuttingDown) {
-		QProcess::startDetached("/bin/sh", {"-c", "halt"});
+		QString cmd = "'sync ; sync ; shutdown -h -P -t 2 now'";
+		QProcess::startDetached("/bin/sh", {"-c", cmd});
+		QApplication::exit(0);
 		mIsShuttingDown = true;
 	}
 }
