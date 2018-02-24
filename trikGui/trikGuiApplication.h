@@ -19,12 +19,7 @@
 
 #include <QtCore/qglobal.h>
 #include <QtCore/QTimer>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QApplication>
-#endif
+#include <QtWidgets/QApplication>
 
 namespace trikGui {
 
@@ -45,11 +40,15 @@ private slots:
 	/// all GUI to remove clutter on a screen.
 	void refreshWidgets();
 
+	void shutdownSoon();
 	void shutdown();
 
 private:
 	QTimer mPowerButtonPressedTimer;
+	QTimer mShutdownDelayTimer;
+	QString mSavedStyleSheet;
 	bool mIsShuttingDown = false;
+	bool mIsShutdownRequested = false;
 };
 
 }

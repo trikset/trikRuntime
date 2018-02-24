@@ -19,12 +19,7 @@
 
 #include <QtGui/QKeyEvent>
 #include <QtCore/QProcess>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
+#include <QtWidgets/QWidget>
 
 #include "backgroundWidget.h"
 
@@ -33,7 +28,10 @@ using namespace trikGui;
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
-	connect(&mPowerButtonPressedTimer, SIGNAL(timeout()), this, SLOT(shutdown()));
+	connect(&mPowerButtonPressedTimer, SIGNAL(timeout()), this, SLOT(shutdownSoon()));
+	connect(&mShutdownDelayTimer, SIGNAL(timeout()), this, SLOT(shutdown()));
+	mPowerButtonPressedTimer.setSingleShot(true);
+	mShutdownDelayTimer.setSingleShot(true);
 }
 
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
@@ -42,12 +40,15 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 		if (keyEvent->key() == Qt::Key_PowerOff) {
 			if (keyEvent->isAutoRepeat()) {
-				if (!mPowerButtonPressedTimer.isActive()) {
-					qDebug() << "Started because: " << receiver<< event;
-					mPowerButtonPressedTimer.start(2000);
-					//return true; // consumed
-				}
+				//if (!mPowerButtonPressedTimer.isActive()) {
+				//	qDebug() << "Started because: " << receiver<< event;
+				//	mPowerButtonPressedTimer.start(2000);
+				//}
 			} else {
+				if (!mPowerButtonPressedTimer.isActive()) {
+					mPowerButtonPressedTimer.start(2000);
+				}
+				mIsShutdownRequested = true;
 				refreshWidgets(); // refresh display if not auto-repeat
 			}
 		}
@@ -55,12 +56,12 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 		if (keyEvent->key() == Qt::Key_PowerOff) {
 			if (!keyEvent->isAutoRepeat()) {
-				if (mPowerButtonPressedTimer.isActive()) {
-					mPowerButtonPressedTimer.stop();
-					qDebug() << "Stopping because:" << receiver << event;
-				}
+				mIsShutdownRequested = false;
+//				if (mPowerButtonPressedTimer.isActive()) {
+//					mPowerButtonPressedTimer.stop();
+//					qDebug() << "Stopping because:" << receiver << event;
+//				}
 			} else {
-				//return true;
 			}
 		}
 	}
@@ -79,10 +80,21 @@ void TrikGuiApplication::refreshWidgets()
 
 void TrikGuiApplication::shutdown()
 {
-	if (!mIsShuttingDown) {
-		setStyleSheet(styleSheet() + " QWidget { background-color:red; } ");
-		QProcess::startDetached("/sbin/shutdown", {"-h", "-P", "-t", "2", "now" });
-		QApplication::exit(0);
-		mIsShuttingDown = true;
+	if(!mIsShutdownRequested) {
+	    setStyleSheet(mSavedStyleSheet);
+		return;
 	}
+
+	QProcess::startDetached("/sbin/shutdown", {"-h", "-P", "now" });
+	QCoreApplication::quit();
+}
+
+void TrikGuiApplication::shutdownSoon()
+{
+	if(mShutdownDelayTimer.isActive() || !mIsShutdownRequested) {
+		return;
+	}
+	mSavedStyleSheet = styleSheet();
+	setStyleSheet(mSavedStyleSheet + " QWidget { background-color:red; } ");
+	mShutdownDelayTimer.start(2000);
 }
