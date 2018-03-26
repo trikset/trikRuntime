@@ -145,8 +145,8 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 				: QString("/dev/video0");
 			QLOG_INFO() << "Calling getStillImage()";
 			auto data = brick->getStillImage();
-			QList<int32_t> result;
-			result.reserve(data.size() / 3); //Repack RGB88 from 3 x uint8_t into int32_t
+			QVariantList result;
+			result.reserve(data.size() / 3); //Repack RGB888 from 3 x uint8_t into int32_t
 			constexpr auto IMAGE_WIDTH = 320;
 			constexpr auto IMAGE_HEIGHT = 240;
 			if (data.size() >= IMAGE_WIDTH * IMAGE_HEIGHT * 3) {
@@ -166,6 +166,7 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 						auto r4 = row2[3];
 						auto g4 = row2[4];
 						auto b4 = row2[5];
+						// TODO It's a bad idea to choose median per color component, but it works fine now
 
 						result.push_back((getMedian(r1, r2, r3, r4) << 16)
 							| (getMedian(g1, g2, g3, g4) << 8)
