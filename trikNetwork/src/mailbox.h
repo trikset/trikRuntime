@@ -29,9 +29,6 @@ namespace trikNetwork {
 class MailboxServer;
 
 /// Implementation of mailboxes system.
-///
-/// @todo Make mailbox renew its IP information when robots connects to a new network.
-///       Workaround: reboot trikGui (or robot) after connectiong to a new network.
 class Mailbox : public MailboxInterface
 {
 	Q_OBJECT
@@ -75,6 +72,8 @@ public slots:
 	QString receive(bool wait = true) override;
 
 	int myHullNumber() const override;
+
+	void renewIp() override;
 
 signals:
 	/// Used to interrupt waiting for new message.

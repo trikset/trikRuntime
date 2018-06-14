@@ -53,6 +53,9 @@ public:
 	/// Returns our own IP address or empty QHostAddress if we have none.
 	QHostAddress myIp() const;
 
+	/// Tries to update our own IP address.
+	void renewIp();
+
 	/// Launches server, supposed to be called when mailbox server is already in a separate thread.
 	Q_INVOKABLE void start();
 
@@ -103,8 +106,10 @@ private:
 	void forEveryConnection(std::function<void(Connection *)> method, int hullNumber = -1);
 
 	int mHullNumber;
-	const QHostAddress mMyIp;
+	QHostAddress mMyIp;
+	QHostAddress mSavedIp;
 	const int mMyPort;
+	/// IP of leader robot to which we connected last
 	QHostAddress mServerIp;
 	int mServerPort;
 

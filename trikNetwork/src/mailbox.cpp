@@ -63,6 +63,11 @@ int Mailbox::myHullNumber() const
 	return mWorker->hullNumber();
 }
 
+void Mailbox::renewIp()
+{
+	mWorker->renewIp();
+}
+
 QHostAddress Mailbox::serverIp() const
 {
 	return mWorker->serverIp();

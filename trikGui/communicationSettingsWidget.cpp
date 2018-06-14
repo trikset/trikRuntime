@@ -121,7 +121,9 @@ void CommunicationSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 void CommunicationSettingsWidget::onConnectButtonClicked()
 {
+	mMailbox.renewIp();
 	QStringList result = mMailbox.myIp().toString().split('.');
+
 	if (result.size() != 4) {
 		/// @todo Properly notify user that the robot is not connected.
 		return;

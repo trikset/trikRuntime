@@ -81,7 +81,7 @@ void TrikGuiApplication::refreshWidgets()
 void TrikGuiApplication::shutdown()
 {
 	if(!mIsShutdownRequested) {
-	    setStyleSheet(mSavedStyleSheet);
+		setStyleSheet(mSavedStyleSheet);
 		return;
 	}
 
@@ -94,6 +94,7 @@ void TrikGuiApplication::shutdownSoon()
 	if(mShutdownDelayTimer.isActive() || !mIsShutdownRequested) {
 		return;
 	}
+
 	mSavedStyleSheet = styleSheet();
 	setStyleSheet(mSavedStyleSheet + " QWidget { background-color:red; } ");
 	mShutdownDelayTimer.start(2000);
