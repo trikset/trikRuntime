@@ -103,11 +103,19 @@ bool MotorsWidget::eventFilter(QObject *, QEvent *event)
 		switch (keyEvent->key()) {
 			case Qt::Key_Up: {
 				focusPreviousChild();
+				if (dynamic_cast<QScrollArea *>(focusWidget())) {
+					focusPreviousChild();
+				}
+
 				ensureFocusedWidgetVisible();
 				break;
 			}
 			case Qt::Key_Down: {
 				focusNextChild();
+				if (dynamic_cast<QScrollArea *>(focusWidget())) {
+					focusNextChild();
+				}
+
 				ensureFocusedWidgetVisible();
 				break;
 			}
