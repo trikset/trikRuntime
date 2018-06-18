@@ -119,6 +119,11 @@ void TrikServer::onConnectionClosed(Connection *connection)
 	QThread * const thread = mConnections.key(connection);
 
 	// Thread shall already be finished here.
+	if (thread->isRunning()) {
+		QLOG_ERROR() << "Thread shall already be finished here" << thread;
+		thread->wait();
+	}
+
 	connection->deleteLater();
 
 	mConnections.remove(thread);

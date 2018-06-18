@@ -40,7 +40,7 @@
 using namespace trikGui;
 using namespace trikWiFi;
 
-static const int connectionTimeout = 3000;
+static const int connectionTimeout = 5000;
 
 WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	: TrikGuiDialog(parent)

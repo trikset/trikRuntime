@@ -70,6 +70,9 @@ public slots:
 	/// Returns true if there are incoming messages. Returns immediately.
 	virtual bool hasMessages() = 0;
 
+	/// Tries to get renewed IP address.
+	virtual void renewIp() = 0;
+
 	/// Receives and returns one incoming message. If there is already a message in a queue, returns immediately,
 	/// otherwise blocks until a message is received. Note that if receive() and handler for newMessage() is used
 	/// simultaneously, message will be delivered twice --- first for receive(), then to handler (or handlers).

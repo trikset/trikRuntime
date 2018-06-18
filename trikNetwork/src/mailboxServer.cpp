@@ -32,11 +32,6 @@ MailboxServer::MailboxServer(int port)
 {
 	setObjectName("MailboxServer");
 	qRegisterMetaType<QHostAddress>("QHostAddress");
-
-	if (mMyIp.isNull()) {
-		QLOG_ERROR() << "Self IP address is invalid, connect to a network and restart trikGui";
-	}
-
 	loadSettings();
 }
 
@@ -75,11 +70,16 @@ QHostAddress MailboxServer::myIp() const
 	return mMyIp;
 }
 
+void MailboxServer::renewIp()
+{
+	mMyIp = determineMyIp();
+}
+
 void MailboxServer::start()
 {
 	startServer(mMyPort);
 
-	if (!mServerIp.isNull() && mServerIp != mMyIp) {
+	if (!mServerIp.isNull() && mServerIp != mMyIp && mMyIp == mSavedIp) {
 		connect(mServerIp, mServerPort);
 	}
 }
@@ -88,7 +88,6 @@ void MailboxServer::setHullNumber(int hullNumber)
 {
 	mHullNumber = hullNumber;
 	saveSettings();
-
 	forEveryConnection([this](Connection *connection) {
 		QMetaObject::invokeMethod(connection, "sendConnectionInfo"
 				, Q_ARG(const QHostAddress &, mMyIp)
@@ -368,6 +367,7 @@ void MailboxServer::loadSettings()
 	mHullNumber = settings.value("hullNumber", 0).toInt();
 	mServerIp = QHostAddress(settings.value("server", mMyIp.toString()).toString());
 	mServerPort = settings.value("serverPort", mMyPort).toInt();
+	mSavedIp = QHostAddress(settings.value("localIp", mMyIp.toString()).toString());
 	mAuxiliaryInformationLock.unlock();
 }
 
@@ -378,6 +378,7 @@ void MailboxServer::saveSettings()
 	settings.setValue("hullNumber", mHullNumber);
 	settings.setValue("server", mServerIp.toString());
 	settings.setValue("serverPort", mServerPort);
+	settings.setValue("localIp", mMyIp.toString());
 	mAuxiliaryInformationLock.unlock();
 }
 
