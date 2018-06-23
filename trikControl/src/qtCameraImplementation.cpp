@@ -38,7 +38,8 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 	const auto & formats = imageCapture->supportedBufferFormats();
 	QLOG_INFO() << "Supported buffer formats: " << formats;
 
-	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged, [this, &imageCapture, camera=mCamera.data()](bool ready)
+	auto camera = mCamera.data();
+	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged, [this, &imageCapture, camera](bool ready)
 		{
 			if (ready) {
 				camera->searchAndLock();
