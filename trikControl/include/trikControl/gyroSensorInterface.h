@@ -43,6 +43,10 @@ public slots:
 	/// @param msec - duration of calibration in milliseconds
 	virtual void calibrate(int msec) = 0;
 
+	virtual QVector<int> getCalibrationValues() = 0;
+
+	virtual void setCalibrationValues(QVector<int> values) = 0;
+
 	/// Checks if bias is counted or not.
 	virtual bool isCalibrated() const = 0;
 
