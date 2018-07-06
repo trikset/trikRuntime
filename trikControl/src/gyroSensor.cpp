@@ -105,14 +105,14 @@ void GyroSensor::calibrate(int msec)
 	mIsCalibrated = false;
 }
 
-QVector<int> GyroSensor::getCalibrationValues()
+const QVector<int> &GyroSensor::getCalibrationValues()
 {
 	return mCalibrationValues;
 }
 
-void GyroSensor::setCalibrationValues(QVector<int> values)
+void GyroSensor::setCalibrationValues(const QVector<int> &values)
 {
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < mBias.size(); i++) {
 		mBias[i] = values[i];
 	}
 
@@ -151,9 +151,9 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mLastUpdate = t;
 	} else {
 
-		const auto r0 = ((mRawData[0]<<GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
-		const auto r1 = ((mRawData[1]<<GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
-		const auto r2 = ((mRawData[2]<<GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
+		const auto r0 = ((mRawData[0] << GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
+		const auto r1 = ((mRawData[1] << GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
+		const auto r2 = ((mRawData[2] << GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
 		mResult[0] = r0;
 		mResult[1] = r1;
 		mResult[2] = r2;
@@ -203,7 +203,7 @@ void GyroSensor::countCalibrationParameters()
 			, this, SLOT(sumGyroscope(QVector<int>,trikKernel::TimeVal)));
 
 	if (mGyroCounter != 0) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < mGyroSum.size(); i++) {
 			mCalibrationValues[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
 			mGyroSum[i] = 0;
 		}
@@ -214,7 +214,7 @@ void GyroSensor::countCalibrationParameters()
 			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
 
 	if (mAccelerometerCounter != 0) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < mAccelerometerSum.size(); i++) {
 			mCalibrationValues[i + 3] = mAccelerometerSum[i] / mAccelerometerCounter;
 			mAccelerometerSum[i] = 0;
 		}
