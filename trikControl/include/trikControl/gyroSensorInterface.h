@@ -43,6 +43,15 @@ public slots:
 	/// @param msec - duration of calibration in milliseconds
 	virtual void calibrate(int msec) = 0;
 
+	/// Returns vector with calibration values, which consists of 6 elements:
+	/// 0-2 -- gyroscope bias, 3-5 -- average accelerometer values.
+	/// Updated values is available only after calibration is done.
+	virtual const QVector<int> & getCalibrationValues() = 0;
+
+	/// Sets vector with calibration values to gyroscope sensor.
+	/// It consists of 6 elements: 0-2 -- gyroscope bias, 3-5 -- average accelerometer values at rest.
+	virtual void setCalibrationValues(const QVector<int> &values) = 0;
+
 	/// Checks if bias is counted or not.
 	virtual bool isCalibrated() const = 0;
 

@@ -59,6 +59,10 @@ public slots:
 
 	void calibrate(int msec) override;
 
+	const QVector<int> &getCalibrationValues() override;
+
+	void setCalibrationValues(const QVector<int> &values) override;
+
 	bool isCalibrated() const override;
 
 private slots:
@@ -67,7 +71,7 @@ private slots:
 	void countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t);
 
 	/// Calculates average mean of bias and reset other tilt parameters.
-	void initParameters();
+	void countCalibrationParameters();
 
 	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &);
 
@@ -91,6 +95,8 @@ private:
 
 	/// Vector of average means of bias (3-axis).
 	QVector<int> mBias;
+
+	QVector<int> mCalibrationValues;
 
 	/// Vector for collecting bias sums.
 	QVector<int> mGyroSum;

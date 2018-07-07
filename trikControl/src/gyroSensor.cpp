@@ -43,11 +43,11 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 			, hardwareAbstraction, mWorkerThread));
 
 	mBias.resize(3);
+	mCalibrationValues.resize(6);
 	mGyroSum.resize(3);
 	mResult.resize(7);
 	mRawData.resize(4);
 
-	mAccelerometerVector.resize(3);
 	mAccelerometerSum.resize(3);
 	mAccelerometerCounter = 0;
 
@@ -60,7 +60,7 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
 				, this, SLOT(countTilt(QVector<int>,trikKernel::TimeVal)));
 
-		connect(&mCalibrationTimer, SIGNAL(timeout()), this, SLOT(initParameters()));
+		connect(&mCalibrationTimer, SIGNAL(timeout()), this, SLOT(countCalibrationParameters()));
 
 		QLOG_INFO() << "Starting VectorSensor worker thread" << &mWorkerThread;
 
@@ -105,6 +105,34 @@ void GyroSensor::calibrate(int msec)
 	mIsCalibrated = false;
 }
 
+const QVector<int> &GyroSensor::getCalibrationValues()
+{
+	return mCalibrationValues;
+}
+
+void GyroSensor::setCalibrationValues(const QVector<int> &values)
+{
+	for (int i = 0; i < mBias.size(); i++) {
+		mBias[i] = values[i];
+	}
+
+	QLOG_INFO() << "Gyro bias(raw): " << mBias;
+
+	QVector3D acc(values[3], values[4], values[5]);
+	acc.normalize();
+	QLOG_INFO() << "Calibrated accelerometer: " << acc;
+
+	QVector3D gravity(0, 0, 1);
+	QVector3D delta = gravity - acc;
+
+	mAxesSwapped = (delta.length() < 0.2);
+	float dot = QVector3D::dotProduct(acc, gravity);
+	QVector3D cross = QVector3D::crossProduct(acc, gravity);
+
+	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / PI);
+	QLOG_INFO() << "Calibrated orientation sensor: Q = " << mQ;
+}
+
 bool GyroSensor::isCalibrated() const
 {
 	return mIsCalibrated;
@@ -123,9 +151,9 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mLastUpdate = t;
 	} else {
 
-		const auto r0 = ((mRawData[0]<<GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
-		const auto r1 = ((mRawData[1]<<GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
-		const auto r2 = ((mRawData[2]<<GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
+		const auto r0 = ((mRawData[0] << GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
+		const auto r1 = ((mRawData[1] << GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
+		const auto r2 = ((mRawData[2] << GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
 		mResult[0] = r0;
 		mResult[1] = r1;
 		mResult[2] = r2;
@@ -169,14 +197,14 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 	}
 }
 
-void GyroSensor::initParameters()
+void GyroSensor::countCalibrationParameters()
 {
 	disconnect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
 			, this, SLOT(sumGyroscope(QVector<int>,trikKernel::TimeVal)));
 
 	if (mGyroCounter != 0) {
-		for (int i = 0; i < 3; i++) {
-			mBias[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
+		for (int i = 0; i < mGyroSum.size(); i++) {
+			mCalibrationValues[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
 			mGyroSum[i] = 0;
 		}
 		mGyroCounter = 0;
@@ -186,28 +214,14 @@ void GyroSensor::initParameters()
 			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
 
 	if (mAccelerometerCounter != 0) {
-		for (int i = 0; i < 3; i++) {
-			mAccelerometerVector[i] = mAccelerometerSum[i] / mAccelerometerCounter;
+		for (int i = 0; i < mAccelerometerSum.size(); i++) {
+			mCalibrationValues[i + 3] = mAccelerometerSum[i] / mAccelerometerCounter;
 			mAccelerometerSum[i] = 0;
 		}
 		mAccelerometerCounter = 0;
 	}
 
-	QLOG_INFO() << "Gyro bias(raw): " << mBias;
-
-	QVector3D acc(mAccelerometerVector[0], mAccelerometerVector[1], mAccelerometerVector[2]);
-	acc.normalize();
-	QLOG_INFO() << "Calibrated accelerometer: " << acc;
-
-	QVector3D gravity(0, 0, 1);
-	QVector3D delta = gravity - acc;
-
-	mAxesSwapped = (delta.length() < 0.2);
-	float dot = QVector3D::dotProduct(acc, gravity);
-	QVector3D cross = QVector3D::crossProduct(acc, gravity);
-
-	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / PI);
-	QLOG_INFO() << "Calibrated orientation sensor: Q = " << mQ;
+	setCalibrationValues(mCalibrationValues);
 
 	mIsCalibrated = true;
 }
