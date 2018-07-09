@@ -100,7 +100,8 @@ HEADERS += \
 	$$PWD/src/shapes/shape.h \
 	$$PWD/src/gyroSensor.h \
         $$PWD/src/qtCameraImplementation.h \
-        $$PWD/src/v4l2CameraImplementation.h
+        $$PWD/src/v4l2CameraImplementation.h \
+        $$PWD/src/imitationCameraImplementation.h
 #	$$PWD/src/headingSensor.h \
 
 SOURCES += \
@@ -154,7 +155,9 @@ SOURCES += \
 	$$PWD/src/gyroSensor.cpp \
         $$PWD/src/cameraDevice.cpp \
         $$PWD/src/qtCameraImplementation.cpp \
-        $$PWD/src/v4l2CameraImplementation.cpp
+        $$PWD/src/v4l2CameraImplementation.cpp \
+        $$PWD/src/imitationCameraImplementation.cpp \
+        $$PWD/src/cameraImplementationInterface.cpp
 #	$$PWD/src/headingSensor.cpp \
 
 

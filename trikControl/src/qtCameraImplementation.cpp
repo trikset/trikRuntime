@@ -51,25 +51,10 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 
 	QVector<uint8_t> imageByteVector;
 
-	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured, [&imageByteVector] (int, const QImage &imgOrig)
-		{
-			// Some possible formats:
-			// QImage::Format_RGB32
-			// QImage::Format_RGB888
-			// QImage::Format_RGB16
-			// QImage::Format_Grayscale8
-			// QImage::Format_Mono
-			constexpr auto DESIRED_FORMAT = QImage::Format_RGB888;
-
-			constexpr auto SIZE_X = 320;
-			constexpr auto SIZE_Y = 240;
-
-			const QImage &img = imgOrig.format() == DESIRED_FORMAT ? imgOrig : imgOrig.convertToFormat(DESIRED_FORMAT);
-			const QImage &scaledImg = img.height() == SIZE_X && img.width() == SIZE_Y ? img : img.scaled(SIZE_X, SIZE_Y); //, Qt::KeepAspectRatioByExpanding
-			auto cb = scaledImg.constBits();
-			imageByteVector.resize(scaledImg.byteCount());
-			std::copy(cb, cb + scaledImg.byteCount(), imageByteVector.begin());
-		}
+	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured
+			, [this, &imageByteVector] (int, const QImage &imgOrig) {
+				imageByteVector = qImageToQVector(imgOrig);
+			}
 	);
 
 	mCamera->setCaptureMode(QCamera::CaptureStillImage);
