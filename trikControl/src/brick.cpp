@@ -395,10 +395,10 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 
 QVector<uint8_t> Brick::getStillImage()
 {
-    if (!mCamera)
-        return QVector<uint8_t>();
-    else
-        return mCamera->getPhoto();
+	if (!mCamera)
+		return QVector<uint8_t>();
+	else
+		return mCamera->getPhoto();
 }
 
 
@@ -550,10 +550,12 @@ void Brick::createDevice(const QString &port)
 			connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
-        } else if (deviceClass == "camera") {
-			QScopedPointer<CameraDeviceInterface> tmp (new CameraDevice(mMediaPath, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "camera") {
+			QScopedPointer<CameraDeviceInterface> tmp (
+						new CameraDevice(mMediaPath, mConfigurer, *mHardwareAbstraction)
+					);
 			mCamera.swap(tmp);
-        }
+		}
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();
 		QLOG_ERROR() << "Ignoring device";

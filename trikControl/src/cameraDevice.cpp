@@ -84,6 +84,6 @@ QVector<uint8_t> CameraDevice::getPhoto() {
 
 
 CameraDevice::Status CameraDevice::status() const {
-    return CameraDevice::Status::ready;
+	return CameraDevice::Status::ready;
 }
 }

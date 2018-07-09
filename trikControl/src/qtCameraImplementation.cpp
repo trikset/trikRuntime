@@ -1,3 +1,19 @@
+/* Copyright 2018 Ivan Tyulyandin and CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#include "qtCameraImplementation.h"
+
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTimer>
 #include <QtCore/QEventLoop>
@@ -5,7 +21,6 @@
 #include <QtMultimedia/QCameraImageCapture>
 #include <QtMultimedia/QCameraInfo>
 
-#include "qtCameraImplementation.h"
 #include <QsLog.h>
 
 using namespace trikControl;
@@ -22,7 +37,8 @@ QtCameraImplementation::QtCameraImplementation(const QString & port)
 	}
 
 	if (!mCamera) {
-		QLOG_ERROR() << "Failed to initialize camera for " << port << " from available cameras" << QCameraInfo::availableCameras();
+		QLOG_ERROR() << "Failed to initialize camera for " << port
+				<< " from available cameras" << QCameraInfo::availableCameras();
 	}
 }
 
@@ -39,8 +55,8 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 	QLOG_INFO() << "Supported buffer formats: " << formats;
 
 	auto camera = mCamera.data();
-	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged, [this, &imageCapture, camera](bool ready)
-		{
+	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged
+		, [this, &imageCapture, camera](bool ready) {
 			if (ready) {
 				camera->searchAndLock();
 				imageCapture->capture(getTempDir() + "/photo.jpg");
@@ -64,10 +80,12 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 	watchdog.setInterval(1000);
 	watchdog.setSingleShot(true);
 	QObject::connect(&watchdog, SIGNAL(timeout()), &eventLoop, SLOT(quit()));
-	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageAvailable, [&eventLoop, &imageByteVector](int, const QVideoFrame &) {
+	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageAvailable
+			, [&eventLoop](int, const QVideoFrame &) {
 				eventLoop.quit();
 			}
 		);
+
 	eventLoop.exec();
 	watchdog.stop();
 

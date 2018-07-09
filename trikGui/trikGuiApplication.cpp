@@ -40,10 +40,10 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
 		if (keyEvent->key() == Qt::Key_PowerOff) {
 			if (keyEvent->isAutoRepeat()) {
-				//if (!mPowerButtonPressedTimer.isActive()) {
+				//	if (!mPowerButtonPressedTimer.isActive()) {
 				//	qDebug() << "Started because: " << receiver<< event;
 				//	mPowerButtonPressedTimer.start(2000);
-				//}
+				//	}
 			} else {
 				if (!mPowerButtonPressedTimer.isActive()) {
 					mPowerButtonPressedTimer.start(2000);
