@@ -74,57 +74,17 @@ OutputDeviceFileInterface *TrikHardwareAbstraction::createOutputDeviceFile(const
 	return new TrikOutputDeviceFile(fileName);
 }
 
-inline unsigned clip255(int x) { return x >= 255 ? 255 : (x <= 0)? 0 : x; }
-
 QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &port, const QString &pathToPic) const
 {
 	Q_UNUSED(pathToPic);
-	TrikV4l2VideoDevice device(port);
+	static TrikV4l2VideoDevice device(port); // need only one camera device
 
 	QLOG_INFO() << "Start open v4l2 device" << port;
 
 	const QVector<uint8_t> & shot =  device.makeShot();
 
-	QLOG_INFO() << "End capturing v4l2 from port" << port << " with " << shot.size() << "bytes";
-
-	QVector<uint8_t> result(shot.size()/4*2*3); // YUV422 to RGB888
-	constexpr auto IMAGE_WIDTH = 320;
-	const auto IMAGE_HEIGHT = shot.length() / IMAGE_WIDTH / 2;
-	const auto Y = &shot[0];
-	const auto U = &shot[IMAGE_WIDTH*IMAGE_HEIGHT];
-	const auto V = &shot[3*IMAGE_WIDTH*IMAGE_HEIGHT/2];
-	for (auto row = 0; row < IMAGE_HEIGHT; ++row) {
-		for (auto col = 0; col < IMAGE_WIDTH; col+=2) {
-			auto startIndex = row * IMAGE_WIDTH + col;
-			auto y1 = Y[startIndex] - 16;
-			auto y2 = Y[startIndex+1] - 16;
-			auto u  = U[startIndex>>1] - 128;
-			auto v  = V[startIndex>>1] - 128;
-			auto _298y1 = 298 * y1;
-			auto _298y2 = 298 * y2;
-			auto _409v  = 409 * v;
-			auto _100u  = -100 * u;
-			auto _516u  = 516 * u;
-			auto _208v  = -208 * v;
-			auto r1 = clip255 ((_298y1 + _409v + 128) >> 8);
-			auto g1 = clip255 ((_298y1 + _100u + _208v + 128) >> 8);
-			auto b1 = clip255 ((_298y1 + _516u + 128) >> 8);
-			auto r2 = clip255 ((_298y2 + _409v + 128) >> 8);
-			auto g2 = clip255 ((_298y2 + _100u + _208v + 128) >> 8);
-			auto b2 = clip255 ((_298y2 + _516u + 128) >> 8);
-
-
-			auto rgb = &result[startIndex*3];
-			rgb[0] = r1;
-			rgb[1] = g1;
-			rgb[2] = b1;
-			rgb[3] = r2;
-			rgb[4] = g2;
-			rgb[5] = b2;
-		}
-	}
-	QLOG_INFO() << "Captrured RGB888 " << result.size() << "bytes image";
-	return result;
+	QLOG_INFO() << "Captrured RGB888 " << shot.size() << "bytes image";
+	return shot;
 }
 
 

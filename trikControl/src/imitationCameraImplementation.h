@@ -14,33 +14,34 @@
 
 #pragma once
 
+#include <QtCore/QVector>
+#include <QtCore/QStringList>
+#include <QtCore/QFileInfoList>
+
 #include "cameraImplementationInterface.h"
-#include <trikHal/hardwareAbstractionInterface.h>
+
 #include "declSpec.h"
-
-
-namespace trikHal {
-class HardwareAbstractionInterface;
-}
 
 namespace trikControl {
 
-/// Camera implementation using v4l2
-class V4l2CameraImplementation : public CameraImplementationInterface
+/// Class for camera imitation
+class TRIKCONTROL_EXPORT ImitationCameraImplementation : public CameraImplementationInterface
 {
 public:
 
-	/// V4l2 camera constructor
-	/// @param port - name of device, i.e. "/dev/video0"
-	/// @param hardwareAbstraction - realization of HAL
-	V4l2CameraImplementation(const QString &port, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	/// Camera imitation constructor
+	/// @param filter - list of filters to select photo from tempDir
+	/// @param path - directory with prepared images
+	ImitationCameraImplementation(const QStringList &filter, const QString &path);
 
 	QVector<uint8_t> getPhoto() override;
 
-	~V4l2CameraImplementation() override = default;
+	~ImitationCameraImplementation() override = default;
+
 private:
-	trikHal::HardwareAbstractionInterface & mHal;
-	QString mPort;
+	QStringList filters;
+	QFileInfoList filesList;
+	int cur {-1};
 };
 
 }
