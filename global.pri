@@ -68,9 +68,8 @@ CONFIG(debug, debug | release) {
 
 #CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
 #!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<5\\.[0-9]\\+\\.\' ){ CONFIG += gcc5 }
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \'\\<4\\.[0-9]\\+\\.\' ){ CONFIG += gcc4 }
-
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<5\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc5 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<4\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc4 }
 
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
@@ -191,6 +190,11 @@ GLOBAL_PWD = $$PWD
 
 # Useful function to copy additional files to destination,
 # from http://stackoverflow.com/questions/3984104/qmake-how-to-copy-a-file-to-the-output
+defineTest(isDir) {
+	exists($$system_path($$1/*)):return(true)
+	return(false)
+}
+
 defineTest(copyToDestdir) {
 	FILES = $$1
 	NOW = $$2
@@ -198,40 +202,37 @@ defineTest(copyToDestdir) {
 	for(FILE, FILES) {
 		DESTDIR_SUFFIX =
 		AFTER_SLASH = $$section(FILE, "/", -1, -1)
-		isEmpty(QMAKE_SH) {
 		# This ugly code is needed because xcopy requires to add source directory name to target directory name when copying directories
-			win32 {
-				BASE_NAME = $$section(FILE, "/", -2, -2)
-				equals(AFTER_SLASH, ""):DESTDIR_SUFFIX = /$$BASE_NAME
-
-				FILE ~= s,/$,,g
-
-				FILE ~= s,/,\\,g
+		win32 {
+			#FILE = $$system_path($$FILE)
+			isDir($$FILE) {
+				ABSOLUTE_PATH = $$absolute_path($$FILE, $$GLOBAL_PWD)
+				BASE_NAME = $$section(ABSOLUTE_PATH, "/", -1, -1)
+				DESTDIR_SUFFIX = /$$BASE_NAME
 			}
-			DDIR = $$DESTDIR$$DESTDIR_SUFFIX/$$3
-			win32:DDIR ~= s,/,\\,g
-		} else {
-			DDIR = $$DESTDIR$$DESTDIR_SUFFIX/$$3
 		}
+		DDIR = $$system_path($$DESTDIR$$3$$DESTDIR_SUFFIX)
 
+		mkpath($$DDIR)
+		win32:isDir($$FILE): FILE = $$FILE/*
+		!win32:equals(AFTER_SLASH, ""):FILE = $$FILE'.'
+		FILE = $$system_path($$FILE)
+
+		message("Attempt to copy $$quote($$FILE) to $$quote($$DDIR)")
 		isEmpty(NOW) {
-			# In case this is directory add "*" to copy contents of a directory instead of directory itself under linux.
-			!win32:equals(AFTER_SLASH, ""):FILE = $$FILE'.'
-			QMAKE_POST_LINK += $(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+			win32:QMAKE_POST_LINK += $$quote("xcopy /l /s /e /y /i") $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
+			!win32:QMAKE_POST_LINK += "$(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)"
 		} else {
 			win32 {
-				system("cmd /C "md $$quote($$DDIR)"")
-				system("cmd /C "xcopy $$quote($$FILE) $$quote($$DDIR) /s /e /q /y /i"")
+				system("cmd.exe /C \"xcopy $$quote($$FILE) $$quote($$DDIR) /f /l /s /e /y /i\"")
 			}
 
 			unix:!macx {
-				system("mkdir -p $$DDIR")
-				system("cp -r -f $$FILE $$DDIR")
+				system("cp -r -f $$FILE $$DDIR/")
 			}
 
 			macx {
-				system("mkdir -p $$DDIR")
-				system("cp -af $$FILE $$DDIR/")
+				system("rsync -avz $$FILE $$DDIR/")
 			}
 		}
 	}
