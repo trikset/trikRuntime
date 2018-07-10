@@ -220,8 +220,8 @@ defineTest(copyToDestdir) {
 			QMAKE_POST_LINK += $(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
 		} else {
 			win32 {
-				system("cmd /C "md $$quote($$DDIR)"")
-				system("cmd /C "xcopy $$quote($$FILE) $$quote($$DDIR) /s /e /q /y /i"")
+				system("cmd /C \\\"md $$quote($$DDIR)\\\"")
+				system("cmd /C \\\"xcopy $$quote($$FILE) $$quote($$DDIR) /s /e /q /y /i\\\"")
 			}
 
 			unix:!macx {
