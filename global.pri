@@ -209,7 +209,7 @@ defineTest(copyToDestdir) {
 			FILE = $$FILE/*
 		}
 
-		DDIR = $$system_path($$DESTDIR$$3$$DESTDIR_SUFFIX)
+		DDIR = $$system_path($$DESTDIR/$$3$$DESTDIR_SUFFIX)
 		FILE = $$system_path($$FILE)
 
 		mkpath($$DDIR)
