@@ -46,7 +46,7 @@ public slots:
 	/// Returns vector with calibration values, which consists of 6 elements:
 	/// 0-2 -- gyroscope bias, 3-5 -- average accelerometer values.
 	/// Updated values is available only after calibration is done.
-	virtual const QVector<int> & getCalibrationValues() = 0;
+	virtual QVector<int> getCalibrationValues() = 0;
 
 	/// Sets vector with calibration values to gyroscope sensor.
 	/// It consists of 6 elements: 0-2 -- gyroscope bias, 3-5 -- average accelerometer values at rest.
