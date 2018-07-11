@@ -59,7 +59,7 @@ public slots:
 
 	void calibrate(int msec) override;
 
-	const QVector<int> &getCalibrationValues() override;
+	QVector<int> getCalibrationValues() override;
 
 	void setCalibrationValues(const QVector<int> &values) override;
 
