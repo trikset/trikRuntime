@@ -202,37 +202,30 @@ defineTest(copyToDestdir) {
 	for(FILE, FILES) {
 		DESTDIR_SUFFIX =
 		AFTER_SLASH = $$section(FILE, "/", -1, -1)
-		# This ugly code is needed because xcopy requires to add source directory name to target directory name when copying directories
-		win32 {
-			#FILE = $$system_path($$FILE)
-			isDir($$FILE) {
-				ABSOLUTE_PATH = $$absolute_path($$FILE, $$GLOBAL_PWD)
-				BASE_NAME = $$section(ABSOLUTE_PATH, "/", -1, -1)
-				DESTDIR_SUFFIX = /$$BASE_NAME
-			}
+		isDir($$FILE) {
+			ABSOLUTE_PATH = $$absolute_path($$FILE, $$GLOBAL_PWD)
+			BASE_NAME = $$section(ABSOLUTE_PATH, "/", -1, -1)
+			DESTDIR_SUFFIX = /$$BASE_NAME
+			FILE = $$FILE/*
 		}
-		DDIR = $$system_path($$DESTDIR$$3$$DESTDIR_SUFFIX)
 
-		mkpath($$DDIR)
-		win32:isDir($$FILE): FILE = $$FILE/*
-		!win32:equals(AFTER_SLASH, ""):FILE = $$FILE'.'
+		DDIR = $$system_path($$DESTDIR$$3$$DESTDIR_SUFFIX)
 		FILE = $$system_path($$FILE)
 
-		message("Attempt to copy $$quote($$FILE) to $$quote($$DDIR)")
+		mkpath($$DDIR)
+
 		isEmpty(NOW) {
-			win32:QMAKE_POST_LINK += $$quote("xcopy /l /s /e /y /i") $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
-			!win32:QMAKE_POST_LINK += "$(COPY_DIR) $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)"
+			win32 {
+				QMAKE_POST_LINK += $$quote("xcopy /l /s /e /y /i")
+			} else {
+				QMAKE_POST_LINK += $(COPY_DIR)
+			}
+			QMAKE_POST_LINK +=  $$quote($$FILE) $$quote($$DDIR) $$escape_expand(\\n\\t)
 		} else {
 			win32 {
 				system("cmd.exe /C \"xcopy $$quote($$FILE) $$quote($$DDIR) /f /l /s /e /y /i\"")
-			}
-
-			unix:!macx {
-				system("cp -r -f $$FILE $$DDIR/")
-			}
-
-			macx {
-				system("rsync -avz $$FILE $$DDIR/")
+			} else {
+				system("rsync -avz $$quote($$FILE) $$quote($$DDIR/)")
 			}
 		}
 	}
