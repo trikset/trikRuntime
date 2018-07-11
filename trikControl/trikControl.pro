@@ -168,8 +168,6 @@ CONFIGS += \
 	$$PWD/system-config.xml \
 	$$PWD/model-config-v6.xml \
 	$$PWD/system-config-v6.xml \
-	$$PWD/model-config-usb.xml \
-	$$PWD/system-config-usb.xml \
 
 OTHER_FILES += \
 	$$CONFIGS \
