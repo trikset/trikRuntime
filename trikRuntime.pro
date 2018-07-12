@@ -44,12 +44,12 @@ trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog trikKernel
 
 OTHER_FILES += \
-	$$PWD/changelog.txt \
-	$$PWD/asan.supp \
+	$$PWD/resources/changelog.txt \
+	$$PWD/resources/asan.supp \
 	$$PWD/.travis.yml \
 	$$PWD/docker/Dockerfile \
 
 include($$PWD/global.pri)
 
-copyToDestdir($$PWD/changelog.txt, now)
-copyToDestdir($$PWD/asan.supp, now)
+copyToDestdir($$PWD/resources/changelog.txt, now)
+copyToDestdir($$PWD/resources/asan.supp, now)
