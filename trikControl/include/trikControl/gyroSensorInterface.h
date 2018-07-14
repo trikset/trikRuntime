@@ -35,7 +35,7 @@ class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
 signals:
 
 	/// Emites when average mean of bias is counted.
-	void biasInited();
+	void calibrationFinished();
 
 public slots:
 	/// Calibrates bias value of sensor, sets new bias value, resets other values include tilt values.

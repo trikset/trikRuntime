@@ -224,7 +224,7 @@ void GyroSensor::countCalibrationParameters()
 	setCalibrationValues(mCalibrationValues);
 
 	mIsCalibrated = true;
-	emit biasInited();
+	emit calibrationFinished();
 }
 
 void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &)
