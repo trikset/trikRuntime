@@ -237,7 +237,7 @@ void Brick::playTone(int hzFreq, int msDuration)
 
 void Brick::say(const QString &text)
 {
-	QStringList args{"-c", "espeak -v russian_test -s 100 \"" + text + "\""};
+	QStringList args{"-c", "exec /etc/trik/say  \"" + text + "\""};
 	mHardwareAbstraction->systemConsole().startProcess("sh", args);
 }
 
