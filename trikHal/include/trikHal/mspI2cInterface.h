@@ -22,7 +22,7 @@ namespace trikHal {
 class MspI2cInterface
 {
 public:
-	virtual ~MspI2cInterface() {}
+    virtual ~MspI2cInterface() {}
 
 	/// Send data to a device.
 	virtual void send(const QByteArray &data) = 0;

@@ -53,6 +53,7 @@
 #include "vectorSensor.h"
 #include "cameraDeviceInterface.h"
 #include "cameraDevice.h"
+#include "i2cdevice.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -393,6 +394,11 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
 
+I2cDeviceInterface *Brick::i2c(int bus, int adress)
+{
+    return new I2cDevice(bus, adress, *mMspCommunicator);
+}
+
 QVector<uint8_t> Brick::getStillImage()
 {
 	if (!mCamera)
@@ -516,7 +522,7 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "pwmCapture") {
 			mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "powerMotor") {
-			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
+            mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
 		} else if (deviceClass == "analogSensor") {
 			mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
 		} else if (deviceClass == "digitalSensor") {

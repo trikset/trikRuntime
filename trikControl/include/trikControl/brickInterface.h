@@ -35,6 +35,8 @@
 #include "soundSensorInterface.h"
 #include "vectorSensorInterface.h"
 #include "cameraDeviceInterface.h"
+#include "i2cdeviceinterface.h"
+//#include "../../trikHal/include/trikHal/mspI2cInterface.h"
 
 #include "declSpec.h"
 
@@ -113,6 +115,9 @@ public slots:
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
 	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
+
+    /// ...
+    virtual I2cDeviceInterface *i2c(int bus, int adress) = 0;
 
 	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
 	virtual QVector<uint8_t> getStillImage() = 0;
