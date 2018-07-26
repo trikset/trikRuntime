@@ -19,12 +19,21 @@
 namespace trikHal {
 namespace trik {
 
+namespace trikKernel {
+class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+}
+
 /// Real implementation of I2C bus communicator.
-class TrikMspI2c : public MspI2cInterface
+class MspI2cDevice : public MspI2cInterface
 {
 public:
-	TrikMspI2c() = default;
-	~TrikMspI2c() override;
+	/// Constructor
+	MspI2cDevice() = default;
+	~MspI2cDevice() override;
 
 	void send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
@@ -38,3 +47,4 @@ private:
 
 }
 }
+

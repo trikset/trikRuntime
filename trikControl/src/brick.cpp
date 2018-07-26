@@ -53,6 +53,9 @@
 #include "vectorSensor.h"
 #include "cameraDeviceInterface.h"
 #include "cameraDevice.h"
+#include "i2cDevice.h"
+#include "mspI2cCommunicator.h"
+#include "i2cBusCommunicator.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -145,6 +148,7 @@ Brick::~Brick()
 	qDeleteAll(mColorSensors);
 	qDeleteAll(mFifos);
 	qDeleteAll(mEventDevices);
+	qDeleteAll(mI2cDevices);
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
 	mMspCommunicator.reset();
@@ -391,6 +395,21 @@ ColorSensorInterface *Brick::colorSensor(const QString &port)
 ObjectSensorInterface *Brick::objectSensor(const QString &port)
 {
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
+}
+
+I2cDeviceInterface *Brick::i2c(int bus, int adress)
+{
+	uint8_t _bus = bus & 0xFF;
+	uint8_t _adress = adress & 0xFF;
+	uint16_t mhash = (_bus << 8) | _adress;
+	if (mI2cDevices.contains(mhash)){
+		return mI2cDevices[mhash];
+	} else {
+		I2cBusCommunicator *BusComm = new I2cBusCommunicator(mHardwareAbstraction->mspI2c(), _bus, _adress);
+		I2cDevice *i2cDevice = new I2cDevice(_bus, _adress, *BusComm);
+		mI2cDevices.insert(mhash, i2cDevice);
+		return i2cDevice;
+	}
 }
 
 QVector<uint8_t> Brick::getStillImage()
