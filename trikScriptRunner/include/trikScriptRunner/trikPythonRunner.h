@@ -46,6 +46,7 @@ public:
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
+	QStringList knownMethodNames() const override;
 
 public slots:
 	void run(const QString &script, const QString &fileName = "") override;

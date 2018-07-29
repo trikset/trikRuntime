@@ -112,3 +112,10 @@ void TrikJavaScriptRunner::sendMessageFromMailBox(int senderNumber, const QStrin
 					 .arg(message)
 					 );
 }
+
+QStringList TrikJavaScriptRunner::knownMethodNames() const
+{
+	return mScriptEngineWorker->knownMethodNames();
+}
+
+

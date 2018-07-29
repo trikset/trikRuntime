@@ -51,8 +51,6 @@ public:
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
 
-	/// Gets all method names from executive objects (brick, script, etc.) from ScriptEngineWorker
-	/// (useful when used from outside of the TrikRuntime).
 	QStringList knownMethodNames() const;
 
 public slots:

@@ -83,3 +83,8 @@ void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &m
 					 .arg(message)
 					 );
 }
+
+QStringList TrikPythonRunner::knownMethodNames() const
+{
+	return QStringList();
+}

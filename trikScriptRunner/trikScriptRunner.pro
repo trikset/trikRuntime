@@ -64,7 +64,7 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 copyToDestdir($$PWD/system.js)
 copyToDestdir($$PWD/system.py)
 
-links(trikKernel trikControl trikNetwork PythonQt)
+links(trikKernel trikControl trikNetwork PythonQt-Qt$${QT_MAJOR_VERSION}$${QT_MINOR_VERSION}-Python2.7)
 implementationIncludes(trikKernel trikControl trikNetwork)
 PythonQtIncludes()
 
