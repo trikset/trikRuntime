@@ -15,7 +15,7 @@
 TEMPLATE = lib
 
 include(../global.pri)
-include(./include/PyTrikControl/PyTrikControl.pri)
+include(./PyTrikControl/PyTrikControl.pri)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
@@ -48,7 +48,7 @@ OTHER_FILES += \
 	$$PWD/system.py \
 
 INCLUDEPATH += \
-        ./include/PyTrikControl \
+        ./PyTrikControl \
         ../trikControl/src \
         ../trikControl/include/trikControl \
 
