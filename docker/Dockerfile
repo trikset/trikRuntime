@@ -1,13 +1,10 @@
-FROM ubuntu:15.10
+FROM ubuntu:14.04
 
 MAINTAINER Yurii Litvinov <yurii.litvinov@gmail.com>
 
 RUN apt-get update
-RUN apt-get install build-essential -y
-RUN apt-get install libboost-system-dev libboost-wave-dev tcl vera++ -y
-RUN apt-get install xvfb -y
-RUN apt-get install mesa-common-dev libglu1-mesa-dev -y
-RUN apt-get install qdbus qmlscene qt5-qmake qtbase5-dev-tools qtchooser qtdeclarative5-dev xbitmaps xterm libqt5svg5-dev qtscript5-dev qt5-default -y
-RUN apt-get install libpng-dev
-RUN apt-get install zlib1g-dev
-RUN apt-get install qtmultimedia5-dev -y
+RUN apt-get install -y rsync build-essential pkg-config libboost-system-dev libboost-wave-dev \
+        tcl vera++ xvfb mesa-common-dev libglu1-mesa-dev qdbus qmlscene qt5-qmake \
+        qtbase5-dev-tools qtchooser qtdeclarative5-dev xbitmaps xterm libqt5svg5-dev \
+        qtscript5-dev qt5-default libpng-dev zlib1g-dev qtmultimedia5-dev python2.7-dev \
+        qtbase5-private-dev

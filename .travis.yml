@@ -16,7 +16,7 @@ services:
   - docker
 
 install:
-  - docker pull yuriilitvinov/trikruntime-builder
+  - docker build -t yuriilitvinov/trikruntime-builder ./docker
 
 script:
   - docker run -d -v `pwd`:`pwd` -w `pwd` --name builder yuriilitvinov/trikruntime-builder Xvfb :0
