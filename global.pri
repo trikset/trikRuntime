@@ -63,8 +63,8 @@ CONFIG(debug, debug | release) {
 
 #CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
 #!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<5\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc5 }
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<4\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc4 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\<5\.[0-9]+\."' ){ CONFIG += gcc5 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\<4\.[0-9]+\."' ){ CONFIG += gcc4 }
 
 CONFIG += link_pkgconfig
 PKGCONFIG += python-2.7
@@ -335,7 +335,7 @@ defineTest(noPch) {
 }
 
 #seems obsolete, atleast for qmake-qt5
-unix:equals(ARCHITECTURE, "x86") {
+unix:equals(ARCHITECTURE, "x86"):!CONFIG(nosanitizers) {
 	CONFIG(debug) {
 		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
 		CONFIG(sanitize_address) {
