@@ -47,9 +47,10 @@ macx {
 	PLATFORM = mac
 }
 
+CONFIGURATION_SUFFIX =
+
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
-	CONFIGURATION_SUFFIX = -d
 	unix {
 		QMAKE_CXXFLAGS += -coverage
 		QMAKE_LFLAGS += -coverage
