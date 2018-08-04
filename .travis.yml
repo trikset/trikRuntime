@@ -6,7 +6,7 @@ git:
 language: cpp
 
 env:
-  - CONFIG=debug     VERA=true    SUFFIX=-d
+  - CONFIG=debug     VERA=true    SUFFIX=
   - CONFIG=release   VERA=false   SUFFIX=
 
 before_install:

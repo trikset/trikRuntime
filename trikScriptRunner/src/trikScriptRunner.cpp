@@ -41,12 +41,12 @@ TrikScriptRunner::~TrikScriptRunner()
 
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
-	throw "Not implemented";
+	fetchRunner(mLastRunner)->registerUserFunction(name, function);
 }
 
 void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
-	throw "Not implemented";
+	fetchRunner(mLastRunner)->addCustomEngineInitStep(step);
 }
 
 QStringList TrikScriptRunner::knownMethodNames() const
