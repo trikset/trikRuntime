@@ -27,9 +27,9 @@ script:
   - docker exec builder sh -c "cd tests && qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers"
   - docker exec builder sh -c "cd tests && make -j2"
   - docker exec builder sh -c "cd bin/x86-$CONFIG && ls"
-  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests-x86$SUFFIX"
-  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikCommunicatorTests-x86$SUFFIX"
-  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikKernelTests-x86$SUFFIX"
+  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests$SUFFIX"
+  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikCommunicatorTests$SUFFIX"
+  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikKernelTests$SUFFIX"
   - docker stop builder
 
 after_success:
