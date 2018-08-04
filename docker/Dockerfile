@@ -15,4 +15,6 @@ RUN apt install -y rsync build-essential g++-4.8 pkg-config libboost-system-dev 
 #    qtscript5-dev qt5-default qtbase5-private-dev qtmultimedia5-dev
 
 RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia
+RUN apt install -y python-pip
+RUN pip install --user codecov
 RUN echo 'source /opt/qt56/bin/qt56-env.sh' >> /root/.bashrc
