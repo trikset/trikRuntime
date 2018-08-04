@@ -46,17 +46,12 @@ win32 {
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
 	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
-	# Address sanitizer is on by default
-	!CONFIG(no-sanitizers):!CONFIG(nosanitizers) {
-		CONFIG += sanitize-address
-		CONFIG += sanitize sanitize_address
-	}
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
 	equals(ARCHITECTURE, "arm") {
 		CONFIGURATION_SUFFIX =
 	} else {
-		CONFIGURATION_SUFFIX = -$$ARCHITECTURE
+		#CONFIGURATION_SUFFIX = -$$ARCHITECTURE
 	}
 }
 

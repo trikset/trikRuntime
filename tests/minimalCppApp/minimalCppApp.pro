@@ -14,7 +14,7 @@
 
 TEMPLATE = app
 
-CONFIG += console 
+CONFIG += console
 QMAKE_CXXFLAGS += -std=c++11
 
 DESTDIR = .
