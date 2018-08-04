@@ -15,6 +15,7 @@
 TEMPLATE = lib
 
 include(../global.pri)
+include(./PyTrikControl/PyTrikControl.pri)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
@@ -23,20 +24,33 @@ HEADERS += \
 	$$PWD/src/scriptable.h \
 	$$PWD/src/scriptExecutionControl.h \
 	$$PWD/src/scriptEngineWorker.h \
+	$$PWD/src/pythonEngineWorker.h \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 	$$PWD/src/scriptThread.h \
+	$$PWD/include/trikScriptRunner/trikScriptRunnerInterface.h \
+	$$PWD/include/trikScriptRunner/trikPythonRunner.h \
+	$$PWD/include/trikScriptRunner/trikJavaScriptRunner.h \
 
 SOURCES += \
 	$$PWD/src/scriptExecutionControl.cpp \
 	$$PWD/src/scriptEngineWorker.cpp \
+	$$PWD/src/pythonEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
+	$$PWD/src/trikPythonRunner.cpp \
+	$$PWD/src/trikJavaScriptRunner.cpp \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
 
 OTHER_FILES += \
 	$$PWD/system.js \
+	$$PWD/system.py \
+
+INCLUDEPATH += \
+        ./PyTrikControl \
+        ../trikControl/src \
+        ../trikControl/include/trikControl \
 
 
 TRANSLATIONS = \
@@ -48,9 +62,12 @@ QT += script
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
 copyToDestdir($$PWD/system.js)
+copyToDestdir($$PWD/system.py)
 
-links(trikKernel trikControl trikNetwork)
+links(trikKernel trikControl trikNetwork PythonQt-Qt$${QT_MAJOR_VERSION}$${QT_MINOR_VERSION}-Python2.7)
 implementationIncludes(trikKernel trikControl trikNetwork)
+PythonQtIncludes()
 
 installs()
 installAdditionalSharedFiles($$PWD/system.js)
+installAdditionalSharedFiles($$PWD/system.py)

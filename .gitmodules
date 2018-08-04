@@ -1,0 +1,3 @@
+[submodule "PythonQt/PythonQt"]
+	path = PythonQt/PythonQt
+	url = https://github.com/trikset/trik-pythonqt.git

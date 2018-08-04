@@ -49,18 +49,13 @@ macx {
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
-	CONFIGURATION_SUFFIX = -$$ARCHITECTURE-d
+	CONFIGURATION_SUFFIX = -d
 	unix {
 		QMAKE_CXXFLAGS += -coverage
 		QMAKE_LFLAGS += -coverage
 	}
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
-	equals(ARCHITECTURE, "arm") {
-		CONFIGURATION_SUFFIX =
-	} else {
-		CONFIGURATION_SUFFIX = -$$ARCHITECTURE
-	}
 }
 
 #	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
@@ -68,8 +63,11 @@ CONFIG(debug, debug | release) {
 
 #CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
 #!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<5\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc5 }
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -oe \\\"\\<4\\.[0-9]\\+\\.\\\" ){ CONFIG += gcc4 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\<5\.[0-9]+\."' ){ CONFIG += gcc5 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\<4\.[0-9]+\."' ){ CONFIG += gcc4 }
+
+CONFIG += link_pkgconfig
+PKGCONFIG += python-2.7
 
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
@@ -181,7 +179,8 @@ CONFIG(gcc5) | clang {
 	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
 }
 
-QMAKE_CXXFLAGS += -Werror=cast-qual -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
+# -Werror=cast-qual
+QMAKE_CXXFLAGS += -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
 			-Werror=non-virtual-dtor -Wno-error=overloaded-virtual \
 			-Werror=uninitialized -Werror=init-self
 
@@ -247,6 +246,11 @@ defineTest(implementationIncludes) {
 
 defineTest(transitiveIncludes) {
 	interfaceIncludes($$1)
+}
+
+defineTest(PythonQtIncludes) {
+	INCLUDEPATH += $$GLOBAL_PWD/PythonQt/PythonQt/src
+	export(INCLUDEPATH)
 }
 
 defineTest(links) {
@@ -331,7 +335,7 @@ defineTest(noPch) {
 }
 
 #seems obsolete, atleast for qmake-qt5
-unix:equals(ARCHITECTURE, "x86") {
+unix:equals(ARCHITECTURE, "x86"):!CONFIG(nosanitizers) {
 	CONFIG(debug) {
 		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
 		CONFIG(sanitize_address) {

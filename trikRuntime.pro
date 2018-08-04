@@ -16,6 +16,7 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
 	qslog \
+	PythonQt \
 	trikKernel \
 	trikWiFi \
 	trikNetwork \
@@ -30,14 +31,15 @@ SUBDIRS = \
 	translations \
 
 qslog.file = qslog/QsLogSharedLibrary.pro
+PythonQt.file = PythonQt/PythonQt.pro
 
-trikCommunicator.depends = trikScriptRunner trikNetwork qslog
+trikCommunicator.depends = trikScriptRunner trikNetwork qslog PythonQt
 trikControl.depends = trikKernel trikHal qslog
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
+trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog PythonQt
 trikKernel.depends = qslog
 trikNetwork.depends = trikKernel qslog
-trikRun.depends = trikScriptRunner trikKernel qslog
-trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog
+trikRun.depends = trikScriptRunner trikKernel qslog PythonQt
+trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog PythonQt
 trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog trikKernel

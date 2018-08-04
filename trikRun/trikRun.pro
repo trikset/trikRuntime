@@ -23,7 +23,9 @@ OTHER_FILES += \
 copyToDestdir($$OTHER_FILES)
 
 implementationIncludes(trikKernel trikControl trikScriptRunner trikNetwork)
-links(trikKernel trikControl trikScriptRunner trikNetwork)
+PythonQtIncludes()
+links(trikKernel trikControl trikScriptRunner trikNetwork PythonQt-Qt$${QT_MAJOR_VERSION}$${QT_MINOR_VERSION}-Python2.7)
+
 
 TEMPLATE = app
 CONFIG += console

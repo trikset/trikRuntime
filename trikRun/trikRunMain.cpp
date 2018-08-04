@@ -23,6 +23,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QEventLoop>
+#include <QFileInfo>
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/deinitializationHelper.h>
@@ -31,7 +32,7 @@
 #include <trikKernel/paths.h>
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
-#include <trikScriptRunner/trikScriptRunner.h>
+#include "trikScriptRunner/trikScriptRunner.h"
 #include <trikNetwork/mailboxFactory.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -61,17 +62,23 @@ int main(int argc, char *argv[])
 	trikKernel::ApplicationInitHelper initHelper(*app);
 
 	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
-			+ " " + QObject::tr("(optional of -s option is specified)"));
+			+ " " + QObject::tr("(optional of -js or -py option is specified)"));
 
-	initHelper.commandLineParser().addOption("s", "script"
-			, QObject::tr("Script to be executed directly from command line.") + "\n"
-					+ QObject::tr("\tExample: ./trikRun -qws -s \"brick.smile(); script.wait(2000);\""));
+	initHelper.commandLineParser().addOption("js", "js-script"
+			, QObject::tr("JavaScript script to be executed directly from command line.") + "\n\t"
+							+ QObject::tr("Example:") + " ./trikRun -js \"brick.smile(); script.wait(2000);\"");
+
+	initHelper.commandLineParser().addOption("py", "py-script"
+			, QObject::tr("Python script to be executed directly from command line.") + "\n\t"
+							+ QObject::tr("Example:") + " ./trikRun -py \""
+										  "brick.display().showImage('media/trik_smile_normal.png'); "
+										  "script.wait(2000)\"");
 
 	initHelper.commandLineParser().addFlag("no-display", "no-display"
 			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
-						  "physical display"));
+								"physical display"));
 
-	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript files."));
+	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript and Python files."));
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;
@@ -81,28 +88,37 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikRun started";
 
-	const auto run = [&](const QString &script) {
+	const auto run = [&](const QString &script, const QString &fileName, trikScriptRunner::ScriptType stype) {
 		QScopedPointer<trikControl::BrickInterface> brick(
-				trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
-				);
+					trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
+					);
 
 		trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
-				, initHelper.configPath() + "/model-config.xml");
+										  , initHelper.configPath() + "/model-config.xml");
 
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
 
 		QObject::connect(&result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
-		result.run(script);
+
+		if (fileName.isEmpty()) { // from command line
+			result.run(script, stype);
+		} else { // from file
+			result.run(script, fileName);
+		}
+
 		return app->exec();
 	};
 
-	if (initHelper.commandLineParser().isSet("s")) {
-		return run(initHelper.commandLineParser().value("s"));
+	if (initHelper.commandLineParser().isSet("js")) {
+		return run(initHelper.commandLineParser().value("js"), "", trikScriptRunner::JAVASCRIPT);
+	} else if (initHelper.commandLineParser().isSet("py")) {
+		return run(initHelper.commandLineParser().value("py"), "", trikScriptRunner::PYTHON);
 	} else {
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
-			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]));
+			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]),
+					positionalArgs[0], trikScriptRunner::JAVASCRIPT);
 		} else {
 			initHelper.commandLineParser().showHelp();
 			return 1;

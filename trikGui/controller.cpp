@@ -101,7 +101,8 @@ void Controller::runFile(const QString &filePath)
 	} else if (fileInfo.suffix() == "exe") {
 		QProcess::startDetached("mono", {filePath});
 	} else if (fileInfo.suffix() == "py") {
-		QProcess::startDetached("python", {filePath});
+		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()),
+						   trikScriptRunner::PYTHON, fileInfo.baseName());
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}

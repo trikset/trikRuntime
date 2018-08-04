@@ -1,13 +1,20 @@
-FROM ubuntu:15.10
+FROM ubuntu:14.04
 
-MAINTAINER Yurii Litvinov <yurii.litvinov@gmail.com>
+MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
+RUN apt update
+RUN apt -y full-upgrade
+RUN apt install software-properties-common -y
+RUN add-apt-repository ppa:beineri/opt-qt563-trusty -y
+RUN apt update
+RUN apt install -y rsync build-essential g++-4.8 pkg-config libboost-system-dev libboost-wave-dev \
+        tcl vera++ xvfb mesa-common-dev libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
+        xterm python2.7-dev git-core
 
-RUN apt-get update
-RUN apt-get install build-essential -y
-RUN apt-get install libboost-system-dev libboost-wave-dev tcl vera++ -y
-RUN apt-get install xvfb -y
-RUN apt-get install mesa-common-dev libglu1-mesa-dev -y
-RUN apt-get install qdbus qmlscene qt5-qmake qtbase5-dev-tools qtchooser qtdeclarative5-dev xbitmaps xterm libqt5svg5-dev qtscript5-dev qt5-default -y
-RUN apt-get install libpng-dev
-RUN apt-get install zlib1g-dev
-RUN apt-get install qtmultimedia5-dev -y
+#RUN apt-get install -y qdbus qmlscene qt5-qmake \
+#        qtbase5-dev-tools qtchooser qtdeclarative5-dev libqt5svg5-dev \
+#    qtscript5-dev qt5-default qtbase5-private-dev qtmultimedia5-dev
+
+RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia
+RUN apt install -y python-pip
+RUN pip install --user codecov
+RUN echo 'source /opt/qt56/bin/qt56-env.sh' >> /root/.bashrc

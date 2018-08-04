@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<typesystem package="PyTrikControl" >
+ <load-typesystem name="typesystem_core.xml" generate="no" />
+ <load-typesystem name="typesystem_gui.xml"  generate="no" />
+
+ <namespace-type name="trikControl" />
+
+ <interface-type name="trikControl::BatteryInterface" create-shell="no"/>
+ <interface-type name="trikControl::DisplayInterface" create-shell="no"/>
+ <interface-type name="trikControl::DisplayWidgetInterface" create-shell="no"/>
+ <interface-type name="trikControl::BrickInterface" create-shell="no"/>
+ <interface-type name="trikControl::KeysInterface" create-shell="no"/>
+ <interface-type name="trikControl::DeviceInterface" create-shell="no"/>
+ <enum-type name="trikControl::DeviceInterface::Status" />
+
+ <interface-type name="trikControl::MotorInterface" create-shell="no"/>
+ <enum-type name="trikControl::MotorInterface::Type" />
+ <interface-type name="trikControl::EncoderInterface" create-shell="no"/>
+ <interface-type name="trikControl::PwmCaptureInterface" create-shell="no"/>
+
+ <interface-type name="trikControl::LedInterface" create-shell="no"/>
+ <interface-type name="trikControl::GamepadInterface" create-shell="no"/>
+ <interface-type name="trikControl::FifoInterface" create-shell="no"/>
+
+ <interface-type name="trikControl::EventCodeInterface" create-shell="no"/>
+ <interface-type name="trikControl::EventInterface" create-shell="no"/>
+ <interface-type name="trikControl::EventDeviceInterface" create-shell="no"/>
+ 
+ <interface-type name="trikControl::SensorInterface" create-shell="no"/>
+ <enum-type name="trikControl::SensorInterface::Type"/>
+ <interface-type name="trikControl::ColorSensorInterface" create-shell="no"/>
+ <interface-type name="trikControl::SoundSensorInterface" create-shell="no"/>
+ <interface-type name="trikControl::VectorSensorInterface" create-shell="no"/>
+ 
+
+ <interface-type name="trikControl::LineSensorInterface" create-shell="no"/>
+ <interface-type name="trikControl::ObjectSensorInterface" create-shell="no"/>
+
+
+ <object-type name="trikControl::Brick"/>
+ <object-type name="trikControl::Battery" create-shell="no">
+    <modify-function signature="trikControl::Battery::Battery(MspCommunicatorInterface&amp;)" remove="all"/>
+ </object-type>
+ <object-type name="trikControl::Display" create-shell="no"/>
+ <object-type name="trikControl::Keys"/>
+ 
+ <object-type name="trikControl::BrickFactory" create-shell="no"/>
+
+</typesystem>

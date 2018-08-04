@@ -12,108 +12,114 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "include/trikScriptRunner/trikScriptRunner.h"
-
-#include <trikKernel/fileUtils.h>
-#include <trikKernel/paths.h>
-
-#include "src/scriptEngineWorker.h"
-#include "src/scriptExecutionControl.h"
-
 #include <QsLog.h>
+
+#include "trikScriptRunner.h"
+#include "trikJavaScriptRunner.h"
+#include "trikPythonRunner.h"
 
 using namespace trikScriptRunner;
 
+/// Constructor.
+/// @param brick - reference to trikControl::Brick instance.
+/// @param mailbox - mailbox object used to communicate with other robots.
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface * const mailbox
-		)
-	: mScriptController(new ScriptExecutionControl())
-	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
-	, mMaxScriptId(0)
-{
-	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
-	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
-	if (mailbox) {
-		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
-	}
-
-	mScriptEngineWorker->moveToThread(&mWorkerThread);
-
-	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
-
-	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
-
-	QLOG_INFO() << "Starting TrikScriptRunner worker thread" << &mWorkerThread;
-
-	mWorkerThread.start();
-}
+								   , trikNetwork::MailboxInterface * const mailbox
+								   )
+	: brick(brick), mailbox(mailbox), mLastRunner(JAVASCRIPT)
+{}
 
 TrikScriptRunner::~TrikScriptRunner()
 {
-	mScriptEngineWorker->stopScript();
-	QMetaObject::invokeMethod(&mWorkerThread, "quit");
-	mWorkerThread.wait(1000);
+	for (size_t i = 0; i < ScriptTypeLength; i++) { // stop and delete all working interpretators
+		if (mScriptRunnerArray[i] != nullptr) {
+			mScriptRunnerArray[i]->abort();
+			delete mScriptRunnerArray[i];
+		}
+	}
 }
 
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
-	mScriptEngineWorker->registerUserFunction(name, function);
+	throw "Not implemented";
 }
 
 void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
-	mScriptEngineWorker->addCustomEngineInitStep(step);
+	throw "Not implemented";
 }
 
 QStringList TrikScriptRunner::knownMethodNames() const
 {
-	return mScriptEngineWorker->knownMethodNames();
-}
-
-void TrikScriptRunner::brickBeep()
-{
-	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
+	return mScriptRunnerArray[mLastRunner]->knownMethodNames();
 }
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
-	const int scriptId = mMaxScriptId++;
-	QLOG_INFO() << "TrikScriptRunner: new script" << scriptId << "from file" << fileName;
-	mScriptEngineWorker->stopScript();
+	if (fileName.endsWith(".py")) {
+		run(script, PYTHON, fileName);
+	} else { // default JS
+		run(script, JAVASCRIPT, fileName);
+	}
+}
 
-	if (!fileName.isEmpty()) {
-		mScriptFileNames[scriptId] = fileName;
+TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(const ScriptType &stype)
+{
+	if (mScriptRunnerArray[stype] == nullptr) { // lazy creation
+		switch (stype) {
+			case JAVASCRIPT:
+				mScriptRunnerArray[stype] = new TrikJavaScriptRunner(brick, mailbox);
+				break;
+			case PYTHON:
+				mScriptRunnerArray[stype] = new TrikPythonRunner(brick, mailbox);
+				break;
+			default:
+				QLOG_ERROR() << "Can't handle script with unrecognized type: " << stype;
+				return nullptr;
+		}
+		// subscribe on wrapped objects signals
+		connect(mScriptRunnerArray[stype], SIGNAL(completed(QString, int)),
+				this, SIGNAL(completed(QString, int)));
+		connect(mScriptRunnerArray[stype], SIGNAL(startedScript(const QString &, int)),
+				this, SIGNAL(startedScript(const QString &, int)));
+		connect(mScriptRunnerArray[stype], SIGNAL(startedDirectScript(int)),
+				this, SIGNAL(startedDirectScript(int)));
+		connect(mScriptRunnerArray[stype], SIGNAL(sendMessage(const QString &)),
+				this, SIGNAL(sendMessage(const QString &)));
 	}
 
-	mScriptEngineWorker->run(script, (fileName.isEmpty() ? -1 : scriptId));
+	mLastRunner = stype;
+
+	return mScriptRunnerArray[stype];
+}
+
+void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const QString &fileName)
+{
+	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
+
+	fetchRunner(stype)->run(script, fileName);
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
 {
-	QLOG_INFO() << "TrikScriptRunner: new direct command" << command;
-	mScriptEngineWorker->runDirect(command, mMaxScriptId++);
+	fetchRunner(mLastRunner)->runDirectCommand(command);
 }
 
 void TrikScriptRunner::abort()
 {
-	mScriptEngineWorker->stopScript();
-	mScriptEngineWorker->resetBrick();
+	fetchRunner(mLastRunner)->abort();
 }
 
-void TrikScriptRunner::onScriptStart(int scriptId)
+void TrikScriptRunner::abortAll()
 {
-	if (scriptId != -1 && mScriptFileNames.contains(scriptId)) {
-		emit startedScript(mScriptFileNames[scriptId], scriptId);
-	} else {
-		emit startedDirectScript(scriptId);
+	for (size_t i = 0; i < ScriptTypeLength; i++) {
+		if (mScriptRunnerArray[i] != nullptr) {
+			mScriptRunnerArray[i]->abort();
+		}
 	}
 }
 
-void TrikScriptRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
+void TrikScriptRunner::brickBeep()
 {
-	emit sendMessage(QString("mail: sender: %1 contents: %2")
-			.arg(senderNumber)
-			.arg(message)
-	);
+	fetchRunner(mLastRunner)->brickBeep();
 }
