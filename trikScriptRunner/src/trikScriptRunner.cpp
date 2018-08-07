@@ -26,17 +26,12 @@ using namespace trikScriptRunner;
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   )
-	: brick(brick), mailbox(mailbox), mLastRunner(JAVASCRIPT)
+	: brick(brick), mailbox(mailbox), mLastRunner(ScriptType::JAVASCRIPT)
 {}
 
 TrikScriptRunner::~TrikScriptRunner()
 {
-	for (size_t i = 0; i < ScriptTypeLength; i++) { // stop and delete all working interpretators
-		if (mScriptRunnerArray[i] != nullptr) {
-			mScriptRunnerArray[i]->abort();
-			delete mScriptRunnerArray[i];
-		}
-	}
+	abortAll();
 }
 
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
@@ -51,46 +46,47 @@ void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScript
 
 QStringList TrikScriptRunner::knownMethodNames() const
 {
-	return mScriptRunnerArray[mLastRunner]->knownMethodNames();
+	return mScriptRunnerArray[to_underlying(mLastRunner)]->knownMethodNames();
 }
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
 	if (fileName.endsWith(".py")) {
-		run(script, PYTHON, fileName);
+		run(script, ScriptType::PYTHON, fileName);
 	} else { // default JS
-		run(script, JAVASCRIPT, fileName);
+		run(script, ScriptType::JAVASCRIPT, fileName);
 	}
 }
 
 TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(const ScriptType &stype)
 {
-	if (mScriptRunnerArray[stype] == nullptr) { // lazy creation
+	auto & cell = mScriptRunnerArray[to_underlying(stype)];
+	if (cell ==  nullptr) { // lazy creation
 		switch (stype) {
-			case JAVASCRIPT:
-				mScriptRunnerArray[stype] = new TrikJavaScriptRunner(brick, mailbox);
+			case ScriptType::JAVASCRIPT:
+				QScopedPointer<TrikScriptRunnerInterface>(new TrikJavaScriptRunner(brick, mailbox)).swap(cell);
 				break;
-			case PYTHON:
-				mScriptRunnerArray[stype] = new TrikPythonRunner(brick, mailbox);
+			case ScriptType::PYTHON:
+				QScopedPointer<TrikScriptRunnerInterface>(new TrikPythonRunner(brick, mailbox)).swap(cell);
 				break;
 			default:
-				QLOG_ERROR() << "Can't handle script with unrecognized type: " << stype;
+				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
 				return nullptr;
 		}
 		// subscribe on wrapped objects signals
-		connect(mScriptRunnerArray[stype], SIGNAL(completed(QString, int)),
+		connect(&*cell, SIGNAL(completed(QString, int)),
 				this, SIGNAL(completed(QString, int)));
-		connect(mScriptRunnerArray[stype], SIGNAL(startedScript(const QString &, int)),
+		connect(&*cell, SIGNAL(startedScript(const QString &, int)),
 				this, SIGNAL(startedScript(const QString &, int)));
-		connect(mScriptRunnerArray[stype], SIGNAL(startedDirectScript(int)),
+		connect(&*cell, SIGNAL(startedDirectScript(int)),
 				this, SIGNAL(startedDirectScript(int)));
-		connect(mScriptRunnerArray[stype], SIGNAL(sendMessage(const QString &)),
+		connect(&*cell, SIGNAL(sendMessage(const QString &)),
 				this, SIGNAL(sendMessage(const QString &)));
 	}
 
 	mLastRunner = stype;
 
-	return mScriptRunnerArray[stype];
+	return cell.data();
 }
 
 void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const QString &fileName)
@@ -112,9 +108,9 @@ void TrikScriptRunner::abort()
 
 void TrikScriptRunner::abortAll()
 {
-	for (size_t i = 0; i < ScriptTypeLength; i++) {
-		if (mScriptRunnerArray[i] != nullptr) {
-			mScriptRunnerArray[i]->abort();
+	for (auto & r: mScriptRunnerArray) {
+		if (r != nullptr) {
+			r->abort();
 		}
 	}
 }

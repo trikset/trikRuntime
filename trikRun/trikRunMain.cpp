@@ -111,14 +111,14 @@ int main(int argc, char *argv[])
 	};
 
 	if (initHelper.commandLineParser().isSet("js")) {
-		return run(initHelper.commandLineParser().value("js"), "", trikScriptRunner::JAVASCRIPT);
+		return run(initHelper.commandLineParser().value("js"), "", trikScriptRunner::ScriptType::JAVASCRIPT);
 	} else if (initHelper.commandLineParser().isSet("py")) {
-		return run(initHelper.commandLineParser().value("py"), "", trikScriptRunner::PYTHON);
+		return run(initHelper.commandLineParser().value("py"), "", trikScriptRunner::ScriptType::PYTHON);
 	} else {
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
 			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]),
-					positionalArgs[0], trikScriptRunner::JAVASCRIPT);
+					positionalArgs[0], trikScriptRunner::ScriptType::JAVASCRIPT);
 		} else {
 			initHelper.commandLineParser().showHelp();
 			return 1;

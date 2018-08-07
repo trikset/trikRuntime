@@ -44,6 +44,7 @@ trikServer.depends = trikCommunicator qslog
 trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog trikKernel
+PythonQt.depends = qslog
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \

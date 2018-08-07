@@ -15,13 +15,26 @@
 #pragma once
 
 #include <functional>
-
+#include <type_traits>
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
 namespace trikScriptRunner {
+
+enum class ScriptType { // must be 0, 1, ..
+	UNINITIALIZED = -1,
+	JAVASCRIPT,
+	PYTHON,
+	Size // should always be the last
+};
+
+static constexpr typename std::underlying_type<ScriptType>::type to_underlying(ScriptType t) noexcept
+{
+	return static_cast<std::underlying_type<ScriptType>::type>(t);
+}
+
 
 /// Interface for all script executors.
 class TrikScriptRunnerInterface : public QObject
@@ -44,6 +57,7 @@ public slots:
 	/// For event-driven mode (where script has brick.run() command) script counts as finished
 	/// when it requests to quit by itself or was aborted. When script is finished, completed() signal will be emitted.
 	/// @param script - script in Qt Script language to be executed.
+	/// @param stype - script type from corresponding enum: JavaScript or Python
 	/// @param fileName - name of a file from which the script was loaded.
 	/// @warning: The multithreaded script must not contain useful actions in the global context
 	/// (function calls, variable initializations and so on in the global context is restricted).
@@ -52,6 +66,7 @@ public slots:
 	/// has no such possibility so we should append function call to the end of the script. So if script will
 	/// run some actions in the global context they will be invoked on each thread start.
 	virtual void run(const QString &script, const QString &fileName = "") = 0;
+
 
 	/// Executes given script as direct command, so it will use existing script execution environment (or create one
 	/// if needed) and will not reset execution state before or after execution. Sequence of direct commands counts

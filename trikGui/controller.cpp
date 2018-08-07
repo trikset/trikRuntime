@@ -102,7 +102,7 @@ void Controller::runFile(const QString &filePath)
 		QProcess::startDetached("mono", {filePath});
 	} else if (fileInfo.suffix() == "py") {
 		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()),
-						   trikScriptRunner::PYTHON, fileInfo.baseName());
+						   trikScriptRunner::ScriptType::PYTHON, fileInfo.baseName());
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath);
 	}
