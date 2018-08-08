@@ -1,16 +1,35 @@
-sudo: required
+os:
+  - linux
+  - osx
 
+compiler:
+  - gcc
+  - clang
+addons:
+  apt:
+    packages:
+      - python-pip
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:
+        - CONFIG=release   VERA=false   SUFFIX=
+        - CONFIG=debug     VERA=true    SUFFIX=
+    - os: osx
+      osx_image: 9.latest
+      env:
+        - CONFIG=release
 git:
   depth: 1
 
 language: cpp
 
-env:
-  - CONFIG=debug     VERA=true    SUFFIX=
-  - CONFIG=release   VERA=false   SUFFIX=
 
 before_install:
-  - if [ "$CONFIG" = "debug" ]; then pip install --user codecov; fi
+  - ./.travis/before_install.sh
 
 services:
   - docker
@@ -19,18 +38,7 @@ install:
   - docker pull trikset/linux-builder
 
 script:
-  - docker run -d -v `pwd`:`pwd` -w `pwd` --name builder trikset/linux-builder Xvfb :0
-  - if [ "$VERA" = "true" ]; then docker exec builder tclsh vera++/generatePaths.tcl; fi
-  - if [ "$VERA" = "true" ]; then docker exec -i builder vera++ --error -p allRules --root vera++ <vera++/params; fi
-  - docker exec builder qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers
-  - docker exec builder make -j2
-  - docker exec builder sh -c "cd tests && qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers"
-  - docker exec builder sh -c "cd tests && make -j2"
-  - docker exec builder sh -c "cd bin/x86-$CONFIG && ls"
-  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests$SUFFIX"
-  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikCommunicatorTests$SUFFIX"
-  - docker exec builder sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikKernelTests$SUFFIX"
-  - docker stop builder
+  - ./.travis/script.sh
 
 after_success:
   - if [ "$CONFIG" = "debug" ]; then codecov; fi
