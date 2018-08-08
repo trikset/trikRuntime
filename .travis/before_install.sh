@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
-case $TRAVIS_OS_NAME ; in
+case $TRAVIS_OS_NAME in
   osx)
     brew update
     brew install qt

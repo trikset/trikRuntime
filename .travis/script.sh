@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euxo pipefail
-case $TRAVIS_OS_NAME ; in
+case $TRAVIS_OS_NAME in
   osx)
       qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers
       make -j 2
