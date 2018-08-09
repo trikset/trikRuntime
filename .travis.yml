@@ -33,10 +33,6 @@ git:
 language: cpp
 
 
-before_install:
-  - ./.travis/before_install.sh
-
-
 install:
   - ./.travis/install.sh
 

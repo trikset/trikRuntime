@@ -2,7 +2,8 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-      EXECUTOR=
+     export PATH="/usr/local/opt/qt/bin:$PATH"
+     EXECUTOR=
     ;;
   linux)
       docker run -d -v `pwd`:`pwd` -w `pwd` --name builder trikset/linux-builder Xvfb :0
