@@ -3,7 +3,7 @@ set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
     brew update
-    brew install qt
+    brew install qt@5.5
     ;;
   linux)
     docker pull trikset/linux-builder

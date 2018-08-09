@@ -2,7 +2,7 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-     export PATH="/usr/local/opt/qt/bin:$PATH"
+     export PATH="/usr/local/opt/qt@5.5/bin:$PATH"
      EXECUTOR=
     ;;
   linux)
