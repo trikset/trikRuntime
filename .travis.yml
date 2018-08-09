@@ -1,9 +1,7 @@
-os:
-  - linux
-  - osx
-
 compiler:
   - gcc
+
+env: CONFIG=release   VERA=false   SUFFIX=
 
 addons:
   apt:
@@ -16,7 +14,6 @@ matrix:
       dist: trusty
       sudo: required
       services: docker
-      env: CONFIG=release   VERA=false   SUFFIX=
       name: "Linux release"
     - os: linux
       dist: trusty
@@ -26,7 +23,7 @@ matrix:
       name: "Linux debug + vera"
     - os: osx
       osx_image: 9.latest
-      env: CONFIG=release
+      name: "macOS release"
 git:
   depth: 1
 
