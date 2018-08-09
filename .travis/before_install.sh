@@ -4,6 +4,7 @@ case $TRAVIS_OS_NAME in
   osx)
     brew update
     brew install qt
+    export PATH="/usr/local/opt/qt/bin:$PATH"
     ;;
   linux)
     if [[ "$CONFIG" == "debug" ]]

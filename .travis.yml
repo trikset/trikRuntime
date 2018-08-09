@@ -5,6 +5,9 @@ env: CONFIG=release   VERA=false   SUFFIX=
 
 addons:
   apt:
+    update: true
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - python-pip
 
@@ -39,6 +42,9 @@ install:
 
 script:
   - ./.travis/script.sh
+
+after_script:
+  - ./.travis/after_script.sh
 
 after_success:
   - if [ "$CONFIG" = "debug" ]; then codecov; fi
