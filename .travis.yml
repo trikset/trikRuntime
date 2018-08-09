@@ -16,13 +16,17 @@ matrix:
       dist: trusty
       sudo: required
       services: docker
-      env:
-        - CONFIG=release   VERA=false   SUFFIX=
-        - CONFIG=debug     VERA=true    SUFFIX=
+      env: CONFIG=release   VERA=false   SUFFIX=
+      name: "Linux release"
+    - os: linux
+      dist: trusty
+      sudo: required
+      services: docker
+      env: CONFIG=debug     VERA=true SUFFIX=
+      name: "Linux debug + vera"
     - os: osx
       osx_image: 9.latest
-      env:
-        - CONFIG=release
+      env: CONFIG=release
 git:
   depth: 1
 
@@ -34,7 +38,7 @@ before_install:
 
 
 install:
-  - docker pull trikset/linux-builder
+  - ./.travis/install.sh
 
 script:
   - ./.travis/script.sh
