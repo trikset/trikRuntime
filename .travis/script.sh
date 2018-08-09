@@ -13,7 +13,7 @@ case $TRAVIS_OS_NAME in
 esac
 
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
-$EXECUTOR qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers
+$EXECUTOR qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers -d
 $EXECUTOR make -j2
 $EXECUTOR sh -c "cd tests && qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers"
 $EXECUTOR sh -c "cd tests && make -j2"
