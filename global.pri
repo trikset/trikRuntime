@@ -69,6 +69,7 @@ CONFIG(debug, debug | release) {
 
 CONFIG += link_pkgconfig
 PKGCONFIG += python-2.7
+macx:QT_CONFIG -= no-pkg-config
 
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
