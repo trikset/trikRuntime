@@ -9,8 +9,6 @@ case $TRAVIS_OS_NAME in
   linux)
       docker run -d -v `pwd`:`pwd` -w `pwd` --name builder trikset/linux-builder Xvfb :0
       EXECUTOR="docker exec builder "
-#temporary!!! until Dockerfile is merged into master
-      $EXECUTOR  sudo apt install ccache
    ;;
   *) exit 1 ;;
 esac
