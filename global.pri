@@ -182,7 +182,8 @@ CONFIG(gcc5) | clang {
 }
 
 clang {
-	QMAKE_CXXFLAGS += -Wno-expansion-to-defined
+# Problem from Qt system headers
+	QMAKE_CXXFLAGS += -Wno-error=expansion-to-defined
 }
 
 # -Werror=cast-qual

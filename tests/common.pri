@@ -16,6 +16,8 @@ include($$PWD/../global.pri)
 
 TEMPLATE = app
 
+CONFIG -= app_bundle
+
 QT += widgets
 
 INCLUDEPATH += \
@@ -33,10 +35,10 @@ CONFIG(clang) {
 	QMAKE_CXXFLAGS += -Wno-unused-local-typedef
 } else {
 	QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
-} 
+}
 
 
-QMAKE_CXXFLAGS += -Wno-error=pedantic 
+QMAKE_CXXFLAGS += -Wno-error=pedantic
 
 DEFINES += GTEST_USE_OWN_TR1_TUPLE
 
