@@ -64,11 +64,12 @@ CONFIG(debug, debug | release) {
 
 #CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
 #!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\<5\.[0-9]+\."' ){ CONFIG += gcc5 }
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\<4\.[0-9]+\."' ){ CONFIG += gcc4 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
 CONFIG += link_pkgconfig
 PKGCONFIG += python-2.7
+macx:QT_CONFIG -= no-pkg-config
 
 DESTDIR = $$PWD/bin/$$CONFIGURATION
 
@@ -178,6 +179,11 @@ QMAKE_CXXFLAGS += -pedantic-errors -ansi -Wextra
 
 CONFIG(gcc5) | clang {
 	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
+}
+
+clang {
+# Problem from Qt system headers
+	QMAKE_CXXFLAGS += -Wno-error=expansion-to-defined
 }
 
 # -Werror=cast-qual

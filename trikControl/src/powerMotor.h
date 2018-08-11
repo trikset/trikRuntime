@@ -61,10 +61,10 @@ public slots:
 
 	/// Sets current motor period.
 	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
-	void setPeriod(int period);
+	void setPeriod(int period) override;
 
 	/// Force brake for a short period of time followed by power off
-	void brake(int durationMs = 500);
+	void brake(int durationMs = 500) override;
 
 private:
 	void lineariseMotor(const QString &port, const trikKernel::Configurer &configurer);

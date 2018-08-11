@@ -17,6 +17,7 @@
 #include "trikScriptRunnerInterface.h"
 #include <QFileInfo>
 #include <QScopedPointer>
+#include <array>
 
 namespace trikNetwork {
 class MailboxInterface;
