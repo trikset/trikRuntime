@@ -3,6 +3,7 @@ set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
      export PATH="/usr/local/opt/qt@5.5/bin:$PATH"
+     export PATH="/usr/local/opt/ccache/libexec:$PATH"
      EXECUTOR=
     ;;
   linux)
@@ -13,9 +14,9 @@ case $TRAVIS_OS_NAME in
 esac
 
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
-$EXECUTOR qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers -Wall
+$EXECUTOR qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers QMAKE_CXX='ccache g++' -Wall
 $EXECUTOR make -k -j2
-$EXECUTOR sh -c "cd tests && qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers"
+$EXECUTOR sh -c "cd tests && qmake -r CONFIG+=$CONFIG CONFIG+=no-sanitizers QMAKE_CXX='ccache g++'"
 $EXECUTOR sh -c "cd tests && make -j2"
 $EXECUTOR sh -c "cd bin/x86-$CONFIG && ls"
 $EXECUTOR sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests$SUFFIX"
