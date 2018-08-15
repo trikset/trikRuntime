@@ -47,16 +47,14 @@ macx {
 	PLATFORM = mac
 }
 
-CONFIGURATION_SUFFIX =
-
 CONFIG(debug, debug | release) {
-	CONFIGURATION = $$ARCHITECTURE-debug
+	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
 		QMAKE_CXXFLAGS += -coverage
 		QMAKE_LFLAGS += -coverage
 	}
 } else {
-	CONFIGURATION = $$ARCHITECTURE-release
+	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-release
 }
 
 #	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
@@ -71,7 +69,9 @@ CONFIG += link_pkgconfig
 PKGCONFIG += python-2.7
 macx:QT_CONFIG -= no-pkg-config
 
-DESTDIR = $$PWD/bin/$$CONFIGURATION
+isEmpty(DESTDIR) { 
+	DESTDIR = $$PWD/bin/$$CONFIGURATION
+}
 
 PROJECT_BASENAME = $$basename(_PRO_FILE_)
 PROJECT_NAME = $$section(PROJECT_BASENAME, ".", 0, 0)
