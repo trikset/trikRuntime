@@ -47,14 +47,19 @@ macx {
 	PLATFORM = mac
 }
 
+
+!CONFIG(qt): CONFIG+=qt
+
 CONFIG(debug, debug | release) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
 		QMAKE_CXXFLAGS += -coverage
 		QMAKE_LFLAGS += -coverage
 	}
+	CONFIGURATION_SUFFIX=-d
 } else {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-release
+	CONFIGURATION_SUFFIX=
 }
 
 #	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
@@ -69,7 +74,7 @@ CONFIG += link_pkgconfig
 !win32:PKGCONFIG += python-2.7
 macx:QT_CONFIG -= no-pkg-config
 
-isEmpty(DESTDIR) { 
+isEmpty(DESTDIR) {
 	DESTDIR = $$PWD/bin/$$CONFIGURATION
 }
 
