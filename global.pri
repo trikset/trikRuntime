@@ -66,7 +66,7 @@ CONFIG(debug, debug | release) {
 !clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
 CONFIG += link_pkgconfig
-PKGCONFIG += python-2.7
+!win32:PKGCONFIG += python-2.7
 macx:QT_CONFIG -= no-pkg-config
 
 isEmpty(DESTDIR) { 

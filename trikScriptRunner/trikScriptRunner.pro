@@ -48,10 +48,9 @@ OTHER_FILES += \
 	$$PWD/system.py \
 
 INCLUDEPATH += \
-        ./PyTrikControl \
-        ../trikControl/src \
-        ../trikControl/include/trikControl \
-
+        $$PWD/PyTrikControl \
+        $$PWD/../trikControl/src \
+        $$PWD/../trikControl/include/trikControl \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikScriptRunner_ru.ts \
@@ -64,8 +63,8 @@ DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 copyToDestdir($$PWD/system.js)
 copyToDestdir($$PWD/system.py)
 
-links(trikKernel trikControl trikNetwork PythonQt-Qt$${QT_MAJOR_VERSION}$${QT_MINOR_VERSION}-Python2.7)
-implementationIncludes(trikKernel trikControl trikNetwork)
+links(trikKernel trikControl trikNetwork PythonQt-Qt$${QT_MAJOR_VERSION}$${QT_MINOR_VERSION}-Python$${PYTHON_VERSION})
+implementationIncludes(trikKernel trikNetwork trikControl)
 PythonQtIncludes()
 
 installs()

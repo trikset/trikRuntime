@@ -122,6 +122,6 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
 transitiveIncludes(trikNetwork)
 PythonQtIncludes()
-links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork PythonQt-Qt$${QT_MAJOR_VERSION}$${QT_MINOR_VERSION}-Python2.7)
+links(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
 
 installs()

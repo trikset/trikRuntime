@@ -23,7 +23,7 @@ namespace trikControl {
 class MspCommunicatorInterface;
 
 /// Implements battery voltage sensor for real hardware.
-class Battery : public BatteryInterface
+class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT Battery : public BatteryInterface
 {
 	Q_OBJECT
 
