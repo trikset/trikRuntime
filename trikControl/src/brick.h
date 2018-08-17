@@ -56,8 +56,6 @@ class CameraDeviceInterface;
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
 /// Is NOT thread-safe.
-
-
 class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT Brick : public BrickInterface
 {
 	Q_OBJECT
