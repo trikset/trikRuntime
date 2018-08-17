@@ -24,7 +24,7 @@ matrix:
       dist: trusty
       sudo: required
       services: docker
-      env: CONFIG=debug     VERA=true SUFFIX=
+      env: CONFIG=debug     VERA=true SUFFIX=-d
       name: "Linux debug + vera"
     - os: osx
       osx_image: 9.latest

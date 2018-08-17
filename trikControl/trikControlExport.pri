@@ -45,7 +45,7 @@ win32 {
 
 CONFIG(debug, debug | release) {
 	CONFIGURATION = $$ARCHITECTURE-debug
-	CONFIGURATION_SUFFIX =
+	CONFIGURATION_SUFFIX = -d
 } else {
 	CONFIGURATION = $$ARCHITECTURE-release
 	CONFIGURATION_SUFFIX =
@@ -66,7 +66,7 @@ LIBS += -lqslog$$CONFIGURATION_SUFFIX
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	CONFIG += c++11
-} 
+}
 
 QMAKE_CXXFLAGS += -std=c++11
 

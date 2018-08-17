@@ -12,6 +12,9 @@ RUN apt install -y rsync build-essential g++-4.8 pkg-config libboost-system-dev 
         tcl vera++ xvfb mesa-common-dev libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
         xterm python2.7-dev git-core ccache
 
+#for TRIK Studio build
+RUN apt install -y libusb-1.0-0-dev
+
 #RUN apt-get install -y qdbus qmlscene qt5-qmake \
 #        qtbase5-dev-tools qtchooser qtdeclarative5-dev libqt5svg5-dev \
 #    qtscript5-dev qt5-default qtbase5-private-dev qtmultimedia5-dev
