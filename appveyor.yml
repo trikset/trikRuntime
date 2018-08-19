@@ -7,14 +7,13 @@ environment:
     PYTHON_LIB: C:\Python27\libs
     PROJECT_FILE: trikRuntime
   matrix:
-#    - PROJECT_FILE: qreal
       - MINGW: C:\Qt\Tools\mingw492_32
         QTDIR: C:\Qt\5.6.3\mingw49_32
       - MINGW: C:\Qt\Tools\mingw530_32
         QTDIR: C:\Qt\5.11.1\mingw53_32
 
 configuration:
-#  - debug
+# - debug
   - release
 
 before_build:
@@ -26,5 +25,5 @@ build_script:
   - mingw32-make -j2
 
 artifacts:
- - path: bin\$(configuration)
-   name: trik-runtime-$(configuration)-win32
+ - path: bin\x86-$(configuration)
+   name: trikRuntime-win32-$(configuration)

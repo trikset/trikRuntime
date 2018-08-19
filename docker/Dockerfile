@@ -13,7 +13,8 @@ RUN apt install -y rsync build-essential g++-4.8 pkg-config libboost-system-dev 
         xterm python2.7-dev git-core ccache
 
 #for TRIK Studio build
-RUN apt install -y libusb-1.0-0-dev
+RUN apt install -y libusb-1.0-0-dev dbus
+RUN [ -r /etc/machine-id ] || { dbus-uuidgen | tee /etc/machine-id ; }
 
 #RUN apt-get install -y qdbus qmlscene qt5-qmake \
 #        qtbase5-dev-tools qtchooser qtdeclarative5-dev libqt5svg5-dev \
