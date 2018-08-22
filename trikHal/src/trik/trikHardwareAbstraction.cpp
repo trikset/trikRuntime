@@ -77,7 +77,7 @@ OutputDeviceFileInterface *TrikHardwareAbstraction::createOutputDeviceFile(const
 QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &port, const QString &pathToPic) const
 {
 	Q_UNUSED(pathToPic);
-	static TrikV4l2VideoDevice device(port); // need only one camera device
+	TrikV4l2VideoDevice device(port); // need only one camera device
 
 	QLOG_INFO() << "Start open v4l2 device" << port;
 

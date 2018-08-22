@@ -32,30 +32,21 @@ CameraDevice::CameraDevice(const QString & mediaPath, const trikKernel::Configur
 	QString type = configurer.attributeByDevice("camera", "type");
 	QString src = configurer.attributeByDevice("camera", "src");
 
-	QString osInfo = QSysInfo::productType();
-	QString currentArch = QSysInfo::currentCpuArchitecture();
 	QString failMessage;
 
-	QLOG_INFO() << "OS name: " << osInfo << " currentArch: " << currentArch;
-
-	bool isLinux = osInfo == "ubuntu" || osInfo == "debian"; // can be done with macros Q_OS_LINUX more easily
 	if (type == "qtmultimedia") {
-		if (! isLinux || currentArch != "arm") {
 			decltype(mCameraImpl)(new QtCameraImplementation(src)).swap(mCameraImpl);
-		} else {
-			failMessage = "can not use qt camera on TRIK controller";
-		}
 	} else if (type == "v4l2") {
-				if (isLinux) {
-					decltype(mCameraImpl)(new V4l2CameraImplementation(src, hardwareAbstraction)).swap(mCameraImpl);
-				} else {
-					failMessage = "can use v4l2 only on Linux";
-				}
+#ifdef Q_OS_LINUX
+			decltype(mCameraImpl)(new V4l2CameraImplementation(src, hardwareAbstraction)).swap(mCameraImpl);
+#else
+			failMessage = "can use v4l2 only on Linux";
+#endif
 	} else if (type == "file") {
 				QStringList filters = configurer.attributeByDevice("camera", "filters").split(',');
 				decltype(mCameraImpl)(new ImitationCameraImplementation(filters, mediaPath)).swap(mCameraImpl);
 	} else {
-		failMessage = "unknown camera device type";
+		failMessage = "unknown camera device type:" + type;
 	}
 
 	if (mCameraImpl) {
