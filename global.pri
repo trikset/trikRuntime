@@ -67,7 +67,7 @@ CONFIG(debug, debug | release) {
 
 #CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
 #!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
+!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<[5-9]\\.[0-9]+\\."' ){ CONFIG += gcc5 }
 !clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
 CONFIG += link_pkgconfig
@@ -90,7 +90,7 @@ isEmpty(TARGET) {
 equals(TEMPLATE, app) {
 	unix:!macx {
 		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,.
+		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
 	}
 	macx:!CONFIG(no_rpath) {
 		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
@@ -102,12 +102,18 @@ macx-clang {
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
 }
 
+CONFIG(no-sanitizers):CONFIG+=nosanitizers
+
 !CONFIG(nosanitizers):!clang:gcc:*-g++*:gcc4{
 	warning("Disabled sanitizers, failed to detect compiler version or too old compiler: $$QMAKE_CXX")
 	CONFIG += nosanitizers
 }
 
-unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
+!CONFIG(nosanitizers) {
+	CONFIG += sanitizer
+}
+
+unix:!CONFIG(nosanitizers) {
 
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
@@ -118,7 +124,7 @@ unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
-	CONFIG(debug, debug | release):!CONFIG(sanitize_address):!macx-clang { CONFIG += sanitize_leak }
+	CONFIG(debug, debug | release):!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!macx-clang { CONFIG += sanitize_leak }
 
 	CONFIG(sanitize_leak) {
 		QMAKE_CFLAGS += -fsanitize=leak
@@ -153,6 +159,10 @@ unix:!CONFIG(nosanitizers):!CONFIG(no-sanitizers) {
 	}
 
 }
+
+
+#Workaround for a known gcc/ld (before 7.3/bionic) issue
+CONFIG(sanitizer):!clang: QMAKE_LFLAGS += -fuse-ld=gold -Wl,--disable-new-dtags
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
 MOC_DIR = .build/$$CONFIGURATION/moc
