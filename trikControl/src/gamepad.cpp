@@ -151,18 +151,19 @@ void Gamepad::handleButton(int button, int pressed)
 	}
 
 	mButtonState[button] = pressed == 1;
-	if (!mButtonStateClearTimers[button]) {
-		mButtonStateClearTimers[button] = QSharedPointer<QTimer>(new QTimer());
-		mButtonStateClearTimers[button]->setInterval(500);
+	auto & tmr = mButtonStateClearTimers[button];
+	if (!tmr) {
+		tmr = new QTimer(this);
+		tmr->setInterval(500);
 		connect(
-				mButtonStateClearTimers[button].data()
+				tmr
 				, SIGNAL(timeout())
 				, this
 				, SLOT(onButtonStateClearTimerTimeout())
 				);
 	}
 
-	mButtonStateClearTimers[button]->start();
+	tmr->start();
 
 	emit Gamepad::button(button, pressed);
 }
@@ -171,7 +172,7 @@ void Gamepad::onButtonStateClearTimerTimeout()
 {
 	const auto timer = dynamic_cast<QTimer *>(sender());
 	if (timer) {
-		const int button = mButtonStateClearTimers.key(QSharedPointer<QTimer>(timer));
+		const int button = mButtonStateClearTimers.key(timer);
 		mButtonState[button] = false;
 		timer->stop();
 	}
