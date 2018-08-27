@@ -66,6 +66,8 @@ namespace {
 	QVector<uint8_t> yuv422pToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuv422p convertion to rgb888
 		QVector<uint8_t> result(height * width * 3);
+		if ( width <= 0 || height <= 0 )
+			return result;
 		const auto Y = &shot[0];
 		const auto U = &shot[width * height];
 		const auto V = &shot[3 * width * height / 2];
