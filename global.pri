@@ -50,6 +50,10 @@ macx {
 
 !CONFIG(qt): CONFIG+=qt
 
+CONFIG += ltcg
+#CONFIG += fat-lto
+
+
 CONFIG(debug, debug | release) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
