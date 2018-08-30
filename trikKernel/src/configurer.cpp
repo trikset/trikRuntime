@@ -195,6 +195,121 @@ QString Configurer::version() const
 	return mVersion;
 }
 
+void Configurer::generateConfigFile(const QString &fileName, const QString &dirPath) const
+{
+	QString content = "<config version = \"" + version() + "\">" + '\n';
+	const QString indent = "    ";
+	QStringList sortedPorts = ports();
+	sortedPorts.sort();
+
+	for (const QString &port : sortedPorts) {
+		ModelConfigurationElement currentElement = mModelConfiguration[port];
+		content += indent + "<" + port + ">" + '\n';
+		content += indent + indent + "<" + currentElement.deviceType;
+
+		QStringList sortedAttributes = currentElement.attributes.keys();
+		sortedAttributes.sort();
+		if (sortedAttributes.length() != 0) {
+			content += '\n';
+		}
+
+		for (const QString &name : sortedAttributes) {
+			if (mDeviceTypes[currentElement.deviceType].attributes[name] != currentElement.attributes[name]) {
+				content += indent + indent + indent + name + "=\"" + currentElement.attributes[name] + "\"" + '\n';
+			}
+		}
+
+		if (sortedAttributes.length() != 0) {
+			content += indent + indent + "/>" + '\n';
+		}
+		else {
+			content += QString(" ") + "/>" + '\n';
+		}
+
+		content += indent + "</" + port + ">" + '\n';
+	}
+
+	QStringList sortedDeviceClasses = mAdditionalModelConfiguration.keys();
+	sortedDeviceClasses.sort();
+	for (const QString &deviceClassName : sortedDeviceClasses) {
+		AdditionalModelConfigurationElement currentElement = mAdditionalModelConfiguration[deviceClassName];
+		content += indent + "<" + deviceClassName;
+
+		QStringList sortedAttributes = currentElement.attributes.keys();
+		sortedAttributes.sort();
+		if (sortedAttributes.length() != 0) {
+			content += '\n';
+		}
+
+		for (const QString &name : sortedAttributes) {
+			if (mDevices[deviceClassName].attributes[name] != currentElement.attributes[name]) {
+				content += indent + indent + name + "=\"" + currentElement.attributes[name] + "\"" + '\n';
+			}
+		}
+
+		if (sortedAttributes.length() != 0) {
+			content += indent + "/>" + '\n';
+		}
+		else {
+			content += " />" + '\n';
+		}
+	}
+
+	content += "</config>";
+	FileUtils::writeToFile(fileName, content, dirPath);
+}
+
+void Configurer::changeAttributeByPort(const QString &port, const QString &attributeName,
+									   const QString &newAttributeValue)
+{
+	if (!mModelConfiguration.contains(port)) {
+		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
+	}
+
+	if (mModelConfiguration[port].attributes.contains(attributeName))
+	{
+		mModelConfiguration[port].attributes[attributeName] = newAttributeValue;
+		return;
+	}
+
+	const QString &deviceType = mModelConfiguration.value(port).deviceType;
+	if (mDeviceTypes.contains(deviceType)) {
+		if (mDeviceTypes[deviceType].attributes.contains(attributeName)) {
+			mModelConfiguration[port].attributes.insert(attributeName, newAttributeValue);
+			return;
+		}
+
+		const QString deviceClass = mDeviceTypes[deviceType].deviceClass;
+		if (mDevices.contains(deviceClass)) {
+			const Device &device = mDevices[deviceClass];
+
+			if (device.attributes.contains(attributeName)) {
+				if (!mAdditionalModelConfiguration.contains(device.name)){
+					AdditionalModelConfigurationElement element;
+					element.deviceType = device.name;
+					mAdditionalModelConfiguration.insert(device.name, element);
+				}
+
+				if (!mAdditionalModelConfiguration[device.name].attributes.contains(attributeName)) {
+					mAdditionalModelConfiguration[device.name].attributes.insert(attributeName, newAttributeValue);
+				}
+				else {
+					mAdditionalModelConfiguration[device.name].attributes[attributeName] = newAttributeValue;
+				}
+				return;
+			}
+		}
+		else {
+			throw MalformedConfigException(
+					QString("Device type '%1' has device class '%2' which is not listed in 'deviceClasses' section.")
+						.arg(deviceType).arg(deviceClass));
+		}
+	}
+
+	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2' on port '%3'")
+			.arg(attributeName).arg(deviceType).arg(port));
+}
+
 void Configurer::parseDeviceClasses(const QDomElement &element)
 {
 	const QDomNodeList deviceClasses = element.childNodes();
@@ -329,8 +444,8 @@ void Configurer::parseModelConfig(const QDomElement &element)
 				}
 			} else {
 				AdditionalModelConfigurationElement element;
-				element.deviceClass = tag.tagName();
-				if (!mDevices.contains(element.deviceClass)) {
+				element.deviceType = tag.tagName();
+				if (!mDevices.contains(element.deviceType)) {
 					throw MalformedConfigException(
 							"Device shall be listed in 'deviceClasses' section in system config", tag);
 				}
@@ -342,7 +457,7 @@ void Configurer::parseModelConfig(const QDomElement &element)
 						element.attributes.insert(attribute.name(), attribute.value());
 					}
 
-					mAdditionalModelConfiguration.insert(element.deviceClass, element);
+					mAdditionalModelConfiguration.insert(element.deviceType, element);
 				}
 			}
 		}

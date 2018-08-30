@@ -60,6 +60,12 @@ public:
 	/// Returns version of the config file which shall correspond to casing model.
 	QString version() const;
 
+	/// Creates new model-config file
+	void generateConfigFile(const QString &fileName, const QString &dirPath) const;
+
+	/// Changes value of given attribute of a device on given port
+	void changeAttributeByPort(const QString &port, const QString &attributeName, const QString &newAttributeValue);
+
 private:
 	struct Device {
 		QString name;
@@ -81,7 +87,7 @@ private:
 	};
 
 	struct AdditionalModelConfigurationElement {
-		QString deviceClass;
+		QString deviceType;
 		QHash<QString, QString> attributes;
 	};
 

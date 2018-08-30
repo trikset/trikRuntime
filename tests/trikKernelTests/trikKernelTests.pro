@@ -16,10 +16,12 @@ include(../common.pri)
 
 HEADERS += \
 	$$PWD/synchronizedVarTest.h \
+	configurerTest.h
 
 SOURCES += \
 	$$PWD/synchronizedVarTest.cpp \
 	$$PWD/differentOwnedPointerTest.cpp \
+	configurerTest.cpp
 
 implementationIncludes(trikKernel)
 links(trikKernel)
