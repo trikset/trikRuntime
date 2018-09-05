@@ -396,7 +396,7 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 
 I2cDeviceInterface *Brick::i2c(int bus, int adress)
 {
-    return new I2cDevice(bus, adress, *mMspCommunicator);
+	return new I2cDevice(bus, adress, *mMspCommunicator);
 }
 
 QVector<uint8_t> Brick::getStillImage()
@@ -522,7 +522,7 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "pwmCapture") {
 			mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "powerMotor") {
-            mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
+			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
 		} else if (deviceClass == "analogSensor") {
 			mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
 		} else if (deviceClass == "digitalSensor") {

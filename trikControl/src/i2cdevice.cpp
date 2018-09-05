@@ -3,30 +3,30 @@
 using namespace trikControl;
 
 I2cDevice::I2cDevice(int bus, int adress /*const trikControl :: MspI2cCommunicator &comm*/ //const trikKernel::Configurer &configurer
-                     , trikControl::MspCommunicatorInterface &communicator)
-    : mState("I2cDevice")
-    , mCommunicator(communicator)
+					 , trikControl::MspCommunicatorInterface &communicator)
+	: mState("I2cDevice")
+	, mCommunicator(communicator)
 
 
 {
-    mAdress = adress;
-    mBus = bus;
+	mAdress = adress;
+	mBus = bus;
 
-    mState.ready();
+	mState.ready();
 }
 
 
 I2cDevice::Status I2cDevice::status() const
 {
-    return combine(mCommunicator, mState.status());
+	return combine(mCommunicator, mState.status());
 }
 
 void I2cDevice :: send(const QByteArray &data)
 {
-    mCommunicator.send(data);
+	mCommunicator.send(data);
 }
 
 int I2cDevice :: read(const QByteArray &data)
 {
-    return mCommunicator.read(data);
+	return mCommunicator.read(data);
 }
