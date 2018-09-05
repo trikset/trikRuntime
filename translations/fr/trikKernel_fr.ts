@@ -21,6 +21,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="67"/>
+        <source>Path to a directory where core dump will be saved in case of creation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../trikKernel/src/commandLineParser.cpp" line="110"/>
         <source>Positional arguments:</source>
         <translation type="unfinished"></translation>

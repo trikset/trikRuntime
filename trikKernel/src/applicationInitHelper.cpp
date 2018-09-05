@@ -63,6 +63,10 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 			"\tmodel-config.xml (configuration of current model).")
 			);
 
+	mCommandLineParser.addOption("d", "coredump-path"
+			, QObject::tr("Path to a directory where core dump will be saved in case of creation.")
+			);
+
 #ifdef Q_WS_QWS
 	if (!app.arguments().contains("--no-display") && !app.arguments().contains("-no-display")) {
 		QWSServer * const server = QWSServer::instance();
@@ -94,7 +98,14 @@ bool ApplicationInitHelper::parseCommandLine()
 
 void ApplicationInitHelper::init()
 {
-	trikKernel::coreDumping::initCoreDumping();
+	QString coreDumpPath;
+	if (mCommandLineParser.isSet("d")) {
+		coreDumpPath = trikKernel::FileUtils::normalizePath(mCommandLineParser.value("d"));
+	} else {
+		coreDumpPath = Paths::coreDumpPath();
+	}
+
+	trikKernel::coreDumping::initCoreDumping(coreDumpPath);
 
 	mConfigPath = Paths::configsPath();
 	if (mCommandLineParser.isSet("c")) {
