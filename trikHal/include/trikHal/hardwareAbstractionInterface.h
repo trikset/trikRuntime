@@ -32,7 +32,7 @@ public:
 	virtual ~HardwareAbstractionInterface() {}
 
 	/// Returns MSP I2C bus implementation.
-    virtual MspI2cInterface &mspI2c() = 0;
+	virtual MspI2cInterface &mspI2c() = 0;
 
 	/// Returns MSP USB bus implementation.
 	virtual MspUsbInterface &mspUsb() = 0;

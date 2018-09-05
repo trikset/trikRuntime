@@ -29,7 +29,7 @@ using namespace trikHal;
 using namespace trikHal::trik;
 
 TrikHardwareAbstraction::TrikHardwareAbstraction()
-    : mI2c(new MspI2cDevice())
+	: mI2c(new MspI2cDevice())
 	, mUsb(new TrikMspUsb())
 	, mSystemConsole(new TrikSystemConsole())
 {

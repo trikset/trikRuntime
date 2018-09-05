@@ -2,7 +2,7 @@
 
 using namespace trikControl;
 
-I2cDevice::I2cDevice(int bus, int adress /*const trikControl :: MspI2cCommunicator &comm*/ //const trikKernel::Configurer &configurer
+I2cDevice::I2cDevice(int bus, int adress
 					 , trikControl::MspCommunicatorInterface &communicator)
 	: mState("I2cDevice")
 	, mCommunicator(communicator)

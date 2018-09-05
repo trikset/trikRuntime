@@ -28,7 +28,7 @@ public:
 	TrikHardwareAbstraction();
 	~TrikHardwareAbstraction() override;
 
-    MspI2cInterface &mspI2c() override;
+	MspI2cInterface &mspI2c() override;
 	MspUsbInterface &mspUsb() override;
 	SystemConsoleInterface &systemConsole() override;
 
@@ -40,7 +40,7 @@ public:
 
 private:
 	/// I2C bus communicator.
-    QScopedPointer<MspI2cInterface> mI2c;
+	QScopedPointer<MspI2cInterface> mI2c;
 
 	/// USB bus communicator.
 	QScopedPointer<MspUsbInterface> mUsb;

@@ -23,7 +23,6 @@
 #include <QsLog.h>
 
 using namespace trikHal::trik;
-//using namespace trikControl;
 
 static inline __s32 i2c_smbus_access(int file, char read_write, __u8 command
 		, int size, union i2c_smbus_data *data)
