@@ -23,6 +23,11 @@
 	model-config.xml (настройки конкретной модели).</translation>
     </message>
     <message>
+	<location filename="../../trikKernel/src/applicationInitHelper.cpp" line="67"/>
+	<source>Path to a directory where core dump will be saved in case of creation.</source>
+	<translation>Путь к папке, в которую будет сохранен core dump в случае создания. </translation>
+    </message>
+    <message>
         <location filename="../../trikKernel/src/commandLineParser.cpp" line="110"/>
         <source>Positional arguments:</source>
         <translation>Позиционные аргументы:</translation>

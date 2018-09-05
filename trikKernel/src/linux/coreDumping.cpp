@@ -18,18 +18,31 @@
 
 #include <sys/resource.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include "paths.h"
 
 void (*oldHandler)(int);
 
-void dumpHandler(int signal)
+static void dumpHandler_impl(int signal, char *p)
 {
-	QDir::setCurrent(trikKernel::Paths::coreDumpPath());
-	oldHandler(signal);
+	static char* path = nullptr;
+	if (path == nullptr && p != nullptr) {
+		path = strdup(p);
+	}
+
+	if (p == nullptr) {
+		chdir(path);
+		oldHandler(signal);
+	}
 }
 
-void initSignals()
+static void dumpHandler(int signal)
+{
+	dumpHandler_impl(signal, nullptr);
+}
+
+static void initSignals()
 {
 	QList<int> const signalsList({SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGBUS, SIGSYS, SIGTRAP, SIGXCPU, SIGXFSZ
 			, SIGIOT});
@@ -49,15 +62,18 @@ void initSignals()
 	}
 }
 
-void setCoreLimits()
+static void setCoreLimits()
 {
 	rlimit core_limits;
 	core_limits.rlim_cur = core_limits.rlim_max = RLIM_INFINITY;
 	setrlimit(RLIMIT_CORE, &core_limits);
 }
 
-void trikKernel::coreDumping::initCoreDumping()
+void trikKernel::coreDumping::initCoreDumping(const QString &coreDumpPath)
 {
+	char *path = coreDumpPath.toLocal8Bit().data();
+	dumpHandler_impl(0, path);
+
 	initSignals();
 	setCoreLimits();
 }
