@@ -31,7 +31,8 @@ class HardwareAbstractionInterface;
 class MspI2cDevice : public MspI2cInterface
 {
 public:
-    MspI2cDevice() = default;
+	/// Constructor
+	MspI2cDevice() = default;
 	~MspI2cDevice() override;
 
 	void send(const QByteArray &data) override;

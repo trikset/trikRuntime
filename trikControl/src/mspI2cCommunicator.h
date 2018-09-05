@@ -35,7 +35,7 @@ class MspI2cCommunicator : public MspCommunicatorInterface
 public:
 	/// Constructor.
 	/// @param configurer - contains preparsed XML configuration.
-    MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
+	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
 
 	~MspI2cCommunicator() override;
 
@@ -51,7 +51,7 @@ private:
 	void disconnect();
 
 	QMutex mLock;
-    trikHal::MspI2cInterface &mI2c;
+	trikHal::MspI2cInterface &mI2c;
 	DeviceState mState;
 };
 
