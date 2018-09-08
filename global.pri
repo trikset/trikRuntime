@@ -50,7 +50,7 @@ macx {
 
 !CONFIG(qt): CONFIG+=qt
 
-CONFIG += ltcg
+unix:CONFIG += ltcg
 #CONFIG += fat-lto
 
 #deal with mixed configurations
