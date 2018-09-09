@@ -172,7 +172,7 @@ unix:!CONFIG(nosanitizers) {
 
 
 #Workaround for a known gcc/ld (before 7.3/bionic) issue
-CONFIG(sanitizer):!clang: QMAKE_LFLAGS += -fuse-ld=gold -Wl,--disable-new-dtags
+CONFIG(sanitizer):!clang:!win32: QMAKE_LFLAGS += -fuse-ld=gold -Wl,--disable-new-dtags
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
 MOC_DIR = .build/$$CONFIGURATION/moc
