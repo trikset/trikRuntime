@@ -2,7 +2,9 @@
 
 [![Join the chat at https://gitter.im/trikset/trikRuntime](https://badges.gitter.im/trikset/trikRuntime.svg)](https://gitter.im/trikset/trikRuntime?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/trikset/trikRuntime.svg?branch=master)](https://travis-ci.org/trikset/trikRuntime)
-[![codecov.io](https://codecov.io/github/trikset/trikRuntime/coverage.svg?branch=master)](https://codecov.io/github/trikset/trikRuntime?branch=master)[![CoverityScan](https://scan.coverity.com/projects/7496/badge.svg)](https://scan.coverity.com/projects/trikset-trikruntime)
+[![Build status](https://ci.appveyor.com/api/projects/status/a6kk307dn6yaa691/branch/master?svg=true)](https://ci.appveyor.com/project/iakov/trikruntime-cgd5y/branch/master)
+[![codecov.io](https://codecov.io/github/trikset/trikRuntime/coverage.svg?branch=master)](https://codecov.io/github/trikset/trikRuntime?branch=master)
+[![CoverityScan](https://scan.coverity.com/projects/7496/badge.svg)](https://scan.coverity.com/projects/trikset-trikruntime)
 
 ===========
 
