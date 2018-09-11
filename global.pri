@@ -47,16 +47,18 @@ macx {
 	PLATFORM = mac
 }
 
-CONFIG = $$unique(CONFIG)
 CONFIG *= qt
 
-CONFIG *= ltcg
+!win32:CONFIG *= ltcg
 #CONFIG += fat-lto
 
 #deal with mixed configurations
 CONFIG -= debug_and_release debug_and_release_target
-CONFIG(release, release | debug): CONFIG -= debug
 CONFIG(debug, debug | release): CONFIG -= release
+else:!CONFIG(debug):CONFIG *= release
+CONFIG(release):CONFIG -= debug
+CONFIG = $$unique(CONFIG)
+
 CONFIG(no-sanitizers):!CONFIG(nosanitizers): CONFIG += nosanitizers
 
 

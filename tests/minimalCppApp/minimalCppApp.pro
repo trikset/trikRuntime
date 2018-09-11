@@ -22,6 +22,6 @@ DESTDIR = .
 SOURCES += \
 	main.cpp \
 
-TRIK_RUNTIME_DIR = ../../
+TRIK_RUNTIME_DIR = $$absolute_path($$PWD/../../)
 
 include(../../trikControl/trikControlExport.pri)

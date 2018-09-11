@@ -1,5 +1,4 @@
 clone_folder: c:\trik-runtime
-test: off
 
 environment:
   global:
@@ -26,6 +25,7 @@ before_build:
   - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PYTHON_PATH%\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
+  - pacman --verbose --noconfirm --sync ccache rsync
   - curl https://raw.githubusercontent.com/MestreLion/git-tools/master/git-restore-mtime-bare > .fix-mtime.py
   - python .fix-mtime.py
   - git submodule foreach --recursive python %cd%\.fix-mtime.py
@@ -35,6 +35,16 @@ build_script:
   - qmake %APPVEYOR_BUILD_FOLDER%\%PROJECT_FILE%.pro -spec win32-g++ CONFIG+=%CONFIGURATION%
   - mingw32-make -j2 qmake_all
   - mingw32-make -j2 all
+  - qmake %APPVEYOR_BUILD_FOLDER%\tests\tests.pro -spec win32-g++ CONFIG+=%CONFIGURATION% -o tests.mak
+  - mingw32-make -f tests.mak -j2 qmake_all
+  - mingw32-make -f tests.mak -j2 all
+
+test_script:
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - cd bin\x86-%CONFIGURATION%
+  - .\trikScriptRunnerTests
+  - .\trikCommunicatorTests
+  - .\trikKernelTests
 
 artifacts:
  - path: bin\x86-$(configuration)
