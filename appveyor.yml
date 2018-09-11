@@ -6,6 +6,7 @@ environment:
     PYTHON_PATH: C:\Python27
     PYTHON_LIB: C:\Python27\libs
     PROJECT_FILE: trikRuntime
+
   matrix:
       - MINGW: C:\Qt\Tools\mingw492_32
         QTDIR: C:\Qt\5.6.3\mingw49_32
@@ -16,13 +17,19 @@ configuration:
 # - debug
   - release
 
+cache:
+  - c:\trik-runtime\.build #BUILD_DIR environment variable
 before_build:
   - git submodule update --init --recursive
   - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%WINDIR%\system32;%WINDIR%;%WINDIR%\System32\WindowsPowerShell\v1.0\;
+  - set  BUILD_DIR=%APPVEYOR_BUILD_FOLDER%\.build
+  - if not exist %BUILD_DIR% md %BUILD_DIR%
 
 build_script:
-  - qmake %PROJECT_FILE%.pro -r -spec win32-g++ CONFIG+=%CONFIGURATION%
-  - mingw32-make -j2
+  - cd %BUILD_DIR%
+  - qmake %APPVEYOR_BUILD_FOLDER%\%PROJECT_FILE%.pro -spec win32-g++ CONFIG+=%CONFIGURATION%
+  - mingw32-make -j2 qmake_all
+  - mingw32-make -j2 all
 
 artifacts:
  - path: bin\x86-$(configuration)
