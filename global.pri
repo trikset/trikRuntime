@@ -52,6 +52,7 @@ CONFIG *= qt
 
 CONFIG *= ltcg
 #CONFIG += fat-lto
+CONFIG(ltcg):win32:QMAKE_LFLAGS += -fno-use-linker-plugin
 
 #deal with mixed configurations
 CONFIG -= debug_and_release debug_and_release_target

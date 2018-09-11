@@ -6,13 +6,13 @@ environment:
     PYTHON_PATH: C:\Python27
     PYTHON_LIB: C:\Python27\libs
     PROJECT_FILE: trikRuntime
-    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=9
+    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=6 -md=128m
 
   matrix:
-      - MINGW: C:\Qt\Tools\mingw492_32
-        QTDIR: C:\Qt\5.6.3\mingw49_32
       - MINGW: C:\Qt\Tools\mingw530_32
         QTDIR: C:\Qt\5.11.1\mingw53_32
+      - MINGW: C:\Qt\Tools\mingw492_32
+        QTDIR: C:\Qt\5.6.3\mingw49_32
 
 configuration:
 # - debug
@@ -22,9 +22,12 @@ cache:
   - c:\trik-runtime\.build #BUILD_DIR environment variable
 before_build:
   - git submodule update --init --recursive
-  - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%WINDIR%\system32;%WINDIR%;%WINDIR%\System32\WindowsPowerShell\v1.0\;
+  - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PYTHON_PATH%\bin;%PATH%
   - set  BUILD_DIR=%APPVEYOR_BUILD_FOLDER%\.build
   - if not exist %BUILD_DIR% md %BUILD_DIR%
+  - du -sh %BUILD_DIR%
+  - curl https://raw.githubusercontent.com/MestreLion/git-tools/master/git-restore-mtime-core > .fix-mtime.py
+  - python .fix-mtime.py && git submodule foreach --recursive python %cd%\.fix-mtime.py
 
 build_script:
   - cd %BUILD_DIR%
