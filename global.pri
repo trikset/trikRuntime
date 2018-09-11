@@ -52,7 +52,6 @@ CONFIG *= qt
 
 CONFIG *= ltcg
 #CONFIG += fat-lto
-CONFIG(ltcg):win32:QMAKE_LFLAGS += -fno-use-linker-plugin
 
 #deal with mixed configurations
 CONFIG -= debug_and_release debug_and_release_target
@@ -174,6 +173,7 @@ unix:!CONFIG(nosanitizers) {
 
 #Workaround for a known gcc/ld (before 7.3/bionic) issue
 CONFIG(sanitizer):!clang:!win32: QMAKE_LFLAGS += -fuse-ld=gold -Wl,--disable-new-dtags
+CONFIG(ltcg):win32:QMAKE_LFLAGS += -fno-use-linker-plugin
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
 MOC_DIR = .build/$$CONFIGURATION/moc
