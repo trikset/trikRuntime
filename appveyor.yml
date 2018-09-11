@@ -6,6 +6,7 @@ environment:
     PYTHON_PATH: C:\Python27
     PYTHON_LIB: C:\Python27\libs
     PROJECT_FILE: trikRuntime
+    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=9
 
   matrix:
       - MINGW: C:\Qt\Tools\mingw492_32

@@ -47,10 +47,10 @@ macx {
 	PLATFORM = mac
 }
 
+CONFIG = $$unique(CONFIG)
+CONFIG *= qt
 
-!CONFIG(qt): CONFIG+=qt
-
-unix:CONFIG += ltcg
+CONFIG *= ltcg
 #CONFIG += fat-lto
 
 #deal with mixed configurations
