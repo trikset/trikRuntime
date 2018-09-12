@@ -6,7 +6,7 @@ environment:
     PYTHON_LIB: C:\Python27\libs
     PROJECT_FILE: trikRuntime
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
-    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=6 -md=128m
+    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=3 -md=32m
     BUILD_DIR: '%APPVEYOR_BUILD_FOLDER%\.build'
 
   matrix:
@@ -20,7 +20,7 @@ configuration:
   - release
 
 cache:
-  - c:\trik-runtime\.build # '%BUILD_DIR%'
+  - '%BUILD_DIR%'
 before_build:
   - git submodule update --init --recursive
   - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PYTHON_PATH%\bin;%PATH%
@@ -51,3 +51,8 @@ test_script:
 artifacts:
  - path: bin\x86-$(configuration)
    name: trikRuntime-win32-$(configuration)
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: QRFxYnwQHitjlrmGleW/IvNXUciFrbLfMfUWJZJKMd7C4G39APa9IkFMmNO129P7kjgCIRevlyisi7L2DX5WOS0tyvxt6rhiq+g7Dn2rz74=
