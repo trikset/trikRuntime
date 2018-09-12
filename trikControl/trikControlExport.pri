@@ -19,6 +19,8 @@
 # built for correct configuration and architecture (for example, if you build your C++ application for ARM9 in Release
 # configuration, trikRuntime must be already built for ARM9-release, qmake and make trikRuntime.pro for this).
 
+CONFIG -= debug_and_release debug_and_release_target
+
 QT += xml gui
 
 if (equals(QT_MAJOR_VERSION, 5)) {
