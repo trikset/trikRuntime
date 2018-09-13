@@ -1,48 +1,41 @@
 compiler:
-  - gcc
-
+- gcc
 env: CONFIG=release   VERA=false   SUFFIX=
-
 cache: ccache
-
 addons:
   apt:
     update: true
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - python-pip
-
+    - python-pip
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      sudo: required
-      services: docker
-      name: "Linux release"
-    - os: linux
-      dist: trusty
-      sudo: required
-      services: docker
-      env: CONFIG=debug     VERA=true SUFFIX=-d
-      name: "Linux debug + vera"
-    - os: osx
-      osx_image: 9.latest
-      name: "macOS release"
+  - os: linux
+    dist: trusty
+    sudo: required
+    services: docker
+    name: Linux release
+  - os: linux
+    dist: trusty
+    sudo: required
+    services: docker
+    env: CONFIG=debug     VERA=true SUFFIX=-d
+    name: Linux debug + vera
+  - os: osx
+    osx_image: 9.latest
+    name: macOS release
 git:
   depth: 1
-
 language: cpp
-
-
 install:
-  - ./.travis/install.sh
-
+- "./.travis/install.sh"
 script:
-  - ./.travis/script.sh
-
+- "./.travis/script.sh"
 after_script:
-  - ./.travis/after_script.sh
-
+- "./.travis/after_script.sh"
 after_success:
-  - if [ "$CONFIG" = "debug" ]; then codecov; fi
+- if [ "$CONFIG" = "debug" ]; then codecov; fi
+notifications:
+  slack:
+    secure: KQUsvDU5DOVz8iP9V4L1O6GW02rPK6vavMi892aXnCIa5fRX+/hiwFQH4fHfFCDVpu93dtaVwfYKXgSQnjcC6foZSARbE4H6dTzU3TRgzwx8BMNJPlzkldFH+oYgctdvt/x9X04tatj1vj1hAEfFXL0QX6BYLeUsTj+AS+MZmck=

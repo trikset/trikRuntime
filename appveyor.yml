@@ -5,7 +5,8 @@ environment:
     PYTHON_PATH: C:\Python27
     PYTHON_LIB: C:\Python27\libs
     PROJECT_FILE: trikRuntime
-    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=6 -md=128m
+    APPVEYOR_SAVE_CACHE_ON_ERROR: true
+    APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=3 -md=32m
     BUILD_DIR: '%APPVEYOR_BUILD_FOLDER%\.build'
 
   matrix:
@@ -15,7 +16,7 @@ environment:
         QTDIR: C:\Qt\5.6.3\mingw49_32
 
 configuration:
-# - debug
+  - debug
   - release
 
 cache:
@@ -25,7 +26,7 @@ before_build:
   - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PYTHON_PATH%\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
-  - pacman --verbose --noconfirm --sync ccache rsync
+  - pacman --verbose --noconfirm --sync ccache rsync curl
   - curl https://raw.githubusercontent.com/MestreLion/git-tools/master/git-restore-mtime-bare > .fix-mtime.py
   - python .fix-mtime.py
   - git submodule foreach --recursive python %cd%\.fix-mtime.py
@@ -42,10 +43,16 @@ build_script:
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - cd bin\x86-%CONFIGURATION%
-  - .\trikScriptRunnerTests
-  - .\trikCommunicatorTests
-  - .\trikKernelTests
+  - if %CONFIGURATION% == debug set CONFIGURATION_SUFFIX=-d
+  - .\trikScriptRunnerTests%CONFIGURATION_SUFFIX%
+  - .\trikCommunicatorTests%CONFIGURATION_SUFFIX%
+  - .\trikKernelTests%CONFIGURATION_SUFFIX%
 
 artifacts:
  - path: bin\x86-$(configuration)
    name: trikRuntime-win32-$(configuration)
+
+notifications:
+  - provider: Slack
+    incoming_webhook:
+      secure: QRFxYnwQHitjlrmGleW/IvNXUciFrbLfMfUWJZJKMd7C4G39APa9IkFMmNO129P7kjgCIRevlyisi7L2DX5WOS0tyvxt6rhiq+g7Dn2rz74=
