@@ -83,12 +83,12 @@ static inline __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value
 	return i2c_smbus_access(file, I2C_SMBUS_WRITE, command, I2C_SMBUS_BYTE_DATA, &data);
 }
 
-TrikMspI2c::~TrikMspI2c()
+MspI2cDevice::~MspI2cDevice()
 {
 	disconnect();
 }
 
-void TrikMspI2c::send(const QByteArray &data)
+void MspI2cDevice::send(const QByteArray &data)
 {
 	if (data.size() == 3) {
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
@@ -97,7 +97,7 @@ void TrikMspI2c::send(const QByteArray &data)
 	}
 }
 
-int TrikMspI2c::read(const QByteArray &data)
+int MspI2cDevice::read(const QByteArray &data)
 {
 	if (data.size() == 2) {
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
@@ -108,7 +108,7 @@ int TrikMspI2c::read(const QByteArray &data)
 	}
 }
 
-bool TrikMspI2c::connect(const QString &devicePath, int deviceId)
+bool MspI2cDevice::connect(const QString &devicePath, int deviceId)
 {
 	mDeviceFileDescriptor = open(devicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
@@ -124,7 +124,7 @@ bool TrikMspI2c::connect(const QString &devicePath, int deviceId)
 	return true;
 }
 
-void TrikMspI2c::disconnect()
+void MspI2cDevice::disconnect()
 {
 	close(mDeviceFileDescriptor);
 }

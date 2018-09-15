@@ -43,6 +43,8 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
 	$$PWD/include/trikControl/markerInterface.h \
+        $$PWD/include/trikControl/i2cdeviceinterface.h
+
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \
@@ -101,7 +103,8 @@ HEADERS += \
 	$$PWD/src/gyroSensor.h \
         $$PWD/src/qtCameraImplementation.h \
         $$PWD/src/v4l2CameraImplementation.h \
-        $$PWD/src/imitationCameraImplementation.h
+        $$PWD/src/imitationCameraImplementation.h \
+        $$PWD/src/i2cdevice.h \
 #	$$PWD/src/headingSensor.h \
 
 SOURCES += \
@@ -157,7 +160,8 @@ SOURCES += \
         $$PWD/src/qtCameraImplementation.cpp \
         $$PWD/src/v4l2CameraImplementation.cpp \
         $$PWD/src/imitationCameraImplementation.cpp \
-        $$PWD/src/cameraImplementationInterface.cpp
+        $$PWD/src/cameraImplementationInterface.cpp \
+        $$PWD/src/i2cdevice.cpp
 #	$$PWD/src/headingSensor.cpp \
 
 

@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2018 Aleksey Fefelov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,37 +14,34 @@
 
 #pragma once
 
-#include "mspI2cInterface.h"
+#include "i2cdeviceinterface.h"
+#include "mspI2cCommunicator.h"
 
-namespace trikHal {
-namespace trik {
+namespace trikControl{
 
-namespace trikKernel {
-class Configurer;
-}
-
-namespace trikHal {
-class HardwareAbstractionInterface;
-}
-
-/// Real implementation of I2C bus communicator.
-class MspI2cDevice : public MspI2cInterface
+/// Abstract i2c device
+class I2cDevice : public I2cDeviceInterface
 {
-public:
-	/// Constructor
-	MspI2cDevice() = default;
-	~MspI2cDevice() override;
+	Q_OBJECT
 
+public:
+	I2cDevice(int bus, int adress
+			  , trikControl::MspCommunicatorInterface &communicator);
+
+	Status status() const override;
+
+public slots:
+	/// Send data to current device, if it is connected.
 	void send(const QByteArray &data) override;
+
+	/// Reads data by given I2C command number and returns the result.
 	int read(const QByteArray &data) override;
-	bool connect(const QString &devicePath, int deviceId) override;
-	void disconnect() override;
 
 private:
-	/// Low-level descriptor of I2C device file.
-	int mDeviceFileDescriptor = -1;
+	int mBus;
+	int mAdress;
+	DeviceState mState;
+	MspCommunicatorInterface &mCommunicator;
 };
 
 }
-}
-

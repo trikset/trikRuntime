@@ -118,6 +118,8 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
+	I2cDeviceInterface *i2c(int bus, int adress) override;
+
 	QVector<uint8_t> getStillImage() override;
 
 	SoundSensorInterface *soundSensor(const QString &port) override;

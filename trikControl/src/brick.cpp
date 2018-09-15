@@ -53,6 +53,7 @@
 #include "vectorSensor.h"
 #include "cameraDeviceInterface.h"
 #include "cameraDevice.h"
+#include "i2cdevice.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -391,6 +392,11 @@ ColorSensorInterface *Brick::colorSensor(const QString &port)
 ObjectSensorInterface *Brick::objectSensor(const QString &port)
 {
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
+}
+
+I2cDeviceInterface *Brick::i2c(int bus, int adress)
+{
+	return new I2cDevice(bus, adress, *mMspCommunicator);
 }
 
 QVector<uint8_t> Brick::getStillImage()
