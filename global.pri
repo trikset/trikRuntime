@@ -103,14 +103,14 @@ equals(TEMPLATE, app) {
 	unix:!macx {
 		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
-		#Workaround for a known gcc/ld (before 7.3/bionic) issue
-		CONFIG(use_gold_linker):!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
-
 	}
 	macx:!CONFIG(no_rpath) {
 		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
 	}
 }
+
+#Workaround for a known gcc/ld (before 7.3/bionic) issue
+CONFIG(use_gold_linker):!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
 
 macx-clang {
 	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
