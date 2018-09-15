@@ -49,7 +49,7 @@ macx {
 
 CONFIG *= qt
 
-!win32:CONFIG *= ltcg
+!win32:CONFIG *= ltcg use_gold_linker
 #CONFIG += fat-lto
 
 #deal with mixed configurations
@@ -103,6 +103,9 @@ equals(TEMPLATE, app) {
 	unix:!macx {
 		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
 		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
+		#Workaround for a known gcc/ld (before 7.3/bionic) issue
+		CONFIG(use_gold_linker):!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
+
 	}
 	macx:!CONFIG(no_rpath) {
 		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
@@ -173,9 +176,7 @@ unix:!CONFIG(nosanitizers) {
 }
 
 
-#Workaround for a known gcc/ld (before 7.3/bionic) issue
-CONFIG(sanitizer):!clang:!win32: QMAKE_LFLAGS += -fuse-ld=gold -Wl,--disable-new-dtags
-CONFIG(ltcg):win32:QMAKE_LFLAGS += -fno-use-linker-plugin
+#CONFIG(ltcg):win32:QMAKE_LFLAGS += -fno-use-linker-plugin
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
 MOC_DIR = .build/$$CONFIGURATION/moc
