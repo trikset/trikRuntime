@@ -71,7 +71,12 @@ void TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 
 void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 {
-	const auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
+	auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
+
+#ifdef Q_OS_WIN
+	fileContents = fileContents.replace("&&", ";");
+#endif
+
 	run(fileContents);
 }
 
@@ -90,6 +95,7 @@ TEST_F(TrikScriptRunnerTest, fileTest)
 	runFromFile("file-test.js");
 }
 
+#ifndef Q_OS_WIN
 TEST_F(TrikScriptRunnerTest, asyncSystemTest)
 {
 	QFile testFile("test");
@@ -100,6 +106,7 @@ TEST_F(TrikScriptRunnerTest, asyncSystemTest)
 	tests::utils::Wait::wait(2500);
 	ASSERT_TRUE(testFile.exists());
 }
+#endif
 
 TEST_F(TrikScriptRunnerTest, syncSystemTest)
 {
@@ -116,12 +123,19 @@ TEST_F(TrikScriptRunnerTest, directCommandTest)
 	testFile.remove();
 	ASSERT_FALSE(testFile.exists());
 	scriptRunner().runDirectCommand("script.system('echo 123 > test', true);");
-	tests::utils::Wait::wait(100);
+	tests::utils::Wait::wait(300);
 	ASSERT_TRUE(testFile.exists());
+
+#ifdef Q_OS_WIN
+	scriptRunner().runDirectCommand("script.system('DEL test', true);");
+#else
 	scriptRunner().runDirectCommand("script.system('rm test', true);");
-	tests::utils::Wait::wait(100);
+#endif
+
+	tests::utils::Wait::wait(300);
 	ASSERT_FALSE(testFile.exists());
 	scriptRunner().runDirectCommand("script.quit();");
+	tests::utils::Wait::wait(300);
 }
 
 TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
@@ -131,7 +145,13 @@ TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
 	ASSERT_FALSE(testFile.exists());
 	runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
 	ASSERT_TRUE(testFile.exists());
+
+#ifdef Q_OS_WIN
+	runDirectCommandAndWaitForQuit("script.system('DEL test', true); script.quit();");
+#else
 	runDirectCommandAndWaitForQuit("script.system('rm test', true); script.quit();");
+#endif
+
 	ASSERT_FALSE(testFile.exists());
 }
 
