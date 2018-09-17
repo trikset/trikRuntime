@@ -29,6 +29,7 @@
 	#include <QtWidgets/QLabel>
 	#include <QtWidgets/QListView>
 	#include <QtWidgets/QFileSystemModel>
+	#include <QtWidgets/QFileIconProvider>
 #endif
 
 #include <QtCore/QString>
@@ -79,6 +80,27 @@ private:
 	Controller &mController;
 	QString mRootDirPath;
 	QString mLastSelectedFile;
+
+	/// Default QFileIconProvider spend about 10 seconds for scanning empty directory for file icons (Qt 5.8.0),
+	/// so here is suggested the light overwrite version of QFileIconProvider class.
+	/// In future it can be used to divide icons for ".py" and ".js" files.
+	class LightFileIconProvider : public QFileIconProvider {
+	public:
+		/// Ligth version of icon method
+		QIcon icon(IconType) const override {
+			return QIcon();
+		}
+
+		/// Ligth version of icon method
+		QIcon icon(const QFileInfo &) const override {
+			return QIcon();
+		}
+
+		/// Ligth version of type method
+		QString type(const QFileInfo &) const override {
+			return QString();
+		}
+	};
 };
 
 }
