@@ -63,6 +63,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 		mRootDirPath = trikKernel::Paths::userScriptsPath();
 	}
 
+	mFileSystemModel.setIconProvider(new LightFileIconProvider());
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
