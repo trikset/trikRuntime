@@ -63,6 +63,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 		mRootDirPath = trikKernel::Paths::userScriptsPath();
 	}
 
+	mFileSystemModel.setIconProvider(new LightFileIconProvider());
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
@@ -223,4 +224,16 @@ void FileManagerWidget::renewCurrentIndex()
 	mFileSystemView.selectionModel()->select(currentIndex, QItemSelectionModel::ClearAndSelect);
 	mFileSystemView.setCurrentIndex(currentIndex);
 	mFileSystemView.scrollTo(currentIndex, QAbstractItemView::PositionAtCenter);
+}
+
+QIcon FileManagerWidget::LightFileIconProvider::icon(QFileIconProvider::IconType) const {
+	return QIcon();
+}
+
+QIcon FileManagerWidget::LightFileIconProvider::icon(const QFileInfo &) const {
+	return QIcon();
+}
+
+QString FileManagerWidget::LightFileIconProvider::type(const QFileInfo &) const {
+	return QString();
 }
