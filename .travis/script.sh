@@ -22,9 +22,9 @@ $EXECUTOR bash -c "export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && qmake -query \
 && ccache -M 0 \
 && pkg-config --list-all \
-&&  qmake -r CONFIG+=$CONFIG -Wall \
+&&  qmake -r CONFIG+=$CONFIG -Wall $QMAKE_EXTRA \
 &&  make -k -j2 \
-&& pushd tests && qmake -r CONFIG+=$CONFIG && make -j2 && popd \
+&& pushd tests && qmake -r CONFIG+=$CONFIG $QMAKE_EXTRA && make -j2 && popd \
 && cd bin/x86-$CONFIG && ls "
 
 $EXECUTOR sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests$SUFFIX"
