@@ -5,6 +5,7 @@ env:
     - CONFIG=release
     - VERA=false
     - SUFFIX=
+    - QMAKE_EXTRA=
     - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@2,python@3} ; echo .empty ; } )
 cache:
   timeout: 1000
@@ -40,6 +41,7 @@ matrix:
   - os: osx
     osx_image: 9.latest
     name: macOS release
+    env: QMAKE_EXTRA=CONFIG+=no-sanitizers
 git:
   depth: 1
 language: cpp
