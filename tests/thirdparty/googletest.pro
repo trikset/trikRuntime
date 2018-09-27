@@ -16,7 +16,7 @@ include(../../global.pri)
 
 TEMPLATE = lib
 
-CONFIG += warn_off
+CONFIG += staticlib
 
 INCLUDEPATH += \
 	googletest/googlemock \
