@@ -1,7 +1,22 @@
 compiler:
 - gcc
-env: CONFIG=release   VERA=false   SUFFIX=
-cache: ccache
+env:
+  global:
+    - CONFIG=release
+    - VERA=false
+    - SUFFIX=
+    - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@2,python@3} ; echo .empty ; } )
+cache:
+  timeout: 1000
+  apt: true
+  ccache: true
+  pip: true
+  directories:
+    - $CELLAR_CACHE_DIR/qt
+    - $CELLAR_CACHE_DIR/ccache
+    - $CELLAR_CACHE_DIR/python@2
+    - $CELLAR_CACHE_DIR/python@3
+#    - /usr/local/opt/
 addons:
   apt:
     update: true

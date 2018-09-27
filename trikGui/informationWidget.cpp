@@ -24,18 +24,18 @@ InformationWidget::InformationWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mUpdateButton(nullptr)
 {
-	QLabel* const versionLabel = new QLabel(tr("Current version") + ": \n" + trikKernel::version);
-	versionLabel->setAlignment(Qt::AlignTop);
-	mLayout.addWidget(versionLabel);
+//	QLabel* const versionLabel = new QLabel(tr("Current version") + ": \n" + trikKernel::version);
+//	versionLabel->setAlignment(Qt::AlignTop);
+//	mLayout.addWidget(versionLabel);
 
 	QLabel* const osVersionLabel = new QLabel(tr("OS version") + ": \n" + osVersion());
 	osVersionLabel->setAlignment(Qt::AlignTop);
 	mLayout.addWidget(osVersionLabel);
 
-	mUpdateButton = new QPushButton(tr("Update"));
-	mLayout.addWidget(mUpdateButton);
-	mUpdateButton->setDefault(true);
-
+//	mUpdateButton = new QPushButton(tr("Update"));
+//	mLayout.addWidget(mUpdateButton);
+//	mUpdateButton->setDefault(true);
+//
 	QString mac = tr("Not found");
 
 	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();

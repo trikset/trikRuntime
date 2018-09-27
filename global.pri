@@ -57,10 +57,8 @@ CONFIG -= debug_and_release debug_and_release_target
 CONFIG(debug, debug | release): CONFIG -= release
 else:!CONFIG(debug):CONFIG *= release
 CONFIG(release):CONFIG -= debug
+CONFIG(no-sanitizers): CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
-
-CONFIG(no-sanitizers):!CONFIG(nosanitizers): CONFIG += nosanitizers
-
 
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
@@ -79,8 +77,10 @@ CONFIG(debug) {
 
 #CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
 #!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<[5-9]\\.[0-9]+\\."' ){ CONFIG += gcc5 }
-!clang:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
+!gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
+!gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
+
+
 
 CONFIG += link_pkgconfig
 !win32:PKGCONFIG += python-2.7
@@ -116,8 +116,6 @@ macx-clang {
 	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
 }
-
-CONFIG(no-sanitizers):CONFIG+=nosanitizers
 
 !CONFIG(nosanitizers):!clang:gcc:*-g++*:gcc4{
 	warning("Disabled sanitizers, failed to detect compiler version or too old compiler: $$QMAKE_CXX")
@@ -169,8 +167,12 @@ unix:!CONFIG(nosanitizers) {
 	}
 
 	CONFIG(release){
+		CONFIG(gcc4) {
+			message("Too old compiler: $$QMAKE_CXX")
+		} else {
 			QMAKE_CFLAGS += -fsanitize-recover=all
 			QMAKE_CXXFLAGS += -fsanitize-recover=all
+		}
 	}
 
 }
