@@ -23,7 +23,7 @@ SUBDIRS = \
 	trikScriptRunnerTests \
 	testUtils \
 
-thirdparty.file = thirdparty/gmock-1.6.0/gmock.pro
+thirdparty.file = thirdparty/googletest.pro
 
 trikKernelTests.depends = thirdparty testUtils
 trikScriptRunnerTests.depends = thirdparty testUtils

@@ -12,29 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../../../global.pri)
+include(../../global.pri)
 
 TEMPLATE = lib
 
 CONFIG += warn_off
 
-DEFINES += GTEST_USE_OWN_TR1_TUPLE
-
 INCLUDEPATH += \
-	. \
-	include \
-	gtest \
-	gtest/include \
+	googletest/googlemock \
+	googletest/googlemock/include \
+	googletest/googletest \
+	googletest/googletest/include \
 
 HEADERS += \
-	$$files(gtest/src/*.h) \
-	$$files(gtest/include/gtest/*.h) \
-	$$files(gtest/include/gtest/internal/*.h) \
-	$$files(include/gmock/*.h) \
-	$$files(include/gmock/internal/*.h) \
+	$$files(googletest/googletest/src/*.h) \
+	$$files(googletest/googletest/include/gtest/*.h) \
+	$$files(googletest/googletest/include/gtest/internal/*.h) \
+	$$files(googletest/googlemock/include/gmock/*.h) \
+	$$files(googletest/googlemock/include/gmock/internal/*.h) \
 
 SOURCES += \
-	$$files(gtest/src/*.cc) \
-	$$files(src/*.cc) \
+	$$files(googletest/googlemock/src/*_all.cc) \
+	$$files(googletest/googletest/src/*_all.cc) \
 
 noPch()
