@@ -22,6 +22,8 @@ $EXECUTOR bash -c "export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && qmake -query \
 && ccache -M 0 \
 && pkg-config --list-all \
+&& { which python3 && python3 -V || true ; } \
+&& { which python && python -V || true ; } \
 &&  qmake -r CONFIG+=$CONFIG -Wall $QMAKE_EXTRA \
 &&  make -k -j2 \
 && pushd tests && qmake -r CONFIG+=$CONFIG $QMAKE_EXTRA && make -j2 && popd \

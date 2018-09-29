@@ -2,8 +2,8 @@ clone_folder: c:\trik-runtime
 
 environment:
   global:
-    PYTHON_PATH: C:\Python27
-    PYTHON_LIB: C:\Python27\libs
+    PYTHON_PATH: C:\Python35
+    PYTHON_LIB: '%PYTHON_PATH%\libs'
     PROJECT_FILE: trikRuntime
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
     APPVEYOR_CACHE_ENTRY_ZIP_ARGS: -t7z -m0=lzma -mx=3 -md=32m
@@ -23,11 +23,16 @@ cache:
   - '%BUILD_DIR%'
 before_build:
   - git submodule update --init --recursive
-  - set PATH=%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PYTHON_PATH%\bin;%PATH%
+  - set PATH=%PYTHON_PATH%;%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
   - pacman --verbose --noconfirm --sync ccache rsync curl
+  - path
+  - python -V
+  - g++ --version
   - curl https://raw.githubusercontent.com/MestreLion/git-tools/master/git-restore-mtime-bare > .fix-mtime.py
+  - python "%PYTHON_PATH%\Tools\scripts\2to3.py" -v -p -w -n -f all .fix-mtime.py
+  - sed -ri "s#line.(startswith|split)\(#line.\1\(b#g" .fix-mtime.py
   - python .fix-mtime.py
   - git submodule foreach --recursive python %cd%\.fix-mtime.py
 

@@ -82,10 +82,6 @@ CONFIG(debug) {
 
 
 
-CONFIG += link_pkgconfig
-!win32:PKGCONFIG += python-2.7
-macx:QT_CONFIG -= no-pkg-config
-
 isEmpty(DESTDIR) {
 	DESTDIR = $$PWD/bin/$$CONFIGURATION
 }
