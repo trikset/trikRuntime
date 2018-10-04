@@ -32,7 +32,7 @@ HEADERS += \
 	$$files(googletest/googlemock/include/gmock/internal/*.h) \
 
 SOURCES += \
-	$$files(googletest/googlemock/src/*_all.cc) \
-	$$files(googletest/googletest/src/*_all.cc) \
+	$$files($$PWD/googletest/googlemock/src/*-all.cc) \
+	$$files($$PWD/googletest/googletest/src/*-all.cc) \
 
 noPch()
