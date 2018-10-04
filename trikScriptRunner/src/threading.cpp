@@ -107,7 +107,12 @@ void Threading::waitForAll()
 {
 	QEventLoop wait;
 	connect(this, SIGNAL(finished()), &wait, SLOT(quit()));
-	wait.exec();
+	mThreadsMutex.lock();
+	auto hasThreads = !mThreads.isEmpty();
+	mThreadsMutex.unlock();
+	if (hasThreads) {	
+		wait.exec();
+	}
 }
 
 void Threading::joinThread(const QString &threadId)
