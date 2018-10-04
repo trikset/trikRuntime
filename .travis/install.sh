@@ -19,4 +19,3 @@ case $TRAVIS_OS_NAME in
     ;;
   *) exit 1 ;;
 esac
-pkg-config --list-all
