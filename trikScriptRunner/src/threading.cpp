@@ -14,6 +14,8 @@
 
 #include "threading.h"
 
+#include <QtCore/QEventLoop>
+
 #include "scriptEngineWorker.h"
 #include "src/utils.h"
 #include "src/scriptThread.h"
@@ -106,9 +108,9 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 void Threading::waitForAll()
 {
-	while (!mThreads.isEmpty()) {
-		QThread::yieldCurrentThread();
-	}
+	QEventLoop l;
+	connect(this, SIGNAL(finished()), &l, SLOT(quit()));
+	l.exec();
 }
 
 void Threading::joinThread(const QString &threadId)
@@ -198,6 +200,10 @@ void Threading::threadFinished(const QString &id)
 	mFinishedThreads.insert(id);
 	mThreadsMutex.unlock();
 	mResetMutex.unlock();
+
+	if (mThreads.isEmpty()) {
+		emit finished();
+	}
 
 	if (!mErrorMessage.isEmpty()) {
 		reset();
