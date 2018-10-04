@@ -108,9 +108,14 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 void Threading::waitForAll()
 {
-	QEventLoop l;
-	connect(this, SIGNAL(finished()), &l, SLOT(quit()));
-	l.exec();
+	QEventLoop wait;
+	connect(this, SIGNAL(finished()), &wait, SLOT(quit()));
+	mThreadsMutex.lock();
+	auto hasThreads = !mThreads.isEmpty();
+	mThreadsMutex.unlock();
+	if (hasThreads) {	
+		wait.exec();
+	}
 }
 
 void Threading::joinThread(const QString &threadId)
