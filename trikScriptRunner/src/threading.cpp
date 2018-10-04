@@ -94,13 +94,10 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 	engine->moveToThread(thread);
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+	QEventLoop wait;
+	connect(thread, SIGNAL(started()), &wait, SLOT(quit()));
 	thread->start();
-
-	// wait until script actually start to avoid problems with multiple starts and resets
-	// TODO: efficient AND safe solution
-	for (int i = 0; i < 500; ++i) {
-		QThread::yieldCurrentThread();
-	}
+	wait.exec();
 
 	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
 	mResetMutex.unlock();
@@ -108,9 +105,9 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 void Threading::waitForAll()
 {
-	QEventLoop l;
-	connect(this, SIGNAL(finished()), &l, SLOT(quit()));
-	l.exec();
+	QEventLoop wait;
+	connect(this, SIGNAL(finished()), &wait, SLOT(quit()));
+	wait.exec();
 }
 
 void Threading::joinThread(const QString &threadId)
