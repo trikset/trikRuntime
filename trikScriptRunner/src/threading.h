@@ -75,6 +75,10 @@ public:
 	/// Returns true if the script is being evaluated in event-driven mode.
 	bool inEventDrivenMode() const;
 
+signals:
+	/// Signals that all threads have finished.
+	void finished();
+
 private:
 	/// Starts a thread with given threadId
 	/// @param engine - script engine that will do the work; it will be owned by a newly created thread

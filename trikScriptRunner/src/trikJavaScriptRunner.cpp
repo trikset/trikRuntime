@@ -31,7 +31,6 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
 	, mMaxScriptId(0)
 {
-	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
 	if (mailbox) {
 		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
@@ -39,6 +38,7 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
+	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
 	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
 	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
 

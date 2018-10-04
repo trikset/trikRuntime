@@ -22,14 +22,16 @@ QT += widgets
 
 INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \
-	$$PWD/thirdparty/gmock-1.6.0/include \
-	$$PWD/thirdparty/gmock-1.6.0/gtest/include \
+	$$PWD/thirdparty/googletest/googlemock/include \
+	$$PWD/thirdparty/googletest/googletest/include \
 
 LIBS += -L$$DESTDIR
 
-LIBS += -lgmock$$CONFIGURATION_SUFFIX
+LIBS += -lgoogletest$$CONFIGURATION_SUFFIX
 
 SOURCES = $$PWD/mainTest.cpp
+
+include(thirdparty/googletest.pri)
 
 CONFIG(clang) {
 	QMAKE_CXXFLAGS += -Wno-unused-local-typedef
@@ -40,7 +42,7 @@ CONFIG(clang) {
 
 QMAKE_CXXFLAGS += -Wno-error=pedantic
 
-DEFINES += GTEST_USE_OWN_TR1_TUPLE
+#DEFINES += GTEST_USE_OWN_TR1_TUPLE
 
 
 OTHER_FILES += \
