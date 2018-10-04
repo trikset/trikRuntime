@@ -76,6 +76,7 @@ public:
 	bool inEventDrivenMode() const;
 
 signals:
+	/// Signals that all threads have finished.
 	void finished();
 
 private:
