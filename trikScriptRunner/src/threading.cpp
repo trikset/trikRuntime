@@ -14,6 +14,8 @@
 
 #include "threading.h"
 
+#include <QtCore/QEventLoop>
+
 #include "scriptEngineWorker.h"
 #include "src/utils.h"
 #include "src/scriptThread.h"
@@ -92,13 +94,10 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 	engine->moveToThread(thread);
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+	QEventLoop wait;
+	connect(thread, SIGNAL(started()), &wait, SLOT(quit()));
 	thread->start();
-
-	// wait until script actually start to avoid problems with multiple starts and resets
-	// TODO: efficient AND safe solution
-	for (int i = 0; i < 500; ++i) {
-		QThread::yieldCurrentThread();
-	}
+	wait.exec();
 
 	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
 	mResetMutex.unlock();
@@ -106,9 +105,9 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 void Threading::waitForAll()
 {
-	while (!mThreads.isEmpty()) {
-		QThread::yieldCurrentThread();
-	}
+	QEventLoop wait;
+	connect(this, SIGNAL(finished()), &wait, SLOT(quit()));
+	wait.exec();
 }
 
 void Threading::joinThread(const QString &threadId)
@@ -198,6 +197,10 @@ void Threading::threadFinished(const QString &id)
 	mFinishedThreads.insert(id);
 	mThreadsMutex.unlock();
 	mResetMutex.unlock();
+
+	if (mThreads.isEmpty()) {
+		emit finished();
+	}
 
 	if (!mErrorMessage.isEmpty()) {
 		reset();
