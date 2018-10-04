@@ -16,8 +16,6 @@ include(../../global.pri)
 
 TEMPLATE = lib
 
-CONFIG += staticlib
-
 INCLUDEPATH += \
 	googletest/googlemock \
 	googletest/googlemock/include \
