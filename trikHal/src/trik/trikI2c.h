@@ -28,12 +28,12 @@ class HardwareAbstractionInterface;
 }
 
 /// Real implementation of I2C bus communicator.
-class MspI2cDevice : public MspI2cInterface
+class TrikI2c : public MspI2cInterface
 {
 public:
 	/// Constructor
-	MspI2cDevice() = default;
-	~MspI2cDevice() override;
+	TrikI2c() = default;
+	~TrikI2c() override;
 
 	void send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
@@ -47,4 +47,3 @@ private:
 
 }
 }
-

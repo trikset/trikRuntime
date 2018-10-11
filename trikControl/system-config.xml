@@ -206,4 +206,8 @@ equal to its class name.
 
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
+
+        <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
+	<i2cBus1 path="/dev/i2c-1" />
+	<i2cBus2 path="/dev/i2c-2" />
 </config>

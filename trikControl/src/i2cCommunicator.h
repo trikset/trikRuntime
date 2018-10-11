@@ -29,17 +29,18 @@ class MspI2cInterface;
 
 namespace trikControl {
 
-/// Realize of i2c bus communicator
-class I2cBusCommunicator : public DeviceInterface
+/// Implementation of i2c communicator
+class I2cCommunicator : public DeviceInterface
 {
 public:
 	/// Constructor.
-	/// @param i2c - Hardware abstraction.
+	/// @param i2c - hardware abstraction.
 	/// @param bus - device bus (1 or 2)
-	/// @param deviceId - device adress on bus.
-	I2cBusCommunicator(trikHal::MspI2cInterface &i2c, uint8_t bus, uint8_t deviceId);
+	/// @param deviceId - device address on bus.
+	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
+			, uint8_t bus, uint8_t deviceId);
 
-	~I2cBusCommunicator();
+	~I2cCommunicator();
 
 	/// Send data to current device, if it is connected.
 	void send(const QByteArray &data);

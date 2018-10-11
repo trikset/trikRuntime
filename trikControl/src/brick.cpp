@@ -55,7 +55,7 @@
 #include "cameraDevice.h"
 #include "i2cDevice.h"
 #include "mspI2cCommunicator.h"
-#include "i2cBusCommunicator.h"
+#include "i2cCommunicator.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -397,16 +397,15 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
 
-I2cDeviceInterface *Brick::i2c(int bus, int adress)
+I2cDeviceInterface *Brick::i2c(int bus, int address)
 {
 	uint8_t _bus = bus & 0xFF;
-	uint8_t _adress = adress & 0xFF;
-	uint16_t mhash = (_bus << 8) | _adress;
-	if (mI2cDevices.contains(mhash)){
+	uint8_t _address = address & 0xFF;
+	uint16_t mhash = (_bus << 8) | _address;
+	if (mI2cDevices.contains(mhash)) {
 		return mI2cDevices[mhash];
 	} else {
-		I2cBusCommunicator *BusComm = new I2cBusCommunicator(mHardwareAbstraction->mspI2c(), _bus, _adress);
-		I2cDevice *i2cDevice = new I2cDevice(_bus, _adress, *BusComm);
+		I2cDevice *i2cDevice = new I2cDevice(mConfigurer, mHardwareAbstraction->mspI2c(), _bus, _address);
 		mI2cDevices.insert(mhash, i2cDevice);
 		return i2cDevice;
 	}

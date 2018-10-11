@@ -12,27 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "i2cBusCommunicator.h"
+#include "i2cCommunicator.h"
 
 using namespace trikControl;
 using namespace trikHal;
 
-#include <trikKernel/configurer.h>
-#include <trikHal/mspI2cInterface.h>
 #include <QsLog.h>
 
+#include <trikKernel/configurer.h>
+#include <trikHal/mspI2cInterface.h>
 
-I2cBusCommunicator::I2cBusCommunicator(trikHal::MspI2cInterface &i2c, uint8_t bus, uint8_t deviceId)
+I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
+		, uint8_t bus, uint8_t deviceId)
 	: mI2c(i2c)
-	, mState("I2C Bus Communicator")
+	, mState("I2C Communicator")
 {
-	QString devicePath; // = configurer.attributeByDevice("i2c", "path");
-	if (bus == 1){
-		devicePath = "/dev/i2c-1";
+	QString devicePath;
+	if (bus == 1) {
+		devicePath = configurer.attributeByDevice("i2cBus1", "path");
 	} else if (bus == 2) {
-		devicePath = "/dev/i2c-2";
+		devicePath = configurer.attributeByDevice("i2cBus2", "path");
 	} else {
-		QLOG_ERROR() << "Incorrect I2C bus " << bus; // << configurer.attributeByDevice("i2c", "deviceId");
+		QLOG_ERROR() << "Incorrect I2C bus " << bus;
 		mState.fail();
 		return;
 	}
@@ -44,14 +45,14 @@ I2cBusCommunicator::I2cBusCommunicator(trikHal::MspI2cInterface &i2c, uint8_t bu
 	}
 }
 
-I2cBusCommunicator::~I2cBusCommunicator()
+I2cCommunicator::~I2cCommunicator()
 {
 	if (mState.isReady()) {
 		disconnect();
 	}
 }
 
-void I2cBusCommunicator::send(const QByteArray &data)
+void I2cCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
@@ -62,7 +63,7 @@ void I2cBusCommunicator::send(const QByteArray &data)
 	mI2c.send(data);
 }
 
-int I2cBusCommunicator::read(const QByteArray &data)
+int I2cCommunicator::read(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
@@ -73,14 +74,14 @@ int I2cBusCommunicator::read(const QByteArray &data)
 	return mI2c.read(data);
 }
 
-void I2cBusCommunicator::disconnect()
+void I2cCommunicator::disconnect()
 {
 	QMutexLocker lock(&mLock);
 	mI2c.disconnect();
 	mState.off();
 }
 
-DeviceInterface::Status I2cBusCommunicator::status() const
+DeviceInterface::Status I2cCommunicator::status() const
 {
 	return mState.status();
 }

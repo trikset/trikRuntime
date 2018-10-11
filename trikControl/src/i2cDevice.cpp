@@ -16,14 +16,12 @@
 
 using namespace trikControl;
 
-I2cDevice::I2cDevice(int bus, int adress
-					 , trikControl::I2cBusCommunicator &communicator)
+I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c, int bus, int address)
 	: mState("I2cDevice")
-	, mCommunicator(communicator)
+	, mCommunicator(configurer, i2c, bus, address)
 {
-	mAdress = adress;
+	mAddress = address;
 	mBus = bus;
-
 	mState.ready();
 }
 
@@ -32,7 +30,7 @@ I2cDevice::Status I2cDevice::status() const
 	return combine(mCommunicator, mState.status());
 }
 
-void I2cDevice :: send(int reg, int value)
+void I2cDevice::send(int reg, int value)
 {
 	if (status() == DeviceInterface::Status::ready) {
 		QByteArray command(3, '\0');
@@ -44,7 +42,7 @@ void I2cDevice :: send(int reg, int value)
 	}
 }
 
-int I2cDevice :: read(int reg)
+int I2cDevice::read(int reg)
 {
 	QByteArray command(2, '\0');
 	command[0] = reg & 0xFF;
