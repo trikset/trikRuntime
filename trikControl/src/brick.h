@@ -52,7 +52,7 @@ class ServoMotor;
 class TonePlayer;
 class VectorSensor;
 class CameraDeviceInterface;
-class I2cBusCommunicator;
+class I2cCommunicator;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -119,7 +119,7 @@ public slots:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	I2cDeviceInterface *i2c(int bus, int adress) override;
+	I2cDeviceInterface *i2c(int bus, int address) override;
 
 	QVector<uint8_t> getStillImage() override;
 

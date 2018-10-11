@@ -116,7 +116,7 @@ public slots:
 	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns i2c device object
-	virtual I2cDeviceInterface *i2c(int bus, int adress) = 0;
+	virtual I2cDeviceInterface *i2c(int bus, int address) = 0;
 
 	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
 	virtual QVector<uint8_t> getStillImage() = 0;

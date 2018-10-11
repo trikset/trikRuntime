@@ -16,7 +16,7 @@
 
 #include "i2cDeviceInterface.h"
 #include "mspI2cCommunicator.h"
-#include "i2cBusCommunicator.h"
+#include "i2cCommunicator.h"
 
 namespace trikControl{
 
@@ -26,13 +26,14 @@ class I2cDevice : public I2cDeviceInterface
 	Q_OBJECT
 
 public:
-	I2cDevice(int bus, int adress
-			  , trikControl::I2cBusCommunicator &communicator);
+	/// Constructor.
+	/// @param configurer - contains preparsed XML configuration.
+	I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c, int bus, int address);
 
 	Status status() const override;
 
 public slots:
-	/// Send data to current device, if it is connected.
+	/// Sends data to current device, if it is connected.
 	void send(int reg, int value) override;
 
 	/// Reads data by given I2C command number and returns the result.
@@ -40,9 +41,9 @@ public slots:
 
 private:
 	int mBus;
-	int mAdress;
+	int mAddress;
 	DeviceState mState;
-	I2cBusCommunicator &mCommunicator;
+	I2cCommunicator mCommunicator;
 };
 
 }

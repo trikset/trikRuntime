@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikMspI2c.h"
+#include "trikI2c.h"
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
@@ -83,12 +83,12 @@ static inline __s32 i2c_smbus_write_byte_data(int file, __u8 command, __u8 value
 	return i2c_smbus_access(file, I2C_SMBUS_WRITE, command, I2C_SMBUS_BYTE_DATA, &data);
 }
 
-MspI2cDevice::~MspI2cDevice()
+TrikI2c::~TrikI2c()
 {
 	disconnect();
 }
 
-void MspI2cDevice::send(const QByteArray &data)
+void TrikI2c::send(const QByteArray &data)
 {
 	if (data.size() == 3) {
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
@@ -97,7 +97,7 @@ void MspI2cDevice::send(const QByteArray &data)
 	}
 }
 
-int MspI2cDevice::read(const QByteArray &data)
+int TrikI2c::read(const QByteArray &data)
 {
 	if (data.size() == 2) {
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
@@ -108,7 +108,7 @@ int MspI2cDevice::read(const QByteArray &data)
 	}
 }
 
-bool MspI2cDevice::connect(const QString &devicePath, int deviceId)
+bool TrikI2c::connect(const QString &devicePath, int deviceId)
 {
 	mDeviceFileDescriptor = open(devicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
@@ -124,7 +124,7 @@ bool MspI2cDevice::connect(const QString &devicePath, int deviceId)
 	return true;
 }
 
-void MspI2cDevice::disconnect()
+void TrikI2c::disconnect()
 {
 	close(mDeviceFileDescriptor);
 }

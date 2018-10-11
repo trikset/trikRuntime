@@ -29,7 +29,7 @@ PUBLIC_HEADERS += \
 !win32:!macx {
 	HEADERS += \
 		$$PWD/src/trik/trikHardwareAbstraction.h \
-		$$PWD/src/trik/trikMspI2c.h \
+                $$PWD/src/trik/trikI2c.h \
 		$$PWD/src/trik/trikMspUsb.h \
 		$$PWD/src/trik/trikSystemConsole.h \
 		$$PWD/src/trik/trikEventFile.h \
@@ -54,7 +54,7 @@ HEADERS += \
 !win32:!macx {
 	SOURCES += \
 		$$PWD/src/trik/trikHardwareAbstraction.cpp \
-		$$PWD/src/trik/trikMspI2c.cpp \
+                $$PWD/src/trik/trikI2c.cpp \
 		$$PWD/src/trik/trikMspUsb.cpp \
 		$$PWD/src/trik/trikSystemConsole.cpp \
 		$$PWD/src/trik/trikEventFile.cpp \

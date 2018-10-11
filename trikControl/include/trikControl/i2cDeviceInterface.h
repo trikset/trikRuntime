@@ -22,13 +22,13 @@
 
 namespace trikControl {
 
-/// class for work with i2c
+/// Class for work with i2c
 class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 
 public :
-	/// Send data to current device, if it is connected.
+	/// Sends data to current device, if it is connected.
 	virtual void send(int reg, int value) = 0;
 
 	/// Reads data by given I2C command number and returns the result.
