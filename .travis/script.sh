@@ -29,6 +29,6 @@ $EXECUTOR bash -c "export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && pushd tests && qmake -r CONFIG+=$CONFIG $QMAKE_EXTRA && make -j2 && popd \
 && cd bin/x86-$CONFIG && ls "
 
-$EXECUTOR sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikScriptRunnerTests$SUFFIX"
-$EXECUTOR sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikCommunicatorTests$SUFFIX"
-$EXECUTOR sh -c "export DISPLAY=:0 && cd bin/x86-$CONFIG && ./trikKernelTests$SUFFIX"
+$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikScriptRunnerTests$SUFFIX"
+$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikCommunicatorTests$SUFFIX"
+$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikKernelTests$SUFFIX"
