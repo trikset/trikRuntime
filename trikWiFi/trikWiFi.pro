@@ -38,4 +38,3 @@ implementationIncludes(trikKernel)
 links(trikKernel)
 
 installs()
-noPch()

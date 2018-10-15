@@ -183,6 +183,7 @@ UI_DIR = .build/$$CONFIGURATION/ui
 
 PRECOMPILED_HEADER = $$PWD/pch.h
 CONFIG += precompile_header
+#PRECOMPILED_SOURCE = $$_PRO_FILE_PWD_/precompile_header_dummy.cpp
 QMAKE_CXX_FLAGS *= -Winvalid-pch
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
@@ -363,7 +364,7 @@ defineTest(installAdditionalSharedFiles) {
 }
 
 defineTest(noPch) {
-	CONFIG -= precompiled_header
+	CONFIG -= precompile_header
 	PRECOMPILED_HEADER =
 	export(CONFIG)
 	export(PRECOMPILED_HEADER)
@@ -379,7 +380,6 @@ unix:equals(ARCHITECTURE, "x86"):!CONFIG(nosanitizers) {
 		}
 		CONFIG(sanitize_undefined) {
 			# UBSan does not play well with precompiled headers for some reason.
-			noPch()
 			QMAKE_CXXFLAGS += -fsanitize=undefined
 			QMAKE_LFLAGS += -fsanitize=undefined
 		}
