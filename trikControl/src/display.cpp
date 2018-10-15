@@ -31,6 +31,7 @@ trikControl::Display::Display(const QString &mediaPath)
 	: mMediaPath(mediaPath)
 	, mGuiWorker(new GuiWorker())
 {
+	mGuiWorker->setParent(this);
 	if (!qApp) {
 		QLOG_ERROR() << "No QApplication object, it seems that trikControl is used from console application";
 		return;
