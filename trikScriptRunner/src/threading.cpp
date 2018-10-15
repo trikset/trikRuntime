@@ -15,6 +15,8 @@
 #include "threading.h"
 
 #include <QtCore/QEventLoop>
+#include <QtScript/QScriptValueIterator>
+#include <QJsonObject>
 
 #include "scriptEngineWorker.h"
 #include "src/utils.h"
@@ -29,6 +31,7 @@ Threading::Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &s
 	, mResetStarted(false)
 	, mScriptWorker(scriptWorker)
 	, mScriptControl(scriptControl)
+	, mMainScriptEngine(nullptr)
 {
 }
 
@@ -47,7 +50,8 @@ void Threading::startMainThread(const QString &script)
 	const QRegExp mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
 	const bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
 
-	startThread("main", mScriptWorker->createScriptEngine(), needCallMain ? script + "\nmain();" : script);
+	mMainScriptEngine = mScriptWorker->createScriptEngine();
+	startThread(mMainThreadName, mMainScriptEngine, needCallMain ? script + "\nmain();" : script);
 }
 
 void Threading::startThread(const QScriptValue &threadId, const QScriptValue &function)
@@ -88,6 +92,10 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	QLOG_INFO() << "Starting new thread" << threadId << "with engine" << engine;
 	ScriptThread * const thread = new ScriptThread(*this, threadId, engine, script);
 	connect(&mScriptControl, SIGNAL(quitSignal()), thread, SIGNAL(stopRunning()), Qt::DirectConnection);
+	if (threadId == mMainThreadName) {
+		connect(this, SIGNAL(getVariables(QString)), thread, SLOT(onGetVariables(QString)));
+		connect(thread, SIGNAL(variablesReady(QJsonObject)), this, SIGNAL(variablesReady(QJsonObject)));
+	}
 	mThreads[threadId] = thread;
 	mFinishedThreads.remove(threadId);
 	mThreadsMutex.unlock();

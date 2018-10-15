@@ -51,6 +51,15 @@ signals:
 	/// Emitted when event loop must be stopped.
 	void stopRunning();
 
+	/// Emitted when variables values are ready
+	/// @param json - JSON container for variables values
+	void variablesReady(const QJsonObject &json);
+
+public slots:
+	/// Catch variables values from current script execution
+	/// @param propertyName - name of variables prefix, i.e prefix "web" for variable "web.light"
+	void onGetVariables(const QString &propertyName);
+
 protected:
 	void run() override;
 

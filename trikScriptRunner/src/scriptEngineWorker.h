@@ -88,6 +88,14 @@ signals:
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedScript(int scriptId);
 
+	/// Emitted when there is a request for variables values
+	/// @param propertyName - name of variables prefix, i.e prefix "web" for variable "web.light"
+	void getVariables(const QString &propertyName);
+
+	/// Emitted when variables values are ready
+	/// @param json - JSON container for variables values
+	void variablesReady(const QJsonObject &data);
+
 public slots:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.

@@ -15,6 +15,7 @@
 #pragma once
 
 #include "trikScriptRunnerInterface.h"
+#include "trikVariablesServer.h"
 
 namespace trikNetwork {
 class MailboxInterface;
@@ -70,6 +71,7 @@ private:
 	int mMaxScriptId;
 
 	QHash<int, QString> mScriptFileNames;
+	QScopedPointer<TrikVariablesServer> mVariablesServer;
 };
 
 }

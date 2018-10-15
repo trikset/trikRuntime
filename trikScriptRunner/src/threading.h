@@ -79,6 +79,14 @@ signals:
 	/// Signals that all threads have finished.
 	void finished();
 
+	/// Emitted when there is a request for variables values
+	/// @param propertyName - name of variables prefix, i.e prefix "web" for variable "web.light"
+	void getVariables(const QString &propertyName);
+
+	/// Emitted when variables values are ready
+	/// @param json - JSON container for variables values
+	void variablesReady(const QJsonObject &data);
+
 private:
 	/// Starts a thread with given threadId
 	/// @param engine - script engine that will do the work; it will be owned by a newly created thread
@@ -109,6 +117,9 @@ private:
 	ScriptEngineWorker * const mScriptWorker;  // Doesn't have ownership.
 	ScriptExecutionControl &mScriptControl;
 	QString mScript;
+
+	QScriptEngine *mMainScriptEngine; // Doesn't have ownership.
+	const QString mMainThreadName = "main";
 };
 
 }
