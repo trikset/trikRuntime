@@ -30,6 +30,7 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	: mScriptController(new ScriptExecutionControl())
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
 	, mMaxScriptId(0)
+	, mVariablesServer(new TrikVariablesServer())
 {
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
 	if (mailbox) {
@@ -43,6 +44,10 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
 
 	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
+
+	connect(mVariablesServer.data(), SIGNAL(getVariables(QString)), mScriptEngineWorker, SIGNAL(getVariables(QString)));
+	connect(mScriptEngineWorker, SIGNAL(variablesReady(QJsonObject))
+		, mVariablesServer.data(), SLOT(sendHTTPResponse(QJsonObject)));
 
 	QLOG_INFO() << "Starting TrikJavaScriptRunner worker thread" << &mWorkerThread;
 
