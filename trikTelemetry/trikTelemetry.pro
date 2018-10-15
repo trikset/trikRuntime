@@ -37,4 +37,3 @@ transitiveIncludes(trikKernel)
 links(trikControl trikNetwork trikKernel)
 
 installs()
-noPch()
