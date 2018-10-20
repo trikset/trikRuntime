@@ -20,8 +20,6 @@ I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cIn
 	: mState("I2cDevice")
 	, mCommunicator(configurer, i2c, bus, address)
 {
-	mAddress = address;
-	mBus = bus;
 	mState.ready();
 }
 
