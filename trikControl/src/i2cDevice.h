@@ -40,8 +40,6 @@ public slots:
 	int read(int reg) override;
 
 private:
-	int mBus;
-	int mAddress;
 	DeviceState mState;
 	I2cCommunicator mCommunicator;
 };
