@@ -187,7 +187,7 @@ private:
 	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
 	QHash<QString, Fifo *> mFifos;  // Has ownership.
 	QHash<QString, EventDeviceInterface *> mEventDevices;  // Has ownership.
-	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices;
+	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
