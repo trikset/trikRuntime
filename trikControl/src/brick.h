@@ -52,6 +52,7 @@ class ServoMotor;
 class TonePlayer;
 class VectorSensor;
 class CameraDeviceInterface;
+class I2cCommunicator;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -117,6 +118,8 @@ public slots:
 	ColorSensorInterface *colorSensor(const QString &port) override;
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
+
+	I2cDeviceInterface *i2c(int bus, int address) override;
 
 	QVector<uint8_t> getStillImage() override;
 
@@ -184,6 +187,7 @@ private:
 	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
 	QHash<QString, Fifo *> mFifos;  // Has ownership.
 	QHash<QString, EventDeviceInterface *> mEventDevices;  // Has ownership.
+	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices;  // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;

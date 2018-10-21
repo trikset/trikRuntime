@@ -31,6 +31,7 @@
 #include <trikControl/eventInterface.h>
 #include <trikControl/gamepadInterface.h>
 #include <trikControl/gyroSensorInterface.h>
+#include <trikControl/i2cDeviceInterface.h>
 #include <trikControl/lineSensorInterface.h>
 #include <trikControl/motorInterface.h>
 #include <trikControl/objectSensorInterface.h>
@@ -78,6 +79,7 @@ Q_DECLARE_METATYPE(QTimer*)
 	TEMPLATE(EventInterface) \
 	TEMPLATE(GamepadInterface) \
 	TEMPLATE(GyroSensorInterface) \
+	TEMPLATE(I2cDeviceInterface) \
 	TEMPLATE(KeysInterface) \
 	TEMPLATE(LedInterface) \
 	TEMPLATE(LineSensorInterface) \

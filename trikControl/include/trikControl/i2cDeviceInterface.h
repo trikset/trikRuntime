@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2018 Aleksey Fefelov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,25 @@
 
 #pragma once
 
-#include "mspI2cInterface.h"
+#include <QtCore/QObject>
 
-namespace trikHal {
-namespace trik {
+#include "deviceInterface.h"
 
-/// Real implementation of I2C bus communicator.
-class TrikMspI2c : public MspI2cInterface
+#include "declSpec.h"
+
+namespace trikControl {
+
+/// Class for work with i2c
+class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInterface
 {
-public:
-	TrikMspI2c() = default;
-	~TrikMspI2c() override;
+	Q_OBJECT
 
-	void send(const QByteArray &data) override;
-	int read(const QByteArray &data) override;
-	bool connect(const QString &devicePath, int deviceId) override;
-	void disconnect() override;
+public :
+	/// Sends data to current device, if it is connected.
+	virtual void send(int reg, int value) = 0;
 
-private:
-	/// Low-level descriptor of I2C device file.
-	int mDeviceFileDescriptor = -1;
+	/// Reads data by given I2C command number and returns the result.
+	virtual int read(int reg) = 0;
 };
 
-}
 }
