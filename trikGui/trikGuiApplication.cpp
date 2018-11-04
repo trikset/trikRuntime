@@ -34,11 +34,15 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	mShutdownDelayTimer.setSingleShot(true);
 }
 
+bool isTrikPowerOffKey(Qt::Key key) {
+	return key == Qt::Key_PowerOff || ( key == Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier));
+}
+
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() == Qt::Key_PowerOff) {
+		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
 			if (keyEvent->isAutoRepeat()) {
 				//	if (!mPowerButtonPressedTimer.isActive()) {
 				//	qDebug() << "Started because: " << receiver<< event;
@@ -51,10 +55,12 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 				mIsShutdownRequested = true;
 				refreshWidgets(); // refresh display if not auto-repeat
 			}
+			static QKeyEvent evntKeyPowerOff(QEvent::KeyPress, Qt::Key_PowerOff, Qt::NoModifier);
+			event = &evntKeyPowerOff;
 		}
 	} else if (event->type() == QEvent::KeyRelease) {
 		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-		if (keyEvent->key() == Qt::Key_PowerOff) {
+		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
 			if (!keyEvent->isAutoRepeat()) {
 				mIsShutdownRequested = false;
 //				if (mPowerButtonPressedTimer.isActive()) {
@@ -63,6 +69,8 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 //				}
 			} else {
 			}
+			static QKeyEvent evntKeyPowerOff(QEvent::KeyRelease, Qt::Key_PowerOff, Qt::NoModifier);
+			event = &evntKeyPowerOff;
 		}
 	}
 
