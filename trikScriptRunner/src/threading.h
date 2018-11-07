@@ -61,7 +61,13 @@ public:
 	Q_INVOKABLE void killThread(const QString &threadId);
 
 	/// Wait until all threads finish execution.
+	/// During this function execution other events can be processed.
 	void waitForAll();
+
+	/// Wait until all threads finish execution.
+	/// During this function execution other events can not be processed,
+	/// they will be processed after.
+	void waitForAllYielding();
 
 	/// Aborts evalutation of all threads, resets to initial state.
 	void reset();
