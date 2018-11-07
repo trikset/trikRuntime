@@ -33,6 +33,7 @@ void PythonEngineWorker::init()
 {
 	// init PythonQt
 	PythonQt::init(PythonQt::IgnoreSiteModule);
+	PythonQt_QtAll::init();
 	mMainContext = PythonQt::self()->getMainModule();
 
 	initTrik();
