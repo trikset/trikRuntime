@@ -123,6 +123,13 @@ void Threading::waitForAll()
 	}
 }
 
+void Threading::waitForAllYielding()
+{
+	while (!mThreads.isEmpty()) {
+		QThread::yieldCurrentThread();
+	}
+}
+
 void Threading::joinThread(const QString &threadId)
 {
 	mThreadsMutex.lock();
@@ -183,7 +190,7 @@ void Threading::reset()
 	mThreadsMutex.unlock();
 	mScriptControl.reset();
 
-	waitForAll();
+	waitForAllYielding();
 
 	qDeleteAll(mMessageQueueMutexes);
 	qDeleteAll(mMessageQueueConditions);
