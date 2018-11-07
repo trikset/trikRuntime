@@ -21,7 +21,7 @@
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
-#include "PythonQt.h"
+#include "PythonQt_QtAll.h"
 #include "PyTrikControl0.h"
 
 void PythonQt_init_PyTrikControl(PyObject* module);
