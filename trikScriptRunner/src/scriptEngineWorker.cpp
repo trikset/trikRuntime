@@ -18,6 +18,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QTextStream>
 #include <QtCore/QMetaMethod>
+#include <QtCore/QStringBuilder>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -97,11 +98,8 @@ REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_TEMPLATE)
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
 	QString result;
-	for (int i = 0; i < context->argumentCount(); ++i) {
-		if (i > 0) {
-			result.append(" ");
-		}
-
+	int argumentCount = context->argumentCount();
+	for (int i = 0; i < argumentCount; ++i) {
 		QScriptValue argument = context->argument(i);
 		if (argument.isArray()) {
 			QScriptValue object = argument.toObject();
@@ -109,31 +107,23 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 			std::function<QString(const QScriptValue &)> arrayPrettyPrinter;
 			arrayPrettyPrinter = [&arrayPrettyPrinter](const QScriptValue &value) {
 				QString res = "[";
-
-				for(auto i = 0; i < value.property("length").toInt32(); ++i) {
-					if (i > 0) {
-						res.append(" ");
-					}
-
+				qint32 arrayLength = value.property("length").toInt32();
+				for(auto i = 0; i < arrayLength; ++i) {
+					QString separator = i + 1 != arrayLength ? ", " : "";
 					if (value.property(QString::number(i)).isArray()) {
-						res += arrayPrettyPrinter(value.property(QString::number(i))) + ',';
+						res = res % arrayPrettyPrinter(value.property(QString::number(i))) % separator;
 					} else {
-						res += value.property(QString::number(i)).toString() + ',';
+						res = res % value.property(QString::number(i)).toString() % separator;
 					}
 				}
 
-				if (res.endsWith(',')) {
-					res.chop(1);
-					res.append(']');
-				}
-
+				res = res % "]";
 				return res;
 			};
 
-			result.append(arrayPrettyPrinter(argument));
-
+			result = result % arrayPrettyPrinter(argument);
 		} else {
-			result.append(argument.toString());
+			result = result % argument.toString();
 		}
 	}
 
