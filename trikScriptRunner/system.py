@@ -4,7 +4,18 @@ import os
 
 class script(object):
     def __init__(self):
+        from PythonQt import QtCore
         self.files = {}
+        self.waitTimer = QtCore.QTimer()
+        self.waitTimer.setSingleShot(True)
+        # quitTimer is used to quit AFTER all events n the loop were processed
+        # but it is fine even without it
+        self.quitTimer = QtCore.QTimer()
+        self.quitTimer.setSingleShot(True)
+        self.quitTimer.setInterval(0)
+        self.waitLoop = QtCore.QEventLoop()
+        self.quitTimer.connect("timeout()", self.waitLoop.quit)
+        self.waitTimer.connect("timeout()", self.quitTimer.start)
 
     def __del__(self):
         for filename in self.files:
@@ -17,7 +28,8 @@ class script(object):
         os.fsync(userfile.fileno())
         userfile.close()
 
-    def random(self, a, b):
+    @staticmethod
+    def random(a, b):
         # https://docs.python.org/2.7/library/random.html#random.randint
         import random
         return random.randint(a, b)
@@ -36,21 +48,23 @@ class script(object):
             self._flushAndClose(self.files.pop(filename))
         os.remove(filename)
 
-    def system(self, cmnd):
-        # https://docs.python.org/2.7/library/subprocess.html#popen-constructor
+    @staticmethod
+    def system(cmnd):
         import shlex
         import subprocess
         subprocess.Popen(shlex.split(cmnd))
 
-    def time(self):
-        # https://docs.python.org/2.7/library/time.html#time.time
+    @staticmethod
+    def time():
         import time
         return time.time() * 1000
 
     def wait(self, ms):
-        # https://docs.python.org/2.7/library/time.html#time.sleep
-        import time
-        time.sleep(ms / 1000.0)
+          #waitTimer object is per instance and we have script's instance per thread
+          #same about waitLoop
+          self.waitTimer.setInterval(ms)
+          self.waitTimer.start()
+          self.waitLoop.exec()
 
     def writeToFile(self, filename, text):
         if filename not in self.files:
