@@ -40,6 +40,6 @@ TEST_F(TrikCommunicatorTest, configVersionTest)
 {
 	TcpClientSimulator client("127.0.0.1", port);
 	client.send("configVersion");
-	Wait::wait(100);
+	Wait::wait(500);
 	ASSERT_EQ("configVersion: model-test", client.latestResponse());
 }

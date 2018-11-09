@@ -12,13 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-TEMPLATE = subdirs
-
 include(../global.pri)
 
-SUBDIRS += PythonQtCore PythonQtFull
-
 QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
-PythonQtFull.depends += PythonQtCore
-PythonQtCore.file = PythonQt/src/src.pro
-PythonQtFull.file = PythonQtFull.pro
+PYTHONQTALL_CONFIG *= PythonQtCore
+QT += widgets
+include(PythonQt/extensions/PythonQt_QtAll/PythonQt_QtAll.pro)
