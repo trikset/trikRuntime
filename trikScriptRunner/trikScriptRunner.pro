@@ -62,8 +62,8 @@ QT += script network
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY
 
-copyToDestdir($$PWD/system.js)
-copyToDestdir($$PWD/system.py)
+copyToDestdir($$PWD/system.js, NOW)
+copyToDestdir($$PWD/system.py, NOW)
 
 links(trikKernel trikControl trikNetwork)
 implementationIncludes(trikKernel trikNetwork trikControl)
