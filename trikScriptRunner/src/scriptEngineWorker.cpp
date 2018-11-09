@@ -102,7 +102,39 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 			result.append(" ");
 		}
 
-		result.append(context->argument(i).toString());
+		QScriptValue argument = context->argument(i);
+		if (argument.isArray()) {
+			QScriptValue object = argument.toObject();
+
+			std::function<QString(const QScriptValue &)> arrayPrettyPrinter;
+			arrayPrettyPrinter = [&arrayPrettyPrinter](const QScriptValue &value) {
+				QString res = "[";
+
+				for(auto i = 0; i < value.property("length").toInt32(); ++i) {
+					if (i > 0) {
+						res.append(" ");
+					}
+
+					if (value.property(QString::number(i)).isArray()) {
+						res += arrayPrettyPrinter(value.property(QString::number(i))) + ',';
+					} else {
+						res += value.property(QString::number(i)).toString() + ',';
+					}
+				}
+
+				if (res.endsWith(',')) {
+					res.chop(1);
+					res.append(']');
+				}
+
+				return res;
+			};
+
+			result.append(arrayPrettyPrinter(argument));
+
+		} else {
+			result.append(argument.toString());
+		}
 	}
 
 	QTextStream(stdout) << result << "\n";
