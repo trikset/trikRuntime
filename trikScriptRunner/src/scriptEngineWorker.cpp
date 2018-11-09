@@ -102,18 +102,18 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	for (int i = 0; i < argumentCount; ++i) {
 		QScriptValue argument = context->argument(i);
 		if (argument.isArray()) {
-			QScriptValue object = argument.toObject();
+			QList<QVariant> array = argument.toVariant().toList();
 
-			std::function<QString(const QScriptValue &)> arrayPrettyPrinter;
-			arrayPrettyPrinter = [&arrayPrettyPrinter](const QScriptValue &value) {
+			std::function<QString(const QList<QVariant> &)> arrayPrettyPrinter;
+			arrayPrettyPrinter = [&arrayPrettyPrinter](const QList<QVariant> &array) {
 				QString res = "[";
-				qint32 arrayLength = value.property("length").toInt32();
+				qint32 arrayLength = array.length();
 				for(auto i = 0; i < arrayLength; ++i) {
 					QString separator = i + 1 != arrayLength ? ", " : "";
-					if (value.property(QString::number(i)).isArray()) {
-						res = res % arrayPrettyPrinter(value.property(QString::number(i))) % separator;
+					if (array.at(i).canConvert(QMetaType::QVariantList)) {
+						res = res % arrayPrettyPrinter(array.at(i).toList()) % separator;
 					} else {
-						res = res % value.property(QString::number(i)).toString() % separator;
+						res = res % array.at(i).toString() % separator;
 					}
 				}
 
@@ -121,7 +121,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 				return res;
 			};
 
-			result = result % arrayPrettyPrinter(argument);
+			result = result % arrayPrettyPrinter(array);
 		} else {
 			result = result % argument.toString();
 		}
