@@ -18,7 +18,6 @@
 #include <QtCore/QVector>
 #include <QtCore/QTextStream>
 #include <QtCore/QMetaMethod>
-#include <QtCore/QStringBuilder>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -98,6 +97,7 @@ REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_TEMPLATE)
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
 	QString result;
+	result.reserve(100000);
 	int argumentCount = context->argumentCount();
 	for (int i = 0; i < argumentCount; ++i) {
 		QScriptValue argument = context->argument(i);
@@ -106,27 +106,40 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 			std::function<QString(const QList<QVariant> &)> arrayPrettyPrinter;
 			arrayPrettyPrinter = [&arrayPrettyPrinter](const QList<QVariant> &array) {
-				QString res = "[";
+				QString res("[");
+				res.reserve(100000);
 				qint32 arrayLength = array.length();
-				for(auto i = 0; i < arrayLength; ++i) {
-					QString separator = i + 1 != arrayLength ? ", " : "";
+				for(auto i = 0; i < arrayLength - 1; ++i) {
 					if (array.at(i).canConvert(QMetaType::QVariantList)) {
-						res = res % arrayPrettyPrinter(array.at(i).toList()) % separator;
+						res.append(arrayPrettyPrinter(array.at(i).toList()));
+						res.append(", ");
 					} else {
-						res = res % array.at(i).toString() % separator;
+						res.append(array.at(i).toString());
+						res.append(", ");
 					}
 				}
 
-				res = res % "]";
+				if (not array.isEmpty()) {
+					if (array.last().canConvert(QMetaType::QVariantList)) {
+						res.append(arrayPrettyPrinter(array.last().toList()));
+						res.append("]");
+					} else {
+						res.append(array.last().toString());
+						res.append("]");
+					}
+				}
+
+				res.squeeze();
 				return res;
 			};
 
-			result = result % arrayPrettyPrinter(array);
+			result.append(arrayPrettyPrinter(array));
 		} else {
-			result = result % argument.toString();
+			result.append(argument.toString());
 		}
 	}
 
+	result.squeeze();
 	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
 	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());
