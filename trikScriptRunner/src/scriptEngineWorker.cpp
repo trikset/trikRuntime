@@ -97,14 +97,49 @@ REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_TEMPLATE)
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
 	QString result;
-	for (int i = 0; i < context->argumentCount(); ++i) {
-		if (i > 0) {
-			result.append(" ");
-		}
+	result.reserve(100000);
+	int argumentCount = context->argumentCount();
+	for (int i = 0; i < argumentCount; ++i) {
+		QScriptValue argument = context->argument(i);
+		if (argument.isArray()) {
+			QList<QVariant> array = argument.toVariant().toList();
 
-		result.append(context->argument(i).toString());
+			std::function<QString(const QList<QVariant> &)> arrayPrettyPrinter;
+			arrayPrettyPrinter = [&arrayPrettyPrinter](const QList<QVariant> &array) {
+				QString res("[");
+				res.reserve(100000);
+				qint32 arrayLength = array.length();
+				for(auto i = 0; i < arrayLength - 1; ++i) {
+					if (array.at(i).canConvert(QMetaType::QVariantList)) {
+						res.append(arrayPrettyPrinter(array.at(i).toList()));
+						res.append(", ");
+					} else {
+						res.append(array.at(i).toString());
+						res.append(", ");
+					}
+				}
+
+				if (not array.isEmpty()) {
+					if (array.last().canConvert(QMetaType::QVariantList)) {
+						res.append(arrayPrettyPrinter(array.last().toList()));
+						res.append("]");
+					} else {
+						res.append(array.last().toString());
+						res.append("]");
+					}
+				}
+
+				res.squeeze();
+				return res;
+			};
+
+			result.append(arrayPrettyPrinter(array));
+		} else {
+			result.append(argument.toString());
+		}
 	}
 
+	result.squeeze();
 	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
 	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());
