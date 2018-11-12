@@ -18,6 +18,7 @@
 #include <QtCore/QVector>
 #include <QtCore/QTextStream>
 #include <QtCore/QMetaMethod>
+#include <QtCore/QStringBuilder>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -100,46 +101,35 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	result.reserve(100000);
 	int argumentCount = context->argumentCount();
 	for (int i = 0; i < argumentCount; ++i) {
-		QScriptValue argument = context->argument(i);
-		if (argument.isArray()) {
-			QList<QVariant> array = argument.toVariant().toList();
-
-			std::function<QString(const QList<QVariant> &)> arrayPrettyPrinter;
-			arrayPrettyPrinter = [&arrayPrettyPrinter](const QList<QVariant> &array) {
-				QString res("[");
-				res.reserve(100000);
+		std::function<QString(const QVariant &)> prettyPrinter
+			= [&prettyPrinter](QVariant const & elem) {
+			auto const &arrayPrettyPrinter = [&prettyPrinter](const QVariantList &array) {
 				qint32 arrayLength = array.length();
-				for(auto i = 0; i < arrayLength - 1; ++i) {
-					if (array.at(i).canConvert(QMetaType::QVariantList)) {
-						res.append(arrayPrettyPrinter(array.at(i).toList()));
-						res.append(", ");
-					} else {
-						res.append(array.at(i).toString());
-						res.append(", ");
-					}
+				
+				if (arrayLength == 0) {
+					return QString("[]");
 				}
+	
+				QString res;
+				res.reserve(100000);
+				res.append("[" % prettyPrinter(array.first()));
 
-				if (not array.isEmpty()) {
-					if (array.last().canConvert(QMetaType::QVariantList)) {
-						res.append(arrayPrettyPrinter(array.last().toList()));
-						res.append("]");
-					} else {
-						res.append(array.last().toString());
-						res.append("]");
-					}
+				for(auto i = 1; i < arrayLength; ++i) {
+					res.append(", " % prettyPrinter(array.at(i)));
 				}
-
-				res.squeeze();
+	
+				res.append("]");
 				return res;
 			};
 
-			result.append(arrayPrettyPrinter(array));
-		} else {
-			result.append(argument.toString());
-		}
+			return elem.canConvert(QMetaType::QVariantList)
+				? arrayPrettyPrinter(elem.toList())
+				: elem.toString();
+		};
+		QScriptValue argument = context->argument(i);
+		result.append(prettyPrinter(argument.toVariant()));
 	}
 
-	result.squeeze();
 	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
 	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());

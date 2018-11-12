@@ -28,7 +28,7 @@ static void dumpHandler_impl(int signal, char *p)
 {
 	static char* path = nullptr;
 	if (path == nullptr && p != nullptr) {
-		path = strdup(p);
+		path = p;
 	}
 
 	if (p == nullptr) {
@@ -71,9 +71,8 @@ static void setCoreLimits()
 
 void trikKernel::coreDumping::initCoreDumping(const QString &coreDumpPath)
 {
-	char *path = coreDumpPath.toLocal8Bit().data();
-	dumpHandler_impl(0, path);
-
+	auto const & p = coreDumpPath.toLocal8Bit();
+	dumpHandler_impl(0, strndup(p.constData(), p.size()));
 	initSignals();
 	setCoreLimits();
 }
