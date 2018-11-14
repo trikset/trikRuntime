@@ -41,10 +41,7 @@ void PythonEngineWorker::init()
 
 void PythonEngineWorker::recreateContext()
 {
-	// Delete current __main__ and create a new one (hack)
-	mMainContext.evalScript("import sys");
-	mMainContext.evalScript("del sys.modules[__name__]");
-	mMainContext = PythonQt::self()->createModuleFromScript("__main__", "");
+	mMainContext.evalScript("script.kill()");
 
 	initTrik();
 }
@@ -99,11 +96,6 @@ void PythonEngineWorker::stopScript()
 		return;
 	}
 
-	while (mState == starting) {
-		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
-		QThread::yieldCurrentThread();
-	}
-
 	QLOG_INFO() << "PythonEngineWorker: stopping script";
 
 	mState = stopping;
@@ -143,8 +135,6 @@ void PythonEngineWorker::doRun(const QString &script)
 
 void PythonEngineWorker::runDirect(const QString &command)
 {
-	qDebug() << "PythonEngineWorker::runDirect";
-
 	QMutexLocker locker(&mScriptStateMutex);
 	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
 }
