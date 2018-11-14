@@ -324,8 +324,6 @@ void ScriptEngineWorker::doRun(const QString &script)
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
-	qDebug() << "ScriptEngineWorker::runDirect";
-
 	QMutexLocker locker(&mScriptStateMutex);
 	if (!mScriptControl.isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
