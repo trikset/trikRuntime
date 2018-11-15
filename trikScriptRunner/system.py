@@ -16,6 +16,7 @@ class script(object):
         self.waitLoop = QtCore.QEventLoop()
         self.quitTimer.connect("timeout()", self.waitLoop.quit)
         self.waitTimer.connect("timeout()", self.quitTimer.start)
+        self.interruptionFlag = False
 
     def __del__(self):
         for filename in self.files:
@@ -65,10 +66,17 @@ class script(object):
           self.waitTimer.setInterval(ms)
           self.waitTimer.start()
           self.waitLoop.exec()
+          # This event loop is required to process events from other threads (i.e., script stopping/abortion or messaging)
+          # Also, by no obvious reason, to be processed in the main thread the exception should be thrown after the loop.
+          if self.interruptionFlag:
+              raise ValueError()
 
     def writeToFile(self, filename, text):
         if filename not in self.files:
             self.files[filename] = open(filename, 'w+')
         self.files[filename].write(text)
+
+    def kill(self):
+        self.interruptionFlag = True
 
 script = script()  # singleton
