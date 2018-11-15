@@ -66,8 +66,8 @@ class script(object):
           self.waitTimer.setInterval(ms)
           self.waitTimer.start()
           self.waitLoop.exec()
-          # This event loops is needed for processing events from other threads (i.e., script stopping)
-          # Exception should be thrown after loop to be processed in main thread.
+          # This event loop is required to process events from other threads (i.e., script stopping/abortion or messaging)
+          # Also, by no obvious reason, to be processed in the main thread the exception should be thrown after the loop.
           if self.interruptionFlag:
               raise ValueError()
 
