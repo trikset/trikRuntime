@@ -2,7 +2,7 @@ clone_folder: c:\trik-runtime
 
 environment:
   global:
-    PYTHON_PATH: C:\Python35
+    PYTHON_PATH: C:\Python36
     PYTHON_LIB: '%PYTHON_PATH%\libs'
     PROJECT_FILE: trikRuntime
     APPVEYOR_SAVE_CACHE_ON_ERROR: true
