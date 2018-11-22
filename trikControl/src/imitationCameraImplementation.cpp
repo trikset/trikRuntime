@@ -15,8 +15,6 @@
 #include "imitationCameraImplementation.h"
 
 #include <QtCore/QDir>
-#include <QtCore/QFileInfoList>
-#include <QtCore/QVector>
 #include <QtGui/QImage>
 
 #include <QsLog.h>
@@ -36,23 +34,25 @@ ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &
 	if (filesList.size() > 1) {
 		QLOG_INFO() << "Few files matching regexps " << filters
 				<< " in file " << getTempDir();
+
 		if (filesList.size() < 10) {
-			for (auto file : filesList) {
+			for (auto &&file : filesList) {
 				QLOG_INFO() << file.fileName();
 			}
 		}
 	}
 }
 
+
 QVector<uint8_t> ImitationCameraImplementation::getPhoto() {
 	if ( ! filesList.isEmpty()) {
 		auto f = filesList[++cur%=filesList.size()];
-		QImage imgOrig(f.fileName());
+		QImage imgOrig(f.absoluteFilePath());
 
 		if (! imgOrig.isNull()) {
-			QLOG_INFO() << "Opening file " << f.fileName();
+			QLOG_INFO() << "Opening file " << f.absoluteFilePath();
 		} else {
-			QLOG_ERROR() << "Can not open file " << f.fileName();
+			QLOG_ERROR() << "Can not open file " << f.absoluteFilePath();
 			return QVector<uint8_t>();
 		}
 
