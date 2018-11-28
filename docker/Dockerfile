@@ -6,14 +6,14 @@ RUN apt -y full-upgrade
 RUN apt install software-properties-common -y
 RUN add-apt-repository ppa:beineri/opt-qt563-trusty -y
 RUN add-apt-repository ppa:forkotov02/opt-qt-5.11.1-trusty -y
-RUN add-apt-repository ppa:deadsnakes/ppa -y # python3.6
+RUN add-apt-repository ppa:deadsnakes/ppa -y # python3.x
 
 RUN apt update
 RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia  qt511x11extras
 
 RUN apt install -y rsync build-essential g++-4.8 pkg-config libboost-system-dev libboost-wave-dev \
         tcl vera++ xvfb mesa-common-dev libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
-        xterm python3.6-dev git-core ccache
+        xterm python3.5-dev git-core ccache
 
 #for TRIK Studio build
 RUN apt install -y libusb-1.0-0-dev dbus
