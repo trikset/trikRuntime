@@ -2,12 +2,12 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-     export PATH="/usr/local/opt/qt/bin:$PATH"
-     export PATH="/usr/local/opt/ccache/libexec:$PATH"
-     EXECUTOR=
+    export PATH="/usr/local/opt/qt/bin:$PATH"
+    export PATH="/usr/local/opt/ccache/libexec:$PATH"
+    EXECUTOR=
     ;;
   linux)
-      EXECUTOR="docker exec builder "
+    EXECUTOR="docker exec builder "
    ;;
   *) exit 1 ;;
 esac
@@ -21,6 +21,7 @@ $EXECUTOR bash -c "export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && which qmake \
 && qmake -query \
 && ccache -M 0 \
+&& pyenv versions \
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \

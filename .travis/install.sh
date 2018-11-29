@@ -2,7 +2,7 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-    REQURED_PACKAGES="qt ccache https://raw.githubusercontent.com/Homebrew/homebrew-core/f2a764ef944b1080be64bd88dca9a1d80130c558/Formula/python.rb"
+    REQURED_PACKAGES="qt ccache pyenv"
     export HOMEBREW_NO_AUTO_UPDATE=1
     for pkg in $REQURED_PACKAGES ; do
       p="${pkg##*/}"
@@ -10,6 +10,8 @@ case $TRAVIS_OS_NAME in
       rmdir $CELLAR_CACHE_DIR/$p && brew install $pkg \
       || { brew unlink $p ; brew link --force $p ; }
     done
+    pyenv update
+    eval "$(pyenv init -)"
   ;;
 
   linux)
