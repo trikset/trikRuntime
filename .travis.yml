@@ -6,7 +6,7 @@ env:
     - VERA=false
     - SUFFIX=
     - QMAKE_EXTRA=
-    - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@2,python@3} ; echo .empty ; } )
+    - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@2,python@3,.pyenv} ; echo .empty ; } )
 cache:
   timeout: 1000
   apt: true
@@ -17,6 +17,7 @@ cache:
     - $CELLAR_CACHE_DIR/ccache
     - $CELLAR_CACHE_DIR/python@2
     - $CELLAR_CACHE_DIR/python@3
+    - $CELLAR_CACHE_DIR/.pyenv
 #    - /usr/local/opt/
 addons:
   apt:
