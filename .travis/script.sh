@@ -4,6 +4,9 @@ case $TRAVIS_OS_NAME in
   osx)
     export PATH="/usr/local/opt/qt/bin:$PATH"
     export PATH="/usr/local/opt/ccache/libexec:$PATH"
+    export PATH="$(pyenv root)/bin:$PATH"
+    eval "$(pyenv init -)"
+    export PKG_CONFIG_PATH="$(python3-config --prefix)/lib/pkgconfig"
     EXECUTOR=
     ;;
   linux)
@@ -13,14 +16,18 @@ case $TRAVIS_OS_NAME in
 esac
 
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
-$EXECUTOR bash -c "export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
+$EXECUTOR bash -lc "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
+   export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && export CCACHE_CPP2=yes \
 && export CCACHE_SLOPPINESS=time_macros \
+&& eval \"\`pyenv init -\`\" \
+&& eval 'export PKG_CONFIG_PATH=\`python3-config --prefix\`/lib/pkgconfig' \
 && which g++ \
 && g++ --version \
 && which qmake \
 && qmake -query \
 && ccache -M 0 \
+&& pyenv root \
 && pyenv versions \
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \

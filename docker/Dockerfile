@@ -41,6 +41,6 @@ ENV PYENV_VERSION 3.5.6
 RUN echo 'source /opt/qt56/bin/qt56-env.sh' >> /root/.bashrc
 RUN echo 'eval "$(pyenv init -)"' >> /root/.bashrc
 RUN echo 'eval "$(pyenv virtualenv-init -)"' >> /root/.bashrc
-RUN echo 'PKG_CONFIG_PATH=$(python-config --prefix)/lib/pkgconfig' >> /root/.bashrc
+RUN echo 'PKG_CONFIG_PATH=$(python3-config --prefix)/lib/pkgconfig' >> /root/.bashrc
 #RUN ln -svt /etc/profile.d/ /opt/qt56/bin/qt56-env.sh
 #ENTRYPOINT ["/bin/bash", "-lc"]
