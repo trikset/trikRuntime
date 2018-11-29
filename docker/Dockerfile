@@ -35,8 +35,8 @@ ENV QTDIR "/opt/qt56"
 ENV PATH "${QTDIR}/bin:/usr/lib/ccache:${PATH}"
 
 RUN apt install -y libssl-dev 
-RUN CFLAGS="-O2 -fPIC" pyenv install 3.5.6
 ENV PYENV_VERSION 3.5.6
+RUN CFLAGS="-O2 -fPIC" pyenv install -s $PYENV_VERSION
 
 RUN echo 'source /opt/qt56/bin/qt56-env.sh' >> /root/.bashrc
 RUN echo 'eval "$(pyenv init -)"' >> /root/.bashrc
