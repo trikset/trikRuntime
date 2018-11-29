@@ -41,6 +41,7 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
+		<camera type="file" src="/dev/video0" filters="*.jpg,*.png"/>
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
