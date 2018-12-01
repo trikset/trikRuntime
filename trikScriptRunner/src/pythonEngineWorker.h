@@ -102,6 +102,9 @@ private slots:
 	/// Actually runs given command. Is to be called from a thread owning PythonEngineWorker.
 	void doRunDirect(const QString &command);
 
+	/// Appends new info from python stderr to current error message
+	void updateErrorMessage(const QString &err);
+
 private:
 	/// State of a script
 	/// @value ready - worker is waiting for a new script
@@ -131,6 +134,8 @@ private:
 	QMutex mScriptStateMutex;
 
 	PythonQtObjectPtr mMainContext;
+
+	QString mErrorMessage;
 };
 
 }
