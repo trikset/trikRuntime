@@ -32,7 +32,8 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 void PythonEngineWorker::init()
 {
 	// init PythonQt
-	PythonQt::init(PythonQt::IgnoreSiteModule);
+	PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
+	connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString &)), this, SLOT(updateErrorMessage(const QString &)));
 	PythonQt_QtAll::init();
 	mMainContext = PythonQt::self()->getMainModule();
 
@@ -123,6 +124,7 @@ void PythonEngineWorker::run(const QString &script)
 
 void PythonEngineWorker::doRun(const QString &script)
 {
+	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
 
@@ -130,7 +132,12 @@ void PythonEngineWorker::doRun(const QString &script)
 
 	mState = running;
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
-	emit completed("", 0);
+
+	if (PythonQt::self()->hadError()) {
+		emit completed(mErrorMessage, 0);
+	} else {
+		emit completed("", 0);
+	}
 }
 
 void PythonEngineWorker::runDirect(const QString &command)
@@ -143,9 +150,15 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 {
 	if (PythonQt::self()->hadError()) {
 		PythonQt::self()->clearError();
+		mErrorMessage.clear();
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
+}
+
+void PythonEngineWorker::updateErrorMessage(const QString &err)
+{
+	mErrorMessage += err;
 }
 
 void PythonEngineWorker::onScriptRequestingToQuit()
