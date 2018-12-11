@@ -103,6 +103,15 @@ equals(TEMPLATE, app) {
 	macx:!CONFIG(no_rpath) {
 		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
 	}
+} else:equals(TEMPLATE, lib){
+
+	CONFIG += create_pc create_prl no_install_prl create_libtool compile_libtool
+	QMAKE_PKGCONFIG_NAME=$$TARGET
+	QMAKE_PKGCONFIG_PREFIX = $$INSTALLBASE
+	QMAKE_PKGCONFIG_LIBDIR = $$target.path
+	QMAKE_PKGCONFIG_INCDIR = $$headers.path
+	QMAKE_PKGCONFIG_VERSION = $$VERSION
+#	QMAKE_PKGCONFIG_DESCRIPTION = 
 }
 
 #Workaround for a known gcc/ld (before 7.3/bionic) issue

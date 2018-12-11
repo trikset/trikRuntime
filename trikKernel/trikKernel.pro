@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TEMPLATE = lib
+
 include(../global.pri)
 
 QT += widgets xml
@@ -61,8 +63,6 @@ equals(ARCHITECTURE, arm) {
 
 	copyToDestdir($$PWD/stubTrikRc, now)
 }
-
-TEMPLATE = lib
 
 DEFINES += TRIKKERNEL_LIBRARY
 

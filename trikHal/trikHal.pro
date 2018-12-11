@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TEMPLATE = lib
+
 include(../global.pri)
 
 PUBLIC_HEADERS += \
@@ -80,8 +82,6 @@ equals(ARCHITECTURE, arm) {
 } else {
 	SOURCES += $$PWD/src/stub/hardwareAbstractionFactory.cpp
 }
-
-TEMPLATE = lib
 
 DEFINES += TRIKHAL_LIBRARY
 

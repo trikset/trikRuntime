@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-include(../global.pri)
-
 TEMPLATE = lib
+
+include(../global.pri)
 
 QT += xml
 

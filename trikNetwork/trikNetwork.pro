@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TEMPLATE = lib
+
 include(../global.pri)
 
 PUBLIC_HEADERS += \
@@ -37,8 +39,6 @@ SOURCES += \
 INCLUDEPATH += $$PWD/include \
 	$$PWD/../qslog \
 	$$PWD/../trikKernel/include \
-
-TEMPLATE = lib
 
 QT += network
 
