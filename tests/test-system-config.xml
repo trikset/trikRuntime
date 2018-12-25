@@ -183,6 +183,8 @@ equal to its class name.
 		<encoder126 class="encoder" ticks="3296" degrees="1000" />
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
+
+                <photo class="camera" type="v4l2" src="/dev/video0" />
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
