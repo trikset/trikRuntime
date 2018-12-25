@@ -5,7 +5,7 @@ env:
     - CONFIG=release
     - VERA=false
     - SUFFIX=
-    - QMAKE_EXTRA=
+    - QMAKE_EXTRA=CONFIG+=tests
     - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@3,pyenv} ; echo .empty ; } )
     - EARLY_START_DOCKER_PULL_PID=$( if [ $TRAVIS_OS_NAME = 'linux' ] ; then docker pull trikset/linux-builder ; else true ; fi 2>&1 >/dev/null & echo $!)
     - HEARTBEAT=$(while sleep 100; do echo "=====[ $SECONDS seconds, still building... ]====="; done >&2 & echo $! )
@@ -44,7 +44,7 @@ matrix:
   - os: osx
     osx_image: 9.latest
     name: macOS release
-    env: QMAKE_EXTRA=CONFIG+=no-sanitizers
+    env: QMAKE_EXTRA="CONFIG+=no-sanitizers CONFIG+=tests"
 git:
   depth: 1
 language: cpp
