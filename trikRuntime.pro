@@ -30,7 +30,10 @@ SUBDIRS = \
 	trikServer \
 	translations \
 
-tests:SUBDIRS *= tests
+tests {
+	SUBDIRS *= tests
+	tests.depends = trikScriptRunner trikCommunicator trikKernel
+}
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
