@@ -50,14 +50,14 @@ macx {
 CONFIG *= qt
 
 !win32:CONFIG *= ltcg use_gold_linker
-#CONFIG += fat-lto
+#CONFIG *= fat-lto
 
 #deal with mixed configurations
 CONFIG -= debug_and_release debug_and_release_target
 CONFIG(debug, debug | release): CONFIG -= release
-else:!CONFIG(debug):CONFIG *= release
-CONFIG(release):CONFIG -= debug
-CONFIG(no-sanitizers): CONFIG *= nosanitizers
+else:!debug:CONFIG *= release
+release:CONFIG -= debug
+no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
 CONFIG(debug) {
@@ -80,10 +80,11 @@ CONFIG(debug) {
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
+GLOBAL_PWD = $$absolute_path($$PWD)
 
 
 isEmpty(DESTDIR) {
-	DESTDIR = $$PWD/bin/$$CONFIGURATION
+	DESTDIR = $$GLOBAL_PWD/bin/$$CONFIGURATION
 }
 
 PROJECT_BASENAME = $$basename(_PRO_FILE_)
@@ -98,9 +99,9 @@ isEmpty(TARGET) {
 equals(TEMPLATE, app) {
 	unix:!macx {
 		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-		!CONFIG(no_rpath) QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
+		no_rpath: QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
 	}
-	macx:!CONFIG(no_rpath) {
+	macx:no_rpath {
 		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
 	}
 } else:equals(TEMPLATE, lib){
@@ -115,23 +116,23 @@ equals(TEMPLATE, app) {
 }
 
 #Workaround for a known gcc/ld (before 7.3/bionic) issue
-CONFIG(use_gold_linker):!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
+use_gold_linker:!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
 
 macx-clang {
 	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
 }
 
-!CONFIG(nosanitizers):!clang:gcc:*-g++*:gcc4{
+!nosanitizers:!clang:gcc:*-g++*:gcc4{
 	warning("Disabled sanitizers, failed to detect compiler version or too old compiler: $$QMAKE_CXX")
 	CONFIG += nosanitizers
 }
 
-!CONFIG(nosanitizers) {
+!nosanitizers {
 	CONFIG += sanitizer
 }
 
-unix:!CONFIG(nosanitizers) {
+unix:!nosanitizers {
 
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
@@ -144,20 +145,20 @@ unix:!CONFIG(nosanitizers) {
 	#But at the moment we can not, because of Qt  problems
 	CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!macx-clang { CONFIG += sanitize_leak }
 
-	CONFIG(sanitize_leak) {
+	sanitize_leak {
 		QMAKE_CFLAGS += -fsanitize=leak
 		QMAKE_CXXFLAGS += -fsanitize=leak
 		QMAKE_LFLAGS += -fsanitize=leak
 	}
 
-	CONFIG(sanitize_undefined):macx-clang {
+	sanitize_undefined:macx-clang {
 		# sometimes runtime is missing in clang. this hack allows to avoid runtime dependency.
 		QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
 		QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
 		QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
 	}
 
-	!clang:gcc:*-g++*:gcc5{
+	gcc5 {
 		CONFIG(sanitize_undefined){
 		# Ubsan has (had at least) known issues with false errors about calls of methods of the base class.
 		# That must be disabled. Variables for confguring ubsan are taken from here:
@@ -172,18 +173,14 @@ unix:!CONFIG(nosanitizers) {
 	}
 
 	CONFIG(release){
-		CONFIG(gcc4) {
-			message("Too old compiler: $$QMAKE_CXX")
-		} else {
-			QMAKE_CFLAGS += -fsanitize-recover=all
-			QMAKE_CXXFLAGS += -fsanitize-recover=all
-		}
+		QMAKE_CFLAGS += -fsanitize-recover=all
+		QMAKE_CXXFLAGS += -fsanitize-recover=all
+	} else {
+		QMAKE_CFLAGS += -fno-sanitize-recover=all
+		QMAKE_CXXFLAGS += -fno-sanitize-recover=all
 	}
 
 }
-
-
-#CONFIG(ltcg):win32:QMAKE_LFLAGS += -fno-use-linker-plugin
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
 MOC_DIR = .build/$$CONFIGURATION/moc
@@ -198,24 +195,15 @@ QMAKE_CXX_FLAGS *= -Winvalid-pch
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
 
-INCLUDEPATH += \
-	$$PWD/qslog \
-
-
-
-LIBS += -L$$DESTDIR
-
-IS_QSLOG = $$find(PROJECT_NAME, [qQ]s[lL]og)
-
-isEmpty(IS_QSLOG) {
-	LIBS += -lqslog$$CONFIGURATION_SUFFIX
+isEmpty($$find(PROJECT_NAME, [qQ]s[lL]og)) {
+	INCLUDEPATH += $$GLOBAL_PWD/qslog
 }
 
 CONFIG += c++11
 
 QMAKE_CXXFLAGS += -pedantic-errors -ansi -Wextra
 
-CONFIG(gcc5) | clang {
+gcc5 | clang {
 	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
 }
 
@@ -224,21 +212,23 @@ clang {
 	QMAKE_CXXFLAGS += -Wno-error=expansion-to-defined
 }
 
-# -Werror=cast-qual
-QMAKE_CXXFLAGS += -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
+
+QMAKE_CXXFLAGS += -Werror=cast-qual -Werror=write-strings -Werror=redundant-decls -Werror=unreachable-code \
 			-Werror=non-virtual-dtor -Wno-error=overloaded-virtual \
 			-Werror=uninitialized -Werror=init-self
 
 
-GLOBAL_PWD = $$PWD
 
-# Useful function to copy additional files to destination,
-# from http://stackoverflow.com/questions/3984104/qmake-how-to-copy-a-file-to-the-output
+
+# Simple function that checks if given argument is a file or directory.
+# Returns false if argument 1 is a file or does not exist.
 defineTest(isDir) {
 	exists($$system_path($$1/*)):return(true)
 	return(false)
 }
 
+# Useful function to copy additional files to destination,
+# from http://stackoverflow.com/questions/3984104/qmake-how-to-copy-a-file-to-the-output
 defineTest(copyToDestdir) {
 	FILES = $$1
 	NOW = $$2
@@ -262,7 +252,8 @@ defineTest(copyToDestdir) {
 			# probably, xcopy needs /s and /e for directories
 			COPY_DIR = "cmd.exe /C xcopy /f /y /i "
 		} else {
-		 	COPY_DIR = "rsync -avz "
+			COPY_DIR = rsync -a
+			!silent: COPY_DIR += -v
 		}
 		COPY_COMMAND = $$COPY_DIR $$quote($$FILE) $$quote($$DDIR/)
 		isEmpty(NOW) {
