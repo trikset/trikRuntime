@@ -97,12 +97,16 @@ isEmpty(TARGET) {
 }
 
 equals(TEMPLATE, app) {
-	unix:!macx {
-		QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
-		no_rpath: QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
-	}
-	macx:no_rpath {
-		QMAKE_LFLAGS += -rpath . -rpath @executable_path/../Lib -rpath @executable_path/../Frameworks -rpath @executable_path/../../../
+	!no_rpath {
+		unix:!macx {
+			QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
+			QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
+		} macx {
+			QMAKE_LFLAGS += -rpath @executable_path
+			QMAKE_LFLAGS += -rpath @executable_path/../Lib
+			QMAKE_LFLAGS += -rpath @executable_path/../Frameworks
+			QMAKE_LFLAGS += -rpath @executable_path/../../../
+		}
 	}
 } else:equals(TEMPLATE, lib){
 

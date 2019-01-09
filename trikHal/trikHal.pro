@@ -85,7 +85,7 @@ equals(ARCHITECTURE, arm) {
 
 DEFINES += TRIKHAL_LIBRARY
 
-links(trikKernel)
+links(qslog trikKernel)
 implementationIncludes(trikKernel)
 
 if (equals(QT_MAJOR_VERSION, 5)) {
