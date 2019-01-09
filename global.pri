@@ -29,6 +29,8 @@ COMPILER = $$(CXX)
 
 COMPILER_IS_ARM = $$find(COMPILER, arm-.*)
 
+PYTHONQTALL_CONFIG=PythonQtCore
+
 count(COMPILER_IS_ARM, 1) {
 	ARCHITECTURE = arm
 } else {
@@ -199,7 +201,9 @@ QMAKE_CXX_FLAGS *= -Winvalid-pch
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
 
-isEmpty($$find(PROJECT_NAME, [qQ]s[lL]og)) {
+
+THIS_IS_QS_LOG=$$find(PROJECT_NAME, [qQ]s[lL]og)
+isEmpty(THIS_IS_QS_LOG) {
 	INCLUDEPATH += $$GLOBAL_PWD/qslog
 }
 
