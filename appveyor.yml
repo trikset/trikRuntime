@@ -1,5 +1,15 @@
 clone_folder: c:\trik-runtime
 
+skip_commits:
+  files:
+    - '.travis/*'
+    - '.travis.yml'
+    - '**/*.html'
+    - '**/*.txt'
+    - '**/*.md'
+  message: /\[NOCI\]/
+
+
 environment:
   global:
     PYTHON_PATH: C:\Python35
@@ -20,7 +30,13 @@ configuration:
   - release
 
 cache:
-  - '%BUILD_DIR%'
+  - '%BUILD_DIR% -> **\*.pr?, appveyor.yml'
+
+init:
+  - git config --global core.autocrlf true
+  - if "x%appveyor_pull_request_number%" EQU "x" set APPVEYOR_CACHE_SKIP_SAVE=true
+  - if "x%appveyor_repo_branch%" NEQ "master" set APPVEYOR_CACHE_SKIP_SAVE=true
+
 before_build:
   - git submodule update --init --recursive
   - set PATH=%PYTHON_PATH%;%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PATH%
@@ -38,20 +54,18 @@ before_build:
 
 build_script:
   - cd %BUILD_DIR%
-  - qmake %APPVEYOR_BUILD_FOLDER%\%PROJECT_FILE%.pro -spec win32-g++ CONFIG+=%CONFIGURATION%
+  - qmake %APPVEYOR_BUILD_FOLDER%\%PROJECT_FILE%.pro -spec win32-g++ CONFIG+=%CONFIGURATION% CONFIG+=tests
   - mingw32-make -j2 qmake_all
   - mingw32-make -j2 all
-  - qmake %APPVEYOR_BUILD_FOLDER%\tests\tests.pro -spec win32-g++ CONFIG+=%CONFIGURATION% -o tests.mak
-  - mingw32-make -f tests.mak -j2 qmake_all
-  - mingw32-make -f tests.mak -j2 all
 
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%
   - cd bin\x86-%CONFIGURATION%
   - if %CONFIGURATION% == debug set CONFIGURATION_SUFFIX=-d
-  - .\trikScriptRunnerTests%CONFIGURATION_SUFFIX%
-  - .\trikCommunicatorTests%CONFIGURATION_SUFFIX%
   - .\trikKernelTests%CONFIGURATION_SUFFIX%
+  - .\trikCommunicatorTests%CONFIGURATION_SUFFIX%
+  - .\trikScriptRunnerTests%CONFIGURATION_SUFFIX%
+  - .\trikCameraPhotoTests%CONFIGURATION_SUFFIX%
 
 artifacts:
  - path: bin\x86-$(configuration)
