@@ -36,7 +36,4 @@ $EXECUTOR bash -lc "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 &&  make -k -j2 \
 && cd bin/x86-$CONFIG && ls "
 
-$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikKernelTests$SUFFIX"
-$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikCameraPhotoTests$SUFFIX"
-$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikCommunicatorTests$SUFFIX"
-$EXECUTOR sh -c "cd bin/x86-$CONFIG &&  env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' ./trikScriptRunnerTests$SUFFIX"
+$EXECUTOR env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' sh -c 'cd bin/x86-$CONFIG && for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests ; do ./$t$SUFFIX || { errCode=$? ; [ -e core ] && gdb ./$t$SUFFIX core -ex "thread apply all bt" -ex "quit"  || true ; rm -f core ; ( exit $errCode ) ; } ; done'
