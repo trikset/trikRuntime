@@ -36,4 +36,16 @@ $EXECUTOR bash -lc "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 &&  make -k -j2 \
 && cd bin/x86-$CONFIG && ls "
 
-$EXECUTOR env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' sh -c 'cd bin/x86-$CONFIG && for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests ; do ./$t$SUFFIX || { errCode=$? ; [ -e core ] && gdb ./$t$SUFFIX core -ex "thread apply all bt" -ex "quit"  || true ; rm -f core ; ( exit $errCode ) ; } ; done'
+for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
+  do
+    $EXECUTOR env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' sh -c \
+    "cd  bin/x86-$CONFIG && \
+     { \
+       errCode=0 ; \
+       ulimit -c unlimited ; \
+       ./$t$SUFFIX || errCode=\$? ; \
+       [ $TRAVIS_OS_NAME == linux -a -e core ] && gdb ./$t$SUFFIX core -ex 'thread apply all bt' -ex 'quit'  || true ; \
+       rm -f core ; \
+       ( exit \$errCode ) ; \
+     } "
+  done
