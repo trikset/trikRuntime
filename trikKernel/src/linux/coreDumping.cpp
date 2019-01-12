@@ -32,7 +32,8 @@ static void dumpHandler_impl(int signal, char *p)
 	}
 
 	if (p == nullptr) {
-		chdir(path);
+		auto rc = chdir(path);
+		Q_UNUSED(rc);
 		oldHandler(signal);
 	}
 }
