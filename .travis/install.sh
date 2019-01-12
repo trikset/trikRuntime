@@ -5,11 +5,13 @@ case $TRAVIS_OS_NAME in
     REQUIRED_PACKAGES="qt ccache pyenv"
     export HOMEBREW_TEMP="$HOME/homebrew.tmp"
     export HOMEBREW_LOGS="$HOMEBREW_TEMP"
+    #To turn autoupdate on use `unset HOMEBREW_NO_AUTO_UPDATE` in a sub-shell before `breq install`
     export HOMEBREW_NO_AUTO_UPDATE=1
     for pkg in $REQUIRED_PACKAGES ; do
       p="${pkg##*/}"
       p="${p%.*}"
-      rmdir $CELLAR_CACHE_DIR/$p && ( unset HOMEBREW_NO_AUTO_UPDATE && brew install $pkg || echo "Failed to install $pkg" ) \
+      rmdir $CELLAR_CACHE_DIR/$p && \
+      ( brew install $pkg || echo "Failed to install $pkg" ) \
       || { brew unlink $p ; brew link --force $p ; }
     done
     # export PYENV_ROOT="$CELLAR_CACHE_DIR/.pyenv"
