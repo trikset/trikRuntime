@@ -4,6 +4,7 @@ skip_commits:
   files:
     - '.travis/*'
     - '.travis.yml'
+    - 'docker/*'
     - '**/*.html'
     - '**/*.txt'
     - '**/*.md'
