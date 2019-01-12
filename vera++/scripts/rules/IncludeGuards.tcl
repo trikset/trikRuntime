@@ -18,7 +18,7 @@
 
 proc checkGuards { fileName } {
   if {![regexp -nocase {.*.h$} $fileName] } { return }
-  if {[string match "*trikRuntime/pch.h" $fileName] } { return }
+  if {[string match "*/pch.h" $fileName] } { return }
   set lineCount 1 
   set guardFound 0
   foreach line [getAllLines $fileName] {
