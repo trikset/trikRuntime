@@ -209,7 +209,7 @@ isEmpty(THIS_IS_QS_LOG) {
 
 CONFIG += c++11
 
-QMAKE_CXXFLAGS += -pedantic-errors -ansi -Wextra
+QMAKE_CXXFLAGS += -pedantic-errors -ansi -Wextra -Werror
 
 gcc5 | clang {
 	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
@@ -398,6 +398,11 @@ unix:equals(ARCHITECTURE, "x86"):!CONFIG(nosanitizers) {
 		}
 	}
 }
+
+defineTest(enableFlagIfCan) {
+  system($$QMAKE_CXX $1 -c /dev/null -o /dev/null >/dev/null 2>/dev/null): QMAKE_CXXFLAGS += $1
+}
+
 
 CONFIG(noPch) {
 	noPch()

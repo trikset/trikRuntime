@@ -423,7 +423,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE_FOR_ENGINE)
 
 	Scriptable<QTimer>::registerMetatype(engine);
-	qScriptRegisterMetaType(engine, timeValToScriptValue, timeValFromScriptValue);
+	qScriptRegisterMetaType(engine, &timeValToScriptValue, &timeValFromScriptValue);
 	qScriptRegisterSequenceMetaType<QVector<int>>(engine);
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 	qScriptRegisterSequenceMetaType<QVector<uint8_t>>(engine);

@@ -13,6 +13,8 @@ CONFIG += shared
 
 TEMPLATE = lib
 
+enableFlagIfCan(-Wno-error=terminate)
+
 DEFINES += QSLOG_IS_SHARED_LIBRARY
 
 installs()

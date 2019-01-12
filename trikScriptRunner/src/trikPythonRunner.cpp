@@ -54,17 +54,21 @@ TrikPythonRunner::~TrikPythonRunner()
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
 {
+	Q_UNUSED(fileName);
 	mScriptEngineWorker->stopScript();
 	mScriptEngineWorker->run(script);
 }
 
 void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
+	Q_UNUSED(name);
+	Q_UNUSED(function);
 	throw "Not implemented";
 }
 
 void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
+	Q_UNUSED(step);
 	throw "Not implemented";
 }
 
