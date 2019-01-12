@@ -4,7 +4,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt update
 RUN apt -y full-upgrade
 RUN apt install software-properties-common -y
-RUN add-apt-repository ppa:beineri/opt-qt563-trusty -y
+RUN add-apt-repository -y ppa:beineri/opt-qt563-trusty
+RUN add-apt-repository -y ppa:jonathonf/gcc
 RUN apt update
 RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia
 #RUN add-apt-repository ppa:forkotov02/opt-qt-5.11.1-trusty -y
