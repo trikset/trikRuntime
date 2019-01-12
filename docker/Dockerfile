@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:trusty
 MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update
@@ -13,7 +13,7 @@ RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia
 #RUN apt update
 #RUN apt install qt511x11extras
 
-RUN apt install -y curl rsync build-essential g++-4.8 pkg-config libboost-system-dev libboost-wave-dev \
+RUN apt install -y curl rsync build-essential g++ pkg-config libboost-system-dev libboost-wave-dev \
         tcl vera++ xvfb mesa-common-dev libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
         xterm git-core ccache
 
