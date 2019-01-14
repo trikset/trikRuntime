@@ -152,7 +152,7 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 		if (FD_ISSET(mSocket, &rfds)) {
 			const int bufferSize = 2048;
 			char buffer[bufferSize];
-			const int replyLen = recv(mSocket, buffer, bufferSize, 0);
+			auto replyLen = recv(mSocket, buffer, bufferSize, 0);
 			if (replyLen < 0) {
 				std::cerr << "Cannot receive a reply from the daemon:" << std::endl;
 				std::cerr << strerror(errno) << std::endl;

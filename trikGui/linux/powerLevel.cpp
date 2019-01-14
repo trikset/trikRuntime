@@ -41,6 +41,7 @@ PowerLevel::Level PowerLevel::currentLevel()
 			return Level::sixVolt;
 		}
 	} catch (trikKernel::FailedToOpenFileException &e) {
+		Q_UNUSED(e);
 		QLOG_ERROR() << "Power level GPIO file '" << powerLevelGpioPath << "' not found. It is not exported by kernel"
 				" or file path is incorrect. Defaulting to 6V scheme.";
 		return Level::sixVolt;

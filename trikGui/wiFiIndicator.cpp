@@ -65,6 +65,7 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode, bool connected)
 		case WiFiModeWidget::accessPoint:
 			setAPOn();
 			break;
+		case WiFiModeWidget::unknown:
 		default:
 			setOff();
 	}

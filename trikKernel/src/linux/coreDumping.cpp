@@ -19,7 +19,7 @@
 #include <sys/resource.h>
 #include <signal.h>
 #include <unistd.h>
-
+#include <stdio.h>
 #include "paths.h"
 
 void (*oldHandler)(int);
@@ -33,7 +33,9 @@ static void dumpHandler_impl(int signal, char *p)
 
 	if (p == nullptr) {
 		auto rc = chdir(path);
-		Q_UNUSED(rc);
+		if (rc) {
+			perror("FAILED to chdir");
+		}
 		oldHandler(signal);
 	}
 }

@@ -51,9 +51,9 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	ports.sort();
 
 	for (const QString &port : ports) {
-		QListWidgetItem *item = new QListWidgetItem(port, &mList);
-		item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
-		item->setCheckState(Qt::Checked);
+		QListWidgetItem *i = new QListWidgetItem(port, &mList);
+		i->setFlags(i->flags() | Qt::ItemIsUserCheckable);
+		i->setCheckState(Qt::Checked);
 	}
 
 	mList.setSelectionMode(QAbstractItemView::SingleSelection);
