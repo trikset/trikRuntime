@@ -14,7 +14,9 @@ CONFIG += shared
 TEMPLATE = lib
 
 enableFlagIfCan(-Wno-error=terminate)
-
+enableFlagIfCan(-Wno-error=weak-vtables)
+enableFlagIfCan(-Wno-error=global-constructors)
+enableFlagIfCan(-Wno-error=undefined-reinterpret-cast)
 DEFINES += QSLOG_IS_SHARED_LIBRARY
 
 installs()

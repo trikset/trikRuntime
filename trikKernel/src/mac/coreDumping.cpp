@@ -16,4 +16,5 @@
 
 void trikKernel::coreDumping::initCoreDumping(const QString &coreDumpPath)
 {
+	Q_UNUSED(coreDumpPath);
 }

@@ -95,7 +95,8 @@ PROJECT_NAME = $$section(PROJECT_BASENAME, ".", 0, 0)
 isEmpty(TARGET) {
 	TARGET = $$PROJECT_NAME$$CONFIGURATION_SUFFIX
 } else {
-	TARGET = $$TARGET$$CONFIGURATION_SUFFIX
+	R=$$find( TARGET, "$$CONFIGURATION_SUFFIX$" )
+	isEmpty(R):TARGET = $$TARGET$$CONFIGURATION_SUFFIX
 }
 
 equals(TEMPLATE, app) {
@@ -209,17 +210,34 @@ isEmpty(THIS_IS_QS_LOG) {
 
 CONFIG += c++11
 
-QMAKE_CXXFLAGS += -pedantic-errors -Wextra
+QMAKE_CXXFLAGS += -pedantic-errors -Wextra -Werror
 
-!clang: QMAKE_CXXFLAGS += -ansi -Werror
+!clang: QMAKE_CXXFLAGS += -ansi
 
 gcc5 | clang {
 	QMAKE_CXXFLAGS +=-Werror=pedantic -Werror=delete-incomplete
 }
 
-clang {
+#treat git submodules as system path
+SYSTEM_INCLUDE_PREFIX_OPTION += $$system(git submodule status 2>/dev/null | sed $$shell_quote('s/^.[0-9a-fA-F]* \\([^ ]*\\).*$/--system-header-prefix=\\1/g'))
+
+#treat Qt includes as system headers
+SYSTEM_INCLUDE_PREFIX_OPTION += --system-header-prefix=$$[QT_INSTALL_HEADERS]
+
+
+clang:QMAKE_CXXFLAGS += $$SYSTEM_INCLUDE_PREFIX_OPTION
+
+false:clang {
 # Problem from Qt system headers
-	QMAKE_CXXFLAGS += -Wno-error=expansion-to-defined
+	QMAKE_CXXFLAGS += -Wno-error=expansion-to-defined -Wno-error=c++98-compat -Wno-error=sign-conversion \
+			-Wno-error=covered-switch-default -Wno-error=c++98-compat-pedantic \
+			-Wno-error=documentation-unknown-command -Wno-error=inconsistent-missing-destructor-override \
+			-Wno-error=used-but-marked-unused -Wno-error=extra-semi-stmt -Wno-error=padded \
+			-Wno-error=float-equal -Wno-error=float-conversion -Wno-error=implicit-float-conversion \
+			-Wno-error=redundant-parens -Wno-error=deprecated -Wno-error=shift-sign-overflow \
+			-Wno-error=zero-as-null-pointer-constant -Wno-error=exit-time-destructors \
+			-Wno-error=double-promotion -Wno-error=shadow-field -Wno-error=documentation \
+			-Wno-error=reserved-id-macro -Wno-error=extra-semi -Wno-error=comma
 }
 
 
@@ -402,7 +420,7 @@ unix:equals(ARCHITECTURE, "x86"):!CONFIG(nosanitizers) {
 }
 
 defineTest(enableFlagIfCan) {
-  system(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o /dev/null ): QMAKE_CXXFLAGS += $$1
+  system(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o /dev/null 2>/dev/null ): QMAKE_CXXFLAGS += $$1
   export(QMAKE_CXXFLAGS)
 }
 

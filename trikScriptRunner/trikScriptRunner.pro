@@ -14,7 +14,7 @@
 
 TEMPLATE = lib
 
-#include(../global.pri)
+include(../global.pri)
 include(./PyTrikControl/PyTrikControl.pri)
 
 enableFlagIfCan(-Wno-error=cast-function-type)
