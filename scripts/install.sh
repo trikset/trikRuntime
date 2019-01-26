@@ -14,13 +14,6 @@ case $TRAVIS_OS_NAME in
       ( brew install $pkg || echo "Failed to install $pkg" ) \
       || { brew unlink $p ; brew link --force $p ; }
     done
-    # export PYENV_ROOT="$CELLAR_CACHE_DIR/.pyenv"
-    export PATH="$(pyenv root)/bin:$PATH"
-    eval "$(pyenv init -)"
-    BEST_AVAILABLE_PYTHON_VERSION=$(pyenv install --list | grep -E '^\s*3\.5\.[0-9]+$' | sort -ruVifb | head -n 1)
-    echo "From pyenv the best matched version is $BEST_AVAILABLE_PYTHON_VERSION"
-    env CFLAGS="-O2 -fPIC" pyenv install -s  $BEST_AVAILABLE_PYTHON_VERSION
-    pyenv global $BEST_AVAILABLE_PYTHON_VERSION
   ;;
 
   linux)

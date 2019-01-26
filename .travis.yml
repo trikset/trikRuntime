@@ -3,6 +3,7 @@ git:
   depth: 1
 env:
   global:
+    - PYENVROOT="$HOME/pyenv.root"
     - CONFIG=release
     - VERA=false
     - SUFFIX=
@@ -20,7 +21,7 @@ cache:
     - $CELLAR_CACHE_DIR/ccache
     - $CELLAR_CACHE_DIR/python@3
     - $CELLAR_CACHE_DIR/pyenv
-    - $HOME/.pyenv
+    - $PYENVROOT
 #    - /usr/local/opt/
 addons:
   apt:

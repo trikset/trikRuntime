@@ -7,7 +7,7 @@ case $TRAVIS_OS_NAME in
     export PATH="$(pyenv root)/bin:$PATH"
     eval "$(pyenv init -)"
     export PKG_CONFIG_PATH="$(python3-config --prefix)/lib/pkgconfig"
-    EXECUTOR=
+    EXECUTOR="scripts/with_pyenv "
     ;;
   linux)
     EXECUTOR="docker exec builder "
