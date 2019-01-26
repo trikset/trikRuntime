@@ -34,7 +34,7 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	mShutdownDelayTimer.setSingleShot(true);
 }
 
-bool isTrikPowerOffKey(Qt::Key key) {
+static bool isTrikPowerOffKey(Qt::Key key) {
 	return key == Qt::Key_PowerOff || ( key == Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier));
 }
 

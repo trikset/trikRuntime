@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TEMPLATE = lib
+
 include(../../global.pri)
 
-TEMPLATE = lib
+clang:QMAKE_CXXFLAGS += -Wno-error=undef -Wno-error=switch-enum -Wno-error=missing-prototypes \
+		-Wno-error=shadow -Wno-error=disabled-macro-expansion
 
 INCLUDEPATH += \
 	googletest/googlemock \

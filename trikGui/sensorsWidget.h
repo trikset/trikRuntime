@@ -59,9 +59,9 @@ public:
 	void renewFocus() override;
 
 protected:
-	void exit();
+	void exit() override;
 
-	void goHome();
+	void goHome() override;
 
 private:
 	AbstractIndicator *produceIndicator(const QString &port, SensorType sensorType);
