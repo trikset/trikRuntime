@@ -2,7 +2,7 @@ clone_folder: c:\trik-runtime
 
 skip_commits:
   files:
-    - '.travis/*'
+    - 'scripts/*'
     - '.travis.yml'
     - 'docker/*'
     - '**/*.html'
