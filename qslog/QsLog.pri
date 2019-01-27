@@ -3,6 +3,8 @@ INCLUDEPATH += $$PWD
 # WARNING: QS_LOG_LINE_NUMBERS and QS_LOG_SEPARATE_THREAD were removed from repo version and made enabled by default
 #DEFINES += QS_LOG_DISABLE         # logging code is replaced with a no-op
 
+enableFlagIfCan(-Wno-terminate)
+
 SOURCES += \
 	$$PWD/QsLogDest.cpp \
 	$$PWD/QsLog.cpp \
