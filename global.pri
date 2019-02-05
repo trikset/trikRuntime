@@ -85,8 +85,11 @@ CONFIG(debug) {
 GLOBAL_PWD = $$absolute_path($$PWD)
 
 
+isEmpty(GLOBAL_DESTDIR) {
+	GLOBAL_DESTDIR = $$GLOBAL_PWD/bin/$$CONFIGURATION
+}
 isEmpty(DESTDIR) {
-	DESTDIR = $$GLOBAL_PWD/bin/$$CONFIGURATION
+	DESTDIR = $$GLOBAL_DESTDIR
 }
 
 PROJECT_BASENAME = $$basename(_PRO_FILE_)
@@ -102,7 +105,7 @@ isEmpty(TARGET) {
 equals(TEMPLATE, app) {
 	!no_rpath {
 		unix:!macx {
-			QMAKE_LFLAGS += -Wl,-rpath-link,$$DESTDIR
+			QMAKE_LFLAGS += -Wl,-rpath-link,$$GLOBAL_DESTDIR
 			QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
 		} macx {
 			QMAKE_LFLAGS += -rpath @executable_path
@@ -267,7 +270,7 @@ defineTest(copyToDestdir) {
 		isDir($$FILE) {
 			ABSOLUTE_PATH = $$absolute_path($$FILE, $$GLOBAL_PWD)
 			BASE_NAME = $$section(ABSOLUTE_PATH, "/", -1, -1)
-			DESTDIR_SUFFIX = /$$BASE_NAME
+			DESTDIR_SUFFIX = $$BASE_NAME/
 			FILE = $$FILE/*
 		}
 
@@ -278,12 +281,12 @@ defineTest(copyToDestdir) {
 
 		win32 {
 			# probably, xcopy needs /s and /e for directories
-			COPY_DIR = "cmd.exe /C xcopy /f /y /i "
+			COPY_DIR = "cmd.exe /C xcopy /f /y /i /s /e "
 		} else {
 			COPY_DIR = rsync -a
 			!silent: COPY_DIR += -v
 		}
-		COPY_COMMAND = $$COPY_DIR $$quote($$FILE) $$quote($$DDIR/)
+		COPY_COMMAND = $$COPY_DIR $$quote($$FILE) $$quote($$DDIR)
 		isEmpty(NOW) {
 			QMAKE_POST_LINK += $$COPY_COMMAND $$escape_expand(\\n\\t)
 		} else {
@@ -396,27 +399,6 @@ defineTest(noPch) {
 	PRECOMPILED_HEADER =
 	export(CONFIG)
 	export(PRECOMPILED_HEADER)
-}
-
-#seems obsolete, atleast for qmake-qt5
-unix:equals(ARCHITECTURE, "x86"):!CONFIG(nosanitizers) {
-	CONFIG(debug) {
-		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
-		CONFIG(sanitize_address) {
-			QMAKE_CXXFLAGS += -fsanitize=address
-			QMAKE_LFLAGS += -fsanitize=address
-		}
-		CONFIG(sanitize_undefined) {
-			# UBSan does not play well with precompiled headers for some reason.
-			QMAKE_CXXFLAGS += -fsanitize=undefined
-			QMAKE_LFLAGS += -fsanitize=undefined
-		}
-		CONFIG(sanitize_thread) {
-			QMAKE_CXXFLAGS += -fsanitize=thread
-			QMAKE_LFLAGS += -fsanitize=thread
-			LIBS += -ltsan
-		}
-	}
 }
 
 defineTest(enableFlagIfCan) {
