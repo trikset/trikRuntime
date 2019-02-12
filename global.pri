@@ -84,7 +84,7 @@ CONFIG(debug) {
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
-GLOBAL_PWD = $$absolute_path($$IN_PWD)
+GLOBAL_PWD = $$absolute_path($$PWD)
 GLOBAL_OUTPWD = $$absolute_path($$OUT_PWD)
 
 
