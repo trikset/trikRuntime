@@ -60,7 +60,7 @@ build_script:
   - mingw32-make -j2 all
 
 test_script:
-  - cd %APPVEYOR_BUILD_FOLDER%
+  - cd %BUILD_DIR%
   - cd bin\x86-%CONFIGURATION%
   - if %CONFIGURATION% == debug set CONFIGURATION_SUFFIX=-d
   - .\trikKernelTests%CONFIGURATION_SUFFIX%
@@ -69,7 +69,7 @@ test_script:
   - .\trikCameraPhotoTests%CONFIGURATION_SUFFIX%
 
 artifacts:
- - path: bin\x86-$(configuration)
+ - path: %BUILD_DIR%\bin\x86-$(configuration)
    name: trikRuntime-win32-$(configuration)
 
 notifications:
