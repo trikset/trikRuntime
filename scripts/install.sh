@@ -19,10 +19,6 @@ case $TRAVIS_OS_NAME in
   linux)
     docker pull trikset/linux-builder
     docker run -d -v $HOME:$HOME:rw -w `pwd` --name builder trikset/linux-builder Xvfb :0
-    if [[ "$CONFIG" == "debug" ]]
-    then
-      pip install --user codecov
-    fi
   ;;
   *) exit 1 ;;
 esac
