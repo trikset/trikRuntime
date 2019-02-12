@@ -25,6 +25,8 @@
 # - CONFIG+=sanitize-undefined will enable undefined behavior sanitizer
 # - CONFIG+=sanitize-thread will enable thread sanitizer
 
+!isEmpty(_PRO_FILE_):!isEmpty(CONFIG):isEmpty(GLOBAL_PRI_INCLUDED){
+#GLOBAL_PRI_INCLUDED = $$PWD
 COMPILER = $$(CXX)
 
 COMPILER_IS_ARM = $$find(COMPILER, arm-.*)
@@ -417,3 +419,4 @@ defineTest(enableFlagIfCan) {
 CONFIG(noPch) {
 	noPch()
 }
+} # GLOBAL_PRI_INCLUDED

@@ -69,7 +69,7 @@ test_script:
   - .\trikCameraPhotoTests%CONFIGURATION_SUFFIX%
 
 artifacts:
- - path: %BUILD_DIR%\bin\x86-$(configuration)
+ - path: "%BUILD_DIR%\bin\x86-$(configuration)"
    name: trikRuntime-win32-$(configuration)
 
 notifications:
