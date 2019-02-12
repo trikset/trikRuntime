@@ -22,3 +22,4 @@ case $TRAVIS_OS_NAME in
   ;;
   *) exit 1 ;;
 esac
+mkdir -p "$BUILDDIR"

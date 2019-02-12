@@ -33,14 +33,14 @@ $EXECUTOR bash -lc "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \
-&&  qmake -r CONFIG+=$CONFIG -Wall $QMAKE_EXTRA \
+&&  cd $BUILDDIR && qmake -r CONFIG+=$CONFIG -Wall $TRAVIS_BUILD_DIR/trikRuntime.pro $QMAKE_EXTRA \
 &&  make -k -j2 \
 && cd bin/x86-$CONFIG && ls "
 
 for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
   do
     $EXECUTOR env DISPLAY=:0 LSAN_OPTIONS='suppressions=asan.supp fast_unwind_on_malloc=0' sh -c \
-    "cd  bin/x86-$CONFIG && \
+    "cd  $BUILDDIR/bin/x86-$CONFIG && \
      { \
        errCode=0 ; \
        ulimit -c unlimited ; \
