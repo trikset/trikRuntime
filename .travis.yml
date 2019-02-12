@@ -15,7 +15,6 @@ cache:
   timeout: 1000
   apt: true
   ccache: true
-  pip: true
   directories:
     - $CELLAR_CACHE_DIR/qt
     - $CELLAR_CACHE_DIR/ccache
@@ -23,13 +22,6 @@ cache:
     - $CELLAR_CACHE_DIR/pyenv
     - $PYENV_ROOT
 #    - /usr/local/opt/
-addons:
-  apt:
-    update: true
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - python-pip
 matrix:
   include:
   - os: linux
