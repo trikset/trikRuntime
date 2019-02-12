@@ -116,7 +116,7 @@ equals(TEMPLATE, app) {
 	}
 } else:equals(TEMPLATE, lib){
 
-	CONFIG += create_pc create_prl no_install_prl create_libtool compile_libtool
+	CONFIG += create_pc create_prl no_install_prl create_libtool
 	QMAKE_PKGCONFIG_NAME=$$TARGET
 	QMAKE_PKGCONFIG_PREFIX = $$INSTALLBASE
 	QMAKE_PKGCONFIG_LIBDIR = $$target.path
