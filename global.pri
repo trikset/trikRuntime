@@ -62,6 +62,8 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
+CONFIG *= object_parallel_to_source
+
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
@@ -82,11 +84,12 @@ CONFIG(debug) {
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
-GLOBAL_PWD = $$absolute_path($$PWD)
+GLOBAL_PWD = $$absolute_path($$IN_PWD)
+GLOBAL_OUTPWD = $$absolute_path($$OUT_PWD)
 
 
 isEmpty(GLOBAL_DESTDIR) {
-	GLOBAL_DESTDIR = $$GLOBAL_PWD/bin/$$CONFIGURATION
+	GLOBAL_DESTDIR = $$GLOBAL_OUTPWD/bin/$$CONFIGURATION
 }
 isEmpty(DESTDIR) {
 	DESTDIR = $$GLOBAL_DESTDIR
