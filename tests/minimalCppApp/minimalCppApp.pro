@@ -14,8 +14,9 @@
 
 TEMPLATE = app
 
-CONFIG += console
+CONFIG += console qt
 QMAKE_CXXFLAGS += -std=c++11
+QT += widgets
 
 DESTDIR = .
 

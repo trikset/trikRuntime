@@ -53,6 +53,7 @@ trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog trikKernel
 PythonQt.depends = qslog
 qslog.depends = initvars
+translations.depends = initvars
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \
