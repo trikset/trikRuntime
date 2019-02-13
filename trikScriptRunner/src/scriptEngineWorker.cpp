@@ -281,7 +281,7 @@ void ScriptEngineWorker::stopScript()
 		/// Actually we shall stop script engines here, do mMailbox->stopWaiting(), then stop threads.
 	}
 
-	mThreading.reset();
+	QMetaObject::invokeMethod(&mThreading, "reset", Qt::QueuedConnection);
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();
