@@ -15,7 +15,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-	minimalCppApp \
 	selftest \
 	thirdparty \
 	trikCameraPhotoTests \
@@ -23,6 +22,9 @@ SUBDIRS = \
 	trikKernelTests \
 	trikScriptRunnerTests \
 	testUtils \
+
+#	minimalCppApp
+
 
 thirdparty.file = thirdparty/googletest.pro
 

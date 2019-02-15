@@ -15,6 +15,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
+	initvars \
 	qslog \
 	PythonQt \
 	trikKernel \
@@ -29,6 +30,8 @@ SUBDIRS = \
 	trikRun \
 	trikServer \
 	translations \
+
+initvars.file = $$PWD/initvars.pre
 
 tests {
 	SUBDIRS *= tests
@@ -49,6 +52,8 @@ trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
 trikWiFi.depends = qslog trikKernel
 trikHal.depends = qslog trikKernel
 PythonQt.depends = qslog
+qslog.depends = initvars
+translations.depends = initvars
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \

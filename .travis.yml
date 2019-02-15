@@ -3,6 +3,7 @@ git:
   depth: 1
 env:
   global:
+    - BUILDDIR="$TRAVIS_BUILD_DIR/$TRAVIS_BUILD_ID"
     - PYENV_ROOT="$HOME/pyenv.root"
     - CONFIG=release
     - VERA=false

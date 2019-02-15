@@ -14,8 +14,9 @@
 
 TEMPLATE = app
 
-CONFIG += console
+CONFIG += console qt
 QMAKE_CXXFLAGS += -std=c++11
+QT += widgets
 
 DESTDIR = .
 
@@ -23,5 +24,6 @@ SOURCES += \
 	main.cpp \
 
 TRIK_RUNTIME_DIR = $$absolute_path($$PWD/../../)
+TRIK_RUNTIME_BIN_DIR = $$absolute_path($$OUT_PWD/../../bin/$$CONFIGURATION)
 
 include(../../trikControl/trikControlExport.pri)

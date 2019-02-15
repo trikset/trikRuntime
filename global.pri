@@ -1,4 +1,4 @@
-# Copyright 2014 - 2016 CyberTech Co. Ltd., Yurii Litvinov, Iakov Kirilenko
+# Copyright 2014 - 2018 CyberTech Co. Ltd., Yurii Litvinov, Iakov Kirilenko
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@
 # - CONFIG+=sanitize-address will enable address sanitizer
 # - CONFIG+=sanitize-undefined will enable undefined behavior sanitizer
 # - CONFIG+=sanitize-thread will enable thread sanitizer
+
+!isEmpty(_PRO_FILE_):!isEmpty(CONFIG):isEmpty(GLOBAL_PRI_INCLUDED){
+# commented out, seems like there is no need for this var, but let's wait
+false:GLOBAL_PRI_INCLUDED=1
 
 COMPILER = $$(CXX)
 
@@ -62,6 +66,8 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
+CONFIG *= object_parallel_to_source
+
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
@@ -74,19 +80,15 @@ CONFIG(debug) {
 	CONFIGURATION_SUFFIX=
 }
 
-#	CHECK_GCC_VERSION_5="test \"x$$CHECK_GCC_VERSION\" != x && echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<5\\.[0-9]\\+\\.\'"
-#	!clang:gcc:*-g++*:system($$CHECK_GCC_VERSION_5){
-
-#CHECK_GCC_VERSION=$$system("$$QMAKE_CXX --version")
-#!CONFIG(nosanitizers):!clang:gcc:*-g++*:system(test \"x$${CHECK_GCC_VERSION}\" = x  || echo \"$$CHECK_GCC_VERSION\" | grep -qe \'\\<4\\.[0-9]\\+\\.\') 
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<4\\.[0-9]+\\."' ){ CONFIG += gcc4 }
 
 GLOBAL_PWD = $$absolute_path($$PWD)
+GLOBAL_OUTPWD = $$absolute_path($$OUT_PWD)
 
 
 isEmpty(GLOBAL_DESTDIR) {
-	GLOBAL_DESTDIR = $$GLOBAL_PWD/bin/$$CONFIGURATION
+	GLOBAL_DESTDIR = $$GLOBAL_OUTPWD/bin/$$CONFIGURATION
 }
 isEmpty(DESTDIR) {
 	DESTDIR = $$GLOBAL_DESTDIR
@@ -199,7 +201,6 @@ UI_DIR = .build/$$CONFIGURATION/ui
 
 PRECOMPILED_HEADER = $$PWD/pch.h
 CONFIG += precompile_header
-#PRECOMPILED_SOURCE = $$_PRO_FILE_PWD_/precompile_header_dummy.cpp
 QMAKE_CXX_FLAGS *= -Winvalid-pch
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
@@ -402,7 +403,7 @@ defineTest(noPch) {
 }
 
 defineTest(enableFlagIfCan) {
-  system(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o $$system(mktemp) ) {
+  system(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o $$system(mktemp) 2>/dev/null ) {
     QMAKE_CXXFLAGS += $$1
     export(QMAKE_CXXFLAGS)
   } else {
@@ -414,3 +415,4 @@ defineTest(enableFlagIfCan) {
 CONFIG(noPch) {
 	noPch()
 }
+} # GLOBAL_PRI_INCLUDED

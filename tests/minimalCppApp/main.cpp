@@ -15,13 +15,7 @@
  * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
  * project. See git revision history for detailed changes. */
 
-#include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QApplication>
-#endif
+#include <QtWidgets/QApplication>
 
 #include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>

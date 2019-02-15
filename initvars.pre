@@ -1,0 +1,5 @@
+include($$PWD/global.pri)
+TEMPLATE=subdirs
+SUBDIRS=
+QMAKE_SUBSTITUTES += .qmake.cache.in
+
