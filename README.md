@@ -11,6 +11,22 @@
 
 Runtime for TRIK controller.
 
+
+# Pre-build step
+
+  ```git submodules update --init --recursive```
+
+# Build
+  PythonQt shoud be build with corresponding version of Python in mind.
+  One can install `libpython3.5` from destribution package manager, or use `pyenv`, and there is a helper script for this.
+
+  ```shell
+    ./scripts/with_pyenv bash -c 'qmake -r && make -j 4'
+  ```
+
+# Out-of-source-tree build (split-build) is supported
+
+===========
 Consists of following subprojects:
 - trikControl: library for interacting with robot hardware, provides interface for hardware as Qt classes with signals and slots, that can be used from other Qt programs or Qt Script.
 - trikScriptRunner: library providing Qt Script interpreter that uses trikControl to enable interaction with hardware from scripts.
