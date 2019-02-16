@@ -21,7 +21,8 @@ Runtime for TRIK controller.
   One can install `libpython3.5` from destribution package manager, or use `pyenv`, and there is a helper script for this.
 
   ```shell
-    ./scripts/with_pyenv bash -c 'qmake -r && make -j 4'
+    ./scripts/with_pyenv qmake -r
+    make -j 4
   ```
 
 # Out-of-source-tree build (split-build) is supported
