@@ -188,8 +188,8 @@ unix:!nosanitizers {
 		QMAKE_CFLAGS += -fsanitize-recover=all
 		QMAKE_CXXFLAGS += -fsanitize-recover=all
 	} else {
-		QMAKE_CFLAGS += -fno-sanitize-recover=all
-		QMAKE_CXXFLAGS += -fno-sanitize-recover=all
+		QMAKE_CFLAGS += -fsanitize-recover=undefined
+		QMAKE_CXXFLAGS += -fsanitize-recover=undefined
 	}
 
 }
@@ -322,7 +322,8 @@ defineTest(PythonQtIncludes) {
 }
 
 defineTest(links) {
-	LIBS += -L$$DESTDIR
+	LIBS *= -L$$GLOBAL_DESTDIR
+	LIBS *= -L$$DESTDIR
 	PROJECTS = $$1
 
 	for(PROJECT, PROJECTS) {
