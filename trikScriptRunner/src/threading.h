@@ -70,7 +70,7 @@ public:
 	void waitForAllYielding();
 
 	/// Aborts evalutation of all threads, resets to initial state.
-	void reset();
+	Q_INVOKABLE void reset();
 
 	/// The last error message.
 	QString errorMessage() const;
