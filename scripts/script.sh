@@ -45,7 +45,7 @@ for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRu
        errCode=0 ; \
        ulimit -c unlimited ; \
        ./$t$SUFFIX || errCode=\$? ; \
-       [ $TRAVIS_OS_NAME == linux -a -e core ] && gdb ./$t$SUFFIX core -ex 'thread apply all bt' -ex 'quit'  || true ; \
+       [ "$TRAVIS_OS_NAME" = linux -a -e core ] && gdb ./$t$SUFFIX core -ex 'thread apply all bt' -ex 'quit'  || true ; \
        rm -f core ; \
        ( exit \$errCode ) ; \
      } "
