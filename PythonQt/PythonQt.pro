@@ -20,5 +20,5 @@ SUBDIRS += PythonQtCore PythonQtFull
 
 QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
 PythonQtFull.depends += PythonQtCore
-PythonQtCore.file = PythonQt/src/src.pro
+PythonQtCore.subdir = PythonQt/src
 PythonQtFull.file = PythonQtFull.pro

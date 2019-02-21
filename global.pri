@@ -116,7 +116,7 @@ equals(TEMPLATE, app) {
 	}
 } else:equals(TEMPLATE, lib){
 
-	CONFIG += create_pc create_prl no_install_prl create_libtool
+	CONFIG += create_pc create_libtool
 	QMAKE_PKGCONFIG_NAME=$$TARGET
 	QMAKE_PKGCONFIG_PREFIX = $$INSTALLBASE
 	QMAKE_PKGCONFIG_LIBDIR = $$target.path
@@ -186,8 +186,8 @@ unix:!nosanitizers {
 		QMAKE_CFLAGS += -fsanitize-recover=all
 		QMAKE_CXXFLAGS += -fsanitize-recover=all
 	} else {
-		QMAKE_CFLAGS += -fno-sanitize-recover=all
-		QMAKE_CXXFLAGS += -fno-sanitize-recover=all
+		QMAKE_CFLAGS += -fsanitize-recover=undefined
+		QMAKE_CXXFLAGS += -fsanitize-recover=undefined
 	}
 
 }
@@ -321,7 +321,8 @@ defineTest(PythonQtIncludes) {
 }
 
 defineTest(links) {
-	LIBS += -L$$DESTDIR
+	LIBS *= -L$$GLOBAL_DESTDIR
+	LIBS *= -L$$DESTDIR
 	PROJECTS = $$1
 
 	for(PROJECT, PROJECTS) {
