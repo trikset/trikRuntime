@@ -15,7 +15,7 @@ RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia
 #RUN apt install qt511x11extras
 
 RUN apt install -y curl rsync build-essential g++ pkg-config libboost-system-dev libboost-wave-dev \
-        tcl vera++ xvfb mesa-common-dev libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
+        tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
         xterm git-core ccache
 
 #for TRIK Studio build
