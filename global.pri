@@ -289,9 +289,9 @@ defineTest(copyToDestdir) {
 		}
 
 		isEmpty(NOW) {
-			QMAKE_POST_LINK += $$COPY_DIR $$shell_quote($$shell_path($$FILE)) $$shell_quote($$shell_path($$DDIR)) $$escape_expand(\\n\\t)
+			QMAKE_POST_LINK += $$COPY_DIR $$quote($$shell_path($$FILE)) $$quote($$shell_path($$DDIR)) $$escape_expand(\\n\\t)
 		} else {
-			system($$COPY_DIR $$system_quote($$FILE) $$system_quote($$DDIR))
+			system($$COPY_DIR $$quote($$FILE) $$quote($$DDIR))
 		}
 	}
 
