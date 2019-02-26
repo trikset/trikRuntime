@@ -40,6 +40,7 @@ void LineSensorWorker::detect()
 
 QVector<int> LineSensorWorker::read()
 {
+	QReadLocker locker(&mReadingLock);
 	return mReading;
 }
 
@@ -64,8 +65,7 @@ void LineSensorWorker::onNewData(const QString &dataLine)
 
 		mReadingBuffer = {x, crossroadsProbability, mass};
 
-		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
-		// this thread prepares data.
+		QWriteLocker locker(&mReadingLock);
 		mReading.swap(mReadingBuffer);
 	}
 
@@ -92,6 +92,7 @@ void LineSensorWorker::onNewData(const QString &dataLine)
 
 		// Atomic operation, so it will prevent data corruption if value is read by another thread at the same time as
 		// this thread prepares data.
+		QWriteLocker locker(&mReadingLock);
 		mDetectParameters.swap(mDetectParametersBuffer);
 	}
 }
