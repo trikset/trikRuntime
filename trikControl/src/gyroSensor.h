@@ -125,7 +125,7 @@ private:
 
 	bool mAxesSwapped;
 
-	mutable QReadWriteLock mResultLocker;
+	mutable QReadWriteLock mResultLock;
 };
 
 }

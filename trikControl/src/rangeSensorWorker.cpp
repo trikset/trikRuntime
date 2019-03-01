@@ -91,7 +91,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 		return;
 	}
 
-	QWriteLocker locker(&mDistanceLocker);
+	QWriteLocker locker(&mDistanceLock);
 	switch (eventType) {
 	case evAbs:
 		switch (code) {
@@ -106,6 +106,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 		}
 		break;
 	case evSyn:
+		locker.unlock();
 		emit newData(mDistance, mRawDistance, eventTime);
 		break;
 	default:
@@ -120,7 +121,7 @@ int RangeSensorWorker::read()
 		return -1;
 	}
 
-	QReadLocker locker(&mDistanceLocker);
+	QReadLocker locker(&mDistanceLock);
 	return mDistance;
 }
 

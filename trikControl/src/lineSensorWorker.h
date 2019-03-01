@@ -82,6 +82,8 @@ private:
 	QVector<int> mDetectParameters{0, 0, 0, 0, 0, 0};
 
 	QReadWriteLock mReadingLock;
+
+	mutable QReadWriteLock mDetectParametersLock;
 };
 
 }

@@ -84,7 +84,7 @@ GyroSensor::Status GyroSensor::status() const
 
 QVector<int> GyroSensor::read() const
 {
-	QReadLocker locker(&mResultLocker);
+	QReadLocker locker(&mResultLock);
 	return mResult;
 }
 
@@ -187,7 +187,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 		const QVector3D euler = getEulerAngles(mQ);
 
-		QWriteLocker locker(&mResultLocker);
+		QWriteLocker locker(&mResultLock);
 		mResult[0] = r0;
 		mResult[1] = r1;
 		mResult[2] = r2;
@@ -196,6 +196,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mResult[4] = euler.x();
 		mResult[5] = euler.z();
 		mResult[6] = -euler.y();
+		locker.unlock();
 
 		emit newData(mResult, t);
 	}

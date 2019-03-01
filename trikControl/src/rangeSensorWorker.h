@@ -76,7 +76,7 @@ private:
 
 	const QString mEventFileName;
 
-	QReadWriteLock mDistanceLocker;
+	QReadWriteLock mDistanceLock;
 };
 
 }
