@@ -91,6 +91,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 		return;
 	}
 
+	QWriteLocker locker(&mDistanceLocker);
 	switch (eventType) {
 	case evAbs:
 		switch (code) {
@@ -119,6 +120,7 @@ int RangeSensorWorker::read()
 		return -1;
 	}
 
+	QReadLocker locker(&mDistanceLocker);
 	return mDistance;
 }
 
