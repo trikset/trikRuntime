@@ -18,6 +18,7 @@
 #include <QtCore/QThread>
 #include <QQuaternion>
 #include <QTimer>
+#include <QReadWriteLock>
 #include <cmath>
 #include <trikKernel/timeVal.h>
 
@@ -123,6 +124,8 @@ private:
 	int mAccelerometerCounter;
 
 	bool mAxesSwapped;
+
+	mutable QReadWriteLock mResultLocker;
 };
 
 }
