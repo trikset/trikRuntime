@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
+#include <QReadWriteLock>
 
 #include "src/abstractVirtualSensorWorker.h"
 
@@ -79,6 +80,10 @@ private:
 
 	/// Current detect parameters, synced and ready to be returned.
 	QVector<int> mDetectParameters{0, 0, 0, 0, 0, 0};
+
+	QReadWriteLock mReadingLock;
+
+	mutable QReadWriteLock mDetectParametersLock;
 };
 
 }

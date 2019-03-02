@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QScopedPointer>
+#include <QReadWriteLock>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikKernel/timeVal.h>
@@ -74,6 +75,8 @@ private:
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 
 	const QString mEventFileName;
+
+	QReadWriteLock mDistanceLock;
 };
 
 }
