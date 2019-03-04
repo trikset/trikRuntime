@@ -25,6 +25,7 @@ using namespace trikNetwork;
 TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	: mConnectionFactory(connectionFactory)
 {
+	qRegisterMetaType<qintptr>("qintptr");
 }
 
 TrikServer::~TrikServer()

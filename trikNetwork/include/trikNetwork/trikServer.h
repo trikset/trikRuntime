@@ -23,10 +23,6 @@
 
 #include "declSpec.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	typedef int qintptr;
-#endif
-
 namespace trikNetwork {
 
 class Connection;
