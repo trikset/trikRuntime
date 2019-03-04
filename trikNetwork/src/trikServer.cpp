@@ -98,8 +98,12 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 {
 	for (auto *connection : mConnections.values()) {
-		if (connection->peerAddress() == ip && connection->peerPort() == port) {
-			return connection;
+		if (connection->isValid()) {
+			if (connection->peerAddress() == ip && connection->peerPort() == port) {
+				return connection;
+			}
+		} else {
+			QLOG_INFO() << "Connection is not valid" << connection;
 		}
 	}
 
@@ -109,8 +113,12 @@ Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 Connection *TrikServer::connection(const QHostAddress &ip) const
 {
 	for (auto *connection : mConnections.values()) {
-		if (connection->peerAddress() == ip) {
-			return connection;
+		if (connection->isValid()) {
+			if (connection->peerAddress() == ip) {
+				return connection;
+			}
+		} else {
+			QLOG_INFO() << "Connection is not valid" << connection;
 		}
 	}
 

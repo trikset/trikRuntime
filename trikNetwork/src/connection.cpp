@@ -35,6 +35,11 @@ bool Connection::isConnected() const
 	return mSocket->isOpen() && mSocket->isValid();
 }
 
+bool Connection::isValid() const
+{
+	return mSocket;
+}
+
 QHostAddress Connection::peerAddress() const
 {
 	if (!mSocket) {
