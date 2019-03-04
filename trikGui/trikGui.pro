@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+TEMPLATE = app
+QT += network xml widgets
+
 include(../global.pri)
 
 HEADERS += \
@@ -110,14 +113,6 @@ OTHER_FILES += \
 	$$PWD/trikGui.sh \
 
 copyToDestdir($$PWD/trikGui.sh)
-
-TEMPLATE = app
-
-QT += network xml
-
-if (equals(QT_MAJOR_VERSION, 5)) {
-	QT += widgets
-}
 
 implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
 transitiveIncludes(trikNetwork)
