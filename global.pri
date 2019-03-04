@@ -55,7 +55,7 @@ macx {
 
 CONFIG *= qt
 
-ltcg:!win32:CONFIG *= use_gold_linker
+!win32:CONFIG *= use_gold_linker
 #CONFIG *= fat-lto
 
 #deal with mixed configurations
