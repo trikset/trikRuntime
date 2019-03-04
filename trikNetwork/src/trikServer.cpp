@@ -69,7 +69,7 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 
-	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor));
+	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(qintptr, socketDescriptor));
 }
 
 void TrikServer::startConnection(Connection * const connectionWorker)

@@ -104,7 +104,7 @@ void Connection::send(const QByteArray &data)
 	}
 }
 
-void Connection::init(int socketDescriptor)
+void Connection::init(qintptr socketDescriptor)
 {
 	mSocket.reset(new QTcpSocket());
 
