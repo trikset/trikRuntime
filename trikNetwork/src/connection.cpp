@@ -80,7 +80,7 @@ void Connection::init(const QHostAddress &ip, int port)
 
 void Connection::send(const QByteArray &data)
 {
-	if (mSocket->state() != QAbstractSocket::ConnectedState) {
+	if (!mSocket || mSocket->state() != QAbstractSocket::ConnectedState) {
 		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
 		return;
 	}
@@ -104,7 +104,7 @@ void Connection::send(const QByteArray &data)
 	}
 }
 
-void Connection::init(int socketDescriptor)
+void Connection::init(qintptr socketDescriptor)
 {
 	mSocket.reset(new QTcpSocket());
 
@@ -218,8 +218,6 @@ void Connection::onConnect()
 
 void Connection::onDisconnect()
 {
-	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
-
 	doDisconnect();
 }
 
@@ -241,8 +239,10 @@ void Connection::keepAlive()
 
 void Connection::onHeartbeatTimeout()
 {
-	/// We did not receive anything for some time, assuming connection is down and closing socket.
-	mSocket->disconnectFromHost();
+	if(mSocket) {
+		/// We did not receive anything for some time, assuming connection is down and closing socket.
+		mSocket->disconnectFromHost();
+	}
 }
 
 void Connection::connectSlots()
@@ -267,9 +267,9 @@ void Connection::doDisconnect()
 
 	mDisconnectReported = true;
 
-	emit disconnected(this);
+	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
-	thread()->quit();
+	emit disconnected(this);
 }
 
 void Connection::initKeepalive()

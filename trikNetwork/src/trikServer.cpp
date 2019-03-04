@@ -25,6 +25,8 @@ using namespace trikNetwork;
 TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	: mConnectionFactory(connectionFactory)
 {
+	qRegisterMetaType<qintptr>("qintptr");
+	qRegisterMetaType<quint16>("quint16");
 }
 
 TrikServer::~TrikServer()
@@ -36,11 +38,10 @@ TrikServer::~TrikServer()
 		}
 	}
 
-	qDeleteAll(mConnections);
 	qDeleteAll(mConnections.keys());
 }
 
-void TrikServer::startServer(const int &port)
+void TrikServer::startServer(quint16 port)
 {
 	if (!listen(QHostAddress::Any, port)) {
 		QLOG_ERROR() << "Can not start server on port " << port;
@@ -69,17 +70,19 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 
-	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(int, socketDescriptor));
+	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(qintptr, socketDescriptor));
 }
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
 	QThread * const connectionThread = new QThread();
 
-	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
-	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)));
-
 	connectionWorker->moveToThread(connectionThread);
+
+	connect(connectionThread, SIGNAL(finished()), connectionWorker, SLOT(deleteLater()));
+	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
+
+	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)));
 
 	const bool firstConnection = mConnections.isEmpty();
 	mConnections.insert(connectionThread, connectionWorker);
@@ -118,15 +121,9 @@ void TrikServer::onConnectionClosed(Connection *connection)
 {
 	QThread * const thread = mConnections.key(connection);
 
-	// Thread shall already be finished here.
-	if (thread->isRunning()) {
-		QLOG_ERROR() << "Thread shall already be finished here" << thread;
-		thread->wait();
-	}
-
-	connection->deleteLater();
-
 	mConnections.remove(thread);
+
+	thread->quit();
 
 	if (mConnections.isEmpty()) {
 		emit disconnected();

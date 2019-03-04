@@ -69,7 +69,7 @@ public:
 	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
 	/// thread.
 	/// @param socketDescriptor - native socket descriptor.
-	Q_INVOKABLE void init(int socketDescriptor);
+	Q_INVOKABLE void init(qintptr socketDescriptor);
 
 	/// Sends given byte array to peer.
 	Q_INVOKABLE void send(const QByteArray &data);

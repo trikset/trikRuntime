@@ -23,10 +23,6 @@
 
 #include "declSpec.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	typedef int qintptr;
-#endif
-
 namespace trikNetwork {
 
 class Connection;
@@ -47,7 +43,7 @@ public:
 	int activeConnections() const;
 
 	/// Starts listening given port on all network interfaces.
-	Q_INVOKABLE void startServer(const int &port);
+	Q_INVOKABLE void startServer(quint16 port);
 
 public slots:
 	/// Broadcasts message across all opened connections.
