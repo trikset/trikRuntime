@@ -269,7 +269,6 @@ void Connection::doDisconnect()
 
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
-	mSocket.reset();
 	emit disconnected(this);
 }
 

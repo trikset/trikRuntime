@@ -26,6 +26,7 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	: mConnectionFactory(connectionFactory)
 {
 	qRegisterMetaType<qintptr>("qintptr");
+	qRegisterMetaType<quint16>("quint16");
 }
 
 TrikServer::~TrikServer()
@@ -40,7 +41,7 @@ TrikServer::~TrikServer()
 	qDeleteAll(mConnections.keys());
 }
 
-void TrikServer::startServer(const int &port)
+void TrikServer::startServer(quint16 port)
 {
 	if (!listen(QHostAddress::Any, port)) {
 		QLOG_ERROR() << "Can not start server on port " << port;
@@ -77,8 +78,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	QThread * const connectionThread = new QThread();
 
 	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
-	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *))
-		, Qt::ConnectionType::BlockingQueuedConnection);
+	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)));
 
 	connectionWorker->moveToThread(connectionThread);
 	connect(connectionThread, SIGNAL(finished()), connectionWorker, SLOT(deleteLater()));
