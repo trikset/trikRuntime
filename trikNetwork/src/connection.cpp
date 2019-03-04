@@ -271,8 +271,6 @@ void Connection::doDisconnect()
 
 	mSocket.reset();
 	emit disconnected(this);
-
-	thread()->quit();
 }
 
 void Connection::initKeepalive()
