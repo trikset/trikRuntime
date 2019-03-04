@@ -77,9 +77,11 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	QThread * const connectionThread = new QThread();
 
 	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
-	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)));
+	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)), Qt::ConnectionType::BlockingQueuedConnection);
 
 	connectionWorker->moveToThread(connectionThread);
+	connect(connectionThread, SIGNAL(finished()), connectionWorker, SLOT(deleteLater()));
+	connect(connectionWorker, SIGNAL(destroyed()), connectionThread, SLOT(quit()));
 
 	const bool firstConnection = mConnections.isEmpty();
 	mConnections.insert(connectionThread, connectionWorker);
@@ -117,14 +119,6 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 void TrikServer::onConnectionClosed(Connection *connection)
 {
 	QThread * const thread = mConnections.key(connection);
-
-	// Thread shall already be finished here.
-	if (thread->isRunning()) {
-		QLOG_ERROR() << "Thread shall already be finished here" << thread;
-		thread->wait();
-	}
-
-	connection->deleteLater();
 
 	mConnections.remove(thread);
 

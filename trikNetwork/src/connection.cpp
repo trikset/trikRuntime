@@ -267,6 +267,7 @@ void Connection::doDisconnect()
 
 	mDisconnectReported = true;
 
+	mSocket.reset();
 	emit disconnected(this);
 
 	thread()->quit();
