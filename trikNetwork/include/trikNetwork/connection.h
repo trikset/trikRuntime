@@ -60,6 +60,12 @@ public:
 	/// Returns true if socket is opened or false otherwise.
 	bool isConnected() const;
 
+	/// Checks if socket is valid or not
+	/// Attention!!! Hot fix for NTI contest. There are a lot of incorrect interaction between threads,
+	/// this dirty fix checks that current connection exists. For example, sometimes thread and connection
+	/// are added/deleted to mConnections in TrikServer, but actually they are not added/deleted.
+	bool isValid() const;
+
 	/// Returns peer address of a connection, if it is open, or empty QHostAddress if connection is not established yet.
 	QHostAddress peerAddress() const;
 
