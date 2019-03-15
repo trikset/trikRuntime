@@ -23,22 +23,22 @@
 	model-config.xml (настройки конкретной модели).</translation>
     </message>
     <message>
-	<location filename="../../trikKernel/src/applicationInitHelper.cpp" line="67"/>
-	<source>Path to a directory where core dump will be saved in case of creation.</source>
-	<translation>Путь к папке, в которую будет сохранен core dump в случае создания. </translation>
+        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="67"/>
+        <source>Path to a directory where core dump will be saved in case of creation.</source>
+        <translation>Путь к папке, в которую будет сохранен core dump в случае создания. </translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="110"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="114"/>
         <source>Positional arguments:</source>
         <translation>Позиционные аргументы:</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="131"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="137"/>
         <source>Options</source>
         <translation>Опции</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="132"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="138"/>
         <source>Flags</source>
         <translation>Флаги</translation>
     </message>

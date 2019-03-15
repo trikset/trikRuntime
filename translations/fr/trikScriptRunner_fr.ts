@@ -4,7 +4,7 @@
 <context>
     <name>trikScriptRunner::ScriptThread</name>
     <message>
-        <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="47"/>
+        <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="50"/>
         <source>Line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12,7 +12,7 @@
 <context>
     <name>trikScriptRunner::Threading</name>
     <message>
-        <location filename="../../trikScriptRunner/src/threading.cpp" line="69"/>
+        <location filename="../../trikScriptRunner/src/threading.cpp" line="76"/>
         <source>Attempt to create a thread with an already occupied id %1</source>
         <translation type="unfinished"></translation>
     </message>
