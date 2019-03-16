@@ -68,7 +68,13 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
 
 	testingItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
+            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
+
+    testingItem->appendRow(new QStandardItem(
+            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::gyroscope)));
+
+    testingItem->appendRow(new QStandardItem(
+            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::accelerometer)));
 
 	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
 	settingsItem->appendRow(networkItem);
@@ -164,7 +170,23 @@ void StartWidget::launch()
 
 			emit newWidget(sensorsSelectionWidget);
 			result = sensorsSelectionWidget.exec();
-		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
+        } else if (currentItemText == SensorsSelectionWidget::menuEntry(
+                       SensorsSelectionWidget::SensorType::gyroscope))
+        {
+            SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+                    , SensorsSelectionWidget::SensorType::gyroscope);
+
+            emit newWidget(sensorsSelectionWidget);
+            result = sensorsSelectionWidget.exec();
+        } else if (currentItemText == SensorsSelectionWidget::menuEntry(
+                       SensorsSelectionWidget::SensorType::accelerometer))
+        {
+            SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
+                    , SensorsSelectionWidget::SensorType::accelerometer);
+
+            emit newWidget(sensorsSelectionWidget);
+            result = sensorsSelectionWidget.exec();
+        } else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
 			if (mController.mailbox()) {
 				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
 				emit newWidget(communicationSettingsWidget);

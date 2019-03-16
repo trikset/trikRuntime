@@ -46,6 +46,7 @@ public:
 	enum class SensorType {
 		analogOrDigitalSensor
 		, encoder
+        , gyroscope
 	};
 
 	/// Constructor.

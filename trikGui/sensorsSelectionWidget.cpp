@@ -45,7 +45,19 @@ SensorsSelectionWidget::SensorsSelectionWidget(trikControl::BrickInterface &bric
 	case SensorType::encoder: {
 		ports = mBrick.encoderPorts();
 		break;
-	}
+    }
+    case SensorType::gyroscope: {
+//        ports = "";
+        mBrick.gyroscope();
+        QListWidgetItem *i = new QListWidgetItem("hi", &mList);
+        i->setFlags(i->flags() & (~Qt::ItemIsUserCheckable));
+        break;
+    }
+    case SensorType::accelerometer: {
+//        ports = "";
+
+        break;
+    }
 	}
 
 	ports.sort();
@@ -78,7 +90,13 @@ QString SensorsSelectionWidget::menuEntry(SensorType type)
 	}
 	case SensorType::encoder: {
 		return tr("Test encoders");
-	}
+    }
+    case SensorType::gyroscope: {
+        return tr("Test gyroscope");
+    }
+    case SensorType::accelerometer: {
+        return tr("Test accelerometer");
+    }
 	}
 
 	return QString();
@@ -118,7 +136,7 @@ void SensorsSelectionWidget::activateItem()
 
 void SensorsSelectionWidget::startTesting()
 {
-	QStringList ports;
+    QStringList ports;
 	const int itemsCount = mList.count();
 	for (int i = 0; i < itemsCount; ++i) {
 		const QListWidgetItem &item = *mList.item(i);
@@ -129,10 +147,12 @@ void SensorsSelectionWidget::startTesting()
 		}
 	}
 
-	const auto sensorType = mSensorType == SensorType::analogSensor || mSensorType == SensorType::digitalSensor
-			? SensorsWidget::SensorType::analogOrDigitalSensor
-			: SensorsWidget::SensorType::encoder
-			;
+   const auto  sensorType = mSensorType == SensorType::analogSensor || mSensorType == SensorType::digitalSensor
+            ? SensorsWidget::SensorType::analogOrDigitalSensor
+            : (mSensorType == SensorType::encoder
+               ? SensorsWidget::SensorType::encoder
+               : SensorsWidget::SensorType::gyroscope)
+            ;
 
 	SensorsWidget sensorsWidget(mBrick, ports, sensorType);
 	emit newWidget(sensorsWidget);

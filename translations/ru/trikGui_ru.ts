@@ -343,7 +343,7 @@
     <name>trikGui::SensorsSelectionWidget</name>
     <message>
         <source>Select sensors for testing:</source>
-        <translation>Выберите датч. для проверки:</translation>
+        <translation>Выберите датчик для проверки:</translation>
     </message>
     <message>
         <source>Start testing</source>
@@ -351,7 +351,7 @@
     </message>
     <message>
         <source>Test analog sensors</source>
-        <translation>Аналоговые датчики</translation>
+        <translation>Аналоговыыыыые датчики</translation>
     </message>
     <message>
         <source>Test digital sensors</source>
@@ -360,6 +360,14 @@
     <message>
         <source>Test encoders</source>
         <translation>Энкодеры</translation>
+    </message>
+    <message>
+        <source>Test gyroscope</source>
+        <translation>Гироскоп</translation>
+    </message>
+    <message>
+        <source>Test accelerometer</source>
+        <translation>Акселерометр</translation>
     </message>
 </context>
 <context>

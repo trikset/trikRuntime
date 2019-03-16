@@ -48,6 +48,8 @@ public:
 		analogSensor
 		, digitalSensor
 		, encoder
+        , gyroscope
+        , accelerometer
 	};
 
 	SensorsSelectionWidget(trikControl::BrickInterface &brick
