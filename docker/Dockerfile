@@ -35,6 +35,7 @@ ENV PYENV_VERSION 3.5.6
 ENV PYENV_ROOT "/pyenv"
 RUN curl -L https://raw.githubusercontent.com/trikset/trik-pythonqt/master/with_pyenv | bash
 
+RUN apt install --no-install-recommends qt56tools
 
 ENV QTDIR "/opt/qt56"
 ENV PATH "${QTDIR}/bin:/usr/lib/ccache:${PATH}"
