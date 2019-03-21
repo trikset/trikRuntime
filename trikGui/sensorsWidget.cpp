@@ -23,6 +23,7 @@
 #include "sensorIndicator.h"
 #include "encoderIndicator.h"
 #include "gyroscopeindicator.h"
+#include "accelerometerindicator.h"
 
 using namespace trikGui;
 
@@ -47,7 +48,7 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 		}
 	}
 
-    if (sensorType == SensorsWidget::SensorType::gyroscope) {
+    if (sensorType == SensorsWidget::SensorType::gyroscope || sensorType == SensorsWidget::SensorType::accelerometer) {
         AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
         if (indicator) {
             mLayout.addWidget(indicator);
@@ -102,6 +103,9 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
     case SensorType::gyroscope: {
         qDebug() << "hello";
         return new GyroscopeIndicator(*mBrick.gyroscope(), this);
+    }
+    case SensorType::accelerometer: {
+        return new AccelerometerIndicator(*mBrick.accelerometer(), this);
     }
 	}
 

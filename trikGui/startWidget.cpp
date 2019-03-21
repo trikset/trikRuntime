@@ -37,6 +37,8 @@
 #include "languageSelectionWidget.h"
 #include "programmingWidget.h"
 
+#include "sensorsWidget.h"
+
 using namespace trikGui;
 
 using trikControl::MotorInterface;
@@ -149,43 +151,40 @@ void StartWidget::launch()
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::analogSensor))
 		{
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-					, SensorsSelectionWidget::SensorType::analogSensor);
+            SensorsWidget sensorsWidget(mController.brick(), (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor), SensorsWidget::SensorType::analogOrDigitalSensor);
+            emit newWidget(sensorsWidget);
 
-			emit newWidget(sensorsSelectionWidget);
-			result = sensorsSelectionWidget.exec();
+            result = sensorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::digitalSensor))
 		{
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-					, SensorsSelectionWidget::SensorType::digitalSensor);
+            SensorsWidget sensorsWidget(mController.brick(), (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor), SensorsWidget::SensorType::analogOrDigitalSensor);
+            emit newWidget(sensorsWidget);
 
-			emit newWidget(sensorsSelectionWidget);
-			result = sensorsSelectionWidget.exec();
+            result = sensorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::encoder))
 		{
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-					, SensorsSelectionWidget::SensorType::encoder);
+            SensorsWidget sensorsWidget(mController.brick(), (mController.brick()).encoderPorts(), SensorsWidget::SensorType::encoder);
+            emit newWidget(sensorsWidget);
 
-			emit newWidget(sensorsSelectionWidget);
-			result = sensorsSelectionWidget.exec();
+            result = sensorsWidget.exec();
         } else if (currentItemText == SensorsSelectionWidget::menuEntry(
                        SensorsSelectionWidget::SensorType::gyroscope))
         {
-            SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-                    , SensorsSelectionWidget::SensorType::gyroscope);
+            QStringList ports;
+            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
+            emit newWidget(sensorsWidget);
 
-            emit newWidget(sensorsSelectionWidget);
-            result = sensorsSelectionWidget.exec();
+            result = sensorsWidget.exec();
         } else if (currentItemText == SensorsSelectionWidget::menuEntry(
                        SensorsSelectionWidget::SensorType::accelerometer))
         {
-            SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-                    , SensorsSelectionWidget::SensorType::accelerometer);
+            QStringList ports;
+            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
+            emit newWidget(sensorsWidget);
 
-            emit newWidget(sensorsSelectionWidget);
-            result = sensorsSelectionWidget.exec();
+            result = sensorsWidget.exec();
         } else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
 			if (mController.mailbox()) {
 				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());

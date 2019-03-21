@@ -47,6 +47,7 @@ public:
 		analogOrDigitalSensor
 		, encoder
         , gyroscope
+        , accelerometer
 	};
 
 	/// Constructor.

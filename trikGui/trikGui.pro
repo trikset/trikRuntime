@@ -61,6 +61,7 @@ HEADERS += \
 	$$PWD/gamepadIndicator.h \
 	$$PWD/powerLevel.h \
         $$PWD/gyroscopeindicator.h \
+        $$PWD/accelerometerindicator.h \
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -104,6 +105,7 @@ SOURCES += \
 	$$PWD/gamepadIndicator.cpp \
         $$PWD/$$PLATFORM/powerLevel.cpp \
         $$PWD/gyroscopeindicator.cpp \
+        $$PWD/accelerometerindicator.cpp \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \
