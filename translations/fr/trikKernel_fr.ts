@@ -26,17 +26,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="110"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="114"/>
         <source>Positional arguments:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="131"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="137"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="132"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="138"/>
         <source>Flags</source>
         <translation type="unfinished"></translation>
     </message>
