@@ -8,18 +8,19 @@ RUN add-apt-repository -y ppa:beineri/opt-qt563-xenial
 RUN add-apt-repository -y ppa:jonathonf/gcc
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt update && apt -y full-upgrade
-RUN apt install -y qt56-meta-minimal qt56svg qt56script qt56multimedia
+RUN apt install -y --no-install-recommends \
+                    qt56tools qt56-meta-minimal qt56svg qt56script qt56multimedia
 #RUN add-apt-repository ppa:forkotov02/opt-qt-5.11.1-trusty -y
 #RUN add-apt-repository ppa:deadsnakes/ppa -y # python3.x
 #RUN apt update
 #RUN apt install qt511x11extras
 
-RUN apt install -y curl rsync build-essential g++ pkg-config libboost-system-dev libboost-wave-dev \
+RUN apt install -y --no-install-recommends curl rsync build-essential g++ pkg-config libboost-system-dev libboost-wave-dev \
         tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri libglu1-mesa-dev libpng-dev zlib1g-dev xbitmaps \
         xterm git-core ccache
 
 #for TRIK Studio build
-RUN apt install -y libusb-1.0-0-dev dbus
+RUN apt install -y --no-install-recommends libusb-1.0-0-dev dbus
 RUN [ -r /etc/machine-id ] || { dbus-uuidgen | tee /etc/machine-id ; }
 
 #RUN apt-get install -y qdbus qmlscene qt5-qmake \
@@ -30,7 +31,7 @@ RUN apt install -y python-pip libpython-dev
 RUN pip install --user --upgrade pip
 RUN pip install --user codecov
 
-RUN apt install -y libssl-dev realpath
+RUN apt install -y --no-install-recommends libssl-dev realpath
 ENV PYENV_VERSION 3.5.6
 ENV PYENV_ROOT "/pyenv"
 RUN curl -L https://raw.githubusercontent.com/trikset/trik-pythonqt/master/with_pyenv | bash
