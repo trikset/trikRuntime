@@ -27,17 +27,14 @@ RUN [ -r /etc/machine-id ] || { dbus-uuidgen | tee /etc/machine-id ; }
 #        qtbase5-dev-tools qtchooser qtdeclarative5-dev libqt5svg5-dev \
 #    qtscript5-dev qt5-default qtbase5-private-dev qtmultimedia5-dev
 
-RUN apt install -y python-pip libpython-dev
-RUN pip install --user --upgrade pip
-RUN pip install --user codecov
 
 RUN apt install -y --no-install-recommends libssl-dev realpath
 ENV PYENV_VERSION 3.5.6
 ENV PYENV_ROOT "/pyenv"
 RUN curl -L https://raw.githubusercontent.com/trikset/trik-pythonqt/master/with_pyenv | bash
-
-RUN apt install --no-install-recommends qt56tools
-
+RUN rm -rf $PYENV_ROOT/sources/* \
+           && find $PYENV_ROOT -type d -name '.git' | xargs rm -rf \
+           && rm -rf $PYENV_ROOT/versions/$PYENV_VERSION/lib/*/test/
 ENV QTDIR "/opt/qt56"
 ENV PATH "${QTDIR}/bin:/usr/lib/ccache:${PATH}"
 ENV PATH "$PYENV_ROOT/bin:$PATH"
@@ -46,5 +43,13 @@ RUN echo 'source /opt/qt56/bin/qt56-env.sh' >> /root/.bashrc
 RUN echo 'eval "$(pyenv init -)"' >> /root/.bashrc
 RUN echo 'eval "$(pyenv virtualenv-init -)"' >> /root/.bashrc
 RUN echo 'PKG_CONFIG_PATH=$(python3-config --prefix)/lib/pkgconfig' >> /root/.bashrc
+RUN bash -ic 'python -m pip install --upgrade pip codecov'
+
+#Cleanup after installation
+RUN rm -rf $QTDIR/examples
+RUN apt purge -y python python3 libpython2.7
+RUN apt autoremove -y
+RUN apt clean -y
+RUN echo Internal image disk usage: $(du -sch /* 2>/dev/null | sort -h)
 #RUN ln -svt /etc/profile.d/ /opt/qt56/bin/qt56-env.sh
 #ENTRYPOINT ["/bin/bash", "-lc"]
