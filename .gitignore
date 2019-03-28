@@ -1,3 +1,4 @@
+*/object_script.*
 scripts/.pyenv-*
 *~
 .*.swp 
@@ -32,8 +33,6 @@ Makefile*
 *.pro.user*
 bin/*
 /.project
-*/object_script.*.Debug
-*/object_script.*.Release
 .qmake.cache
 # project-specific
 **/.build
