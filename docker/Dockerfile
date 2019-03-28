@@ -1,10 +1,10 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update
 RUN apt -y full-upgrade
 RUN apt install software-properties-common -y
-RUN add-apt-repository -y ppa:beineri/opt-qt563-trusty
+RUN add-apt-repository -y ppa:beineri/opt-qt563-xenial
 RUN add-apt-repository -y ppa:jonathonf/gcc
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test
 RUN apt update && apt -y full-upgrade
