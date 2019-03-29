@@ -83,6 +83,7 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 				<< eventType << code << value;
 	};
 
+	QWriteLocker locker(&mReadingLock);
 	switch (eventType) {
 		case evAbs:
 			switch (code) {
@@ -112,6 +113,7 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 QVector<int> VectorSensorWorker::read()
 {
 	if (mState.isReady()) {
+		QReadLocker locker(&mReadingLock);
 		return mReading;
 	} else {
 		return {};
