@@ -83,7 +83,6 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 				<< eventType << code << value;
 	};
 
-	QWriteLocker locker(&mReadingLock);
 	switch (eventType) {
 		case evAbs:
 			switch (code) {
@@ -101,9 +100,13 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 			}
 			break;
 		case evSyn:
+		{
+			QWriteLocker locker(&mReadingLock);
 			mReading.swap(mReadingUnsynced);
+			locker.unlock();
 			emit newData(mReading, eventTime);
 			break;
+		}
 		default:
 			reportError();
 	}
