@@ -100,9 +100,13 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 			}
 			break;
 		case evSyn:
+		{
+			QWriteLocker locker(&mReadingLock);
 			mReading.swap(mReadingUnsynced);
+			locker.unlock();
 			emit newData(mReading, eventTime);
 			break;
+		}
 		default:
 			reportError();
 	}
@@ -112,6 +116,7 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 QVector<int> VectorSensorWorker::read()
 {
 	if (mState.isReady()) {
+		QReadLocker locker(&mReadingLock);
 		return mReading;
 	} else {
 		return {};

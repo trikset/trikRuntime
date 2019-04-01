@@ -86,6 +86,8 @@ private:
 
 	/// Timer that initiates attempts to reopen device file if there is a hangup.
 	QTimer mTryReopenTimer;
+
+	mutable QReadWriteLock mReadingLock;
 };
 
 }
