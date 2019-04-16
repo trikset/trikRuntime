@@ -45,11 +45,15 @@ public:
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
+	
+	/// Create completion list for interpreted language
+	QStringList knownMethodNamesFor(ScriptType t);
 
 	/// See corresponding TrikScriptRunnerInterface method
 	QStringList knownMethodNames() const override;
 	/// Execute script with a corresponding engine of specified type
-	void run(const QString &script, const ScriptType &stype, const QString &fileName = "");
+	void run(const QString &script, ScriptType stype, const QString &fileName = "");
+
 public slots:
 	/// See corresponding TrikScriptRunnerInterface method
 	void run(const QString &script, const QString &fileName = "") override;
@@ -63,7 +67,7 @@ public slots:
 	void brickBeep() override;
 
 private:
-	TrikScriptRunnerInterface * fetchRunner(const ScriptType &stype);
+	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &brick;
 	trikNetwork::MailboxInterface * mailbox;
