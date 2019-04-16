@@ -49,6 +49,11 @@ QStringList TrikScriptRunner::knownMethodNames() const
 	return mScriptRunnerArray[to_underlying(mLastRunner)]->knownMethodNames();
 }
 
+QStringList TrikScriptRunner::knownMethodNamesFor(ScriptType r)
+{
+	return fetchRunner(r)->knownMethodNames();
+}
+
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
 	if (fileName.endsWith(".py")) {
@@ -58,7 +63,7 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 	}
 }
 
-TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(const ScriptType &stype)
+TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 {
 	auto & cell = mScriptRunnerArray[to_underlying(stype)];
 	if (cell ==  nullptr) { // lazy creation
@@ -89,7 +94,7 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(const ScriptType &styp
 	return cell.data();
 }
 
-void TrikScriptRunner::run(const QString &script, const ScriptType &stype, const QString &fileName)
+void TrikScriptRunner::run(const QString &script, ScriptType stype, const QString &fileName)
 {
 	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
 
@@ -108,7 +113,7 @@ void TrikScriptRunner::abort()
 
 void TrikScriptRunner::abortAll()
 {
-	for (auto & r: mScriptRunnerArray) {
+	for (auto && r: mScriptRunnerArray) {
 		if (r != nullptr) {
 			r->abort();
 		}
