@@ -12,7 +12,11 @@
     #include <QtWidgets/QDial>
 #endif
 
+#include <QPixmap>
 #include "abstractIndicator.h"
+
+class QPropertyAnimation;
+class QParallelAnimationGroup;
 
 namespace trikControl {
 class VectorSensorInterface;
@@ -35,12 +39,20 @@ public slots:
     void renew() override;
 
 private:
+    void resizeEvent(QResizeEvent *) override;
+    void paintEvent(QPaintEvent *) override;
+
+    QRectF m_bounds;
+    QRectF m_knopBounds;
+    QLabel mText;
+    QLabel mText1;
+    QLabel mText2;
+    QLabel mWid;
+    QHBoxLayout mLayout;
+    QPixmap *mPix;
+
+
     trikControl::VectorSensorInterface &mAccelerometer;
 
-    QHBoxLayout mLayout;
-    QLabel mNameLabel;
-    QLabel mValueX;
-    QLabel mValueY;
-    QLabel mValueZ;
 };
 }
