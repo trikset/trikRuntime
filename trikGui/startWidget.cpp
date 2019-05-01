@@ -126,6 +126,7 @@ void StartWidget::launch()
 		QString currentItemText = currentItem->text();
 
 		int result = TrikGuiDialog::normalExit;
+        QStringList ports;
 
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
@@ -151,28 +152,33 @@ void StartWidget::launch()
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::analogSensor))
 		{
-            SensorsWidget sensorsWidget(mController.brick(), (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor), SensorsWidget::SensorType::analogOrDigitalSensor);
+            ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
+            ports.sort();
+            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
             emit newWidget(sensorsWidget);
 
             result = sensorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::digitalSensor))
 		{
-            SensorsWidget sensorsWidget(mController.brick(), (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor), SensorsWidget::SensorType::analogOrDigitalSensor);
+            ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
+            ports.sort();
+            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
             emit newWidget(sensorsWidget);
 
             result = sensorsWidget.exec();
 		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
 				SensorsSelectionWidget::SensorType::encoder))
 		{
-            SensorsWidget sensorsWidget(mController.brick(), (mController.brick()).encoderPorts(), SensorsWidget::SensorType::encoder);
+            ports = (mController.brick()).encoderPorts();
+            ports.sort();
+            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
             emit newWidget(sensorsWidget);
 
             result = sensorsWidget.exec();
         } else if (currentItemText == SensorsSelectionWidget::menuEntry(
                        SensorsSelectionWidget::SensorType::gyroscope))
         {
-            QStringList ports;
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
             emit newWidget(sensorsWidget);
 
@@ -180,7 +186,6 @@ void StartWidget::launch()
         } else if (currentItemText == SensorsSelectionWidget::menuEntry(
                        SensorsSelectionWidget::SensorType::accelerometer))
         {
-            QStringList ports;
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
             emit newWidget(sensorsWidget);
 
