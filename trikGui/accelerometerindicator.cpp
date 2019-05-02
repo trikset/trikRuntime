@@ -18,11 +18,11 @@ AccelerometerIndicator::AccelerometerIndicator(trikControl::VectorSensorInterfac
     : AbstractIndicator(parent)
     , mAccelerometer(accelerometer)
 {
-    mText.setAlignment(Qt::AlignTop);
-    mText1.setAlignment(Qt::AlignTop);
-    mText2.setAlignment(Qt::AlignTop);
+    mText.setAlignment(Qt::AlignVCenter);
+    mText1.setAlignment(Qt::AlignVCenter);
+    mText2.setAlignment(Qt::AlignVCenter);
 
-    mWid.setAlignment(Qt::AlignCenter);
+    mWid.setAlignment(Qt::AlignVCenter);
 
     mLayout.addWidget(&mText);
     mLayout.addWidget(&mText1);
@@ -69,12 +69,17 @@ void AccelerometerIndicator::renew()
 
 void AccelerometerIndicator::resizeEvent(QResizeEvent *)
 {
+    mText.setFixedSize(rect().width() / 16, rect().height() / 16);
+    mText1.setFixedSize(rect().width() / 16, rect().height() / 16);
+    mText2.setFixedSize(rect().width() / 16, rect().height() / 16);
+    mWid.setFixedSize(rect().width() * 13 / 16, rect().height() * 13 / 16);
+
     mPix = new QPixmap(mWid.width(), mWid.height());
-    float size = qMin(rect().width(), rect().height());
+    float size = qMin(rect().width() * 13 / 16, rect().height() * 13 / 16);
 
     QPointF topleft;
-    topleft.setY(((height()-size)/2));
-    topleft.setX((width()-size)/2);
+    topleft.setY(((height() * 13 / 16 - size)/2));
+    topleft.setX((width() * 13 / 16- size)/2);
 
     m_bounds = QRectF(topleft, QSize(size, size));
 
@@ -87,8 +92,9 @@ void AccelerometerIndicator::resizeEvent(QResizeEvent *)
 
 void AccelerometerIndicator::paintEvent(QPaintEvent *)
 {
-
+    mPix->fill(Qt::transparent);
     QPainter painter(mPix);
+
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
@@ -110,8 +116,7 @@ void AccelerometerIndicator::paintEvent(QPaintEvent *)
     painter.setBrush(QBrush(Qt::darkGray));
     painter.drawEllipse(m_knopBounds);
 
+    mWid.setPixmap(*mPix);
 
-    QPainter painter1(mPix);
-    painter1.drawPixmap(0, 0, *mPix);
 }
 

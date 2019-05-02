@@ -48,7 +48,7 @@ private:
     QLabel mText1;
     QLabel mText2;
     QLabel mWid;
-    QHBoxLayout mLayout;
+    QVBoxLayout mLayout;
     QPixmap *mPix;
 
 
