@@ -182,11 +182,11 @@
     <name>trikGui::InformationWidget</name>
     <message>
         <source>Current version</source>
-        <translation>Текущая версия</translation>
+        <translation type="vanished">Текущая версия</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation>Обновление ПО</translation>
+        <translation type="vanished">Обновление ПО</translation>
     </message>
     <message>
         <source>Not found</source>
