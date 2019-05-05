@@ -7,6 +7,7 @@ env:
     - PYENV_ROOT="$HOME/pyenv.root"
     - CONFIG=release
     - VERA=false
+    - TRANSLATIONS=false
     - SUFFIX=
     - QMAKE_EXTRA=CONFIG+=tests CONFIG+=silent
     - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@3,pyenv} ; echo .empty ; } )
@@ -32,8 +33,8 @@ matrix:
   - os: linux
     sudo: required
     services: docker
-    env: CONFIG=debug     VERA=true SUFFIX=-d
-    name: Linux debug + vera
+    env: CONFIG=debug VERA=true SUFFIX=-d TRANSLATIONS=true
+    name: Linux debug + vera + translations
   - os: osx
     language: cpp
     name: macOS release
