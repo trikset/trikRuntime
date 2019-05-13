@@ -216,8 +216,8 @@ uint32_t sendUSBPacket(char *in_msp_packet
 	}
 	else
 	{
-		s1[18] = 0x00;
-		strncpy(out_msp_packet, s1, n_read + 1);
+		memcpy(out_msp_packet, s1, RECV_PACK_LEN);
+		out_msp_packet[RECV_PACK_LEN] = 0;
 	}
 
 	return NO_ERROR;
