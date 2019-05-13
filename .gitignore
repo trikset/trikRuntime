@@ -40,9 +40,6 @@ bin/*
 tests/minimalCppApp/*
 .qmake.stash
 
-# Translations
-*.qm
-
 # PKG config
 pkg-config_wrapper.sh
 
