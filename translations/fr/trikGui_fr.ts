@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../trikGui/trikGuiMain.cpp" line="43"/>
+        <location filename="../../trikGui/trikGuiMain.cpp" line="49"/>
         <source>Graphical user interface, TRIK Studio runtime environment and script runner of a robot</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12,12 +12,12 @@
 <context>
     <name>trikGui::CommandSettingsWidget</name>
     <message>
-        <location filename="../../trikGui/commandSettingsWidget.cpp" line="28"/>
+        <location filename="../../trikGui/commandSettingsWidget.cpp" line="29"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/commandSettingsWidget.cpp" line="47"/>
+        <location filename="../../trikGui/commandSettingsWidget.cpp" line="48"/>
         <source>Command Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -151,7 +151,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="173"/>
+        <location filename="../../trikGui/controller.cpp" line="184"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -159,17 +159,17 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="101"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="102"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="125"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="126"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="126"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="127"/>
         <source>Are you sure you want to delete file?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -177,18 +177,8 @@
 <context>
     <name>trikGui::InformationWidget</name>
     <message>
-        <location filename="../../trikGui/informationWidget.cpp" line="27"/>
-        <source>Current version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../trikGui/informationWidget.cpp" line="31"/>
         <source>OS version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/informationWidget.cpp" line="35"/>
-        <source>Update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -249,12 +239,14 @@
     <name>trikGui::MotorLever</name>
     <message>
         <location filename="../../trikGui/motorLever.cpp" line="40"/>
-        <location filename="../../trikGui/motorLever.cpp" line="127"/>
+        <location filename="../../trikGui/motorLever.cpp" line="57"/>
+        <location filename="../../trikGui/motorLever.cpp" line="114"/>
         <source>off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/motorLever.cpp" line="124"/>
+        <location filename="../../trikGui/motorLever.cpp" line="57"/>
+        <location filename="../../trikGui/motorLever.cpp" line="111"/>
         <source>on</source>
         <translation type="unfinished"></translation>
     </message>
@@ -262,12 +254,12 @@
 <context>
     <name>trikGui::MotorsWidget</name>
     <message>
-        <location filename="../../trikGui/motorsWidget.cpp" line="78"/>
+        <location filename="../../trikGui/motorsWidget.cpp" line="80"/>
         <source>Test power motors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/motorsWidget.cpp" line="81"/>
+        <location filename="../../trikGui/motorsWidget.cpp" line="83"/>
         <source>Test servo motors</source>
         <translation type="unfinished"></translation>
     </message>
@@ -319,24 +311,24 @@
 <context>
     <name>trikGui::SensorSettingsWidget</name>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="34"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="38"/>
         <source>Select distance:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="34"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="38"/>
         <source>Select tacho limit:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="44"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="49"/>
         <source>Continue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="56"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="65"/>
         <source>Sensor Settings</source>
         <translation type="unfinished"></translation>
     </message>
