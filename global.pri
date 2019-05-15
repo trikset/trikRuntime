@@ -202,7 +202,7 @@ UI_DIR = .build/$$CONFIGURATION/ui
 
 PRECOMPILED_HEADER = $$PWD/pch.h
 CONFIG += precompile_header
-QMAKE_CXX_FLAGS *= -Winvalid-pch
+QMAKE_CXXFLAGS *= -Winvalid-pch
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
