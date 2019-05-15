@@ -32,10 +32,18 @@ libssl-dev realpath \
 && { [ -r /etc/machine-id ] || { dbus-uuidgen | tee /etc/machine-id ; } ; }
 
 
+COPY qt_scriptinstall.qs /tmp
 # Split docker image into two main layers, this is the second one
 RUN  apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
                     qt56tools qt56-meta-minimal qt56svg qt56script qt56multimedia \
+# Download QT_IFW
+    && curl -L -o /tmp/qt_installer.run http://download.qt-project.org/official_releases/online_installers/qt-unified-linux-x64-online.run  \
+    && chmod +x /tmp/qt_installer.run \
+    && /tmp/qt_installer.run --verbose --platform minimal --script /tmp/qt_scriptinstall.qs \
+    && rm -f /tmp/qt_installer.run \
+    && rm -f /tmp/qt_scriptinstall.qs \
+    && rm -rf $HOME/Qt/Examples \
 # Cleanup once again
 && rm -rf $QTDIR/examples \
     && apt-get purge -y software-properties-common python python3 libpython2.7 \
