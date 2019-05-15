@@ -13,7 +13,11 @@ CONFIG += shared
 
 TEMPLATE = lib
 
-enableFlagIfCan(-Wno-error=terminate)
+gcc:!clang:!lessThan(COMPILER_VERSION, 6.1){
+# versionNumberAtLeast($$COMPILER_VERSION, 6.1) does not work yet...
+	QMAKE_CXXFLAGS+=-Wno-error=terminate
+}
+
 enableFlagIfCan(-Wno-error=weak-vtables)
 enableFlagIfCan(-Wno-error=global-constructors)
 enableFlagIfCan(-Wno-error=undefined-reinterpret-cast)
