@@ -30,8 +30,8 @@ configuration:
   - debug
   - release
 
-cache:
-  - '%BUILD_DIR% -> **\*.pr?, appveyor.yml'
+#cache:
+#  - '%BUILD_DIR% -> **\*.pr?, appveyor.yml'
 
 init:
   - git config --global core.autocrlf true
@@ -43,15 +43,10 @@ before_build:
   - set PATH=%PYTHON_PATH%;%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
-  - pacman --verbose --noconfirm --sync ccache rsync curl
+  - pacman --verbose --noconfirm --sync rsync
   - path
   - python -V
   - g++ --version
-  - curl https://raw.githubusercontent.com/MestreLion/git-tools/master/git-restore-mtime-bare > .fix-mtime.py
-  - python "%PYTHON_PATH%\Tools\scripts\2to3.py" -v -p -w -n -f all .fix-mtime.py
-  - sed -ri "s#line.(startswith|split)\(#line.\1\(b#g" .fix-mtime.py
-  - python .fix-mtime.py
-  - git submodule foreach --recursive python %cd%\.fix-mtime.py
 
 build_script:
   - cd %BUILD_DIR%
