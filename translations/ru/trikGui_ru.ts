@@ -9,6 +9,13 @@
     </message>
 </context>
 <context>
+    <name>trikGui::AccelerometerIndicator</name>
+    <message>
+        <source>Accelerometer</source>
+        <translation>Акселерометр</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::CommandSettingsWidget</name>
     <message>
         <source>Continue</source>
@@ -179,6 +186,13 @@
     </message>
 </context>
 <context>
+    <name>trikGui::GyroscopeIndicator</name>
+    <message>
+        <source>Gyroscope</source>
+        <translation>Гироскоп</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::InformationWidget</name>
     <message>
         <source>Current version</source>
@@ -343,31 +357,23 @@
     <name>trikGui::SensorsSelectionWidget</name>
     <message>
         <source>Select sensors for testing:</source>
-        <translation>Выберите датчик для проверки:</translation>
+        <translation type="vanished">Выберите датч. для проверки:</translation>
     </message>
     <message>
         <source>Start testing</source>
-        <translation>Начать проверку</translation>
+        <translation type="vanished">Начать проверку</translation>
     </message>
     <message>
         <source>Test analog sensors</source>
-        <translation>Аналоговыыыыые датчики</translation>
+        <translation type="vanished">Аналоговые датчики</translation>
     </message>
     <message>
         <source>Test digital sensors</source>
-        <translation>Цифровые датчики</translation>
+        <translation type="vanished">Цифровые датчики</translation>
     </message>
     <message>
         <source>Test encoders</source>
-        <translation>Энкодеры</translation>
-    </message>
-    <message>
-        <source>Test gyroscope</source>
-        <translation>Гироскоп</translation>
-    </message>
-    <message>
-        <source>Test accelerometer</source>
-        <translation>Акселерометр</translation>
+        <translation type="vanished">Энкодеры</translation>
     </message>
 </context>
 <context>
@@ -395,6 +401,26 @@
     <message>
         <source>System</source>
         <translation>Система</translation>
+    </message>
+    <message>
+        <source>Test analog sensors</source>
+        <translation>Аналоговые датчики</translation>
+    </message>
+    <message>
+        <source>Test digital sensors</source>
+        <translation>Цифровые датчики</translation>
+    </message>
+    <message>
+        <source>Test encoders</source>
+        <translation>Энкодеры</translation>
+    </message>
+    <message>
+        <source>Test gyroscope</source>
+        <translation>Гироскоп</translation>
+    </message>
+    <message>
+        <source>Test accelerometer</source>
+        <translation>Акселерометр</translation>
     </message>
 </context>
 <context>

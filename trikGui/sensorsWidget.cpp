@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
+﻿/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
 #include "sensorsWidget.h"
 
 #include <QtGui/QKeyEvent>
-#include <QDebug>
 
 #include <trikControl/brickInterface.h>
 
 #include "abstractIndicator.h"
 #include "sensorIndicator.h"
 #include "encoderIndicator.h"
-#include "gyroscopeindicator.h"
-#include "accelerometerindicator.h"
+#include "gyroscopeIndicator.h"
+#include "accelerometerIndicator.h"
 
 using namespace trikGui;
 
@@ -31,34 +30,36 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 		, SensorType sensorType, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
-    , mIndicators(ports.size() + 1)
 	, mInterval(100)
 {
 	mTimer.setInterval(mInterval);
 	mTimer.setSingleShot(false);
 
     int i = 0;
-	for (const QString &port : ports) {
-		AbstractIndicator *indicator = produceIndicator(port, sensorType);
-		if (indicator) {
-			mLayout.addWidget(indicator);
-			connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
-			mIndicators[i] = indicator;
-			++i;
-		}
-	}
 
     if (sensorType == SensorsWidget::SensorType::gyroscope || sensorType == SensorsWidget::SensorType::accelerometer) {
         AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
+		mIndicators.reserve(1);
+
         if (indicator) {
             mLayout.addWidget(indicator);
-
-            qDebug() << ports.size();
             connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
-            mIndicators[i] = indicator;
-            ++i;
+			mIndicators[i] = indicator;
         }
-    }
+
+	} else {
+		mIndicators.reserve(ports.size());
+
+		for (const QString &port : ports) {
+			AbstractIndicator *indicator = produceIndicator(port, sensorType);
+			if (indicator) {
+				mLayout.addWidget(indicator);
+				connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
+				mIndicators[i] = indicator;
+				++i;
+			}
+		}
+	}
 
 	setLayout(&mLayout);
 }
@@ -100,8 +101,7 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
     case SensorType::encoder: {
 		return new EncoderIndicator(port, *mBrick.encoder(port), this);
 	}
-    case SensorType::gyroscope: {
-        qDebug() << "hello";
+	case SensorType::gyroscope: {
         return new GyroscopeIndicator(*mBrick.gyroscope(), this);
     }
     case SensorType::accelerometer: {

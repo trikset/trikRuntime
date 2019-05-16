@@ -79,7 +79,7 @@ private:
 	virtual void onNewData(const QString &dataLine) = 0;
 
 	/// Starts virtual sensor if needed and opens its fifos.
-	void initVirtualSensor();
+    void initVirtualSensor();
 
 	/// Launches sensor control script with given command as a parameter.
 	/// @returns true if sensor script launched successfully.

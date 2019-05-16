@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
+﻿/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@
 #include "fileManagerWidget.h"
 #include "wiFiModeWidget.h"
 #include "motorsWidget.h"
-#include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
 #include "informationWidget.h"
 #include "systemSettingsWidget.h"
@@ -60,23 +59,18 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
 	settingsItem->appendRow(testingItem);
 
-	testingItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
+	testingItem->appendRow(new QStandardItem(tr("Test analog sensors")));
 
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
 
-	testingItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
+	testingItem->appendRow(new QStandardItem(tr("Test digital sensors")));
 
-	testingItem->appendRow(new QStandardItem(
-            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
+	testingItem->appendRow(new QStandardItem(tr("Test encoders")));
 
-    testingItem->appendRow(new QStandardItem(
-            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::gyroscope)));
+	testingItem->appendRow(new QStandardItem(tr("Test gyroscope")));
 
-    testingItem->appendRow(new QStandardItem(
-            SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::accelerometer)));
+	testingItem->appendRow(new QStandardItem(tr("Test accelerometer")));
 
 	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
 	settingsItem->appendRow(networkItem);
@@ -149,43 +143,33 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
-				SensorsSelectionWidget::SensorType::analogSensor))
-		{
+		} else if (currentItemText == tr("Test analog sensors")) {
             ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
             ports.sort();
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
             emit newWidget(sensorsWidget);
 
             result = sensorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
-				SensorsSelectionWidget::SensorType::digitalSensor))
-		{
+		} else if (currentItemText == tr("Test digital sensors")) {
             ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
             ports.sort();
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
             emit newWidget(sensorsWidget);
 
             result = sensorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
-				SensorsSelectionWidget::SensorType::encoder))
-		{
+		} else if (currentItemText == tr("Test encoders")) {
             ports = (mController.brick()).encoderPorts();
             ports.sort();
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
             emit newWidget(sensorsWidget);
 
             result = sensorsWidget.exec();
-        } else if (currentItemText == SensorsSelectionWidget::menuEntry(
-                       SensorsSelectionWidget::SensorType::gyroscope))
-        {
+		} else if (currentItemText == tr("Test gyroscope")) {
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
             emit newWidget(sensorsWidget);
 
-            result = sensorsWidget.exec();
-        } else if (currentItemText == SensorsSelectionWidget::menuEntry(
-                       SensorsSelectionWidget::SensorType::accelerometer))
-        {
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Test accelerometer")) {
             SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
             emit newWidget(sensorsWidget);
 

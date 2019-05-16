@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
@@ -6,6 +6,14 @@
     <message>
         <location filename="../../trikGui/trikGuiMain.cpp" line="49"/>
         <source>Graphical user interface, TRIK Studio runtime environment and script runner of a robot</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::AccelerometerIndicator</name>
+    <message>
+        <location filename="../../trikGui/accelerometerIndicator.cpp" line="25"/>
+        <source>Accelerometer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -175,8 +183,16 @@
     </message>
 </context>
 <context>
-    <name>trikGui::InformationWidget</name>
+    <name>trikGui::GyroscopeIndicator</name>
     <message>
+        <location filename="../../trikGui/gyroscopeIndicator.cpp" line="29"/>
+        <source>Gyroscope</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::InformationWidget</name>
+	<message>
         <location filename="../../trikGui/informationWidget.cpp" line="31"/>
         <source>OS version</source>
         <translation type="unfinished"></translation>
@@ -334,58 +350,59 @@
     </message>
 </context>
 <context>
-    <name>trikGui::SensorsSelectionWidget</name>
-    <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="27"/>
-        <source>Select sensors for testing:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="31"/>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="114"/>
-        <source>Start testing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="74"/>
-        <source>Test analog sensors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="77"/>
-        <source>Test digital sensors</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/sensorsSelectionWidget.cpp" line="80"/>
-        <source>Test encoders</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>trikGui::StartWidget</name>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="50"/>
+        <location filename="../../trikGui/startWidget.cpp" line="51"/>
         <source>TRIK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="55"/>
+        <location filename="../../trikGui/startWidget.cpp" line="56"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="58"/>
+        <location filename="../../trikGui/startWidget.cpp" line="59"/>
         <source>Testing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../trikGui/startWidget.cpp" line="62"/>
+        <location filename="../../trikGui/startWidget.cpp" line="146"/>
+        <source>Test analog sensors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="67"/>
+        <location filename="../../trikGui/startWidget.cpp" line="153"/>
+        <source>Test digital sensors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="69"/>
+        <location filename="../../trikGui/startWidget.cpp" line="160"/>
+        <source>Test encoders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="71"/>
+        <location filename="../../trikGui/startWidget.cpp" line="167"/>
+        <source>Test gyroscope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../trikGui/startWidget.cpp" line="73"/>
+        <location filename="../../trikGui/startWidget.cpp" line="172"/>
+        <source>Test accelerometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="75"/>
         <source>Network and connectivity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="82"/>
+        <location filename="../../trikGui/startWidget.cpp" line="84"/>
         <source>System</source>
         <translation type="unfinished"></translation>
     </message>
