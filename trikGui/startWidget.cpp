@@ -56,7 +56,7 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mMenuModel.appendRow(settingsItem);
 
 	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
-	settingsItem->appendRow(testingItem);
+	mMenuModel.appendRow(testingItem);
 
 	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
