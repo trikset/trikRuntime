@@ -1,4 +1,4 @@
-﻿/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
+/* Copyright 2014 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,17 +35,17 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 	mTimer.setInterval(mInterval);
 	mTimer.setSingleShot(false);
 
-    int i = 0;
+	int i = 0;
 
-    if (sensorType == SensorsWidget::SensorType::gyroscope || sensorType == SensorsWidget::SensorType::accelerometer) {
-        AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
+	if (sensorType == SensorsWidget::SensorType::gyroscope || sensorType == SensorsWidget::SensorType::accelerometer) {
+		AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
 		mIndicators.reserve(1);
 
-        if (indicator) {
-            mLayout.addWidget(indicator);
-            connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
+		if (indicator) {
+			mLayout.addWidget(indicator);
+			connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
 			mIndicators[i] = indicator;
-        }
+		}
 
 	} else {
 		mIndicators.reserve(ports.size());
@@ -98,15 +98,15 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
 	case SensorType::analogOrDigitalSensor: {
 		return new SensorIndicator(port, *mBrick.sensor(port), this);
 	}
-    case SensorType::encoder: {
+	case SensorType::encoder: {
 		return new EncoderIndicator(port, *mBrick.encoder(port), this);
 	}
 	case SensorType::gyroscope: {
-        return new GyroscopeIndicator(*mBrick.gyroscope(), this);
-    }
-    case SensorType::accelerometer: {
-        return new AccelerometerIndicator(*mBrick.accelerometer(), this);
-    }
+		return new GyroscopeIndicator(*mBrick.gyroscope(), this);
+	}
+	case SensorType::accelerometer: {
+		return new AccelerometerIndicator(*mBrick.accelerometer(), this);
+	}
 	}
 
 	return nullptr;

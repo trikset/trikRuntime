@@ -1,4 +1,4 @@
-﻿/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
+/* Copyright 2013 - 2015 Roman Kurbatov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ void StartWidget::launch()
 		QString currentItemText = currentItem->text();
 
 		int result = TrikGuiDialog::normalExit;
-        QStringList ports;
+		QStringList ports;
 
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
@@ -144,37 +144,37 @@ void StartWidget::launch()
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
 		} else if (currentItemText == tr("Test analog sensors")) {
-            ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
-            ports.sort();
-            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
-            emit newWidget(sensorsWidget);
+			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			emit newWidget(sensorsWidget);
 
-            result = sensorsWidget.exec();
+			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Test digital sensors")) {
-            ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
-            ports.sort();
-            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
-            emit newWidget(sensorsWidget);
+			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			emit newWidget(sensorsWidget);
 
-            result = sensorsWidget.exec();
+			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Test encoders")) {
-            ports = (mController.brick()).encoderPorts();
-            ports.sort();
-            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
-            emit newWidget(sensorsWidget);
+			ports = (mController.brick()).encoderPorts();
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
+			emit newWidget(sensorsWidget);
 
-            result = sensorsWidget.exec();
+			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Test gyroscope")) {
-            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
-            emit newWidget(sensorsWidget);
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
+			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Test accelerometer")) {
-            SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
-            emit newWidget(sensorsWidget);
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
+			emit newWidget(sensorsWidget);
 
-            result = sensorsWidget.exec();
-        } else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
+			result = sensorsWidget.exec();
+		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
 			if (mController.mailbox()) {
 				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
 				emit newWidget(communicationSettingsWidget);
@@ -272,4 +272,3 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 		}
 	}
 }
-

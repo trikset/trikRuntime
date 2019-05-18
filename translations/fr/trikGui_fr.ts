@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
@@ -192,7 +192,7 @@
 </context>
 <context>
     <name>trikGui::InformationWidget</name>
-	<message>
+    <message>
         <location filename="../../trikGui/informationWidget.cpp" line="31"/>
         <source>OS version</source>
         <translation type="unfinished"></translation>

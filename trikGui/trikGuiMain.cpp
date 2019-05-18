@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikGui started";
 
-    BackgroundWidget w(initHelper.configPath());
-    w.show();
+	BackgroundWidget w(initHelper.configPath());
+	w.show();
 
 	return app.exec();
 }

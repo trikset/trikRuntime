@@ -1,4 +1,4 @@
-﻿/* Copyright 2019 Dina Funt
+/* Copyright 2019 Dina Funt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
 using namespace trikGui;
 
-static constexpr int MAX_VALUE = 250;
+static constexpr int MAX_VAL = 250;
 
 GyroscopeIndicator::GyroscopeIndicator(trikControl::GyroSensorInterface &gyroscope
 		, QWidget *parent)
@@ -106,17 +106,21 @@ void GyroscopeIndicator::paintEvent(QPaintEvent *)
 	painter.drawLine(QPointF(mBounds.center().x(), mBounds.top()),
 					 QPointF(mBounds.center().x(), mBounds.bottom()));
 
-	//draw lines x, y, z
+	// draw lines x, y, z
 	painter.setPen(QPen(QBrush(Qt::blue), mBounds.width() * 0.02));
 	painter.drawLine(QPointF(mBounds.center().x(), mBounds.center().y()),
-					 QPointF(mBounds.center().x() + constrain(mX, MAX_VALUE, -MAX_VALUE) * mBounds.width() / (2 * MAX_VALUE), mBounds.center().y()));
+					 QPointF(mBounds.center().x()
+							 + constrain(mX, MAX_VAL, -MAX_VAL) * mBounds.width() / (2 * MAX_VAL),
+							 mBounds.center().y()));
 
 	painter.setPen(QPen(QBrush(Qt::green), mBounds.width() * 0.02));
 	painter.drawLine(QPointF(mBounds.center().x(), mBounds.center().y()),
-					 QPointF(mBounds.center().x(), mBounds.center().y() + constrain(mY, MAX_VALUE, -MAX_VALUE) * mBounds.width() / (2 * MAX_VALUE)));
+					 QPointF(mBounds.center().x(),
+							 mBounds.center().y()
+							 + constrain(mY, MAX_VAL, -MAX_VAL) * mBounds.width() / (2 * MAX_VAL)));
 
 	int startAngle = 90 * 16;
-	int spanAngle = constrain(mZ, MAX_VALUE, -MAX_VALUE) * 16 / MAX_VALUE * 180;
+	int spanAngle = constrain(mZ, MAX_VAL, -MAX_VAL) * 16 / MAX_VAL * 180;
 
 	painter.setPen(QPen(QBrush(Qt::red), mBounds.width() * 0.02));
 	painter.drawArc(mBounds, startAngle, spanAngle);

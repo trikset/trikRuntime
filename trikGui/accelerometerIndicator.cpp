@@ -1,4 +1,4 @@
-﻿/* Copyright 2019 Dina Funt
+/* Copyright 2019 Dina Funt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 #include <QtGui/QPainter>
 #include <QtCore/QString>
+#include <cmath>
 #include "accelerometerIndicator.h"
 #include "trikControl/vectorSensorInterface.h"
 
@@ -104,7 +105,7 @@ void AccelerometerIndicator::paintEvent(QPaintEvent *)
 
 	painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
-	//draw big circle
+	// draw big circle
 	painter.setPen(QPen(QBrush(Qt::black), mBounds.width() * 0.005));
 	painter.setBrush(QBrush(Qt::transparent));
 	painter.drawEllipse(mBounds);
@@ -132,4 +133,3 @@ void AccelerometerIndicator::paintEvent(QPaintEvent *)
 
 	mCircle.setPixmap(*mPix);
 }
-
