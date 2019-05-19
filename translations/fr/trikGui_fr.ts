@@ -12,7 +12,7 @@
 <context>
     <name>trikGui::AccelerometerIndicator</name>
     <message>
-        <location filename="../../trikGui/accelerometerIndicator.cpp" line="25"/>
+        <location filename="../../trikGui/accelerometerIndicator.cpp" line="26"/>
         <source>Accelerometer</source>
         <translation type="unfinished"></translation>
     </message>
