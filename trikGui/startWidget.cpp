@@ -82,11 +82,8 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	}
 
 	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
-	QStandardItem * const systemItem = new QStandardItem(tr("System"));
-	moreItem->appendRow(systemItem);
-	systemItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
-	systemItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
-
+	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+	moreItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
