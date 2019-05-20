@@ -384,11 +384,6 @@
         <source>More...</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../../trikGui/startWidget.cpp" line="85"/>
-        <source>System</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>trikGui::SystemSettingsWidget</name>
