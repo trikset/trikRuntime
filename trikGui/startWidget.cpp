@@ -50,13 +50,18 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuModel.appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));
-
-	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
-	mMenuModel.appendRow(settingsItem);
 
 	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
 	mMenuModel.appendRow(testingItem);
+
+	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
+	mMenuModel.appendRow(networkItem);
+
+	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
+
+	QStandardItem * const moreItem = new QStandardItem(tr("More..."));
+	mMenuModel.appendRow(moreItem);
+
 
 	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
@@ -70,21 +75,18 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
 
-	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
-	settingsItem->appendRow(networkItem);
+	networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
 
 	if (mController.mailbox()) {
 		networkItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
 	}
 
-	networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
-
+	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
 	QStandardItem * const systemItem = new QStandardItem(tr("System"));
-	settingsItem->appendRow(systemItem);
+	moreItem->appendRow(systemItem);
 	systemItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 	systemItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 
-	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
