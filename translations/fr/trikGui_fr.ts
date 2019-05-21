@@ -375,12 +375,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="57"/>
-        <source>Network and connectivity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/startWidget.cpp" line="62"/>
+        <location filename="../../trikGui/startWidget.cpp" line="65"/>
         <source>More...</source>
         <translation type="unfinished"></translation>
     </message>

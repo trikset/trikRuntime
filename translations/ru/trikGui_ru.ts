@@ -378,7 +378,7 @@
     </message>
     <message>
         <source>Network and connectivity</source>
-        <translation>Сеть и подключение</translation>
+        <translation type="vanished">Сеть и подключение</translation>
     </message>
     <message>
         <source>System</source>
