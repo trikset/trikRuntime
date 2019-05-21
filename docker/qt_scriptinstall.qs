@@ -15,7 +15,11 @@ Controller.prototype.IntroductionPageCallback = function() {
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function() {
-  gui.currentPageWidget().TargetDirectoryLineEdit.setText(installer.value("HomeDir") + "/Qt_auto");
+  var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
+  if (targetDir == "") {
+    targetDir = installer.value("HomeDir") + "/Qt";
+  }
+  gui.currentPageWidget().TargetDirectoryLineEdit.setText(targetDir);
   gui.clickButton(buttons.NextButton);
 }
 
