@@ -33,8 +33,8 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
   
   widget.deselectAll();
   widget.selectComponent("qt.tools.ifw.30");
-  widget.selectComponent("qt.qt5.5122.gcc_64");
-  widget.selectComponent("qt.qt5.5122.qtscript");
+  widget.selectComponent("qt.qt5.5123.gcc_64");
+  widget.selectComponent("qt.qt5.5123.qtscript");
   
   gui.clickButton(buttons.NextButton);
 }
