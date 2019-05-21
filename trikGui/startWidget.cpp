@@ -90,6 +90,7 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 			);
 
 	mLayout.addWidget(&mTitleLabel);
+	mLayout.addWidget(&mNetworkWidget);
 	mLayout.addWidget(&mMenuView);
 
 	setLayout(&mLayout);
