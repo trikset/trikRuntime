@@ -36,7 +36,7 @@ COPY install_qt.sh /tmp
 RUN /tmp/install_qt.sh $QTDIR --verbose --platform minimal \
 # Cleanup once again
     && rm -rf /tmp/* \
-    && rm -rf $QTDIR/Docs $QTDIR/Examples
+    && rm -rf $QTDIR/Docs $QTDIR/Examples $QTDIR/Tools/QtCreator
 
 
 ENV PYENV_VERSION 3.5.6
