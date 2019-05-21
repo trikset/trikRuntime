@@ -54,8 +54,11 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
 	mMenuModel.appendRow(testingItem);
 
-	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
-	mMenuModel.appendRow(networkItem);
+	mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
+
+	if (mController.mailbox()) {
+		mMenuModel.appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
+	}
 
 	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
 
@@ -74,12 +77,6 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 	testingItem->appendRow(new QStandardItem(
 			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
-
-	networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
-
-	if (mController.mailbox()) {
-		networkItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
-	}
 
 	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
 	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
