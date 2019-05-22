@@ -14,14 +14,14 @@ RUN apt-get update \
 		    wget curl rsync build-essential g++ \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
-		libglu1-mesa-dev libpng-dev libpulse-mainloop-glib0 \
+		libglu1-mesa-dev libpng-dev \
 		zlib1g-dev xbitmaps xterm git-core ccache \
 #for TRIK Studio build
-                libusb-1.0-0-dev dbus libxkbcommon-x11-0 libxcb-xkb1\
+                libusb-1.0-0-dev dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
 #for pyenv/PythonQt
                 libssl-dev realpath \
 #Cleanup after installation
-    && apt-get purge -y software-properties-common python python3 libpython2.7 \
+    && apt-get purge -y software-properties-common python3 \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
