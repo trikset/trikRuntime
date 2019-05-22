@@ -373,20 +373,20 @@
         <translation>ТРИК</translation>
     </message>
     <message>
-        <source>Settings</source>
-        <translation>Настройки</translation>
-    </message>
-    <message>
         <source>Testing</source>
         <translation>Тестирование</translation>
     </message>
     <message>
         <source>Network and connectivity</source>
-        <translation>Сеть и подключение</translation>
+        <translation type="vanished">Сеть и подключение</translation>
     </message>
     <message>
         <source>System</source>
-        <translation>Система</translation>
+        <translation type="vanished">Система</translation>
+    </message>
+    <message>
+        <source>More...</source>
+        <translation>Еще...</translation>
     </message>
 </context>
 <context>

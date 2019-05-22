@@ -370,23 +370,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="55"/>
-        <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/startWidget.cpp" line="58"/>
+        <location filename="../../trikGui/startWidget.cpp" line="54"/>
         <source>Testing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="73"/>
-        <source>Network and connectivity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/startWidget.cpp" line="82"/>
-        <source>System</source>
+        <location filename="../../trikGui/startWidget.cpp" line="65"/>
+        <source>More...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
