@@ -67,8 +67,3 @@ test_script:
 artifacts:
  - path: .build\bin\x86-$(configuration)
    name: trikRuntime-win32-$(configuration)
-
-notifications:
-  - provider: Slack
-    incoming_webhook:
-      secure: QRFxYnwQHitjlrmGleW/IvNXUciFrbLfMfUWJZJKMd7C4G39APa9IkFMmNO129P7kjgCIRevlyisi7L2DX5WOS0tyvxt6rhiq+g7Dn2rz74=
