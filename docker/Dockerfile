@@ -14,7 +14,7 @@ RUN apt-get update \
 		    wget curl rsync build-essential g++ \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
-		libglu1-mesa-dev libpng-dev \
+		libglu1-mesa-dev libpng-dev libpulse-dev \
 		zlib1g-dev xbitmaps xterm git-core ccache \
 #for TRIK Studio build
                 libusb-1.0-0-dev dbus \
