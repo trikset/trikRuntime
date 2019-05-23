@@ -16,8 +16,10 @@ RUN apt-get update \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
 		zlib1g-dev xbitmaps xterm git-core ccache \
-#for TRIK Studio build
-                libusb-1.0-0-dev dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
+#for libusb build
+                automake libtool-bin libudev-dev \
+#for TRIK Studio build and tests
+                dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
 #for pyenv/PythonQt
                 libssl-dev realpath \
 #Cleanup after installation
@@ -32,6 +34,8 @@ RUN apt-get update \
             /usr/share/locale/??_?? \
 && { [ -r /etc/machine-id ] || { dbus-uuidgen | tee /etc/machine-id ; } ; }
 
+#Build fresh libusb from sources
+RUN git clone https://github.com/libusb/libusb && cd libusb && git checkout v1.0.22 && ./autogen.sh --enable-udev --disable-examples-build --disable-tests-build --disable-static && make install && cd .. && rm -rf libusb && echo pkg-config libusb-1.0 is v$(pkg-config --modversion libusb-1.0)
 
 COPY qt_scriptinstall.qs /tmp
 COPY install_qt.sh /tmp
