@@ -200,8 +200,12 @@ MOC_DIR = .build/$$CONFIGURATION/moc
 RCC_DIR = .build/$$CONFIGURATION/rcc
 UI_DIR = .build/$$CONFIGURATION/ui
 
+!noPch:CONFIG += precompile_header
 PRECOMPILED_HEADER = $$PWD/pch.h
-CONFIG += precompile_header
+
+precompile_header:!isEmpty(PRECOMPILED_HEADER) {
+	QMAKE_CXXFLAGS += -include $$PRECOMPILED_HEADER
+}
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
