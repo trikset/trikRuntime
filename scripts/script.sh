@@ -18,18 +18,20 @@ esac
 
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
-
+export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG
+sudo mkdir -p $CCACHE_DIR
+sudo touch $CCACHE_DIR/ccache.conf
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
-   export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
+   export CCACHE_DIR=$CCACHE_DIR \
 && export CCACHE_CPP2=yes \
-&& export CCACHE_SLOPPINESS=time_macros \
+&& export CCACHE_SLOPPINESS='pch_defines,time_macros,include_file_ctime,include_file_mtime' \
 && eval \"\`pyenv init -\`\" \
 && eval 'export PKG_CONFIG_PATH=\`python3-config --prefix\`/lib/pkgconfig' \
 && which g++ \
 && g++ --version \
 && which qmake \
 && qmake -query \
-&& ccache -M 0 \
+&& ccache -z -M 0 \
 && pyenv root \
 && pyenv versions \
 && pkg-config --list-all \
@@ -37,7 +39,9 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 && { which python && python -V || true ; } \
 &&  cd $BUILDDIR && qmake -r CONFIG+=$CONFIG -Wall $TRAVIS_BUILD_DIR/trikRuntime.pro $QMAKE_EXTRA \
 &&  make -k -j2 \
-&& cd bin/x86-$CONFIG && ls "
+&& cd bin/x86-$CONFIG && ls \
+&& ccache -s \
+"
 
 for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
   do
