@@ -25,7 +25,6 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
    export CCACHE_DIR=$CCACHE_DIR \
 && export CCACHE_CPP2=yes \
 && export CCACHE_SLOPPINESS=time_macros \
-&& export CCACHE_DISABLE=1 \
 && eval \"\`pyenv init -\`\" \
 && eval 'export PKG_CONFIG_PATH=\`python3-config --prefix\`/lib/pkgconfig' \
 && which g++ \
