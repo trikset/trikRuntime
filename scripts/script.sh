@@ -24,15 +24,14 @@ sudo touch $CCACHE_DIR/ccache.conf
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
    export CCACHE_DIR=$CCACHE_DIR \
 && export CCACHE_CPP2=yes \
-&& export CCACHE_DEPEND=true \
-&& export CCACHE_SLOPPINESS='pch_defines,time_macros' \
+&& export CCACHE_SLOPPINESS='pch_defines,time_macros,include_file_ctime,include_file_mtime' \
 && eval \"\`pyenv init -\`\" \
 && eval 'export PKG_CONFIG_PATH=\`python3-config --prefix\`/lib/pkgconfig' \
 && which g++ \
 && g++ --version \
 && which qmake \
 && qmake -query \
-&& ccache -M 0 \
+&& ccache -z -M 0 \
 && pyenv root \
 && pyenv versions \
 && pkg-config --list-all \

@@ -204,7 +204,7 @@ UI_DIR = .build/$$CONFIGURATION/ui
 PRECOMPILED_HEADER = $$PWD/pch.h
 
 precompile_header:!isEmpty(PRECOMPILED_HEADER) {
-	QMAKE_CXXFLAGS += -include $$PRECOMPILED_HEADER
+	QMAKE_CXXFLAGS += -include $$PRECOMPILED_HEADER -fpch-preprocess
 }
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \

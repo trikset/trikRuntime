@@ -16,14 +16,13 @@ env:
 cache:
   timeout: 1000
   apt: true
-  ccache: true
   directories:
     - $CELLAR_CACHE_DIR/qt
     - $CELLAR_CACHE_DIR/ccache
     - $CELLAR_CACHE_DIR/python@3
     - $CELLAR_CACHE_DIR/pyenv
     - $PYENV_ROOT
-#    - /usr/local/opt/
+    - $HOME/.ccache
 matrix:
   include:
   - os: linux
