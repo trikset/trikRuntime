@@ -38,7 +38,6 @@ matrix:
   - os: osx
     language: cpp
     name: macOS release
-    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=no-sanitizers"
 
 before_install:
 - wait $EARLY_START_DOCKER_PULL_PID || true
