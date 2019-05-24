@@ -18,11 +18,14 @@ esac
 
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
-
+export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG
+sudo mkdir -p $CCACHE_DIR
+sudo touch $CCACHE_DIR/ccache.conf
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
-   export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
+   export CCACHE_DIR=$CCACHE_DIR \
 && export CCACHE_CPP2=yes \
 && export CCACHE_SLOPPINESS=time_macros \
+&& export CCACHE_DISABLE=1 \
 && eval \"\`pyenv init -\`\" \
 && eval 'export PKG_CONFIG_PATH=\`python3-config --prefix\`/lib/pkgconfig' \
 && which g++ \
