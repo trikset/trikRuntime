@@ -39,7 +39,9 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 && { which python && python -V || true ; } \
 &&  cd $BUILDDIR && qmake -r CONFIG+=$CONFIG -Wall $TRAVIS_BUILD_DIR/trikRuntime.pro $QMAKE_EXTRA \
 &&  make -k -j2 \
-&& cd bin/x86-$CONFIG && ls "
+&& cd bin/x86-$CONFIG && ls \
+&& ccache -s \
+"
 
 for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
   do
