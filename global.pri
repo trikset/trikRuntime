@@ -200,8 +200,11 @@ MOC_DIR = .build/$$CONFIGURATION/moc
 RCC_DIR = .build/$$CONFIGURATION/rcc
 UI_DIR = .build/$$CONFIGURATION/ui
 
-PRECOMPILED_HEADER = $$PWD/pch.h
 CONFIG += precompile_header
+precompile_header {
+	PRECOMPILED_HEADER = $$PWD/pch.h
+	QMAKE_CXXFLAGS *= -Wno-error=invalid-pch
+}
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
 	$$_PRO_FILE_PWD_/include/$$PROJECT_NAME \
