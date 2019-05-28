@@ -99,7 +99,7 @@ private:
 	void addShape(Shape *shape);
 
 	/// List of all labels.
-	QHash<QPair<int, int>, QString> mLabels;
+	QHash<QPair<int, int>, QPair<QColor, QString>> mLabels;
 
 	QList<Shape *> mElements;
 
