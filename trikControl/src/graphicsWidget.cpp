@@ -67,9 +67,11 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 
 	for (const QPair<int, int> &position : mLabels.keys()) {
 		painter.setPen(mCurrentPenColor);
-		const QString text = mLabels[position];
-		painter.drawText(position.first, position.second, mFontMetrics->width(text), mFontMetrics->height()
-				, Qt::TextWordWrap, text);
+		auto & text = mLabels[position];
+		painter.setPen(text.first);
+		painter.drawText(position.first, position.second
+				 , mFontMetrics->width(text.second), mFontMetrics->height()
+				 , Qt::TextWordWrap, text.second);
 	}
 }
 
@@ -123,24 +125,15 @@ void GraphicsWidget::drawArc(int x, int y, int width, int height, int startAngle
 
 void GraphicsWidget::addShape(Shape *shape)
 {
-	bool found = false;
-	for (const Shape *element : mElements) {
-		if (element && element->equals(shape)) {
-			found = true;
-			break;
-		}
-	}
-
-	if (found) {
-		delete shape;
-	} else {
+	auto found = std::find_if(mElements.begin(), mElements.end(), [=](Shape *x) { return x->equals(shape);});
+	if (found == mElements.end())
 		mElements << shape;
-	}
+	else *found = shape;
 }
 
 void GraphicsWidget::addLabel(const QString &text, int x, int y)
 {
-	mLabels[qMakePair(x, y)] = text;
+	mLabels[qMakePair(x, y)] = qMakePair(mCurrentPenColor, text);
 }
 
 void GraphicsWidget::setPixmap(const QPixmap &picture)
