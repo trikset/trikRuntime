@@ -11,7 +11,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass build-essential g++ \
+		    wget curl rsync sshpass openssh-client build-essential g++ \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
