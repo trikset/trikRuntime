@@ -7,8 +7,9 @@
 #include <trikKernel/paths.h>
 
 using namespace trikKernel;
+using namespace trikGui;
 
-trikGui::NetworkWidget::NetworkWidget(QWidget *parent)
+NetworkWidget::NetworkWidget(QWidget *parent)
 	: QWidget(parent)
 {
 	mHostnameLabel.setText("Name: ");
@@ -23,10 +24,8 @@ trikGui::NetworkWidget::NetworkWidget(QWidget *parent)
 	mUpdateTimer.start();
 }
 
-void trikGui::NetworkWidget::updateIP()
+void NetworkWidget::updateIP()
 {
-	const QString name = trikKernel::FileUtils::readFromFile(trikKernel::Paths::hostnameName()).trimmed();
-
 	const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
 	for (const QNetworkInterface &interface : interfaces) {
 		if (interface.name() == "wlan0") {
@@ -44,7 +43,7 @@ void trikGui::NetworkWidget::updateIP()
 	}
 }
 
-void trikGui::NetworkWidget::updateHostname()
+void NetworkWidget::updateHostname()
 {
 	const QString name = trikKernel::FileUtils::readFromFile(trikKernel::Paths::hostnameName()).trimmed();
 	mHostnameLabel.setText(tr("Name: ") + name);

@@ -5,10 +5,13 @@
 
 namespace trikGui {
 
+/// Widget, that shows current state of the network -- hostname and IP-address
 class NetworkWidget : public QWidget
 {
 	Q_OBJECT
 public:
+
+	/// Constructor
 	NetworkWidget(QWidget *parent = 0);
 
 private slots:
@@ -17,8 +20,6 @@ private slots:
 
 private:
 	QVBoxLayout mNetworkLayout;
-	QHBoxLayout mNameLayout;
-	QHBoxLayout mIPLayout;
 
 	QLabel mHostnameLabel;
 	QLabel mIPLabel;
