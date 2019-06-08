@@ -123,11 +123,9 @@ void FileManagerWidget::remove()
 {
 	const QModelIndex &index = mFileSystemView.currentIndex();
 	if (!mFileSystemModel.isDir(index)) {
-		QMessageBox confirmMessageBox(QMessageBox::Warning, tr("Confirm deletion")
-				, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No);
-		confirmMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
-		const int result = confirmMessageBox.exec();
-		if (result == QMessageBox::Yes) {
+		QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
+				, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+		if (reply == QMessageBox::Yes) {
 			mFileSystemModel.remove(index);
 		}
 	}
