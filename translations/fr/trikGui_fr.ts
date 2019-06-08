@@ -265,6 +265,19 @@
     </message>
 </context>
 <context>
+    <name>trikGui::NetworkWidget</name>
+    <message>
+        <location filename="../../trikGui/networkWidget.cpp" line="36"/>
+        <source>IP: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/networkWidget.cpp" line="49"/>
+        <source>Name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>trikGui::ProgrammingWidget</name>
     <message>
         <location filename="../../trikGui/programmingWidget.cpp" line="28"/>

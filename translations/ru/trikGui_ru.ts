@@ -259,6 +259,17 @@
     </message>
 </context>
 <context>
+    <name>trikGui::NetworkWidget</name>
+    <message>
+        <source>IP: </source>
+        <translation>IP: </translation>
+    </message>
+    <message>
+        <source>Name: </source>
+        <translation>Имя: </translation>
+    </message>
+</context>
+<context>
     <name>trikGui::ProgrammingWidget</name>
     <message>
         <source>Add commands to list</source>
