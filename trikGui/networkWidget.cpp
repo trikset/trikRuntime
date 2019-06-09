@@ -40,19 +40,16 @@ NetworkWidget::NetworkWidget(QWidget *parent)
 
 void NetworkWidget::updateIP()
 {
-	const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-	for (const QNetworkInterface &interface : interfaces) {
-		if (interface.name() == "wlan0") {
-			const QList<QNetworkAddressEntry> entries = interface.addressEntries();
-			for (const QNetworkAddressEntry &entry : entries) {
-				const QHostAddress ip = entry.ip();
-				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
-					mIPLabel.setText(tr("IP: ") + ip.toString());
-					break;
-				}
-			}
+	const auto & interfaces = QNetworkInterface::allInterfaces();
+	const auto & interface = std::find_if(interfaces.begin(), interfaces.end()
+				, [](const QNetworkInterface & interface) {return interface.name() == "wlan0"; });
 
-			break;
+	if (interface != interfaces.end()) {
+		const auto & entries = interface[0].addressEntries();
+		const auto & entry = std::find_if(entries.begin(), entries.end()
+			, [](const QNetworkAddressEntry & entry) { return entry.ip().protocol() == QAbstractSocket::IPv4Protocol;});
+		if (entry != entries.end()) {
+			mIPLabel.setText(tr("IP: ") + entry[0].ip().toString());
 		}
 	}
 }
