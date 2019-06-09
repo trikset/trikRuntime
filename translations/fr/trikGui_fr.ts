@@ -267,12 +267,12 @@
 <context>
     <name>trikGui::NetworkWidget</name>
     <message>
-        <location filename="../../trikGui/networkWidget.cpp" line="36"/>
+        <location filename="../../trikGui/networkWidget.cpp" line="52"/>
         <source>IP: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/networkWidget.cpp" line="49"/>
+        <location filename="../../trikGui/networkWidget.cpp" line="60"/>
         <source>Name: </source>
         <translation type="unfinished"></translation>
     </message>
