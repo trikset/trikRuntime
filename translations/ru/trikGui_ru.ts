@@ -354,27 +354,6 @@
     </message>
 </context>
 <context>
-    <name>trikGui::SensorsSelectionWidget</name>
-    <message>
-        <source>Select sensors for testing:</source>
-        <translation type="vanished">Выберите датч. для проверки:</translation>
-    </message>
-    <message>
-        <source>Start testing</source>
-        <translation type="vanished">Начать проверку</translation>
-    </message>
-    <message>
-        <source>Test analog sensors</source>
-        <translation type="vanished">Аналоговые датчики</translation>
-    </message>
-    <message>
-        <source>Test digital sensors</source>
-        <translation type="vanished">Цифровые датчики</translation>
-    </message>
-    <message>
-        <source>Test encoders</source>
-        <translation type="vanished">Энкодеры</translation>
-    </message>
 </context>
 <context>
     <name>trikGui::StartWidget</name>
