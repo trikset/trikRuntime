@@ -25,7 +25,7 @@ win32 {
 }
 else {
 	system(find $$system_quote($$PWD/) -name '*.qm' -delete)
-	system(find $$system_quote($$PWD) -name '*.ts' -print0 | xargs -0 $$[QT_INSTALL_BINS]/lrelease -removeidentical)
+	system(find $$system_quote($$PWD) -name '*.ts' -print0 | xargs -0 $$[QT_HOST_BINS]/lrelease -removeidentical)
 	system(mkdir -p $$DESTDIR/translations/; find ./ -name *.qm -exec rsync --remove-source-files -R {} $$DESTDIR/translations \\;)
 	system(mkdir -p $$DESTDIR/translations/; find ./ -name *.ini -exec rsync -R {} $$DESTDIR/translations \\;)
 }
