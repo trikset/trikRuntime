@@ -17,6 +17,8 @@
 #include <QtCore/QScopedPointer>
 #include <QtCore/QVector>
 
+#include <QMutex>
+
 #include "cameraDeviceInterface.h"
 #include "cameraImplementationInterface.h"
 #include "declSpec.h"
@@ -51,6 +53,7 @@ public:
 	~CameraDevice() override = default;
 
 private:
+	QMutex mCameraMutex;
 	QScopedPointer<CameraImplementationInterface> mCameraImpl;
 };
 

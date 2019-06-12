@@ -22,6 +22,10 @@
 #include <QsLog.h>
 #include <trikKernel/configurer.h>
 
+#include <QEventLoop>
+#include <QThread>
+#include <functional>
+
 namespace trikControl {
 
 CameraDevice::CameraDevice(const QString & mediaPath, const trikKernel::Configurer &configurer
@@ -67,10 +71,26 @@ CameraDevice::CameraDevice(const QString & mediaPath, const trikKernel::Configur
 
 
 QVector<uint8_t> CameraDevice::getPhoto() {
-	if (mCameraImpl)
-		return mCameraImpl->getPhoto();
-	else
+	if (!mCameraImpl)
 		return QVector<uint8_t>();
+	QMutexLocker lock(&mCameraMutex);
+	QVector<uint8_t> photo;
+	std::function<void()> runFunc = [this, &photo](){ mCameraImpl->getPhoto().swap(photo); };
+#if QT_VERSION_MAJOR>=5 && QT_VERSION_MINOR>=10
+	QScopedPointer<QThread> t(QThread::create(std::move(runFunc)));
+#else
+	struct CameraThread: public QThread {
+		explicit CameraThread(std::function<void()> &&f): mF(f) {}
+		void run() override { mF(); }
+		std::function<void()> mF;
+	};
+	QScopedPointer<QThread> t(new CameraThread(std::move(runFunc)));
+#endif
+	QEventLoop l;
+	QObject::connect(t.data(), SIGNAL(finished()), &l, SLOT(quit()));
+	t->start();
+	l.exec();
+	return photo;
 }
 
 
