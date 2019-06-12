@@ -60,6 +60,7 @@ HEADERS += \
 	$$PWD/scriptHolder.h \
 	$$PWD/gamepadIndicator.h \
 	$$PWD/powerLevel.h \
+	$$PWD/networkWidget.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -102,6 +103,7 @@ SOURCES += \
 	$$PWD/scriptHolder.cpp \
 	$$PWD/gamepadIndicator.cpp \
 	$$PWD/$$PLATFORM/powerLevel.cpp \
+	$$PWD/networkWidget.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \
