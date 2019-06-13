@@ -57,11 +57,11 @@ translations.depends = initvars
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \
-	$$PWD/resources/asan.supp \
+	$$PWD/resources/lsan.supp \
 	$$PWD/.travis.yml \
 	$$PWD/docker/Dockerfile \
 
 include($$PWD/global.pri)
 
 copyToDestdir($$PWD/resources/changelog.txt, now)
-copyToDestdir($$PWD/resources/asan.supp, now)
+copyToDestdir($$PWD/resources/lsan.supp, now)
