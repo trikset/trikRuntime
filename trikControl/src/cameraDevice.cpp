@@ -76,7 +76,7 @@ QVector<uint8_t> CameraDevice::getPhoto() {
 	QMutexLocker lock(&mCameraMutex);
 	QVector<uint8_t> photo;
 	std::function<void()> runFunc = [this, &photo](){ mCameraImpl->getPhoto().swap(photo); };
-#if QT_VERSION_MAJOR>=5 && QT_VERSION_MINOR>=10
+#if QT_VERSION_MAJOR>=5 && QT_VERSION_MINOR>=10 && QT_VERSION_PATCH >= 2
 	QScopedPointer<QThread> t(QThread::create(std::move(runFunc)));
 #else
 	struct CameraThread: public QThread {
