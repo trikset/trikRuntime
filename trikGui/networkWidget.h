@@ -16,6 +16,7 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QTimer>
 
 namespace trikGui {
 
@@ -26,7 +27,7 @@ class NetworkWidget : public QWidget
 public:
 
 	/// Constructor
-	NetworkWidget(QWidget *parent = 0);
+	explicit NetworkWidget(QWidget *parent = 0);
 
 private slots:
 	void updateIP();
