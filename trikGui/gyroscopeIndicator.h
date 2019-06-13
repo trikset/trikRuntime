@@ -14,17 +14,9 @@
 
 #pragma once
 
-#include <QtCore/qglobal.h>
+#include <QVBoxLayout>
+#include <QLabel>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QVBoxLayout>
-	#include <QtGui/QLabel>
-#else
-	#include <QtWidgets/QVBoxLayout>
-	#include <QtWidgets/QLabel>
-#endif
-
-#include <QtGui/QPixmap>
 #include "abstractIndicator.h"
 
 namespace trikControl {
@@ -44,9 +36,6 @@ public:
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	GyroscopeIndicator(trikControl::GyroSensorInterface &gyroscope, QWidget *parent = 0);
 
-	/// Destructor.
-	~GyroscopeIndicator() override;
-
 public slots:
 	void renew() override;
 
@@ -62,8 +51,6 @@ private:
 	QLabel mValueZ;
 	QLabel mCircle;
 	QVBoxLayout mLayout;
-
-	QPixmap *mPix; //Has ownership
 
 	int mX;
 	int mY;
