@@ -21,6 +21,8 @@
 #include "abstractIndicator.h"
 #include "sensorIndicator.h"
 #include "encoderIndicator.h"
+#include "gyroscopeIndicator.h"
+#include "accelerometerWidget.h"
 
 using namespace trikGui;
 
@@ -28,20 +30,34 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 		, SensorType sensorType, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
-	, mIndicators(ports.size())
 	, mInterval(100)
 {
 	mTimer.setInterval(mInterval);
 	mTimer.setSingleShot(false);
 
 	int i = 0;
-	for (const QString &port : ports) {
-		AbstractIndicator *indicator = produceIndicator(port, sensorType);
+
+	if (sensorType == SensorsWidget::SensorType::gyroscope || sensorType == SensorsWidget::SensorType::accelerometer) {
+		AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
+		mIndicators.reserve(1);
+
 		if (indicator) {
 			mLayout.addWidget(indicator);
 			connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
 			mIndicators[i] = indicator;
-			++i;
+		}
+
+	} else {
+		mIndicators.reserve(ports.size());
+
+		for (const QString &port : ports) {
+			AbstractIndicator *indicator = produceIndicator(port, sensorType);
+			if (indicator) {
+				mLayout.addWidget(indicator);
+				connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
+				mIndicators[i] = indicator;
+				++i;
+			}
 		}
 	}
 
@@ -84,6 +100,12 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
 	}
 	case SensorType::encoder: {
 		return new EncoderIndicator(port, *mBrick.encoder(port), this);
+	}
+	case SensorType::gyroscope: {
+		return new GyroscopeIndicator(*mBrick.gyroscope(), this);
+	}
+	case SensorType::accelerometer: {
+		return new AccelerometerWidget(*mBrick.accelerometer(), this);
 	}
 	}
 

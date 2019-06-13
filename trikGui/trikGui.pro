@@ -38,7 +38,6 @@ HEADERS += \
 	$$PWD/communicationSettingsWidget.h \
 	$$PWD/runningWidget.h \
 	$$PWD/sensorIndicator.h \
-	$$PWD/sensorsSelectionWidget.h \
 	$$PWD/sensorsWidget.h \
 	$$PWD/startWidget.h \
 	$$PWD/systemSettingsWidget.h \
@@ -60,6 +59,8 @@ HEADERS += \
 	$$PWD/scriptHolder.h \
 	$$PWD/gamepadIndicator.h \
 	$$PWD/powerLevel.h \
+	$$PWD/gyroscopeIndicator.h \
+	$$PWD/accelerometerWidget.h \
 	$$PWD/networkWidget.h
 
 SOURCES += \
@@ -81,7 +82,6 @@ SOURCES += \
 	$$PWD/numberSelectionWidget.cpp \
 	$$PWD/runningWidget.cpp \
 	$$PWD/sensorIndicator.cpp \
-	$$PWD/sensorsSelectionWidget.cpp \
 	$$PWD/sensorsWidget.cpp \
 	$$PWD/startWidget.cpp \
 	$$PWD/systemSettingsWidget.cpp \
@@ -103,6 +103,8 @@ SOURCES += \
 	$$PWD/scriptHolder.cpp \
 	$$PWD/gamepadIndicator.cpp \
 	$$PWD/$$PLATFORM/powerLevel.cpp \
+	$$PWD/gyroscopeIndicator.cpp \
+	$$PWD/accelerometerWidget.cpp \
 	$$PWD/networkWidget.cpp
 
 TRANSLATIONS = \

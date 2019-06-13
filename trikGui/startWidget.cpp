@@ -30,12 +30,13 @@
 #include "fileManagerWidget.h"
 #include "wiFiModeWidget.h"
 #include "motorsWidget.h"
-#include "sensorsSelectionWidget.h"
 #include "communicationSettingsWidget.h"
 #include "informationWidget.h"
 #include "systemSettingsWidget.h"
 #include "languageSelectionWidget.h"
 #include "programmingWidget.h"
+
+#include "sensorsWidget.h"
 
 using namespace trikGui;
 
@@ -66,17 +67,18 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mMenuModel.appendRow(moreItem);
 
 
-	testingItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::analogSensor)));
+	testingItem->appendRow(new QStandardItem(tr("Analog sensors")));
 
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
 
-	testingItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::digitalSensor)));
+	testingItem->appendRow(new QStandardItem(tr("Digital sensors")));
 
-	testingItem->appendRow(new QStandardItem(
-			SensorsSelectionWidget::menuEntry(SensorsSelectionWidget::SensorType::encoder)));
+	testingItem->appendRow(new QStandardItem(tr("Encoders")));
+
+	testingItem->appendRow(new QStandardItem(tr("Gyroscope")));
+
+	testingItem->appendRow(new QStandardItem(tr("Accelerometer")));
 
 	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
 	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
@@ -115,6 +117,7 @@ void StartWidget::launch()
 		QString currentItemText = currentItem->text();
 
 		int result = TrikGuiDialog::normalExit;
+		QStringList ports;
 
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
@@ -137,30 +140,37 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
-				SensorsSelectionWidget::SensorType::analogSensor))
-		{
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-					, SensorsSelectionWidget::SensorType::analogSensor);
+		} else if (currentItemText == tr("Analog sensors")) {
+			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			emit newWidget(sensorsWidget);
 
-			emit newWidget(sensorsSelectionWidget);
-			result = sensorsSelectionWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
-				SensorsSelectionWidget::SensorType::digitalSensor))
-		{
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-					, SensorsSelectionWidget::SensorType::digitalSensor);
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Digital sensors")) {
+			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			emit newWidget(sensorsWidget);
 
-			emit newWidget(sensorsSelectionWidget);
-			result = sensorsSelectionWidget.exec();
-		} else if (currentItemText == SensorsSelectionWidget::menuEntry(
-				SensorsSelectionWidget::SensorType::encoder))
-		{
-			SensorsSelectionWidget sensorsSelectionWidget(mController.brick()
-					, SensorsSelectionWidget::SensorType::encoder);
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Encoders")) {
+			ports = (mController.brick()).encoderPorts();
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
+			emit newWidget(sensorsWidget);
 
-			emit newWidget(sensorsSelectionWidget);
-			result = sensorsSelectionWidget.exec();
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Gyroscope")) {
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
+			emit newWidget(sensorsWidget);
+
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Accelerometer")) {
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
+			emit newWidget(sensorsWidget);
+
+			result = sensorsWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
 			if (mController.mailbox()) {
 				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
@@ -259,4 +269,3 @@ void StartWidget::keyPressEvent(QKeyEvent *event)
 		}
 	}
 }
-

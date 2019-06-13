@@ -9,6 +9,13 @@
     </message>
 </context>
 <context>
+    <name>trikGui::AccelerometerIndicator</name>
+    <message>
+        <source>Accelerometer</source>
+        <translation>Акселерометр</translation>
+    </message>
+</context>
+<context>
     <name>trikGui::CommandSettingsWidget</name>
     <message>
         <source>Continue</source>
@@ -176,6 +183,13 @@
     <message>
         <source>Are you sure you want to delete file?</source>
         <translation>Вы уверены, что хотите удалить файл?</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::GyroscopeIndicator</name>
+    <message>
+        <source>Gyroscope</source>
+        <translation>Гироскоп</translation>
     </message>
 </context>
 <context>
@@ -351,29 +365,6 @@
     </message>
 </context>
 <context>
-    <name>trikGui::SensorsSelectionWidget</name>
-    <message>
-        <source>Select sensors for testing:</source>
-        <translation>Выберите датч. для проверки:</translation>
-    </message>
-    <message>
-        <source>Start testing</source>
-        <translation>Начать проверку</translation>
-    </message>
-    <message>
-        <source>Test analog sensors</source>
-        <translation>Аналоговые датчики</translation>
-    </message>
-    <message>
-        <source>Test digital sensors</source>
-        <translation>Цифровые датчики</translation>
-    </message>
-    <message>
-        <source>Test encoders</source>
-        <translation>Энкодеры</translation>
-    </message>
-</context>
-<context>
     <name>trikGui::StartWidget</name>
     <message>
         <source>Exit</source>
@@ -388,16 +379,28 @@
         <translation>Тестирование</translation>
     </message>
     <message>
-        <source>Network and connectivity</source>
-        <translation type="vanished">Сеть и подключение</translation>
-    </message>
-    <message>
-        <source>System</source>
-        <translation type="vanished">Система</translation>
-    </message>
-    <message>
         <source>More...</source>
         <translation>Еще...</translation>
+    </message>
+    <message>
+        <source>Analog sensors</source>
+        <translation>Аналоговые датчики</translation>
+    </message>
+    <message>
+        <source>Digital sensors</source>
+        <translation>Цифровые датчики</translation>
+    </message>
+    <message>
+        <source>Encoders</source>
+        <translation>Энкодеры</translation>
+    </message>
+    <message>
+        <source>Gyroscope</source>
+        <translation>Гироскоп</translation>
+    </message>
+    <message>
+        <source>Accelerometer</source>
+        <translation>Акселерометр</translation>
     </message>
 </context>
 <context>
