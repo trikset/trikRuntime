@@ -16,6 +16,7 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QRectF>
 
 #include "abstractIndicator.h"
 
@@ -34,7 +35,7 @@ public:
 	/// Constructor.
 	/// @param gyroscope - gyroscope which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	GyroscopeIndicator(trikControl::GyroSensorInterface &gyroscope, QWidget *parent = 0);
+	explicit GyroscopeIndicator(trikControl::GyroSensorInterface &gyroscope, QWidget *parent = 0);
 
 public slots:
 	void renew() override;
