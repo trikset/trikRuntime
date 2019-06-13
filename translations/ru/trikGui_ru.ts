@@ -365,8 +365,6 @@
     </message>
 </context>
 <context>
-</context>
-<context>
     <name>trikGui::StartWidget</name>
     <message>
         <source>Exit</source>
@@ -381,35 +379,27 @@
         <translation>Тестирование</translation>
     </message>
     <message>
-        <source>Network and connectivity</source>
-        <translation type="vanished">Сеть и подключение</translation>
-    </message>
-    <message>
-        <source>System</source>
-        <translation type="vanished">Система</translation>
-    </message>
-    <message>
         <source>More...</source>
         <translation>Еще...</translation>
     </message>
     <message>
-        <source>Test analog sensors</source>
+        <source>Analog sensors</source>
         <translation>Аналоговые датчики</translation>
     </message>
     <message>
-        <source>Test digital sensors</source>
+        <source>Digital sensors</source>
         <translation>Цифровые датчики</translation>
     </message>
     <message>
-        <source>Test encoders</source>
+        <source>Encoders</source>
         <translation>Энкодеры</translation>
     </message>
     <message>
-        <source>Test gyroscope</source>
+        <source>Gyroscope</source>
         <translation>Гироскоп</translation>
     </message>
     <message>
-        <source>Test accelerometer</source>
+        <source>Accelerometer</source>
         <translation>Акселерометр</translation>
     </message>
 </context>

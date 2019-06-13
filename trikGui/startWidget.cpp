@@ -67,18 +67,18 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mMenuModel.appendRow(moreItem);
 
 
-	testingItem->appendRow(new QStandardItem(tr("Test analog sensors")));
+	testingItem->appendRow(new QStandardItem(tr("Analog sensors")));
 
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
 
-	testingItem->appendRow(new QStandardItem(tr("Test digital sensors")));
+	testingItem->appendRow(new QStandardItem(tr("Digital sensors")));
 
-	testingItem->appendRow(new QStandardItem(tr("Test encoders")));
+	testingItem->appendRow(new QStandardItem(tr("Encoders")));
 
-	testingItem->appendRow(new QStandardItem(tr("Test gyroscope")));
+	testingItem->appendRow(new QStandardItem(tr("Gyroscope")));
 
-	testingItem->appendRow(new QStandardItem(tr("Test accelerometer")));
+	testingItem->appendRow(new QStandardItem(tr("Accelerometer")));
 
 	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
 	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
@@ -140,33 +140,33 @@ void StartWidget::launch()
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
 			emit newWidget(motorsWidget);
 			result = motorsWidget.exec();
-		} else if (currentItemText == tr("Test analog sensors")) {
+		} else if (currentItemText == tr("Analog sensors")) {
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
-		} else if (currentItemText == tr("Test digital sensors")) {
+		} else if (currentItemText == tr("Digital sensors")) {
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
-		} else if (currentItemText == tr("Test encoders")) {
+		} else if (currentItemText == tr("Encoders")) {
 			ports = (mController.brick()).encoderPorts();
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
-		} else if (currentItemText == tr("Test gyroscope")) {
+		} else if (currentItemText == tr("Gyroscope")) {
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
-		} else if (currentItemText == tr("Test accelerometer")) {
+		} else if (currentItemText == tr("Accelerometer")) {
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
 			emit newWidget(sensorsWidget);
 
