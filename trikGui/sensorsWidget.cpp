@@ -22,7 +22,7 @@
 #include "sensorIndicator.h"
 #include "encoderIndicator.h"
 #include "gyroscopeIndicator.h"
-#include "accelerometerIndicator.h"
+#include "accelerometerWidget.h"
 
 using namespace trikGui;
 
@@ -105,7 +105,7 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
 		return new GyroscopeIndicator(*mBrick.gyroscope(), this);
 	}
 	case SensorType::accelerometer: {
-		return new AccelerometerIndicator(*mBrick.accelerometer(), this);
+		return new AccelerometerWidget(*mBrick.accelerometer(), this);
 	}
 	}
 

@@ -12,16 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include "accelerometerWidget.h"
+
 #include <QPainter>
 #include <QString>
-
 #include <cmath>
-#include "accelerometerIndicator.h"
+
 #include "trikControl/vectorSensorInterface.h"
 
 using namespace trikGui;
 
-AccelerometerIndicator::AccelerometerIndicator(trikControl::VectorSensorInterface &accelerometer
+AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface &accelerometer
 		, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mTitle(tr("Accelerometer"))
@@ -43,89 +44,69 @@ AccelerometerIndicator::AccelerometerIndicator(trikControl::VectorSensorInterfac
 	setLayout(&mLayout);
 }
 
-AccelerometerIndicator::~AccelerometerIndicator() {
-	delete mPix;
-}
-
-template<typename T>
-T constrain(T value1, T value2, T max)
+void AccelerometerWidget::renew()
 {
-	T norm = sqrtf(value1 * value1 + value2 * value2);
-	return (norm > max) ? (value1 * max / norm) : value1;
-}
-
-void AccelerometerIndicator::renew()
-{
-	QVector<int> value = mAccelerometer.read();
-
+	const auto & value = mAccelerometer.read();
 	mValueX.setText(QString("x: ") + QString::number(value[0]));
 	mValueY.setText(QString("y: ") + QString::number(value[1]));
 	mValueZ.setText(QString("z: ") + QString::number(value[2]));
 
-
-	float norm = sqrtf(value[0] * value[0] + value[1] * value[1] + value[2] * value[2]);
-
+	auto norm = sqrtf(value[0] * value[0] + value[1] * value[1] + value[2] * value[2]);
 	QPointF acc(value[1] / norm * mBounds.width(), value[0] / norm * mBounds.width());
 
-	qreal radius = (mBounds.width() - mKnopBounds.width()) / 2;
+	auto radius = (mBounds.width() - mKnopBounds.width()) / 2;
+	auto smallNorm = sqrtf(QPointF::dotProduct(acc, acc));
+	auto x = smallNorm > radius ? acc.x() * radius / smallNorm : acc.x();
+	auto y = smallNorm > radius ? acc.y() * radius / smallNorm : acc.y();
 
-	acc.setX(constrain(acc.x(), acc.y(), radius));
-	acc.setY(constrain(acc.y(), acc.x(), radius));
-
-	mKnopBounds.moveCenter(acc + mBounds.center());
+	mKnopBounds.moveCenter(QPointF(x, y) + mBounds.center());
 	update();
 }
 
-
-void AccelerometerIndicator::resizeEvent(QResizeEvent *)
+void AccelerometerWidget::resizeEvent(QResizeEvent *)
 {
-
-	mPix = new QPixmap(mCircle.width(), mCircle.height());
 	auto size = qMin(mCircle.width(), mCircle.height());
-
 	QPointF topleft((mCircle.width() - size) / 2, (mCircle.height() - size) / 2);
 
 	mBounds = QRectF(topleft, QSize(size, size));
-
-	mKnopBounds.setWidth(size * 0.3);
-	mKnopBounds.setHeight(size * 0.3);
-
-	// adjust knob position
-	mKnopBounds.moveCenter(QPointF(mBounds.center().x(), mBounds.center().y()));
+	mKnopBounds.setSize(QSizeF(size * 0.2, size * 0.2));
+	mKnopBounds.moveCenter(mBounds.center());
 }
 
-void AccelerometerIndicator::paintEvent(QPaintEvent *)
+void AccelerometerWidget::paintEvent(QPaintEvent *)
 {
-	mPix->fill(Qt::transparent);
-	QPainter painter(mPix);
-
-	painter.setRenderHint(QPainter::HighQualityAntialiasing);
+	QPixmap pixmap(mCircle.size());
+	pixmap.fill(Qt::transparent);
 
 	// draw big circle
+	QPainter painter(&pixmap);
+	painter.setRenderHint(QPainter::HighQualityAntialiasing);
+
 	painter.setPen(QPen(QBrush(Qt::black), mBounds.width() * 0.005));
 	painter.setBrush(QBrush(Qt::transparent));
 	painter.drawEllipse(mBounds);
 
 	// draw crosshair
-	painter.setPen(QPen(QBrush(Qt::black), mBounds.width() * 0.005));
+	painter.setPen(QColor(Qt::black));
+	auto quarterLineLength = mBounds.width() * 0.35;
 	painter.drawLine(QPointF(mBounds.left(), mBounds.center().y()),
-					 QPointF(mBounds.center().x() - mBounds.width() * 0.35, mBounds.center().y()));
+				QPointF(mBounds.center().x() - quarterLineLength, mBounds.center().y()));
 
-	painter.drawLine(QPointF(mBounds.center().x() + mBounds.width() * 0.35, mBounds.center().y()),
-					 QPointF(mBounds.right(), mBounds.center().y()));
+	painter.drawLine(QPointF(mBounds.center().x() + quarterLineLength, mBounds.center().y()),
+				QPointF(mBounds.right(), mBounds.center().y()));
 
 	painter.drawLine(QPointF(mBounds.center().x(), mBounds.top()),
-					 QPointF(mBounds.center().x(), mBounds.center().y() - mBounds.width() * 0.35));
+				QPointF(mBounds.center().x(), mBounds.center().y() - quarterLineLength));
 
-	painter.drawLine(QPointF(mBounds.center().x(), mBounds.center().y() + mBounds.width() * 0.35),
-					 QPointF(mBounds.center().x(), mBounds.bottom()));
+	painter.drawLine(QPointF(mBounds.center().x(), mBounds.center().y() + quarterLineLength),
+				QPointF(mBounds.center().x(), mBounds.bottom()));
 
-	painter.drawPoint(mBounds.center().x(), mBounds.center().y());
+	painter.drawPoint(mBounds.center());
 
 	// draw knob
-	painter.setPen(QPen(QBrush(Qt::darkGray), mBounds.width() * 0.005));
+	painter.setPen(QColor(Qt::darkGray));
 	painter.setBrush(QBrush(Qt::darkGray));
 	painter.drawEllipse(mKnopBounds);
 
-	mCircle.setPixmap(*mPix);
+	mCircle.setPixmap(pixmap);
 }

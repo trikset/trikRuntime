@@ -14,17 +14,9 @@
 
 #pragma once
 
-#include <QtCore/qglobal.h>
+#include <QVBoxLayout>
+#include <QLabel>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QVBoxLayout>
-	#include <QtGui/QLabel>
-#else
-	#include <QtWidgets/QVBoxLayout>
-	#include <QtWidgets/QLabel>
-#endif
-
-#include <QtGui/QPixmap>
 #include "abstractIndicator.h"
 
 namespace trikControl {
@@ -34,7 +26,7 @@ class VectorSensorInterface;
 namespace trikGui {
 
 /// Widget that shows current accelerometer reading.
-class AccelerometerIndicator : public AbstractIndicator
+class AccelerometerWidget : public AbstractIndicator
 {
 	Q_OBJECT
 
@@ -42,10 +34,7 @@ public:
 	/// Constructor.
 	/// @param accelerometer - accelerometer which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	AccelerometerIndicator(trikControl::VectorSensorInterface &accelerometer, QWidget *parent = 0);
-
-	/// Destructor.
-	~AccelerometerIndicator() override;
+	AccelerometerWidget(trikControl::VectorSensorInterface &accelerometer, QWidget *parent = 0);
 
 public slots:
 	void renew() override;
@@ -63,8 +52,6 @@ private:
 	QLabel mValueZ;
 	QLabel mCircle;
 	QVBoxLayout mLayout;
-
-	QPixmap *mPix; //Has ownership
 
 	trikControl::VectorSensorInterface &mAccelerometer;
 };

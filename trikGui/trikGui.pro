@@ -60,7 +60,7 @@ HEADERS += \
 	$$PWD/gamepadIndicator.h \
 	$$PWD/powerLevel.h \
 	$$PWD/gyroscopeIndicator.h \
-	$$PWD/accelerometerIndicator.h \
+	$$PWD/accelerometerWidget.h \
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -103,7 +103,7 @@ SOURCES += \
 	$$PWD/gamepadIndicator.cpp \
 	$$PWD/$$PLATFORM/powerLevel.cpp \
 	$$PWD/gyroscopeIndicator.cpp \
-	$$PWD/accelerometerIndicator.cpp \
+	$$PWD/accelerometerWidget.cpp \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \
