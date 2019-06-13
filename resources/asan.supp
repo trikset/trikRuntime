@@ -1,3 +1,0 @@
-#Do not forget to use fast_unwind_on_malloc=0 sanitizer option!
-leak:*libfontconfig.so*
-leak:*libdbus-1.so*
