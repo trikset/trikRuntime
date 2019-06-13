@@ -40,6 +40,8 @@
 #include "wiFiModeWidget.h"
 #include "mainWidget.h"
 #include "controller.h"
+#include "networkWidget.h"
+
 
 namespace trikGui {
 
@@ -74,6 +76,7 @@ private:
 
 	QVBoxLayout mLayout;
 	QLabel mTitleLabel;
+	NetworkWidget mNetworkWidget;
 	QListView mMenuView;
 	QStandardItemModel mMenuModel;
 	Controller &mController;

@@ -34,11 +34,12 @@ matrix:
     sudo: required
     services: docker
     env: CONFIG=debug VERA=true SUFFIX=-d TRANSLATIONS=true
+    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address"
     name: Linux debug + vera + translations
   - os: osx
     language: cpp
     name: macOS release
-    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=no-sanitizers"
+    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=force_debug_info"
 
 before_install:
 - wait $EARLY_START_DOCKER_PULL_PID || true

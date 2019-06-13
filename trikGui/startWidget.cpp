@@ -51,13 +51,21 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mTitleLabel.setText(tr("TRIK"));
 
 	mMenuModel.appendRow(new QStandardItem(FileManagerWidget::menuEntry()));
-	mMenuModel.appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));
-
-	QStandardItem * const settingsItem = new QStandardItem(tr("Settings"));
-	mMenuModel.appendRow(settingsItem);
 
 	QStandardItem * const testingItem = new QStandardItem(tr("Testing"));
-	settingsItem->appendRow(testingItem);
+	mMenuModel.appendRow(testingItem);
+
+	mMenuModel.appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
+
+	if (mController.mailbox()) {
+		mMenuModel.appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
+	}
+
+	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
+
+	QStandardItem * const moreItem = new QStandardItem(tr("More..."));
+	mMenuModel.appendRow(moreItem);
+
 
 	testingItem->appendRow(new QStandardItem(tr("Test analog sensors")));
 
@@ -72,21 +80,9 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 	testingItem->appendRow(new QStandardItem(tr("Test accelerometer")));
 
-	QStandardItem * const networkItem = new QStandardItem(tr("Network and connectivity"));
-	settingsItem->appendRow(networkItem);
-
-	if (mController.mailbox()) {
-		networkItem->appendRow(new QStandardItem(CommunicationSettingsWidget::menuEntry()));
-	}
-
-	networkItem->appendRow(new QStandardItem(WiFiModeWidget::menuEntry()));
-
-	QStandardItem * const systemItem = new QStandardItem(tr("System"));
-	settingsItem->appendRow(systemItem);
-	systemItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
-	systemItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
-
-	mMenuModel.appendRow(new QStandardItem(LanguageSelectionWidget::menuEntry()));
+	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
+	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
+	moreItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 
 	mMenuView.setModel(&mMenuModel);
 
@@ -96,6 +92,7 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 			);
 
 	mLayout.addWidget(&mTitleLabel);
+	mLayout.addWidget(&mNetworkWidget);
 	mLayout.addWidget(&mMenuView);
 
 	setLayout(&mLayout);

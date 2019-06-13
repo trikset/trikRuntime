@@ -41,7 +41,8 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 
 for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
   do
-    $EXECUTOR env DISPLAY=:0 ASAN_OPTIONS=detect_leaks=0 LSAN_OPTIONS='detect_leaks=0 suppressions=asan.supp fast_unwind_on_malloc=0' sh -c \
+    $EXECUTOR env DISPLAY=:0 ASAN_OPTIONS='detect_leaks=0 detect_stack_use_after_return=1' \
+    LSAN_OPTIONS='detect_leaks=0 suppressions=asan.supp fast_unwind_on_malloc=0' sh -c \
     "cd  $BUILDDIR/bin/x86-$CONFIG && \
      { \
        errCode=0 ; \

@@ -281,6 +281,19 @@
     </message>
 </context>
 <context>
+    <name>trikGui::NetworkWidget</name>
+    <message>
+        <location filename="../../trikGui/networkWidget.cpp" line="52"/>
+        <source>IP: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/networkWidget.cpp" line="60"/>
+        <source>Name: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>trikGui::ProgrammingWidget</name>
     <message>
         <location filename="../../trikGui/programmingWidget.cpp" line="28"/>
@@ -402,8 +415,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="84"/>
-        <source>System</source>
+        <location filename="../../trikGui/startWidget.cpp" line="54"/>
+        <source>Testing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/startWidget.cpp" line="65"/>
+        <source>More...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
