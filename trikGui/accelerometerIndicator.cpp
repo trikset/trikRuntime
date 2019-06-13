@@ -12,8 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QtGui/QPainter>
-#include <QtCore/QString>
+#include <QPainter>
+#include <QString>
+
 #include <cmath>
 #include "accelerometerIndicator.h"
 #include "trikControl/vectorSensorInterface.h"
@@ -26,11 +27,11 @@ AccelerometerIndicator::AccelerometerIndicator(trikControl::VectorSensorInterfac
 	, mTitle(tr("Accelerometer"))
 	, mAccelerometer(accelerometer)
 {
-	mValueX.setAlignment(Qt::AlignVCenter);
-	mValueY.setAlignment(Qt::AlignVCenter);
-	mValueZ.setAlignment(Qt::AlignVCenter);
-
-	mCircle.setAlignment(Qt::AlignVCenter);
+	mTitle.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	mValueX.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	mValueY.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	mValueZ.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+	mCircle.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 	mLayout.addWidget(&mTitle);
 	mLayout.addWidget(&mValueX);
@@ -78,14 +79,9 @@ void AccelerometerIndicator::renew()
 
 void AccelerometerIndicator::resizeEvent(QResizeEvent *)
 {
-	mTitle.setFixedSize(width(), height() / 32);
-	mValueX.setFixedSize(width(), height() / 32);
-	mValueY.setFixedSize(width(), height() / 32);
-	mValueZ.setFixedSize(width(), height() / 32);
-	mCircle.setFixedSize(width(), height() * 11 / 16);
 
 	mPix = new QPixmap(mCircle.width(), mCircle.height());
-	float size = qMin(mCircle.width(), mCircle.height());
+	auto size = qMin(mCircle.width(), mCircle.height());
 
 	QPointF topleft((mCircle.width() - size) / 2, (mCircle.height() - size) / 2);
 
