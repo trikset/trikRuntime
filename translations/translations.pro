@@ -24,7 +24,7 @@ win32 {
 	system(cmd.exe /C "DEL /s *.qm")
 }
 else {
-	system(find $$system_quote($$PWD) -name '*.ts' -print0 | xargs -0 $$[QT_HOST_BINS]/lrelease -removeidentical)
+	system(find $$system_quote($$PWD) -name '*.ts' -print0 | xargs -0 $$[QT_HOST_BINS/get]/lrelease -removeidentical)
 	system(rsync -vrdmR  --remove-source-files --include='*/' --include='*.qm' --exclude='*' ./ $$DESTDIR/translations/)
 	system(rsync -vrdmR  --include='*/' --include='*.ini' --exclude='*' ./ $$DESTDIR/translations/)
 }
