@@ -4,17 +4,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="56"/>
+        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="+56"/>
         <source>Print this help text.</source>
         <translation>Распечатать это сообщение.</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="58"/>
+        <location line="+2"/>
         <source>Ignore all locale options and use English language</source>
         <translation>Игнорировать настройки локали и использовать английский язык (Ignore all locale options and use English language)</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="61"/>
+        <location line="+3"/>
         <source>Path to a directory where all configs for TRIK runtime are stored. Config files are
 	system-config.xml (system-wide configuration of robot hardware for trikControl library) and
 	model-config.xml (configuration of current model).</source>
@@ -23,22 +23,22 @@
 	model-config.xml (настройки конкретной модели).</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="67"/>
+        <location line="+6"/>
         <source>Path to a directory where core dump will be saved in case of creation.</source>
         <translation>Путь к папке, в которую будет сохранен core dump в случае создания. </translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="114"/>
+        <location filename="../../trikKernel/src/commandLineParser.cpp" line="+114"/>
         <source>Positional arguments:</source>
         <translation>Позиционные аргументы:</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="137"/>
+        <location line="+23"/>
         <source>Options</source>
         <translation>Опции</translation>
     </message>
     <message>
-        <location filename="../../trikKernel/src/commandLineParser.cpp" line="138"/>
+        <location line="+1"/>
         <source>Flags</source>
         <translation>Флаги</translation>
     </message>
