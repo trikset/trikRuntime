@@ -58,11 +58,10 @@ build_script:
 test_script:
   - cd %BUILD_DIR%
   - cd bin\x86-%CONFIGURATION%
-  - if %CONFIGURATION% == debug set CONFIGURATION_SUFFIX=-d
-  - .\trikKernelTests%CONFIGURATION_SUFFIX%
-  - .\trikCommunicatorTests%CONFIGURATION_SUFFIX%
-  - .\trikScriptRunnerTests%CONFIGURATION_SUFFIX%
-  - .\trikCameraPhotoTests%CONFIGURATION_SUFFIX%
+  - .\trikKernelTests
+  - .\trikCommunicatorTests
+  - .\trikScriptRunnerTests
+  - .\trikCameraPhotoTests
 
 artifacts:
  - path: .build\bin\x86-$(configuration)
