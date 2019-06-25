@@ -23,6 +23,9 @@ cache:
     - $CELLAR_CACHE_DIR/pyenv
     - $PYENV_ROOT
 #    - /usr/local/opt/
+branches:
+  except:
+    - /dependabot.*/
 matrix:
   include:
   - os: linux
