@@ -10,13 +10,6 @@
     </message>
 </context>
 <context>
-    <name>trikGui::AccelerometerIndicator</name>
-    <message>
-        <source>Accelerometer</source>
-        <translation type="vanished">Акселерометр</translation>
-    </message>
-</context>
-<context>
     <name>trikGui::AccelerometerWidget</name>
     <message>
         <location filename="../../trikGui/accelerometerWidget.cpp" line="+28"/>
@@ -235,14 +228,6 @@
 <context>
     <name>trikGui::InformationWidget</name>
     <message>
-        <source>Current version</source>
-        <translation type="vanished">Текущая версия</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation type="vanished">Обновление ПО</translation>
-    </message>
-    <message>
         <location filename="../../trikGui/informationWidget.cpp" line="+30"/>
         <source>Not found</source>
         <translation>Не найден</translation>
@@ -251,14 +236,6 @@
         <location line="+9"/>
         <source>MAC address</source>
         <translation>MAC-адрес</translation>
-    </message>
-    <message>
-        <source>Version and update</source>
-        <translation type="vanished">Версия и обновление</translation>
-    </message>
-    <message>
-        <source>Do you really want to update current version?</source>
-        <translation type="vanished">Вы действительно хотите обновиться?</translation>
     </message>
     <message>
         <location line="-13"/>
@@ -399,17 +376,6 @@
         <location line="-22"/>
         <source>Press Power to abort</source>
         <translation>Нажмите кнопку Питание для выхода</translation>
-    </message>
-</context>
-<context>
-    <name>trikGui::SensorLever</name>
-    <message>
-        <source>&gt;</source>
-        <translation type="vanished">&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;</source>
-        <translation type="vanished">&lt;</translation>
     </message>
 </context>
 <context>
