@@ -13,22 +13,7 @@
  * limitations under the License. */
 
 #pragma once
-
-#include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QPushButton>
-	#include <QtGui/QMessageBox>
-#else
-	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QPushButton>
-	#include <QtWidgets/QMessageBox>
-#endif
+#include <QVBoxLayout>
 
 #include "trikGuiDialog.h"
 #include "updateWidget.h"
@@ -43,22 +28,16 @@ class InformationWidget : public TrikGuiDialog
 public:
 	/// Constructor.
 	/// @param parent - parent of this widget in terms of Qt widget parent/child system.
-	explicit InformationWidget(QWidget *parent = 0);
+	explicit InformationWidget(QWidget *parent = nullptr);
 
 	/// Destructor.
-	~InformationWidget() override;
+	~InformationWidget() override = default;
 
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
 
 public slots:
-	void renewFocus() override;
-
-protected:
-	void keyPressEvent(QKeyEvent *event) override;
-
-private slots:
-	void updateVersion();
+	void renewFocus() override {}
 
 private:
 	/// Returns operating system version.
@@ -66,8 +45,6 @@ private:
 
 	/// Main layout of this widget.
 	QVBoxLayout mLayout;
-
-	QPushButton *mUpdateButton;  // Has ownership.
 };
 
 }

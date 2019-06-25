@@ -22,32 +22,31 @@ using namespace trikGui;
 
 InformationWidget::InformationWidget(QWidget *parent)
 	: TrikGuiDialog(parent)
-	, mUpdateButton(nullptr)
 {
-//	QLabel* const versionLabel = new QLabel(tr("Current version") + ": \n" + trikKernel::version);
-//	versionLabel->setAlignment(Qt::AlignTop);
-//	mLayout.addWidget(versionLabel);
-
-	QLabel* const osVersionLabel = new QLabel(tr("OS version") + ": \n" + osVersion());
+	auto osVersionLabel = new QLabel(tr("OS version") + ": \n" + osVersion(), this);
 	osVersionLabel->setAlignment(Qt::AlignTop);
 	mLayout.addWidget(osVersionLabel);
 
-//	mUpdateButton = new QPushButton(tr("Update"));
-//	mLayout.addWidget(mUpdateButton);
-//	mUpdateButton->setDefault(true);
-//
-	QString mac = tr("Not found");
+	auto mac = tr("Not found");
 
-	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-	for (const QNetworkInterface &interface : interfaces) {
+	for (auto &&interface : QNetworkInterface::allInterfaces()) {
 		if (interface.name() == "wlan0") {
 			mac = interface.hardwareAddress();
 			break;
 		}
 	}
 
-	QLabel* const macLabel = new QLabel(tr("MAC address") + ": \n" + mac);
+	auto macLabel = new QLabel(tr("MAC address") + ": \n" + mac, this);
 	mLayout.addWidget(macLabel);
+
+	auto visit = new QLabel(this);
+	visit->setText("<a href=\"https://trikset.com/\">trikset.com</a>");
+	visit->setAlignment(Qt::AlignCenter);
+	visit->setTextFormat(Qt::RichText);
+	visit->setTextInteractionFlags(Qt::TextBrowserInteraction);
+	visit->setOpenExternalLinks(true);
+	mLayout.addWidget(visit);
+
 
 	mLayout.addStretch();
 
@@ -55,53 +54,9 @@ InformationWidget::InformationWidget(QWidget *parent)
 	setFocusPolicy(Qt::StrongFocus);
 }
 
-InformationWidget::~InformationWidget()
-{
-	delete mUpdateButton;
-}
-
-void InformationWidget::renewFocus()
-{
-}
-
 QString InformationWidget::menuEntry()
 {
-	return QString(tr("Version and update"));
-}
-
-void InformationWidget::keyPressEvent(QKeyEvent *event)
-{
-	switch (event->key()) {
-		case Qt::Key_Return: {
-			updateVersion();
-			break;
-		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
-	}
-}
-
-void InformationWidget::updateVersion()
-{
-	QMessageBox updateMessageBox(this);
-	updateMessageBox.setIcon(QMessageBox::Question);
-	updateMessageBox.setText(tr("Do you really want to update current version?"));
-	updateMessageBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-	updateMessageBox.setDefaultButton(QMessageBox::Yes);
-	const int answer = updateMessageBox.exec();
-
-	switch (answer) {
-		case QMessageBox::Yes: {
-			UpdateWidget updateWidget;
-			emit newWidget(updateWidget);
-			updateWidget.exec();
-			break;
-		}
-		default:
-			break;
-	 }
+	return QString(tr("Version"));
 }
 
 QString InformationWidget::osVersion() const
