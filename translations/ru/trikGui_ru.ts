@@ -243,32 +243,35 @@
         <translation type="vanished">Обновление ПО</translation>
     </message>
     <message>
-        <location filename="../../trikGui/informationWidget.cpp" line="+39"/>
+        <location filename="../../trikGui/informationWidget.cpp" line="+30"/>
         <source>Not found</source>
         <translation>Не найден</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>MAC address</source>
         <translation>MAC-адрес</translation>
     </message>
     <message>
-        <location line="+20"/>
         <source>Version and update</source>
-        <translation>Версия и обновление</translation>
+        <translation type="vanished">Версия и обновление</translation>
     </message>
     <message>
-        <location line="+21"/>
         <source>Do you really want to update current version?</source>
-        <translation>Вы действительно хотите обновиться?</translation>
+        <translation type="vanished">Вы действительно хотите обновиться?</translation>
     </message>
     <message>
-        <location line="-59"/>
+        <location line="-13"/>
         <source>OS version</source>
         <translation>Версия ОС</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+33"/>
+        <source>Version</source>
+        <translation type="unfinished">Версия ПО</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Unknown</source>
         <translation>Неизвестна</translation>
     </message>
