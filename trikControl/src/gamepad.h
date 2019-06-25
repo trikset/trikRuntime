@@ -82,6 +82,8 @@ private:
 
 	void handleButton(int button, int pressed);
 
+	void handleKeepalive(int waitForMs);
+
 	Fifo mUnderlyingFifo;
 
 	QSet<int> mButtonWasPressed;
