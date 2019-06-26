@@ -79,7 +79,7 @@ bool Gamepad::isConnected() const
 void Gamepad::onNewData(const QString &data)
 {
 	const QStringList cmd = data.split(" ", QString::SkipEmptyParts);
-	if (cmd.length() < 1) {
+	if (cmd.isEmpty()) {
 		return;
 	}
 
@@ -119,6 +119,9 @@ void Gamepad::onNewData(const QString &data)
 	} else if (commandName == "wheel") {
 		const int perc = cmd.at(1).trimmed().toInt();
 		handleWheel(perc);
+	} else if (commandName == "keepalive") {
+		const int waitForMs = cmd.at(1).trimmed().toInt();
+		handleKeepalive(waitForMs);
 	} else {
 		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
 	}
@@ -166,6 +169,12 @@ void Gamepad::handleButton(int button, int pressed)
 	tmr->start();
 
 	emit Gamepad::button(button, pressed);
+}
+
+void Gamepad::handleKeepalive(int waitForMs)
+{
+	Q_UNUSED(waitForMs);
+	//TODO: implement
 }
 
 void Gamepad::onButtonStateClearTimerTimeout()
