@@ -193,32 +193,27 @@
 <context>
     <name>trikGui::InformationWidget</name>
     <message>
-        <location filename="../../trikGui/informationWidget.cpp" line="+31"/>
+        <location filename="../../trikGui/informationWidget.cpp" line="+26"/>
         <source>OS version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+4"/>
         <source>Not found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>MAC address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+20"/>
-        <source>Version and update</source>
+        <source>Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
-        <source>Do you really want to update current version?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="+7"/>
         <source>Unknown</source>
         <translation type="unfinished"></translation>
     </message>

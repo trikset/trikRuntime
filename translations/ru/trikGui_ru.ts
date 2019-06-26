@@ -10,13 +10,6 @@
     </message>
 </context>
 <context>
-    <name>trikGui::AccelerometerIndicator</name>
-    <message>
-        <source>Accelerometer</source>
-        <translation type="vanished">Акселерометр</translation>
-    </message>
-</context>
-<context>
     <name>trikGui::AccelerometerWidget</name>
     <message>
         <location filename="../../trikGui/accelerometerWidget.cpp" line="+28"/>
@@ -235,40 +228,27 @@
 <context>
     <name>trikGui::InformationWidget</name>
     <message>
-        <source>Current version</source>
-        <translation type="vanished">Текущая версия</translation>
-    </message>
-    <message>
-        <source>Update</source>
-        <translation type="vanished">Обновление ПО</translation>
-    </message>
-    <message>
-        <location filename="../../trikGui/informationWidget.cpp" line="+39"/>
+        <location filename="../../trikGui/informationWidget.cpp" line="+30"/>
         <source>Not found</source>
         <translation>Не найден</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+9"/>
         <source>MAC address</source>
         <translation>MAC-адрес</translation>
     </message>
     <message>
-        <location line="+20"/>
-        <source>Version and update</source>
-        <translation>Версия и обновление</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Do you really want to update current version?</source>
-        <translation>Вы действительно хотите обновиться?</translation>
-    </message>
-    <message>
-        <location line="-59"/>
+        <location line="-13"/>
         <source>OS version</source>
         <translation>Версия ОС</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+33"/>
+        <source>Version</source>
+        <translation type="unfinished">Версия ПО</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Unknown</source>
         <translation>Неизвестна</translation>
     </message>
@@ -396,17 +376,6 @@
         <location line="-22"/>
         <source>Press Power to abort</source>
         <translation>Нажмите кнопку Питание для выхода</translation>
-    </message>
-</context>
-<context>
-    <name>trikGui::SensorLever</name>
-    <message>
-        <source>&gt;</source>
-        <translation type="vanished">&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;</source>
-        <translation type="vanished">&lt;</translation>
     </message>
 </context>
 <context>

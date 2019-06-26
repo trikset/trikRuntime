@@ -62,6 +62,7 @@ equals(ARCHITECTURE, arm) {
 	SOURCES += $$PWD/src/stub/paths.cpp
 
 	copyToDestdir($$PWD/stubTrikRc, now)
+	copyToDestdir($$PWD/stubHostname, now)
 }
 
 DEFINES += TRIKKERNEL_LIBRARY
