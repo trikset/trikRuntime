@@ -1,8 +1,6 @@
 FROM ubuntu:xenial
 MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
-ENV QTDIR "/Qt"
-ENV QTBIN "${QTDIR}/5.12.3/gcc_64/bin"
 # Build image with two huge layers, this is the 1st one.
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -37,10 +35,12 @@ RUN apt-get update \
 #Build fresh libusb from sources
 RUN git clone https://github.com/libusb/libusb && cd libusb && git checkout v1.0.22 && ./autogen.sh --enable-udev --disable-examples-build --disable-tests-build --disable-static && make install && cd .. && rm -rf libusb && echo pkg-config libusb-1.0 is v$(pkg-config --modversion libusb-1.0)
 
+ENV QTDIR "/Qt"
+ENV QTBIN "${QTDIR}/5.12.4/gcc_64/bin"
 COPY qt_scriptinstall.qs /tmp
 COPY install_qt.sh /tmp
 # Split docker image into two main layers, this is the second one
-RUN /tmp/install_qt.sh $QTDIR --verbose --platform minimal \
+RUN /tmp/install_qt.sh $QTDIR \
 # Cleanup once again
     && rm -rf /tmp/* \
     && rm -rf $QTDIR/Docs $QTDIR/Examples $QTDIR/Tools/QtCreator \
