@@ -25,17 +25,17 @@ Controller.prototype.TargetDirectoryPageCallback = function() {
 
 Controller.prototype.LicenseAgreementPageCallback = function() {
   gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
-  gui.clickButton(buttons.NextButton);  
+  gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
   var widget = gui.currentPageWidget();
-  
+  var targetPlatform = {"darwin":"clang_64", "winnt":"undefined", "linux":"gcc_64"}[systemInfo.kernelType];
   widget.deselectAll();
-  widget.selectComponent("qt.tools.ifw.30");
-  widget.selectComponent("qt.qt5.5123.gcc_64");
-  widget.selectComponent("qt.qt5.5123.qtscript");
-  
+  widget.selectComponent("qt.tools.ifw.31");
+  widget.selectComponent("qt.qt5.5124."+targetPlatform);
+  widget.selectComponent("qt.qt5.5124.qtscript");
+
   gui.clickButton(buttons.NextButton);
 }
 
@@ -47,7 +47,7 @@ Controller.prototype.ReadyForInstallationPageCallback = function() {
 }
 
 Controller.prototype.FinishedPageCallback = function() {
-  var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm; 
+  var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm;
   if (checkBoxForm) {
     checkBoxForm.launchQtCreatorCheckBox.setChecked(false);
   }
