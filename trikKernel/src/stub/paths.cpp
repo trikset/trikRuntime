@@ -70,7 +70,7 @@ QString Paths::translationsPath()
 
 QString Paths::trikRcName()
 {
-	return "./stubTrikRc";
+	return path(Resource::configs) + "stubTrikRc";
 }
 
 QString Paths::localSettings()
@@ -80,5 +80,5 @@ QString Paths::localSettings()
 
 QString Paths::hostnameName()
 {
-	return "./stubHostname";
+	return path(Resource::configs) + "stubHostname";
 }
