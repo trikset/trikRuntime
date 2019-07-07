@@ -72,7 +72,7 @@ void TrikEventFile::tryOpenEventFile()
 		return;
 	}
 
-	mEventFileDescriptor = ::open(mFileName.toStdString().c_str(), O_SYNC | O_NONBLOCK, O_RDONLY);
+	mEventFileDescriptor = ::open(mFileName.toStdString().c_str(), O_SYNC | O_NONBLOCK | O_RDONLY);
 
 	if (mEventFileDescriptor != -1 && !mInitWaitingLoop.isNull() && mInitWaitingLoop->isRunning()) {
 		mInitWaitingLoop->quit();
