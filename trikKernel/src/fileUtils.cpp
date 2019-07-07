@@ -25,8 +25,8 @@ using namespace trikKernel;
 QString FileUtils::readFromFile(const QString &fileName)
 {
 	QFile file(fileName);
-	file.open(QIODevice::ReadOnly | QIODevice::Text);
-	if (!file.isOpen()) {
+	auto opened = file.open(QIODevice::ReadOnly | QIODevice::Text);
+	if (!opened) {
 		throw FailedToOpenFileException(file);
 	}
 

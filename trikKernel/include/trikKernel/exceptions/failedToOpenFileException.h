@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <QtCore/QFile>
-
+#include <QFile>
+#include <QFileInfo>
 #include <QsLog.h>
 
 #include "trikRuntimeException.h"
@@ -28,10 +28,10 @@ class FailedToOpenFileException : public TrikRuntimeException
 public:
 	/// Constructor.
 	/// @param file - file that is failed to open.
-	FailedToOpenFileException(const QFile &file)
+	explicit FailedToOpenFileException(const QFile &file)
 		: mFile(file)
 	{
-		QLOG_ERROR() << "Failed to open file" << file.fileName()
+		QLOG_ERROR() << "Failed to open" << QFileInfo(file).absolutePath()
 				<< (file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading");
 	}
 
