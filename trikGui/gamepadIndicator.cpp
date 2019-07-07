@@ -24,10 +24,6 @@ GamepadIndicator::GamepadIndicator(Controller &controller, QWidget *parent)
 {
 	connect(&mController, SIGNAL(gamepadDisconnected()), this, SLOT(setOff()));
 	connect(&mController, SIGNAL(gamepadConnected()), this, SLOT(setOn()));
-
-	updateStatus();
-	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-	mUpdateTimer.start(7000);
 }
 
 void GamepadIndicator::setOn()
@@ -46,9 +42,3 @@ void GamepadIndicator::connected(bool connected)
 {
 	connected ? setOn() : setOff();
 }
-
-void GamepadIndicator::updateStatus()
-{
-	connected(mController.gamepadConnectionStatus());
-}
-

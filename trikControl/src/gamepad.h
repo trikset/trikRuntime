@@ -96,6 +96,8 @@ private:
 
 	QHash<int, PadStatus> mPads;
 	int mWheelPercent = -101;
+
+	QTimer mKeepaliveTimer;
 };
 
 }
