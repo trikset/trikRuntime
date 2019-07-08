@@ -23,13 +23,8 @@ Gamepad::Gamepad(const trikKernel::Configurer &configurer
 	: mUnderlyingFifo(configurer.attributeByDevice("gamepad", "file"), hardwareAbstraction)
 {
 	mKeepaliveTimer.setSingleShot(true);
-	connect(&mKeepaliveTimer, SIGNAL(timeout()), this, SIGNAL(disconnect()));
-	connect(&mKeepaliveTimer, &QTimer::timeout, [this]() { mConnected = false; });
-	connect(&mUnderlyingFifo, SIGNAL(newData(QString)), this, SLOT(onNewData(QString)));
-}
-
-Gamepad::~Gamepad()
-{
+	connect(&mKeepaliveTimer, &QTimer::timeout, this, &Gamepad::disconnect);
+	connect(&mUnderlyingFifo, &Fifo::newData, this, &Gamepad::onNewData);
 }
 
 void Gamepad::reset()
@@ -75,15 +70,25 @@ int Gamepad::wheel() const
 
 bool Gamepad::isConnected() const
 {
-	/// TODO: !!!
-	return mUnderlyingFifo.status() == Status::ready;
+	return mConnected && status() == Status::ready;
+}
+
+bool Gamepad::disconnect()
+{
+	auto wasConnected = isConnected();
+	if (wasConnected) {
+		mConnected = false;
+		reset();
+		emit disconnected();
+	}
+	return wasConnected;
 }
 
 void Gamepad::onNewData(const QString &data)
 {
-	if (!mConnected) {
-		emit connected();
+	if (!isConnected()) {
 		mConnected = true;
+		emit connected();
 	}
 
 	const QStringList cmd = data.split(" ", QString::SkipEmptyParts);
