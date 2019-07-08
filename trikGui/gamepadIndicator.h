@@ -15,12 +15,7 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QLabel>
-#else
-	#include <QtWidgets/QLabel>
-#endif
+#include <QtWidgets/QLabel>
 
 #include <controller.h>
 
@@ -41,14 +36,10 @@ public slots:
 	/// Updates the status to 'disconnect'.
 	void setOff();
 
-	/// Requests connection info from the controller and updates the status.
-	void updateStatus();
-
 	/// Updates the status according to connected parameters.
 	void connected(bool connected);
 
 private:
-	QTimer mUpdateTimer;
 	Controller &mController;
 };
 
