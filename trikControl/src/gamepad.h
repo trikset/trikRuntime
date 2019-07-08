@@ -98,7 +98,7 @@ private:
 	int mWheelPercent = -101;
 
 	QTimer mKeepaliveTimer;
-	bool mFirstKeepalive {true};
+	bool mConnected {false};
 };
 
 }

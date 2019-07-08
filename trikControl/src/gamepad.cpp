@@ -24,7 +24,7 @@ Gamepad::Gamepad(const trikKernel::Configurer &configurer
 {
 	mKeepaliveTimer.setSingleShot(true);
 	connect(&mKeepaliveTimer, SIGNAL(timeout()), this, SIGNAL(disconnect()));
-	connect(&mKeepaliveTimer, &QTimer::timeout, [this]() { mFirstKeepalive = true; });
+	connect(&mKeepaliveTimer, &QTimer::timeout, [this]() { mConnected = false; });
 	connect(&mUnderlyingFifo, SIGNAL(newData(QString)), this, SLOT(onNewData(QString)));
 }
 
@@ -81,6 +81,11 @@ bool Gamepad::isConnected() const
 
 void Gamepad::onNewData(const QString &data)
 {
+	if (!mConnected) {
+		emit connected();
+		mConnected = true;
+	}
+
 	const QStringList cmd = data.split(" ", QString::SkipEmptyParts);
 	if (cmd.isEmpty()) {
 		return;
@@ -176,16 +181,9 @@ void Gamepad::handleButton(int button, int pressed)
 
 void Gamepad::handleKeepalive(int waitForMs)
 {
-	if (mFirstKeepalive) {
-		emit connected();
-	}
-
-	qDebug() << "handle keepalive" << waitForMs;
-	mFirstKeepalive = false;
 	if (waitForMs == 0) {
 		mKeepaliveTimer.stop();
 	} else {
-		QLOG_INFO() << "keepalive new" << waitForMs;
 		mKeepaliveTimer.start(waitForMs);
 	}
 }
