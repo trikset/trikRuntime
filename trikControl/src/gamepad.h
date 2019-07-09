@@ -39,7 +39,7 @@ public:
 	Gamepad(const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	~Gamepad() override;
+	~Gamepad() override = default;
 
 	Status status() const override;
 
@@ -59,6 +59,8 @@ public slots:
 	int wheel() const override;
 
 	bool isConnected() const override;
+
+	bool disconnect() override;
 
 private slots:
 	void onNewData(const QString &data);

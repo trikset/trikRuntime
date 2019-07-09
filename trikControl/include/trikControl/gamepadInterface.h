@@ -51,6 +51,12 @@ public slots:
 	/// Returns true if a gamepad is currently connected to a robot.
 	virtual bool isConnected() const = 0;
 
+	/// Disconnects a gamepad.
+	/// Emits `disconnected` signal and then resets button state if a gamepad was connected to a robot.
+	/// Returns true if a gamepad was connected
+	virtual bool disconnect() = 0;
+
+
 signals:
 	/// Emitted when user pulls finger off a pad.
 	/// @param pad - id of a pad on which the event occurs.
@@ -77,7 +83,7 @@ signals:
 
 	/// Emitted when last gamepad disconnects from robot. Note that robot may have several connected gamepads
 	/// at the same time, so when one gamepad disconnects, this signal will not be emitted.
-	void disconnect();
+	void disconnected();
 };
 
 }
