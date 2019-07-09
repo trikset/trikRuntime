@@ -8,7 +8,7 @@ env:
     - CONFIG=release
     - VERA=false
     - TRANSLATIONS=false
-    - QMAKE_EXTRA="CONFIG+=tests CONFIG+=silent CONFIG+=ccache"
+    - QMAKE_EXTRA="CONFIG+=tests CONFIG+=silent CONFIG+=ccache CONFIG+=noPch"
     - CELLAR_CACHE_DIR=$([ $TRAVIS_OS_NAME = 'osx' ] && echo "/usr/local/Cellar" || { mkdir -p .empty/{qt,ccache,python@3,pyenv} ; echo .empty ; } )
     - EARLY_START_DOCKER_PULL_PID=$( if [ $TRAVIS_OS_NAME = 'linux' ] ; then docker pull trikset/linux-builder ; else true ; fi 2>&1 >/dev/null & echo $!)
     - HEARTBEAT=$(while sleep 100; do echo "=====[ $SECONDS seconds, still building... ]====="; done >&2 & echo $! )
@@ -36,12 +36,12 @@ matrix:
     sudo: required
     services: docker
     env: CONFIG=debug VERA=true TRANSLATIONS=true
-    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address"
+    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
     name: Linux debug + vera + translations
   - os: osx
     language: cpp
     name: macOS release
-    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=force_debug_info"
+    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info"
 
 before_install:
 - wait $EARLY_START_DOCKER_PULL_PID || true
