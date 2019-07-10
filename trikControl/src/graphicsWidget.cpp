@@ -70,7 +70,7 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 		auto & text = mLabels[position];
 		painter.setPen(text.first);
 		painter.drawText(position.first, position.second
-				 , mFontMetrics->width(text.second), mFontMetrics->height()
+				 , mFontMetrics->horizontalAdvance(text.second), mFontMetrics->height()
 				 , Qt::TextWordWrap, text.second);
 	}
 }

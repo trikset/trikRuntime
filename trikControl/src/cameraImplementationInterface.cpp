@@ -31,8 +31,8 @@ QVector<uint8_t> CameraImplementationInterface::qImageToQVector(const QImage &im
 	const QImage &img = imgOrig.format() == DESIRED_FORMAT ? imgOrig : imgOrig.convertToFormat(DESIRED_FORMAT);
 	const QImage &scaledImg = img.height() == SIZE_X && img.width() == SIZE_Y ? img : img.scaled(SIZE_X, SIZE_Y);
 	auto cb = scaledImg.constBits();
-	QVector<uint8_t> imageByteVector = QVector<uint8_t>(scaledImg.byteCount());
-	std::copy(cb, cb + scaledImg.byteCount(), imageByteVector.begin());
+	QVector<uint8_t> imageByteVector = QVector<uint8_t>(scaledImg.sizeInBytes());
+	std::copy(cb, cb + scaledImg.sizeInBytes(), imageByteVector.begin());
 
 	return imageByteVector;
 }
