@@ -26,6 +26,8 @@
 
 #include <QtGui/QPixmap>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 GuiWorker::GuiWorker()
@@ -55,6 +57,29 @@ void GuiWorker::showImage(const QString &fileName)
 	}
 
 	mImageWidget->setPixmap(mImagesCache[fileName]);
+	repaintGraphicsWidget();
+}
+
+void GuiWorker::show(const QVector<uint8_t> & array, int width, int height, const QString & format)
+{
+	QImage::Format fmt;
+	if (format == "rgb32") {
+		fmt = QImage::Format_RGB32;
+	} else if (format == "rgb888"){
+		fmt = QImage::Format_RGB888;
+	}
+	else if (format == "grayscale8") {
+		fmt = QImage::Format_Grayscale8;
+	} else {
+		QLOG_ERROR() << format << "format is not supported";
+		return;
+	}
+
+	QImage img(array.data(), width, height, fmt);
+
+	QPixmap pixmap(QPixmap::fromImage(img));
+	mImageWidget->setPixmap(pixmap);
+
 	repaintGraphicsWidget();
 }
 
