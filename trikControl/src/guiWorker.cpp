@@ -60,7 +60,7 @@ void GuiWorker::showImage(const QString &fileName)
 	repaintGraphicsWidget();
 }
 
-void GuiWorker::show(const QVector<uint8_t> & array, int width, int height, const QString & format)
+void GuiWorker::show(const QVector<uint8_t> &array, int width, int height, const QString &format)
 {
 	QImage::Format fmt;
 	if (format == "rgb32") {
@@ -75,9 +75,7 @@ void GuiWorker::show(const QVector<uint8_t> & array, int width, int height, cons
 		return;
 	}
 
-	QImage img(array.data(), width, height, fmt);
-
-	QPixmap pixmap(QPixmap::fromImage(img));
+	QPixmap pixmap(QPixmap::fromImage(QImage(array.data(), width, height, fmt)));
 	mImageWidget->setPixmap(pixmap);
 
 	repaintGraphicsWidget();

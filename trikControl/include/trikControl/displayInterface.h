@@ -38,7 +38,7 @@ public slots:
 	///        supported formats, but .jpg, .png, .bmp, .gif are supported.
 	virtual void showImage(const QString &fileName) = 0;
 
-	virtual void show(const QVector<uint8_t> & array, int width, int height, const QString & format) = 0;
+	virtual void show(const QVector<uint8_t> &array, int width, int height, const QString &format) = 0;
 
 	/// Add a label to the specific position of the screen without redrawing it.
 	/// If there already is a label in these coordinates, its contents will be updated.
