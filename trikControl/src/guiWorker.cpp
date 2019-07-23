@@ -36,6 +36,7 @@ GuiWorker::GuiWorker()
 
 void GuiWorker::init()
 {
+	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 	mImageWidget.reset(new GraphicsWidget());
 	mImageWidget->setWindowState(Qt::WindowFullScreen);
 	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
@@ -60,23 +61,23 @@ void GuiWorker::showImage(const QString &fileName)
 	repaintGraphicsWidget();
 }
 
-void GuiWorker::show(const QVector<uint8_t> &array, int width, int height, const QString &format)
+void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const QString &format)
 {
 	QImage::Format fmt;
 	if (format == "rgb32") {
 		fmt = QImage::Format_RGB32;
-	} else if (format == "rgb888"){
+	} else if (format == "rgb888") {
 		fmt = QImage::Format_RGB888;
-	}
-	else if (format == "grayscale8") {
+	} else if (format == "grayscale8") {
 		fmt = QImage::Format_Grayscale8;
 	} else {
 		QLOG_ERROR() << format << "format is not supported";
 		return;
 	}
 
-	QPixmap pixmap(QPixmap::fromImage(QImage(array.data(), width, height, fmt)));
-	mImageWidget->setPixmap(pixmap);
+
+	QImage img(reinterpret_cast<const uchar *>(array.constData()), width, height, fmt);
+	mImageWidget->setPixmap(QPixmap::fromImage(img));
 
 	repaintGraphicsWidget();
 }

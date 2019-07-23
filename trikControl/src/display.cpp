@@ -59,9 +59,9 @@ void trikControl::Display::showImage(const QString &fileName)
 	QMetaObject::invokeMethod(mGuiWorker, "showImage", Q_ARG(QString, correctedFileName));
 }
 
-void trikControl::Display::show(const QVector<uint8_t> &array, int width, int height, const QString &format)
+void trikControl::Display::show(const QVector<int32_t> &array, int width, int height, const QString &format)
 {
-	QMetaObject::invokeMethod(mGuiWorker, "show", Q_ARG(QVector<uint8_t>, array)
+	QMetaObject::invokeMethod(mGuiWorker, "show", Q_ARG(QVector<int32_t>, array)
 							  , Q_ARG(int, width), Q_ARG(int, height), Q_ARG(QString, format));
 }
 
