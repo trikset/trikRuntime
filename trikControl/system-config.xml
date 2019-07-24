@@ -24,7 +24,6 @@ equal to its class name.
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
 		/etc/trik/init-ov7670-320x240.sh 0
-		/usr/share/trik/init.d/init_mems.sh
 
 		echo 1 > /sys/class/gpio/gpio62/value
 
