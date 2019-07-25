@@ -66,40 +66,34 @@ void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const
 	auto *allData = static_cast<const uchar *>(static_cast<const void *>(array.data()));
 	QImage::Format fmt;
 	const uchar *rawData = nullptr;
-	int rawDataLength = 0;
+	QVector<uchar> formattedData(width * height * 3); // Reserve maximum possible size of arrays
 
 	if (format == "rgb32") {
 		fmt = QImage::Format_RGB32;
 		rawData = allData;
-		rawDataLength = array.length();
 	} else if (format == "rgb888") {
 		fmt = QImage::Format_RGB888;
 
-		QVector<uchar> formattedData(width * height * 3);
+		formattedData.resize(width * height * 3);
 		for (int i = 0; i < width * height * 3; i++) {
 			formattedData[i] = allData[i * 4];
 		}
 		rawData = formattedData.constData();
-		rawDataLength = formattedData.length();
 	} else if (format == "grayscale8") {
 		fmt = QImage::Format_Grayscale8;
 
-		QVector<uchar> formattedData(width * height);
+		formattedData.resize(width * height);
 		for (int i = 0; i < width * height; i++) {
 			formattedData[i] = allData[i * 4];
 		}
 		rawData = formattedData.constData();
-		rawDataLength = formattedData.length();
 	} else {
 		QLOG_ERROR() << format << "format is not supported";
 		return;
 	}
 
-	uchar *result = new uchar[rawDataLength];
-	std::copy(rawData, rawData + rawDataLength - 1, result);
-	QImage img(result, width, height, fmt);
-	img.save("result.jpg");
-	mImageWidget->setPixmap(QPixmap::fromImage(img));
+	QImage img(rawData, width, height, fmt);
+	mImageWidget->setPixmap(QPixmap::fromImage(std::move(img)));
 
 	repaintGraphicsWidget();
 }
