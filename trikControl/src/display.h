@@ -43,6 +43,8 @@ public slots:
 	void setBackground(const QString &color) override;
 	void showImage(const QString &fileName) override;
 
+	void show(const QVector<int32_t> &array, int width, int height, const QString &format) override;
+
 	void addLabel(const QString &text, int x, int y) override;
 	void removeLabels() override;
 

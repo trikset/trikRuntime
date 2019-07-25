@@ -50,6 +50,8 @@ public slots:
 	/// for better performance.
 	void showImage(const QString &fileName);
 
+	void show(const QVector<int32_t> &array, int width, int height, const QString &format);
+
 	/// Add a label to the specific position of the screen without redrawing it.
 	/// If there already is a label in these coordinates, its contents will be updated.
 	/// @param text - label text.

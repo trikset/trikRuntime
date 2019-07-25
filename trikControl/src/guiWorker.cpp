@@ -26,6 +26,8 @@
 
 #include <QtGui/QPixmap>
 
+#include "QsLog.h"
+
 using namespace trikControl;
 
 GuiWorker::GuiWorker()
@@ -34,6 +36,7 @@ GuiWorker::GuiWorker()
 
 void GuiWorker::init()
 {
+	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 	mImageWidget.reset(new GraphicsWidget());
 	mImageWidget->setWindowState(Qt::WindowFullScreen);
 	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
@@ -55,6 +58,43 @@ void GuiWorker::showImage(const QString &fileName)
 	}
 
 	mImageWidget->setPixmap(mImagesCache[fileName]);
+	repaintGraphicsWidget();
+}
+
+void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const QString &format)
+{
+	auto *allData = static_cast<const uchar *>(static_cast<const void *>(array.data()));
+	QImage::Format fmt;
+	const uchar *rawData = nullptr;
+	QVector<uchar> formattedData(width * height * 3); // Reserve maximum possible size of arrays
+
+	if (format == "rgb32") {
+		fmt = QImage::Format_RGB32;
+		rawData = allData;
+	} else if (format == "rgb888") {
+		fmt = QImage::Format_RGB888;
+
+		formattedData.resize(width * height * 3);
+		for (int i = 0; i < width * height * 3; i++) {
+			formattedData[i] = allData[i * 4];
+		}
+		rawData = formattedData.constData();
+	} else if (format == "grayscale8") {
+		fmt = QImage::Format_Grayscale8;
+
+		formattedData.resize(width * height);
+		for (int i = 0; i < width * height; i++) {
+			formattedData[i] = allData[i * 4];
+		}
+		rawData = formattedData.constData();
+	} else {
+		QLOG_ERROR() << format << "format is not supported";
+		return;
+	}
+
+	QImage img(rawData, width, height, fmt);
+	mImageWidget->setPixmap(QPixmap::fromImage(std::move(img)));
+
 	repaintGraphicsWidget();
 }
 
