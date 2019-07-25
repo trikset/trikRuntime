@@ -17,7 +17,7 @@ TEMPLATE = lib
 include(../global.pri)
 include(./PyTrikControl/PyTrikControl.pri)
 
-enableFlagIfCan(-Wno-error=cast-function-type)
+!macx:enableFlagIfCan(-Wno-error=cast-function-type)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
