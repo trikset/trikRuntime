@@ -1,0 +1,216 @@
+<!--
+TrikControl system configuration file. Meant to be written once for each release of OS and shall be the same
+for all models running that OS release.
+
+Devices have properties depending on a port to which device is plugged and device class (IR Sensor, Servomotor
+and so on), such as device file or I2C device number, and properties common for some devices of given class regardless
+of port (for example, we may have two different types of angular servos that have common control interface but
+different parameters). So we distinguish "device class" and "device type". "device class" is a class of device as in
+underlying C++ code (basically, a logic of communication with particular kind of device), "device type" is a set of
+parameters for each device class. Device class can have many device types associated with it (for instance, for
+different kinds of servomotors from example above). Device classes are hard-coded, device types are defined in system
+config. Every parameter for device type may be overridden in model config, to allow to fine-tune devices for particular
+purpose (ability to set the maximum and minimum angles of angular servo proven to be especially useful).
+
+System config has declaration of configurable device classes ("deviceClasses" section) with properties common to all
+devices of that class, definition of device-port relations (which device class can be attached to which port and it
+also defines port-specific properties like device file) and definition of device types (containing variable parameters
+for device class, for example, various raw-to-degree coefficients for different encoders). If device has no variable
+parameters, it may be not listed in "device types" section, it is assumed that it has one device type with a name
+equal to its class name.
+-->
+
+<config version="model-2015" >
+	<!-- Initialization sh script, will be executed when runtime is launched. -->
+	<initScript>
+		/etc/trik/init-ov7670-320x240.sh 0
+		echo 0 > /sys/class/misc/l3g42xxd/fs_selection
+		echo 1 > /sys/class/misc/l3g42xxd/odr_selection
+		echo 5 > /sys/class/misc/mma845x/odr_selection
+		echo 0 > /sys/class/misc/mma845x/fs_selection
+
+		echo 1 > /sys/class/gpio/gpio62/value
+
+                export GP="/sys/class/gpio/"
+                echo 94 > $GP/export
+                echo high > $GP/gpio94/direction
+                echo 35 > $GP/export
+                echo high > $GP/gpio35/direction
+                echo 36 > $GP/export
+                echo high > $GP/gpio36/direction
+                echo 37 > $GP/export
+                echo high > $GP/gpio37/direction
+
+                export PWM="/sys/class/pwm/pwmchip"
+                echo 0 > ${PWM}0/export
+                echo 0 > ${PWM}1/export
+                echo 0 > ${PWM}2/export
+                echo 1 > ${PWM}3/export
+                echo 1 > ${PWM}5/export
+                echo 0 > ${PWM}5/export
+
+		#amixer -q set PCM 127
+	</initScript>
+
+	<!-- A list of known devices. -->
+	<deviceClasses>
+                <!-- URI protocol: v4l2, file, qtmultimedia  -->
+                <camera type="v4l2" src="/dev/video0" />
+		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
+		<pwmCapture />
+		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
+		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
+		<encoder invert="false" />
+		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
+		<digitalSensor />
+		<fifo />
+		<accelerometer deviceFile="/dev/input/by-path/platform-i2c_davinci.2-event" optional="true" />
+		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" optional="true" />
+		<lineSensor script="/etc/init.d/line-sensor-ov7670" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
+		<objectSensor script="/etc/init.d/object-sensor-ov7670" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
+		<colorSensor script="/etc/init.d/mxn-sensor-ov7670" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
+
+		<!-- Device files for LED on a brick. -->
+		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
+
+		<!--Device file for keys on a brick -->
+		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
+
+		<!-- Settings for mailbox server (which enables communication between robots) -->
+		<mailbox port="8889" optional="true" />
+
+		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
+	</deviceClasses>
+
+	<devicePorts>
+		<servoMotor
+			port="S1"
+			deviceFile="/sys/class/pwm/pwmchip2/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip2/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip2/pwm0/enable"
+		/>
+		<servoMotor
+			port="S2"
+			deviceFile="/sys/class/pwm/pwmchip1/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip1/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip1/pwm0/enable"
+		/>
+		<servoMotor
+			port="S3"
+			deviceFile="/sys/class/pwm/pwmchip0/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip0/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip0/pwm0/enable"
+		/>
+		<servoMotor
+			port="S4"
+			deviceFile="/sys/class/pwm/pwmchip3/pwm1/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip3/pwm1/period"
+			runFile="/sys/class/pwm/pwmchip3/pwm1/enable"
+		/>
+		<servoMotor
+			port="S5"
+			deviceFile="/sys/class/pwm/pwmchip5/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip5/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip5/pwm0/enable"
+		/>
+		<servoMotor
+			port="S6"
+			deviceFile="/sys/class/pwm/pwmchip5/pwm1/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip5/pwm1/period"
+			runFile="/sys/class/pwm/pwmchip5/pwm1/enable"
+			controlMin="0"
+			controlMax="100"
+		/>
+		<pwmCapture
+			port="S1"
+			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+		/>
+		<pwmCapture
+			port="S2"
+			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
+		/>
+		<pwmCapture
+			port="S3"
+			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
+			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
+		/>
+		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
+		<powerMotor port="M2" i2cCommandNumber="0x15" />
+		<powerMotor port="M3" i2cCommandNumber="0x16" />
+		<powerMotor port="M4" i2cCommandNumber="0x17" />
+		<analogSensor port="A1" i2cCommandNumber="0x25" />
+		<analogSensor port="A2" i2cCommandNumber="0x24" />
+		<analogSensor port="A3" i2cCommandNumber="0x23" />
+		<analogSensor port="A4" i2cCommandNumber="0x22" />
+		<analogSensor port="A5" i2cCommandNumber="0x21" />
+		<analogSensor port="A6" i2cCommandNumber="0x20" />
+		<encoder port="E1" i2cCommandNumber="0x30" />
+		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
+		<encoder port="E3" i2cCommandNumber="0x33" />
+		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
+		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
+		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
+		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
+		<lineSensor port="video1" />
+		<lineSensor port="video2" />
+		<objectSensor port="video1" />
+		<objectSensor port="video2" />
+		<colorSensor port="video1" />
+		<colorSensor port="video2" />
+                <camera port="video1" />
+                <camera port="video2" />
+		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
+	</devicePorts>
+
+	<deviceTypes>
+		<angularServomotor class="servoMotor" min="700000" max="2150000" zero="1425000" stop="0"
+				controlMin="-90" controlMax="90" />
+
+		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0"
+				controlMin="-100" controlMax="100" />
+
+		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
+				controlMin="0" controlMax="100" />
+
+		<jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+
+		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
+
+		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
+				controlMin="0" controlMax="100" />
+
+		<quadroEsc class="servoMotor" min="1100000" max="1900000" zero="1500000" stop="0"
+				controlMin="0" controlMax="100" />
+
+		<sharpGP2Sensor class="analogSensor" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
+
+		<touchSensor class="analogSensor" rawValue1="100" rawValue2="1023" normalizedValue1="1" normalizedValue2="0"
+				minValue="0" maxValue="1" />
+
+		<sonarSensor class="rangeSensor" minValue="0" maxValue="400" />
+
+		<lightSensor class="analogSensor" rawValue1="30" rawValue2="1023" normalizedValue1="0" normalizedValue2="100"
+				minValue="0" maxValue="100" />
+
+		<volumeSensor class="digitalSensor" min="0" max="100" />
+
+		<encoder95 class="encoder" ticks="157" degrees="100" />
+
+		<encoder126 class="encoder" ticks="3296" degrees="1000" />
+
+		<colorSensor3x3 class="colorSensor" m="3" n="3" />
+
+                <photo class="camera" type="v4l2" src="/dev/video0" />
+	</deviceTypes>
+
+	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
+	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;" />
+
+	<!-- Format for playSound command, used to play .mp3 files. %1 designates file name to be played. -->
+	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;" />
+
+	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
+	<i2c path="/dev/i2c-2" deviceId="0x48" />
+</config>
