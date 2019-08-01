@@ -19,21 +19,13 @@
 
 #include <QtCore/qglobal.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QVBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QListView>
-	#include <QtGui/QFileSystemModel>
-#else
-	#include <QtWidgets/QVBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QListView>
-	#include <QtWidgets/QFileSystemModel>
-	#include <QtWidgets/QFileIconProvider>
-#endif
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QListView>
+#include <QFileSystemModel>
+#include <QFileIconProvider>
 
-#include <QtCore/QString>
-
+#include "fileSystemFilter.h"
 #include "controller.h"
 #include "trikGuiDialog.h"
 
@@ -80,6 +72,8 @@ private:
 	Controller &mController;
 	QString mRootDirPath;
 	QString mLastSelectedFile;
+	QString mDeleteAllFilesPath;
+	FileSystemFilter mFilterProxyModel;
 
 	/// Default QFileIconProvider spend about 10 seconds for scanning empty directory for file icons (Qt 5.8.0),
 	/// so here is suggested the light overwrite version of QFileIconProvider class.
