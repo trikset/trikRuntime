@@ -16,10 +16,12 @@
 
 #include <QSortFilterProxyModel>
 
+/// Filter to sort special "Delete all..." entry
 class FileSystemFilter : public QSortFilterProxyModel
 {
 
 public:
+/// Public constructor
 	explicit FileSystemFilter(QObject *parent = nullptr);
 
 protected:

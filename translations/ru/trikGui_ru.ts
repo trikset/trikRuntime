@@ -216,7 +216,7 @@
     <message>
         <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
         <source>Delete all...</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить всё...</translation>
     </message>
     <message>
         <location line="+44"/>
