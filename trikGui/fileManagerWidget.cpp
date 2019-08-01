@@ -123,12 +123,7 @@ void FileManagerWidget::open()
 		}
 	} else {
 		if (mFileSystemModel.fileName(mFilterProxyModel.mapToSource(index)) == tr("Delete all")) {
-			QDir dir(trikKernel::Paths::userScriptsPath());
-			dir.setNameFilters(QStringList() << "*.*");
-			dir.setFilter(QDir::Files);
-			for (auto && dirFile : dir.entryList()) {
-				dir.remove(dirFile);
-			}
+			removeAll();
 		} else {
 			mController.runFile(mFileSystemModel.filePath(mFilterProxyModel.mapToSource(index)));
 		}
@@ -143,6 +138,20 @@ void FileManagerWidget::remove()
 				, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 		if (reply == QMessageBox::Yes) {
 			mFileSystemModel.remove(index);
+		}
+	}
+}
+
+void FileManagerWidget::removeAll()
+{
+	QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
+			, tr("Are you sure you want to delete all files?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+	if (reply == QMessageBox::Yes) {
+		QDir dir(trikKernel::Paths::userScriptsPath());
+		dir.setNameFilters(QStringList() << "*.*");
+		dir.setFilter(QDir::Files);
+		for (auto && dirFile : dir.entryList()) {
+			dir.remove(dirFile);
 		}
 	}
 }

@@ -63,6 +63,7 @@ private:
 	void showCurrentDir();
 	void open();
 	void remove();
+	void removeAll();
 	QString currentPath();
 
 	QVBoxLayout mLayout;
