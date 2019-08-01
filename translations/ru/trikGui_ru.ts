@@ -5,9 +5,8 @@
     <name>FileSystemFilter</name>
     <message>
         <location filename="../../trikGui/fileSystemFilter.cpp" line="+26"/>
-        <location line="+2"/>
-        <source>Delete all</source>
-        <translation>Удалить всё</translation>
+        <source>Delete all...</source>
+        <translation>Удалить всё...</translation>
     </message>
 </context>
 <context>
@@ -211,13 +210,16 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
-        <location line="+59"/>
         <source>Delete all</source>
-        <translation>Удалить всё</translation>
+        <translation type="vanished">Удалить всё</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
+        <source>Delete all...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>

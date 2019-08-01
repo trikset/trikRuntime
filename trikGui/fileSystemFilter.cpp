@@ -23,6 +23,6 @@ bool FileSystemFilter::lessThan(const QModelIndex &left, const QModelIndex &righ
 {
 	const auto &l = sourceModel()->data(left).toString();
 	const auto &r = sourceModel()->data(right).toString();
-	const auto &d = tr("Delete all");
+	const auto &d = tr("Delete all...");
 	return l != d && (r == d || QSortFilterProxyModel::lessThan(left, right));
 }
