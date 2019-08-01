@@ -63,7 +63,8 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 		mRootDirPath = trikKernel::Paths::userScriptsPath();
 	}
 
-	mDeleteAllFilesPath = trikKernel::Paths::userScriptsPath() + tr("Delete all");
+	mDeleteAllFilesName = tr("Delete all...");
+	mDeleteAllFilesPath = trikKernel::Paths::userScriptsPath() + mDeleteAllFilesName;
 	QFile deleteAllFile(mDeleteAllFilesPath);
 	/// This flag and operation is necessary to create file if it doesn't exists
 	deleteAllFile.open(QIODevice::WriteOnly);
@@ -122,7 +123,7 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		if (mFileSystemModel.fileName(mFilterProxyModel.mapToSource(index)) == tr("Delete all")) {
+		if (mFileSystemModel.fileName(mFilterProxyModel.mapToSource(index)) == mDeleteAllFilesName) {
 			removeAll();
 		} else {
 			mController.runFile(mFileSystemModel.filePath(mFilterProxyModel.mapToSource(index)));

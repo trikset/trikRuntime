@@ -74,6 +74,7 @@ private:
 	QString mRootDirPath;
 	QString mLastSelectedFile;
 	QString mDeleteAllFilesPath;
+	QString mDeleteAllFilesName;
 	FileSystemFilter mFilterProxyModel;
 
 	/// Default QFileIconProvider spend about 10 seconds for scanning empty directory for file icons (Qt 5.8.0),
