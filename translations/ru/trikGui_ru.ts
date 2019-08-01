@@ -4,7 +4,7 @@
 <context>
     <name>FileSystemFilter</name>
     <message>
-        <location filename="../../trikGui/fileSystemFilter.cpp" line="+12"/>
+        <location filename="../../trikGui/fileSystemFilter.cpp" line="+26"/>
         <location line="+2"/>
         <source>Delete all</source>
         <translation>Удалить всё</translation>
