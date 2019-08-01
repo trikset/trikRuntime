@@ -149,7 +149,7 @@ void FileManagerWidget::removeAll()
 			, tr("Are you sure you want to delete all files?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 	if (reply == QMessageBox::Yes) {
 		QDir dir(trikKernel::Paths::userScriptsPath());
-		dir.setNameFilters({"*.*"});
+		dir.setNameFilters({"*.js", "*.py"});
 		dir.setFilter(QDir::Files);
 		for (auto &&dirFile: dir.entryList()) {
 			dir.remove(dirFile);
