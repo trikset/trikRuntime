@@ -61,7 +61,8 @@ HEADERS += \
 	$$PWD/powerLevel.h \
 	$$PWD/gyroscopeIndicator.h \
 	$$PWD/accelerometerWidget.h \
-	$$PWD/networkWidget.h
+	$$PWD/networkWidget.h \
+	$$PWD/fileSystemFilter.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -105,7 +106,8 @@ SOURCES += \
 	$$PWD/$$PLATFORM/powerLevel.cpp \
 	$$PWD/gyroscopeIndicator.cpp \
 	$$PWD/accelerometerWidget.cpp \
-	$$PWD/networkWidget.cpp
+	$$PWD/networkWidget.cpp \
+	$$PWD/fileSystemFilter.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

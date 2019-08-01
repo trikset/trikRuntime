@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>FileSystemFilter</name>
+    <message>
+        <location filename="../../trikGui/fileSystemFilter.cpp" line="+26"/>
+        <source>Delete all...</source>
+        <translation>Удалить всё...</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../../trikGui/trikGuiMain.cpp" line="+49"/>
@@ -14,7 +22,7 @@
     <message>
         <location filename="../../trikGui/accelerometerWidget.cpp" line="+28"/>
         <source>Accelerometer</source>
-        <translation type="unfinished">Акселерометр</translation>
+        <translation>Акселерометр</translation>
     </message>
 </context>
 <context>
@@ -202,19 +210,34 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="+102"/>
+        <source>Delete all</source>
+        <translation type="vanished">Удалить всё</translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
+        <source>Delete all...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+28"/>
+        <location line="+10"/>
         <source>Confirm deletion</source>
         <translation>Удаление</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-9"/>
         <source>Are you sure you want to delete file?</source>
         <translation>Вы уверены, что хотите удалить файл?</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Are you sure you want to delete all files?</source>
+        <translation>Вы уверены, что хотите удалить все файлы?</translation>
     </message>
 </context>
 <context>
@@ -245,7 +268,7 @@
     <message>
         <location line="+33"/>
         <source>Version</source>
-        <translation type="unfinished">Версия ПО</translation>
+        <translation>Версия ПО</translation>
     </message>
     <message>
         <location line="+7"/>
