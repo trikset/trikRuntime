@@ -2,6 +2,15 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>FileSystemFilter</name>
+    <message>
+        <location filename="../../trikGui/fileSystemFilter.cpp" line="+12"/>
+        <location line="+2"/>
+        <source>Delete all</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../../trikGui/trikGuiMain.cpp" line="+49"/>
@@ -168,7 +177,7 @@
     <name>trikGui::FileManagerWidget</name>
     <message>
         <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
-        <location line="+57"/>
+        <location line="+59"/>
         <source>Delete all</source>
         <translation type="unfinished"></translation>
     </message>
@@ -178,13 +187,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+28"/>
+        <location line="+10"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-9"/>
         <source>Are you sure you want to delete file?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Are you sure you want to delete all files?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
