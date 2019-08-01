@@ -1,4 +1,4 @@
-language: generic
+language: minimal
 git:
   depth: 1
 env:
@@ -29,14 +29,13 @@ branches:
 matrix:
   include:
   - os: linux
-    sudo: required
     services: docker
     name: Linux release
   - os: linux
-    sudo: required
     services: docker
-    env: CONFIG=debug VERA=true TRANSLATIONS=true
-    env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
+    env:
+      - CONFIG=debug VERA=true TRANSLATIONS=true
+      - QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
     name: Linux debug + vera + translations
   - os: osx
     language: cpp
