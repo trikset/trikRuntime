@@ -12,17 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include "abstractIndicator.h"
 #include "sensorLever.h"
 
 #include <QtGui/QKeyEvent>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QStylePainter>
-	#include <QtGui/QStyleOptionFocusRect>
-#else
-	#include <QtWidgets/QStylePainter>
-	#include <QtWidgets/QStyleOptionFocusRect>
-#endif
+#include <QtWidgets/QStylePainter>
+#include <QtWidgets/QStyleOptionFocusRect>
 
 using namespace trikGui;
 
@@ -49,7 +45,7 @@ SensorLever::SensorLever(const QString &port, QWidget *parent)
 
 	// mSignLabel can change its width during work. It will cause mDistanceBar
 	// width change. To prevent it, we set fixed width it.
-	mSignLabel.setFixedWidth(fontMetrics().width("WWWW"));
+	mSignLabel.setFixedWidth(AbstractIndicator::fontMetricsHorizontalAdvance(this, "WWWW"));
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mDistanceBar);

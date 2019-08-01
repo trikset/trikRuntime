@@ -15,16 +15,9 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QProgressBar>
-#else
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QProgressBar>
-#endif
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QProgressBar>
 
 #include "abstractIndicator.h"
 
