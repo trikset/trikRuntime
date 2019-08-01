@@ -21,13 +21,8 @@ FileSystemFilter::FileSystemFilter(QObject *parent)
 
 bool FileSystemFilter::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
-	QVariant leftData = sourceModel()->data(left);
-	QVariant rightData = sourceModel()->data(right);
-	if (leftData.toString() == tr("Delete all")) {
-		return false;
-	} else if (rightData.toString() == tr("Delete all")) {
-		return true;
-	} else {
-		return QSortFilterProxyModel::lessThan(left, right);
-	}
+	const auto &l = sourceModel()->data(left).toString();
+	const auto &r = sourceModel()->data(right).toString();
+	const auto &d = tr("Delete all");
+	return l != d && (r == d || QSortFilterProxyModel::lessThan(left, right));
 }
