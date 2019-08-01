@@ -50,6 +50,7 @@ public slots:
 	/// for better performance.
 	void showImage(const QString &fileName);
 
+	/// Shows image from array data according to format. Image is scaled to fill the screen.
 	void show(const QVector<int32_t> &array, int width, int height, const QString &format);
 
 	/// Add a label to the specific position of the screen without redrawing it.

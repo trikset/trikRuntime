@@ -16,11 +16,7 @@
 
 #include <QtCore/qglobal.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
+#include <QtWidgets/QWidget>
 
 namespace trikGui {
 
@@ -33,6 +29,18 @@ public:
 	/// Constructor.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	explicit AbstractIndicator(QWidget *parent = 0) : QWidget(parent) {}
+
+	/// For compatibility with old Qt (until we use 5.10.1 for TRIK firmware)
+	static inline int fontMetricsHorizontalAdvance(const QWidget *w, const QString &text)
+	{
+	#if (QT_VERSION_MAJOR == 5) && (QT_VERSION_MINOR < 11)
+	#define horizontalAdvance width
+	#endif
+		return w->fontMetrics().horizontalAdvance(text);
+	#ifdef horizontalAdvance
+	#undef horizontalAdvance
+	#endif
+	}
 
 public slots:
 	/// Rereads sensor and updates widget contents.

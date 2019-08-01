@@ -16,17 +16,10 @@
 
 #include <QtCore/qglobal.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QProgressBar>
-#else
-	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QProgressBar>
-#endif
+#include <QtWidgets/QWidget>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QProgressBar>
 
 #include <QtCore/QString>
 
@@ -41,7 +34,7 @@ public:
 	/// Constructor.
 	/// @param port - name of a port which the sensor is connected to.
 	/// @param parent - pointer to a parent widget.
-	SensorLever(const QString &port, QWidget *parent = 0);
+	explicit SensorLever(const QString &port, QWidget *parent = 0);
 
 	/// Returns distance value of this lever.
 	int distance() const;

@@ -14,13 +14,8 @@
 
 #include "sensorIndicator.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QStylePainter>
-	#include <QtGui/QStyleOptionFocusRect>
-#else
-	#include <QtWidgets/QStylePainter>
-	#include <QtWidgets/QStyleOptionFocusRect>
-#endif
+#include <QtWidgets/QStylePainter>
+#include <QtWidgets/QStyleOptionFocusRect>
 
 #include <QtCore/QString>
 
@@ -49,8 +44,7 @@ SensorIndicator::SensorIndicator(const QString &port
 	// width change. To prevent it, we set fixed width for mValueLabel.
 	// It is equal to maximum width of the widget which it achieves
 	// when the label text is set to "100".
-	mValueLabel.setFixedWidth(fontMetrics().width("WWWW"));
-
+	mValueLabel.setFixedWidth(fontMetricsHorizontalAdvance(this, "WWWW"));
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mValueBar);
 	mLayout.addWidget(&mValueLabel);

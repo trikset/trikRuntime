@@ -38,6 +38,12 @@ public slots:
 	///        supported formats, but .jpg, .png, .bmp, .gif are supported.
 	virtual void showImage(const QString &fileName) = 0;
 
+	/// Shows given image on display. Scales from to fullscreen
+	/// @param array  - pixel data (depends on format)
+	/// @param width  - image width
+	/// @param height - image height
+	/// @param format - "rgb32" for packed xRGB32 (pixel per int32), "grayscale8"
+	/// for grayscale 8bit (int per pixel), "rgb888" for 3 ints per pixel (R,G,B -- 8bits each)
 	virtual void show(const QVector<int32_t> &array, int width, int height, const QString &format) = 0;
 
 	/// Add a label to the specific position of the screen without redrawing it.

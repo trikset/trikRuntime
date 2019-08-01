@@ -187,7 +187,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="+184"/>
+        <location filename="../../trikGui/controller.cpp" line="+194"/>
         <source>direct command</source>
         <translation>команда с компьютера</translation>
     </message>
@@ -307,9 +307,9 @@
 <context>
     <name>trikGui::MotorLever</name>
     <message>
-        <location filename="../../trikGui/motorLever.cpp" line="+40"/>
+        <location filename="../../trikGui/motorLever.cpp" line="+37"/>
         <location line="+17"/>
-        <location line="+57"/>
+        <location line="+58"/>
         <source>off</source>
         <translation>выкл</translation>
     </message>

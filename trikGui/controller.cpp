@@ -24,6 +24,7 @@
 #include <trikKernel/paths.h>
 #include <trikKernel/exceptions/internalErrorException.h>
 #include <trikControl/brickFactory.h>
+#include <trikControl/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikWiFi/trikWiFi.h>
 
@@ -47,8 +48,10 @@ Controller::Controller(const QString &configPath)
 	trikKernel::Configurer configurer(correctedConfigPath + "system-config.xml"
 			, correctedConfigPath + "model-config.xml");
 
-	connect(mBrick->gamepad(), SIGNAL(disconnect()), this, SIGNAL(gamepadDisconnected()));
-	connect(mBrick->gamepad(), SIGNAL(connected()), this, SIGNAL(gamepadConnected()));
+	connect(mBrick->gamepad(), &trikControl::GamepadInterface::disconnected
+			, this, &Controller::gamepadDisconnected);
+	connect(mBrick->gamepad(), &trikControl::GamepadInterface::connected
+			, this, &Controller::gamepadConnected);
 
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick));
@@ -56,25 +59,32 @@ Controller::Controller(const QString &configPath)
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner, configurer.version()));
 
 	mWiFi.reset(new trikWiFi::TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this));
-	connect(mWiFi.data(), SIGNAL(connected()), this, SIGNAL(wiFiConnected()));
-	connect(mWiFi.data(), SIGNAL(disconnected(trikWiFi::DisconnectReason)), this, SIGNAL(wiFiDisconnected()));
+	connect(mWiFi.data(), &trikWiFi::TrikWiFi::connected, this, &Controller::wiFiConnected);
+	connect(mWiFi.data(), &trikWiFi::TrikWiFi::disconnected, this, &Controller::wiFiDisconnected);
 
-	connect(mCommunicator.data(), SIGNAL(stopCommandReceived()), this, SLOT(abortExecution()));
-	connect(mCommunicator.data(), SIGNAL(connected()), this, SLOT(updateCommunicatorStatus()));
-	connect(mCommunicator.data(), SIGNAL(disconnected()), this, SLOT(updateCommunicatorStatus()));
-	connect(mTelemetry.data(), SIGNAL(connected()), this, SLOT(updateCommunicatorStatus()));
-	connect(mTelemetry.data(), SIGNAL(disconnected()), this, SLOT(updateCommunicatorStatus()));
-	connect(mMailbox.data(), SIGNAL(connectionStatusChanged(bool)), this, SIGNAL(mailboxStatusChanged(bool)));
+	connect(mCommunicator.data(), &trikCommunicator::TrikCommunicator::stopCommandReceived
+			, this, &Controller::abortExecution);
+	connect(mCommunicator.data(), &trikCommunicator::TrikCommunicator::connected
+			, this, &Controller::updateCommunicatorStatus);
+	connect(mCommunicator.data(), &trikCommunicator::TrikCommunicator::disconnected
+			, this, &Controller::updateCommunicatorStatus);
+	connect(mTelemetry.data(), &trikTelemetry::TrikTelemetry::connected
+			, this, &Controller::updateCommunicatorStatus);
+	connect(mTelemetry.data(), &trikTelemetry::TrikTelemetry::disconnected
+			, this, &Controller::updateCommunicatorStatus);
+	connect(mMailbox.data(), &trikNetwork::MailboxInterface::connectionStatusChanged
+			, this, &Controller::mailboxStatusChanged);
 
-	connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), this, SLOT(scriptExecutionCompleted(QString, int)));
+	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
+			, this, &Controller::scriptExecutionCompleted);
 
-	connect(mScriptRunner.data(), SIGNAL(startedScript(QString, int))
-			, this, SLOT(scriptExecutionFromFileStarted(QString, int)));
+	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedScript
+			, this, &Controller::scriptExecutionFromFileStarted);
 
-	connect(mScriptRunner.data(), SIGNAL(startedDirectScript(int))
-			, this, SLOT(directScriptExecutionStarted(int)));
+	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedDirectScript
+			, this, &Controller::directScriptExecutionStarted);
 
-	connect(mBrick.data(), SIGNAL(stopped()), this, SIGNAL(brickStopped()));
+	connect(mBrick.data(), &trikControl::BrickInterface::stopped, this, &Controller::brickStopped);
 
 	mCommunicator->startServer(communicatorPort);
 	mTelemetry->startServer(telemetryPort);
