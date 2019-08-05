@@ -89,7 +89,7 @@ void WiFiModeWidget::setMode(Mode mode)
 		WiFiInitWidget wiFiInitWidget;
 		emit newWidget(wiFiInitWidget);
 		if (wiFiInitWidget.init(mode) == WiFiInitWidget::fail) {
-			QLOG_ERROR() << "Faile on init WiFi widget in mode" << currentModeText;
+			QLOG_ERROR() << "Failed to init WiFi widget in mode" << currentModeText;
 			return;
 		}
 	}
