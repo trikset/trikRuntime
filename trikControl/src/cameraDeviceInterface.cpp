@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "cameraImplementationInterface.h"
+#include "cameraDeviceInterface.h"
 
 using namespace trikControl;
 
-QVector<uint8_t> CameraImplementationInterface::qImageToQVector(const QImage &imgOrig) {
+QVector<uint8_t> CameraDeviceInterface::qImageToQVector(const QImage &imgOrig) {
 	// Some possible formats:
 	// QImage::Format_RGB32
 	// QImage::Format_RGB888
@@ -31,8 +31,9 @@ QVector<uint8_t> CameraImplementationInterface::qImageToQVector(const QImage &im
 	const QImage &img = imgOrig.format() == DESIRED_FORMAT ? imgOrig : imgOrig.convertToFormat(DESIRED_FORMAT);
 	const QImage &scaledImg = img.height() == SIZE_X && img.width() == SIZE_Y ? img : img.scaled(SIZE_X, SIZE_Y);
 	auto cb = scaledImg.constBits();
-	QVector<uint8_t> imageByteVector = QVector<uint8_t>(scaledImg.sizeInBytes());
-	std::copy(cb, cb + scaledImg.sizeInBytes(), imageByteVector.begin());
+	auto size = scaledImg.sizeInBytes();
+	QVector<uint8_t> imageByteVector (size);
+	std::copy(cb, cb + size, imageByteVector.begin());
 
 	return imageByteVector;
 }

@@ -13,7 +13,7 @@
  * limitations under the License. */
 
 #include "qtCameraImplementation.h"
-
+#include "cameraDeviceInterface.h"
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTimer>
 #include <QtCore/QEventLoop>
@@ -68,8 +68,8 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 	QVector<uint8_t> imageByteVector;
 
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured
-			, [this, &imageByteVector] (int, const QImage &imgOrig) {
-				imageByteVector = qImageToQVector(imgOrig);
+			, [&imageByteVector] (int, const QImage &imgOrig) {
+				imageByteVector = CameraDeviceInterface::qImageToQVector(imgOrig);
 			}
 	);
 
