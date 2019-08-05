@@ -123,7 +123,7 @@ void FileManagerWidget::open()
 			showCurrentDir();
 		}
 	} else {
-		if (mFileSystemModel.fileName(mFilterProxyModel.mapToSource(index)) == mDeleteAllFilesName) {
+		if (isDeleteAllName(index)) {
 			removeAll();
 		} else {
 			mController.runFile(mFileSystemModel.filePath(mFilterProxyModel.mapToSource(index)));
@@ -135,10 +135,12 @@ void FileManagerWidget::remove()
 {
 	const QModelIndex &index = mFileSystemView.currentIndex();
 	if (!mFileSystemModel.isDir(index)) {
-		QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
-				, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			mFileSystemModel.remove(index);
+		if (!isDeleteAllName(index)) {
+			QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
+					, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			if (reply == QMessageBox::Yes) {
+				mFileSystemModel.remove(mFilterProxyModel.mapToSource(index));
+			}
 		}
 	}
 }
@@ -197,6 +199,11 @@ QString FileManagerWidget::currentPath()
 	}
 
 	return result;
+}
+
+bool FileManagerWidget::isDeleteAllName(const QModelIndex &index) const
+{
+	return mFileSystemModel.fileName(mFilterProxyModel.mapToSource(index)) == mDeleteAllFilesName;
 }
 
 void FileManagerWidget::showCurrentDir()

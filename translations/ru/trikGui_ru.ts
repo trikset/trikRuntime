@@ -224,18 +224,18 @@
         <translation>Файлы</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <location line="+10"/>
+        <location line="+29"/>
+        <location line="+11"/>
         <source>Confirm deletion</source>
         <translation>Удаление</translation>
     </message>
     <message>
-        <location line="-9"/>
+        <location line="-10"/>
         <source>Are you sure you want to delete file?</source>
         <translation>Вы уверены, что хотите удалить файл?</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>Are you sure you want to delete all files?</source>
         <translation>Вы уверены, что хотите удалить все файлы?</translation>
     </message>
