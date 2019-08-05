@@ -224,15 +224,15 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 		font.setBold(false);
 		item->setFont(font);
 		if (item->text() == mCurrentSsid) {
-			item->setIcon(QIcon("://resources/connectedWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/connectedWifi.png")));
 			font.setBold(true);
 			item->setFont(font);
 		} else if (mNetworks[item->text()].isKnown) {
-			item->setIcon(QIcon("://resources/knownWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/knownWifi.png")));
 		} else if (mNetworks[item->text()].security == Security::none) {
-			item->setIcon(QIcon("://resources/openWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/openWifi.png")));
 		} else {
-			item->setIcon(QIcon("://resources/passwordedWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/passwordedWifi.png")));
 		}
 	}
 
@@ -285,7 +285,7 @@ void WiFiClientWidget::connectToSelectedNetwork()
 void WiFiClientWidget::showScanning()
 {
 	const auto scanning = new QStandardItem(tr("Scanning..."));
-	scanning->setIcon(QIcon("://resources/wait.png"));
+	scanning->setIcon(QIcon(QPixmap("://resources/wait.png")));
 	mAvailableNetworksModel.clear();
 	mAvailableNetworksModel.appendRow(scanning);
 }
