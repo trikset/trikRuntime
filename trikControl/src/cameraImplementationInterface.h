@@ -39,10 +39,6 @@ public:
 	/// @param newDir - new name of tempDir
 	void setTempDir(const QString &newDir) {tempDir = newDir;}
 
-	/// Convert QImage to QVector of uint8_t in RGB 888 format
-	/// @param imgOrig - converting this QImage to QVector
-	QVector<uint8_t> qImageToQVector(const QImage &imgOrig);
-
 private:
 	QString tempDir;
 

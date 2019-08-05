@@ -15,7 +15,7 @@
 #pragma once
 
 #include <QtCore/QVector>
-
+#include <QImage>
 #include "declSpec.h"
 #include "deviceInterface.h"
 
@@ -32,6 +32,10 @@ public:
 	virtual Status status() const override = 0;
 
 	~CameraDeviceInterface() override = default;
+
+	/// Convert QImage to QVector of uint8_t in RGB 888 format
+	/// @param imgOrig - converting this QImage to QVector
+	static QVector<uint8_t> qImageToQVector(const QImage &imgOrig);
 };
 
 }
