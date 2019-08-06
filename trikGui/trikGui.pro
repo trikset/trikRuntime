@@ -62,7 +62,8 @@ HEADERS += \
 	$$PWD/gyroscopeIndicator.h \
 	$$PWD/accelerometerWidget.h \
 	$$PWD/networkWidget.h \
-	$$PWD/fileSystemFilter.h
+	$$PWD/fileSystemFilter.h \
+	cameraWidget.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -107,7 +108,8 @@ SOURCES += \
 	$$PWD/gyroscopeIndicator.cpp \
 	$$PWD/accelerometerWidget.cpp \
 	$$PWD/networkWidget.cpp \
-	$$PWD/fileSystemFilter.cpp
+	$$PWD/fileSystemFilter.cpp \
+	cameraWidget.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

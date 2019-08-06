@@ -23,6 +23,7 @@
 #include "encoderIndicator.h"
 #include "gyroscopeIndicator.h"
 #include "accelerometerWidget.h"
+#include "cameraWidget.h"
 
 using namespace trikGui;
 
@@ -37,9 +38,12 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 
 	int i = 0;
 
-	if (sensorType == SensorsWidget::SensorType::gyroscope || sensorType == SensorsWidget::SensorType::accelerometer) {
+	if (sensorType == SensorsWidget::SensorType::gyroscope
+			|| sensorType == SensorsWidget::SensorType::accelerometer
+			|| sensorType == SensorsWidget::SensorType::camera) {
 		AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
 		mIndicators.reserve(1);
+		mIndicators.resize(1);
 
 		if (indicator) {
 			mLayout.addWidget(indicator);
@@ -106,6 +110,9 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
 	}
 	case SensorType::accelerometer: {
 		return new AccelerometerWidget(*mBrick.accelerometer(), this);
+	}
+	case SensorType::camera: {
+		return new CameraWidget(mBrick, this);
 	}
 	}
 

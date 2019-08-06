@@ -80,6 +80,8 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 	testingItem->appendRow(new QStandardItem(tr("Accelerometer")));
 
+	testingItem->appendRow(new QStandardItem(tr("Camera")));
+
 	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
 	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 	moreItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
@@ -168,6 +170,11 @@ void StartWidget::launch()
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Accelerometer")) {
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
+			emit newWidget(sensorsWidget);
+
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Camera")) {
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::camera);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();

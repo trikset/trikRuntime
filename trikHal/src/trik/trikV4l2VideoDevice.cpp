@@ -286,6 +286,8 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	if (mFrame.size() / 4 * 2 != IMAGE_HEIGHT * IMAGE_WIDTH) {
 		QLOG_ERROR() << "V4l2: unexpected size of getted image, expect " << IMAGE_HEIGHT * IMAGE_WIDTH
 				<< "bytes, got " << mFrame.size() / 4 * 2 << " bytes";
+		mFrame = QVector<uint8_t>();
+		return mFrame;
 	}
 
 	mFrame = mConvertFunc(mFrame, IMAGE_HEIGHT, IMAGE_WIDTH);
