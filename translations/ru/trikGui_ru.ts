@@ -279,7 +279,7 @@
 <context>
     <name>trikGui::LanguageSelectionWidget</name>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+40"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+32"/>
         <source>Select language:</source>
         <translation>Выберите язык:</translation>
     </message>
@@ -300,8 +300,8 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>GUI will now restart</source>
-        <translation>Сейчас произойдёт перезапуск</translation>
+        <source>GUI will now restart. Do you want to continue?</source>
+        <translation>Контроллер сейчас перегрузится. Вы действительно хотите продолжить?</translation>
     </message>
 </context>
 <context>

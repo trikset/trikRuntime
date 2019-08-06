@@ -240,7 +240,7 @@
 <context>
     <name>trikGui::LanguageSelectionWidget</name>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+40"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+32"/>
         <source>Select language:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -261,7 +261,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>GUI will now restart</source>
+        <source>GUI will now restart. Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
