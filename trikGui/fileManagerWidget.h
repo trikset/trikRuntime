@@ -65,7 +65,6 @@ private:
 	void remove();
 	void removeAll();
 	QString currentPath();
-	bool isDeleteAllName(const QModelIndex &index) const;
 
 	QVBoxLayout mLayout;
 	QLabel mCurrentPathLabel;
