@@ -83,7 +83,7 @@ void LanguageSelectionWidget::keyPressEvent(QKeyEvent *event)
 			settings.setValue("locale", selectedLocale);
 			settings.sync();
 
-			QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Warning")
+			auto reply = QMessageBox::warning(this, tr("Warning")
 					, tr("GUI will now restart. Do you want to continue?")
 					, QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
