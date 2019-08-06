@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "audioSynthDevices.h"
+#include "audioSynthDevice.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
@@ -26,7 +26,6 @@ namespace trikControl {
 class TonePlayer : public QObject
 {
 	Q_OBJECT
-
 public:
 
 	/// Constructor
@@ -40,13 +39,15 @@ public slots:
 private:
 	QAudioFormat mFormat;
 
-	AudioSynthDevice *mDevice; // Has ownership.
-
-	QAudioOutput *mOutput; // Has ownership.
-
+	QScopedPointer<AudioSynthDevice> mDevice;
+	QScopedPointer<QAudioOutput> mOutput;
 	QTimer mTimer;
 
 	void initializeAudio();
+
+	static const int channelCount = 1;
+	static const int sampleRate = 16000;
+	static const int sampleSize = 16;
 
 public slots:
 	/// Stop playing

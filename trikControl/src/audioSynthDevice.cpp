@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "audioSynthDevices.h"
+#include "audioSynthDevice.h"
 
 #include <QtMultimedia/QAudioDeviceInfo>
 #include <qmath.h>
+#include <QsLog.h>
 
-AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSize)
+AudioSynthDevice::AudioSynthDevice(int sampleRate, int sampleSize, QObject *parent)
 	: QIODevice(parent)
 	, mBuffer(0)
 	, mPos(0)
@@ -25,15 +26,11 @@ AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSi
 	, mSampleRate(sampleRate)
 	, mSampleSize(sampleSize)
 {
-	open(QIODevice::ReadOnly);
-}
-
-AudioSynthDevice::~AudioSynthDevice()
-{
 }
 
 void AudioSynthDevice::start(int hzFreq)
 {
+	open(QIODevice::ReadOnly);
 	reset();
 	mPos = 0;
 	mHzFreq = hzFreq;
@@ -53,13 +50,14 @@ void AudioSynthDevice::start(int hzFreq)
 
 void AudioSynthDevice::stop()
 {
-	reset();
+	close();
 	mHzFreq = 0;
 }
 
 // Modified coupled first-order form algorithm with fixed point arithmetic
 int AudioSynthDevice::generate(char *data, int length)
 {
+	QLOG_INFO() << "Started data generation of length" << length;
 	if(mHzFreq == 0)
 		return 0;
 
