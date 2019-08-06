@@ -16,20 +16,12 @@
 
 #include <QsLog.h>
 
-#include <QtCore/QSettings>
-#include <QtCore/QSettings>
-#include <QtCore/QDir>
-#include <QtCore/QDirIterator>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-	#include <QtGui/QMessageBox>
-#else
-	#include <QtWidgets/QApplication>
-	#include <QtWidgets/QMessageBox>
-#endif
-
-#include <QtGui/QKeyEvent>
+#include <QSettings>
+#include <QDir>
+#include <QDirIterator>
+#include <QApplication>
+#include <QMessageBox>
+#include <QKeyEvent>
 
 #include <trikKernel/paths.h>
 
@@ -91,12 +83,13 @@ void LanguageSelectionWidget::keyPressEvent(QKeyEvent *event)
 			settings.setValue("locale", selectedLocale);
 			settings.sync();
 
-			QMessageBox restartMessageBox(QMessageBox::Warning, tr("Warning")
-					, tr("GUI will now restart"), QMessageBox::Ok);
+			QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Warning")
+					, tr("GUI will now restart. Do you want to continue?")
+					, QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
-			restartMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
-			restartMessageBox.exec();
-			QApplication::exit(0);
+			if (reply == QMessageBox::Yes) {
+				QApplication::exit(0);
+			}
 			break;
 		}
 		default: {
