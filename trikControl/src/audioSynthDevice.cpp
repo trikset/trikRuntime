@@ -57,7 +57,6 @@ void AudioSynthDevice::stop()
 // Modified coupled first-order form algorithm with fixed point arithmetic
 int AudioSynthDevice::generate(char *data, int length)
 {
-	QLOG_INFO() << "Started data generation of length" << length;
 	if(mHzFreq == 0)
 		return 0;
 
