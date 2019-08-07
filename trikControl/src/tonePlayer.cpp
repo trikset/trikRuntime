@@ -81,4 +81,5 @@ void TonePlayer::play(int hzFreq, int msDuration)
 void TonePlayer::stop()
 {
 	mDevice->stop();
+	mTimer.stop();
 }
