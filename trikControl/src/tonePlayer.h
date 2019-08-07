@@ -45,9 +45,9 @@ private:
 
 	void initializeAudio();
 
-	static const int channelCount = 1;
-	static const int sampleRate = 16000;
-	static const int sampleSize = 16;
+	static constexpr int CHANNEL_COUNT = 1;
+	static constexpr int SAMPLE_RATE = 16000;
+	static constexpr int SAMPLE_SIZE = 16;
 
 public slots:
 	/// Stop playing

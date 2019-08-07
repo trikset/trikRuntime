@@ -28,9 +28,9 @@ TonePlayer::TonePlayer()
 
 void TonePlayer::initializeAudio()
 {
-	mFormat.setChannelCount(channelCount);
-	mFormat.setSampleRate(sampleRate);
-	mFormat.setSampleSize(sampleSize);
+	mFormat.setChannelCount(CHANNEL_COUNT);
+	mFormat.setSampleRate(SAMPLE_RATE);
+	mFormat.setSampleSize(SAMPLE_SIZE);
 	mFormat.setSampleType(QAudioFormat::SampleType::SignedInt);
 	mFormat.setCodec("audio/pcm");
 
@@ -68,7 +68,9 @@ void TonePlayer::play(int hzFreq, int msDuration)
 		case QAudio::IdleState:
 			mOutput->start(mDevice);
 			break;
-		default:
+		case QAudio::InterruptedState:
+				QLOG_ERROR() << "Audio device was interrupted previously";
+				mOutput->start(mDevice);
 			break;
 	}
 
