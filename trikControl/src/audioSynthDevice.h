@@ -25,7 +25,7 @@ class AudioSynthDevice : public QIODevice
 
 public:
 	/// Constructor
-	AudioSynthDevice(int sampleRate, int sampleSize, QObject *parent);
+	AudioSynthDevice(int sampleRate, int sampleSize, QObject *parent = nullptr);
 
 	~AudioSynthDevice() = default;
 
