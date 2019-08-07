@@ -11,7 +11,7 @@ case $TRAVIS_OS_NAME in
     EXECUTOR="scripts/with_pyenv "
     ;;
   linux)
-    EXECUTOR="docker exec builder "
+    EXECUTOR="docker exec --interactive builder "
    ;;
   *) exit 1 ;;
 esac
