@@ -22,8 +22,8 @@ TonePlayer::TonePlayer()
 {
 	mTimer.setSingleShot(true);
 	initializeAudio();
-	mDevice.reset(new AudioSynthDevice(mFormat.sampleRate(), mFormat.sampleSize(), this));
-	mOutput.reset(new QAudioOutput(mFormat, this));
+	mDevice = new AudioSynthDevice(mFormat.sampleRate(), mFormat.sampleSize(), this);
+	mOutput = new QAudioOutput(mFormat, this);
 }
 
 void TonePlayer::initializeAudio()
@@ -63,10 +63,12 @@ void TonePlayer::play(int hzFreq, int msDuration)
 			mOutput->resume();
 			break;
 		case QAudio::StoppedState:
-			mOutput->start(mDevice.data());
+			mOutput->start(mDevice);
 			break;
 		case QAudio::IdleState:
-			mOutput->start(mDevice.data());
+			mOutput->start(mDevice);
+			break;
+		default:
 			break;
 	}
 

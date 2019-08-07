@@ -39,8 +39,8 @@ public slots:
 private:
 	QAudioFormat mFormat;
 
-	QScopedPointer<AudioSynthDevice> mDevice;
-	QScopedPointer<QAudioOutput> mOutput;
+	AudioSynthDevice *mDevice; // Has ownership
+	QAudioOutput *mOutput; // Has ownership
 	QTimer mTimer;
 
 	void initializeAudio();
