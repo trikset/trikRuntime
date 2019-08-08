@@ -25,9 +25,9 @@ class AudioSynthDevice : public QIODevice
 
 public:
 	/// Constructor
-	AudioSynthDevice(QObject *parent, int sampleRate, int sampleSize);
+	AudioSynthDevice(int sampleRate, int sampleSize, QObject *parent = nullptr);
 
-	~AudioSynthDevice();
+	~AudioSynthDevice() = default;
 
 	/// Provides reading from device
 	qint64 readData(char *data, qint64 maxlen);

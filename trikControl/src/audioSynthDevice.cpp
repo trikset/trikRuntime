@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "audioSynthDevices.h"
+#include "audioSynthDevice.h"
 
 #include <QtMultimedia/QAudioDeviceInfo>
 #include <qmath.h>
+#include <QsLog.h>
 
-AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSize)
+AudioSynthDevice::AudioSynthDevice(int sampleRate, int sampleSize, QObject *parent)
 	: QIODevice(parent)
 	, mBuffer(0)
 	, mPos(0)
@@ -25,15 +26,11 @@ AudioSynthDevice::AudioSynthDevice(QObject *parent, int sampleRate, int sampleSi
 	, mSampleRate(sampleRate)
 	, mSampleSize(sampleSize)
 {
-	open(QIODevice::ReadOnly);
-}
-
-AudioSynthDevice::~AudioSynthDevice()
-{
 }
 
 void AudioSynthDevice::start(int hzFreq)
 {
+	open(QIODevice::ReadOnly);
 	reset();
 	mPos = 0;
 	mHzFreq = hzFreq;
@@ -53,7 +50,7 @@ void AudioSynthDevice::start(int hzFreq)
 
 void AudioSynthDevice::stop()
 {
-	reset();
+	close();
 	mHzFreq = 0;
 }
 

@@ -12,50 +12,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-
 #include "tonePlayer.h"
 
+#include <QsLog.h>
 
-namespace trikControl{
+using namespace trikControl;
 
 TonePlayer::TonePlayer()
 {
 	mTimer.setSingleShot(true);
 	initializeAudio();
-	mDevice = new AudioSynthDevice(this, mFormat.sampleRate(), mFormat.sampleSize());
+	mDevice = new AudioSynthDevice(mFormat.sampleRate(), mFormat.sampleSize(), this);
 	mOutput = new QAudioOutput(mFormat, this);
 }
 
 void TonePlayer::initializeAudio()
 {
-
-	mFormat.setChannelCount(1);
-	mFormat.setSampleRate(16000);
-	mFormat.setSampleSize(16);
+	mFormat.setChannelCount(CHANNEL_COUNT);
+	mFormat.setSampleRate(SAMPLE_RATE);
+	mFormat.setSampleSize(SAMPLE_SIZE);
 	mFormat.setSampleType(QAudioFormat::SampleType::SignedInt);
 	mFormat.setCodec("audio/pcm");
 
-	connect(&mTimer, SIGNAL(timeout()), this, SLOT(stop()));
+	connect(&mTimer, &QTimer::timeout, this, &TonePlayer::stop);
 
 	QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
 	if (!info.isFormatSupported(mFormat)) {
 		mFormat = info.nearestFormat(mFormat);
+		QLOG_INFO() << "Specified format is not supported. The nearest one is:"
+					<< "channel count: " << mFormat.channelCount() << ";"
+					<< "sample rate: " << mFormat.sampleRate() << ";"
+					<< "sample size: " << mFormat.sampleSize() << ";"
+					<< "sample type: " << mFormat.sampleType() << ";"
+					<< "codec: " << mFormat.codec();
 	}
 }
 
 void TonePlayer::play(int hzFreq, int msDuration)
 {
 	mDevice->start(hzFreq);
-	switch (mOutput->state()) {
+	const auto state = mOutput->state();
+	QLOG_INFO() << "Device started. Output state is" << state;
+	switch (state) {
 		case QAudio::ActiveState:
 			mOutput->suspend();
 			mDevice->reset();
 			mOutput->resume();
 			break;
-		case QAudio::SuspendedState: mOutput->resume(); break;
-		case QAudio::StoppedState:   mOutput->start(mDevice); break;
-		case QAudio::IdleState:      mOutput->start(mDevice); break;
-		default: break;
+		case QAudio::SuspendedState:
+			mOutput->resume();
+			break;
+		case QAudio::StoppedState:
+			mOutput->start(mDevice);
+			break;
+		case QAudio::IdleState:
+			mOutput->start(mDevice);
+			break;
+		case QAudio::InterruptedState:
+				QLOG_ERROR() << "Audio device was interrupted previously";
+				mOutput->start(mDevice);
+			break;
 	}
 
 	mTimer.setInterval(msDuration);
@@ -66,5 +82,4 @@ void TonePlayer::stop()
 {
 	mDevice->stop();
 	mTimer.stop();
-}
 }
