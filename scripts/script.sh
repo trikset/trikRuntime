@@ -17,7 +17,9 @@ case $TRAVIS_OS_NAME in
 esac
 
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
-if [ "$VERA" = "true" ]; then git diff --name-only ${TRAVIS_COMMIT_RANGE} | xargs file -i | grep text/x-c | cut -f 1 -d :  | $EXECUTOR vera++ --error --root vera++ --profile strict ; fi
+if [ "$VERA" = "true" ]; then git diff --name-only ${TRAVIS_COMMIT_RANGE} \
+	| xargs -r file -i | sed -e "s|\(.*\): text/x-c.*|\1|g" -e "/:/d"  \
+	| $EXECUTOR vera++ --error --root vera++ --profile strict ; fi
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
 
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
