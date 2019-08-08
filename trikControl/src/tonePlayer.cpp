@@ -34,7 +34,7 @@ void TonePlayer::initializeAudio()
 	mFormat.setSampleType(QAudioFormat::SampleType::SignedInt);
 	mFormat.setCodec("audio/pcm");
 
-	connect(&mTimer, SIGNAL(timeout()), this, SLOT(stop()));
+	connect(&mTimer, &QTimer::timeout, this, &TonePlayer::stop);
 
 	QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
 	if (!info.isFormatSupported(mFormat)) {
