@@ -24,11 +24,11 @@ WiFiIndicator::WiFiIndicator(Controller &controller, QWidget *parent)
 	: QLabel(parent)
 	, mController(controller)
 {
-	connect(&mController, SIGNAL(wiFiConnected()), this, SLOT(setOn()));
-	connect(&mController, SIGNAL(wiFiDisconnected()), this, SLOT(setOff()));
+	connect(&mController, &Controller::wiFiConnected, this, &WiFiIndicator::setOn);
+	connect(&mController, &Controller::wiFiDisconnected, this, &WiFiIndicator::setOff);
 
 	updateStatus();
-	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+	connect(&mUpdateTimer, &QTimer::timeout, this, &WiFiIndicator::updateStatus);
 	mUpdateTimer.start(7000);
 }
 

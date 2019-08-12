@@ -52,7 +52,6 @@ private slots:
 	void updateStatus();
 
 private:
-
 	QTimer mUpdateTimer;
 	Controller &mController;
 	WiFiModeWidget::Mode mMode;
