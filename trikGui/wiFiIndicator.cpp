@@ -82,11 +82,11 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 				bool res;
 				auto strength = QString(strengthProcess.readAllStandardOutput()).toInt(&res);
 				if (res) {
-					if (strength >= -110 && strength <= -90) {
+					if (strength <= -70) {
 						setLowStrength();
-					} else if (strength > -90 && strength <= -55) {
+					} else if (strength > -70 && strength <= -50) {
 						setMediumStrength();
-					} else if (strength > -55 && strength <= -40) {
+					} else if (strength > -50) {
 						setHighStrength();
 					}
 				} else {
