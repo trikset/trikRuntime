@@ -1,9 +1,18 @@
 ************************************************************************
 Not in type system
+<enum-type name="enum_2"/>
+<enum-type name="enum_3"/>
 ************************************************************************
 
 ************************************************************************
 Generation disabled by type system
+<enum-type name="QFont::ResolveProperties"/>
+<enum-type name="QGradient::InterpolationMode"/>
+<enum-type name="QSysInfo::MacVersion"/>
+<enum-type name="QSysInfo::WinVersion"/>
+<enum-type name="Qt::Initialization"/>
+<enum-type name="Qt::Modifier"/>
+<enum-type name="enum_1"/>
 ************************************************************************
 
 ************************************************************************
