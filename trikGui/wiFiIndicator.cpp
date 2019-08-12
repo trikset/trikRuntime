@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QProcess>
+
 #include "wiFiIndicator.h"
 
 #include "trikKernel/paths.h"
@@ -50,14 +52,46 @@ void WiFiIndicator::setAPOn()
 	setPixmap(icon);
 }
 
-void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode, bool connected)
+void WiFiIndicator::setLowStrength()
+{
+	QPixmap icon("://resources/wifi-signal-low.png");
+	setPixmap(icon);
+}
+
+void WiFiIndicator::setMediumStrength()
+{
+	QPixmap icon("://resources/wifi-signal-medium.png");
+	setPixmap(icon);
+}
+
+void WiFiIndicator::setHighStrength()
+{
+	QPixmap icon("://resources/wifi-signal-high.png");
+	setPixmap(icon);
+}
+
+void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 {
 	mMode = mode;
-
 	switch (mode) {
 		case WiFiModeWidget::client:
-			if (connected) {
-				setOn();
+			if (mController.wiFi().statusResult().connected) {
+				QProcess strengthProcess;
+				strengthProcess.start("/usr/share/trik/wifi_strength.sh");
+				strengthProcess.waitForFinished();
+				bool res;
+				auto strength = QString(strengthProcess.readAllStandardOutput()).toInt(&res);
+				if (res) {
+					if (strength >= -110 && strength <= -90) {
+						setLowStrength();
+					} else if (strength > -90 && strength <= -55) {
+						setMediumStrength();
+					} else if (strength > -55 && strength <= -40) {
+						setHighStrength();
+					}
+				} else {
+					setOn();
+				}
 			} else {
 				setOff();
 			}
@@ -66,7 +100,6 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode, bool connected)
 			setAPOn();
 			break;
 		case WiFiModeWidget::unknown:
-		default:
 			setOff();
 	}
 }
@@ -85,5 +118,5 @@ void WiFiIndicator::updateStatus()
 		wiFiMode = WiFiModeWidget::unknown;
 	}
 
-	changeMode(wiFiMode, wiFiMode == WiFiModeWidget::client && mController.wiFi().statusResult().connected);
+	changeMode(wiFiMode);
 }
