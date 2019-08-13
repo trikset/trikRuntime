@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QProcess>
-
 #include "wiFiIndicator.h"
 
 #include "trikKernel/paths.h"
+#include "trikWiFi/networkStructs.h"
 
 using namespace trikGui;
+using namespace trikWiFi;
 
 WiFiIndicator::WiFiIndicator(Controller &controller, QWidget *parent)
 	: QLabel(parent)
@@ -76,21 +76,19 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 	switch (mode) {
 		case WiFiModeWidget::client:
 			if (mController.wiFi().statusResult().connected) {
-				QProcess strengthProcess;
-				strengthProcess.start("/usr/share/trik/wifi_strength.sh");
-				strengthProcess.waitForFinished();
-				bool res;
-				auto strength = QString(strengthProcess.readAllStandardOutput()).toInt(&res);
-				if (res) {
-					if (strength <= -70) {
+				switch (mController.wiFi().signalStrength()) {
+					case SignalStrength::undefined:
+						setOn();
+						break;
+					case SignalStrength::low:
 						setLowStrength();
-					} else if (strength > -70 && strength <= -50) {
+						break;
+					case SignalStrength::medium:
 						setMediumStrength();
-					} else if (strength > -50) {
+						break;
+					case SignalStrength::high:
 						setHighStrength();
-					}
-				} else {
-					setOn();
+						break;
 				}
 			} else {
 				setOff();

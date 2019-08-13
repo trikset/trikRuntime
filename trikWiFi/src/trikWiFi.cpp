@@ -15,6 +15,10 @@
 #include "trikWiFi.h"
 
 #include <QsLog.h>
+#include <sys/socket.h>
+#include <linux/wireless.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "trikWiFiWorker.h"
 
@@ -61,6 +65,35 @@ void TrikWiFi::reinit()
 void TrikWiFi::dispose()
 {
 	QMetaObject::invokeMethod(mWorker.data(), "dispose");
+}
+
+SignalStrength TrikWiFi::signalStrength()
+{
+	iwreq req;
+	auto iwname = "wlan0";
+	strcpy(req.ifr_name, iwname);
+
+	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	req.u.data.pointer = (iw_statistics *)malloc(sizeof(iw_statistics));
+	req.u.data.length = sizeof(iw_statistics);
+
+	if (ioctl(sockfd, SIOCGIWSTATS, &req) == -1) {
+		QLOG_ERROR() << "Access to invalid interface about signal strength";
+		close(sockfd);
+		return SignalStrength::undefined;
+	} else if (((iw_statistics *)req.u.data.pointer)->qual.updated & IW_QUAL_DBM) {
+		//signal is measured in dBm and is valid for us to use
+		auto level = ((iw_statistics *)req.u.data.pointer)->qual.level - 256;
+		close(sockfd);
+		if (level < -70) {
+			return SignalStrength::low;
+		} else if (level > -50) {
+			return SignalStrength::high;
+		} else {
+			return SignalStrength::medium;
+		}
+	}
 }
 
 void TrikWiFi::connect(const QString &ssid)
