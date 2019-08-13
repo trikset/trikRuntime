@@ -162,3 +162,20 @@ TEST_F(TrikScriptRunnerTest, twoProgramsTest)
 	scriptRunner().run("script.wait(500);");
 	tests::utils::Wait::wait(600);
 }
+
+
+TEST_F(TrikScriptRunnerTest, pythonInitEngine)
+{
+	scriptRunner().run("print(0)", "dummy.py");
+}
+
+TEST_F(TrikScriptRunnerTest, DISABLED_pythonAccessQtCore)
+{
+	scriptRunner().run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)", "dummy.py");
+}
+
+TEST_F(TrikScriptRunnerTest, DISABLED_pythonScriptWait)
+{
+	scriptRunner().run("script.wait(500)", "dummy.py");
+	tests::utils::Wait::wait(600);
+}
