@@ -86,7 +86,6 @@ SignalStrength TrikWiFi::signalStrength()
 		close(sockfd);
 		return SignalStrength::undefined;
 	} else if (((iw_statistics *)req.u.data.pointer)->qual.updated & IW_QUAL_DBM) {
-		//signal is measured in dBm and is valid for us to use
 		auto level = ((iw_statistics *)req.u.data.pointer)->qual.level - 256;
 		close(sockfd);
 		if (level < -70) {

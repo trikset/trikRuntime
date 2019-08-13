@@ -70,6 +70,7 @@ public:
 	/// Closes the connection to wpa_supplicant.
 	void dispose();
 
+	/// Return signal strength of current Wi-Fi connection
 	SignalStrength signalStrength();
 
 signals:
