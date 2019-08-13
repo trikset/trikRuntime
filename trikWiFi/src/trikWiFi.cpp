@@ -15,10 +15,12 @@
 #include "trikWiFi.h"
 
 #include <QsLog.h>
+#ifdef Q_OS_LINUX
 #include <sys/socket.h>
 #include <linux/wireless.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#endif
 
 #include "trikWiFiWorker.h"
 
@@ -69,6 +71,7 @@ void TrikWiFi::dispose()
 
 SignalStrength TrikWiFi::signalStrength()
 {
+#ifdef Q_OS_LINUX
 	iwreq req;
 	auto iwname = "wlan0";
 	strcpy(req.ifr_name, iwname);
@@ -94,6 +97,9 @@ SignalStrength TrikWiFi::signalStrength()
 			return SignalStrength::medium;
 		}
 	}
+#else
+	return SignalStrength::undefined;
+#endif
 }
 
 void TrikWiFi::connect(const QString &ssid)
