@@ -41,6 +41,14 @@ enum class DisconnectReason
 	, unplanned
 };
 
+enum class SignalStrength
+{
+	undefined
+	, low
+	, medium
+	, high
+};
+
 /// Contains info about current connection.
 struct Status
 {

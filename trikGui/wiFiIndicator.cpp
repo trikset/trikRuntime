@@ -15,18 +15,20 @@
 #include "wiFiIndicator.h"
 
 #include "trikKernel/paths.h"
+#include "trikWiFi/networkStructs.h"
 
 using namespace trikGui;
+using namespace trikWiFi;
 
 WiFiIndicator::WiFiIndicator(Controller &controller, QWidget *parent)
 	: QLabel(parent)
 	, mController(controller)
 {
-	connect(&mController, SIGNAL(wiFiConnected()), this, SLOT(setOn()));
-	connect(&mController, SIGNAL(wiFiDisconnected()), this, SLOT(setOff()));
+	connect(&mController, &Controller::wiFiConnected, this, &WiFiIndicator::setOn);
+	connect(&mController, &Controller::wiFiDisconnected, this, &WiFiIndicator::setOff);
 
 	updateStatus();
-	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+	connect(&mUpdateTimer, &QTimer::timeout, this, &WiFiIndicator::updateStatus);
 	mUpdateTimer.start(7000);
 }
 
@@ -50,14 +52,44 @@ void WiFiIndicator::setAPOn()
 	setPixmap(icon);
 }
 
-void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode, bool connected)
+void WiFiIndicator::setLowStrength()
+{
+	QPixmap icon("://resources/wifi-signal-low.png");
+	setPixmap(icon);
+}
+
+void WiFiIndicator::setMediumStrength()
+{
+	QPixmap icon("://resources/wifi-signal-medium.png");
+	setPixmap(icon);
+}
+
+void WiFiIndicator::setHighStrength()
+{
+	QPixmap icon("://resources/wifi-signal-high.png");
+	setPixmap(icon);
+}
+
+void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 {
 	mMode = mode;
-
 	switch (mode) {
 		case WiFiModeWidget::client:
-			if (connected) {
-				setOn();
+			if (mController.wiFi().statusResult().connected) {
+				switch (mController.wiFi().signalStrength()) {
+					case SignalStrength::undefined:
+						setOn();
+						break;
+					case SignalStrength::low:
+						setLowStrength();
+						break;
+					case SignalStrength::medium:
+						setMediumStrength();
+						break;
+					case SignalStrength::high:
+						setHighStrength();
+						break;
+				}
 			} else {
 				setOff();
 			}
@@ -66,7 +98,6 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode, bool connected)
 			setAPOn();
 			break;
 		case WiFiModeWidget::unknown:
-		default:
 			setOff();
 	}
 }
@@ -85,5 +116,5 @@ void WiFiIndicator::updateStatus()
 		wiFiMode = WiFiModeWidget::unknown;
 	}
 
-	changeMode(wiFiMode, wiFiMode == WiFiModeWidget::client && mController.wiFi().statusResult().connected);
+	changeMode(wiFiMode);
 }
