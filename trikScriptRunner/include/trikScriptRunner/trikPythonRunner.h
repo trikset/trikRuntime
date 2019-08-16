@@ -42,7 +42,7 @@ public:
 					 , trikNetwork::MailboxInterface * const mailbox
 					 );
 
-	~TrikPythonRunner();
+	~TrikPythonRunner() override;
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
