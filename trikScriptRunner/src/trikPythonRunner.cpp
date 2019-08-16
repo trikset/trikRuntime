@@ -31,25 +31,22 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
+
 	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
 	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
 
 	mWorkerThread.start();
-
-	QMetaObject::invokeMethod(mScriptEngineWorker, "init"); /// create Python main module
-
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 }
 
 TrikPythonRunner::~TrikPythonRunner()
 {
 	mScriptEngineWorker->stopScript();
-	mScriptEngineWorker->deleteLater();
+	delete mScriptEngineWorker;
 
-	QMetaObject::invokeMethod(&mWorkerThread, "quit");
+	mWorkerThread.quit();
 	mWorkerThread.wait(1000);
-
-	mWorkerThread.deleteLater();
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
