@@ -112,11 +112,6 @@ void GuiWorker::removeLabels()
 	repaintGraphicsWidget();
 }
 
-void GuiWorker::deleteWorker()
-{
-	deleteLater();
-}
-
 void GuiWorker::setBackground(const QString &color)
 {
 	QPalette palette = mImageWidget->palette();

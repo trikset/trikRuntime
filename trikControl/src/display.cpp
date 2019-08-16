@@ -43,8 +43,7 @@ trikControl::Display::Display(const QString &mediaPath)
 
 trikControl::Display::~Display()
 {
-	QMetaObject::invokeMethod(mGuiWorker, "deleteWorker");
-	qApp->thread()->wait(1000);
+	mGuiWorker->deleteLater();
 }
 
 trikControl::DisplayWidgetInterface &trikControl::Display::graphicsWidget()
