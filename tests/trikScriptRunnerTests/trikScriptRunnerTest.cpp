@@ -51,12 +51,12 @@ void TrikScriptRunnerTest::TearDown()
 {
 }
 
-void TrikScriptRunnerTest::run(const QString &script)
+void TrikScriptRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop waitingLoop;
-	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
-	mScriptRunner->run(script);
-
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
+					 , &waitingLoop, &QEventLoop::quit);
+	mScriptRunner->run(script, file);
 	waitingLoop.exec();
 }
 
@@ -77,7 +77,7 @@ void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 	fileContents = fileContents.replace("&&", ";");
 #endif
 
-	run(fileContents);
+	run(fileContents, fileName);
 }
 
 trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
@@ -85,12 +85,12 @@ trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
 	return *mScriptRunner;
 }
 
-TEST_F(TrikScriptRunnerTest, sanityCheck)
+TEST_F(TrikScriptRunnerTest, sanityCheckJs)
 {
-	run("1 + 1");
+	run("1 + 1", "_.js");
 }
 
-TEST_F(TrikScriptRunnerTest, fileTest)
+TEST_F(TrikScriptRunnerTest, fileTestJs)
 {
 	runFromFile("file-test.js");
 }
@@ -160,5 +160,26 @@ TEST_F(TrikScriptRunnerTest, twoProgramsTest)
 	scriptRunner().run("script.wait(500);");
 	tests::utils::Wait::wait(100);
 	scriptRunner().run("script.wait(500);");
+	tests::utils::Wait::wait(600);
+}
+
+TEST_F(TrikScriptRunnerTest, DISABLED_sanityCheckPy)
+{
+	run("1 + 1", "_.py");
+}
+
+TEST_F(TrikScriptRunnerTest, DISABLED_fileTestPy)
+{
+	runFromFile("file-test.py");
+}
+
+TEST_F(TrikScriptRunnerTest, DISABLED_pythonAccessQtCore)
+{
+	run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)", "_.py");
+}
+
+TEST_F(TrikScriptRunnerTest, DISABLED_pythonScriptWait)
+{
+	scriptRunner().run("script.wait(500)", "_.py");
 	tests::utils::Wait::wait(600);
 }
