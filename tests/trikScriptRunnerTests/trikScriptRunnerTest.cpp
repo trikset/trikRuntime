@@ -20,6 +20,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikKernel/fileUtils.h>
 #include <testUtils/wait.h>
+#include <QTimer>
 
 using namespace tests;
 
@@ -51,13 +52,13 @@ void TrikScriptRunnerTest::TearDown()
 {
 }
 
-void TrikScriptRunnerTest::run(const QString &script, const QString &file)
+int TrikScriptRunnerTest::run(const QString &script, const QString &file)
 {
-	QEventLoop waitingLoop;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &waitingLoop, &QEventLoop::quit);
+	QEventLoop wait;
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
 	mScriptRunner->run(script, file);
-	waitingLoop.exec();
+	return wait.exec();
 }
 
 void TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
@@ -69,7 +70,7 @@ void TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	waitingLoop.exec();
 }
 
-void TrikScriptRunnerTest::runFromFile(const QString &fileName)
+int TrikScriptRunnerTest::runFromFile(const QString &fileName)
 {
 	auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
 
@@ -77,7 +78,7 @@ void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 	fileContents = fileContents.replace("&&", ";");
 #endif
 
-	run(fileContents, fileName);
+	return run(fileContents, fileName);
 }
 
 trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
@@ -87,12 +88,14 @@ trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
 
 TEST_F(TrikScriptRunnerTest, sanityCheckJs)
 {
-	run("1 + 1", "_.js");
+	auto errCode = run("1 + 1", "_.js");
+	ASSERT_EQ(errCode, 0);
 }
 
 TEST_F(TrikScriptRunnerTest, fileTestJs)
 {
-	runFromFile("file-test.js");
+	auto errCode = runFromFile("file-test.js");
+	ASSERT_EQ(errCode, 0);
 }
 
 #ifndef Q_OS_WIN

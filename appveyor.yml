@@ -65,7 +65,8 @@ test_script:
   - .\trikCameraPhotoTests
 
 on_finish:
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+# Uncomment to pause build for RDP connection
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 artifacts:
  - path: .build\bin\x86-$(configuration)

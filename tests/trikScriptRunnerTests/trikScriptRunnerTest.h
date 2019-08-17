@@ -29,9 +29,9 @@ protected:
 	void SetUp() override;
 	void TearDown() override;
 
-	void run(const QString &script, const QString &file);
+	int run(const QString &script, const QString &file);
 	void runDirectCommandAndWaitForQuit(const QString &script);
-	void runFromFile(const QString &fileName);
+	int runFromFile(const QString &fileName);
 
 	trikScriptRunner::TrikScriptRunner &scriptRunner();
 
