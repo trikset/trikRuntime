@@ -151,9 +151,13 @@ unix:!nosanitizers {
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
 		# Ubsan is turned on by default
 		CONFIG += sanitizer sanitize_undefined
+		QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-undefined-trap-on-error
 	}
 
-
+	CONFIG(sanitize_address) {
+	# GCC 5.5 does not know this
+	#	QMAKE_SANITIZE_ADDRESS_CXXFLAGS += -fsanitize-address-use-after-scope
+	}
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
 	CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!macx-clang { CONFIG += sanitize_leak }
