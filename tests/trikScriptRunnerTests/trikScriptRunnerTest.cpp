@@ -56,13 +56,14 @@ int TrikScriptRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
 					 , &wait, [&alreadyCompleted]()
 	{
 		alreadyCompleted = true;
 	} ) ;
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+
 	mScriptRunner->run(script, file);
 	auto exitCode = 0;
 	if (!alreadyCompleted) {

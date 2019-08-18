@@ -550,22 +550,22 @@ void Brick::createDevice(const QString &port)
 			mLineSensors.insert(port, new LineSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
-			connect(mLineSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mLineSensors[port], &LineSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "objectSensor") {
 			mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
-			connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mObjectSensors[port], &ObjectSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "colorSensor") {
 			mColorSensors.insert(port, new ColorSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
-			connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mColorSensors[port], &ColorSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "soundSensor") {
 			mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one sound sensor launched at a time.
-			connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mSoundSensors[port], &SoundSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {

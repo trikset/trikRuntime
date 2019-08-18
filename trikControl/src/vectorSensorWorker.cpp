@@ -39,7 +39,6 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	mReadingUnsynced = mReading;
 
 	moveToThread(&thread);
-
 	mLastEventTimer.moveToThread(&thread);
 	mLastEventTimer.setInterval(maxEventDelay);
 	mLastEventTimer.setSingleShot(false);
@@ -47,16 +46,13 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	mTryReopenTimer.moveToThread(&thread);
 	mTryReopenTimer.setInterval(reopenDelay);
 	mTryReopenTimer.setSingleShot(false);
+	connect(&mLastEventTimer, &QTimer::timeout, this, &VectorSensorWorker::onSensorHanged);
+	connect(&mTryReopenTimer, &QTimer::timeout, this, &VectorSensorWorker::onTryReopen);
 
 	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
 			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));
-
-	connect(&mLastEventTimer, SIGNAL(timeout()), this, SLOT(onSensorHanged()));
-	connect(&mTryReopenTimer, SIGNAL(timeout()), this, SLOT(onTryReopen()));
-
+	connect(&thread, &QThread::finished, this, &VectorSensorWorker::deinitialize);
 	mEventFile->open();
-	thread.start();
-
 	if (mEventFile->isOpened()) {
 		// Timer should be started in its thread, so doing it via metacall
 		QMetaObject::invokeMethod(&mLastEventTimer, "start");
@@ -67,6 +63,7 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 		QMetaObject::invokeMethod(&mTryReopenTimer, "start");
 		mState.fail();
 	}
+	thread.start();
 }
 
 void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
