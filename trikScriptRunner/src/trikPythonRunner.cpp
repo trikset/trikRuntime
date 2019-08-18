@@ -32,15 +32,12 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
-
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed
 			, this, &TrikPythonRunner::completed);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript
 			, this, &TrikPythonRunner::onScriptStart);
 	connect(&mWorkerThread, &QThread::started
 			, mScriptEngineWorker, &PythonEngineWorker::init);
-	connect(&mWorkerThread, &QThread::finished
-				, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
 
 	mWorkerThread.start();
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;

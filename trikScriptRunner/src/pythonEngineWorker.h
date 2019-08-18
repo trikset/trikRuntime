@@ -137,6 +137,8 @@ private:
 
 	PythonQtObjectPtr mMainContext;
 
+	PyThreadState * mPyInterpreter { nullptr };
+
 	QString mErrorMessage;
 };
 

@@ -32,16 +32,51 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 PythonEngineWorker::~PythonEngineWorker()
 {
 	stopScript();
-	PythonQt::cleanup();
+	mMainContext = PythonQtObjectPtr();
+	if (mPyInterpreter) {
+		Py_EndInterpreter(mPyInterpreter);
+		mPyInterpreter = nullptr;
+	}
+	if (Py_IsInitialized()) {
+		Py_Finalize();
+	}
+	if (PythonQt::self()) {
+		PythonQt::cleanup();
+	}
 }
 
 void PythonEngineWorker::init()
 {
-	// init PythonQt
-	PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
-	connect(PythonQt::self(), &PythonQt::pythonStdErr
-		, this, &PythonEngineWorker::updateErrorMessage);
-	PythonQt_QtAll::init();
+	if (!Py_IsInitialized()) {
+		Py_SetPythonHome(L"SOME_PATH"); //??? Need to set correct one
+
+		Py_SetPath(L"C:\\Python37\\Lib"); //Must point to local .zip file
+
+/* uncommen for verbosity
+		Py_VerboseFlag = 3;
+		Py_InspectFlag = 1;
+		Py_DebugFlag = 2;
+*/
+		Py_IsolatedFlag = 1;
+		Py_BytesWarningFlag = 3;
+		Py_DontWriteBytecodeFlag = 1;
+		Py_NoSiteFlag = 1;
+		Py_NoUserSiteDirectory = 1;
+
+		Py_Initialize();
+	}
+
+	if (!PythonQt::self()) {
+		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
+		PythonQt_QtAll::init();
+		connect(PythonQt::self(), &PythonQt::pythonStdErr
+			, this, &PythonEngineWorker::updateErrorMessage);
+	}
+
+	if (!mPyInterpreter) {
+		mPyInterpreter = Py_NewInterpreter();
+	}
+
 	mMainContext = PythonQt::self()->getMainModule();
 
 	initTrik();
