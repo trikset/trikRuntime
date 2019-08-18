@@ -45,7 +45,7 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
   do
     $EXECUTOR env DISPLAY=:0 \
-    ASAN_OPTIONS="$( [[ $TRAVIS_OS_NAME == linux ]] && echo detect_leaks=1 || :):detect_stack_use_after_return=1:fast_unwind_on_malloc=0:disable_coredump=0:symbolize=1:use_signalstack=0" \
+    ASAN_OPTIONS="$( [[ $TRAVIS_OS_NAME == linux ]] && echo detect_leaks=1:disable_coredump=0 || :):detect_stack_use_after_return=1:fast_unwind_on_malloc=0:symbolize=1:use_signalstack=0" \
     LSAN_OPTIONS="suppressions=lsan.supp:fast_unwind_on_malloc=0" sh -xc \
     "cd  $BUILDDIR/bin/x86-$CONFIG && \
      { \
