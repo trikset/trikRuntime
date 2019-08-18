@@ -150,8 +150,8 @@ unix:!nosanitizers {
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
 		# Ubsan is turned on by default
-		CONFIG += sanitizer sanitize_undefined
-                QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined -fsanitize-undefined-trap-on-error
+		#CONFIG += sanitizer sanitize_undefined
+                #QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined -fsanitize-undefined-trap-on-error
 	}
 
 	CONFIG(sanitize_address) {
