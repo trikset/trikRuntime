@@ -32,6 +32,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 PythonEngineWorker::~PythonEngineWorker()
 {
 	stopScript();
+	PythonQt::cleanup();
 }
 
 void PythonEngineWorker::init()

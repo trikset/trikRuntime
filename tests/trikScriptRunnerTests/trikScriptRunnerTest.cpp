@@ -188,7 +188,7 @@ TEST_F(TrikScriptRunnerTest, twoProgramsTest)
 	tests::utils::Wait::wait(600);
 }
 
-TEST_F(TrikScriptRunnerTest, DISABLED_sanityCheckPy)
+TEST_F(TrikScriptRunnerTest, sanityCheckPy)
 {
 	run("1 + 1", "_.py");
 }
@@ -198,12 +198,12 @@ TEST_F(TrikScriptRunnerTest, DISABLED_fileTestPy)
 	runFromFile("file-test.py");
 }
 
-TEST_F(TrikScriptRunnerTest, DISABLED_pythonAccessQtCore)
+TEST_F(TrikScriptRunnerTest, pythonAccessQtCore)
 {
 	run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)", "_.py");
 }
 
-TEST_F(TrikScriptRunnerTest, DISABLED_pythonScriptWait)
+TEST_F(TrikScriptRunnerTest, pythonScriptWait)
 {
 	scriptRunner().run("script.wait(500)", "_.py");
 	tests::utils::Wait::wait(600);
