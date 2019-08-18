@@ -48,11 +48,12 @@ PythonEngineWorker::~PythonEngineWorker()
 void PythonEngineWorker::init()
 {
 	if (!Py_IsInitialized()) {
-		Py_SetPythonHome(L"SOME_PATH"); //??? Need to set correct one
+		Py_SetPythonHome(const_cast<wchar_t*>(L"SOME_PATH")); //??? Need to set correct one
 
-		Py_SetPath(L"C:\\Python37\\Lib"); //Must point to local .zip file
+		//TODO: Now use PYTHONPATH environment variable (default) until fixed
+		//Py_SetPath(const_cast<wchar_t*>(L"/usr/lib/python3.6")); //Must point to local .zip file
 
-/* uncommen for verbosity
+/* uncomment for verbosity
 		Py_VerboseFlag = 3;
 		Py_InspectFlag = 1;
 		Py_DebugFlag = 2;
