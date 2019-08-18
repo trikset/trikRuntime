@@ -30,7 +30,7 @@ protected:
 	void TearDown() override;
 
 	int run(const QString &script, const QString &file);
-	void runDirectCommandAndWaitForQuit(const QString &script);
+	int runDirectCommandAndWaitForQuit(const QString &script);
 	int runFromFile(const QString &fileName);
 
 	trikScriptRunner::TrikScriptRunner &scriptRunner();

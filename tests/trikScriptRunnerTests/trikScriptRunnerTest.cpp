@@ -61,13 +61,14 @@ int TrikScriptRunnerTest::run(const QString &script, const QString &file)
 	return wait.exec();
 }
 
-void TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
+int TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
-	QEventLoop waitingLoop;
-	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
+	QEventLoop wait;
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 	mScriptRunner->runDirectCommand(script);
 
-	waitingLoop.exec();
+	return wait.exec();
 }
 
 int TrikScriptRunnerTest::runFromFile(const QString &fileName)
@@ -146,7 +147,8 @@ TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
 	QFile testFile("test");
 	testFile.remove();
 	ASSERT_FALSE(testFile.exists());
-	runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
+	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
+	ASSERT_EQ(exitCode, 0);
 	ASSERT_TRUE(testFile.exists());
 
 #ifdef Q_OS_WIN

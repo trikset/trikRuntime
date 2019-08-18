@@ -26,15 +26,19 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	: mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
 {
 	if (mailbox) {
-		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
+		connect(mailbox,  &trikNetwork::MailboxInterface::newMessage
+				, this, &TrikPythonRunner::sendMessageFromMailBox);
 	}
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
 
-	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
-	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
+	connect(mScriptEngineWorker, &PythonEngineWorker::completed
+			, this, &TrikPythonRunner::completed);
+	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript
+			, this, &TrikPythonRunner::onScriptStart);
+	connect(&mWorkerThread, &QThread::started
+			, mScriptEngineWorker, &PythonEngineWorker::init);
 
 	mWorkerThread.start();
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
