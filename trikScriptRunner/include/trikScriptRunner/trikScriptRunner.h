@@ -30,7 +30,7 @@ class BrickInterface;
 namespace trikScriptRunner {
 
 /// General wrapper for other executors (such as Python, JavaScript)
-class TrikScriptRunner : public TrikScriptRunnerInterface
+class TRIKSCRIPTRUNNER_EXPORT TrikScriptRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
 public:

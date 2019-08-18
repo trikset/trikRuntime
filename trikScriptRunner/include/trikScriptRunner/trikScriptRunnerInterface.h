@@ -21,6 +21,13 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
+
+#ifdef TRIKSCRIPTRUNNER_LIBRARY
+#define  TRIKSCRIPTRUNNER_EXPORT Q_DECL_EXPORT
+#else
+#define TRIKSCRIPTRUNNER_EXPORT Q_DECL_IMPORT
+#endif
+
 namespace trikScriptRunner {
 
 enum class ScriptType { // must be 0, 1, ..
@@ -37,7 +44,7 @@ static constexpr typename std::underlying_type<ScriptType>::type to_underlying(S
 
 
 /// Interface for all script executors.
-class TrikScriptRunnerInterface : public QObject
+class TRIKSCRIPTRUNNER_EXPORT TrikScriptRunnerInterface : public QObject
 {
 	Q_OBJECT
 
