@@ -55,20 +55,40 @@ void TrikScriptRunnerTest::TearDown()
 int TrikScriptRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop wait;
+	auto volatile alreadyCompleted = false;
 	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
+					 , &wait, [&alreadyCompleted]()
+	{
+		alreadyCompleted = true;
+	} ) ;
 	mScriptRunner->run(script, file);
-	return wait.exec();
+	auto exitCode = 0;
+	if (!alreadyCompleted) {
+		exitCode = wait.exec();
+	}
+	return exitCode;
 }
 
 int TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop wait;
+	auto volatile alreadyCompleted = false;
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
+					 , &wait, [&alreadyCompleted]()
+	{
+		alreadyCompleted = true;
+	} ) ;
 	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 	mScriptRunner->runDirectCommand(script);
 
-	return wait.exec();
+	auto exitCode = 0;
+	if (!alreadyCompleted) {
+		exitCode = wait.exec();
+	}
+	return exitCode;
 }
 
 int TrikScriptRunnerTest::runFromFile(const QString &fileName)

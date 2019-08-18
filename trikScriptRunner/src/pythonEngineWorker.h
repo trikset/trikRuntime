@@ -42,6 +42,8 @@ public:
 			, trikNetwork::MailboxInterface * const mailbox
 			);
 
+	~PythonEngineWorker();
+
 	/// Clears execution state and stops robot.
 	/// Can be safely called from other threads.
 	void resetBrick();

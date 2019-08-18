@@ -29,11 +29,17 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 	, mState(ready)
 {}
 
+PythonEngineWorker::~PythonEngineWorker()
+{
+	stopScript();
+}
+
 void PythonEngineWorker::init()
 {
 	// init PythonQt
 	PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
-	connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString &)), this, SLOT(updateErrorMessage(const QString &)));
+	connect(PythonQt::self(), &PythonQt::pythonStdErr
+		, this, &PythonEngineWorker::updateErrorMessage);
 	PythonQt_QtAll::init();
 	mMainContext = PythonQt::self()->getMainModule();
 
