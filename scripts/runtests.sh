@@ -32,7 +32,7 @@ for t in "$@"
        ulimit -c unlimited ; \
        if [ $TRAVIS_OS_NAME = linux ] ; then echo core > /proc/sys/kernel/core_pattern ; echo 0 > /proc/sys/kernel/core_uses_pid; fi ; \
        ./$t -platform minimal || errCode=\$? ; \
-       [ $TRAVIS_OS_NAME = linux -a -e core ] && gdb ./$t core -ex 'thread apply all bt' -ex 'quit'  || true ; \
+       [ $TRAVIS_OS_NAME = linux -a -e core ] && PYTHONPATH='' gdb ./$t core -ex 'thread apply all bt' -ex 'quit'  || true ; \
        rm -f core* ; \
        ( exit \$errCode ) ; \
      } "

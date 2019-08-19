@@ -22,7 +22,6 @@ if [ "$VERA" = "true" ]; then git diff --name-only ${TRAVIS_COMMIT_RANGE} \
 	| $EXECUTOR vera++ --error --root vera++ --profile strict ; fi
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
 
-export PYTHONPATH=$($EXECUTOR python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
    export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && export CCACHE_CPP2=yes \
