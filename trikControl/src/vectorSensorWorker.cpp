@@ -49,8 +49,7 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	connect(&mLastEventTimer, &QTimer::timeout, this, &VectorSensorWorker::onSensorHanged);
 	connect(&mTryReopenTimer, &QTimer::timeout, this, &VectorSensorWorker::onTryReopen);
 
-	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
-			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));
+	connect(mEventFile.data(), &trikHal::EventFileInterface::newEvent, this, &VectorSensorWorker::onNewEvent);
 	connect(&thread, &QThread::finished, this, &VectorSensorWorker::deinitialize);
 	mEventFile->open();
 	if (mEventFile->isOpened()) {
