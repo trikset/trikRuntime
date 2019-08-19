@@ -22,6 +22,7 @@ if [ "$VERA" = "true" ]; then git diff --name-only ${TRAVIS_COMMIT_RANGE} \
 	| $EXECUTOR vera++ --error --root vera++ --profile strict ; fi
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
 
+export PYTHONPATH=$($EXECUTOR python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
    export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && export CCACHE_CPP2=yes \
@@ -45,8 +46,10 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
   do
     $EXECUTOR env DISPLAY=:0 \
-    ASAN_OPTIONS="$( [[ $TRAVIS_OS_NAME == linux ]] && echo detect_leaks=1:disable_coredump=0 || :):detect_stack_use_after_return=1:fast_unwind_on_malloc=0:symbolize=1:use_signalstack=0" \
-    LSAN_OPTIONS="suppressions=lsan.supp:fast_unwind_on_malloc=0" sh -xc \
+    ASAN_OPTIONS="$( [[ $TRAVIS_OS_NAME == linux ]] && echo 'detect_leaks=1:disable_coredump=0:' || :)detect_stack_use_after_return=1:fast_unwind_on_malloc=0:symbolize=1:use_signalstack=0" \
+    LSAN_OPTIONS=suppressions=lsan.supp:fast_unwind_on_malloc=0 \
+    PYTHONPATH=$PYTHONPATH \
+    sh -xc \
     "cd  $BUILDDIR/bin/x86-$CONFIG && \
      { \
        errCode=0 ; \
