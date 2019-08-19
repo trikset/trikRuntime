@@ -21,11 +21,12 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
-
-#ifdef TRIKSCRIPTRUNNER_LIBRARY
-#define  TRIKSCRIPTRUNNER_EXPORT Q_DECL_EXPORT
-#else
-#define TRIKSCRIPTRUNNER_EXPORT Q_DECL_IMPORT
+#ifndef TRIKSCRIPTRUNNER_EXPORT
+#  if defined(TRIKSCRIPTRUNNER_LIBRARY)
+#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_EXPORT
+#  else
+#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_IMPORT
+#  endif
 #endif
 
 namespace trikScriptRunner {
