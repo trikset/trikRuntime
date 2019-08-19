@@ -57,7 +57,7 @@ void PythonEngineWorker::init()
 		Py_VerboseFlag = 3;
 		Py_InspectFlag = 1;
 		Py_DebugFlag = 2;
-*/
+// */
 		Py_IsolatedFlag = 1;
 		Py_BytesWarningFlag = 3;
 		Py_DontWriteBytecodeFlag = 1;
@@ -67,15 +67,15 @@ void PythonEngineWorker::init()
 		Py_Initialize();
 	}
 
+	if (!mPyInterpreter) {
+	//	mPyInterpreter = Py_NewInterpreter();
+	}
+
 	if (!PythonQt::self()) {
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 		PythonQt_QtAll::init();
 		connect(PythonQt::self(), &PythonQt::pythonStdErr
 			, this, &PythonEngineWorker::updateErrorMessage);
-	}
-
-	if (!mPyInterpreter) {
-		mPyInterpreter = Py_NewInterpreter();
 	}
 
 	mMainContext = PythonQt::self()->getMainModule();
