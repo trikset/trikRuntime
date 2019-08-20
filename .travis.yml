@@ -1,6 +1,6 @@
 language: minimal
 git:
-  depth: 25
+  depth: 100
 env:
   global:
     - BUILDDIR="$TRAVIS_BUILD_DIR/$TRAVIS_BUILD_ID"
