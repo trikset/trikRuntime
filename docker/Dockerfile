@@ -9,7 +9,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++ gdb \
+		    wget curl rsync sshpass openssh-client build-essential g++ gdb python3-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
@@ -21,7 +21,7 @@ RUN apt-get update \
 #for pyenv/PythonQt
                 libssl-dev realpath \
 #Cleanup after installation
-    && apt-get purge -y software-properties-common python3 \
+    && apt-get purge -y software-properties-common \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
