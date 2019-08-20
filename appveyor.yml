@@ -59,7 +59,7 @@ build_script:
 test_script:
   - cd %BUILD_DIR%
   - cd bin\x86-%CONFIGURATION%
-  - set PYTHONPATH=%PYTHON_PATH%
+  - set TRIK_PYTHONPATH=%PYTHON_PATH%
   - .\trikKernelTests
   - .\trikCommunicatorTests
   - .\trikScriptRunnerTests

@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QProcess>
 #include <QsLog.h>
 
 #include <trikNetwork/mailboxInterface.h>
@@ -50,8 +51,11 @@ void PythonEngineWorker::init()
 	if (!Py_IsInitialized()) {
 		Py_SetPythonHome(const_cast<wchar_t*>(L"SOME_PATH")); //??? Need to set correct one
 
+		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH", "");
 		// TODO: Now use PYTHONPATH environment variable (default) until fixed
-		// Py_SetPath(const_cast<wchar_t*>(L"/usr/lib/python3.6")); // Must point to local .zip file
+		// Must point to local .zip file
+		Py_SetPath(path.toStdWString().data());
+
 
 /* uncomment for verbosity
 		Py_VerboseFlag = 3;
