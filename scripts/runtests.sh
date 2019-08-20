@@ -1,23 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
-case $TRAVIS_OS_NAME in
-  osx)
-    export PATH="/usr/local/opt/qt/bin:$PATH"
-    export PATH="/usr/local/opt/ccache/libexec:$PATH"
-    export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-    export PATH="$(pyenv root)/bin:$PATH"
-    eval "$(pyenv init -)"
-    export PKG_CONFIG_PATH="$(python3-config --prefix)/lib/pkgconfig"
-    EXECUTOR="scripts/with_pyenv "
-    ;;
-  linux)
-    EXECUTOR="docker exec --interactive builder "
-   ;;
-  *) exit 1 ;;
-esac
 
-PYTHONPATH=$($EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
-	python3 -c 'import sys; import os; print(os.pathsep.join(sys.path))'")
+PYTHONPATH=$($EXECUTOR python3 -c 'import sys; import os; print(os.pathsep.join(sys.path))')
 
 for t in "$@"
   do

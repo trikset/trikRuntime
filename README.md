@@ -18,10 +18,10 @@ Runtime for TRIK controller.
 
 # Build
   PythonQt shoud be build with corresponding version of Python in mind.
-  One can install `libpython3.5` from destribution package manager, or use `pyenv`, and there is a helper script for this.
+  One can install `libpython3-dev` from destribution package manager, or use `pyenv`, and there is a helper script for this.
 
   ```shell
-    ./scripts/with_pyenv qmake -r
+    qmake -r
     make -j 4
   ```
 
