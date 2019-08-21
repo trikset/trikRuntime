@@ -69,10 +69,10 @@ struct ScanResult
 	QString ssid;
 
 	/// Security algorithm used in that network.
-	Security security;
+	Security security {};
 
 	/// Is this network known --- listed in /etc/wpa_supplicant.conf.
-	bool known;
+	bool known {};
 };
 
 }
