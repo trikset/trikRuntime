@@ -17,6 +17,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QIODevice>
 #include <QtMultimedia/QAudioFormat>
+#include <cmath>
 
 /// QIODevice that synthesize sine wave values
 class AudioSynthDevice : public QIODevice
@@ -62,16 +63,16 @@ private:
 	const int mSampleSize;
 
 	/// Mode of device
-	const bool mBuffered = false;
+	const bool mBuffered { false };
 
-	long long mY1 = 0;
+	long long mY1 { 0 };
 
-	long long mY2 = 0;
+	long long mY2 { 0 };
 
-	long long mB = 0;
+	long long mB { 0 };
 
-	static const int M = 1 << 30;
+	static constexpr int M = 1 << 30;
 
-	double mOmega = nan("");
+	double mOmega { std::nan("") };
 };
 

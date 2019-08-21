@@ -21,8 +21,11 @@ namespace trikHal {
 /// Represents console of an OS.
 class SystemConsoleInterface
 {
+	Q_DISABLE_COPY(SystemConsoleInterface)
 public:
-	virtual ~SystemConsoleInterface() {}
+	virtual ~SystemConsoleInterface() = default;
+
+	SystemConsoleInterface() = default;
 
 	/// Executes given command on a system console. Returns return code of a command.
 	virtual int system(const QString &command) = 0;

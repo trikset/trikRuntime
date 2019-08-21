@@ -39,7 +39,7 @@ public:
 
 signals:
 	/// Emitted when the widget wants it to be shown.
-	void showMe(MainWidget &widget);
+	void showMe(trikGui::MainWidget &widget);
 
 	/// Emitted when the widget wants it to be hidden.
 	void hideMe();

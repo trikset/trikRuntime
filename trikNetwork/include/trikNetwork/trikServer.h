@@ -73,7 +73,7 @@ protected:
 
 private slots:
 	/// Called when connection thread finishes.
-	void onConnectionClosed(Connection *connection);
+	void onConnectionClosed(trikNetwork::Connection *connection);
 
 private:
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.

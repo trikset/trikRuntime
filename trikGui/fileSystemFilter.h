@@ -19,7 +19,7 @@
 /// Filter to sort special "Delete all..." entry
 class FileSystemFilter : public QSortFilterProxyModel
 {
-
+	Q_OBJECT
 public:
 /// Public constructor
 	explicit FileSystemFilter(QObject *parent = nullptr);

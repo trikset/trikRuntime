@@ -167,7 +167,7 @@ void PythonEngineWorker::run(const QString &script)
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
 	emit startedScript(0);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void PythonEngineWorker::doRun(const QString &script)
@@ -191,7 +191,7 @@ void PythonEngineWorker::doRun(const QString &script)
 void PythonEngineWorker::runDirect(const QString &command)
 {
 	QMutexLocker locker(&mScriptStateMutex);
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command));
 }
 
 void PythonEngineWorker::doRunDirect(const QString &command)

@@ -22,7 +22,12 @@ namespace trikKernel {
 class TrikRuntimeException : public std::exception
 {
 public:
-	virtual ~TrikRuntimeException() {}
+	TrikRuntimeException() = default;
+	~TrikRuntimeException() = default;
+	TrikRuntimeException(TrikRuntimeException &&e) = default;
+
+	TrikRuntimeException(const TrikRuntimeException &e) = delete;
+
 };
 
 }

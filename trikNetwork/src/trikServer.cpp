@@ -53,7 +53,7 @@ void TrikServer::startServer(quint16 port)
 
 void TrikServer::sendMessage(const QString &message)
 {
-	for (Connection * const connection : mConnections.values()) {
+	for (auto &&connection : mConnections) {
 		QMetaObject::invokeMethod(connection, "send", Q_ARG(QByteArray, message.toUtf8()));
 	}
 }
@@ -97,7 +97,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 
 Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 {
-	for (auto *connection : mConnections.values()) {
+	for (auto *connection : mConnections) {
 		if (connection->isValid()) {
 			if (connection->peerAddress() == ip && connection->peerPort() == port) {
 				return connection;
@@ -112,7 +112,7 @@ Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 
 Connection *TrikServer::connection(const QHostAddress &ip) const
 {
-	for (auto *connection : mConnections.values()) {
+	for (auto *connection : mConnections) {
 		if (connection->isValid()) {
 			if (connection->peerAddress() == ip) {
 				return connection;

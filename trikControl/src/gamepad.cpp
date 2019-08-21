@@ -195,7 +195,7 @@ void Gamepad::handleKeepalive(int waitForMs)
 
 void Gamepad::onButtonStateClearTimerTimeout()
 {
-	const auto timer = dynamic_cast<QTimer *>(sender());
+	const auto timer = qobject_cast<QTimer *>(sender());
 	if (timer) {
 		const int button = mButtonStateClearTimers.key(timer);
 		mButtonState[button] = false;

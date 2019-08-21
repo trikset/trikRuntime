@@ -115,7 +115,7 @@ void WiFiClientWidget::onNetworksInfoUpdated()
 		mNetworks.insert(network.ssid, network);
 	}
 
-	for (const NetworkInfo &network : mNetworks.values()) {
+	for (auto &&network : mNetworks) {
 		mAvailableNetworksModel.appendRow(new QStandardItem(network.ssid));
 	}
 

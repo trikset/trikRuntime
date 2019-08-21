@@ -132,7 +132,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
-	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());
+	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
 	if (script) {
 		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
 	}
@@ -331,7 +331,7 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void ScriptEngineWorker::doRun(const QString &script)
@@ -356,7 +356,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		stopScript();
 	}
 
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command), Q_ARG(int, scriptId));
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command), Q_ARG(int, scriptId));
 }
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)

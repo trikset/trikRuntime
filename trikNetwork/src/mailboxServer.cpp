@@ -39,7 +39,7 @@ bool MailboxServer::isConnected()
 {
 	bool result = false;
 	mKnownRobotsLock.lockForRead();
-	for (const auto &endpoint : mKnownRobots.values()) {
+	for (auto &&endpoint : mKnownRobots) {
 		Connection * const connection = this->connection(endpoint.ip, endpoint.port);
 		MailboxConnection * const mailboxConnection = dynamic_cast<MailboxConnection *>(connection);
 		if (mailboxConnection && mailboxConnection->isConnected()) {
@@ -90,7 +90,7 @@ void MailboxServer::setHullNumber(int hullNumber)
 	saveSettings();
 	forEveryConnection([this](Connection *connection) {
 		QMetaObject::invokeMethod(connection, "sendConnectionInfo"
-				, Q_ARG(const QHostAddress &, mMyIp)
+				, Q_ARG(QHostAddress, mMyIp)
 				, Q_ARG(int, mMyPort)
 				, Q_ARG(int, mHullNumber)
 				);
@@ -141,7 +141,7 @@ Connection *MailboxServer::connect(const QHostAddress &ip, int port)
 	startConnection(connection);
 
 	QMetaObject::invokeMethod(connection, "connect"
-			, Q_ARG(const QHostAddress &, ip)
+			, Q_ARG(QHostAddress, ip)
 			, Q_ARG(int, port)
 			, Q_ARG(int, mMyPort)
 			, Q_ARG(int, mHullNumber)
@@ -203,7 +203,7 @@ Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 	// Next, trying to create new connection to given IP. We need port, so checking if robot is known.
 	Endpoint targetEndpoint;
 	mKnownRobotsLock.lockForRead();
-	for (const auto &endpoint : mKnownRobots.values()) {
+	for (auto &&endpoint : mKnownRobots) {
 		if (endpoint.ip == ip) {
 			targetEndpoint = endpoint;
 			break;
@@ -236,7 +236,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 		// Propagate information about newly connected robot through robot network.
 		forEveryConnection([&ip, &serverPort, &hullNumber](Connection *connection) {
 			QMetaObject::invokeMethod(connection, "sendConnectionInfo"
-					, Q_ARG(const QHostAddress &, ip)
+					, Q_ARG(QHostAddress, ip)
 					, Q_ARG(int, serverPort)
 					, Q_ARG(int, hullNumber)
 					);
@@ -250,7 +250,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 		mKnownRobotsLock.lockForRead();
 		for (const auto &endpoint: endpoints) {
 			QMetaObject::invokeMethod(connectionObject, "sendConnectionInfo"
-					, Q_ARG(const QHostAddress &, endpoint.ip)
+					, Q_ARG(QHostAddress, endpoint.ip)
 					, Q_ARG(int, endpoint.port)
 					, Q_ARG(int, mKnownRobots.key(endpoint))
 					);
@@ -280,7 +280,7 @@ void MailboxServer::send(int hullNumber, const QString &message)
 	forEveryConnection([&message](Connection *connection) {
 		const auto data = QString("data:%1").arg(message).toUtf8();
 		QMetaObject::invokeMethod(connection, "send"
-				, Q_ARG(const QByteArray &, data)
+				, Q_ARG(QByteArray, data)
 				);
 	}
 	, hullNumber);
@@ -295,7 +295,7 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int port, int hullN
 {
 	QList<Endpoint> toDelete;
 	mKnownRobotsLock.lockForRead();
-	for (const auto &endpoint : mKnownRobots.values()) {
+	for (auto &&endpoint : mKnownRobots) {
 		if (endpoint == Endpoint{ip, port}) {
 			toDelete << endpoint;
 		}
@@ -322,7 +322,7 @@ void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray
 
 	int senderHullNumber = -1;
 	mKnownRobotsLock.lockForRead();
-	for (const auto &endpoint : mKnownRobots.values()) {
+	for (const auto &endpoint : mKnownRobots) {
 		if (endpoint.ip == ip) {
 			senderHullNumber = mKnownRobots.key(endpoint);
 		}

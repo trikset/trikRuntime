@@ -199,7 +199,7 @@ void Brick::reset()
 	}
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
-	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+	for (auto &&rangeSensor : mRangeSensors) {
 		rangeSensor->init();
 	}
 }
@@ -253,11 +253,11 @@ void Brick::stop()
 
 	mTonePlayer->stop();
 
-	for (ServoMotor * const servoMotor : mServoMotors.values()) {
+	for (auto &&servoMotor : mServoMotors) {
 		servoMotor->powerOff();
 	}
 
-	for (PowerMotor * const powerMotor : mPowerMotors.values()) {
+	for (auto &&powerMotor : mPowerMotors) {
 		powerMotor->powerOff();
 	}
 
@@ -266,31 +266,31 @@ void Brick::stop()
 	}
 
 	/// @todo: Also be able to stop initializing sensor.
-	for (LineSensor * const lineSensor : mLineSensors) {
+	for (auto &&lineSensor : mLineSensors) {
 		if (lineSensor->status() == DeviceInterface::Status::ready) {
 			lineSensor->stop();
 		}
 	}
 
-	for (ColorSensor * const colorSensor : mColorSensors) {
+	for (auto &&colorSensor : mColorSensors) {
 		if (colorSensor->status() == DeviceInterface::Status::ready) {
 			colorSensor->stop();
 		}
 	}
 
-	for (ObjectSensor * const objectSensor : mObjectSensors) {
+	for (auto &&objectSensor : mObjectSensors) {
 		if (objectSensor->status() == DeviceInterface::Status::ready) {
 			objectSensor->stop();
 		}
 	}
 
-	for (SoundSensor * const soundSensor : mSoundSensors) {
+	for (auto &&soundSensor : mSoundSensors) {
 		if (soundSensor->status() == DeviceInterface::Status::ready) {
 			soundSensor->stop();
 		}
 	}
 
-	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+	for (auto &&rangeSensor : mRangeSensors) {
 		rangeSensor->stop();
 	}
 
@@ -357,11 +357,11 @@ QStringList Brick::sensorPorts(SensorInterface::Type type) const
 	}
 	case SensorInterface::Type::specialSensor: {
 		// Special sensors can not be connected to standard ports, they have their own methods to access them.
-		return QStringList();
+		return {};
 	}
 	}
 
-	return QStringList();
+	return {};
 }
 
 EncoderInterface *Brick::encoder(const QString &port)

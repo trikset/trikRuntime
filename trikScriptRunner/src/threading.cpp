@@ -174,14 +174,14 @@ void Threading::reset()
 	QLOG_INFO() << "Threading: reset started";
 
 	mMessageMutex.lock();
-	for (QWaitCondition * const condition : mMessageQueueConditions.values()) {
+	for (auto &&condition : mMessageQueueConditions) {
 		condition->wakeAll();
 	}
 
 	mMessageMutex.unlock();
 	mThreadsMutex.lock();
 
-	for (ScriptThread *thread : mThreads.values()) {
+	for (auto *thread : mThreads) {
 		mScriptControl.reset();  // TODO: find more sophisticated solution to prevent waiting after abortion
 		thread->abort();
 	}
@@ -252,7 +252,7 @@ QScriptValue Threading::receiveMessage(bool waitForMessage)
 		return QScriptValue();
 	}
 
-	QString threadId = dynamic_cast<ScriptThread *>(QThread::currentThread())->id();
+	QString threadId = qobject_cast<ScriptThread *>(QThread::currentThread())->id();
 	mMessageMutex.lock();
 	if (!mMessageQueueConditions.contains(threadId)) {
 		mMessageQueueMutexes[threadId] = new QMutex();
