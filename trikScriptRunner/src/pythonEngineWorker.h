@@ -39,7 +39,7 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	PythonEngineWorker(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::MailboxInterface * mailbox
 			);
 
 	~PythonEngineWorker();

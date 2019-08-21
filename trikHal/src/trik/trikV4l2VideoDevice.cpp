@@ -17,9 +17,9 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cerrno>
+#include <cstring>
+#include <cstdlib>
 #include <unistd.h>
 #include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
@@ -34,7 +34,7 @@
 // convertion funtions
 namespace {
 
-	inline unsigned clip255(int x) { return x >= 255 ? 255 : (x <= 0)? 0 : x; }
+	inline unsigned clip255(unsigned x) { return x >= 255 ? 255 : (x <= 0)? 0 : x; }
 
 	QVector<uint8_t> yuyvToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuyv (yuv422) convertion to rgb888
@@ -66,8 +66,9 @@ namespace {
 	QVector<uint8_t> yuv422pToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuv422p convertion to rgb888
 		QVector<uint8_t> result(height * width * 3);
-		if ( width <= 0 || height <= 0 )
+		if ( width <= 0 || height <= 0 ) {
 			return result;
+		}
 		const auto Y = &shot[0];
 		const auto U = &shot[width * height];
 		const auto V = &shot[3 * width * height / 2];
@@ -77,8 +78,8 @@ namespace {
 				auto startIndex = row * width + col;
 				auto y1 = Y[startIndex] - 16;
 				auto y2 = Y[startIndex+1] - 16;
-				auto u  = U[startIndex>>1] - 128;
-				auto v  = V[startIndex>>1] - 128;
+				auto u  = U[startIndex / 2] - 128;
+				auto v  = V[startIndex / 2] - 128;
 				auto _298y1 = 298 * y1;
 				auto _298y2 = 298 * y2;
 				auto _409v  = 409 * v;
@@ -113,13 +114,9 @@ namespace {
 	}
 }
 
-
-template <typename T> void reset(T &x) { ::memset(&x, 0, sizeof(x)); }
-
 TrikV4l2VideoDevice::TrikV4l2VideoDevice(const QString &inputFile)
 	: fileDevicePath(inputFile), mConvertFunc(convertToEmpty)
 {
-	reset(mFormat);
 	openDevice();
 	setFormat();
 }
@@ -157,8 +154,7 @@ void TrikV4l2VideoDevice::openDevice()
 		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor ;
 	} else {
 		QLOG_INFO() << "Open v4l2 camera device" <<  fileDevicePath << ",fd =" << mFileDescriptor;
-		v4l2_capability cap;
-		reset(cap);
+		v4l2_capability cap {};
 		unsigned requested = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE;
 
 		if(!xioctl(VIDIOC_QUERYCAP, &cap, "VIDIOC_QUERYCAP failed")
@@ -185,8 +181,7 @@ void TrikV4l2VideoDevice::setFormat()
 	char descPixelFmt[32] = {0}; // 32 - size of v4l2_fmtdesc.description
 	__u32 fmtIdx = 0;
 	do {
-		v4l2_fmtdesc fmtTry;
-		reset(fmtTry);
+		v4l2_fmtdesc fmtTry {};
 		fmtTry.index = fmtIdx;
 		fmtTry.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		if ( ! xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT fail")) {
@@ -289,9 +284,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 
 void TrikV4l2VideoDevice::initMMAP()
 {
-	v4l2_requestbuffers req;
-	reset(req);
-
+	v4l2_requestbuffers req{};
 	req.count = 1;
 	req.type = mFormat.type;
 	req.memory = V4L2_MEMORY_MMAP;
@@ -305,8 +298,7 @@ void TrikV4l2VideoDevice::initMMAP()
 	buffers.resize(req.count);
 
 	for (int i = 0; i < buffers.size(); ++i) {
-		v4l2_buffer buf;
-		reset(buf);
+		v4l2_buffer buf{};
 		buf.type = mFormat.type;
 		buf.index = i;
 		buf.memory = V4L2_MEMORY_MMAP;
@@ -316,9 +308,9 @@ void TrikV4l2VideoDevice::initMMAP()
 		}
 
 		buffers[i].length = buf.length;
-		buffers[i].start = (uint8_t *) ::v4l2_mmap(nullptr, buf.length
+		buffers[i].start = static_cast<uint8_t *>(::v4l2_mmap(nullptr, buf.length
 							, PROT_READ | PROT_WRITE, MAP_SHARED
-							, mFileDescriptor, buf.m.offset);
+							, mFileDescriptor, buf.m.offset));
 
 		if (buffers[i].start == MAP_FAILED) {
 			QLOG_ERROR() << "mmap failed in TrikV4l2VideoDevice::initMMAP()";
@@ -332,8 +324,7 @@ void TrikV4l2VideoDevice::initMMAP()
 void TrikV4l2VideoDevice::startCapturing()
 {
 	for(int i = 0; i < buffers.size(); ++i) {
-		v4l2_buffer buf;
-		reset(buf);
+		v4l2_buffer buf {};
 		buf.type = mFormat.type;
 		buf.memory = V4L2_MEMORY_MMAP;
 		buf.index = i;
@@ -361,8 +352,7 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	}
 
 	mNotifier->setEnabled(false);
-	v4l2_buffer buf;
-	reset(buf);
+	v4l2_buffer buf{};
 	buf.type = mFormat.type;
 	buf.memory = V4L2_MEMORY_MMAP;
 

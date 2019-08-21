@@ -70,7 +70,7 @@ private:
 	};
 	QVector<uint8_t> mFrame;
 	QVector<buffer> buffers;
-	v4l2_format mFormat;
+	v4l2_format mFormat {};
 	QSocketNotifier *mNotifier {}; // Has ownership
 	convertFunctionPtr mConvertFunc; // convert real camera shot to RGB888
 };

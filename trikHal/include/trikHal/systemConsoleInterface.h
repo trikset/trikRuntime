@@ -34,7 +34,7 @@ public:
 	/// Synchronously starts given process with given arguments.
 	/// @returns true, if process was started successfully.
 	virtual bool startProcessSynchronously(const QString &processName, const QStringList &arguments
-			, QString * const output = nullptr) = 0;
+			, QString * output = nullptr) = 0;
 };
 
 }

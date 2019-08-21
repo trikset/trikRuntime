@@ -118,7 +118,7 @@ void Threading::waitForAll()
 	mThreadsMutex.lock();
 	auto hasThreads = !mThreads.isEmpty();
 	mThreadsMutex.unlock();
-	if (hasThreads) {	
+	if (hasThreads) {
 		wait.exec();
 	}
 }
@@ -252,7 +252,7 @@ QScriptValue Threading::receiveMessage(bool waitForMessage)
 		return QScriptValue();
 	}
 
-	QString threadId = static_cast<ScriptThread *>(QThread::currentThread())->id();
+	QString threadId = dynamic_cast<ScriptThread *>(QThread::currentThread())->id();
 	mMessageMutex.lock();
 	if (!mMessageQueueConditions.contains(threadId)) {
 		mMessageQueueMutexes[threadId] = new QMutex();

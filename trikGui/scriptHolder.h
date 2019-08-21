@@ -24,6 +24,12 @@ namespace trikGui {
 class ScriptHolder
 {
 public:
+	/// Deleted
+	ScriptHolder(ScriptHolder const&) = delete;
+
+	/// Deleted
+	ScriptHolder& operator=(ScriptHolder const&) = delete;
+
 	/// Creates instance of ScriptHolder.
 	static ScriptHolder* instance();
 
@@ -46,10 +52,7 @@ public:
 
 private:
 	/// Constructor.
-	ScriptHolder() {}
-
-	ScriptHolder(ScriptHolder const&) = delete;
-	ScriptHolder& operator=(ScriptHolder const&) = delete;
+	ScriptHolder() = default;
 
 	QStringList mTitles;
 	QStringList mCommands;

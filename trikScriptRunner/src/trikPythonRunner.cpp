@@ -17,6 +17,7 @@
 #include "trikPythonRunner.h"
 
 #include "src/pythonEngineWorker.h"
+#include <stdexcept>
 
 using namespace trikScriptRunner;
 
@@ -60,13 +61,13 @@ void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::
 {
 	Q_UNUSED(name);
 	Q_UNUSED(function);
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
 	Q_UNUSED(step);
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 void TrikPythonRunner::brickBeep()
@@ -101,5 +102,5 @@ void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &m
 
 QStringList TrikPythonRunner::knownMethodNames() const
 {
-	return QStringList();
+	return {};
 }

@@ -72,6 +72,6 @@ private:
 
 	static const int M = 1 << 30;
 
-	double mOmega;
+	double mOmega = nan("");
 };
 

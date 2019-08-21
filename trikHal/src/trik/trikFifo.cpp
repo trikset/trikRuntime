@@ -16,7 +16,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
+#include <cerrno>
 
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QStringList>

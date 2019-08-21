@@ -38,14 +38,14 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * const mailbox
+					 , trikNetwork::MailboxInterface * mailbox
 					 );
 
 	~TrikScriptRunner() override;
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
-	
+
 	/// Create completion list for interpreted language
 	QStringList knownMethodNamesFor(ScriptType t);
 

@@ -26,7 +26,7 @@
 	#include <QtWidgets/QScrollArea>
 #endif
 
-#include <QApplication> 
+#include <QApplication>
 
 #include "motorLever.h"
 
@@ -98,7 +98,7 @@ bool MotorsWidget::eventFilter(QObject *, QEvent *event)
 {
 	if(event->type() == QEvent::KeyPress)
 	{
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 
 		switch (keyEvent->key()) {
 			case Qt::Key_Up: {

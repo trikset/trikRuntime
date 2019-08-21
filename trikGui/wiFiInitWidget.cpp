@@ -54,15 +54,15 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 	QStringList arguments;
 
 	switch (mode) {
-		case WiFiModeWidget::accessPoint: {
+		case WiFiModeWidget::Mode::accessPoint: {
 			arguments << "ap";
 			break;
 		}
-		case WiFiModeWidget::client: {
+		case WiFiModeWidget::Mode::client: {
 			arguments << "client";
 			break;
 		}
-		case WiFiModeWidget::unknown: {
+		case WiFiModeWidget::Mode::unknown: {
 			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiInitWidget::init()";
 			return fail;
 		}

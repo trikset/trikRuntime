@@ -228,7 +228,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 	}
 
 	mKnownRobotsLock.lockForRead();
-	const bool knownRobot = mKnownRobots.contains(hullNumber, {ip, serverPort});
+	const auto knownRobot = mKnownRobots.contains(hullNumber, {ip, serverPort});
 	const auto endpoints = mKnownRobots.values();
 	mKnownRobotsLock.unlock();
 

@@ -75,7 +75,7 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
-	QThread * const connectionThread = new QThread();
+	auto connectionThread = new QThread();
 
 	connectionWorker->moveToThread(connectionThread);
 

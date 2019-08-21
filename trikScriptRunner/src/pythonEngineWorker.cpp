@@ -49,7 +49,8 @@ PythonEngineWorker::~PythonEngineWorker()
 void PythonEngineWorker::init()
 {
 	if (!Py_IsInitialized()) {
-		Py_SetPythonHome(const_cast<wchar_t*>(L"SOME_PATH")); //??? Need to set correct one
+		static auto nonConst = wcsdup(L"SOME_PATH"); // leak?
+		Py_SetPythonHome(nonConst); //??? Need to set correct one
 
 		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH", "");
 		// TODO: Now use PYTHONPATH environment variable (default) until fixed
@@ -210,5 +211,5 @@ void PythonEngineWorker::updateErrorMessage(const QString &err)
 
 void PythonEngineWorker::onScriptRequestingToQuit()
 {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }

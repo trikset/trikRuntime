@@ -232,8 +232,10 @@ void Brick::playTone(int hzFreq, int msDuration)
 {
 	QLOG_INFO() << "Playing tone (" << hzFreq << "," << msDuration << ")";
 
-	if (hzFreq < 0 || msDuration < 0)
+	if (hzFreq < 0 || msDuration < 0) {
 		return;
+	}
+
 	// mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
 	// mTonePlayer->play(hzFreq, msDuration);
 	QMetaObject::invokeMethod(mTonePlayer.data(), "play", Q_ARG(int, hzFreq), Q_ARG(int, msDuration));

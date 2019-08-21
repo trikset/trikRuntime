@@ -111,7 +111,7 @@ private:
 	const int mMyPort;
 	/// IP of leader robot to which we connected last
 	QHostAddress mServerIp;
-	int mServerPort;
+	int mServerPort{};
 
 	struct Endpoint {
 		QHostAddress ip;

@@ -105,11 +105,11 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 			= [&prettyPrinter](QVariant const & elem) {
 			auto const &arrayPrettyPrinter = [&prettyPrinter](const QVariantList &array) {
 				qint32 arrayLength = array.length();
-				
+
 				if (arrayLength == 0) {
 					return QString("[]");
 				}
-	
+
 				QString res;
 				res.reserve(100000);
 				res.append("[" % prettyPrinter(array.first()));
@@ -117,7 +117,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 				for(auto i = 1; i < arrayLength; ++i) {
 					res.append(", " % prettyPrinter(array.at(i)));
 				}
-	
+
 				res.append("]");
 				return res;
 			};
@@ -142,7 +142,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 {
-	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInteger(), context->argument(1).toInteger());
+	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInt32(), context->argument(1).toInt32());
 	return engine->toScriptValue(result);
 }
 

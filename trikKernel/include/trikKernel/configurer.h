@@ -41,7 +41,7 @@ public:
 
 	/// Returns true if device is enabled in current configuration (either explicitly enabled in model configuration
 	/// or can not be disabled at all).
-	bool isEnabled(const QString deviceName) const;
+	bool isEnabled(const QString &deviceName) const;
 
 	/// Ports configured in model config.
 	QStringList ports() const;

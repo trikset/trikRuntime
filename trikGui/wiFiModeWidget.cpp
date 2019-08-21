@@ -59,9 +59,9 @@ void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 		case Qt::Key_Return: {
 			if (mModes.currentItem()->text() == tr("Wi-Fi client")) {
-				setMode(client);
+				setMode(Mode::client);
 			} else {
-				setMode(accessPoint);
+				setMode(Mode::accessPoint);
 			}
 			break;
 		}
@@ -78,11 +78,11 @@ void WiFiModeWidget::setMode(Mode mode)
 
 	const QString currentModeText = mRcReader.value("trik_wifi_mode");
 
-	Mode currentMode = unknown;
+	Mode currentMode = Mode::unknown;
 	if (currentModeText == "client") {
-		currentMode = client;
+		currentMode = Mode::client;
 	} else if (currentModeText == "ap") {
-		currentMode = accessPoint;
+		currentMode = Mode::accessPoint;
 	}
 
 	if (currentMode != mode) {
@@ -97,7 +97,7 @@ void WiFiModeWidget::setMode(Mode mode)
 	int returnValue = 0;
 
 	switch (mode) {
-		case client: {
+		case Mode::client: {
 			if (currentMode != mode) {
 				mWiFi.reinit();
 			}
@@ -106,14 +106,14 @@ void WiFiModeWidget::setMode(Mode mode)
 			returnValue = wiFiClientWidget.exec();
 			break;
 		}
-		case accessPoint: {
+		case Mode::accessPoint: {
 			mWiFi.dispose();
 			WiFiAPWidget wiFiAPWidget;
 			emit newWidget(wiFiAPWidget);
 			returnValue = wiFiAPWidget.exec();
 			break;
 		}
-		case unknown: {
+		case Mode::unknown: {
 			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
 			break;
 		}

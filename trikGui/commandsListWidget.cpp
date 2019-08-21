@@ -23,7 +23,6 @@
 #include "motorsWidget.h"
 
 using namespace trikGui;
-using trikControl::MotorInterface;
 
 CommandsListWidget::CommandsListWidget(Controller &controller, const QString &name, QWidget *parent)
 	: TrikGuiDialog(parent)
