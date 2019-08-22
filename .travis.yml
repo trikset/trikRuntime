@@ -32,7 +32,8 @@ matrix:
     services: docker
     sudo: required
     name: Linux release
-  - QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=force_debug_info"
+    env:
+      - QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=force_debug_info"
   - os: linux
     services: docker
     sudo: required
