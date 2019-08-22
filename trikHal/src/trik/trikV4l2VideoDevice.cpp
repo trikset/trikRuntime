@@ -34,7 +34,7 @@
 // convertion funtions
 namespace {
 
-	inline unsigned clip255(unsigned x) { return x >= 255 ? 255 : (x <= 0)? 0 : x; }
+	inline unsigned char clip255(unsigned x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
 
 	QVector<uint8_t> yuyvToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuyv (yuv422) convertion to rgb888
@@ -50,13 +50,23 @@ namespace {
 				startIndex += 4;
 
 				auto resRgb = &result[(row * width + col) * 3];
-				resRgb[0] = clip255(y0 + 1.402 * (cr - 128)); // red
-				resRgb[1] = clip255(y0 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
-				resRgb[2] = clip255(y0 + 1.772 * (cb - 128)); // blue
+//				resRgb[0] = clip255(y0 + 1.402 * (cr - 128)); // red
+//				resRgb[1] = clip255(y0 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
+//				resRgb[2] = clip255(y0 + 1.772 * (cb - 128)); // blue
 
-				resRgb[3] = clip255(y1 + 1.402 * (cr - 128)); // red
-				resRgb[4] = clip255(y1 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
-				resRgb[5] = clip255(y1 + 1.772 * (cb - 128)); // blue
+//				resRgb[3] = clip255(y1 + 1.402 * (cr - 128)); // red
+//				resRgb[4] = clip255(y1 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
+//				resRgb[5] = clip255(y1 + 1.772 * (cb - 128)); // blue
+
+				const auto alpha = 180 * (cr - 128) / 128;
+				const auto beta  = 45 * (cb - 128) / 128;
+				resRgb[0] = clip255(y0 + alpha); // red
+				resRgb[1] = clip255(y0 - beta - alpha / 2); // green
+				resRgb[2] = clip255(y0 + 5 * beta); // blue
+
+				resRgb[3] = clip255(y1 + alpha); // red
+				resRgb[4] = clip255(y1 - beta - alpha / 2); // green
+				resRgb[5] = clip255(y1 + 5 * beta); // blue
 			}
 		}
 

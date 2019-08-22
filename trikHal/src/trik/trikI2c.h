@@ -19,14 +19,6 @@
 namespace trikHal {
 namespace trik {
 
-namespace trikKernel {
-class Configurer;
-}
-
-namespace trikHal {
-class HardwareAbstractionInterface;
-}
-
 /// Real implementation of I2C bus communicator.
 class TrikI2c : public MspI2cInterface
 {
