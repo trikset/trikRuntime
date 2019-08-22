@@ -69,6 +69,8 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
+QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -O1
+
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
@@ -151,7 +153,7 @@ unix:!nosanitizers {
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
 		# Ubsan is turned on by default
 		#CONFIG += sanitizer sanitize_undefined
-                #QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined -fsanitize-undefined-trap-on-error
+		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined -fsanitize-undefined-trap-on-error
 	}
 
 	CONFIG(sanitize_address) {

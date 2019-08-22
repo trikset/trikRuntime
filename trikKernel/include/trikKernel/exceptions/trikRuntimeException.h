@@ -24,8 +24,9 @@ class TrikRuntimeException : public std::exception
 public:
 	TrikRuntimeException() = default;
 	~TrikRuntimeException() = default;
+	/// Default
 	TrikRuntimeException(TrikRuntimeException &&e) = default;
-
+	/// Deleted
 	TrikRuntimeException(const TrikRuntimeException &e) = delete;
 
 };
