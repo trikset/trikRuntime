@@ -73,7 +73,7 @@ void TrikWiFi::dispose()
 
 SignalStrength TrikWiFi::signalStrength()
 {
-#if 0 //defined(Q_OS_LINUX)
+#ifdef Q_OS_LINUX
 	iwreq req;
 	auto iwname = "wlan0";
 	strcpy(req.ifr_name, iwname);
@@ -98,9 +98,8 @@ SignalStrength TrikWiFi::signalStrength()
 			return SignalStrength::medium;
 		}
 	}
-#else
-	return SignalStrength::undefined;
 #endif
+	return SignalStrength::undefined;
 }
 
 void TrikWiFi::connect(const QString &ssid)
