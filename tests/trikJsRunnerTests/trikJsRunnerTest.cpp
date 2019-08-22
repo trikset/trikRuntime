@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikScriptRunnerTest.h"
+#include "trikJsRunnerTest.h"
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QFile>
@@ -41,18 +41,18 @@ QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 	return {};
 }
 
-void TrikScriptRunnerTest::SetUp()
+void TrikJsRunnerTest::SetUp()
 {
 	mBrick.reset(trikControl::BrickFactory::create("./", "./"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
-	mScriptRunner->registerUserFunction("assert", scriptAssert);
+//	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
-void TrikScriptRunnerTest::TearDown()
+void TrikJsRunnerTest::TearDown()
 {
 }
 
-int TrikScriptRunnerTest::run(const QString &script, const QString &file)
+int TrikJsRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
@@ -72,7 +72,7 @@ int TrikScriptRunnerTest::run(const QString &script, const QString &file)
 	return exitCode;
 }
 
-int TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
+int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
@@ -92,7 +92,7 @@ int TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	return exitCode;
 }
 
-int TrikScriptRunnerTest::runFromFile(const QString &fileName)
+int TrikJsRunnerTest::runFromFile(const QString &fileName)
 {
 	auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
 
@@ -103,25 +103,31 @@ int TrikScriptRunnerTest::runFromFile(const QString &fileName)
 	return run(fileContents, fileName);
 }
 
-trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
+trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
 {
 	return *mScriptRunner;
 }
 
-TEST_F(TrikScriptRunnerTest, sanityCheckJs)
+TEST_F(TrikJsRunnerTest, sanityCheckJs)
+{
+	auto errCode = run("1", "_.js");
+	ASSERT_EQ(errCode, 0);
+}
+
+TEST_F(TrikJsRunnerTest, sanityCheckJs1)
 {
 	auto errCode = run("1 + 1", "_.js");
 	ASSERT_EQ(errCode, 0);
 }
 
-TEST_F(TrikScriptRunnerTest, fileTestJs)
+TEST_F(TrikJsRunnerTest, fileTestJs)
 {
 	auto errCode = runFromFile("file-test.js");
 	ASSERT_EQ(errCode, 0);
 }
 
 #ifndef Q_OS_WIN
-TEST_F(TrikScriptRunnerTest, asyncSystemTest)
+TEST_F(TrikJsRunnerTest, asyncSystemTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -133,7 +139,7 @@ TEST_F(TrikScriptRunnerTest, asyncSystemTest)
 }
 #endif
 
-TEST_F(TrikScriptRunnerTest, syncSystemTest)
+TEST_F(TrikJsRunnerTest, syncSystemTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -142,7 +148,7 @@ TEST_F(TrikScriptRunnerTest, syncSystemTest)
 	ASSERT_TRUE(testFile.exists());
 }
 
-TEST_F(TrikScriptRunnerTest, directCommandTest)
+TEST_F(TrikJsRunnerTest, directCommandTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -163,7 +169,7 @@ TEST_F(TrikScriptRunnerTest, directCommandTest)
 	tests::utils::Wait::wait(300);
 }
 
-TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
+TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -181,31 +187,10 @@ TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
 	ASSERT_FALSE(testFile.exists());
 }
 
-TEST_F(TrikScriptRunnerTest, twoProgramsTest)
+TEST_F(TrikJsRunnerTest, twoProgramsTest)
 {
 	scriptRunner().run("script.wait(500);");
 	tests::utils::Wait::wait(100);
 	scriptRunner().run("script.wait(500);");
-	tests::utils::Wait::wait(600);
-}
-
-TEST_F(TrikScriptRunnerTest, sanityCheckPy)
-{
-	run("1 + 1", "_.py");
-}
-
-TEST_F(TrikScriptRunnerTest, DISABLED_fileTestPy)
-{
-	runFromFile("file-test.py");
-}
-
-TEST_F(TrikScriptRunnerTest, pythonAccessQtCore)
-{
-	run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)", "_.py");
-}
-
-TEST_F(TrikScriptRunnerTest, pythonScriptWait)
-{
-	scriptRunner().run("script.wait(500)", "_.py");
 	tests::utils::Wait::wait(600);
 }

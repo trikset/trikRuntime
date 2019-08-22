@@ -23,7 +23,7 @@
 namespace tests {
 
 /// Test suite for script runner.
-class TrikScriptRunnerTest : public testing::Test
+class TrikJsRunnerTest : public testing::Test
 {
 protected:
 	void SetUp() override;

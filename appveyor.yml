@@ -62,8 +62,9 @@ test_script:
   - set TRIK_PYTHONPATH=%PYTHON_PATH%
   - .\trikKernelTests
   - .\trikCommunicatorTests
-  - .\trikScriptRunnerTests
   - .\trikCameraPhotoTests
+  - .\trikJsRunnerTests
+  - .\trikPyRunnerTests
 
 on_finish:
 # Uncomment to pause build for RDP connection
