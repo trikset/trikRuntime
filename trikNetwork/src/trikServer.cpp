@@ -79,10 +79,10 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 
 	connectionWorker->moveToThread(connectionThread);
 
-	connect(connectionThread, SIGNAL(finished()), connectionWorker, SLOT(deleteLater()));
-	connect(connectionThread, SIGNAL(finished()), connectionThread, SLOT(deleteLater()));
+	connect(connectionThread, &QThread::finished, connectionWorker, &Connection::deleteLater);
+	connect(connectionThread, &QThread::finished, connectionThread, &QThread::deleteLater);
 
-	connect(connectionWorker, SIGNAL(disconnected(Connection*)), this, SLOT(onConnectionClosed(Connection *)));
+	connect(connectionWorker, &Connection::disconnected, this, &TrikServer::onConnectionClosed);
 
 	const bool firstConnection = mConnections.isEmpty();
 	mConnections.insert(connectionThread, connectionWorker);

@@ -141,18 +141,15 @@ QString Mailbox::receive(bool wait)
 void Mailbox::init(int port)
 {
 	mWorker.reset(new MailboxServer(port));
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaitingSignal()));
-	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SLOT(updateConnectionStatus()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SLOT(updateConnectionStatus()));
-
 	mWorker->moveToThread(&mWorkerThread);
+	QObject::connect(&mWorkerThread, &QThread::started, mWorker.data(), &MailboxServer::start);
+	QObject::connect(mWorker.data(), &MailboxServer::newMessage, this, &Mailbox::newMessage);
+	QObject::connect(mWorker.data(), &MailboxServer::newMessage, this, &Mailbox::stopWaitingSignal);
+	QObject::connect(mWorker.data(), &MailboxServer::connected, this, &Mailbox::updateConnectionStatus);
+	QObject::connect(mWorker.data(), &MailboxServer::disconnected, this, &Mailbox::updateConnectionStatus);
 
 	QLOG_INFO() << "Starting Mailbox worker thread" << &mWorkerThread;
-
 	mWorkerThread.start();
-
-	QMetaObject::invokeMethod(mWorker.data(), "start", Qt::QueuedConnection);
 }
 
 void Mailbox::updateConnectionStatus()

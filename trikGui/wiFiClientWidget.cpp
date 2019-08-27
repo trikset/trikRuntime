@@ -49,8 +49,7 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 {
 	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(onNetworksInfoUpdated()));
 	connect(&mWiFi, SIGNAL(connected()), this, SLOT(onConnected()));
-	connect(&mWiFi, SIGNAL(disconnected(trikWiFi::DisconnectReason))
-			, this, SLOT(onDisconnected(trikWiFi::DisconnectReason)));
+	connect(&mWiFi, &TrikWiFi::disconnected, this, &WiFiClientWidget::onDisconnected);
 	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(onStatusUpdated()));
 	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(onError(const QString &)));
 
