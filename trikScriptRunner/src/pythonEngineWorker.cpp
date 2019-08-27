@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QProcess>
 #include <QsLog.h>
 
 #include <trikNetwork/mailboxInterface.h>
@@ -119,7 +120,7 @@ void PythonEngineWorker::run(const QString &script)
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
 	emit startedScript(0);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void PythonEngineWorker::doRun(const QString &script)
@@ -143,7 +144,7 @@ void PythonEngineWorker::doRun(const QString &script)
 void PythonEngineWorker::runDirect(const QString &command)
 {
 	QMutexLocker locker(&mScriptStateMutex);
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command));
 }
 
 void PythonEngineWorker::doRunDirect(const QString &command)
@@ -163,5 +164,5 @@ void PythonEngineWorker::updateErrorMessage(const QString &err)
 
 void PythonEngineWorker::onScriptRequestingToQuit()
 {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }

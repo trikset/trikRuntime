@@ -18,6 +18,7 @@
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/timeVal.h>
+#include <QEventLoop>
 #include <QsLog.h>
 
 #include "configurerHelper.h"
@@ -47,8 +48,7 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);
 
-		connect(mSensorWorker.data(), SIGNAL(newData(int, int, trikKernel::TimeVal))
-				, this, SIGNAL(newData(int, int, trikKernel::TimeVal)));
+		connect(mSensorWorker.data(), &RangeSensorWorker::newData, this, &RangeSensor::newData);
 
 		QLOG_INFO() << "Starting RangeSensor worker thread" << &mWorkerThread;
 

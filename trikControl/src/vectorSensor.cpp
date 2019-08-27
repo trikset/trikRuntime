@@ -31,8 +31,7 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 
 	if (!mState.isFailed()) {
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-				, this, SIGNAL(newData(QVector<int>,trikKernel::TimeVal)));
+		connect(mVectorSensorWorker.data(), &VectorSensorWorker::newData, this, &VectorSensor::newData);
 
 		QLOG_INFO() << "Starting VectorSensor worker thread" << &mWorkerThread;
 

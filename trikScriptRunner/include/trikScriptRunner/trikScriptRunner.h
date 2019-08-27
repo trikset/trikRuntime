@@ -30,7 +30,7 @@ class BrickInterface;
 namespace trikScriptRunner {
 
 /// General wrapper for other executors (such as Python, JavaScript)
-class TrikScriptRunner : public TrikScriptRunnerInterface
+class TRIKSCRIPTRUNNER_EXPORT TrikScriptRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
 public:
@@ -38,14 +38,14 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * const mailbox
+					 , trikNetwork::MailboxInterface * mailbox
 					 );
 
-	~TrikScriptRunner();
+	~TrikScriptRunner() override;
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
-	
+
 	/// Create completion list for interpreted language
 	QStringList knownMethodNamesFor(ScriptType t);
 

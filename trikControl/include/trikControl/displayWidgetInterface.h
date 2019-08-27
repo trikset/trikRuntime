@@ -30,6 +30,10 @@ namespace trikControl {
 class TRIKCONTROL_EXPORT DisplayWidgetInterface : public QWidget
 {
 	Q_OBJECT
+	Q_DISABLE_COPY(DisplayWidgetInterface)
+public:
+	DisplayWidgetInterface() = default;
+	~DisplayWidgetInterface() override = default;
 
 signals:
 	/// Emitted when widget is shown.

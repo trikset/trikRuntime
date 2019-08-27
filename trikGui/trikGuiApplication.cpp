@@ -41,7 +41,7 @@ static bool isTrikPowerOffKey(Qt::Key key) {
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 {
 	if (event->type() == QEvent::KeyPress) {
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
 			if (keyEvent->isAutoRepeat()) {
 				//	if (!mPowerButtonPressedTimer.isActive()) {
@@ -59,7 +59,7 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 			event = &evntKeyPowerOff;
 		}
 	} else if (event->type() == QEvent::KeyRelease) {
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
 			if (!keyEvent->isAutoRepeat()) {
 				mIsShutdownRequested = false;

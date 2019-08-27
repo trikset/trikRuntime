@@ -22,7 +22,8 @@ namespace trikHal {
 class MspUsbInterface
 {
 public:
-	virtual ~MspUsbInterface() {}
+	MspUsbInterface() = default;
+	virtual ~MspUsbInterface() = default;
 
 	/// Send data to MSP.
 	virtual void send(const QByteArray &data) = 0;

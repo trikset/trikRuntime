@@ -24,10 +24,10 @@
 using namespace trikControl;
 
 static constexpr int GYRO_ARITHM_PRECISION = 0;
-static constexpr double GYRO_250DPS = 8.75 / (1 << GYRO_ARITHM_PRECISION) ;
-static constexpr double PI = 3.14159265358979323846;
-static constexpr double PI_2 = 1.57079632679489661923;
-static constexpr double RAD_TO_MDEG = 1000 * 180 / PI;
+static constexpr auto GYRO_250DPS = 8.75f / (1 << GYRO_ARITHM_PRECISION) ;
+static constexpr auto PI = 3.14159265358979323846f;
+static constexpr auto PI_2 = 1.57079632679489661923f;
+static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer)
@@ -126,11 +126,11 @@ void GyroSensor::setCalibrationValues(const QVector<int> &values)
 	QVector3D gravity(0, 0, 1);
 	QVector3D delta = gravity - acc;
 
-	mAxesSwapped = (delta.length() < 0.2);
+	mAxesSwapped = (delta.length() < 0.2f);
 	float dot = QVector3D::dotProduct(acc, gravity);
 	QVector3D cross = QVector3D::crossProduct(acc, gravity);
 
-	mQ = QQuaternion::fromAxisAndAngle(cross, acos(dot) * 180 / PI);
+	mQ = QQuaternion::fromAxisAndAngle(cross, std::acos(dot) * 180 / PI);
 	QLOG_INFO() << "Calibrated orientation sensor: Q = " << mQ;
 }
 
@@ -232,8 +232,9 @@ void GyroSensor::countCalibrationParameters()
 	emit calibrationFinished();
 }
 
-void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &)
+void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &t)
 {
+	Q_UNUSED(t);
 	mAccelerometerSum[0] += accelerometerData[0];
 	mAccelerometerSum[1] += accelerometerData[1];
 	mAccelerometerSum[2] += accelerometerData[2];

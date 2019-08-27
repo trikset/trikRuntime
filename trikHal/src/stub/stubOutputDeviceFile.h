@@ -28,7 +28,7 @@ class StubOutputDeviceFile : public OutputDeviceFileInterface
 public:
 	/// Constructor.
 	/// @param fileName - file name (with path, relative or absolute) of a device file.
-	StubOutputDeviceFile(const QString &fileName);
+	explicit StubOutputDeviceFile(const QString &fileName);
 
 	bool open() override;
 	void close() override;

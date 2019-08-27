@@ -21,18 +21,12 @@ TimeVal::TimeVal(int sec, int mcsec)
 	mTime = ((sec * mSecConst) >> (mShift - 6)) + (mcsec >> mShift);
 }
 
-TimeVal &TimeVal::operator=(const TimeVal &timeVal)
-{
-	mTime = timeVal.mTime;
-	return *this;
-}
-
-int TimeVal::packedUInt32() const
+uint32_t TimeVal::packedUInt32() const
 {
 	return mTime;
 }
 
-TimeVal TimeVal::fromPackedUInt32(int packedTime)
+TimeVal TimeVal::fromPackedUInt32(uint32_t packedTime)
 {
 	return TimeVal(packedTime);
 }

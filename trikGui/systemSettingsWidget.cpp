@@ -95,7 +95,7 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		default: {
-			MainWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}
@@ -103,7 +103,7 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 
 void SystemSettingsWidget::changeDefaultButton()
 {
-	QRadioButton const* const current = dynamic_cast<QRadioButton const*>(mButtonGroup.checkedButton());
+	QRadioButton const* const current = qobject_cast<QRadioButton const*>(mButtonGroup.checkedButton());
 	if (current == mOnlyScriptsButton) {
 		mAllFSButton->setChecked(true);
 		mOnlyScriptsButton->setChecked(false);
@@ -115,7 +115,7 @@ void SystemSettingsWidget::changeDefaultButton()
 
 void SystemSettingsWidget::emitCheckedDirPath()
 {
-	QRadioButton const* const current = dynamic_cast<QRadioButton const*>(mButtonGroup.checkedButton());
+	QRadioButton const* const current = qobject_cast<QRadioButton const*>(mButtonGroup.checkedButton());
 	if (current == mOnlyScriptsButton) {
 		emit currentFilesDirPath(MainWidget::FileManagerRootType::scriptsDir);
 	} else {

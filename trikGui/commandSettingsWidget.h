@@ -46,7 +46,7 @@ public:
 	/// @param title - information for user in the top of the page.
 	/// @param digits - amount of digits which selector should show.
 	/// @param parent - parent of this widget in Qt object hierarchy.
-	CommandSettingsWidget(const QString &title, const int digits, QWidget *parent = 0);
+	CommandSettingsWidget(const QString &title, int digits, QWidget *parent = nullptr);
 
 	/// Returns menu entry for this widget.
 	static QString menuEntry();

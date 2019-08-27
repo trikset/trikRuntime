@@ -35,7 +35,7 @@ initvars.file = $$PWD/initvars.pre
 
 tests {
 	SUBDIRS *= tests
-	tests.depends = trikScriptRunner trikCommunicator trikKernel
+	tests.depends = trikScriptRunner
 }
 
 qslog.file = qslog/QsLogSharedLibrary.pro

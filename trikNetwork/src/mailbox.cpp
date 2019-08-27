@@ -97,22 +97,22 @@ bool Mailbox::isEnabled()
 
 void Mailbox::connect(const QString &ip, int port)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(const QString &, ip), Q_ARG(int, port));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ip), Q_ARG(int, port));
 }
 
 void Mailbox::connect(const QString &ip)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(const QString &, ip));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ip));
 }
 
 void Mailbox::send(int hullNumber, const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(const QString &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(QString, message));
 }
 
 void Mailbox::send(const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(const QString &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(QString, message));
 }
 
 bool Mailbox::hasMessages()

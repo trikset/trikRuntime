@@ -44,6 +44,6 @@ public:
 
 signals:
 	/// Emitted when the widget created a new one and wants it to be shown.
-	void newWidget(MainWidget &widget);
+	void newWidget(trikGui::MainWidget &widget);
 };
 }

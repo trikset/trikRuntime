@@ -58,8 +58,8 @@ public slots:
 private:
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mRedDeviceFile;
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mGreenDeviceFile;
-	int mOn;
-	int mOff;
+//	int mOn {};
+//	int mOff {};
 	DeviceState mState;
 };
 

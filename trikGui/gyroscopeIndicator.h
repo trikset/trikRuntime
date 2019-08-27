@@ -53,9 +53,9 @@ private:
 	QLabel mCircle;
 	QVBoxLayout mLayout;
 
-	int mX;
-	int mY;
-	int mZ;
+	int mX {};
+	int mY {};
+	int mZ {};
 	trikControl::GyroSensorInterface &mGyroscope;
 };
 }
