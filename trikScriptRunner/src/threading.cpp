@@ -101,9 +101,9 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	mThreadsMutex.unlock();
 
 	engine->moveToThread(thread);
-	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+	connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 	QEventLoop wait;
-	connect(thread, SIGNAL(started()), &wait, SLOT(quit()));
+	connect(thread, &QThread::started, &wait, &QEventLoop::quit);
 	thread->start();
 	wait.exec();
 
@@ -114,7 +114,7 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 void Threading::waitForAll()
 {
 	QEventLoop wait;
-	connect(this, SIGNAL(finished()), &wait, SLOT(quit()));
+	connect(this, &Threading::finished, &wait, &QEventLoop::quit);
 	mThreadsMutex.lock();
 	auto hasThreads = !mThreads.isEmpty();
 	mThreadsMutex.unlock();
@@ -218,12 +218,12 @@ void Threading::threadFinished(const QString &id)
 	mThreadsMutex.unlock();
 	mResetMutex.unlock();
 
-	if (mThreads.isEmpty()) {
-		emit finished();
-	}
-
 	if (!mErrorMessage.isEmpty()) {
 		reset();
+	}
+
+	if (mThreads.isEmpty()) {
+		emit finished();
 	}
 }
 
