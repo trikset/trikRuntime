@@ -33,7 +33,7 @@ void ScriptExecutionControl::reset()
 {
 	mInEventDrivenMode = false;
 	emit stopWaiting();
-	for (QTimer * const timer : qAsConst(mTimers)) {
+	for (auto &&timer : mTimers) {
 		QMetaObject::invokeMethod(timer, "stop", Qt::QueuedConnection);
 		timer->deleteLater();
 	}

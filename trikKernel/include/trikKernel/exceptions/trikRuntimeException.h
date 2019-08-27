@@ -28,7 +28,6 @@ public:
 	TrikRuntimeException(TrikRuntimeException &&e) = default;
 	/// Deleted
 	TrikRuntimeException(const TrikRuntimeException &e) = delete;
-
 };
 
 }
