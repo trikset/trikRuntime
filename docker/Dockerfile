@@ -53,7 +53,7 @@ RUN /tmp/install_qt.sh $QTDIR \
 	      $QTBIN/../lib/*.a
 
 
-ENV PYENV_VERSION 3.5.6
+ENV PYENV_VERSION 3.7.4
 ENV PYENV_ROOT "/pyenv"
 RUN curl -L https://raw.githubusercontent.com/trikset/trik-pythonqt/master/with_pyenv | bash \
 && rm -rf $PYENV_ROOT/sources/* \
