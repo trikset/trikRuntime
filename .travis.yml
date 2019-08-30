@@ -30,9 +30,13 @@ matrix:
   include:
   - os: linux
     services: docker
+    sudo: required
     name: Linux release
+    env:
+      - QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=force_debug_info"
   - os: linux
     services: docker
+    sudo: required
     env:
       - CONFIG=debug VERA=true TRANSLATIONS=true
       - QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
