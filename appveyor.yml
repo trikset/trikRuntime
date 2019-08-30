@@ -21,10 +21,10 @@ environment:
   matrix:
       - MINGW: C:\Qt\Tools\mingw730_32
         QTDIR: C:\Qt\5.12\mingw73_32
-        PYTHON_PATH: C:\Python35
+        PYTHON_PATH: C:\Python37
       - MINGW: C:\Qt\Tools\mingw730_64
         QTDIR: C:\Qt\5.12\mingw73_64
-        PYTHON_PATH: C:\Python35-x64
+        PYTHON_PATH: C:\Python37-x64
 
 configuration:
   - debug
@@ -40,7 +40,6 @@ init:
 
 before_build:
   - git submodule update --init --recursive
-  - set PYTHON_LIB="%PYTHON_PATH%\libs"
   - set PATH=%PYTHON_PATH%;%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
@@ -58,6 +57,7 @@ build_script:
 test_script:
   - cd %BUILD_DIR%
   - cd bin\x86-%CONFIGURATION%
+  - set TRIK_PYTHONPATH=%PYTHON_PATH%
   - .\trikKernelTests
   - .\trikCommunicatorTests
   - .\trikScriptRunnerTests
