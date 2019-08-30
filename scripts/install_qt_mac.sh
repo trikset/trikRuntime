@@ -8,7 +8,7 @@ P=$(hdiutil attach $D -noverify -noautofsck | grep -o '/Volumes/.*$')
 I=$(find $P -type f -name '*qt-unified-*' -path '*Contents/MacOS/*' -print)
 env TRIK_QT_INSTALL_DIR="$TRIK_QT_INSTALL_DIR" $I --verbose --no-force-installations --show-virtual-components --script $SCRIPT_DIR/../docker/qt_scriptinstall.qs --platform minimal
 
-#remove Doc & Examples. No way to deselect this in installer script.
+#remove garbage. No way to deselect this in installer script.
+rm -rf $TRIK_QT_INSTALL_DIR/{Docs,Examples,"Qt Creator.app",MaintenanceTool.app,MaintenanceTool.dat}
 
-rm -rf $TRIK_QT_INSTALL_DIR/{Doc,Examples}
 du -csh $TRIK_QT_INSTALL_DIR/* | sort -h
