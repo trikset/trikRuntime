@@ -2,7 +2,7 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-    REQUIRED_PACKAGES="qt ccache pyenv coreutils"
+    REQUIRED_PACKAGES="ccache pyenv coreutils"
     export HOMEBREW_TEMP="$HOME/homebrew.tmp"
     export HOMEBREW_LOGS="$HOMEBREW_TEMP"
     #To turn autoupdate on use `unset HOMEBREW_NO_AUTO_UPDATE` in a sub-shell before `breq install`
@@ -14,6 +14,7 @@ case $TRAVIS_OS_NAME in
       ( brew install $pkg || echo "Failed to install $pkg" ) \
       || { brew unlink $p ; brew link --force $p ; }
     done
+    [ -d $TRIK_QT/5.12.4 ] || env TRIK_QT_INSTALL_DIR="$TRIK_QT" scripts/install_qt_mac.sh
   ;;
 
   linux)
