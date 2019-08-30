@@ -5,36 +5,32 @@ case $TRAVIS_OS_NAME in
     export PATH="$TRIK_QT/5.12.4/clang_64/bin:$PATH"
     export PATH="/usr/local/opt/ccache/libexec:$PATH"
     export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-    export PATH="$(pyenv root)/bin:$PATH"
-    eval "$(pyenv init -)"
-    export PKG_CONFIG_PATH="$(python3-config --prefix)/lib/pkgconfig"
-    EXECUTOR="scripts/with_pyenv "
+    EXECUTOR=
     ;;
   linux)
     EXECUTOR="docker exec --interactive builder "
    ;;
   *) exit 1 ;;
 esac
-
+export EXECUTOR
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
-if [ "$VERA" = "true" ]; then git diff --name-only ${TRAVIS_COMMIT_RANGE} \
-	| xargs -r file -i | sed -e "s|\(.*\): text/x-c.*|\1|g" -e "/:/d"  \
-	| $EXECUTOR vera++ --error --root vera++ --profile strict ; fi
+if [ "$VERA" = "true" ]; then
+  git diff --diff-filter=d --name-only ${TRAVIS_COMMIT_RANGE} \
+	| xargs -r file -i | sed -e "s|\(.*\):.*text/x-c.*|\1|g" -e "/:/d"  \
+	| $EXECUTOR vera++ --warning --root vera++ --profile strict
+fi
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
 
 $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
    export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && export CCACHE_CPP2=yes \
 && export CCACHE_SLOPPINESS=time_macros \
-&& eval \"\`pyenv init -\`\" \
 && eval 'export PKG_CONFIG_PATH=\`python3-config --prefix\`/lib/pkgconfig' \
 && which g++ \
 && g++ --version \
 && which qmake \
 && qmake -query \
 && ccache -M 0 \
-&& pyenv root \
-&& pyenv versions \
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \
