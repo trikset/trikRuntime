@@ -14,9 +14,11 @@
 
 #include <QProcess>
 #include <QsLog.h>
+#include <QFileInfo>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 
 #include "pythonEngineWorker.h"
 
@@ -49,10 +51,13 @@ PythonEngineWorker::~PythonEngineWorker()
 void PythonEngineWorker::init()
 {
 	if (!Py_IsInitialized()) {
-		static auto nonConst = wcsdup(L"SOME_PATH"); // leak?
+		static const auto nonConst = wcsdup(L"SOME_PATH"); // leak?
 		Py_SetPythonHome(nonConst); //??? Need to set correct one
 
-		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH", "");
+		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH");
+		if (path.isEmpty() || !QFileInfo::exists(path)) {
+			throw trikKernel::InternalErrorException("TRIK_PYTHON path must be set to correct value");
+		}
 		// TODO: Now use PYTHONPATH environment variable (default) until fixed
 		// Must point to local .zip file
 		Py_SetPath(path.toStdWString().data());
@@ -79,8 +84,7 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 		PythonQt_QtAll::init();
-		connect(PythonQt::self(), &PythonQt::pythonStdErr
-			, this, &PythonEngineWorker::updateErrorMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 	}
 
 	mMainContext = PythonQt::self()->getMainModule();
