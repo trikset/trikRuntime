@@ -36,6 +36,7 @@ matrix:
       - QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
     name: Linux debug + vera + translations
   - os: osx
+    osx_image: xcode11
     language: cpp
     name: macOS release
     env: QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info"
