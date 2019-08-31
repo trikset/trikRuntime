@@ -55,8 +55,12 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 	QLOG_INFO() << "Supported buffer formats: " << formats;
 
 	auto camera = mCamera.data();
+	QVector<uint8_t> imageByteVector;
+	QTimer watchdog;
+	QEventLoop eventLoop;
+
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged
-		, [this, &imageCapture, camera](bool ready) {
+		, &eventLoop, [this, &imageCapture, camera](bool ready) {
 			if (ready) {
 				camera->searchAndLock();
 				imageCapture->capture(getTempDir() + "/photo.jpg");
@@ -65,23 +69,20 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 		}
 	);
 
-	QVector<uint8_t> imageByteVector;
-
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured
-			, [&imageByteVector] (int, const QImage &imgOrig) {
+			, &eventLoop, [&imageByteVector] (int, const QImage &imgOrig) {
 				imageByteVector = CameraDeviceInterface::qImageToQVector(imgOrig);
 			}
 	);
 
 	mCamera->setCaptureMode(QCamera::CaptureStillImage);
 	mCamera->start();
-	QEventLoop eventLoop;
-	QTimer watchdog;
+
 	watchdog.setInterval(1000);
 	watchdog.setSingleShot(true);
-	QObject::connect(&watchdog, SIGNAL(timeout()), &eventLoop, SLOT(quit()));
+	QObject::connect(&watchdog, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageAvailable
-			, [&eventLoop](int, const QVideoFrame &) {
+			, &eventLoop, [&eventLoop](int, const QVideoFrame &) {
 				eventLoop.quit();
 			}
 		);
