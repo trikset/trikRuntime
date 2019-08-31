@@ -94,7 +94,7 @@ void MotorsWidget::renewFocus()
 	}
 }
 
-bool MotorsWidget::eventFilter(QObject *, QEvent *event)
+bool MotorsWidget::eventFilter(QObject *o, QEvent *event)
 {
 	if(event->type() == QEvent::KeyPress)
 	{

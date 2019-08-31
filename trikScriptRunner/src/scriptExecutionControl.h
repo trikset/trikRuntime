@@ -32,39 +32,39 @@ public:
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
 
-	/// Resets script execution state, clearing all flags and stopping all timers.
-	void reset();
-
-public slots:
 	/// Starts a new timer with given interval and returns reference to it.
-	QTimer *timer(int milliseconds);
+	Q_INVOKABLE QTimer *timer(int milliseconds);
 
 	/// Waits given amount of time in milliseconds and returns.
-	void wait(const int &milliseconds);
+	Q_INVOKABLE void wait(const int &milliseconds);
 
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
-	qint64 time() const;
+	Q_INVOKABLE qint64 time() const;
 
 	/// Returns random number from an interval [from, to].
-	int random(int from, int to) const;
+	Q_INVOKABLE int random(int from, int to) const;
 
+	/// Execute given sh command.
+	Q_INVOKABLE void system(const QString &command, bool synchronously = false);
+
+	/// Appends given text to the end of a file.
+	Q_INVOKABLE void writeToFile(const QString &file, const QString &text);
+
+	/// Reads all lines from a text file and returns it as a list of strings.
+	Q_INVOKABLE QStringList readAll(const QString &file) const;
+
+	/// Removes a file.
+	Q_INVOKABLE void removeFile(const QString &file);
+
+public slots:
 	/// Starts event loop for script.
 	void run();
 
 	/// Aborts script execution.
 	void quit();
 
-	/// Execute given sh command.
-	void system(const QString &command, bool synchronously = false);
-
-	/// Appends given text to the end of a file.
-	void writeToFile(const QString &file, const QString &text);
-
-	/// Reads all lines from a text file and returns it as a list of strings.
-	QStringList readAll(const QString &file) const;
-
-	/// Removes a file.
-	void removeFile(const QString &file);
+	/// Resets script execution state, clearing all flags and stopping all timers.
+	void reset();
 
 signals:
 	/// Emitted when script requested system to abort execution.
