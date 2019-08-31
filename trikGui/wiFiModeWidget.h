@@ -42,7 +42,7 @@ class WiFiModeWidget : public TrikGuiDialog
 	Q_OBJECT
 
 public:
-	enum Mode {
+	enum class Mode {
 		accessPoint
 		, client
 		, unknown

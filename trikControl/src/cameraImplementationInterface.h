@@ -25,12 +25,15 @@ namespace trikControl {
 /// Interface for camera implementations
 class TRIKCONTROL_EXPORT CameraImplementationInterface
 {
+	Q_DISABLE_COPY(CameraImplementationInterface)
 public:
 
 	/// Get photo as a vector of uint8t in RGB 888 format
 	virtual QVector<uint8_t> getPhoto() = 0;
 
 	virtual ~CameraImplementationInterface() = default;
+
+	CameraImplementationInterface() = default;
 
 	/// Get directory, where photos are saved
 	QString getTempDir() const { return tempDir;}

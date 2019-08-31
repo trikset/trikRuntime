@@ -50,7 +50,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	mLocal->sun_family = AF_UNIX;
 	snprintf(mLocal->sun_path, sizeof(mLocal->sun_path), "%s", interfaceFile.toStdString().c_str());
 	unlink(mLocal->sun_path);
-	if (bind(mSocket, reinterpret_cast<sockaddr *>(mLocal.data()), sizeof(*(mLocal.data()))) != 0) {
+	if (bind(mSocket, static_cast<sockaddr *>(static_cast<void*>(mLocal.data())), sizeof(*(mLocal.data()))) != 0) {
 		std::cerr << "Cannot bind a name to a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		close(mSocket);
@@ -60,7 +60,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 
 	mDest->sun_family = AF_UNIX;
 	snprintf(mDest->sun_path, sizeof(mDest->sun_path), "%s", daemonFile.toStdString().c_str());
-	if (::connect(mSocket, reinterpret_cast<sockaddr *>(mDest.data()), sizeof(*(mDest.data()))) != 0) {
+	if (::connect(mSocket, static_cast<sockaddr *>(static_cast<void*>(mDest.data())), sizeof(*(mDest.data()))) != 0) {
 		std::cerr << "Cannot connect a socket:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		unlink(mLocal->sun_path);

@@ -17,9 +17,9 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cerrno>
+#include <cstring>
+#include <cstdlib>
 #include <unistd.h>
 #include <QtCore/QEventLoop>
 #include <QtCore/QTimer>
@@ -66,8 +66,9 @@ namespace {
 	QVector<uint8_t> yuv422pToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuv422p convertion to rgb888
 		QVector<uint8_t> result(height * width * 3);
-		if ( width <= 0 || height <= 0 )
+		if ( width <= 0 || height <= 0 ) {
 			return result;
+		}
 		const auto Y = &shot[0];
 		const auto U = &shot[width * height];
 		const auto V = &shot[3 * width * height / 2];
@@ -77,8 +78,8 @@ namespace {
 				auto startIndex = row * width + col;
 				auto y1 = Y[startIndex] - 16;
 				auto y2 = Y[startIndex+1] - 16;
-				auto u  = U[startIndex>>1] - 128;
-				auto v  = V[startIndex>>1] - 128;
+				auto u  = U[startIndex / 2] - 128;
+				auto v  = V[startIndex / 2] - 128;
 				auto _298y1 = 298 * y1;
 				auto _298y2 = 298 * y2;
 				auto _409v  = 409 * v;
@@ -316,9 +317,9 @@ void TrikV4l2VideoDevice::initMMAP()
 		}
 
 		buffers[i].length = buf.length;
-		buffers[i].start = (uint8_t *) ::v4l2_mmap(nullptr, buf.length
+		buffers[i].start = static_cast<uint8_t *>(::v4l2_mmap(nullptr, buf.length
 							, PROT_READ | PROT_WRITE, MAP_SHARED
-							, mFileDescriptor, buf.m.offset);
+							, mFileDescriptor, buf.m.offset));
 
 		if (buffers[i].start == MAP_FAILED) {
 			QLOG_ERROR() << "mmap failed in TrikV4l2VideoDevice::initMMAP()";

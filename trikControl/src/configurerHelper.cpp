@@ -34,7 +34,6 @@ int ConfigurerHelper::configureInt(const trikKernel::Configurer &configurer, Dev
 		if (!ok) {
 			QLOG_ERROR() << QString("Incorrect configuration for parameter \"%1\" for port \"%2\": \"%3\" ")
 					.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
-
 			state.fail();
 			return 0;
 		}

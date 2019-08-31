@@ -17,9 +17,9 @@
 #include <QtCore/QDir>
 
 #include <sys/resource.h>
-#include <signal.h>
+#include <csignal>
 #include <unistd.h>
-#include <stdio.h>
+#include <cstdio>
 #include "paths.h"
 
 void (*oldHandler)(int);

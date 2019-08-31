@@ -42,7 +42,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param scriptControl - reference to script execution control object.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::MailboxInterface * mailbox
 			, ScriptExecutionControl &scriptControl
 			);
 
@@ -55,7 +55,7 @@ public:
 	/// Note that functions will not be copied to a new engine due to limitations of Qt Scripting engine,
 	/// they need to be re-evaluated manually.
 	/// Can be safely called from other threads (to some extent. Original engine shall not simultaneously evaluate).
-	QScriptEngine *copyScriptEngine(const QScriptEngine * const original);
+	QScriptEngine *copyScriptEngine(const QScriptEngine * original);
 
 	/// Registers given C++ function as callable from script, with given name.
 	/// Can be safely called from other threads (but it shall not be called simultaneously with engine creation).
@@ -144,7 +144,7 @@ private:
 	void startScriptEvaluation(int scriptId);
 
 	/// Evaluates "system.js" file in given engine.
-	void evalSystemJs(QScriptEngine * const engine) const;
+	void evalSystemJs(QScriptEngine * engine) const;
 
 	/// Collects all methods names from given metaObject.
 	/// If the returnType of given method name is registered in metaobject system,

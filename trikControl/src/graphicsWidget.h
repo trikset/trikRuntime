@@ -27,6 +27,7 @@ namespace trikControl {
 /// Class of graphic widget.
 class GraphicsWidget : public DisplayWidgetInterface
 {
+	Q_OBJECT
 public:
 	GraphicsWidget();
 	~GraphicsWidget();

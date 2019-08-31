@@ -232,8 +232,9 @@ void GyroSensor::countCalibrationParameters()
 	emit calibrationFinished();
 }
 
-void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &)
+void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &t)
 {
+	Q_UNUSED(t);
 	mAccelerometerSum[0] += accelerometerData[0];
 	mAccelerometerSum[1] += accelerometerData[1];
 	mAccelerometerSum[2] += accelerometerData[2];

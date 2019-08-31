@@ -105,11 +105,11 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 			= [&prettyPrinter](QVariant const & elem) {
 			auto const &arrayPrettyPrinter = [&prettyPrinter](const QVariantList &array) {
 				qint32 arrayLength = array.length();
-				
+
 				if (arrayLength == 0) {
 					return QString("[]");
 				}
-	
+
 				QString res;
 				res.reserve(100000);
 				res.append("[" % prettyPrinter(array.first()));
@@ -117,7 +117,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 				for(auto i = 1; i < arrayLength; ++i) {
 					res.append(", " % prettyPrinter(array.at(i)));
 				}
-	
+
 				res.append("]");
 				return res;
 			};
@@ -132,7 +132,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
-	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());
+	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
 	if (script) {
 		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
 	}
@@ -142,7 +142,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 {
-	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInteger(), context->argument(1).toInteger());
+	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInt32(), context->argument(1).toInt32());
 	return engine->toScriptValue(result);
 }
 
@@ -331,7 +331,7 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void ScriptEngineWorker::doRun(const QString &script)
@@ -356,7 +356,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		stopScript();
 	}
 
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command), Q_ARG(int, scriptId));
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command), Q_ARG(int, scriptId));
 }
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)

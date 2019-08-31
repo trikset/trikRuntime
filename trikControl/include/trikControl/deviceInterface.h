@@ -13,14 +13,18 @@
  * limitations under the License. */
 
 #pragma once
+#include <QtGlobal>
 
 namespace trikControl {
 
 /// TRIK device interface, base interface for everything that can be plugged to a brick or already on board.
 class DeviceInterface
 {
+	Q_DISABLE_COPY(DeviceInterface)
 
 public:
+public:
+	DeviceInterface() = default;
 	virtual ~DeviceInterface() = default;
 
 	/// Device status.

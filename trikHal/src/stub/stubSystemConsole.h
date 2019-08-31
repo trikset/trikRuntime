@@ -26,7 +26,7 @@ public:
 	int system(const QString &command) override;
 	bool startProcess(const QString &processName, const QStringList &arguments) override;
 	bool startProcessSynchronously(const QString &processName, const QStringList &arguments
-			, QString * const output = nullptr) override;
+			, QString * output = nullptr) override;
 };
 
 }

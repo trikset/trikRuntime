@@ -29,7 +29,6 @@
 #include "connectButton.h"
 
 using namespace trikGui;
-using trikControl::MotorInterface;
 
 SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, QWidget *parent)
 	: TrikGuiDialog(parent)

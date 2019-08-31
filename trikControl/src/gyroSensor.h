@@ -74,7 +74,7 @@ private slots:
 	/// Calculates average mean of bias and reset other tilt parameters.
 	void countCalibrationParameters();
 
-	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &);
+	void sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal & t);
 
 	/// Sums values of bias.
 	void sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &);

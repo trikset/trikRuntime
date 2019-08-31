@@ -61,7 +61,7 @@ public:
 	bool isSet(const QString &optionShortName) const;
 
 	/// Returns value of an option or an empty string if it is not set.
-	QString value(const QString optionShortName) const;
+	QString value(const QString &optionShortName) const;
 
 private:
 	QString mApplicationName;

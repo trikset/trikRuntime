@@ -142,7 +142,7 @@ QString Configurer::attributeByPort(const QString &port, const QString &attribut
 			.arg(attributeName).arg(deviceType).arg(port));
 }
 
-bool Configurer::isEnabled(const QString deviceName) const
+bool Configurer::isEnabled(const QString &deviceName) const
 {
 	if (mAdditionalModelConfiguration.contains(deviceName)) {
 		return true;

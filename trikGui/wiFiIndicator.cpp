@@ -34,7 +34,7 @@ WiFiIndicator::WiFiIndicator(Controller &controller, QWidget *parent)
 
 void WiFiIndicator::setOn()
 {
-	if (mMode == WiFiModeWidget::client) {
+	if (mMode == WiFiModeWidget::Mode::client) {
 		QPixmap icon("://resources/wifion.png");
 		setPixmap(icon);
 	}
@@ -74,7 +74,7 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 {
 	mMode = mode;
 	switch (mode) {
-		case WiFiModeWidget::client:
+		case WiFiModeWidget::Mode::client:
 			if (mController.wiFi().statusResult().connected) {
 				switch (mController.wiFi().signalStrength()) {
 					case SignalStrength::undefined:
@@ -94,10 +94,10 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 				setOff();
 			}
 			break;
-		case WiFiModeWidget::accessPoint:
+		case WiFiModeWidget::Mode::accessPoint:
 			setAPOn();
 			break;
-		case WiFiModeWidget::unknown:
+		case WiFiModeWidget::Mode::unknown:
 			setOff();
 	}
 }
@@ -109,11 +109,11 @@ void WiFiIndicator::updateStatus()
 
 	WiFiModeWidget::Mode wiFiMode;
 	if (rcReader.value("trik_wifi_mode") == "ap") {
-		wiFiMode = WiFiModeWidget::accessPoint;
+		wiFiMode = WiFiModeWidget::Mode::accessPoint;
 	} else if (rcReader.value("trik_wifi_mode") == "client") {
-		wiFiMode = WiFiModeWidget::client;
+		wiFiMode = WiFiModeWidget::Mode::client;
 	} else {
-		wiFiMode = WiFiModeWidget::unknown;
+		wiFiMode = WiFiModeWidget::Mode::unknown;
 	}
 
 	changeMode(wiFiMode);

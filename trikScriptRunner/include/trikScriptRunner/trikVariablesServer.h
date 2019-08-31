@@ -46,7 +46,7 @@ private slots:
 
 private:
 	QScopedPointer<QTcpServer> mTcpServer;
-	QTcpSocket *mCurrentConnection; // Has ownership in QTcpServer
+	QTcpSocket *mCurrentConnection {}; // Has ownership in QTcpServer
 
 	constexpr static int port = 10000;
 };

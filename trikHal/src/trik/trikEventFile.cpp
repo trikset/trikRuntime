@@ -111,12 +111,12 @@ QString TrikEventFile::fileName() const
 
 void TrikEventFile::readFile()
 {
-	struct input_event event;
+	struct input_event event {};
 	int size = 0;
 
 	mSocketNotifier->setEnabled(false);
 
-	while ((size = ::read(mEventFileDescriptor, reinterpret_cast<char *>(&event), sizeof(event)))
+	while ((size = ::read(mEventFileDescriptor, static_cast<void*>(&event), sizeof(event)))
 			== static_cast<int>(sizeof(event)))
 	{
 		trikKernel::TimeVal eventTime(event.time.tv_sec, event.time.tv_usec);
