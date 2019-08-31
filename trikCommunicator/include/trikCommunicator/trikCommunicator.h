@@ -49,7 +49,7 @@ public:
 	/// @param brick - reference to robot brick.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikCommunicator(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::MailboxInterface * mailbox
 			);
 
 	/// Constructor that accepts external script runner and issues commands to it.

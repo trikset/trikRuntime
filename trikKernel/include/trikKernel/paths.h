@@ -68,7 +68,7 @@ private:
 		, systemScripts
 	};
 
-	static QString path(const Resource resource);
+	static QString path(const Resource &resource);
 };
 
 }

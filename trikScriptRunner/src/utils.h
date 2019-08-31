@@ -25,7 +25,7 @@ public:
 	/// Creates new instance of script value copying there all insufficient data from prototype.
 	/// @param prototype - object to copy.
 	/// @paragraph engine - an engine that should own new object.
-	static QScriptValue clone(const QScriptValue &prototype, QScriptEngine * const engine);
+	static QScriptValue clone(const QScriptValue &prototype, QScriptEngine * engine);
 
 	/// Copies data into target from prototype.
 	/// @param prototype - copy source.

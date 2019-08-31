@@ -57,8 +57,9 @@ void AudioSynthDevice::stop()
 // Modified coupled first-order form algorithm with fixed point arithmetic
 int AudioSynthDevice::generate(char *data, int length)
 {
-	if(mHzFreq == 0)
+	if(mHzFreq == 0) {
 		return 0;
+	}
 
 	const int channelBytes = mSampleSize / 8;
 
@@ -66,7 +67,7 @@ int AudioSynthDevice::generate(char *data, int length)
 
 	const int AMPLITUDE = (1 << (mSampleSize - 1)) - 1;
 
-	unsigned char *ptr = reinterpret_cast<unsigned char *>(data);
+	auto ptr = static_cast<unsigned char *>(static_cast<void*>(data));
 
 	long long y0;
 
@@ -79,10 +80,10 @@ int AudioSynthDevice::generate(char *data, int length)
 
 		if (mSampleSize == 8) {
 			const qint8 val = static_cast<qint8>(y0 * AMPLITUDE / M);
-			*reinterpret_cast<quint8*>(ptr) = val;
+			*static_cast<qint8*>(static_cast<void*>(ptr)) = val;
 		} else if(mSampleSize == 16) {
 			const qint16 val = static_cast<qint16>(y0 * AMPLITUDE / M);
-			*reinterpret_cast<quint16*>(ptr) = val;
+			*static_cast<qint16*>(static_cast<void*>(ptr)) = val;
 		}
 
 		ptr += channelBytes;

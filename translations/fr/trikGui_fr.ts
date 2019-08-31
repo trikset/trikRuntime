@@ -41,7 +41,7 @@
 <context>
     <name>trikGui::CommandsListWidget</name>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="+30"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="+29"/>
         <source>Choose command:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -354,7 +354,7 @@
 <context>
     <name>trikGui::SensorSettingsWidget</name>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+38"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+37"/>
         <source>Select distance:
 </source>
         <translation type="unfinished"></translation>
@@ -516,7 +516,7 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+59"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+58"/>
         <source>IP:</source>
         <translation type="unfinished"></translation>
     </message>

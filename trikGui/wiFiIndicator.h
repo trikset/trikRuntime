@@ -54,7 +54,7 @@ private slots:
 private:
 	QTimer mUpdateTimer;
 	Controller &mController;
-	WiFiModeWidget::Mode mMode;
+	WiFiModeWidget::Mode mMode { WiFiModeWidget::Mode::unknown };
 };
 
 }

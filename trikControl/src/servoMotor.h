@@ -72,7 +72,7 @@ public slots:
 	///        will be sent to a motor unaltered.
 	void setPower(int power, bool constrain = true) override;
 
-	void brake(int = 0) override { /** Makes no sense, neither for angular servo nor for rotational */}
+	void brake(int /* durationMs */ = 0) override { /** Makes no sense, neither for angular servo nor for rotational */}
 
 	void setPeriod(int uSec = 20000) override;
 private:

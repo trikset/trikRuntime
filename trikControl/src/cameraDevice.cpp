@@ -71,8 +71,10 @@ CameraDevice::CameraDevice(const QString & mediaPath, const trikKernel::Configur
 
 
 QVector<uint8_t> CameraDevice::getPhoto() {
-	if (!mCameraImpl)
+	if (!mCameraImpl) {
 		return QVector<uint8_t>();
+	}
+
 	QMutexLocker lock(&mCameraMutex);
 	QVector<uint8_t> photo;
 	std::function<void()> runFunc = [this, &photo](){ mCameraImpl->getPhoto().swap(photo); };

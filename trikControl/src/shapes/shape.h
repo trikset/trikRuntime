@@ -21,6 +21,7 @@ namespace trikControl {
 /// Base class for elements that can be drawn on display.
 class Shape
 {
+	Q_DISABLE_COPY(Shape)
 public:
 	/// @param color - color of pen with which a shape must be drawn
 	/// @param penWidth - width of lines
@@ -30,7 +31,7 @@ public:
 	{
 	}
 
-	virtual ~Shape() {}
+	virtual ~Shape() = default;
 
 	/// Draws a shape with a given painter.
 	virtual void draw(QPainter *painter) = 0;

@@ -26,7 +26,6 @@ namespace trikControl {
 class TRIKCONTROL_EXPORT BatteryInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
-
 public slots:
 	/// Returns current battery voltage in volts.
 	virtual float readVoltage() = 0;

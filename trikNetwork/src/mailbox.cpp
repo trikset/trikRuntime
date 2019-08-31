@@ -97,22 +97,22 @@ bool Mailbox::isEnabled()
 
 void Mailbox::connect(const QString &ip, int port)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(const QString &, ip), Q_ARG(int, port));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ip), Q_ARG(int, port));
 }
 
 void Mailbox::connect(const QString &ip)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(const QString &, ip));
+	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ip));
 }
 
 void Mailbox::send(int hullNumber, const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(const QString &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(QString, message));
 }
 
 void Mailbox::send(const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(const QString &, message));
+	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(QString, message));
 }
 
 bool Mailbox::hasMessages()
@@ -141,12 +141,11 @@ QString Mailbox::receive(bool wait)
 void Mailbox::init(int port)
 {
 	mWorker.reset(new MailboxServer(port));
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(newMessage(int, QString)));
-	QObject::connect(mWorker.data(), SIGNAL(newMessage(int, QString)), this, SIGNAL(stopWaitingSignal()));
-	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SLOT(updateConnectionStatus()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected()), this, SLOT(updateConnectionStatus()));
-
 	mWorker->moveToThread(&mWorkerThread);
+	QObject::connect(mWorker.data(), &MailboxServer::newMessage, this, &Mailbox::newMessage);
+	QObject::connect(mWorker.data(), &MailboxServer::newMessage, this, &Mailbox::stopWaitingSignal);
+	QObject::connect(mWorker.data(), &MailboxServer::connected, this, &Mailbox::updateConnectionStatus);
+	QObject::connect(mWorker.data(), &MailboxServer::disconnected, this, &Mailbox::updateConnectionStatus);
 
 	QLOG_INFO() << "Starting Mailbox worker thread" << &mWorkerThread;
 

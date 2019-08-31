@@ -35,14 +35,16 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	qRegisterMetaType<trikWiFi::DisconnectReason>("trikWiFi::DisconnectReason");
 	mWorker->moveToThread(&mWorkerThread);
 
-	QObject::connect(mWorker.data(), SIGNAL(scanFinished()), this, SIGNAL(scanFinished()));
-	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SIGNAL(connected()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected(trikWiFi::DisconnectReason))
-			, this, SIGNAL(disconnected(trikWiFi::DisconnectReason)));
-
-	QObject::connect(mWorker.data(), SIGNAL(statusReady()), this, SIGNAL(statusReady()));
-
-	QObject::connect(mWorker.data(), SIGNAL(error(QString)), this, SIGNAL(error(QString)));
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::scanFinished
+					 , this, &TrikWiFi::scanFinished);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::connected
+					 , this, &TrikWiFi::connected);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::disconnected
+			, this, &TrikWiFi::disconnected);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::statusReady
+					 , this, &TrikWiFi::statusReady);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::error
+					 , this, &TrikWiFi::error);
 
 	QLOG_INFO() << "Starting TrikWiFi worker thread" << &mWorkerThread;
 

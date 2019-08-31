@@ -35,7 +35,7 @@ class TrikTelemetry : public trikNetwork::TrikServer
 public:
 	/// Constructor.
 	/// @param brick - a Brick used to respond to clients
-	TrikTelemetry(trikControl::BrickInterface &brick);
+	explicit TrikTelemetry(trikControl::BrickInterface &brick);
 
 private:
 	Connection *connectionFactory();
