@@ -20,7 +20,8 @@ SUBDIRS = \
 	trikCameraPhotoTests \
 	trikCommunicatorTests \
 	trikKernelTests \
-	trikScriptRunnerTests \
+	trikJsRunnerTests \
+	trikPyRunnerTests \
 	testUtils \
 
 #	minimalCppApp
@@ -29,7 +30,9 @@ SUBDIRS = \
 thirdparty.file = thirdparty/googletest.pro
 
 trikKernelTests.depends = thirdparty testUtils
-trikScriptRunnerTests.depends = thirdparty testUtils
+trikPyRunnerTests.depends = thirdparty testUtils
+trikJsRunnerTests.depends = thirdparty testUtils
+
 trikCommunicatorTests.depends = thirdparty testUtils
 selftest.depends = thirdparty testUtils
 trikCameraPhotoTests.depends = thirdparty testUtils

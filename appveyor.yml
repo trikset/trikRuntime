@@ -60,8 +60,9 @@ test_script:
   - set TRIK_PYTHONPATH=%PYTHON_PATH%
   - .\trikKernelTests
   - .\trikCommunicatorTests
-  - .\trikScriptRunnerTests
   - .\trikCameraPhotoTests
+  - .\trikJsRunnerTests
+#  - .\trikPyRunnerTests
 
 artifacts:
  - path: .build\bin\x86-$(configuration)
