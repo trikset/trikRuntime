@@ -114,13 +114,9 @@ namespace {
 	}
 }
 
-
-template <typename T> void reset(T &x) { ::memset(&x, 0, sizeof(x)); }
-
 TrikV4l2VideoDevice::TrikV4l2VideoDevice(const QString &inputFile)
 	: fileDevicePath(inputFile), mConvertFunc(convertToEmpty)
 {
-	reset(mFormat);
 	openDevice();
 	setFormat();
 }
@@ -158,8 +154,7 @@ void TrikV4l2VideoDevice::openDevice()
 		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor ;
 	} else {
 		QLOG_INFO() << "Open v4l2 camera device" <<  fileDevicePath << ",fd =" << mFileDescriptor;
-		v4l2_capability cap;
-		reset(cap);
+		v4l2_capability cap {};
 		unsigned requested = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE;
 
 		if(!xioctl(VIDIOC_QUERYCAP, &cap, "VIDIOC_QUERYCAP failed")
@@ -186,8 +181,7 @@ void TrikV4l2VideoDevice::setFormat()
 	char descPixelFmt[32] = {0}; // 32 - size of v4l2_fmtdesc.description
 	__u32 fmtIdx = 0;
 	do {
-		v4l2_fmtdesc fmtTry;
-		reset(fmtTry);
+		v4l2_fmtdesc fmtTry {};
 		fmtTry.index = fmtIdx;
 		fmtTry.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		if ( ! xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT fail")) {
@@ -290,9 +284,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 
 void TrikV4l2VideoDevice::initMMAP()
 {
-	v4l2_requestbuffers req;
-	reset(req);
-
+	v4l2_requestbuffers req{};
 	req.count = 1;
 	req.type = mFormat.type;
 	req.memory = V4L2_MEMORY_MMAP;
@@ -306,8 +298,7 @@ void TrikV4l2VideoDevice::initMMAP()
 	buffers.resize(req.count);
 
 	for (int i = 0; i < buffers.size(); ++i) {
-		v4l2_buffer buf;
-		reset(buf);
+		v4l2_buffer buf{};
 		buf.type = mFormat.type;
 		buf.index = i;
 		buf.memory = V4L2_MEMORY_MMAP;
@@ -333,8 +324,7 @@ void TrikV4l2VideoDevice::initMMAP()
 void TrikV4l2VideoDevice::startCapturing()
 {
 	for(int i = 0; i < buffers.size(); ++i) {
-		v4l2_buffer buf;
-		reset(buf);
+		v4l2_buffer buf {};
 		buf.type = mFormat.type;
 		buf.memory = V4L2_MEMORY_MMAP;
 		buf.index = i;
@@ -362,8 +352,7 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	}
 
 	mNotifier->setEnabled(false);
-	v4l2_buffer buf;
-	reset(buf);
+	v4l2_buffer buf{};
 	buf.type = mFormat.type;
 	buf.memory = V4L2_MEMORY_MMAP;
 
