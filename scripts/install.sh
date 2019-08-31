@@ -17,7 +17,7 @@ case $TRAVIS_OS_NAME in
 
   linux)
     docker pull trikset/linux-builder
-    docker run -d -v $HOME:$HOME:rw -w `pwd` --name builder trikset/linux-builder Xvfb :0
+    docker run -d --privileged -v $HOME:$HOME:rw -w `pwd` --name builder trikset/linux-builder Xvfb :0
     docker exec builder bash -c 'export PATH=/usr/bin:/bin:/usr/sbin:/sbin ; python -V ; python3 -V ; rm -f ~/.bashrc'
   ;;
   *) exit 1 ;;
