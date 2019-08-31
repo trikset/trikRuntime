@@ -27,12 +27,18 @@ void (*oldHandler)(int);
 static void dumpHandler_impl(int signal, char *p)
 {
 	static char* path = nullptr;
-	if (path == nullptr && p != nullptr) {
+	if (p) {
+		// Special case: set path for future dumps
 		path = p;
-	}
-
-	if (p == nullptr) {
-		auto rc = chdir(path);
+	} else {
+		// dumpHandler called, path should be set in advance
+		auto rc = 0;
+		if (path) {
+			rc = chdir(path);
+		} else {
+			// path was not set in advance
+			perror("path was not set before core dump");
+		}
 		if (rc) {
 			perror("FAILED to chdir");
 		}
