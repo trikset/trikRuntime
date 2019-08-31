@@ -218,12 +218,12 @@ void Threading::threadFinished(const QString &id)
 	mThreadsMutex.unlock();
 	mResetMutex.unlock();
 
-	if (mThreads.isEmpty()) {
-		emit finished();
-	}
-
 	if (!mErrorMessage.isEmpty()) {
 		reset();
+	}
+
+	if (mThreads.isEmpty()) {
+		emit finished();
 	}
 }
 

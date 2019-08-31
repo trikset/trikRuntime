@@ -134,8 +134,8 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 		return -1;
 	}
 
-	char const *commandAscii = command.toStdString().c_str();
-	if (send(mSocket, commandAscii, strlen(commandAscii) + 1, 0) < 0) {
+	auto const &commandAscii = command.toStdString();
+	if (send(mSocket, commandAscii.c_str(), commandAscii.size()+1, 0) < 0) {
 		std::cerr << "Cannot send a message to the daemon:" << std::endl;
 		std::cerr << strerror(errno) << std::endl;
 		return -1;
