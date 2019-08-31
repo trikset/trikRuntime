@@ -95,7 +95,7 @@ void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		default: {
-			MainWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}

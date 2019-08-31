@@ -69,7 +69,7 @@ private:
 	QLabel mStatusLabel;
 	QLabel mAbortLabel;
 	Controller &mController;
-	int mScriptId;
+	int mScriptId { -1 };
 };
 
 }

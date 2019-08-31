@@ -50,6 +50,7 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	connect(&mTryReopenTimer, &QTimer::timeout, this, &VectorSensorWorker::onTryReopen);
 
 	connect(mEventFile.data(), &trikHal::EventFileInterface::newEvent, this, &VectorSensorWorker::onNewEvent);
+	connect(&thread, &QThread::finished, this, &VectorSensorWorker::deinitialize);
 	mEventFile->open();
 	thread.start();
 

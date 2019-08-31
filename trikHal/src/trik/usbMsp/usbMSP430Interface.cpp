@@ -643,8 +643,8 @@ uint32_t reset_Encoder(QByteArray const &i2c_data)
 /// Read encoder function
 uint32_t read_Encoder(QByteArray const &i2c_data)
 {
-	char s1[MAX_STRING_LENGTH];		    // Temp string variable
-	char s2[MAX_STRING_LENGTH];		    // Temp string variable
+	char s1[MAX_STRING_LENGTH] {};		    // Temp string variable
+	char s2[MAX_STRING_LENGTH] {};		    // Temp string variable
 	uint32_t errcode;			    // Returned error code
 	Q_UNUSED(errcode);
 	uint8_t devaddr;			    // Returned device address
