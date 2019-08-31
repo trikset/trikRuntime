@@ -122,7 +122,7 @@ bool MotorsWidget::eventFilter(QObject *, QEvent *event)
 		}
 	}
 
-	return false;
+	return TrikGuiDialog::eventFilter(o, event);
 }
 
 
