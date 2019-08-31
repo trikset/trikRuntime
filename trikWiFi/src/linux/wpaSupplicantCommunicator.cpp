@@ -145,7 +145,7 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 		fd_set rfds;
 		FD_ZERO(&rfds);
 		FD_SET(mSocket, &rfds);
-		struct timeval tv;
+		struct timeval tv {};
 		tv.tv_sec = 10;
 		tv.tv_usec = 0;
 		select(mSocket + 1, &rfds, nullptr, nullptr, &tv);
@@ -173,7 +173,7 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 
 bool WpaSupplicantCommunicator::isPending()
 {
-	struct timeval tv;
+	struct timeval tv {};
 	fd_set rfds;
 	tv.tv_sec = 0;
 	tv.tv_usec = 0;
