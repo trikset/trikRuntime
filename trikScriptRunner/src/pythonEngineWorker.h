@@ -42,6 +42,8 @@ public:
 			, trikNetwork::MailboxInterface * mailbox
 			);
 
+	~PythonEngineWorker();
+
 	/// Clears execution state and stops robot.
 	/// Can be safely called from other threads.
 	void resetBrick();
@@ -134,6 +136,8 @@ private:
 	QMutex mScriptStateMutex;
 
 	PythonQtObjectPtr mMainContext;
+
+	PyThreadState * mPyInterpreter { nullptr };
 
 	QString mErrorMessage;
 };
