@@ -23,15 +23,15 @@
 namespace tests {
 
 /// Test suite for script runner.
-class TrikScriptRunnerTest : public testing::Test
+class TrikJsRunnerTest : public testing::Test
 {
 protected:
 	void SetUp() override;
 	void TearDown() override;
 
-	void run(const QString &script);
-	void runDirectCommandAndWaitForQuit(const QString &script);
-	void runFromFile(const QString &fileName);
+	int run(const QString &script, const QString &file);
+	int runDirectCommandAndWaitForQuit(const QString &script);
+	int runFromFile(const QString &fileName);
 
 	trikScriptRunner::TrikScriptRunner &scriptRunner();
 

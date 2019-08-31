@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikScriptRunnerTest.h"
+#include "trikJsRunnerTest.h"
 
 #include <QtCore/QEventLoop>
 #include <QtCore/QFile>
@@ -20,6 +20,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikKernel/fileUtils.h>
 #include <testUtils/wait.h>
+#include <QTimer>
 
 using namespace tests;
 
@@ -40,36 +41,58 @@ QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 	return {};
 }
 
-void TrikScriptRunnerTest::SetUp()
+void TrikJsRunnerTest::SetUp()
 {
 	mBrick.reset(trikControl::BrickFactory::create("./", "./"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
-void TrikScriptRunnerTest::TearDown()
+void TrikJsRunnerTest::TearDown()
 {
 }
 
-void TrikScriptRunnerTest::run(const QString &script)
+int TrikJsRunnerTest::run(const QString &script, const QString &file)
 {
-	QEventLoop waitingLoop;
-	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
-	mScriptRunner->run(script);
+	QEventLoop wait;
+	auto volatile alreadyCompleted = false;
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
+					 , &wait, [&alreadyCompleted]()
+	{
+		alreadyCompleted = true;
+	} ) ;
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 
-	waitingLoop.exec();
+	mScriptRunner->run(script, file);
+	auto exitCode = 0;
+	if (!alreadyCompleted) {
+		exitCode = wait.exec();
+	}
+	return exitCode;
 }
 
-void TrikScriptRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
+int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
-	QEventLoop waitingLoop;
-	QObject::connect(mScriptRunner.data(), SIGNAL(completed(QString, int)), &waitingLoop, SLOT(quit()));
+	QEventLoop wait;
+	auto volatile alreadyCompleted = false;
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
+					 , &wait, [&alreadyCompleted]()
+	{
+		alreadyCompleted = true;
+	} ) ;
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 	mScriptRunner->runDirectCommand(script);
 
-	waitingLoop.exec();
+	auto exitCode = 0;
+	if (!alreadyCompleted) {
+		exitCode = wait.exec();
+	}
+	return exitCode;
 }
 
-void TrikScriptRunnerTest::runFromFile(const QString &fileName)
+int TrikJsRunnerTest::runFromFile(const QString &fileName)
 {
 	auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
 
@@ -77,26 +100,34 @@ void TrikScriptRunnerTest::runFromFile(const QString &fileName)
 	fileContents = fileContents.replace("&&", ";");
 #endif
 
-	run(fileContents);
+	return run(fileContents, fileName);
 }
 
-trikScriptRunner::TrikScriptRunner &TrikScriptRunnerTest::scriptRunner()
+trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
 {
 	return *mScriptRunner;
 }
 
-TEST_F(TrikScriptRunnerTest, sanityCheck)
+TEST_F(TrikJsRunnerTest, sanityCheckJs)
 {
-	run("1 + 1");
+	auto errCode = run("1", "_.js");
+	ASSERT_EQ(errCode, 0);
 }
 
-TEST_F(TrikScriptRunnerTest, fileTest)
+TEST_F(TrikJsRunnerTest, sanityCheckJs1)
 {
-	runFromFile("file-test.js");
+	auto errCode = run("1 + 1", "_.js");
+	ASSERT_EQ(errCode, 0);
+}
+
+TEST_F(TrikJsRunnerTest, fileTestJs)
+{
+	auto errCode = runFromFile("file-test.js");
+	ASSERT_EQ(errCode, 0);
 }
 
 #ifndef Q_OS_WIN
-TEST_F(TrikScriptRunnerTest, asyncSystemTest)
+TEST_F(TrikJsRunnerTest, asyncSystemTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -108,7 +139,7 @@ TEST_F(TrikScriptRunnerTest, asyncSystemTest)
 }
 #endif
 
-TEST_F(TrikScriptRunnerTest, syncSystemTest)
+TEST_F(TrikJsRunnerTest, syncSystemTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -117,7 +148,7 @@ TEST_F(TrikScriptRunnerTest, syncSystemTest)
 	ASSERT_TRUE(testFile.exists());
 }
 
-TEST_F(TrikScriptRunnerTest, directCommandTest)
+TEST_F(TrikJsRunnerTest, directCommandTest)
 {
 	QFile testFile("test");
 	testFile.remove();
@@ -138,12 +169,13 @@ TEST_F(TrikScriptRunnerTest, directCommandTest)
 	tests::utils::Wait::wait(300);
 }
 
-TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
+TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 {
 	QFile testFile("test");
 	testFile.remove();
 	ASSERT_FALSE(testFile.exists());
-	runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
+	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
+	ASSERT_EQ(exitCode, 0);
 	ASSERT_TRUE(testFile.exists());
 
 #ifdef Q_OS_WIN
@@ -155,7 +187,7 @@ TEST_F(TrikScriptRunnerTest, directCommandThatQuitsImmediatelyTest)
 	ASSERT_FALSE(testFile.exists());
 }
 
-TEST_F(TrikScriptRunnerTest, twoProgramsTest)
+TEST_F(TrikJsRunnerTest, twoProgramsTest)
 {
 	scriptRunner().run("script.wait(500);");
 	tests::utils::Wait::wait(100);

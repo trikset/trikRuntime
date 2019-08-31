@@ -38,18 +38,4 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 &&  make -k -j2 \
 && cd bin/x86-$CONFIG && ls "
 
-for t in trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikScriptRunnerTests
-  do
-    $EXECUTOR env DISPLAY=:0 \
-    ASAN_OPTIONS="$( [[$TRAVIS_OS_NAME == linux ]] && echo detect_leaks=1 || :) detect_stack_use_after_return=1 fast_unwind_on_malloc=0" \
-    LSAN_OPTIONS="suppressions=lsan.supp fast_unwind_on_malloc=0" sh -xc \
-    "cd  $BUILDDIR/bin/x86-$CONFIG && \
-     { \
-       errCode=0 ; \
-       ulimit -c unlimited ; \
-       ./$t || errCode=\$? ; \
-       [ "$TRAVIS_OS_NAME" = linux -a -e core ] && gdb ./$t core -ex 'thread apply all bt' -ex 'quit'  || true ; \
-       rm -f core ; \
-       ( exit \$errCode ) ; \
-     } "
-  done
+exec scripts/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests #trikPyRunnerTests

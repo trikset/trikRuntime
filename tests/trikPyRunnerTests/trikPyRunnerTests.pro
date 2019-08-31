@@ -14,22 +14,20 @@
 
 include(../common.pri)
 
-QT += script
-
 HEADERS += \
-	$$PWD/trikScriptRunnerTest.h \
+	$$PWD/trikPyRunnerTest.h \
 
 SOURCES += \
-	$$PWD/trikScriptRunnerTest.cpp \
+	$$PWD/trikPyRunnerTest.cpp \
 
 OTHER_FILES += \
-	$$PWD/data/file-test.js \
+	$$PWD/data/file-test.py \
 
 implementationIncludes(trikKernel trikControl trikScriptRunner tests/testUtils)
 links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
 copyToDestdir($$PWD/data/, now)
 
-DISTFILES += \
-	data/sync-system-test.js \
-	data/async-system-test.js
+#DISTFILES += \
+#	data/sync-system-test.js \
+#	data/async-system-test.js
