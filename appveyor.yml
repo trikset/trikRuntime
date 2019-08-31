@@ -62,7 +62,7 @@ test_script:
   - .\trikCommunicatorTests
   - .\trikCameraPhotoTests
   - .\trikJsRunnerTests
-#  - .\trikPyRunnerTests
+  - .\trikPyRunnerTests
 
 artifacts:
  - path: .build\bin\x86-$(configuration)
