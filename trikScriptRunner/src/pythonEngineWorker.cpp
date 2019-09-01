@@ -157,7 +157,7 @@ void PythonEngineWorker::stopScript()
 		mMailbox->stopWaiting();
 	}
 
-	QMetaObject::invokeMethod(this, "recreateContext"); /// recreates python module, which we use
+	//QMetaObject::invokeMethod(this, "recreateContext"); /// recreates python module, which we use
 
 	mState = ready;
 
@@ -179,7 +179,7 @@ void PythonEngineWorker::doRun(const QString &script)
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
-
+	recreateContext();
 	mMainContext.evalScript(script);
 
 	mState = running;
