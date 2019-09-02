@@ -170,9 +170,9 @@ unix:!nosanitizers {
 
 	sanitize_undefined:macx-clang {
 		# sometimes runtime is missing in clang. this hack allows to avoid runtime dependency.
-		QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
-		QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
-		QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
+		#QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
+		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
+		#QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
 	}
 
 	gcc5 {
@@ -398,7 +398,7 @@ defineTest(installAdditionalSharedFiles) {
 		additionalSharedFiles.files += $$FILES
 		additionalSharedFiles.path = $$INSTALL_ROOT/usr/share/trikRuntime/
 
-		INSTALLS += additionalSharedFiles
+		INSTALLS *= additionalSharedFiles
 
 		export(additionalSharedFiles.path)
 		export(additionalSharedFiles.files)
