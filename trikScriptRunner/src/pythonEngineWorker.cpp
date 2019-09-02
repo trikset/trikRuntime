@@ -12,10 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QProcess>
 #include <QsLog.h>
+#include <QFileInfo>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 
 #include "pythonEngineWorker.h"
 
@@ -29,12 +32,61 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 	, mState(ready)
 {}
 
+PythonEngineWorker::~PythonEngineWorker()
+{
+	stopScript();
+	mMainContext = PythonQtObjectPtr();
+	if (mPyInterpreter) {
+		Py_EndInterpreter(mPyInterpreter);
+		mPyInterpreter = nullptr;
+	}
+	if (Py_IsInitialized()) {
+		Py_Finalize();
+	}
+	if (PythonQt::self()) {
+		PythonQt::cleanup();
+	}
+}
+
 void PythonEngineWorker::init()
 {
-	// init PythonQt
-	PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
-	connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString &)), this, SLOT(updateErrorMessage(const QString &)));
-	PythonQt_QtAll::init();
+	if (!Py_IsInitialized()) {
+		static const auto nonConst = wcsdup(L"SOME_PATH"); // leak?
+		Py_SetPythonHome(nonConst); //??? Need to set correct one
+
+		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH");
+		if (path.isEmpty()) {
+			throw trikKernel::InternalErrorException("TRIK_PYTHONPATH must be set to correct value");
+		}
+		// TODO: Now use PYTHONPATH environment variable (default) until fixed
+		// Must point to local .zip file
+		Py_SetPath(path.toStdWString().data());
+
+
+/* uncomment for verbosity
+		Py_VerboseFlag = 3;
+		Py_InspectFlag = 1;
+		Py_DebugFlag = 2;
+// */
+		Py_IsolatedFlag = 1;
+		Py_BytesWarningFlag = 3;
+		Py_DontWriteBytecodeFlag = 1;
+		Py_NoSiteFlag = 1;
+		Py_NoUserSiteDirectory = 1;
+
+		Py_Initialize();
+	}
+
+	if (!mPyInterpreter) {
+	//	mPyInterpreter = Py_NewInterpreter();
+	}
+
+	if (!PythonQt::self()) {
+		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
+		PythonQt_QtAll::init();
+		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+	}
+
 	mMainContext = PythonQt::self()->getMainModule();
 
 	initTrik();
@@ -105,8 +157,6 @@ void PythonEngineWorker::stopScript()
 		mMailbox->stopWaiting();
 	}
 
-	QMetaObject::invokeMethod(this, "recreateContext"); /// recreates python module, which we use
-
 	mState = ready;
 
 	/// @todo: is it actually stopped?
@@ -127,10 +177,10 @@ void PythonEngineWorker::doRun(const QString &script)
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
-
+	mState = running;
+	recreateContext();
 	mMainContext.evalScript(script);
 
-	mState = running;
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
 
 	if (PythonQt::self()->hadError()) {
