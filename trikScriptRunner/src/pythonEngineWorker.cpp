@@ -24,6 +24,8 @@
 
 using namespace trikScriptRunner;
 
+QAtomicInt PythonEngineWorker::initCounter = 0;
+
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		)
@@ -35,22 +37,22 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 PythonEngineWorker::~PythonEngineWorker()
 {
 	stopScript();
-	mMainContext = PythonQtObjectPtr();
+	mMainContext = nullptr;
 	if (mPyInterpreter) {
 		Py_EndInterpreter(mPyInterpreter);
 		mPyInterpreter = nullptr;
 	}
-	if (Py_IsInitialized()) {
+	if (--initCounter == 0) {
 		Py_Finalize();
-	}
-	if (PythonQt::self()) {
-		PythonQt::cleanup();
+		if (PythonQt::self()) {
+			PythonQt::cleanup();
+		}
 	}
 }
 
 void PythonEngineWorker::init()
 {
-	if (!Py_IsInitialized()) {
+	if (initCounter++ == 0) {
 		static const auto nonConst = wcsdup(L"SOME_PATH"); // leak?
 		Py_SetPythonHome(nonConst); //??? Need to set correct one
 
@@ -78,13 +80,13 @@ void PythonEngineWorker::init()
 	}
 
 	if (!mPyInterpreter) {
-	//	mPyInterpreter = Py_NewInterpreter();
-	}
+		//	mPyInterpreter = Py_NewInterpreter();
 
-	if (!PythonQt::self()) {
-		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
-		PythonQt_QtAll::init();
-		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+		if (!PythonQt::self()) {
+			PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
+			PythonQt_QtAll::init();
+			connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+		}
 	}
 
 	mMainContext = PythonQt::self()->getMainModule();

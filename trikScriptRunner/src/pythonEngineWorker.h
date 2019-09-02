@@ -140,6 +140,8 @@ private:
 	PyThreadState * mPyInterpreter { nullptr };
 
 	QString mErrorMessage;
+
+	static QAtomicInt initCounter;
 };
 
 }
