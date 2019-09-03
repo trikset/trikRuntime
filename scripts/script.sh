@@ -15,7 +15,7 @@ esac
 export EXECUTOR
 if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
 if [ "$VERA" = "true" ]; then
-  git diff --diff-filter=d --name-only ${TRAVIS_COMMIT_RANGE} \
+  ( git diff --diff-filter=d --name-only ${TRAVIS_COMMIT_RANGE} || true ) \
 	| xargs -r file -i | sed -e "s|\(.*\):.*text/x-c.*|\1|g" -e "/:/d"  \
 	| $EXECUTOR vera++ --warning --root vera++ --profile strict
 fi
