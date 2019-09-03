@@ -69,4 +69,4 @@ inline int operator-(const TimeVal &left, const TimeVal &right)
 
 }
 
-Q_DECLARE_METATYPE(trikKernel::TimeVal);
+Q_DECLARE_METATYPE(trikKernel::TimeVal)

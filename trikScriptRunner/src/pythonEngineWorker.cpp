@@ -36,11 +36,11 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-	//Py_BEGIN_ALLOW_THREADS
-	//PyGILState_STATE state = PyGILState_Ensure();
+//	Py_BEGIN_ALLOW_THREADS
+//	PyGILState_STATE state = PyGILState_Ensure();
 	Py_AddPendingCall(&quitFromPython, nullptr);
-	//PyGILState_Release(state);
-	//Py_END_ALLOW_THREADS
+//	PyGILState_Release(state);
+//	Py_END_ALLOW_THREADS
 }
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
