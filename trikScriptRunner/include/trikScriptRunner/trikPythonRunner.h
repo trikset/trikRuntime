@@ -61,8 +61,9 @@ private slots:
 	void sendMessageFromMailBox(int senderNumber, const QString &message);
 
 private:
+
 	/// Has ownership, memory is managed by thread and deleteLater().
-	PythonEngineWorker *mScriptEngineWorker;
+	PythonEngineWorker *mScriptEngineWorker { nullptr };
 	QThread mWorkerThread;
 };
 

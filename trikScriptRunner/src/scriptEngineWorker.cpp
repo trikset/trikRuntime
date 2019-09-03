@@ -44,6 +44,7 @@
 #include "scriptable.h"
 #include "utils.h"
 
+#include <QFileInfo>
 #include <QsLog.h>
 
 using namespace trikScriptRunner;
@@ -52,7 +53,6 @@ using namespace trikNetwork;
 
 Q_DECLARE_METATYPE(QVector<uint8_t>)
 Q_DECLARE_METATYPE(QVector<int>)
-Q_DECLARE_METATYPE(trikKernel::TimeVal)
 Q_DECLARE_METATYPE(QTimer*)
 
 #define DECLARE_METATYPE_TEMPLATE(TYPE) \
@@ -483,7 +483,7 @@ void ScriptEngineWorker::addCustomEngineInitStep(const std::function<void (QScri
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 {
 	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
-	if (QFile::exists(systemJsPath)) {
+	if (QFileInfo::exists(systemJsPath)) {
 		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
 		if (engine->hasUncaughtException()) {
 			const int line = engine->uncaughtExceptionLineNumber();
