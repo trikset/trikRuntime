@@ -21,10 +21,27 @@
 #include <trikKernel/exceptions/internalErrorException.h>
 
 #include "pythonEngineWorker.h"
+#include <Python.h>
 
 using namespace trikScriptRunner;
 
 QAtomicInt PythonEngineWorker::initCounter = 0;
+
+static int quitFromPython(void*) {
+	PyErr_SetInterrupt();
+	return -1;
+}
+
+static void abortPythonInterpreter() {
+	if(!Py_IsInitialized()) {
+		return;
+	}
+	//Py_BEGIN_ALLOW_THREADS
+	//PyGILState_STATE state = PyGILState_Ensure();
+	Py_AddPendingCall(&quitFromPython, nullptr);
+	//PyGILState_Release(state);
+	//Py_END_ALLOW_THREADS
+}
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
@@ -80,44 +97,60 @@ void PythonEngineWorker::init()
 	}
 
 	if (!mPyInterpreter) {
-		//	mPyInterpreter = Py_NewInterpreter();
+//		mPyInterpreter = Py_NewInterpreter();
 
 		if (!PythonQt::self()) {
+			PythonQt::setEnableThreadSupport(true);
+			PythonQtGILScope _;
 			PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 			PythonQt_QtAll::init();
 			connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+			connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
+
 		}
 	}
-
 	mMainContext = PythonQt::self()->getMainModule();
-
-	initTrik();
+	emit inited();
 }
 
-void PythonEngineWorker::recreateContext()
+bool PythonEngineWorker::recreateContext()
 {
+	if (!initTrik()) {
+		return false;
+	}
+	PythonQtGILScope _;
 	mMainContext.evalScript("script.kill()");
-
-	initTrik();
+	auto ok = !PythonQt::self()->hadError();
+	return ok;
 }
 
-void PythonEngineWorker::evalSystemPy()
+bool PythonEngineWorker::evalSystemPy()
 {
 	const QString systemPyPath = trikKernel::Paths::systemScriptsPath() + "system.py";
 
-	if (QFile::exists(systemPyPath)) {
-		mMainContext.evalFile(systemPyPath);
-	} else {
+	if (!QFileInfo::exists(systemPyPath)) {
 		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
+		return false;
 	}
+
+	PythonQtGILScope _;
+	PythonQt::self()->clearError();
+	mMainContext.evalFile(systemPyPath);
+	if (PythonQt::self()->hadError()) {
+		QLOG_ERROR() << "Failed to eval system.py";
+		return false;
+	}
+	return true;
 }
 
-void PythonEngineWorker::initTrik()
+bool PythonEngineWorker::initTrik()
 {
+	PythonQtGILScope _;
+	PyErr_Clear();
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
 
-	evalSystemPy();
+	return evalSystemPy();
 }
 
 void PythonEngineWorker::resetBrick()
@@ -155,6 +188,10 @@ void PythonEngineWorker::stopScript()
 
 	mState = stopping;
 
+	if (QThread::currentThread() != thread()) {
+		abortPythonInterpreter();
+	}
+
 	if (mMailbox) {
 		mMailbox->stopWaiting();
 	}
@@ -180,7 +217,13 @@ void PythonEngineWorker::doRun(const QString &script)
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
 	mState = running;
-	recreateContext();
+	auto ok = recreateContext();
+	if (!ok) {
+		emit completed(mErrorMessage,0);
+		return;
+	}
+
+	PythonQtGILScope _;
 	mMainContext.evalScript(script);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
@@ -205,6 +248,7 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		mErrorMessage.clear();
 		recreateContext();
 	}
+	PythonQtGILScope _;
 	mMainContext.evalScript(command);
 }
 

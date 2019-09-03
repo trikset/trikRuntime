@@ -63,6 +63,9 @@ signals:
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedScript(int scriptId);
 
+	/// When engine was inited
+	void inited();
+
 public slots:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
@@ -84,8 +87,8 @@ public slots:
 	/// Calls initTrik()
 	void init();
 
-	/// Recreates Main Context made by init
-	void recreateContext();
+	/// Recreates Main Context made by init, returns true when were errors
+	bool recreateContext();
 
 	/// Plays "beep" sound.
 	/// Can be safely called from other threads.
@@ -95,8 +98,8 @@ private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
-	/// Adds trik object to main Python context
-	void initTrik();
+	/// Adds trik object to main Python context, returns true on success
+	bool initTrik();
 
 	/// Actually runs given script. Is to be called from a thread owning PythonEngineWorker.
 	void doRun(const QString &script);
@@ -120,8 +123,8 @@ private:
 		, running
 	};
 
-	/// Evaluates "system.py" file in the current context.
-	void evalSystemPy();
+	/// Evaluates "system.py" file in the current context, returns true on success
+	bool evalSystemPy();
 
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);

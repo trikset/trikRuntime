@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QEventLoop>
 #include <QsLog.h>
 
 #include "trikPythonRunner.h"
@@ -24,24 +25,29 @@ using namespace trikScriptRunner;
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   )
-	: mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
+	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
 {
+
 	if (mailbox) {
 		connect(mailbox,  &trikNetwork::MailboxInterface::newMessage
 				, this, &TrikPythonRunner::sendMessageFromMailBox);
 	}
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
+	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
+	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
+
+	QEventLoop l;
+	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
+
+	mWorkerThread.start();
+	l.exec();
 
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed
 			, this, &TrikPythonRunner::completed);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript
 			, this, &TrikPythonRunner::onScriptStart);
 
-	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
-	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
-
-	mWorkerThread.start();
 
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 }
