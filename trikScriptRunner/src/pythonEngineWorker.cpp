@@ -36,11 +36,9 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-//	Py_BEGIN_ALLOW_THREADS
-//	PyGILState_STATE state = PyGILState_Ensure();
+	// TODO: Lock is required, but we have broken design and it causes a deadlock
+	// PythonQtGILScope _;
 	Py_AddPendingCall(&quitFromPython, nullptr);
-//	PyGILState_Release(state);
-//	Py_END_ALLOW_THREADS
 }
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
@@ -54,12 +52,22 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 PythonEngineWorker::~PythonEngineWorker()
 {
 	stopScript();
-	mMainContext = nullptr;
-	if (mPyInterpreter) {
-		Py_EndInterpreter(mPyInterpreter);
-		mPyInterpreter = nullptr;
+	{
+		// In python at least before 3.7 (3.5,3.6)
+		// we need to make all pending calls before the context
+		// is destroyed, otherwise python crashes
+		PythonQtGILScope _;
+		Py_MakePendingCalls();
+		mMainContext = nullptr;
+		if (mPyInterpreter) {
+			Py_EndInterpreter(mPyInterpreter);
+			mPyInterpreter = nullptr;
+		}
 	}
+
 	if (--initCounter == 0) {
+		auto state = PyGILState_Ensure();
+		Q_UNUSED(state);
 		Py_Finalize();
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
@@ -133,9 +141,8 @@ bool PythonEngineWorker::evalSystemPy()
 		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
 		return false;
 	}
-
-	PythonQtGILScope _;
 	PythonQt::self()->clearError();
+	PythonQtGILScope _;
 	mMainContext.evalFile(systemPyPath);
 	if (PythonQt::self()->hadError()) {
 		QLOG_ERROR() << "Failed to eval system.py";
