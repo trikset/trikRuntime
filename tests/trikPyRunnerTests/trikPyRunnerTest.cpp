@@ -26,7 +26,8 @@ using namespace tests;
 
 void TrikPyRunnerTest::SetUp()
 {
-	mBrick.reset(trikControl::BrickFactory::create("./", "./"));
+	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
+				   , "./test-model-config.xml", "./media/"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 // TODO:	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }

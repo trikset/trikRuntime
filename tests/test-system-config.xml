@@ -184,7 +184,7 @@ equal to its class name.
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
-                <photo class="camera" type="v4l2" src="/dev/video0" />
+		<photo class="camera" type="file" src="./" filters="*.jpg,*.png" />
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
