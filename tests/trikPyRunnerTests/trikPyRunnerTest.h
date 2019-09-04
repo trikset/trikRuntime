@@ -29,7 +29,7 @@ protected:
 	void SetUp() override;
 	void TearDown() override;
 
-	int run(const QString &script, const QString &file);
+	int run(const QString &script);
 	int runDirectCommandAndWaitForQuit(const QString &script);
 	int runFromFile(const QString &fileName);
 

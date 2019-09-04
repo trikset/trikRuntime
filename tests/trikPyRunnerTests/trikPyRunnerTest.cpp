@@ -23,6 +23,7 @@
 #include <QTimer>
 
 using namespace tests;
+constexpr auto EXIT_TIMEOUT = -93;
 
 void TrikPyRunnerTest::SetUp()
 {
@@ -36,7 +37,7 @@ void TrikPyRunnerTest::TearDown()
 {
 }
 
-int TrikPyRunnerTest::run(const QString &script, const QString &file)
+int TrikPyRunnerTest::run(const QString &script)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
@@ -46,9 +47,9 @@ int TrikPyRunnerTest::run(const QString &script, const QString &file)
 	{
 		alreadyCompleted = true;
 	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 
-	mScriptRunner->run(script, file);
+	mScriptRunner->run(script, "_.py");
 	auto exitCode = 0;
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
@@ -66,7 +67,7 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	{
 		alreadyCompleted = true;
 	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 	mScriptRunner->runDirectCommand(script);
 
 	auto exitCode = 0;
@@ -84,7 +85,7 @@ int TrikPyRunnerTest::runFromFile(const QString &fileName)
 	fileContents = fileContents.replace("&&", ";");
 #endif
 
-	return run(fileContents, fileName);
+	return run(fileContents);
 }
 
 trikScriptRunner::TrikScriptRunner &TrikPyRunnerTest::scriptRunner()
@@ -92,23 +93,45 @@ trikScriptRunner::TrikScriptRunner &TrikPyRunnerTest::scriptRunner()
 	return *mScriptRunner;
 }
 
+TEST_F(TrikPyRunnerTest, abortBeforeRun)
+{
+	scriptRunner().abortAll();
+}
+
+
 TEST_F(TrikPyRunnerTest, sanityCheckPy)
 {
-	run("1 + 1", "_.py");
+	auto err = run("1 + 1");
+	ASSERT_EQ(err, 0);
 }
+
+TEST_F(TrikPyRunnerTest, abortWhileTrue)
+{
+	QTimer t;
+	t.setInterval(200);
+	t.setSingleShot(true);
+	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &trikScriptRunner::TrikScriptRunnerInterface::abort);
+	t.start();
+	auto err = run("while True: pass");
+	ASSERT_NE(err, EXIT_TIMEOUT);
+	t.stop();
+}
+
 
 TEST_F(TrikPyRunnerTest, DISABLED_fileTestPy)
 {
-	runFromFile("file-test.py");
+	auto err = runFromFile("file-test.py");
+	ASSERT_EQ(err, 0);
 }
 
 TEST_F(TrikPyRunnerTest, pythonAccessQtCore)
 {
-	run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)", "_.py");
+	auto err = run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)");
+	ASSERT_EQ(err, 0);
 }
 
 TEST_F(TrikPyRunnerTest, pythonScriptWait)
 {
-	scriptRunner().run("script.wait(500)", "_.py");
+	scriptRunner().run("script.wait(500)");
 	tests::utils::Wait::wait(600);
 }
