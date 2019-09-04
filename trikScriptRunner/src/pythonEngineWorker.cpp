@@ -94,6 +94,7 @@ void PythonEngineWorker::init()
 		Py_NoUserSiteDirectory = 1;
 
 		Py_Initialize();
+		PyEval_InitThreads(); // For Python < 3.7
 	}
 
 	if (!mPyInterpreter) {
