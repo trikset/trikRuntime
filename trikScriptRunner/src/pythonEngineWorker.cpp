@@ -29,7 +29,7 @@ QAtomicInt PythonEngineWorker::initCounter = 0;
 
 static int quitFromPython(void*) {
 	PyErr_SetInterrupt();
-	return -1;
+	return 0;
 }
 
 static void abortPythonInterpreter() {
