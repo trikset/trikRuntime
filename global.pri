@@ -259,7 +259,7 @@ QMAKE_CXXFLAGS += -Werror=cast-qual -Werror=write-strings -Werror=redundant-decl
 			-Werror=non-virtual-dtor -Wno-error=overloaded-virtual \
 			-Werror=uninitialized -Werror=init-self
 
-
+gcc4:QMAKE_CXXFLAGS += -Wno-error=missing-field-initializers
 
 
 # Simple function that checks if given argument is a file or directory.
