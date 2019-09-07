@@ -69,6 +69,8 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
+QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -Og
+
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
 	unix {
