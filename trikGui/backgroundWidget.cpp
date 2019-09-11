@@ -61,20 +61,20 @@ BackgroundWidget::BackgroundWidget(
 
 	setLayout(&mMainLayout);
 
-	connect(&mMainWidgetsLayout, SIGNAL(currentChanged(int)), this, SLOT(renewFocus()));
-	connect(&mMainWidgetsLayout, SIGNAL(widgetRemoved(int)), this, SLOT(updateStack(int)));
+	connect(&mMainWidgetsLayout, &QStackedLayout::currentChanged, this, &BackgroundWidget::renewFocus);
+	connect(&mMainWidgetsLayout, &QStackedLayout::widgetRemoved, this, &BackgroundWidget::updateStack);
 
-	connect(&mController, SIGNAL(brickStopped()), this, SLOT(refresh()));
-	connect(&mController, SIGNAL(showRunningWidget(QString, int)), this, SLOT(showRunningWidget(QString, int)));
-	connect(&mController, SIGNAL(showError(QString, int)), this, SLOT(showError(QString, int)));
-	connect(&mController, SIGNAL(hideRunningWidget(int)), this, SLOT(hideRunningWidget(int)));
-	connect(&mController, SIGNAL(hideGraphicsWidget()), this, SLOT(hideGraphicsWidget()));
-	connect(&mController, SIGNAL(hideScriptWidgets()), this, SLOT(hideScriptWidgets()));
+	connect(&mController, &Controller::brickStopped, this, &BackgroundWidget::refresh);
+	connect(&mController, &Controller::showRunningWidget, this, &BackgroundWidget::showRunningWidget);
+	connect(&mController, &Controller::showError, this, &BackgroundWidget::showError);
+	connect(&mController, &Controller::hideRunningWidget, this, &BackgroundWidget::hideRunningWidget);
+	connect(&mController, &Controller::hideGraphicsWidget, this, &BackgroundWidget::hideGraphicsWidget);
+	connect(&mController, &Controller::hideScriptWidgets, this, &BackgroundWidget::hideScriptWidgets);
+	connect(&mController, &Controller::communicatorStatusChanged,
+			&mCommunicatorIndicator, &OpenSocketIndicator::changeStatus);
+	connect(&mController, &Controller::mailboxStatusChanged, &mMailboxIndicator, &OpenSocketIndicator::changeStatus);
 
-	connect(&mController, SIGNAL(communicatorStatusChanged(bool)), &mCommunicatorIndicator, SLOT(changeStatus(bool)));
-	connect(&mController, SIGNAL(mailboxStatusChanged(bool)), &mMailboxIndicator, SLOT(changeStatus(bool)));
-
-	connect(&mRunningWidget, SIGNAL(hideMe(int)), this, SLOT(hideRunningWidget(int)));
+	connect(&mRunningWidget, &RunningWidget::hideMe, this, &BackgroundWidget::hideRunningWidget);
 }
 
 BackgroundWidget::~BackgroundWidget()
@@ -100,7 +100,7 @@ void BackgroundWidget::addMainWidget(MainWidget &widget)
 	mMainWidgetIndex.push(mMainWidgetsLayout.addWidget(&widget));
 	mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
 
-	connect(&widget, SIGNAL(newWidget(MainWidget &)), this, SLOT(addMainWidget(MainWidget &)));
+	connect(&widget, &MainWidget::newWidget, this, &BackgroundWidget::addMainWidget);
 }
 
 void BackgroundWidget::addRunningWidget(MainWidget &widget)
@@ -114,8 +114,8 @@ void BackgroundWidget::addLazyWidget(LazyMainWidget &widget)
 	resetWidgetLayout(widget);
 	mMainWidgetsLayout.addWidget(&widget);
 
-	connect(&widget, SIGNAL(showMe(MainWidget &)), this, SLOT(showMainWidget(MainWidget &)));
-	connect(&widget, SIGNAL(hideMe()), this, SLOT(hideGraphicsWidget()));
+	connect(&widget, &LazyMainWidget::showMe, this, &BackgroundWidget::showMainWidget);
+	connect(&widget, &LazyMainWidget::hideMe, this, &BackgroundWidget::hideGraphicsWidget);
 }
 
 void BackgroundWidget::showMainWidget(MainWidget &widget)
