@@ -124,13 +124,14 @@ void PythonEngineWorker::init()
 
 bool PythonEngineWorker::recreateContext()
 {
-	if (!initTrik()) {
-		return false;
+	{
+		PythonQtGILScope _;
+		Py_MakePendingCalls();
+		PyErr_CheckSignals();
+		PyErr_Clear();
 	}
-	PythonQtGILScope _;
-	mMainContext.evalScript("script.kill()");
-	auto ok = !PythonQt::self()->hadError();
-	return ok;
+	PythonQt::self()->clearError();
+	return initTrik();
 }
 
 bool PythonEngineWorker::evalSystemPy()
@@ -141,7 +142,6 @@ bool PythonEngineWorker::evalSystemPy()
 		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
 		return false;
 	}
-	PythonQt::self()->clearError();
 	PythonQtGILScope _;
 	mMainContext.evalFile(systemPyPath);
 	if (PythonQt::self()->hadError()) {
@@ -154,7 +154,6 @@ bool PythonEngineWorker::evalSystemPy()
 bool PythonEngineWorker::initTrik()
 {
 	PythonQtGILScope _;
-	PyErr_Clear();
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
 
@@ -236,7 +235,9 @@ void PythonEngineWorker::doRun(const QString &script)
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
 
-	if (PythonQt::self()->hadError()) {
+	auto wasError = mState != ready && PythonQt::self()->hadError();
+	mState = ready;
+	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {
 		emit completed("", 0);
