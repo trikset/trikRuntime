@@ -99,7 +99,12 @@ int main(int argc, char *argv[])
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
 
-		QObject::connect(&result, SIGNAL(completed(QString, int)), app.data(), SLOT(quit()));
+		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::completed, app.data(), [&app](const QString &err, int){
+			if (!err.isEmpty()) {
+				QLOG_ERROR() << "Script reported:" << err;
+			}
+			app->quit();
+		});
 
 		if (fileName.isEmpty()) { // from command line
 			result.run(script, stype);

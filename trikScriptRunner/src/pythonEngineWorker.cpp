@@ -83,7 +83,9 @@ void PythonEngineWorker::init()
 
 		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH");
 		if (path.isEmpty()) {
-			throw trikKernel::InternalErrorException("TRIK_PYTHONPATH must be set to correct value");
+			constexpr auto e = "TRIK_PYTHONPATH must be set to correct value";
+			QLOG_FATAL() << e;
+			throw trikKernel::InternalErrorException(e);
 		}
 		// TODO: Now use PYTHONPATH environment variable (default) until fixed
 		// Must point to local .zip file

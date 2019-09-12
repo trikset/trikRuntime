@@ -58,6 +58,8 @@ macx {
 
 CONFIG *= qt
 
+CONFIG -= app_bundle
+
 !win32:CONFIG *= use_gold_linker
 #CONFIG *= fat-lto
 
