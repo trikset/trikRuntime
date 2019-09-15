@@ -14,11 +14,12 @@
 
 #pragma once
 #include <QtGlobal>
+#include "declSpec.h"
 
 namespace trikControl {
 
 /// TRIK device interface, base interface for everything that can be plugged to a brick or already on board.
-class DeviceInterface
+class TRIKCONTROL_EXPORT DeviceInterface
 {
 	Q_DISABLE_COPY(DeviceInterface)
 

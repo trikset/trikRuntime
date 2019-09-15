@@ -2,6 +2,8 @@
 <typesystem package="PyTrikControl" >
  <load-typesystem name="typesystem_core.xml" generate="no" />
  <load-typesystem name="typesystem_gui.xml"  generate="no" />
+ <load-typesystem name="typesystem_trikHal.xml"  generate="no" />
+ <load-typesystem name="typesystem_trikKernel.xml"  generate="no" />
 
  <namespace-type name="trikControl" />
 
@@ -21,6 +23,7 @@
  <interface-type name="trikControl::LedInterface" create-shell="no"/>
  <interface-type name="trikControl::GamepadInterface" create-shell="no"/>
  <interface-type name="trikControl::FifoInterface" create-shell="no"/>
+ <interface-type name="trikControl::MarkerInterface" create-shell="no"/>
 
  <interface-type name="trikControl::EventCodeInterface" create-shell="no"/>
  <interface-type name="trikControl::EventInterface" create-shell="no"/>
@@ -28,6 +31,10 @@
  
  <interface-type name="trikControl::SensorInterface" create-shell="no"/>
  <enum-type name="trikControl::SensorInterface::Type"/>
+ <interface-type name="trikControl::GyroSensorInterface" create-shell="no"/>
+ <interface-type name="trikControl::I2cDeviceInterface" create-shell="no"/>
+ <interface-type name="trikControl::CameraDeviceInterface" create-shell="no"/>
+
  <interface-type name="trikControl::ColorSensorInterface" create-shell="no"/>
  <interface-type name="trikControl::SoundSensorInterface" create-shell="no"/>
  <interface-type name="trikControl::VectorSensorInterface" create-shell="no"/>
@@ -36,6 +43,7 @@
  <interface-type name="trikControl::LineSensorInterface" create-shell="no"/>
  <interface-type name="trikControl::ObjectSensorInterface" create-shell="no"/>
 
+<!--
 
  <object-type name="trikControl::Brick"/>
  <object-type name="trikControl::Battery" create-shell="no">
@@ -43,7 +51,7 @@
  </object-type>
  <object-type name="trikControl::Display" create-shell="no"/>
  <object-type name="trikControl::Keys"/>
- 
+--> 
  <object-type name="trikControl::BrickFactory" create-shell="no"/>
 
 </typesystem>

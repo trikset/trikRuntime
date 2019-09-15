@@ -1,101 +1,13 @@
 ************************************************************************
 Not in type system
-<object-type name="ConnectionTypes"/>
-<object-type name="MetaTypeDefinedHelper"/>
-<object-type name="QFunctorSlotObject"/>
-<object-type name="QMetaTypeTypeFlags"/>
-<object-type name="QSlotObject"/>
-<object-type name="QSlotObjectBase"/>
-<object-type name="QSmartPointerConvertFunctor"/>
-<object-type name="QStaticSlotObject"/>
-<object-type name="trikControl::CameraDeviceInterface"/>
-<object-type name="trikControl::GyroSensorInterface"/>
-<object-type name="trikControl::I2cDeviceInterface"/>
-<object-type name="trikControl::MarkerInterface"/>
 ************************************************************************
 
 ************************************************************************
 Generation disabled by type system
-<object-type name="QAlgorithmsPrivate"/>
-<object-type name="QArrayData"/>
-<object-type name="QArrayDataPointerRef"/>
-<object-type name="QAtomicInt"/>
-<object-type name="QAtomicInteger"/>
-<object-type name="QAtomicPointer"/>
-<object-type name="QBasicAtomicInteger"/>
-<object-type name="QBasicAtomicPointer"/>
-<object-type name="QBrushData"/>
-<object-type name="QByteArrayDataPtr"/>
-<object-type name="QChar"/>
-<object-type name="QCharRef"/>
-<object-type name="QEnableSharedFromThis"/>
-<object-type name="QExplicitlySharedDataPointer"/>
-<object-type name="QFlag"/>
-<object-type name="QFlags"/>
-<object-type name="QHash"/>
-<object-type name="QHashData"/>
-<object-type name="QHashDummyValue"/>
-<object-type name="QHashIterator"/>
-<object-type name="QHashNode"/>
-<object-type name="QIncompatibleFlag"/>
-<object-type name="QIntegerForSize>"/>
-<object-type name="QIntegerForSizeof"/>
-<object-type name="QInternal"/>
-<object-type name="QLatin1Char"/>
-<object-type name="QLatin1String"/>
-<object-type name="QList::MemoryLayout"/>
-<object-type name="QList::Node"/>
-<object-type name="QList::const_iterator"/>
-<object-type name="QList::iterator"/>
-<object-type name="QListData"/>
-<object-type name="QListIterator"/>
-<object-type name="QListSpecialMethods"/>
-<object-type name="QMetaTypeId"/>
-<object-type name="QMetaTypeId2"/>
-<object-type name="QMetaTypeIdQObject"/>
-<object-type name="QMultiHash"/>
-<object-type name="QMutableHashIterator"/>
-<object-type name="QMutableListIterator"/>
-<object-type name="QMutableVectorIterator"/>
-<object-type name="QObjectData"/>
-<object-type name="QObjectUserData"/>
-<object-type name="QPalette::Data"/>
-<object-type name="QRegion::QRegionData"/>
-<object-type name="QScopedArrayPointer"/>
-<object-type name="QScopedPointer"/>
-<object-type name="QScopedPointerArrayDeleter"/>
-<object-type name="QScopedPointerDeleter"/>
-<object-type name="QScopedPointerObjectDeleteLater"/>
-<object-type name="QScopedPointerPodDeleter"/>
-<object-type name="QSharedData"/>
-<object-type name="QSharedDataPointer"/>
-<object-type name="QSizePolicy::Bits"/>
-<object-type name="QStaticArrayData"/>
-<object-type name="QStaticAssertFailure"/>
-<object-type name="QStaticByteArrayData"/>
-<object-type name="QStaticStringData"/>
-<object-type name="QString"/>
-<object-type name="QStringDataPtr"/>
-<object-type name="QStringMatcher::Data"/>
-<object-type name="QStringRef"/>
-<object-type name="QTypeInfo"/>
-<object-type name="QTypeInfoMerger"/>
-<object-type name="QTypeInfoQuery"/>
-<object-type name="QTypedArrayData"/>
-<object-type name="QVarLengthArray"/>
-<object-type name="QVector::AlignmentDummy"/>
-<object-type name="QVectorIterator"/>
-<object-type name="QWeakPointer"/>
-<object-type name="QWidgetData"/>
-<object-type name="QtPrivate"/>
-<object-type name="qGreater"/>
-<object-type name="qLess"/>
-<object-type name="std"/>
 ************************************************************************
 
 ************************************************************************
 Type redefined to not be a class
-<object-type name="QByteRef"/>
 ************************************************************************
 
 ************************************************************************
