@@ -113,7 +113,14 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 	tests::utils::Wait::wait(600);
 }
 
-TEST_F(TrikPyRunnerTest, DirectCommandContextWithTimersAndQtCore)
+
+TEST_F(TrikPyRunnerTest, print)
+{
+	auto err = runDirectCommandAndWaitForQuit("print('Hello')");
+	ASSERT_EQ(err, EXIT_SUCCESS);
+}
+
+TEST_F(TrikPyRunnerTest, DISABLED_directCommandContextWithTimersAndQtCore)
 {
 	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore");
 	ASSERT_EQ(err, EXIT_SUCCESS);
@@ -123,13 +130,13 @@ TEST_F(TrikPyRunnerTest, DirectCommandContextWithTimersAndQtCore)
 	ASSERT_EQ(err, EXIT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, propertyAndMethodWithSimpleType)
+TEST_F(TrikPyRunnerTest, DISABLED_propertyAndMethodWithSimpleType)
 {
 	auto exitCode = run("brick.gyroscope().read()");
 	ASSERT_EQ(exitCode, EXIT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, brickMethodWithNonTrivialReturnTypeConversion)
+TEST_F(TrikPyRunnerTest, DISABLED_brickMethodWithNonTrivialReturnTypeConversion)
 {
 	auto exitCode = run("brick.getStillImage()");
 	ASSERT_EQ(exitCode, EXIT_SUCCESS);

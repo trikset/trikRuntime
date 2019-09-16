@@ -118,7 +118,7 @@ void PythonEngineWorker::init()
 		PythonQtGILScope _;
 		PythonQt::init(PythonQt::PythonAlreadyInitialized);
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
 	}
@@ -182,6 +182,11 @@ void PythonEngineWorker::resetBrick()
 void PythonEngineWorker::brickBeep()
 {
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+}
+
+void PythonEngineWorker::sendStdOutMessage(const QString &text)
+{
+	emit sendMessage(QString("print: %1").arg(text));
 }
 
 void PythonEngineWorker::stopScript()

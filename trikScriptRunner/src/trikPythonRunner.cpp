@@ -36,6 +36,7 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
 	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
+	connect(mScriptEngineWorker, &PythonEngineWorker::sendMessage, this, &TrikPythonRunner::sendMessage);
 
 	QEventLoop l;
 	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
