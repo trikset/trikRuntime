@@ -113,3 +113,8 @@ QStringList TrikPythonRunner::knownMethodNames() const
 {
 	return {};
 }
+
+bool TrikPythonRunner::wasError()
+{
+	return PythonQt::self()->hadError();
+}

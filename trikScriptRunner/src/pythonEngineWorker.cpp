@@ -111,18 +111,21 @@ void PythonEngineWorker::init()
 
 	if (!mPyInterpreter) {
 //		mPyInterpreter = Py_NewInterpreter();
-
-		if (!PythonQt::self()) {
-			PythonQt::setEnableThreadSupport(true);
-			PythonQtGILScope _;
-			PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
-			connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-			connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
-			PythonQtRegisterListTemplateConverter(QVector, uint8_t)
-			PythonQt_QtAll::init();
-		}
 	}
-	mMainContext = PythonQt::self()->getMainModule();
+
+	if (!PythonQt::self()) {
+		PythonQt::setEnableThreadSupport(true);
+		PythonQtGILScope _;
+		PythonQt::init(PythonQt::PythonAlreadyInitialized);
+		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
+		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
+		PythonQt_QtAll::init();
+	}
+	if (!mMainContext) {
+		mMainContext = PythonQt::self()->getMainModule();
+		recreateContext();
+	}
 	emit inited();
 }
 
