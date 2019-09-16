@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QFileInfo>
+#include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
@@ -22,6 +23,7 @@
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
+#include "PythonQtConversion.h"
 
 using namespace trikScriptRunner;
 
@@ -114,10 +116,10 @@ void PythonEngineWorker::init()
 			PythonQt::setEnableThreadSupport(true);
 			PythonQtGILScope _;
 			PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
-			PythonQt_QtAll::init();
 			connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 			connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
-
+			PythonQtRegisterListTemplateConverter(QVector, uint8_t)
+			PythonQt_QtAll::init();
 		}
 	}
 	mMainContext = PythonQt::self()->getMainModule();
