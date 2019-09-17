@@ -7,7 +7,12 @@ pull_request_rules:
       - "#dismissed-reviews-by=0"  # no one declined
       - "#commented-reviews-by=0"  # no discussion happened in reviews
       - "#changes-requested-reviews-by=0" # no more changes were requested
-      - "#status-success = 6" # all checks succeeded
+#      - "#status-success = 6" # all checks succeeded
+      - status-success="continuous-integration/travis-ci/pr"
+      - status-success="continuous-integration/appveyor/pr"
+      - status-success="Mergeable"
+      - status-success="CodeFactor"
+
     actions:
       merge:
         method: merge
