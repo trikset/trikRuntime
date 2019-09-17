@@ -8,6 +8,7 @@ skip_commits:
     - '**/*.html'
     - '**/*.txt'
     - '**/*.md'
+    - '.mergify.yml'
   message: /\[NOCI\]/
 
 
