@@ -82,8 +82,12 @@ public:
 
 	~TrikScriptRunner() override;
 
+	/// Choose default runner type (Python or JavaScript)
+	void setDefaultRunner(ScriptType t);
+
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
+	bool wasError() override;
 
 	/// Create completion list for interpreted language
 	QStringList knownMethodNamesFor(ScriptType t);

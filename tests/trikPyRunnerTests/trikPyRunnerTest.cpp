@@ -22,14 +22,17 @@
 #include <testUtils/wait.h>
 #include <QTimer>
 
+
 using namespace tests;
 constexpr auto EXIT_TIMEOUT = -93;
+constexpr auto EXIT_SCRIPT_ERROR = 113;
 
 void TrikPyRunnerTest::SetUp()
 {
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
 				   , "./test-model-config.xml", "./media/"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
+	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::PYTHON);
 // TODO:	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
@@ -41,11 +44,12 @@ int TrikPyRunnerTest::run(const QString &script)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted]()
+					 , &wait, [&alreadyCompleted, &wait](const QString &e)
 	{
 		alreadyCompleted = true;
+		auto errCode = e.isEmpty()? EXIT_SUCCESS : EXIT_SCRIPT_ERROR;
+		wait.exit(errCode);
 	} ) ;
 	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 
@@ -59,22 +63,8 @@ int TrikPyRunnerTest::run(const QString &script)
 
 int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
-	QEventLoop wait;
-	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted]()
-	{
-		alreadyCompleted = true;
-	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 	mScriptRunner->runDirectCommand(script);
-
-	auto exitCode = 0;
-	if (!alreadyCompleted) {
-		exitCode = wait.exec();
-	}
-	return exitCode;
+	return mScriptRunner->wasError()? EXIT_SCRIPT_ERROR : EXIT_SUCCESS;
 }
 
 int TrikPyRunnerTest::runFromFile(const QString &fileName)
@@ -102,7 +92,7 @@ TEST_F(TrikPyRunnerTest, abortBeforeRun)
 TEST_F(TrikPyRunnerTest, sanityCheckPy)
 {
 	auto err = run("1 + 1");
-	ASSERT_EQ(err, 0);
+	ASSERT_EQ(err, EXIT_SUCCESS);
 }
 
 TEST_F(TrikPyRunnerTest, abortWhileTrue)
@@ -117,21 +107,49 @@ TEST_F(TrikPyRunnerTest, abortWhileTrue)
 	t.stop();
 }
 
+TEST_F(TrikPyRunnerTest, scriptWait)
+{
+	scriptRunner().run("script.wait(500)");
+	tests::utils::Wait::wait(600);
+}
+
+
+TEST_F(TrikPyRunnerTest, print)
+{
+	auto err = runDirectCommandAndWaitForQuit("print('Hello')");
+	ASSERT_EQ(err, EXIT_SUCCESS);
+}
+
+TEST_F(TrikPyRunnerTest, DISABLED_directCommandContextWithTimersAndQtCore)
+{
+	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore");
+	ASSERT_EQ(err, EXIT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(100, lambda _ : None)");
+	ASSERT_EQ(err, EXIT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("t=QtCore.QTimer()");
+	ASSERT_EQ(err, EXIT_SUCCESS);
+}
+
+TEST_F(TrikPyRunnerTest, DISABLED_propertyAndMethodWithSimpleType)
+{
+	auto exitCode = run("brick.gyroscope().read()");
+	ASSERT_EQ(exitCode, EXIT_SUCCESS);
+}
+
+TEST_F(TrikPyRunnerTest, DISABLED_brickMethodWithNonTrivialReturnTypeConversion)
+{
+	auto exitCode = run("brick.getStillImage()");
+	ASSERT_EQ(exitCode, EXIT_SUCCESS);
+}
+
+TEST_F(TrikPyRunnerTest, DISABLED_brickPropertyAndVectorArgument)
+{
+	auto exitCode = run("brick.display().show([0], 1, 1, 'grayscale8')");
+	ASSERT_EQ(exitCode, EXIT_SUCCESS);
+}
 
 TEST_F(TrikPyRunnerTest, DISABLED_fileTestPy)
 {
 	auto err = runFromFile("file-test.py");
-	ASSERT_EQ(err, 0);
-}
-
-TEST_F(TrikPyRunnerTest, pythonAccessQtCore)
-{
-	auto err = run("from PythonQt import QtCore\nQtCore.QTimer.singleShot(500)");
-	ASSERT_EQ(err, 0);
-}
-
-TEST_F(TrikPyRunnerTest, pythonScriptWait)
-{
-	scriptRunner().run("script.wait(500)");
-	tests::utils::Wait::wait(600);
+	ASSERT_EQ(err, EXIT_SUCCESS);
 }

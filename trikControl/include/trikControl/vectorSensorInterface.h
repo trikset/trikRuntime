@@ -16,14 +16,12 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QVector>
-
+#include <trikKernel/timeVal.h>
+#include "declSpec.h"
 #include "deviceInterface.h"
 
-#include "declSpec.h"
 
-namespace trikKernel {
-class TimeVal;
-}
+
 
 namespace trikControl {
 

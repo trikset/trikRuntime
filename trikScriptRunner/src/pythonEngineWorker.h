@@ -66,6 +66,9 @@ signals:
 	/// When engine was inited
 	void inited();
 
+	/// Some message to send, for example, from stdout
+	void sendMessage(const QString&);
+
 public slots:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
@@ -93,6 +96,9 @@ public slots:
 	/// Plays "beep" sound.
 	/// Can be safely called from other threads.
 	void brickBeep();
+
+	/// Sends message to listeners
+	void sendStdOutMessage(const QString &text);
 
 private slots:
 	/// Abort script execution.

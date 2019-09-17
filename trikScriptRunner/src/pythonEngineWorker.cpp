@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QFileInfo>
+#include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
@@ -22,6 +23,7 @@
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
+#include "PythonQtConversion.h"
 
 using namespace trikScriptRunner;
 
@@ -109,18 +111,21 @@ void PythonEngineWorker::init()
 
 	if (!mPyInterpreter) {
 //		mPyInterpreter = Py_NewInterpreter();
-
-		if (!PythonQt::self()) {
-			PythonQt::setEnableThreadSupport(true);
-			PythonQtGILScope _;
-			PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
-			PythonQt_QtAll::init();
-			connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-			connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
-
-		}
 	}
-	mMainContext = PythonQt::self()->getMainModule();
+
+	if (!PythonQt::self()) {
+		PythonQt::setEnableThreadSupport(true);
+		PythonQtGILScope _;
+		PythonQt::init(PythonQt::PythonAlreadyInitialized);
+		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
+		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
+		PythonQt_QtAll::init();
+	}
+	if (!mMainContext) {
+		mMainContext = PythonQt::self()->getMainModule();
+		recreateContext();
+	}
 	emit inited();
 }
 
@@ -177,6 +182,11 @@ void PythonEngineWorker::resetBrick()
 void PythonEngineWorker::brickBeep()
 {
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+}
+
+void PythonEngineWorker::sendStdOutMessage(const QString &text)
+{
+	emit sendMessage(QString("print: %1").arg(text));
 }
 
 void PythonEngineWorker::stopScript()

@@ -16,6 +16,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QVector>
 
 #include "displayWidgetInterface.h"
 

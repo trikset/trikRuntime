@@ -69,6 +69,11 @@ TrikScriptRunner::~TrikScriptRunner()
 	abortAll();
 }
 
+void TrikScriptRunner::setDefaultRunner(ScriptType t)
+{
+	mLastRunner = t;
+}
+
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
 	fetchRunner(mLastRunner)->registerUserFunction(name, function);
@@ -77,6 +82,11 @@ void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::
 void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
 	fetchRunner(mLastRunner)->addCustomEngineInitStep(step);
+}
+
+bool TrikScriptRunner::wasError()
+{
+	return fetchRunner(mLastRunner)->wasError();
 }
 
 QStringList TrikScriptRunner::knownMethodNames() const
@@ -124,7 +134,7 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 				this, SIGNAL(sendMessage(const QString &)));
 	}
 
-	mLastRunner = stype;
+	setDefaultRunner(stype);
 
 	return cell.data();
 }
