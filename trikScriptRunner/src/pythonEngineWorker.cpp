@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QFileInfo>
+#include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
@@ -22,6 +23,7 @@
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
+#include "PythonQtConversion.h"
 
 using namespace trikScriptRunner;
 
@@ -66,9 +68,9 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
-		auto state = PyGILState_Ensure();
-		Q_UNUSED(state);
 		Py_Finalize();
+		PyMem_RawFree(mProgramName);
+		PyMem_RawFree(mPythonPath);
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
 		}
@@ -78,18 +80,18 @@ PythonEngineWorker::~PythonEngineWorker()
 void PythonEngineWorker::init()
 {
 	if (initCounter++ == 0) {
-		static const auto nonConst = wcsdup(L"SOME_PATH"); // leak?
-		Py_SetPythonHome(nonConst); //??? Need to set correct one
-
+		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+		Py_SetProgramName(mProgramName);
 		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH");
 		if (path.isEmpty()) {
 			constexpr auto e = "TRIK_PYTHONPATH must be set to correct value";
 			QLOG_FATAL() << e;
 			throw trikKernel::InternalErrorException(e);
 		}
-		// TODO: Now use PYTHONPATH environment variable (default) until fixed
-		// Must point to local .zip file
-		Py_SetPath(path.toStdWString().data());
+
+		/// TODO: Must point to local .zip file
+		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
+		Py_SetPath(mPythonPath);
 
 
 /* uncomment for verbosity
@@ -109,18 +111,21 @@ void PythonEngineWorker::init()
 
 	if (!mPyInterpreter) {
 //		mPyInterpreter = Py_NewInterpreter();
-
-		if (!PythonQt::self()) {
-			PythonQt::setEnableThreadSupport(true);
-			PythonQtGILScope _;
-			PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
-			PythonQt_QtAll::init();
-			connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-			connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::updateErrorMessage);
-
-		}
 	}
-	mMainContext = PythonQt::self()->getMainModule();
+
+	if (!PythonQt::self()) {
+		PythonQt::setEnableThreadSupport(true);
+		PythonQtGILScope _;
+		PythonQt::init(PythonQt::PythonAlreadyInitialized);
+		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
+		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
+		PythonQt_QtAll::init();
+	}
+	if (!mMainContext) {
+		mMainContext = PythonQt::self()->getMainModule();
+		recreateContext();
+	}
 	emit inited();
 }
 
@@ -177,6 +182,11 @@ void PythonEngineWorker::resetBrick()
 void PythonEngineWorker::brickBeep()
 {
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+}
+
+void PythonEngineWorker::sendStdOutMessage(const QString &text)
+{
+	emit sendMessage(QString("print: %1").arg(text));
 }
 
 void PythonEngineWorker::stopScript()

@@ -60,6 +60,9 @@ public:
 	/// (useful when used from outside of the TrikRuntime).
 	virtual QStringList knownMethodNames() const = 0;
 
+	/// Get status of last direct command/script
+	virtual bool wasError() = 0;
+
 public slots:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// For event-driven mode (where script has brick.run() command) script counts as finished

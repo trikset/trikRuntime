@@ -23,6 +23,10 @@ branches:
   except:
     - /dependabot.*/
 matrix:
+  fast_finish: true
+  allow_failures:
+  - os: linux
+    env: CONFIG=debug VERA=true TRANSLATIONS=true QMAKE_EXTRA="$QMAKE_EXTRA CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
   include:
   - os: linux
     services: docker

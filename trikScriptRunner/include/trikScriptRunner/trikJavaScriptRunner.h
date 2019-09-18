@@ -49,6 +49,8 @@ public:
 
 	QStringList knownMethodNames() const override;
 
+	bool wasError() override { return false; }
+
 public slots:
 	void run(const QString &script, const QString &fileName = "") override;
 	void runDirectCommand(const QString &command) override;

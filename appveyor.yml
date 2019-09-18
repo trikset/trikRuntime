@@ -8,6 +8,8 @@ skip_commits:
     - '**/*.html'
     - '**/*.txt'
     - '**/*.md'
+    - '.mergify.yml'
+    - '.github/mergeable.yml'
   message: /\[NOCI\]/
 
 
@@ -63,7 +65,7 @@ test_script:
   - .\trikCameraPhotoTests
   - .\trikJsRunnerTests
   - .\trikPyRunnerTests
-
-artifacts:
- - path: .build\bin\x86-$(configuration)
-   name: trikRuntime-win32-$(configuration)
+#Uncomment if needed
+#artifacts:
+# - path: .build\bin\x86-$(configuration)
+#   name: trikRuntime-win32-$(configuration)
