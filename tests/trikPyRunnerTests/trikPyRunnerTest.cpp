@@ -130,7 +130,7 @@ TEST_F(TrikPyRunnerTest, DISABLED_directCommandContextWithTimersAndQtCore)
 	ASSERT_EQ(err, EXIT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, DISABLED_propertyAndMethodWithSimpleType)
+TEST_F(TrikPyRunnerTest, propertyAndMethodWithSimpleType)
 {
 	auto exitCode = run("brick.gyroscope().read()");
 	ASSERT_EQ(exitCode, EXIT_SUCCESS);

@@ -150,6 +150,9 @@ private:
 
 	QString mErrorMessage;
 
+	wchar_t *mProgramName { nullptr };
+	wchar_t *mPythonPath { nullptr };
+
 	static QAtomicInt initCounter;
 };
 

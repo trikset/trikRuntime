@@ -68,9 +68,11 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
-		auto state = PyGILState_Ensure();
-		Q_UNUSED(state);
+//		auto state = PyGILState_Ensure();
+//		Q_UNUSED(state);
 		Py_Finalize();
+		PyMem_RawFree(mProgramName);
+		PyMem_RawFree(mPythonPath);
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
 		}
@@ -80,9 +82,8 @@ PythonEngineWorker::~PythonEngineWorker()
 void PythonEngineWorker::init()
 {
 	if (initCounter++ == 0) {
-		static const auto nonConst = wcsdup(L"SOME_PATH"); // leak?
-		Py_SetPythonHome(nonConst); //??? Need to set correct one
-
+		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+		Py_SetProgramName(mProgramName);
 		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH");
 		if (path.isEmpty()) {
 			constexpr auto e = "TRIK_PYTHONPATH must be set to correct value";
@@ -91,7 +92,8 @@ void PythonEngineWorker::init()
 		}
 		// TODO: Now use PYTHONPATH environment variable (default) until fixed
 		// Must point to local .zip file
-		Py_SetPath(path.toStdWString().data());
+		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
+		Py_SetPath(mPythonPath);
 
 
 /* uncomment for verbosity
