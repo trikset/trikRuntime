@@ -68,8 +68,6 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
-//		auto state = PyGILState_Ensure();
-//		Q_UNUSED(state);
 		Py_Finalize();
 		PyMem_RawFree(mProgramName);
 		PyMem_RawFree(mPythonPath);
@@ -90,8 +88,8 @@ void PythonEngineWorker::init()
 			QLOG_FATAL() << e;
 			throw trikKernel::InternalErrorException(e);
 		}
-		// TODO: Now use PYTHONPATH environment variable (default) until fixed
-		// Must point to local .zip file
+
+		/// TODO: Must point to local .zip file
 		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
 		Py_SetPath(mPythonPath);
 

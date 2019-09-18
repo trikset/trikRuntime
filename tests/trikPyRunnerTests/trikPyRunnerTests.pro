@@ -23,7 +23,7 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/data/file-test.py \
 
-implementationIncludes(trikKernel trikControl trikScriptRunner tests/testUtils)
+implementationIncludes(trikKernel trikControl trikScriptRunner trikNetwork tests/testUtils)
 links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
 copyToDestdir($$PWD/data/, now)

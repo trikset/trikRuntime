@@ -116,11 +116,12 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 
 TEST_F(TrikPyRunnerTest, print)
 {
+	/// TODO: Check stdout, probably via sendMessage signal
 	auto err = runDirectCommandAndWaitForQuit("print('Hello')");
 	ASSERT_EQ(err, EXIT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, DISABLED_directCommandContextWithTimersAndQtCore)
+TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 {
 	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore");
 	ASSERT_EQ(err, EXIT_SUCCESS);
@@ -136,13 +137,13 @@ TEST_F(TrikPyRunnerTest, propertyAndMethodWithSimpleType)
 	ASSERT_EQ(exitCode, EXIT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, DISABLED_brickMethodWithNonTrivialReturnTypeConversion)
+TEST_F(TrikPyRunnerTest, brickMethodWithNonTrivialReturnTypeConversion)
 {
 	auto exitCode = run("brick.getStillImage()");
 	ASSERT_EQ(exitCode, EXIT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, DISABLED_brickPropertyAndVectorArgument)
+TEST_F(TrikPyRunnerTest, brickPropertyAndVectorArgument)
 {
 	auto exitCode = run("brick.display().show([0], 1, 1, 'grayscale8')");
 	ASSERT_EQ(exitCode, EXIT_SUCCESS);
