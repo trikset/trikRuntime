@@ -173,12 +173,8 @@ void Gamepad::handleButton(int button, int pressed)
 	if (!tmr) {
 		tmr = new QTimer(this);
 		tmr->setInterval(500);
-		connect(
-				tmr
-				, SIGNAL(timeout())
-				, this
-				, SLOT(onButtonStateClearTimerTimeout())
-				);
+		tmr->setSingleShot(true);
+		connect(tmr, &QTimer::timeout, this, &Gamepad::onButtonStateClearTimerTimeout);
 	}
 
 	tmr->start();
