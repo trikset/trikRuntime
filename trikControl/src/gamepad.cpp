@@ -135,6 +135,8 @@ void Gamepad::onNewData(const QString &data)
 	} else if (commandName == "keepalive") {
 		const int waitForMs = cmd.at(1).trimmed().toInt();
 		handleKeepalive(waitForMs);
+	} else if (commandName == "custom") {
+		handleCustom(data.mid(commandName.length()).trimmed());
 	} else {
 		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
 	}
@@ -191,6 +193,12 @@ void Gamepad::handleKeepalive(int waitForMs)
 	} else {
 		mKeepaliveTimer.start(waitForMs);
 	}
+}
+
+void Gamepad::handleCustom(const QString &message)
+{
+	mLastCustomMessage = message;
+	emit custom(message);
 }
 
 void Gamepad::onButtonStateClearTimerTimeout()
