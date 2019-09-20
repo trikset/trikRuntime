@@ -63,9 +63,6 @@ public slots:
 	/// Remove all labels from the screen and redraws it.
 	void removeLabels();
 
-	/// Queues worker object for deletion. It is actually deleted when control flow returns to event loop.
-	void deleteWorker();
-
 	/// Hides image widget.
 	void hide();
 
