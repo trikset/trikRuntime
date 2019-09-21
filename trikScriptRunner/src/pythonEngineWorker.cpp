@@ -39,7 +39,7 @@ static void abortPythonInterpreter() {
 		return;
 	}
 	// TODO: Lock is required, but we have broken design and it causes a deadlock
-	// PythonQtGILScope _;
+	PythonQtGILScope _;
 	Py_AddPendingCall(&quitFromPython, nullptr);
 }
 
@@ -152,7 +152,6 @@ bool PythonEngineWorker::evalSystemPy()
 		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
 		return false;
 	}
-	PythonQtGILScope _;
 	mMainContext.evalFile(systemPyPath);
 	if (PythonQt::self()->hadError()) {
 		QLOG_ERROR() << "Failed to eval system.py";
@@ -163,7 +162,6 @@ bool PythonEngineWorker::evalSystemPy()
 
 bool PythonEngineWorker::initTrik()
 {
-	PythonQtGILScope _;
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
 
@@ -212,6 +210,8 @@ void PythonEngineWorker::stopScript()
 
 	if (QThread::currentThread() != thread()) {
 		abortPythonInterpreter();
+	} else {
+		QLOG_FATAL() << "Attempt to abort Python from main thread.";
 	}
 
 	if (mMailbox) {
@@ -229,12 +229,12 @@ void PythonEngineWorker::run(const QString &script)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
-	emit startedScript(0);
 	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void PythonEngineWorker::doRun(const QString &script)
 {
+	emit startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
@@ -245,7 +245,6 @@ void PythonEngineWorker::doRun(const QString &script)
 		return;
 	}
 
-	PythonQtGILScope _;
 	mMainContext.evalScript(script);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
@@ -267,13 +266,14 @@ void PythonEngineWorker::runDirect(const QString &command)
 
 void PythonEngineWorker::doRunDirect(const QString &command)
 {
+	emit startedDirectScript(0);
 	if (PythonQt::self()->hadError()) {
 		PythonQt::self()->clearError();
 		mErrorMessage.clear();
 		recreateContext();
 	}
-	PythonQtGILScope _;
 	mMainContext.evalScript(command);
+	emit completed(mErrorMessage, 0);
 }
 
 void PythonEngineWorker::updateErrorMessage(const QString &err)
