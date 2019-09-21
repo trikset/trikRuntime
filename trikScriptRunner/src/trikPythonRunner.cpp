@@ -38,13 +38,13 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
 	connect(mScriptEngineWorker, &PythonEngineWorker::sendMessage, this, &TrikPythonRunner::sendMessage);
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed, this, &TrikPythonRunner::completed);
-	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::onScriptStart);
-
-	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
+	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::startedScript);
+	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
+			, this, &TrikPythonRunner::startedDirectScript);
 
 	QEventLoop l;
 	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
-
+	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 	mWorkerThread.start();
 	l.exec();
 }
@@ -91,11 +91,6 @@ void TrikPythonRunner::abort()
 {
 	mScriptEngineWorker->stopScript();
 	mScriptEngineWorker->resetBrick();
-}
-
-void TrikPythonRunner::onScriptStart(int scriptId)
-{
-	emit startedDirectScript(scriptId);
 }
 
 void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
