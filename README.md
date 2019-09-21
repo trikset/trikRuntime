@@ -13,10 +13,10 @@
 
 # Pre-build step
 
-  ```git submodules update --init --recursive```
+  ```git submodule update --init --recursive```
 
 # Build
-  PythonQt shoud be build with corresponding version of Python in mind.
+  PythonQt should be built with corresponding version of Python in mind.
   One can install `libpython3-dev` from destribution package manager, or use `pyenv`, and there is a helper script for this.
 
   ```shell

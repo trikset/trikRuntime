@@ -61,7 +61,12 @@ signals:
 
 	/// Emitted when new script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
-	void startedScript(int scriptId);
+	void startedScript(const QString &fileName, int scriptId);
+
+	/// Emitted when new direct script is started.
+	/// @param scriptId - unique identifier assigned to a newly started script.
+	void startedDirectScript(int scriptId);
+
 
 	/// When engine was inited
 	void inited();

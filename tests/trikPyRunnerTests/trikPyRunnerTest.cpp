@@ -42,28 +42,20 @@ void TrikPyRunnerTest::TearDown()
 
 int TrikPyRunnerTest::run(const QString &script)
 {
-	QEventLoop wait;
-	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted, &wait](const QString &e)
-	{
-		alreadyCompleted = true;
-		auto errCode = e.isEmpty()? EXIT_SUCCESS : EXIT_SCRIPT_ERROR;
-		wait.exit(errCode);
-	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
-
+	QEventLoop l;
+	QTimer::singleShot(5000, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
+	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed, &l, &QEventLoop::quit);
 	mScriptRunner->run(script, "_.py");
-	auto exitCode = 0;
-	if (!alreadyCompleted) {
-		exitCode = wait.exec();
-	}
+	auto exitCode = l.exec();
 	return exitCode;
 }
 
 int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
+	QEventLoop l;
+	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed, &l, &QEventLoop::quit);
 	mScriptRunner->runDirectCommand(script);
+	l.exec();
 	return mScriptRunner->wasError()? EXIT_SCRIPT_ERROR : EXIT_SUCCESS;
 }
 
@@ -95,14 +87,23 @@ TEST_F(TrikPyRunnerTest, sanityCheckPy)
 	ASSERT_EQ(err, EXIT_SUCCESS);
 }
 
+TEST_F(TrikPyRunnerTest, print)
+{
+	/// TODO: Check stdout, probably via sendMessage signal
+	auto err = runDirectCommandAndWaitForQuit("print('Hello')");
+	ASSERT_EQ(err, EXIT_SUCCESS);
+}
+
 TEST_F(TrikPyRunnerTest, abortWhileTrue)
 {
 	QTimer t;
 	t.setInterval(200);
 	t.setSingleShot(true);
-	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &trikScriptRunner::TrikScriptRunnerInterface::abort);
-	t.start();
-	auto err = run("while True: pass");
+	using trikScriptRunner::TrikScriptRunnerInterface;
+	QObject::connect(&scriptRunner(), &TrikScriptRunnerInterface::startedScript
+					 , &t, QOverload<>::of(&QTimer::start));
+	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
+	auto err = run("print('before')\nwhile True: pass\nprint('after')");
 	ASSERT_NE(err, EXIT_TIMEOUT);
 	t.stop();
 }
@@ -111,14 +112,6 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 {
 	scriptRunner().run("script.wait(500)");
 	tests::utils::Wait::wait(600);
-}
-
-
-TEST_F(TrikPyRunnerTest, print)
-{
-	/// TODO: Check stdout, probably via sendMessage signal
-	auto err = runDirectCommandAndWaitForQuit("print('Hello')");
-	ASSERT_EQ(err, EXIT_SUCCESS);
 }
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)

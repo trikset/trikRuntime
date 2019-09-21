@@ -124,14 +124,11 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 				return nullptr;
 		}
 		// subscribe on wrapped objects signals
-		connect(&*cell, SIGNAL(completed(QString, int)),
-				this, SIGNAL(completed(QString, int)));
-		connect(&*cell, SIGNAL(startedScript(const QString &, int)),
-				this, SIGNAL(startedScript(const QString &, int)));
-		connect(&*cell, SIGNAL(startedDirectScript(int)),
-				this, SIGNAL(startedDirectScript(int)));
-		connect(&*cell, SIGNAL(sendMessage(const QString &)),
-				this, SIGNAL(sendMessage(const QString &)));
+		connect(&*cell, &TrikScriptRunnerInterface::completed, this, &TrikScriptRunnerInterface::completed);
+		connect(&*cell, &TrikScriptRunnerInterface::startedScript, this, &TrikScriptRunnerInterface::startedScript);
+		connect(&*cell, &TrikScriptRunnerInterface::startedDirectScript
+				, this, &TrikScriptRunnerInterface::startedDirectScript);
+		connect(&*cell, &TrikScriptRunnerInterface::sendMessage, this, &TrikScriptRunnerInterface::sendMessage);
 	}
 
 	setDefaultRunner(stype);
