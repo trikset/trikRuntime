@@ -82,11 +82,14 @@ void PythonEngineWorker::init()
 	if (initCounter++ == 0) {
 		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
 		Py_SetProgramName(mProgramName);
-		auto path = QProcessEnvironment::systemEnvironment().value("TRIK_PYTHONPATH");
+		constexpr auto varName = "TRIK_PYTHONPATH";
+		auto const &path = QProcessEnvironment::systemEnvironment().value(varName);
 		if (path.isEmpty()) {
-			constexpr auto e = "TRIK_PYTHONPATH must be set to correct value";
+			auto const &e = QString("%1 must be set to correct value").arg(varName);
 			QLOG_FATAL() << e;
 			throw trikKernel::InternalErrorException(e);
+		} else {
+			QLOG_INFO() << varName << ":" << path;
 		}
 
 		/// TODO: Must point to local .zip file
