@@ -77,6 +77,10 @@ signals:
 	/// @param pressed - 1 if button was pressed, 0 if it was released.
 	void button(int button, int pressed);
 
+	/// Any custom message for simple extention via gamepad protocol/TCP port
+	/// `custom my message` is delivered as "my message"
+	void custom(const QString &s);
+
 	/// Emitted when a gamepad connects to robot. Note that robot may have several connected gamepads, and this signal
 	/// will be emitted only when the first gamepad connects to robot.
 	void connected();

@@ -37,8 +37,8 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 {
 	mState.start();
 
-	connect(mFifo.data(), SIGNAL(newData(QString)), this, SLOT(onNewData(QString)));
-	connect(mFifo.data(), SIGNAL(readError()), this, SLOT(onReadError()));
+	connect(mFifo.data(), &trikHal::FifoInterface::newData, this, &Fifo::onNewData);
+	connect(mFifo.data(), &trikHal::FifoInterface::readError, this, &Fifo::onReadError);
 
 	if (mFifo->open()) {
 		mState.ready();
@@ -61,27 +61,32 @@ DeviceInterface::Status Fifo::status() const
 
 QString Fifo::read()
 {
-	while (mCurrent.isEmpty()) {
-		QEventLoop eventLoop;
-		connect(this, SIGNAL(newData(QString)), &eventLoop, SLOT(quit()));
-		eventLoop.exec();
+	QReadLocker r(&mCurrentLock);
+	if (mCurrent.isEmpty()) {
+		r.unlock();
+		QEventLoop l;
+		connect(this, &Fifo::newData, &l, [&l](const QString &newData) { if (!newData.isEmpty()) l.quit(); } );
+		l.exec();
 	}
-
-	const QString result = mCurrent;
-	mCurrent = "";
+	r.unlock();
+	QString result;
+	QWriteLocker w(&mCurrentLock);
+	result.swap(mCurrent);
 	return result;
 }
 
 bool Fifo::hasData() const
 {
-	return mCurrent != "";
+	QReadLocker r(&mCurrentLock);
+	return !mCurrent.isEmpty();
 }
 
 void Fifo::onNewData(const QString &data)
 {
-	QString buffer = data;
-	mCurrent.swap(buffer);
-	emit newData(data);
+	QWriteLocker w(&mCurrentLock);
+	mCurrent = data;
+	w.unlock();
+	emit newData(mCurrent);
 }
 
 void Fifo::onReadError()
