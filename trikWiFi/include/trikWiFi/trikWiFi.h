@@ -70,6 +70,9 @@ public:
 	/// Closes the connection to wpa_supplicant.
 	void dispose();
 
+	/// Return signal strength of current Wi-Fi connection
+	SignalStrength signalStrength();
+
 signals:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
 	/// and ready to be obtained by scanResults() method.

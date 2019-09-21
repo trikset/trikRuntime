@@ -14,13 +14,7 @@
 
 #pragma once
 
-#include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QLabel>
-#else
-	#include <QtWidgets/QLabel>
-#endif
+#include <QLabel>
 
 #include <controller.h>
 #include <wiFiModeWidget.h>
@@ -35,9 +29,7 @@ public:
 	/// @param controller is used to get the current network info
 	explicit WiFiIndicator(Controller &controller, QWidget *parent = 0);
 
-signals:
-
-public slots:
+private slots:
 	/// Updates the status to 'connected'.
 	void setOn();
 
@@ -47,8 +39,14 @@ public slots:
 	/// Updates the status to 'access point mode'.
 	void setAPOn();
 
+	void setLowStrength();
+
+	void setMediumStrength();
+
+	void setHighStrength();
+
 	/// Updates the status according to mode and connected parameters.
-	void changeMode(WiFiModeWidget::Mode mode, bool connected);
+	void changeMode(WiFiModeWidget::Mode mode);
 
 	/// Requests connection info from the controller and updates the status.
 	void updateStatus();
@@ -56,7 +54,7 @@ public slots:
 private:
 	QTimer mUpdateTimer;
 	Controller &mController;
-	WiFiModeWidget::Mode mMode;
+	WiFiModeWidget::Mode mMode { WiFiModeWidget::Mode::unknown };
 };
 
 }

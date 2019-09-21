@@ -135,6 +135,8 @@ void Gamepad::onNewData(const QString &data)
 	} else if (commandName == "keepalive") {
 		const int waitForMs = cmd.at(1).trimmed().toInt();
 		handleKeepalive(waitForMs);
+	} else if (commandName == "custom") {
+		handleCustom(data.mid(commandName.length()).trimmed());
 	} else {
 		QLOG_ERROR() << "Gamepad: unknown command" << commandName;
 	}
@@ -171,12 +173,8 @@ void Gamepad::handleButton(int button, int pressed)
 	if (!tmr) {
 		tmr = new QTimer(this);
 		tmr->setInterval(500);
-		connect(
-				tmr
-				, SIGNAL(timeout())
-				, this
-				, SLOT(onButtonStateClearTimerTimeout())
-				);
+		tmr->setSingleShot(true);
+		connect(tmr, &QTimer::timeout, this, &Gamepad::onButtonStateClearTimerTimeout);
 	}
 
 	tmr->start();
@@ -193,9 +191,15 @@ void Gamepad::handleKeepalive(int waitForMs)
 	}
 }
 
+void Gamepad::handleCustom(const QString &message)
+{
+	mLastCustomMessage = message;
+	emit custom(message);
+}
+
 void Gamepad::onButtonStateClearTimerTimeout()
 {
-	const auto timer = dynamic_cast<QTimer *>(sender());
+	const auto timer = qobject_cast<QTimer *>(sender());
 	if (timer) {
 		const int button = mButtonStateClearTimers.key(timer);
 		mButtonState[button] = false;

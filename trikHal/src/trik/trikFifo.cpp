@@ -16,7 +16,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include <errno.h>
+#include <cerrno>
 
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QStringList>
@@ -61,8 +61,9 @@ void TrikFifo::readFile()
 	mSocketNotifier->setEnabled(false);
 
 	if (::read(mFileDescriptor, &data, 4000) < 0) {
-		QLOG_ERROR() << "FIFO read failed: " << strerror(errno);
+		QLOG_ERROR() << "FIFO read failed: " << strerror(errno) << "in" << mFileName;
 		emit readError();
+		mSocketNotifier->setEnabled(true);
 		return;
 	}
 

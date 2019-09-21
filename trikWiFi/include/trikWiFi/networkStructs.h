@@ -41,6 +41,14 @@ enum class DisconnectReason
 	, unplanned
 };
 
+enum class SignalStrength
+{
+	undefined
+	, low
+	, medium
+	, high
+};
+
 /// Contains info about current connection.
 struct Status
 {
@@ -61,10 +69,10 @@ struct ScanResult
 	QString ssid;
 
 	/// Security algorithm used in that network.
-	Security security;
+	Security security {};
 
 	/// Is this network known --- listed in /etc/wpa_supplicant.conf.
-	bool known;
+	bool known {};
 };
 
 }

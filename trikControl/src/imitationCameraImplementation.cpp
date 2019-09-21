@@ -13,6 +13,7 @@
  * limitations under the License. */
 
 #include "imitationCameraImplementation.h"
+#include "cameraDeviceInterface.h"
 
 #include <QtCore/QDir>
 #include <QtGui/QImage>
@@ -56,7 +57,7 @@ QVector<uint8_t> ImitationCameraImplementation::getPhoto() {
 			return QVector<uint8_t>();
 		}
 
-		return qImageToQVector(imgOrig);
+		return CameraDeviceInterface::qImageToQVector(imgOrig);
 	} else {
 		QLOG_INFO() << "Return empty image, are filters for camera correct?";
 		return QVector<uint8_t>();

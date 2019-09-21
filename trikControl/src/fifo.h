@@ -70,6 +70,9 @@ private:
 	/// Last line that was read from FIFO.
 	QString mCurrent;
 
+	/// Lock for mCurrent
+	mutable QReadWriteLock mCurrentLock;
+
 	/// State of a FIFO file as a device.
 	DeviceState mState;
 };

@@ -29,16 +29,12 @@ public:
 	/// = sec * mSecConst << (mShift - 6) + mcsec << mShift
 	TimeVal(int sec, int mcsec);
 
-	/// Overloaded "is equal" operator.
-	/// @param timeVal - a value, which is assigned to a variable.
-	TimeVal &operator=(const TimeVal &timeVal);
-
 	/// Returns packed data that shifted to the left on mShift bits.
-	int packedUInt32() const;
+	uint32_t packedUInt32() const;
 
 	/// Creates TimeVal using packed data.
 	/// It needs for hiding one argument constructor of TimeVal from packed data.
-	static TimeVal fromPackedUInt32(int packedTime);
+	static TimeVal fromPackedUInt32(uint32_t packedTime);
 
 	/// Counts time interval between two packed data of time
 	static int timeInterval(int packedTimeLeft, int packedTimeRight);
@@ -72,3 +68,5 @@ inline int operator-(const TimeVal &left, const TimeVal &right)
 }
 
 }
+
+Q_DECLARE_METATYPE(trikKernel::TimeVal)

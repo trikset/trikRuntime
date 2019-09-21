@@ -87,6 +87,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
+	qRegisterMetaType<QVector<uint8_t>>("QVector<uint8_t>");
 	qRegisterMetaType<QVector<int>>("QVector<int>");
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
@@ -199,7 +200,7 @@ void Brick::reset()
 	}
 
 	/// @todo Temporary, we need more carefully init/deinit range sensors.
-	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+	for (auto &&rangeSensor : mRangeSensors) {
 		rangeSensor->init();
 	}
 }
@@ -232,8 +233,10 @@ void Brick::playTone(int hzFreq, int msDuration)
 {
 	QLOG_INFO() << "Playing tone (" << hzFreq << "," << msDuration << ")";
 
-	if (hzFreq < 0 || msDuration < 0)
+	if (hzFreq < 0 || msDuration < 0) {
 		return;
+	}
+
 	// mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
 	// mTonePlayer->play(hzFreq, msDuration);
 	QMetaObject::invokeMethod(mTonePlayer.data(), "play", Q_ARG(int, hzFreq), Q_ARG(int, msDuration));
@@ -251,11 +254,11 @@ void Brick::stop()
 
 	mTonePlayer->stop();
 
-	for (ServoMotor * const servoMotor : mServoMotors.values()) {
+	for (auto &&servoMotor : mServoMotors) {
 		servoMotor->powerOff();
 	}
 
-	for (PowerMotor * const powerMotor : mPowerMotors.values()) {
+	for (auto &&powerMotor : mPowerMotors) {
 		powerMotor->powerOff();
 	}
 
@@ -264,31 +267,31 @@ void Brick::stop()
 	}
 
 	/// @todo: Also be able to stop initializing sensor.
-	for (LineSensor * const lineSensor : mLineSensors) {
+	for (auto &&lineSensor : mLineSensors) {
 		if (lineSensor->status() == DeviceInterface::Status::ready) {
 			lineSensor->stop();
 		}
 	}
 
-	for (ColorSensor * const colorSensor : mColorSensors) {
+	for (auto &&colorSensor : mColorSensors) {
 		if (colorSensor->status() == DeviceInterface::Status::ready) {
 			colorSensor->stop();
 		}
 	}
 
-	for (ObjectSensor * const objectSensor : mObjectSensors) {
+	for (auto &&objectSensor : mObjectSensors) {
 		if (objectSensor->status() == DeviceInterface::Status::ready) {
 			objectSensor->stop();
 		}
 	}
 
-	for (SoundSensor * const soundSensor : mSoundSensors) {
+	for (auto &&soundSensor : mSoundSensors) {
 		if (soundSensor->status() == DeviceInterface::Status::ready) {
 			soundSensor->stop();
 		}
 	}
 
-	for (RangeSensor * const rangeSensor : mRangeSensors.values()) {
+	for (auto &&rangeSensor : mRangeSensors) {
 		rangeSensor->stop();
 	}
 
@@ -355,11 +358,11 @@ QStringList Brick::sensorPorts(SensorInterface::Type type) const
 	}
 	case SensorInterface::Type::specialSensor: {
 		// Special sensors can not be connected to standard ports, they have their own methods to access them.
-		return QStringList();
+		return {};
 	}
 	}
 
-	return QStringList();
+	return {};
 }
 
 EncoderInterface *Brick::encoder(const QString &port)
@@ -550,22 +553,22 @@ void Brick::createDevice(const QString &port)
 			mLineSensors.insert(port, new LineSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
-			connect(mLineSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mLineSensors[port], &LineSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "objectSensor") {
 			mObjectSensors.insert(port, new ObjectSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
-			connect(mObjectSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mObjectSensors[port], &ObjectSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "colorSensor") {
 			mColorSensors.insert(port, new ColorSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one video sensor launched at a time.
-			connect(mColorSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mColorSensors[port], &ColorSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "soundSensor") {
 			mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
 
 			/// @todo This will work only in case when there can be only one sound sensor launched at a time.
-			connect(mSoundSensors[port], SIGNAL(stopped()), this, SIGNAL(stopped()));
+			connect(mSoundSensors[port], &SoundSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {

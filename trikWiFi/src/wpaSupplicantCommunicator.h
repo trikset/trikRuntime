@@ -34,7 +34,7 @@ public:
 	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
 	///        /run/wpa_supplicant/wlan0.
 	/// @param parent - parent QObject.
-	WpaSupplicantCommunicator(const QString &interfaceFile, const QString &daemonFile, QObject *parent = 0);
+	WpaSupplicantCommunicator(const QString &interfaceFile, const QString &daemonFile, QObject *parent = nullptr);
 
 	/// Destructor.
 	~WpaSupplicantCommunicator();

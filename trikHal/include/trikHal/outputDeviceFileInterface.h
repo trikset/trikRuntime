@@ -22,8 +22,10 @@ namespace trikHal {
 /// Flushes its contents after every write.
 class OutputDeviceFileInterface
 {
+	Q_DISABLE_COPY(OutputDeviceFileInterface)
 public:
-	virtual ~OutputDeviceFileInterface() {}
+	OutputDeviceFileInterface() = default;
+	virtual ~OutputDeviceFileInterface() = default;
 
 	/// Open a file. File name must be set previously.
 	virtual bool open() = 0;

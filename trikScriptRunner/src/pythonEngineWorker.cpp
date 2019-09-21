@@ -12,14 +12,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QProcess>
 #include <QsLog.h>
+#include <QFileInfo>
+#include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 
 #include "pythonEngineWorker.h"
+#include <Python.h>
+#include "PythonQtConversion.h"
 
 using namespace trikScriptRunner;
+
+QAtomicInt PythonEngineWorker::initCounter = 0;
+
+static int quitFromPython(void*) {
+	PyErr_SetInterrupt();
+	return 0;
+}
+
+static void abortPythonInterpreter() {
+	if(!Py_IsInitialized()) {
+		return;
+	}
+	// TODO: Lock is required, but we have broken design and it causes a deadlock
+	// PythonQtGILScope _;
+	Py_AddPendingCall(&quitFromPython, nullptr);
+}
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
@@ -29,41 +51,123 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 	, mState(ready)
 {}
 
-void PythonEngineWorker::init()
+PythonEngineWorker::~PythonEngineWorker()
 {
-	// init PythonQt
-	PythonQt::init(PythonQt::IgnoreSiteModule | PythonQt::RedirectStdOut);
-	connect(PythonQt::self(), SIGNAL(pythonStdErr(const QString &)), this, SLOT(updateErrorMessage(const QString &)));
-	PythonQt_QtAll::init();
-	mMainContext = PythonQt::self()->getMainModule();
+	stopScript();
+	{
+		// In python at least before 3.7 (3.5,3.6)
+		// we need to make all pending calls before the context
+		// is destroyed, otherwise python crashes
+		PythonQtGILScope _;
+		Py_MakePendingCalls();
+		mMainContext = nullptr;
+		if (mPyInterpreter) {
+			Py_EndInterpreter(mPyInterpreter);
+			mPyInterpreter = nullptr;
+		}
+	}
 
-	initTrik();
-}
-
-void PythonEngineWorker::recreateContext()
-{
-	mMainContext.evalScript("script.kill()");
-
-	initTrik();
-}
-
-void PythonEngineWorker::evalSystemPy()
-{
-	const QString systemPyPath = trikKernel::Paths::systemScriptsPath() + "system.py";
-
-	if (QFile::exists(systemPyPath)) {
-		mMainContext.evalFile(systemPyPath);
-	} else {
-		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
+	if (--initCounter == 0) {
+		Py_Finalize();
+		PyMem_RawFree(mProgramName);
+		PyMem_RawFree(mPythonPath);
+		if (PythonQt::self()) {
+			PythonQt::cleanup();
+		}
 	}
 }
 
-void PythonEngineWorker::initTrik()
+void PythonEngineWorker::init()
 {
+	if (initCounter++ == 0) {
+		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+		Py_SetProgramName(mProgramName);
+		constexpr auto varName = "TRIK_PYTHONPATH";
+		auto const &path = QProcessEnvironment::systemEnvironment().value(varName);
+		if (path.isEmpty()) {
+			auto const &e = QString("%1 must be set to correct value").arg(varName);
+			QLOG_FATAL() << e;
+			throw trikKernel::InternalErrorException(e);
+		} else {
+			QLOG_INFO() << varName << ":" << path;
+		}
+
+		/// TODO: Must point to local .zip file
+		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
+		Py_SetPath(mPythonPath);
+
+
+/* uncomment for verbosity
+		Py_VerboseFlag = 3;
+		Py_InspectFlag = 1;
+		Py_DebugFlag = 2;
+// */
+		Py_IsolatedFlag = 1;
+		Py_BytesWarningFlag = 3;
+		Py_DontWriteBytecodeFlag = 1;
+		Py_NoSiteFlag = 1;
+		Py_NoUserSiteDirectory = 1;
+
+		Py_Initialize();
+		PyEval_InitThreads(); // For Python < 3.7
+	}
+
+	if (!mPyInterpreter) {
+//		mPyInterpreter = Py_NewInterpreter();
+	}
+
+	if (!PythonQt::self()) {
+		PythonQt::setEnableThreadSupport(true);
+		PythonQtGILScope _;
+		PythonQt::init(PythonQt::PythonAlreadyInitialized);
+		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
+		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
+		PythonQt_QtAll::init();
+	}
+	if (!mMainContext) {
+		mMainContext = PythonQt::self()->getMainModule();
+		recreateContext();
+	}
+	emit inited();
+}
+
+bool PythonEngineWorker::recreateContext()
+{
+	{
+		PythonQtGILScope _;
+		Py_MakePendingCalls();
+		PyErr_CheckSignals();
+		PyErr_Clear();
+	}
+	PythonQt::self()->clearError();
+	return initTrik();
+}
+
+bool PythonEngineWorker::evalSystemPy()
+{
+	const QString systemPyPath = trikKernel::Paths::systemScriptsPath() + "system.py";
+
+	if (!QFileInfo::exists(systemPyPath)) {
+		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
+		return false;
+	}
+	PythonQtGILScope _;
+	mMainContext.evalFile(systemPyPath);
+	if (PythonQt::self()->hadError()) {
+		QLOG_ERROR() << "Failed to eval system.py";
+		return false;
+	}
+	return true;
+}
+
+bool PythonEngineWorker::initTrik()
+{
+	PythonQtGILScope _;
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
 
-	evalSystemPy();
+	return evalSystemPy();
 }
 
 void PythonEngineWorker::resetBrick()
@@ -81,6 +185,11 @@ void PythonEngineWorker::resetBrick()
 void PythonEngineWorker::brickBeep()
 {
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+}
+
+void PythonEngineWorker::sendStdOutMessage(const QString &text)
+{
+	emit sendMessage(QString("print: %1").arg(text));
 }
 
 void PythonEngineWorker::stopScript()
@@ -101,11 +210,13 @@ void PythonEngineWorker::stopScript()
 
 	mState = stopping;
 
+	if (QThread::currentThread() != thread()) {
+		abortPythonInterpreter();
+	}
+
 	if (mMailbox) {
 		mMailbox->stopWaiting();
 	}
-
-	QMetaObject::invokeMethod(this, "recreateContext"); /// recreates python module, which we use
 
 	mState = ready;
 
@@ -119,7 +230,7 @@ void PythonEngineWorker::run(const QString &script)
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
 	emit startedScript(0);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void PythonEngineWorker::doRun(const QString &script)
@@ -127,13 +238,21 @@ void PythonEngineWorker::doRun(const QString &script)
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
+	mState = running;
+	auto ok = recreateContext();
+	if (!ok) {
+		emit completed(mErrorMessage,0);
+		return;
+	}
 
+	PythonQtGILScope _;
 	mMainContext.evalScript(script);
 
-	mState = running;
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
 
-	if (PythonQt::self()->hadError()) {
+	auto wasError = mState != ready && PythonQt::self()->hadError();
+	mState = ready;
+	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {
 		emit completed("", 0);
@@ -143,7 +262,7 @@ void PythonEngineWorker::doRun(const QString &script)
 void PythonEngineWorker::runDirect(const QString &command)
 {
 	QMutexLocker locker(&mScriptStateMutex);
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command));
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command));
 }
 
 void PythonEngineWorker::doRunDirect(const QString &command)
@@ -153,6 +272,7 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		mErrorMessage.clear();
 		recreateContext();
 	}
+	PythonQtGILScope _;
 	mMainContext.evalScript(command);
 }
 
@@ -163,5 +283,5 @@ void PythonEngineWorker::updateErrorMessage(const QString &err)
 
 void PythonEngineWorker::onScriptRequestingToQuit()
 {
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }

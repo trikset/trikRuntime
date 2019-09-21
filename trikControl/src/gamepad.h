@@ -86,6 +86,8 @@ private:
 
 	void handleKeepalive(int waitForMs);
 
+	void handleCustom(const QString &message);
+
 	Fifo mUnderlyingFifo;
 
 	QSet<int> mButtonWasPressed;
@@ -97,10 +99,12 @@ private:
 	QHash<int, QTimer*> mButtonStateClearTimers;
 
 	QHash<int, PadStatus> mPads;
-	int mWheelPercent = -101;
+	int mWheelPercent { -101 };
 
 	QTimer mKeepaliveTimer;
-	bool mConnected {false};
+	QString mLastCustomMessage;
+
+	bool mConnected { false };
 };
 
 }

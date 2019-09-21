@@ -17,13 +17,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 
-#include <trikKernel/timeVal.h>
 #include "vectorSensorInterface.h"
 
 #include "declSpec.h"
-namespace trikKernel {
-class TimeVal;
-}
 
 namespace trikControl {
 

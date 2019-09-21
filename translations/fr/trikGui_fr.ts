@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>FileSystemFilter</name>
+    <message>
+        <location filename="../../trikGui/fileSystemFilter.cpp" line="+26"/>
+        <source>Delete all...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../../trikGui/trikGuiMain.cpp" line="+49"/>
@@ -33,7 +41,7 @@
 <context>
     <name>trikGui::CommandsListWidget</name>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="+30"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="+29"/>
         <source>Choose command:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -159,7 +167,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="+184"/>
+        <location filename="../../trikGui/controller.cpp" line="+194"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -167,18 +175,29 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="+102"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
+        <source>Delete all...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+44"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+29"/>
+        <location line="+11"/>
         <source>Confirm deletion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-10"/>
         <source>Are you sure you want to delete file?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Are you sure you want to delete all files?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -221,7 +240,7 @@
 <context>
     <name>trikGui::LanguageSelectionWidget</name>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+40"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+32"/>
         <source>Select language:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -242,16 +261,16 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>GUI will now restart</source>
+        <source>GUI will now restart. Do you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>trikGui::MotorLever</name>
     <message>
-        <location filename="../../trikGui/motorLever.cpp" line="+40"/>
+        <location filename="../../trikGui/motorLever.cpp" line="+37"/>
         <location line="+17"/>
-        <location line="+57"/>
+        <location line="+58"/>
         <source>off</source>
         <translation type="unfinished"></translation>
     </message>
@@ -335,7 +354,7 @@
 <context>
     <name>trikGui::SensorSettingsWidget</name>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+38"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+37"/>
         <source>Select distance:
 </source>
         <translation type="unfinished"></translation>
@@ -497,7 +516,7 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+59"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+58"/>
         <source>IP:</source>
         <translation type="unfinished"></translation>
     </message>

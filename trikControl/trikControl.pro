@@ -15,7 +15,7 @@ TEMPLATE = lib
 
 include(../global.pri)
 
-#QT += multimediawidgets 
+#QT += multimediawidgets
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/batteryInterface.h \
@@ -50,7 +50,7 @@ PUBLIC_HEADERS += \
 HEADERS += \
 	$$PWD/src/abstractVirtualSensorWorker.h \
 	$$PWD/src/analogSensor.h \
-	$$PWD/src/audioSynthDevices.h \
+	$$PWD/src/audioSynthDevice.h \
 	$$PWD/src/battery.h \
 	$$PWD/src/brick.h \
 	$$PWD/src/cameraDevice.h \
@@ -155,13 +155,13 @@ SOURCES += \
 	$$PWD/src/shapes/line.cpp \
 	$$PWD/src/shapes/rectangle.cpp \
 	$$PWD/src/shapes/arc.cpp \
-	$$PWD/src/audioSynthDevices.cpp \
+	$$PWD/src/audioSynthDevice.cpp \
 	$$PWD/src/gyroSensor.cpp \
 	$$PWD/src/cameraDevice.cpp \
 	$$PWD/src/qtCameraImplementation.cpp \
 	$$PWD/src/v4l2CameraImplementation.cpp \
 	$$PWD/src/imitationCameraImplementation.cpp \
-	$$PWD/src/cameraImplementationInterface.cpp \
+	$$PWD/src/cameraDeviceInterface.cpp \
 	$$PWD/src/i2cDevice.cpp \
 	$$PWD/src/i2cCommunicator.cpp
 #	$$PWD/src/headingSensor.cpp \

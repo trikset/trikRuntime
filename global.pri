@@ -58,6 +58,8 @@ macx {
 
 CONFIG *= qt
 
+CONFIG -= app_bundle
+
 !win32:CONFIG *= use_gold_linker
 #CONFIG *= fat-lto
 
@@ -68,6 +70,8 @@ else:!debug:CONFIG *= release
 release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
+
+QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -Og
 
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
@@ -150,10 +154,14 @@ unix:!nosanitizers {
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
 		# Ubsan is turned on by default
-		CONFIG += sanitizer sanitize_undefined
+		#CONFIG += sanitizer sanitize_undefined
+		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined -fsanitize-undefined-trap-on-error
 	}
 
-
+	CONFIG(sanitize_address) {
+	# GCC 5.5 does not know this
+	#	QMAKE_SANITIZE_ADDRESS_CXXFLAGS += -fsanitize-address-use-after-scope
+	}
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
 	CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!macx-clang { CONFIG += sanitize_leak }
@@ -166,9 +174,9 @@ unix:!nosanitizers {
 
 	sanitize_undefined:macx-clang {
 		# sometimes runtime is missing in clang. this hack allows to avoid runtime dependency.
-		QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
-		QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
-		QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
+		#QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
+		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
+		#QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
 	}
 
 	gcc5 {
@@ -253,7 +261,7 @@ QMAKE_CXXFLAGS += -Werror=cast-qual -Werror=write-strings -Werror=redundant-decl
 			-Werror=non-virtual-dtor -Wno-error=overloaded-virtual \
 			-Werror=uninitialized -Werror=init-self
 
-
+gcc4:QMAKE_CXXFLAGS += -Wno-error=missing-field-initializers
 
 
 # Simple function that checks if given argument is a file or directory.
@@ -394,7 +402,7 @@ defineTest(installAdditionalSharedFiles) {
 		additionalSharedFiles.files += $$FILES
 		additionalSharedFiles.path = $$INSTALL_ROOT/usr/share/trikRuntime/
 
-		INSTALLS += additionalSharedFiles
+		INSTALLS *= additionalSharedFiles
 
 		export(additionalSharedFiles.path)
 		export(additionalSharedFiles.files)

@@ -1,4 +1,4 @@
-#trikRuntime
+# Runtime for TRIK controller.
 
 [![Build Status](https://img.shields.io/travis/trikset/trikRuntime/master.svg?maxAge=3600&style=for-the-badge&logo=linux&logoColor=green)](https://travis-ci.org/trikset/trikRuntime)
 [![Build status](https://img.shields.io/appveyor/ci/iakov/trikruntime-cgd5y/master.svg?maxAge=3600&style=for-the-badge&logo=windows&logoColor=green)](https://ci.appveyor.com/project/iakov/trikruntime-cgd5y/branch/master)
@@ -6,10 +6,9 @@
 [![Join the chat at https://gitter.im/trikset/trikRuntime](https://badges.gitter.im/trikset/trikRuntime.svg)](https://gitter.im/trikset/trikRuntime?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![codecov.io](https://codecov.io/github/trikset/trikRuntime/coverage.svg?branch=master)](https://codecov.io/github/trikset/trikRuntime?branch=master)
 [![CoverityScan](https://scan.coverity.com/projects/7496/badge.svg)](https://scan.coverity.com/projects/trikset-trikruntime)
+[![Mergify][https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/trikset/trikRuntime&style=flat]](ADD_URL_HERE)
 
 ===========
-
-Runtime for TRIK controller.
 
 
 # Pre-build step
@@ -18,10 +17,10 @@ Runtime for TRIK controller.
 
 # Build
   PythonQt should be built with corresponding version of Python in mind.
-  One can install `libpython3.5` from destribution package manager, or use `pyenv`, and there is a helper script for this.
+  One can install `libpython3-dev` from destribution package manager, or use `pyenv`, and there is a helper script for this.
 
   ```shell
-    ./scripts/with_pyenv qmake -r
+    qmake -r
     make -j 4
   ```
 

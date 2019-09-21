@@ -27,10 +27,49 @@ namespace trikControl {
 class BrickInterface;
 }
 
+#define DECLARE_METATYPE_TEMPLATE(TYPE) \
+	Q_DECLARE_METATYPE(TYPE*)
+
+#define REGISTER_METATYPE_FOR_ENGINE(TYPE) \
+	Scriptable<TYPE>::registerMetatype(engine);
+
+#define REGISTER_METATYPE(TYPE) \
+	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
+
+/// Here we define a convenient template that registers all devices used in trik.
+/// When creating a new device(interface), you should append it to this list.
+/// So it lets you write the device just one time rather than append appropriate line to each place
+/// that uses devices.
+/// ATTENTION: do not forget to append newly created device to this list!
+#define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
+	TEMPLATE(BatteryInterface) \
+	TEMPLATE(ColorSensorInterface) \
+	TEMPLATE(FifoInterface) \
+	TEMPLATE(DisplayInterface) \
+	TEMPLATE(EncoderInterface) \
+	TEMPLATE(EventCodeInterface) \
+	TEMPLATE(EventDeviceInterface) \
+	TEMPLATE(EventInterface) \
+	TEMPLATE(GamepadInterface) \
+	TEMPLATE(GyroSensorInterface) \
+	TEMPLATE(I2cDeviceInterface) \
+	TEMPLATE(KeysInterface) \
+	TEMPLATE(LedInterface) \
+	TEMPLATE(LineSensorInterface) \
+	TEMPLATE(MailboxInterface) \
+	TEMPLATE(MarkerInterface) \
+	TEMPLATE(MotorInterface) \
+	TEMPLATE(ObjectSensorInterface) \
+	TEMPLATE(SoundSensorInterface) \
+	TEMPLATE(SensorInterface) \
+	TEMPLATE(Threading) \
+	TEMPLATE(VectorSensorInterface)
+
+
 namespace trikScriptRunner {
 
 /// General wrapper for other executors (such as Python, JavaScript)
-class TrikScriptRunner : public TrikScriptRunnerInterface
+class TRIKSCRIPTRUNNER_EXPORT TrikScriptRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
 public:
@@ -38,14 +77,18 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * const mailbox
+					 , trikNetwork::MailboxInterface * mailbox
 					 );
 
-	~TrikScriptRunner();
+	~TrikScriptRunner() override;
+
+	/// Choose default runner type (Python or JavaScript)
+	void setDefaultRunner(ScriptType t);
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
-	
+	bool wasError() override;
+
 	/// Create completion list for interpreted language
 	QStringList knownMethodNamesFor(ScriptType t);
 

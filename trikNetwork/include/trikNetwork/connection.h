@@ -81,10 +81,10 @@ public:
 	Q_INVOKABLE void send(const QByteArray &data);
 signals:
 	/// Emitted after connection becomes closed.
-	void disconnected(Connection *self);
+	void disconnected(trikNetwork::Connection *self);
 
 	/// Emitted after connection is established.
-	void connected(Connection *self);
+	void connected(trikNetwork::Connection *self);
 
 protected:
 	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own

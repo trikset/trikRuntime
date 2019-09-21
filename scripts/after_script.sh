@@ -8,3 +8,5 @@ case $TRAVIS_OS_NAME in
     ;;
   *) exit 1 ;;
 esac
+
+[ -r build.log ] && tail -n 1000 build.log || true

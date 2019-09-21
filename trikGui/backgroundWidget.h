@@ -63,15 +63,15 @@ public:
 private slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(MainWidget &widget);
+	void addMainWidget(trikGui::MainWidget &widget);
 
 	/// Add a RunningWidget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addRunningWidget(MainWidget &widget);
+	void addRunningWidget(trikGui::MainWidget &widget);
 
 	/// Add a GraphicsWidget to main widgets layout and show RunningWidget.
 	/// @param widget - reference to the widget.
-	void addLazyWidget(LazyMainWidget &widget);
+	void addLazyWidget(trikGui::LazyMainWidget &widget);
 
 	/// Properly sets focus on a current widget.
 	void renewFocus();
@@ -81,7 +81,7 @@ private slots:
 
 	/// Show a widget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showMainWidget(MainWidget &widget);
+	void showMainWidget(trikGui::MainWidget &widget);
 
 	/// Show a RunningWidget which is contained in main widgets layout.
 	void showRunningWidget(const QString &fileName, int scriptId);

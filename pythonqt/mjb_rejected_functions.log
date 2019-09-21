@@ -12,9 +12,17 @@ Type redefined to not be a class
 
 ************************************************************************
 Unmatched argument type
+trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
+trikControl::DisplayInterface::show QVector<int32_t> const&
+trikKernel::TimeVal::fromPackedUInt32 uint32_t
 ************************************************************************
 
 ************************************************************************
 Unmatched return type
+trikControl::BrickInterface::getStillImage QVector<uint8_t>
+trikControl::CameraDeviceInterface::getPhoto QVector<uint8_t>
+trikControl::CameraDeviceInterface::qImageToQVector QVector<uint8_t>
+trikControl::CameraDeviceInterface::status Status
+trikKernel::TimeVal::packedUInt32 uint32_t
 ************************************************************************
 

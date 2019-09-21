@@ -15,6 +15,12 @@
 #include "trikWiFi.h"
 
 #include <QsLog.h>
+#ifdef Q_OS_LINUX
+#include <sys/socket.h>
+#include <linux/wireless.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#endif
 
 #include "trikWiFiWorker.h"
 
@@ -29,14 +35,16 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	qRegisterMetaType<trikWiFi::DisconnectReason>("trikWiFi::DisconnectReason");
 	mWorker->moveToThread(&mWorkerThread);
 
-	QObject::connect(mWorker.data(), SIGNAL(scanFinished()), this, SIGNAL(scanFinished()));
-	QObject::connect(mWorker.data(), SIGNAL(connected()), this, SIGNAL(connected()));
-	QObject::connect(mWorker.data(), SIGNAL(disconnected(trikWiFi::DisconnectReason))
-			, this, SIGNAL(disconnected(trikWiFi::DisconnectReason)));
-
-	QObject::connect(mWorker.data(), SIGNAL(statusReady()), this, SIGNAL(statusReady()));
-
-	QObject::connect(mWorker.data(), SIGNAL(error(QString)), this, SIGNAL(error(QString)));
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::scanFinished
+					 , this, &TrikWiFi::scanFinished);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::connected
+					 , this, &TrikWiFi::connected);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::disconnected
+			, this, &TrikWiFi::disconnected);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::statusReady
+					 , this, &TrikWiFi::statusReady);
+	QObject::connect(mWorker.data(), &TrikWiFiWorker::error
+					 , this, &TrikWiFi::error);
 
 	QLOG_INFO() << "Starting TrikWiFi worker thread" << &mWorkerThread;
 
@@ -61,6 +69,38 @@ void TrikWiFi::reinit()
 void TrikWiFi::dispose()
 {
 	QMetaObject::invokeMethod(mWorker.data(), "dispose");
+}
+
+SignalStrength TrikWiFi::signalStrength()
+{
+#if 0 // defined(Q_OS_LINUX)
+	iwreq req;
+	auto iwname = "wlan0";
+	strcpy(req.ifr_name, iwname);
+
+	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	req.u.data.pointer = (iw_statistics *)malloc(sizeof(iw_statistics));
+	req.u.data.length = sizeof(iw_statistics);
+
+	if (ioctl(sockfd, SIOCGIWSTATS, &req) == -1) {
+		QLOG_ERROR() << "Access to invalid interface about signal strength";
+		close(sockfd);
+		return SignalStrength::undefined;
+	} else if (((iw_statistics *)req.u.data.pointer)->qual.updated & IW_QUAL_DBM) {
+		auto level = ((iw_statistics *)req.u.data.pointer)->qual.level - 256;
+		close(sockfd);
+		if (level < -70) {
+			return SignalStrength::low;
+		} else if (level > -50) {
+			return SignalStrength::high;
+		} else {
+			return SignalStrength::medium;
+		}
+	}
+#else
+	return SignalStrength::undefined;
+#endif
 }
 
 void TrikWiFi::connect(const QString &ssid)

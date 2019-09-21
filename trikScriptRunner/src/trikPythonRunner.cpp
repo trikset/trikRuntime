@@ -12,31 +12,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QEventLoop>
 #include <QsLog.h>
 
 #include "trikPythonRunner.h"
 
 #include "src/pythonEngineWorker.h"
+#include <stdexcept>
 
 using namespace trikScriptRunner;
 
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   )
-	: mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
+	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
 {
+
 	if (mailbox) {
-		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
+		connect(mailbox,  &trikNetwork::MailboxInterface::newMessage
+				, this, &TrikPythonRunner::sendMessageFromMailBox);
 	}
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
+	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
+	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
+	connect(mScriptEngineWorker, &PythonEngineWorker::sendMessage, this, &TrikPythonRunner::sendMessage);
 
-	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+	QEventLoop l;
+	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
 
 	mWorkerThread.start();
+	l.exec();
 
-	QMetaObject::invokeMethod(mScriptEngineWorker, "init"); /// create Python main module
+	connect(mScriptEngineWorker, &PythonEngineWorker::completed
+			, this, &TrikPythonRunner::completed);
+	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript
+			, this, &TrikPythonRunner::onScriptStart);
+
 
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 }
@@ -44,12 +56,8 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 TrikPythonRunner::~TrikPythonRunner()
 {
 	mScriptEngineWorker->stopScript();
-	mScriptEngineWorker->deleteLater();
-
-	QMetaObject::invokeMethod(&mWorkerThread, "quit");
+	mWorkerThread.quit();
 	mWorkerThread.wait(1000);
-
-	mWorkerThread.deleteLater();
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
@@ -63,13 +71,13 @@ void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::
 {
 	Q_UNUSED(name);
 	Q_UNUSED(function);
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
 	Q_UNUSED(step);
-	throw "Not implemented";
+	throw std::logic_error("Not implemented");
 }
 
 void TrikPythonRunner::brickBeep()
@@ -104,5 +112,10 @@ void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &m
 
 QStringList TrikPythonRunner::knownMethodNames() const
 {
-	return QStringList();
+	return {};
+}
+
+bool TrikPythonRunner::wasError()
+{
+	return PythonQt::self()->hadError();
 }

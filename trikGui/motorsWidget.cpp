@@ -26,7 +26,7 @@
 	#include <QtWidgets/QScrollArea>
 #endif
 
-#include <QApplication> 
+#include <QApplication>
 
 #include "motorLever.h"
 
@@ -94,11 +94,11 @@ void MotorsWidget::renewFocus()
 	}
 }
 
-bool MotorsWidget::eventFilter(QObject *, QEvent *event)
+bool MotorsWidget::eventFilter(QObject *o, QEvent *event)
 {
 	if(event->type() == QEvent::KeyPress)
 	{
-		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 
 		switch (keyEvent->key()) {
 			case Qt::Key_Up: {
@@ -122,7 +122,7 @@ bool MotorsWidget::eventFilter(QObject *, QEvent *event)
 		}
 	}
 
-	return false;
+	return TrikGuiDialog::eventFilter(o, event);
 }
 
 

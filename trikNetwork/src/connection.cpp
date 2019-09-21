@@ -254,7 +254,7 @@ void Connection::connectSlots()
 {
 	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 	connect(mSocket.data(), SIGNAL(connected()), this, SLOT(onConnect()));
-	connect(mSocket.data(), SIGNAL(disconnected()), this, SLOT(onDisconnect()));
+	connect(mSocket.data(), &QTcpSocket::disconnected, this, &Connection::onDisconnect);
 	connect(mSocket.data(), SIGNAL(error(QAbstractSocket::SocketError))
 			, this, SLOT(onError(QAbstractSocket::SocketError)));
 }

@@ -39,8 +39,10 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	PythonEngineWorker(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * const mailbox
+			, trikNetwork::MailboxInterface * mailbox
 			);
+
+	~PythonEngineWorker();
 
 	/// Clears execution state and stops robot.
 	/// Can be safely called from other threads.
@@ -60,6 +62,12 @@ signals:
 	/// Emitted when new script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedScript(int scriptId);
+
+	/// When engine was inited
+	void inited();
+
+	/// Some message to send, for example, from stdout
+	void sendMessage(const QString&);
 
 public slots:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
@@ -82,19 +90,22 @@ public slots:
 	/// Calls initTrik()
 	void init();
 
-	/// Recreates Main Context made by init
-	void recreateContext();
+	/// Recreates Main Context made by init, returns true when were errors
+	bool recreateContext();
 
 	/// Plays "beep" sound.
 	/// Can be safely called from other threads.
 	void brickBeep();
 
+	/// Sends message to listeners
+	void sendStdOutMessage(const QString &text);
+
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
-	/// Adds trik object to main Python context
-	void initTrik();
+	/// Adds trik object to main Python context, returns true on success
+	bool initTrik();
 
 	/// Actually runs given script. Is to be called from a thread owning PythonEngineWorker.
 	void doRun(const QString &script);
@@ -118,8 +129,8 @@ private:
 		, running
 	};
 
-	/// Evaluates "system.py" file in the current context.
-	void evalSystemPy();
+	/// Evaluates "system.py" file in the current context, returns true on success
+	bool evalSystemPy();
 
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);
@@ -135,7 +146,14 @@ private:
 
 	PythonQtObjectPtr mMainContext;
 
+	PyThreadState * mPyInterpreter { nullptr };
+
 	QString mErrorMessage;
+
+	wchar_t *mProgramName { nullptr };
+	wchar_t *mPythonPath { nullptr };
+
+	static QAtomicInt initCounter;
 };
 
 }

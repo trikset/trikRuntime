@@ -19,81 +19,19 @@
 #include <QtCore/QTextStream>
 #include <QtCore/QMetaMethod>
 #include <QtCore/QStringBuilder>
-
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
-#include <trikKernel/timeVal.h>
-#include <trikControl/batteryInterface.h>
-#include <trikControl/colorSensorInterface.h>
-#include <trikControl/displayInterface.h>
-#include <trikControl/encoderInterface.h>
-#include <trikControl/eventCodeInterface.h>
-#include <trikControl/eventDeviceInterface.h>
-#include <trikControl/eventInterface.h>
-#include <trikControl/gamepadInterface.h>
-#include <trikControl/gyroSensorInterface.h>
-#include <trikControl/i2cDeviceInterface.h>
-#include <trikControl/lineSensorInterface.h>
-#include <trikControl/motorInterface.h>
-#include <trikControl/objectSensorInterface.h>
-#include <trikControl/soundSensorInterface.h>
-#include <trikControl/sensorInterface.h>
-#include <trikControl/vectorSensorInterface.h>
-#include <trikNetwork/mailboxInterface.h>
+#include "trikScriptRunner.h"
+
+using namespace trikScriptRunner;
+using namespace trikNetwork;
+using namespace trikControl;
 
 #include "scriptable.h"
 #include "utils.h"
 
+#include <QFileInfo>
 #include <QsLog.h>
-
-using namespace trikScriptRunner;
-using namespace trikControl;
-using namespace trikNetwork;
-
-Q_DECLARE_METATYPE(QVector<uint8_t>)
-Q_DECLARE_METATYPE(QVector<int>)
-Q_DECLARE_METATYPE(trikKernel::TimeVal)
-Q_DECLARE_METATYPE(QTimer*)
-
-#define DECLARE_METATYPE_TEMPLATE(TYPE) \
-	Q_DECLARE_METATYPE(TYPE*)
-
-#define REGISTER_METATYPE_FOR_ENGINE(TYPE) \
-	Scriptable<TYPE>::registerMetatype(engine);
-
-#define REGISTER_METATYPE(TYPE) \
-	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
-
-/// Here we define a convenient template that registers all devices used in trik.
-/// When creating a new device(interface), you should append it to this list.
-/// So it lets you write the device just one time rather than append appropriate line to each place
-/// that uses devices.
-/// ATTENTION: do not forget to append newly created device to this list!
-#define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
-	TEMPLATE(BatteryInterface) \
-	TEMPLATE(ColorSensorInterface) \
-	TEMPLATE(FifoInterface) \
-	TEMPLATE(DisplayInterface) \
-	TEMPLATE(EncoderInterface) \
-	TEMPLATE(EventCodeInterface) \
-	TEMPLATE(EventDeviceInterface) \
-	TEMPLATE(EventInterface) \
-	TEMPLATE(GamepadInterface) \
-	TEMPLATE(GyroSensorInterface) \
-	TEMPLATE(I2cDeviceInterface) \
-	TEMPLATE(KeysInterface) \
-	TEMPLATE(LedInterface) \
-	TEMPLATE(LineSensorInterface) \
-	TEMPLATE(MailboxInterface) \
-	TEMPLATE(MarkerInterface) \
-	TEMPLATE(MotorInterface) \
-	TEMPLATE(ObjectSensorInterface) \
-	TEMPLATE(SoundSensorInterface) \
-	TEMPLATE(SensorInterface) \
-	TEMPLATE(Threading) \
-	TEMPLATE(VectorSensorInterface)
-
-REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_TEMPLATE)
 
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
@@ -105,11 +43,11 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 			= [&prettyPrinter](QVariant const & elem) {
 			auto const &arrayPrettyPrinter = [&prettyPrinter](const QVariantList &array) {
 				qint32 arrayLength = array.length();
-				
+
 				if (arrayLength == 0) {
 					return QString("[]");
 				}
-	
+
 				QString res;
 				res.reserve(100000);
 				res.append("[" % prettyPrinter(array.first()));
@@ -117,7 +55,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 				for(auto i = 1; i < arrayLength; ++i) {
 					res.append(", " % prettyPrinter(array.at(i)));
 				}
-	
+
 				res.append("]");
 				return res;
 			};
@@ -132,7 +70,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
-	auto script = dynamic_cast<ScriptExecutionControl*> (scriptValue.toQObject());
+	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
 	if (script) {
 		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
 	}
@@ -142,7 +80,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 {
-	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInteger(), context->argument(1).toInteger());
+	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInt32(), context->argument(1).toInt32());
 	return engine->toScriptValue(result);
 }
 
@@ -239,8 +177,6 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);
 	registerUserFunction("getPhoto", getPhoto);
-
-	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -331,7 +267,7 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(const QString &, script));
+	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
 }
 
 void ScriptEngineWorker::doRun(const QString &script)
@@ -356,7 +292,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		stopScript();
 	}
 
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(const QString &, command), Q_ARG(int, scriptId));
+	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command), Q_ARG(int, scriptId));
 }
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
@@ -418,7 +354,6 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 {
 	QScriptEngine *engine = new QScriptEngine();
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
-
 
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE_FOR_ENGINE)
 
@@ -483,7 +418,7 @@ void ScriptEngineWorker::addCustomEngineInitStep(const std::function<void (QScri
 void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 {
 	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
-	if (QFile::exists(systemJsPath)) {
+	if (QFileInfo::exists(systemJsPath)) {
 		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
 		if (engine->hasUncaughtException()) {
 			const int line = engine->uncaughtExceptionLineNumber();

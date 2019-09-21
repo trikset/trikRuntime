@@ -39,14 +39,15 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikPythonRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * const mailbox
+					 , trikNetwork::MailboxInterface * mailbox
 					 );
 
-	~TrikPythonRunner();
+	~TrikPythonRunner() override;
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
 	QStringList knownMethodNames() const override;
+	bool wasError() override;
 
 public slots:
 	void run(const QString &script, const QString &fileName = "") override;
@@ -61,8 +62,9 @@ private slots:
 	void sendMessageFromMailBox(int senderNumber, const QString &message);
 
 private:
+
 	/// Has ownership, memory is managed by thread and deleteLater().
-	PythonEngineWorker *mScriptEngineWorker;
+	PythonEngineWorker *mScriptEngineWorker { nullptr };
 	QThread mWorkerThread;
 };
 

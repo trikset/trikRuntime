@@ -49,8 +49,7 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 {
 	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(onNetworksInfoUpdated()));
 	connect(&mWiFi, SIGNAL(connected()), this, SLOT(onConnected()));
-	connect(&mWiFi, SIGNAL(disconnected(trikWiFi::DisconnectReason))
-			, this, SLOT(onDisconnected(trikWiFi::DisconnectReason)));
+	connect(&mWiFi, &TrikWiFi::disconnected, this, &WiFiClientWidget::onDisconnected);
 	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(onStatusUpdated()));
 	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(onError(const QString &)));
 
@@ -115,7 +114,7 @@ void WiFiClientWidget::onNetworksInfoUpdated()
 		mNetworks.insert(network.ssid, network);
 	}
 
-	for (const NetworkInfo &network : mNetworks.values()) {
+	for (auto &&network : mNetworks) {
 		mAvailableNetworksModel.appendRow(new QStandardItem(network.ssid));
 	}
 
@@ -224,15 +223,15 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 		font.setBold(false);
 		item->setFont(font);
 		if (item->text() == mCurrentSsid) {
-			item->setIcon(QIcon("://resources/connectedWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/connectedWifi.png")));
 			font.setBold(true);
 			item->setFont(font);
 		} else if (mNetworks[item->text()].isKnown) {
-			item->setIcon(QIcon("://resources/knownWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/knownWifi.png")));
 		} else if (mNetworks[item->text()].security == Security::none) {
-			item->setIcon(QIcon("://resources/openWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/openWifi.png")));
 		} else {
-			item->setIcon(QIcon("://resources/passwordedWifi.png"));
+			item->setIcon(QIcon(QPixmap("://resources/passwordedWifi.png")));
 		}
 	}
 
@@ -285,7 +284,7 @@ void WiFiClientWidget::connectToSelectedNetwork()
 void WiFiClientWidget::showScanning()
 {
 	const auto scanning = new QStandardItem(tr("Scanning..."));
-	scanning->setIcon(QIcon("://resources/wait.png"));
+	scanning->setIcon(QIcon(QPixmap("://resources/wait.png")));
 	mAvailableNetworksModel.clear();
 	mAvailableNetworksModel.appendRow(scanning);
 }

@@ -21,7 +21,7 @@
 
 using namespace trikKernel;
 
-QString Paths::path(const Resource resource)
+QString Paths::path(const Resource &resource)
 {
 	QString defaultPath;
 	const QString currentPath = FileUtils::normalizePath(QCoreApplication::applicationDirPath());

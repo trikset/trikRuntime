@@ -69,6 +69,7 @@ class script(object):
           # This event loop is required to process events from other threads (i.e., script stopping/abortion or messaging)
           # Also, by no obvious reason, to be processed in the main thread the exception should be thrown after the loop.
           if self.interruptionFlag:
+              self.interruptionFlag = False
               raise ValueError()
 
     def writeToFile(self, filename, text):

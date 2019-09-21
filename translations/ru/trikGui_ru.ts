@@ -2,6 +2,14 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>FileSystemFilter</name>
+    <message>
+        <location filename="../../trikGui/fileSystemFilter.cpp" line="+26"/>
+        <source>Delete all...</source>
+        <translation>Удалить всё...</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../../trikGui/trikGuiMain.cpp" line="+49"/>
@@ -14,7 +22,7 @@
     <message>
         <location filename="../../trikGui/accelerometerWidget.cpp" line="+28"/>
         <source>Accelerometer</source>
-        <translation type="unfinished">Акселерометр</translation>
+        <translation>Акселерометр</translation>
     </message>
 </context>
 <context>
@@ -33,7 +41,7 @@
 <context>
     <name>trikGui::CommandsListWidget</name>
     <message>
-        <location filename="../../trikGui/commandsListWidget.cpp" line="+30"/>
+        <location filename="../../trikGui/commandsListWidget.cpp" line="+29"/>
         <source>Choose command:</source>
         <translation>Выберите команду:</translation>
     </message>
@@ -179,7 +187,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="+184"/>
+        <location filename="../../trikGui/controller.cpp" line="+194"/>
         <source>direct command</source>
         <translation>команда с компьютера</translation>
     </message>
@@ -202,19 +210,34 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="+102"/>
+        <source>Delete all</source>
+        <translation type="vanished">Удалить всё</translation>
+    </message>
+    <message>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
+        <source>Delete all...</source>
+        <translation>Удалить всё...</translation>
+    </message>
+    <message>
+        <location line="+44"/>
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+29"/>
+        <location line="+11"/>
         <source>Confirm deletion</source>
         <translation>Удаление</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-10"/>
         <source>Are you sure you want to delete file?</source>
         <translation>Вы уверены, что хотите удалить файл?</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Are you sure you want to delete all files?</source>
+        <translation>Вы уверены, что хотите удалить все файлы?</translation>
     </message>
 </context>
 <context>
@@ -245,7 +268,7 @@
     <message>
         <location line="+33"/>
         <source>Version</source>
-        <translation type="unfinished">Версия ПО</translation>
+        <translation>Версия ПО</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -256,7 +279,7 @@
 <context>
     <name>trikGui::LanguageSelectionWidget</name>
     <message>
-        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+40"/>
+        <location filename="../../trikGui/languageSelectionWidget.cpp" line="+32"/>
         <source>Select language:</source>
         <translation>Выберите язык:</translation>
     </message>
@@ -277,16 +300,16 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>GUI will now restart</source>
-        <translation>Сейчас произойдёт перезапуск</translation>
+        <source>GUI will now restart. Do you want to continue?</source>
+        <translation>Контроллер сейчас перегрузится. Вы действительно хотите продолжить?</translation>
     </message>
 </context>
 <context>
     <name>trikGui::MotorLever</name>
     <message>
-        <location filename="../../trikGui/motorLever.cpp" line="+40"/>
+        <location filename="../../trikGui/motorLever.cpp" line="+37"/>
         <location line="+17"/>
-        <location line="+57"/>
+        <location line="+58"/>
         <source>off</source>
         <translation>выкл</translation>
     </message>
@@ -385,7 +408,7 @@
         <translation type="obsolete">Выберите расстояние:</translation>
     </message>
     <message>
-        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+49"/>
+        <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+48"/>
         <source>Continue</source>
         <translation>Продолжить</translation>
     </message>
@@ -566,7 +589,7 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+59"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+58"/>
         <source>IP:</source>
         <translation>IP:</translation>
     </message>

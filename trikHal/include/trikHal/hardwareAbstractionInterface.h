@@ -28,8 +28,11 @@ namespace trikHal {
 /// Hardware abstraction, provides devices that are used to communicate with robot hardware or emulate it.
 class HardwareAbstractionInterface
 {
+	Q_DISABLE_COPY(HardwareAbstractionInterface)
 public:
-	virtual ~HardwareAbstractionInterface() {}
+	HardwareAbstractionInterface() = default;
+
+	virtual ~HardwareAbstractionInterface() = default;
 
 	/// Returns MSP I2C bus implementation.
 	virtual MspI2cInterface &mspI2c() = 0;

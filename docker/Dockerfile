@@ -9,7 +9,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++ \
+		    wget curl rsync sshpass openssh-client build-essential g++ gdb python3-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
@@ -18,10 +18,10 @@ RUN apt-get update \
                 automake libtool-bin libudev-dev \
 #for TRIK Studio build and tests
                 dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
-#for pyenv/PythonQt
-                libssl-dev realpath \
+#for PythonQt
+                realpath \
 #Cleanup after installation
-    && apt-get purge -y software-properties-common python3 \
+    && apt-get purge -y software-properties-common \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
@@ -53,19 +53,8 @@ RUN /tmp/install_qt.sh $QTDIR \
 	      $QTBIN/../lib/*.a
 
 
-ENV PYENV_VERSION 3.5.6
-ENV PYENV_ROOT "/pyenv"
-RUN curl -L https://raw.githubusercontent.com/trikset/trik-pythonqt/master/with_pyenv | bash \
-&& rm -rf $PYENV_ROOT/sources/* \
-           && find $PYENV_ROOT -type d -name '.git' | xargs rm -rf \
-           && rm -rf $PYENV_ROOT/versions/$PYENV_VERSION/lib/*/test/
 ENV PATH "${QTBIN}:/usr/lib/ccache:${PATH}"
-ENV PATH "$PYENV_ROOT/bin:$PATH"
-
-RUN echo 'eval "$(pyenv init -)"' >> /root/.bashrc \
-&& echo 'eval "$(pyenv virtualenv-init -)"' >> /root/.bashrc \
-&& echo 'export PKG_CONFIG_PATH=$(python3-config --prefix)/lib/pkgconfig' >> /root/.bashrc \
-&& bash -ic 'python -m pip install --upgrade pip codecov'
+ENV bash -ic 'python3 -m pip install --upgrade pip codecov'
 
 RUN echo Internal image disk usage: $(du -sch /* 2>/dev/null | sort -h)
 #RUN ln -svt /etc/profile.d/ /opt/qt56/bin/qt56-env.sh

@@ -63,6 +63,13 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 		mRootDirPath = trikKernel::Paths::userScriptsPath();
 	}
 
+	mDeleteAllFilesName = tr("Delete all...");
+	mDeleteAllFilesPath = trikKernel::Paths::userScriptsPath() + mDeleteAllFilesName;
+	QFile deleteAllFile(mDeleteAllFilesPath);
+	/// This flag and operation is necessary to create file if it doesn't exists
+	deleteAllFile.open(QIODevice::WriteOnly);
+
+
 	mFileSystemModel.setIconProvider(new LightFileIconProvider());
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
@@ -73,7 +80,8 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 			, SLOT(onDirectoryLoaded(QString))
 			);
 
-	mFileSystemView.setModel(&mFileSystemModel);
+	mFilterProxyModel.setSourceModel(&mFileSystemModel);
+	mFileSystemView.setModel(&mFilterProxyModel);
 
 	mLayout.addWidget(&mCurrentPathLabel);
 	mLayout.addWidget(&mFileSystemView);
@@ -109,24 +117,44 @@ void FileManagerWidget::renewFocus()
 
 void FileManagerWidget::open()
 {
-	const QModelIndex &index = mFileSystemView.currentIndex();
+	const QModelIndex &index = mFilterProxyModel.mapToSource(mFileSystemView.currentIndex());
 	if (mFileSystemModel.isDir(index)) {
 		if (QDir::setCurrent(mFileSystemModel.filePath(index))) {
 			showCurrentDir();
 		}
 	} else {
-		mController.runFile(mFileSystemModel.filePath(index));
+		if (mFileSystemModel.fileName(index) == mDeleteAllFilesName) {
+			removeAll();
+		} else {
+			mController.runFile(mFileSystemModel.filePath(index));
+		}
 	}
 }
 
 void FileManagerWidget::remove()
 {
-	const QModelIndex &index = mFileSystemView.currentIndex();
+	const QModelIndex &index = mFilterProxyModel.mapToSource(mFileSystemView.currentIndex());
 	if (!mFileSystemModel.isDir(index)) {
-		QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
-				, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-		if (reply == QMessageBox::Yes) {
-			mFileSystemModel.remove(index);
+		if (mFileSystemModel.fileName(index) != mDeleteAllFilesName) {
+			QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
+					, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			if (reply == QMessageBox::Yes) {
+				mFileSystemModel.remove(index);
+			}
+		}
+	}
+}
+
+void FileManagerWidget::removeAll()
+{
+	QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
+			, tr("Are you sure you want to delete all files?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+	if (reply == QMessageBox::Yes) {
+		QDir dir(trikKernel::Paths::userScriptsPath());
+		dir.setNameFilters({"*.js", "*.py"});
+		dir.setFilter(QDir::Files);
+		for (auto &&dirFile: dir.entryList()) {
+			dir.remove(dirFile);
 		}
 	}
 }
@@ -153,7 +181,7 @@ void FileManagerWidget::onSelectionChanged(QModelIndex current, QModelIndex prev
 {
 	Q_UNUSED(previous);
 
-	mLastSelectedFile = mFileSystemModel.filePath(current);
+	mLastSelectedFile = mFileSystemModel.filePath(mFilterProxyModel.mapToSource(current));
 }
 
 QString FileManagerWidget::currentPath()
@@ -188,7 +216,9 @@ void FileManagerWidget::showCurrentDir()
 
 	mFileSystemModel.setFilter(filters);
 
-	mFileSystemView.setRootIndex(mFileSystemModel.index(QDir::currentPath()));
+	mFileSystemView.setRootIndex(mFilterProxyModel.mapFromSource(
+		mFileSystemModel.index(QDir::currentPath())));
+	mFilterProxyModel.sort(0);
 }
 
 void FileManagerWidget::onDirectoryLoaded(const QString &path)
@@ -208,7 +238,7 @@ void FileManagerWidget::renewCurrentIndex()
 
 	QModelIndex currentIndex;
 	if (!mLastSelectedFile.isEmpty()) {
-		currentIndex = mFileSystemModel.index(mLastSelectedFile);
+		currentIndex = mFilterProxyModel.mapFromSource(mFileSystemModel.index(mLastSelectedFile));
 		if (currentIndex.parent() != mFileSystemView.rootIndex()) {
 			// If last selected file is not in this directory, ignore it.
 			currentIndex = QModelIndex();

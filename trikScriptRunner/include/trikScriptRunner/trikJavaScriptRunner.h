@@ -39,7 +39,7 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikJavaScriptRunner(trikControl::BrickInterface &brick
-						 , trikNetwork::MailboxInterface * const mailbox
+						 , trikNetwork::MailboxInterface * mailbox
 						 );
 
 	~TrikJavaScriptRunner();
@@ -48,6 +48,8 @@ public:
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
 
 	QStringList knownMethodNames() const override;
+
+	bool wasError() override { return false; }
 
 public slots:
 	void run(const QString &script, const QString &fileName = "") override;
