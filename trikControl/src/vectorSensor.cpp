@@ -26,12 +26,12 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(deviceName)
 {
-	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-			, hardwareAbstraction, mWorkerThread));
+	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
+			, hardwareAbstraction, mWorkerThread);
 
 	if (!mState.isFailed()) {
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-		connect(mVectorSensorWorker.data(), &VectorSensorWorker::newData, this, &VectorSensor::newData);
+		connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &VectorSensor::newData);
 
 		QLOG_INFO() << "Starting VectorSensor worker thread" << &mWorkerThread;
 
@@ -41,11 +41,8 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 
 VectorSensor::~VectorSensor()
 {
-	if (mWorkerThread.isRunning()) {
-		QMetaObject::invokeMethod(mVectorSensorWorker.data(), "deinitialize");
-		mWorkerThread.quit();
-		mWorkerThread.wait();
-	}
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
 VectorSensor::Status VectorSensor::status() const

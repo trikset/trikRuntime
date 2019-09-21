@@ -14,6 +14,7 @@
 
 #include "src/vectorSensorWorker.h"
 
+#include <QEventLoop>
 #include <QsLog.h>
 
 static const int maxEventDelay = 1000;
@@ -50,10 +51,13 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	connect(&mTryReopenTimer, &QTimer::timeout, this, &VectorSensorWorker::onTryReopen);
 
 	connect(mEventFile.data(), &trikHal::EventFileInterface::newEvent, this, &VectorSensorWorker::onNewEvent);
-	connect(&thread, &QThread::finished, this, &VectorSensorWorker::deinitialize);
-	mEventFile->open();
-	thread.start();
+	connect(&thread, &QThread::finished, this, &VectorSensorWorker::deleteLater);
 
+	mEventFile->open();
+	QEventLoop pause;
+	connect(&thread, &QThread::started, &pause,  &QEventLoop::quit);
+	thread.start();
+	pause.exec();
 	if (mEventFile->isOpened()) {
 		// Timer should be started in its thread, so doing it via metacall
 		QMetaObject::invokeMethod(&mLastEventTimer, "start");
@@ -118,12 +122,6 @@ QVector<int> VectorSensorWorker::read()
 	} else {
 		return {};
 	}
-}
-
-void VectorSensorWorker::deinitialize()
-{
-	mLastEventTimer.stop();
-	mTryReopenTimer.stop();
 }
 
 void VectorSensorWorker::onSensorHanged()

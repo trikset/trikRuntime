@@ -39,8 +39,8 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	, mAccelerometer(accelerometer)
 	, mAxesSwapped(false)
 {
-	mVectorSensorWorker.reset(new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-			, hardwareAbstraction, mWorkerThread));
+	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
+			, hardwareAbstraction, mWorkerThread);
 
 	mBias.resize(3);
 	mCalibrationValues.resize(6);
@@ -57,10 +57,9 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	if (!mState.isFailed()) {
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
-		connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-				, this, SLOT(countTilt(QVector<int>,trikKernel::TimeVal)));
+		connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::countTilt);
 
-		connect(&mCalibrationTimer, SIGNAL(timeout()), this, SLOT(countCalibrationParameters()));
+		connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
 
 		QLOG_INFO() << "Starting VectorSensor worker thread" << &mWorkerThread;
 
@@ -70,11 +69,8 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 
 GyroSensor::~GyroSensor()
 {
-	if (mWorkerThread.isRunning()) {
-		QMetaObject::invokeMethod(mVectorSensorWorker.data(), "deinitialize");
-		mWorkerThread.quit();
-		mWorkerThread.wait();
-	}
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
 GyroSensor::Status GyroSensor::status() const
@@ -97,11 +93,9 @@ void GyroSensor::calibrate(int msec)
 {
 	QMetaObject::invokeMethod(&mCalibrationTimer, "start", Qt::QueuedConnection, Q_ARG(int, msec));
 
-	connect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-			, this, SLOT(sumGyroscope(QVector<int>,trikKernel::TimeVal)));
+	connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::sumGyroscope);
 
-	connect(mAccelerometer, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
+	connect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	mIsCalibrated = false;
 }
@@ -204,19 +198,17 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 void GyroSensor::countCalibrationParameters()
 {
-	disconnect(mVectorSensorWorker.data(), SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-			, this, SLOT(sumGyroscope(QVector<int>,trikKernel::TimeVal)));
+	disconnect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::sumGyroscope);
 
 	if (mGyroCounter != 0) {
 		for (int i = 0; i < mGyroSum.size(); i++) {
-			mCalibrationValues[i] = (mGyroSum[i] << GYRO_ARITHM_PRECISION) / mGyroCounter;
+			mCalibrationValues[i] = mGyroSum[i] / mGyroCounter;
 			mGyroSum[i] = 0;
 		}
 		mGyroCounter = 0;
 	}
 
-	disconnect(mAccelerometer, SIGNAL(newData(QVector<int>,trikKernel::TimeVal))
-			, this, SLOT(sumAccelerometer(QVector<int>,trikKernel::TimeVal)));
+	disconnect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	if (mAccelerometerCounter != 0) {
 		for (int i = 0; i < mAccelerometerSum.size(); i++) {

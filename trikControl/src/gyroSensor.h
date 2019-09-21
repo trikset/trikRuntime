@@ -85,7 +85,7 @@ private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 
-	QScopedPointer<VectorSensorWorker> mVectorSensorWorker;
+	VectorSensorWorker *mVectorSensorWorker; // Has ownership
 	QThread mWorkerThread;
 
 	QTimer mCalibrationTimer;
