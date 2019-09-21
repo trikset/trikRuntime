@@ -204,8 +204,8 @@ unix:!nosanitizers {
 		}
 	}
 
-	QMAKE_CFLAGS += -fno-sanitize-recover
-	QMAKE_CXXFLAGS += -fno-sanitize-recover
+	QMAKE_CFLAGS += -fno-sanitize-recover=all
+	QMAKE_CXXFLAGS += -fno-sanitize-recover=all
 }
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
