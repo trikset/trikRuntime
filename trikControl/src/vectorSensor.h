@@ -18,6 +18,7 @@
 #include <QtCore/QThread>
 
 #include "vectorSensorInterface.h"
+#include "vectorSensorWorker.h"
 #include "deviceState.h"
 
 namespace trikKernel {
@@ -29,8 +30,6 @@ class HardwareAbstractionInterface;
 }
 
 namespace trikControl {
-
-class VectorSensorWorker;
 
 /// Sensor that returns a vector.
 class VectorSensor : public VectorSensorInterface
@@ -55,7 +54,7 @@ private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 
-	QScopedPointer<VectorSensorWorker> mVectorSensorWorker;
+	VectorSensorWorker *mVectorSensorWorker { nullptr }; /// Is owned by mWorkerThread
 	QThread mWorkerThread;
 };
 

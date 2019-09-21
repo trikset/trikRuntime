@@ -37,20 +37,16 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
 	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
 	connect(mScriptEngineWorker, &PythonEngineWorker::sendMessage, this, &TrikPythonRunner::sendMessage);
+	connect(mScriptEngineWorker, &PythonEngineWorker::completed, this, &TrikPythonRunner::completed);
+	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::onScriptStart);
+
+	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 
 	QEventLoop l;
 	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
 
 	mWorkerThread.start();
 	l.exec();
-
-	connect(mScriptEngineWorker, &PythonEngineWorker::completed
-			, this, &TrikPythonRunner::completed);
-	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript
-			, this, &TrikPythonRunner::onScriptStart);
-
-
-	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 }
 
 TrikPythonRunner::~TrikPythonRunner()
