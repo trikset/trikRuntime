@@ -161,22 +161,31 @@ unix:!nosanitizers {
 	CONFIG(sanitize_address) {
 	# GCC 5.5 does not know this
 	#	QMAKE_SANITIZE_ADDRESS_CXXFLAGS += -fsanitize-address-use-after-scope
+		!clang:QMAKE_LFLAGS *= -static-libasan
 	}
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
 	CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!macx-clang { CONFIG += sanitize_leak }
 
 	sanitize_leak {
-		QMAKE_CFLAGS += -fsanitize=leak
-		QMAKE_CXXFLAGS += -fsanitize=leak
-		QMAKE_LFLAGS += -fsanitize=leak
+		QMAKE_CFLAGS *= -fsanitize=leak
+		QMAKE_CXXFLAGS *= -fsanitize=leak
+		QMAKE_LFLAGS *= -fsanitize=leak
+		!clang:QMAKE_LFLAGS *= -static-liblsan
 	}
 
-	sanitize_undefined:macx-clang {
+	sanitize_undefined {
+		macx-clang {
 		# sometimes runtime is missing in clang. this hack allows to avoid runtime dependency.
 		#QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
 		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
 		#QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
+		}
+		!clang:QMAKE_LFLAGS *= -static-libubsan
+	}
+
+	sanitize_thread {
+		!clang:QMAKE_LFLAGS *= -static-libtsan
 	}
 
 	gcc5 {
@@ -187,20 +196,16 @@ unix:!nosanitizers {
 		# They can change in some version of Qt, keep track of it.
 		# By the way, simply setting QMAKE_CFLAGS, QMAKE_CXXFLAGS and QMAKE_LFLAGS instead of those used below
 		# will not work due to arguments order ("-fsanitize=undefined" must be declared before "-fno-sanitize=vptr").
-			QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fno-sanitize=vptr
-			QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fno-sanitize=vptr
-			QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fno-sanitize=vptr
+
+# Useless since 2019? Commented out.
+#			QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fno-sanitize=vptr
+#			QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fno-sanitize=vptr
+#			QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fno-sanitize=vptr
 		}
 	}
 
-	CONFIG(release){
-		QMAKE_CFLAGS += -fsanitize-recover=all
-		QMAKE_CXXFLAGS += -fsanitize-recover=all
-	} else {
-		QMAKE_CFLAGS += -fsanitize-recover=undefined
-		QMAKE_CXXFLAGS += -fsanitize-recover=undefined
-	}
-
+	QMAKE_CFLAGS += -fno-sanitize-recover=all
+	QMAKE_CXXFLAGS += -fno-sanitize-recover=all
 }
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
