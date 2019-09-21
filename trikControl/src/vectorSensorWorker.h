@@ -53,9 +53,6 @@ public slots:
 	/// Returns current raw reading of a sensor.
 	QVector<int> read();
 
-	/// Shuts down sensor.
-	void deinitialize();
-
 private slots:
 	/// Updates current reading when new value is ready in event file.
 	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
