@@ -7,3 +7,6 @@ leak:QObjectPrivate::connectImpl
 leak:QTWTF::mainThreadFunctionQueueMutex
 #uses/initializes global variable with new pointer to Mutex
 leak:QTWTF::initializeThreading
+
+#it leaks, just leaks
+leak:PythonQtPrivate::addDecorators

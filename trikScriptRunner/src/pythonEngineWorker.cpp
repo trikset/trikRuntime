@@ -38,7 +38,6 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-	// TODO: Lock is required, but we have broken design and it causes a deadlock
 	PythonQtGILScope _;
 	Py_AddPendingCall(&quitFromPython, nullptr);
 }
