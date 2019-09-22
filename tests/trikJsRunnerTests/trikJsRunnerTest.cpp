@@ -43,8 +43,8 @@ QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 
 void TrikJsRunnerTest::SetUp()
 {
-	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml",
-	                                               "./ftest-model-config.xml", "./media"));
+	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
+					, "./test-model-config.xml", "./media"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
