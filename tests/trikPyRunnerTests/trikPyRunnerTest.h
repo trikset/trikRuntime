@@ -34,6 +34,7 @@ protected:
 	int runFromFile(const QString &fileName);
 
 	trikScriptRunner::TrikScriptRunner &scriptRunner();
+	QString mStdOut;
 
 private:
 	/// Does nothing, but ensures event processing at the time of destruction of test suite, to avoid
