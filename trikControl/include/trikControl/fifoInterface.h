@@ -40,3 +40,5 @@ signals:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::FifoInterface *)

@@ -91,3 +91,5 @@ signals:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::GamepadInterface *)
