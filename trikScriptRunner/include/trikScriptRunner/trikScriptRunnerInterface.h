@@ -82,10 +82,6 @@
 	TEMPLATE(trikControl::VectorSensorInterface) \
 	TEMPLATE(trikNetwork::MailboxInterface) \
 
-//#define DECLARE_METATYPE_FOR_POINTER(TYPE) Q_DECLARE_METATYPE(TYPE*)
-//REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_FOR_POINTER)
-
-
 namespace trikScriptRunner {
 
 enum class ScriptType { // must be 0, 1, ..
@@ -115,6 +111,15 @@ public:
 	/// Gets all method names from executive objects (brick, script, etc.) from ScriptEngineWorker
 	/// (useful when used from outside of the TrikRuntime).
 	virtual QStringList knownMethodNames() const = 0;
+
+	struct Helper
+	{
+		/// Helper function collects all methods names from given metaObject.
+		/// If the returnType of given method name is registered in metaobject system,
+		/// newMetaObject is constructed and procedure is called recursively for it.
+		static void collectMethodNames(QSet<QString> &result, const QMetaObject *obj);
+	};
+
 
 	/// Get status of last direct command/script
 	virtual bool wasError() = 0;

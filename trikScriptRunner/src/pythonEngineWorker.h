@@ -53,6 +53,9 @@ public:
 	/// Can be safely called from other threads.
 	void stopScript();
 
+	/// Report known objects and methods for autocompletion
+	QStringList knownNames() const;
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.

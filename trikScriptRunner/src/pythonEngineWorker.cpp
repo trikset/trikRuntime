@@ -225,6 +225,19 @@ void PythonEngineWorker::stopScript()
 	QLOG_INFO() << "PythonEngineWorker: stopping complete";
 }
 
+QStringList PythonEngineWorker::knownNames() const
+{
+	QSet<QString> result = {"brick", "script", "threading"};
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, &trikControl::BrickInterface::staticMetaObject);
+/// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl.metaObject());
+	if (mMailbox) {
+		result.insert("mailbox");
+		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
+	}
+/// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
+	return result.toList();
+}
+
 void PythonEngineWorker::run(const QString &script)
 {
 	QMutexLocker locker(&mScriptStateMutex);

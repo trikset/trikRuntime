@@ -103,7 +103,7 @@ void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &m
 
 QStringList TrikPythonRunner::knownMethodNames() const
 {
-	return {};
+	return mScriptEngineWorker->knownNames();
 }
 
 bool TrikPythonRunner::wasError()

@@ -144,3 +144,18 @@ void TrikScriptRunner::brickBeep()
 {
 	fetchRunner(mLastRunner)->brickBeep();
 }
+
+
+void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) {
+	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
+		auto const &metaMethod = obj->method(i);
+		auto const &methodName = QString::fromLatin1(metaMethod.name());
+		result.insert(methodName);
+
+		auto const &methodReturnTypeId = metaMethod.returnType();
+		const QMetaObject *newObj = QMetaType::metaObjectForType(methodReturnTypeId);
+		if (newObj) {
+			collectMethodNames(result, newObj);
+		}
+	}
+}

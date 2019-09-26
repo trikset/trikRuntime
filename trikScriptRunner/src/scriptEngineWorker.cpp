@@ -239,19 +239,6 @@ void ScriptEngineWorker::stopScript()
 	QLOG_INFO() << "ScriptEngineWorker: stopping complete";
 }
 
-QStringList ScriptEngineWorker::knownMethodNames() const
-{
-	QSet<QString> result = {"brick", "script", "threading"};
-	collectMethodNames(result, mBrick.metaObject());
-	collectMethodNames(result, mScriptControl.metaObject());
-	if (mMailbox) {
-		result.insert("mailbox");
-		collectMethodNames(result, mMailbox->metaObject());
-	}
-	collectMethodNames(result, mThreading.metaObject());
-	return result.toList();
-}
-
 void ScriptEngineWorker::resetBrick()
 {
 	QLOG_INFO() << "Stopping robot";
@@ -437,22 +424,15 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 	}
 }
 
-void ScriptEngineWorker::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) const
+QStringList ScriptEngineWorker::knownMethodNames() const
 {
-	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
-		const QMetaMethod metaMethod = obj->method(i);
-		const QString methodName = QString::fromLatin1(metaMethod.name());
-		result.insert(methodName);
-
-		QString methodReturnType = QString::fromLatin1(metaMethod.typeName());
-		if (methodReturnType.endsWith('*')) {
-			methodReturnType.chop(1);
-		}
-
-		const int typeId = QMetaType::type(methodReturnType.toLatin1());
-		const QMetaObject *newObj = QMetaType::metaObjectForType(typeId);
-		if (newObj) {
-			collectMethodNames(result, newObj);
-		}
+	QSet<QString> result = {"brick", "script", "threading"};
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, &trikControl::BrickInterface::staticMetaObject);
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl.metaObject());
+	if (mMailbox) {
+		result.insert("mailbox");
+		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
 	}
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
+	return result.toList();
 }
