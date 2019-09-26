@@ -36,3 +36,5 @@ signals:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::EventCodeInterface *)

@@ -80,13 +80,13 @@ public slots:
 	virtual void stop() = 0;
 
 	/// Returns reference to motor of a given type on a given port
-	virtual MotorInterface *motor(const QString &port) = 0;
+	virtual trikControl::MotorInterface *motor(const QString &port) = 0;
 
 	/// Returns reference to PWM signal capture device on a given port.
-	virtual PwmCaptureInterface *pwmCapture(const QString &port) = 0;
+	virtual trikControl::PwmCaptureInterface *pwmCapture(const QString &port) = 0;
 
 	/// Returns reference to sensor on a given port.
-	virtual SensorInterface *sensor(const QString &port) = 0;
+	virtual trikControl::SensorInterface *sensor(const QString &port) = 0;
 
 	/// Retruns list of ports for motors of a given type.
 	virtual QStringList motorPorts(MotorInterface::Type type) const = 0;
@@ -101,57 +101,57 @@ public slots:
 	virtual QStringList encoderPorts() const = 0;
 
 	/// Returns on-board accelerometer.
-	virtual VectorSensorInterface *accelerometer() = 0;
+	virtual trikControl::VectorSensorInterface *accelerometer() = 0;
 
 	/// Returns on-board gyroscope.
-	virtual GyroSensorInterface *gyroscope() = 0;
+	virtual trikControl::GyroSensorInterface *gyroscope() = 0;
 
 	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
-	virtual LineSensorInterface *lineSensor(const QString &port) = 0;
+	virtual trikControl::LineSensorInterface *lineSensor(const QString &port) = 0;
 
 	/// Returns high-level color sensor using camera on given port (video0 or video1).
-	virtual ColorSensorInterface *colorSensor(const QString &port) = 0;
+	virtual trikControl::ColorSensorInterface *colorSensor(const QString &port) = 0;
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
-	virtual ObjectSensorInterface *objectSensor(const QString &port) = 0;
+	virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns i2c device object
-	virtual I2cDeviceInterface *i2c(int bus, int address) = 0;
+	virtual trikControl::I2cDeviceInterface *i2c(int bus, int address) = 0;
 
 	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
 	virtual QVector<uint8_t> getStillImage() = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
-	virtual SoundSensorInterface *soundSensor(const QString &port) = 0;
+	virtual trikControl::SoundSensorInterface *soundSensor(const QString &port) = 0;
 
 	/// Returns encoder on given port.
-	virtual EncoderInterface *encoder(const QString &port) = 0;
+	virtual trikControl::EncoderInterface *encoder(const QString &port) = 0;
 
 	/// Returns battery.
-	virtual BatteryInterface *battery() = 0;
+	virtual trikControl::BatteryInterface *battery() = 0;
 
 	/// Returns keys on a control brick.
-	virtual KeysInterface *keys() = 0;
+	virtual trikControl::KeysInterface *keys() = 0;
 
 	/// Returns class that provides drawing on display.
-	virtual DisplayInterface *display() = 0;
+	virtual trikControl::DisplayInterface *display() = 0;
 
 	/// Returns LED control class.
-	virtual LedInterface *led() = 0;
+	virtual trikControl::LedInterface *led() = 0;
 
 	/// Returns handler for Android gamepad.
-	virtual GamepadInterface *gamepad() = 0;
+	virtual trikControl::GamepadInterface *gamepad() = 0;
 
 	/// Returns custom FIFO file which can be used as sensor.
-	virtual FifoInterface *fifo(const QString &port) = 0;
+	virtual trikControl::FifoInterface *fifo(const QString &port) = 0;
 
 	/// Returns marker.
-	virtual MarkerInterface *marker() = 0;
+	virtual trikControl::MarkerInterface *marker() = 0;
 
 	/// Returns custom event device that can be used as a sensor, for example, for custom gamepad support.
 	/// Creates new event device on first access to a file, then returns already opened device.
 	/// Ownership retained by brick.
-	virtual EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
+	virtual trikControl::EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
 
 	/// Stops listening given event device and destroys its watcher object.
 	virtual void stopEventDevice(const QString &deviceFile) = 0;
@@ -163,3 +163,5 @@ signals:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::BrickInterface *)

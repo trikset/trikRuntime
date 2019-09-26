@@ -95,6 +95,11 @@ TEST_F(TrikPyRunnerTest, sanityCheck)
 {
 	auto err = run("1 + 1");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	const auto &knownMethodNames = scriptRunner().knownMethodNames();
+	ASSERT_TRUE(knownMethodNames.contains("brick"));
+	ASSERT_TRUE(knownMethodNames.contains("setPower"));
+	err = run("brick.motor('M2').setPower(10)");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
 
 TEST_F(TrikPyRunnerTest, print)

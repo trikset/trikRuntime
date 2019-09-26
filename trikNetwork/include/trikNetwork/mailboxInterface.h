@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <QtCore/QObject>
+#include <QMetaType>
+#include <QObject>
 #include <QtNetwork/QHostAddress>
-#include <QtXml/QDomElement>
 
 #include "declSpec.h"
 
@@ -93,3 +93,5 @@ signals:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikNetwork::MailboxInterface*)

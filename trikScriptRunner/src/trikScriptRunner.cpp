@@ -19,28 +19,8 @@
 #include "trikPythonRunner.h"
 
 #include <trikKernel/timeVal.h>
-#include <trikControl/batteryInterface.h>
-#include <trikControl/colorSensorInterface.h>
-#include <trikControl/displayInterface.h>
-#include <trikControl/encoderInterface.h>
-#include <trikControl/eventCodeInterface.h>
-#include <trikControl/eventDeviceInterface.h>
-#include <trikControl/eventInterface.h>
-#include <trikControl/gamepadInterface.h>
-#include <trikControl/gyroSensorInterface.h>
-#include <trikControl/i2cDeviceInterface.h>
-#include <trikControl/lineSensorInterface.h>
-#include <trikControl/motorInterface.h>
-#include <trikControl/objectSensorInterface.h>
-#include <trikControl/soundSensorInterface.h>
-#include <trikControl/sensorInterface.h>
-#include <trikControl/vectorSensorInterface.h>
-#include <trikControl/fifoInterface.h>
-#include <trikControl/keysInterface.h>
-#include <trikControl/ledInterface.h>
-#include <trikControl/markerInterface.h>
-#include <trikNetwork/mailboxInterface.h>
 #include "threading.h"
+#include <QMetaMethod>
 
 using namespace trikControl;
 using namespace trikScriptRunner;
@@ -50,8 +30,6 @@ using namespace trikKernel;
 Q_DECLARE_METATYPE(QVector<uint8_t>)
 Q_DECLARE_METATYPE(QVector<int>)
 Q_DECLARE_METATYPE(QTimer*)
-
-REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_TEMPLATE)
 
 /// Constructor.
 /// @param brick - reference to trikControl::Brick instance.
@@ -165,4 +143,19 @@ void TrikScriptRunner::abortAll()
 void TrikScriptRunner::brickBeep()
 {
 	fetchRunner(mLastRunner)->brickBeep();
+}
+
+
+void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) {
+	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
+		auto const &metaMethod = obj->method(i);
+		auto const &methodName = QString::fromLatin1(metaMethod.name());
+		result.insert(methodName);
+
+		auto const &methodReturnTypeId = metaMethod.returnType();
+		const QMetaObject *newObj = QMetaType::metaObjectForType(methodReturnTypeId);
+		if (newObj) {
+			collectMethodNames(result, newObj);
+		}
+	}
 }

@@ -36,3 +36,5 @@ public :
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::I2cDeviceInterface *)

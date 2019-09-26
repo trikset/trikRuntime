@@ -20,6 +20,7 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
 #include <trikKernel/exceptions/internalErrorException.h>
+#include <trikScriptRunnerInterface.h>
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
@@ -222,6 +223,19 @@ void PythonEngineWorker::stopScript()
 	/// @todo: is it actually stopped?
 
 	QLOG_INFO() << "PythonEngineWorker: stopping complete";
+}
+
+QStringList PythonEngineWorker::knownNames() const
+{
+	QSet<QString> result = {"brick", "script", "threading"};
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, &trikControl::BrickInterface::staticMetaObject);
+/// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl.metaObject());
+	if (mMailbox) {
+		result.insert("mailbox");
+		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
+	}
+/// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
+	return result.toList();
 }
 
 void PythonEngineWorker::run(const QString &script)

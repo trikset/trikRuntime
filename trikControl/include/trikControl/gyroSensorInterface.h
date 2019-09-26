@@ -56,3 +56,5 @@ public slots:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::GyroSensorInterface *)
