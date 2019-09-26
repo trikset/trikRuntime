@@ -21,17 +21,18 @@
 #include <QtCore/QStringBuilder>
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
-#include "trikScriptRunner.h"
-
-using namespace trikScriptRunner;
-using namespace trikNetwork;
-using namespace trikControl;
-
+#include "trikScriptRunnerInterface.h"
 #include "scriptable.h"
 #include "utils.h"
 
 #include <QFileInfo>
 #include <QsLog.h>
+
+#define REGISTER_METATYPE_FOR_ENGINE(TYPE) \
+	Scriptable<TYPE>::registerMetatype(engine);
+
+
+using namespace trikScriptRunner;
 
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
@@ -103,7 +104,7 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 	QObject *qObjBrick = brickValue.toQObject();
 	if (qObjBrick)
 	{
-		BrickInterface *brick = qobject_cast<BrickInterface*>(qObjBrick);
+		auto *brick = qobject_cast<trikControl::BrickInterface*>(qObjBrick);
 		if (brick)
 		{
 			auto port = context->argumentCount() > 0 ? context->argument(0).toString()
@@ -356,6 +357,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE_FOR_ENGINE)
+	REGISTER_METATYPE_FOR_ENGINE(trikScriptRunner::Threading)
 
 	Scriptable<QTimer>::registerMetatype(engine);
 	qScriptRegisterMetaType(engine, &timeValToScriptValue, &timeValFromScriptValue);

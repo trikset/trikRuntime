@@ -29,6 +29,63 @@
 #  endif
 #endif
 
+#include <trikControl/batteryInterface.h>
+#include <trikControl/colorSensorInterface.h>
+#include <trikControl/displayInterface.h>
+#include <trikControl/encoderInterface.h>
+#include <trikControl/eventCodeInterface.h>
+#include <trikControl/eventDeviceInterface.h>
+#include <trikControl/eventInterface.h>
+#include <trikControl/gamepadInterface.h>
+#include <trikControl/gyroSensorInterface.h>
+#include <trikControl/i2cDeviceInterface.h>
+#include <trikControl/lineSensorInterface.h>
+#include <trikControl/motorInterface.h>
+#include <trikControl/objectSensorInterface.h>
+#include <trikControl/soundSensorInterface.h>
+#include <trikControl/sensorInterface.h>
+#include <trikControl/vectorSensorInterface.h>
+#include <trikControl/fifoInterface.h>
+#include <trikControl/keysInterface.h>
+#include <trikControl/ledInterface.h>
+#include <trikControl/markerInterface.h>
+#include <trikNetwork/mailboxInterface.h>
+
+#define REGISTER_METATYPE(TYPE) \
+	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
+
+/// Here we define a convenient template that registers all devices used in trik.
+/// When creating a new device(interface), you should append it to this list.
+/// So it lets you write the device just one time rather than append appropriate line to each place
+/// that uses devices.
+/// ATTENTION: do not forget to append newly created device to this list!
+#define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
+	TEMPLATE(trikControl::BatteryInterface) \
+	TEMPLATE(trikControl::ColorSensorInterface) \
+	TEMPLATE(trikControl::FifoInterface) \
+	TEMPLATE(trikControl::DisplayInterface) \
+	TEMPLATE(trikControl::EncoderInterface) \
+	TEMPLATE(trikControl::EventCodeInterface) \
+	TEMPLATE(trikControl::EventDeviceInterface) \
+	TEMPLATE(trikControl::EventInterface) \
+	TEMPLATE(trikControl::GamepadInterface) \
+	TEMPLATE(trikControl::GyroSensorInterface) \
+	TEMPLATE(trikControl::I2cDeviceInterface) \
+	TEMPLATE(trikControl::KeysInterface) \
+	TEMPLATE(trikControl::LedInterface) \
+	TEMPLATE(trikControl::LineSensorInterface) \
+	TEMPLATE(trikControl::MarkerInterface) \
+	TEMPLATE(trikControl::MotorInterface) \
+	TEMPLATE(trikControl::ObjectSensorInterface) \
+	TEMPLATE(trikControl::SoundSensorInterface) \
+	TEMPLATE(trikControl::SensorInterface) \
+	TEMPLATE(trikControl::VectorSensorInterface) \
+	TEMPLATE(trikNetwork::MailboxInterface) \
+
+//#define DECLARE_METATYPE_FOR_POINTER(TYPE) Q_DECLARE_METATYPE(TYPE*)
+//REGISTER_DEVICES_WITH_TEMPLATE(DECLARE_METATYPE_FOR_POINTER)
+
+
 namespace trikScriptRunner {
 
 enum class ScriptType { // must be 0, 1, ..
@@ -42,7 +99,6 @@ static constexpr typename std::underlying_type<ScriptType>::type to_underlying(S
 {
 	return static_cast<std::underlying_type<ScriptType>::type>(t);
 }
-
 
 /// Interface for all script executors.
 class TRIKSCRIPTRUNNER_EXPORT TrikScriptRunnerInterface : public QObject

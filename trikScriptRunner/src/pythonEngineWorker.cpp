@@ -20,6 +20,7 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
 #include <trikKernel/exceptions/internalErrorException.h>
+#include <trikScriptRunnerInterface.h>
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
