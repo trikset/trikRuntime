@@ -9,7 +9,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++ gdb python3-dev \
+		    wget curl rsync sshpass openssh-client build-essential g++-8 gdb python3-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
@@ -20,6 +20,8 @@ RUN apt-get update \
                 dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
 #for PythonQt
                 realpath \
+#set gcc/g++ version 8 as default
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8 \
 #Cleanup after installation
     && apt-get purge -y software-properties-common \
     && apt-get autoremove -y \
