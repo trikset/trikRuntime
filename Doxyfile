@@ -9,3 +9,4 @@ RECURSIVE              = YES
 GENERATE_LATEX         = NO
 GENERATE_TREEVIEW      = YES
 JAVADOC_AUTOBRIEF      = YES
+EXCLUDE_PATTERNS       = */PythonQt/* */thirdparty/* */PyTrikControl*/*
