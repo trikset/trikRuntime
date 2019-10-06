@@ -6,7 +6,7 @@
 [![Join the chat at https://gitter.im/trikset/trikRuntime](https://badges.gitter.im/trikset/trikRuntime.svg)](https://gitter.im/trikset/trikRuntime?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![codecov.io](https://codecov.io/github/trikset/trikRuntime/coverage.svg?branch=master)](https://codecov.io/github/trikset/trikRuntime?branch=master)
 [![CoverityScan](https://scan.coverity.com/projects/7496/badge.svg)](https://scan.coverity.com/projects/trikset-trikruntime)
-[![Mergify][https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/trikset/trikRuntime&style=flat]](ADD_URL_HERE)
+[![Mergify](https://img.shields.io/endpoint.svg?url=https://gh.mergify.io/badges/trikset/trikRuntime&style=flat)](ADD_URL_HERE)
 
 ===========
 
