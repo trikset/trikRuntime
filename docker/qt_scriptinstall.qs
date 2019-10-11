@@ -32,8 +32,9 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
   var widget = gui.currentPageWidget();
   var targetPlatform = {"darwin":"clang_64", "winnt":"undefined", "linux":"gcc_64"}[systemInfo.kernelType];
   widget.deselectAll();
-  widget.selectComponent("qt.qt5.5124."+targetPlatform);
-  widget.selectComponent("qt.qt5.5124.qtscript");
+  var qtVersionId = "qt.qt5.5125."
+  widget.selectComponent(qtVersionId + targetPlatform);
+  widget.selectComponent(qtVersionId + "qtscript");
   widget.selectComponent("qt.tools.ifw.31");
 
   installer.calculateComponentsToInstall();
@@ -43,8 +44,8 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
   for (var i = 0 ; i < components.length ;i++) {
     var c = components[i];
     var n = c.name;
-    var examplesId = "qt.qt5.5124.examples";
-    var docId = "qt.qt5.5124.doc";
+    var examplesId = qtVersionId + "examples";
+    var docId = qtVersionId + "doc";
     if (n.startsWith(examplesId) || n.startsWith(docId)) {
       widget.deselectComponent(n);
       print("Deselecting:" +  n);
