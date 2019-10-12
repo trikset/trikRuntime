@@ -69,6 +69,10 @@ Controller.prototype.ReadyForInstallationPageCallback = function() {
   });
 }
 
+Controller.prototype.PerformInstallationPageCallback = function() {
+  gui.clickButton(buttons.CommitButton);
+}
+
 Controller.prototype.FinishedPageCallback = function() {
   var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm;
   if (checkBoxForm) {
