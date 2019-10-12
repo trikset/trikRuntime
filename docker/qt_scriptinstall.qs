@@ -14,6 +14,12 @@ Controller.prototype.IntroductionPageCallback = function() {
   gui.clickButton(buttons.NextButton);
 }
 
+Controller.prototype.DynamicTelemetryPluginFormCallback = function() {
+  var page = gui.pageWidgetByObjectName("DynamicTelemetryPluginForm");
+  page.statisticGroupBox.disableStatisticRadioButton.setChecked(true);
+  gui.clickButton(buttons.NextButton);
+}
+
 Controller.prototype.TargetDirectoryPageCallback = function() {
   var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
   if (targetDir == "") {
@@ -61,6 +67,10 @@ Controller.prototype.ReadyForInstallationPageCallback = function() {
   installer.installationFinished.connect(function() {
     gui.clickButton(buttons.NextButton);
   });
+}
+
+Controller.prototype.PerformInstallationPageCallback = function() {
+  gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.FinishedPageCallback = function() {
