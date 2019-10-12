@@ -161,7 +161,7 @@ unix:!nosanitizers {
 	CONFIG(sanitize_address) {
 	# GCC 5.5 does not know this
 	#	QMAKE_SANITIZE_ADDRESS_CXXFLAGS += -fsanitize-address-use-after-scope
-		!clang:QMAKE_LFLAGS *= -static-libasan
+		!clang:QMAKE_LFLAGS_RELEASE *= -static-libasan
 	}
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
@@ -171,7 +171,7 @@ unix:!nosanitizers {
 		QMAKE_CFLAGS *= -fsanitize=leak
 		QMAKE_CXXFLAGS *= -fsanitize=leak
 		QMAKE_LFLAGS *= -fsanitize=leak
-		!clang:QMAKE_LFLAGS *= -static-liblsan
+		!clang:QMAKE_LFLAGS_RELEASE *= -static-liblsan
 	}
 
 	sanitize_undefined {
@@ -181,11 +181,11 @@ unix:!nosanitizers {
 		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
 		#QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
 		}
-		!clang:QMAKE_LFLAGS *= -static-libubsan
+		!clang:QMAKE_LFLAGS_RELEASE *= -static-libubsan
 	}
 
 	sanitize_thread {
-		!clang:QMAKE_LFLAGS *= -static-libtsan
+		!clang:QMAKE_LFLAGS_RELEASE *= -static-libtsan
 	}
 
 	gcc5 {
