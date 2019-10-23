@@ -321,7 +321,7 @@ defineTest(interfaceIncludes) {
 	PROJECTS = $$1
 
 	for(PROJECT, PROJECTS) {
-		INCLUDEPATH += $$GLOBAL_PWD/$$PROJECT/include
+		INCLUDEPATH *= $$GLOBAL_PWD/$$PROJECT/include
 	}
 
 	export(INCLUDEPATH)
@@ -424,10 +424,10 @@ defineTest(noPch) {
 
 defineTest(enableFlagIfCan) {
   system(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o $$system(mktemp) 2>/dev/null ) {
-    QMAKE_CXXFLAGS += $$1
-    export(QMAKE_CXXFLAGS)
+	QMAKE_CXXFLAGS += $$1
+	export(QMAKE_CXXFLAGS)
   } else {
-    message(Cannot enable $$1)
+	message(Cannot enable $$1)
   }
 }
 
