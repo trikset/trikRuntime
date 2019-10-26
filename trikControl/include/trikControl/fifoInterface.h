@@ -28,15 +28,20 @@ class TRIKCONTROL_EXPORT FifoInterface : public QObject, public DeviceInterface
 	Q_OBJECT
 
 public slots:
-	/// Reads data from this FIFO file, returning all available data as string.
+	/// Reads line from this FIFO file, returning all available data as string.
 	virtual QString read() = 0;
+	/// Reads data from this FIFO file, returning all available data as string.
+	virtual QString readRaw() = 0; //Andrei
 
 	/// Returns true if FIFO has new data in it.
 	virtual bool hasData() const = 0;
 
 signals:
 	/// Emitted when new string is arrived to FIFO file. Emitted several times if more than one string arrives at once.
-	void newData(const QString &data);
+	void newLine(const QString &data);
+	/// Emitted when new bytes is arrived to FIFO file.
+//	void newData(const QByteArray &data); //Andrei
+	void newData(const QVector<uint8_t> &data); //Andrei
 };
 
 }

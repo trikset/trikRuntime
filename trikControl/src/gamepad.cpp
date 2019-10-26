@@ -24,7 +24,7 @@ Gamepad::Gamepad(const trikKernel::Configurer &configurer
 {
 	mKeepaliveTimer.setSingleShot(true);
 	connect(&mKeepaliveTimer, &QTimer::timeout, this, &Gamepad::disconnect);
-	connect(&mUnderlyingFifo, &Fifo::newData, this, &Gamepad::onNewData);
+	connect(&mUnderlyingFifo, &Fifo::newLine, this, &Gamepad::onNewData);
 }
 
 void Gamepad::reset()

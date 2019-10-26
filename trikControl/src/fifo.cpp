@@ -37,7 +37,8 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 {
 	mState.start();
 
-	connect(mFifo.data(), &trikHal::FifoInterface::newData, this, &Fifo::onNewData);
+	connect(mFifo.data(), &trikHal::FifoInterface::newData, this, &Fifo::onNewData); //Andrei
+	connect(mFifo.data(), &trikHal::FifoInterface::newLine, this, &Fifo::onNewLine);
 	connect(mFifo.data(), &trikHal::FifoInterface::readError, this, &Fifo::onReadError);
 
 	if (mFifo->open()) {
@@ -62,32 +63,58 @@ DeviceInterface::Status Fifo::status() const
 QString Fifo::read()
 {
 	QReadLocker r(&mCurrentLock);
-	if (mCurrent.isEmpty()) {
+	if (mCurrentLine.isEmpty()) {
 		r.unlock();
 		QEventLoop l;
-		connect(this, &Fifo::newData, &l, [&l](const QString &newData) { if (!newData.isEmpty()) l.quit(); } );
+		connect(this, &Fifo::newLine, &l, [&l](const QString &newLine) { if (!newLine.isEmpty()) l.quit(); } );
 		l.exec();
 	}
 	r.unlock();
 	QString result;
 	QWriteLocker w(&mCurrentLock);
-	result.swap(mCurrent);
+	result.swap(mCurrentLine);
+	return result;
+}
+
+QString Fifo::readRaw() //Andrei
+{
+	QReadLocker r(&mCurrentLock);
+	if (mCurrentData.isEmpty()) {
+		r.unlock();
+		QEventLoop l;
+		connect(this, &Fifo::newData, &l, [&l](const QVector<uint8_t> &newData) { if (!newData.isEmpty()) l.quit(); } );
+		l.exec();
+	}
+	r.unlock();
+	QString result;
+	QWriteLocker w(&mCurrentLock);
+	//result.swap(mCurrentData);
 	return result;
 }
 
 bool Fifo::hasData() const
 {
 	QReadLocker r(&mCurrentLock);
-	return !mCurrent.isEmpty();
+	return !mCurrentLine.isEmpty();
 }
 
-void Fifo::onNewData(const QString &data)
+void Fifo::onNewLine(const QString &line)
 {
 	QWriteLocker w(&mCurrentLock);
-	mCurrent = data;
+	mCurrentLine = line;
 	w.unlock();
-	emit newData(mCurrent);
+	emit newLine(mCurrentLine);
 }
+
+//void Fifo::onNewData(const QByteArray &data) //Andrei
+void Fifo::onNewData(const QVector<uint8_t> &data) //Andrei
+{
+	QWriteLocker w(&mCurrentLock);
+	mCurrentData = data;
+	w.unlock();
+	emit newData(mCurrentData);
+}
+
 
 void Fifo::onReadError()
 {
