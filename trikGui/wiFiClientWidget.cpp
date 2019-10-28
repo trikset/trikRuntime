@@ -22,14 +22,8 @@
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QAbstractSocket>
 #include <QtGui/QKeyEvent>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QScrollBar>
-	#include <QtGui/QMessageBox>
-#else
-	#include <QtWidgets/QScrollBar>
-	#include <QtWidgets/QMessageBox>
-#endif
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QMessageBox>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
