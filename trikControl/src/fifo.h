@@ -61,7 +61,7 @@ public slots:
 	QVector<uint8_t> readRaw() override; //Andrei
 
 	/// Returns true if FIFO has new Line in it.
-	bool hasData() const override;
+	int hasData() const override;
 
 private slots:
 	void onNewLine(const QString &data);

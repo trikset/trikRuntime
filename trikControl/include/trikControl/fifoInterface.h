@@ -33,7 +33,9 @@ public slots:
 	/// Reads data from this FIFO file, returning all available data as string.
 	virtual QVector<uint8_t> readRaw() = 0; //Andrei
 
-	/// Returns true if FIFO has new data in it.
+	/// Returns true if FIFO has new line in it.
+	virtual bool hasLine() const = 0;
+	/// Returns true if FIFO has new bytes in it.
 	virtual bool hasData() const = 0;
 
 signals:

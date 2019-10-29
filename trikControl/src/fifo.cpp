@@ -91,11 +91,16 @@ QVector<uint8_t> Fifo::readRaw() //Andrei
 	result.swap(mCurrentData);
 	return result;
 }
+bool Fifo::hasLine() const
+{
+	QReadLocker r(&mCurrentLock);
+	return !mCurrentLine.isEmpty();
+}
 
 bool Fifo::hasData() const
 {
 	QReadLocker r(&mCurrentLock);
-	return !mCurrentLine.isEmpty();
+	return !mCurrentData.isEmpty();
 }
 
 void Fifo::onNewLine(const QString &line)
