@@ -60,8 +60,10 @@ public slots:
 	/// Reads data from this FIFO file, returning all available data as string.
 	QVector<uint8_t> readRaw() override; //Andrei
 
-	/// Returns true if FIFO has new Line in it.
-	int hasData() const override;
+	/// Returns true if FIFO has new line in it.
+	bool hasLine() const override;
+	/// Returns true if FIFO has new bytes in it.
+	bool hasData() const override;
 
 private slots:
 	void onNewLine(const QString &data);
