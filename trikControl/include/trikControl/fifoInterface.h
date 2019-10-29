@@ -31,7 +31,7 @@ public slots:
 	/// Reads line from this FIFO file, returning all available data as string.
 	virtual QString read() = 0;
 	/// Reads data from this FIFO file, returning all available data as string.
-	virtual QString readRaw() = 0; //Andrei
+	virtual QVector<uint8_t> readRaw() = 0; //Andrei
 
 	/// Returns true if FIFO has new data in it.
 	virtual bool hasData() const = 0;

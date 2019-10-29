@@ -58,7 +58,7 @@ public slots:
 	/// Reads line from this FIFO file, returning all available data as string.
 	QString read() override;
 	/// Reads data from this FIFO file, returning all available data as string.
-	QString readRaw() override; //Andrei
+	QVector<uint8_t> readRaw() override; //Andrei
 
 	/// Returns true if FIFO has new Line in it.
 	bool hasData() const override;
