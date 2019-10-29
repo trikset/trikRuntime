@@ -76,7 +76,7 @@ QString Fifo::read()
 	return result;
 }
 
-QString Fifo::readRaw() //Andrei
+QVector<uint8_t> Fifo::readRaw() //Andrei
 {
 	QReadLocker r(&mCurrentLock);
 	if (mCurrentData.isEmpty()) {
@@ -86,9 +86,9 @@ QString Fifo::readRaw() //Andrei
 		l.exec();
 	}
 	r.unlock();
-	QString result;
+	QVector<uint8_t> result;
 	QWriteLocker w(&mCurrentLock);
-	//result.swap(mCurrentData);
+	result.swap(mCurrentData);
 	return result;
 }
 
@@ -110,7 +110,7 @@ void Fifo::onNewLine(const QString &line)
 void Fifo::onNewData(const QVector<uint8_t> &data) //Andrei
 {
 	QWriteLocker w(&mCurrentLock);
-	mCurrentData = data;
+	mCurrentData.append(data);
 	w.unlock();
 	emit newData(mCurrentData);
 }
