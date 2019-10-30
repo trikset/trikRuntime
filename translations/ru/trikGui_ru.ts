@@ -589,7 +589,7 @@
 <context>
     <name>trikGui::WiFiClientWidget</name>
     <message>
-        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+58"/>
+        <location filename="../../trikGui/wiFiClientWidget.cpp" line="+52"/>
         <source>IP:</source>
         <translation>IP:</translation>
     </message>
