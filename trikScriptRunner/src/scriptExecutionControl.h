@@ -50,6 +50,9 @@ public:
 	/// Appends given text to the end of a file.
 	Q_INVOKABLE void writeToFile(const QString &file, const QString &text);
 
+	/// Appends given bytes to the end of a file.
+	Q_INVOKABLE void writeToFile(const QString &file, const QVector<uint8_t> &bytes);
+
 	/// Reads all lines from a text file and returns it as a list of strings.
 	Q_INVOKABLE QStringList readAll(const QString &file) const;
 

@@ -108,6 +108,13 @@ void ScriptExecutionControl::writeToFile(const QString &file, const QString &tex
 	out.write(text.toUtf8());
 }
 
+void ScriptExecutionControl::writeToFile(const QString &file, const QVector<uint8_t> &bytes)
+{
+	QFile out(file);
+	out.open(QIODevice::WriteOnly | QIODevice::Append);
+	out.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+}
+
 QStringList ScriptExecutionControl::readAll(const QString &file) const
 {
 	QFile in(file);
