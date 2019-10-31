@@ -1,5 +1,9 @@
 #pragma once
 
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPixmap>
+
 #include "abstractIndicator.h"
 
 namespace trikControl {
@@ -18,8 +22,6 @@ public slots:
 	void renew() override;
 
 private:
-	void paintEvent(QPaintEvent *) override;
-
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QLabel mPixmap;

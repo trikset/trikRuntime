@@ -1,7 +1,5 @@
 #include "cameraWidget.h"
 
-#include <QDebug>
-
 #include "trikControl/brickInterface.h"
 
 using namespace trikGui;
@@ -19,9 +17,7 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 	setLayout(&mLayout);
 
 	auto photo = mBrick.getStillImage();
-	qDebug() << photo.isEmpty();
 	if (!photo.isEmpty()) {
-		qDebug() << photo.size();
 		mPixmap.setPixmap(QPixmap::fromImage(QImage(photo.data(), 320, 240, QImage::Format_RGB888)));
 	} else {
 		mPixmap.setText(tr("Camera is not available"));
@@ -31,9 +27,4 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 void CameraWidget::renew()
 {
 	update();
-}
-
-void CameraWidget::paintEvent(QPaintEvent *)
-{
-
 }
