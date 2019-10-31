@@ -47,7 +47,7 @@ bool TrikFifo::open()
 
 	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
 
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+	connect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikFifo::readFile);
 	mSocketNotifier->setEnabled(true);
 
 	QLOG_INFO() << "Opened FIFO file" << mFileName;
