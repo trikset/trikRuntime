@@ -57,7 +57,6 @@ bool TrikFifo::open()
 void TrikFifo::readFile()
 {
 	QVector<uint8_t> bytes(4000);
-//	QByteArray bytes(4000, ' '); //Andrei
 	mSocketNotifier->setEnabled(false);
 	auto bytesRead = ::read(mFileDescriptor, bytes.data(), static_cast<size_t>(bytes.size()));
 	if (bytesRead < 0) {

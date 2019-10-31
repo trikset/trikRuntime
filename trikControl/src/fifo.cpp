@@ -37,7 +37,7 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 {
 	mState.start();
 
-	connect(mFifo.data(), &trikHal::FifoInterface::newData, this, &Fifo::onNewData); //Andrei
+	connect(mFifo.data(), &trikHal::FifoInterface::newData, this, &Fifo::onNewData);
 	connect(mFifo.data(), &trikHal::FifoInterface::newLine, this, &Fifo::onNewLine);
 	connect(mFifo.data(), &trikHal::FifoInterface::readError, this, &Fifo::onReadError);
 
@@ -76,7 +76,7 @@ QString Fifo::read()
 	return result;
 }
 
-QVector<uint8_t> Fifo::readRaw() //Andrei
+QVector<uint8_t> Fifo::readRaw()
 {
 	QReadLocker r(&mCurrentLock);
 	if (mCurrentData.isEmpty()) {
@@ -111,11 +111,14 @@ void Fifo::onNewLine(const QString &line)
 	emit newLine(mCurrentLine);
 }
 
-//void Fifo::onNewData(const QByteArray &data) //Andrei
-void Fifo::onNewData(const QVector<uint8_t> &data) //Andrei
+void Fifo::onNewData(const QVector<uint8_t> &data)
 {
 	QWriteLocker w(&mCurrentLock);
 	mCurrentData.append(data);
+	if (mCurrentData.size() > 1024 * 1024) {
+		QLOG_ERROR() << "FIFO buffer limit exceeded, buffer droped. Use readRaw more often";
+		mCurrentData.clear();
+	}
 	w.unlock();
 	emit newData(mCurrentData);
 }

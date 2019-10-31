@@ -31,7 +31,7 @@ public slots:
 	/// Reads line from this FIFO file, returning all available data as string.
 	virtual QString read() = 0;
 	/// Reads data from this FIFO file, returning all available data as string.
-	virtual QVector<uint8_t> readRaw() = 0; //Andrei
+	virtual QVector<uint8_t> readRaw() = 0;
 
 	/// Returns true if FIFO has new line in it.
 	virtual bool hasLine() const = 0;
@@ -42,8 +42,7 @@ signals:
 	/// Emitted when new string is arrived to FIFO file. Emitted several times if more than one string arrives at once.
 	void newLine(const QString &data);
 	/// Emitted when new bytes is arrived to FIFO file.
-//	void newData(const QByteArray &data); //Andrei
-	void newData(const QVector<uint8_t> &data); //Andrei
+	void newData(const QVector<uint8_t> &data);
 };
 
 }

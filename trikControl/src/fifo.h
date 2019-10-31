@@ -58,7 +58,7 @@ public slots:
 	/// Reads line from this FIFO file, returning all available data as string.
 	QString read() override;
 	/// Reads data from this FIFO file, returning all available data as string.
-	QVector<uint8_t> readRaw() override; //Andrei
+	QVector<uint8_t> readRaw() override;
 
 	/// Returns true if FIFO has new line in it.
 	bool hasLine() const override;
@@ -67,8 +67,7 @@ public slots:
 
 private slots:
 	void onNewLine(const QString &data);
-//	void onNewData(const QByteArray &data); //Andrei
-	void onNewData(const QVector<uint8_t> &data); //Andrei
+	void onNewData(const QVector<uint8_t> &data);
 	void onReadError();
 
 private:
@@ -78,9 +77,7 @@ private:
 	QString mCurrentLine;
 
 	/// Last data that was read from FIFO.
-
 	QVector<uint8_t> mCurrentData;
-//	QByteArray mCurrentData; //Andrei
 
 	/// Lock for mCurrent
 	mutable QReadWriteLock mCurrentLock;

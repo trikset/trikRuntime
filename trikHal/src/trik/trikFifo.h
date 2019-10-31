@@ -31,7 +31,7 @@ class TrikFifo : public FifoInterface
 public:
 	/// Constructor.
 	/// @param fileName - name of a FIFO file.
-	TrikFifo(const QString &fileName);
+	explicit TrikFifo(const QString &fileName);
 
 	~TrikFifo() override;
 
