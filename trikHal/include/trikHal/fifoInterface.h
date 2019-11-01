@@ -38,7 +38,6 @@ public:
 
 signals:
 	/// Emitted when new data is read from FIFO.
-//	void newData(QByteArray data);
 	void newData(QVector<uint8_t> data);
 	/// Emitted for each line from FIFO.
 	void newLine(QString data);

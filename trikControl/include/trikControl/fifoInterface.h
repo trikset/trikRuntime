@@ -39,9 +39,9 @@ public slots:
 	virtual bool hasData() const = 0;
 
 signals:
-	/// Emitted when new string is arrived to FIFO file. Emitted several times if more than one string arrives at once.
+	/// Emitted when new text line has arrived to FIFO file. Emitted several times if more than one line arrives at once.
 	void newLine(const QString &data);
-	/// Emitted when new bytes is arrived to FIFO file.
+	/// Emitted when new bytes have arrived to FIFO file.
 	void newData(const QVector<uint8_t> &data);
 };
 
