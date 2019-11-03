@@ -16,10 +16,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QObject>
-
-namespace trikKernel {
-class TimeVal;
-}
+#include <trikKernel/timeVal.h>
 
 namespace trikHal {
 
@@ -49,7 +46,7 @@ signals:
 	/// @param eventType - low-level type of an event.
 	/// @param code - low-level event code.
 	/// @param value - low-level event value.
-	void newEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
+	void newEvent(int eventType, int code, int value, trikKernel::TimeVal eventTime);
 };
 
 }

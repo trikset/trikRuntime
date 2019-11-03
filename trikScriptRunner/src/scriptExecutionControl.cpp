@@ -52,9 +52,9 @@ QTimer* ScriptExecutionControl::timer(int milliseconds)
 void ScriptExecutionControl::wait(const int &milliseconds)
 {
 	QEventLoop loop;
-	QObject::connect(this, SIGNAL(stopWaiting()), &loop, SLOT(quit()), Qt::DirectConnection);
+	QObject::connect(this, &ScriptExecutionControl::stopWaiting, &loop, &QEventLoop::quit, Qt::DirectConnection);
 	QTimer t;
-	connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
+	connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit, Qt::DirectConnection);
 	t.start(milliseconds);
 	loop.exec();
 }
@@ -106,6 +106,13 @@ void ScriptExecutionControl::writeToFile(const QString &file, const QString &tex
 	QFile out(file);
 	out.open(QIODevice::WriteOnly | QIODevice::Append);
 	out.write(text.toUtf8());
+}
+
+void ScriptExecutionControl::writeData(const QString &file, const QVector<uint8_t> &bytes)
+{
+	QFile out(file);
+	out.open(QIODevice::WriteOnly | QIODevice::Append);
+	out.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
 }
 
 QStringList ScriptExecutionControl::readAll(const QString &file) const
