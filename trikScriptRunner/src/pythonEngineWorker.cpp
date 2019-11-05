@@ -47,6 +47,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		)
 	: mBrick(brick)
+	, mScriptExecutionControl(new ScriptExecutionControl())
 	, mMailbox(mailbox)
 	, mState(ready)
 {}
@@ -164,6 +165,7 @@ bool PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
+	mMainContext.addObject("scriptExecutionControl", mScriptExecutionControl.data());
 
 	return evalSystemPy();
 }

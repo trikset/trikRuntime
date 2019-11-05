@@ -21,6 +21,7 @@
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
+#include "scriptExecutionControl.h"
 #include "PythonQt_QtAll.h"
 #include "PyTrikControl0.h"
 
@@ -144,6 +145,7 @@ private:
 	void startScriptEvaluation(int scriptId);
 
 	trikControl::BrickInterface &mBrick;
+	QScopedPointer<ScriptExecutionControl> mScriptExecutionControl;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 
 	State mState = State::ready;
