@@ -167,7 +167,6 @@ bool PythonEngineWorker::initTrik()
 	mMainContext.addObject("brick", &mBrick);
 	mMainContext.addObject("script", mScriptExecutionControl.data());
 
-	//return true;
 	return evalSystemPy();
 }
 
