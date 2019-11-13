@@ -165,8 +165,9 @@ bool PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
-	mMainContext.addObject("scriptExecutionControl", mScriptExecutionControl.data());
+	mMainContext.addObject("script", mScriptExecutionControl.data());
 
+	//return true;
 	return evalSystemPy();
 }
 

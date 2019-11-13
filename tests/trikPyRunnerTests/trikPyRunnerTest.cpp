@@ -167,6 +167,6 @@ TEST_F(TrikPyRunnerTest, DISABLED_fileTestPy)
 
 TEST_F(TrikPyRunnerTest, scriptExecutionControl)
 {
-	auto exitCode = run("scriptExecutionControl.wait(3)");
+	auto exitCode = run("a = script.timer(1000)");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }
