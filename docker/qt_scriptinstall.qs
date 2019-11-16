@@ -1,13 +1,21 @@
 function Controller() {
   installer.autoRejectMessageBoxes();
+  installer.installationFinished.connect(function() {
+    gui.clickButton(buttons.NextButton);
+  });
+  installer.setMessageBoxAutomaticAnswer("cancelInstallation", QMessageBox.Yes);
 }
 
 Controller.prototype.WelcomePageCallback = function() {
   gui.clickButton(buttons.NextButton, 3000);
+  gui.clickButton(buttons.NextButton, 3000);
 }
 
 Controller.prototype.CredentialsPageCallback = function() {
-    gui.clickButton(buttons.NextButton);
+    var widget = gui.currentPageWidget();
+    widget.loginWidget.EmailLineEdit.setText("");
+    widget.loginWidget.PasswordLineEdit.setText("");
+    gui.clickButton(buttons.NextButton, 500);
 }
 
 Controller.prototype.IntroductionPageCallback = function() {
@@ -21,11 +29,14 @@ Controller.prototype.DynamicTelemetryPluginFormCallback = function() {
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function() {
-  var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
-  if (targetDir == "") {
-    targetDir = installer.value("HomeDir") + "/Qt";
+  var widget = gui.currentPageWidget()
+  if (widget != null) {
+    var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
+    if (targetDir == "") {
+      targetDir = installer.value("HomeDir") + "/Qt";
+    }
+    widget.TargetDirectoryLineEdit.setText(targetDir);
   }
-  gui.currentPageWidget().TargetDirectoryLineEdit.setText(targetDir);
   gui.clickButton(buttons.NextButton);
 }
 
@@ -64,9 +75,10 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
 
 Controller.prototype.ReadyForInstallationPageCallback = function() {
   gui.clickButton(buttons.CommitButton);
-  installer.installationFinished.connect(function() {
+}
+
+Controller.prototype.StartMenuDirectoryPageCallback = function() {
     gui.clickButton(buttons.NextButton);
-  });
 }
 
 Controller.prototype.PerformInstallationPageCallback = function() {
@@ -74,12 +86,13 @@ Controller.prototype.PerformInstallationPageCallback = function() {
 }
 
 Controller.prototype.FinishedPageCallback = function() {
-  var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm;
-  if (checkBoxForm) {
+  var page = gui.currentPageWidget();
+  var checkBoxForm = page.LaunchQtCreatorCheckBoxForm;
+  if (checkBoxForm && checkBoxForm.launchQtCreatorCheckBox) {
     checkBoxForm.launchQtCreatorCheckBox.setChecked(false);
   }
-  else {
-    gui.currentPageWidget().RunItCheckBox.setChecked(false);
+  if (page.RunItCheckBox) {
+    page.RunItCheckBox.setChecked(false);
   }
   gui.clickButton(buttons.FinishButton);
 }
