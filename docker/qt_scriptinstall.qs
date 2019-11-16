@@ -7,11 +7,12 @@ function Controller() {
 }
 
 Controller.prototype.WelcomePageCallback = function() {
-  gui.clickButton(buttons.NextButton, 3000);
+  console.log("Welcome page");
   gui.clickButton(buttons.NextButton, 10000);
 }
 
 Controller.prototype.CredentialsPageCallback = function() {
+    console.log("Credentials page");
     var widget = gui.currentPageWidget();
     widget.loginWidget.EmailLineEdit.setText("");
     widget.loginWidget.PasswordLineEdit.setText("");
@@ -19,16 +20,19 @@ Controller.prototype.CredentialsPageCallback = function() {
 }
 
 Controller.prototype.IntroductionPageCallback = function() {
+  console.log("Introduction page");
   gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.DynamicTelemetryPluginFormCallback = function() {
+  console.log("Telemetry page");
   var page = gui.pageWidgetByObjectName("DynamicTelemetryPluginForm");
   page.statisticGroupBox.disableStatisticRadioButton.setChecked(true);
   gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function() {
+  console.log("Directory page");
   var widget = gui.currentPageWidget()
   if (widget != null) {
     var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
@@ -41,11 +45,13 @@ Controller.prototype.TargetDirectoryPageCallback = function() {
 }
 
 Controller.prototype.LicenseAgreementPageCallback = function() {
+  console.log("License page");
   gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
   gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
+  console.log("Components page");
   var widget = gui.currentPageWidget();
   var targetPlatform = {"darwin":"clang_64", "winnt":"undefined", "linux":"gcc_64"}[systemInfo.kernelType];
   widget.deselectAll();
@@ -74,18 +80,22 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
 }
 
 Controller.prototype.ReadyForInstallationPageCallback = function() {
+  console.log("Ready to install");
   gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.StartMenuDirectoryPageCallback = function() {
+    console.log("Start menu page");
     gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.PerformInstallationPageCallback = function() {
+  console.log("Perform installation page");
   gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.FinishedPageCallback = function() {
+  console.log("Finished page");
   var page = gui.currentPageWidget();
   var checkBoxForm = page.LaunchQtCreatorCheckBoxForm;
   if (checkBoxForm && checkBoxForm.launchQtCreatorCheckBox) {
