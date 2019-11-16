@@ -8,7 +8,7 @@ function Controller() {
 
 Controller.prototype.WelcomePageCallback = function() {
   gui.clickButton(buttons.NextButton, 3000);
-  gui.clickButton(buttons.NextButton, 3000);
+  gui.clickButton(buttons.NextButton, 10000);
 }
 
 Controller.prototype.CredentialsPageCallback = function() {
