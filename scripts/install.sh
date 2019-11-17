@@ -12,7 +12,7 @@ case $TRAVIS_OS_NAME in
       p="${p%.*}"
       brew install $pkg || echo "Failed to install $pkg"
     done
-    [ -d $TRIK_QT/5.12.5 ] || env TRIK_QT_INSTALL_DIR="$TRIK_QT" scripts/install_qt_mac.sh >> build.log 2>&1
+    [ -d $TRIK_QT/5.12.6 ] || env TRIK_QT_INSTALL_DIR="$TRIK_QT" scripts/install_qt_mac.sh >> build.log 2>&1
   ;;
 
   linux)
