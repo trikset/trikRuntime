@@ -58,11 +58,3 @@ class PadEventCodes(IntEnum):
     Hat0Y = 17
     Hat1X = 18
     Hat1Y = 19
-
-
-script.repeat = lambda mscs, f : script.timer(mscs).connect(f)
-
-brick.smile = lambda : brick.display().showImage('media/trik_smile_normal.png')
-
-brick.sadSmile = lambda : brick.display().showImage('media/trik_smile_sad.png')
-
