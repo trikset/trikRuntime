@@ -66,4 +66,3 @@ brick.smile = lambda : brick.display().showImage('media/trik_smile_normal.png')
 
 brick.sadSmile = lambda : brick.display().showImage('media/trik_smile_sad.png')
 
-include = lambda f : eval(script.readAll(f).join(" "))
