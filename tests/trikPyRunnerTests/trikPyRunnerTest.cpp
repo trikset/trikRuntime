@@ -164,3 +164,9 @@ TEST_F(TrikPyRunnerTest, DISABLED_fileTestPy)
 	auto err = runFromFile("file-test.py");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
+
+TEST_F(TrikPyRunnerTest, scriptExecutionControl)
+{
+	auto exitCode = run("a = script.timer(1000)");
+	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
+}

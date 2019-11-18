@@ -1,83 +1,60 @@
 import os
-# Python imports are intelligent, so we can import every time we call a method
+from enum import IntEnum
 
+class KeysEnum(IntEnum):
+    Left = 105
+    Up = 103
+    Down = 108
+    Enter = 28
+    Right = 106
+    Power = 116
+    Esc = 1
 
-class script(object):
-    def __init__(self):
-        from PythonQt import QtCore
-        self.files = {}
-        self.waitTimer = QtCore.QTimer()
-        self.waitTimer.setSingleShot(True)
-        # quitTimer is used to quit AFTER all events n the loop were processed
-        # but it is fine even without it
-        self.quitTimer = QtCore.QTimer()
-        self.quitTimer.setSingleShot(True)
-        self.quitTimer.setInterval(0)
-        self.waitLoop = QtCore.QEventLoop()
-        self.quitTimer.connect("timeout()", self.waitLoop.quit)
-        self.waitTimer.connect("timeout()", self.quitTimer.start)
-        self.interruptionFlag = False
+class Events(IntEnum):
+    Sync = 0
+    Key = 1
+    Relative = 2
+    Absolute = 3
+    Misc = 4
 
-    def __del__(self):
-        for filename in self.files:
-            self._flushAndClose(self.files[filename])
+class MouseEventCodes(IntEnum):
+    X = 0
+    Y = 1
+    Wheel = 8
 
-    @staticmethod
-    def _flushAndClose(userfile):
-        # https://docs.python.org/2.7/library/os.html#os.fsync
-        userfile.flush()
-        os.fsync(userfile.fileno())
-        userfile.close()
+    LeftBtn = 272
+    RightBtn = 273
+    MiddleBtn = 274
 
-    @staticmethod
-    def random(a, b):
-        # https://docs.python.org/2.7/library/random.html#random.randint
-        import random
-        return random.randint(a, b)
+class PadEventCodes(IntEnum):
+    BtnA = 304
+    BtnB = 305
+    BtnC = 306
+    BtnX = 307
+    BtnY = 308
+    BtnZ = 309
 
-    def readAll(self, filename):
-        if filename in self.files:
-            userfile = self.files[filename]
-            userfile.seek(0)
-            return userfile.read()
-        else:
-            with open(filename) as userfile:
-                return userfile.read()
+    BtnTL = 310
+    BtnTR = 311
+    BtnTL2 = 312
+    BtnTR2 = 313
+    BtnSelect = 314
+    BtnStart = 315
 
-    def removeFile(self, filename):
-        if filename in self.files:
-            self._flushAndClose(self.files.pop(filename))
-        os.remove(filename)
+    X = 0
+    Y = 1
+    Z = 2
+    Rx = 3
+    Ry = 4
+    Rz = 5
 
-    @staticmethod
-    def system(cmnd):
-        import shlex
-        import subprocess
-        subprocess.Popen(shlex.split(cmnd))
+    Throttle = 6
+    Rudder = 7
+    Wheel = 8
+    Gas = 9
+    Break = 10
 
-    @staticmethod
-    def time():
-        import time
-        return time.time() * 1000
-
-    def wait(self, ms):
-          #waitTimer object is per instance and we have script's instance per thread
-          #same about waitLoop
-          self.waitTimer.setInterval(ms)
-          self.waitTimer.start()
-          self.waitLoop.exec()
-          # This event loop is required to process events from other threads (i.e., script stopping/abortion or messaging)
-          # Also, by no obvious reason, to be processed in the main thread the exception should be thrown after the loop.
-          if self.interruptionFlag:
-              self.interruptionFlag = False
-              raise ValueError()
-
-    def writeToFile(self, filename, text):
-        if filename not in self.files:
-            self.files[filename] = open(filename, 'w+')
-        self.files[filename].write(text)
-
-    def kill(self):
-        self.interruptionFlag = True
-
-script = script()  # singleton
+    Hat0X = 16
+    Hat0Y = 17
+    Hat1X = 18
+    Hat1Y = 19
