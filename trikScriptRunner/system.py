@@ -1,5 +1,34 @@
+# Copyright 2019 CyberTech Labs Ltd. & Andrei Khodko
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
+import types
 from enum import IntEnum
+
+script = types.SimpleNamespace()
+script.random = script_cpp.random
+script.wait = script_cpp.wait
+script.time = script_cpp.time
+script.timer = script_cpp.timer
+script.system = script_cpp.system
+script.writeToFile = script_cpp.writeToFile
+script.writeData = script_cpp.writeData
+script.readAll = script_cpp.readAll
+script.removeFile = script_cpp.removeFile
+script.run = script_cpp.run
+script.quit = script_cpp.quit
+script.reset = script_cpp.reset
 
 class KeysEnum(IntEnum):
     Left = 105
