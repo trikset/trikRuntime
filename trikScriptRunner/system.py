@@ -14,6 +14,7 @@
 
 import os
 import types
+import sys
 from enum import IntEnum
 
 script = types.SimpleNamespace()
@@ -29,6 +30,8 @@ script.removeFile = script_cpp.removeFile
 script.run = script_cpp.run
 script.quit = script_cpp.quit
 script.reset = script_cpp.reset
+
+sys.path.append('')
 
 class KeysEnum(IntEnum):
     Left = 105
