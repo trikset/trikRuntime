@@ -69,7 +69,6 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 		result.append(prettyPrinter(argument.toVariant()));
 	}
 
-	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
 	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
 	if (script) {

@@ -106,6 +106,10 @@ int main(int argc, char *argv[])
 			app->quit();
 		});
 
+		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::sendMessage, app.data(), [&app](const QString &m){
+			QTextStream(stdout) << m << "\n";
+		});
+
 		if (fileName.isEmpty()) { // from command line
 			result.run(script, stype);
 		} else { // from file

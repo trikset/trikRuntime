@@ -78,11 +78,17 @@ Controller::Controller(const QString &configPath)
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
 			, this, &Controller::scriptExecutionCompleted);
 
+	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::sendMessage, this, [](const QString &m){
+		QTextStream(stdout) << m << "\n";
+	});
+
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedScript
 			, this, &Controller::scriptExecutionFromFileStarted);
 
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedDirectScript
 			, this, &Controller::directScriptExecutionStarted);
+
+\
 
 	connect(mBrick.data(), &trikControl::BrickInterface::stopped, this, &Controller::brickStopped);
 
