@@ -88,8 +88,6 @@ Controller::Controller(const QString &configPath)
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedDirectScript
 			, this, &Controller::directScriptExecutionStarted);
 
-\
-
 	connect(mBrick.data(), &trikControl::BrickInterface::stopped, this, &Controller::brickStopped);
 
 	mCommunicator->startServer(communicatorPort);
