@@ -187,7 +187,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="+194"/>
+        <location filename="../../trikGui/controller.cpp" line="+198"/>
         <source>direct command</source>
         <translation>команда с компьютера</translation>
     </message>
