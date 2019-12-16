@@ -18,10 +18,10 @@
 #include <QImage>
 
 /// The class that makes utility code reusable.
-class Utilites : public QObject
+class Utilities : public QObject
 {
 	Q_OBJECT
 public:
 	/// Creates image for show method from data according to format. Image is scaled to fill the screen.
-	static QImage *show(const QVector<int32_t> &array, int width, int height, const QString &format);
+	static QImage imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format);
 };

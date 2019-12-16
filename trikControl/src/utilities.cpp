@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "utilites.h"
+#include "utilities.h"
 
 #include "QsLog.h"
 
-QImage* Utilites::show(const QVector<int32_t> &array, int width, int height, const QString &format){
+QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
 	auto fmt = QImage::Format_RGB32;
 	auto *rawData = static_cast<const uchar *>(static_cast<const void *>(array.data()));
 
@@ -46,8 +46,8 @@ QImage* Utilites::show(const QVector<int32_t> &array, int width, int height, con
 		copyAligned(width);
 	} else {
 		QLOG_ERROR() << "Unsupported format " << format;
-		return nullptr;
+		return QImage();
 	}
 
-	return new QImage(rawData, width, height, fmt);
+	return QImage(rawData, width, height, fmt);
 }

@@ -27,7 +27,7 @@
 #include <QtGui/QPixmap>
 
 #include "QsLog.h"
-#include "utilites.h"
+#include "utilities.h"
 
 using namespace trikControl;
 
@@ -64,12 +64,11 @@ void GuiWorker::showImage(const QString &fileName)
 
 void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const QString &format)
 {
-	QImage *img = Utilites::show(array, width, height, format);
-	if (img == nullptr)
+	QImage img = Utilities::imageFromBytes(array, width, height, format);
+	if (img.isNull())
 		return;
 
-	mImageWidget->setPixmap(QPixmap::fromImage(std::move(*img)));
-	delete img;
+	mImageWidget->setPixmap(QPixmap::fromImage(std::move(img)));
 
 	repaintGraphicsWidget();
 }
