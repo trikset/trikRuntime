@@ -105,7 +105,8 @@ HEADERS += \
 	$$PWD/src/v4l2CameraImplementation.h \
 	$$PWD/src/imitationCameraImplementation.h \
 	$$PWD/src/i2cDevice.h \
-	$$PWD/src/i2cCommunicator.h
+	$$PWD/src/i2cCommunicator.h \
+	src/utilites.h
 #	$$PWD/src/headingSensor.h \
 
 SOURCES += \
@@ -163,7 +164,8 @@ SOURCES += \
 	$$PWD/src/imitationCameraImplementation.cpp \
 	$$PWD/src/cameraDeviceInterface.cpp \
 	$$PWD/src/i2cDevice.cpp \
-	$$PWD/src/i2cCommunicator.cpp
+	$$PWD/src/i2cCommunicator.cpp \
+	src/utilites.cpp
 #	$$PWD/src/headingSensor.cpp \
 
 
