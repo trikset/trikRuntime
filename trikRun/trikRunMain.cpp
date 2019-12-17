@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
 	// RAII-style code to ensure that after brick gets destroyed there will be an event loop that cleans it up.
 	trikKernel::DeinitializationHelper helper;
-	Q_UNUSED(helper);
+	Q_UNUSED(helper)
 
 	trikKernel::ApplicationInitHelper initHelper(*app);
 
@@ -106,9 +106,9 @@ int main(int argc, char *argv[])
 			app->quit();
 		});
 
-		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::sendMessage, app.data(),
-				 [&app](const QString &m){
-			QTextStream(stdout) << m << "\n";
+		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::textInStdOut, &result,
+				 [](const QString &m){
+			QTextStream(stdout) << m;
 		});
 
 		if (fileName.isEmpty()) { // from command line

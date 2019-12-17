@@ -27,16 +27,10 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 								   )
 	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox))
 {
-
-	if (mailbox) {
-		connect(mailbox,  &trikNetwork::MailboxInterface::newMessage
-				, this, &TrikPythonRunner::sendMessageFromMailBox);
-	}
-
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
 	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
-	connect(mScriptEngineWorker, &PythonEngineWorker::sendMessage, this, &TrikPythonRunner::sendMessage);
+	connect(mScriptEngineWorker, &PythonEngineWorker::textInStdOut, this, &TrikPythonRunner::textInStdOut);
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed, this, &TrikPythonRunner::completed);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::startedScript);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
@@ -91,14 +85,6 @@ void TrikPythonRunner::abort()
 {
 	mScriptEngineWorker->stopScript();
 	mScriptEngineWorker->resetBrick();
-}
-
-void TrikPythonRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
-{
-	emit sendMessage(QString("mail: sender: %1 contents: %2")
-					 .arg(senderNumber)
-					 .arg(message)
-					 );
 }
 
 QStringList TrikPythonRunner::knownMethodNames() const

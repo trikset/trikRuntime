@@ -42,7 +42,7 @@ public:
 						 , trikNetwork::MailboxInterface * mailbox
 						 );
 
-	~TrikJavaScriptRunner();
+	~TrikJavaScriptRunner() override;
 
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
@@ -59,9 +59,6 @@ public slots:
 
 private slots:
 	void onScriptStart(int scriptId);
-
-	/// Sends message to host machine from mailbox via wifi.
-	void sendMessageFromMailBox(int senderNumber, const QString &message);
 
 private:
 	QScopedPointer<ScriptExecutionControl> mScriptController;

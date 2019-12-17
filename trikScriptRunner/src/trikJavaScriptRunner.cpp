@@ -33,9 +33,6 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	, mVariablesServer(new TrikVariablesServer())
 {
 	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
-	if (mailbox) {
-		connect(mailbox, SIGNAL(newMessage(int, QString)), this, SLOT(sendMessageFromMailBox(int, QString)));
-	}
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
@@ -43,7 +40,7 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
 	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
 
-	connect(mScriptController.data(), SIGNAL(sendMessage(QString)), this, SIGNAL(sendMessage(QString)));
+	connect(mScriptController.data(), &ScriptExecutionControl::textInStdOut, this, &TrikJavaScriptRunner::textInStdOut);
 
 	connect(mVariablesServer.data(), SIGNAL(getVariables(QString)), mScriptEngineWorker, SIGNAL(getVariables(QString)));
 	connect(mScriptEngineWorker, SIGNAL(variablesReady(QJsonObject))
@@ -108,14 +105,6 @@ void TrikJavaScriptRunner::onScriptStart(int scriptId)
 	} else {
 		emit startedDirectScript(scriptId);
 	}
-}
-
-void TrikJavaScriptRunner::sendMessageFromMailBox(int senderNumber, const QString &message)
-{
-	emit sendMessage(QString("mail: sender: %1 contents: %2")
-					 .arg(senderNumber)
-					 .arg(message)
-					 );
 }
 
 QStringList TrikJavaScriptRunner::knownMethodNames() const
