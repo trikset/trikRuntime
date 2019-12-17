@@ -72,7 +72,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	auto scriptValue = engine->globalObject().property("script");
 	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
 	if (script) {
-		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
+		QMetaObject::invokeMethod(script, "textInStdOut", Q_ARG(QString, QString("%1").arg(result)));
 	}
 
 	return engine->toScriptValue(result);
