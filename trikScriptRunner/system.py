@@ -14,7 +14,6 @@
 
 import os
 import types
-from enum import IntEnum
 
 script = types.SimpleNamespace()
 script.random = script_cpp.random
@@ -30,7 +29,7 @@ script.run = script_cpp.run
 script.quit = script_cpp.quit
 script.reset = script_cpp.reset
 
-class KeysEnum(IntEnum):
+class KeysEnum():
     Left = 105
     Up = 103
     Down = 108
@@ -39,14 +38,14 @@ class KeysEnum(IntEnum):
     Power = 116
     Esc = 1
 
-class Events(IntEnum):
+class Events():
     Sync = 0
     Key = 1
     Relative = 2
     Absolute = 3
     Misc = 4
 
-class MouseEventCodes(IntEnum):
+class MouseEventCodes():
     X = 0
     Y = 1
     Wheel = 8
@@ -55,7 +54,7 @@ class MouseEventCodes(IntEnum):
     RightBtn = 273
     MiddleBtn = 274
 
-class PadEventCodes(IntEnum):
+class PadEventCodes():
     BtnA = 304
     BtnB = 305
     BtnC = 306
