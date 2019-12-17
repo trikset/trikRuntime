@@ -31,7 +31,7 @@ script.run = script_cpp.run
 script.quit = script_cpp.quit
 script.reset = script_cpp.reset
 
-sys.path.append('')
+sys.path.append('/home/root/trik/scripts')
 
 class KeysEnum(IntEnum):
     Left = 105
