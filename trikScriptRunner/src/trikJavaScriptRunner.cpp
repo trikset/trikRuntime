@@ -32,19 +32,19 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	, mMaxScriptId(0)
 	, mVariablesServer(new TrikVariablesServer())
 {
-	connect(&mWorkerThread, SIGNAL(finished()), &mWorkerThread, SLOT(deleteLater()));
+	connect(&mWorkerThread, &QThread::finished, &mWorkerThread, &QThread::deleteLater);
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
-	connect(&mWorkerThread, SIGNAL(finished()), mScriptEngineWorker, SLOT(deleteLater()));
-	connect(mScriptEngineWorker, SIGNAL(completed(QString, int)), this, SIGNAL(completed(QString, int)));
-	connect(mScriptEngineWorker, SIGNAL(startedScript(int)), this, SLOT(onScriptStart(int)));
+	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &QThread::deleteLater);
+	connect(mScriptEngineWorker, &ScriptEngineWorker::completed, this, &TrikJavaScriptRunner::completed);
+	connect(mScriptEngineWorker, &ScriptEngineWorker::startedScript, this, &TrikJavaScriptRunner::onScriptStart);
 
 	connect(mScriptController.data(), &ScriptExecutionControl::textInStdOut, this, &TrikJavaScriptRunner::textInStdOut);
 
-	connect(mVariablesServer.data(), SIGNAL(getVariables(QString)), mScriptEngineWorker, SIGNAL(getVariables(QString)));
-	connect(mScriptEngineWorker, SIGNAL(variablesReady(QJsonObject))
-		, mVariablesServer.data(), SLOT(sendHTTPResponse(QJsonObject)));
+	connect(mVariablesServer.data(), &TrikVariablesServer::getVariables, mScriptEngineWorker, &ScriptEngineWorker::getVariables);
+	connect(mScriptEngineWorker, &ScriptEngineWorker::variablesReady
+		, mVariablesServer.data(), &TrikVariablesServer::sendHTTPResponse);
 
 	QLOG_INFO() << "Starting TrikJavaScriptRunner worker thread" << &mWorkerThread;
 

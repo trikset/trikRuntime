@@ -62,6 +62,6 @@ TrikCommunicator::~TrikCommunicator()
 Connection *TrikCommunicator::connectionFactory()
 {
 	Connection * const connection = new Connection(*mTrikScriptRunner, mConfigVersion);
-	connect(connection, SIGNAL(stopCommandReceived()), this, SIGNAL(stopCommandReceived()));
+	connect(connection, &Connection::stopCommandReceived, this, &TrikCommunicator::stopCommandReceived);
 	return connection;
 }
