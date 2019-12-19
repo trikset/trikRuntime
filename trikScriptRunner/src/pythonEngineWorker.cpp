@@ -240,7 +240,7 @@ void PythonEngineWorker::run(const QString &script)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
+	QMetaObject::invokeMethod(this, [this, script](){doRun(script);});
 }
 
 void PythonEngineWorker::doRun(const QString &script)
