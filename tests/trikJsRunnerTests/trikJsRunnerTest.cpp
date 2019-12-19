@@ -209,6 +209,5 @@ TEST_F(TrikJsRunnerTest, printTest)
 	const QString text = "Hello";
 	auto err = runDirectCommandAndWaitForQuit("print('" + text + "');script.quit();");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	auto const &out = mStdOut;
-	ASSERT_TRUE(text == out);
+	ASSERT_TRUE(text == mStdOut);
 }
