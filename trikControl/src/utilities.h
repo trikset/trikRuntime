@@ -14,13 +14,11 @@
 
 #pragma once
 
-#include <QObject>
 #include <QImage>
 
 /// The class that makes utility code reusable.
-class Utilities : public QObject
+class Utilities
 {
-	Q_OBJECT
 public:
 	/// Creates image for show method from data according to format. Image is scaled to fill the screen.
 	static QImage imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format);
