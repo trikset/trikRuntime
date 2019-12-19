@@ -260,6 +260,11 @@ void PythonEngineWorker::doRun(const QString &script)
 		return;
 	}
 
+	if (script.endsWith(".py")) {
+		int fileNameStarts = script.lastIndexOf('/');
+		QString pathToScript = script.left(fileNameStarts);
+		mMainContext.evalScript("import sys; sys.append(" + pathToScript + ")");
+	}
 	mMainContext.evalScript(script);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
