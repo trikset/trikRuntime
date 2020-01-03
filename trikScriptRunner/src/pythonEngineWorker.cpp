@@ -14,6 +14,7 @@
 
 #include <QProcess>
 #include <QsLog.h>
+#include <QDir>
 #include <QFileInfo>
 #include <QVector>
 
@@ -261,9 +262,9 @@ void PythonEngineWorker::doRun(const QString &script)
 	}
 
 	if (script.endsWith(".py")) {
-		int fileNameStarts = script.lastIndexOf('/');
-		QString pathToScript = script.left(fileNameStarts);
-		mMainContext.evalScript("import sys; sys.append(" + pathToScript + ")");
+		QFileInfo scriptInfo = QFileInfo(script);
+		auto const & pathToScript = scriptInfo.dir();
+		mMainContext.evalScript("import sys; sys.append(" + pathToScript.path() + ")");
 	}
 	mMainContext.evalScript(script);
 
