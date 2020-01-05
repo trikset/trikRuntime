@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QVector>
 #include <QtCore/QScopedPointer>
 
 #include "fifoInterface.h"
@@ -54,21 +55,29 @@ public:
 	Status status() const override;
 
 public slots:
-	/// Reads data from this FIFO file, returning all available data as string.
+	/// Reads line from this FIFO file, returning all available data as string.
 	QString read() override;
+	/// Reads data from this FIFO file, returning all available data as string.
+	QVector<uint8_t> readRaw() override;
 
-	/// Returns true if FIFO has new data in it.
+	/// Returns true if FIFO has new line in it.
+	bool hasLine() const override;
+	/// Returns true if FIFO has new bytes in it.
 	bool hasData() const override;
 
 private slots:
-	void onNewData(const QString &data);
+	void onNewLine(const QString &data);
+	void onNewData(const QVector<uint8_t> &data);
 	void onReadError();
 
 private:
 	QScopedPointer<trikHal::FifoInterface> mFifo;
 
 	/// Last line that was read from FIFO.
-	QString mCurrent;
+	QString mCurrentLine;
+
+	/// Last data that was read from FIFO.
+	QVector<uint8_t> mCurrentData;
 
 	/// Lock for mCurrent
 	mutable QReadWriteLock mCurrentLock;

@@ -42,8 +42,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	mSocket = socket(PF_UNIX, SOCK_DGRAM, 0);
 
 	if (mSocket < 0) {
-		std::cerr << "Cannot create a socket:" << std::endl;
-		std::cerr << strerror(errno) << std::endl;
+		QLOG_ERROR() << "Cannot create a socket:" << strerror(errno);
 		return;
 	}
 
@@ -51,8 +50,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	snprintf(mLocal->sun_path, sizeof(mLocal->sun_path), "%s", interfaceFile.toStdString().c_str());
 	unlink(mLocal->sun_path);
 	if (bind(mSocket, static_cast<sockaddr *>(static_cast<void*>(mLocal.data())), sizeof(*(mLocal.data()))) != 0) {
-		std::cerr << "Cannot bind a name to a socket:" << std::endl;
-		std::cerr << strerror(errno) << std::endl;
+		QLOG_ERROR() << "Cannot bind a name to a socket:" << strerror(errno);
 		close(mSocket);
 		mSocket = -1;
 		return;
@@ -61,8 +59,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	mDest->sun_family = AF_UNIX;
 	snprintf(mDest->sun_path, sizeof(mDest->sun_path), "%s", daemonFile.toStdString().c_str());
 	if (::connect(mSocket, static_cast<sockaddr *>(static_cast<void*>(mDest.data())), sizeof(*(mDest.data()))) != 0) {
-		std::cerr << "Cannot connect a socket:" << std::endl;
-		std::cerr << strerror(errno) << std::endl;
+		QLOG_ERROR() << "Cannot connect a socket:" << strerror(errno);
 		unlink(mLocal->sun_path);
 		close(mSocket);
 		mSocket = -1;
@@ -80,13 +77,11 @@ WpaSupplicantCommunicator::~WpaSupplicantCommunicator()
 {
 	if (mSocket >= 0) {
 		if (close(mSocket) != 0) {
-			std::cerr << "Cannot close socket:" << std::endl;
-			std::cerr << strerror(errno) << std::endl;
+			QLOG_ERROR() << "Cannot close socket:" << strerror(errno);
 		}
 
 		if (unlink(mLocal->sun_path) != 0) {
-			std::cerr << "Cannot unlink:" << std::endl;
-			std::cerr << strerror(errno) << std::endl;
+			QLOG_ERROR() << "Cannot unlink:" << strerror(errno);
 		}
 	}
 }
@@ -99,6 +94,7 @@ int WpaSupplicantCommunicator::fileDescriptor()
 int WpaSupplicantCommunicator::attach()
 {
 	if (mSocket < 0) {
+		QLOG_ERROR() << "Cannot attach, because socket doesn't exist.";
 		return -1;
 	}
 
@@ -115,6 +111,7 @@ int WpaSupplicantCommunicator::attach()
 int WpaSupplicantCommunicator::detach()
 {
 	if (mSocket < 0) {
+		QLOG_ERROR() << "Cannot detach, because socket doesn't exist.";
 		return -1;
 	}
 
@@ -131,13 +128,13 @@ int WpaSupplicantCommunicator::detach()
 int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 {
 	if (mSocket < 0) {
+		QLOG_ERROR() << "Cannot request, because socket doesn't exist.";
 		return -1;
 	}
 
 	auto const &commandAscii = command.toStdString();
 	if (send(mSocket, commandAscii.c_str(), commandAscii.size()+1, 0) < 0) {
-		std::cerr << "Cannot send a message to the daemon:" << std::endl;
-		std::cerr << strerror(errno) << std::endl;
+		QLOG_ERROR() << "Cannot send a message to the daemon:" << strerror(errno);
 		return -1;
 	}
 
@@ -154,8 +151,7 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 			char buffer[bufferSize];
 			auto replyLen = recv(mSocket, buffer, bufferSize, 0);
 			if (replyLen < 0) {
-				std::cerr << "Cannot receive a reply from the daemon:" << std::endl;
-				std::cerr << strerror(errno) << std::endl;
+				QLOG_ERROR() << "Cannot receive a reply from the daemon:" << strerror(errno);
 				return -1;
 			} else if (buffer[0] == '<') { //unsolicited message
 				continue;
@@ -165,7 +161,7 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 				return 0;
 			}
 		} else {
-			std::cerr << "No reply from the daemon" << std::endl;
+			QLOG_ERROR() << "No reply from the daemon";
 			return -1;
 		}
 	}
@@ -189,8 +185,7 @@ int WpaSupplicantCommunicator::receive(QString &message)
 	char buffer[bufferSize];
 	const int messageLen = recv(mSocket, buffer, bufferSize, 0);
 	if (messageLen < 0) {
-		std::cerr << "Cannot receive a message from the daemon:" << std::endl;
-		std::cerr << strerror(errno) << std::endl;
+		QLOG_ERROR() << "Cannot receive a message from the daemon:" << strerror(errno);
 		return -1;
 	}
 

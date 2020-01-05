@@ -7,10 +7,11 @@ QMAKE_CXXFLAGS -= -Werror -Werror=pedantic -pedantic-errors -Werror=write-string
 
 QT += widgets
 
+INCLUDEPATH *= $$PWD/../../trikControl/include/trikControl
 
 HEADERS += \
-           $$PWD/PyTrikControl0.h \
+		   $$PWD/PyTrikControl0.h \
 
 SOURCES += \
-           $$PWD/PyTrikControl0.cpp \
-           $$PWD/PyTrikControl_init.cpp
+		   $$PWD/PyTrikControl0.cpp \
+		   $$PWD/PyTrikControl_init.cpp

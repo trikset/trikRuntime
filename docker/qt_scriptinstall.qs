@@ -1,39 +1,65 @@
 function Controller() {
   installer.autoRejectMessageBoxes();
+  installer.setMessageBoxAutomaticAnswer("OverwriteTargetDirectory", QMessageBox.Yes);
+  installer.setMessageBoxAutomaticAnswer("stopProcessesForUpdates", QMessageBox.Ignore);
+  installer.installationFinished.connect(function() {
+    gui.clickButton(buttons.NextButton);
+  });
+  installer.setMessageBoxAutomaticAnswer("cancelInstallation", QMessageBox.Yes);
 }
 
 Controller.prototype.WelcomePageCallback = function() {
-  gui.clickButton(buttons.NextButton, 3000);
+  console.log("Welcome page");
+  gui.clickButton(buttons.NextButton, 10000);
 }
 
 Controller.prototype.CredentialsPageCallback = function() {
-    gui.clickButton(buttons.NextButton);
+    console.log("Credentials page");
+    var widget = gui.currentPageWidget();
+    widget.loginWidget.EmailLineEdit.setText("");
+    widget.loginWidget.PasswordLineEdit.setText("");
+    gui.clickButton(buttons.NextButton, 500);
 }
 
 Controller.prototype.IntroductionPageCallback = function() {
+  console.log("Introduction page");
+  gui.clickButton(buttons.NextButton);
+}
+
+Controller.prototype.DynamicTelemetryPluginFormCallback = function() {
+  console.log("Telemetry page");
+  var page = gui.pageWidgetByObjectName("DynamicTelemetryPluginForm");
+  page.statisticGroupBox.disableStatisticRadioButton.setChecked(true);
   gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function() {
-  var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
-  if (targetDir == "") {
-    targetDir = installer.value("HomeDir") + "/Qt";
+  console.log("Directory page");
+  var widget = gui.currentPageWidget()
+  if (widget != null) {
+    var targetDir = installer.environmentVariable("TRIK_QT_INSTALL_DIR");
+    if (targetDir == "") {
+      targetDir = installer.value("HomeDir") + "/Qt";
+    }
+    widget.TargetDirectoryLineEdit.setText(targetDir);
   }
-  gui.currentPageWidget().TargetDirectoryLineEdit.setText(targetDir);
   gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.LicenseAgreementPageCallback = function() {
+  console.log("License page");
   gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
   gui.clickButton(buttons.NextButton);
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function() {
+  console.log("Components page");
   var widget = gui.currentPageWidget();
   var targetPlatform = {"darwin":"clang_64", "winnt":"undefined", "linux":"gcc_64"}[systemInfo.kernelType];
   widget.deselectAll();
-  widget.selectComponent("qt.qt5.5124."+targetPlatform);
-  widget.selectComponent("qt.qt5.5124.qtscript");
+  var qtVersionId = "qt.qt5.5126."
+  widget.selectComponent(qtVersionId + targetPlatform);
+  widget.selectComponent(qtVersionId + "qtscript");
   widget.selectComponent("qt.tools.ifw.31");
 
   installer.calculateComponentsToInstall();
@@ -43,8 +69,8 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
   for (var i = 0 ; i < components.length ;i++) {
     var c = components[i];
     var n = c.name;
-    var examplesId = "qt.qt5.5124.examples";
-    var docId = "qt.qt5.5124.doc";
+    var examplesId = qtVersionId + "examples";
+    var docId = qtVersionId + "doc";
     if (n.startsWith(examplesId) || n.startsWith(docId)) {
       widget.deselectComponent(n);
       print("Deselecting:" +  n);
@@ -56,19 +82,29 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
 }
 
 Controller.prototype.ReadyForInstallationPageCallback = function() {
+  console.log("Ready to install");
   gui.clickButton(buttons.CommitButton);
-  installer.installationFinished.connect(function() {
+}
+
+Controller.prototype.StartMenuDirectoryPageCallback = function() {
+    console.log("Start menu page");
     gui.clickButton(buttons.NextButton);
-  });
+}
+
+Controller.prototype.PerformInstallationPageCallback = function() {
+  console.log("Perform installation page");
+  gui.clickButton(buttons.CommitButton);
 }
 
 Controller.prototype.FinishedPageCallback = function() {
-  var checkBoxForm = gui.currentPageWidget().LaunchQtCreatorCheckBoxForm;
-  if (checkBoxForm) {
+  console.log("Finished page");
+  var page = gui.currentPageWidget();
+  var checkBoxForm = page.LaunchQtCreatorCheckBoxForm;
+  if (checkBoxForm && checkBoxForm.launchQtCreatorCheckBox) {
     checkBoxForm.launchQtCreatorCheckBox.setChecked(false);
   }
-  else {
-    gui.currentPageWidget().RunItCheckBox.setChecked(false);
+  if (page.RunItCheckBox) {
+    page.RunItCheckBox.setChecked(false);
   }
   gui.clickButton(buttons.FinishButton);
 }

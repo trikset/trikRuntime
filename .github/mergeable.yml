@@ -1,6 +1,6 @@
 version: 2
 mergeable:
-  - when: pull_request.*
+  - when: pull_request.* , pull_request_review.*
     validate:
       - do: title
         must_exclude:
@@ -13,11 +13,11 @@ mergeable:
           enabled: true
         must_include:
           regex: '19\.[0-9]+'
-#      - do: approvals
-#        min:
-#          count: 1
-#        required:
-#          assignees: true
+      - do: approvals
+        min:
+          count: 1
+        required:
+          assignees: true
     error:
       - do: checks
         status: 'failure'

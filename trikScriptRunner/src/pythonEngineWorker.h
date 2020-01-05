@@ -21,6 +21,7 @@
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
+#include "scriptExecutionControl.h"
 #include "PythonQt_QtAll.h"
 #include "PyTrikControl0.h"
 
@@ -52,6 +53,9 @@ public:
 	/// worker would be in a ready state.
 	/// Can be safely called from other threads.
 	void stopScript();
+
+	/// Report known objects and methods for autocompletion
+	QStringList knownNames() const;
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
@@ -141,6 +145,7 @@ private:
 	void startScriptEvaluation(int scriptId);
 
 	trikControl::BrickInterface &mBrick;
+	QScopedPointer<ScriptExecutionControl> mScriptExecutionControl;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 
 	State mState = State::ready;

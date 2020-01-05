@@ -39,3 +39,5 @@ public:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::CameraDeviceInterface *)

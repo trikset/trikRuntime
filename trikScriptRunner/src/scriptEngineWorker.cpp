@@ -21,17 +21,18 @@
 #include <QtCore/QStringBuilder>
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
-#include "trikScriptRunner.h"
-
-using namespace trikScriptRunner;
-using namespace trikNetwork;
-using namespace trikControl;
-
+#include "trikScriptRunnerInterface.h"
 #include "scriptable.h"
 #include "utils.h"
 
 #include <QFileInfo>
 #include <QsLog.h>
+
+#define REGISTER_METATYPE_FOR_ENGINE(TYPE) \
+	Scriptable<TYPE>::registerMetatype(engine);
+
+
+using namespace trikScriptRunner;
 
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
@@ -103,7 +104,7 @@ QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
 	QObject *qObjBrick = brickValue.toQObject();
 	if (qObjBrick)
 	{
-		BrickInterface *brick = qobject_cast<BrickInterface*>(qObjBrick);
+		auto *brick = qobject_cast<trikControl::BrickInterface*>(qObjBrick);
 		if (brick)
 		{
 			auto port = context->argumentCount() > 0 ? context->argument(0).toString()
@@ -238,19 +239,6 @@ void ScriptEngineWorker::stopScript()
 	QLOG_INFO() << "ScriptEngineWorker: stopping complete";
 }
 
-QStringList ScriptEngineWorker::knownMethodNames() const
-{
-	QSet<QString> result = {"brick", "script", "threading"};
-	collectMethodNames(result, mBrick.metaObject());
-	collectMethodNames(result, mScriptControl.metaObject());
-	if (mMailbox) {
-		result.insert("mailbox");
-		collectMethodNames(result, mMailbox->metaObject());
-	}
-	collectMethodNames(result, mThreading.metaObject());
-	return result.toList();
-}
-
 void ScriptEngineWorker::resetBrick()
 {
 	QLOG_INFO() << "Stopping robot";
@@ -356,6 +344,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
 
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE_FOR_ENGINE)
+	REGISTER_METATYPE_FOR_ENGINE(trikScriptRunner::Threading)
 
 	Scriptable<QTimer>::registerMetatype(engine);
 	qScriptRegisterMetaType(engine, &timeValToScriptValue, &timeValFromScriptValue);
@@ -435,22 +424,15 @@ void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
 	}
 }
 
-void ScriptEngineWorker::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) const
+QStringList ScriptEngineWorker::knownMethodNames() const
 {
-	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
-		const QMetaMethod metaMethod = obj->method(i);
-		const QString methodName = QString::fromLatin1(metaMethod.name());
-		result.insert(methodName);
-
-		QString methodReturnType = QString::fromLatin1(metaMethod.typeName());
-		if (methodReturnType.endsWith('*')) {
-			methodReturnType.chop(1);
-		}
-
-		const int typeId = QMetaType::type(methodReturnType.toLatin1());
-		const QMetaObject *newObj = QMetaType::metaObjectForType(typeId);
-		if (newObj) {
-			collectMethodNames(result, newObj);
-		}
+	QSet<QString> result = {"brick", "script", "threading"};
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, &trikControl::BrickInterface::staticMetaObject);
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl.metaObject());
+	if (mMailbox) {
+		result.insert("mailbox");
+		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
 	}
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
+	return result.toList();
 }

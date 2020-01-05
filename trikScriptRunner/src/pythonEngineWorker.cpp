@@ -20,6 +20,7 @@
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
 #include <trikKernel/exceptions/internalErrorException.h>
+#include <trikScriptRunnerInterface.h>
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
@@ -46,6 +47,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		)
 	: mBrick(brick)
+	, mScriptExecutionControl(new ScriptExecutionControl())
 	, mMailbox(mailbox)
 	, mState(ready)
 {}
@@ -118,7 +120,7 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
-		PythonQt::init(PythonQt::PythonAlreadyInitialized);
+		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
@@ -163,6 +165,7 @@ bool PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
+	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
 
 	return evalSystemPy();
 }
@@ -222,6 +225,19 @@ void PythonEngineWorker::stopScript()
 	/// @todo: is it actually stopped?
 
 	QLOG_INFO() << "PythonEngineWorker: stopping complete";
+}
+
+QStringList PythonEngineWorker::knownNames() const
+{
+	QSet<QString> result = {"brick", "script", "threading"};
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, &trikControl::BrickInterface::staticMetaObject);
+/// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl.metaObject());
+	if (mMailbox) {
+		result.insert("mailbox");
+		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
+	}
+/// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
+	return result.toList();
 }
 
 void PythonEngineWorker::run(const QString &script)

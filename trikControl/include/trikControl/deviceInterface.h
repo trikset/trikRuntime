@@ -14,6 +14,7 @@
 
 #pragma once
 #include <QtGlobal>
+#include <QMetaType>
 #include "declSpec.h"
 
 namespace trikControl {
@@ -68,3 +69,5 @@ public:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::DeviceInterface *)

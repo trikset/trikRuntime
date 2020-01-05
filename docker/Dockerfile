@@ -9,7 +9,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++ gdb python3-dev \
+		    wget curl rsync sshpass openssh-client build-essential g++-8 gdb python3-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
@@ -20,6 +20,8 @@ RUN apt-get update \
                 dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
 #for PythonQt
                 realpath \
+#set gcc/g++ version 8 as default
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8 \
 #Cleanup after installation
     && apt-get purge -y software-properties-common \
     && apt-get autoremove -y \
@@ -36,7 +38,7 @@ RUN apt-get update \
 RUN git clone https://github.com/libusb/libusb && cd libusb && git checkout v1.0.22 && ./autogen.sh --enable-udev --disable-examples-build --disable-tests-build --disable-static && make install && cd .. && rm -rf libusb && echo pkg-config libusb-1.0 is v$(pkg-config --modversion libusb-1.0)
 
 ENV QTDIR "/Qt"
-ENV QTBIN "${QTDIR}/5.12.4/gcc_64/bin"
+ENV QTBIN "${QTDIR}/5.12.6/gcc_64/bin"
 COPY qt_scriptinstall.qs /tmp
 COPY install_qt.sh /tmp
 # Split docker image into two main layers, this is the second one

@@ -79,3 +79,5 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::PowerMotor*)

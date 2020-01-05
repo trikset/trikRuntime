@@ -47,7 +47,7 @@ bool TrikFifo::open()
 
 	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
 
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+	connect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikFifo::readFile);
 	mSocketNotifier->setEnabled(true);
 
 	QLOG_INFO() << "Opened FIFO file" << mFileName;
@@ -56,27 +56,26 @@ bool TrikFifo::open()
 
 void TrikFifo::readFile()
 {
-	char data[4000] = {0};
-
+	QVector<uint8_t> bytes(4000);
 	mSocketNotifier->setEnabled(false);
-
-	if (::read(mFileDescriptor, &data, 4000) < 0) {
+	auto bytesRead = ::read(mFileDescriptor, bytes.data(), static_cast<size_t>(bytes.size()));
+	if (bytesRead < 0) {
 		QLOG_ERROR() << "FIFO read failed: " << strerror(errno) << "in" << mFileName;
 		emit readError();
 		mSocketNotifier->setEnabled(true);
 		return;
 	}
-
-	mBuffer += data;
-
+	bytes.resize(bytesRead);
+	emit newData(bytes);
+	mBuffer += QByteArray(reinterpret_cast<char*>(bytes.data()), bytes.size());
 	if (mBuffer.contains("\n")) {
 		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
 
 		mBuffer = lines.last();
 		lines.removeLast();
 
-		for (const QString &line : lines) {
-			emit newData(line);
+		for (auto &&line : lines) {
+			emit newLine(line);
 		}
 	}
 

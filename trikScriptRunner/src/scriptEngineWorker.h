@@ -146,11 +146,6 @@ private:
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * engine) const;
 
-	/// Collects all methods names from given metaObject.
-	/// If the returnType of given method name is registered in metaobject system,
-	/// newMetaObject is constructed and procedure is called recursively for it.
-	void collectMethodNames(QSet<QString> &result, const QMetaObject *obj) const;
-
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;

@@ -115,9 +115,14 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 	ASSERT_EQ(errCode, 0);
 }
 
-TEST_F(TrikJsRunnerTest, sanityCheckJs1)
+TEST_F(TrikJsRunnerTest, brickInterfaceAccess)
 {
 	auto errCode = run("1 + 1", "_.js");
+	ASSERT_EQ(errCode, 0);
+	const auto &knownMethodNames = scriptRunner().knownMethodNames();
+	ASSERT_TRUE(knownMethodNames.contains("brick"));
+	ASSERT_TRUE(knownMethodNames.contains("setPower"));
+	errCode = run("brick.sensor(A1).read()", "_.js");
 	ASSERT_EQ(errCode, 0);
 }
 

@@ -1,83 +1,89 @@
+# Copyright 2019 CyberTech Labs Ltd. & Andrei Khodko
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
-# Python imports are intelligent, so we can import every time we call a method
+import types
+from enum import IntEnum
 
+script = types.SimpleNamespace()
+script.random = script_cpp.random
+script.wait = script_cpp.wait
+script.time = script_cpp.time
+script.timer = script_cpp.timer
+script.system = script_cpp.system
+script.writeToFile = script_cpp.writeToFile
+script.writeData = script_cpp.writeData
+script.readAll = script_cpp.readAll
+script.removeFile = script_cpp.removeFile
+script.run = script_cpp.run
+script.quit = script_cpp.quit
+script.reset = script_cpp.reset
 
-class script(object):
-    def __init__(self):
-        from PythonQt import QtCore
-        self.files = {}
-        self.waitTimer = QtCore.QTimer()
-        self.waitTimer.setSingleShot(True)
-        # quitTimer is used to quit AFTER all events n the loop were processed
-        # but it is fine even without it
-        self.quitTimer = QtCore.QTimer()
-        self.quitTimer.setSingleShot(True)
-        self.quitTimer.setInterval(0)
-        self.waitLoop = QtCore.QEventLoop()
-        self.quitTimer.connect("timeout()", self.waitLoop.quit)
-        self.waitTimer.connect("timeout()", self.quitTimer.start)
-        self.interruptionFlag = False
+class KeysEnum(IntEnum):
+    Left = 105
+    Up = 103
+    Down = 108
+    Enter = 28
+    Right = 106
+    Power = 116
+    Esc = 1
 
-    def __del__(self):
-        for filename in self.files:
-            self._flushAndClose(self.files[filename])
+class Events(IntEnum):
+    Sync = 0
+    Key = 1
+    Relative = 2
+    Absolute = 3
+    Misc = 4
 
-    @staticmethod
-    def _flushAndClose(userfile):
-        # https://docs.python.org/2.7/library/os.html#os.fsync
-        userfile.flush()
-        os.fsync(userfile.fileno())
-        userfile.close()
+class MouseEventCodes(IntEnum):
+    X = 0
+    Y = 1
+    Wheel = 8
 
-    @staticmethod
-    def random(a, b):
-        # https://docs.python.org/2.7/library/random.html#random.randint
-        import random
-        return random.randint(a, b)
+    LeftBtn = 272
+    RightBtn = 273
+    MiddleBtn = 274
 
-    def readAll(self, filename):
-        if filename in self.files:
-            userfile = self.files[filename]
-            userfile.seek(0)
-            return userfile.read()
-        else:
-            with open(filename) as userfile:
-                return userfile.read()
+class PadEventCodes(IntEnum):
+    BtnA = 304
+    BtnB = 305
+    BtnC = 306
+    BtnX = 307
+    BtnY = 308
+    BtnZ = 309
 
-    def removeFile(self, filename):
-        if filename in self.files:
-            self._flushAndClose(self.files.pop(filename))
-        os.remove(filename)
+    BtnTL = 310
+    BtnTR = 311
+    BtnTL2 = 312
+    BtnTR2 = 313
+    BtnSelect = 314
+    BtnStart = 315
 
-    @staticmethod
-    def system(cmnd):
-        import shlex
-        import subprocess
-        subprocess.Popen(shlex.split(cmnd))
+    X = 0
+    Y = 1
+    Z = 2
+    Rx = 3
+    Ry = 4
+    Rz = 5
 
-    @staticmethod
-    def time():
-        import time
-        return time.time() * 1000
+    Throttle = 6
+    Rudder = 7
+    Wheel = 8
+    Gas = 9
+    Break = 10
 
-    def wait(self, ms):
-          #waitTimer object is per instance and we have script's instance per thread
-          #same about waitLoop
-          self.waitTimer.setInterval(ms)
-          self.waitTimer.start()
-          self.waitLoop.exec()
-          # This event loop is required to process events from other threads (i.e., script stopping/abortion or messaging)
-          # Also, by no obvious reason, to be processed in the main thread the exception should be thrown after the loop.
-          if self.interruptionFlag:
-              self.interruptionFlag = False
-              raise ValueError()
-
-    def writeToFile(self, filename, text):
-        if filename not in self.files:
-            self.files[filename] = open(filename, 'w+')
-        self.files[filename].write(text)
-
-    def kill(self):
-        self.interruptionFlag = True
-
-script = script()  # singleton
+    Hat0X = 16
+    Hat0Y = 17
+    Hat1X = 18
+    Hat1Y = 19

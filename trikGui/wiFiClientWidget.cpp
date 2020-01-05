@@ -22,14 +22,8 @@
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QAbstractSocket>
 #include <QtGui/QKeyEvent>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QScrollBar>
-	#include <QtGui/QMessageBox>
-#else
-	#include <QtWidgets/QScrollBar>
-	#include <QtWidgets/QMessageBox>
-#endif
+#include <QtWidgets/QScrollBar>
+#include <QtWidgets/QMessageBox>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -47,11 +41,11 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	, mWiFi(trikWiFi)
 	, mConnectionState(ConnectionState::notConnected)
 {
-	connect(&mWiFi, SIGNAL(scanFinished()), this, SLOT(onNetworksInfoUpdated()));
-	connect(&mWiFi, SIGNAL(connected()), this, SLOT(onConnected()));
+	connect(&mWiFi, &TrikWiFi::scanFinished, this, &WiFiClientWidget::onNetworksInfoUpdated);
+	connect(&mWiFi, &TrikWiFi::connected, this, &WiFiClientWidget::onConnected);
 	connect(&mWiFi, &TrikWiFi::disconnected, this, &WiFiClientWidget::onDisconnected);
-	connect(&mWiFi, SIGNAL(statusReady()), this, SLOT(onStatusUpdated()));
-	connect(&mWiFi, SIGNAL(error(const QString &)), this, SLOT(onError(const QString &)));
+	connect(&mWiFi, &TrikWiFi::statusReady, this, &WiFiClientWidget::onStatusUpdated);
+	connect(&mWiFi, &TrikWiFi::error, this, &WiFiClientWidget::onError);
 
 	mConnectionIconLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -86,7 +80,7 @@ WiFiClientWidget::WiFiClientWidget(TrikWiFi &trikWiFi, QWidget *parent)
 	mConnectionTimeoutTimer.setInterval(connectionTimeout);
 	mConnectionTimeoutTimer.setSingleShot(true);
 
-	connect(&mConnectionTimeoutTimer, SIGNAL(timeout()), this, SLOT(onConnectionTimeout()));
+	connect(&mConnectionTimeoutTimer, &QTimer::timeout, this, &WiFiClientWidget::onConnectionTimeout);
 
 	mWiFi.statusRequest();
 	mWiFi.scanRequest();
