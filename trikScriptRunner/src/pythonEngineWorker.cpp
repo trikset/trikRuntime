@@ -122,7 +122,7 @@ void PythonEngineWorker::init()
 		PythonQtGILScope _;
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::textInStdOut);
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
 	}
@@ -187,10 +187,6 @@ void PythonEngineWorker::brickBeep()
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
 }
 
-void PythonEngineWorker::sendStdOutMessage(const QString &text)
-{
-	emit sendMessage(QString("print: %1").arg(text));
-}
 
 void PythonEngineWorker::stopScript()
 {
@@ -244,7 +240,7 @@ void PythonEngineWorker::run(const QString &script)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
+	QMetaObject::invokeMethod(this, [this, script](){doRun(script);});
 }
 
 void PythonEngineWorker::doRun(const QString &script)

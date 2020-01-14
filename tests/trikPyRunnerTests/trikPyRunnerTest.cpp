@@ -22,7 +22,6 @@
 #include <testUtils/wait.h>
 #include <QTimer>
 
-
 using namespace tests;
 constexpr auto EXIT_TIMEOUT = -93;
 constexpr auto EXIT_SCRIPT_ERROR = 113;
@@ -34,8 +33,8 @@ void TrikPyRunnerTest::SetUp()
 				   , "./test-model-config.xml", "./media/"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::PYTHON);
-	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::sendMessage,
-					 &*mScriptRunner, [this](const QString &m) { mStdOut += m + "\n"; });
+	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
+					 &*mScriptRunner, [this](const QString &m) { mStdOut += m; });
 // TODO:	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
@@ -105,10 +104,9 @@ TEST_F(TrikPyRunnerTest, sanityCheck)
 TEST_F(TrikPyRunnerTest, print)
 {
 	const QString text = "Hello";
-	auto err = runDirectCommandAndWaitForQuit("print('" + text + "')");
+	auto err = runDirectCommandAndWaitForQuit("print('" + text + "', end='')");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	auto const &out = mStdOut.split("print: ", QString::SplitBehavior::SkipEmptyParts)[0].trimmed();
-	ASSERT_TRUE(text == out);
+	ASSERT_TRUE(text == mStdOut);
 }
 
 TEST_F(TrikPyRunnerTest, abortWhileTrue)

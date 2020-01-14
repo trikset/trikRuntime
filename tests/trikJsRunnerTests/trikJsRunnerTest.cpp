@@ -23,10 +23,11 @@
 #include <QTimer>
 
 using namespace tests;
+constexpr auto EXIT_SCRIPT_SUCCESS = EXIT_SUCCESS;
 
 QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 {
-	Q_UNUSED(engine);
+	Q_UNUSED(engine)
 
 	if (context->argumentCount() != 1) {
 		ADD_FAILURE() << "'assert' shall have exactly one argument";
@@ -47,6 +48,8 @@ void TrikJsRunnerTest::SetUp()
 				   , "./test-model-config.xml", "./media/"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->registerUserFunction("assert", scriptAssert);
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
+					 mScriptRunner.data(), [this](const QString &m) { mStdOut += m; });
 }
 
 void TrikJsRunnerTest::TearDown()
@@ -112,24 +115,24 @@ trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
 TEST_F(TrikJsRunnerTest, sanityCheckJs)
 {
 	auto errCode = run("1", "_.js");
-	ASSERT_EQ(errCode, 0);
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
 TEST_F(TrikJsRunnerTest, brickInterfaceAccess)
 {
 	auto errCode = run("1 + 1", "_.js");
-	ASSERT_EQ(errCode, 0);
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 	const auto &knownMethodNames = scriptRunner().knownMethodNames();
 	ASSERT_TRUE(knownMethodNames.contains("brick"));
 	ASSERT_TRUE(knownMethodNames.contains("setPower"));
 	errCode = run("brick.sensor(A1).read()", "_.js");
-	ASSERT_EQ(errCode, 0);
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
 TEST_F(TrikJsRunnerTest, fileTestJs)
 {
 	auto errCode = runFromFile("file-test.js");
-	ASSERT_EQ(errCode, 0);
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
 #ifndef Q_OS_WIN
@@ -181,7 +184,7 @@ TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 	testFile.remove();
 	ASSERT_FALSE(testFile.exists());
 	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
-	ASSERT_EQ(exitCode, 0);
+	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 	ASSERT_TRUE(testFile.exists());
 
 #ifdef Q_OS_WIN
@@ -199,4 +202,12 @@ TEST_F(TrikJsRunnerTest, twoProgramsTest)
 	tests::utils::Wait::wait(100);
 	scriptRunner().run("script.wait(500);");
 	tests::utils::Wait::wait(600);
+}
+
+TEST_F(TrikJsRunnerTest, printTest)
+{
+	const QString text = "Hello";
+	auto err = runDirectCommandAndWaitForQuit("print('" + text + "');script.quit();");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	ASSERT_TRUE(text == mStdOut);
 }

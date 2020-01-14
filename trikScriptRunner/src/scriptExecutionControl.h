@@ -77,7 +77,7 @@ signals:
 	void stopWaiting();
 
 	/// Requests sending a message to a desktop.
-	void sendMessage(const QString &text);
+	void textInStdOut(const QString &text);
 
 private:
 	QList<QTimer *> mTimers; // Has ownership.
