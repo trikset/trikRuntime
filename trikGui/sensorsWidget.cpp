@@ -42,7 +42,6 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 			|| sensorType == SensorsWidget::SensorType::accelerometer
 			|| sensorType == SensorsWidget::SensorType::camera) {
 		AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
-		mIndicators.reserve(1);
 		mIndicators.resize(1);
 
 		if (indicator) {

@@ -16,7 +16,7 @@ class CameraWidget : public AbstractIndicator
 {
 	Q_OBJECT
 public:
-	CameraWidget(trikControl::BrickInterface &brick, QWidget *parent = nullptr);
+	explicit CameraWidget(trikControl::BrickInterface &brick, QWidget *parent = nullptr);
 
 public slots:
 	void renew() override;

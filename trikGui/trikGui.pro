@@ -63,7 +63,7 @@ HEADERS += \
 	$$PWD/accelerometerWidget.h \
 	$$PWD/networkWidget.h \
 	$$PWD/fileSystemFilter.h \
-	cameraWidget.h
+	$$PWD/cameraWidget.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -109,7 +109,7 @@ SOURCES += \
 	$$PWD/accelerometerWidget.cpp \
 	$$PWD/networkWidget.cpp \
 	$$PWD/fileSystemFilter.cpp \
-	cameraWidget.cpp
+	$$PWD/cameraWidget.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \

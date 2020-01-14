@@ -16,7 +16,7 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 
 	setLayout(&mLayout);
 
-	auto photo = mBrick.getStillImage();
+	auto const & photo = mBrick.getStillImage();
 	if (!photo.isEmpty()) {
 		mPixmap.setPixmap(QPixmap::fromImage(QImage(photo.data(), 320, 240, QImage::Format_RGB888)));
 	} else {
