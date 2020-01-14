@@ -103,22 +103,23 @@ TEST_F(TrikPyRunnerTest, sanityCheck)
 
 TEST_F(TrikPyRunnerTest, print)
 {
-	const QString text = "Hello";
-	auto err = runDirectCommandAndWaitForQuit("print('" + text + "', end='')");
+	auto text = "Hello";
+	auto err = runDirectCommandAndWaitForQuit(QString("print('") + text + "', end='')");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	ASSERT_TRUE(text == mStdOut);
+	ASSERT_EQ(text, mStdOut.toStdString());
 }
 
 TEST_F(TrikPyRunnerTest, abortWhileTrue)
 {
 	QTimer t;
-	t.setInterval(200);
+	t.setInterval(1000);
 	t.setSingleShot(true);
 	using trikScriptRunner::TrikScriptRunnerInterface;
 	QObject::connect(&scriptRunner(), &TrikScriptRunnerInterface::startedScript
 					 , &t, QOverload<>::of(&QTimer::start));
 	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
 	auto err = run("print('before')\nwhile True: pass\nprint('after')");
+	ASSERT_EQ(mStdOut.toStdString(), "before\n");
 	ASSERT_NE(err, EXIT_TIMEOUT);
 	t.stop();
 }
