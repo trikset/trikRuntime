@@ -19,11 +19,7 @@
 
 #include <QtGui/QKeyEvent>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QApplication>
-#endif
+#include <QtWidgets/QApplication>
 
 #include <trikControl/motorInterface.h>
 
@@ -192,8 +188,8 @@ void StartWidget::launch()
 			result = versionWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
-			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
-					, this, SLOT(changeFileManagerRoot(MainWidget::FileManagerRootType const&)));
+			connect(&systemSettingsWidget, &SystemSettingsWidget::currentFilesDirPath
+					, this, &StartWidget::changeFileManagerRoot);
 
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();

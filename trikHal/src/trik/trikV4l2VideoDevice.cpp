@@ -268,7 +268,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 			loop.quit();
 		}, Qt::QueuedConnection);
 
-	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()),Qt::QueuedConnection);
+	connect(this, &TrikV4l2VideoDevice::dataReady, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 	watchdog.start();
 
 	initMMAP();
@@ -354,7 +354,7 @@ void TrikV4l2VideoDevice::startCapturing()
 
 	QLOG_INFO() << "V4l2 camera: start capturing";
 	mNotifier = new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this);
-	connect(mNotifier, SIGNAL(activated(int)), this, SLOT(readFrameData(int)), Qt::QueuedConnection);
+	connect(mNotifier, &QSocketNotifier::activated, this, &TrikV4l2VideoDevice::readFrameData);
 }
 
 void TrikV4l2VideoDevice::readFrameData(int fd) {

@@ -46,7 +46,7 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 
 		if (indicator) {
 			mLayout.addWidget(indicator);
-			connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
+			connect(&mTimer, &QTimer::timeout, indicator, &AbstractIndicator::renew);
 			mIndicators[i] = indicator;
 		}
 
@@ -57,7 +57,7 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 			AbstractIndicator *indicator = produceIndicator(port, sensorType);
 			if (indicator) {
 				mLayout.addWidget(indicator);
-				connect(&mTimer, SIGNAL(timeout()), indicator, SLOT(renew()));
+				connect(&mTimer, &QTimer::timeout, indicator, &AbstractIndicator::renew);
 				mIndicators[i] = indicator;
 				++i;
 			}
