@@ -354,7 +354,7 @@ void TrikV4l2VideoDevice::startCapturing()
 
 	QLOG_INFO() << "V4l2 camera: start capturing";
 	mNotifier = new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this);
-	connect(mNotifier, &QSocketNotifier::activated, this, &TrikV4l2VideoDevice::readFrameData);
+	connect(mNotifier, &QSocketNotifier::activated, this, &TrikV4l2VideoDevice::readFrameData, Qt::QueuedConnection);
 }
 
 void TrikV4l2VideoDevice::readFrameData(int fd) {
