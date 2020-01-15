@@ -34,7 +34,7 @@
 // convertion funtions
 namespace {
 
-	inline unsigned char clip255(unsigned x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
+	inline unsigned char clip255(int x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
 
 	QVector<uint8_t> yuyvToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuyv (yuv422) convertion to rgb888
