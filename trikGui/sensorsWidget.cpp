@@ -51,7 +51,7 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 		}
 
 	} else {
-		mIndicators.reserve(ports.size());
+		mIndicators.resize(ports.size());
 
 		for (const QString &port : ports) {
 			AbstractIndicator *indicator = produceIndicator(port, sensorType);

@@ -26,13 +26,12 @@ class BrickInterface;
 
 namespace trikGui {
 
-// Widget that demonstrates availabilty of the camera and photo from it
+/// Widget that demonstrates availabilty of the camera and photo from it
 class CameraWidget : public AbstractIndicator
 {
 	Q_OBJECT
 public:
-
-	// Constructor for Camera Widget in testing menu
+	/// Constructor for Camera Widget in testing menu
 	explicit CameraWidget(trikControl::BrickInterface &brick, QWidget *parent = nullptr);
 
 public slots:
