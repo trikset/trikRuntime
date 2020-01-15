@@ -48,6 +48,7 @@ public:
 		, encoder
 		, gyroscope
 		, accelerometer
+		, camera
 	};
 
 	/// Constructor.

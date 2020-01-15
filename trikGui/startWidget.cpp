@@ -19,11 +19,7 @@
 
 #include <QtGui/QKeyEvent>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QApplication>
-#endif
+#include <QtWidgets/QApplication>
 
 #include <trikControl/motorInterface.h>
 
@@ -79,6 +75,8 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	testingItem->appendRow(new QStandardItem(tr("Gyroscope")));
 
 	testingItem->appendRow(new QStandardItem(tr("Accelerometer")));
+
+	testingItem->appendRow(new QStandardItem(tr("Camera")));
 
 	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
 	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
@@ -171,6 +169,11 @@ void StartWidget::launch()
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("Camera")) {
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::camera);
+			emit newWidget(sensorsWidget);
+
+			result = sensorsWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
 			if (mController.mailbox()) {
 				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
@@ -185,8 +188,8 @@ void StartWidget::launch()
 			result = versionWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
-			connect(&systemSettingsWidget, SIGNAL(currentFilesDirPath(MainWidget::FileManagerRootType const&))
-					, this, SLOT(changeFileManagerRoot(MainWidget::FileManagerRootType const&)));
+			connect(&systemSettingsWidget, &SystemSettingsWidget::currentFilesDirPath
+					, this, &StartWidget::changeFileManagerRoot);
 
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
