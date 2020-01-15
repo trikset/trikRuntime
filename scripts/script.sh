@@ -39,4 +39,4 @@ $EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ;
 &&  make -k -j2 \
 && cd bin/x86-$CONFIG && ls "
 
-exec scripts/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests trikPyRunnerTests
+exec timeout -k 10s 100s scripts/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests trikPyRunnerTests
