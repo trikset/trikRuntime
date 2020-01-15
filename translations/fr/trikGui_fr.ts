@@ -28,7 +28,7 @@
 <context>
     <name>trikGui::CameraWidget</name>
     <message>
-        <location filename="../../trikGui/cameraWidget.cpp" line="+9"/>
+        <location filename="../../trikGui/cameraWidget.cpp" line="+23"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,7 +392,7 @@
 <context>
     <name>trikGui::StartWidget</name>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="+51"/>
+        <location filename="../../trikGui/startWidget.cpp" line="+47"/>
         <source>TRIK</source>
         <translation type="unfinished"></translation>
     </message>
