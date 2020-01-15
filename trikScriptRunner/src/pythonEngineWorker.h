@@ -17,6 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QMutex>
+#include <QFileInfo>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -85,7 +86,7 @@ public slots:
 	/// by calling reset() first.
 	/// @param script - QtScript code to evaluate
 	/// Can be safely called from other threads.
-	void run(const QString &script);
+	void run(const QString &script, const QFileInfo &scriptFile = QFileInfo());
 
 	/// Runs a command in a `current` context. Permits to run a script line by line.
 	/// The command will be executed asynchronously.
@@ -117,7 +118,7 @@ private slots:
 	bool initTrik();
 
 	/// Actually runs given script. Is to be called from a thread owning PythonEngineWorker.
-	void doRun(const QString &script);
+	void doRun(const QString &script, const QFileInfo &scriptFile);
 
 	/// Actually runs given command. Is to be called from a thread owning PythonEngineWorker.
 	void doRunDirect(const QString &command);

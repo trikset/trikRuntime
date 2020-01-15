@@ -15,7 +15,6 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QDir>
-#include <QFileInfo>
 #include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
@@ -241,14 +240,14 @@ QStringList PythonEngineWorker::knownNames() const
 	return result.toList();
 }
 
-void PythonEngineWorker::run(const QString &script)
+void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
+	QMetaObject::invokeMethod(this, [this, script, scriptFile](){this->doRun(script, scriptFile);});
 }
 
-void PythonEngineWorker::doRun(const QString &script)
+void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
 {
 	emit startedScript("", 0);
 	mErrorMessage.clear();
@@ -261,10 +260,8 @@ void PythonEngineWorker::doRun(const QString &script)
 		return;
 	}
 
-	if (script.endsWith(".py")) {
-		QFileInfo scriptInfo = QFileInfo(script);
-		auto const & pathToScript = scriptInfo.dir();
-		mMainContext.evalScript("import sys; sys.append(" + pathToScript.path() + ")");
+	if (scriptFile.isFile()) {
+		mMainContext.evalScript("import sys; sys.append(" + scriptFile.dir().path() + ")");
 	}
 	mMainContext.evalScript(script);
 
