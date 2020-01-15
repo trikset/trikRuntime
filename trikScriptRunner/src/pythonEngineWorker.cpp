@@ -14,7 +14,6 @@
 
 #include <QProcess>
 #include <QsLog.h>
-#include <QDir>
 #include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
@@ -261,7 +260,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	}
 
 	if (scriptFile.isFile()) {
-		mMainContext.evalScript("import sys; sys.append(" + scriptFile.dir().path() + ")");
+		mMainContext.evalScript("import sys; sys.path.append('" + scriptFile.canonicalPath() + "')");
 	}
 	mMainContext.evalScript(script);
 
