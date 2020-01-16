@@ -34,6 +34,21 @@
 
 using namespace trikScriptRunner;
 
+QScriptValue include(QScriptContext *context, QScriptEngine *engine)
+{
+	const auto & filepath = trikKernel::Paths::userScriptsPath() + context->argument(0).toString();
+
+	const auto & scriptValue = engine->globalObject().property("scriptEngineWorker");
+	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *> (scriptValue.toQObject())) {
+		auto connection = (QThread::currentThread() != engine->thread()) ?
+					Qt::BlockingQueuedConnection : Qt::DirectConnection;
+		QMetaObject::invokeMethod(scriptWorkerValue, [scriptWorkerValue, filepath, engine]()
+					{scriptWorkerValue->evalExternalFile(filepath, engine);}, connection);
+	}
+
+	return QScriptValue();
+}
+
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
 	QString result;
@@ -179,6 +194,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);
 	registerUserFunction("getPhoto", getPhoto);
+	registerUserFunction("include", include);
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -327,7 +343,7 @@ void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngin
 			QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message << filepath;
 		}
 	} else {
-		emit completed(tr("File for include doesn't exists"), mScriptId);
+		emit completed(tr("File for include %1 doesn't exists").arg(filepath), mScriptId);
 		QLOG_ERROR() << "File for eval not found, path:" << filepath;
 	}
 }
@@ -371,6 +387,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+	engine->globalObject().setProperty("scriptEngineWorker", engine->newQObject(this));
 
 	if (mMailbox) {
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));

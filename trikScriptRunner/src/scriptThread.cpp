@@ -40,16 +40,16 @@ void ScriptThread::run()
 {
 	QLOG_INFO() << "Started thread" << this;
 
-
 	qsrand(QDateTime::currentMSecsSinceEpoch());
 
-	mEngine->evaluate(mScript, mFilename);
+	mEngine->evaluate(mScript);
 
 	if (mEngine->hasUncaughtException()) {
 		const auto line = mEngine->uncaughtExceptionLineNumber();
+		const auto & message = mEngine->uncaughtException().toString();
 		const auto & backtrace = mEngine->uncaughtExceptionBacktrace().join("\n");
-		mError = tr("Line %1: %2").arg(QString::number(line), backtrace);
-		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << backtrace;
+		mError = tr("Line %1: %2\nBacktrace: %3").arg(QString::number(line), message, backtrace);
+		QLOG_ERROR() << "Uncaught exception with next backtrace" << backtrace;
 	} else if (mThreading.inEventDrivenMode()) {
 		QEventLoop loop;
 		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::QueuedConnection);

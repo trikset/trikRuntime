@@ -117,6 +117,8 @@ public slots:
 	/// Can be safely called from other threads.
 	void brickBeep();
 
+	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
+
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
@@ -145,8 +147,6 @@ private:
 
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * engine);
-
-	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
