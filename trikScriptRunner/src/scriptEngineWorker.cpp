@@ -69,11 +69,11 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 		result.append(prettyPrinter(argument.toVariant()));
 	}
 
-	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
-	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
-	if (script) {
-		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
+
+	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
+		auto msg = QString("%1").arg(result);
+		QMetaObject::invokeMethod(script, [script, msg](){script->textInStdOut(msg);});
 	}
 
 	return engine->toScriptValue(result);
@@ -171,9 +171,10 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mScriptId(0)
 	, mState(ready)
 {
-	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
-	connect(this, SIGNAL(getVariables(QString)), &mThreading, SIGNAL(getVariables(QString)));
-	connect(&mThreading, SIGNAL(variablesReady(QJsonObject)), this, SIGNAL(variablesReady(QJsonObject)));
+	connect(&mScriptControl, &ScriptExecutionControl::quitSignal,
+		this, &ScriptEngineWorker::onScriptRequestingToQuit);
+	connect(this, &ScriptEngineWorker::getVariables, &mThreading, &Threading::getVariables);
+	connect(&mThreading, &Threading::variablesReady, this,&ScriptEngineWorker::variablesReady);
 
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);

@@ -26,6 +26,19 @@
     </message>
 </context>
 <context>
+    <name>trikGui::CameraWidget</name>
+    <message>
+        <location filename="../../trikGui/cameraWidget.cpp" line="+23"/>
+        <source>Camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Camera is not available</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>trikGui::CommandSettingsWidget</name>
     <message>
         <location filename="../../trikGui/commandSettingsWidget.cpp" line="+29"/>
@@ -167,7 +180,7 @@
 <context>
     <name>trikGui::Controller</name>
     <message>
-        <location filename="../../trikGui/controller.cpp" line="+194"/>
+        <location filename="../../trikGui/controller.cpp" line="+199"/>
         <source>direct command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -379,42 +392,48 @@
 <context>
     <name>trikGui::StartWidget</name>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="+51"/>
+        <location filename="../../trikGui/startWidget.cpp" line="+47"/>
         <source>TRIK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+73"/>
+        <location line="+75"/>
         <source>Analog sensors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-68"/>
-        <location line="+75"/>
+        <location line="-70"/>
+        <location line="+77"/>
         <source>Digital sensors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-73"/>
-        <location line="+80"/>
+        <location line="-75"/>
+        <location line="+82"/>
         <source>Encoders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-78"/>
-        <location line="+85"/>
+        <location line="-80"/>
+        <location line="+87"/>
         <source>Gyroscope</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-83"/>
-        <location line="+88"/>
+        <location line="-85"/>
+        <location line="+90"/>
         <source>Accelerometer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-114"/>
+        <location line="-88"/>
+        <location line="+93"/>
+        <source>Camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-121"/>
         <source>Testing</source>
         <translation type="unfinished"></translation>
     </message>

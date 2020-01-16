@@ -34,7 +34,7 @@
 // convertion funtions
 namespace {
 
-	inline unsigned char clip255(unsigned x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
+	inline unsigned char clip255(int x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
 
 	QVector<uint8_t> yuyvToRgb(const QVector<uint8_t> &shot, int height, int width) {
 		// yuyv (yuv422) convertion to rgb888
@@ -268,7 +268,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 			loop.quit();
 		}, Qt::QueuedConnection);
 
-	connect(this, SIGNAL(dataReady()), &loop, SLOT(quit()),Qt::QueuedConnection);
+	connect(this, &TrikV4l2VideoDevice::dataReady, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 	watchdog.start();
 
 	initMMAP();
@@ -286,6 +286,8 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	if (mFrame.size() / 4 * 2 != IMAGE_HEIGHT * IMAGE_WIDTH) {
 		QLOG_ERROR() << "V4l2: unexpected size of getted image, expect " << IMAGE_HEIGHT * IMAGE_WIDTH
 				<< "bytes, got " << mFrame.size() / 4 * 2 << " bytes";
+		mFrame = QVector<uint8_t>();
+		return mFrame;
 	}
 
 	mFrame = mConvertFunc(mFrame, IMAGE_HEIGHT, IMAGE_WIDTH);
@@ -352,7 +354,7 @@ void TrikV4l2VideoDevice::startCapturing()
 
 	QLOG_INFO() << "V4l2 camera: start capturing";
 	mNotifier = new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this);
-	connect(mNotifier, SIGNAL(activated(int)), this, SLOT(readFrameData(int)), Qt::QueuedConnection);
+	connect(mNotifier, &QSocketNotifier::activated, this, &TrikV4l2VideoDevice::readFrameData, Qt::QueuedConnection);
 }
 
 void TrikV4l2VideoDevice::readFrameData(int fd) {
