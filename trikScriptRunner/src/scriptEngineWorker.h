@@ -117,6 +117,7 @@ public slots:
 	/// Can be safely called from other threads.
 	void brickBeep();
 
+	/// Evaluate external file with filepath in the current state of the engine
 	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
 
 private slots:

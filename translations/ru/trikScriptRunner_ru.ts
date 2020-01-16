@@ -26,8 +26,7 @@
     </message>
     <message>
         <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="+51"/>
-        <source>Line %1: %2
-Backtrace: %3</source>
+        <source>Line %1: %2\nBacktrace: %3</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
