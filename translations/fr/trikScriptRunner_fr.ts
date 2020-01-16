@@ -2,10 +2,24 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="fr_FR">
 <context>
+    <name>trikScriptRunner::ScriptEngineWorker</name>
+    <message>
+        <location filename="../../trikScriptRunner/src/scriptEngineWorker.cpp" line="+342"/>
+        <source>Line %1: %2 in %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>File for include %1 doesn&apos;t exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>trikScriptRunner::ScriptThread</name>
     <message>
-        <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="+50"/>
-        <source>Line %1: %2</source>
+        <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="+51"/>
+        <source>Line %1: %2
+Backtrace: %3</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
