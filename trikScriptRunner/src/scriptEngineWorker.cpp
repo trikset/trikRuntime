@@ -316,6 +316,22 @@ void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 	emit startedScript(mScriptId);
 }
 
+void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngine * const engine)
+{
+	if (QFileInfo::exists(filepath)) {
+		engine->evaluate(trikKernel::FileUtils::readFromFile(filepath), filepath);
+		if (engine->hasUncaughtException()) {
+			const auto line = engine->uncaughtExceptionLineNumber();
+			const auto & message = engine->uncaughtException().toString();
+			emit completed(tr("Line %1: %2 in %3").arg(QString::number(line), message, filepath), mScriptId);
+			QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message << filepath;
+		}
+	} else {
+		emit completed(tr("File for include doesn't exists"), mScriptId);
+		QLOG_ERROR() << "File for eval not found, path:" << filepath;
+	}
+}
+
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	if (!mScriptControl.isInEventDrivenMode()) {
@@ -405,19 +421,10 @@ void ScriptEngineWorker::addCustomEngineInitStep(const std::function<void (QScri
 	mCustomInitSteps.append(step);
 }
 
-void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
+void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine)
 {
 	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
-	if (QFileInfo::exists(systemJsPath)) {
-		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
-		if (engine->hasUncaughtException()) {
-			const int line = engine->uncaughtExceptionLineNumber();
-			const QString message = engine->uncaughtException().toString();
-			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
-		}
-	} else {
-		QLOG_ERROR() << "system.js not found, path:" << systemJsPath;
-	}
+	evalExternalFile(systemJsPath, engine);
 
 	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
 		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);

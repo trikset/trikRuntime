@@ -144,7 +144,9 @@ private:
 	void startScriptEvaluation(int scriptId);
 
 	/// Evaluates "system.js" file in given engine.
-	void evalSystemJs(QScriptEngine * engine) const;
+	void evalSystemJs(QScriptEngine * engine);
+
+	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
