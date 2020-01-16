@@ -52,9 +52,9 @@ TrikPythonRunner::~TrikPythonRunner()
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
 {
-	Q_UNUSED(fileName)
+	QFileInfo scriptFile = QFileInfo(fileName);
 	mScriptEngineWorker->stopScript();
-	mScriptEngineWorker->run(script);
+	mScriptEngineWorker->run(script, scriptFile);
 }
 
 void TrikPythonRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
