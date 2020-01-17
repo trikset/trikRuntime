@@ -117,6 +117,10 @@ if (!String.prototype.format) {
     };
 }
 
+getPhoto = function(port = "/dev/video0") {
+    script.getPhoto();
+}
+
 script.repeat = function(mscs, f) {
     var timer = script.timer(mscs);
     timer.timeout.connect(f);

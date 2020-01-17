@@ -72,7 +72,7 @@ void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScript
 
 void TrikPythonRunner::brickBeep()
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
+	QMetaObject::invokeMethod(mScriptEngineWorker, [this](){mScriptEngineWorker->brickBeep();});
 }
 
 void TrikPythonRunner::runDirectCommand(const QString &command)
