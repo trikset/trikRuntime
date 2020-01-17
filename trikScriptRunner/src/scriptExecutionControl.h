@@ -38,7 +38,7 @@ public:
 	bool isInEventDrivenMode() const;
 
 	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image
-	QList<int32_t> getPhoto();
+	Q_INVOKABLE QVector<int32_t> getPhoto();
 
 	/// Starts a new timer with given interval and returns reference to it.
 	Q_INVOKABLE QTimer *timer(int milliseconds);

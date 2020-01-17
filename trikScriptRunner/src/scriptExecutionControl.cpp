@@ -154,11 +154,11 @@ static inline int32_t getMedian(uint8_t &a, uint8_t &b, uint8_t &c, uint8_t &d)
 	return (static_cast<int32_t>(b) + c) >> 1;
 }
 
-QList<int32_t> ScriptExecutionControl::getPhoto()
+QVector<int32_t> ScriptExecutionControl::getPhoto()
 {
 	QLOG_INFO() << "Calling getStillImage()";
 	auto data = mBrick.getStillImage();
-	QList<int32_t> result;
+	QVector<int32_t> result;
 	result.reserve(data.size() / 3); //Repack RGB88 from 3 x uint8_t into int32_t
 	constexpr auto IMAGE_WIDTH = 320;
 	constexpr auto IMAGE_HEIGHT = 240;
