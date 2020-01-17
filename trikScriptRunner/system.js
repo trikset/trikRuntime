@@ -133,5 +133,3 @@ brick.smile = function() {
 brick.sadSmile = function() {
     brick.display().showImage('media/trik_smile_sad.png');
 }
-
-include = function(f) {eval(script.readAll(f).join(" "))}

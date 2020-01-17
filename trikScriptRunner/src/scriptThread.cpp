@@ -45,10 +45,11 @@ void ScriptThread::run()
 	mEngine->evaluate(mScript);
 
 	if (mEngine->hasUncaughtException()) {
-		const int line = mEngine->uncaughtExceptionLineNumber();
-		const QString message = mEngine->uncaughtException().toString();
-		mError = tr("Line %1: %2").arg(QString::number(line), message);
-		QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message;
+		const auto line = mEngine->uncaughtExceptionLineNumber();
+		const auto & message = mEngine->uncaughtException().toString();
+		const auto & backtrace = mEngine->uncaughtExceptionBacktrace().join("\n");
+		mError = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
+		QLOG_ERROR() << "Uncaught exception with next backtrace" << backtrace;
 	} else if (mThreading.inEventDrivenMode()) {
 		QEventLoop loop;
 		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::QueuedConnection);
