@@ -29,7 +29,7 @@ class ScriptExecutionControl : public QObject
 public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
-	ScriptExecutionControl(trikControl::BrickInterface &brick);
+	explicit ScriptExecutionControl(trikControl::BrickInterface &brick);
 
 	~ScriptExecutionControl() override;
 
