@@ -27,13 +27,17 @@ class ScriptExecutionControl : public QObject
 	Q_OBJECT
 
 public:
+	/// Constructor.
+	/// @param brick - reference to trikControl::Brick instance.
 	ScriptExecutionControl(trikControl::BrickInterface &brick);
+
 	~ScriptExecutionControl() override;
 
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
 	bool isInEventDrivenMode() const;
 
+	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image
 	QList<int32_t> getPhoto();
 
 	/// Starts a new timer with given interval and returns reference to it.
