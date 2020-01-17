@@ -118,6 +118,7 @@ if (!String.prototype.format) {
 }
 
 /* global script */
+/* global script */
 var getPhoto = script.getPhoto();
 
 script.repeat = function(mscs, f) {
