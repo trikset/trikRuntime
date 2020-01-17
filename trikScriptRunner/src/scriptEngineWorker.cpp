@@ -34,11 +34,13 @@
 
 using namespace trikScriptRunner;
 
+constexpr auto scriptEngineWorkerName = "__scriptEngineWorker";
+
 QScriptValue include(QScriptContext *context, QScriptEngine *engine)
 {
 	const auto & filepath = trikKernel::Paths::userScriptsPath() + context->argument(0).toString();
 
-	const auto & scriptValue = engine->globalObject().property("scriptEngineWorker");
+	const auto & scriptValue = engine->globalObject().property(scriptEngineWorkerName);
 	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *> (scriptValue.toQObject())) {
 		auto connection = (QThread::currentThread() != engine->thread()) ?
 					Qt::BlockingQueuedConnection : Qt::DirectConnection;
@@ -339,11 +341,13 @@ void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngin
 		if (engine->hasUncaughtException()) {
 			const auto line = engine->uncaughtExceptionLineNumber();
 			const auto & message = engine->uncaughtException().toString();
-			emit completed(tr("Line %1: %2 in %3").arg(QString::number(line), message, filepath), mScriptId);
-			QLOG_ERROR() << "Uncaught exception at line" << line << ":" << message << filepath;
+			const auto & backtrace = engine->uncaughtExceptionBacktrace().join("\n");
+			const auto & error = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
+			emit completed(error, mScriptId);
+			QLOG_ERROR() << "Uncaught exception with error" << error;
 		}
 	} else {
-		emit completed(tr("File for include %1 doesn't exists").arg(filepath), mScriptId);
+		emit completed(tr("File %1 not found").arg(filepath), mScriptId);
 		QLOG_ERROR() << "File for eval not found, path:" << filepath;
 	}
 }
@@ -387,7 +391,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
-	engine->globalObject().setProperty("scriptEngineWorker", engine->newQObject(this));
+	engine->globalObject().setProperty(scriptEngineWorkerName, engine->newQObject(this));
 
 	if (mMailbox) {
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));

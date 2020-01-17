@@ -4,13 +4,13 @@
 <context>
     <name>trikScriptRunner::ScriptEngineWorker</name>
     <message>
-        <location filename="../../trikScriptRunner/src/scriptEngineWorker.cpp" line="+342"/>
-        <source>Line %1: %2 in %3</source>
+        <location filename="../../trikScriptRunner/src/scriptEngineWorker.cpp" line="+345"/>
+        <source>Line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>File for include %1 doesn&apos;t exists</source>
+        <location line="+5"/>
+        <source>File %1 not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -18,7 +18,7 @@
     <name>trikScriptRunner::ScriptThread</name>
     <message>
         <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="+51"/>
-        <source>Line %1: %2\nBacktrace: %3</source>
+        <source>Line %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
