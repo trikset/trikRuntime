@@ -34,6 +34,23 @@
 
 using namespace trikScriptRunner;
 
+constexpr auto scriptEngineWorkerName = "__scriptEngineWorker";
+
+QScriptValue include(QScriptContext *context, QScriptEngine *engine)
+{
+	const auto & filepath = trikKernel::Paths::userScriptsPath() + context->argument(0).toString();
+
+	const auto & scriptValue = engine->globalObject().property(scriptEngineWorkerName);
+	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *> (scriptValue.toQObject())) {
+		auto connection = (QThread::currentThread() != engine->thread()) ?
+					Qt::BlockingQueuedConnection : Qt::DirectConnection;
+		QMetaObject::invokeMethod(scriptWorkerValue, [scriptWorkerValue, filepath, engine]()
+					{scriptWorkerValue->evalExternalFile(filepath, engine);}, connection);
+	}
+
+	return QScriptValue();
+}
+
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
 	QString result;
@@ -179,6 +196,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);
 	registerUserFunction("getPhoto", getPhoto);
+	registerUserFunction("include", include);
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -316,6 +334,24 @@ void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 	emit startedScript(mScriptId);
 }
 
+void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngine * const engine)
+{
+	if (QFileInfo::exists(filepath)) {
+		engine->evaluate(trikKernel::FileUtils::readFromFile(filepath), filepath);
+		if (engine->hasUncaughtException()) {
+			const auto line = engine->uncaughtExceptionLineNumber();
+			const auto & message = engine->uncaughtException().toString();
+			const auto & backtrace = engine->uncaughtExceptionBacktrace().join("\n");
+			const auto & error = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
+			emit completed(error, mScriptId);
+			QLOG_ERROR() << "Uncaught exception with error" << error;
+		}
+	} else {
+		emit completed(tr("File %1 not found").arg(filepath), mScriptId);
+		QLOG_ERROR() << "File for eval not found, path:" << filepath;
+	}
+}
+
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
 	if (!mScriptControl.isInEventDrivenMode()) {
@@ -355,6 +391,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+	engine->globalObject().setProperty(scriptEngineWorkerName, engine->newQObject(this));
 
 	if (mMailbox) {
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
@@ -405,19 +442,10 @@ void ScriptEngineWorker::addCustomEngineInitStep(const std::function<void (QScri
 	mCustomInitSteps.append(step);
 }
 
-void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
+void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine)
 {
 	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
-	if (QFileInfo::exists(systemJsPath)) {
-		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
-		if (engine->hasUncaughtException()) {
-			const int line = engine->uncaughtExceptionLineNumber();
-			const QString message = engine->uncaughtException().toString();
-			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
-		}
-	} else {
-		QLOG_ERROR() << "system.js not found, path:" << systemJsPath;
-	}
+	evalExternalFile(systemJsPath, engine);
 
 	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
 		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);

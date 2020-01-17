@@ -224,7 +224,7 @@
     <name>trikGui::FileManagerWidget</name>
     <message>
         <source>Delete all</source>
-        <translation type="vanished">Удалить всё</translation>
+        <translation type="obsolete">Удалить всё</translation>
     </message>
     <message>
         <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
@@ -404,12 +404,12 @@
  чтобы выйти</translation>
     </message>
     <message>
-        <location filename="../../trikGui/runningWidget.cpp" line="+53"/>
+        <location filename="../../trikGui/runningWidget.cpp" line="+54"/>
         <source>Running </source>
         <translation>Выполняется </translation>
     </message>
     <message>
-        <location line="-22"/>
+        <location line="-23"/>
         <source>Press Power to abort</source>
         <translation>Нажмите кнопку Питание для выхода</translation>
     </message>

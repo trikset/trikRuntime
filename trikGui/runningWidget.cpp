@@ -43,7 +43,8 @@ void RunningWidget::showError(const QString &error, int scriptId)
 	}
 
 	mStatusLabel.setAlignment(Qt::AlignLeft);
-	mStatusLabel.setText(QString("<font color='red'>%1</font>").arg(error));
+	mStatusLabel.setStyleSheet("QLabel { color : red; }");
+	mStatusLabel.setText(error);
 	update();
 }
 
