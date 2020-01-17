@@ -15,6 +15,7 @@
 import os
 import types
 
+/* global script_cpp */
 script = types.SimpleNamespace()
 script.random = script_cpp.random
 script.wait = script_cpp.wait
