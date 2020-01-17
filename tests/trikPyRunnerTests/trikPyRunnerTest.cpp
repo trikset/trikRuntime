@@ -170,8 +170,8 @@ TEST_F(TrikPyRunnerTest, scriptExecutionControl)
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }
 
-TEST_F(TrikPyRunnerTest, DISABLED_globalFunction)
+TEST_F(TrikPyRunnerTest, globalFunction)
 {
-	auto exitCode = run("print(len(getPhoto()))");
+	auto exitCode = run("script.getPhoto()");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }

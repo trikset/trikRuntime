@@ -28,6 +28,7 @@ script.removeFile = script_cpp.removeFile
 script.run = script_cpp.run
 script.quit = script_cpp.quit
 script.reset = script_cpp.reset
+script.getPhoto = script_cpp.getPhoto
 
 class KeysEnum():
     Left = 105
