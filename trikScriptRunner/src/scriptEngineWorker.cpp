@@ -199,7 +199,7 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
+	QMetaObject::invokeMethod(this, std::bind(&ScriptEngineWorker::doRun, this, script));
 }
 
 void ScriptEngineWorker::doRun(const QString &script)
@@ -224,7 +224,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		stopScript();
 	}
 
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command), Q_ARG(int, scriptId));
+	QMetaObject::invokeMethod(this, std::bind(&ScriptEngineWorker::doRunDirect, this, command, scriptId));
 }
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
@@ -242,11 +242,11 @@ void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 		/// If script was stopped by quit(), engine will already be reset to nullptr in ScriptEngineWorker::stopScript.
 		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
-			emit completed(mDirectScriptsEngine->hasUncaughtException()
-					? mDirectScriptsEngine->uncaughtException().toString()
-					: "", mScriptId);
+			emit completed(mDirectScriptsEngine->uncaughtException().toString(), mScriptId);
 			mDirectScriptsEngine->deleteLater();
 			mDirectScriptsEngine = nullptr;
+		} else {
+			emit completed("", mScriptId);
 		}
 	}
 }
