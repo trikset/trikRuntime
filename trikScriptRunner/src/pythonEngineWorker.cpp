@@ -46,7 +46,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		)
 	: mBrick(brick)
-	, mScriptExecutionControl(new ScriptExecutionControl())
+	, mScriptExecutionControl(new ScriptExecutionControl(brick))
 	, mMailbox(mailbox)
 	, mState(ready)
 {}

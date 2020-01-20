@@ -162,38 +162,39 @@ TEST_F(TrikJsRunnerTest, directCommandTest)
 	QFile testFile("test");
 	testFile.remove();
 	ASSERT_FALSE(testFile.exists());
-	scriptRunner().runDirectCommand("script.system('echo 123 > test', true);");
-	tests::utils::Wait::wait(300);
+	runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true);");
 	ASSERT_TRUE(testFile.exists());
 
+	runDirectCommandAndWaitForQuit("script.system('"
 #ifdef Q_OS_WIN
-	scriptRunner().runDirectCommand("script.system('DEL test', true);");
+"DEL"
 #else
-	scriptRunner().runDirectCommand("script.system('rm test', true);");
+"rm"
 #endif
-
-	tests::utils::Wait::wait(300);
+	" test', true);");
 	ASSERT_FALSE(testFile.exists());
-	scriptRunner().runDirectCommand("script.quit();");
+	runDirectCommandAndWaitForQuit("script.quit();");
 	tests::utils::Wait::wait(300);
 }
 
 TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 {
-	QFile testFile("test");
-	testFile.remove();
-	ASSERT_FALSE(testFile.exists());
-	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > test', true); script.quit();");
+	auto testFileName = "test" + QString::number(qrand(), 16);
+	::remove(testFileName.toStdString().c_str());
+	ASSERT_FALSE(QFileInfo::exists(testFileName));
+	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > "
+												   + testFileName + "', true); script.quit();");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
-	ASSERT_TRUE(testFile.exists());
-
+	ASSERT_TRUE(QFileInfo::exists(testFileName));
+	tests::utils::Wait::wait(300);
+	runDirectCommandAndWaitForQuit("script.system('"
 #ifdef Q_OS_WIN
-	runDirectCommandAndWaitForQuit("script.system('DEL test', true); script.quit();");
+	"DEL"
 #else
-	runDirectCommandAndWaitForQuit("script.system('rm test', true); script.quit();");
+	"rm"
 #endif
-
-	ASSERT_FALSE(testFile.exists());
+	" " + testFileName + "', true); script.quit();");
+	ASSERT_FALSE(QFileInfo::exists(testFileName));
 }
 
 TEST_F(TrikJsRunnerTest, twoProgramsTest)
