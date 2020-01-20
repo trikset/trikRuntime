@@ -19,11 +19,11 @@ include(../../global.pri)
 clang:QMAKE_CXXFLAGS += -Wno-error=undef -Wno-error=switch-enum -Wno-error=missing-prototypes \
 		-Wno-error=shadow -Wno-error=disabled-macro-expansion
 
-INCLUDEPATH += \
-	googletest/googlemock \
-	googletest/googlemock/include \
-	googletest/googletest \
-	googletest/googletest/include \
+QMAKE_CXXFLAGS += \
+	-isystem $$PWD/googletest/googlemock \
+	-isystem $$PWD/googletest/googlemock/include \
+	-isystem $$PWD/googletest/googletest \
+	-isystem $$PWD/googletest/googletest/include \
 
 HEADERS += \
 	$$files(googletest/googletest/src/*.h) \
