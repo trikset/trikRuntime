@@ -22,8 +22,10 @@ QT += widgets
 
 INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \
-	$$PWD/thirdparty/googletest/googlemock/include \
-	$$PWD/thirdparty/googletest/googletest/include \
+
+QMAKE_CXXFLAGS += \
+	-isystem $$PWD/thirdparty/googletest/googlemock/include \
+	-isystem $$PWD/thirdparty/googletest/googletest/include \
 
 LIBS += -L$$DESTDIR
 
@@ -34,14 +36,13 @@ SOURCES = $$PWD/mainTest.cpp
 include(thirdparty/googletest.pri)
 
 CONFIG(clang) {
-	QMAKE_CXXFLAGS += -Wno-unused-local-typedef
+	QMAKE_CXXFLAGS += -Wno-unused-local-typedef -Wno-error=gnu-zero-variadic-macro-arguments
 } else {
-	QMAKE_CXXFLAGS += -Wno-unused-local-typedefs
+	QMAKE_CXXFLAGS += -Wno-unused-local-typedefs -Wno-error=variadic-macros
 }
 
 
 QMAKE_CXXFLAGS += -Wno-error=pedantic
-
 #DEFINES += GTEST_USE_OWN_TR1_TUPLE
 
 
