@@ -3,7 +3,7 @@ TRIK_QT_INSTALL_DIR=${TRIK_QT_INSTALL_DIR:-$HOME/TRIK_Qt}
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 set -ueo pipefail
 D=/tmp/qt-installer.dmg
-test -r "$D" || curl -o "$D" http://master.qt.io/archive/online_installers/3.1/qt-unified-mac-x64-3.1.1-online.dmg
+test -r "$D" || curl -L -o "$D" http://download.qt-project.org/official_releases/online_installers/qt-unified-mac-x64-online.dmg
 P=$(hdiutil attach "$D" -noverify -noautofsck | grep -o '/Volumes/.*$')
 I=$(find "$P" -type f -name '*qt-unified-*' -path '*Contents/MacOS/*' -print)
 env TRIK_QT_INSTALL_DIR="$TRIK_QT_INSTALL_DIR" "$I" --verbose --no-force-installations --show-virtual-components --script "$SCRIPT_DIR/../docker/qt_scriptinstall.qs"
