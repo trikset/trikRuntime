@@ -1,6 +1,6 @@
 # Runtime for TRIK controller.
 
-[![Build Status](https://img.shields.io/travis/trikset/trikRuntime/master.svg?maxAge=3600&style=for-the-badge&logo=linux&logoColor=green)](https://travis-ci.org/trikset/trikRuntime)
+[![Build Status](https://img.shields.io/travis/trikset/trikRuntime/master.svg?maxAge=3600&style=for-the-badge&logo=linux&logoColor=green)](https://travis-ci.com/trikset/trikRuntime)
 [![Build status](https://img.shields.io/appveyor/ci/iakov/trikruntime-cgd5y/master.svg?maxAge=3600&style=for-the-badge&logo=windows&logoColor=green)](https://ci.appveyor.com/project/iakov/trikruntime-cgd5y/branch/master)
 
 [![Join the chat at https://gitter.im/trikset/trikRuntime](https://badges.gitter.im/trikset/trikRuntime.svg)](https://gitter.im/trikset/trikRuntime?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

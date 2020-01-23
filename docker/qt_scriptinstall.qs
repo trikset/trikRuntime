@@ -21,6 +21,15 @@ Controller.prototype.CredentialsPageCallback = function() {
     gui.clickButton(buttons.NextButton, 500);
 }
 
+Controller.prototype.ObligationsPageCallback = function()
+{
+  console.log("Obligations page");
+  var page = gui.pageWidgetByObjectName("ObligationsPage");
+  page.obligationsAgreement.setChecked(true);
+  page.completeChanged();
+  gui.clickButton(buttons.NextButton);
+}
+
 Controller.prototype.IntroductionPageCallback = function() {
   console.log("Introduction page");
   gui.clickButton(buttons.NextButton);
@@ -60,17 +69,17 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
   var qtVersionId = "qt.qt5.5126."
   widget.selectComponent(qtVersionId + targetPlatform);
   widget.selectComponent(qtVersionId + "qtscript");
-  widget.selectComponent("qt.tools.ifw.31");
+  widget.selectComponent("qt.tools.ifw.32");
 
   installer.calculateComponentsToInstall();
 
+  var examplesId = qtVersionId + "examples";
+  var docId = qtVersionId + "doc";
 
   var components = installer.components();
   for (var i = 0 ; i < components.length ;i++) {
     var c = components[i];
     var n = c.name;
-    var examplesId = qtVersionId + "examples";
-    var docId = qtVersionId + "doc";
     if (n.startsWith(examplesId) || n.startsWith(docId)) {
       widget.deselectComponent(n);
       print("Deselecting:" +  n);

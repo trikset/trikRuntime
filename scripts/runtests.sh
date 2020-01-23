@@ -13,8 +13,7 @@ for t in "$@"
     "cd  $BUILDDIR/bin/x86-$CONFIG && \
      { \
        errCode=0 ; \
-       ulimit -c unlimited ; \
-       if [ $TRAVIS_OS_NAME = linux ] ; then echo core > /proc/sys/kernel/core_pattern ; echo 0 > /proc/sys/kernel/core_uses_pid; fi ; \
+       if [ $TRAVIS_OS_NAME = linux ] ; then ulimit -c unlimited ; echo core > /proc/sys/kernel/core_pattern ; echo 0 > /proc/sys/kernel/core_uses_pid; fi ; \
        ./$t -platform minimal || errCode=\$? ; \
        [ $TRAVIS_OS_NAME = linux -a -e core ] && gdb ./$t core -ex 'thread apply all bt' -ex 'quit'  || true ; \
        rm -f core* ; \

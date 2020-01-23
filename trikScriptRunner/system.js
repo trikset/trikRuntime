@@ -117,6 +117,9 @@ if (!String.prototype.format) {
     };
 }
 
+/* global script */
+var getPhoto = script.getPhoto;
+
 script.repeat = function(mscs, f) {
     var timer = script.timer(mscs);
     timer.timeout.connect(f);
@@ -129,5 +132,3 @@ brick.smile = function() {
 brick.sadSmile = function() {
     brick.display().showImage('media/trik_smile_sad.png');
 }
-
-include = function(f) {eval(script.readAll(f).join(" "))}

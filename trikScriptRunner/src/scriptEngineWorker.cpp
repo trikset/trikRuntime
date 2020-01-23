@@ -34,6 +34,23 @@
 
 using namespace trikScriptRunner;
 
+constexpr auto scriptEngineWorkerName = "__scriptEngineWorker";
+
+QScriptValue include(QScriptContext *context, QScriptEngine *engine)
+{
+	const auto & filepath = trikKernel::Paths::userScriptsPath() + context->argument(0).toString();
+
+	const auto & scriptValue = engine->globalObject().property(scriptEngineWorkerName);
+	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *> (scriptValue.toQObject())) {
+		auto connection = (QThread::currentThread() != engine->thread()) ?
+					Qt::BlockingQueuedConnection : Qt::DirectConnection;
+		QMetaObject::invokeMethod(scriptWorkerValue, [scriptWorkerValue, filepath, engine]()
+					{scriptWorkerValue->evalExternalFile(filepath, engine);}, connection);
+	}
+
+	return QScriptValue();
+}
+
 QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 {
 	QString result;
@@ -69,11 +86,11 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 		result.append(prettyPrinter(argument.toVariant()));
 	}
 
-	QTextStream(stdout) << result << "\n";
 	auto scriptValue = engine->globalObject().property("script");
-	auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject());
-	if (script) {
-		QMetaObject::invokeMethod(script, "sendMessage", Q_ARG(QString, QString("print: %1").arg(result)));
+
+	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
+		auto msg = QString("%1").arg(result);
+		QMetaObject::invokeMethod(script, [script, msg](){script->textInStdOut(msg);});
 	}
 
 	return engine->toScriptValue(result);
@@ -83,80 +100,6 @@ QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 {
 	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInt32(), context->argument(1).toInt32());
 	return engine->toScriptValue(result);
-}
-
-static inline int32_t getMedian(uint8_t &a, uint8_t &b, uint8_t &c, uint8_t &d)
-{
-	if (a > b)
-		std::swap(a, b);
-	if (c > d)
-		std::swap(c, d);
-	if (a > c)
-		std::swap(a, c);
-	if (b > d)
-		std::swap(b, d);
-	return (static_cast<int32_t>(b) + c) >> 1;
-}
-
-QScriptValue getPhoto(QScriptContext *context,	QScriptEngine *engine)
-{
-	const QScriptValue & brickValue = engine->globalObject().property("brick");
-	QObject *qObjBrick = brickValue.toQObject();
-	if (qObjBrick)
-	{
-		auto *brick = qobject_cast<trikControl::BrickInterface*>(qObjBrick);
-		if (brick)
-		{
-			auto port = context->argumentCount() > 0 ? context->argument(0).toString()
-				: QString("/dev/video0");
-			QLOG_INFO() << "Calling getStillImage()";
-			auto data = brick->getStillImage();
-			QList<int32_t> result;
-			result.reserve(data.size() / 3); //Repack RGB88 from 3 x uint8_t into int32_t
-			constexpr auto IMAGE_WIDTH = 320;
-			constexpr auto IMAGE_HEIGHT = 240;
-			if (data.size() >= IMAGE_WIDTH * IMAGE_HEIGHT * 3) {
-				for(int row = 0; row < IMAGE_HEIGHT; row += 2) {
-					for(int col = 0; col < IMAGE_WIDTH; col+=2) {
-						auto row1 = &data[(row*IMAGE_WIDTH+col)*3];
-						auto row2 = row1 + IMAGE_WIDTH*3;
-						auto r1 = row1[0];
-						auto g1 = row1[1];
-						auto b1 = row1[2];
-						auto r2 = row1[3];
-						auto g2 = row1[4];
-						auto b2 = row1[5];
-						auto r3 = row2[0];
-						auto g3 = row2[1];
-						auto b3 = row2[2];
-						auto r4 = row2[3];
-						auto g4 = row2[4];
-						auto b4 = row2[5];
-
-						result.push_back((getMedian(r1, r2, r3, r4) << 16)
-							| (getMedian(g1, g2, g3, g4) << 8)
-							| getMedian(b1, b2, b3, b4));
-					}
-				}
-			}
-
-			QLOG_INFO() << "Constructed result of getStillImage()";
-			auto val = engine->toScriptValue(result);
-			QLOG_INFO() << "Result of getStillImage() converted to JS value";
-			return val;
-		}
-		else
-		{
-			QLOG_ERROR() << "script getPhoto failed at downcasting qObject to Brick";
-			return QScriptValue();
-		}
-	}
-	else
-	{
-		QLOG_ERROR() << "script getPhoto failed to get brick Obj";
-		return QScriptValue();
-	}
-
 }
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
@@ -171,13 +114,14 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mScriptId(0)
 	, mState(ready)
 {
-	connect(&mScriptControl, SIGNAL(quitSignal()), this, SLOT(onScriptRequestingToQuit()));
-	connect(this, SIGNAL(getVariables(QString)), &mThreading, SIGNAL(getVariables(QString)));
-	connect(&mThreading, SIGNAL(variablesReady(QJsonObject)), this, SIGNAL(variablesReady(QJsonObject)));
+	connect(&mScriptControl, &ScriptExecutionControl::quitSignal,
+		this, &ScriptEngineWorker::onScriptRequestingToQuit);
+	connect(this, &ScriptEngineWorker::getVariables, &mThreading, &Threading::getVariables);
+	connect(&mThreading, &Threading::variablesReady, this,&ScriptEngineWorker::variablesReady);
 
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);
-	registerUserFunction("getPhoto", getPhoto);
+	registerUserFunction("include", include);
 }
 
 void ScriptEngineWorker::brickBeep()
@@ -255,7 +199,7 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
+	QMetaObject::invokeMethod(this, std::bind(&ScriptEngineWorker::doRun, this, script));
 }
 
 void ScriptEngineWorker::doRun(const QString &script)
@@ -280,7 +224,7 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 		stopScript();
 	}
 
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command), Q_ARG(int, scriptId));
+	QMetaObject::invokeMethod(this, std::bind(&ScriptEngineWorker::doRunDirect, this, command, scriptId));
 }
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
@@ -298,11 +242,11 @@ void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 		/// If script was stopped by quit(), engine will already be reset to nullptr in ScriptEngineWorker::stopScript.
 		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
-			emit completed(mDirectScriptsEngine->hasUncaughtException()
-					? mDirectScriptsEngine->uncaughtException().toString()
-					: "", mScriptId);
+			emit completed(mDirectScriptsEngine->uncaughtException().toString(), mScriptId);
 			mDirectScriptsEngine->deleteLater();
 			mDirectScriptsEngine = nullptr;
+		} else {
+			emit completed("", mScriptId);
 		}
 	}
 }
@@ -313,6 +257,24 @@ void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 	mState = starting;
 	mScriptId = scriptId;
 	emit startedScript(mScriptId);
+}
+
+void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngine * const engine)
+{
+	if (QFileInfo::exists(filepath)) {
+		engine->evaluate(trikKernel::FileUtils::readFromFile(filepath), filepath);
+		if (engine->hasUncaughtException()) {
+			const auto line = engine->uncaughtExceptionLineNumber();
+			const auto & message = engine->uncaughtException().toString();
+			const auto & backtrace = engine->uncaughtExceptionBacktrace().join("\n");
+			const auto & error = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
+			emit completed(error, mScriptId);
+			QLOG_ERROR() << "Uncaught exception with error" << error;
+		}
+	} else {
+		emit completed(tr("File %1 not found").arg(filepath), mScriptId);
+		QLOG_ERROR() << "File for eval not found, path:" << filepath;
+	}
 }
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
@@ -354,6 +316,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
 	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+	engine->globalObject().setProperty(scriptEngineWorkerName, engine->newQObject(this));
 
 	if (mMailbox) {
 		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
@@ -404,19 +367,10 @@ void ScriptEngineWorker::addCustomEngineInitStep(const std::function<void (QScri
 	mCustomInitSteps.append(step);
 }
 
-void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine) const
+void ScriptEngineWorker::evalSystemJs(QScriptEngine * const engine)
 {
 	const QString systemJsPath = trikKernel::Paths::systemScriptsPath() + "system.js";
-	if (QFileInfo::exists(systemJsPath)) {
-		engine->evaluate(trikKernel::FileUtils::readFromFile(systemJsPath));
-		if (engine->hasUncaughtException()) {
-			const int line = engine->uncaughtExceptionLineNumber();
-			const QString message = engine->uncaughtException().toString();
-			QLOG_ERROR() << "system.js: Uncaught exception at line" << line << ":" << message;
-		}
-	} else {
-		QLOG_ERROR() << "system.js not found, path:" << systemJsPath;
-	}
+	evalExternalFile(systemJsPath, engine);
 
 	for (const auto &functionName : mRegisteredUserFunctions.keys()) {
 		QScriptValue functionValue = engine->newFunction(mRegisteredUserFunctions[functionName]);

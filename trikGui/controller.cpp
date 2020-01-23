@@ -78,6 +78,11 @@ Controller::Controller(const QString &configPath)
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
 			, this, &Controller::scriptExecutionCompleted);
 
+	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::textInStdOut
+		, mScriptRunner.data(), [](const QString &m){
+		QTextStream(stdout) << m;
+	});
+
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedScript
 			, this, &Controller::scriptExecutionFromFileStarted);
 

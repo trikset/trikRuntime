@@ -40,7 +40,16 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	: brick(brick), mailbox(mailbox), mLastRunner(ScriptType::JAVASCRIPT)
 {
 		REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
+	if (mailbox) {
+			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
+				emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
+									 .arg(senderNumber)
+									 .arg(message)
+									 );
+			});
+	}
 }
+
 
 TrikScriptRunner::~TrikScriptRunner()
 {
@@ -106,7 +115,7 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 		connect(&*cell, &TrikScriptRunnerInterface::startedScript, this, &TrikScriptRunnerInterface::startedScript);
 		connect(&*cell, &TrikScriptRunnerInterface::startedDirectScript
 				, this, &TrikScriptRunnerInterface::startedDirectScript);
-		connect(&*cell, &TrikScriptRunnerInterface::sendMessage, this, &TrikScriptRunnerInterface::sendMessage);
+		connect(&*cell, &TrikScriptRunnerInterface::textInStdOut, this, &TrikScriptRunnerInterface::textInStdOut);
 	}
 
 	setDefaultRunner(stype);

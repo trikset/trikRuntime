@@ -172,7 +172,7 @@ signals:
 	void startedDirectScript(int scriptId);
 
 	/// Emitted when a message must be sent to a desktop.
-	void sendMessage(const QString &text);
+	void textInStdOut(const QString &text);
 };
 
 }

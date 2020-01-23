@@ -17,6 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QMutex>
+#include <QFileInfo>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -76,7 +77,7 @@ signals:
 	void inited();
 
 	/// Some message to send, for example, from stdout
-	void sendMessage(const QString&);
+	void textInStdOut(const QString&);
 
 public slots:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
@@ -85,7 +86,7 @@ public slots:
 	/// by calling reset() first.
 	/// @param script - QtScript code to evaluate
 	/// Can be safely called from other threads.
-	void run(const QString &script);
+	void run(const QString &script, const QFileInfo &scriptFile = QFileInfo());
 
 	/// Runs a command in a `current` context. Permits to run a script line by line.
 	/// The command will be executed asynchronously.
@@ -106,9 +107,6 @@ public slots:
 	/// Can be safely called from other threads.
 	void brickBeep();
 
-	/// Sends message to listeners
-	void sendStdOutMessage(const QString &text);
-
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
@@ -117,7 +115,7 @@ private slots:
 	bool initTrik();
 
 	/// Actually runs given script. Is to be called from a thread owning PythonEngineWorker.
-	void doRun(const QString &script);
+	void doRun(const QString &script, const QFileInfo &scriptFile);
 
 	/// Actually runs given command. Is to be called from a thread owning PythonEngineWorker.
 	void doRunDirect(const QString &command);

@@ -14,7 +14,6 @@
 
 #include <QProcess>
 #include <QsLog.h>
-#include <QFileInfo>
 #include <QVector>
 
 #include <trikNetwork/mailboxInterface.h>
@@ -47,7 +46,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		)
 	: mBrick(brick)
-	, mScriptExecutionControl(new ScriptExecutionControl())
+	, mScriptExecutionControl(new ScriptExecutionControl(brick))
 	, mMailbox(mailbox)
 	, mState(ready)
 {}
@@ -122,7 +121,7 @@ void PythonEngineWorker::init()
 		PythonQtGILScope _;
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::sendStdOutMessage);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::textInStdOut);
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
 	}
@@ -187,10 +186,6 @@ void PythonEngineWorker::brickBeep()
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
 }
 
-void PythonEngineWorker::sendStdOutMessage(const QString &text)
-{
-	emit sendMessage(QString("print: %1").arg(text));
-}
 
 void PythonEngineWorker::stopScript()
 {
@@ -240,14 +235,14 @@ QStringList PythonEngineWorker::knownNames() const
 	return result.toList();
 }
 
-void PythonEngineWorker::run(const QString &script)
+void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
-	QMetaObject::invokeMethod(this, "doRun", Q_ARG(QString, script));
+	QMetaObject::invokeMethod(this, [this, script, scriptFile](){this->doRun(script, scriptFile);});
 }
 
-void PythonEngineWorker::doRun(const QString &script)
+void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
 {
 	emit startedScript("", 0);
 	mErrorMessage.clear();
@@ -260,6 +255,9 @@ void PythonEngineWorker::doRun(const QString &script)
 		return;
 	}
 
+	if (scriptFile.isFile()) {
+		mMainContext.evalScript("import sys; sys.path.append('" + scriptFile.canonicalPath() + "')");
+	}
 	mMainContext.evalScript(script);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";

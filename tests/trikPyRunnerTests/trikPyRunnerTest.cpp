@@ -22,7 +22,6 @@
 #include <testUtils/wait.h>
 #include <QTimer>
 
-
 using namespace tests;
 constexpr auto EXIT_TIMEOUT = -93;
 constexpr auto EXIT_SCRIPT_ERROR = 113;
@@ -34,8 +33,8 @@ void TrikPyRunnerTest::SetUp()
 				   , "./test-model-config.xml", "./media/"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::PYTHON);
-	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::sendMessage,
-					 &*mScriptRunner, [this](const QString &m) { mStdOut += m + "\n"; });
+	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
+					 &*mScriptRunner, [this](const QString &m) { mStdOut += m; });
 // TODO:	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
@@ -104,23 +103,23 @@ TEST_F(TrikPyRunnerTest, sanityCheck)
 
 TEST_F(TrikPyRunnerTest, print)
 {
-	const QString text = "Hello";
-	auto err = runDirectCommandAndWaitForQuit("print('" + text + "')");
+	auto text = "Hello";
+	auto err = runDirectCommandAndWaitForQuit(QString("print('") + text + "', end='')");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	auto const &out = mStdOut.split("print: ", QString::SplitBehavior::SkipEmptyParts)[0].trimmed();
-	ASSERT_TRUE(text == out);
+	ASSERT_EQ(text, mStdOut.toStdString());
 }
 
 TEST_F(TrikPyRunnerTest, abortWhileTrue)
 {
 	QTimer t;
-	t.setInterval(200);
+	t.setInterval(1000);
 	t.setSingleShot(true);
 	using trikScriptRunner::TrikScriptRunnerInterface;
 	QObject::connect(&scriptRunner(), &TrikScriptRunnerInterface::startedScript
 					 , &t, QOverload<>::of(&QTimer::start));
 	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
 	auto err = run("print('before')\nwhile True: pass\nprint('after')");
+	ASSERT_EQ(mStdOut.toStdString(), "before\n");
 	ASSERT_NE(err, EXIT_TIMEOUT);
 	t.stop();
 }
@@ -168,5 +167,11 @@ TEST_F(TrikPyRunnerTest, DISABLED_fileTestPy)
 TEST_F(TrikPyRunnerTest, scriptExecutionControl)
 {
 	auto exitCode = run("a = script.timer(1000)");
+	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
+}
+
+TEST_F(TrikPyRunnerTest, globalFunction)
+{
+	auto exitCode = run("script.getPhoto()");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }
