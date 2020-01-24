@@ -256,7 +256,9 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	}
 
 	if (scriptFile.isFile()) {
-		mMainContext.evalScript("import sys; sys.path.append('" + scriptFile.canonicalPath() + "')");
+		mMainContext.evalScript("import sys; sys.path.append('" + scriptFile.canonicalPath() + "') if "
+					"not '" + scriptFile.canonicalPath() +
+					"' in sys.path else sys.path");
 	}
 	mMainContext.evalScript(script);
 
