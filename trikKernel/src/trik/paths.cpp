@@ -49,7 +49,10 @@ QString Paths::path(const Resource &resource)
 		defaultPath = "/usr/share/trikRuntime/translations/";
 		break;
 	case Resource::userScripts:
-		defaultPath = "/home/root/scripts/";
+		defaultPath = "/home/root/trik/scripts/";
+		break;
+	case Resource::images:
+		defaultPath = "/home/root/trik/images/";
 		break;
 	}
 
@@ -59,6 +62,8 @@ QString Paths::path(const Resource &resource)
 			return currentPath + "scripts/";
 		} else if (resource == Resource::translations) {
 			return currentPath + "translations/";
+		} else if (resource == Resource::images) {
+			return currentPath + "images/";
 		} else {
 			return currentPath;
 		}
@@ -115,4 +120,9 @@ QString Paths::localSettings()
 QString Paths::hostnameName()
 {
 	return "/etc/hostname";
+}
+
+QString Paths::imagesPath()
+{
+	return path(Resource::images);
 }
