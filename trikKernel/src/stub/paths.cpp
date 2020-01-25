@@ -28,6 +28,8 @@ QString Paths::path(const Resource &resource)
 		return currentPath + "scripts/";
 	} else if (resource == Resource::translations) {
 		return currentPath + "translations/";
+	} else if (resource == Resource::images) {
+		return currentPath + "images/";
 	} else {
 		return currentPath;
 	}
@@ -81,4 +83,9 @@ QString Paths::localSettings()
 QString Paths::hostnameName()
 {
 	return path(Resource::configs) + "stubHostname";
+}
+
+QString Paths::imagesPath()
+{
+	return path(Resource::images);
 }

@@ -56,6 +56,9 @@ public:
 	/// Name (with path) of hostname file.
 	static QString hostnameName();
 
+	/// Path to images obtained from the camera.
+	static QString imagesPath();
+
 private:
 	enum class Resource {
 		configs
@@ -66,6 +69,7 @@ private:
 		, coreDump
 		, userScripts
 		, systemScripts
+		, images
 	};
 
 	static QString path(const Resource &resource);
