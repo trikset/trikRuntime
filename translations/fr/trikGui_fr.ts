@@ -28,12 +28,12 @@
 <context>
     <name>trikGui::CameraWidget</name>
     <message>
-        <location filename="../../trikGui/cameraWidget.cpp" line="+23"/>
+        <location filename="../../trikGui/cameraWidget.cpp" line="+27"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+32"/>
         <source>Camera is not available</source>
         <translation type="unfinished"></translation>
     </message>
