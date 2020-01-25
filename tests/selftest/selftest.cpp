@@ -37,7 +37,7 @@ TEST(selftest, brickCheck)
 	// RAII-style code to ensure that after brick gets destroyed there will be an event loop that cleans it up.
 	trikKernel::DeinitializationHelper helper;
 	Q_UNUSED(helper);
-	QScopedPointer<BrickInterface> brick(BrickFactory::create("./system-config.xml"
+	QScopedPointer<BrickInterface> brick(BrickFactory::create("./selftest-system-config.xml"
 			, "./selftest-model-config.xml", "./"));
 
 	// Give devices some time to initialize.
@@ -195,7 +195,7 @@ TEST(selftest, brickCheck)
 
 TEST(selftest, mailboxCheck)
 {
-	trikKernel::Configurer configurer("./system-config.xml", "./selftest-model-config.xml");
+	trikKernel::Configurer configurer("./selftest-system-config.xml", "./selftest-model-config.xml");
 	QScopedPointer<MailboxInterface> mailbox(MailboxFactory::create(configurer));
 	ASSERT_FALSE(mailbox.isNull());
 }

@@ -118,9 +118,6 @@ TRANSLATIONS = \
 RESOURCES = trikGui.qrc
 
 OTHER_FILES += \
-	$$PWD/trikGui.sh \
-
-copyToDestdir($$PWD/trikGui.sh)
 
 implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
 transitiveIncludes(trikNetwork)

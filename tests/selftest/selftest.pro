@@ -22,5 +22,7 @@ links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
 OTHER_FILES += \
 	selftest-model-config.xml \
+	selftest-system-config.xml \
 
 copyToDestdir($$PWD/selftest-model-config.xml)
+copyToDestdir($$PWD/selftest-system-config.xml)
