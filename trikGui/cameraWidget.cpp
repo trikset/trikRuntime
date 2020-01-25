@@ -43,11 +43,8 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 		QDir dir(trikKernel::Paths::imagesPath());
 
 		if (!dir.exists()) {
-			const auto result = dir.mkpath(trikKernel::Paths::imagesPath());
-			if (!result) {
+			if (!dir.mkpath(trikKernel::Paths::imagesPath())) {
 				QLOG_ERROR() << "Can not create directory for images";
-			} else {
-
 			}
 		} else {
 			const auto & name = trikKernel::Paths::imagesPath() + "/photo_" + QString::number(dir.count() - 1) + ".jpg";
