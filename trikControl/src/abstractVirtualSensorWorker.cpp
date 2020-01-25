@@ -126,7 +126,8 @@ void AbstractVirtualSensorWorker::openFifos()
 
 	QLOG_INFO() << "Opening" << mOutputFifo->fileName();
 
-	connect(mOutputFifo.data(), SIGNAL(newData(QString)), this, SLOT(onNewDataInOutputFifo(QString)));
+	connect(mOutputFifo.data(), &trikHal::FifoInterface::newLine
+			, this, &AbstractVirtualSensorWorker::onNewDataInOutputFifo);
 
 	if (!mOutputFifo->open()) {
 		mState.fail();
