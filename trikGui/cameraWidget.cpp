@@ -37,19 +37,17 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 	auto const & photo = mBrick.getStillImage();
 
 	if (!photo.isEmpty()) {
-		const auto & image = QImage(photo.data(), 320, 240, QImage::Format_RGB888);
+		QImage image(photo.data(), 320, 240, QImage::Format_RGB888);
 		mPixmap.setPixmap(QPixmap::fromImage(image));
 
 		QDir dir(trikKernel::Paths::imagesPath());
 
-		if (!dir.exists()) {
-			if (!dir.mkpath(trikKernel::Paths::imagesPath())) {
-				QLOG_ERROR() << "Can not create directory for images";
-			}
+		if (!dir.exists() && !dir.mkpath(trikKernel::Paths::imagesPath())) {
+			QLOG_ERROR() << "Cannot create directory for images";
 		} else {
 			const auto & name = trikKernel::Paths::imagesPath() + "/photo_" + QString::number(dir.count() - 1) + ".jpg";
 			if (!image.save(name, "JPG")) {
-				QLOG_ERROR() << "Failed to save captured image";
+				QLOG_ERROR() << "Failed to save captured image" << name;
 			}
 		}
 	} else {
