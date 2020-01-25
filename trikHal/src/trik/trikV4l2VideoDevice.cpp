@@ -58,8 +58,8 @@ namespace {
 //				resRgb[4] = clip255(y1 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
 //				resRgb[5] = clip255(y1 + 1.772 * (cb - 128)); // blue
 
-				const auto alpha = 180u * (cr - 128) / 128;
-				const auto beta  = 45u * (cb - 128) / 128;
+				const auto alpha = 180 * (cr - 128) / 128;
+				const auto beta  = 45 * (cb - 128) / 128;
 				resRgb[0] = clip255(y0 + alpha); // red
 				resRgb[1] = clip255(y0 - beta - alpha / 2); // green
 				resRgb[2] = clip255(y0 + 5 * beta); // blue
