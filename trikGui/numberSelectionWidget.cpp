@@ -110,7 +110,7 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 	}
 	case Qt::Key_Return: {
 		mEditingMode = !mEditingMode;
-		this->update();
+		update();
 		event->accept();
 		break;
 	}
