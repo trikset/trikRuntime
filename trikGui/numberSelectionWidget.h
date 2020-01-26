@@ -75,7 +75,6 @@ private:
 	QList<DigitSelector *> lineEdits() const;
 
 	QHBoxLayout mLayout;
-	QWidget *mWidget;
 	int mCurrentDigit;
 	int mDigits;
 	bool mEditingMode;

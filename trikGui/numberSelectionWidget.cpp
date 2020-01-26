@@ -25,7 +25,7 @@
 using namespace trikGui;
 
 NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int separator, int height, QWidget *parent)
-	: mWidget(parent)
+	: QWidget(parent)
 	, mCurrentDigit(0)
 	, mDigits(digits)
 	, mEditingMode(false)
@@ -110,7 +110,7 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 	}
 	case Qt::Key_Return: {
 		mEditingMode = !mEditingMode;
-		mWidget->update();
+		this->update();
 		event->accept();
 		break;
 	}
