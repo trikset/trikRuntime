@@ -178,7 +178,7 @@
         <translation>Подключиться</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>Comm settings</source>
         <translation>Взаимодействие</translation>
     </message>
@@ -187,7 +187,7 @@
         <translation type="obsolete">&apos;Enter&apos; для изменения</translation>
     </message>
     <message>
-        <location line="-57"/>
+        <location line="-60"/>
         <source>(Press &apos;Enter&apos; to edit)</source>
         <translation>(&apos;Enter&apos; для изменения)</translation>
     </message>

@@ -40,9 +40,9 @@ NumberSelectionWidget::NumberSelectionWidget(int defaultValue, int digits, int s
 
 		mLayout.addWidget(digitSelector);
 
-		connect(digitSelector, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged()));
-		connect(digitSelector, SIGNAL(upPressed()), this, SIGNAL(upPressed()));
-		connect(digitSelector, SIGNAL(downPressed()), this, SIGNAL(downPressed()));
+		connect(digitSelector, &DigitSelector::valueChanged, this, &NumberSelectionWidget::onValueChanged);
+		connect(digitSelector, &DigitSelector::upPressed, this, &NumberSelectionWidget::upPressed);
+		connect(digitSelector, &DigitSelector::downPressed, this, &NumberSelectionWidget::downPressed);
 
 		if (separator != 0 && separatorCounter % separator == 0 && i != digits - 1) {
 			mLayout.addWidget(new QLabel("."));
@@ -110,6 +110,7 @@ void NumberSelectionWidget::keyPressEvent(QKeyEvent *event)
 	}
 	case Qt::Key_Return: {
 		mEditingMode = !mEditingMode;
+		update();
 		event->accept();
 		break;
 	}
