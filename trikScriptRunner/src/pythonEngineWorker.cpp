@@ -152,11 +152,17 @@ bool PythonEngineWorker::evalSystemPy()
 		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
 		return false;
 	}
-	mMainContext.evalFile(systemPyPath);
+
+	mMainContext.evalScript("script.wait(0)");
 	if (PythonQt::self()->hadError()) {
-		QLOG_ERROR() << "Failed to eval system.py";
-		return false;
+		PythonQt::self()->clearError();
+		mMainContext.evalFile(systemPyPath);
+		if (PythonQt::self()->hadError()) {
+			QLOG_ERROR() << "Failed to eval system.py";
+			return false;
+		}
 	}
+
 	return true;
 }
 
