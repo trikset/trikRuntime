@@ -156,6 +156,7 @@ bool PythonEngineWorker::evalSystemPy()
 	// HACK: to avoid duplicate system.py try to check if basic feature like script.wait works.
 	mMainContext.evalScript("script.wait(0)");
 	if (PythonQt::self()->hadError()) {
+		// HACK: no script.wait means usually a problem with system.py, let's try to include it
 		PythonQt::self()->clearError();
 		mMainContext.evalFile(systemPyPath);
 		if (PythonQt::self()->hadError()) {
