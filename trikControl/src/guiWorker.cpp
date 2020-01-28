@@ -37,6 +37,7 @@ GuiWorker::GuiWorker()
 
 void GuiWorker::init()
 {
+	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 	mImageWidget.reset(new GraphicsWidget());
 	mImageWidget->setWindowState(Qt::WindowFullScreen);
 	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
