@@ -153,6 +153,7 @@ bool PythonEngineWorker::evalSystemPy()
 		return false;
 	}
 
+	// HACK: to avoid duplicate system.py try to check if basic feature like script.wait works.
 	mMainContext.evalScript("script.wait(0)");
 	if (PythonQt::self()->hadError()) {
 		PythonQt::self()->clearError();
