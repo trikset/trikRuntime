@@ -152,11 +152,19 @@ bool PythonEngineWorker::evalSystemPy()
 		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
 		return false;
 	}
-	mMainContext.evalFile(systemPyPath);
+
+	// HACK: to avoid duplicate system.py try to check if basic feature like script.wait works.
+	mMainContext.evalScript("script.wait(0)");
 	if (PythonQt::self()->hadError()) {
-		QLOG_ERROR() << "Failed to eval system.py";
-		return false;
+		// HACK: no script.wait means usually a problem with system.py, let's try to include it
+		PythonQt::self()->clearError();
+		mMainContext.evalFile(systemPyPath);
+		if (PythonQt::self()->hadError()) {
+			QLOG_ERROR() << "Failed to eval system.py";
+			return false;
+		}
 	}
+
 	return true;
 }
 
