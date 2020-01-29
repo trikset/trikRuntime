@@ -46,9 +46,12 @@ void ScriptThread::run()
 
 	if (mEngine->hasUncaughtException()) {
 		const auto line = mEngine->uncaughtExceptionLineNumber();
-		const auto & message = mEngine->uncaughtException().toString();
-		const auto & backtrace = mEngine->uncaughtExceptionBacktrace().join("\n");
-		mError = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
+		const auto &message = mEngine->uncaughtException().toString();
+		const auto &backtrace = mEngine->uncaughtExceptionBacktrace();
+		mError = tr("Line %1: %2").arg(QString::number(line), message);
+		if (!backtrace.isEmpty()) {
+			mError += "\n" + backtrace.join('\n');
+		}
 		QLOG_ERROR() << "Uncaught exception with next backtrace" << backtrace;
 	} else if (mThreading.inEventDrivenMode()) {
 		QEventLoop loop;
