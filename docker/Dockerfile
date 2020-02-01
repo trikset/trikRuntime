@@ -38,7 +38,7 @@ RUN apt-get update \
 RUN git clone https://github.com/libusb/libusb && cd libusb && git checkout v1.0.22 && ./autogen.sh --enable-udev --disable-examples-build --disable-tests-build --disable-static && make install && cd .. && rm -rf libusb && echo pkg-config libusb-1.0 is v$(pkg-config --modversion libusb-1.0)
 
 ENV QTDIR "/Qt"
-ENV QTBIN "${QTDIR}/5.12.6/gcc_64/bin"
+ENV QTBIN "${QTDIR}/5.12.7/gcc_64/bin"
 COPY qt_scriptinstall.qs /tmp
 COPY install_qt.sh /tmp
 # Split docker image into two main layers, this is the second one

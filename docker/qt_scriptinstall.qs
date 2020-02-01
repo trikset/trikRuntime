@@ -66,7 +66,7 @@ Controller.prototype.ComponentSelectionPageCallback = function() {
   var widget = gui.currentPageWidget();
   var targetPlatform = {"darwin":"clang_64", "winnt":"undefined", "linux":"gcc_64"}[systemInfo.kernelType];
   widget.deselectAll();
-  var qtVersionId = "qt.qt5.5126."
+  var qtVersionId = "qt.qt5.5127."
   widget.selectComponent(qtVersionId + targetPlatform);
   widget.selectComponent(qtVersionId + "qtscript");
   widget.selectComponent("qt.tools.ifw.32");
