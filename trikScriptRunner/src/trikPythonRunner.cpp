@@ -30,7 +30,8 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
 	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
-	connect(mScriptEngineWorker, &PythonEngineWorker::textInStdOut, this, &TrikPythonRunner::textInStdOut);
+	connect(mScriptEngineWorker, &PythonEngineWorker::textInStdOut, this, &TrikPythonRunner::textInStdOut
+		, Qt::BlockingQueuedConnection);
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed, this, &TrikPythonRunner::completed);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::startedScript);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
