@@ -89,8 +89,9 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	auto scriptValue = engine->globalObject().property("script");
 
 	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
-		auto msg = QString("%1").arg(result);
-		QMetaObject::invokeMethod(script, [script, msg](){script->textInStdOut(msg);});
+		result.append('\n');
+		QTimer::singleShot(0, script, [script, result](){script->textInStdOut(result);});
+		script->wait(0);
 	}
 
 	return engine->toScriptValue(result);
@@ -162,7 +163,7 @@ void ScriptEngineWorker::stopScript()
 		/// Actually we shall stop script engines here, do mMailbox->stopWaiting(), then stop threads.
 	}
 
-	QMetaObject::invokeMethod(&mThreading, "reset", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(&mThreading, &Threading::reset, Qt::QueuedConnection);
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();
