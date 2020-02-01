@@ -2,7 +2,7 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-    export PATH="$TRIK_QT/5.12.6/clang_64/bin:$PATH"
+    export PATH="$TRIK_QT/5.12.7/clang_64/bin:$PATH"
     export PATH="/usr/local/opt/ccache/libexec:$PATH"
     export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
     EXECUTOR=
