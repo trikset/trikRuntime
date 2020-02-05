@@ -106,7 +106,7 @@ TEST_F(TrikPyRunnerTest, print)
 	auto text = "Hello";
 	auto err = runDirectCommandAndWaitForQuit(QString("print('") + text + "', end='')");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	ASSERT_EQ(text, mStdOut.toStdString());
+	ASSERT_EQ(text, mStdOut.toStdString()) << "Actual output: |" << mStdOut << "|";
 }
 
 TEST_F(TrikPyRunnerTest, abortWhileTrue)
@@ -119,7 +119,7 @@ TEST_F(TrikPyRunnerTest, abortWhileTrue)
 					 , &t, QOverload<>::of(&QTimer::start));
 	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
 	auto err = run("print('before')\nwhile True: pass\nprint('after')");
-	ASSERT_EQ(mStdOut.toStdString(), "before\n");
+	ASSERT_EQ(mStdOut.toStdString(), "before\n")  << "Actual output: |" << mStdOut << "|";
 	ASSERT_NE(err, EXIT_TIMEOUT);
 	t.stop();
 }
