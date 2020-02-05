@@ -48,7 +48,11 @@ GyroscopeIndicator::GyroscopeIndicator(trikControl::GyroSensorInterface &gyrosco
 
 void GyroscopeIndicator::renew()
 {
-	const auto & value = mGyroscope.read();
+	const auto &value = mGyroscope.read();
+
+	if (value.isEmpty()) {
+		return;
+	}
 
 	mX = value[0];
 	mY = value[1];

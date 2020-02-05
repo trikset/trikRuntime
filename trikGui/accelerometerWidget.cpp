@@ -46,7 +46,10 @@ AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface &acc
 
 void AccelerometerWidget::renew()
 {
-	const auto & value = mAccelerometer.read();
+	const auto &value = mAccelerometer.read();
+	if (value.isEmpty()) {
+		return;
+	}
 	mValueX.setText(QString("x: ") + QString::number(value[0]));
 	mValueY.setText(QString("y: ") + QString::number(value[1]));
 	mValueZ.setText(QString("z: ") + QString::number(value[2]));
