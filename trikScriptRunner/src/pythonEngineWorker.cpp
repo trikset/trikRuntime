@@ -121,7 +121,10 @@ void PythonEngineWorker::init()
 		PythonQtGILScope _;
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, &PythonEngineWorker::textInStdOut);
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
+			QTimer::singleShot(0, this, [this, str](){this->textInStdOut(str);});
+			mScriptExecutionControl->wait(0);
+		});
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
 	}
