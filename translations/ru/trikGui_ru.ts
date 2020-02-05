@@ -466,37 +466,37 @@
     </message>
     <message>
         <location line="+4"/>
-        <location line="+75"/>
+        <location line="+77"/>
         <source>Analog sensors</source>
         <translation>Аналоговые датчики</translation>
     </message>
     <message>
-        <location line="-70"/>
-        <location line="+77"/>
+        <location line="-72"/>
+        <location line="+79"/>
         <source>Digital sensors</source>
         <translation>Цифровые датчики</translation>
     </message>
     <message>
-        <location line="-75"/>
-        <location line="+82"/>
+        <location line="-77"/>
+        <location line="+84"/>
         <source>Encoders</source>
         <translation>Энкодеры</translation>
     </message>
     <message>
-        <location line="-80"/>
-        <location line="+87"/>
+        <location line="-82"/>
+        <location line="+89"/>
         <source>Gyroscope</source>
         <translation>Гироскоп</translation>
     </message>
     <message>
-        <location line="-85"/>
-        <location line="+90"/>
+        <location line="-87"/>
+        <location line="+92"/>
         <source>Accelerometer</source>
         <translation>Акселерометр</translation>
     </message>
     <message>
-        <location line="-88"/>
-        <location line="+93"/>
+        <location line="-90"/>
+        <location line="+95"/>
         <source>Camera</source>
         <translation>Камера</translation>
     </message>
