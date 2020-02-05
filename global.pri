@@ -230,6 +230,8 @@ isEmpty(THIS_IS_QS_LOG) {
 
 CONFIG += c++11
 
+DEFINES += QT_FORCE_ASSERTS
+
 QMAKE_CXXFLAGS += -pedantic-errors -Wextra -Werror
 
 !clang: QMAKE_CXXFLAGS += -ansi
