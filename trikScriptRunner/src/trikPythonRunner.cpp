@@ -48,7 +48,7 @@ TrikPythonRunner::~TrikPythonRunner()
 {
 	mScriptEngineWorker->stopScript();
 	mWorkerThread.quit();
-	mWorkerThread.wait(1000);
+	mWorkerThread.wait();
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)

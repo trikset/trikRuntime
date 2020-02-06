@@ -32,7 +32,7 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	, mMaxScriptId(0)
 	, mVariablesServer(new TrikVariablesServer())
 {
-	connect(&mWorkerThread, &QThread::finished, &mWorkerThread, &QThread::deleteLater);
+	//connect(&mWorkerThread, &QThread::finished, &mWorkerThread, &QThread::deleteLater);
 
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
@@ -55,8 +55,8 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 TrikJavaScriptRunner::~TrikJavaScriptRunner()
 {
 	mScriptEngineWorker->stopScript();
-	QMetaObject::invokeMethod(&mWorkerThread, "quit");
-	mWorkerThread.wait(1000);
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
 void TrikJavaScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
