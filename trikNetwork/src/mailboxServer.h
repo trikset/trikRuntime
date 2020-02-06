@@ -39,7 +39,7 @@ class MailboxServer : public TrikServer
 public:
 	/// Constructor.
 	/// @param port - a port for mailbox server.
-	MailboxServer(int port);
+	explicit MailboxServer(quint16 port);
 
 	/// Returns true if at least one opened mailbox connection presents at the moment.
 	bool isConnected();
@@ -63,10 +63,10 @@ public:
 	Q_INVOKABLE void setHullNumber(int hullNumber);
 
 	/// Connects to robot by IP and port.
-	Q_INVOKABLE void connect(const QString &ip, int port);
+	Q_INVOKABLE void connectTo(const QString &ip, int port);
 
 	/// Connects to robot by IP and uses port of local mailbox server as a port on remote robot.
-	Q_INVOKABLE void connect(const QString &ip);
+	Q_INVOKABLE void connectTo(const QString &ip);
 
 	/// Sends message to a robot with given hull number.
 	Q_INVOKABLE void send(int hullNumber, const QString &message);
@@ -90,7 +90,7 @@ private slots:
 	void onNewData(const QHostAddress &ip, int port, const QByteArray &data);
 
 private:
-	Connection *connect(const QHostAddress &ip, int port);
+	Connection *connectTo(const QHostAddress &ip, int port);
 
 	Connection *connectionFactory();
 
@@ -108,7 +108,7 @@ private:
 	int mHullNumber;
 	QHostAddress mMyIp;
 	QHostAddress mSavedIp;
-	const int mMyPort;
+	quint16 mMyPort;
 	/// IP of leader robot to which we connected last
 	QHostAddress mServerIp;
 	int mServerPort{};
@@ -120,7 +120,7 @@ private:
 
 	inline uint qHash(const Endpoint &key)
 	{
-		return ::qHash(key.ip.toString()) ^ key.port;
+		return ::qHash(key.ip.toString()) ^ static_cast<uint>(key.port);
 	}
 
 	friend bool operator ==(const MailboxServer::Endpoint &left, const MailboxServer::Endpoint &right);

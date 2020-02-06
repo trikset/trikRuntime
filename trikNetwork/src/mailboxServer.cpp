@@ -24,7 +24,7 @@
 
 using namespace trikNetwork;
 
-MailboxServer::MailboxServer(int port)
+MailboxServer::MailboxServer(quint16 port)
 	: TrikServer([this] () { return connectionFactory(); })
 	, mHullNumber(0)
 	, mMyIp(determineMyIp())
@@ -80,7 +80,7 @@ void MailboxServer::start()
 	startServer(mMyPort);
 
 	if (!mServerIp.isNull() && mServerIp != mMyIp && mMyIp == mSavedIp) {
-		connect(mServerIp, mServerPort);
+		connectTo(mServerIp, mServerPort);
 	}
 }
 
@@ -96,7 +96,7 @@ void MailboxServer::setHullNumber(int hullNumber)
 	, -1);
 }
 
-void MailboxServer::connect(const QString &ip, int port)
+void MailboxServer::connectTo(const QString &ip, int port)
 {
 	mAuxiliaryInformationLock.lockForRead();
 	auto server = mServerIp;
@@ -122,15 +122,15 @@ void MailboxServer::connect(const QString &ip, int port)
 		return;
 	}
 
-	connect(server, serverPort);
+	connectTo(server, serverPort);
 }
 
-void MailboxServer::connect(const QString &ip)
+void MailboxServer::connectTo(const QString &ip)
 {
-	connect(ip, mMyPort);
+	connectTo(ip, mMyPort);
 }
 
-Connection *MailboxServer::connect(const QHostAddress &ip, int port)
+Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 {
 	const auto c = new MailboxConnection();
 	connectConnection(c);
@@ -205,7 +205,7 @@ Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 		return nullptr;
 	}
 
-	return connect(targetEndpoint.ip, targetEndpoint.port);
+	return connectTo(targetEndpoint.ip, targetEndpoint.port);
 }
 
 void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int serverPort, int hullNumber)
@@ -335,7 +335,7 @@ QString MailboxServer::receive()
 	QByteArray const result = !mMessagesQueue.isEmpty() ? mMessagesQueue.dequeue() : QByteArray();
 	mMessagesQueueLock.unlock();
 
-	return QString(result);
+	return result;
 }
 
 void MailboxServer::loadSettings()

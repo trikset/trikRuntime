@@ -91,6 +91,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
 		result.append('\n');
 		QTimer::singleShot(0, script, [script, result](){script->textInStdOut(result);});
+		/// In case of user loop with `print' this gives some time for events to be processed
 		script->wait(0);
 	}
 
