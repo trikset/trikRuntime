@@ -155,7 +155,7 @@ private:
 	Threading mThreading;
 	QScriptEngine *mDirectScriptsEngine = nullptr;  // Has ownership.
 	int mScriptId = 0;
-	State mState = State::ready;
+	volatile State mState = State::ready;
 	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;
 	QVector<std::function<void (QScriptEngine *)>> mCustomInitSteps;
 
