@@ -56,6 +56,9 @@ signals:
 	/// Emitted when the last connection closes.
 	void disconnected();
 
+	/// Emmitted for each new started connection thread
+	void startedConnection(Connection *c);
+
 protected:
 	void incomingConnection(qintptr socketDescriptor) override;
 
