@@ -296,8 +296,6 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int port, int hullN
 void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray &data)
 {
 	QLOG_INFO() << "New data received by a mailbox from " << ip << ":" << port << ", data is:" << data;
-	qDebug() << "New data received by a mailbox from " << ip << ":" << port << ", data is:" << data;
-
 	int senderHullNumber = -1;
 	mKnownRobotsLock.lockForRead();
 	for (const auto &endpoint : mKnownRobots) {
@@ -310,7 +308,6 @@ void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray
 
 	if (senderHullNumber == -1) {
 		QLOG_INFO() << "Received message from" << ip << ":" << port << "which is unknown at the moment";
-		qDebug() << "Received message from" << ip << ":" << port << "which is unknown at the moment";
 	}
 
 	mMessagesQueueLock.lockForWrite();

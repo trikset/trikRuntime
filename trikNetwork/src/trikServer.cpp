@@ -15,9 +15,6 @@
 #include "trikServer.h"
 
 #include "connection.h"
-
-#include <QtCore/QDebug>
-
 #include <QsLog.h>
 
 using namespace trikNetwork;
@@ -55,7 +52,6 @@ void TrikServer::startServer(quint16 port)
 		QLOG_ERROR() << "Can not start server on port " << port;
 	} else {
 		QLOG_INFO() << "Server on port" << port << "started";
-		qDebug() << "Server on port" << port << "started";
 	}
 }
 

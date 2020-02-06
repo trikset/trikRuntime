@@ -32,8 +32,6 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	, mMaxScriptId(0)
 	, mVariablesServer(new TrikVariablesServer())
 {
-	//connect(&mWorkerThread, &QThread::finished, &mWorkerThread, &QThread::deleteLater);
-
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &QThread::deleteLater);
