@@ -20,8 +20,13 @@
 <context>
     <name>trikGui::AccelerometerWidget</name>
     <message>
-        <location filename="../../trikGui/accelerometerWidget.cpp" line="+28"/>
+        <location filename="../../trikGui/accelerometerWidget.cpp" line="+29"/>
         <source>Accelerometer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -219,6 +224,11 @@
     <message>
         <location filename="../../trikGui/gyroscopeIndicator.cpp" line="+30"/>
         <source>Gyroscope</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
