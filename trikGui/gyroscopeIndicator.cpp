@@ -50,17 +50,13 @@ void GyroscopeIndicator::renew()
 {
 	const auto &value = mGyroscope.read();
 
-	if (value.isEmpty()) {
-		return;
-	}
+	const auto &text = [&value](int i, int &out) {
+		return value.size() > i ? QString::number(out = value[i]) : tr("Error");
+	};
 
-	mX = value[0];
-	mY = value[1];
-	mZ = value[2];
-
-	mValueX.setText(QString("x: ") + QString::number(value[0]));
-	mValueY.setText(QString("y: ") + QString::number(value[1]));
-	mValueZ.setText(QString("z: ") + QString::number(value[2]));
+	mValueX.setText(QString("x: ") + text(0, mX));
+	mValueY.setText(QString("y: ") + text(1, mY));
+	mValueZ.setText(QString("z: ") + text(2, mZ));
 
 	update();
 }

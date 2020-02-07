@@ -17,6 +17,7 @@
 #include <QPainter>
 #include <QString>
 #include <cmath>
+#include <QtMath>
 
 #include "trikControl/vectorSensorInterface.h"
 
@@ -47,18 +48,22 @@ AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface &acc
 void AccelerometerWidget::renew()
 {
 	const auto &value = mAccelerometer.read();
-	if (value.isEmpty()) {
+
+	const auto &text = [&value](int i) { return value.size() > i ? QString::number(value[i]) : tr("Error"); };
+
+	mValueX.setText(QString("x: ") + text(0));
+	mValueY.setText(QString("y: ") + text(1));
+	mValueZ.setText(QString("z: ") + text(2));
+
+	if (value.size() < 3) {
 		return;
 	}
-	mValueX.setText(QString("x: ") + QString::number(value[0]));
-	mValueY.setText(QString("y: ") + QString::number(value[1]));
-	mValueZ.setText(QString("z: ") + QString::number(value[2]));
 
-	auto norm = sqrtf(value[0] * value[0] + value[1] * value[1] + value[2] * value[2]);
-	QPointF acc(value[1] / norm * mBounds.width(), value[0] / norm * mBounds.width());
+	auto norm = qSqrt(value[0] * value[0] + value[1] * value[1] + value[2] * value[2]);
+	QPointF acc(value[1] * mBounds.width() / norm, value[0] * mBounds.width() / norm);
 
 	auto radius = (mBounds.width() - mKnopBounds.width()) / 2;
-	auto smallNorm = sqrtf(QPointF::dotProduct(acc, acc));
+	auto smallNorm = qSqrt(QPointF::dotProduct(acc, acc));
 	auto x = smallNorm > radius ? acc.x() * radius / smallNorm : acc.x();
 	auto y = smallNorm > radius ? acc.y() * radius / smallNorm : acc.y();
 
