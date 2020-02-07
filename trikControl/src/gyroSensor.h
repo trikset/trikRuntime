@@ -80,7 +80,6 @@ private slots:
 	void sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &);
 
 private:
-
 	QVector3D getEulerAngles(const QQuaternion &q);
 
 	/// Device state, shared with worker.
