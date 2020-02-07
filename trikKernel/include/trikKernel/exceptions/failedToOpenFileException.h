@@ -31,7 +31,7 @@ public:
 	explicit FailedToOpenFileException(const QFile &file)
 		: mFile(file)
 	{
-		QLOG_ERROR() << "Failed to open" << QFileInfo(file).absolutePath()
+		QLOG_ERROR() << "Failed to open" << QFileInfo(file).absoluteFilePath()
 				<< (file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading");
 	}
 

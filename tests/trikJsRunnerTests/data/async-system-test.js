@@ -1,1 +1,1 @@
-script.system("sleep 2 && echo 123 > test");
+script.system("sleep 1 && echo 123 > test");
