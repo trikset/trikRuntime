@@ -120,6 +120,8 @@ public slots:
 	/// Eval file from include
 	void evalInclude(const QString &filename, QScriptEngine * const engine);
 
+	void setWorkingDir(const QString &workingDir);
+
 private slots:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();

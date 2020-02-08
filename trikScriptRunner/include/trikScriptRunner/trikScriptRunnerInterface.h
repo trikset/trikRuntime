@@ -154,6 +154,9 @@ public slots:
 	/// Plays "beep" sound.
 	virtual void brickBeep() = 0;
 
+	/// Set working directory -- path to all project files
+	virtual void setWorkingDirectory(const QString &workingDir) = 0;
+
 signals:
 	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
 	/// or was aborted).

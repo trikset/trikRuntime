@@ -75,6 +75,12 @@ void TrikJavaScriptRunner::brickBeep()
 	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
 }
 
+void TrikJavaScriptRunner::setWorkingDirectory(const QString &workingDir)
+{
+	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir]()
+				{mScriptEngineWorker->setWorkingDir(workingDir);});
+}
+
 void TrikJavaScriptRunner::run(const QString &script, const QString &fileName)
 {
 	const int scriptId = mMaxScriptId++;

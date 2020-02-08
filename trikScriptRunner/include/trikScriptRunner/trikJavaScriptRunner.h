@@ -56,6 +56,7 @@ public slots:
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
 	void brickBeep() override;
+	void setWorkingDirectory(const QString &workingDir) override;
 
 private slots:
 	void onScriptStart(int scriptId);

@@ -136,6 +136,11 @@ void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * co
 	evalExternalFile(mWorkingDirectory + filename, engine);
 }
 
+void ScriptEngineWorker::setWorkingDir(const QString &workingDir)
+{
+	mWorkingDirectory = workingDir;
+}
+
 void ScriptEngineWorker::stopScript()
 {
 	QMutexLocker locker(&mScriptStateMutex);

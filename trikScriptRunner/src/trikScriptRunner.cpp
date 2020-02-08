@@ -154,6 +154,11 @@ void TrikScriptRunner::brickBeep()
 	fetchRunner(mLastRunner)->brickBeep();
 }
 
+void TrikScriptRunner::setWorkingDirectory(const QString &workingDir)
+{
+	fetchRunner(mLastRunner)->setWorkingDirectory(workingDir);
+}
+
 
 void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) {
 	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {

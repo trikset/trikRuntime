@@ -66,6 +66,8 @@ public slots:
 	/// See corresponding TrikScriptRunnerInterface method
 	void brickBeep() override;
 
+	void setWorkingDirectory(const QString &workingDir) override;
+
 private:
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
