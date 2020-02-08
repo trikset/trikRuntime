@@ -45,8 +45,6 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	mBias.resize(3);
 	mCalibrationValues.resize(6);
 	mGyroSum.resize(3);
-	mResult.resize(7);
-	mRawData.resize(4);
 
 	mAccelerometerSum.resize(3);
 	mAccelerometerCounter = 0;
@@ -91,13 +89,11 @@ QVector<int> GyroSensor::readRawData() const
 
 void GyroSensor::calibrate(int msec)
 {
-	QMetaObject::invokeMethod(&mCalibrationTimer, "start", Qt::QueuedConnection, Q_ARG(int, msec));
-
 	connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::sumGyroscope);
-
 	connect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	mIsCalibrated = false;
+	QMetaObject::invokeMethod(&mCalibrationTimer, [this, msec]() { mCalibrationTimer.start(msec); });
 }
 
 QVector<int> GyroSensor::getCalibrationValues()
@@ -135,6 +131,7 @@ bool GyroSensor::isCalibrated() const
 
 void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 {
+	mRawData.resize(4);
 	mRawData[0] = -gyroData[1];
 	mRawData[1] = -gyroData[0];
 	mRawData[2] = gyroData[2];
@@ -182,6 +179,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		const QVector3D euler = getEulerAngles(mQ);
 
 		QWriteLocker locker(&mResultLock);
+		mResult.resize(7);
 		mResult[0] = r0;
 		mResult[1] = r1;
 		mResult[2] = r2;
@@ -199,6 +197,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 void GyroSensor::countCalibrationParameters()
 {
 	disconnect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::sumGyroscope);
+	disconnect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	if (mGyroCounter != 0) {
 		for (int i = 0; i < mGyroSum.size(); i++) {
@@ -207,8 +206,6 @@ void GyroSensor::countCalibrationParameters()
 		}
 		mGyroCounter = 0;
 	}
-
-	disconnect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	if (mAccelerometerCounter != 0) {
 		for (int i = 0; i < mAccelerometerSum.size(); i++) {

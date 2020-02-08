@@ -4,7 +4,7 @@
 <context>
     <name>trikScriptRunner::ScriptEngineWorker</name>
     <message>
-        <location filename="../../trikScriptRunner/src/scriptEngineWorker.cpp" line="+271"/>
+        <location filename="../../trikScriptRunner/src/scriptEngineWorker.cpp" line="+275"/>
         <source>Line %1: %2</source>
         <translation type="unfinished">Строка %1: %2</translation>
     </message>

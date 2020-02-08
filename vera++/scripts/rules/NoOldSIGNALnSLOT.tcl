@@ -15,7 +15,7 @@
 proc NoOldSIGNALnSLOT { fileName } {
   set lineCount 1
   foreach line [getAllLines $fileName] {
-    if { [regexp {SIGNAL} $line]  || [regexp {SLOT} $line] } {
+    if { [regexp {\mSIGNAL\M} $line]  || [regexp {\mSLOT\M} $line] } {
       report $fileName $lineCount "SIGNAL/SLOT is forbidden, use &Class::mem_ptr syntax instead"
     }
     incr lineCount

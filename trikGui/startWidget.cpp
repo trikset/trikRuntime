@@ -84,6 +84,8 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 	mMenuView.setModel(&mMenuModel);
 
+	mMenuView.setEditTriggers(QAbstractItemView::NoEditTriggers);
+
 	mMenuView.selectionModel()->select(
 			mMenuModel.index(0, 0)
 			, QItemSelectionModel::ClearAndSelect

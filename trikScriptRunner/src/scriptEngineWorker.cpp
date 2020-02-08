@@ -91,6 +91,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
 		result.append('\n');
 		QTimer::singleShot(0, script, [script, result](){script->textInStdOut(result);});
+		/// In case of user loop with `print' this gives some time for events to be processed
 		script->wait(0);
 	}
 
@@ -145,6 +146,13 @@ void ScriptEngineWorker::stopScript()
 {
 	QMutexLocker locker(&mScriptStateMutex);
 
+	while (mState == starting) {
+		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
+		locker.unlock();
+		QThread::yieldCurrentThread();
+		locker.relock();
+	}
+
 	if (mState == stopping) {
 		// Already stopping, so we can do nothing.
 		return;
@@ -155,10 +163,6 @@ void ScriptEngineWorker::stopScript()
 		return;
 	}
 
-	while (mState == starting) {
-		// Some script is starting right now, so we are in inconsistent state. Let it start, then stop it.
-		QThread::yieldCurrentThread();
-	}
 
 	QLOG_INFO() << "ScriptEngineWorker: stopping script";
 

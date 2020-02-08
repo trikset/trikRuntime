@@ -53,18 +53,18 @@ public:
 
 	Status status() const override;
 
-public slots:
-	QVector<int> read() const override;
+	Q_INVOKABLE QVector<int> read() const override;
 
-	QVector<int> readRawData() const override;
+	Q_INVOKABLE QVector<int> readRawData() const override;
 
-	void calibrate(int msec) override;
+	Q_INVOKABLE QVector<int> getCalibrationValues() override;
 
-	QVector<int> getCalibrationValues() override;
+	Q_INVOKABLE bool isCalibrated() const override;
 
-	void setCalibrationValues(const QVector<int> &values) override;
+	Q_SLOT void calibrate(int msec) override;
 
-	bool isCalibrated() const override;
+	Q_SLOT void setCalibrationValues(const QVector<int> &values) override;
+
 
 private slots:
 	/// Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
@@ -79,9 +79,9 @@ private slots:
 	/// Sums values of bias.
 	void sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &);
 
+private:
 	QVector3D getEulerAngles(const QQuaternion &q);
 
-private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 

@@ -18,11 +18,20 @@
 
 #include "fileUtils.h"
 
+#include <QDir>
+
 using namespace trikKernel;
 
 QString Paths::path(const Resource &resource)
 {
-	const QString currentPath = FileUtils::normalizePath(QCoreApplication::applicationDirPath());
+	QDir appPath = QCoreApplication::applicationDirPath();  // ../bin/debug/myapp.app/Contents/MacOS/ or ../bin/debug
+	if (appPath.dirName() == "MacOS") {
+		appPath.cdUp();
+		appPath.cdUp();
+		appPath.cdUp();
+	}
+
+	const QString currentPath = FileUtils::normalizePath(appPath.path());
 
 	if (resource == Resource::userScripts) {
 		return currentPath + "scripts/";
