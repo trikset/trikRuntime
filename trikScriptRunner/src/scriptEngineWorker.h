@@ -117,8 +117,8 @@ public slots:
 	/// Can be safely called from other threads.
 	void brickBeep();
 
-	/// Evaluate external file with filepath in the current state of the engine
-	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
+	/// Eval file from include
+	void evalInclude(const QString &filename, QScriptEngine * const engine);
 
 private slots:
 	/// Abort script execution.
@@ -129,6 +129,9 @@ private slots:
 
 	/// Actually runs given command. Is to be called from a thread owning ScriptEngineWorker.
 	void doRunDirect(const QString &command, int scriptId);
+
+	/// Evaluate external file with filepath in the current state of the engine
+	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
 
 private:
 	/// State of a script
@@ -162,6 +165,8 @@ private:
 	/// Ensures that there is only one instance of StopScript running at any given time, to prevent unpredicted
 	/// behavior when programs are started and stopped actively.
 	QMutex mScriptStateMutex;
+
+	QString mWorkingDirectory;
 };
 
 }
