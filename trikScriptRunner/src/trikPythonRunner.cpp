@@ -78,7 +78,8 @@ void TrikPythonRunner::brickBeep()
 void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)
 {
 	Q_UNUSED(workingDir)
-	// TODO: finish include for python
+	// This has already been implemented. When executing the script, we adding to the sys.path path of its
+	// directory. So all files near will be available by filename.
 }
 
 void TrikPythonRunner::runDirectCommand(const QString &command)
