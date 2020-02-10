@@ -38,14 +38,14 @@ constexpr auto scriptEngineWorkerName = "__scriptEngineWorker";
 
 QScriptValue include(QScriptContext *context, QScriptEngine *engine)
 {
-	const auto & filepath = trikKernel::Paths::userScriptsPath() + context->argument(0).toString();
+	const auto &filename = context->argument(0).toString();
 
 	const auto & scriptValue = engine->globalObject().property(scriptEngineWorkerName);
 	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *> (scriptValue.toQObject())) {
 		auto connection = (QThread::currentThread() != engine->thread()) ?
 					Qt::BlockingQueuedConnection : Qt::DirectConnection;
-		QMetaObject::invokeMethod(scriptWorkerValue, [scriptWorkerValue, filepath, engine]()
-					{scriptWorkerValue->evalExternalFile(filepath, engine);}, connection);
+		QMetaObject::invokeMethod(scriptWorkerValue, [scriptWorkerValue, filename, engine]()
+					{scriptWorkerValue->evalInclude(filename, engine);}, connection);
 	}
 
 	return QScriptValue();
@@ -115,6 +115,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mDirectScriptsEngine(nullptr)
 	, mScriptId(0)
 	, mState(ready)
+	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {
 	connect(&mScriptControl, &ScriptExecutionControl::quitSignal,
 		this, &ScriptEngineWorker::onScriptRequestingToQuit);
@@ -129,6 +130,16 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 void ScriptEngineWorker::brickBeep()
 {
 	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+}
+
+void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * const engine)
+{
+	evalExternalFile(mWorkingDirectory + filename, engine);
+}
+
+void ScriptEngineWorker::setWorkingDir(const QString &workingDir)
+{
+	mWorkingDirectory = workingDir;
 }
 
 void ScriptEngineWorker::stopScript()

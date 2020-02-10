@@ -75,6 +75,12 @@ void TrikPythonRunner::brickBeep()
 	QMetaObject::invokeMethod(mScriptEngineWorker, &PythonEngineWorker::brickBeep);
 }
 
+void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)
+{
+	Q_UNUSED(workingDir)
+	// TODO: finish include for python
+}
+
 void TrikPythonRunner::runDirectCommand(const QString &command)
 {
 	QLOG_INFO() << "TrikPythonRunner: new direct command" << command;
