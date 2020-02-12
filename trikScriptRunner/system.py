@@ -87,3 +87,5 @@ class PadEventCodes():
     Hat0Y = 17
     Hat1X = 18
     Hat1Y = 19
+
+gamepad = brick.gamepad()
