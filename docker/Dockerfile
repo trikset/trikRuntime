@@ -1,6 +1,7 @@
 FROM ubuntu:xenial
 MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
+ENV GCCVERSION 9
 # Build image with two huge layers, this is the 1st one.
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -10,7 +11,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:beineri/opt-qt-5.12.7-xenial \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++-8 gdb python3-dev \
+		    wget curl rsync sshpass openssh-client build-essential g++-${GCCVERSION} gdb python3-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
@@ -23,8 +24,8 @@ RUN apt-get update \
                 dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
 #for PythonQt
                 realpath \
-#set gcc/g++ version 8 as default
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8 \
+#set gcc/g++ version ${GCCVERSION} as default
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCCVERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCCVERSION} \
 #Cleanup after installation
     && apt-get purge -y software-properties-common \
     && apt-get autoremove -y \
