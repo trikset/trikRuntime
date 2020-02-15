@@ -2,7 +2,7 @@
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
-    REQUIRED_PACKAGES="ccache coreutils python3 pkg-config"
+    REQUIRED_PACKAGES="ccache coreutils python3 pkg-config qt"
     export HOMEBREW_TEMP="$HOME/homebrew.tmp"
     export HOMEBREW_LOGS="$HOMEBREW_TEMP"
     #To turn autoupdate on use `unset HOMEBREW_NO_AUTO_UPDATE` in a sub-shell before `brew install`
@@ -17,7 +17,7 @@ case $TRAVIS_OS_NAME in
       p="${p%.*}"
       brew install "$pkg" || brew upgrade "$pkg" || brew link --force "$pkg" || echo "Failed to install/upgrade $pkg"
     done
-    [ -d $TRIK_QT/5.12.7 ] || env TRIK_QT_INSTALL_DIR="$TRIK_QT" scripts/install_qt_mac.sh >> build.log 2>&1
+#    [ -d $TRIK_QT/5.12.7 ] || env TRIK_QT_INSTALL_DIR="$TRIK_QT" scripts/install_qt_mac.sh >> build.log 2>&1
   ;;
 
   linux)
