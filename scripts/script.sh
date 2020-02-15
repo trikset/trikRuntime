@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 set -euxo pipefail
 case $TRAVIS_OS_NAME in
   osx)
@@ -22,7 +22,7 @@ fi
 
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
 
-$EXECUTOR bash -ic "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
+$EXECUTOR bash -ixc "{ [ -r /root/.bashrc ] && source /root/.bashrc || true ; } ; \
    export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && export CCACHE_CPP2=yes \
 && export CCACHE_SLOPPINESS=time_macros \
