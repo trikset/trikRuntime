@@ -1,7 +1,11 @@
 FROM ubuntu:xenial
 MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
-ENV GCCVERSION 9
+
+ENV TRIK_GCCVERSION 9
+ENV TRIK_QTIFW_TAG 3.2
+ENV TRIK_LIBUSB_TAG v1.0.23
+
 # Build image with two huge layers, this is the 1st one.
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -11,7 +15,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:beineri/opt-qt-5.12.7-xenial \
     && apt-get update && apt -y upgrade \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++-${GCCVERSION} gdb python3-dev \
+		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb python3-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
@@ -24,8 +28,8 @@ RUN apt-get update \
                 dbus libxkbcommon-x11-0 libxcb-xkb1 libpulse-dev \
 #for PythonQt
                 realpath \
-#set gcc/g++ version ${GCCVERSION} as default
-    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${GCCVERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${GCCVERSION} \
+#set gcc/g++ version ${TRIK_GCCVERSION} as default
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${TRIK_GCCVERSION} 60 --slave /usr/bin/g++ g++ /usr/bin/g++-${TRIK_GCCVERSION} \
 #Cleanup after installation
     && apt-get purge -y software-properties-common \
     && apt-get autoremove -y \
@@ -40,11 +44,17 @@ RUN apt-get update \
 && { [ -r /etc/machine-id ] || { dbus-uuidgen | tee /etc/machine-id ; } ; }
 
 #Build fresh libusb from sources
-RUN git clone https://github.com/libusb/libusb && cd libusb && git checkout v1.0.22 && ./autogen.sh --enable-udev --disable-examples-build --disable-tests-build --disable-static && make install && cd .. && rm -rf libusb && echo pkg-config libusb-1.0 is v$(pkg-config --modversion libusb-1.0)
+RUN git clone --single-branch --depth 1 --branch ${TRIK_LIBUSB_TAG} https://github.com/libusb/libusb \
+    && cd libusb \
+    && ./autogen.sh --enable-udev --disable-examples-build --disable-tests-build --disable-static \
+    && make install -j 4 \
+    && cd .. \
+    && rm -rf libusb \
+    && echo pkg-config libusb-1.0 is v$(pkg-config --modversion libusb-1.0)
 
 #ENV QTDIR "/Qt"
 #ENV QTBIN "${QTDIR}/5.12.7/gcc_64/bin"
-ENV QTBIN /opt/qt512/bin
+#ENV QTBIN /opt/qt512/bin
 #COPY qt_scriptinstall.qs /tmp
 #COPY install_qt.sh /tmp
 # Split docker image into two main layers, this is the second one
@@ -60,12 +70,19 @@ ENV QTBIN /opt/qt512/bin
 #	      $QTBIN/designer \
 #	      $QTBIN/../lib/*.a
 
+RUN ln -svt /etc/profile.d/ /opt/qt512/bin/qt512-env.sh
+SHELL ["/bin/bash", "-lic"]
+#Build QtIFW from sources
+RUN git clone --single-branch --depth 1 --branch ${TRIK_QTIFW_TAG} https://github.com/qtproject/installer-framework.git qtifw \
+    && cd qtifw \
+    && qmake CONFIG+=release \
+    && make install -j 4 \
+    && cd .. \
+    && rm -rf qtifw
 
-ENV PATH "${QTBIN}:/usr/lib/ccache:${PATH}"
+#ENV PATH "${QTBIN}:/usr/lib/ccache:${PATH}"
 #RUN python3 -m pip install --upgrade pip codecov
 
 RUN echo Internal image disk usage: $(du -sch /* 2>/dev/null | sort -h)
-RUN ln -svt /etc/profile.d/ /opt/qt512/bin/qt512-env.sh
-#SHELL ["/bin/bash", "-lc"]
 ENTRYPOINT ["/bin/bash", "-lc"]
 CMD ["bash"]
