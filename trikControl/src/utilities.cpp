@@ -21,19 +21,21 @@ QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int h
 	auto *rawData = static_cast<const uchar *>(static_cast<const void *>(array.data()));
 
 	// Reserve maximum possible size to avoid reallocation
-	QVector<uchar> formattedData( (width + 3) * (height + 3) * 3 + 3);
+	auto formattedData  = new uchar[(width + 3) * (height + 3) * 3 + 3];
+	static auto cleanUp = [](void *p) { if (p) delete [](static_cast<decltype (formattedData)>(p)); };
+	void *cleanUpInfo = nullptr;
 
 	// QImage requires 32-bit aligned scan lines
 	// Helper function to convert data
 	auto copyAligned = [&](int perLine){
 		auto scanLineSize = static_cast<int>((static_cast<unsigned>(perLine + 3)) & 0xFFFFFFFC);
-		formattedData.resize(scanLineSize * height);
-		auto dst = formattedData.begin();
+		auto dst = formattedData;
 		for (auto src = array.begin(); src < array.end(); src += perLine) {
 			dst = std::copy(src, src + perLine, dst);
 			dst += scanLineSize - perLine;
 		}
-		rawData = formattedData.constData();
+		rawData = formattedData;
+		cleanUpInfo = formattedData;
 	};
 
 	if (!format.compare("rgb32", Qt::CaseInsensitive)) {
@@ -49,5 +51,5 @@ QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int h
 		return QImage();
 	}
 
-	return QImage(rawData, width, height, fmt);
+	return QImage(rawData, width, height, fmt, cleanUp, cleanUpInfo);
 }
