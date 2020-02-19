@@ -64,7 +64,7 @@ void GuiWorker::showImage(const QString &fileName)
 
 void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const QString &format)
 {
-	QImage img = Utilities::imageFromBytes(array, width, height, format);
+	QImage img = Utilities::imageFromBytes(array, width, height, format).copy();
 	if (img.isNull())
 		return;
 
