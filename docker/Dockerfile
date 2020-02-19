@@ -84,5 +84,5 @@ RUN git clone --single-branch --depth 1 --branch ${TRIK_QTIFW_TAG} https://githu
 #RUN python3 -m pip install --upgrade pip codecov
 
 RUN echo Internal image disk usage: $(du -sch /* 2>/dev/null | sort -h)
-ENTRYPOINT ["/bin/bash", "-lc"]
+ENTRYPOINT ["/bin/bash", "-lic"]
 CMD ["bash"]
