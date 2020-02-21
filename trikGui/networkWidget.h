@@ -32,12 +32,14 @@ public:
 private slots:
 	void updateIP();
 	void updateHostname();
+	void updateHullNumber();
 
 private:
 	QVBoxLayout mNetworkLayout;
 
 	QLabel mHostnameLabel;
 	QLabel mIPLabel;
+	QLabel mHullNumberLabel;
 
 	QTimer mUpdateTimer;
 };

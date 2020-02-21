@@ -359,7 +359,13 @@
 <context>
     <name>trikGui::NetworkWidget</name>
     <message>
-        <location filename="../../trikGui/networkWidget.cpp" line="+52"/>
+        <location filename="../../trikGui/networkWidget.cpp" line="+32"/>
+        <location line="+39"/>
+        <source>Hull number:</source>
+        <translation type="unfinished">Бортномер:</translation>
+    </message>
+    <message>
+        <location line="-15"/>
         <source>IP: </source>
         <translation>IP: </translation>
     </message>
