@@ -87,10 +87,6 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
-	qRegisterMetaType<QVector<uint8_t>>("QVector<uint8_t>");
-	qRegisterMetaType<QVector<int>>("QVector<int>");
-	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-
 	const bool hasGui = (qobject_cast<QApplication *>(QCoreApplication::instance()) != nullptr);
 
 	if (hasGui) {
