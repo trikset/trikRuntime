@@ -21,7 +21,7 @@ if [ "$VERA" = "true" ]; then
   [[ -z "${git_diff}" ]] || $EXECUTOR vera++ --error --root vera++ --profile strict <<< "$git_diff"
 fi
 
-if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR lupdate trikRuntime.pro && $EXECUTOR scripts/checkStatus.sh ; fi
+if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR bash -lic 'lupdate trikRuntime.pro' && $EXECUTOR scripts/checkStatus.sh ; fi
 
 $EXECUTOR bash -lixc " \
    export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \

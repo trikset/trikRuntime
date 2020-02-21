@@ -73,12 +73,12 @@ RUN git clone --single-branch --depth 1 --branch ${TRIK_LIBUSB_TAG} https://gith
 RUN ln -svt /etc/profile.d/ /opt/qt512/bin/qt512-env.sh
 SHELL ["/bin/bash", "-lic"]
 #Build QtIFW from sources
-RUN git clone --single-branch --depth 1 --branch ${TRIK_QTIFW_TAG} https://github.com/qtproject/installer-framework.git qtifw \
-    && cd qtifw \
-    && qmake CONFIG+=release \
-    && make install -j 4 \
-    && cd .. \
-    && rm -rf qtifw
+#RUN git clone --single-branch --depth 1 --branch ${TRIK_QTIFW_TAG} https://github.com/qtproject/installer-framework.git qtifw \
+#    && cd qtifw \
+#    && qmake CONFIG+=release CONFIG+=static \
+#    && make install -j 4 \
+#    && cd .. \
+#    && rm -rf qtifw
 
 #ENV PATH "${QTBIN}:/usr/lib/ccache:${PATH}"
 #RUN python3 -m pip install --upgrade pip codecov
