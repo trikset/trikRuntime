@@ -166,6 +166,7 @@ SOURCES += \
 	$$PWD/src/i2cDevice.cpp \
 	$$PWD/src/i2cCommunicator.cpp \
 	$$PWD/src/utilities.cpp \
+	$$PWD/include/trikControl/brickInterface.cpp \
 #	$$PWD/src/headingSensor.cpp \
 
 
