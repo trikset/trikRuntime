@@ -16,6 +16,7 @@
 
 #include <QWidget>
 #include <QNetworkInterface>
+#include <QtCore/QSettings>
 
 #include <trikKernel/fileUtils.h>
 #include <trikKernel/paths.h>
@@ -28,13 +29,16 @@ NetworkWidget::NetworkWidget(QWidget *parent)
 {
 	mHostnameLabel.setText("Name: ");
 	mIPLabel.setText("IP: ");
+	mHullNumberLabel.setText(tr("Hull number:"));
 	mNetworkLayout.addWidget(&mHostnameLabel);
 	mNetworkLayout.addWidget(&mIPLabel);
+	mNetworkLayout.addWidget(&mHullNumberLabel);
 	setLayout(&mNetworkLayout);
 
 	mUpdateTimer.setInterval(5000);
-	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateIP()));
-	connect(&mUpdateTimer, SIGNAL(timeout()), this, SLOT(updateHostname()));
+	connect(&mUpdateTimer, &QTimer::timeout, this, &NetworkWidget::updateIP);
+	connect(&mUpdateTimer, &QTimer::timeout, this, &NetworkWidget::updateHostname);
+	connect(&mUpdateTimer, &QTimer::timeout, this, &NetworkWidget::updateHullNumber);
 	mUpdateTimer.start();
 }
 
@@ -58,4 +62,11 @@ void NetworkWidget::updateHostname()
 {
 	const QString name = trikKernel::FileUtils::readFromFile(trikKernel::Paths::hostnameName()).trimmed();
 	mHostnameLabel.setText(tr("Name: ") + name);
+}
+
+void NetworkWidget::updateHullNumber()
+{
+	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
+	auto hullNumber = settings.value("hullNumber");
+	mHullNumberLabel.setText(tr("Hull number:") + " " + QString::number(hullNumber.toInt()));
 }
