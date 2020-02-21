@@ -14,7 +14,7 @@ case $TRAVIS_OS_NAME in
   *) exit 1 ;;
 esac
 export EXECUTOR
-if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
+if [ "$VERA" = "true" ]; then $EXECUTOR -e TRAVIS_COMMIT_RANGE=${TRAVIS_COMMIT_RANGE} ./runVera++.sh ; fi
 if [ "$VERA" = "true" ]; then
   git_diff=$( { git diff --diff-filter=d --name-only ${TRAVIS_COMMIT_RANGE} || true ; } \
   | xargs -r file -i | sed -e "s|\(.*\):.*text/x-c.*|\1|g" -e "/:/d")
