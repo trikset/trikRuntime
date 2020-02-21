@@ -54,7 +54,7 @@ bool Mailbox::isConnected() const
 void Mailbox::setHullNumber(int hullNumber)
 {
 	if (isEnabled()) {
-		QMetaObject::invokeMethod(mWorker.data(), "setHullNumber", Q_ARG(int, hullNumber));
+		QMetaObject::invokeMethod(mWorker.data(), [this, hullNumber](){mWorker->setHullNumber(hullNumber);});
 	}
 }
 
@@ -97,22 +97,22 @@ bool Mailbox::isEnabled()
 
 void Mailbox::connect(const QString &ip, int port)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ip), Q_ARG(int, port));
+	QMetaObject::invokeMethod(mWorker.data(), [=](){mWorker->connectTo(ip, port);});
 }
 
 void Mailbox::connect(const QString &ip)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ip));
+	QMetaObject::invokeMethod(mWorker.data(), [=](){mWorker->connectTo(ip);});
 }
 
 void Mailbox::send(int hullNumber, const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(int, hullNumber), Q_ARG(QString, message));
+	QMetaObject::invokeMethod(mWorker.data(), [=](){mWorker->send(hullNumber, message);});
 }
 
 void Mailbox::send(const QString &message)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "send", Q_ARG(QString, message));
+	QMetaObject::invokeMethod(mWorker.data(), [=](){mWorker->send(message);});
 }
 
 bool Mailbox::hasMessages()
@@ -151,7 +151,7 @@ void Mailbox::init(int port)
 
 	mWorkerThread.start();
 
-	QMetaObject::invokeMethod(mWorker.data(), "start", Qt::QueuedConnection);
+	QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::start, Qt::QueuedConnection);
 }
 
 void Mailbox::updateConnectionStatus()
