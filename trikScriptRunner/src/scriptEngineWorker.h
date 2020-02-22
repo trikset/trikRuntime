@@ -120,6 +120,7 @@ public slots:
 	/// Eval file from include
 	void evalInclude(const QString &filename, QScriptEngine * const engine);
 
+	/// Set default directory for includes (not a working dir, actually...)
 	void setWorkingDir(const QString &workingDir);
 
 private slots:
