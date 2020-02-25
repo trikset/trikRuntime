@@ -48,7 +48,9 @@ Mailbox::~Mailbox()
 
 bool Mailbox::isConnected() const
 {
-	return mWorker->isConnected();
+	bool res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->isConnected();}, Qt::BlockingQueuedConnection);
+	return res;
 }
 
 void Mailbox::setHullNumber(int hullNumber)
@@ -60,28 +62,37 @@ void Mailbox::setHullNumber(int hullNumber)
 
 int Mailbox::myHullNumber() const
 {
-	return mWorker->hullNumber();
+	int res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->hullNumber();}, Qt::BlockingQueuedConnection);
+	return res;
 }
 
 void Mailbox::renewIp()
 {
-	mWorker->renewIp();
+	QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::renewIp);
 }
 
 QHostAddress Mailbox::serverIp() const
 {
-	return mWorker->serverIp();
+	QHostAddress res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->serverIp();}, Qt::BlockingQueuedConnection);
+	return res;
 }
 
 QHostAddress Mailbox::myIp() const
 {
-	return mWorker->myIp();
+	QHostAddress res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->myIp();}, Qt::BlockingQueuedConnection);
+	return res;
 }
 
 void Mailbox::clearQueue()
 {
-	while (mWorker->hasMessages()) {
-		mWorker->receive();
+	bool hasMessages;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}, Qt::BlockingQueuedConnection);
+	while (hasMessages) {
+		QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::receive, Qt::BlockingQueuedConnection);
+		QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}, Qt::BlockingQueuedConnection);
 	}
 }
 
@@ -92,7 +103,9 @@ void Mailbox::stopWaiting()
 
 bool Mailbox::isEnabled()
 {
-	return !mWorker.isNull();
+	bool res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = !mWorker.isNull();}, Qt::BlockingQueuedConnection);
+	return res;
 }
 
 void Mailbox::connect(const QString &ip, int port)
@@ -117,7 +130,9 @@ void Mailbox::send(const QString &message)
 
 bool Mailbox::hasMessages()
 {
-	return mWorker->hasMessages();
+	bool res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->hasMessages();}, Qt::BlockingQueuedConnection);
+	return res;
 }
 
 QString Mailbox::receive(bool wait)
@@ -127,12 +142,16 @@ QString Mailbox::receive(bool wait)
 	QEventLoop loop;
 	QObject::connect(this, &Mailbox::stopWaitingSignal, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 
-	if (!mWorker->hasMessages() && wait) {
+	bool hasMessages;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}, Qt::BlockingQueuedConnection);
+
+	if (!hasMessages && wait) {
 		loop.exec();
 	}
 
-	if (mWorker->hasMessages()) {
-		result = mWorker->receive();
+	QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}, Qt::BlockingQueuedConnection);
+	if (hasMessages) {
+		QMetaObject::invokeMethod(mWorker.data(), [this, &result](){result = mWorker->receive();}, Qt::BlockingQueuedConnection);
 	}
 
 	return result;
@@ -156,5 +175,7 @@ void Mailbox::init(int port)
 
 void Mailbox::updateConnectionStatus()
 {
-	emit connectionStatusChanged(mWorker->activeConnections() > 0);
+	int activeConnections;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &activeConnections](){activeConnections = mWorker->activeConnections();}, Qt::BlockingQueuedConnection);
+	emit connectionStatusChanged(activeConnections > 0);
 }
