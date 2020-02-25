@@ -15,6 +15,7 @@
 #include "cameraWidget.h"
 
 #include <QDir>
+#include <QtGui/QKeyEvent>
 
 #include "trikControl/brickInterface.h"
 #include "trikKernel/paths.h"
@@ -34,6 +35,21 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 
 	setLayout(&mLayout);
 
+	doPhoto();
+}
+
+void CameraWidget::relaunch()
+{
+	doPhoto();
+}
+
+void CameraWidget::renew()
+{
+	update();
+}
+
+void CameraWidget::doPhoto()
+{
 	auto const & photo = mBrick.getStillImage();
 
 	if (!photo.isEmpty()) {
@@ -53,9 +69,5 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 	} else {
 		mPixmap.setText(tr("Camera is not available"));
 	}
-}
-
-void CameraWidget::renew()
-{
 	update();
 }

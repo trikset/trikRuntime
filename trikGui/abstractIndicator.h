@@ -42,6 +42,11 @@ public:
 	#endif
 	}
 
+	/// Relaunch tests
+	virtual void relaunch() {
+		return;
+	}
+
 public slots:
 	/// Rereads sensor and updates widget contents.
 	virtual void renew() = 0;
