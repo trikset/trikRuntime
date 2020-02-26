@@ -91,8 +91,8 @@ QHostAddress Mailbox::myIp() const
 
 void Mailbox::clearQueue()
 {
-	while (hasMessages()) {
-		QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::receive, Qt::BlockingQueuedConnection);
+	while (!receive(false).isNull()){
+		/// If no messages in queue, receive returns just QString()
 	}
 }
 
@@ -141,10 +141,9 @@ QString Mailbox::receive(bool wait)
 {
 	QString result;
 
-	QEventLoop loop;
-	QObject::connect(this, &Mailbox::stopWaitingSignal, &loop, &QEventLoop::quit, Qt::QueuedConnection);
-
-	if (!hasMessages() && wait) {
+	if (wait && !hasMessages()) {
+		QEventLoop loop;
+		QObject::connect(this, &Mailbox::stopWaitingSignal, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 		loop.exec();
 	}
 
