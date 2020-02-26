@@ -91,13 +91,8 @@ QHostAddress Mailbox::myIp() const
 
 void Mailbox::clearQueue()
 {
-	bool hasMessages;
-	QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}
-							, Qt::BlockingQueuedConnection);
-	while (hasMessages) {
+	while (hasMessages()) {
 		QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::receive, Qt::BlockingQueuedConnection);
-		QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}
-								, Qt::BlockingQueuedConnection);
 	}
 }
 
@@ -149,17 +144,11 @@ QString Mailbox::receive(bool wait)
 	QEventLoop loop;
 	QObject::connect(this, &Mailbox::stopWaitingSignal, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 
-	bool hasMessages;
-	QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}
-							, Qt::BlockingQueuedConnection);
-
-	if (!hasMessages && wait) {
+	if (!hasMessages() && wait) {
 		loop.exec();
 	}
 
-	QMetaObject::invokeMethod(mWorker.data(), [this, &hasMessages](){hasMessages = mWorker->hasMessages();}
-							, Qt::BlockingQueuedConnection);
-	if (hasMessages) {
+	if (hasMessages()) {
 		QMetaObject::invokeMethod(mWorker.data(), [this, &result](){result = mWorker->receive();}
 							, Qt::BlockingQueuedConnection);
 	}
