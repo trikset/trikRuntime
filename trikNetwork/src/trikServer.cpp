@@ -57,8 +57,8 @@ void TrikServer::startServer(quint16 port)
 
 void TrikServer::sendMessage(const QString &message)
 {
-	for (auto &&connection : mConnections) {
-		QMetaObject::invokeMethod(connection, "send", Q_ARG(QByteArray, message.toUtf8()));
+	for (auto *connection : mConnections) {
+		QMetaObject::invokeMethod(connection, [=](){connection->send(message.toUtf8());});
 	}
 }
 
@@ -74,7 +74,7 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 
-	QMetaObject::invokeMethod(connectionWorker, "init", Q_ARG(qintptr, socketDescriptor));
+	QMetaObject::invokeMethod(connectionWorker, [=](){connectionWorker->init(socketDescriptor);});
 }
 
 void TrikServer::startConnection(Connection * const connectionWorker)
