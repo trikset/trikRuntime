@@ -101,7 +101,7 @@ void Connection::send(const QByteArray &data)
 
 	const QByteArray message = mProtocol == Protocol::messageLength
 			? QByteArray::number(data.size()) + ':' + data
-			: data + '\n';
+			: data;
 
 	const qint64 sentBytes = mSocket->write(message);
 	if (sentBytes != message.size()) {

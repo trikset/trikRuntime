@@ -258,8 +258,8 @@ void MailboxServer::send(int hullNumber, const QString &message)
 {
 	const auto data = QString("data:%1").arg(message).toUtf8();
 	forEveryConnection(
-		[&data](Connection *c) {
-			QMetaObject::invokeMethod(c, [c, &data]() { c->send(data); });
+		[data](Connection *c) {
+			QMetaObject::invokeMethod(c, [c, data]() { c->send(data); });
 		}
 	, hullNumber);
 }
