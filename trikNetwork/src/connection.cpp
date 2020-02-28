@@ -252,11 +252,11 @@ void Connection::onHeartbeatTimeout()
 
 void Connection::connectSlots()
 {
-	connect(mSocket.data(), SIGNAL(readyRead()), this, SLOT(onReadyRead()));
-	connect(mSocket.data(), SIGNAL(connected()), this, SLOT(onConnect()));
+	connect(mSocket.data(), &QTcpSocket::readyRead, this, &Connection::onReadyRead);
+	connect(mSocket.data(), &QTcpSocket::connected, this, &Connection::onConnect);
 	connect(mSocket.data(), &QTcpSocket::disconnected, this, &Connection::onDisconnect);
-	connect(mSocket.data(), SIGNAL(error(QAbstractSocket::SocketError))
-			, this, SLOT(onError(QAbstractSocket::SocketError)));
+	connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error)
+		, this, &Connection::onError);
 }
 
 void Connection::doDisconnect()
@@ -283,8 +283,8 @@ void Connection::initKeepalive()
 		mKeepAliveTimer.reset(new QTimer);
 		mHeartbeatTimer.reset(new QTimer);
 
-		connect(mKeepAliveTimer.data(), SIGNAL(timeout()), this, SLOT(keepAlive()));
-		connect(mHeartbeatTimer.data(), SIGNAL(timeout()), this, SLOT(onHeartbeatTimeout()));
+		connect(mKeepAliveTimer.data(), &QTimer::timeout, this, &Connection::keepAlive);
+		connect(mHeartbeatTimer.data(), &QTimer::timeout, this, &Connection::onHeartbeatTimeout);
 
 		mKeepAliveTimer->setSingleShot(false);
 		mHeartbeatTimer->setSingleShot(false);
