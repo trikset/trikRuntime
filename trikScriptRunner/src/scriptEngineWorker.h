@@ -19,6 +19,7 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
+#include <QtCore/QDir>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -169,7 +170,7 @@ private:
 	/// behavior when programs are started and stopped actively.
 	QMutex mScriptStateMutex;
 
-	QString mWorkingDirectory;
+	QDir mWorkingDirectory;
 };
 
 }
