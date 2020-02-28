@@ -38,9 +38,18 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 	doPhoto();
 }
 
-void CameraWidget::relaunch()
+void CameraWidget::keyPressEvent(QKeyEvent *event)
 {
-	doPhoto();
+	switch (event->key()) {
+		case Qt::Key_Return: {
+			doPhoto();
+			break;
+		}
+		default: {
+			event->ignore();
+			break;
+		}
+	}
 }
 
 void CameraWidget::renew()

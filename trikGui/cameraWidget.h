@@ -34,10 +34,11 @@ public:
 	/// Constructor for Camera Widget in testing menu
 	explicit CameraWidget(trikControl::BrickInterface &brick, QWidget *parent = nullptr);
 
-	void relaunch() override;
-
 public slots:
 	void renew() override;
+
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
 
 private:
 	/// Creating image to display

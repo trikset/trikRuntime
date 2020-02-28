@@ -108,13 +108,11 @@ void SensorsWidget::keyPressEvent(QKeyEvent *event)
 			break;
 		}
 		case Qt::Key_Return: {
-			if (mSensorType == SensorsWidget::SensorType::camera) {
-				mIndicators[0]->relaunch();
-			}
+			mIndicators[0]->setFocus();
 			break;
 		}
 		default: {
-			MainWidget::keyPressEvent(event);
+			TrikGuiDialog::keyPressEvent(event);
 			break;
 		}
 	}
