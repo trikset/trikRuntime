@@ -38,7 +38,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+79"/>
         <source>Camera is not available</source>
         <translation type="unfinished"></translation>
     </message>
@@ -384,13 +384,13 @@
     <name>trikGui::SensorSettingsWidget</name>
     <message>
         <location filename="../../trikGui/sensorSettingsWidget.cpp" line="+37"/>
-        <source>Select distance:
+        <source>Select tacho limit:
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>Select tacho limit:
+        <source>Select distance:
 </source>
         <translation type="unfinished"></translation>
     </message>
@@ -413,7 +413,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+4"/>
+        <location line="+64"/>
+        <source>Testing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-53"/>
+        <source>More...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <location line="+81"/>
         <source>Analog sensors</source>
         <translation type="unfinished"></translation>
@@ -446,17 +457,6 @@
         <location line="-94"/>
         <location line="+99"/>
         <source>Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-127"/>
-        <location line="+64"/>
-        <source>Testing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-53"/>
-        <source>More...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
