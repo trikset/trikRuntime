@@ -21,6 +21,7 @@
 #include <trikKernel/fileUtils.h>
 #include <testUtils/wait.h>
 #include <QRandomGenerator>
+#include <QCoreApplication>
 #include <QTimer>
 
 using namespace tests;
@@ -77,6 +78,7 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
 	}
+	QCoreApplication::sendPostedEvents(mScriptRunner.data());
 	return exitCode;
 }
 
@@ -97,6 +99,7 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
 	}
+	QCoreApplication::sendPostedEvents(mScriptRunner.data());
 	return exitCode;
 }
 

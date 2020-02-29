@@ -20,6 +20,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikKernel/fileUtils.h>
 #include <testUtils/wait.h>
+#include <QCoreApplication>
 #include <QTimer>
 
 using namespace tests;
@@ -50,7 +51,9 @@ int TrikPyRunnerTest::run(const QString &script)
 					 , &l, [&l](const QString &e) { l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR); } );
 	mStdOut.clear();
 	mScriptRunner->run(script, "_.py");
-	return l.exec();
+	auto code = l.exec();
+	QCoreApplication::sendPostedEvents(mScriptRunner.data());
+	return code;
 }
 
 int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
@@ -60,6 +63,7 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
 	l.exec();
+	QCoreApplication::sendPostedEvents(mScriptRunner.data());
 	return mScriptRunner->wasError()? EXIT_SCRIPT_ERROR : EXIT_SCRIPT_SUCCESS;
 }
 
