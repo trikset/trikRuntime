@@ -134,7 +134,8 @@ void ScriptEngineWorker::brickBeep()
 
 void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * const engine)
 {
-	evalExternalFile(mWorkingDirectory + filename, engine);
+	QFileInfo fi(mWorkingDirectory, filename);
+	evalExternalFile(fi.absoluteFilePath(), engine);
 }
 
 void ScriptEngineWorker::setWorkingDir(const QString &workingDir)
