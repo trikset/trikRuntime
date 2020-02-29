@@ -69,6 +69,9 @@ public slots:
 	void setWorkingDirectory(const QString &workingDir) override;
 
 private:
+	void onTextInStdOut(QString const &msg);
+	void onCompleted(QString const &msg, int id);
+
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &brick;

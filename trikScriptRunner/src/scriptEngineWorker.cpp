@@ -25,6 +25,7 @@
 #include "scriptable.h"
 #include "utils.h"
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QsLog.h>
 
@@ -194,9 +195,9 @@ void ScriptEngineWorker::stopScript()
 	}
 
 	mState = ready;
-
+	locker.unlock();
+	QCoreApplication::sendPostedEvents(this);
 	/// @todo: is it actually stopped?
-
 	QLOG_INFO() << "ScriptEngineWorker: stopping complete";
 }
 
@@ -228,6 +229,7 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mState = running;
 	mThreading.waitForAll();
 	const QString error = mThreading.errorMessage();
+	QCoreApplication::sendPostedEvents(this);
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
 	emit completed(error, mScriptId);
 }
@@ -255,7 +257,7 @@ void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->evaluate(command);
-
+		QCoreApplication::sendPostedEvents(this);
 		/// If script was stopped by quit(), engine will already be reset to nullptr in ScriptEngineWorker::stopScript.
 		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";

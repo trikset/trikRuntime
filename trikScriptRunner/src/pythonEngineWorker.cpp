@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QVector>
+#include <QCoreApplication>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
@@ -228,6 +229,8 @@ void PythonEngineWorker::stopScript()
 
 	mState = ready;
 
+	locker.unlock();
+	QCoreApplication::sendPostedEvents(this);
 	/// @todo: is it actually stopped?
 
 	QLOG_INFO() << "PythonEngineWorker: stopping complete";
@@ -275,6 +278,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
 
 	auto wasError = mState != ready && PythonQt::self()->hadError();
+	QCoreApplication::sendPostedEvents(this);
 	mState = ready;
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
@@ -298,6 +302,7 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
+	QCoreApplication::sendPostedEvents(this);
 	emit completed(mErrorMessage, 0);
 }
 

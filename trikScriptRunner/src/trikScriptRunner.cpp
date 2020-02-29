@@ -20,6 +20,7 @@
 
 #include <trikKernel/timeVal.h>
 #include "threading.h"
+#include <QCoreApplication>
 #include <QMetaMethod>
 
 using namespace trikControl;
@@ -111,11 +112,11 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 				return nullptr;
 		}
 		// subscribe on wrapped objects signals
-		connect(&*cell, &TrikScriptRunnerInterface::completed, this, &TrikScriptRunnerInterface::completed);
+		connect(&*cell, &TrikScriptRunnerInterface::completed, this, &TrikScriptRunner::onCompleted);
 		connect(&*cell, &TrikScriptRunnerInterface::startedScript, this, &TrikScriptRunnerInterface::startedScript);
 		connect(&*cell, &TrikScriptRunnerInterface::startedDirectScript
 				, this, &TrikScriptRunnerInterface::startedDirectScript);
-		connect(&*cell, &TrikScriptRunnerInterface::textInStdOut, this, &TrikScriptRunnerInterface::textInStdOut);
+		connect(&*cell, &TrikScriptRunnerInterface::textInStdOut, this, &TrikScriptRunner::onTextInStdOut);
 	}
 
 	setDefaultRunner(stype);
@@ -157,6 +158,18 @@ void TrikScriptRunner::brickBeep()
 void TrikScriptRunner::setWorkingDirectory(const QString &workingDir)
 {
 	fetchRunner(mLastRunner)->setWorkingDirectory(workingDir);
+}
+
+void TrikScriptRunner::onTextInStdOut(const QString &msg)
+{
+	emit textInStdOut(msg);
+	QCoreApplication::sendPostedEvents(); // dispatch immediately
+}
+
+void TrikScriptRunner::onCompleted(const QString &msg, int id)
+{
+	QCoreApplication::sendPostedEvents(); // dispatch queued events
+	emit completed(msg, id);
 }
 
 
