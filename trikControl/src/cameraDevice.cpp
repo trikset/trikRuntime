@@ -89,7 +89,7 @@ QVector<uint8_t> CameraDevice::getPhoto() {
 	QScopedPointer<QThread> t(new CameraThread(std::move(runFunc)));
 #endif
 	QEventLoop l;
-	QObject::connect(t.data(), SIGNAL(finished()), &l, SLOT(quit()));
+	QObject::connect(t.data(), &QThread::finished, &l, &QEventLoop::quit);
 	t->start();
 	l.exec();
 	return photo;

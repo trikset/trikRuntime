@@ -32,16 +32,17 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mInterval(100)
+	, mSensorType(sensorType)
 {
 	mTimer.setInterval(mInterval);
 	mTimer.setSingleShot(false);
 
 	int i = 0;
 
-	if (sensorType == SensorsWidget::SensorType::gyroscope
-			|| sensorType == SensorsWidget::SensorType::accelerometer
-			|| sensorType == SensorsWidget::SensorType::camera) {
-		AbstractIndicator *indicator = produceIndicator(QString(""), sensorType);
+	if (mSensorType == SensorsWidget::SensorType::gyroscope
+			|| mSensorType == SensorsWidget::SensorType::accelerometer
+			|| mSensorType == SensorsWidget::SensorType::camera) {
+		AbstractIndicator *indicator = produceIndicator(QString(""), mSensorType);
 		mIndicators.resize(1);
 
 		if (indicator) {
@@ -54,7 +55,7 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 		mIndicators.resize(ports.size());
 
 		for (const QString &port : ports) {
-			AbstractIndicator *indicator = produceIndicator(port, sensorType);
+			AbstractIndicator *indicator = produceIndicator(port, mSensorType);
 			if (indicator) {
 				mLayout.addWidget(indicator);
 				connect(&mTimer, &QTimer::timeout, indicator, &AbstractIndicator::renew);
@@ -93,6 +94,28 @@ void SensorsWidget::goHome()
 {
 	mTimer.stop();
 	TrikGuiDialog::goHome();
+}
+
+void SensorsWidget::keyPressEvent(QKeyEvent *event)
+{
+	switch (event->key()) {
+		case Qt::Key_PowerOff: {
+			goHome();
+			break;
+		}
+		case Qt::Key_Escape: {
+			exit();
+			break;
+		}
+		case Qt::Key_Return: {
+			mIndicators[0]->setFocus();
+			break;
+		}
+		default: {
+			TrikGuiDialog::keyPressEvent(event);
+			break;
+		}
+	}
 }
 
 AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorType sensorType)

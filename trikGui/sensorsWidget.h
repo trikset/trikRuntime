@@ -66,6 +66,8 @@ protected:
 
 	void goHome() override;
 
+	void keyPressEvent(QKeyEvent *event) override;
+
 private:
 	AbstractIndicator *produceIndicator(const QString &port, SensorType sensorType);
 
@@ -74,6 +76,7 @@ private:
 	QVector<AbstractIndicator *> mIndicators;  // Has ownership.
 	const int mInterval;
 	QTimer mTimer;
+	SensorType mSensorType;
 };
 
 }

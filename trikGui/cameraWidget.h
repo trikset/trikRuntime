@@ -37,7 +37,13 @@ public:
 public slots:
 	void renew() override;
 
+protected:
+	void keyPressEvent(QKeyEvent *event) override;
+
 private:
+	/// Creating image to display
+	void doPhoto();
+
 	QVBoxLayout mLayout;
 	QLabel mTitle;
 	QLabel mPixmap;
