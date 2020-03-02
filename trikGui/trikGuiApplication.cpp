@@ -28,8 +28,8 @@ using namespace trikGui;
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
-	connect(&mPowerButtonPressedTimer, SIGNAL(timeout()), this, SLOT(shutdownSoon()));
-	connect(&mShutdownDelayTimer, SIGNAL(timeout()), this, SLOT(shutdown()));
+	connect(&mPowerButtonPressedTimer, &QTimer::timeout, this, &TrikGuiApplication::shutdownSoon);
+	connect(&mShutdownDelayTimer, &QTimer::timeout, this, &TrikGuiApplication::shutdown);
 	mPowerButtonPressedTimer.setSingleShot(true);
 	mShutdownDelayTimer.setSingleShot(true);
 }
