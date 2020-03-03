@@ -45,7 +45,6 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
 			if (keyEvent->isAutoRepeat()) {
 				//	if (!mPowerButtonPressedTimer.isActive()) {
-				//	qDebug() << "Started because: " << receiver<< event;
 				//	mPowerButtonPressedTimer.start(2000);
 				//	}
 			} else {
@@ -65,7 +64,6 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 				mIsShutdownRequested = false;
 //				if (mPowerButtonPressedTimer.isActive()) {
 //					mPowerButtonPressedTimer.stop();
-//					qDebug() << "Stopping because:" << receiver << event;
 //				}
 			} else {
 			}
