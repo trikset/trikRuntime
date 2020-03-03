@@ -235,7 +235,8 @@ void Brick::playTone(int hzFreq, int msDuration)
 
 	// mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
 	// mTonePlayer->play(hzFreq, msDuration);
-	QMetaObject::invokeMethod(mTonePlayer.data(), "play", Q_ARG(int, hzFreq), Q_ARG(int, msDuration));
+	QMetaObject::invokeMethod(mTonePlayer.data(), [this, hzFreq, msDuration](){
+		mTonePlayer->play(hzFreq, msDuration);});
 }
 
 void Brick::say(const QString &text)

@@ -75,6 +75,8 @@ BackgroundWidget::BackgroundWidget(
 	connect(&mController, &Controller::mailboxStatusChanged, &mMailboxIndicator, &OpenSocketIndicator::changeStatus);
 
 	connect(&mRunningWidget, &RunningWidget::hideMe, this, &BackgroundWidget::hideRunningWidget);
+
+	mController.brick().playTone(800, 15);
 }
 
 BackgroundWidget::~BackgroundWidget()
