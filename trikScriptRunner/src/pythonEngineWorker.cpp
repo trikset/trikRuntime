@@ -49,6 +49,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 	, mScriptExecutionControl(new ScriptExecutionControl(brick))
 	, mMailbox(mailbox)
 	, mState(ready)
+	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {}
 
 PythonEngineWorker::~PythonEngineWorker()
@@ -171,6 +172,12 @@ bool PythonEngineWorker::evalSystemPy()
 	return true;
 }
 
+void PythonEngineWorker::addSearchModuleDirectory(const QString &path)
+{
+	mMainContext.evalScript("import sys; (lambda x: sys.path.append(x) if not x in sys.path else None)('"
+							+ path + "')");
+}
+
 bool PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
@@ -246,8 +253,16 @@ QStringList PythonEngineWorker::knownNames() const
 	return result.toList();
 }
 
+void PythonEngineWorker::setWorkingDirectory(const QString &workingDir)
+{
+	mWorkingDirectory = workingDir;
+}
+
 void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
+	if (mState != ready)
+		return;
+
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
 	QMetaObject::invokeMethod(this, [this, script, scriptFile](){this->doRun(script, scriptFile);});
@@ -266,10 +281,11 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 		return;
 	}
 
+	addSearchModuleDirectory(mWorkingDirectory.canonicalPath());
 	if (scriptFile.isFile()) {
-		mMainContext.evalScript("import sys; (lambda x: sys.path.append(x) if not x in sys.path else None)('"
-								+ scriptFile.canonicalPath() + "')");
+		addSearchModuleDirectory(scriptFile.canonicalPath());
 	}
+
 	mMainContext.evalScript(script);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
