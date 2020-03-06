@@ -77,7 +77,8 @@ void TrikPythonRunner::brickBeep()
 
 void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)
 {
-	mScriptEngineWorker->setWorkingDirectory(workingDir);
+	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir](){
+		mScriptEngineWorker->setWorkingDirectory(workingDir);}, Qt::BlockingQueuedConnection);
 }
 
 void TrikPythonRunner::runDirectCommand(const QString &command)

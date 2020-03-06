@@ -61,6 +61,15 @@ void TrikScriptRunner::setDefaultRunner(ScriptType t)
 	mLastRunner = t;
 }
 
+void TrikScriptRunner::setDefaultRunner(const QString &languageExtension)
+{
+	if (languageExtension.contains("js")) {
+		mLastRunner = ScriptType::JAVASCRIPT;
+	} else if (languageExtension.contains("py")) {
+		mLastRunner = ScriptType::PYTHON;
+	}
+}
+
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
 {
 	fetchRunner(mLastRunner)->registerUserFunction(name, function);
