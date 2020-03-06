@@ -75,7 +75,7 @@ void TrikJavaScriptRunner::brickBeep()
 void TrikJavaScriptRunner::setWorkingDirectory(const QString &workingDir)
 {
 	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir]()
-				{mScriptEngineWorker->setWorkingDir(workingDir);}, Qt::BlockingQueuedConnection);
+				{mScriptEngineWorker->setWorkingDir(workingDir);});
 }
 
 void TrikJavaScriptRunner::run(const QString &script, const QString &fileName)
