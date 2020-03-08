@@ -172,10 +172,13 @@ bool PythonEngineWorker::evalSystemPy()
 	return true;
 }
 
-void PythonEngineWorker::addSearchModuleDirectory(const QString &path)
+void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 {
+	if (path.path().indexOf("'") != -1)
+		return;
+
 	mMainContext.evalScript("import sys; (lambda x: sys.path.append(x) if not x in sys.path else None)('"
-							+ path + "')");
+							+ path.path() + "')");
 }
 
 bool PythonEngineWorker::initTrik()
@@ -253,16 +256,13 @@ QStringList PythonEngineWorker::knownNames() const
 	return result.toList();
 }
 
-void PythonEngineWorker::setWorkingDirectory(const QString &workingDir)
+void PythonEngineWorker::setWorkingDirectory(const QDir &workingDir)
 {
 	mWorkingDirectory = workingDir;
 }
 
 void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
-	if (mState != ready)
-		return;
-
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
 	QMetaObject::invokeMethod(this, [this, script, scriptFile](){this->doRun(script, scriptFile);});

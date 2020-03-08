@@ -60,7 +60,7 @@ public:
 	QStringList knownNames() const;
 
 	/// Changes mWorkingDirectory var.
-	void setWorkingDirectory(const QString &workingDir);
+	void setWorkingDirectory(const QDir &workingDir);
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
@@ -75,7 +75,6 @@ signals:
 	/// Emitted when new direct script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedDirectScript(int scriptId);
-
 
 	/// When engine was inited
 	void inited();
@@ -147,7 +146,7 @@ private:
 	void startScriptEvaluation(int scriptId);
 
 	/// Adds @value path to the Python's sys.path array.
-	void addSearchModuleDirectory(const QString &path);
+	void addSearchModuleDirectory(const QDir &path);
 
 	trikControl::BrickInterface &mBrick;
 	QScopedPointer<ScriptExecutionControl> mScriptExecutionControl;
