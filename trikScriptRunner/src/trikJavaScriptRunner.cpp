@@ -69,7 +69,7 @@ void TrikJavaScriptRunner::addCustomEngineInitStep(const std::function<void (QSc
 
 void TrikJavaScriptRunner::brickBeep()
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, "brickBeep");
+	QMetaObject::invokeMethod(mScriptEngineWorker, &ScriptEngineWorker::brickBeep);
 }
 
 void TrikJavaScriptRunner::setWorkingDirectory(const QString &workingDir)

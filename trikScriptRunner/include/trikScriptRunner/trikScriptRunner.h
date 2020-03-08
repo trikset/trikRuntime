@@ -40,6 +40,9 @@ public:
 	/// Choose default runner type (Python or JavaScript)
 	void setDefaultRunner(ScriptType t);
 
+	/// Choose default runner type (Python or JavaScript) from extension
+	void setDefaultRunner(const QString &languageExtension);
+
 	void registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function) override;
 	void addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step) override;
 	bool wasError() override;

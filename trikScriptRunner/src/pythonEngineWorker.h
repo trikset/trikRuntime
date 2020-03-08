@@ -18,6 +18,7 @@
 #include <QtCore/QThread>
 #include <QMutex>
 #include <QFileInfo>
+#include <QDir>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -58,6 +59,9 @@ public:
 	/// Report known objects and methods for autocompletion
 	QStringList knownNames() const;
 
+	/// Changes mWorkingDirectory var.
+	void setWorkingDirectory(const QDir &workingDir);
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
@@ -71,7 +75,6 @@ signals:
 	/// Emitted when new direct script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedDirectScript(int scriptId);
-
 
 	/// When engine was inited
 	void inited();
@@ -142,6 +145,9 @@ private:
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);
 
+	/// Adds @value path to the Python's sys.path array.
+	void addSearchModuleDirectory(const QDir &path);
+
 	trikControl::BrickInterface &mBrick;
 	QScopedPointer<ScriptExecutionControl> mScriptExecutionControl;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
@@ -156,6 +162,8 @@ private:
 
 	PyThreadState * mPyInterpreter { nullptr };
 
+	/// Directory that would be added to Python's sys.path var when any execution will start.
+	QDir mWorkingDirectory;
 	QString mErrorMessage;
 
 	wchar_t *mProgramName { nullptr };

@@ -77,8 +77,8 @@ void TrikPythonRunner::brickBeep()
 
 void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)
 {
-	Q_UNUSED(workingDir)
-	// TODO: finish include for python
+	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir](){
+		mScriptEngineWorker->setWorkingDirectory(workingDir);});
 }
 
 void TrikPythonRunner::runDirectCommand(const QString &command)
