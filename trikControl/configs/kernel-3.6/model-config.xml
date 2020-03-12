@@ -93,16 +93,16 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Power motor ports. -->
 	<M1>
-		<motor350 />
+		<jga25-371 />
 	</M1>
 	<M2>
-		<motor350 />
+		<jga25-371 />
 	</M2>
 	<M3>
-		<motor350 />
+		<jga25-371 />
 	</M3>
 	<M4>
-		<motor350 />
+		<jga25-371 />
 	</M4>
 
 	<!-- Video sensor ports. -->
