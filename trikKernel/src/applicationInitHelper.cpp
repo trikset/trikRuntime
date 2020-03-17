@@ -25,6 +25,7 @@
 	#include <QtWidgets/QApplication>
 #endif
 
+#include <QRandomGenerator>
 #include <QsLog.h>
 
 #include "translationsHelper.h"
@@ -40,7 +41,7 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 	: mApp(app)
 	, mLoggingHelper(new LoggingHelper(Paths::logsPath()))
 {
-	qsrand(static_cast<uint>(QDateTime::currentMSecsSinceEpoch()));
+	QRandomGenerator::global()->seed(static_cast<uint>(QDateTime::currentMSecsSinceEpoch()));
 	mApp.setApplicationVersion(trikKernel::version);
 
 	trikKernel::TranslationsHelper::initLocale(app.arguments().contains("--no-locale")

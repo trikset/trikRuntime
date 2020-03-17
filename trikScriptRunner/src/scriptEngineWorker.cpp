@@ -140,7 +140,7 @@ void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * co
 
 void ScriptEngineWorker::setWorkingDir(const QString &workingDir)
 {
-	mWorkingDirectory = workingDir;
+	mWorkingDirectory.setPath(workingDir);
 }
 
 void ScriptEngineWorker::stopScript()
@@ -405,5 +405,5 @@ QStringList ScriptEngineWorker::knownMethodNames() const
 		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
 	}
 	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
-	return result.toList();
+	return result.values();
 }

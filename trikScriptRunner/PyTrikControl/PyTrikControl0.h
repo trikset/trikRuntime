@@ -31,7 +31,6 @@
 #include <qwidget.h>
 #include <sensorInterface.h>
 #include <soundSensorInterface.h>
-#include <timeVal.h>
 #include <vectorSensorInterface.h>
 
 

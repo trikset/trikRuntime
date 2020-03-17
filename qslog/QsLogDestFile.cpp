@@ -149,7 +149,7 @@ void QsLogging::FileDestination::write(const QString& message, Level level)
 		mOutputStream.setDevice(&mFile);
 	}
 
-	mOutputStream << message << endl;
+	mOutputStream << message << Qt::endl;
 	mOutputStream.flush();
 }
 
