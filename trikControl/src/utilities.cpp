@@ -17,6 +17,11 @@
 #include "QsLog.h"
 
 QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
+
+	if (array.empty()) {
+		return QImage();
+	}
+
 	auto fmt = QImage::Format_RGB32;
 	auto *rawData = static_cast<const uchar *>(static_cast<const void *>(array.data()));
 
