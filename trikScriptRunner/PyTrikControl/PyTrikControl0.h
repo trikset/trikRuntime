@@ -24,8 +24,14 @@
 #include <motorInterface.h>
 #include <objectSensorInterface.h>
 #include <pwmCaptureInterface.h>
+#include <qfontinfo.h>
+#include <qmargins.h>
+#include <qpaintdevice.h>
+#include <qrect.h>
+#include <qwidget.h>
 #include <sensorInterface.h>
 #include <soundSensorInterface.h>
+#include <timeVal.h>
 #include <vectorSensorInterface.h>
 
 
@@ -258,7 +264,6 @@ class PythonQtWrapper_trikControl__DisplayWidgetInterface : public QObject
 { Q_OBJECT
 public:
 public slots:
-trikControl::DisplayWidgetInterface* new_trikControl__DisplayWidgetInterface();
 void delete_trikControl__DisplayWidgetInterface(trikControl::DisplayWidgetInterface* obj) { delete obj; } 
 };
 
@@ -336,6 +341,7 @@ void delete_trikControl__EventInterface(trikControl::EventInterface* obj) { dele
 class PythonQtPublicPromoter_trikControl__FifoInterface : public trikControl::FifoInterface
 { public:
 inline bool  py_q_hasData() const { return this->hasData(); }
+inline bool  py_q_hasLine() const { return this->hasLine(); }
 inline QString  py_q_read() { return this->read(); }
 };
 
@@ -345,6 +351,7 @@ public:
 public slots:
 void delete_trikControl__FifoInterface(trikControl::FifoInterface* obj) { delete obj; } 
    bool  py_q_hasData(trikControl::FifoInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__FifoInterface*)theWrappedObject)->py_q_hasData());}
+   bool  py_q_hasLine(trikControl::FifoInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__FifoInterface*)theWrappedObject)->py_q_hasLine());}
    QString  py_q_read(trikControl::FifoInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__FifoInterface*)theWrappedObject)->py_q_read());}
 };
 
