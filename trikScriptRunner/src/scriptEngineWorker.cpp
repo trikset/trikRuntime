@@ -129,7 +129,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+	mBrick.playTone(2500, 20);
 }
 
 void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * const engine)
