@@ -35,7 +35,7 @@ public:
 	/// Constructor.
 	/// @param accelerometer - accelerometer which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	explicit AccelerometerWidget(trikControl::VectorSensorInterface &accelerometer, QWidget *parent = 0);
+	explicit AccelerometerWidget(trikControl::VectorSensorInterface *accelerometer, QWidget *parent = 0);
 
 public slots:
 	void renew() override;
@@ -54,6 +54,6 @@ private:
 	QLabel mCircle;
 	QVBoxLayout mLayout;
 
-	trikControl::VectorSensorInterface &mAccelerometer;
+	trikControl::VectorSensorInterface *mAccelerometer;
 };
 }

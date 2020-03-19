@@ -35,7 +35,7 @@ public:
 	/// Constructor.
 	/// @param gyroscope - gyroscope which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	explicit GyroscopeIndicator(trikControl::GyroSensorInterface &gyroscope, QWidget *parent = 0);
+	explicit GyroscopeIndicator(trikControl::GyroSensorInterface *gyroscope, QWidget *parent = 0);
 
 public slots:
 	void renew() override;
@@ -56,6 +56,6 @@ private:
 	int mX {};
 	int mY {};
 	int mZ {};
-	trikControl::GyroSensorInterface &mGyroscope;
+	trikControl::GyroSensorInterface *mGyroscope;
 };
 }

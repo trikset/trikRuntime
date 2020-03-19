@@ -23,7 +23,7 @@
 
 using namespace trikGui;
 
-AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface &accelerometer
+AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface *accelerometer
 		, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mTitle(tr("Accelerometer"))
@@ -47,7 +47,7 @@ AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface &acc
 
 void AccelerometerWidget::renew()
 {
-	const auto &value = mAccelerometer.read();
+	const auto &value = mAccelerometer != nullptr ? mAccelerometer->read() : QVector<int>();
 
 	const auto &text = [&value](int i) { return value.size() > i ? QString::number(value[i]) : tr("Error"); };
 

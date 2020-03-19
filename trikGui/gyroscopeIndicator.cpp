@@ -24,7 +24,7 @@ using namespace trikGui;
 static constexpr int MAX_GYROSCOPE_VAL = 100000;
 static constexpr int ARC_DRAWING_CONST = 16;
 
-GyroscopeIndicator::GyroscopeIndicator(trikControl::GyroSensorInterface &gyroscope
+GyroscopeIndicator::GyroscopeIndicator(trikControl::GyroSensorInterface *gyroscope
 		, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mTitle(tr("Gyroscope"))
@@ -48,7 +48,7 @@ GyroscopeIndicator::GyroscopeIndicator(trikControl::GyroSensorInterface &gyrosco
 
 void GyroscopeIndicator::renew()
 {
-	const auto &value = mGyroscope.read();
+	const auto &value = mGyroscope != nullptr ? mGyroscope->read() : QVector<int>();
 
 	const auto &text = [&value](int i, int &out) {
 		return value.size() > i ? QString::number(out = value[i]) : tr("Error");
