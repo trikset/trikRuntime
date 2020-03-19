@@ -17,13 +17,9 @@
 #include "QsLog.h"
 
 QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
-
-	// Reserve maximum possible size to avoid reallocation
-	uchar *formattedData = nullptr;
-	static auto cleanUp = [](void *p) { if (p) delete [](static_cast<decltype (formattedData)>(p)); };
-
 	// QImage requires 32-bit aligned scan lines
 	// Helper function to convert data
+	uchar *formattedData = nullptr;
 	auto copyAligned = [&](int perLine){
 		if (perLine * height > array.size()) {
 			QLOG_WARN() << "imageFromBytes: not enough data";
@@ -55,6 +51,7 @@ QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int h
 	if (!formattedData) {
 		return QImage();
 	} else {
+		static auto cleanUp = [](void *p) { if (p) delete [](static_cast<decltype (formattedData)>(p)); };
 		return QImage(formattedData, width, height, fmt, cleanUp, formattedData);
 	}
 }

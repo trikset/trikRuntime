@@ -71,7 +71,8 @@ void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const
 		painter.begin(&pixmap);
 		painter.fillRect(0, 0, width, height, QBrush(QColor(Qt::GlobalColor::lightGray), Qt::BrushStyle::SolidPattern));
 		QBrush brush(Qt::GlobalColor::red, Qt::BrushStyle::SolidPattern);
-		QPen pen(brush, (width+height)/20+1, Qt::PenStyle::SolidLine, Qt::PenCapStyle::RoundCap, Qt::PenJoinStyle::MiterJoin);
+		QPen pen(brush, (width+height)/20+1, Qt::PenStyle::SolidLine
+				, Qt::PenCapStyle::RoundCap, Qt::PenJoinStyle::MiterJoin);
 		painter.setBrush(brush);
 		painter.setPen(pen);
 		QPainterPath path;
