@@ -141,7 +141,7 @@ void GraphicsWidget::addLabel(const QString &text, int x, int y)
 	mLabels[qMakePair(x, y)] = qMakePair(mCurrentPenColor, text);
 }
 
-void GraphicsWidget::setPixmap(const QPixmap &picture)
+void GraphicsWidget::setPixmap(QPixmap &&picture)
 {
 	mPicture = picture;
 }

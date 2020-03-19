@@ -4,7 +4,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="+57"/>
+        <location filename="../../trikKernel/src/applicationInitHelper.cpp" line="+56"/>
         <source>Print this help text.</source>
         <translation type="unfinished"></translation>
     </message>
