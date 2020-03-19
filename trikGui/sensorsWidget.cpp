@@ -128,10 +128,10 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
 		return new EncoderIndicator(port, *mBrick.encoder(port), this);
 	}
 	case SensorType::gyroscope: {
-		return new GyroscopeIndicator(*mBrick.gyroscope(), this);
+		return new GyroscopeIndicator(mBrick.gyroscope(), this);
 	}
 	case SensorType::accelerometer: {
-		return new AccelerometerWidget(*mBrick.accelerometer(), this);
+		return new AccelerometerWidget(mBrick.accelerometer(), this);
 	}
 	case SensorType::camera: {
 		return new CameraWidget(mBrick, this);
