@@ -42,7 +42,9 @@ void CameraWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Return: {
-			doPhoto();
+			if (!isCreatingPhoto) {
+				doPhoto();
+			}
 			break;
 		}
 		default: {
@@ -59,6 +61,7 @@ void CameraWidget::renew()
 
 void CameraWidget::doPhoto()
 {
+	isCreatingPhoto = true;
 	auto const & photo = mBrick.getStillImage();
 
 	if (!photo.isEmpty()) {
@@ -79,4 +82,5 @@ void CameraWidget::doPhoto()
 		mPixmap.setText(tr("Camera is not available"));
 	}
 	update();
+	isCreatingPhoto = false;
 }
