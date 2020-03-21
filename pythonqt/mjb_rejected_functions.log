@@ -4,6 +4,14 @@ Not in type system
 
 ************************************************************************
 Generation disabled by type system
+QGradient::interpolationMode
+QGradient::setInterpolationMode
+QIODevice::d_func
+QPainterPathStroker::d_func
+QWidget::create
+QWidget::d_func
+QWidget::find
+QWidget::internalWinId
 ************************************************************************
 
 ************************************************************************
@@ -12,17 +20,49 @@ Type redefined to not be a class
 
 ************************************************************************
 Unmatched argument type
+QDataStream::__lshift__ qfloat16
+QDataStream::__lshift__ std::nullptr_t
+QDataStream::__rshift__ qfloat16&
+QDataStream::__rshift__ std::nullptr_t&
+QGradient::QGradient QGradient::Preset
+QImage::QImage QImageCleanupFunction
+QImage::qSwap d
+QMetaType::QMetaType QMetaType::ExtensionFlag const
+QMetaType::ctor QMetaTypeInterface const*
+QMetaType::debugStream QDebug&
+QMetaType::isExtended QMetaType::ExtensionFlag const
+QMetaType::registerConverter To
+QMetaType::registerConverter UnaryFunction
+QMetaType::registerNormalizedType QMetaType::Deleter
+QMetaType::registerNormalizedType QMetaType::Destructor
+QMetaType::registerNormalizedType QMetaType::TypedDestructor
+QMetaType::registerStreamOperators QMetaType::SaveOperator
+QMetaType::registerType QMetaType::Deleter
+QMetaType::registerType QMetaType::TypedDestructor
+QPainterPath::qSwap d_ptr
+QStringMatcher::QStringMatcher QStringView
 trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
 trikControl::DisplayInterface::show QVector<int32_t> const&
+trikControl::FifoInterface::newData QVector<uint8_t> const&
 trikKernel::TimeVal::fromPackedUInt32 uint32_t
 ************************************************************************
 
 ************************************************************************
 Unmatched return type
+QLineF::intersects IntersectionType
+QMessageLogger::critical QDebug
+QMessageLogger::debug QDebug
+QMessageLogger::info QDebug
+QMessageLogger::warning QDebug
+QPair::noexcept 
+QStringMatcher::indexIn qsizetype
+QSysInfo::macVersion QSysInfo::MacVersion
+QSysInfo::windowsVersion QSysInfo::WinVersion
 trikControl::BrickInterface::getStillImage QVector<uint8_t>
 trikControl::CameraDeviceInterface::getPhoto QVector<uint8_t>
 trikControl::CameraDeviceInterface::qImageToQVector QVector<uint8_t>
 trikControl::CameraDeviceInterface::status Status
+trikControl::FifoInterface::readRaw QVector<uint8_t>
 trikKernel::TimeVal::packedUInt32 uint32_t
 ************************************************************************
 

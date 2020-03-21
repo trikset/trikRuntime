@@ -91,7 +91,8 @@ public:
 	void addLabel(const QString &text, int x, int y);
 
 	/// Sets pixmap which will be drawn instead of other elements.
-	void setPixmap(const QPixmap &picture);
+	/// Steals ownership for performance optimization
+	void setPixmap(QPixmap &&picture);
 
 private:
 	/// Draw all elements.

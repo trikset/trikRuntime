@@ -553,7 +553,7 @@
         <translation>Обновление ПО</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+40"/>
         <source>Update is failed</source>
         <translation>Во время обновления (update) произошла ошибка</translation>
     </message>

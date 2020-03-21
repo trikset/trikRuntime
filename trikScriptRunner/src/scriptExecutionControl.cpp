@@ -20,6 +20,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
 
+#include <QRandomGenerator>
 #include <QsLog.h>
 
 using namespace trikScriptRunner;
@@ -74,7 +75,7 @@ int ScriptExecutionControl::random(int from, int to) const
 		qSwap(from, to);
 	}
 
-	return qrand() % (to - from + 1) + from;
+	return QRandomGenerator::global()->bounded(from, to+1);
 }
 
 void ScriptExecutionControl::run()

@@ -24,6 +24,11 @@
 #include <motorInterface.h>
 #include <objectSensorInterface.h>
 #include <pwmCaptureInterface.h>
+#include <qfontinfo.h>
+#include <qmargins.h>
+#include <qpaintdevice.h>
+#include <qrect.h>
+#include <qwidget.h>
 #include <sensorInterface.h>
 #include <soundSensorInterface.h>
 #include <vectorSensorInterface.h>
@@ -87,10 +92,6 @@ trikControl::DisplayWidgetInterface*  PythonQtWrapper_trikControl__DisplayInterf
 }
 
 
-
-trikControl::DisplayWidgetInterface* PythonQtWrapper_trikControl__DisplayWidgetInterface::new_trikControl__DisplayWidgetInterface()
-{ 
-return new trikControl::DisplayWidgetInterface(); }
 
 
 

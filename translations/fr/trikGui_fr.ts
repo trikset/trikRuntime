@@ -495,7 +495,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+35"/>
         <source>Update and Upgrade is successfully finished</source>
         <translation type="unfinished"></translation>
     </message>

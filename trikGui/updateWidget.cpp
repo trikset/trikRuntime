@@ -65,20 +65,18 @@ int UpdateWidget::exec()
 	show();
 
 	QEventLoop loop;
-	QTimer::singleShot(1000, &loop, SLOT(quit()));
+	QTimer::singleShot(1000, &loop, &QEventLoop::quit);
 	loop.exec();
 
 	QLOG_INFO() << "Running: " << "opkg update";
-	qDebug() << "Running:" << "opkg update";
 	QProcess updateCommand;
-	updateCommand.start("opkg update");
+	updateCommand.start("opkg", {"update"});
 	bool update = updateCommand.waitForFinished();
 
 	if (update) {
 		QLOG_INFO() << "Running: " << "opkg upgrade";
-		qDebug() << "Running:" << "opkg upgrade";
 		QProcess upgradeCommand;
-		upgradeCommand.start("opkg upgrade");
+		upgradeCommand.start("opkg", {"upgrade"});
 		bool upgrade = upgradeCommand.waitForFinished(100000);
 
 		if (upgrade) {

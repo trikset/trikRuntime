@@ -14,7 +14,7 @@ PythonQt::self()->addParentClass("trikControl::CameraDeviceInterface", "trikCont
 PythonQt::priv()->registerClass(&trikControl::ColorSensorInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__ColorSensorInterface>, NULL, module, 0);
 PythonQt::priv()->registerCPPClass("trikControl::DeviceInterface", "", "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__DeviceInterface>, NULL, module, 0);
 PythonQt::priv()->registerClass(&trikControl::DisplayInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__DisplayInterface>, NULL, module, 0);
-PythonQt::priv()->registerCPPClass("trikControl::DisplayWidgetInterface", "", "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__DisplayWidgetInterface>, NULL, module, 0);
+PythonQt::priv()->registerClass(&trikControl::DisplayWidgetInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__DisplayWidgetInterface>, NULL, module, 0);
 PythonQt::priv()->registerClass(&trikControl::EncoderInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__EncoderInterface>, NULL, module, 0);
 PythonQt::priv()->registerClass(&trikControl::EventCodeInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__EventCodeInterface>, NULL, module, 0);
 PythonQt::priv()->registerClass(&trikControl::EventDeviceInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__EventDeviceInterface>, NULL, module, 0);

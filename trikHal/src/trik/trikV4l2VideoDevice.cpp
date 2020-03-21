@@ -240,42 +240,27 @@ void TrikV4l2VideoDevice::setFormat()
 
 void TrikV4l2VideoDevice::closeDevice()
 {
-	if (mNotifier) {
-		mNotifier->setEnabled(false);
-		delete mNotifier;
-		mNotifier = nullptr;
-	}
-
+	mNotifier.reset();
 	if (::v4l2_close(mFileDescriptor)) {
-		 QLOG_ERROR() << "Failed to close v4l2 camera device, device path = " << fileDevicePath;
-		 return;
+		 QLOG_ERROR() << "Failed to close v4l2 camera device descriptor #" << mFileDescriptor
+						<< ", device path: " << fileDevicePath;
 	}
 
 	mFileDescriptor = -1;
-
-	QLOG_INFO() << "Close v4l2 camera device " <<  fileDevicePath;
+	QLOG_INFO() << "Closed v4l2 camera device " <<  fileDevicePath;
 }
 
 
 const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 {
 	QEventLoop loop;
-	QTimer watchdog;
-	watchdog.setSingleShot(true);
-	watchdog.setInterval(1000);
-	connect(&watchdog, &QTimer::timeout, &loop, [&]() {
-			QLOG_WARN() << "V4l2 makeShot termitated by watchdog timer";
-			loop.quit();
-		}, Qt::QueuedConnection);
-
 	connect(this, &TrikV4l2VideoDevice::dataReady, &loop, &QEventLoop::quit, Qt::QueuedConnection);
-	watchdog.start();
-
 	initMMAP();
 	startCapturing();
-
-	loop.exec();
-	watchdog.stop();
+	QTimer::singleShot(1000, &loop, [&loop](){loop.exit(-1);});
+	if (loop.exec() < 0) {
+		QLOG_WARN() << "V4l2 makeShot terminated by watchdog timer";
+	}
 
 	stopCapturing();
 	freeMMAP();
@@ -286,11 +271,10 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	if (mFrame.size() / 4 * 2 != IMAGE_HEIGHT * IMAGE_WIDTH) {
 		QLOG_ERROR() << "V4l2: unexpected size of getted image, expect " << IMAGE_HEIGHT * IMAGE_WIDTH
 				<< "bytes, got " << mFrame.size() / 4 * 2 << " bytes";
-		mFrame = QVector<uint8_t>();
-		return mFrame;
+		QVector<uint8_t>().swap(mFrame);
+	} else {
+		mConvertFunc(mFrame, IMAGE_HEIGHT, IMAGE_WIDTH).swap(mFrame);
 	}
-
-	mFrame = mConvertFunc(mFrame, IMAGE_HEIGHT, IMAGE_WIDTH);
 	return mFrame;
 }
 
@@ -335,6 +319,9 @@ void TrikV4l2VideoDevice::initMMAP()
 
 void TrikV4l2VideoDevice::startCapturing()
 {
+	mNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
+	connect(&*mNotifier, &QSocketNotifier::activated, this, &TrikV4l2VideoDevice::readFrameData);
+
 	for(int i = 0; i < buffers.size(); ++i) {
 		v4l2_buffer buf {};
 		buf.type = mFormat.type;
@@ -353,13 +340,11 @@ void TrikV4l2VideoDevice::startCapturing()
 	}
 
 	QLOG_INFO() << "V4l2 camera: start capturing";
-	mNotifier = new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read, this);
-	connect(mNotifier, &QSocketNotifier::activated, this, &TrikV4l2VideoDevice::readFrameData, Qt::QueuedConnection);
 }
 
 void TrikV4l2VideoDevice::readFrameData(int fd) {
 	if (fd != mFileDescriptor) {
-		QLOG_ERROR() << "V4l2: readFrame data requested for incorrect fd="<<fd;
+		QLOG_ERROR() << "V4l2: readFrame data requested for incorrect fd=" << fd;
 		return;
 	}
 
@@ -372,39 +357,35 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	QVector<uint8_t> res;
 
 	if (buf.index < static_cast<decltype(buf.index)>(buffers.size())) {
-		auto & b = buffers[buf.index];
+		auto &b = buffers[buf.index];
 		if (buf.bytesused > 0) {
 			res.resize(buf.bytesused);
 			std::copy(b.start, b.start + buf.bytesused, res.begin());
 			QLOG_INFO() << "V4l2 captured " << buf.bytesused << "bytes into buf #" << buf.index;
 		}
-
 		mFrame.swap(res);
 		emit dataReady();
 	}
+	mNotifier->setEnabled(true);
 }
 
 void TrikV4l2VideoDevice::stopCapturing()
 {
 	v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-	if (xioctl(VIDIOC_STREAMOFF, &type, "V4l2 VIDIOC_STREAMOFF failed")) {
-		return;
+	if (!xioctl(VIDIOC_STREAMOFF, &type, "V4l2 VIDIOC_STREAMOFF failed")) {
+		QLOG_INFO() << "V4l2 camera: stopped capturing";
 	}
-
-	QLOG_INFO() << "V4l2 camera: stop capturing";
 }
 
 
 void TrikV4l2VideoDevice::freeMMAP()
 {
-	for(auto & b : buffers) {
+	for(auto &b : buffers) {
 		if (b.start != MAP_FAILED && ::v4l2_munmap(b.start, b.length)) {
 			QLOG_ERROR() << "Free MMAP error in TrikV4l2VideoDevice::freeMMAP() for buffer";
 		}
 	}
 
-	QLOG_INFO() << "Free MMAP for v4l2 camera";
+	QLOG_INFO() << "Free MMAP buffers for v4l2 finished";
 }
-
-

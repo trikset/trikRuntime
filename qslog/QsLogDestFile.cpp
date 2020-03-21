@@ -29,6 +29,12 @@
 #include <QtGlobal>
 #include <iostream>
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+#define QT_ENDL_NAMESPACE Qt
+#else
+#define QT_ENDL_NAMESPACE
+#endif
+
 const int QsLogging::SizeRotationStrategy::MaxBackupCount = 10;
 
 QsLogging::RotationStrategy::~RotationStrategy()
@@ -149,7 +155,7 @@ void QsLogging::FileDestination::write(const QString& message, Level level)
 		mOutputStream.setDevice(&mFile);
 	}
 
-	mOutputStream << message << endl;
+	mOutputStream << message <<  QT_ENDL_NAMESPACE::endl;
 	mOutputStream.flush();
 }
 

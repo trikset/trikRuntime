@@ -20,6 +20,7 @@
 #include <trikControl/brickFactory.h>
 #include <trikKernel/fileUtils.h>
 #include <testUtils/wait.h>
+#include <QRandomGenerator>
 #include <QTimer>
 
 using namespace tests;
@@ -179,7 +180,7 @@ TEST_F(TrikJsRunnerTest, directCommandTest)
 
 TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 {
-	auto testFileName = "test" + QString::number(qrand(), 16);
+	auto testFileName = "test" + QString::number(QRandomGenerator::global()->generate(), 16);
 	::remove(testFileName.toStdString().c_str());
 	ASSERT_FALSE(QFileInfo::exists(testFileName));
 	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > "

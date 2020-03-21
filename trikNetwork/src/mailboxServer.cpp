@@ -249,7 +249,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 	if (!knownRobot) {
 		mKnownRobotsLock.lockForWrite();
 
-		mKnownRobots.insertMulti(hullNumber, {ip, serverPort});
+		mKnownRobots.insert(hullNumber, {ip, serverPort});
 		mKnownRobotsLock.unlock();
 	}
 }
@@ -289,7 +289,7 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int port, int hullN
 		}
 	}
 
-	mKnownRobots.insertMulti(hullNumber, {ip, port});
+	mKnownRobots.insert(hullNumber, {ip, port});
 	mKnownRobotsLock.unlock();
 }
 

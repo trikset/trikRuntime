@@ -119,7 +119,7 @@ void Controller::runFile(const QString &filePath)
 		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()),
 						   trikScriptRunner::ScriptType::PYTHON, fileInfo.baseName());
 	} else if (fileInfo.isExecutable()) {
-		QProcess::startDetached(filePath);
+		QProcess::startDetached(filePath, {});
 	}
 }
 
