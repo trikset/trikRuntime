@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <QtCore/QDir>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -36,14 +37,14 @@ public:
 	CameraImplementationInterface() = default;
 
 	/// Get directory, where photos are saved
-	QString getTempDir() const { return tempDir;}
+	QDir getTempDir() const { return tempDir;}
 
 	/// Set directory, where photos are saved
 	/// @param newDir - new name of tempDir
-	void setTempDir(const QString &newDir) {tempDir = newDir;}
+	void setTempDir(const QDir &newDir) {tempDir = newDir;}
 
 private:
-	QString tempDir;
+	QDir tempDir;
 
 };
 

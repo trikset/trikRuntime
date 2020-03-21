@@ -23,21 +23,20 @@
 using namespace trikControl;
 
 ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &filter, const QString &path)
-	: filters(filter)
+	: mFilters(filter)
 {
 	setTempDir(path);
-	filesList = QDir(getTempDir()).entryInfoList(filters);
-	if (filesList.isEmpty()) {
-		QLOG_ERROR() << "No files in directory " << getTempDir()
-				<< " matching regexps " << filters;
-	}
-
-	if (filesList.size() > 1) {
-		QLOG_INFO() << "Few files matching regexps " << filters
+	mFiles = QDir(getTempDir()).entryInfoList(mFilters
+											  , QDir::Filter::NoDotAndDotDot | QDir::Filter::Readable | QDir::Filter::Files
+											  , QDir::SortFlag::Name | QDir::SortFlag::IgnoreCase);
+	if (mFiles.isEmpty()) {
+		QLOG_WARN() << "No files in directory " << getTempDir()
+				<< " matching" << mFilters;
+	} else {
+		QLOG_INFO() << "Few files matching regexps " << mFilters
 				<< " in file " << getTempDir();
-
-		if (filesList.size() < 10) {
-			for (auto &&file : filesList) {
+		if (mFiles.size() < 10) {
+			for (auto &&file : mFiles) {
 				QLOG_INFO() << file.fileName();
 			}
 		}
@@ -46,20 +45,18 @@ ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &
 
 
 QVector<uint8_t> ImitationCameraImplementation::getPhoto() {
-	if ( ! filesList.isEmpty()) {
-		auto f = filesList[++cur%=filesList.size()];
-		QImage imgOrig(f.absoluteFilePath());
-
-		if (! imgOrig.isNull()) {
-			QLOG_INFO() << "Opening file " << f.absoluteFilePath();
-		} else {
-			QLOG_ERROR() << "Can not open file " << f.absoluteFilePath();
-			return QVector<uint8_t>();
-		}
-
-		return CameraDeviceInterface::qImageToQVector(imgOrig);
-	} else {
-		QLOG_INFO() << "Return empty image, are filters for camera correct?";
+	if (mFiles.isEmpty()) {
 		return QVector<uint8_t>();
 	}
+	auto const &path = mFiles[++mCurrentFileIndex %= mFiles.size()].absoluteFilePath();
+	QImage imgOrig(path);
+
+	if (!imgOrig.isNull()) {
+		QLOG_INFO() << "getPhoto: using " << path;
+	} else {
+		QLOG_ERROR() << "getPhoto: can not open file " << path;
+		return QVector<uint8_t>();
+	}
+
+	return CameraDeviceInterface::qImageToQVector(imgOrig);
 }
