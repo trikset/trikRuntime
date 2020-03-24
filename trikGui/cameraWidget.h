@@ -45,7 +45,7 @@ private:
 	void doPhoto();
 
 	QVBoxLayout mLayout;
-	std::atomic<bool> mIsCreatingPhoto;
+	std::atomic<bool> mIsCreatingPhoto {false};
 	QLabel mTitle;
 	QLabel mPixmap;
 	trikControl::BrickInterface &mBrick;
