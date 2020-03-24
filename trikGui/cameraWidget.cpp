@@ -25,6 +25,7 @@ using namespace trikGui;
 
 CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 	: AbstractIndicator(parent)
+	, mIsCreatingPhoto(false)
 	, mTitle(tr("Camera"))
 	, mBrick(brick)
 {
@@ -42,9 +43,7 @@ void CameraWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 		case Qt::Key_Return: {
-			if (!isCreatingPhoto) {
-				doPhoto();
-			}
+			doPhoto();
 			break;
 		}
 		default: {
@@ -61,7 +60,10 @@ void CameraWidget::renew()
 
 void CameraWidget::doPhoto()
 {
-	isCreatingPhoto = true;
+	if (mIsCreatingPhoto)
+		return;
+
+	mIsCreatingPhoto = true;
 	auto const & photo = mBrick.getStillImage();
 
 	if (!photo.isEmpty()) {
@@ -82,5 +84,5 @@ void CameraWidget::doPhoto()
 		mPixmap.setText(tr("Camera is not available"));
 	}
 	update();
-	isCreatingPhoto = false;
+	mIsCreatingPhoto = false;
 }
