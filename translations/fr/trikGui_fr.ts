@@ -38,7 +38,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+54"/>
         <source>Camera is not available</source>
         <translation type="unfinished"></translation>
     </message>
