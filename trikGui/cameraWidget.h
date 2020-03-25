@@ -18,6 +18,7 @@
 #include <QLabel>
 #include <QPixmap>
 
+#include <atomic>
 #include "abstractIndicator.h"
 
 namespace trikControl {
@@ -45,6 +46,7 @@ private:
 	void doPhoto();
 
 	QVBoxLayout mLayout;
+	std::atomic_bool mIsCreatingPhoto {false};
 	QLabel mTitle;
 	QLabel mPixmap;
 	trikControl::BrickInterface &mBrick;

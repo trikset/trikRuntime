@@ -59,6 +59,10 @@ void CameraWidget::renew()
 
 void CameraWidget::doPhoto()
 {
+	if (mIsCreatingPhoto.exchange(true)) {
+		return;
+	}
+
 	auto const & photo = mBrick.getStillImage();
 
 	if (!photo.isEmpty()) {
@@ -79,4 +83,6 @@ void CameraWidget::doPhoto()
 		mPixmap.setText(tr("Camera is not available"));
 	}
 	update();
+
+	mIsCreatingPhoto.store(false);
 }
