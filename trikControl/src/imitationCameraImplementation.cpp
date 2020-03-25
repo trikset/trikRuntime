@@ -27,8 +27,8 @@ ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &
 {
 	setTempDir(path);
 	mFiles = QDir(getTempDir()).entryInfoList(mFilters
-											  , QDir::Filter::NoDotAndDotDot | QDir::Filter::Readable | QDir::Filter::Files
-											  , QDir::SortFlag::Name | QDir::SortFlag::IgnoreCase);
+			, QDir::Filter::NoDotAndDotDot | QDir::Filter::Readable | QDir::Filter::Files
+			, QDir::SortFlag::Name | QDir::SortFlag::IgnoreCase);
 	if (mFiles.isEmpty()) {
 		QLOG_WARN() << "No files in directory " << getTempDir()
 				<< " matching" << mFilters;
