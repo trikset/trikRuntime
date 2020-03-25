@@ -59,8 +59,9 @@ void CameraWidget::renew()
 
 void CameraWidget::doPhoto()
 {
-	if (mIsCreatingPhoto.exchange(true))
+	if (mIsCreatingPhoto.exchange(true)) {
 		return;
+	}
 
 	auto const & photo = mBrick.getStillImage();
 
