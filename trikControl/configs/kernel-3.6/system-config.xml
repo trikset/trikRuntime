@@ -163,11 +163,9 @@ equal to its class name.
 		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
 				controlMin="0" controlMax="100" />
 
-                <!-- old motors 95RPM
-                <jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" /> -->
+                <motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
 
-                <!-- temporary workaround to use 100RPM motors -->
-                <jga25-371 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
+                <motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
 
 		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
 
