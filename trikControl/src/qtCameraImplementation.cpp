@@ -63,7 +63,7 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 		, &eventLoop, [this, &imageCapture, camera](bool ready) {
 			if (ready) {
 				camera->searchAndLock();
-				imageCapture->capture(getTempDir() + "/photo.jpg");
+				imageCapture->capture(getTempDir().filePath("photo.jpg"));
 				camera->unlock();
 			}
 		}

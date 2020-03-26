@@ -33,7 +33,7 @@ QVector<uint8_t> V4l2CameraImplementation::getPhoto()
 		return result;
 
 	auto image = QImage(result.data(), 320, 240, QImage::Format_RGB888);
-	auto saved = image.save(getTempDir()+"/photo.jpg", "JPG");
+	auto saved = image.save(getTempDir().filePath("photo.jpg"), "JPG");
 	if (!saved) {
 		QLOG_WARN() << "Failed to save captured image";
 	}

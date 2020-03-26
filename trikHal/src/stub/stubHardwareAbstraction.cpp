@@ -74,7 +74,7 @@ OutputDeviceFileInterface *StubHardwareAbstraction::createOutputDeviceFile(const
 	return new StubOutputDeviceFile(fileName);
 }
 
-QVector<uint8_t> StubHardwareAbstraction::captureV4l2StillImage(const QString &port, const QString &pathToPic) const
+QVector<uint8_t> StubHardwareAbstraction::captureV4l2StillImage(const QString &port, const QDir &pathToPic) const
 {
 	Q_UNUSED(pathToPic);
 	QLOG_INFO() << "Call stub HAL captureV4l2StillImage on port " + port;

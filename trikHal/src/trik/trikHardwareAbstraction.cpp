@@ -74,7 +74,7 @@ OutputDeviceFileInterface *TrikHardwareAbstraction::createOutputDeviceFile(const
 	return new TrikOutputDeviceFile(fileName);
 }
 
-QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &port, const QString &pathToPic) const
+QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &port, const QDir &pathToPic) const
 {
 	Q_UNUSED(pathToPic);
 	TrikV4l2VideoDevice device(port); // need only one camera device

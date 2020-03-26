@@ -23,6 +23,8 @@
 #include "mspUsbInterface.h"
 #include "systemConsoleInterface.h"
 
+#include <QtCore/QDir>
+
 namespace trikHal {
 
 /// Hardware abstraction, provides devices that are used to communicate with robot hardware or emulate it.
@@ -63,7 +65,7 @@ public:
 	/// Returns QVector with info about picture pixels
 	/// @param port - port name for device
 	/// @param pathToPic - path to picture
-	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port, const QString &pathToPic) const = 0;
+	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port, const QDir &pathToPic) const = 0;
 };
 
 }
