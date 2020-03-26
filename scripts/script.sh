@@ -14,12 +14,7 @@ case $TRAVIS_OS_NAME in
   *) exit 1 ;;
 esac
 export EXECUTOR
-if [ "$VERA" = "true" ]; then $EXECUTOR ./runVera++.sh ; fi
-if [ "$VERA" = "true" ]; then
-  git_diff=$( { git diff --diff-filter=d --name-only ${TRAVIS_COMMIT_RANGE} || true ; } \
-  | xargs -r file -i | sed -e "s|\(.*\):.*text/x-c.*|\1|g" -e "/:/d")
-  [[ -z "${git_diff}" ]] || $EXECUTOR vera++ --error --root vera++ --profile strict <<< "$git_diff"
-fi
+if "$VERA" ; then $EXECUTOR ./runVera++.sh ; fi
 
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR bash -lic 'lupdate trikRuntime.pro' && $EXECUTOR scripts/checkStatus.sh ; fi
 
