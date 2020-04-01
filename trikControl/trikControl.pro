@@ -44,7 +44,8 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
 	$$PWD/include/trikControl/markerInterface.h \
-	$$PWD/include/trikControl/i2cDeviceInterface.h
+	$$PWD/include/trikControl/i2cDeviceInterface.h \
+	$$PWD/include/trikControl/utilities.h
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \
@@ -106,7 +107,6 @@ HEADERS += \
 	$$PWD/src/imitationCameraImplementation.h \
 	$$PWD/src/i2cDevice.h \
 	$$PWD/src/i2cCommunicator.h \
-	$$PWD/src/utilities.h
 #	$$PWD/src/headingSensor.h \
 
 SOURCES += \
