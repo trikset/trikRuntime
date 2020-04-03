@@ -16,13 +16,20 @@
 
 #include <QImage>
 
+#include "declSpec.h"
+
+namespace trikControl {
+
 /// The class that makes utility code reusable.
-class Utilities
+class TRIKCONTROL_EXPORT Utilities
 {
 public:
 	/// Creates image for show method from data according to format. Image is scaled to fill the screen.
 	static QImage imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format);
 
 	/// Reworks data from brick.getStillImage() to better getPhoto()
-	static QVector<int32_t> rescalePhoto(QVector<uint8_t> data);
+	static QVector<int32_t> rescalePhoto(const QVector<uchar> data);
 };
+}
+
+// Q_DECLARE_METATYPE(trikControl::Utilities)

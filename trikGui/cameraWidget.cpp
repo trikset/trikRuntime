@@ -18,6 +18,8 @@
 #include <QtGui/QKeyEvent>
 
 #include "trikControl/brickInterface.h"
+#include "trikControl/utilities.h"
+
 #include "trikKernel/paths.h"
 #include "QsLog.h"
 
@@ -63,10 +65,11 @@ void CameraWidget::doPhoto()
 		return;
 	}
 
-	auto const & photo = mBrick.getStillImage();
+	auto const & photo = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
 
 	if (!photo.isEmpty()) {
-		QImage image(photo.data(), 320, 240, QImage::Format_RGB888);
+		auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb888");
+		//QImage image(static_cast<QVector<int32_t>>(photo), 160, 120, QImage::Format_RGB888);
 		mPixmap.setPixmap(QPixmap::fromImage(image));
 
 		QDir dir(trikKernel::Paths::imagesPath());

@@ -16,7 +16,9 @@
 
 #include "QsLog.h"
 
-QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
+using namespace trikControl;
+
+QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
 	// QImage requires 32-bit aligned scan lines
 	// Helper function to convert data
 	uchar *formattedData = nullptr;
@@ -69,7 +71,8 @@ static inline int32_t getMedian(uint8_t &a, uint8_t &b, uint8_t &c, uint8_t &d)
 	return (static_cast<int32_t>(b) + c) >> 1;
 }
 
-QVector<int32_t> Utilities::rescalePhoto(QVector<uint8_t> data){
+QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> data)
+{
 	QVector<int32_t> result;
 	result.reserve(data.size() / 3); //Repack RGB88 from 3 x uint8_t into int32_t
 	constexpr auto IMAGE_WIDTH = 320;
