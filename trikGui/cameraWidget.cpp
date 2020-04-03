@@ -65,12 +65,11 @@ void CameraWidget::doPhoto()
 		return;
 	}
 
-	auto const & photo = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
+	auto const photo = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
+	auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb32");
 
-	if (!photo.isEmpty()) {
-		auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb888");
-		mPixmap.setPixmap(QPixmap::fromImage(std::move(image)));
-
+	if (!image.isNull()) {
+		mPixmap.setPixmap(QPixmap::fromImage(image));
 		QDir dir(trikKernel::Paths::imagesPath());
 
 		if (!dir.exists() && !dir.mkpath(trikKernel::Paths::imagesPath())) {

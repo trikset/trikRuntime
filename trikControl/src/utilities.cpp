@@ -23,13 +23,13 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	// Helper function to convert data
 	uchar *formattedData = nullptr;
 	auto copyAligned = [&](int perLine){
-		if (perLine * height > array.size()) {
+		if (width * height > array.size()) {
 			QLOG_WARN() << "imageFromBytes: not enough data";
 			return;
 		}
 		auto scanLineSize = static_cast<int>((static_cast<unsigned>(perLine + 3)) & 0xFFFFFFFC);
 		auto dst = formattedData = new uchar[scanLineSize * height];
-		for (auto src = array.begin(); src < array.end(); src += width) {
+		for (auto src = array.begin(); src < array.end(); src += perLine) {
 			dst = std::copy(src, src + perLine, dst);
 			dst += scanLineSize - perLine;
 		}
@@ -38,9 +38,10 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	auto fmt = QImage::Format_Invalid;
 
 	if (!format.compare("rgb32", Qt::CaseInsensitive)) {
-		fmt = QImage::Format_RGB32;
-		formattedData = new uchar[width * height]; // RGB32 alligned by default just needs to copy
-		formattedData = std::copy(array.begin(), array.end(), formattedData);
+		if (width * height <= array.size()) {
+			return QImage(static_cast<const uchar *>(static_cast<const void *>(array.data()))
+				      , width, height, QImage::Format_RGB32);
+		}
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
 		copyAligned(3 * width);
@@ -72,7 +73,7 @@ static inline int32_t getMedian(uint8_t &a, uint8_t &b, uint8_t &c, uint8_t &d)
 	return (static_cast<int32_t>(b) + c) >> 1;
 }
 
-QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> data)
+QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> &data)
 {
 	QVector<int32_t> result;
 	result.reserve(data.size() / 3); //Repack RGB88 from 3 x uint8_t into int32_t
