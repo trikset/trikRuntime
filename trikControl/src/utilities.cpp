@@ -44,7 +44,6 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 			formattedData = new uchar[width * height];
 			formattedData = std::copy(array.begin(), array.end(), formattedData);
 		}
-		qDebug() << formattedData;
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
 		copyAligned(3 * width);

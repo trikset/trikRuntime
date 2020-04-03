@@ -69,7 +69,8 @@ void CameraWidget::doPhoto()
 
 	if (!photo.isEmpty()) {
 		auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb888");
-		mPixmap.setPixmap(QPixmap::fromImage(std::move(image)));
+		//mPixmap.setPixmap(QPixmap::fromImage(std::move(image)));
+		mPixmap.setPixmap(QPixmap::fromImage(image));
 
 		QDir dir(trikKernel::Paths::imagesPath());
 
