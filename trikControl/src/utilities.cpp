@@ -29,7 +29,7 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 		}
 		auto scanLineSize = static_cast<int>((static_cast<unsigned>(perLine + 3)) & 0xFFFFFFFC);
 		auto dst = formattedData = new uchar[scanLineSize * height];
-		for (auto src = array.begin(); src < array.end(); src += perLine) {
+		for (auto src = array.begin(); src < array.end(); src += width) {
 			dst = std::copy(src, src + perLine, dst);
 			dst += scanLineSize - perLine;
 		}
@@ -39,7 +39,8 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 
 	if (!format.compare("rgb32", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB32;
-		copyAligned(4 * width);
+		formattedData = new uchar[width * height]; // RGB32 alligned by default just needs to copy
+		formattedData = std::copy(array.begin(), array.end(), formattedData);
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
 		copyAligned(3 * width);
