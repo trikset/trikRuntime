@@ -38,7 +38,7 @@
         <translation>Камера</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+54"/>
         <source>Camera is not available</source>
         <translation>Камера недоступна</translation>
     </message>
