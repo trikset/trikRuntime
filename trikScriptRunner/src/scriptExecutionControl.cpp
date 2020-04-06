@@ -148,6 +148,5 @@ void ScriptExecutionControl::removeFile(const QString &file)
 
 QVector<int32_t> ScriptExecutionControl::getPhoto()
 {
-	QVector<int32_t> result = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
-	return result;
+	return trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
 }
