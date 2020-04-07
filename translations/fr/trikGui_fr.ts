@@ -408,53 +408,54 @@
 <context>
     <name>trikGui::StartWidget</name>
     <message>
-        <location filename="../../trikGui/startWidget.cpp" line="+47"/>
+        <location filename="../../trikGui/startWidget.cpp" line="+49"/>
         <source>TRIK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
-        <location line="+77"/>
+        <location line="+81"/>
         <source>Analog sensors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-72"/>
-        <location line="+79"/>
+        <location line="-76"/>
+        <location line="+83"/>
         <source>Digital sensors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-77"/>
-        <location line="+84"/>
+        <location line="-81"/>
+        <location line="+88"/>
         <source>Encoders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-82"/>
-        <location line="+89"/>
+        <location line="-86"/>
+        <location line="+93"/>
         <source>Gyroscope</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-87"/>
-        <location line="+92"/>
+        <location line="-91"/>
+        <location line="+96"/>
         <source>Accelerometer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-90"/>
-        <location line="+95"/>
+        <location line="-94"/>
+        <location line="+99"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-127"/>
+        <location line="+64"/>
         <source>Testing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-53"/>
         <source>More...</source>
         <translation type="unfinished"></translation>
     </message>

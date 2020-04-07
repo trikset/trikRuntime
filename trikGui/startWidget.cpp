@@ -21,6 +21,8 @@
 
 #include <QtWidgets/QApplication>
 
+#include <QProcess>
+
 #include <trikControl/motorInterface.h>
 
 #include "fileManagerWidget.h"
@@ -78,7 +80,7 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 	testingItem->appendRow(new QStandardItem(tr("Camera")));
 
-	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));;
+	moreItem->appendRow(new QStandardItem(ProgrammingWidget::menuEntry()));
 	moreItem->appendRow(new QStandardItem(SystemSettingsWidget::menuEntry()));
 	moreItem->appendRow(new QStandardItem(InformationWidget::menuEntry()));
 
@@ -112,6 +114,10 @@ void StartWidget::launch()
 	const QModelIndex &currentIndex = mMenuView.currentIndex();
 	const QStandardItem * const currentItem = mMenuModel.itemFromIndex(currentIndex);
 	if (currentItem->hasChildren()) {
+		if (currentItem->text() == tr("Testing")) {
+			QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"0"});
+			QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"1"});
+		}
 		setRootIndex(currentIndex);
 	} else {
 		QString currentItemText = currentItem->text();
