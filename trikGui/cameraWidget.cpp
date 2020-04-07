@@ -66,11 +66,10 @@ void CameraWidget::doPhoto()
 	}
 
 	auto const photo = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
-	auto image = QImage(static_cast<const uchar *>(static_cast<const void *>(photo.data()))
-			    , 160, 120, QImage::Format_RGB32);
+	// imageFromBytes allocates memory and delete it when it is necessery
+	auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb32");
 
 	if (!image.isNull()) {
-		mPixmap.setPixmap(QPixmap::fromImage(std::move(image)));
 		QDir dir(trikKernel::Paths::imagesPath());
 
 		if (!dir.exists() && !dir.mkpath(trikKernel::Paths::imagesPath())) {
@@ -81,6 +80,7 @@ void CameraWidget::doPhoto()
 				QLOG_ERROR() << "Failed to save captured image" << name;
 			}
 		}
+		mPixmap.setPixmap(QPixmap::fromImage(std::move(image)));
 	} else {
 		mPixmap.setText(tr("Camera is not available"));
 	}
