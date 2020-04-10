@@ -1,5 +1,3 @@
-image: Visual Studio 2019
-
 clone_folder: c:\trik-runtime
 
 skip_commits:
@@ -27,6 +25,7 @@ environment:
         QTDIR: C:\Qt\5.14\mingw73_32
         PYTHON_PATH: C:\Python38
         CONFIGURATION: release
+        APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       - MINGW: C:\Qt\Tools\mingw730_32
         QTDIR: C:\Qt\5.12\mingw73_32
         PYTHON_PATH: C:\Python37
