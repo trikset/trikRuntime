@@ -18,6 +18,8 @@
 #include <QtGui/QKeyEvent>
 
 #include "trikControl/brickInterface.h"
+#include "trikControl/utilities.h"
+
 #include "trikKernel/paths.h"
 #include "QsLog.h"
 
@@ -63,12 +65,11 @@ void CameraWidget::doPhoto()
 		return;
 	}
 
-	auto const & photo = mBrick.getStillImage();
+	auto const photo = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
+	// imageFromBytes allocates memory and delete it when it is necessery
+	auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb32");
 
-	if (!photo.isEmpty()) {
-		QImage image(photo.data(), 320, 240, QImage::Format_RGB888);
-		mPixmap.setPixmap(QPixmap::fromImage(image));
-
+	if (!image.isNull()) {
 		QDir dir(trikKernel::Paths::imagesPath());
 
 		if (!dir.exists() && !dir.mkpath(trikKernel::Paths::imagesPath())) {
@@ -79,6 +80,7 @@ void CameraWidget::doPhoto()
 				QLOG_ERROR() << "Failed to save captured image" << name;
 			}
 		}
+		mPixmap.setPixmap(QPixmap::fromImage(std::move(image)));
 	} else {
 		mPixmap.setText(tr("Camera is not available"));
 	}

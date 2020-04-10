@@ -33,7 +33,7 @@
 <context>
     <name>trikGui::CameraWidget</name>
     <message>
-        <location filename="../../trikGui/cameraWidget.cpp" line="+28"/>
+        <location filename="../../trikGui/cameraWidget.cpp" line="+30"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
