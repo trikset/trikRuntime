@@ -111,7 +111,7 @@ aliases = ["A1", "A2", "A3", "A4", "A5", "A6", "T1", "T2", "T3", "W1", "W2", "W3
         , "HUM_DHT22_1", "HUM_DHT22_2", "HUM_DHT22_3", "HUM_DHT22_4", "HUM_DHT22_5", "HUM_DHT22_6", "HUM_DHT22_7"
         , "HUM_DHT22_8", "HUM_DHT22_9", "HUM_DHT22_10", "HUM_DHT22_11", "HUM_DHT22_12", "HUM_DHT22_13", "HUM_DHT22_14"
         , "S1", "S2", "S3", "S4", "S5", "S6"
-        , "video1", "video2"];
+        , "video1", "video2"]
 
 for i in aliases:
   globals()[i]=i
