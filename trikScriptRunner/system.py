@@ -88,4 +88,15 @@ class PadEventCodes():
     Hat1X = 18
     Hat1Y = 19
 
+aliases = ["A1", "A2", "A3", "A4", "A5", "A6"
+        , "D1", "D2", "D3"
+        , "M1", "M2", "M3", "M4"
+        , "E1", "E2", "E3", "E4"
+        , "S1", "S2", "S3", "S4", "S5", "S6"
+        ]
+
+for i in aliases:
+  globals()[i]=i
+
 gamepad = brick.gamepad()
+getPhoto = script.getPhoto
