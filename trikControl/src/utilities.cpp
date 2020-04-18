@@ -39,8 +39,9 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 
 	if (!format.compare("rgb32", Qt::CaseInsensitive)) {
 		if (width * height <= array.size()) {
+			formattedData = new uchar[width * height];
 			auto code = static_cast<const uchar *>(static_cast<const void *>(array.data()));
-			formattedData = std::copy(code, code + width * height , formattedData);
+			formattedData = std::copy(code, code + width * height, formattedData);
 		}
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
@@ -83,7 +84,7 @@ QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> &data)
 		for(int row = 0; row < IMAGE_HEIGHT; row += 2) {
 			for(int col = 0; col < IMAGE_WIDTH; col += 2) {
 				auto row1 = &data[(row * IMAGE_WIDTH + col) * 3];
-				auto row2 = row1 + IMAGE_WIDTH*3;
+				auto row2 = row1 + IMAGE_WIDTH * 3;
 				auto r1 = row1[0];
 				auto g1 = row1[1];
 				auto b1 = row1[2];
