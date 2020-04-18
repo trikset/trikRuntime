@@ -49,7 +49,7 @@ bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
 				//	}
 			} else {
 				if (!mPowerButtonPressedTimer.isActive()) {
-					mPowerButtonPressedTimer.start(2000);
+					mPowerButtonPressedTimer.start(1500);
 				}
 				mIsShutdownRequested = true;
 				refreshWidgets(); // refresh display if not auto-repeat
@@ -103,5 +103,5 @@ void TrikGuiApplication::shutdownSoon()
 
 	mSavedStyleSheet = styleSheet();
 	setStyleSheet(mSavedStyleSheet + " QWidget { background-color:red; } ");
-	mShutdownDelayTimer.start(2000);
+	mShutdownDelayTimer.start(1500);
 }
