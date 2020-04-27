@@ -165,14 +165,21 @@ unix:!nosanitizers {
 	}
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
-	CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!macx-clang { CONFIG += sanitize_leak }
+        CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_memory):!CONFIG(sanitize_thread):!macx-clang {
+             CONFIG += sanitize_leak
+        }
 
-	sanitize_leak {
+        sanitize_leak {
 		QMAKE_CFLAGS *= -fsanitize=leak
 		QMAKE_CXXFLAGS *= -fsanitize=leak
 		QMAKE_LFLAGS *= -fsanitize=leak
 		!clang:QMAKE_LFLAGS_RELEASE *= -static-liblsan
 	}
+
+        sanitize_memory {
+                QMAKE_CFLAGS *= -fsanitize-memory-use-after-dtor -fsanitize-memory-track-origins
+                QMAKE_CXXFLAGS *= -fsanitize-memory-use-after-dtor -fsanitize-memory-track-origins
+        }
 
 	sanitize_undefined {
 		macx-clang {

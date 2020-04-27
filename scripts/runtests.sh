@@ -8,6 +8,7 @@ for t in "$@"
     $EXECUTOR env DISPLAY=:0 \
     ASAN_OPTIONS="detect_leaks=0:disable_coredump=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0:symbolize=1:use_sigaltstack=0" \
     LSAN_OPTIONS=suppressions=lsan.supp:fast_unwind_on_malloc=0 \
+    MSAN_OPTIONS=poison_in_dtor=1 \
     TRIK_PYTHONPATH=$TRIK_PYTHONPATH \
     sh -xc \
     "cd  $BUILDDIR/bin/x86-$CONFIG && \
