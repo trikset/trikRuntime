@@ -23,7 +23,7 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	// Helper function to convert data
 	uchar *formattedData = nullptr;
 	auto copyAligned = [&](int perLine){
-		if (width * height > array.size()) {
+		if (perLine * height > array.size()) {
 			QLOG_WARN() << "imageFromBytes: not enough data";
 			return;
 		}
@@ -38,9 +38,12 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	auto fmt = QImage::Format_Invalid;
 
 	if (!format.compare("rgb32", Qt::CaseInsensitive)) {
-		if (width * height <= array.size()) {
-			auto code = static_cast<const uchar *>(static_cast<const void *>(array.data()));
-			formattedData = std::copy(code, code + width * height , formattedData);
+		const auto imageSize = width * height;
+		fmt = QImage::Format_RGB32;
+		if (imageSize <= array.size()) {
+			formattedData = new uchar[imageSize * 4];
+			auto dstPtr = static_cast<int32_t *>(static_cast<void *>(formattedData));
+			std::copy(array.begin(), array.end(), dstPtr);
 		}
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
@@ -83,7 +86,7 @@ QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> &data)
 		for(int row = 0; row < IMAGE_HEIGHT; row += 2) {
 			for(int col = 0; col < IMAGE_WIDTH; col += 2) {
 				auto row1 = &data[(row * IMAGE_WIDTH + col) * 3];
-				auto row2 = row1 + IMAGE_WIDTH*3;
+				auto row2 = row1 + IMAGE_WIDTH * 3;
 				auto r1 = row1[0];
 				auto g1 = row1[1];
 				auto b1 = row1[2];
