@@ -141,6 +141,7 @@ equal to its class name.
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
+		<rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="jf1_hcsr04" />
 		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
 		<lineSensor port="video2" />

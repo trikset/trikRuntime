@@ -71,6 +71,9 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<D2>
 		<sonarSensor />
 	</D2>
+        <D3>
+                <sonarSensor />
+        </D3>                   
 	<!--
 	<D3>
 		<volumeSensor />
