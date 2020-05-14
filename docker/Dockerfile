@@ -12,7 +12,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y software-properties-common \
     && add-apt-repository -y ppa:jonathonf/gcc \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && add-apt-repository -y ppa:beineri/opt-qt-5.12.7-xenial \
+    && add-apt-repository -y ppa:beineri/opt-qt-5.12.8-xenial \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
 		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb python3-dev \
