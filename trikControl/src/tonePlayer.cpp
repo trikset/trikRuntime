@@ -48,9 +48,9 @@ void TonePlayer::initializeAudio()
 	}
 }
 
-void TonePlayer::play(int hzFreq, int msDuration)
+void TonePlayer::play(int freqHz, int durationMs)
 {
-	mDevice->start(hzFreq);
+	mDevice->start(freqHz);
 	const auto state = mOutput->state();
 	QLOG_INFO() << "Device started. Output state is" << state;
 	switch (state) {
@@ -74,7 +74,7 @@ void TonePlayer::play(int hzFreq, int msDuration)
 			break;
 	}
 
-	mTimer.setInterval(msDuration);
+	mTimer.setInterval(durationMs);
 	mTimer.start();
 }
 

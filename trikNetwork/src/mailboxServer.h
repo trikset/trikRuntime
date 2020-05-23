@@ -103,7 +103,7 @@ private:
 	void loadSettings();
 	void saveSettings();
 
-	void forEveryConnection(std::function<void(Connection *)> method, int hullNumber = -1);
+	void forEveryConnection(const std::function<void(Connection *)> &method, int hullNumber = -1);
 
 	int mHullNumber;
 	QHostAddress mMyIp;

@@ -47,7 +47,7 @@ TrikCommunicator::TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikS
 
 
 	connect(runner.data(), &trikScriptRunner::TrikScriptRunner::textInStdOut
-		, this, [this](QString text){
+		, this, [this](const QString &text){
 			sendMessage(QString("print: %1").arg(text));
 		});
 

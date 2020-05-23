@@ -46,7 +46,7 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 	trikKernel::TranslationsHelper::initLocale(app.arguments().contains("--no-locale")
 			|| app.arguments().contains("-no-locale"));
 
-	QApplication *guiApp = dynamic_cast<QApplication *>(&app);
+	auto *guiApp = qobject_cast<QApplication *>(&app);
 	if (guiApp) {
 		QFont font(guiApp->font());
 		font.setPixelSize(18);

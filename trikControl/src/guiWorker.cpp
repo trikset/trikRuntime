@@ -185,5 +185,5 @@ void GuiWorker::repaintGraphicsWidget()
 
 QColor GuiWorker::colorByName(const QString &name)
 {
-	return QColor(name.toLower());
+	return {name.toLower()};
 }

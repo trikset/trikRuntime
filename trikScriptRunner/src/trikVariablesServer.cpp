@@ -65,7 +65,7 @@ void TrikVariablesServer::processHTTPRequest()
 		list.append(data);
 	}
 
-	const QString cleanString = list.join("").remove(QRegExp("[\\n\\t\\r]"));
+	const QString cleanString = list.join("").remove(QRegExp(R"([\n\t\r])"));
 	const QStringList words = cleanString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
 
 	if (words[1] == "/web/") {

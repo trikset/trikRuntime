@@ -28,7 +28,6 @@ using namespace trikScriptRunner;
 
 Threading::Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl)
 	: QObject(scriptWorker)
-	, mResetStarted(false)
 	, mScriptWorker(scriptWorker)
 	, mScriptControl(scriptControl)
 	, mMainScriptEngine(nullptr)
@@ -47,7 +46,7 @@ void Threading::startMainThread(const QString &script)
 	mFinishedThreads.clear();
 	mPreventFromStart.clear();
 
-	const QRegExp mainRegexp("(.*var main\\s*=\\s*\\w*\\s*function\\(.*\\).*)|(.*function\\s+%1\\s*\\(.*\\).*)");
+	const QRegExp mainRegexp(R"#((.*var main\s*=\s*\w*\s*function\(.*\).*)|(.*function\s+%1\s*\(.*\).*))#");
 	const bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
 
 	mMainScriptEngine = mScriptWorker->createScriptEngine();

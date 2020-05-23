@@ -24,6 +24,8 @@ namespace trikKernel {
 template<typename T> class DifferentOwnerPointer
 {
 public:
+	~DifferentOwnerPointer() = default;
+
 	/// Copy constructor. Preserves ownership semantics of a copied object.
 	DifferentOwnerPointer(const DifferentOwnerPointer<T> &other)
 		: mPointer(other.mPointer)

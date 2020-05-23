@@ -35,7 +35,9 @@ namespace QsLogging
 {
 class RotationStrategy
 {
+	Q_DISABLE_COPY(RotationStrategy)
 public:
+	RotationStrategy() = default;
 	virtual ~RotationStrategy();
 
 	virtual void setInitialInfo(const QFile &file) = 0;
@@ -49,6 +51,7 @@ public:
 class NullRotationStrategy : public RotationStrategy
 {
 public:
+	NullRotationStrategy() = default;
 	virtual void setInitialInfo(const QFile &) {}
 	virtual void includeMessageInCalculation(const QString &) {}
 	virtual bool shouldRotate() { return false; }

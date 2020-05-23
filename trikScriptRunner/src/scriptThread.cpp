@@ -85,8 +85,8 @@ bool ScriptThread::isEvaluating() const
 	return mEngine->isEvaluating();
 }
 
-
-/* TODO: Fix design error. This slot is called on wrong thread (probably) */
+// TODO: Fix design error. This slot is called on wrong thread (probably)
+// mEngine must be accessed from the correct worker thread instead
 void ScriptThread::onGetVariables(const QString &propertyName)
 {
 	if (mEngine != nullptr) {

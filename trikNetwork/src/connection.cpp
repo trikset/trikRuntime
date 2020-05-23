@@ -207,7 +207,7 @@ void Connection::handleIncomingData(const QByteArray &data)
 	if (data == "keepalive") {
 		return;
 	} if (data == "version") {
-		send(QString("version: " + trikKernel::version).toUtf8());
+		send(QString("version: %1").arg(trikKernel::version).toUtf8());
 	} else {
 		processData(data);
 	}

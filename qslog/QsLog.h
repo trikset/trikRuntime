@@ -57,6 +57,7 @@ public:
 	/// log message.
 	class QSLOG_SHARED_OBJECT Helper
 	{
+		Q_DISABLE_COPY (Helper)
 	public:
 		explicit Helper(Level logLevel) :
 			level(logLevel),

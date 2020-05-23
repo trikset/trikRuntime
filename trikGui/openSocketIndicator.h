@@ -29,9 +29,9 @@ class OpenSocketIndicator : public QLabel
 {
 	Q_OBJECT
 public:
-	/// @param openFile, closedFile - paths to pictures for open and closed connection status
+	/// @param openFilePic - path to picture for open connection status
 	/// @param status - initial connection status
-	OpenSocketIndicator(const QString &openFile, bool status, QWidget *parent = 0);
+	OpenSocketIndicator(const QString &openFilePic, bool status, QWidget *parent = 0);
 
 public slots:
 	/// Changes status of indicator to a given value.

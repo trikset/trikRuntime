@@ -41,7 +41,7 @@ bool MailboxServer::isConnected()
 	mKnownRobotsLock.lockForRead();
 	for (auto &&endpoint : mKnownRobots) {
 		Connection * const connection = this->connection(endpoint.ip, endpoint.port);
-		MailboxConnection * const mailboxConnection = dynamic_cast<MailboxConnection *>(connection);
+		auto *mailboxConnection = qobject_cast<MailboxConnection *>(connection);
 		if (mailboxConnection && mailboxConnection->isConnected()) {
 			result = true;
 			break;
@@ -271,7 +271,7 @@ void MailboxServer::send(const QString &message)
 
 void MailboxServer::onConnectionInfo(const QHostAddress &ip, int port, int hullNumber)
 {
-	QList<Endpoint> toDelete;
+	QVector<Endpoint> toDelete;
 	mKnownRobotsLock.lockForRead();
 	for (auto &&endpoint : mKnownRobots) {
 		if (endpoint == Endpoint{ip, port}) {
@@ -357,7 +357,7 @@ void MailboxServer::saveSettings()
 	mAuxiliaryInformationLock.unlock();
 }
 
-void MailboxServer::forEveryConnection(std::function<void(Connection *)> method, int hullNumber)
+void MailboxServer::forEveryConnection(const std::function<void(Connection *)> &method, int hullNumber)
 {
 	mKnownRobotsLock.lockForRead();
 	const auto endpoints = hullNumber == -1 ? mKnownRobots.values() : mKnownRobots.values(hullNumber);

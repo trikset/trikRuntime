@@ -21,13 +21,14 @@ using namespace trikKernel;
 /// Helper class that provides something to construct and destruct and a means to verify its destruction.
 class TestHelper
 {
+	Q_DISABLE_COPY(TestHelper)
 public:
 	/// Class that can report that it was destroyed.
 	class Destructable
 	{
+		Q_DISABLE_COPY(Destructable)
 	public:
-		Destructable(TestHelper &parent)
-			: mParent(parent)
+		explicit Destructable(TestHelper &parent) : mParent(parent)
 		{
 		}
 
@@ -40,6 +41,7 @@ public:
 		TestHelper &mParent;
 	};
 
+	TestHelper() = default;
 	~TestHelper()
 	{
 		if (!mDestroyed)

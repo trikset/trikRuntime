@@ -152,7 +152,7 @@ private:
 	QScopedPointer<ScriptExecutionControl> mScriptExecutionControl;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 
-	State mState = State::ready;
+	State mState  { State::ready };
 
 	/// Ensures that there is only one instance of StopScript running at any given time, to prevent unpredicted
 	/// behavior when programs are started and stopped actively.

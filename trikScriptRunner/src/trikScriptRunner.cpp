@@ -90,9 +90,9 @@ QStringList TrikScriptRunner::knownMethodNames() const
 	return mScriptRunnerArray[to_underlying(mLastRunner)]->knownMethodNames();
 }
 
-QStringList TrikScriptRunner::knownMethodNamesFor(ScriptType r)
+QStringList TrikScriptRunner::knownMethodNamesFor(ScriptType t)
 {
-	return fetchRunner(r)->knownMethodNames();
+	return fetchRunner(t)->knownMethodNames();
 }
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)

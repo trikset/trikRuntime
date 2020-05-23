@@ -292,5 +292,5 @@ QVector3D GyroSensor::getEulerAngles(const QQuaternion &q)
 	   pitch = pitch * RAD_TO_MDEG;
 	   yaw = yaw * RAD_TO_MDEG;
 	   roll = roll * RAD_TO_MDEG;
-	   return QVector3D(pitch, roll, yaw);
+	   return {pitch, roll, yaw};
 }

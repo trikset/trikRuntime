@@ -66,7 +66,7 @@ public slots:
 	bool hasData() const override;
 
 private slots:
-	void onNewLine(const QString &data);
+	void onNewLine(const QString &line);
 	void onNewData(const QVector<uint8_t> &data);
 	void onReadError();
 

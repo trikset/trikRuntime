@@ -13,6 +13,7 @@
  * limitations under the License. */
 
 #pragma once
+#include <QtGlobal>
 
 namespace trikKernel {
 
@@ -21,7 +22,9 @@ namespace trikKernel {
 /// shuts down.
 class DeinitializationHelper
 {
+	Q_DISABLE_COPY(DeinitializationHelper)
 public:
+	DeinitializationHelper() = default;
 	/// Here is all the magic - runs zero-time event loop when this object is destroyed.
 	~DeinitializationHelper();
 };

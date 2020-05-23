@@ -91,7 +91,7 @@ bool TrikEventFile::close()
 	}
 
 	if (::close(mEventFileDescriptor) != 0) {
-		QLOG_ERROR() << QString("%1: close failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: close failed: %2").arg(mFileName, strerror(errno));
 		return false;
 	}
 

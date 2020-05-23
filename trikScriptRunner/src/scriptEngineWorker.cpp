@@ -90,7 +90,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
 		result.append('\n');
-		QTimer::singleShot(0, script, [script, result](){script->textInStdOut(result);});
+		QTimer::singleShot(0, script, [script, result](){ Q_EMIT script->textInStdOut(result);});
 		/// In case of user loop with `print' this gives some time for events to be processed
 		script->wait(0);
 	}
@@ -112,9 +112,6 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mMailbox(mailbox)
 	, mScriptControl(scriptControl)
 	, mThreading(this, scriptControl)
-	, mDirectScriptsEngine(nullptr)
-	, mScriptId(0)
-	, mState(ready)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {
 	connect(&mScriptControl, &ScriptExecutionControl::quitSignal,

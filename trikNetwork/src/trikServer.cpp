@@ -24,7 +24,7 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 {
 	qRegisterMetaType<qintptr>("qintptr");
 	qRegisterMetaType<quint16>("quint16");
-	connect(this, &TrikServer::startedConnection, [this](Connection *c) {
+	connect(this, &TrikServer::startedConnection, this, [this](Connection *c) {
 		const bool firstConnection = mConnections.isEmpty();
 		mConnections.insert(c->thread(), c);
 		if (firstConnection) {
@@ -43,7 +43,7 @@ TrikServer::~TrikServer()
 		}
 	}
 
-	qDeleteAll(mConnections.keys());
+	qDeleteAll(mConnections.keyBegin(), mConnections.keyEnd());
 }
 
 void TrikServer::startServer(quint16 port)
@@ -86,7 +86,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connect(connectionThread, &QThread::finished, connectionWorker, &Connection::deleteLater);
 	connect(connectionThread, &QThread::finished, connectionThread, &QThread::deleteLater);
 	connect(connectionThread, &QThread::started, this, [this, connectionWorker]() {
-		startedConnection(connectionWorker);
+		Q_EMIT startedConnection(connectionWorker);
 	});
 
 	connect(connectionWorker, &Connection::disconnected, this, &TrikServer::onConnectionClosed);

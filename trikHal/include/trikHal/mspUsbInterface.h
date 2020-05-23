@@ -21,6 +21,7 @@ namespace trikHal {
 /// Communicates with MSP processor over USB bus.
 class MspUsbInterface
 {
+	Q_DISABLE_COPY(MspUsbInterface)
 public:
 	MspUsbInterface() = default;
 	virtual ~MspUsbInterface() = default;

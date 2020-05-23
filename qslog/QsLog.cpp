@@ -37,7 +37,7 @@
 
 namespace QsLogging
 {
-typedef QVector<DestinationPtr> DestinationList;
+using DestinationList = QVector<DestinationPtr>;
 
 static const char TraceString[] = "TRACE";
 static const char DebugString[] = "DEBUG";
@@ -47,7 +47,7 @@ static const char ErrorString[] = "ERROR";
 static const char FatalString[] = "FATAL";
 
 // not using Qt::ISODate because we need the milliseconds too
-static const QString fmtDateTime("yyyy-MM-ddThh:mm:ss.zzz");
+static auto fmtDateTime = "yyyy-MM-ddThh:mm:ss.zzz";
 
 static Logger* sInstance = 0;
 
@@ -77,9 +77,10 @@ static const char* LevelToText(Level theLevel)
 
 class LogWriterRunnable : public QRunnable
 {
+	Q_DISABLE_COPY(LogWriterRunnable)
 public:
 	LogWriterRunnable(QString message, Level level);
-	virtual void run();
+	void run() override;
 
 private:
 	QString mMessage;
@@ -90,16 +91,16 @@ class LoggerImpl
 {
 public:
 	LoggerImpl();
-
+	friend class Logger;
+private:
 	QThreadPool threadPool;
 	QMutex logMutex;
-	Level level;
+	Level level { Level::InfoLevel };
 	DestinationList destList;
 };
 
 LogWriterRunnable::LogWriterRunnable(QString message, Level level)
-	: QRunnable()
-	, mMessage(message)
+	: mMessage(message)
 	, mLevel(level)
 {
 }
@@ -111,7 +112,6 @@ void LogWriterRunnable::run()
 
 
 LoggerImpl::LoggerImpl()
-	: level(InfoLevel)
 {
 	// assume at least file + console
 	destList.reserve(2);
@@ -224,9 +224,8 @@ void Logger::enqueueWrite(const QString& message, Level level)
 void Logger::write(const QString& message, Level level)
 {
 	QMutexLocker lock(&d->logMutex);
-	for (DestinationList::iterator it = d->destList.begin(),
-		endIt = d->destList.end();it != endIt;++it) {
-		(*it)->write(message, level);
+	for (auto &it:d->destList) {
+		it->write(message, level);
 	}
 }
 
