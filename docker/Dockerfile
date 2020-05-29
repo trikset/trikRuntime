@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TRIK_GCCVERSION 9
 ENV TRIK_QTIFW_TAG 3.2.2
 ENV TRIK_LIBUSB_TAG v1.0.23
+ENV TRIK_PYTHON3_VERSION_MINOR 5
 
 # Build image with two huge layers, this is the 1st one.
 # Do not upgrade packages to match trikset/checker-runtime
@@ -15,7 +16,7 @@ RUN apt-get update \
     && add-apt-repository -y ppa:beineri/opt-qt-5.12.8-xenial \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb python3-dev \
+		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb python3.${TRIK_PYTHON3_VERSION_MINOR}-dev \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
