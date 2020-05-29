@@ -30,7 +30,8 @@ Configurer::Configurer(const QString &systemConfigFileName, const QString &model
 	const QDomElement systemConfig = trikKernel::FileUtils::readXmlFile(systemConfigFileName);
 	const QDomElement modelConfig = trikKernel::FileUtils::readXmlFile(modelConfigFileName);
 
-	auto parseSection = [&systemConfig](const QString &sectionName, const std::function<void(const QDomElement &)> &action) {
+	auto parseSection = [&systemConfig](const QString &sectionName
+			, const std::function<void(const QDomElement &)> &action) {
 		const QDomNodeList section = systemConfig.elementsByTagName(sectionName);
 		if (section.size() != 1) {
 			throw MalformedConfigException("'" + sectionName + "' element shall appear exactly once in config");
