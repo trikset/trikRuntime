@@ -22,7 +22,7 @@ $EXECUTOR bash -lixc " \
    export CCACHE_DIR=$HOME/.ccache/$TRAVIS_OS_NAME-$CONFIG \
 && export CCACHE_CPP2=yes \
 && export CCACHE_SLOPPINESS=time_macros \
-&& eval 'export PKG_CONFIG_PATH=\`python3.${TRIK_PYTHON3_VERSION_MINOR}-config --prefix\`/lib/pkgconfig' \
+&& eval 'export PKG_CONFIG_PATH=\`python3.\${TRIK_PYTHON3_VERSION_MINOR}-config --prefix\`/lib/pkgconfig' \
 && which g++ \
 && g++ --version \
 && which qmake \
@@ -31,7 +31,7 @@ $EXECUTOR bash -lixc " \
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \
-&&  cd $BUILDDIR && qmake -r PYTHON3_VERSION_MINOR=\$TRIK_PYTHON3_VERSION_MINOR' CONFIG+=$CONFIG -Wall $TRAVIS_BUILD_DIR/trikRuntime.pro $QMAKE_EXTRA \
+&&  cd $BUILDDIR && qmake -r PYTHON3_VERSION_MINOR=\$TRIK_PYTHON3_VERSION_MINOR CONFIG+=$CONFIG -Wall $TRAVIS_BUILD_DIR/trikRuntime.pro $QMAKE_EXTRA \
 &&  make -k -j2 \
 && cd bin/x86-$CONFIG && ls "
 
