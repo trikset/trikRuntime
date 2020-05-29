@@ -5,7 +5,6 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TRIK_GCCVERSION 9
 ENV TRIK_QTIFW_TAG 3.2.2
 ENV TRIK_LIBUSB_TAG v1.0.23
-ENV TRIK_PYTHON3_VERSION_MINOR 5
 
 # Build image with two huge layers, this is the 1st one.
 # Do not upgrade packages to match trikset/checker-runtime
