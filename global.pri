@@ -263,6 +263,8 @@ gcc {
 
 QMAKE_CXXFLAGS += $$SYSTEM_INCLUDE_PREFIX_OPTION
 
+gcc:versionAtLeast(QT_VERSION, 5.15.0):QMAKE_CXXFLAGS *= -Wno-error=deprecated-declarations
+
 false:clang {
 # Problem from Qt system headers
 	QMAKE_CXXFLAGS += -Wno-error=expansion-to-defined -Wno-error=c++98-compat -Wno-error=sign-conversion \

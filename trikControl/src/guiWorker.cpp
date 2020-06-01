@@ -29,6 +29,8 @@
 #include "QsLog.h"
 #include "utilities.h"
 
+#include <QPainterPath>
+
 using namespace trikControl;
 
 GuiWorker::GuiWorker()
