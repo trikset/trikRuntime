@@ -23,13 +23,14 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	// Helper function to convert data
 	uchar *formattedData = nullptr;
 	auto copyAligned = [&](int perLine){
-		if (perLine * height > array.size()) {
+		const auto realSize = perLine * height;
+		if (realSize > array.size()) {
 			QLOG_WARN() << "imageFromBytes: not enough data";
 			return;
 		}
 		auto scanLineSize = static_cast<int>((static_cast<unsigned>(perLine + 3)) & 0xFFFFFFFC);
 		auto dst = formattedData = new uchar[scanLineSize * height];
-		for (auto src = array.begin(); src < array.end(); src += perLine) {
+		for (auto src = array.begin(); src < array.begin() + realSize; src += perLine) {
 			dst = std::copy(src, src + perLine, dst);
 			dst += scanLineSize - perLine;
 		}
@@ -43,7 +44,7 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 		if (imageSize <= array.size()) {
 			formattedData = new uchar[imageSize * 4];
 			auto dstPtr = static_cast<int32_t *>(static_cast<void *>(formattedData));
-			std::copy(array.begin(), array.end(), dstPtr);
+			std::copy(array.begin(), array.begin() + imageSize, dstPtr);
 		}
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
