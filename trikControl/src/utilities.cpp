@@ -43,7 +43,7 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 		if (imageSize <= array.size()) {
 			formattedData = new uchar[imageSize * 4];
 			auto dstPtr = static_cast<int32_t *>(static_cast<void *>(formattedData));
-			std::copy(array.begin(), array.end(), dstPtr);
+			std::copy(array.begin(), array.begin() + imageSize, dstPtr);
 		}
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
