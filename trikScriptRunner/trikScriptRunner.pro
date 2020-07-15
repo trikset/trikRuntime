@@ -30,10 +30,11 @@ HEADERS += \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 	$$PWD/src/scriptThread.h \
+	$$PWD/src/trikPythonModule.h \
 	$$PWD/include/trikScriptRunner/trikScriptRunnerInterface.h \
 	$$PWD/include/trikScriptRunner/trikPythonRunner.h \
 	$$PWD/include/trikScriptRunner/trikJavaScriptRunner.h \
-	$$PWD/include/trikScriptRunner/trikVariablesServer.h
+	$$PWD/include/trikScriptRunner/trikVariablesServer.h \
 
 SOURCES += \
 	$$PWD/src/scriptExecutionControl.cpp \
@@ -45,7 +46,8 @@ SOURCES += \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
-	$$PWD/src/trikVariablesServer.cpp
+	$$PWD/src/trikVariablesServer.cpp \
+	$$PWD/src/trikPythonModule.cpp
 
 OTHER_FILES += \
 	$$PWD/system.js \
