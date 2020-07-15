@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <Python.h>
+#include <PythonQt.h>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>

@@ -14,7 +14,6 @@
 
 #include "trikPythonModule.h"
 
-#include <Python.h>
 #include <PythonQt.h>
 #include <PythonQtConversion.h>
 
