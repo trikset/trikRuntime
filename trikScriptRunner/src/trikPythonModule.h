@@ -21,9 +21,5 @@
 
 #include "scriptExecutionControl.h"
 
-PyMODINIT_FUNC trikPythonModuleInit();
-PyMODINIT_FUNC trikBrickPythonModuleInit();
-PyMODINIT_FUNC trikScriptPythonModuleInit();
-PyMODINIT_FUNC trikMailboxPythonModuleInit();
-void trikPythonModuleSetObjects(trikControl::BrickInterface* brick,
-	trikScriptRunner::ScriptExecutionControl* script, trikNetwork::MailboxInterface* mailbox);
+void trikPythonModuleInit(trikControl::BrickInterface* brick,
+			 trikScriptRunner::ScriptExecutionControl* script, trikNetwork::MailboxInterface* mailbox);

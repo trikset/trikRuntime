@@ -15,6 +15,10 @@
 import os
 import types
 
+from trik import *
+
+script_cpp = script
+
 script = types.SimpleNamespace()
 script.random = script_cpp.random
 script.wait = script_cpp.wait
@@ -29,6 +33,8 @@ script.run = script_cpp.run
 script.quit = script_cpp.quit
 script.reset = script_cpp.reset
 script.getPhoto = script_cpp.getPhoto
+
+del script_cpp
 
 class KeysEnum():
     Left = 105

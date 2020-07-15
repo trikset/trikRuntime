@@ -23,24 +23,21 @@
 
 #include "scriptExecutionControl.h"
 
-static trikControl::BrickInterface* gBrick;
-static trikScriptRunner::ScriptExecutionControl* gScript;
-static trikNetwork::MailboxInterface* gMailbox;
 
-void trikPythonModuleSetObjects(trikControl::BrickInterface* brick,
-	trikScriptRunner::ScriptExecutionControl* script, trikNetwork::MailboxInterface* mailbox)
-{
-	gBrick = brick;
-	gScript = script;
-	gMailbox = mailbox;
-}
+struct trikPythonModuleState {
+	trikControl::BrickInterface* mBrick;
+	trikScriptRunner::ScriptExecutionControl* mScript;
+	trikNetwork::MailboxInterface* mMailbox;
+};
 
 static PyObject* trik_get_native_brick(PyObject *self, PyObject* args)
 {
 	if (!PyArg_ParseTuple(args, ""))
 		return nullptr;
 
-	return PythonQtConv::QVariantToPyObject(QVariant::fromValue(gBrick));
+	auto state = reinterpret_cast<trikPythonModuleState*>(PyModule_GetState(self));
+
+	return PythonQtConv::QVariantToPyObject(QVariant::fromValue(static_cast<QObject*>(state->mBrick)));
 }
 
 static PyObject* trik_get_native_script(PyObject *self, PyObject* args)
@@ -48,7 +45,9 @@ static PyObject* trik_get_native_script(PyObject *self, PyObject* args)
 	if (!PyArg_ParseTuple(args, ""))
 		return nullptr;
 
-	return PythonQtConv::QVariantToPyObject(QVariant::fromValue(gScript));
+	auto state = reinterpret_cast<trikPythonModuleState*>(PyModule_GetState(self));
+
+	return PythonQtConv::QVariantToPyObject(QVariant::fromValue(static_cast<QObject*>(state->mScript)));
 }
 
 static PyObject* trik_get_native_mailbox(PyObject *self, PyObject* args)
@@ -56,7 +55,9 @@ static PyObject* trik_get_native_mailbox(PyObject *self, PyObject* args)
 	if (!PyArg_ParseTuple(args, ""))
 		return nullptr;
 
-	return PythonQtConv::QVariantToPyObject(QVariant::fromValue(gMailbox));
+	auto state = reinterpret_cast<trikPythonModuleState*>(PyModule_GetState(self));
+
+	return PythonQtConv::QVariantToPyObject(QVariant::fromValue(static_cast<QObject*>(state->mMailbox)));
 }
 
 static PyMethodDef TrikMethods[] =
@@ -72,23 +73,30 @@ static struct PyModuleDef trikmodule =
 	PyModuleDef_HEAD_INIT,
 	"trik",   /* name of module */
 	nullptr, /* module documentation, may be nullptr */
-	-1,       /* size of per-interpreter state of the module,
+	sizeof(trikPythonModuleState),       /* size of per-interpreter state of the module,
 				 or -1 if the module keeps state in global variables. */
 	TrikMethods
 };
 
-PyMODINIT_FUNC trikPythonModuleInit()
+void trikPythonModuleInit(trikControl::BrickInterface* brick,
+						trikScriptRunner::ScriptExecutionControl* script, trikNetwork::MailboxInterface* mailbox)
 {
 	PythonQtObjectPtr mod = PyModule_Create(&trikmodule);
+
+	auto state = reinterpret_cast<trikPythonModuleState*>(PyModule_GetState(mod));
+
+	state->mBrick = brick;
+	state->mScript = script;
+	state->mMailbox = mailbox;
 
 	// make module a package
 	PyModule_AddStringConstant(mod, "__package__", "trik");
 	PyModule_AddObject(mod, "__path__", PyList_New(0));
 
-	PythonQtObjectPtr all_ptr = PyList_New((gMailbox != nullptr) ? 3 : 2);
+	PythonQtObjectPtr all_ptr = PyList_New((mailbox != nullptr) ? 3 : 2);
 	PyList_SetItem(all_ptr, 0, PyString_FromString("brick"));
 	PyList_SetItem(all_ptr, 1, PyString_FromString("script"));
-	if (gMailbox != nullptr)
+	if (mailbox != nullptr)
 		PyList_SetItem(all_ptr, 2, PyString_FromString("mailbox"));
 	PyModule_AddObject(mod, "__all__", all_ptr.takeObject());
 
@@ -98,8 +106,27 @@ PyMODINIT_FUNC trikPythonModuleInit()
 					"if _get_native_mailbox():\n  mailbox = _modules['trik.mailbox'] = _get_native_mailbox()\n"
 					"del _modules");
 
-	return mod;
+	PythonQtObjectPtr sys;
+	sys.setNewRef(PyImport_ImportModule("sys"));
+
+
+	PyObject *old_module_names = PyObject_GetAttrString(sys.object(),"builtin_module_names");
+	if (old_module_names && PyTuple_Check(old_module_names)) {
+	  Py_ssize_t old_size = PyTuple_Size(old_module_names);
+	  PyObject *module_names = PyTuple_New(old_size + 1);
+	  for (Py_ssize_t i = 0; i < old_size; i++) {
+		PyObject* val = PyTuple_GetItem(old_module_names, i);
+		Py_INCREF(val);
+		PyTuple_SetItem(module_names, i, val);
+	  }
+	  PyTuple_SetItem(module_names, old_size, PyString_FromString("trik"));
+	  PyModule_AddObject(sys.object(), "builtin_module_names", module_names);
+	}
+	Py_XDECREF(old_module_names);
+
+	PyDict_SetItemString(PyObject_GetAttrString(sys.object(), "modules"), "trik", mod);
 }
+
 
 
 

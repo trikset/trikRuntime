@@ -109,10 +109,6 @@ void PythonEngineWorker::init()
 		Py_NoSiteFlag = 1;
 		Py_NoUserSiteDirectory = 1;
 
-		if (PyImport_AppendInittab("trik", trikPythonModuleInit) == -1) {
-			abort();
-		}
-
 		Py_Initialize();
 		PyEval_InitThreads(); // For Python < 3.7
 	}
@@ -189,11 +185,7 @@ bool PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
 
-	trikPythonModuleSetObjects(&mBrick, mScriptExecutionControl.data(), mMailbox);
-
-	mMainContext.addObject("brick", &mBrick);
-	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
-	mMainContext.addObject("mailbox", mMailbox);
+	trikPythonModuleInit(&mBrick, mScriptExecutionControl.data(), mMailbox);
 
 	return evalSystemPy();
 }
