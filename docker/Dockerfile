@@ -5,14 +5,15 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TRIK_GCCVERSION 9
 ENV TRIK_QTIFW_TAG 3.2.2
 ENV TRIK_LIBUSB_TAG v1.0.23
-
+ENV TRIK_QTVERSION 5.12.9
+RUN bash -uc 'echo ${TRIK_PYTHON3_VERSION_MINOR}'
 # Build image with two huge layers, this is the 1st one.
 # Do not upgrade packages to match trikset/checker-runtime
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y software-properties-common \
+    && apt-get install --no-install-recommends -y lsb-release software-properties-common \
     && add-apt-repository -y ppa:jonathonf/gcc \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
-    && add-apt-repository -y ppa:beineri/opt-qt-5.12.8-xenial \
+    && add-apt-repository -y ppa:beineri/opt-qt-${TRIK_QTVERSION}-$(lsb_release -sc) \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
 		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb python3.${TRIK_PYTHON3_VERSION_MINOR}-dev \
