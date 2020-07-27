@@ -96,9 +96,9 @@ public:
 
 private:
 	struct TextObject {
-		TextObject(){}
+		TextObject() = default;
 
-		TextObject(QString text, QColor color, int fontSize)
+		TextObject(const QString &text, const QColor &color, int fontSize)
 			: text(text)
 			, currentPenColor(color)
 		{
