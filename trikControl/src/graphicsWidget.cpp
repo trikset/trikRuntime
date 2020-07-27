@@ -31,7 +31,6 @@ GraphicsWidget::GraphicsWidget()
 	, mCurrentPenWidth(0)
 {
 	setAutoFillBackground(true);
-	mFontMetrics.reset(new QFontMetrics(font()));
 }
 
 GraphicsWidget::~GraphicsWidget()
@@ -65,20 +64,20 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 		shape->draw(&painter);
 	}
 
-	for (const QPair<int, int> &position : mLabels.keys()) {
+	for (const auto & position : mLabels.keys()) {
 		painter.setPen(mCurrentPenColor);
-		auto & text = mLabels[position];
-		mFontMetrics.reset(new QFontMetrics(text.font));
-		painter.setPen(text.currentPenColor);
-		painter.setFont(text.font);
+		auto & textObject = mLabels[position];
+		QFontMetrics fontMetrics(textObject.font);
+		painter.setPen(textObject.currentPenColor);
+		painter.setFont(textObject.font);
 		painter.drawText(position.first, position.second
 #if (QT_VERSION_MAJOR == 5) && (QT_VERSION_MINOR < 11)
-				, mFontMetrics->width(text.second)
+				, fontMetrics.width(textObject.text)
 #else
-				, mFontMetrics->horizontalAdvance(text.text)
+				, fontMetrics.horizontalAdvance(textObject.text)
 #endif
-				, mFontMetrics->height()
-				, Qt::TextWordWrap, text.text);
+				, fontMetrics.height()
+				, Qt::TextWordWrap, textObject.text);
 	}
 }
 
@@ -140,7 +139,8 @@ void GraphicsWidget::addShape(Shape *shape)
 
 void GraphicsWidget::addLabel(const QString &text, int x, int y, int fontSize)
 {
-	mLabels[qMakePair(x, y)] = TextObject(text, mCurrentPenColor, fontSize);
+	TextObject newTextObject(text, mCurrentPenColor, fontSize);
+	mLabels[qMakePair(x, y)] = newTextObject;
 }
 
 void GraphicsWidget::setPixmap(QPixmap &&picture)

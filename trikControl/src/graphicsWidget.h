@@ -105,6 +105,12 @@ private:
 			font.setPixelSize(fontSize);
 		}
 
+		TextObject(const TextObject &textObject) = default;
+
+		TextObject(TextObject &&textObject) = default;
+
+		TextObject& operator=(const TextObject &textObject) = default;
+
 		QString text;
 
 		QColor currentPenColor;
@@ -129,9 +135,6 @@ private:
 
 	/// Current pen width.
 	int mCurrentPenWidth;
-
-	/// Font information used for printing text.
-	QScopedPointer<QFontMetrics> mFontMetrics;
 };
 
 }
