@@ -88,20 +88,37 @@ public:
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle);
 
 	/// Prints text at given coordinates.
-	void addLabel(const QString &text, int x, int y);
+	void addLabel(const QString &text, int x, int y, int fontSize = -1);
 
 	/// Sets pixmap which will be drawn instead of other elements.
 	/// Steals ownership for performance optimization
 	void setPixmap(QPixmap &&picture);
 
 private:
+	struct TextObject {
+		TextObject(){}
+
+		TextObject(QString text, QColor color, int fontSize)
+			: text(text)
+			, currentPenColor(color)
+		{
+			font.setPixelSize(fontSize);
+		}
+
+		QString text;
+
+		QColor currentPenColor;
+
+		QFont font;
+	};
+
 	/// Draw all elements.
 	virtual void paintEvent(QPaintEvent *paintEvent);
 
 	void addShape(Shape *shape);
 
 	/// List of all labels.
-	QHash<QPair<int, int>, QPair<QColor, QString>> mLabels;
+	QHash<QPair<int, int>, TextObject> mLabels;
 
 	QList<Shape *> mElements;
 

@@ -92,9 +92,9 @@ void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const
 	repaintGraphicsWidget();
 }
 
-void GuiWorker::addLabel(const QString &text, int x, int y)
+void GuiWorker::addLabel(const QString &text, int x, int y, int fontSize)
 {
-	mImageWidget->addLabel(text, x, y);
+	mImageWidget->addLabel(text, x, y, fontSize);
 }
 
 void GuiWorker::removeLabels()
