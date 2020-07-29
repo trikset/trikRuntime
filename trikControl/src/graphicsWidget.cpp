@@ -27,8 +27,6 @@
 using namespace trikControl;
 
 GraphicsWidget::GraphicsWidget()
-	: mCurrentPenColor(Qt::black)
-	, mCurrentPenWidth(0)
 {
 	setAutoFillBackground(true);
 }

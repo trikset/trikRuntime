@@ -111,6 +111,8 @@ private:
 
 		TextObject& operator=(const TextObject &textObject) = default;
 
+		TextObject& operator=(TextObject &&textObject) = default;
+
 		QString text;
 
 		QColor currentPenColor;
@@ -131,10 +133,10 @@ private:
 	QPixmap mPicture;
 
 	/// Current pen color.
-	QColor mCurrentPenColor;
+	QColor mCurrentPenColor {Qt::black};
 
 	/// Current pen width.
-	int mCurrentPenWidth;
+	int mCurrentPenWidth {0};
 };
 
 }
