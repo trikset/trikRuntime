@@ -59,13 +59,13 @@ void trikControl::Display::showImage(const QString &fileName)
 }
 
 void trikControl::Display::show(const QVector<int32_t> &array, int width, int height, const QString &format)
-{	
+{
 	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->show(array, width, height, format);});
 }
 
-void trikControl::Display::addLabel(const QString &text, int x, int y)
+void trikControl::Display::addLabel(const QString &text, int x, int y, int fontSize)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->addLabel(text, x, y);});
+	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->addLabel(text, x, y, fontSize);});
 }
 
 void trikControl::Display::removeLabels()
