@@ -52,7 +52,8 @@ public slots:
 	/// @param text - label text.
 	/// @param x - label x coordinate.
 	/// @param y - label y coordinate.
-	virtual void addLabel(const QString &text, int x, int y) = 0;
+	/// @param fontSize - label font size
+	virtual void addLabel(const QString &text, int x, int y, int fontSize = -1) = 0;
 
 	/// Remove all labels from the screen.
 	virtual void removeLabels() = 0;
