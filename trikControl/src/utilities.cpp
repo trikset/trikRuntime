@@ -49,7 +49,7 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	} else if (!format.compare("rgb888", Qt::CaseInsensitive)) {
 		fmt = QImage::Format_RGB888;
 		copyAligned(3 * width);
-	} else if (format == "grayscale8") {
+	} else if (format == "grayscale8" || format == "greyscale8") {
 		fmt = QImage::Format_Grayscale8;
 		copyAligned(1 * width);
 	} else {
