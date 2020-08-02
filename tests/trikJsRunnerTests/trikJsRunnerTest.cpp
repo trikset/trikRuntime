@@ -124,7 +124,7 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 
 TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 {
-	auto err = runDirectCommandAndWaitForQuit("script.wait(0);script.quit()");
+	auto err = runDirectCommandAndWaitForQuit("script.wait(50);script.quit();");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
 
