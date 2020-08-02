@@ -17,14 +17,16 @@
 #include <QtCore/QJsonDocument>
 #include <QtCore/QRegExp>
 #include <QtNetwork/QTcpSocket>
-
+#include <QsLog.h>
 using namespace trikScriptRunner;
 
 TrikVariablesServer::TrikVariablesServer() :
 	mTcpServer(new QTcpServer(this))
 {
 	connect(mTcpServer.data(), SIGNAL(newConnection()), this, SLOT(onNewConnection()));
-	mTcpServer->listen(QHostAddress::LocalHost, port);
+	if (!mTcpServer->listen(QHostAddress::LocalHost, port)) {
+		QLOG_ERROR() << "Failed to open port" << port << "for variables";
+	}
 }
 
 void TrikVariablesServer::sendHTTPResponse(const QJsonObject &json)
