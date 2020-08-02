@@ -181,13 +181,15 @@ void ScriptEngineWorker::stopScript()
 	if (mDirectScriptsEngine) {
 		mDirectScriptsEngine->abortEvaluation();
 		QLOG_INFO() << "ScriptEngineWorker : ending interpretation";
-		emit completed(mDirectScriptsEngine->hasUncaughtException()
-						? mDirectScriptsEngine->uncaughtException().toString()
-						: ""
-				, mScriptId);
+		const auto &msg = mDirectScriptsEngine->hasUncaughtException()
+				   ? mDirectScriptsEngine->uncaughtException().toString()
+				   : "";
+		// This method is called from script.quit()
+		// Thus deletion of the mDirectScriptsEngine should be postponed
+		// Instead of deleteLater() we use zero timer
+		QTimer::singleShot(0, this, [this]() { mDirectScriptsEngine.reset(); });
 
-		mDirectScriptsEngine->deleteLater();
-		mDirectScriptsEngine = nullptr;
+		emit completed(msg, mScriptId);
 	}
 
 	mState = ready;
@@ -220,7 +222,6 @@ void ScriptEngineWorker::doRun(const QString &script)
 {
 	/// When starting script execution (by any means), clear button states.
 	mBrick.keys()->reset();
-
 	mThreading.startMainThread(script);
 	mState = running;
 	mThreading.waitForAll();
@@ -245,7 +246,7 @@ void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 {
 	if (!mScriptControl.isInEventDrivenMode() && !mDirectScriptsEngine) {
 		startScriptEvaluation(scriptId);
-		mDirectScriptsEngine = createScriptEngine(false);
+		mDirectScriptsEngine.reset(createScriptEngine(false));
 		mScriptControl.run();
 		mState = running;
 	}
@@ -254,14 +255,13 @@ void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 		mDirectScriptsEngine->evaluate(command);
 
 		/// If script was stopped by quit(), engine will already be reset to nullptr in ScriptEngineWorker::stopScript.
+		QString msg;
 		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
-			emit completed(mDirectScriptsEngine->uncaughtException().toString(), mScriptId);
-			mDirectScriptsEngine->deleteLater();
-			mDirectScriptsEngine = nullptr;
-		} else {
-			emit completed("", mScriptId);
+			msg = mDirectScriptsEngine->uncaughtException().toString();
+			mDirectScriptsEngine.reset();
 		}
+		Q_EMIT completed(msg, mScriptId);
 	}
 }
 

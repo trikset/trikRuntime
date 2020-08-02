@@ -124,8 +124,7 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 
 TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 {
-	const QString text = "Hello";
-	auto err = runDirectCommandAndWaitForQuit("script.wait(50);script.quit();");
+	auto err = runDirectCommandAndWaitForQuit("script.wait(0);script.quit()");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
 
@@ -223,4 +222,3 @@ TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 	" " + testFileName + "', true); script.quit();");
 	ASSERT_FALSE(QFileInfo::exists(testFileName));
 }
-

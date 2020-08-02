@@ -66,8 +66,7 @@ protected:
 private:
 	QString mId;
 
-	/// Has ownership (thru deleteLater() call).
-	QScriptEngine *mEngine;
+	QScopedPointer<QScriptEngine> mEngine;
 	QString mScript;
 
 	Threading &mThreading;
