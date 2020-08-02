@@ -54,4 +54,5 @@ LoggingHelper::LoggingHelper(const QString &pathToLog)
 
 LoggingHelper::~LoggingHelper()
 {
+	QsLogging::Logger::destroyInstance();
 }
