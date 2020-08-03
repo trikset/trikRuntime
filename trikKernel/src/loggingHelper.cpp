@@ -17,6 +17,7 @@
 #include <QtCore/QDir>
 
 #include <QsLog.h>
+#include <QsLogDestConsole.h>
 
 using namespace trikKernel;
 
@@ -43,7 +44,7 @@ LoggingHelper::LoggingHelper(const QString &pathToLog)
 	mConsoleDestination = QsLogging::DestinationFactory::MakeFunctorDestination(
 			[](const QString &message, QsLogging::Level level) {
 				if (level >= QsLogging::ErrorLevel) {
-					qDebug() << message;
+					QsDebugOutput::output(message);
 				}
 			}
 			);
