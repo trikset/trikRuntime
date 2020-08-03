@@ -23,7 +23,7 @@ using namespace trikScriptRunner;
 TrikVariablesServer::TrikVariablesServer() :
 	mTcpServer(new QTcpServer(this))
 {
-	connect(mTcpServer.data(), SIGNAL(newConnection()), this, SLOT(onNewConnection()));
+	connect(mTcpServer.data(), &QTcpServer::newConnection, this, &TrikVariablesServer::onNewConnection);
 	if (!mTcpServer->listen(QHostAddress::LocalHost, port)) {
 		QLOG_ERROR() << "Failed to open port" << port << "for variables";
 	}
@@ -53,7 +53,7 @@ void TrikVariablesServer::onNewConnection()
 	// deleted when QTcpServer is destroyed. Maybe it may sense to call "deleteLater" explicitly,
 	// to avoid wasting memory.
 	mCurrentConnection = mTcpServer->nextPendingConnection();
-	connect(mCurrentConnection, SIGNAL(readyRead()), this, SLOT(processHTTPRequest()));
+	connect(mCurrentConnection, &QTcpSocket::readyRead, this, &TrikVariablesServer::processHTTPRequest);
 }
 
 void TrikVariablesServer::processHTTPRequest()
