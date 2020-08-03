@@ -15,7 +15,7 @@
 #pragma once
 
 #include <QtCore/QString>
-#include <QtCore/QSharedPointer>
+#include <memory>
 
 namespace QsLogging {
 class Destination;
@@ -34,8 +34,8 @@ public:
 	~LoggingHelper();
 
 private:
-	QSharedPointer<QsLogging::Destination> mFileDestination;
-	QSharedPointer<QsLogging::Destination> mConsoleDestination;
+	std::unique_ptr<QsLogging::Destination> mFileDestination;
+	std::unique_ptr<QsLogging::Destination> mConsoleDestination;
 };
 
 }
