@@ -4,3 +4,6 @@
 [submodule "tests/thirdparty/googletest"]
 	path = tests/thirdparty/googletest
 	url = https://github.com/google/googletest
+[submodule "qslog/qslog"]
+	path = qslog/qslog
+	url = https://bitbucket.org/codeimproved/qslog.git
