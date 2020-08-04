@@ -160,7 +160,7 @@ private:
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 	ScriptExecutionControl &mScriptControl;
 	Threading mThreading;
-	QScriptEngine *mDirectScriptsEngine = nullptr;  // Has ownership.
+	QScopedPointer<QScriptEngine> mDirectScriptsEngine;
 	int mScriptId = 0;
 	volatile State mState = State::ready;
 	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;

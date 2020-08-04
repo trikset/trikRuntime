@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
 	initHelper.init();
 
 	QLOG_INFO() << "TrikServer started on port" << port;
-	qDebug() << "Running TrikServer on port" << port;
 
 	QScopedPointer<trikControl::BrickInterface> brick(trikControl::BrickFactory::create(
 			initHelper.configPath(), trikKernel::Paths::mediaPath()));

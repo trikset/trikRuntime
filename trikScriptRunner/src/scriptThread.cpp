@@ -55,19 +55,20 @@ void ScriptThread::run()
 		QLOG_ERROR() << "Uncaught exception with next backtrace" << backtrace;
 	} else if (mThreading.inEventDrivenMode()) {
 		QEventLoop loop;
-		connect(this, SIGNAL(stopRunning()), &loop, SLOT(quit()), Qt::QueuedConnection);
+		connect(this, &ScriptThread::stopRunning, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 		loop.exec();
 	}
 
-	mEngine->deleteLater();
-	mThreading.threadFinished(mId);
+	mEngine.reset();
 	QLOG_INFO() << "Ended evaluation, thread" << this;
 }
 
 void ScriptThread::abort()
 {
-	mEngine->abortEvaluation();
-	emit stopRunning();
+	if (isEvaluating()) {
+		mEngine->abortEvaluation();
+		emit stopRunning();
+	}
 }
 
 QString ScriptThread::id() const
@@ -82,7 +83,7 @@ QString ScriptThread::error() const
 
 bool ScriptThread::isEvaluating() const
 {
-	return mEngine->isEvaluating();
+	return mEngine && mEngine->isEvaluating();
 }
 
 // TODO: Fix design error. This slot is called on wrong thread (probably)

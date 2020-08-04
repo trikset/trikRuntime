@@ -232,7 +232,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 
 THIS_IS_QS_LOG=$$find(PROJECT_NAME, [qQ]s[lL]og)
 isEmpty(THIS_IS_QS_LOG) {
-	INCLUDEPATH += $$GLOBAL_PWD/qslog
+        INCLUDEPATH += $$GLOBAL_PWD/qslog/qslog
 }
 
 CONFIG += c++11

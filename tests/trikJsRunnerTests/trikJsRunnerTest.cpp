@@ -55,6 +55,9 @@ void TrikJsRunnerTest::SetUp()
 
 void TrikJsRunnerTest::TearDown()
 {
+	// Cleanup in proper order
+	mScriptRunner.reset();
+	mBrick.reset();
 }
 
 int TrikJsRunnerTest::run(const QString &script, const QString &file)
@@ -117,6 +120,28 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 {
 	auto errCode = run("1", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
+}
+
+TEST_F(TrikJsRunnerTest, scriptWaitQuit)
+{
+	auto err = runDirectCommandAndWaitForQuit("script.wait(0);script.quit()");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+}
+
+TEST_F(TrikJsRunnerTest, twoProgramsTest)
+{
+	scriptRunner().run("script.wait(500);");
+	tests::utils::Wait::wait(100);
+	scriptRunner().run("script.wait(500);");
+	tests::utils::Wait::wait(600);
+}
+
+TEST_F(TrikJsRunnerTest, printTest)
+{
+	const QString text = "Hello";
+	auto err = runDirectCommandAndWaitForQuit("print('" + text + "');script.quit();");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	ASSERT_EQ(text + '\n', mStdOut);
 }
 
 TEST_F(TrikJsRunnerTest, brickInterfaceAccess)
@@ -196,20 +221,4 @@ TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 #endif
 	" " + testFileName + "', true); script.quit();");
 	ASSERT_FALSE(QFileInfo::exists(testFileName));
-}
-
-TEST_F(TrikJsRunnerTest, twoProgramsTest)
-{
-	scriptRunner().run("script.wait(500);");
-	tests::utils::Wait::wait(100);
-	scriptRunner().run("script.wait(500);");
-	tests::utils::Wait::wait(600);
-}
-
-TEST_F(TrikJsRunnerTest, printTest)
-{
-	const QString text = "Hello";
-	auto err = runDirectCommandAndWaitForQuit("print('" + text + "');script.quit();");
-	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	ASSERT_EQ(text + '\n', mStdOut);
 }

@@ -13,10 +13,12 @@
  * limitations under the License. */
 
 #include "loggingHelper.h"
-
+#include <iostream>
+#include <iomanip>
 #include <QtCore/QDir>
 
 #include <QsLog.h>
+#include <QsLogDestConsole.h>
 
 using namespace trikKernel;
 
@@ -33,25 +35,24 @@ LoggingHelper::LoggingHelper(const QString &pathToLog)
 
 	const int maxLogSize = 10 * 1024 * 1024;
 	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
-	mFileDestination = QsLogging::DestinationFactory::MakeFileDestination(
+	QsLogging::Logger::instance().addDestination(QsLogging::DestinationFactory::MakeFileDestination(
 			correctedPath + "trik.log"
-			, QsLogging::EnableLogRotation
+			, QsLogging::LogRotationOption::EnableLogRotation
 			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)
-			, QsLogging::TraceLevel);
+			, QsLogging::MaxOldLogCount(2)));
 
-	mConsoleDestination = QsLogging::DestinationFactory::MakeFunctorDestination(
-			[](const QString &message, QsLogging::Level level) {
-				if (level >= QsLogging::ErrorLevel) {
-					qDebug() << message;
+	QsLogging::Logger::instance().addDestination(QsLogging::DestinationFactory::MakeFunctorDestination(
+			[](const QsLogging::LogMessage &message) {
+				if (message.level >= QsLogging::ErrorLevel) {
+					std::cerr << qPrintable(message.formatted) << std::endl << std::flush;
 				}
 			}
-			);
-
-	QsLogging::Logger::instance().addDestination(mFileDestination);
-	QsLogging::Logger::instance().addDestination(mConsoleDestination);
+			));
 }
 
 LoggingHelper::~LoggingHelper()
 {
+#if defined(Q_OS_WIN)
+	QsLogging::Logger::instance().shutDownLoggerThread();
+#endif
 }
