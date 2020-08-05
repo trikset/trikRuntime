@@ -37,13 +37,12 @@ SOURCES += \
 	$$PWD/src/trikServer.cpp \
 
 INCLUDEPATH += $$PWD/include \
-	$$PWD/../qslog \
 	$$PWD/../trikKernel/include \
 
 QT += network
 
 DEFINES += TRIKNETWORK_LIBRARY
 
-links(qslog trikKernel)
+links(trikQsLog trikKernel)
 
 installs()
