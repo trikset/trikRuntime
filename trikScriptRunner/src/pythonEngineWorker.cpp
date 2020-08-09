@@ -68,20 +68,30 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
-		Py_Finalize();
-		PyMem_RawFree(mProgramName);
-		PyMem_RawFree(mPythonPath);
+		if (Py_FinalizeEx()) {
+			QLOG_ERROR() << "Failed to finalize python engine";
+		}
+
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
 		}
+
+		PyMem_RawFree(mProgramName);
+		PyMem_RawFree(mPythonPath);		
 	}
 }
 
 void PythonEngineWorker::init()
 {
 	if (initCounter++ == 0) {
-		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
-		Py_SetProgramName(mProgramName);
+
+		QLOG_INFO() << "Built with python:" << PY_VERSION << QString::number(PY_VERSION_HEX, 16);
+		QLOG_INFO() << "Running with python:" << Py_GetVersion();
+		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
+			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
+							.arg(PY_VERSION).arg(Py_GetVersion());
+			throw trikKernel::InternalErrorException(e);
+		}
 		constexpr auto varName = "TRIK_PYTHONPATH";
 		auto const &path = QProcessEnvironment::systemEnvironment().value(varName);
 		if (path.isEmpty()) {
@@ -96,6 +106,8 @@ void PythonEngineWorker::init()
 		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
 		Py_SetPath(mPythonPath);
 
+		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+		Py_SetProgramName(mProgramName);
 
 /* uncomment for verbosity
 		Py_VerboseFlag = 3;
@@ -107,9 +119,39 @@ void PythonEngineWorker::init()
 		Py_DontWriteBytecodeFlag = 1;
 		Py_NoSiteFlag = 1;
 		Py_NoUserSiteDirectory = 1;
-
+#if PY_MAJOR_VERSION != 3
+#error "Unsupported PYTHON version"
+#else
+#if PY_MINOR_VERSION < 6
 		Py_Initialize();
-		PyEval_InitThreads(); // For Python < 3.7
+#else
+		Py_InitializeEx(true); // Initialize handlers, because we need PyErr_SetInterrupt()
+#endif
+
+#if PY_MINOR_VERSION < 7
+		PyEval_InitThreads();
+#endif
+#endif
+
+		constexpr auto extractVersionCommand = "(sys.version_info.major,sys.version_info.minor)";
+		PythonQtObjectPtr dict;
+		dict.setNewRef(PyDict_New());
+		PyMapping_SetItemString(dict.object(), "sys", PyImport_ImportModule("sys"));
+		PythonQtObjectPtr ver;
+		ver.setNewRef(PyRun_StringFlags(extractVersionCommand, Py_eval_input, dict.object(), dict.object(), nullptr));
+		if (ver) {
+			auto major = PyLong_AsLong(PyTuple_GetItem(ver, 0));
+			auto minor = PyLong_AsLong(PyTuple_GetItem(ver, 1));
+			if (major != PY_MAJOR_VERSION || minor != PY_MINOR_VERSION) {
+				auto const &e = QString("Incompatible Python library detected. Expecting version %1, but found %2.%3")
+								.arg(PY_VERSION).arg(major).arg(minor);
+				throw trikKernel::InternalErrorException(e);
+			}
+		} else {
+			auto e = QString("Failed to extract Python version from provided library, check %1").arg(varName);
+			QLOG_FATAL() << e;
+			throw trikKernel::InternalErrorException(e);
+		}
 	}
 
 	if (!mPyInterpreter) {
