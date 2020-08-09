@@ -24,7 +24,7 @@ copyToDestdir($$OTHER_FILES)
 
 implementationIncludes(trikKernel trikControl trikScriptRunner trikNetwork)
 PythonQtIncludes()
-links(qslog trikKernel trikControl trikScriptRunner trikNetwork)
+links(trikQsLog trikKernel trikControl trikScriptRunner trikNetwork)
 
 
 TEMPLATE = app

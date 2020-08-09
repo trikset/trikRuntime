@@ -40,20 +40,21 @@ tests {
 
 qslog.file = qslog/QsLogSharedLibrary.pro
 
-trikCommunicator.depends = trikScriptRunner trikNetwork qslog
-trikControl.depends = trikKernel trikHal qslog
-trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikKernel trikTelemetry qslog
-trikKernel.depends = qslog
-trikNetwork.depends = trikKernel qslog
-trikRun.depends = trikScriptRunner trikKernel qslog
-trikScriptRunner.depends = trikControl trikKernel trikNetwork qslog PythonQt
-trikServer.depends = trikCommunicator qslog
-trikTelemetry.depends = trikControl trikNetwork trikKernel qslog
-trikWiFi.depends = qslog trikKernel
-trikHal.depends = qslog trikKernel
-PythonQt.depends = qslog
 qslog.depends = initvars
 translations.depends = initvars
+
+PythonQt.depends = qslog
+trikKernel.depends = qslog translations
+trikHal.depends = trikKernel
+trikControl.depends = trikHal
+trikWiFi.depends = trikKernel
+trikNetwork.depends = trikKernel
+trikRun.depends = trikScriptRunner
+trikScriptRunner.depends = trikControl trikNetwork PythonQt
+trikCommunicator.depends = trikScriptRunner
+trikServer.depends = trikCommunicator
+trikTelemetry.depends = trikControl trikNetwork
+trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikTelemetry
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \

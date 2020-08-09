@@ -18,7 +18,7 @@ SOURCES += \
 	$$PWD/trikServerMain.cpp \
 
 implementationIncludes(trikKernel trikControl trikCommunicator trikNetwork)
-links(qslog trikControl trikCommunicator trikNetwork trikKernel)
+links(trikQsLog trikControl trikCommunicator trikNetwork trikKernel)
 
 TEMPLATE = app
 CONFIG += console

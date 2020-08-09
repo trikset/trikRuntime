@@ -71,5 +71,5 @@ TRANSLATIONS = \
 	$$PWD/../translations/ru/trikKernel_ru.ts \
 	$$PWD/../translations/fr/trikKernel_fr.ts \
 
-links(qslog)
+links(trikQsLog)
 installs()
