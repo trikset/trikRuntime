@@ -265,11 +265,6 @@ void Connection::doDisconnect()
 		return;
 	}
 
-	if (mUseHeartbeat) {
-		mKeepAliveTimer->stop();
-		mHeartbeatTimer->stop();
-	}
-
 	mDisconnectReported = true;
 
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
@@ -285,6 +280,8 @@ void Connection::initKeepalive()
 
 		connect(mKeepAliveTimer.data(), &QTimer::timeout, this, &Connection::keepAlive);
 		connect(mHeartbeatTimer.data(), &QTimer::timeout, this, &Connection::onHeartbeatTimeout);
+		connect(this, &Connection::disconnected, mKeepAliveTimer.data(), &QTimer::stop);
+		connect(this, &Connection::disconnected, mHeartbeatTimer.data(), &QTimer::stop);
 
 		mKeepAliveTimer->setSingleShot(false);
 		mHeartbeatTimer->setSingleShot(false);
