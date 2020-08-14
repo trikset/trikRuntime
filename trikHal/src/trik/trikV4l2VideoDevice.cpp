@@ -80,16 +80,15 @@ namespace {
 			return result;
 		}
 		const auto Y = &shot[0];
-		const auto U = &shot[width * height];
-		const auto V = &shot[3 * width * height / 2];
+		const auto UV = &shot[width * height];
 
 		for (auto row = 0; row < height; ++row) {
 			for (auto col = 0; col < width; col+=2) {
 				auto startIndex = row * width + col;
-				auto y1 = Y[startIndex] - 16;
-				auto y2 = Y[startIndex+1] - 16;
-				auto u  = U[startIndex / 2] - 128;
-				auto v  = V[startIndex / 2] - 128;
+				int const y1 = Y[startIndex] - 16;
+				int const y2 = Y[startIndex+1] - 16;
+				int const u  = UV[startIndex] - 128;
+				int const v  = UV[startIndex+1] - 128;
 				auto _298y1 = 298 * y1;
 				auto _298y2 = 298 * y2;
 				auto _409v  = 409 * v;
