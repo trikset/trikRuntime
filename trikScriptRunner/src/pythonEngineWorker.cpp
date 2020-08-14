@@ -70,7 +70,7 @@ PythonEngineWorker::~PythonEngineWorker()
 	if (--initCounter == 0) {
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
-#else
+#endif
 #if PY_MINOR_VERSION < 6
 		Py_Finalize();
 #else
