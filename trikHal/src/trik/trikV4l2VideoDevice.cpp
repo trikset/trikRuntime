@@ -95,12 +95,12 @@ namespace {
 				auto _100u  = -100 * u;
 				auto _516u  = 516 * u;
 				auto _208v  = -208 * v;
-				auto r1 = clip255 ((_298y1 + _409v + 128) >> 8);
+				auto r1 = clip255 ((_298y1 + _516u + 128) >> 8);
 				auto g1 = clip255 ((_298y1 + _100u + _208v + 128) >> 8);
-				auto b1 = clip255 ((_298y1 + _516u + 128) >> 8);
-				auto r2 = clip255 ((_298y2 + _409v + 128) >> 8);
+				auto b1 = clip255 ((_298y1 + _409v + 128) >> 8);
+				auto r2 = clip255 ((_298y2 + _516u + 128) >> 8);
 				auto g2 = clip255 ((_298y2 + _100u + _208v + 128) >> 8);
-				auto b2 = clip255 ((_298y2 + _516u + 128) >> 8);
+				auto b2 = clip255 ((_298y2 + _409v + 128) >> 8);
 
 				auto rgb = &result[startIndex*3];
 				rgb[0] = r1;
