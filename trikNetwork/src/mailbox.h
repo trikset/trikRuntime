@@ -36,27 +36,27 @@ class Mailbox : public MailboxInterface
 public:
 	/// Constructor.
 	/// @param port - port for mailbox server.
-	Mailbox(int port);
+	explicit Mailbox(int port);
 
 	/// Constructor.
 	/// @param configurer - configurer object that contains preparsed XML config.
-	Mailbox(const trikKernel::Configurer &configurer);
+	explicit Mailbox(const trikKernel::Configurer &configurer);
 
 	~Mailbox() override;
 
-	bool isConnected() const override;
+	Q_INVOKABLE bool isConnected() const override;
 
-	void setHullNumber(int myHullNumber) override;
+	Q_INVOKABLE QHostAddress serverIp() const override;
 
-	QHostAddress serverIp() const override;
+	Q_INVOKABLE QHostAddress myIp() const override;
 
-	QHostAddress myIp() const override;
+	Q_INVOKABLE bool isEnabled() override;
 
-	void clearQueue() override;
+	Q_INVOKABLE bool hasMessages() override;
 
-	bool isEnabled() override;
+	Q_INVOKABLE QString receive(bool wait = true) override;
 
-	void stopWaiting() override;
+	Q_INVOKABLE int myHullNumber() const override;
 
 public slots:
 	void connect(const QString &ip, int port) override;
@@ -67,13 +67,13 @@ public slots:
 
 	void send(const QString &message) override;
 
-	bool hasMessages() override;
-
-	QString receive(bool wait = true) override;
-
-	int myHullNumber() const override;
+	void stopWaiting() override;
 
 	void renewIp() override;
+
+	void clearQueue() override;
+
+	void setHullNumber(int myHullNumber) override;
 
 signals:
 	/// Used to interrupt waiting for new message.
