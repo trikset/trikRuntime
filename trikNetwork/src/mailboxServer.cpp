@@ -20,6 +20,7 @@
 #include <QtCore/QSettings>
 
 #include <trikKernel/paths.h>
+#include <QHostInfo>
 #include <QsLog.h>
 
 using namespace trikNetwork;
@@ -79,7 +80,7 @@ void MailboxServer::start()
 {
 	startServer(mMyPort);
 
-	if (!mServerIp.isNull() && mServerIp != mMyIp && mMyIp == mSavedIp) {
+	if (!mServerIp.isNull() && mMyIp == mSavedIp) {
 		connectTo(mServerIp, mServerPort);
 	}
 }
@@ -105,24 +106,15 @@ void MailboxServer::connectTo(const QString &ip, int port)
 
 	if (server.toString() != ip || serverPort != port) {
 		mAuxiliaryInformationLock.lockForWrite();
-		mServerIp = QHostAddress(ip);
+		mServerIp = QHostInfo::fromName(ip).addresses().first();
 		mServerPort = port;
 		mAuxiliaryInformationLock.unlock();
 
 		saveSettings();
 	}
 
-	mAuxiliaryInformationLock.lockForRead();
-	server = mServerIp;
-	serverPort = mServerPort;
-	mAuxiliaryInformationLock.unlock();
-
-	if (server == mMyIp) {
-		// Do not connect to ourselves.
-		return;
-	}
-
-	connectTo(server, serverPort);
+	QReadLocker l(&mAuxiliaryInformationLock);
+	connectTo(mServerIp, mServerPort);
 }
 
 void MailboxServer::connectTo(const QString &ip)
@@ -132,6 +124,11 @@ void MailboxServer::connectTo(const QString &ip)
 
 Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 {
+	if (ip == mMyIp && port == mMyPort && isListening()) {
+		// do not connect to self
+		return nullptr;
+	}
+
 	const auto c = new MailboxConnection();
 	connectConnection(c);
 	connect(this, &MailboxServer::startedConnection, c, [c, ip, port, this]() {
@@ -161,23 +158,25 @@ void MailboxServer::connectConnection(Connection * connection)
 
 QHostAddress MailboxServer::determineMyIp()
 {
-	/// @todo What if we are not in a network yet?
-	QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-	for (const QNetworkInterface &interface : interfaces) {
-		if (interface.name() == "wlan0") {
-			const QList<QNetworkAddressEntry> entries = interface.addressEntries();
-			for (const QNetworkAddressEntry &entry : entries) {
+	QList<QNetworkInterface> ifs {
+				// TRIK wlan0
+				QNetworkInterface::interfaceFromName("wlan0")
+				// Fallback to localhost
+				, QNetworkInterface::interfaceFromName("lo")
+				, QNetworkInterface::interfaceFromIndex(1)
+	};
+	for (auto &&interface : ifs) {
+		if (interface.isValid()) {
+			for (auto &&entry : interface.addressEntries()) {
 				const QHostAddress ip = entry.ip();
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
 					return ip;
 				}
-			}
-
-			break;
+			}			
 		}
 	}
 
-	return QHostAddress();
+	return QHostAddress(); // Total fail
 }
 
 Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
@@ -335,15 +334,29 @@ QString MailboxServer::receive()
 	return result;
 }
 
+bool MailboxServer::hasServer() const
+{
+	return isListening();
+}
+
 void MailboxServer::loadSettings()
 {
-	mAuxiliaryInformationLock.lockForWrite();
+	QWriteLocker l(&mAuxiliaryInformationLock);
 	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 	mHullNumber = settings.value("hullNumber", 0).toInt();
-	mServerIp = QHostAddress(settings.value("server", mMyIp.toString()).toString());
+	auto tryResolve = [](const QString &ipOrName) {
+		auto info = QHostInfo::fromName(ipOrName);
+		if (info.error() != QHostInfo::NoError || info.addresses().isEmpty()) {
+			QLOG_ERROR() << "Failed to get ip for " << ipOrName << ":" << info.error();
+			return QHostAddress();
+		} else {
+			return info.addresses().first();
+		}
+	};
+
+	mServerIp = tryResolve(settings.value("server", mMyIp.toString()).toString());
 	mServerPort = settings.value("serverPort", mMyPort).toInt();
-	mSavedIp = QHostAddress(settings.value("localIp", mMyIp.toString()).toString());
-	mAuxiliaryInformationLock.unlock();
+	mSavedIp = tryResolve(settings.value("localIp", mMyIp.toString()).toString());
 }
 
 void MailboxServer::saveSettings()

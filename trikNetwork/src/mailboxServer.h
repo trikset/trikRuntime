@@ -80,6 +80,9 @@ public:
 	/// Returns one incoming message or empty string if there are none.
 	Q_INVOKABLE QString receive();
 
+	/// Returns true iff the server was started and is listening
+	bool hasServer() const;
+
 signals:
 	/// Emitted when new message was received from a robot with given hull number.
 	void newMessage(int senderHullNumber, const QString &message);
