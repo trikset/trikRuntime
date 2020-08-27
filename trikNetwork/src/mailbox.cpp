@@ -69,6 +69,14 @@ int Mailbox::myHullNumber() const
 	return res;
 }
 
+bool Mailbox::hasServer() const
+{
+	bool res;
+	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->hasServer();}
+							, Qt::BlockingQueuedConnection);
+	return res;
+}
+
 void Mailbox::renewIp()
 {
 	QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::renewIp);

@@ -58,6 +58,9 @@ public:
 
 	Q_INVOKABLE int myHullNumber() const override;
 
+	/// True iff the server is running
+	Q_INVOKABLE bool hasServer() const;
+
 public slots:
 	void connect(const QString &ip, int port) override;
 

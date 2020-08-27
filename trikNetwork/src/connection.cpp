@@ -27,6 +27,7 @@ const int heartbeatTime = 5000;
 Connection::Connection(Protocol connectionProtocol, Heartbeat useHeartbeat)
 	: mProtocol(connectionProtocol)
 	, mUseHeartbeat(useHeartbeat == Heartbeat::use)
+	, mSocket(new QTcpSocket())
 {
 }
 
@@ -42,28 +43,17 @@ bool Connection::isValid() const
 
 QHostAddress Connection::peerAddress() const
 {
-	if (!mSocket) {
-		QLOG_FATAL() << "Connection::peerAddress() called on empty socket, thread:" << thread();
-		Q_ASSERT(false);
-	}
-
 	return mSocket->peerAddress();
 }
 
 int Connection::peerPort() const
 {
-	if (!mSocket) {
-		QLOG_FATAL() << "Connection::peerPort() called on empty socket, thread:" << thread();
-		Q_ASSERT(false);
-	}
-
 	return mSocket->peerPort();
 }
 
 void Connection::init(const QHostAddress &ip, int port)
 {
 	mSocket.reset(new QTcpSocket());
-
 	connectSlots();
 
 	initKeepalive();
@@ -85,7 +75,7 @@ void Connection::init(const QHostAddress &ip, int port)
 
 void Connection::send(const QByteArray &data)
 {
-	if (!mSocket || mSocket->state() != QAbstractSocket::ConnectedState) {
+	if (mSocket->state() != QAbstractSocket::ConnectedState) {
 		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
 		return;
 	}
@@ -130,7 +120,7 @@ void Connection::init(qintptr socketDescriptor)
 
 void Connection::onReadyRead()
 {
-	if (!mSocket || !mSocket->isValid()) {
+	if (!mSocket->isValid()) {
 		return;
 	}
 
