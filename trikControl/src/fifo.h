@@ -19,6 +19,7 @@
 #include <QtCore/QScopedPointer>
 
 #include "fifoInterface.h"
+#include "fifoworker.h"
 #include "deviceState.h"
 
 namespace trikKernel {
@@ -65,25 +66,12 @@ public slots:
 	/// Returns true if FIFO has new bytes in it.
 	bool hasData() const override;
 
-private slots:
-	void onNewLine(const QString &line);
-	void onNewData(const QVector<uint8_t> &data);
-	void onReadError();
-
 private:
-	QScopedPointer<trikHal::FifoInterface> mFifo;
+	/// Worker object that handles sensor in separate thread.
+	QScopedPointer<FifoWorker> mFifoWorker;
 
-	/// Last line that was read from FIFO.
-	QString mCurrentLine;
-
-	/// Last data that was read from FIFO.
-	QVector<uint8_t> mCurrentData;
-
-	/// Lock for mCurrent
-	mutable QReadWriteLock mCurrentLock;
-
-	/// State of a FIFO file as a device.
-	DeviceState mState;
+	/// Worker thread.
+	QThread mWorkerThread;
 };
 
 }

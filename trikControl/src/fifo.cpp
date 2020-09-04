@@ -32,99 +32,51 @@ Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 }
 
 Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mFifo(hardwareAbstraction.createFifo(fileName))
-	, mState("Fifo on '" + fileName + "'")
 {
-	mState.start();
+	mFifoWorker.reset(new FifoWorker(fileName, hardwareAbstraction));
+	mFifoWorker->moveToThread(&mWorkerThread);
 
-	connect(mFifo.data(), &trikHal::FifoInterface::newData, this, &Fifo::onNewData);
-	connect(mFifo.data(), &trikHal::FifoInterface::newLine, this, &Fifo::onNewLine);
-	connect(mFifo.data(), &trikHal::FifoInterface::readError, this, &Fifo::onReadError);
-
-	if (mFifo->open()) {
-		mState.ready();
-	} else {
-		mState.fail();
-	}
+	connect(mFifoWorker.data(), &FifoWorker::newLine, this, &Fifo::newLine);
+	connect(mFifoWorker.data(), &FifoWorker::newData, this, &Fifo::newData);
 }
 
 Fifo::~Fifo()
 {
-	if (mState.isReady()) {
-		mFifo->close();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
 	}
 }
 
 DeviceInterface::Status Fifo::status() const
 {
-	return mState.status();
+	return mFifoWorker->status();
 }
 
 QString Fifo::read()
 {
-	QReadLocker r(&mCurrentLock);
-	if (mCurrentLine.isEmpty()) {
-		r.unlock();
-		QEventLoop l;
-		connect(this, &Fifo::newLine, &l, [&l](const QString &newLine) { if (!newLine.isEmpty()) l.quit(); } );
-		l.exec();
-	}
-	r.unlock();
 	QString result;
-	QWriteLocker w(&mCurrentLock);
-	result.swap(mCurrentLine);
+	QMetaObject::invokeMethod(mFifoWorker.data(), [this, &result](){result = mFifoWorker->read();});
 	return result;
 }
 
 QVector<uint8_t> Fifo::readRaw()
 {
-	QReadLocker r(&mCurrentLock);
-	if (mCurrentData.isEmpty()) {
-		r.unlock();
-		QEventLoop l;
-		connect(this, &Fifo::newData, &l, [&l](const QVector<uint8_t> &newData) { if (!newData.isEmpty()) l.quit(); } );
-		l.exec();
-	}
-	r.unlock();
 	QVector<uint8_t> result;
-	QWriteLocker w(&mCurrentLock);
-	result.swap(mCurrentData);
+	QMetaObject::invokeMethod(mFifoWorker.data(), [this, &result](){result = mFifoWorker->readRaw();});
 	return result;
 }
+
 bool Fifo::hasLine() const
 {
-	QReadLocker r(&mCurrentLock);
-	return !mCurrentLine.isEmpty();
+	bool result;
+	QMetaObject::invokeMethod(mFifoWorker.data(), [this, &result](){result = mFifoWorker->hasLine();});
+	return result;
 }
 
 bool Fifo::hasData() const
 {
-	QReadLocker r(&mCurrentLock);
-	return !mCurrentData.isEmpty();
-}
-
-void Fifo::onNewLine(const QString &line)
-{
-	QWriteLocker w(&mCurrentLock);
-	mCurrentLine = line;
-	w.unlock();
-	emit newLine(mCurrentLine);
-}
-
-void Fifo::onNewData(const QVector<uint8_t> &data)
-{
-	QWriteLocker w(&mCurrentLock);
-	mCurrentData.append(data);
-	if (mCurrentData.size() > 1024 * 1024) {
-		QLOG_ERROR() << "FIFO buffer limit exceeded, buffer droped. Use readRaw more often";
-		mCurrentData.clear();
-	}
-	w.unlock();
-	emit newData(mCurrentData);
-}
-
-
-void Fifo::onReadError()
-{
-	mState.fail();
+	bool result;
+	QMetaObject::invokeMethod(mFifoWorker.data(), [this, &result](){result = mFifoWorker->hasData();});
+	return result;
 }

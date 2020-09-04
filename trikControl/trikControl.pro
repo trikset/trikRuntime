@@ -107,7 +107,8 @@ HEADERS += \
 	$$PWD/src/imitationCameraImplementation.h \
 	$$PWD/src/i2cDevice.h \
 	$$PWD/src/i2cCommunicator.h \
-#	$$PWD/src/headingSensor.h \
+	$$PWD/src/fifoworker.h
+ #	$$PWD/src/headingSensor.h \
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -167,7 +168,8 @@ SOURCES += \
 	$$PWD/src/i2cCommunicator.cpp \
 	$$PWD/src/utilities.cpp \
 	$$PWD/src/brickInterface.cpp \
-#	$$PWD/src/headingSensor.cpp \
+ \#	$$PWD/src/headingSensor.cpp \
+	$$PWD/src/fifoworker.cpp
 
 
 CONFIGS += \
