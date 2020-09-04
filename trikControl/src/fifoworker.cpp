@@ -12,8 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "fifoworker.h"
 #include <QsLog.h>
+#include <QtCore/QEventLoop>
+
+#include "fifoworker.h"
 
 trikControl::FifoWorker::FifoWorker(const QString &fileName
 	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)

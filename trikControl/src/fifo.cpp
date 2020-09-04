@@ -14,12 +14,8 @@
 
 #include "src/fifo.h"
 
-#include <QtCore/QEventLoop>
-
 #include <trikKernel/configurer.h>
 #include <trikHal/hardwareAbstractionInterface.h>
-
-#include <QsLog.h>
 
 #include "src/configurerHelper.h"
 
