@@ -68,7 +68,7 @@ public slots:
 
 private:
 	/// Worker object that handles sensor in separate thread.
-	QScopedPointer<FifoWorker> mFifoWorker;
+	FifoWorker *mFifoWorker;
 
 	/// Worker thread.
 	QThread mWorkerThread;
