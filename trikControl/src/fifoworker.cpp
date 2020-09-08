@@ -69,7 +69,8 @@ QVector<uint8_t> trikControl::FifoWorker::readRaw()
 	if (mCurrentData.isEmpty()) {
 		r.unlock();
 		QEventLoop l;
-		connect(this, &FifoWorker::newData, &l, [&l](const QVector<uint8_t> &newData) { if (!newData.isEmpty()) l.quit(); } );
+		connect(this, &FifoWorker::newData, &l, [&l](const QVector<uint8_t> &newData) {
+			if (!newData.isEmpty()) l.quit(); } );
 		l.exec();
 	}
 	r.unlock();

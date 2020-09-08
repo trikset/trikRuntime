@@ -39,14 +39,14 @@ class Fifo: public FifoInterface
 	Q_OBJECT
 
 public:
-	/// Constructor. Creates FIFO device by a description in config file.
+	/// Constructor. Creates FIFO worker and moves it in a separate thread.
 	/// @param virtualPort - port in system-config.xml on which this FIFO file is configured.
 	/// @param configurer - configurer object containing preparsed XML files with parameters.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	/// Constructor. Creates FIFO device programmatically by file name.
+	/// Constructor. Creates FIFO worker and moves it in a separate thread.
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
@@ -68,7 +68,7 @@ public slots:
 
 private:
 	/// Worker object that handles sensor in separate thread.
-	FifoWorker *mFifoWorker;
+	FifoWorker *mFifoWorker; // Has ownership.
 
 	/// Worker thread.
 	QThread mWorkerThread;

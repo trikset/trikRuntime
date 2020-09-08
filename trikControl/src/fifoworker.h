@@ -25,11 +25,16 @@
 
 namespace trikControl {
 
+/// Worker object that processes FIFO output and updates stored reading. Meant to be executed in separate
+/// thread.
 class FifoWorker : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 
 public:
+	/// Constructor. Creates FIFO device programmatically by file name.
+	/// @param fileName - name of a FIFO file.
+	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	FifoWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 	~FifoWorker();
 
