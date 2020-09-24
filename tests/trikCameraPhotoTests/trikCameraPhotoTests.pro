@@ -17,7 +17,7 @@ include(../common.pri)
 HEADERS += \
 	$$PWD/trikCameraPhotoImitationTest.h
 
-SOURCES += \ 
+SOURCES += \
 	$$PWD/trikCameraPhotoImitationTest.cpp
 
 implementationIncludes(trikKernel trikControl tests/testUtils)

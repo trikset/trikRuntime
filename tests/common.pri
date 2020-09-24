@@ -16,7 +16,7 @@ include($$PWD/../global.pri)
 
 TEMPLATE = app
 
-CONFIG -= app_bundle
+CONFIG += test_case
 
 QT += widgets
 
