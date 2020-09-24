@@ -61,30 +61,6 @@ void CameraWidget::renew()
 
 void CameraWidget::doPhoto()
 {
-	auto const & photo = mBrick.getStillImage();
-}
-
-void CameraWidget::keyPressEvent(QKeyEvent *event)
-{
-	switch (event->key()) {
-		case Qt::Key_Return: {
-			doPhoto();
-			break;
-		}
-		default: {
-			event->ignore();
-			break;
-		}
-	}
-}
-
-void CameraWidget::renew()
-{
-	update();
-}
-
-void CameraWidget::doPhoto()
-{
 	if (mIsCreatingPhoto.exchange(true)) {
 		return;
 	}

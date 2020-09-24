@@ -43,8 +43,8 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
-                <!-- URI protocol: v4l2, file, qtmultimedia  -->
-                <camera type="v4l2" src="/dev/video0" />
+				<!-- URI protocol: v4l2, file, qtmultimedia  -->
+				<camera type="v4l2" src="/dev/video0" />
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
@@ -149,8 +149,8 @@ equal to its class name.
 		<objectSensor port="video2" />
 		<colorSensor port="video1" />
 		<colorSensor port="video2" />
-                <camera port="video1" />
-                <camera port="video2" />
+				<camera port="video1" />
+				<camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 	</devicePorts>
 
@@ -194,7 +194,7 @@ equal to its class name.
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
-                <photo class="camera" type="v4l2" src="/dev/video0" />
+		<photo class="camera" type="v4l2" src="/dev/video0" />
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
@@ -206,7 +206,7 @@ equal to its class name.
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 
-        <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
+		<!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
 	<i2cBus1 path="/dev/i2c-1" />
 	<i2cBus2 path="/dev/i2c-2" />
 </config>

@@ -11,12 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+isEmpty(TEMPLATE): TEMPLATE = app
 
-include($$PWD/../global.pri)
+include(../global.pri)
 
-TEMPLATE = app
+# after global.pri sets DESTDIR
 
-CONFIG += test_case
+#Workaround for MinGW build. Qt incorrectly sets it to empty string on Win32 for bash
+TEST_TARGET_DIR = .
+
+equals(TEMPLATE, app) {
+	CONFIG += testcase testcase_no_bundle no_testcase_installs
+}
 
 QT += widgets
 
