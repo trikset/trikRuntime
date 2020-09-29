@@ -39,6 +39,7 @@ using namespace trikGui;
 FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
+	, mFileIconProvider(new LightFileIconProvider())
 	, mController(controller)
 {
 	QDir dir(trikKernel::Paths::userScriptsPath());
@@ -70,7 +71,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	deleteAllFile.open(QIODevice::WriteOnly);
 
 
-	mFileSystemModel.setIconProvider(new LightFileIconProvider());
+	mFileSystemModel.setIconProvider(mFileIconProvider.data());
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
@@ -179,8 +180,7 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 
 void FileManagerWidget::onSelectionChanged(QModelIndex current, QModelIndex previous)
 {
-	Q_UNUSED(previous);
-
+	Q_UNUSED(previous)
 	mLastSelectedFile = mFileSystemModel.filePath(mFilterProxyModel.mapToSource(current));
 }
 

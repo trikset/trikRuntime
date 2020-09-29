@@ -172,7 +172,7 @@ QHostAddress MailboxServer::determineMyIp()
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
 					return ip;
 				}
-			}			
+			}
 		}
 	}
 
@@ -209,7 +209,7 @@ Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 
 void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int serverPort, int hullNumber)
 {
-	if (ip == mMyIp) {
+	if (ip == mMyIp && serverPort == mMyPort ) {
 		/// Refuse to handle connections from ourselves.
 		return;
 	}

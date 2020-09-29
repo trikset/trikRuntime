@@ -221,7 +221,7 @@ void Connection::onError(QAbstractSocket::SocketError error)
 	if (error == QAbstractSocket::RemoteHostClosedError) {
 		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << ": remote host closed";
 	} else {
-		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored.";
+		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored." << mSocket->error();
 	}
 
 	doDisconnect();

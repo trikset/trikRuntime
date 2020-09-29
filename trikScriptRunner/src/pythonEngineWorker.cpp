@@ -85,7 +85,7 @@ PythonEngineWorker::~PythonEngineWorker()
 		}
 
 		PyMem_RawFree(mProgramName);
-		PyMem_RawFree(mPythonPath);		
+		PyMem_RawFree(mPythonPath);
 	}
 }
 
@@ -181,6 +181,9 @@ void PythonEngineWorker::init()
 	if (!mMainContext) {
 		mMainContext = PythonQt::self()->getMainModule();
 		recreateContext();
+		if (!initTrik()) {
+			QLOG_FATAL() << "Failed to init TRIK runtime for Python";
+		}
 	}
 	emit inited();
 }
@@ -194,7 +197,7 @@ bool PythonEngineWorker::recreateContext()
 		PyErr_Clear();
 	}
 	PythonQt::self()->clearError();
-	return initTrik();
+	return true;
 }
 
 bool PythonEngineWorker::evalSystemPy()
@@ -285,6 +288,8 @@ void PythonEngineWorker::stopScript()
 	if (mMailbox) {
 		mMailbox->stopWaiting();
 	}
+
+	mScriptExecutionControl->reset();
 
 	mState = ready;
 
