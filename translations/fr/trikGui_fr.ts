@@ -193,12 +193,12 @@
 <context>
     <name>trikGui::FileManagerWidget</name>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="+67"/>
         <source>Delete all...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+40"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>

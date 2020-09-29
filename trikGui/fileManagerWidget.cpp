@@ -75,11 +75,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
-	connect(&mFileSystemModel
-			, SIGNAL(directoryLoaded(QString))
-			, this
-			, SLOT(onDirectoryLoaded(QString))
-			);
+	connect(&mFileSystemModel, &QFileSystemModel::directoryLoaded, this, &FileManagerWidget::onDirectoryLoaded);
 
 	mFilterProxyModel.setSourceModel(&mFileSystemModel);
 	mFileSystemView.setModel(&mFilterProxyModel);
@@ -91,8 +87,8 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
-	connect(mFileSystemView.selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex))
-			, this, SLOT(onSelectionChanged(QModelIndex, QModelIndex)));
+	connect(mFileSystemView.selectionModel(), &QItemSelectionModel::currentChanged
+			, this, &FileManagerWidget::onSelectionChanged);
 
 	QSettings settings("trik");
 	mLastSelectedFile = settings.value("lastSelectedFile").toString();
