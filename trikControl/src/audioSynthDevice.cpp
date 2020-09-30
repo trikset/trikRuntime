@@ -30,8 +30,14 @@ AudioSynthDevice::AudioSynthDevice(int sampleRate, int sampleSize, QObject *pare
 
 void AudioSynthDevice::start(int hzFreq)
 {
-	open(QIODevice::ReadOnly);
-	reset();
+	if (!open(QIODevice::ReadOnly)) {
+		QLOG_ERROR() << "Failed to open audio synthesis device";
+		return;
+	}
+	if (!reset()) {
+		QLOG_ERROR() << "Failed to reset audio synthesis device";
+		return;
+	}
 	mPos = 0;
 	mHzFreq = hzFreq;
 
@@ -50,7 +56,6 @@ void AudioSynthDevice::start(int hzFreq)
 
 void AudioSynthDevice::stop()
 {
-	close();
 	mHzFreq = 0;
 }
 
@@ -111,8 +116,8 @@ qint64 AudioSynthDevice::readData(char *data, qint64 len)
 
 qint64 AudioSynthDevice::writeData(const char *data, qint64 len)
 {
-	Q_UNUSED(data);
-	Q_UNUSED(len);
+	Q_UNUSED(data)
+	Q_UNUSED(len)
 
 	return 0;
 }

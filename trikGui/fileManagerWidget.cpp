@@ -39,6 +39,7 @@ using namespace trikGui;
 FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
 		, QWidget *parent)
 	: TrikGuiDialog(parent)
+	, mFileIconProvider(new LightFileIconProvider())
 	, mController(controller)
 {
 	QDir dir(trikKernel::Paths::userScriptsPath());
@@ -70,15 +71,11 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	deleteAllFile.open(QIODevice::WriteOnly);
 
 
-	mFileSystemModel.setIconProvider(new LightFileIconProvider());
+	mFileSystemModel.setIconProvider(mFileIconProvider.data());
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
 
-	connect(&mFileSystemModel
-			, SIGNAL(directoryLoaded(QString))
-			, this
-			, SLOT(onDirectoryLoaded(QString))
-			);
+	connect(&mFileSystemModel, &QFileSystemModel::directoryLoaded, this, &FileManagerWidget::onDirectoryLoaded);
 
 	mFilterProxyModel.setSourceModel(&mFileSystemModel);
 	mFileSystemView.setModel(&mFilterProxyModel);
@@ -90,8 +87,8 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	mFileSystemView.setSelectionMode(QAbstractItemView::SingleSelection);
 	mFileSystemView.setFocus();
 
-	connect(mFileSystemView.selectionModel(), SIGNAL(currentChanged(QModelIndex, QModelIndex))
-			, this, SLOT(onSelectionChanged(QModelIndex, QModelIndex)));
+	connect(mFileSystemView.selectionModel(), &QItemSelectionModel::currentChanged
+			, this, &FileManagerWidget::onSelectionChanged);
 
 	QSettings settings("trik");
 	mLastSelectedFile = settings.value("lastSelectedFile").toString();
@@ -179,8 +176,7 @@ void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 
 void FileManagerWidget::onSelectionChanged(QModelIndex current, QModelIndex previous)
 {
-	Q_UNUSED(previous);
-
+	Q_UNUSED(previous)
 	mLastSelectedFile = mFileSystemModel.filePath(mFilterProxyModel.mapToSource(current));
 }
 

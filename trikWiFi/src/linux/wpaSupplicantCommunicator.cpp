@@ -42,7 +42,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	mSocket = socket(PF_UNIX, SOCK_DGRAM, 0);
 
 	if (mSocket < 0) {
-		QLOG_ERROR() << "Cannot create a socket:" << strerror(errno);
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot create a socket:" << strerror(errno);
 		return;
 	}
 
@@ -50,7 +50,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	snprintf(mLocal->sun_path, sizeof(mLocal->sun_path), "%s", interfaceFile.toStdString().c_str());
 	unlink(mLocal->sun_path);
 	if (bind(mSocket, static_cast<sockaddr *>(static_cast<void*>(mLocal.data())), sizeof(*(mLocal.data()))) != 0) {
-		QLOG_ERROR() << "Cannot bind a name to a socket:" << strerror(errno);
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot bind a name to a socket:" << strerror(errno);
 		close(mSocket);
 		mSocket = -1;
 		return;
@@ -59,7 +59,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	mDest->sun_family = AF_UNIX;
 	snprintf(mDest->sun_path, sizeof(mDest->sun_path), "%s", daemonFile.toStdString().c_str());
 	if (::connect(mSocket, static_cast<sockaddr *>(static_cast<void*>(mDest.data())), sizeof(*(mDest.data()))) != 0) {
-		QLOG_ERROR() << "Cannot connect a socket:" << strerror(errno);
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot connect a socket:" << strerror(errno);
 		unlink(mLocal->sun_path);
 		close(mSocket);
 		mSocket = -1;
@@ -94,7 +94,7 @@ int WpaSupplicantCommunicator::fileDescriptor()
 int WpaSupplicantCommunicator::attach()
 {
 	if (mSocket < 0) {
-		QLOG_ERROR() << "Cannot attach, because socket doesn't exist.";
+		QLOG_ERROR() << __PRETTY_FUNCTION__ <<  "Cannot attach, because socket doesn't exist.";
 		return -1;
 	}
 
@@ -111,7 +111,7 @@ int WpaSupplicantCommunicator::attach()
 int WpaSupplicantCommunicator::detach()
 {
 	if (mSocket < 0) {
-		QLOG_ERROR() << "Cannot detach, because socket doesn't exist.";
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot detach, because socket doesn't exist.";
 		return -1;
 	}
 
@@ -128,13 +128,13 @@ int WpaSupplicantCommunicator::detach()
 int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 {
 	if (mSocket < 0) {
-		QLOG_ERROR() << "Cannot request, because socket doesn't exist.";
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot request, because socket doesn't exist.";
 		return -1;
 	}
 
 	auto const &commandAscii = command.toStdString();
 	if (send(mSocket, commandAscii.c_str(), commandAscii.size()+1, 0) < 0) {
-		QLOG_ERROR() << "Cannot send a message to the daemon:" << strerror(errno);
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot send a message to the daemon:" << strerror(errno);
 		return -1;
 	}
 

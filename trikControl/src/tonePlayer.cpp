@@ -80,6 +80,7 @@ void TonePlayer::play(int freqHz, int durationMs)
 
 void TonePlayer::stop()
 {
-	mDevice->stop();
 	mTimer.stop();
+	mOutput->suspend();
+	mOutput->reset();
 }

@@ -232,12 +232,12 @@
         <translation type="obsolete">Удалить всё</translation>
     </message>
     <message>
-        <location filename="../../trikGui/fileManagerWidget.cpp" line="+66"/>
+        <location filename="../../trikGui/fileManagerWidget.cpp" line="+67"/>
         <source>Delete all...</source>
         <translation>Удалить всё...</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+40"/>
         <source>File Manager</source>
         <translation>Файлы</translation>
     </message>
