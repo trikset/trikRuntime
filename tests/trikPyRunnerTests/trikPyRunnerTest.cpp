@@ -52,19 +52,18 @@ int TrikPyRunnerTest::run(const QString &script)
 	mStdOut.clear();
 	mScriptRunner->run(script, "_.py");
 	auto code = l.exec();
-	QCoreApplication::sendPostedEvents(mScriptRunner.data());
 	return code;
 }
 
 int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop l;
-	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed, &l, &QEventLoop::quit);
+	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
+					 , &l, [&l](const QString &e) { l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR); });
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
-	l.exec();
-	QCoreApplication::sendPostedEvents(mScriptRunner.data());
-	return mScriptRunner->wasError()? EXIT_SCRIPT_ERROR : EXIT_SCRIPT_SUCCESS;
+	auto code = l.exec();
+	return code;
 }
 
 int TrikPyRunnerTest::runFromFile(const QString &fileName)
@@ -138,7 +137,7 @@ TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 {
 	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(0, lambda _ : None)");
+	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(100, lambda _ : None)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("t=QtCore.QTimer()");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);

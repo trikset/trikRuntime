@@ -368,7 +368,12 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
-	emit completed(mErrorMessage, 0);
+	auto wasError = PythonQt::self()->hadError();
+	if (wasError) {
+		emit completed(mErrorMessage, 0);
+	} else {
+		emit completed("", 0);
+	}
 }
 
 void PythonEngineWorker::updateErrorMessage(const QString &err)
