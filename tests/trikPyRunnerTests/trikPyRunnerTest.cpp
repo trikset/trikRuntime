@@ -138,7 +138,7 @@ TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 {
 	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(100, lambda _ : None)");
+	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(0, lambda _ : None)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("t=QtCore.QTimer()");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
