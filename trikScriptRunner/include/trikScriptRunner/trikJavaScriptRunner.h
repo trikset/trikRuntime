@@ -38,9 +38,7 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	TrikJavaScriptRunner(trikControl::BrickInterface &brick
-						 , trikNetwork::MailboxInterface * mailbox
-						 );
+	TrikJavaScriptRunner(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox);
 
 	~TrikJavaScriptRunner() override;
 

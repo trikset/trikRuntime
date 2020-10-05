@@ -27,7 +27,7 @@
 
 using namespace trikScriptRunner;
 
-ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface &brick): mBrick(brick) {
+ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface *brick): mBrick(brick) {
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }
 
@@ -148,5 +148,5 @@ void ScriptExecutionControl::removeFile(const QString &file)
 
 QVector<int32_t> ScriptExecutionControl::getPhoto()
 {
-	return trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
+	return trikControl::Utilities::rescalePhoto(mBrick->getStillImage());
 }

@@ -15,7 +15,6 @@
 #pragma once
 
 #include "trikScriptRunnerInterface.h"
-#include "trikPythonRunner.h"
 
 namespace trikNetwork {
 class MailboxInterface;
@@ -38,9 +37,7 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	TrikPythonRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * mailbox
-					 );
+	TrikPythonRunner(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox);
 
 	~TrikPythonRunner() override;
 

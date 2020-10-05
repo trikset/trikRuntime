@@ -42,7 +42,7 @@ static void abortPythonInterpreter() {
 	Py_AddPendingCall(&quitFromPython, nullptr);
 }
 
-PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
+PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 		, trikNetwork::MailboxInterface * const mailbox
 		)
 	: mBrick(brick)
@@ -236,7 +236,7 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 bool PythonEngineWorker::initTrik()
 {
 	PythonQt_init_PyTrikControl(mMainContext);
-	mMainContext.addObject("brick", &mBrick);
+	mMainContext.addObject("brick", mBrick);
 	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
 	mMainContext.addObject("mailbox", mMailbox);
 
@@ -252,14 +252,13 @@ void PythonEngineWorker::resetBrick()
 		mMailbox->clearQueue();
 	}
 
-	mBrick.reset();
+	mBrick->reset();
 }
 
 void PythonEngineWorker::brickBeep()
 {
-	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+	mBrick->playTone(2500, 20);
 }
-
 
 void PythonEngineWorker::stopScript()
 {
@@ -328,7 +327,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	emit startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
-	mBrick.keys()->reset();
+	mBrick->keys()->reset();
 	mState = running;
 	auto ok = recreateContext();
 	if (!ok) {

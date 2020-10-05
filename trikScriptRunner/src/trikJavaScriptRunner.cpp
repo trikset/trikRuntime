@@ -24,11 +24,11 @@
 
 using namespace trikScriptRunner;
 
-TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
-										   , trikNetwork::MailboxInterface * const mailbox
+TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface *brick
+										   , trikNetwork::MailboxInterface * mailbox
 										   )
 	: mScriptController(new ScriptExecutionControl(brick))
-	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
+	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, mScriptController.data()))
 	, mMaxScriptId(0)
 	, mVariablesServer(new TrikVariablesServer())
 {
