@@ -2,6 +2,7 @@
 #Otherwise suppression results might be incorrect
 
 #uses static local variable to store Mutex
+leak:QScriptEngine::QScriptEngine()
 leak:QTWTF::Mutex::Mutex()
 #
 leak:QApplicationPrivate::initializeWidgetFontHash
