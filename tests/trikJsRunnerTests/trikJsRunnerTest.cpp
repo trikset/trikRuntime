@@ -65,11 +65,12 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted]()
+					 , &wait, [&alreadyCompleted, &wait]()
 	{
 		alreadyCompleted = true;
+		Q_ASSERT(wait.isRunning());
+		wait.quit();
 	} ) ;
 	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 
@@ -78,7 +79,6 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
 	}
-	QCoreApplication::sendPostedEvents(mScriptRunner.data());
 	return exitCode;
 }
 
@@ -99,7 +99,6 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
 	}
-	QCoreApplication::sendPostedEvents(mScriptRunner.data());
 	return exitCode;
 }
 
@@ -122,6 +121,8 @@ trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
 TEST_F(TrikJsRunnerTest, sanityCheckJs)
 {
 	auto errCode = run("1", "_.js");
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
+	errCode = run("1 + 1", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
@@ -149,12 +150,10 @@ TEST_F(TrikJsRunnerTest, printTest)
 
 TEST_F(TrikJsRunnerTest, brickInterfaceAccess)
 {
-	auto errCode = run("1 + 1", "_.js");
-	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 	const auto &knownMethodNames = scriptRunner().knownMethodNames();
 	ASSERT_TRUE(knownMethodNames.contains("brick"));
 	ASSERT_TRUE(knownMethodNames.contains("setPower"));
-	errCode = run("brick.sensor(A1).read()", "_.js");
+	auto errCode = run("brick.sensor(A1).read()", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
