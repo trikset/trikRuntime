@@ -27,7 +27,8 @@
 
 using namespace trikScriptRunner;
 
-ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface &brick): mBrick(brick) {
+ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface &brick)
+	: mBrick(brick) {
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }
 

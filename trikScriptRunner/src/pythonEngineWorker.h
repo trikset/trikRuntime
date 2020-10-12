@@ -43,6 +43,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	PythonEngineWorker(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * mailbox
+			, QSharedPointer<TrikScriptControlInterface> scriptControl
 			);
 
 	~PythonEngineWorker();
@@ -149,7 +150,7 @@ private:
 	void addSearchModuleDirectory(const QDir &path);
 
 	trikControl::BrickInterface &mBrick;
-	QScopedPointer<ScriptExecutionControl> mScriptExecutionControl;
+	QSharedPointer<TrikScriptControlInterface> mScriptExecutionControl;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
 
 	State mState  { State::ready };

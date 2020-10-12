@@ -44,9 +44,10 @@ static void abortPythonInterpreter() {
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
+		, QSharedPointer<TrikScriptControlInterface> scriptControl
 		)
 	: mBrick(brick)
-	, mScriptExecutionControl(new ScriptExecutionControl(brick))
+	, mScriptExecutionControl(scriptControl)
 	, mMailbox(mailbox)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {}

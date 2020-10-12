@@ -26,9 +26,10 @@ using namespace trikScriptRunner;
 
 TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 										   , trikNetwork::MailboxInterface * const mailbox
+										   , QSharedPointer<TrikScriptControlInterface> scriptControl
 										   )
-	: mScriptController(new ScriptExecutionControl(brick))
-	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController))
+	: mScriptController(scriptControl)
+	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, *mScriptController.data()))
 	, mMaxScriptId(0)
 	, mVariablesServer(new TrikVariablesServer())
 {
@@ -38,7 +39,8 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, &ScriptEngineWorker::completed, this, &TrikJavaScriptRunner::completed);
 	connect(mScriptEngineWorker, &ScriptEngineWorker::startedScript, this, &TrikJavaScriptRunner::onScriptStart);
 
-	connect(&*mScriptController, &ScriptExecutionControl::textInStdOut, this, &TrikJavaScriptRunner::textInStdOut);
+	connect(mScriptController.data(), &TrikScriptControlInterface::textInStdOut
+			, this, &TrikJavaScriptRunner::textInStdOut);
 
 	connect(mVariablesServer.data(), &TrikVariablesServer::getVariables
 		, mScriptEngineWorker, &ScriptEngineWorker::getVariables);

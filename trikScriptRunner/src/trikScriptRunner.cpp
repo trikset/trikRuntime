@@ -36,8 +36,9 @@ Q_DECLARE_METATYPE(QTimer*)
 /// @param mailbox - mailbox object used to communicate with other robots.
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
+								   , TrikScriptControlInterface * scriptControl
 								   )
-	: brick(brick), mailbox(mailbox), mLastRunner(ScriptType::JAVASCRIPT)
+	: mBrick(brick), mMailbox(mailbox), mScriptControl(scriptControl), mLastRunner(ScriptType::JAVASCRIPT)
 {
 		REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
@@ -50,6 +51,12 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	}
 }
 
+TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
+								   , trikNetwork::MailboxInterface * const mailbox
+								   )
+	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(brick))
+{
+}
 
 TrikScriptRunner::~TrikScriptRunner()
 {
@@ -107,13 +114,15 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 {
 	auto & cell = mScriptRunnerArray[to_underlying(stype)];
-	if (cell ==  nullptr) { // lazy creation
+	if (cell == nullptr) { // lazy creation
 		switch (stype) {
 			case ScriptType::JAVASCRIPT:
-				QScopedPointer<TrikScriptRunnerInterface>(new TrikJavaScriptRunner(brick, mailbox)).swap(cell);
+				QScopedPointer<TrikScriptRunnerInterface>(
+							new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 			case ScriptType::PYTHON:
-				QScopedPointer<TrikScriptRunnerInterface>(new TrikPythonRunner(brick, mailbox)).swap(cell);
+				QScopedPointer<TrikScriptRunnerInterface>(
+							new TrikPythonRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);

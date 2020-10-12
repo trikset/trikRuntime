@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "trikScriptControlInterface.h"
 #include "trikScriptRunnerInterface.h"
 #include "trikVariablesServer.h"
 
@@ -28,7 +29,7 @@ class BrickInterface;
 namespace trikScriptRunner {
 
 class ScriptEngineWorker;
-class ScriptExecutionControl;
+class TrikScriptControlInterface;
 
 /// Executes scripts in Qt Scripting Engine.
 class TrikJavaScriptRunner : public TrikScriptRunnerInterface
@@ -40,6 +41,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikJavaScriptRunner(trikControl::BrickInterface &brick
 						 , trikNetwork::MailboxInterface * mailbox
+						 , QSharedPointer<TrikScriptControlInterface> scriptControl
 						 );
 
 	~TrikJavaScriptRunner() override;
@@ -62,7 +64,7 @@ private slots:
 	void onScriptStart(int scriptId);
 
 private:
-	QScopedPointer<ScriptExecutionControl> mScriptController;
+	QSharedPointer<TrikScriptControlInterface> mScriptController;
 
 	/// Has ownership, memory is managed by thread and deleteLater().
 	ScriptEngineWorker *mScriptEngineWorker;

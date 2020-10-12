@@ -15,7 +15,7 @@
 #pragma once
 
 #include "trikScriptRunnerInterface.h"
-#include "trikPythonRunner.h"
+#include "trikScriptControlInterface.h"
 
 namespace trikNetwork {
 class MailboxInterface;
@@ -40,6 +40,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikPythonRunner(trikControl::BrickInterface &brick
 					 , trikNetwork::MailboxInterface * mailbox
+					 , QSharedPointer<TrikScriptControlInterface> scriptControl
 					 );
 
 	~TrikPythonRunner() override;

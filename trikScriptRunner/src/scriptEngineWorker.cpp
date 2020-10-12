@@ -88,7 +88,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 	auto scriptValue = engine->globalObject().property("script");
 
-	if (auto script = qobject_cast<ScriptExecutionControl*> (scriptValue.toQObject())) {
+	if (auto script = qobject_cast<TrikScriptControlInterface*> (scriptValue.toQObject())) {
 		result.append('\n');
 		QTimer::singleShot(0, script, [script, result](){ Q_EMIT script->textInStdOut(result);});
 		/// In case of user loop with `print' this gives some time for events to be processed
@@ -106,7 +106,7 @@ QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
-		, ScriptExecutionControl &scriptControl
+		, TrikScriptControlInterface &scriptControl
 		)
 	: mBrick(brick)
 	, mMailbox(mailbox)
@@ -114,7 +114,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	, mThreading(this, scriptControl)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {
-	connect(&mScriptControl, &ScriptExecutionControl::quitSignal,
+	connect(&mScriptControl, &TrikScriptControlInterface::quitSignal,
 		this, &ScriptEngineWorker::onScriptRequestingToQuit);
 	connect(this, &ScriptEngineWorker::getVariables, &mThreading, &Threading::getVariables);
 	connect(&mThreading, &Threading::variablesReady, this,&ScriptEngineWorker::variablesReady);
