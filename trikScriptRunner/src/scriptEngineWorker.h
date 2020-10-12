@@ -44,7 +44,7 @@ public:
 	/// @param scriptControl - reference to script execution control object.
 	ScriptEngineWorker(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * mailbox
-			, ScriptExecutionControl &scriptControl
+			, TrikScriptControlInterface &scriptControl
 			);
 
 	/// Create and initialize a new script engine.
@@ -158,7 +158,7 @@ private:
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
-	ScriptExecutionControl &mScriptControl;
+	TrikScriptControlInterface &mScriptControl;
 	Threading mThreading;
 	QScopedPointer<QScriptEngine> mDirectScriptsEngine;
 	int mScriptId = 0;

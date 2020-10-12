@@ -37,7 +37,7 @@ class Threading : public QObject
 
 public:
 	/// Constructs a Threading object with given script worker as a parent.
-	explicit Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl);
+	explicit Threading(ScriptEngineWorker *scriptWorker, TrikScriptControlInterface &scriptControl);
 	~Threading() override;
 
 	/// Starts the main thread of a script
@@ -116,7 +116,7 @@ private:
 	QMutex mResetMutex;
 
 	ScriptEngineWorker * const mScriptWorker;  // Doesn't have ownership.
-	ScriptExecutionControl &mScriptControl;
+	TrikScriptControlInterface &mScriptControl;
 	QString mScript;
 
 	QScriptEngine *mMainScriptEngine; // Doesn't have ownership.

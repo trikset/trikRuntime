@@ -26,7 +26,7 @@
 
 using namespace trikScriptRunner;
 
-Threading::Threading(ScriptEngineWorker *scriptWorker, ScriptExecutionControl &scriptControl)
+Threading::Threading(ScriptEngineWorker *scriptWorker, TrikScriptControlInterface &scriptControl)
 	: QObject(scriptWorker)
 	, mScriptWorker(scriptWorker)
 	, mScriptControl(scriptControl)
@@ -88,7 +88,7 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	engine->moveToThread(thread);
 
 	connect(thread, &QThread::finished, this, [this, threadId](){ threadFinished(threadId); });
-	connect(&mScriptControl, &ScriptExecutionControl::quitSignal, thread
+	connect(&mScriptControl, &TrikScriptControlInterface::quitSignal, thread
 			, &ScriptThread::stopRunning, Qt::DirectConnection);
 	if (threadId == mMainThreadName) {
 		connect(this, &Threading::getVariables, thread, &ScriptThread::onGetVariables);

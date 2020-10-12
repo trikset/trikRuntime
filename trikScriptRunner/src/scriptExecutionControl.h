@@ -36,7 +36,7 @@ public:
 
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
-	bool isInEventDrivenMode() const;
+	bool isInEventDrivenMode() const override;
 
 	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image
 	Q_INVOKABLE QVector<int32_t> getPhoto() override;

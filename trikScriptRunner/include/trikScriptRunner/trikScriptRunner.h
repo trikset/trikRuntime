@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "trikScriptControlInterface.h"
 #include "trikScriptRunnerInterface.h"
 #include <QFileInfo>
 #include <QScopedPointer>
@@ -33,6 +34,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikScriptRunner(trikControl::BrickInterface &brick
 					 , trikNetwork::MailboxInterface * mailbox
+					 , TrikScriptControlInterface * scriptControl
 					 );
 
 	~TrikScriptRunner() override;
@@ -74,8 +76,9 @@ public slots:
 private:
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
-	trikControl::BrickInterface &brick;
-	trikNetwork::MailboxInterface * mailbox;
+	trikControl::BrickInterface &mBrick;
+	trikNetwork::MailboxInterface * mMailbox;
+	QSharedPointer <TrikScriptControlInterface> mScriptControl;
 	std::array<QScopedPointer<TrikScriptRunnerInterface>, to_underlying(ScriptType::Size)> mScriptRunnerArray;
 	ScriptType mLastRunner;
 };
