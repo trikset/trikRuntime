@@ -51,6 +51,12 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	}
 }
 
+TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
+								   , trikNetwork::MailboxInterface * const mailbox
+								   )
+	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(brick))
+{
+}
 
 TrikScriptRunner::~TrikScriptRunner()
 {
