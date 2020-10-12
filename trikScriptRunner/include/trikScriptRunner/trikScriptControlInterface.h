@@ -1,3 +1,19 @@
+/* Copyright 2020 CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#pragma once
+
 /* Copyright 2015 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,69 +30,60 @@
 
 #pragma once
 
-#include <QtCore/QList>
 #include <QtCore/QTimer>
-#include <QtCore/QStringList>
 #include <trikControl/brickInterface.h>
-#include <trikScriptControlInterface.h>
 
 namespace trikScriptRunner {
 
 /// Script execution controller, provides related functions to scripts.
-class ScriptExecutionControl : public TrikScriptControlInterface
+class TrikScriptControlInterface : public QObject
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param brick - reference to trikControl::Brick instance.
-	explicit ScriptExecutionControl(trikControl::BrickInterface &brick);
-
-	~ScriptExecutionControl() override;
-
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
-	bool isInEventDrivenMode() const;
+	virtual bool isInEventDrivenMode() const = 0;
 
 	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image
-	Q_INVOKABLE QVector<int32_t> getPhoto() override;
+	Q_INVOKABLE virtual QVector<int32_t> getPhoto() = 0;
 
 	/// Starts a new timer with given interval and returns reference to it.
-	Q_INVOKABLE QTimer *timer(int milliseconds) override;
+	Q_INVOKABLE virtual QTimer *timer(int milliseconds) = 0;
 
 	/// Waits given amount of time in milliseconds and returns.
-	Q_INVOKABLE void wait(const int &milliseconds) override;
+	Q_INVOKABLE virtual void wait(const int &milliseconds) = 0;
 
 	/// Returns the number of milliseconds since 1970-01-01T00:00:00 UTC.
-	Q_INVOKABLE qint64 time() const override;
+	Q_INVOKABLE virtual qint64 time() const = 0;
 
 	/// Returns random number from an interval [from, to].
-	Q_INVOKABLE int random(int from, int to) const override;
+	Q_INVOKABLE virtual int random(int from, int to) const = 0;
 
 	/// Execute given sh command.
-	Q_INVOKABLE void system(const QString &command, bool synchronously = false) override;
+	Q_INVOKABLE virtual void system(const QString &command, bool synchronously = false) = 0;
 
 	/// Appends given text to the end of a file.
-	Q_INVOKABLE void writeToFile(const QString &file, const QString &text) override;
+	Q_INVOKABLE virtual void writeToFile(const QString &file, const QString &text) = 0;
 
 	/// Appends given bytes to the end of a file.
-	Q_INVOKABLE void writeData(const QString &file, const QVector<uint8_t> &bytes) override;
+	Q_INVOKABLE virtual void writeData(const QString &file, const QVector<uint8_t> &bytes) = 0;
 
 	/// Reads all lines from a text file and returns it as a list of strings.
-	Q_INVOKABLE QStringList readAll(const QString &file) const override;
+	Q_INVOKABLE virtual QStringList readAll(const QString &file) const = 0;
 
 	/// Removes a file.
-	Q_INVOKABLE void removeFile(const QString &file) override;
+	Q_INVOKABLE virtual void removeFile(const QString &file) = 0;
 
 public slots:
 	/// Starts event loop for script.
-	void run() override;
+	virtual void run() = 0;
 
 	/// Aborts script execution.
-	void quit() override;
+	virtual void quit() = 0;
 
 	/// Resets script execution state, clearing all flags and stopping all timers.
-	void reset() override;
+	virtual void reset() = 0;
 
 signals:
 	/// Emitted when script requested system to abort execution.
@@ -87,15 +94,6 @@ signals:
 
 	/// Requests sending a message to a desktop.
 	void textInStdOut(const QString &text);
-
-private:
-	QList<QTimer *> mTimers; // Has ownership.
-	trikControl::BrickInterface &mBrick;
-
-
-	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
-	/// If it is false, script will exit immediately.
-	bool mInEventDrivenMode = false;
 };
 
 }
