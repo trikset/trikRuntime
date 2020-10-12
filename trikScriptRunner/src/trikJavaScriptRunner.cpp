@@ -39,7 +39,8 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, &ScriptEngineWorker::completed, this, &TrikJavaScriptRunner::completed);
 	connect(mScriptEngineWorker, &ScriptEngineWorker::startedScript, this, &TrikJavaScriptRunner::onScriptStart);
 
-	connect(mScriptController.data(), &TrikScriptControlInterface::textInStdOut, this, &TrikJavaScriptRunner::textInStdOut);
+	connect(mScriptController.data(), &TrikScriptControlInterface::textInStdOut
+			, this, &TrikJavaScriptRunner::textInStdOut);
 
 	connect(mVariablesServer.data(), &TrikVariablesServer::getVariables
 		, mScriptEngineWorker, &ScriptEngineWorker::getVariables);

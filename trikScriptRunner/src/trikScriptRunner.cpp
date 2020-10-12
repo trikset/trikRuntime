@@ -117,10 +117,12 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 	if (cell == nullptr) { // lazy creation
 		switch (stype) {
 			case ScriptType::JAVASCRIPT:
-				QScopedPointer<TrikScriptRunnerInterface>(new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
+				QScopedPointer<TrikScriptRunnerInterface>(
+							new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 			case ScriptType::PYTHON:
-				QScopedPointer<TrikScriptRunnerInterface>(new TrikPythonRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
+				QScopedPointer<TrikScriptRunnerInterface>(
+							new TrikPythonRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
