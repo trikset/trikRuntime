@@ -17,10 +17,18 @@
 #include <QtCore/QTimer>
 #include <trikControl/brickInterface.h>
 
+#ifndef TRIKSCRIPTRUNNER_EXPORT
+#  if defined(TRIKSCRIPTRUNNER_LIBRARY)
+#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_EXPORT
+#  else
+#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_IMPORT
+#  endif
+#endif
+
 namespace trikScriptRunner {
 
 /// Script execution controller, provides related functions to scripts.
-class TrikScriptControlInterface : public QObject
+class TRIKSCRIPTRUNNER_EXPORT TrikScriptControlInterface : public QObject
 {
 	Q_OBJECT
 
