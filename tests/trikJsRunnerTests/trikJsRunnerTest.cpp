@@ -77,6 +77,7 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
 	}
+	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
 	return exitCode;
 }
 
@@ -97,6 +98,7 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	if (!alreadyCompleted) {
 		exitCode = wait.exec();
 	}
+	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
 	return exitCode;
 }
 
