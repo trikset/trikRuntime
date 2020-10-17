@@ -104,10 +104,6 @@ void Connection::init(qintptr socketDescriptor)
 
 void Connection::onReadyRead()
 {
-	if (isValid()) {
-		return;
-	}
-
 	if (mUseHeartbeat) {
 		/// Reset heartbeat timer, we received something, so connection is up.
 		mHeartbeatTimer->start();
@@ -202,12 +198,7 @@ void Connection::onDisconnect()
 
 void Connection::onError(QAbstractSocket::SocketError error)
 {
-	if (error == QAbstractSocket::RemoteHostClosedError) {
-		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << ": remote host closed";
-	} else {
-		QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored." << mSocket->error();
-	}
-
+	QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored." << error;
 	doDisconnect();
 }
 

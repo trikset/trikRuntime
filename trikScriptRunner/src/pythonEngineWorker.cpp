@@ -258,7 +258,8 @@ void PythonEngineWorker::resetBrick()
 
 void PythonEngineWorker::brickBeep()
 {
-	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+	// TODO: move to utils or script control to reuse between scripting engines
+	mBrick.playTone(2500, 20);
 }
 
 

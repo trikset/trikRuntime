@@ -14,6 +14,8 @@
 
 #include "tcpClientSimulator.h"
 
+#include <QThread>
+
 using namespace tests::utils;
 using namespace trikNetwork;
 
@@ -30,5 +32,6 @@ void TcpClientSimulator::processData(const QByteArray &data)
 
 QString TcpClientSimulator::latestResponse() const
 {
+	Q_ASSERT(thread() == QThread::currentThread());
 	return mLatestResponse;
 }
