@@ -258,7 +258,8 @@ void PythonEngineWorker::resetBrick()
 
 void PythonEngineWorker::brickBeep()
 {
-	mBrick.playSound(trikKernel::Paths::mediaPath() + "media/beep_soft.wav");
+	// TODO: move to utils or script control to reuse between scripting engines
+	mBrick.playTone(2500, 20);
 }
 
 
@@ -348,6 +349,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
+	mScriptExecutionControl->reset();
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {

@@ -119,8 +119,8 @@ private:
 	/// Handles incoming data: sending version or processing received data.
 	void handleIncomingData(const QByteArray &data);
 
-	/// Connects all slots of this object to the appropriate signals.
-	void connectSlots();
+	/// Resets private socket, connects all slots of this object to the appropriate signals.
+	void resetSocket();
 
 	/// Parses current buffer content and splits it on complete messages.
 	void processBuffer();
@@ -129,7 +129,7 @@ private:
 	void doDisconnect();
 
 	/// Initializes keepalive and heartbeat timers.
-	void initKeepalive();
+	void restartKeepalive();
 
 	/// Buffer to accumulate parts of a message.
 	QByteArray mBuffer;

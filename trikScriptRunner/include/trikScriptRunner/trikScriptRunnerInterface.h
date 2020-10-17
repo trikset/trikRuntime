@@ -21,14 +21,6 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 
-#ifndef TRIKSCRIPTRUNNER_EXPORT
-#  if defined(TRIKSCRIPTRUNNER_LIBRARY)
-#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_EXPORT
-#  else
-#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
-
 #include <trikControl/batteryInterface.h>
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
@@ -50,6 +42,9 @@
 #include <trikControl/ledInterface.h>
 #include <trikControl/markerInterface.h>
 #include <trikNetwork/mailboxInterface.h>
+
+#include "trikScriptControlInterface.h"
+
 
 #define REGISTER_METATYPE(TYPE) \
 	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
