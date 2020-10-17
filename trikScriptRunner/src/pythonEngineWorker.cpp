@@ -349,6 +349,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
+	mScriptExecutionControl->reset();
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {
