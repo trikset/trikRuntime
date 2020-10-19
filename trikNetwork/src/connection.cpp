@@ -53,14 +53,15 @@ int Connection::peerPort() const
 void Connection::init(const QHostAddress &ip, int port)
 {
 	resetSocket();
+	restartKeepalive();
+
 	mSocket->connectToHost(ip, port);
+
 	if (!mSocket->waitForConnected()) {
 		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
 		doDisconnect();
 		return;
 	}
-	restartKeepalive();
-
 	emit connected(this);
 }
 
