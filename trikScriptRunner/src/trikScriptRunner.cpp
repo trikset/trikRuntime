@@ -49,8 +49,10 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 									 );
 			});
 	}
-	mScriptRunnerArray[to_underlying(ScriptType::JAVASCRIPT)].reset(new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl));
-	mScriptRunnerArray[to_underlying(ScriptType::PYTHON)].reset(new TrikPythonRunner(mBrick, mMailbox, mScriptControl));
+	mScriptRunnerArray[to_underlying(ScriptType::JAVASCRIPT)].reset(
+				new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl));
+	mScriptRunnerArray[to_underlying(ScriptType::PYTHON)].reset(
+				new TrikPythonRunner(mBrick, mMailbox, mScriptControl));
 	connectRunners();
 }
 
@@ -192,7 +194,6 @@ void TrikScriptRunner::connectRunners()
 		}
 	}
 }
-
 
 void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) {
 	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
