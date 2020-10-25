@@ -233,8 +233,9 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 
 bool PythonEngineWorker::initTrik()
 {
-	mMainContext.evalScript("import gc;"
+	mMainContext.evalScript("import sys;"
 				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
+				"import gc;"
 				"gc.collect()");
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
