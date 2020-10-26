@@ -235,7 +235,7 @@ bool PythonEngineWorker::initTrik()
 {
 	mMainContext.evalScript("import sys;"
 				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
-				"import gc;"
+				"from gc import collect;"
 				"gc.collect()");
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
