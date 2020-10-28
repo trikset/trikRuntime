@@ -53,6 +53,15 @@ before_build:
   - set PATH=%PYTHON_PATH%;%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
+# deal with 2020 summer package upgrade problem, when keys changed
+  - curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
+  - curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig
+  - pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz || bash -lc 'pacman --noconfirm -U --config <(echo) msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz'
+# update core files
+  - cmd /c "pacman --verbose --noconfirm -Syuu" #update core files
+  - tasklist /v
+  - taskkill /im gpg-agent.exe /f /t
+# proceed normally
   - pacman --verbose --noconfirm --sync rsync
   - path
   - python -V
