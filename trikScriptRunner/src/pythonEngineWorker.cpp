@@ -182,9 +182,6 @@ void PythonEngineWorker::init()
 	if (!mMainContext) {
 		mMainContext = PythonQt::self()->getMainModule();
 		recreateContext();
-		if (!initTrik()) {
-			QLOG_FATAL() << "Failed to init TRIK runtime for Python";
-		}
 	}
 	emit inited();
 }
@@ -198,7 +195,7 @@ bool PythonEngineWorker::recreateContext()
 		PyErr_Clear();
 	}
 	PythonQt::self()->clearError();
-	return true;
+	return initTrik();
 }
 
 bool PythonEngineWorker::evalSystemPy()
@@ -236,6 +233,10 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 
 bool PythonEngineWorker::initTrik()
 {
+	mMainContext.evalScript("import sys;"
+				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
+				"from gc import collect;"
+				"gc.collect()");
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
 	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
