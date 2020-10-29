@@ -44,7 +44,9 @@ public:
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit WiFiInitWidget(QWidget *parent = 0);
 
-	enum Result {
+	~WiFiInitWidget() override;
+
+	enum class Result {
 		success
 		, fail
 	};

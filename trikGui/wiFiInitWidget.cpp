@@ -44,8 +44,19 @@ WiFiInitWidget::WiFiInitWidget(QWidget *parent)
 	mLayout.addWidget(&mBreakMessage);
 	setLayout(&mLayout);
 
-	connect(&mProcess, SIGNAL(finished(int, QProcess::ExitStatus)), SLOT(onProcessFinished(int, QProcess::ExitStatus)));
-	connect(&mProcess, SIGNAL(error(QProcess::ProcessError)), SLOT(onProcessError(QProcess::ProcessError)));
+	connect(&mProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished)
+			, this, &WiFiInitWidget::onProcessFinished);
+	connect(&mProcess, QOverload<QProcess::ProcessError>::of(&QProcess::error), this, &WiFiInitWidget::onProcessError);
+	connect(&mProcess, &QProcess::errorOccurred, this, &WiFiInitWidget::onProcessError);
+
+}
+
+WiFiInitWidget::~WiFiInitWidget()
+{
+	if (mProcess.state() != QProcess::NotRunning) {
+		QLOG_ERROR () << "Destroyng WiFiInitWidget with runnig process. The user has cancelled the running operation?";
+		mProcess.kill();
+	}
 }
 
 WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
@@ -64,7 +75,7 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 		}
 		case WiFiModeWidget::Mode::unknown: {
 			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiInitWidget::init()";
-			return fail;
+			return Result::fail;
 		}
 	}
 
@@ -77,10 +88,10 @@ WiFiInitWidget::Result WiFiInitWidget::init(WiFiModeWidget::Mode mode)
 	close();
 
 	if (result != 0) {
-		return fail;
+		return Result::fail;
 	}
 
-	return success;
+	return Result::success;
 }
 
 void WiFiInitWidget::renewFocus()
@@ -123,12 +134,6 @@ void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 void WiFiInitWidget::onProcessError(QProcess::ProcessError error)
 {
 	mProcess.disconnect();
-
 	QLOG_ERROR() << "set_wifi_mode.sh process error: " << error;
-
-	if (mProcess.state() != QProcess::NotRunning) {
-		mProcess.kill();
-	}
-
 	mEventLoop.exit(1);
 }
