@@ -53,7 +53,11 @@ QString trikControl::FifoWorker::read()
 	if (mCurrentLine.isEmpty()) {
 		r.unlock();
 		QEventLoop l;
-		connect(this, &FifoWorker::newLine, &l, [&l](const QString &newLine) { if (!newLine.isEmpty()) l.quit(); } );
+		connect(this, &FifoWorker::newLine, &l, [&l](const QString &newLine) {
+			if (!newLine.isEmpty()) {
+				l.quit();
+			}
+		});
 		l.exec();
 	}
 	r.unlock();
@@ -70,7 +74,10 @@ QVector<uint8_t> trikControl::FifoWorker::readRaw()
 		r.unlock();
 		QEventLoop l;
 		connect(this, &FifoWorker::newData, &l, [&l](const QVector<uint8_t> &newData) {
-			if (!newData.isEmpty()) l.quit(); } );
+			if (!newData.isEmpty()) {
+				l.quit();
+			}
+		});
 		l.exec();
 	}
 	r.unlock();

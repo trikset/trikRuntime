@@ -35,6 +35,7 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 	connect(mFifoWorker, &FifoWorker::newLine, this, &Fifo::newLine);
 	connect(mFifoWorker, &FifoWorker::newData, this, &Fifo::newData);
 	connect(&mWorkerThread, &QThread::finished, mFifoWorker, &QObject::deleteLater);
+	mWorkerThread.start();
 }
 
 Fifo::~Fifo()
@@ -53,16 +54,20 @@ DeviceInterface::Status Fifo::status() const
 QString Fifo::read()
 {
 	QString result;
-	QMetaObject::invokeMethod(mFifoWorker, [this, &result](){result = mFifoWorker->read();}
-							, Qt::BlockingQueuedConnection);
+	if (hasLine()) {
+		QMetaObject::invokeMethod(mFifoWorker, [this, &result](){result = mFifoWorker->read();}
+								, Qt::BlockingQueuedConnection);
+	}
 	return result;
 }
 
 QVector<uint8_t> Fifo::readRaw()
 {
 	QVector<uint8_t> result;
-	QMetaObject::invokeMethod(mFifoWorker, [this, &result](){result = mFifoWorker->readRaw();}
-							, Qt::BlockingQueuedConnection);
+	if (hasData()) {
+		QMetaObject::invokeMethod(mFifoWorker, [this, &result](){result = mFifoWorker->readRaw();}
+								, Qt::BlockingQueuedConnection);
+	}
 	return result;
 }
 
