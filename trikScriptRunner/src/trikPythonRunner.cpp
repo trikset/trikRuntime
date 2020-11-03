@@ -26,7 +26,7 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   , QSharedPointer<TrikScriptControlInterface> scriptControl
 								   )
-	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl))
+	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl, &mPythonInitFinished))
 {
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
@@ -37,11 +37,10 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
 			, this, &TrikPythonRunner::startedDirectScript);
 
-	QEventLoop l;
-	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
+	QMutexLocker locker(&mConstructorMutex);
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 	mWorkerThread.start();
-	l.exec();
+	mPythonInitFinished.wait(&mConstructorMutex);
 }
 
 TrikPythonRunner::~TrikPythonRunner()
@@ -73,7 +72,7 @@ void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScript
 
 void TrikPythonRunner::brickBeep()
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, &PythonEngineWorker::brickBeep);
+	QMetaObject::invokeMethod(mScriptEngineWorker, &PythonEngineWorker::brickBeep, Qt::BlockingQueuedConnection);
 }
 
 void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)

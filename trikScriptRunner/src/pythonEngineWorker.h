@@ -19,6 +19,7 @@
 #include <QMutex>
 #include <QFileInfo>
 #include <QDir>
+#include <QWaitCondition>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -44,6 +45,7 @@ public:
 	PythonEngineWorker(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * mailbox
 			, QSharedPointer<TrikScriptControlInterface> scriptControl
+			, QWaitCondition *InitFinished
 			);
 
 	~PythonEngineWorker();
@@ -76,9 +78,6 @@ signals:
 	/// Emitted when new direct script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedDirectScript(int scriptId);
-
-	/// When engine was inited
-	void inited();
 
 	/// Some message to send, for example, from stdout
 	void textInStdOut(const QString&);
@@ -166,6 +165,7 @@ private:
 	/// Directory that would be added to Python's sys.path var when any execution will start.
 	QDir mWorkingDirectory;
 	QString mErrorMessage;
+	QWaitCondition *mInitFinished;
 
 	wchar_t *mProgramName { nullptr };
 	wchar_t *mPythonPath { nullptr };
