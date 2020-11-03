@@ -41,6 +41,8 @@ public:
 	Status status() const override;
 
 public slots:
+	/// Work with DeviceState and connections.
+	void init();
 	/// Reads line from this FIFO file, returning all available data as string.
 	QString read();
 	/// Reads data from this FIFO file, returning all available data as string.
@@ -56,6 +58,8 @@ signals:
 	void newLine(const QString &data);
 	/// Emitted when new bytes have arrived to FIFO file.
 	void newData(const QVector<uint8_t> &data);
+	/// Emitted when FifoWorker is inited.
+	void inited();
 
 private slots:
 	void onNewLine(const QString &line);

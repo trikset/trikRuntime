@@ -21,6 +21,19 @@ trikControl::FifoWorker::FifoWorker(const QString &fileName
 	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFifo(hardwareAbstraction.createFifo(fileName))
 	, mState("Fifo on '" + fileName + "'")
+{}
+
+trikControl::FifoWorker::~FifoWorker()
+{
+	mFifo.reset();
+}
+
+trikControl::DeviceInterface::Status trikControl::FifoWorker::status() const
+{
+	return mState.status();
+}
+
+void trikControl::FifoWorker::init()
 {
 	mState.start();
 
@@ -33,18 +46,8 @@ trikControl::FifoWorker::FifoWorker(const QString &fileName
 	} else {
 		mState.fail();
 	}
-}
 
-trikControl::FifoWorker::~FifoWorker()
-{
-	if (mState.isReady()) {
-		mFifo->close();
-	}
-}
-
-trikControl::DeviceInterface::Status trikControl::FifoWorker::status() const
-{
-	return mState.status();
+	emit inited();
 }
 
 QString trikControl::FifoWorker::read()

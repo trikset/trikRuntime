@@ -16,6 +16,7 @@
 
 #include <trikKernel/configurer.h>
 #include <trikHal/hardwareAbstractionInterface.h>
+#include <QEventLoop>
 
 #include "src/configurerHelper.h"
 
@@ -34,16 +35,19 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 
 	connect(mFifoWorker, &FifoWorker::newLine, this, &Fifo::newLine);
 	connect(mFifoWorker, &FifoWorker::newData, this, &Fifo::newData);
+	connect(&mWorkerThread, &QThread::started, mFifoWorker, &FifoWorker::init);
 	connect(&mWorkerThread, &QThread::finished, mFifoWorker, &QObject::deleteLater);
+
+	QEventLoop l;
+	connect(mFifoWorker, &FifoWorker::inited, &l, &QEventLoop::quit);
 	mWorkerThread.start();
+	l.exec();
 }
 
 Fifo::~Fifo()
 {
-	if (mWorkerThread.isRunning()) {
-		mWorkerThread.quit();
-		mWorkerThread.wait();
-	}
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
 DeviceInterface::Status Fifo::status() const
