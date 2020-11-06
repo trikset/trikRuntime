@@ -23,6 +23,8 @@
 #include <trikHal/fifoInterface.h>
 #include <trikHal/hardwareAbstractionInterface.h>
 
+#include <QWaitCondition>
+
 namespace trikControl {
 
 /// Worker object that processes FIFO output and updates stored reading. Meant to be executed in separate
@@ -35,7 +37,9 @@ public:
 	/// Constructor. Creates FIFO device programmatically by file name.
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
-	FifoWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	FifoWorker(const QString &fileName
+			   , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+			   , QWaitCondition *initFinished);
 	~FifoWorker();
 
 	Status status() const override;
@@ -58,8 +62,6 @@ signals:
 	void newLine(const QString &data);
 	/// Emitted when new bytes have arrived to FIFO file.
 	void newData(const QVector<uint8_t> &data);
-	/// Emitted when FifoWorker is inited.
-	void inited();
 
 private slots:
 	void onNewLine(const QString &line);
@@ -67,6 +69,8 @@ private slots:
 	void onReadError();
 
 private:
+	const QString &mFifoFileName;
+	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 	QScopedPointer<trikHal::FifoInterface> mFifo;
 
 	/// Last line that was read from FIFO.
@@ -80,6 +84,9 @@ private:
 
 	/// State of a FIFO file as a device.
 	DeviceState mState;
+
+	/// WakeAll when FifoWorker is inited.
+	QWaitCondition *mInitFinished; // Does not have ownership.
 };
 
 }

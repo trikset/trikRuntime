@@ -18,6 +18,9 @@
 #include <QtCore/QVector>
 #include <QtCore/QScopedPointer>
 
+#include <QMutex>
+#include <QWaitCondition>
+
 #include "fifoInterface.h"
 #include "fifoworker.h"
 #include "deviceState.h"
@@ -72,6 +75,9 @@ private:
 
 	/// Worker thread.
 	QThread mWorkerThread;
+
+	QMutex mConstructorMutex;
+	QWaitCondition mFifoInitComplete;
 };
 
 }
