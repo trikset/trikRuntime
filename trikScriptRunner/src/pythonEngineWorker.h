@@ -165,7 +165,8 @@ private:
 	/// Directory that would be added to Python's sys.path var when any execution will start.
 	QDir mWorkingDirectory;
 	QString mErrorMessage;
-	QWaitCondition *mInitFinished;
+
+	QWaitCondition *mInitFinished; // Does not have ownership.
 
 	wchar_t *mProgramName { nullptr };
 	wchar_t *mPythonPath { nullptr };
