@@ -55,17 +55,15 @@ void Connection::processData(const QByteArray &data)
 		const QString fileContents = trikKernel::FileUtils::readFromFile(
 				trikKernel::Paths::userScriptsPath() + command);
 
-		QMetaObject::invokeMethod(&mTrikScriptRunner, [=](){mTrikScriptRunner.run(fileContents, command);}
-									, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(&mTrikScriptRunner, [=](){mTrikScriptRunner.run(fileContents, command);});
 	} else if (command == "stop") {
 		emit stopCommandReceived();
 	} else if (command.startsWith("direct:")) {
 		command.remove(0, QString("direct:").length());
-		QMetaObject::invokeMethod(&mTrikScriptRunner, [=](){mTrikScriptRunner.runDirectCommand(command);}
-									, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(&mTrikScriptRunner, [=](){mTrikScriptRunner.runDirectCommand(command);});
 	} else if (command.startsWith("directScript:")) {
 		command.remove(0, QString("directScript:").length());
-		QMetaObject::invokeMethod(&mTrikScriptRunner, [=](){mTrikScriptRunner.run(command);}, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(&mTrikScriptRunner, [=](){mTrikScriptRunner.run(command);});
 	} else if (command == "configVersion") {
 		send("configVersion: " + mConfigVersion.toUtf8());
 	}
