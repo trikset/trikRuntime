@@ -18,7 +18,11 @@
 #include <QtCore/QVector>
 #include <QtCore/QScopedPointer>
 
+#include <QMutex>
+#include <QWaitCondition>
+
 #include "fifoInterface.h"
+#include "fifoworker.h"
 #include "deviceState.h"
 
 namespace trikKernel {
@@ -38,14 +42,14 @@ class Fifo: public FifoInterface
 	Q_OBJECT
 
 public:
-	/// Constructor. Creates FIFO device by a description in config file.
+	/// Constructor. Creates FIFO worker and moves it in a separate thread.
 	/// @param virtualPort - port in system-config.xml on which this FIFO file is configured.
 	/// @param configurer - configurer object containing preparsed XML files with parameters.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	/// Constructor. Creates FIFO device programmatically by file name.
+	/// Constructor. Creates FIFO worker and moves it in a separate thread.
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
@@ -65,25 +69,12 @@ public slots:
 	/// Returns true if FIFO has new bytes in it.
 	bool hasData() const override;
 
-private slots:
-	void onNewLine(const QString &line);
-	void onNewData(const QVector<uint8_t> &data);
-	void onReadError();
-
 private:
-	QScopedPointer<trikHal::FifoInterface> mFifo;
+	/// Worker object that handles sensor in separate thread.
+	FifoWorker *mFifoWorker; // Has ownership.
 
-	/// Last line that was read from FIFO.
-	QString mCurrentLine;
-
-	/// Last data that was read from FIFO.
-	QVector<uint8_t> mCurrentData;
-
-	/// Lock for mCurrent
-	mutable QReadWriteLock mCurrentLock;
-
-	/// State of a FIFO file as a device.
-	DeviceState mState;
+	/// Worker thread.
+	QThread mWorkerThread;
 };
 
 }
