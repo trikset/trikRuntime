@@ -19,6 +19,7 @@
 #include <QMutex>
 #include <QFileInfo>
 #include <QDir>
+#include <QSemaphore>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -63,6 +64,9 @@ public:
 	/// Changes mWorkingDirectory var.
 	void setWorkingDirectory(const QDir &workingDir);
 
+	/// Blocks the Thread with QSemaphore until init() method releases it.
+	void waitUntilInited();
+
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
@@ -76,9 +80,6 @@ signals:
 	/// Emitted when new direct script is started.
 	/// @param scriptId - unique identifier assigned to a newly started script.
 	void startedDirectScript(int scriptId);
-
-	/// When engine was inited
-	void inited();
 
 	/// Some message to send, for example, from stdout
 	void textInStdOut(const QString&);
@@ -166,6 +167,8 @@ private:
 	/// Directory that would be added to Python's sys.path var when any execution will start.
 	QDir mWorkingDirectory;
 	QString mErrorMessage;
+
+	QSemaphore mWaitForInitSemaphore {1};
 
 	wchar_t *mProgramName { nullptr };
 	wchar_t *mPythonPath { nullptr };

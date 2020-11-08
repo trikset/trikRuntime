@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QEventLoop>
 #include <QsLog.h>
 
 #include "trikPythonRunner.h"
@@ -37,11 +36,9 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
 			, this, &TrikPythonRunner::startedDirectScript);
 
-	QEventLoop l;
-	connect(mScriptEngineWorker, &PythonEngineWorker::inited, &l, &QEventLoop::quit);
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 	mWorkerThread.start();
-	l.exec();
+	mScriptEngineWorker->waitUntilInited();
 }
 
 TrikPythonRunner::~TrikPythonRunner()
@@ -73,7 +70,7 @@ void TrikPythonRunner::addCustomEngineInitStep(const std::function<void (QScript
 
 void TrikPythonRunner::brickBeep()
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, &PythonEngineWorker::brickBeep);
+	QMetaObject::invokeMethod(mScriptEngineWorker, &PythonEngineWorker::brickBeep, Qt::BlockingQueuedConnection);
 }
 
 void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)

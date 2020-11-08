@@ -49,11 +49,6 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 									 );
 			});
 	}
-	mScriptRunnerArray[to_underlying(ScriptType::JAVASCRIPT)].reset(
-				new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl));
-	mScriptRunnerArray[to_underlying(ScriptType::PYTHON)].reset(
-				new TrikPythonRunner(mBrick, mMailbox, mScriptControl));
-	connectRunners();
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
@@ -180,19 +175,6 @@ void TrikScriptRunner::brickBeep()
 void TrikScriptRunner::setWorkingDirectory(const QString &workingDir)
 {
 	fetchRunner(mLastRunner)->setWorkingDirectory(workingDir);
-}
-
-void TrikScriptRunner::connectRunners()
-{
-	for (auto && r: mScriptRunnerArray) {
-		if (r != nullptr) {
-			connect(&*r, &TrikScriptRunnerInterface::completed, this, &TrikScriptRunnerInterface::completed);
-			connect(&*r, &TrikScriptRunnerInterface::startedScript, this, &TrikScriptRunnerInterface::startedScript);
-			connect(&*r, &TrikScriptRunnerInterface::startedDirectScript
-					, this, &TrikScriptRunnerInterface::startedDirectScript);
-			connect(&*r, &TrikScriptRunnerInterface::textInStdOut, this, &TrikScriptRunnerInterface::textInStdOut);
-		}
-	}
 }
 
 void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) {

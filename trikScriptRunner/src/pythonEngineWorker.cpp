@@ -50,7 +50,9 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 	, mScriptExecutionControl(scriptControl)
 	, mMailbox(mailbox)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
-{}
+{
+	mWaitForInitSemaphore.acquire(1);
+}
 
 PythonEngineWorker::~PythonEngineWorker()
 {
@@ -110,7 +112,6 @@ void PythonEngineWorker::init()
 		} else {
 			QLOG_INFO() << varName << ":" << path;
 		}
-
 		/// TODO: Must point to local .zip file
 		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
 		Py_SetPath(mPythonPath);
@@ -141,7 +142,6 @@ void PythonEngineWorker::init()
 		PyEval_InitThreads();
 #endif
 #endif
-
 		constexpr auto extractVersionCommand = "(sys.version_info.major,sys.version_info.minor)";
 		PythonQtObjectPtr dict;
 		dict.setNewRef(PyDict_New());
@@ -162,7 +162,6 @@ void PythonEngineWorker::init()
 			throw trikKernel::InternalErrorException(e);
 		}
 	}
-
 	if (!mPyInterpreter) {
 //		mPyInterpreter = Py_NewInterpreter();
 	}
@@ -183,7 +182,9 @@ void PythonEngineWorker::init()
 		mMainContext = PythonQt::self()->getMainModule();
 		recreateContext();
 	}
-	emit inited();
+	QLOG_INFO() << "PythonEngineWorker inited";
+
+	mWaitForInitSemaphore.release(1);
 }
 
 bool PythonEngineWorker::recreateContext()
@@ -215,6 +216,7 @@ bool PythonEngineWorker::evalSystemPy()
 		mMainContext.evalFile(systemPyPath);
 		if (PythonQt::self()->hadError()) {
 			QLOG_ERROR() << "Failed to eval system.py";
+			QLOG_ERROR() << mErrorMessage;
 			return false;
 		}
 	}
@@ -235,8 +237,8 @@ bool PythonEngineWorker::initTrik()
 {
 	mMainContext.evalScript("import sys;"
 				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
-				"from gc import collect;"
-				"gc.collect()");
+				"from gc import collect as gc_collect;"
+				"gc_collect();");
 	PythonQt_init_PyTrikControl(mMainContext);
 	mMainContext.addObject("brick", &mBrick);
 	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
@@ -259,7 +261,7 @@ void PythonEngineWorker::resetBrick()
 
 void PythonEngineWorker::brickBeep()
 {
-	// TODO: move to utils or script control to reuse between scripting engines
+	// TODO: move to script control to reuse between scripting engines
 	mBrick.playTone(2500, 20);
 }
 
@@ -319,6 +321,12 @@ void PythonEngineWorker::setWorkingDirectory(const QDir &workingDir)
 	mWorkingDirectory = workingDir;
 }
 
+void PythonEngineWorker::waitUntilInited()
+{
+	mWaitForInitSemaphore.acquire(1);
+	mWaitForInitSemaphore.release(1);
+}
+
 void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
 	QMutexLocker locker(&mScriptStateMutex);
@@ -361,7 +369,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 void PythonEngineWorker::runDirect(const QString &command)
 {
 	QMutexLocker locker(&mScriptStateMutex);
-	QMetaObject::invokeMethod(this, "doRunDirect", Q_ARG(QString, command));
+	QMetaObject::invokeMethod(this, [this, &command](){doRunDirect(command);});
 }
 
 void PythonEngineWorker::doRunDirect(const QString &command)

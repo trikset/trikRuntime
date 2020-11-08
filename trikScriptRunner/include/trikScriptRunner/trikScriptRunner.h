@@ -17,6 +17,7 @@
 #include "trikScriptControlInterface.h"
 #include "trikScriptRunnerInterface.h"
 #include <QFileInfo>
+#include <QMutex>
 #include <QScopedPointer>
 #include <array>
 #include <trikControl/brickInterface.h>
@@ -82,8 +83,6 @@ public slots:
 	void setWorkingDirectory(const QString &workingDir) override;
 
 private:
-	void connectRunners();
-
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &mBrick;
