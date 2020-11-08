@@ -618,7 +618,7 @@ for break</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+92"/>
         <source>Network initialization
 failed</source>
         <translation type="unfinished"></translation>

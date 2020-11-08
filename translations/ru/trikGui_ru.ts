@@ -687,7 +687,7 @@ in process</source>
 сети</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+95"/>
         <source>Network initialization
 failed</source>
         <translation>Не удалось
@@ -696,7 +696,7 @@ failed</source>
 сети</translation>
     </message>
     <message>
-        <location line="-81"/>
+        <location line="-92"/>
         <source>Press Escape
 for break</source>
         <translation>Чтобы прервать
