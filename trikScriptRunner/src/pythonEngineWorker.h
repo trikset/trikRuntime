@@ -19,7 +19,7 @@
 #include <QMutex>
 #include <QFileInfo>
 #include <QDir>
-#include <QWaitCondition>
+#include <QSemaphore>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -45,7 +45,6 @@ public:
 	PythonEngineWorker(trikControl::BrickInterface &brick
 			, trikNetwork::MailboxInterface * mailbox
 			, QSharedPointer<TrikScriptControlInterface> scriptControl
-			, QWaitCondition *InitFinished
 			);
 
 	~PythonEngineWorker();
@@ -64,6 +63,9 @@ public:
 
 	/// Changes mWorkingDirectory var.
 	void setWorkingDirectory(const QDir &workingDir);
+
+	/// Blocks the Thread with QSemaphore until init() method releases it.
+	void waitUntilInited();
 
 signals:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
@@ -166,7 +168,7 @@ private:
 	QDir mWorkingDirectory;
 	QString mErrorMessage;
 
-	QWaitCondition *mInitFinished; // Does not have ownership.
+	QSemaphore mWaitForInitSemaphore {1};
 
 	wchar_t *mProgramName { nullptr };
 	wchar_t *mPythonPath { nullptr };

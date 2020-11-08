@@ -17,9 +17,6 @@
 #include "trikScriptRunnerInterface.h"
 #include "trikScriptControlInterface.h"
 
-#include <QMutex>
-#include <QWaitCondition>
-
 namespace trikNetwork {
 class MailboxInterface;
 }
@@ -65,9 +62,6 @@ private:
 	/// Has ownership, memory is managed by thread and deleteLater().
 	PythonEngineWorker *mScriptEngineWorker { nullptr };
 	QThread mWorkerThread;
-
-	QMutex mConstructorMutex;
-	QWaitCondition mPythonInitFinished;
 };
 
 }

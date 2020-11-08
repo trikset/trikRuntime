@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <QEventLoop>
 #include <QsLog.h>
 
 #include "trikPythonRunner.h"
@@ -26,7 +25,7 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   , QSharedPointer<TrikScriptControlInterface> scriptControl
 								   )
-	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl, &mPythonInitFinished))
+	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl))
 {
 	mScriptEngineWorker->moveToThread(&mWorkerThread);
 	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
@@ -37,10 +36,9 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
 			, this, &TrikPythonRunner::startedDirectScript);
 
-	QMutexLocker locker(&mConstructorMutex);
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 	mWorkerThread.start();
-	mPythonInitFinished.wait(&mConstructorMutex);
+	mScriptEngineWorker->waitUntilInited();
 }
 
 TrikPythonRunner::~TrikPythonRunner()

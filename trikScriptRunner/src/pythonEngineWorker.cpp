@@ -45,14 +45,14 @@ static void abortPythonInterpreter() {
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, QSharedPointer<TrikScriptControlInterface> scriptControl
-		, QWaitCondition *InitFinished
 		)
 	: mBrick(brick)
 	, mScriptExecutionControl(scriptControl)
 	, mMailbox(mailbox)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
-	, mInitFinished(InitFinished)
-{}
+{
+	mWaitForInitSemaphore.acquire(1);
+}
 
 PythonEngineWorker::~PythonEngineWorker()
 {
@@ -184,7 +184,7 @@ void PythonEngineWorker::init()
 	}
 	QLOG_INFO() << "PythonEngineWorker inited";
 
-	mInitFinished->wakeAll();
+	mWaitForInitSemaphore.release(1);
 }
 
 bool PythonEngineWorker::recreateContext()
@@ -319,6 +319,12 @@ QStringList PythonEngineWorker::knownNames() const
 void PythonEngineWorker::setWorkingDirectory(const QDir &workingDir)
 {
 	mWorkingDirectory = workingDir;
+}
+
+void PythonEngineWorker::waitUntilInited()
+{
+	mWaitForInitSemaphore.acquire(1);
+	mWaitForInitSemaphore.release(1);
 }
 
 void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
