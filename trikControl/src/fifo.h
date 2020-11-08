@@ -75,9 +75,6 @@ private:
 
 	/// Worker thread.
 	QThread mWorkerThread;
-
-	QMutex mConstructorMutex;
-	QWaitCondition mFifoInitComplete;
 };
 
 }

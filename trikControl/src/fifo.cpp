@@ -29,7 +29,7 @@ Fifo::Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
 }
 
 Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mFifoWorker(new FifoWorker(fileName, hardwareAbstraction, &mFifoInitComplete))
+	: mFifoWorker(new FifoWorker(fileName, hardwareAbstraction))
 {
 	mFifoWorker->moveToThread(&mWorkerThread);
 
@@ -38,9 +38,8 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 	connect(&mWorkerThread, &QThread::started, mFifoWorker, &FifoWorker::init);
 	connect(&mWorkerThread, &QThread::finished, mFifoWorker, &QObject::deleteLater);
 
-	QMutexLocker l(&mConstructorMutex);
 	mWorkerThread.start();
-	mFifoInitComplete.wait(&mConstructorMutex);
+	mFifoWorker->waitUntilInited();
 }
 
 Fifo::~Fifo()

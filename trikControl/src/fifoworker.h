@@ -23,7 +23,7 @@
 #include <trikHal/fifoInterface.h>
 #include <trikHal/hardwareAbstractionInterface.h>
 
-#include <QWaitCondition>
+#include <qsemaphore.h>
 
 namespace trikControl {
 
@@ -38,8 +38,7 @@ public:
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	FifoWorker(const QString &fileName
-			   , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-			   , QWaitCondition *initFinished);
+			   , const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 	~FifoWorker();
 
 	Status status() const override;
@@ -56,6 +55,9 @@ public slots:
 	bool hasLine() const;
 	/// Returns true if FIFO has new bytes in it.
 	bool hasData() const;
+
+	/// Blocks the Thread with QSemaphore until init() method releases it.
+	void waitUntilInited();
 
 signals:
 	/// Emitted once per each text line that arrives to FIFO.
@@ -85,8 +87,8 @@ private:
 	/// State of a FIFO file as a device.
 	DeviceState mState;
 
-	/// WakeAll when FifoWorker is inited.
-	QWaitCondition *mInitFinished; // Does not have ownership.
+	/// Releases when init() is finished
+	QSemaphore mWaitForInit {1};
 };
 
 }

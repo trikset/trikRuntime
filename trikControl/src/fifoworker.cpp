@@ -18,12 +18,13 @@
 #include "fifoworker.h"
 
 trikControl::FifoWorker::FifoWorker(const QString &fileName
-	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, QWaitCondition *initFinished)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFifoFileName(fileName)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mState("Fifo on '" + fileName + "'")
-	, mInitFinished(initFinished)
-{}
+{
+	mWaitForInit.acquire(1);
+}
 
 trikControl::FifoWorker::~FifoWorker()
 {
@@ -50,7 +51,7 @@ void trikControl::FifoWorker::init()
 		mState.fail();
 	}
 
-	mInitFinished->wakeAll();
+	mWaitForInit.release(1);
 }
 
 QString trikControl::FifoWorker::read()
@@ -103,6 +104,12 @@ bool trikControl::FifoWorker::hasData() const
 {
 	QReadLocker r(&mCurrentLock);
 	return !mCurrentData.isEmpty();
+}
+
+void trikControl::FifoWorker::waitUntilInited()
+{
+	mWaitForInit.acquire(1);
+	mWaitForInit.release(1);
 }
 
 void trikControl::FifoWorker::onNewLine(const QString &line)
