@@ -59,7 +59,7 @@ before_build:
   - pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz || bash -lc 'pacman --noconfirm -U --config <(echo) msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz'
 # update core files
   - cmd /c "pacman --verbose --noconfirm -Syuu" #update core files
-  - cmd /c "taskkill /im gpg-agent.exe /f /t"
+  - cmd /c "taskkill /im gpg-agent.exe /f /t & exit 0"
 # proceed normally
   - pacman --verbose --noconfirm --sync rsync
   - path
