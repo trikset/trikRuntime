@@ -54,9 +54,9 @@ SystemConsoleInterface &TrikHardwareAbstraction::systemConsole()
 	return *mSystemConsole.data();
 }
 
-EventFileInterface *TrikHardwareAbstraction::createEventFile(const QString &fileName, QThread &thread) const
+EventFileInterface *TrikHardwareAbstraction::createEventFile(const QString &fileName) const
 {
-	return new TrikEventFile(fileName, thread);
+	return new TrikEventFile(fileName);
 }
 
 FifoInterface *TrikHardwareAbstraction::createFifo(const QString &fileName) const

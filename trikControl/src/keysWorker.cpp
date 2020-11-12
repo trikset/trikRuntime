@@ -24,7 +24,7 @@ static const int evKey = 1;
 
 KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile(keysPath, *QThread::currentThread()))
+	: mEventFile(hardwareAbstraction.createEventFile(keysPath))
 	, mState(state)
 {
 	mState.start();

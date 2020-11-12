@@ -67,7 +67,7 @@ void RangeSensorWorker::init()
 {
 	mState.start();
 
-	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName, *QThread::currentThread()));
+	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
 
 	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
 			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));

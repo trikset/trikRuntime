@@ -40,7 +40,12 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	, mAxesSwapped(false)
 {
 	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-			, hardwareAbstraction, mWorkerThread);
+			, hardwareAbstraction);
+	mVectorSensorWorker->moveToThread(&mWorkerThread);
+
+	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
+	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
+	mWorkerThread.start();
 
 	mBias.resize(3);
 	mCalibrationValues.resize(6);

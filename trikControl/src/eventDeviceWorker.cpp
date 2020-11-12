@@ -22,7 +22,7 @@ using namespace trikControl;
 
 EventDeviceWorker::EventDeviceWorker(const QString &deviceFilePath, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile(deviceFilePath, *QThread::currentThread()))
+	: mEventFile(hardwareAbstraction.createEventFile(deviceFilePath))
 {
 	state.start();
 	if (!mEventFile->open()) {

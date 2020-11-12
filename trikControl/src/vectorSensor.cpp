@@ -27,7 +27,12 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 	: mState(deviceName)
 {
 	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-			, hardwareAbstraction, mWorkerThread);
+			, hardwareAbstraction);
+	mVectorSensorWorker->moveToThread(&mWorkerThread);
+
+	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
+	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
+	mWorkerThread.start();
 
 	if (!mState.isFailed()) {
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");

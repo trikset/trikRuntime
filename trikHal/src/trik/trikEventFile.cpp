@@ -29,11 +29,9 @@
 
 using namespace trikHal::trik;
 
-TrikEventFile::TrikEventFile(const QString &fileName, QThread &thread)
+TrikEventFile::TrikEventFile(const QString &fileName)
 	: mFileName(fileName)
-	, mThread(thread)
 {
-	moveToThread(&thread);
 }
 
 bool TrikEventFile::open()
@@ -60,7 +58,6 @@ bool TrikEventFile::open()
 	}
 
 	mSocketNotifier.reset(new QSocketNotifier(mEventFileDescriptor, QSocketNotifier::Read));
-	mSocketNotifier->moveToThread(&mThread);
 
 	connect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikEventFile::readFile);
 	mSocketNotifier->setEnabled(true);
