@@ -3,7 +3,7 @@ MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV TRIK_GCCVERSION 9
-ENV TRIK_QTIFW_TAG 3.2.2
+ENV TRIK_QTIFW_VERSION 4.0.0
 ENV TRIK_LIBUSB_TAG v1.0.23
 ENV TRIK_QTVERSION 5.12.9
 RUN bash -uc 'echo ${TRIK_PYTHON3_VERSION_MINOR}'
@@ -74,7 +74,7 @@ RUN git clone --single-branch --depth 1 --branch ${TRIK_LIBUSB_TAG} https://gith
 RUN ln -svt /etc/profile.d/ /opt/qt512/bin/qt512-env.sh
 SHELL ["/bin/bash", "-lic"]
 ADD qt_scriptinstall.qs /tmp/
-RUN curl -L -o /tmp/qtifw.run https://download.qt.io/official_releases/qt-installer-framework/${TRIK_QTIFW_TAG}/QtInstallerFramework-linux-x64.run \
+RUN curl -L -o /tmp/qtifw.run https://download.qt.io/official_releases/qt-installer-framework/${TRIK_QTIFW_VERSION}/QtInstallerFramework-linux-x64.run \
     && chmod +x /tmp/qtifw.run \
     && env TRIK_QT_INSTALL_DIR=/opt/qtifw /tmp/qtifw.run -platform minimal --no-force-installations --verbose --script /tmp/qt_scriptinstall.qs \
     && rm  /tmp/qtifw.run \
