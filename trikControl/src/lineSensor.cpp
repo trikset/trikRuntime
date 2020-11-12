@@ -36,8 +36,7 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 				, hardwareAbstraction));
 
 		mLineSensorWorker->moveToThread(&mWorkerThread);
-		connect(mLineSensorWorker.data(), &LineSensorWorker::stopped
-				, this, &LineSensor::onStopped, Qt::DirectConnection);
+		connect(mLineSensorWorker.data(), &LineSensorWorker::stopped, this, &LineSensor::onStopped);
 
 		QLOG_INFO() << "Starting LineSensor worker thread" << &mWorkerThread;
 
