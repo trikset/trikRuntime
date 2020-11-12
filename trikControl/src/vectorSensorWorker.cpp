@@ -32,13 +32,14 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mEventFile(hardwareAbstraction.createEventFile(eventFile))
 	, mState(state)
+	, mLastEventTimer(this)
+	, mTryReopenTimer(this)
 {
+	mState.start();
 }
 
 void VectorSensorWorker::init()
 {
-	mState.start();
-
 	mReading << 0 << 0 << 0 << 0 << 0 << 0;
 	mReadingUnsynced = mReading;
 
