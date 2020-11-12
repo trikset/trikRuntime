@@ -77,7 +77,7 @@ void RangeSensor::init()
 		mState.resetFailure();
 	}
 
-	QMetaObject::invokeMethod(mSensorWorker.data(), "init");
+	QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::init);
 }
 
 int RangeSensor::read()
@@ -103,7 +103,7 @@ int RangeSensor::readRawData()
 void RangeSensor::stop()
 {
 	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mSensorWorker.data(), "stop");
+		QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::stop);
 	}
 }
 

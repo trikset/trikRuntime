@@ -26,8 +26,7 @@ EventDevice::EventDevice(const QString &eventFile, const trikHal::HardwareAbstra
 {
 	mWorker.reset(new EventDeviceWorker(eventFile, mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
-		connect(mWorker.data(), SIGNAL(newEvent(int, int, int, int)), this, SIGNAL(on(int, int, int, int))
-				, Qt::QueuedConnection);
+		connect(mWorker.data(), &EventDeviceWorker::newEvent, this, &EventDevice::on, Qt::QueuedConnection);
 
 		mWorker->moveToThread(&mWorkerThread);
 
@@ -50,7 +49,7 @@ EventInterface *EventDevice::onEvent(int eventType)
 {
 	if (!mEvents.contains(eventType)) {
 		const QSharedPointer<Event> event(new Event(eventType));
-		connect(this, SIGNAL(on(int, int, int, int)), event.data(), SLOT(onEvent(int, int, int, int)));
+		connect(this, &EventDevice::on, event.data(), &Event::onEvent);
 		mEvents.insert(eventType, event);
 	}
 

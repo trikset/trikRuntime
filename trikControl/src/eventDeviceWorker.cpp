@@ -30,8 +30,7 @@ EventDeviceWorker::EventDeviceWorker(const QString &deviceFilePath, DeviceState 
 		return;
 	}
 
-	connect(mEventFile.data(), SIGNAL(newEvent(int, int, int, trikKernel::TimeVal))
-			, this, SLOT(onNewEvent(int, int, int, trikKernel::TimeVal)));
+	connect(mEventFile.data(), &trikHal::EventFileInterface::newEvent, this, &EventDeviceWorker::onNewEvent);
 }
 
 void EventDeviceWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)

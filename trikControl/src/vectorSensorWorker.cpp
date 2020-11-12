@@ -60,12 +60,12 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 	pause.exec();
 	if (mEventFile->isOpened()) {
 		// Timer should be started in its thread, so doing it via metacall
-		QMetaObject::invokeMethod(&mLastEventTimer, "start");
+		QMetaObject::invokeMethod(&mLastEventTimer, [this](){mLastEventTimer.start();});
 	} else {
 		QLOG_WARN() << "Sensor" << mState.deviceName() << ", device file can not be opened, will retry in"
 				<< reopenDelay << "milliseconds";
 		// Timer should be started in its thread, so doing it via metacall
-		QMetaObject::invokeMethod(&mTryReopenTimer, "start");
+		QMetaObject::invokeMethod(&mTryReopenTimer, [this](){mTryReopenTimer.start();});
 		mState.fail();
 	}
 }

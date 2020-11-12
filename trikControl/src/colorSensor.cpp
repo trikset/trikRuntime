@@ -36,7 +36,8 @@ ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &conf
 	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState, hardwareAbstraction));
 	mColorSensorWorker->moveToThread(&mWorkerThread);
 
-	connect(mColorSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
+	connect(mColorSensorWorker.data(), &ColorSensorWorker::stopped
+			, this, &ColorSensor::onStopped, Qt::DirectConnection);
 
 	QLOG_INFO() << "Starting ColorSensor worker thread" << &mWorkerThread;
 
@@ -58,7 +59,8 @@ ColorSensor::Status ColorSensor::status() const
 
 void ColorSensor::init(bool showOnDisplay)
 {
-	QMetaObject::invokeMethod(mColorSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+	QMetaObject::invokeMethod(mColorSensorWorker.data()
+							  , [this, showOnDisplay](){mColorSensorWorker->init(showOnDisplay);});
 }
 
 QVector<int> ColorSensor::read(int m, int n)
@@ -69,7 +71,7 @@ QVector<int> ColorSensor::read(int m, int n)
 
 void ColorSensor::stop()
 {
-	QMetaObject::invokeMethod(mColorSensorWorker.data(), "stop");
+	QMetaObject::invokeMethod(mColorSensorWorker.data(), &ColorSensorWorker::stop);
 }
 
 void ColorSensor::onStopped()

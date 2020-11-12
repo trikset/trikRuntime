@@ -50,7 +50,7 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 
 	mWorkerThread.start();
 
-	QMetaObject::invokeMethod(mWorker.data(), "reinit");
+	reinit();
 }
 
 TrikWiFi::~TrikWiFi()
@@ -63,12 +63,12 @@ TrikWiFi::~TrikWiFi()
 
 void TrikWiFi::reinit()
 {
-	QMetaObject::invokeMethod(mWorker.data(), "reinit");
+	QMetaObject::invokeMethod(mWorker.data(), &TrikWiFiWorker::reinit);
 }
 
 void TrikWiFi::dispose()
 {
-	QMetaObject::invokeMethod(mWorker.data(), "dispose");
+	QMetaObject::invokeMethod(mWorker.data(), &TrikWiFiWorker::dispose);
 }
 
 SignalStrength TrikWiFi::signalStrength()
@@ -105,17 +105,17 @@ SignalStrength TrikWiFi::signalStrength()
 
 void TrikWiFi::connect(const QString &ssid)
 {
-	QMetaObject::invokeMethod(mWorker.data(), "connect", Q_ARG(QString, ssid));
+	QMetaObject::invokeMethod(mWorker.data(), [this, &ssid](){mWorker->connect(ssid);});
 }
 
 void TrikWiFi::disconnect()
 {
-	QMetaObject::invokeMethod(mWorker.data(), "disconnect");
+	QMetaObject::invokeMethod(mWorker.data(), &TrikWiFiWorker::disconnect);
 }
 
 void TrikWiFi::statusRequest()
 {
-	QMetaObject::invokeMethod(mWorker.data(), "statusRequest");
+	QMetaObject::invokeMethod(mWorker.data(), &TrikWiFiWorker::statusRequest);
 }
 
 Status TrikWiFi::statusResult() const
@@ -125,7 +125,7 @@ Status TrikWiFi::statusResult() const
 
 void TrikWiFi::scanRequest()
 {
-	QMetaObject::invokeMethod(mWorker.data(), "scanRequest");
+	QMetaObject::invokeMethod(mWorker.data(), &TrikWiFiWorker::scanRequest);
 }
 
 QList<ScanResult> TrikWiFi::scanResult() const
