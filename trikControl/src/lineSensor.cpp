@@ -36,7 +36,7 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 				, hardwareAbstraction));
 
 		mLineSensorWorker->moveToThread(&mWorkerThread);
-		connect(mLineSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
+		connect(mLineSensorWorker.data(), &LineSensorWorker::stopped, this, &LineSensor::onStopped);
 
 		QLOG_INFO() << "Starting LineSensor worker thread" << &mWorkerThread;
 
@@ -60,14 +60,15 @@ LineSensor::Status LineSensor::status() const
 void LineSensor::init(bool showOnDisplay)
 {
 	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mLineSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+		QMetaObject::invokeMethod(mLineSensorWorker.data()
+								  , [this, showOnDisplay](){mLineSensorWorker->init(showOnDisplay);});
 	}
 }
 
 void LineSensor::detect()
 {
 	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mLineSensorWorker.data(), "detect");
+		QMetaObject::invokeMethod(mLineSensorWorker.data(), &LineSensorWorker::detect);
 	} else {
 		QLOG_WARN() << "Calling 'detect' for sensor which is not ready";
 	}
@@ -88,7 +89,7 @@ void LineSensor::stop()
 {
 	if (mState.isReady()) {
 		/// @todo Correctly stop starting sensor.
-		QMetaObject::invokeMethod(mLineSensorWorker.data(), "stop");
+		QMetaObject::invokeMethod(mLineSensorWorker.data(), &LineSensorWorker::stop);
 	}
 }
 

@@ -33,7 +33,7 @@ public:
 	/// Constructor.
 	/// @param fileName - file name (with path, relative or absolute) of an event file.
 	/// @param thread - background thread where all socket events will be processed.
-	TrikEventFile(const QString &fileName, QThread &thread);
+	TrikEventFile(const QString &fileName);
 	~TrikEventFile() override {}
 
 	bool open() override;
@@ -55,9 +55,6 @@ private:
 
 	/// File name of an event file.
 	const QString mFileName;
-
-	/// Background thread where all socket events will be processed.
-	QThread &mThread;
 
 	/// Waiting loop that is used to retry opening attempt if event file does not exist yet (some drivers take some
 	/// time to init and create event file).

@@ -29,11 +29,9 @@
 
 using namespace trikHal::trik;
 
-TrikEventFile::TrikEventFile(const QString &fileName, QThread &thread)
+TrikEventFile::TrikEventFile(const QString &fileName)
 	: mFileName(fileName)
-	, mThread(thread)
 {
-	moveToThread(&thread);
 }
 
 bool TrikEventFile::open()
@@ -45,10 +43,11 @@ bool TrikEventFile::open()
 		// Give driver some time to create event file.
 		mInitWaitingLoop.reset(new QEventLoop());
 		QTimer checkTimer;
-		QObject::connect(&checkTimer, SIGNAL(timeout()), this, SLOT(tryOpenEventFile()));
+		QObject::connect(&checkTimer, &QTimer::timeout, this, &TrikEventFile::tryOpenEventFile);
 		checkTimer.start(100);
 
-		QTimer::singleShot(2000, mInitWaitingLoop.data(), SLOT(quit()));
+		QTimer::singleShot(2000, mInitWaitingLoop.data(), &QEventLoop::quit);
+
 
 		mInitWaitingLoop->exec();
 	}
@@ -59,9 +58,8 @@ bool TrikEventFile::open()
 	}
 
 	mSocketNotifier.reset(new QSocketNotifier(mEventFileDescriptor, QSocketNotifier::Read));
-	mSocketNotifier->moveToThread(&mThread);
 
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+	connect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikEventFile::readFile);
 	mSocketNotifier->setEnabled(true);
 	return true;
 }
@@ -86,7 +84,7 @@ bool TrikEventFile::close()
 	}
 
 	if (mSocketNotifier) {
-		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+		disconnect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikEventFile::readFile);
 		mSocketNotifier->setEnabled(false);
 	}
 
