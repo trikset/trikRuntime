@@ -11,12 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-include($$PWD/../global.pri)
-
 TEMPLATE = app
-
-CONFIG -= app_bundle
+include($$PWD/../global.pri)
+CONFIG += testcase testcase_no_bundle no_testcase_installs
 
 QT += widgets
 
