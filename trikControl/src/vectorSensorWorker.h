@@ -80,6 +80,9 @@ private:
 	/// Device state, shared between worker and proxy.
 	DeviceState &mState;
 
+	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+	const QString &mEventFileName;
+
 	/// Timer that reopens event file when there are no events for too long (1 second hardcoded).
 	QTimer mLastEventTimer;
 

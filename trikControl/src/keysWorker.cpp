@@ -24,10 +24,16 @@ static const int evKey = 1;
 
 KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile(keysPath))
+	: mHardwareAbstraction(hardwareAbstraction)
+	, mKeysPath(keysPath)
 	, mState(state)
 {
 	mState.start();
+}
+
+void KeysWorker::init()
+{
+	mEventFile.reset(mHardwareAbstraction.createEventFile(mKeysPath));
 	if (!mEventFile->open()) {
 		mState.fail();
 		return;
