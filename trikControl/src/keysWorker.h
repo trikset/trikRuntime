@@ -65,7 +65,7 @@ private:
 	QReadWriteLock mLock;
 
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
-	const QString &mKeysPath;
+	const QString mKeysPath;
 
 	/// Device state object, shared between worker and proxy.
 	DeviceState &mState;

@@ -27,6 +27,7 @@ EventDevice::EventDevice(const QString &eventFile, const trikHal::HardwareAbstra
 	mWorker.reset(new EventDeviceWorker(eventFile, mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
 		mWorker->moveToThread(&mWorkerThread);
+		connect(&mWorkerThread, &QThread::started, mWorker.data(), &EventDeviceWorker::init);
 		connect(mWorker.data(), &EventDeviceWorker::newEvent, this, &EventDevice::on);
 
 		QLOG_INFO() << "Starting generic event device" << eventFile << " worker thread" << &mWorkerThread;

@@ -81,7 +81,7 @@ private:
 	DeviceState &mState;
 
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
-	const QString &mEventFileName;
+	const QString mEventFileName;
 
 	/// Timer that reopens event file when there are no events for too long (1 second hardcoded).
 	QTimer mLastEventTimer;
