@@ -36,6 +36,7 @@ public:
 	EventDeviceWorker(const QString &deviceFilePath, DeviceState &state
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
+	/// Execute init() after worker thread started.
 	void init();
 
 signals:
