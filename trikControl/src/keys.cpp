@@ -34,9 +34,11 @@ Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbst
 {
 	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState, hardwareAbstraction));
 	if (!mState.isFailed()) {
-		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SIGNAL(buttonPressed(int, int)));
-		connect(mKeysWorker.data(), SIGNAL(buttonPressed(int, int)), this, SLOT(changeButtonState(int, int)));
 		mKeysWorker->moveToThread(&mWorkerThread);
+
+		connect(mKeysWorker.data(), &KeysWorker::buttonPressed, this, &Keys::buttonPressed);
+		connect(mKeysWorker.data(), &KeysWorker::buttonPressed, this, &Keys::changeButtonState);
+		connect(&mWorkerThread, &QThread::started, mKeysWorker.data(), &KeysWorker::init);
 
 		QLOG_INFO() << "Starting Keys worker thread" << &mWorkerThread;
 

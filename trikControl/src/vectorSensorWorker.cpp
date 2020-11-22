@@ -30,8 +30,9 @@ using namespace trikControl;
 
 VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &state
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mEventFile(hardwareAbstraction.createEventFile(eventFile))
-	, mState(state)
+	: mState(state)
+	, mHardwareAbstraction(hardwareAbstraction)
+	, mEventFileName(eventFile)
 	, mLastEventTimer(this)
 	, mTryReopenTimer(this)
 {
@@ -40,6 +41,8 @@ VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &st
 
 void VectorSensorWorker::init()
 {
+	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
+
 	mReading << 0 << 0 << 0 << 0 << 0 << 0;
 	mReadingUnsynced = mReading;
 

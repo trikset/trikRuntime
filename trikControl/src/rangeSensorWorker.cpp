@@ -30,6 +30,7 @@ RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &stat
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mEventFileName(eventFile)
 {
+	mState.start();
 }
 
 RangeSensorWorker::~RangeSensorWorker()
@@ -65,8 +66,6 @@ void RangeSensorWorker::stop()
 
 void RangeSensorWorker::init()
 {
-	mState.start();
-
 	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
 
 	connect(mEventFile.data(), &trikHal::EventFileInterface::newEvent, this, &RangeSensorWorker::onNewEvent);

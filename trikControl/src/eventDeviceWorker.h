@@ -36,6 +36,9 @@ public:
 	EventDeviceWorker(const QString &deviceFilePath, DeviceState &state
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
+	/// Execute init() after worker thread started.
+	void init();
+
 signals:
 	/// Emitted when there is new event in an event file.
 	/// @param event - type of the event.
@@ -51,6 +54,10 @@ private slots:
 private:
 	/// Underlying event file that watches actual event file from operating system.
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
+
+	DeviceState &mState;
+	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+	const QString mEventFileName;
 };
 
 }
