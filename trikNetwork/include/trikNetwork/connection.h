@@ -72,6 +72,8 @@ public:
 	/// Returns peer port of a connection, if it is open, or -1 if connection is not established yet.
 	int peerPort() const;
 
+	qintptr socketDescriptor() const;
+
 	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
 	/// thread.
 	/// @param socketDescriptor - native socket descriptor.

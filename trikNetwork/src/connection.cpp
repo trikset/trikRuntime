@@ -53,6 +53,11 @@ int Connection::peerPort() const
 	return isValid() ? mSocket->peerPort() : -1;
 }
 
+qintptr Connection::socketDescriptor() const
+{
+	return mSocket->socketDescriptor();
+}
+
 void Connection::init(const QHostAddress &ip, int port)
 {
 	resetSocket();
@@ -122,9 +127,9 @@ void Connection::onReadyRead()
 
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
-
+	qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << data;
 	if (mBuffer != "9:keepalive") {
-		qDebug() << "MYLOG LOG: Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
+		//qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 		QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 	}
 
@@ -210,18 +215,21 @@ void Connection::onDisconnect()
 
 void Connection::onError(QAbstractSocket::SocketError error)
 {
+	qDebug() << "Connection" << mSocket->socketDescriptor() << mSocket->peerAddress() << mSocket->peerPort() << "errored." << error;
 	QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored." << error;
 	doDisconnect();
 }
 
 void Connection::keepAlive()
 {
+	qDebug() << "Sedn keepalive";
 	send("keepalive");
 }
 
 void Connection::onHeartbeatTimeout()
 {
 	if(mSocket) {
+		qDebug() << "WE DISCONNECTED" << mSocket->peerAddress() << mSocket->peerPort();
 		/// We did not receive anything for some time, assuming connection is down and closing socket.
 		mSocket->disconnectFromHost();
 	}
@@ -235,6 +243,7 @@ void Connection::resetSocket()
 	mSocket->setSocketOption(QAbstractSocket::SocketOption::LowDelayOption, 1);
 	mSocket->setSocketOption(QAbstractSocket::SocketOption::TypeOfServiceOption, 64); // Immediate level
 
+	// Могла отъехать подписка
 	connect(mSocket.data(), &QTcpSocket::readyRead, this, &Connection::onReadyRead);
 	connect(mSocket.data(), &QTcpSocket::connected, this, &Connection::onConnect);
 	connect(mSocket.data(), &QTcpSocket::disconnected, this, &Connection::onDisconnect);
@@ -244,6 +253,7 @@ void Connection::resetSocket()
 
 void Connection::doDisconnect()
 {
+	qDebug() << "Connection" << mSocket->socketDescriptor() << mSocket->peerAddress() << mSocket->peerPort() << "disconnected.";
 	if (mDisconnectReported) {
 		return;
 	}
