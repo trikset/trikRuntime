@@ -66,6 +66,8 @@ void Connection::init(const QHostAddress &ip, int port)
 		doDisconnect();
 		return;
 	}
+
+	qDebug() << "MYLOG connection is inited to" << ip << ":" << port;
 	emit connected(this);
 }
 
@@ -73,7 +75,7 @@ void Connection::send(const QByteArray &data)
 {
 	if (!isValid() || mSocket->state() != QAbstractSocket::ConnectedState) {
 		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
-		qDebug() << "MYLOG ERROR: sending msg to" << peerAddress() << ":" << peerPort() << mSocket->error();
+		//qDebug() << "MYLOG ERROR: sending msg to" << peerAddress() << ":" << peerPort() << mSocket->error();
 		return;
 	}
 
@@ -107,6 +109,7 @@ void Connection::init(qintptr socketDescriptor)
 		return;
 	}
 
+	qDebug() << "MYLOG incoming connection is inited to" << mSocket->peerAddress() << ":" << mSocket->peerPort();
 	restartKeepalive();
 }
 

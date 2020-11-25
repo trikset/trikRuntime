@@ -125,11 +125,13 @@ void MailboxServer::connectTo(const QString &ip)
 Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 {
 	// Why isListening !!!
+	qDebug() << "trying connecting to" << ip << port << "MyData" << mMyIp << mMyPort << __PRETTY_FUNCTION__;
 	if (ip == mMyIp && port == mMyPort && isListening()) {
 		// do not connect to self
 		return nullptr;
 	}
 
+	qDebug() << "connecting to" << ip << port << __PRETTY_FUNCTION__;
 	const auto c = new MailboxConnection();
 	connectConnection(c);
 	connect(this, &MailboxServer::startedConnection, c, [=]() {
@@ -182,10 +184,10 @@ QHostAddress MailboxServer::determineMyIp()
 }
 
 // Возможно здесь ошибка потому что у студии тот же ip что и рантайма?
-Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
+Connection *MailboxServer::prepareConnection(const QHostAddress &ip, const int port)
 {
 	// First, trying to reuse existing connection.
-	const auto connectionObject = connection(ip);
+	const auto connectionObject = connection(ip, port);
 	if (connectionObject != nullptr) {
 		return connectionObject;
 	}
@@ -194,7 +196,7 @@ Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 	Endpoint targetEndpoint;
 	mKnownRobotsLock.lockForRead();
 	for (auto &&endpoint : mKnownRobots) {
-		if (endpoint.ip == ip) {
+		if (endpoint.ip == ip && endpoint.port == port) {
 			targetEndpoint = endpoint;
 			break;
 		}
@@ -203,7 +205,7 @@ Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 	mKnownRobotsLock.unlock();
 
 	if (targetEndpoint.ip.isNull()) {
-		QLOG_ERROR() << "Trying to connect to unknown robot, IP:" << ip;
+		QLOG_ERROR() << "Trying to connect to unknown robot, IP:" << ip << port;
 		return nullptr;
 	}
 
@@ -383,7 +385,7 @@ void MailboxServer::forEveryConnection(const std::function<void(Connection *)> &
 	mKnownRobotsLock.unlock();
 
 	for (const auto &endpoint : endpoints) {
-		const auto connection = prepareConnection(endpoint.ip);
+		const auto connection = prepareConnection(endpoint.ip, endpoint.port);
 		if (connection == nullptr) {
 			QLOG_ERROR() << "Connection to" << endpoint.ip << ":" << endpoint.port << "is dead at the moment, message"
 					<< "is not delivered. Will try to reestablish connection on next send.";
