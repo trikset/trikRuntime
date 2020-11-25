@@ -43,7 +43,7 @@ public:
 	virtual QHostAddress serverIp() const = 0;
 
 	/// Returns our IP address, or empty QHostAddress if we are not connected.
-	virtual QHostAddress myIp() const = 0;
+	virtual QString myIp() const = 0;
 
 	/// Clears message queue.
 	virtual void clearQueue() = 0;

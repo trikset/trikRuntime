@@ -160,6 +160,7 @@ void MailboxServer::connectConnection(Connection * connection)
 	connect(c, &MailboxConnection::newData, this, &MailboxServer::onNewData);
 }
 
+// Nado kakto vernut normal ip
 QHostAddress MailboxServer::determineMyIp()
 {
 	QList<QNetworkInterface> ifs {
@@ -171,6 +172,8 @@ QHostAddress MailboxServer::determineMyIp()
 	};
 	for (auto &&interface : ifs) {
 		if (interface.isValid()) {
+			//QHostAddress("127.0.0.1"), QHostAddress("::1"), QHostAddress("192.168.1.114"), QHostAddress("192.168.77.211")
+			qDebug() << "IMPO" << interface.allAddresses();
 			for (auto &&entry : interface.addressEntries()) {
 				const QHostAddress ip = entry.ip();
 				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
