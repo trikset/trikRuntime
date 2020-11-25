@@ -41,8 +41,8 @@ bool MailboxServer::isConnected()
 	bool result = false;
 	mKnownRobotsLock.lockForRead();
 	for (auto &&endpoint : mKnownRobots) {
-		Connection * const connection = this->connection(endpoint.ip, endpoint.port);
-		auto *mailboxConnection = qobject_cast<MailboxConnection *>(connection);
+		const auto connection = this->connection(endpoint.ip, endpoint.port);
+		auto mailboxConnection = qobject_cast<MailboxConnection *>(connection);
 		if (mailboxConnection && mailboxConnection->isConnected()) {
 			result = true;
 			break;
@@ -124,6 +124,7 @@ void MailboxServer::connectTo(const QString &ip)
 
 Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 {
+	// Why isListening !!!
 	if (ip == mMyIp && port == mMyPort && isListening()) {
 		// do not connect to self
 		return nullptr;
@@ -131,13 +132,14 @@ Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 
 	const auto c = new MailboxConnection();
 	connectConnection(c);
-	connect(this, &MailboxServer::startedConnection, c, [c, ip, port, this]() {
+	connect(this, &MailboxServer::startedConnection, c, [=]() {
 		c->connect(ip, port, mMyPort, mHullNumber);
 	});
 	startConnection(c);
 	return c;
 }
 
+// X\Chomu tak? Why connection instead of MailboxConnection is there some problems !!!
 Connection *MailboxServer::connectionFactory()
 {
 	auto connection = new MailboxConnection();
@@ -179,6 +181,7 @@ QHostAddress MailboxServer::determineMyIp()
 	return QHostAddress(); // Total fail
 }
 
+// Возможно здесь ошибка потому что у студии тот же ip что и рантайма?
 Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
 {
 	// First, trying to reuse existing connection.
@@ -233,6 +236,8 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 		mKnownRobotsLock.lockForRead();
 		for (const auto &endpoint : endpoints) {
 			QMetaObject::invokeMethod(c, [this, c, endpoint]() {
+				// This function can be slow (linear time), because QHash's internal data structure is optimized for
+				// fast lookup by key, not by value.
 				c->sendConnectionInfo(endpoint.ip, endpoint.port, mKnownRobots.key(endpoint));
 			});
 		}
@@ -241,6 +246,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 		QMetaObject::invokeMethod(c, [this, c]() { c->sendSelfInfo(mHullNumber); });
 		mKnownRobotsLock.unlock();
 	} else {
+		qDebug() << "MYLOG ERROR: Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
 		QLOG_ERROR() << "Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
 		return;
 	}

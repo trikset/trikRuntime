@@ -40,11 +40,14 @@ bool Connection::isValid() const
 	return mSocket && mSocket->isValid();
 }
 
+//  Returns peer address of a connection, if it is open
+//  But we checking on isValid condition where is mistake?
 QHostAddress Connection::peerAddress() const
 {
 	return isValid() ? mSocket->peerAddress() : QHostAddress();
 }
 
+// Same shit
 int Connection::peerPort() const
 {
 	return isValid() ? mSocket->peerPort() : -1;
@@ -58,7 +61,8 @@ void Connection::init(const QHostAddress &ip, int port)
 	mSocket->connectToHost(ip, port);
 
 	if (!mSocket->waitForConnected()) {
-		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
+		qDebug() << "MYLOG ERROR: Connection to" << ip << ":" << port << "failed with " << mSocket->error();
+		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed with " << mSocket->error();
 		doDisconnect();
 		return;
 	}
@@ -69,11 +73,13 @@ void Connection::send(const QByteArray &data)
 {
 	if (!isValid() || mSocket->state() != QAbstractSocket::ConnectedState) {
 		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
+		qDebug() << "MYLOG ERROR: sending msg to" << peerAddress() << ":" << peerPort() << mSocket->error();
 		return;
 	}
 
 	if (data != "keepalive") {
 		QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
+		qDebug() << "MYLOG Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 	}
 
 	if (mUseHeartbeat) {
@@ -87,6 +93,7 @@ void Connection::send(const QByteArray &data)
 
 	const qint64 sentBytes = mSocket->write(message);
 	if (sentBytes != message.size()) {
+		qDebug() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 		QLOG_ERROR() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 	}
 }
@@ -114,6 +121,7 @@ void Connection::onReadyRead()
 	mBuffer.append(data);
 
 	if (mBuffer != "9:keepalive") {
+		qDebug() << "MYLOG LOG: Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 		QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 	}
 
