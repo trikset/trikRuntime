@@ -48,7 +48,7 @@ public:
 
 	Q_INVOKABLE QHostAddress serverIp() const override;
 
-	Q_INVOKABLE QHostAddress myIp() const override;
+	Q_INVOKABLE QString myIp() const override;
 
 	Q_INVOKABLE bool isEnabled() override;
 

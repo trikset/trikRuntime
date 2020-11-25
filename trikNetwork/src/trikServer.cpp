@@ -25,9 +25,9 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	qRegisterMetaType<qintptr>("qintptr");
 	qRegisterMetaType<quint16>("quint16");
 	connect(this, &TrikServer::startedConnection, this, [this](Connection *c) {
-		const bool firstConnection = mConnections.isEmpty();
+		const bool isFirstConnection = mConnections.isEmpty();
 		mConnections.insert(c->thread(), c);
-		if (firstConnection) {
+		if (isFirstConnection) {
 			/// @todo: Emit "connected" signal only when socket is actually connected.
 			emit connected();
 		}
@@ -49,8 +49,10 @@ TrikServer::~TrikServer()
 void TrikServer::startServer(quint16 port)
 {
 	if (!listen(QHostAddress::Any, port)) {
+		qDebug() << "MYLOG ERROR: Can not start server on port " << port;
 		QLOG_ERROR() << "Can not start server on port " << port;
 	} else {
+		qDebug() << "MYLOG: Server on port" << port << "started";
 		QLOG_INFO() << "Server on port" << port << "started";
 	}
 }
@@ -69,6 +71,7 @@ int TrikServer::activeConnections() const
 
 void TrikServer::incomingConnection(qintptr socketDescriptor)
 {
+	qDebug() << "MYLOG: New connection, socket descriptor: " << socketDescriptor;
 	QLOG_INFO() << "New connection, socket descriptor: " << socketDescriptor;
 
 	Connection * const connectionWorker = mConnectionFactory();
@@ -101,6 +104,7 @@ Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 				return connection;
 			}
 		} else {
+			qDebug() << "MYLOG ERROR: Connection is not valid" << connection;
 			QLOG_INFO() << "Connection is not valid" << connection;
 		}
 	}
@@ -116,6 +120,7 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 				return connection;
 			}
 		} else {
+			qDebug() << "MYLOG ERROR: Connection is not valid" << connection;
 			QLOG_INFO() << "Connection is not valid" << connection;
 		}
 	}
@@ -125,7 +130,7 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 
 void TrikServer::onConnectionClosed(Connection *connection)
 {
-	QThread * const thread = mConnections.key(connection);
+	const auto thread = mConnections.key(connection);
 
 	mConnections.remove(thread);
 

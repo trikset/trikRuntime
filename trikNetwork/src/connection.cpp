@@ -40,11 +40,14 @@ bool Connection::isValid() const
 	return mSocket && mSocket->isValid();
 }
 
+//  Returns peer address of a connection, if it is open
+//  But we checking on isValid condition where is mistake?
 QHostAddress Connection::peerAddress() const
 {
 	return isValid() ? mSocket->peerAddress() : QHostAddress();
 }
 
+// Same shit
 int Connection::peerPort() const
 {
 	return isValid() ? mSocket->peerPort() : -1;
@@ -58,10 +61,13 @@ void Connection::init(const QHostAddress &ip, int port)
 	mSocket->connectToHost(ip, port);
 
 	if (!mSocket->waitForConnected()) {
-		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
+		qDebug() << "MYLOG ERROR: Connection to" << ip << ":" << port << "failed with " << mSocket->error();
+		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed with " << mSocket->error();
 		doDisconnect();
 		return;
 	}
+
+	qDebug() << "MYLOG connection is inited to" << ip << ":" << port;
 	emit connected(this);
 }
 
@@ -69,11 +75,13 @@ void Connection::send(const QByteArray &data)
 {
 	if (!isValid() || mSocket->state() != QAbstractSocket::ConnectedState) {
 		QLOG_ERROR() << "Trying to send through unconnected socket, message is not delivered";
+		//qDebug() << "MYLOG ERROR: sending msg to" << peerAddress() << ":" << peerPort() << mSocket->error();
 		return;
 	}
 
 	if (data != "keepalive") {
 		QLOG_INFO() << "Sending:" << data << " to" << peerAddress() << ":" << peerPort();
+		qDebug() << "MYLOG Sending:" << data << " to" << peerAddress() << ":" << peerPort();
 	}
 
 	if (mUseHeartbeat) {
@@ -87,6 +95,7 @@ void Connection::send(const QByteArray &data)
 
 	const qint64 sentBytes = mSocket->write(message);
 	if (sentBytes != message.size()) {
+		qDebug() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 		QLOG_ERROR() << "Failed to send message" << message << ", " << sentBytes << "sent.";
 	}
 }
@@ -100,6 +109,7 @@ void Connection::init(qintptr socketDescriptor)
 		return;
 	}
 
+	qDebug() << "MYLOG incoming connection is inited to" << mSocket->peerAddress() << ":" << mSocket->peerPort();
 	restartKeepalive();
 }
 
@@ -114,6 +124,7 @@ void Connection::onReadyRead()
 	mBuffer.append(data);
 
 	if (mBuffer != "9:keepalive") {
+		qDebug() << "MYLOG LOG: Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 		QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 	}
 
@@ -199,6 +210,7 @@ void Connection::onDisconnect()
 
 void Connection::onError(QAbstractSocket::SocketError error)
 {
+	qDebug() << "Connection" << mSocket->socketDescriptor() << mSocket->peerAddress() << mSocket->peerPort() << "errored." << error;
 	QLOG_ERROR() << "Connection" << mSocket->socketDescriptor() << "errored." << error;
 	doDisconnect();
 }
@@ -211,6 +223,7 @@ void Connection::keepAlive()
 void Connection::onHeartbeatTimeout()
 {
 	if(mSocket) {
+		qDebug() << "WE DISCONNECTED" << mSocket->peerAddress() << mSocket->peerPort();
 		/// We did not receive anything for some time, assuming connection is down and closing socket.
 		mSocket->disconnectFromHost();
 	}
@@ -239,6 +252,7 @@ void Connection::doDisconnect()
 
 	mDisconnectReported = true;
 
+	qDebug() << "Connection" << mSocket->socketDescriptor() << mSocket->peerAddress() << mSocket->peerPort() << "disconnected.";
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
 	emit disconnected(this);
