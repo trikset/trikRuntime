@@ -47,10 +47,15 @@ QHostAddress Connection::peerAddress() const
 	return isValid() ? mSocket->peerAddress() : QHostAddress();
 }
 
-// Same shit
 int Connection::peerPort() const
 {
 	return isValid() ? mSocket->peerPort() : -1;
+}
+
+qintptr Connection::socketDescriptor() const
+{
+	qDebug() << "	" << mSocket->socketDescriptor() << peerAddress() << ":" << peerPort() << mSocket->localAddress() << mSocket->localPort();
+	return mSocket->socketDescriptor();
 }
 
 void Connection::init(const QHostAddress &ip, int port)
@@ -58,6 +63,9 @@ void Connection::init(const QHostAddress &ip, int port)
 	resetSocket();
 	restartKeepalive();
 
+	qDebug() << "STARTING connection init to" << ip << port;
+	socketDescriptor();
+	mSocket->bind(mSocket->localAddress());
 	mSocket->connectToHost(ip, port);
 
 	if (!mSocket->waitForConnected()) {
@@ -67,7 +75,8 @@ void Connection::init(const QHostAddress &ip, int port)
 		return;
 	}
 
-	qDebug() << "MYLOG connection is inited to" << ip << ":" << port;
+	qDebug() << "Connection is inited to";
+	socketDescriptor();
 	emit connected(this);
 }
 
@@ -109,7 +118,8 @@ void Connection::init(qintptr socketDescriptor)
 		return;
 	}
 
-	qDebug() << "MYLOG incoming connection is inited to" << mSocket->peerAddress() << ":" << mSocket->peerPort();
+	qDebug() << "MYLOG incoming connection is inited to";
+	this->socketDescriptor();
 	restartKeepalive();
 }
 
@@ -122,9 +132,8 @@ void Connection::onReadyRead()
 
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
-
 	if (mBuffer != "9:keepalive") {
-		qDebug() << "MYLOG LOG: Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
+		qDebug() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 		QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 	}
 
@@ -246,13 +255,13 @@ void Connection::resetSocket()
 
 void Connection::doDisconnect()
 {
+	qDebug() << "Connection" << mSocket->socketDescriptor() << mSocket->peerAddress() << mSocket->peerPort() << "disconnected.";
 	if (mDisconnectReported) {
 		return;
 	}
 
 	mDisconnectReported = true;
 
-	qDebug() << "Connection" << mSocket->socketDescriptor() << mSocket->peerAddress() << mSocket->peerPort() << "disconnected.";
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
 	emit disconnected(this);

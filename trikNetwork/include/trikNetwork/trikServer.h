@@ -79,6 +79,8 @@ private slots:
 	void onConnectionClosed(trikNetwork::Connection *connection);
 
 private:
+	void printAllConnections() const;
+
 	/// Maps thread object to corresponding connection worker object, to be able to correctly stop and delete them all.
 	QHash<QThread *, Connection *> mConnections;  // Has ownership over threads and connections.
 
