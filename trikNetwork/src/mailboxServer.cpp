@@ -161,15 +161,18 @@ QHostAddress MailboxServer::determineMyIp()
 	QList<QNetworkInterface> ifs {
 				// TRIK wlan0
 				QNetworkInterface::interfaceFromName("wlan0")
+				// Desktop
+				, QNetworkInterface::interfaceFromName("wlp4s0")
+				, QNetworkInterface::interfaceFromName("enp5s0")
 				// Fallback to localhost
 				, QNetworkInterface::interfaceFromName("lo")
 				, QNetworkInterface::interfaceFromIndex(1)
 	};
 	for (auto &&interface : ifs) {
 		if (interface.isValid()) {
-			//QHostAddress("127.0.0.1"), QHostAddress("::1"), QHostAddress("192.168.1.114"), QHostAddress("192.168.77.211")
-			for (auto &&ip : interface.allAddresses()) {
-				if (ip.protocol() == QAbstractSocket::IPv4Protocol && ip != QHostAddress("127.0.0.1") && ip != QHostAddress("192.168.1.114")) {
+			for (auto &&entry : interface.addressEntries()) {
+				auto const ip = entry.ip();
+				if (ip.protocol() == QAbstractSocket::IPv4Protocol) {
 					return ip;
 				}
 			}
