@@ -36,7 +36,6 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 
 TrikServer::~TrikServer()
 {
-	qDebug() << "TrikServer DELETED ALERT";
 	for (QThread *thread : mConnections.keys()) {
 		thread->quit();
 		if (!thread->wait(1000)) {
@@ -50,10 +49,8 @@ TrikServer::~TrikServer()
 void TrikServer::startServer(quint16 port)
 {
 	if (!listen(QHostAddress::Any, port)) {
-		qDebug() << "MYLOG ERROR: Can not start server on port " << port;
 		QLOG_ERROR() << "Can not start server on port " << port;
 	} else {
-		qDebug() << "MYLOG: Server on port" << port << "started";
 		QLOG_INFO() << "Server on port" << port << "started";
 	}
 }
@@ -72,11 +69,7 @@ int TrikServer::activeConnections() const
 
 void TrikServer::incomingConnection(qintptr socketDescriptor)
 {
-	qDebug() << "New incoming connection, socket descriptor: " << socketDescriptor;
 	QLOG_INFO() << "New connection, socket descriptor: " << socketDescriptor;
-
-	qDebug() << "ALL CONNECTIONS" << __PRETTY_FUNCTION__;
-	printAllConnections();
 
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
@@ -86,8 +79,6 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
-	qDebug() << "ALL CONNECTIONS" << __PRETTY_FUNCTION__;
-	printAllConnections();
 	auto connectionThread = new QThread(this);
 
 	connectionWorker->moveToThread(connectionThread);
@@ -104,15 +95,12 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 
 Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 {
-	qDebug() << "ALL CONNECTIONS" << __PRETTY_FUNCTION__;
-	printAllConnections();
 	for (auto *connection : mConnections) {
 		if (connection->isValid()) {
 			if (connection->peerAddress() == ip && connection->peerPort() == port) {
 				return connection;
 			}
 		} else {
-			qDebug() << "MYLOG ERROR: Connection is not valid" << connection;
 			QLOG_INFO() << "Connection is not valid" << connection;
 		}
 	}
@@ -122,15 +110,12 @@ Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 
 Connection *TrikServer::connection(const QHostAddress &ip) const
 {
-	qDebug() << "ALL CONNECTIONS" << __PRETTY_FUNCTION__;
-	printAllConnections();
 	for (auto *connection : mConnections) {
 		if (connection->isValid()) {
 			if (connection->peerAddress() == ip) {
 				return connection;
 			}
 		} else {
-			qDebug() << "MYLOG ERROR: Connection is not valid" << connection;
 			QLOG_INFO() << "Connection is not valid" << connection;
 		}
 	}
@@ -141,24 +126,12 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 void TrikServer::onConnectionClosed(Connection *connection)
 {
 	const auto thread = mConnections.key(connection);
-	qDebug() << "mConnections.remove" << connection->peerAddress() << connection->peerPort() << thread;
 
 	mConnections.remove(thread);
 
-	qDebug() << "ALL CONNECTIONS" << __PRETTY_FUNCTION__;
-	printAllConnections();
-
 	thread->quit();
-
 
 	if (mConnections.isEmpty()) {
 		emit disconnected();
-	}
-}
-
-void TrikServer::printAllConnections() const
-{
-	for (auto *connection : mConnections) {
-		qDebug() << connection->socketDescriptor() << connection->peerPort() << connection->peerAddress();
 	}
 }

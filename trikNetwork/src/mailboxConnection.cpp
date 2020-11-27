@@ -68,7 +68,6 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
 			} else {
-				qDebug() << "MYLOG register: newConnection(" << peerAddress() << "," << peerPort() << "," << serverPort << "," << hullNumber << ")";
 				emit newConnection(peerAddress(), peerPort(), serverPort, hullNumber);
 			}
 		}
@@ -84,7 +83,6 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
 			} else {
-				qDebug() << "MYLOG connection: connectionInfo(" << QHostAddress(parsedString[1]) << "," << serverPort << "," << hullNumber << ")";
 				emit connectionInfo(QHostAddress(parsedString[1]), serverPort, hullNumber);
 			}
 		}
@@ -99,14 +97,12 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			if (!hullNumberOk) {
 				error(data);
 			} else {
-				qDebug() << "MYLOG self: connectionInfo(" << peerAddress() << "," << peerPort() << "," << hullNumber << ")";
 				emit connectionInfo(peerAddress(), peerPort(), hullNumber);
 			}
 		}
 	} else if (data.startsWith(dataCommand)) {
 		QString parsedString = data;
 		parsedString.remove(0, dataCommand.length());
-		qDebug() << "MYLOG data: newData(" << peerAddress() << "," << peerPort() << "," << parsedString.toUtf8() << ")";
 		emit newData(peerAddress(), peerPort(), parsedString.toUtf8());
 	}
 }
