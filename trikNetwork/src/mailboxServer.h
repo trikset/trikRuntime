@@ -101,7 +101,7 @@ private:
 
 	static QHostAddress determineMyIp();
 
-	Connection *prepareConnection(const QHostAddress &ip, const int port);
+	Connection *prepareConnection(const QHostAddress &ip);
 
 	void loadSettings();
 	void saveSettings();
