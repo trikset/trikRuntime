@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TRIK_GCCVERSION 9
 ENV TRIK_QTIFW_VERSION 4.0.0
 ENV TRIK_LIBUSB_TAG v1.0.23
-ENV TRIK_QTVERSION 5.12.9
+ENV TRIK_QTVERSION 5.12.10
 RUN bash -uc 'echo ${TRIK_PYTHON3_VERSION_MINOR}'
 # Build image with two huge layers, this is the 1st one.
 # Do not upgrade packages to match trikset/checker-runtime
@@ -13,6 +13,7 @@ RUN apt-get update \
     && apt-get install --no-install-recommends -y lsb-release software-properties-common \
     && add-apt-repository -y ppa:jonathonf/gcc \
     && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+    && add-apt-repository -y ppa:git-core/ppa \
     && add-apt-repository -y ppa:beineri/opt-qt-${TRIK_QTVERSION}-$(lsb_release -sc) \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -20,7 +21,7 @@ RUN apt-get update \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
-		zlib1g-dev xbitmaps xterm git-core ccache \
+		zlib1g-dev xbitmaps xterm git ccache \
 #qt
 		qt512-meta-minimal qt512multimedia qt512script qt512svg qt512tools \
 #for libusb build
