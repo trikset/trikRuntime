@@ -38,19 +38,7 @@ MailboxServer::MailboxServer(quint16 port)
 
 bool MailboxServer::isConnected()
 {
-	bool result = false;
-	mKnownRobotsLock.lockForRead();
-	for (auto &&endpoint : mKnownRobots) {
-		const auto connection = this->connection(endpoint.ip, endpoint.port);
-		auto mailboxConnection = qobject_cast<MailboxConnection *>(connection);
-		if (mailboxConnection && mailboxConnection->isConnected()) {
-			result = true;
-			break;
-		}
-	}
-
-	mKnownRobotsLock.unlock();
-	return result;
+	return activeConnections() > 0;
 }
 
 int MailboxServer::hullNumber() const
@@ -157,7 +145,9 @@ Connection *MailboxServer::connectionFactory()
 void MailboxServer::connectConnection(Connection * connection)
 {
 	auto c = qobject_cast<MailboxConnection *>(connection);
-	connect(c, &MailboxConnection::connectionInfo, this, &MailboxServer::onConnectionInfo);
+	connect(c, &MailboxConnection::connectionInfo, this, [this](const QHostAddress &ip, int port, int hullNumber){
+		onConnectionInfo(ip, port, hullNumber);
+	});
 	connect(c, &MailboxConnection::newData, this, &MailboxServer::onNewData);
 }
 
@@ -184,30 +174,18 @@ QHostAddress MailboxServer::determineMyIp()
 	return QHostAddress(); // Total fail
 }
 
-Connection *MailboxServer::prepareConnection(const QHostAddress &ip)
+Connection *MailboxServer::prepareConnection(Endpoint &endpoint)
 {
 	// First, trying to reuse existing connection.
-	const auto connectionObject = connection(ip);
-	if (connectionObject != nullptr) {
-		return connectionObject;
-	}
-	// Next, trying to create new connection to given IP. We need port, so checking if robot is known.
-	Endpoint targetEndpoint;
-	mKnownRobotsLock.lockForRead();
-	for (auto &&endpoint : mKnownRobots) {
-		if (endpoint.ip == ip) {
-			targetEndpoint = endpoint;
-			break;
+	if (endpoint.connectedPort != -1) {
+		const auto connectionObject = connection(endpoint.ip, endpoint.connectedPort);
+		if (connectionObject != nullptr) {
+			return connectionObject;
 		}
 	}
 
-	mKnownRobotsLock.unlock();
-
-	if (targetEndpoint.ip.isNull()) {
-		QLOG_ERROR() << "Trying to connect to unknown robot, IP:" << ip;
-		return nullptr;
-	}
-	return connectTo(targetEndpoint.ip, targetEndpoint.port);
+	endpoint.connectedPort = endpoint.serverPort;
+	return connectTo(endpoint.ip, endpoint.serverPort);
 }
 
 void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int serverPort, int hullNumber)
@@ -218,7 +196,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 	}
 
 	mKnownRobotsLock.lockForRead();
-	const auto knownRobot = mKnownRobots.contains(hullNumber, {ip, serverPort});
+	const auto knownRobot = mKnownRobots.contains(hullNumber, {ip, serverPort, clientPort});
 	const auto endpoints = mKnownRobots.values();
 	mKnownRobotsLock.unlock();
 
@@ -236,7 +214,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 		mKnownRobotsLock.lockForRead();
 		for (const auto &endpoint : endpoints) {
 			QMetaObject::invokeMethod(c, [this, c, endpoint]() {
-				c->sendConnectionInfo(endpoint.ip, endpoint.port, mKnownRobots.key(endpoint));
+				c->sendConnectionInfo(endpoint.ip, endpoint.serverPort, mKnownRobots.key(endpoint));
 			});
 		}
 
@@ -249,10 +227,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 	}
 
 	if (!knownRobot) {
-		mKnownRobotsLock.lockForWrite();
-
-		mKnownRobots.insert(hullNumber, {ip, serverPort});
-		mKnownRobotsLock.unlock();
+		onConnectionInfo(ip, serverPort, hullNumber, clientPort);
 	}
 }
 
@@ -271,16 +246,16 @@ void MailboxServer::send(const QString &message)
 	send(-1, message);
 }
 
-void MailboxServer::onConnectionInfo(const QHostAddress &ip, int port, int hullNumber)
+void MailboxServer::onConnectionInfo(const QHostAddress &ip, int serverPort, int hullNumber, int connectedPort)
 {
-	if (ip == mMyIp && port == mMyPort) {
+	if (ip == mMyIp && serverPort == mMyPort) {
 		return;
 	}
 
 	QVector<Endpoint> toDelete;
 	mKnownRobotsLock.lockForRead();
 	for (auto &&endpoint : mKnownRobots) {
-		if (endpoint == Endpoint{ip, port}) {
+		if (endpoint.ip == ip && endpoint.serverPort == serverPort) {
 			toDelete << endpoint;
 		}
 	}
@@ -295,7 +270,7 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int port, int hullN
 		}
 	}
 
-	mKnownRobots.insert(hullNumber, {ip, port});
+	mKnownRobots.insert(hullNumber, {ip, serverPort, connectedPort});
 	mKnownRobotsLock.unlock();
 }
 
@@ -305,7 +280,7 @@ void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray
 	int senderHullNumber = -1;
 	mKnownRobotsLock.lockForRead();
 	for (const auto &endpoint : mKnownRobots) {
-		if (endpoint.ip == ip) {
+		if (endpoint.ip == ip && endpoint.connectedPort == port) {
 			senderHullNumber = mKnownRobots.key(endpoint);
 		}
 	}
@@ -381,14 +356,13 @@ void MailboxServer::forEveryConnection(const std::function<void(Connection *)> &
 {
 	mKnownRobotsLock.lockForRead();
 
-	const auto endpoints = hullNumber == -1 ? mKnownRobots.values() : mKnownRobots.values(hullNumber);
+	auto endpoints = hullNumber == -1 ? mKnownRobots.values() : mKnownRobots.values(hullNumber);
 	mKnownRobotsLock.unlock();
 
-	for (const auto &endpoint : endpoints) {
-		// We prepare only by IP because there was a check by a hull number.
-		const auto connection = prepareConnection(endpoint.ip);
+	for (auto &endpoint : endpoints) {
+		const auto connection = prepareConnection(endpoint);
 		if (connection == nullptr) {
-			QLOG_ERROR() << "Connection to" << endpoint.ip << ":" << endpoint.port << "is dead at the moment, message"
+			QLOG_ERROR() << "Connection to" << endpoint << "is dead at the moment, message"
 					<< "is not delivered. Will try to reestablish connection on next send.";
 		} else {
 			if (connection->isConnected()) {

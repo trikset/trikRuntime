@@ -88,8 +88,8 @@ signals:
 	void newMessage(int senderHullNumber, const QString &message);
 
 private slots:
-	void onNewConnection(const QHostAddress &ip, int clientPort, int serverPort, int hullNumber);
-	void onConnectionInfo(const QHostAddress &ip, int port, int hullNumber);
+	void onNewConnection(const QHostAddress &ip, int connectedPort, int serverPort, int hullNumber);
+	void onConnectionInfo(const QHostAddress &ip, int serverPort, int hullNumber, int connectedPort = -1);
 	void onNewData(const QHostAddress &ip, int port, const QByteArray &data);
 
 private:
@@ -101,7 +101,13 @@ private:
 
 	static QHostAddress determineMyIp();
 
-	Connection *prepareConnection(const QHostAddress &ip);
+	struct Endpoint {
+		QHostAddress ip;
+		int serverPort;
+		int connectedPort;
+	};
+
+	Connection *prepareConnection(Endpoint &endpoint);
 
 	void loadSettings();
 	void saveSettings();
@@ -116,14 +122,10 @@ private:
 	QHostAddress mServerIp;
 	int mServerPort{};
 
-	struct Endpoint {
-		QHostAddress ip;
-		int port;
-	};
 
 	inline uint qHash(const Endpoint &key)
 	{
-		return ::qHash(key.ip.toString()) ^ static_cast<uint>(key.port);
+		return ::qHash(key.ip.toString()) ^ static_cast<uint>(key.serverPort);
 	}
 
 	friend bool operator ==(const MailboxServer::Endpoint &left, const MailboxServer::Endpoint &right);
@@ -140,12 +142,12 @@ private:
 
 inline bool operator ==(const MailboxServer::Endpoint &left, const MailboxServer::Endpoint &right)
 {
-	return left.ip == right.ip && left.port == right.port;
+	return left.ip == right.ip && left.serverPort == right.serverPort;
 }
 
 inline QDebug operator <<(QDebug dbg, const MailboxServer::Endpoint &endpoint)
 {
-	dbg.nospace() << endpoint.ip << ":" << endpoint.port;
+	dbg.nospace() << endpoint.ip << ":" << endpoint.serverPort << ":" << endpoint.connectedPort;
 	return dbg.space();
 }
 
