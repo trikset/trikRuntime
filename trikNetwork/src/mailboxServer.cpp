@@ -129,8 +129,7 @@ Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 		return nullptr;
 	}
 
-	const auto connectionObject = connection(ip, port);
-	if (connectionObject != nullptr) {
+	if (auto connectionObject = connection(ip, port)) {
 		return connectionObject;
 	}
 
