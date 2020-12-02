@@ -58,10 +58,11 @@ void Connection::init(const QHostAddress &ip, int port)
 	mSocket->connectToHost(ip, port);
 
 	if (!mSocket->waitForConnected()) {
-		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed";
+		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed with " << mSocket->error();
 		doDisconnect();
 		return;
 	}
+
 	emit connected(this);
 }
 
@@ -112,7 +113,6 @@ void Connection::onReadyRead()
 
 	const QByteArray &data = mSocket->readAll();
 	mBuffer.append(data);
-
 	if (mBuffer != "9:keepalive") {
 		QLOG_INFO() << "Received from" << peerAddress() << ":" << peerPort() << ":" << mBuffer;
 	}

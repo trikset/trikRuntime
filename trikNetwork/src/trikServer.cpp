@@ -25,9 +25,9 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	qRegisterMetaType<qintptr>("qintptr");
 	qRegisterMetaType<quint16>("quint16");
 	connect(this, &TrikServer::startedConnection, this, [this](Connection *c) {
-		const bool firstConnection = mConnections.isEmpty();
+		const bool isFirstConnection = mConnections.isEmpty();
 		mConnections.insert(c->thread(), c);
-		if (firstConnection) {
+		if (isFirstConnection) {
 			/// @todo: Emit "connected" signal only when socket is actually connected.
 			emit connected();
 		}
@@ -48,7 +48,7 @@ TrikServer::~TrikServer()
 
 void TrikServer::startServer(quint16 port)
 {
-	if (!listen(QHostAddress::Any, port)) {
+	if (!listen(QHostAddress::AnyIPv4, port)) {
 		QLOG_ERROR() << "Can not start server on port " << port;
 	} else {
 		QLOG_INFO() << "Server on port" << port << "started";
@@ -125,7 +125,7 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 
 void TrikServer::onConnectionClosed(Connection *connection)
 {
-	QThread * const thread = mConnections.key(connection);
+	const auto thread = mConnections.key(connection);
 
 	mConnections.remove(thread);
 

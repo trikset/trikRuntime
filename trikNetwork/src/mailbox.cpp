@@ -90,11 +90,11 @@ QHostAddress Mailbox::serverIp() const
 	return res;
 }
 
-QHostAddress Mailbox::myIp() const
+QString Mailbox::myIp() const
 {
 	QHostAddress res;
 	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->myIp();}, Qt::BlockingQueuedConnection);
-	return res;
+	return res.toString();
 }
 
 void Mailbox::clearQueue()

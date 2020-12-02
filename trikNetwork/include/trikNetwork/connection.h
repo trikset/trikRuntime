@@ -66,10 +66,10 @@ public:
 	/// are added/deleted to mConnections in TrikServer, but actually they are not added/deleted.
 	bool isValid() const;
 
-	/// Returns peer address of a connection, if it is open, or empty QHostAddress if connection is not established yet.
+	/// Returns peer address of a connection, if it is valid, or empty QHostAddress if connection is not established yet.
 	QHostAddress peerAddress() const;
 
-	/// Returns peer port of a connection, if it is open, or -1 if connection is not established yet.
+	/// Returns peer port of a connection, if it is valid, or -1 if connection is not established yet.
 	int peerPort() const;
 
 	/// Creates socket and initializes incoming connection, shall be called when Connection is already in its own
