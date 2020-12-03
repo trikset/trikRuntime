@@ -94,7 +94,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 	case evAbs:
 		switch (code) {
 		case absDistance:
-			mDistance = value;
+			mDistance = medianDistance(value);
 			break;
 		case absMisc:
 			mRawDistance = value;
@@ -110,6 +110,23 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 	default:
 		QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;
 	}
+}
+
+int RangeSensorWorker::medianDistance(int c)
+{
+	int a = mReadData1;
+	int b = mReadData2;
+	mReadData1 = b;
+	mReadData2 = c;
+
+	if (a > b)
+		std::swap(a, b);
+	if (b > c)
+		std::swap(b, c);
+	if (a > b)
+		std::swap(a, b);
+
+	return b < 0 ? c : b;
 }
 
 int RangeSensorWorker::read()

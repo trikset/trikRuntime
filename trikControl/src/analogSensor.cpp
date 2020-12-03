@@ -63,7 +63,7 @@ int AnalogSensor::read()
 		return result;
 	}
 
-	return mK * raw + mB;
+	return getMedianData(mK * raw + mB);
 }
 
 int AnalogSensor::readRawData()
@@ -77,6 +77,23 @@ int AnalogSensor::readRawData()
 	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
 
 	return mCommunicator.read(command);
+}
+
+int AnalogSensor::getMedianData(int c)
+{
+	int a = mReadData1;
+	int b = mReadData2;
+	mReadData1 = b;
+	mReadData2 = c;
+
+	if (a > b)
+		std::swap(a, b);
+	if (b > c)
+		std::swap(b, c);
+	if (a > b)
+		std::swap(a, b);
+
+	return b < 0 ? c : b;
 }
 
 void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)
