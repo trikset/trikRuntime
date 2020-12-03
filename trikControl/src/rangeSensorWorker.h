@@ -18,6 +18,7 @@
 #include <QtCore/QString>
 #include <QtCore/QScopedPointer>
 #include <QReadWriteLock>
+#include <QVector>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikKernel/timeVal.h>
@@ -62,10 +63,13 @@ private slots:
 	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 private:
+	int medianDistance(int newDistance);
+
 	/// Event file of a sensor driver.
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 
 	int mDistance = -1;
+	QVector<int> mPreviousDistance;
 
 	int mRawDistance = -1;
 

@@ -17,6 +17,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
+#include <QVector>
+
 #include "sensorInterface.h"
 #include "deviceState.h"
 
@@ -63,6 +65,8 @@ private:
 		, analog
 	};
 
+	int getMedianData(int newData);
+
 	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
@@ -96,6 +100,8 @@ private:
 
 	/// State of a device.
 	DeviceState mState;
+
+	QVector<int> mPreviousData;
 };
 
 }
