@@ -69,7 +69,9 @@ private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 
 	int mDistance = -1;
-	QVector<int> mPreviousDistance;
+
+	int mReadData1 = -1;
+	int mReadData2 = -1;
 
 	int mRawDistance = -1;
 

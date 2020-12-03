@@ -81,15 +81,15 @@ int AnalogSensor::readRawData()
 
 int AnalogSensor::getMedianData(int c)
 {
-	if (mPreviousData.size() < 2) {
-		mPreviousData.push_back(c);
+	if (mReadData1 + mReadData2 < 0) {
+		mReadData2 = c;
 		return c;
 	}
 
-	int a = mPreviousData[0];
-	int b = mPreviousData[1];
-	mPreviousData[0] = b;
-	mPreviousData[1] = c;
+	int a = mReadData1;
+	int b = mReadData2;
+	mReadData1 = b;
+	mReadData2 = c;
 
 	if (a > b)
 		std::swap(a, b);

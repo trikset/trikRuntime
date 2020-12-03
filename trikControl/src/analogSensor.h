@@ -101,7 +101,8 @@ private:
 	/// State of a device.
 	DeviceState mState;
 
-	QVector<int> mPreviousData;
+	int mReadData1 = -1;
+	int mReadData2 = -1;
 };
 
 }

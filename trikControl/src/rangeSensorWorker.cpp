@@ -114,15 +114,15 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 
 int RangeSensorWorker::medianDistance(int c)
 {
-	if (mPreviousDistance.size() < 2) {
-		mPreviousDistance.push_back(c);
+	if (mReadData1 + mReadData2 < 0) {
+		mReadData2 = c;
 		return c;
 	}
 
-	int a = mPreviousDistance[0];
-	int b = mPreviousDistance[1];
-	mPreviousDistance[0] = b;
-	mPreviousDistance[1] = c;
+	int a = mReadData1;
+	int b = mReadData2;
+	mReadData1 = b;
+	mReadData2 = c;
 
 	if (a > b)
 		std::swap(a, b);
