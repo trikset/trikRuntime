@@ -55,8 +55,17 @@ private:
 	/// Timer that renews battery status once in a while.
 	QTimer mRenewTimer;
 
+	/// Timer that sets warning beeping duration.
+	QTimer mBeepingTimer;
+
+	/// Timer that renews battery beep alert.
+	QTimer mBeepTimer;
+
 	/// Battery status renewal interval.
-	const int mRenewInterval = 60 * 1000;
+	const int mRenewInterval = 30 * 1000;
+
+	/// Low voltage warning beeping duration.
+	const int mBeepingInterval = 10 * 1000;
 
 	/// Currently selected low power threshold level on a board.
 	PowerLevel::Level mCurrentLevel;
