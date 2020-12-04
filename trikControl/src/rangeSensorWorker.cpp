@@ -114,11 +114,6 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 
 int RangeSensorWorker::medianDistance(int c)
 {
-	if (mReadData1 + mReadData2 < 0) {
-		mReadData2 = c;
-		return c;
-	}
-
 	int a = mReadData1;
 	int b = mReadData2;
 	mReadData1 = b;
