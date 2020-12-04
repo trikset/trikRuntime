@@ -18,7 +18,6 @@
 #include <QtCore/QString>
 #include <QtCore/QScopedPointer>
 #include <QReadWriteLock>
-#include <QVector>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikKernel/timeVal.h>

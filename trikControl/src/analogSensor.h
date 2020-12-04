@@ -17,8 +17,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
-#include <QVector>
-
 #include "sensorInterface.h"
 #include "deviceState.h"
 
