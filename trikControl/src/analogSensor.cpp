@@ -93,7 +93,7 @@ int AnalogSensor::getMedianData(int c)
 	if (a > b)
 		std::swap(a, b);
 
-	return b;
+	return b < 0 ? c : b;
 }
 
 void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)

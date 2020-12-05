@@ -126,7 +126,7 @@ int RangeSensorWorker::medianDistance(int c)
 	if (a > b)
 		std::swap(a, b);
 
-	return b;
+	return b < 0 ? c : b;
 }
 
 int RangeSensorWorker::read()
