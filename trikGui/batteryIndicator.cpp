@@ -24,12 +24,20 @@ BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *
 	, mBrick(brick)
 	, mCurrentLevel(PowerLevel::currentLevel())
 {
-	renew();
+	mRenewTimer.setSingleShot(true);
+	connect(&mRenewTimer, &QTimer::timeout, this, &BatteryIndicator::renew);
 
-	mRenewTimer.setInterval(mRenewInterval);
-	mRenewTimer.setSingleShot(false);
-	connect(&mRenewTimer, SIGNAL(timeout()), this, SLOT(renew()));
-	mRenewTimer.start();
+	mBeepingTimer.setSingleShot(true);
+	connect(&mBeepingTimer, &QTimer::timeout, this, [this](){
+		mBeepTimer.stop();
+		mRenewTimer.start(mRenewInterval);
+	});
+
+	connect(&mBeepTimer, &QTimer::timeout, this, [this](){
+		mBrick.playTone(1500, 100);
+	});
+
+	renew();
 }
 
 void BatteryIndicator::renew()
@@ -39,10 +47,11 @@ void BatteryIndicator::renew()
 		if (voltage > mSanityThreshold && voltage < shutdownThreshold()) {
 			QProcess::startDetached("/bin/sh", {"-c", "halt"});
 		} else if (voltage > mSanityThreshold && voltage < warningThreshold()) {
-			mBrick.playTone(800, mRenewInterval / 2);
+			mBeepTimer.start(500);
+			mBeepingTimer.start(mBeepingInterval);
 		}
-
 		setText(QString::number(voltage, 'f', 1) + " V");
+		mRenewTimer.start(mRenewInterval);
 	}
 }
 
