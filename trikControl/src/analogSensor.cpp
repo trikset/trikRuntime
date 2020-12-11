@@ -32,9 +32,9 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
-	mIsCountingMedian = configurer.attributeByPort(port, "countMedian") == "true";
-	mReadData1 = mMinValue;
-	mReadData2 = mMaxValue;
+	if (configurer.attributeByPort(port, "filter") == "median3") {
+		mDataFilter.reset(new DataFilter(mMinValue, mMaxValue, "median3"));
+	}
 
 	// We use linear subjection to normalize common analog sensor values:
 	// normalizedValue = k * rawValue + b
@@ -61,13 +61,16 @@ AnalogSensor::Status AnalogSensor::status() const
 int AnalogSensor::read()
 {
 	const auto raw = readRawData();
+	auto result = raw;
 	if (mIRType == Type::sharpGP2) {
 		const auto quotient = raw + mL;
-		const auto result = quotient != 0 ? mS / quotient + mN : 0;
-		return result;
+		result = quotient != 0 ? mS / quotient + mN : 0;
+	}
+	else {
+		result = mK * raw + mB;
 	}
 
-	return getMedianData(mK * raw + mB);
+	return mDataFilter.isNull() ? result : mDataFilter->applyFilter(result);
 }
 
 int AnalogSensor::readRawData()
@@ -81,26 +84,6 @@ int AnalogSensor::readRawData()
 	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
 
 	return mCommunicator.read(command);
-}
-
-int AnalogSensor::getMedianData(int c)
-{
-	if (!mIsCountingMedian)
-		return c;
-
-	int a = mReadData1;
-	int b = mReadData2;
-	mReadData1 = b;
-	mReadData2 = c;
-
-	if (a > b)
-		std::swap(a, b);
-	if (b > c)
-		std::swap(b, c);
-	if (a > b)
-		std::swap(a, b);
-
-	return b;
 }
 
 void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)

@@ -25,22 +25,16 @@ static const int absMisc = 0x28;
 using namespace trikControl;
 
 RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+		, int minValue, int maxValue, const QString &filterName)
 	: mState(state)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mEventFileName(eventFile)
+	, mMinValue(minValue)
+	, mMaxValue(maxValue)
+	, mFilterName(filterName)
 {
 	mState.start();
-}
-
-RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
-									 , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-									 , const int &minValue, const int &maxValue, const bool &isCountingMedian)
-	: RangeSensorWorker(eventFile, state, hardwareAbstraction)
-{
-	mReadData1 = minValue;
-	mReadData2 = maxValue;
-	mIsCountingMedian = isCountingMedian;
 }
 
 RangeSensorWorker::~RangeSensorWorker()
@@ -91,6 +85,10 @@ void RangeSensorWorker::init()
 		// Sensor launch failed for some reason, assuming permanent failure.
 		mState.fail();
 	}
+
+	if (mFilterName == "median3") {
+		mDataFilter.reset(new DataFilter(mMinValue, mMaxValue, "median3"));
+	}
 }
 
 void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
@@ -104,7 +102,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 	case evAbs:
 		switch (code) {
 		case absDistance:
-			mDistance = medianDistance(value);
+			mDistance = mDataFilter.isNull() ? value : mDataFilter->applyFilter(value);
 			break;
 		case absMisc:
 			mRawDistance = value;
@@ -120,26 +118,6 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 	default:
 		QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;
 	}
-}
-
-int RangeSensorWorker::medianDistance(int c)
-{
-	if (!mIsCountingMedian)
-		return c;
-
-	int a = mReadData1;
-	int b = mReadData2;
-	mReadData1 = b;
-	mReadData2 = c;
-
-	if (a > b)
-		std::swap(a, b);
-	if (b > c)
-		std::swap(b, c);
-	if (a > b)
-		std::swap(a, b);
-
-	return b;
 }
 
 int RangeSensorWorker::read()

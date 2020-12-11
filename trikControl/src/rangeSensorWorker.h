@@ -22,6 +22,7 @@
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikKernel/timeVal.h>
 
+#include "datafilter.h"
 #include "deviceState.h"
 
 namespace trikControl {
@@ -36,11 +37,8 @@ public:
 	/// Constructor.
 	/// @param eventFile - event file for this sensor.
 	RangeSensorWorker(const QString &eventFile, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-
-	RangeSensorWorker(const QString &eventFile, DeviceState &state
-					  , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-					  , const int &minValue, const int &maxValue, const bool &isCountingMedian);
+			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+			, int minValue, int maxValue, const QString &filterName);
 
 	~RangeSensorWorker() override;
 
@@ -66,16 +64,10 @@ private slots:
 	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
 private:
-	int medianDistance(int newDistance);
-
 	/// Event file of a sensor driver.
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 
 	int mDistance {-1};
-
-	bool mIsCountingMedian {false};
-	int mReadData1 {-1};
-	int mReadData2 {-1};
 
 	int mRawDistance {-1};
 
@@ -85,6 +77,11 @@ private:
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 
 	const QString mEventFileName;
+
+	int mMinValue;
+	int mMaxValue;
+	QString mFilterName;
+	QScopedPointer <DataFilter> mDataFilter {nullptr};
 
 	QReadWriteLock mDistanceLock;
 };

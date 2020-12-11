@@ -19,6 +19,7 @@
 
 #include "sensorInterface.h"
 #include "deviceState.h"
+#include "datafilter.h"
 
 namespace trikKernel {
 class Configurer;
@@ -63,8 +64,6 @@ private:
 		, analog
 	};
 
-	int getMedianData(int newData);
-
 	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
@@ -99,9 +98,7 @@ private:
 	/// State of a device.
 	DeviceState mState;
 
-	bool mIsCountingMedian {false};
-	int mReadData1 {-1};
-	int mReadData2 {-1};
+	QScopedPointer <DataFilter> mDataFilter {nullptr};
 };
 
 }
