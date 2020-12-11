@@ -45,9 +45,9 @@ equal to its class name.
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
-		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
+		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" filter="" />
 		<encoder invert="false" />
-		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
+		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
 		<digitalSensor />
 		<fifo />
 		<accelerometer deviceFile="/dev/input/by-path/platform-i2c_davinci.2-event" optional="true" />
