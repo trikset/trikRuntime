@@ -33,6 +33,16 @@ RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &stat
 	mState.start();
 }
 
+RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
+									 , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+									 , const int &minValue, const int &maxValue, const bool &isCountingMedian)
+	: RangeSensorWorker(eventFile, state, hardwareAbstraction)
+{
+	mReadData1 = minValue;
+	mReadData2 = maxValue;
+	mIsCountingMedian = isCountingMedian;
+}
+
 RangeSensorWorker::~RangeSensorWorker()
 {
 	if (mState.isReady()) {
@@ -114,6 +124,9 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 
 int RangeSensorWorker::medianDistance(int c)
 {
+	if (!mIsCountingMedian)
+		return c;
+
 	int a = mReadData1;
 	int b = mReadData2;
 	mReadData1 = b;
@@ -126,7 +139,7 @@ int RangeSensorWorker::medianDistance(int c)
 	if (a > b)
 		std::swap(a, b);
 
-	return b < 0 ? c : b;
+	return b;
 }
 
 int RangeSensorWorker::read()

@@ -38,6 +38,10 @@ public:
 	RangeSensorWorker(const QString &eventFile, DeviceState &state
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
+	RangeSensorWorker(const QString &eventFile, DeviceState &state
+					  , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+					  , const int &minValue, const int &maxValue, const bool &isCountingMedian);
+
 	~RangeSensorWorker() override;
 
 signals:
@@ -69,6 +73,7 @@ private:
 
 	int mDistance {-1};
 
+	bool mIsCountingMedian {false};
 	int mReadData1 {-1};
 	int mReadData2 {-1};
 

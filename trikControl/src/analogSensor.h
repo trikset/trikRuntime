@@ -99,6 +99,7 @@ private:
 	/// State of a device.
 	DeviceState mState;
 
+	bool mIsCountingMedian {false};
 	int mReadData1 {-1};
 	int mReadData2 {-1};
 };

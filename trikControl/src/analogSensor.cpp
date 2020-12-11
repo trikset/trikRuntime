@@ -32,6 +32,10 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
+	mIsCountingMedian = configurer.attributeByPort(port, "countMedian") == "true";
+	mReadData1 = mMinValue;
+	mReadData2 = mMaxValue;
+
 	// We use linear subjection to normalize common analog sensor values:
 	// normalizedValue = k * rawValue + b
 	// To calculate k and b we need two raw values and two corresponding them normalized values.
@@ -81,6 +85,9 @@ int AnalogSensor::readRawData()
 
 int AnalogSensor::getMedianData(int c)
 {
+	if (!mIsCountingMedian)
+		return c;
+
 	int a = mReadData1;
 	int b = mReadData2;
 	mReadData1 = b;
@@ -93,7 +100,7 @@ int AnalogSensor::getMedianData(int c)
 	if (a > b)
 		std::swap(a, b);
 
-	return b < 0 ? c : b;
+	return b;
 }
 
 void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)

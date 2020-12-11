@@ -42,8 +42,10 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
+	bool isMedianCounting = configurer.attributeByPort(port, "countMedian") == "true";
+
 	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState
-			, hardwareAbstraction));
+			, hardwareAbstraction, mMinValue, mMaxValue, isMedianCounting));
 
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);
