@@ -126,18 +126,18 @@ equal to its class name.
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
 		<powerMotor port="M3" i2cCommandNumber="0x16" />
 		<powerMotor port="M4" i2cCommandNumber="0x17" />
-		<analogSensor port="A1" i2cCommandNumber="0x25" countMedian="false"/>
-		<analogSensor port="A2" i2cCommandNumber="0x24" countMedian="false"/>
-		<analogSensor port="A3" i2cCommandNumber="0x23" countMedian="false"/>
-		<analogSensor port="A4" i2cCommandNumber="0x22" countMedian="false"/>
-		<analogSensor port="A5" i2cCommandNumber="0x21" countMedian="false"/>
-		<analogSensor port="A6" i2cCommandNumber="0x20" countMedian="false"/>
+		<analogSensor port="A1" i2cCommandNumber="0x25" />
+		<analogSensor port="A2" i2cCommandNumber="0x24" />
+		<analogSensor port="A3" i2cCommandNumber="0x23" />
+		<analogSensor port="A4" i2cCommandNumber="0x22" />
+		<analogSensor port="A5" i2cCommandNumber="0x21" />
+		<analogSensor port="A6" i2cCommandNumber="0x20" />
 		<encoder port="E1" i2cCommandNumber="0x30" />
 		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
 		<encoder port="E3" i2cCommandNumber="0x33" />
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
-		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" countMedian="true"/>
-		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" countMedian="true"/>
+		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
+		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
 		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
 		<lineSensor port="video2" />
