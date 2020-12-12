@@ -38,6 +38,7 @@ Fifo::Fifo(const QString &fileName, const trikHal::HardwareAbstractionInterface 
 	connect(&mWorkerThread, &QThread::started, mFifoWorker, &FifoWorker::init);
 	connect(&mWorkerThread, &QThread::finished, mFifoWorker, &QObject::deleteLater);
 
+	mWorkerThread.setObjectName(mFifoWorker->metaObject()->className());
 	mWorkerThread.start();
 	mFifoWorker->waitUntilInited();
 }

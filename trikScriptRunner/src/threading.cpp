@@ -100,6 +100,8 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 	QEventLoop wait;
 	connect(thread, &QThread::started, &wait, &QEventLoop::quit);
+
+	thread->setObjectName(engine->metaObject()->className());
 	thread->start();
 	wait.exec();
 	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;

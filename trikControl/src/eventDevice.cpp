@@ -32,6 +32,7 @@ EventDevice::EventDevice(const QString &eventFile, const trikHal::HardwareAbstra
 
 		QLOG_INFO() << "Starting generic event device" << eventFile << " worker thread" << &mWorkerThread;
 
+		mWorkerThread.setObjectName(mWorker->metaObject()->className());
 		mWorkerThread.start();
 		mState.ready();
 	}

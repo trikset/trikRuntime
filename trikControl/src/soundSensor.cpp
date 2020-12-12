@@ -35,10 +35,11 @@ SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &conf
 
 		mSoundSensorWorker->moveToThread(&mWorkerThread);
 
-		connect(mSoundSensorWorker.data(), SIGNAL(stopped()), this, SIGNAL(stopped()));
+		connect(mSoundSensorWorker.data(), &SoundSensorWorker::stopped, this, &SoundSensor::stopped);
 
 		QLOG_INFO() << "Starting SoundSensor worker thread" << &mWorkerThread;
 
+		mWorkerThread.setObjectName(mSoundSensorWorker->metaObject()->className());
 		mWorkerThread.start();
 	}
 }
@@ -59,14 +60,14 @@ SoundSensor::Status SoundSensor::status() const
 void SoundSensor::init(bool showOnDisplay)
 {
 	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), [=](){mSoundSensorWorker->init(showOnDisplay);});
 	}
 }
 
 void SoundSensor::detect()
 {
 	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "detect");
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), &SoundSensorWorker::detect);
 	}
 	else
 	{
@@ -77,7 +78,7 @@ void SoundSensor::detect()
 void SoundSensor::volume(int volCoeff)
 {
 	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "volume", Q_ARG(int, volCoeff));
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), [=](){mSoundSensorWorker->volume(volCoeff);});
 	}
 	else
 	{
@@ -99,7 +100,7 @@ QVector<int>  SoundSensor::read()
 void SoundSensor::stop()
 {
 	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), "stop");
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), &SoundSensorWorker::stop);
 	} else {
 		QLOG_ERROR() << "Trying to call 'stop' when sensor is not ready, ignoring";
 	}

@@ -49,6 +49,7 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 
 	QLOG_INFO() << "Starting TrikJavaScriptRunner worker thread" << &mWorkerThread;
 
+	mWorkerThread.setObjectName(mScriptEngineWorker->metaObject()->className());
 	mWorkerThread.start();
 }
 

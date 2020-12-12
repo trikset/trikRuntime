@@ -40,6 +40,7 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 
 		QLOG_INFO() << "Starting LineSensor worker thread" << &mWorkerThread;
 
+		mWorkerThread.setObjectName(mLineSensorWorker->metaObject()->className());
 		mWorkerThread.start();
 	}
 }

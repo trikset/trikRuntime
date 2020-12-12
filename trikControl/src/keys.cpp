@@ -42,7 +42,9 @@ Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbst
 
 		QLOG_INFO() << "Starting Keys worker thread" << &mWorkerThread;
 
+		mWorkerThread.setObjectName(mKeysWorker->metaObject()->className());
 		mWorkerThread.start();
+
 		mState.ready();
 	}
 }

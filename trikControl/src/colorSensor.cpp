@@ -41,6 +41,7 @@ ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &conf
 
 	QLOG_INFO() << "Starting ColorSensor worker thread" << &mWorkerThread;
 
+	mWorkerThread.setObjectName(mColorSensorWorker->metaObject()->className());
 	mWorkerThread.start();
 }
 

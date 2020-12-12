@@ -174,6 +174,7 @@ void Mailbox::init(int port)
 
 	QLOG_INFO() << "Starting Mailbox worker thread" << &mWorkerThread;
 
+	mWorkerThread.setObjectName(mWorker->metaObject()->className());
 	mWorkerThread.start();
 
 	QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::start, Qt::QueuedConnection);

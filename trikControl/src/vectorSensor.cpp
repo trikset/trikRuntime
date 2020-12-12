@@ -32,6 +32,8 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 
 	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
 	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
+
+	mWorkerThread.setObjectName(mVectorSensorWorker->metaObject()->className());
 	mWorkerThread.start();
 
 	if (!mState.isFailed()) {

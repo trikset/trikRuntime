@@ -48,6 +48,7 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 
 	QLOG_INFO() << "Starting TrikWiFi worker thread" << &mWorkerThread;
 
+	mWorkerThread.setObjectName(mWorker->metaObject()->className());
 	mWorkerThread.start();
 
 	reinit();
