@@ -20,6 +20,7 @@
 #include "src/scriptEngineWorker.h"
 #include "src/scriptExecutionControl.h"
 
+#include <QEventLoop>
 #include <QsLog.h>
 
 using namespace trikScriptRunner;
@@ -56,7 +57,12 @@ TrikJavaScriptRunner::~TrikJavaScriptRunner()
 {
 	mScriptEngineWorker->stopScript();
 	mWorkerThread.quit();
-	mWorkerThread.wait();
+	QEventLoop wait;
+	connect(&mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
+	mWorkerThread.quit();
+	// We need an event loop to process pending calls from dying thread to the current
+	// mWorkerThread.wait(); // <-- !!! blocks pending calls
+	wait.exec();
 }
 
 void TrikJavaScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)

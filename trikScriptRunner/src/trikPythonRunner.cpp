@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <QEventLoop>
 #include <QsLog.h>
 
 #include "trikPythonRunner.h"
@@ -44,8 +45,12 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 TrikPythonRunner::~TrikPythonRunner()
 {
 	mScriptEngineWorker->stopScript();
+	QEventLoop wait;
+	connect(&mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
 	mWorkerThread.quit();
-	mWorkerThread.wait();
+	// We need an event loop to process pending calls from dying thread to the current
+	// mWorkerThread.wait(); // <-- !!! blocks pending calls
+	wait.exec();
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
