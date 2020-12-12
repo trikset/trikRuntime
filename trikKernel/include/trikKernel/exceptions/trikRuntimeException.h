@@ -15,6 +15,8 @@
 #pragma once
 
 #include <exception>
+#include <QString>
+#include <QsLog.h>
 
 namespace trikKernel {
 
@@ -22,12 +24,19 @@ namespace trikKernel {
 class TrikRuntimeException : public std::exception
 {
 public:
-	TrikRuntimeException() = default;
+	explicit TrikRuntimeException(const QString &msg):
+		mMessage(msg)
+	{
+		QLOG_ERROR() << message();
+	}
 	~TrikRuntimeException() = default;
-	/// Default
-	TrikRuntimeException(TrikRuntimeException &&e) = default;
-	/// Deleted
-	TrikRuntimeException(const TrikRuntimeException &e) = delete;
+	const char *what() const noexcept override
+	{
+		return message().toLatin1().constData();
+	}
+	const QString &message() const { return mMessage; }
+private:
+	QString mMessage;
 };
 
 }

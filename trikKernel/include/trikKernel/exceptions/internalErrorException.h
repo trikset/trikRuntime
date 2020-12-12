@@ -26,20 +26,10 @@ class InternalErrorException : public TrikRuntimeException
 public:
 	/// Constructor.
 	/// @param message - information about what went wrong.
-	InternalErrorException(const QString &message)
-		: mMessage(message)
+	explicit InternalErrorException(const QString &message)
+		: TrikRuntimeException(QString("Internal error: %1").arg(message))
 	{
-		QLOG_ERROR() << "Internal error:" << message;
 	}
-
-	/// Returns exception information.
-	const QString &message() const
-	{
-		return mMessage;
-	}
-
-private:
-	const QString &mMessage;
 };
 
 }

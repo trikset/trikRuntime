@@ -29,10 +29,11 @@ public:
 	/// Constructor.
 	/// @param file - file that is failed to open.
 	explicit FailedToOpenFileException(const QFile &file)
-		: mFile(file)
+		: TrikRuntimeException(QString("Failed to open %1 %2")
+							   .arg(QFileInfo(file).absoluteFilePath())
+							   .arg((file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading")))
+		  , mFile(file)
 	{
-		QLOG_ERROR() << "Failed to open" << QFileInfo(file).absoluteFilePath()
-				<< (file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading");
 	}
 
 	/// Returns file that is failed to open.

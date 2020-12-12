@@ -31,18 +31,18 @@ public:
 	/// @param from - status from which we tried to change.
 	/// @param to - status to which we tried to change.
 	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from, DeviceInterface::Status to)
+		: trikKernel::TrikRuntimeException(QString("%1: incorrect device state change from \"%2\" to \"%3\"")
+					.arg(deviceName).arg(statusToString(from)).arg(statusToString(to)))
 	{
-		QLOG_ERROR() << deviceName << QString(": incorrect device state change from \"%1\" to \"%2\"")
-				.arg(statusToString(from)).arg(statusToString(to));
 	}
 
 	/// Constructor, used to report incorrect resetting of failure state.
 	/// @param deviceName - name of the device.
 	/// @param from - status from which we tried to change.
 	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from)
+		: trikKernel::TrikRuntimeException(QString("%1 : incorrect attempt to reset failure from \"%2\"")
+										   .arg(deviceName).arg(statusToString(from)))
 	{
-		QLOG_ERROR() << deviceName << QString(": incorrect attempt to reset failure from \"%1\"")
-				.arg(statusToString(from));
 	}
 
 private:
