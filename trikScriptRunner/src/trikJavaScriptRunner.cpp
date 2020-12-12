@@ -55,10 +55,9 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface &brick
 
 TrikJavaScriptRunner::~TrikJavaScriptRunner()
 {
-	mScriptEngineWorker->stopScript();
-	mWorkerThread.quit();
 	QEventLoop wait;
 	connect(&mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
+	mScriptEngineWorker->stopScript();
 	mWorkerThread.quit();
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
