@@ -32,7 +32,7 @@ public:
 private:
 	int getMedian3(int data);
 
-	std::function<int(int data)> mFilterFunction;
+	std::function<int(int)> mFilterFunction;
 
 	int mReadData1 {-1};
 	int mReadData2 {-1};

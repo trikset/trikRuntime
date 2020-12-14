@@ -102,7 +102,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 	case evAbs:
 		switch (code) {
 		case absDistance:
-			mDistance = mDataFilter.isNull() ? value : mDataFilter->applyFilter(value);
+			mDistance = !mDataFilter ? value : mDataFilter->applyFilter(value);
 			break;
 		case absMisc:
 			mRawDistance = value;

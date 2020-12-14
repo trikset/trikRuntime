@@ -81,7 +81,7 @@ private:
 	int mMinValue;
 	int mMaxValue;
 	QString mFilterName;
-	QScopedPointer <DataFilter> mDataFilter {nullptr};
+	QScopedPointer<DataFilter> mDataFilter;
 
 	QReadWriteLock mDistanceLock;
 };

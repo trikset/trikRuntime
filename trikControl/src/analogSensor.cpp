@@ -70,7 +70,7 @@ int AnalogSensor::read()
 		result = mK * raw + mB;
 	}
 
-	return mDataFilter.isNull() ? result : mDataFilter->applyFilter(result);
+	return !mDataFilter ? result : mDataFilter->applyFilter(result);
 }
 
 int AnalogSensor::readRawData()

@@ -98,7 +98,7 @@ private:
 	/// State of a device.
 	DeviceState mState;
 
-	QScopedPointer <DataFilter> mDataFilter {nullptr};
+	QScopedPointer<DataFilter> mDataFilter;
 };
 
 }
