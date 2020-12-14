@@ -18,13 +18,9 @@
 #include <QObject>
 #include <functional>
 
-class DataFilter : public QObject
+class DataFilter
 {
-	Q_OBJECT
-
 public:
-	DataFilter() = default;
-
 	DataFilter(int minValue, int maxValue, const QString &filterName = "");
 
 	int applyFilter(int data);

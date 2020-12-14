@@ -22,7 +22,9 @@ DataFilter::DataFilter(int minValue, int maxValue, const QString &filterName)
 	if (filterName == "median3") {
 		mFilterFunction = [this](int data){return getMedian3(data);};
 	}
-	mFilterFunction = [](int data){return data;};
+	else {
+		mFilterFunction = [](int data){return data;};
+	}
 }
 
 int DataFilter::applyFilter(int data)
