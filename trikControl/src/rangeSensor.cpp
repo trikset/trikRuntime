@@ -53,7 +53,10 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 		QLOG_INFO() << "Starting RangeSensor worker thread" << &mWorkerThread;
 		QEventLoop l;
 		connect(&mWorkerThread, &QThread::started, &l, &QEventLoop::quit);
+
+		mWorkerThread.setObjectName(mSensorWorker->metaObject()->className());
 		mWorkerThread.start();
+
 		l.exec();
 	}
 }

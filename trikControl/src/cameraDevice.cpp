@@ -90,6 +90,7 @@ QVector<uint8_t> CameraDevice::getPhoto() {
 #endif
 	QEventLoop l;
 	QObject::connect(t.data(), &QThread::finished, &l, &QEventLoop::quit);
+	t->setObjectName(__PRETTY_FUNCTION__);
 	t->start();
 	l.exec();
 	return photo;

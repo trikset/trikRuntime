@@ -38,6 +38,7 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
 			, this, &TrikPythonRunner::startedDirectScript);
 
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
+	mWorkerThread.setObjectName(mScriptEngineWorker->metaObject()->className());
 	mWorkerThread.start();
 	mScriptEngineWorker->waitUntilInited();
 }

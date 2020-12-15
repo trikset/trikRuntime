@@ -45,6 +45,8 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 
 	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
 	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
+
+	mWorkerThread.setObjectName(mVectorSensorWorker->metaObject()->className());
 	mWorkerThread.start();
 
 	mBias.resize(3);

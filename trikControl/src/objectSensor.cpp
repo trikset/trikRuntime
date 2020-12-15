@@ -39,6 +39,7 @@ ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &co
 
 		QLOG_INFO() << "Starting ObjectSensor worker thread" << &mWorkerThread;
 
+		mWorkerThread.setObjectName(mObjectSensorWorker->metaObject()->className());
 		mWorkerThread.start();
 	}
 }

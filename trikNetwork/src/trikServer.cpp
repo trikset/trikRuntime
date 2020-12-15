@@ -90,6 +90,8 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	});
 
 	connect(connectionWorker, &Connection::disconnected, this, &TrikServer::onConnectionClosed);
+
+	connectionThread->setObjectName(connectionWorker->metaObject()->className());
 	connectionThread->start();
 }
 
