@@ -43,7 +43,7 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
 	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState
-			, hardwareAbstraction));
+			, hardwareAbstraction, mMinValue, mMaxValue, configurer.attributeByPort(port, "filter")));
 
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);

@@ -19,6 +19,7 @@
 
 #include "sensorInterface.h"
 #include "deviceState.h"
+#include "datafilter.h"
 
 namespace trikKernel {
 class Configurer;
@@ -67,35 +68,37 @@ private:
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
 	MspCommunicatorInterface &mCommunicator;
-	int mI2cCommandNumber = 0;
+	int mI2cCommandNumber {0};
 	Type mIRType;
 
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
-	qreal mK = 0;
+	qreal mK {0};
 
 	/// Linear approximation coefficient b. Normalized value is calculated as normalizedValue = k * rawValue + b.
-	qreal mB = 0;
+	qreal mB {0};
 
 	/// Hyperbolical approximation coefficient l.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
-	int mL = 0;
+	int mL {0};
 
 	/// Hyperbolical approximation coefficient n.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
-	int mN = 0;
+	int mN {0};
 
 	/// Hyperbolical approximation coefficient s.
 	/// Normalized value is calculated as normalizedValue = s / (rawValue + l) + n.
-	int mS = 0;
+	int mS {0};
 
 	/// Minimal possible normalized value returned by sensor.
-	int mMinValue = 0;
+	int mMinValue {0};
 
 	/// Maximal possible normalized value returned by sensor.
-	int mMaxValue = 0;
+	int mMaxValue {0};
 
 	/// State of a device.
 	DeviceState mState;
+
+	QScopedPointer<DataFilter> mDataFilter;
 };
 
 }
