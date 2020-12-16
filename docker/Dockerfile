@@ -73,7 +73,7 @@ RUN git clone --single-branch --depth 1 --branch ${TRIK_LIBUSB_TAG} https://gith
 #	      $QTBIN/../lib/*.a
 
 RUN ln -svt /etc/profile.d/ /opt/qt512/bin/qt512-env.sh
-SHELL ["/bin/bash", "-lic"]
+ENV BASH_ENV /etc/profile
 ADD qt_scriptinstall.qs /tmp/
 RUN curl -L -o /tmp/qtifw.run https://download.qt.io/official_releases/qt-installer-framework/${TRIK_QTIFW_VERSION}/QtInstallerFramework-linux-x64.run \
     && chmod +x /tmp/qtifw.run \
@@ -94,5 +94,5 @@ RUN curl -L -o /tmp/qtifw.run https://download.qt.io/official_releases/qt-instal
 #RUN python3 -m pip install --upgrade pip codecov
 
 RUN echo Internal image disk usage: $(du -sch /* 2>/dev/null | sort -h)
-ENTRYPOINT ["/bin/bash", "-lic"]
+ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["bash"]
