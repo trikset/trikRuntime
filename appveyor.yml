@@ -47,12 +47,14 @@ init:
   - git config --global core.autocrlf true
   - if "x%appveyor_pull_request_number%" NEQ "x" set APPVEYOR_CACHE_SKIP_SAVE=true
   - if "x%appveyor_repo_branch%" NEQ "xmaster" set APPVEYOR_CACHE_SKIP_SAVE=true
-
 before_build:
   - git submodule update --init --recursive
   - set PATH=%PYTHON_PATH%;%QTDIR%\bin;%MINGW%\bin;C:\msys64\usr\bin;%PATH%
   - if not exist %BUILD_DIR% md %BUILD_DIR%
   - du -sh %BUILD_DIR%
+  - path
+  - python -V
+  - g++ --version
 # deal with 2020 summer package upgrade problem, when keys changed
   - curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz
   - curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig
@@ -61,12 +63,9 @@ before_build:
   - curl -O http://repo.msys2.org/msys/x86_64/zstd-1.4.7-1-x86_64.pkg.tar.xz # the latest in xz
   - curl -O http://repo.msys2.org/msys/x86_64/pacman-5.2.2-5-x86_64.pkg.tar.xz # the latest in xz
   - pacman --verbose --noconfirm --disable-download-timeout -U zstd-1.4.7-1-x86_64.pkg.tar.xz pacman-5.2.2-5-x86_64.pkg.tar.xz # Upgrade now (Dec 2020) needs zstd decompressor
-  - 'del /q %APPVEYOR_BUILD_FOLDER%\*.*' # cleanup before checkout
   - cmd /c "pacman --verbose --noconfirm --disable-download-timeout -Syuu" #Full update of core files
-  - packman --verbose --noconfirm --sync rsync
-  - path
-  - python -V
-  - g++ --version
+  - pacman --verbose --noconfirm --sync rsync
+
 
 build_script:
   - cd %BUILD_DIR%
