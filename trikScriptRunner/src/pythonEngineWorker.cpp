@@ -24,6 +24,7 @@
 #include "pythonEngineWorker.h"
 #include <Python.h>
 #include "PythonQtConversion.h"
+#include "trikPythonModule.h"
 
 using namespace trikScriptRunner;
 
@@ -240,9 +241,8 @@ bool PythonEngineWorker::initTrik()
 				"from gc import collect as gc_collect;"
 				"gc_collect();");
 	PythonQt_init_PyTrikControl(mMainContext);
-	mMainContext.addObject("brick", &mBrick);
-	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
-	mMainContext.addObject("mailbox", mMailbox);
+
+	trikPythonModuleInit(&mBrick, mScriptExecutionControl.data(), mMailbox);
 
 	return evalSystemPy();
 }
@@ -352,7 +352,9 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 		addSearchModuleDirectory(scriptFile.canonicalPath());
 	}
 
-	mMainContext.evalScript(script);
+	PythonQtObjectPtr code = Py_CompileString(QStringToPythonCharPointer(script),
+			QStringToPythonCharPointer(scriptFile.absoluteFilePath()), Py_file_input);
+	mMainContext.evalCode(code);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
 
