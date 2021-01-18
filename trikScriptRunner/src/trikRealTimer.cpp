@@ -18,11 +18,10 @@ using namespace trikScriptRunner;
 
 TrikRealTimer::TrikRealTimer()
 {
-	setRepeatable(true);
 	QObject::connect(&mTimer, &QTimer::timeout, this, &TrikRealTimer::timeout);
 }
 
-bool TrikRealTimer::isTicking() const
+bool TrikRealTimer::isActive() const
 {
 	return mTimer.isActive();
 }
@@ -53,7 +52,7 @@ void TrikRealTimer::setInterval(int ms)
 	mTimer.setInterval(ms);
 }
 
-void TrikRealTimer::setRepeatable(bool repeatable)
+void TrikRealTimer::setSingleShot(bool isSingleShot)
 {
-	mTimer.setSingleShot(!repeatable);
+	mTimer.setSingleShot(isSingleShot);
 }

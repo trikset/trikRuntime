@@ -12,9 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "trikAbstractTimer.h"
+#include "trikScriptControlInterface.h"
 
-void trikScriptRunner::TrikAbstractTimer::onTimeout()
+trikScriptRunner::TrikScriptControlInterface::TrikScriptControlInterface()
 {
-	emit timeout();
+	qRegisterMetaType<TrikAbstractTimer *>("TrikAbstractTimer*");
+	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }

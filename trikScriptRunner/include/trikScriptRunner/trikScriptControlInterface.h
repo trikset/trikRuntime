@@ -27,6 +27,9 @@ class TRIKSCRIPTRUNNER_EXPORT TrikScriptControlInterface : public QObject
 	Q_OBJECT
 
 public:
+	/// Registers required metatypes
+	TrikScriptControlInterface();
+
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
 	virtual bool isInEventDrivenMode() const = 0;

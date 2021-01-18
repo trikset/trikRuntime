@@ -27,13 +27,13 @@ class TRIKSCRIPTRUNNER_EXPORT TrikRealTimer : public TrikAbstractTimer
 public:
 	TrikRealTimer();
 
-	bool isTicking() const override;
+	bool isActive() const override;
 	int interval() const override;
 	void start() override;
 	void start(int ms) override;
 	void stop() override;
 	void setInterval(int ms) override;
-	void setRepeatable(bool repeatable) override;
+	void setSingleShot(bool isSingleShot) override;
 
 private:
 	QTimer mTimer;

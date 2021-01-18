@@ -50,8 +50,8 @@ SOURCES += \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
 	$$PWD/src/trikVariablesServer.cpp \
-	$$PWD/src/trikAbstractTimer.cpp \
-	$$PWD/src/trikRealTimer.cpp
+	$$PWD/src/trikRealTimer.cpp \
+	$$PWD/src/trikScriptControlInterface.cpp
 
 OTHER_FILES += \
 	$$PWD/system.js \

@@ -29,8 +29,6 @@ using namespace trikScriptRunner;
 
 ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface &brick)
 	: mBrick(brick) {
-	qRegisterMetaType<TrikAbstractTimer *>("TrikAbstractTimer*");
-	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }
 
 ScriptExecutionControl::~ScriptExecutionControl()
@@ -52,7 +50,7 @@ void ScriptExecutionControl::reset()
 
 TrikAbstractTimer* ScriptExecutionControl::timer(int milliseconds)
 {
-	TrikRealTimer *result = new TrikRealTimer();
+	auto result = new TrikRealTimer();
 	mTimers.append(result);
 	result->start(milliseconds);
 	return result;
