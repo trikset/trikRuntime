@@ -29,6 +29,7 @@ using namespace trikScriptRunner;
 
 ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface &brick)
 	: mBrick(brick) {
+	qRegisterMetaType<TrikAbstractTimer *>("TrikAbstractTimer*");
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }
 
@@ -42,16 +43,16 @@ void ScriptExecutionControl::reset()
 	mInEventDrivenMode = false;
 	emit stopWaiting();
 	for (auto &&timer : mTimers) {
-		QMetaObject::invokeMethod(timer, &QTimer::stop, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(timer, &TrikRealTimer::stop, Qt::QueuedConnection);
 		timer->deleteLater();
 	}
 
 	mTimers.clear();
 }
 
-QTimer* ScriptExecutionControl::timer(int milliseconds)
+TrikAbstractTimer* ScriptExecutionControl::timer(int milliseconds)
 {
-	QTimer *result = new QTimer();
+	TrikRealTimer *result = new TrikRealTimer();
 	mTimers.append(result);
 	result->start(milliseconds);
 	return result;
