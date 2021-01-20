@@ -22,6 +22,8 @@ include(./PyTrikControl/PyTrikControl.pri)
 PUBLIC_HEADERS += \
 	$$PWD/include/trikScriptRunner/trikScriptRunner.h \
 	$$PWD/include/trikScriptRunner/trikScriptControlInterface.h \
+	$$PWD/include/trikScriptRunner/trikAbstractTimer.h \
+	$$PWD/include/trikScriptRunner/trikRealTimer.h \
 
 HEADERS += \
 	$$PWD/src/scriptable.h \
@@ -35,6 +37,7 @@ HEADERS += \
 	$$PWD/include/trikScriptRunner/trikPythonRunner.h \
 	$$PWD/include/trikScriptRunner/trikJavaScriptRunner.h \
 	$$PWD/include/trikScriptRunner/trikVariablesServer.h \
+	$$PWD/include/trikScriptRunner/trikScriptRunnerDeclSpec.h
 
 SOURCES += \
 	$$PWD/src/scriptExecutionControl.cpp \
@@ -46,7 +49,9 @@ SOURCES += \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
-	$$PWD/src/trikVariablesServer.cpp
+	$$PWD/src/trikVariablesServer.cpp \
+	$$PWD/src/trikRealTimer.cpp \
+	$$PWD/src/trikScriptControlInterface.cpp
 
 OTHER_FILES += \
 	$$PWD/system.js \

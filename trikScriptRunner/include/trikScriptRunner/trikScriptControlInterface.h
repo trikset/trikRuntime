@@ -14,16 +14,10 @@
 
 #pragma once
 
-#include <QtCore/QTimer>
 #include <trikControl/brickInterface.h>
+#include "trikAbstractTimer.h"
 
-#ifndef TRIKSCRIPTRUNNER_EXPORT
-#  if defined(TRIKSCRIPTRUNNER_LIBRARY)
-#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_EXPORT
-#  else
-#    define TRIKSCRIPTRUNNER_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
+#include "trikScriptRunnerDeclSpec.h"
 
 namespace trikScriptRunner {
 
@@ -33,6 +27,9 @@ class TRIKSCRIPTRUNNER_EXPORT TrikScriptControlInterface : public QObject
 	Q_OBJECT
 
 public:
+	/// Registers required metatypes
+	TrikScriptControlInterface();
+
 	/// Returns true if a script is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
 	virtual bool isInEventDrivenMode() const = 0;
@@ -41,7 +38,7 @@ public:
 	Q_INVOKABLE virtual QVector<int32_t> getPhoto() = 0;
 
 	/// Starts a new timer with given interval and returns reference to it.
-	Q_INVOKABLE virtual QTimer *timer(int milliseconds) = 0;
+	Q_INVOKABLE virtual TrikAbstractTimer *timer(int milliseconds) = 0;
 
 	/// Waits given amount of time in milliseconds and returns.
 	Q_INVOKABLE virtual void wait(const int &milliseconds) = 0;
