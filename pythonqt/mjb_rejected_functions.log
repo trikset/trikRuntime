@@ -4,14 +4,94 @@ Not in type system
 
 ************************************************************************
 Generation disabled by type system
+QBrush::
+QBrush::cleanUp
+QBrush::data_ptr
+QBrush::detach
+QBrush::isDetached
+QByteArray::
+QByteArray::data_ptr
+QByteArray::detach
+QByteArray::isDetached
+QColor::
+QCursor::
+QFont::
+QFont::detach
 QGradient::interpolationMode
 QGradient::setInterpolationMode
 QIODevice::d_func
+QImage::
+QImage::data_ptr
+QImage::detach
+QImage::isDetached
+QKeySequence::
+QKeySequence::data_ptr
+QKeySequence::isDetached
+QList::begin
+QList::constBegin
+QList::constEnd
+QList::detach
+QList::end
+QList::erase
+QList::fromSet
+QList::insert
+QList::isDetached
+QList::node_construct
+QList::node_copy
+QList::node_destruct
+QList::toSet
+QMatrix::
+QMessageLogContext::copy
+QObject::connect
+QObject::connectNotify
+QObject::d_func
+QObject::destroyed
+QObject::disconnect
+QObject::disconnectNotify
+QObject::findChild
+QObject::findChildren
+QObject::receivers
+QObject::registerUserData
+QObject::setUserData
+QObject::userData
+QPainterPath::d_func
+QPainterPath::detach
 QPainterPathStroker::d_func
+QPalette::
+QPalette::detach
+QPixmap::
+QPixmap::data_ptr
+QPixmap::detach
+QPixmap::fromImageInPlace
+QPixmap::isDetached
+QPolygon::
+QPolygon::point
+QPolygon::putPoints
+QPolygon::setPoint
+QPolygon::setPoints
+QPolygonF::
+QRegion::
+QRegion::cleanUp
+QRegion::detach
+QSizePolicy::
+QTransform::
+QVector::back
+QVector::begin
+QVector::constBegin
+QVector::constEnd
+QVector::detach
+QVector::end
+QVector::erase
+QVector::front
+QVector::insert
+QVector::isDetached
+QVector::operator+=
 QWidget::create
 QWidget::d_func
 QWidget::find
 QWidget::internalWinId
+Qt::qt_getEnumMetaObject
+Qt::qt_getEnumName
 ************************************************************************
 
 ************************************************************************
@@ -20,13 +100,32 @@ Type redefined to not be a class
 
 ************************************************************************
 Unmatched argument type
+QBasicMutex::fastTryLock QMutexData*&
+QBasicMutex::fastTryUnlock QMutexData*&
+QByteArray::QByteArray QByteArrayDataPtr
+QByteArray::QByteArray Qt::Initialization
+QByteArray::fromStdString std::string const&
+QByteArray::reallocData Data::AllocationOptions
+QColor::QColor QStringView
+QColor::isValidColor QStringView
+QColor::setColorFromString String
+QColor::setNamedColor QStringView
 QDataStream::__lshift__ qfloat16
 QDataStream::__lshift__ std::nullptr_t
 QDataStream::__rshift__ qfloat16&
 QDataStream::__rshift__ std::nullptr_t&
 QGradient::QGradient QGradient::Preset
 QImage::QImage QImageCleanupFunction
-QImage::qSwap d
+QList::contains_impl QListData::ArrayCompatibleLayout
+QList::contains_impl QListData::NotArrayCompatibleLayout
+QList::count_impl QListData::ArrayCompatibleLayout
+QList::count_impl QListData::NotArrayCompatibleLayout
+QList::dealloc QListData::Data*
+QList::fromStdList std::list<T> const&
+QList::isValidIterator iterator const&
+QList::op_eq_impl QListData::ArrayCompatibleLayout
+QList::op_eq_impl QListData::NotArrayCompatibleLayout
+QMatrix::QMatrix Qt::Initialization
 QMetaType::QMetaType QMetaType::ExtensionFlag const
 QMetaType::ctor QMetaTypeInterface const*
 QMetaType::debugStream QDebug&
@@ -39,8 +138,19 @@ QMetaType::registerNormalizedType QMetaType::TypedDestructor
 QMetaType::registerStreamOperators QMetaType::SaveOperator
 QMetaType::registerType QMetaType::Deleter
 QMetaType::registerType QMetaType::TypedDestructor
-QPainterPath::qSwap d_ptr
-QStringMatcher::QStringMatcher QStringView
+QPair::QPair QPair<TT1,TT2> const&
+QPair::operator_assign QPair<TT1,TT2> const&
+QPixelFormat::get QPixelFormat::Field
+QPixelFormat::set QPixelFormat::Field
+QPixmap::QPixmap QPlatformPixmap*
+QSizePolicy::QSizePolicy Bits
+QStringList::contains QStringView
+QTransform::QTransform Qt::Initialization
+QVector::freeData Data*
+QVector::freeData QVector<T>::Data*
+QVector::fromStdVector std::vector<T> const&
+QVector::isValidIterator QVector<T>::iterator const&
+QVector::reallocData QArrayData::AllocationOptions
 trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
 trikControl::DisplayInterface::show QVector<int32_t> const&
 trikControl::FifoInterface::newData QVector<uint8_t> const&
@@ -49,15 +159,68 @@ trikKernel::TimeVal::fromPackedUInt32 uint32_t
 
 ************************************************************************
 Unmatched return type
-QLineF::intersects IntersectionType
+QBasicMutex::dummyLocked QMutexData*
+QByteArray::crbegin QByteArray::const_reverse_iterator
+QByteArray::crend QByteArray::const_reverse_iterator
+QByteArray::rbegin QByteArray::const_reverse_iterator
+QByteArray::rbegin QByteArray::reverse_iterator
+QByteArray::rend QByteArray::const_reverse_iterator
+QByteArray::rend QByteArray::reverse_iterator
+QByteArray::toStdString std::string
+QImage::sizeInBytes qsizetype
+QList::cbegin const_iterator
+QList::cend const_iterator
+QList::crbegin const_reverse_iterator
+QList::crend const_reverse_iterator
+QList::detach_helper_grow Node*
+QList::rbegin const_reverse_iterator
+QList::rbegin reverse_iterator
+QList::rend const_reverse_iterator
+QList::rend reverse_iterator
+QList::toStdList std::list<T>
 QMessageLogger::critical QDebug
 QMessageLogger::debug QDebug
 QMessageLogger::info QDebug
+QMessageLogger::noDebug QNoDebug
 QMessageLogger::warning QDebug
-QPair::noexcept 
-QStringMatcher::indexIn qsizetype
+QObject::connectImpl QMetaObject::Connection
+QPixmap::handle QPlatformPixmap*
+QRegion::crbegin QRegion::const_reverse_iterator
+QRegion::crend QRegion::const_reverse_iterator
+QRegion::rbegin QRegion::const_reverse_iterator
+QRegion::rend QRegion::const_reverse_iterator
 QSysInfo::macVersion QSysInfo::MacVersion
 QSysInfo::windowsVersion QSysInfo::WinVersion
+QVector::cbegin const_iterator
+QVector::cend const_iterator
+QVector::crbegin const_reverse_iterator
+QVector::crend const_reverse_iterator
+QVector::rbegin const_reverse_iterator
+QVector::rbegin reverse_iterator
+QVector::rend const_reverse_iterator
+QVector::rend reverse_iterator
+QVector::toStdVector std::vector<T>
+Qt::__or__ QFlags<Alignment::enum_type>
+Qt::__or__ QFlags<DockWidgetAreas::enum_type>
+Qt::__or__ QFlags<DropActions::enum_type>
+Qt::__or__ QFlags<Edges::enum_type>
+Qt::__or__ QFlags<GestureFlags::enum_type>
+Qt::__or__ QFlags<ImageConversionFlags::enum_type>
+Qt::__or__ QFlags<InputMethodHints::enum_type>
+Qt::__or__ QFlags<InputMethodQueries::enum_type>
+Qt::__or__ QFlags<ItemFlags::enum_type>
+Qt::__or__ QFlags<KeyboardModifiers::enum_type>
+Qt::__or__ QFlags<MatchFlags::enum_type>
+Qt::__or__ QFlags<MouseButtons::enum_type>
+Qt::__or__ QFlags<MouseEventFlags::enum_type>
+Qt::__or__ QFlags<Orientations::enum_type>
+Qt::__or__ QFlags<ScreenOrientations::enum_type>
+Qt::__or__ QFlags<TextInteractionFlags::enum_type>
+Qt::__or__ QFlags<ToolBarAreas::enum_type>
+Qt::__or__ QFlags<TouchPointStates::enum_type>
+Qt::__or__ QFlags<WindowFlags::enum_type>
+Qt::__or__ QFlags<WindowStates::enum_type>
+Qt::__or__ QIncompatibleFlag
 trikControl::BrickInterface::getStillImage QVector<uint8_t>
 trikControl::CameraDeviceInterface::getPhoto QVector<uint8_t>
 trikControl::CameraDeviceInterface::qImageToQVector QVector<uint8_t>

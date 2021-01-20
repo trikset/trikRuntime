@@ -24,13 +24,29 @@
 #include <motorInterface.h>
 #include <objectSensorInterface.h>
 #include <pwmCaptureInterface.h>
+#include <qbytearray.h>
+#include <qcursor.h>
+#include <qfont.h>
 #include <qfontinfo.h>
+#include <qfontmetrics.h>
+#include <qkeysequence.h>
+#include <qlist.h>
 #include <qmargins.h>
+#include <qobject.h>
 #include <qpaintdevice.h>
+#include <qpalette.h>
+#include <qpixmap.h>
+#include <qpoint.h>
 #include <qrect.h>
+#include <qregion.h>
+#include <qsize.h>
+#include <qsizepolicy.h>
+#include <qstringlist.h>
+#include <qvector.h>
 #include <qwidget.h>
 #include <sensorInterface.h>
 #include <soundSensorInterface.h>
+#include <timeVal.h>
 #include <vectorSensorInterface.h>
 
 
@@ -99,7 +115,7 @@ inline trikControl::LedInterface*  py_q_led() { return this->led(); }
 inline trikControl::LineSensorInterface*  py_q_lineSensor(const QString&  port) { return this->lineSensor(port); }
 inline trikControl::MarkerInterface*  py_q_marker() { return this->marker(); }
 inline trikControl::MotorInterface*  py_q_motor(const QString&  port) { return this->motor(port); }
-inline QStringList  py_q_motorPorts(trikControl::MotorInterface::Type  type) { return this->motorPorts(type); }
+inline QStringList  py_q_motorPorts(trikControl::MotorInterface::Type  type) const { return this->motorPorts(type); }
 inline trikControl::ObjectSensorInterface*  py_q_objectSensor(const QString&  port) { return this->objectSensor(port); }
 inline void py_q_playSound(const QString&  soundFileName) { this->playSound(soundFileName); }
 inline void py_q_playTone(int  hzFreq, int  msDuration) { this->playTone(hzFreq, msDuration); }
@@ -108,7 +124,7 @@ inline QStringList  py_q_pwmCapturePorts() const { return this->pwmCapturePorts(
 inline void py_q_reset() { this->reset(); }
 inline void py_q_say(const QString&  text) { this->say(text); }
 inline trikControl::SensorInterface*  py_q_sensor(const QString&  port) { return this->sensor(port); }
-inline QStringList  py_q_sensorPorts(trikControl::SensorInterface::Type  type) { return this->sensorPorts(type); }
+inline QStringList  py_q_sensorPorts(trikControl::SensorInterface::Type  type) const { return this->sensorPorts(type); }
 inline trikControl::SoundSensorInterface*  py_q_soundSensor(const QString&  port) { return this->soundSensor(port); }
 inline void py_q_stop() { this->stop(); }
 inline void py_q_stopEventDevice(const QString&  deviceFile) { this->stopEventDevice(deviceFile); }
@@ -213,7 +229,7 @@ void delete_trikControl__DeviceInterface(trikControl::DeviceInterface* obj) { de
 
 class PythonQtPublicPromoter_trikControl__DisplayInterface : public trikControl::DisplayInterface
 { public:
-inline void py_q_addLabel(const QString&  text, int  x, int  y) { this->addLabel(text, x, y); }
+inline void py_q_addLabel(const QString&  text, int  x, int  y, int  fontSize = -1) { this->addLabel(text, x, y, fontSize); }
 inline void py_q_clear() { this->clear(); }
 inline void py_q_drawArc(int  x, int  y, int  width, int  height, int  startAngle, int  spanAngle) { this->drawArc(x, y, width, height, startAngle, spanAngle); }
 inline void py_q_drawEllipse(int  x, int  y, int  width, int  height, bool  filled = false) { this->drawEllipse(x, y, width, height, filled); }
@@ -236,7 +252,7 @@ class PythonQtWrapper_trikControl__DisplayInterface : public QObject
 public:
 public slots:
 void delete_trikControl__DisplayInterface(trikControl::DisplayInterface* obj) { delete obj; } 
-   void py_q_addLabel(trikControl::DisplayInterface* theWrappedObject, const QString&  text, int  x, int  y){  (((PythonQtPublicPromoter_trikControl__DisplayInterface*)theWrappedObject)->py_q_addLabel(text, x, y));}
+   void py_q_addLabel(trikControl::DisplayInterface* theWrappedObject, const QString&  text, int  x, int  y, int  fontSize = -1){  (((PythonQtPublicPromoter_trikControl__DisplayInterface*)theWrappedObject)->py_q_addLabel(text, x, y, fontSize));}
    void py_q_clear(trikControl::DisplayInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__DisplayInterface*)theWrappedObject)->py_q_clear());}
    void py_q_drawArc(trikControl::DisplayInterface* theWrappedObject, int  x, int  y, int  width, int  height, int  startAngle, int  spanAngle){  (((PythonQtPublicPromoter_trikControl__DisplayInterface*)theWrappedObject)->py_q_drawArc(x, y, width, height, startAngle, spanAngle));}
    void py_q_drawEllipse(trikControl::DisplayInterface* theWrappedObject, int  x, int  y, int  width, int  height, bool  filled = false){  (((PythonQtPublicPromoter_trikControl__DisplayInterface*)theWrappedObject)->py_q_drawEllipse(x, y, width, height, filled));}

@@ -24,13 +24,29 @@
 #include <motorInterface.h>
 #include <objectSensorInterface.h>
 #include <pwmCaptureInterface.h>
+#include <qbytearray.h>
+#include <qcursor.h>
+#include <qfont.h>
 #include <qfontinfo.h>
+#include <qfontmetrics.h>
+#include <qkeysequence.h>
+#include <qlist.h>
 #include <qmargins.h>
+#include <qobject.h>
 #include <qpaintdevice.h>
+#include <qpalette.h>
+#include <qpixmap.h>
+#include <qpoint.h>
 #include <qrect.h>
+#include <qregion.h>
+#include <qsize.h>
+#include <qsizepolicy.h>
+#include <qstringlist.h>
+#include <qvector.h>
 #include <qwidget.h>
 #include <sensorInterface.h>
 #include <soundSensorInterface.h>
+#include <timeVal.h>
 #include <vectorSensorInterface.h>
 
 
