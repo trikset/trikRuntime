@@ -15,7 +15,18 @@
 TEMPLATE = lib
 
 include(../global.pri)
-include(./PyTrikControl/PyTrikControl.pri)
+
+DEBUG_EXT=$${CONFIGURATION_SUFFIX}
+include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
+#PythonQt generated files have problems
+INCLUDEPATH *= $$PWD/../trikControl/include/trikControl $$PWD/../trikKernel/include/trikKernel
+clang:QMAKE_CXXFLAGS *= -Wno-error -Wno-error=sometimes-uninitialized -Wno-error=writable-strings
+QMAKE_CXXFLAGS *= -Wno-error=cast-qual -Wno-error=redundant-decls
+QMAKE_CXXFLAGS -= -Werror -Werror=pedantic -pedantic-errors -Werror=write-strings
+QT += widgets
+#------
+
+include(./generated_cpp/PyTrikControl/PyTrikControl.pri)
 
 !macx:enableFlagIfCan(-Wno-error=cast-function-type)
 
@@ -58,8 +69,8 @@ OTHER_FILES += \
 	$$PWD/system.py \
 
 INCLUDEPATH += \
-		$$PWD/PyTrikControl \
-		$$PWD/../trikControl/src \
+	$$PWD/generated_cpp/PyTrikControl \
+	$$PWD/../trikControl/src \
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikScriptRunner_ru.ts \
