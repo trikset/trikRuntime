@@ -38,7 +38,8 @@ public:
 	Q_INVOKABLE virtual QVector<int32_t> getPhoto() = 0;
 
 	/// Starts a new timer with given interval and returns reference to it.
-	Q_INVOKABLE virtual TrikAbstractTimer *timer(int milliseconds) = 0;
+	/// QObject - hack to be able to inherit together QTimer and AbstractTimer from the studio
+	Q_INVOKABLE virtual QObject *timer(int milliseconds) = 0;
 
 	/// Waits given amount of time in milliseconds and returns.
 	Q_INVOKABLE virtual void wait(const int &milliseconds) = 0;
