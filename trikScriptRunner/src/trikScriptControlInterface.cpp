@@ -16,6 +16,5 @@
 
 trikScriptRunner::TrikScriptControlInterface::TrikScriptControlInterface()
 {
-	qRegisterMetaType<TrikAbstractTimer *>("TrikAbstractTimer*");
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }

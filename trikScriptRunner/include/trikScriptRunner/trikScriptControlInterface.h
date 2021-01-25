@@ -15,7 +15,6 @@
 #pragma once
 
 #include <trikControl/brickInterface.h>
-#include "trikAbstractTimer.h"
 
 #include "trikScriptRunnerDeclSpec.h"
 

@@ -16,9 +16,10 @@
 
 #include <QtCore/QList>
 #include <QtCore/QStringList>
+#include <QTimer>
+
 #include <trikControl/brickInterface.h>
 #include <trikScriptControlInterface.h>
-#include <trikRealTimer.h>
 
 namespace trikScriptRunner {
 
