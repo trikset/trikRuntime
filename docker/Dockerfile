@@ -3,9 +3,10 @@ MAINTAINER Iakov Kirilenko <Iakov.Kirilenko@trikset.com>
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV TRIK_GCCVERSION 9
-ENV TRIK_QTIFW_VERSION 4.0.0
-ENV TRIK_LIBUSB_TAG v1.0.23
+ENV TRIK_QTIFW_VERSION 4.0.1
+ENV TRIK_LIBUSB_TAG v1.0.24
 ENV TRIK_QTVERSION 5.12.10
+
 RUN bash -uc 'echo ${TRIK_PYTHON3_VERSION_MINOR}'
 # Build image with two huge layers, this is the 1st one.
 # Do not upgrade packages to match trikset/checker-runtime
