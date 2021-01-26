@@ -41,16 +41,16 @@ void ScriptExecutionControl::reset()
 	mInEventDrivenMode = false;
 	emit stopWaiting();
 	for (auto &&timer : mTimers) {
-		QMetaObject::invokeMethod(timer, &TrikRealTimer::stop, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(timer, &QTimer::stop, Qt::QueuedConnection);
 		timer->deleteLater();
 	}
 
 	mTimers.clear();
 }
 
-TrikAbstractTimer* ScriptExecutionControl::timer(int milliseconds)
+QTimer* ScriptExecutionControl::timer(int milliseconds)
 {
-	auto result = new TrikRealTimer();
+	auto result = new QTimer();
 	mTimers.append(result);
 	result->start(milliseconds);
 	return result;

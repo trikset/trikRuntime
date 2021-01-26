@@ -16,9 +16,10 @@
 
 #include <QtCore/QList>
 #include <QtCore/QStringList>
+#include <QTimer>
+
 #include <trikControl/brickInterface.h>
 #include <trikScriptControlInterface.h>
-#include <trikRealTimer.h>
 
 namespace trikScriptRunner {
 
@@ -42,7 +43,7 @@ public:
 	Q_INVOKABLE QVector<int32_t> getPhoto() override;
 
 	/// Starts a new timer with given interval and returns reference to it.
-	Q_INVOKABLE TrikAbstractTimer *timer(int milliseconds) override;
+	Q_INVOKABLE QTimer *timer(int milliseconds) override;
 
 	/// Waits given amount of time in milliseconds and returns.
 	Q_INVOKABLE void wait(const int &milliseconds) override;
@@ -89,7 +90,7 @@ signals:
 	void textInStdOut(const QString &text);
 
 private:
-	QList<TrikRealTimer *> mTimers; // Has ownership.
+	QList<QTimer *> mTimers; // Has ownership.
 	trikControl::BrickInterface &mBrick;
 
 
