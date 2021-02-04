@@ -67,8 +67,8 @@ void ScriptThread::abort()
 {
 	if (isEvaluating()) {
 		mEngine->abortEvaluation();
-		emit stopRunning();
 	}
+	emit stopRunning();
 }
 
 QString ScriptThread::id() const
