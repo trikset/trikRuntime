@@ -117,7 +117,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 	connect(&mScriptControl, &TrikScriptControlInterface::quitSignal,
 		this, &ScriptEngineWorker::onScriptRequestingToQuit);
 	connect(this, &ScriptEngineWorker::getVariables, &mThreading, &Threading::getVariables);
-	connect(&mThreading, &Threading::variablesReady, this,&ScriptEngineWorker::variablesReady);
+	connect(&mThreading, &Threading::variablesReady, this, &ScriptEngineWorker::variablesReady);
 
 	registerUserFunction("print", print);
 	registerUserFunction("timeInterval", timeInterval);

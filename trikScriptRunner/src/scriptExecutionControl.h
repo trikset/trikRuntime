@@ -43,7 +43,7 @@ public:
 	Q_INVOKABLE QVector<int32_t> getPhoto() override;
 
 	/// Starts a new timer with given interval and returns reference to it.
-	Q_INVOKABLE QTimer *timer(int milliseconds) override;
+	Q_INVOKABLE QObject *timer(int milliseconds) override;
 
 	/// Waits given amount of time in milliseconds and returns.
 	Q_INVOKABLE void wait(const int &milliseconds) override;
