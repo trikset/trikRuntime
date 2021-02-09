@@ -86,14 +86,12 @@ void Keys::changeButtonState(int code, int value)
 
 int Keys::buttonCode(bool wait)
 {
-	if (!wait) {
-		return pressedButton();
+	if (wait) {
+		QEventLoop l;
+		connect(this, &Keys::buttonStateChanged, &l, &QEventLoop::quit);
+		connect(mKeysWorker.data(), &KeysWorker::stopWaiting, &l, &QEventLoop::quit);
+		l.exec();
 	}
-
-	QEventLoop l;
-	connect(this, &Keys::buttonStateChanged, &l, &QEventLoop::quit);
-	connect(mKeysWorker.data(), &KeysWorker::stopWaiting, &l, &QEventLoop::quit);
-	l.exec();
 
 	return pressedButton();
 }
