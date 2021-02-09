@@ -57,6 +57,9 @@ public slots:
 
 	int buttonCode(bool wait = true) override;
 
+signals:
+	void buttonStateChanged();
+
 private slots:
 	void changeButtonState(int code, int value);
 

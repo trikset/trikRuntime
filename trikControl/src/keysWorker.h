@@ -57,6 +57,9 @@ signals:
 	/// @param value - key state.
 	void buttonPressed(int code, int value);
 
+	/// Triggers when everyone who waits for buttons events has to stop waiting.
+	void stopWaiting();
+
 private:
 	QScopedPointer<trikHal::EventFileInterface> mEventFile;
 	int mButtonCode = 0;

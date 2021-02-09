@@ -65,6 +65,7 @@ Keys::Status Keys::status() const
 void Keys::reset()
 {
 	mKeysWorker->reset();
+	mKeysPressed.clear();
 }
 
 bool Keys::wasPressed(int code)
@@ -80,6 +81,7 @@ bool Keys::isPressed(int code)
 void Keys::changeButtonState(int code, int value)
 {
 	mKeysPressed[code] = value;
+	emit buttonStateChanged();
 }
 
 int Keys::buttonCode(bool wait)
@@ -88,15 +90,12 @@ int Keys::buttonCode(bool wait)
 		return pressedButton();
 	}
 
-	while (true) {
-		int code = pressedButton();
-		if (code == -1) {
-			usleep(20);
-			QApplication::processEvents();
-		} else {
-			return code;
-		}
-	}
+	QEventLoop l;
+	connect(this, &Keys::buttonStateChanged, &l, &QEventLoop::quit);
+	connect(mKeysWorker.data(), &KeysWorker::stopWaiting, &l, &QEventLoop::quit);
+	l.exec();
+
+	return pressedButton();
 }
 
 int Keys::pressedButton()
