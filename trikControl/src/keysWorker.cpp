@@ -45,6 +45,7 @@ void KeysWorker::init()
 void KeysWorker::reset()
 {
 	mLock.lockForWrite();
+	emit stopWaiting();
 	mWasPressed.clear();
 	mButtonCode = 0;
 	mButtonValue = 0;
