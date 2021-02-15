@@ -48,7 +48,7 @@ void ScriptExecutionControl::reset()
 	mTimers.clear();
 }
 
-QTimer* ScriptExecutionControl::timer(int milliseconds)
+QObject* ScriptExecutionControl::timer(int milliseconds)
 {
 	auto result = new QTimer();
 	mTimers.append(result);
