@@ -59,9 +59,9 @@ equal to its class name.
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
-		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" />
+		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" filter="" />
 		<encoder invert="false" />
-		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" />
+		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
 		<digitalSensor />
 		<fifo />
 		<accelerometer deviceFile="/dev/input/by-path/platform-i2c_davinci.2-event" optional="true" />
@@ -152,6 +152,7 @@ equal to its class name.
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
+		<rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="jf1_hcsr04" />
 		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
 		<lineSensor port="video2" />
@@ -174,7 +175,9 @@ equal to its class name.
 		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
 				controlMin="0" controlMax="100" />
 
-		<jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+                <motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+
+                <motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
 
 		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
 
@@ -213,4 +216,8 @@ equal to its class name.
 
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
+
+        <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
+	<i2cBus1 path="/dev/i2c-1" />
+	<i2cBus2 path="/dev/i2c-2" />
 </config>
