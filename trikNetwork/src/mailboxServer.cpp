@@ -255,11 +255,11 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int serverPort, int
 	mKnownRobotsLock.lockForRead();
 	for (auto &&endpoint : mKnownRobots) {
 		if (endpoint.ip == ip && endpoint.serverPort == serverPort) {
-            const auto connectionObject = connection(ip, endpoint.connectedPort);
-            if (connectionObject != nullptr) {
-                connectedPort = endpoint.connectedPort;
-            }
-            toDelete << endpoint;
+			const auto connectionObject = connection(ip, endpoint.connectedPort);
+			if (connectionObject != nullptr) {
+				connectedPort = endpoint.connectedPort;
+			}
+			toDelete << endpoint;
 		}
 	}
 

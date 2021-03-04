@@ -56,11 +56,11 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			QLOG_ERROR() << "Malformed data: " << data;
 	};
 
-    const auto parsedString = data.split(":");
-    bool serverPortOk = false;
-    bool hullNumberOk = false;
+	const auto parsedString = data.split(":");
+	bool serverPortOk = false;
+	bool hullNumberOk = false;
 	if (data.startsWith(registerCommand)) {
-        if (parsedString.size() != 3) {
+		if (parsedString.size() != 3) {
 			error(data);
 		} else {
 			const int serverPort = parsedString[1].toInt(&serverPortOk);
