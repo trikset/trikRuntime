@@ -40,7 +40,7 @@ public:
 	virtual void setHullNumber(int myHullNumber) = 0;
 
 	/// Returns IP of a leader robot, or empty QHostAddress if we are not connected.
-	virtual QHostAddress serverIp() const = 0;
+	virtual QString serverIp() const = 0;
 
 	/// Returns our IP address, or empty QHostAddress if we are not connected.
 	virtual QString myIp() const = 0;

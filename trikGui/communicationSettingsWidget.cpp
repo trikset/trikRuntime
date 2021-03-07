@@ -51,7 +51,7 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikNetwork::MailboxInt
 
 	mSelectorsHelpLabel.setAlignment(Qt::AlignHCenter);
 
-	const auto hostAddressString = mailbox.serverIp().toString();
+	const auto hostAddressString = mailbox.serverIp();
 
 	if (hostAddressString == QHostAddress().toString()) {
 		mServerIpSelector.setValue(0);

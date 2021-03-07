@@ -82,12 +82,12 @@ void Mailbox::renewIp()
 	QMetaObject::invokeMethod(mWorker.data(), &MailboxServer::renewIp);
 }
 
-QHostAddress Mailbox::serverIp() const
+QString Mailbox::serverIp() const
 {
 	QHostAddress res;
 	QMetaObject::invokeMethod(mWorker.data(), [this, &res](){res = mWorker->serverIp();}
 							, Qt::BlockingQueuedConnection);
-	return res;
+	return res.toString();
 }
 
 QString Mailbox::myIp() const
