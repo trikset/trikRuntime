@@ -256,7 +256,7 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int serverPort, int
 	for (auto &&endpoint : mKnownRobots) {
 		if (endpoint.ip == ip && endpoint.serverPort == serverPort) {
 			// We want to remember connected robots but with a changed hull number.
-			if (connectedPort == 1) {
+			if (connectedPort == -1) {
 				const auto connectionObject = connection(ip, endpoint.connectedPort);
 				if (connectionObject != nullptr) {
 					connectedPort = endpoint.connectedPort;
