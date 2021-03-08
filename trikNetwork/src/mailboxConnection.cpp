@@ -56,14 +56,14 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			QLOG_ERROR() << "Malformed data: " << data;
 	};
 
+	const auto parsedString = data.split(":");
+	bool serverPortOk = false;
+	bool hullNumberOk = false;
 	if (data.startsWith(registerCommand)) {
-		QStringList const parsedString = data.split(":");
 		if (parsedString.size() != 3) {
 			error(data);
 		} else {
-			bool serverPortOk = false;
 			const int serverPort = parsedString[1].toInt(&serverPortOk);
-			bool hullNumberOk = false;
 			const int hullNumber = parsedString[2].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
@@ -72,13 +72,10 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			}
 		}
 	} else if (data.startsWith(connectionCommand)) {
-		QStringList const parsedString = data.split(":");
 		if (parsedString.size() != 4) {
 			error(data);
 		} else {
-			bool serverPortOk = false;
 			const int serverPort = parsedString[2].toInt(&serverPortOk);
-			bool hullNumberOk = false;
 			const int hullNumber = parsedString[3].toInt(&hullNumberOk);
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
@@ -87,12 +84,10 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			}
 		}
 	} else if (data.startsWith(selfCommand)) {
-		QStringList const parsedString = data.split(":");
 		if (parsedString.size() != 2) {
 			error(data);
 		} else {
 			// Self-info. Host and port is to be determined automatically via socket.
-			bool hullNumberOk = false;
 			const int hullNumber = parsedString[1].toInt(&hullNumberOk);
 			if (!hullNumberOk) {
 				error(data);
@@ -101,7 +96,7 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			}
 		}
 	} else if (data.startsWith(dataCommand)) {
-		QString parsedString = data;
+		auto parsedString = data;
 		parsedString.remove(0, dataCommand.length());
 		emit newData(peerAddress(), peerPort(), parsedString.toUtf8());
 	}

@@ -46,7 +46,7 @@ public:
 
 	Q_INVOKABLE bool isConnected() const override;
 
-	Q_INVOKABLE QHostAddress serverIp() const override;
+	Q_INVOKABLE QString serverIp() const override;
 
 	Q_INVOKABLE QString myIp() const override;
 
