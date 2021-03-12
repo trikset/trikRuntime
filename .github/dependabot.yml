@@ -1,0 +1,20 @@
+version: 2
+updates:
+- package-ecosystem: gitsubmodule
+  directory: "/"
+  schedule:
+    interval: monthly
+    time: "23:59"
+    timezone: Europe/Moscow
+  open-pull-requests-limit: 99
+  reviewers:
+  - iakov
+  assignees:
+  - iakov
+- package-ecosystem: docker
+  directory: "/docker"
+  schedule:
+    interval: daily
+    time: "23:59"
+    timezone: Europe/Moscow
+  open-pull-requests-limit: 99
