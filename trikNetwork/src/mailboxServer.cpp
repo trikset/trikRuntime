@@ -66,7 +66,11 @@ void MailboxServer::renewIp()
 
 void MailboxServer::start()
 {
-	startServer(mMyPort);
+	int i = 0;
+	while (i < 5 && !startServer(mMyPort)) {
+		mMyPort++;
+		i++;
+	}
 
 	if (!mServerIp.isNull() && mMyIp == mSavedIp) {
 		connectTo(mServerIp, mServerPort);

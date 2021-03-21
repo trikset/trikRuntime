@@ -46,12 +46,14 @@ TrikServer::~TrikServer()
 	qDeleteAll(mConnections.keyBegin(), mConnections.keyEnd());
 }
 
-void TrikServer::startServer(quint16 port)
+bool TrikServer::startServer(quint16 port)
 {
 	if (!listen(QHostAddress::AnyIPv4, port)) {
 		QLOG_ERROR() << "Can not start server on port " << port;
+		return false;
 	} else {
 		QLOG_INFO() << "Server on port" << port << "started";
+		return true;
 	}
 }
 
