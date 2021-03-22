@@ -43,7 +43,8 @@ public:
 	int activeConnections() const;
 
 	/// Starts listening given port on all network interfaces.
-	Q_INVOKABLE void startServer(quint16 port);
+	/// returns true on successful start
+	Q_INVOKABLE bool startServer(quint16 port);
 
 public slots:
 	/// Broadcasts message across all opened connections.
