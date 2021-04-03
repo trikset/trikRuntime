@@ -15,19 +15,11 @@
 TEMPLATE = subdirs
 
 include(../global.pri)
-
-win32 {
-	DESTDIR ~= s,/,\\,g
-	system(cmd.exe /C "FOR /R %G in (*.ts) do lrelease -removeidentical %G")
-	system("cmd.exe /C \"xcopy *.qm $$DESTDIR\\translations\\ /s /e /y\"")
-	system("cmd.exe /C \"xcopy *.ini $$DESTDIR\\translations\\ /s /e /y\"")
-	system(cmd.exe /C "DEL /s *.qm")
-}
-else {
-	system(find $$system_quote($$PWD) -name '*.ts' -print0 | xargs -0 $$[QT_HOST_BINS/get]/lrelease -removeidentical)
-	system(rsync -vrdmR  --remove-source-files --include='*/' --include='*.qm' --exclude='*' ./ $$DESTDIR/translations/)
-	system(rsync -vrdmR  --include='*/' --include='*.ini' --exclude='*' ./ $$DESTDIR/translations/)
-}
+TRANSLATIONS_DIR=$$system_quote($$DESTDIR/translations/)
+win32:TRANSLATIONS_DIR=$$system(cygpath -u $$TRANSLATIONS_DIR)
+system(bash -c $$system_quote(find $$shell_quote($$PWD) -name '*.ts' -print0 | xargs -0 $$[QT_HOST_BINS/get]/lrelease -removeidentical))
+system(bash -c $$system_quote(rsync -vrdmR  --remove-source-files --include='*/' --include='*.qm' --exclude='*' ./ $$TRANSLATIONS_DIR))
+system(bash -c $$system_quote(rsync -vrdmR  --include='*/' --include='*.ini' --exclude='*' ./ $$TRANSLATIONS_DIR))
 
 OTHER_FILES += \
 	$$PWD/ru/locale.ini \
