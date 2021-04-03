@@ -25,9 +25,9 @@
 # - CONFIG+=sanitize-undefined will enable undefined behavior sanitizer
 # - CONFIG+=sanitize-thread will enable thread sanitizer
 
-!isEmpty(_PRO_FILE_):!isEmpty(CONFIG):isEmpty(GLOBAL_PRI_INCLUDED){
+!isEmpty(_PRO_FILE_):!isEmpty(CONFIG):isEmpty(RUNTIME_GLOBAL_PRI_INCLUDED){
 # commented out, seems like there is no need for this var, but let's wait
-false:GLOBAL_PRI_INCLUDED=1
+RUNTIME_GLOBAL_PRI_INCLUDED=1
 
 COMPILER = $$(CXX)
 !isEmpty(QMAKE_GCC_MAJOR_VERSION) {
@@ -90,7 +90,6 @@ CONFIG(debug) {
 
 GLOBAL_PWD = $$absolute_path($$PWD)
 GLOBAL_OUTPWD = $$absolute_path($$OUT_PWD)
-
 
 isEmpty(GLOBAL_DESTDIR) {
 	GLOBAL_DESTDIR = $$GLOBAL_OUTPWD/bin/$$CONFIGURATION
@@ -440,7 +439,7 @@ defineTest(noPch) {
 }
 
 defineTest(enableFlagIfCan) {
-  system(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o $$system(mktemp) 2>/dev/null ) {
+  system(bash -c $$system_quote(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o $$system(bash -c mktemp) 2>/dev/null) ) {
 	QMAKE_CXXFLAGS += $$1
 	export(QMAKE_CXXFLAGS)
   } else {
