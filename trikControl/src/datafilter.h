@@ -18,11 +18,17 @@
 #include <QObject>
 #include <functional>
 
+/// Data filter for TRIK sensors
 class DataFilter
 {
 public:
+	/// Constructor
+	/// @param minValue - minimal possible value returned by sensor
+	/// @param maxValue - maximal possible value returned by sensor
+	/// @param filterName - name of filter to be applied
 	DataFilter(int minValue, int maxValue, const QString &filterName = "");
 
+	/// Applies the specified filter to the data
 	int applyFilter(int data);
 
 private:
