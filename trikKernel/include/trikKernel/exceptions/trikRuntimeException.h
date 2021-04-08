@@ -24,16 +24,26 @@ namespace trikKernel {
 class TrikRuntimeException : public std::exception
 {
 public:
+	/// Constructor
+	/// @param msg - message to be returned
 	explicit TrikRuntimeException(const QString &msg):
 		mMessage(msg)
 	{
+		/// Vera
 		QLOG_ERROR() << message();
 	}
+
+	/// Destructor
 	~TrikRuntimeException() = default;
+
+	/// Returns the exception message
 	const char *what() const noexcept override
 	{
+		/// Vera
 		return message().toLatin1().constData();
 	}
+
+	/// Returns the exception message
 	const QString &message() const { return mMessage; }
 private:
 	QString mMessage;
