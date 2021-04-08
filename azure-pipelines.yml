@@ -32,7 +32,7 @@ jobs:
 
     pool:
       vmImage: $(imageName)
-    
+
     steps:
     - checkout: self
       fetchDepth: 100
