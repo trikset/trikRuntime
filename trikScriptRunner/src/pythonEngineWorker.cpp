@@ -199,27 +199,17 @@ bool PythonEngineWorker::recreateContext()
 	return initTrik();
 }
 
-bool PythonEngineWorker::evalSystemPy()
+bool PythonEngineWorker::importTrikPy()
 {
-	const QString systemPyPath = trikKernel::Paths::systemScriptsPath() + "system.py";
+	const QString systemPyPath = trikKernel::Paths::systemScriptsPath() + "TRIK.py";
 
 	if (!QFileInfo::exists(systemPyPath)) {
-		QLOG_ERROR() << "system.py not found, path:" << systemPyPath;
+		QLOG_ERROR() << "TRIK.py not found, path:" << systemPyPath;
 		return false;
 	}
 
-	// HACK: to avoid duplicate system.py try to check if basic feature like script.wait works.
-	mMainContext.evalScript("script.wait(0)");
-	if (PythonQt::self()->hadError()) {
-		// HACK: no script.wait means usually a problem with system.py, let's try to include it
-		PythonQt::self()->clearError();
-		mMainContext.evalFile(systemPyPath);
-		if (PythonQt::self()->hadError()) {
-			QLOG_ERROR() << "Failed to eval system.py";
-			QLOG_ERROR() << mErrorMessage;
-			return false;
-		}
-	}
+	addSearchModuleDirectory(trikKernel::Paths::systemScriptsPath());
+	mMainContext.evalScript("import TRIK;from TRIK import *");
 
 	return true;
 }
@@ -240,11 +230,16 @@ bool PythonEngineWorker::initTrik()
 				"from gc import collect as gc_collect;"
 				"gc_collect();");
 	PythonQt_init_PyTrikControl(mMainContext);
-	mMainContext.addObject("brick", mBrick);
-	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
-	mMainContext.addObject("mailbox", mMailbox);
 
-	return evalSystemPy();
+	mMainContext.addObject("_trik_brick_cpp", mBrick);
+	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl.data());
+	mMainContext.addObject("_trik_mailbox_cpp", mMailbox);
+	mMainContext.evalScript("import builtins;"
+				"builtins._trik_brick_cpp = _trik_brick_cpp;"
+				"builtins._trik_script_cpp = _trik_script_cpp;"
+				"builtins._trik_mailbox_cpp = _trik_mailbox_cpp;");
+
+	return importTrikPy();
 }
 
 void PythonEngineWorker::resetBrick()

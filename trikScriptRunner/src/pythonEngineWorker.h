@@ -140,8 +140,8 @@ private:
 		, running
 	};
 
-	/// Evaluates "system.py" file in the current context, returns true on success
-	bool evalSystemPy();
+	/// Imports "TRIK.py" file in the current context, returns true on success
+	bool importTrikPy();
 
 	/// Turns the worker to a starting state, emits startedScript() signal.
 	void startScriptEvaluation(int scriptId);
