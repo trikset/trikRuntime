@@ -74,8 +74,8 @@ build_script:
   - qmake %APPVEYOR_BUILD_FOLDER%\%PROJECT_FILE%.pro -spec win32-g++ CONFIG+=%CONFIGURATION% CONFIG+=tests
     #  - ps: $blockRdp = $true;iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
-  - mingw32-make qmake_all
-  - mingw32-make all
+  - make -j2 qmake_all
+  - make -j2 all
 
 test_script:
   - cd %BUILD_DIR%
