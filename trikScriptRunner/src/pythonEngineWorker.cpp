@@ -226,6 +226,10 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 bool PythonEngineWorker::initTrik()
 {
 	mMainContext.evalScript("import sys;"
+				"to_delete = [];"
+				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
+				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
+				"[sys.modules.pop(x) for x in to_delete];"
 				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
 				"from gc import collect as gc_collect;"
 				"gc_collect();");
