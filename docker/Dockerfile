@@ -18,7 +18,8 @@ RUN apt-get update \
     && add-apt-repository -y ppa:beineri/opt-qt-${TRIK_QTVERSION}-$(lsb_release -sc) \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb python3.${TRIK_PYTHON3_VERSION_MINOR}-dev \
+		    wget curl rsync sshpass openssh-client build-essential g++-${TRIK_GCCVERSION} gdb \
+		    python3.${TRIK_PYTHON3_VERSION_MINOR}-dev python3.${TRIK_PYTHON3_VERSION_MINOR}-venv \
 		    pkg-config libboost-system-dev libboost-wave-dev \
                 tcl vera++ xvfb mesa-common-dev libgl1-mesa-dri \
 		libglu1-mesa-dev libpng-dev \
