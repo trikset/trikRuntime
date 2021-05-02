@@ -15,11 +15,12 @@
 #pragma once
 
 #include <QtCore/QByteArray>
+#include "declSpec.h"
 
 namespace trikHal {
 
 /// Communicates with MSP processor over USB bus.
-class MspUsbInterface
+class TRIKHAL_EXPORT MspUsbInterface
 {
 	Q_DISABLE_COPY(MspUsbInterface)
 public:

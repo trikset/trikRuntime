@@ -22,7 +22,7 @@ namespace trikHal {
 
 /// Abstract factory that creates hardware abstraction object depending on whether we compile for real robot or for
 /// desktop.
-class HardwareAbstractionFactory
+class TRIKHAL_EXPORT HardwareAbstractionFactory
 {
 public:
 	/// Returns pointer to hardware abstraction object.

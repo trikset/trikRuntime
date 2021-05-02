@@ -15,11 +15,12 @@
 #pragma once
 
 #include <QtCore/QStringList>
+#include "declSpec.h"
 
 namespace trikHal {
 
 /// Represents console of an OS.
-class SystemConsoleInterface
+class TRIKHAL_EXPORT SystemConsoleInterface
 {
 	Q_DISABLE_COPY(SystemConsoleInterface)
 public:

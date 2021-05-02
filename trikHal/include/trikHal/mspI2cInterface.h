@@ -15,11 +15,12 @@
 #pragma once
 
 #include <QtCore/QByteArray>
+#include "declSpec.h"
 
 namespace trikHal {
 
 /// Communicates with MSP processor over I2C bus.
-class MspI2cInterface
+class TRIKHAL_EXPORT MspI2cInterface
 {
 	Q_DISABLE_COPY(MspI2cInterface)
 public:

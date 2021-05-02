@@ -13,9 +13,13 @@
 # limitations under the License.
 TEMPLATE = app
 include($$PWD/../global.pri)
-CONFIG += testcase testcase_no_bundle no_testcase_installs
 
 QT += widgets
+
+#Workaround for MinGW build. Qt incorrectly sets it to empty string on Win32 for bash
+mingw: TEST_TARGET_DIR = .
+
+CONFIG += testcase testcase_no_bundle no_testcase_installs
 
 INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \

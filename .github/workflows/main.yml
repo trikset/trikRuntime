@@ -14,15 +14,31 @@ jobs:
         python-version: [3.8]
     defaults:
       run:
-        shell: msys2 {0}
+        shell: bash
     steps:
       - name: Cancel Previous Workflow Runs
         uses: n1hility/cancel-previous-runs@v2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: 'Disable Windows Just-in-Time Debugger/Error reporting'
+        shell: pwsh
+        run: |
+             reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v Debugger /d - /t REG_SZ /f
+             reg add "HKLM\SOFTWARE\Microsoft\.NETFramework" /v DbgManagedDebugger /d - /t REG_SZ /f
+             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /d 1 /t REG_DWORD /f
+             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
+             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
+             reg add "HKLM\System\CurrentControlSet\Control\Windows" /v ErrorMode /d 2 /t REG_DWORD /f
+
+
+             reg add "HKCU\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v Debugger /d - /t REG_SZ /f
+             reg add "HKCU\SOFTWARE\Microsoft\.NETFramework" /v DbgManagedDebugger /d - /t REG_SZ /f
+             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /d 1 /t REG_DWORD /f
+             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
+             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
+
       - name: Configure git
-        shell: bash
         run: |
             git config --global core.symlinks true
             git config --global core.autocrlf true
@@ -42,7 +58,15 @@ jobs:
           version: 5.12.10
           arch: win32_mingw73
           modules: 'qtscript qtsvg'
-          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,8.1,qt.tools.win32_mingw810'
+          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,7.3,qt.tools.win32_mingw730'
+          extra: '--external 7z'
+
+# After Qt install action, that spoils pythonLocation variable
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x86'
 
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
@@ -50,22 +74,37 @@ jobs:
           release: false
           update: false
           msystem: MINGW32
-          path-type: inherit
+          path-type: strict #strict #inherit #minimal
           install: >-
+            base
             rsync
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-          architecture: 'x86'
+      - name: Purge MinGW conflicting packages
+        run: 'pacman --remove --noconfirm --cascade --recursive --unneeded gcc python3 || :'
+        shell: msys2 {0}
+
+      - name: Update PATH
+        shell: msys2 {0}
+        run: | 
+             set -xue
+             cygpath -w /usr/bin >> $GITHUB_PATH
+             cygpath -w /mingw32/bin >> $GITHUB_PATH
+             cygpath -w "${pythonLocation}" >> $GITHUB_PATH
+             cygpath -w "${Qt5_Dir}/bin" >> $GITHUB_PATH
+             cygpath -w "${IQTA_TOOLS}/mingw730_32/bin" >> $GITHUB_PATH
+
+      - name: Check PATH
+        run: |
+             echo "$GITHUB_PATH"
+             cat $GITHUB_PATH
+             echo '----'
+             echo PATH="$PATH"
 
       - name: Check available tools
         run: |
              set -xueo pipefail
-             echo PATH=$PATH
              uname -a
-             rsync -v /dev/null /dev/null
+             rsync --version
              ls "$IQTA_TOOLS/" "$Qt5_Dir/"
              qmake --version
              python3 --version
@@ -75,12 +114,17 @@ jobs:
         run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}"'
 
       - name: QMake all
+        timeout-minutes: 5
         run: mingw32-make -j $(nproc) qmake_all
 
       - name: Make all
+        timeout-minutes: 10
         run: mingw32-make -j $(nproc) all
 
       - name: Tests
+        timeout-minutes: 5
         run: |
           export TRIK_PYTHONPATH="$pythonLocation/Lib"
+          export QT_QPA_PLATFORM=minimal
+          export TESTRUNNER=strace.exe
           mingw32-make check

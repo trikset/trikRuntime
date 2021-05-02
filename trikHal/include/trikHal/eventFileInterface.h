@@ -17,11 +17,12 @@
 #include <QtCore/QString>
 #include <QtCore/QObject>
 #include <trikKernel/timeVal.h>
+#include "declSpec.h"
 
 namespace trikHal {
 
 /// Event file abstraction. Can be opened or closed, when opened can emit signal containing event data.
-class EventFileInterface : public QObject
+class TRIKHAL_EXPORT EventFileInterface : public QObject
 {
 	Q_OBJECT
 
