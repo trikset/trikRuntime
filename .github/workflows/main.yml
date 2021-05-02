@@ -9,25 +9,78 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
     defaults:
       run:
         shell: msys2 {0}
     steps:
-        - uses: actions/checkout@v2
-          with:
-            submodules: recursive
+      - name: Cancel Previous Workflow Runs
+        uses: n1hility/cancel-previous-runs@v2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Setup MSYS2
-          uses: msys2/setup-msys2@v2
-          with:
-            release: false
-            update: false
-            msystem: MINGW32
-            path-type: minimal
-            install: >-
-               rsync           
+      - name: Configure git
+        shell: bash
+        run: |
+            git config --global core.symlinks true
+            git config --global core.autocrlf true
 
-        - shell: msys2 {0}
-          run: |
-                  uname -a
-                  rsync -v /dev/null /dev/null
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+#      - name: Fetch git tags
+#        run: git fetch --tags --unshallow
+#        shell: bash
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          version: 5.12.10
+          arch: win32_mingw73
+          modules: 'qtscript qtsvg'
+          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,8.1,qt.tools.win32_mingw810'
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          release: false
+          update: false
+          msystem: MINGW32
+          path-type: inherit
+          install: >-
+            rsync
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x86'
+
+      - name: Check available tools
+        run: |
+             set -xueo pipefail
+             echo PATH=$PATH
+             uname -a
+             rsync -v /dev/null /dev/null
+             ls "$IQTA_TOOLS/" "$Qt5_Dir/"
+             qmake --version
+             python3 --version
+             g++ --version
+
+      - name: QMake
+        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}"'
+
+      - name: QMake all
+        run: mingw32-make -j $(nproc) qmake_all
+
+      - name: Make all
+        run: mingw32-make -j $(nproc) all
+
+      - name: Tests
+        run: |
+          export TRIK_PYTHONPATH="$pythonLocation/Lib"
+          mingw32-make check

@@ -9,7 +9,7 @@ skip_commits:
     - '**/*.txt'
     - '**/*.md'
     - '.mergify.yml'
-    - '.github/mergeable.yml'
+    - '.github/*'
   message: /\[NOCI\]/
 
 
