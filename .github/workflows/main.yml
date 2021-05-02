@@ -1,0 +1,33 @@
+name: GHA CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+        - uses: actions/checkout@v2
+          with:
+            submodules: recursive
+
+        - name: Setup MSYS2
+          uses: msys2/setup-msys2@v2
+          with:
+            release: false
+            update: false
+            msystem: MINGW32
+            path-type: minimal
+            install: >-
+               rsync           
+
+        - shell: msys2 {0}
+          run: |
+                  uname -a
+                  rsync -v /dev/null /dev/null
