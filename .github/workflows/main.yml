@@ -1,9 +1,9 @@
 name: GHA CI
 on:
   push:
-    branches: [ master ]
+    branches:
   pull_request:
-    branches: [ master ]
+    branches:
   workflow_dispatch:
 
 jobs:
@@ -24,20 +24,20 @@ jobs:
       - name: 'Disable Windows Just-in-Time Debugger/Error reporting'
         shell: pwsh
         run: |
-             reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v Debugger /d - /t REG_SZ /f
-             reg add "HKLM\SOFTWARE\Microsoft\.NETFramework" /v DbgManagedDebugger /d - /t REG_SZ /f
-             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /d 1 /t REG_DWORD /f
-             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
-             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
-             reg add "HKLM\System\CurrentControlSet\Control\Windows" /v ErrorMode /d 2 /t REG_DWORD /f
-
-
-             reg add "HKCU\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v Debugger /d - /t REG_SZ /f
-             reg add "HKCU\SOFTWARE\Microsoft\.NETFramework" /v DbgManagedDebugger /d - /t REG_SZ /f
-             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /d 1 /t REG_DWORD /f
-             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
-             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
-
+          #             reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v Debugger /d - /t REG_SZ /f
+          #             reg add "HKLM\SOFTWARE\Microsoft\.NETFramework" /v DbgManagedDebugger /d - /t REG_SZ /f
+          #             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /d 1 /t REG_DWORD /f
+          #             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
+          #             reg add "HKLM\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
+          #             reg add "HKLM\System\CurrentControlSet\Control\Windows" /v ErrorMode /d 2 /t REG_DWORD /f
+          #
+          #
+          #             reg add "HKCU\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug" /v Debugger /d - /t REG_SZ /f
+          #             reg add "HKCU\SOFTWARE\Microsoft\.NETFramework" /v DbgManagedDebugger /d - /t REG_SZ /f
+          #             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v DontShowUI /d 1 /t REG_DWORD /f
+          #             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
+          #             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
+          #
       - name: Configure git
         run: |
             git config --global core.symlinks true
@@ -71,7 +71,7 @@ jobs:
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
         with:
-          release: false
+          release: true
           update: false
           msystem: MINGW32
           path-type: strict #strict #inherit #minimal
@@ -89,9 +89,9 @@ jobs:
              set -xue
              cygpath -w /usr/bin >> $GITHUB_PATH
              cygpath -w /mingw32/bin >> $GITHUB_PATH
+             cygpath -w "${IQTA_TOOLS}/mingw730_32/bin" >> $GITHUB_PATH
              cygpath -w "${pythonLocation}" >> $GITHUB_PATH
              cygpath -w "${Qt5_Dir}/bin" >> $GITHUB_PATH
-             cygpath -w "${IQTA_TOOLS}/mingw730_32/bin" >> $GITHUB_PATH
 
       - name: Check PATH
         run: |
@@ -111,7 +111,7 @@ jobs:
              g++ --version
 
       - name: QMake
-        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}"'
+        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=debug PYTHON_PATH="${pythonLocation}"'
 
       - name: QMake all
         timeout-minutes: 5
@@ -122,9 +122,26 @@ jobs:
         run: mingw32-make -j $(nproc) all
 
       - name: Tests
-        timeout-minutes: 5
+        timeout-minutes: 3
+        continue-on-error: true
         run: |
-          export TRIK_PYTHONPATH="$pythonLocation/Lib"
-          export QT_QPA_PLATFORM=minimal
-          export TESTRUNNER=strace.exe
-          mingw32-make check
+          echo "$PATH"
+          echo ------
+          export TRIK_PYTHONPATH=$(cygpath -w "$pythonLocation/Lib")
+          mingw32-make check -k
+
+      - name: Prepare for RDP connection
+        continue-on-error: true
+        shell: pwsh
+        env:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        run: |
+            Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+            Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+            Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+            Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+            Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+            Expand-Archive ngrok.zip
+            .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+            choco install far dependencies
+            .\ngrok\ngrok.exe tcp 3389
