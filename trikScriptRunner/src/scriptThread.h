@@ -16,13 +16,14 @@
 
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
+#include "trikScriptRunnerDeclSpec.h"
 
 namespace trikScriptRunner {
 
 class Threading;
 
 /// Thread object which executes a script with a QScriptEngine
-class ScriptThread : public QThread
+class TRIKSCRIPTRUNNER_EXPORT ScriptThread : public QThread
 {
 	Q_OBJECT
 

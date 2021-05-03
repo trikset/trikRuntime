@@ -32,7 +32,7 @@ class ScriptEngineWorker;
 class TrikScriptControlInterface;
 
 /// Executes scripts in Qt Scripting Engine.
-class TrikJavaScriptRunner : public TrikScriptRunnerInterface
+class TRIKSCRIPTRUNNER_EXPORT TrikJavaScriptRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
 public:

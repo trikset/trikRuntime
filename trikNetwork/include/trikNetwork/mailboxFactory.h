@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "declSpec.h"
+#include "trikNetworkDeclSpec.h"
 
 namespace trikKernel {
 class Configurer;

@@ -17,7 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QObject>
 #include <trikKernel/timeVal.h>
-#include "declSpec.h"
+#include <trikHal/trikHalDeclSpec.h>
 
 namespace trikHal {
 

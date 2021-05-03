@@ -16,11 +16,12 @@
 
 #include <QtCore/QObject>
 #include <QtNetwork/QTcpServer>
+#include "trikScriptRunnerDeclSpec.h"
 
 namespace trikScriptRunner {
 
 /// Class for script variables observing, based on HTTP server
-class TrikVariablesServer : public QObject
+class TRIKSCRIPTRUNNER_EXPORT TrikVariablesServer : public QObject
 {
 	Q_OBJECT
 public:

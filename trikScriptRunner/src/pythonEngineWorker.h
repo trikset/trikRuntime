@@ -34,7 +34,7 @@ namespace trikScriptRunner
 {
 
 /// Worker object to be run in a separate thread for Python execution.
-class PythonEngineWorker : public QObject
+class TRIKSCRIPTRUNNER_EXPORT PythonEngineWorker : public QObject
 {
 	Q_OBJECT
 

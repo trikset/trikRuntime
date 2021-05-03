@@ -17,7 +17,7 @@ TEMPLATE = lib
 include(../global.pri)
 
 PUBLIC_HEADERS += \
-	$$PWD/include/trikHal/declSpec.h \
+	$$PWD/include/trikHal/trikHalDeclSpec.h \
 	$$PWD/include/trikHal/hardwareAbstractionInterface.h \
 	$$PWD/include/trikHal/hardwareAbstractionFactory.h \
 	$$PWD/include/trikHal/fifoInterface.h \

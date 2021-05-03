@@ -37,7 +37,7 @@
 #include "cameraDeviceInterface.h"
 #include "i2cDeviceInterface.h"
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

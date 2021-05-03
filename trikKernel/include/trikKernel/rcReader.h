@@ -18,11 +18,12 @@
 #include <QtCore/QString>
 #include <QtCore/QHash>
 #include <QtCore/QFile>
+#include "trikKernelDeclSpec.h"
 
 namespace trikKernel {
 
 /// Simple trikrc file parser.
-class RcReader : public QObject
+class TRIKKERNEL_EXPORT RcReader : public QObject
 {
 	Q_OBJECT
 

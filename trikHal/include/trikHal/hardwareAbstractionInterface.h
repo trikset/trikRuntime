@@ -22,7 +22,8 @@
 #include "mspI2cInterface.h"
 #include "mspUsbInterface.h"
 #include "systemConsoleInterface.h"
-#include "declSpec.h"
+
+#include <trikHal/trikHalDeclSpec.h>
 #include <QtCore/QDir>
 
 namespace trikHal {

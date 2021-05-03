@@ -23,7 +23,7 @@
 namespace trikKernel {
 
 /// Exception that is thrown when file opening operation failed.
-class FailedToOpenFileException : public TrikRuntimeException
+class TRIKKERNEL_EXPORT FailedToOpenFileException : public TrikRuntimeException
 {
 public:
 	/// Constructor.

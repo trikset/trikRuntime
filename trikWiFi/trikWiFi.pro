@@ -23,7 +23,7 @@ DEFINES += TRIKWIFI_LIBRARY
 PUBLIC_HEADERS += \
 	$$PWD/include/trikWiFi/trikWiFi.h \
 	$$PWD/include/trikWiFi/networkStructs.h \
-	$$PWD/include/trikWiFi/declSpec.h \
+	$$PWD/include/trikWiFi/trikWifiDeclSpec.h \
 
 HEADERS += \
 	$$PWD/src/wpaSupplicantCommunicator.h \

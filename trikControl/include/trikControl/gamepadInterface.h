@@ -16,7 +16,7 @@
 
 #include <QtCore/QObject>
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

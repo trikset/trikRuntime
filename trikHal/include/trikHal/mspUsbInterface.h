@@ -15,7 +15,7 @@
 #pragma once
 
 #include <QtCore/QByteArray>
-#include "declSpec.h"
+#include <trikHal/trikHalDeclSpec.h>
 
 namespace trikHal {
 

@@ -19,7 +19,7 @@
 
 #include "vectorSensorInterface.h"
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

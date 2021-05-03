@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "declSpec.h"
+#include "testUtilsDeclSpec.h"
 
 namespace tests {
 namespace utils {

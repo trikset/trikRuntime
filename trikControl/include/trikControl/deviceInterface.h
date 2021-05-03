@@ -15,7 +15,7 @@
 #pragma once
 #include <QtGlobal>
 #include <QMetaType>
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

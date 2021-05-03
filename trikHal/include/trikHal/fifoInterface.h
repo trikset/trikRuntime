@@ -16,7 +16,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QObject>
-#include "declSpec.h"
+#include <trikHal/trikHalDeclSpec.h>
 
 namespace trikHal {
 

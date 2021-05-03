@@ -31,7 +31,7 @@ class ScriptThread;
 
 /// Designed to support OS threads from a Qt Script.
 /// Provides methods for creation and joining threads and for sending messages between threads.
-class Threading : public QObject
+class TRIKSCRIPTRUNNER_EXPORT Threading : public QObject
 {
 	Q_OBJECT
 

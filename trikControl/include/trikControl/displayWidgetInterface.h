@@ -22,7 +22,7 @@
 	#include <QtWidgets/QWidget>
 #endif
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

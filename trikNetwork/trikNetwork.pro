@@ -18,7 +18,7 @@ include(../global.pri)
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikNetwork/connection.h \
-	$$PWD/include/trikNetwork/declSpec.h \
+	$$PWD/include/trikNetwork/trikNetworkDeclSpec.h \
 	$$PWD/include/trikNetwork/mailboxFactory.h \
 	$$PWD/include/trikNetwork/mailboxInterface.h \
 	$$PWD/include/trikNetwork/trikServer.h \

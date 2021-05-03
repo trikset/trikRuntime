@@ -1,4 +1,4 @@
-/* Copyright 2019 Andrei Khodko
+/* Copyright 2021 Iakov Kirilenko, CyberTech Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,12 @@
 
 #pragma once
 
-#include <QImage>
+#include <QtCore/qglobal.h>
 
-#include <trikControl/trikControlDeclSpec.h>
-
-namespace trikControl {
-
-/// The class that makes utility code reusable.
-class TRIKCONTROL_EXPORT Utilities
-{
-public:
-	/// Creates image for show method from data according to format. Image is scaled to fill the screen.
-	static QImage imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format);
-
-	/// Reworks data from brick.getStillImage() to better getPhoto()
-	static QVector<int32_t> rescalePhoto(const QVector<uchar> &data);
-};
-}
+#ifndef TRIKCONTROL_EXPORT
+#  if defined(TRIKCONTROL_LIBRARY)
+#    define TRIKCONTROL_EXPORT Q_DECL_EXPORT
+#  else
+#    define TRIKCONTROL_EXPORT Q_DECL_IMPORT
+#  endif
+#endif

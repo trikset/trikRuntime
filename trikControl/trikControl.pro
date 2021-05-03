@@ -45,7 +45,8 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
 	$$PWD/include/trikControl/markerInterface.h \
 	$$PWD/include/trikControl/i2cDeviceInterface.h \
-	$$PWD/include/trikControl/utilities.h
+	$$PWD/include/trikControl/utilities.h \
+	$$PWD/include/trikControl/trikControlDeclSpec.h \
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \

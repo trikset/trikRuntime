@@ -16,7 +16,7 @@
 
 #include "cameraImplementationInterface.h"
 #include <trikHal/hardwareAbstractionInterface.h>
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 
 namespace trikHal {

@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-#include "declSpec.h"
+#include "trikWifiDeclSpec.h"
 
 struct sockaddr_un;
 

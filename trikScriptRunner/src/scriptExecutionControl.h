@@ -24,7 +24,7 @@
 namespace trikScriptRunner {
 
 /// Script execution controller, provides related functions to scripts.
-class ScriptExecutionControl : public TrikScriptControlInterface
+class TRIKSCRIPTRUNNER_EXPORT ScriptExecutionControl : public TrikScriptControlInterface
 {
 	Q_OBJECT
 
