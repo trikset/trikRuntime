@@ -55,10 +55,10 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: 5.12.10
-          arch: win32_mingw73
+          version: 5.15.2
+          arch: win32_mingw81
           modules: 'qtscript qtsvg'
-          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,7.3,qt.tools.win32_mingw730'
+          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,8.1,qt.tools.win32_mingw810'
           extra: '--external 7z'
 
 # After Qt install action, that spoils pythonLocation variable
@@ -111,7 +111,7 @@ jobs:
              g++ --version
 
       - name: QMake
-        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=debug PYTHON_PATH="${pythonLocation}"'
+        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}"'
 
       - name: QMake all
         timeout-minutes: 5
@@ -144,4 +144,4 @@ jobs:
             Expand-Archive ngrok.zip
             .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
             choco install far dependencies
-            .\ngrok\ngrok.exe tcp 3389
+#           .\ngrok\ngrok.exe tcp 3389
