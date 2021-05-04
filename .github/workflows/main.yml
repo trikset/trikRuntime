@@ -10,12 +10,27 @@ jobs:
   build:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.8]
+        qt-version: ['5.15.2']
+        include:
+#          - qt-version: '5.10.1'
+#            mingw-version: 5.3
+#            mingw-short-version: 53
+#            python-version: 3.5
+#          - qt-version: '5.12.10'
+#            mingw-version: 7.3
+#            python-version: 3.8
+#            mingw-short-version: 73
+          - qt-version: '5.15.2'
+            mingw-version: 8.1
+            mingw-short-version: 81
+            python-version: 3.8
     defaults:
       run:
         shell: bash
     steps:
+
       - name: Cancel Previous Workflow Runs
         uses: n1hility/cancel-previous-runs@v2.0
         with:
@@ -55,10 +70,10 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-          version: 5.15.2
-          arch: win32_mingw81
+          version: ${{matrix.qt-version}}
+          arch: win32_mingw${{matrix.mingw-short-version}}
           modules: 'qtscript qtsvg'
-          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,8.1,qt.tools.win32_mingw810'
+          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,${{matrix.mingw-version}},qt.tools.win32_mingw${{matrix.mingw-short-version}}0'
           extra: '--external 7z'
 
 # After Qt install action, that spoils pythonLocation variable
@@ -89,7 +104,7 @@ jobs:
              set -xue
              cygpath -w /usr/bin >> $GITHUB_PATH
              cygpath -w /mingw32/bin >> $GITHUB_PATH
-             cygpath -w "${IQTA_TOOLS}/mingw730_32/bin" >> $GITHUB_PATH
+             cygpath -w "${IQTA_TOOLS}/mingw${{matrix.mingw-short-version}}0_32/bin" >> $GITHUB_PATH
              cygpath -w "${pythonLocation}" >> $GITHUB_PATH
              cygpath -w "${Qt5_Dir}/bin" >> $GITHUB_PATH
 
@@ -140,8 +155,8 @@ jobs:
             Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
             Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
             Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-            Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-            Expand-Archive ngrok.zip
-            .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
-            choco install far dependencies
+#            Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+#            Expand-Archive ngrok.zip
+#            .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+#            choco install far dependencies
 #           .\ngrok\ngrok.exe tcp 3389
