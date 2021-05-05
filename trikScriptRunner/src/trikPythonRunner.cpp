@@ -22,7 +22,7 @@
 
 using namespace trikScriptRunner;
 
-TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface &brick
+TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface *brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   , QSharedPointer<TrikScriptControlInterface> scriptControl
 								   )

@@ -42,9 +42,9 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param scriptControl - reference to script execution control object.
-	ScriptEngineWorker(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * mailbox
-			, TrikScriptControlInterface &scriptControl
+	ScriptEngineWorker(trikControl::BrickInterface *brick
+			, trikNetwork::MailboxInterface *mailbox
+			, TrikScriptControlInterface *scriptControl
 			);
 
 	/// Create and initialize a new script engine.
@@ -156,12 +156,13 @@ private:
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * engine);
 
-	trikControl::BrickInterface &mBrick;
-	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
-	TrikScriptControlInterface &mScriptControl;
+	trikControl::BrickInterface *mBrick{}; // Does not have ownership.
+	trikNetwork::MailboxInterface * mMailbox{};  // Does not have ownership.
+	TrikScriptControlInterface *mScriptControl{}; // Does not have ownership.
 	Threading mThreading;
 	QScopedPointer<QScriptEngine> mDirectScriptsEngine;
 	int mScriptId = 0;
+
 	volatile State mState = State::ready;
 	QHash<QString, QScriptEngine::FunctionSignature> mRegisteredUserFunctions;
 	QVector<std::function<void (QScriptEngine *)>> mCustomInitSteps;

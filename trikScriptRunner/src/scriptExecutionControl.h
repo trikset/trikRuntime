@@ -31,7 +31,7 @@ class TRIKSCRIPTRUNNER_EXPORT ScriptExecutionControl : public TrikScriptControlI
 public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
-	explicit ScriptExecutionControl(trikControl::BrickInterface &brick);
+	explicit ScriptExecutionControl(trikControl::BrickInterface *brick);
 
 	~ScriptExecutionControl() override;
 
@@ -91,7 +91,7 @@ signals:
 
 private:
 	QList<QTimer *> mTimers; // Has ownership.
-	trikControl::BrickInterface &mBrick;
+	trikControl::BrickInterface *mBrick {}; //Does not have ownership
 
 
 	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
