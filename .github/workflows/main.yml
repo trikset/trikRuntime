@@ -18,10 +18,10 @@ jobs:
 #            mingw-version: 5.3
 #            mingw-short-version: 53
 #            python-version: 3.5
-#          - qt-version: '5.12.10'
-#            mingw-version: 7.3
-#            python-version: 3.8
-#            mingw-short-version: 73
+          - qt-version: '5.12.10'
+            mingw-version: 7.3
+            mingw-short-version: 73
+            python-version: 3.8
           - qt-version: '5.15.2'
             mingw-version: 8.1
             mingw-short-version: 81
@@ -67,6 +67,9 @@ jobs:
 #        run: git fetch --tags --unshallow
 #        shell: bash
 
+      - name: Install RSync
+        run: choco install rsync
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
@@ -83,23 +86,23 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: 'x86'
 
-      - name: Setup MSYS2
-        uses: msys2/setup-msys2@v2
-        with:
-          release: true
-          update: false
-          msystem: MINGW32
-          path-type: strict #strict #inherit #minimal
-          install: >-
-            base
-            rsync
+#      - name: Setup MSYS2
+#        uses: msys2/setup-msys2@v2
+#        with:
+#          release: true
+#          update: false
+#          msystem: MINGW32
+#          path-type: strict #strict #inherit #minimal
+#          install: >-
+#            base
+#            rsync
 
-      - name: Purge MinGW conflicting packages
-        run: 'pacman --remove --noconfirm --cascade --recursive --unneeded gcc python3 || :'
-        shell: msys2 {0}
+#      - name: Purge MinGW conflicting packages
+#        run: 'pacman --remove --noconfirm --cascade --recursive --unneeded gcc python3 || :'
+#        shell: msys2 {0}
 
       - name: Update PATH
-        shell: msys2 {0}
+#        shell: msys2 {0}
         run: | 
              set -xue
              cygpath -w /usr/bin >> $GITHUB_PATH
