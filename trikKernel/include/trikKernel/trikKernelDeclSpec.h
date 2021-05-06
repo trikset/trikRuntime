@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2021 Iakov Kirilenko and CyberTech Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,12 @@
 
 #pragma once
 
-#include <QtCore/QSharedPointer>
+#include <QtCore/qglobal.h>
 
-#include "hardwareAbstractionInterface.h"
-
-namespace trikHal {
-
-/// Abstract factory that creates hardware abstraction object depending on whether we compile for real robot or for
-/// desktop.
-class TRIKHAL_EXPORT HardwareAbstractionFactory
-{
-public:
-	/// Returns pointer to hardware abstraction object.
-	static QSharedPointer<HardwareAbstractionInterface> create();
-};
-
-}
+#ifndef TRIKKERNEL_EXPORT
+#  if defined(TRIKKERNEL_LIBRARY)
+#    define TRIKKERNEL_EXPORT Q_DECL_EXPORT
+#  else
+#    define TRIKKERNEL_EXPORT Q_DECL_IMPORT
+#  endif
+#endif

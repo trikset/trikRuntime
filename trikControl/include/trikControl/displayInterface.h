@@ -20,7 +20,7 @@
 
 #include "displayWidgetInterface.h"
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

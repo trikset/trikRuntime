@@ -24,7 +24,7 @@
 namespace trikKernel {
 
 /// Exception that is thrown when something is wrong with runtime configuration files.
-class MalformedConfigException : public TrikRuntimeException
+class TRIKKERNEL_EXPORT MalformedConfigException : public TrikRuntimeException
 {
 public:
 	/// Constructor.

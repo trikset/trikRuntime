@@ -16,7 +16,7 @@
 
 #include <QtCore/QVector>
 #include <QImage>
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 #include "deviceInterface.h"
 
 namespace trikControl {

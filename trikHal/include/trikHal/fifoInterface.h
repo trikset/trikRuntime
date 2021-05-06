@@ -16,11 +16,12 @@
 
 #include <QtCore/QString>
 #include <QtCore/QObject>
+#include <trikHal/trikHalDeclSpec.h>
 
 namespace trikHal {
 
 /// Abstraction of Linux FIFO used to receive events. To write to FIFO, use OutputDeviceFileInterface.
-class FifoInterface : public QObject
+class TRIKHAL_EXPORT FifoInterface : public QObject
 {
 	Q_OBJECT
 

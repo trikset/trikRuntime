@@ -16,7 +16,7 @@
 
 #include <QtCore/QString>
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikHal {
 class HardwareAbstractionInterface;

@@ -27,7 +27,7 @@ class LoggingHelper;
 /// Usage scenario is to creae application object, create this helper, get command line parser from it and add
 /// needed additional command line options, then call "parseCommandLine", then, if it is successful, call "init",
 /// then take configPath, if needed.
-class ApplicationInitHelper
+class TRIKKERNEL_EXPORT ApplicationInitHelper
 {
 public:
 	/// Constructor.

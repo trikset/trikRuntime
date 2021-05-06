@@ -17,6 +17,7 @@
 #include <exception>
 #include <QString>
 #include <QsLog.h>
+#include <trikKernel/trikKernelDeclSpec.h>
 
 namespace trikKernel {
 

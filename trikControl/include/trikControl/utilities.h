@@ -16,7 +16,7 @@
 
 #include <QImage>
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

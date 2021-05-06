@@ -18,11 +18,12 @@
 #include <QtCore/QString>
 #include <QtCore/QThread>
 #include <QtCore/QHash>
+#include "trikKernelDeclSpec.h"
 
 namespace trikKernel {
 
 /// Debug helper that logs function entry and exit.
-class Debugger : public QObject
+class TRIKKERNEL_EXPORT Debugger : public QObject
 {
 	Q_OBJECT
 

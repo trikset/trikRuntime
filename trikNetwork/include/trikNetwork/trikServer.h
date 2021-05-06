@@ -21,7 +21,7 @@
 #include <QtNetwork/QTcpServer>
 #include <QtCore/QTimer>
 
-#include "declSpec.h"
+#include "trikNetworkDeclSpec.h"
 
 namespace trikNetwork {
 

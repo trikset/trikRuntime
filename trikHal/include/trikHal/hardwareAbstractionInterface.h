@@ -23,12 +23,13 @@
 #include "mspUsbInterface.h"
 #include "systemConsoleInterface.h"
 
+#include <trikHal/trikHalDeclSpec.h>
 #include <QtCore/QDir>
 
 namespace trikHal {
 
 /// Hardware abstraction, provides devices that are used to communicate with robot hardware or emulate it.
-class HardwareAbstractionInterface
+class TRIKHAL_EXPORT HardwareAbstractionInterface
 {
 	Q_DISABLE_COPY(HardwareAbstractionInterface)
 public:

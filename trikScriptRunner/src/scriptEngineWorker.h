@@ -33,7 +33,7 @@ namespace trikScriptRunner
 /// Worker object to be run in a separate thread for Qt Script execution. QScriptEngine calls ProcessEvents too
 /// infrequently even when ProcessEventsInterval is set to 1 ms, so there is a need for separate threads to
 /// run a script and listen for incoming connections.
-class ScriptEngineWorker : public QObject
+class TRIKSCRIPTRUNNER_EXPORT ScriptEngineWorker : public QObject
 {
 	Q_OBJECT
 

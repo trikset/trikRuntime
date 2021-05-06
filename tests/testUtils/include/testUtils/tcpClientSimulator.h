@@ -16,7 +16,7 @@
 
 #include <trikNetwork/connection.h>
 
-#include "declSpec.h"
+#include "testUtilsDeclSpec.h"
 
 namespace tests {
 namespace utils {

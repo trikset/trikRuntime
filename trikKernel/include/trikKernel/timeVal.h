@@ -14,10 +14,12 @@
 
 #pragma once
 #include <QtCore/qmetatype.h>
+#include <trikKernel/trikKernelDeclSpec.h>
+
 namespace trikKernel {
 
 /// Structure of a time value in a convenient format.
-class TimeVal
+class TRIKKERNEL_EXPORT TimeVal
 {
 public:
 

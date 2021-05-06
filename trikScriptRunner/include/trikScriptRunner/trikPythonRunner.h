@@ -31,7 +31,7 @@ namespace trikScriptRunner {
 class PythonEngineWorker;
 
 /// Executes scripts in Python Engine.
-class TrikPythonRunner : public TrikScriptRunnerInterface
+class TRIKSCRIPTRUNNER_EXPORT TrikPythonRunner : public TrikScriptRunnerInterface
 {
 	Q_OBJECT
 public:

@@ -20,7 +20,7 @@
 
 #include "networkStructs.h"
 
-#include "declSpec.h"
+#include "trikWifiDeclSpec.h"
 
 namespace trikWiFi {
 

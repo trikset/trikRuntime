@@ -20,7 +20,7 @@
 
 #include "cameraImplementationInterface.h"
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

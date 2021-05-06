@@ -26,7 +26,7 @@ links(trikNetwork)
 HEADERS += \
 	$$PWD/include/testUtils/tcpClientSimulator.h \
 	$$PWD/include/testUtils/wait.h \
-	$$PWD/include/testUtils/declSpec.h \
+	$$PWD/include/testUtils/testUtilsDeclSpec.h \
 
 SOURCES += \
 	$$PWD/src/tcpClientSimulator.cpp \

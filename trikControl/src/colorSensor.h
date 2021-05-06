@@ -20,7 +20,7 @@
 #include "colorSensorInterface.h"
 #include "deviceState.h"
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikKernel {
 class Configurer;

@@ -14,13 +14,14 @@
 
 #pragma once
 #include <QtGlobal>
+#include <trikKernel/trikKernelDeclSpec.h>
 
 namespace trikKernel {
 
 /// RAII-style helper class that performs deferred deinitialization, intended to be used in main programs or test cases
 /// (with Q_UNUSED macro). Runs zero-time event loop that processes all deleteLater() requests and so on, then
 /// shuts down.
-class DeinitializationHelper
+class TRIKKERNEL_EXPORT DeinitializationHelper
 {
 	Q_DISABLE_COPY(DeinitializationHelper)
 public:

@@ -16,11 +16,12 @@
 
 #include <QtCore/QString>
 #include <QtXml/QDomElement>
+#include "trikKernelDeclSpec.h"
 
 namespace trikKernel {
 
 /// Helper class with file helper functions.
-class FileUtils
+class TRIKKERNEL_EXPORT FileUtils
 {
 public:
 	/// Reads all file contents and returns it as sting or throws an exception.

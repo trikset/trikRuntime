@@ -20,7 +20,7 @@
 #include <QtNetwork/QTcpSocket>
 #include <QtNetwork/QHostAddress>
 
-#include "declSpec.h"
+#include "trikNetworkDeclSpec.h"
 
 namespace trikNetwork {
 

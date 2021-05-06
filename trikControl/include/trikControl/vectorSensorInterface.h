@@ -17,7 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QVector>
 #include <trikKernel/timeVal.h>
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 #include "deviceInterface.h"
 
 

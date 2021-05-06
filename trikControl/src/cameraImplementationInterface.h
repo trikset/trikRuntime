@@ -19,7 +19,7 @@
 #include <QtCore/QString>
 #include <QtCore/QVector>
 #include <QtGui/QImage>
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

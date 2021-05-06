@@ -19,7 +19,7 @@
 #include "deviceInterface.h"
 #include "eventInterface.h"
 
-#include "declSpec.h"
+#include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 

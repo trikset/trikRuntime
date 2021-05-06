@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QString>
+#include "trikKernelDeclSpec.h"
 
 namespace trikKernel {
 
@@ -23,7 +24,7 @@ namespace trikKernel {
 /// is stored near binary (as in old "copy" deployment style), if not, it uses common Linux conventions for file
 /// locations (configs in /etc/trik/trikRuntime/, media in /usr/share/trikRuntime/ and so on).
 /// All methods returning paths return them ending with "/".
-class Paths
+class TRIKKERNEL_EXPORT Paths
 {
 public:
 	/// Path to a directory with trikControl config files.
