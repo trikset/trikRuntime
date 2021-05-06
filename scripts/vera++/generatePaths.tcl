@@ -37,7 +37,7 @@ proc getFiles { folder } {
 }
 
 set parameters [getFiles [pwd]]
-set fo [open "vera++/params" "w" ]
+set fo [open "scripts/vera++/params" "w" ]
 foreach par $parameters {
   puts $fo $par
 }
