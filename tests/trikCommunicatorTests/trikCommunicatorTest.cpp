@@ -41,5 +41,5 @@ TEST_F(TrikCommunicatorTest, configVersionTest)
 	TcpClientSimulator client("127.0.0.1", port);
 	client.send("configVersion");
 	Wait::wait(500);
-	ASSERT_EQ("configVersion: model-test", client.latestResponse());
+	ASSERT_EQ("configVersion: model-2015", client.latestResponse().toLocal8Bit());
 }

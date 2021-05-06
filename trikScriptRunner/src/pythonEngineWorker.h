@@ -42,10 +42,9 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	PythonEngineWorker(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * mailbox
-			, QSharedPointer<TrikScriptControlInterface> scriptControl
-			);
+	PythonEngineWorker(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
+					   , QSharedPointer<TrikScriptControlInterface> scriptControl
+					   );
 
 	~PythonEngineWorker();
 
@@ -150,9 +149,9 @@ private:
 	/// Adds @value path to the Python's sys.path array.
 	void addSearchModuleDirectory(const QDir &path);
 
-	trikControl::BrickInterface &mBrick;
+	trikControl::BrickInterface *mBrick {};
 	QSharedPointer<TrikScriptControlInterface> mScriptExecutionControl;
-	trikNetwork::MailboxInterface * const mMailbox;  // Does not have ownership.
+	trikNetwork::MailboxInterface * const mMailbox {};  // Does not have ownership.
 
 	State mState  { State::ready };
 

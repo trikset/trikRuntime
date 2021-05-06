@@ -1,3 +1,4 @@
+<!-- Originally it is a generic system-config.xml -->
 <!--
 TrikControl system configuration file. Meant to be written once for each release of OS and shall be the same
 for all models running that OS release.
@@ -20,9 +21,11 @@ parameters, it may be not listed in "device types" section, it is assumed that i
 equal to its class name.
 -->
 
-<config version="model-test" >
+<config version="model-2015" >
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
+		/etc/trik/init-ov7670-320x240.sh 0
+
 		echo 1 > /sys/class/gpio/gpio62/value
 
 		echo 1 > /sys/class/pwm/ehrpwm.1:1/request
@@ -41,7 +44,8 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
-		<camera type="file" src="/dev/video0" filters="*.jpg,*.png"/>
+				<!-- URI protocol: v4l2, file, qtmultimedia  -->
+				<camera type="v4l2" src="/dev/video0" />
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
@@ -65,7 +69,7 @@ equal to its class name.
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
 
-		<gamepad file="/home/root/trik/gamepad.fifo" />
+		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
 	</deviceClasses>
 
 	<devicePorts>
@@ -138,6 +142,7 @@ equal to its class name.
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
 		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
 		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
+		<rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="jf1_hcsr04" />
 		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
 		<lineSensor port="video2" />
@@ -145,6 +150,8 @@ equal to its class name.
 		<objectSensor port="video2" />
 		<colorSensor port="video1" />
 		<colorSensor port="video2" />
+				<camera port="video1" />
+				<camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 	</devicePorts>
 
@@ -158,7 +165,11 @@ equal to its class name.
 		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
 				controlMin="0" controlMax="100" />
 
-		<jga25-371 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+                <motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+
+                <motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
+
+		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
 
 		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
 				controlMin="0" controlMax="100" />
@@ -184,7 +195,7 @@ equal to its class name.
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
-		<photo class="camera" type="file" src="./" filters="*.jpg,*.png" />
+		<photo class="camera" type="v4l2" src="/dev/video0" />
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
@@ -195,4 +206,8 @@ equal to its class name.
 
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
+
+		<!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
+	<i2cBus1 path="/dev/i2c-1" />
+	<i2cBus2 path="/dev/i2c-2" />
 </config>

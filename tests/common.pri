@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-TEMPLATE = app
+isEmpty(TEMPLATE): TEMPLATE = app
 include($$PWD/../global.pri)
 
 QT += widgets
@@ -19,33 +19,18 @@ QT += widgets
 #Workaround for MinGW build. Qt incorrectly sets it to empty string on Win32 for bash
 mingw: TEST_TARGET_DIR = .
 
-CONFIG += testcase testcase_no_bundle no_testcase_installs
+# after global.pri sets DESTDIR
+
+equals(TEMPLATE, app) {
+	CONFIG += testcase testcase_no_bundle no_testcase_installs
+}
 
 INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \
 
-QMAKE_CXXFLAGS += \
-	-isystem $$PWD/thirdparty/googletest/googlemock/include \
-	-isystem $$PWD/thirdparty/googletest/googletest/include \
-
-LIBS += -L$$DESTDIR
-
-LIBS += -lgoogletest$$CONFIGURATION_SUFFIX
-
 SOURCES = $$PWD/mainTest.cpp
 
 include(thirdparty/googletest.pri)
-
-CONFIG(clang) {
-	QMAKE_CXXFLAGS += -Wno-unused-local-typedef -Wno-error=gnu-zero-variadic-macro-arguments
-} else {
-	QMAKE_CXXFLAGS += -Wno-unused-local-typedefs -Wno-error=variadic-macros
-}
-
-
-QMAKE_CXXFLAGS += -Wno-error=pedantic
-#DEFINES += GTEST_USE_OWN_TR1_TUPLE
-
 
 OTHER_FILES += \
 	$$PWD/test-system-config.xml \

@@ -570,7 +570,7 @@ void Brick::createDevice(const QString &port)
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {
 			QScopedPointer<CameraDeviceInterface> tmp (
-						new CameraDevice(mMediaPath, mConfigurer, *mHardwareAbstraction)
+						new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)
 					);
 			mCamera.swap(tmp);
 		}

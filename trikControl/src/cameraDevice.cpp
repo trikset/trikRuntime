@@ -28,13 +28,13 @@
 
 namespace trikControl {
 
-CameraDevice::CameraDevice(const QString & mediaPath, const trikKernel::Configurer &configurer
+CameraDevice::CameraDevice(const QString & port, const QString & mediaPath, const trikKernel::Configurer &configurer
 							, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
-	Q_UNUSED(hardwareAbstraction);
+	Q_UNUSED(hardwareAbstraction)
 
-	QString type = configurer.attributeByDevice("camera", "type");
-	QString src = configurer.attributeByDevice("camera", "src");
+	QString type = configurer.attributeByPort(port, "type");
+	QString src = configurer.attributeByPort(port, "src");
 
 	QString failMessage;
 
@@ -47,7 +47,7 @@ CameraDevice::CameraDevice(const QString & mediaPath, const trikKernel::Configur
 			failMessage = "can use v4l2 only on Linux";
 #endif
 	} else if (type == "file") {
-				QStringList filters = configurer.attributeByDevice("camera", "filters").split(',');
+				QStringList filters = configurer.attributeByPort(port, "filters").split(',');
 				decltype(mCameraImpl)(new ImitationCameraImplementation(filters, mediaPath)).swap(mCameraImpl);
 	} else {
 		failMessage = "unknown camera device type:" + type;
