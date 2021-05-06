@@ -42,7 +42,7 @@ public:
 	/// @param mediaPath - path where program should save photos
 	/// @param configurer - configurer to get info from config
 	/// @param hardwareAbstraction - realization of HAL
-	CameraDevice(const QString & mediaPath
+	CameraDevice(const QString &port, const QString & mediaPath
 				 , const trikKernel::Configurer &configurer
 				 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 

@@ -104,17 +104,17 @@ QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
 	return engine->toScriptValue(result);
 }
 
-ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface * const mailbox
-		, TrikScriptControlInterface &scriptControl
+ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
+		, trikNetwork::MailboxInterface * mailbox
+		, TrikScriptControlInterface *scriptControl
 		)
 	: mBrick(brick)
 	, mMailbox(mailbox)
 	, mScriptControl(scriptControl)
-	, mThreading(this, scriptControl)
+	, mThreading(this, *scriptControl)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {
-	connect(&mScriptControl, &TrikScriptControlInterface::quitSignal,
+	connect(mScriptControl, &TrikScriptControlInterface::quitSignal,
 		this, &ScriptEngineWorker::onScriptRequestingToQuit);
 	connect(this, &ScriptEngineWorker::getVariables, &mThreading, &Threading::getVariables);
 	connect(&mThreading, &Threading::variablesReady, this, &ScriptEngineWorker::variablesReady);
@@ -126,7 +126,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface &brick
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick.playTone(2500, 20);
+	mBrick->playTone(2500, 20);
 }
 
 void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * const engine)
@@ -166,7 +166,7 @@ void ScriptEngineWorker::stopScript()
 
 	mState = stopping;
 
-	mScriptControl.reset();
+	mScriptControl->reset();
 
 	if (mMailbox) {
 		mMailbox->stopWaiting();
@@ -208,7 +208,7 @@ void ScriptEngineWorker::resetBrick()
 		mMailbox->clearQueue();
 	}
 
-	mBrick.reset();
+	mBrick->reset();
 }
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)
@@ -221,7 +221,7 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 void ScriptEngineWorker::doRun(const QString &script)
 {
 	/// When starting script execution (by any means), clear button states.
-	mBrick.keys()->reset();
+	mBrick->keys()->reset();
 	mThreading.startMainThread(script);
 	mState = running;
 	mThreading.waitForAll();
@@ -233,7 +233,7 @@ void ScriptEngineWorker::doRun(const QString &script)
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
-	if (!mScriptControl.isInEventDrivenMode()) {
+	if (!mScriptControl->isInEventDrivenMode()) {
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
 		locker.unlock();
 		stopScript();
@@ -244,10 +244,10 @@ void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 {
-	if (!mScriptControl.isInEventDrivenMode() && !mDirectScriptsEngine) {
+	if (!mScriptControl->isInEventDrivenMode() && !mDirectScriptsEngine) {
 		startScriptEvaluation(scriptId);
 		mDirectScriptsEngine.reset(createScriptEngine(false));
-		mScriptControl.run();
+		mScriptControl->run();
 		mState = running;
 	}
 
@@ -293,10 +293,10 @@ void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngin
 
 void ScriptEngineWorker::onScriptRequestingToQuit()
 {
-	if (!mScriptControl.isInEventDrivenMode()) {
+	if (!mScriptControl->isInEventDrivenMode()) {
 		// Somebody erroneously called script.quit() before entering event loop, so we must force event loop for script
 		// and only then quit, to send completed() signal properly.
-		mScriptControl.run();
+		mScriptControl->run();
 	}
 
 	stopScript();
@@ -328,8 +328,8 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	qScriptRegisterSequenceMetaType<QStringList>(engine);
 	qScriptRegisterSequenceMetaType<QVector<uint8_t>>(engine);
 
-	engine->globalObject().setProperty("brick", engine->newQObject(&mBrick));
-	engine->globalObject().setProperty("script", engine->newQObject(&mScriptControl));
+	engine->globalObject().setProperty("brick", engine->newQObject(mBrick));
+	engine->globalObject().setProperty("script", engine->newQObject(mScriptControl));
 	engine->globalObject().setProperty(scriptEngineWorkerName, engine->newQObject(this));
 
 	if (mMailbox) {
@@ -338,8 +338,8 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 	// Gamepad can still be accessed from script as brick.gamepad(), 'gamepad' variable is here for backwards
 	// compatibility.
-	if (mBrick.gamepad()) {
-		engine->globalObject().setProperty("gamepad", engine->newQObject(mBrick.gamepad()));
+	if (auto gamepad = mBrick->gamepad()) {
+		engine->globalObject().setProperty("gamepad", engine->newQObject(gamepad));
 	}
 
 	if (supportThreads) {
@@ -396,7 +396,7 @@ QStringList ScriptEngineWorker::knownMethodNames() const
 {
 	QSet<QString> result = {"brick", "script", "threading"};
 	TrikScriptRunnerInterface::Helper::collectMethodNames(result, &trikControl::BrickInterface::staticMetaObject);
-	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl.metaObject());
+	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mScriptControl->metaObject());
 	if (mMailbox) {
 		result.insert("mailbox");
 		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());

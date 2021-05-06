@@ -97,7 +97,7 @@ working properly, it tests only that runtime can interact with them).
 	-->
 
 	<video2>
-                <photo />
+		<camera type="file" src="./" filters="*.jpg,*.png"/>
 	</video2>
 
 	<!-- On-board sensors. -->

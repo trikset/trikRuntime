@@ -54,7 +54,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   , trikNetwork::MailboxInterface * const mailbox
 								   )
-	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(brick))
+	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(&brick))
 {
 }
 
@@ -118,11 +118,11 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 		switch (stype) {
 			case ScriptType::JAVASCRIPT:
 				QScopedPointer<TrikScriptRunnerInterface>(
-							new TrikJavaScriptRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
+							new TrikJavaScriptRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 			case ScriptType::PYTHON:
 				QScopedPointer<TrikScriptRunnerInterface>(
-							new TrikPythonRunner(mBrick, mMailbox, mScriptControl)).swap(cell);
+							new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);

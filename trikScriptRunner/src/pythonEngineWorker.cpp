@@ -42,7 +42,7 @@ static void abortPythonInterpreter() {
 	Py_AddPendingCall(&quitFromPython, nullptr);
 }
 
-PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface &brick
+PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 		, trikNetwork::MailboxInterface * const mailbox
 		, QSharedPointer<TrikScriptControlInterface> scriptControl
 		)
@@ -240,7 +240,7 @@ bool PythonEngineWorker::initTrik()
 				"from gc import collect as gc_collect;"
 				"gc_collect();");
 	PythonQt_init_PyTrikControl(mMainContext);
-	mMainContext.addObject("brick", &mBrick);
+	mMainContext.addObject("brick", mBrick);
 	mMainContext.addObject("script_cpp", mScriptExecutionControl.data());
 	mMainContext.addObject("mailbox", mMailbox);
 
@@ -256,15 +256,13 @@ void PythonEngineWorker::resetBrick()
 		mMailbox->clearQueue();
 	}
 
-	mBrick.reset();
+	mBrick->reset();
 }
 
 void PythonEngineWorker::brickBeep()
 {
-	// TODO: move to script control to reuse between scripting engines
-	mBrick.playTone(2500, 20);
+	mBrick->playTone(2500, 20);
 }
-
 
 void PythonEngineWorker::stopScript()
 {
@@ -339,7 +337,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	emit startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
-	mBrick.keys()->reset();
+	mBrick->keys()->reset();
 	mState = running;
 	auto ok = recreateContext();
 	if (!ok) {
@@ -381,7 +379,12 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
-	emit completed(mErrorMessage, 0);
+	auto wasError = PythonQt::self()->hadError();
+	if (wasError) {
+		emit completed(mErrorMessage, 0);
+	} else {
+		emit completed("", 0);
+	}
 }
 
 void PythonEngineWorker::updateErrorMessage(const QString &err)

@@ -38,8 +38,8 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	TrikPythonRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * mailbox
+
+	TrikPythonRunner(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
 					 , QSharedPointer<TrikScriptControlInterface> scriptControl
 					 );
 
