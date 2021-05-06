@@ -10,6 +10,7 @@ leak:QFontconfigDatabase::defaultFont() const
 leak:QGuiApplicationPrivate::createPlatformIntegration()
 leak:*libfontconfig.so.1*
 leak:*libfreetype.so.6*
+leak:*libdbus-1.so*
 
 #Well, ... we definitely need to address this issue
 leak:*libpython3.*.so*

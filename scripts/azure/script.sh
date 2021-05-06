@@ -15,9 +15,8 @@ case $AGENT_OS in
   *) exit 1 ;;
 esac
 export EXECUTOR
-if "$VERA" ; then $EXECUTOR scripts/azure/runVera++.sh ; fi
 
-if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR bash -lic 'lupdate trikRuntime.pro' && $EXECUTOR scripts/checkStatus.sh ; fi
+$EXECUTOR env VERA=$VERA TRANSLATIONS=$TRANSLATIONS scripts/azure/vera_translation.sh
 
 $EXECUTOR bash -lic " set -x; \
    export CCACHE_DIR=$CCACHE_DIR \
@@ -33,13 +32,14 @@ $EXECUTOR bash -lic " set -x; \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \
 &&  cd $BUILDDIR && qmake -r PYTHON3_VERSION_MINOR=\$TRIK_PYTHON3_VERSION_MINOR CONFIG+=$CONFIG -Wall $BUILD_SOURCESDIRECTORY/trikRuntime.pro $QMAKE_EXTRA \
+&&  make -j 2 all \
 && env TRIK_PYTHONPATH=\`python3.\${TRIK_PYTHON3_VERSION_MINOR} -c 'import sys; import os; print(os.pathsep.join(sys.path))'\` \
     DISPLAY=:0 \
     PYTHONMALLOC=malloc \
-    ASAN_OPTIONS=disable_coredump=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0:symbolize=1:use_sigaltstack=0 \
+    ASAN_OPTIONS=disable_coredump=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0:use_sigaltstack=0 \
     LSAN_OPTIONS=suppressions=\$PWD/bin/x86-$CONFIG/lsan.supp:fast_unwind_on_malloc=0 \
     MSAN_OPTIONS=poison_in_dtor=1 \
-    make check -k -j 2 check \
+    make -k -j 2 check \
 && ls bin/x86-$CONFIG "
 
 

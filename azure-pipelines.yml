@@ -52,5 +52,6 @@ jobs:
       displayName: Process caches
     - bash: scripts/azure/script.sh
       displayName: Build
+      timeoutInMinutes: 10
     - bash: scripts/azure/after_script.sh
       displayName: After script
