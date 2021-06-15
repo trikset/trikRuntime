@@ -1,4 +1,4 @@
-# Copyright 2019 CyberTech Labs Ltd. & Andrei Khodko
+# Copyright 2019 - 2021 CyberTech Labs Ltd. & Andrei Khodko
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,20 +14,9 @@
 
 import types
 
-script = types.SimpleNamespace()
-script.random = script_cpp.random
-script.wait = script_cpp.wait
-script.time = script_cpp.time
-script.timer = script_cpp.timer
-script.system = script_cpp.system
-script.writeToFile = script_cpp.writeToFile
-script.writeData = script_cpp.writeData
-script.readAll = script_cpp.readAll
-script.removeFile = script_cpp.removeFile
-script.run = script_cpp.run
-script.quit = script_cpp.quit
-script.reset = script_cpp.reset
-script.getPhoto = script_cpp.getPhoto
+script = _trik_script_cpp
+brick = _trik_brick_cpp
+mailbox = _trik_mailbox_cpp
 
 class KeysEnum():
     Left = 105
