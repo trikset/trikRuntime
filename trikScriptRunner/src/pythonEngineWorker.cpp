@@ -209,7 +209,7 @@ bool PythonEngineWorker::importTrikPy()
 	}
 
 	addSearchModuleDirectory(trikKernel::Paths::systemScriptsPath());
-	mMainContext.evalScript("import TRIK;from TRIK import *");
+	mMainContext.evalScript("from TRIK import *");
 
 	return true;
 }
