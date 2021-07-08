@@ -69,6 +69,9 @@ public:
 	/// Removes a file.
 	Q_INVOKABLE void removeFile(const QString &file) override;
 
+	/// Counts time interval between two packed data of time using TimeVal
+	Q_INVOKABLE int timeInterval(int packedTimeLeft, int packedTimeRight) override;
+
 public slots:
 	/// Starts event loop for script.
 	void run() override;

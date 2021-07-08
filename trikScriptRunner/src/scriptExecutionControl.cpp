@@ -146,6 +146,11 @@ void ScriptExecutionControl::removeFile(const QString &file)
 	out.remove();
 }
 
+int ScriptExecutionControl::timeInterval(int packedTimeLeft, int packedTimeRight)
+{
+	return trikKernel::TimeVal::timeInterval(packedTimeLeft, packedTimeRight);
+}
+
 QVector<int32_t> ScriptExecutionControl::getPhoto()
 {
 	return trikControl::Utilities::rescalePhoto(mBrick->getStillImage());

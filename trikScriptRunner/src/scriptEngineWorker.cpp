@@ -98,12 +98,6 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	return engine->toScriptValue(result);
 }
 
-QScriptValue timeInterval(QScriptContext *context, QScriptEngine *engine)
-{
-	int result = trikKernel::TimeVal::timeInterval(context->argument(0).toInt32(), context->argument(1).toInt32());
-	return engine->toScriptValue(result);
-}
-
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
 		, trikNetwork::MailboxInterface * mailbox
 		, TrikScriptControlInterface *scriptControl
@@ -120,7 +114,6 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
 	connect(&mThreading, &Threading::variablesReady, this, &ScriptEngineWorker::variablesReady);
 
 	registerUserFunction("print", print);
-	registerUserFunction("timeInterval", timeInterval);
 	registerUserFunction("include", include);
 }
 

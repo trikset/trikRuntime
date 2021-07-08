@@ -64,6 +64,9 @@ public:
 	/// Removes a file.
 	Q_INVOKABLE virtual void removeFile(const QString &file) = 0;
 
+	/// Counts time interval between two packed data of time using TimeVal
+	Q_INVOKABLE virtual int timeInterval(int packedTimeLeft, int packedTimeRight) = 0;
+
 public slots:
 	/// Starts event loop for script.
 	virtual void run() = 0;
