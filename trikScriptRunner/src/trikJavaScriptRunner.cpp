@@ -107,8 +107,10 @@ void TrikJavaScriptRunner::runDirectCommand(const QString &command)
 
 void TrikJavaScriptRunner::abort()
 {
-	mScriptEngineWorker->stopScript();
-	mScriptEngineWorker->resetBrick();
+	if (mScriptEngineWorker) {
+		mScriptEngineWorker->stopScript();
+		mScriptEngineWorker->resetBrick();
+	}
 }
 
 void TrikJavaScriptRunner::onScriptStart(int scriptId)

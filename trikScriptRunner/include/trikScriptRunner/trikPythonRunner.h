@@ -17,6 +17,8 @@
 #include "trikScriptRunnerInterface.h"
 #include "trikScriptControlInterface.h"
 
+#include <QPointer>
+
 namespace trikNetwork {
 class MailboxInterface;
 }
@@ -60,7 +62,7 @@ public slots:
 private:
 
 	/// Has ownership, memory is managed by thread and deleteLater().
-	PythonEngineWorker *mScriptEngineWorker { nullptr };
+	QPointer<PythonEngineWorker> mScriptEngineWorker;
 	QThread mWorkerThread;
 };
 
