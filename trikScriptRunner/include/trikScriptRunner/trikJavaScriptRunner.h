@@ -18,6 +18,8 @@
 #include "trikScriptRunnerInterface.h"
 #include "trikVariablesServer.h"
 
+#include <QPointer>
+
 namespace trikNetwork {
 class MailboxInterface;
 }
@@ -65,7 +67,7 @@ private:
 	QSharedPointer<TrikScriptControlInterface> mScriptController;
 
 	/// Has ownership, memory is managed by thread and deleteLater().
-	ScriptEngineWorker *mScriptEngineWorker;
+	QPointer<ScriptEngineWorker> mScriptEngineWorker;
 	QThread mWorkerThread;
 
 	int mMaxScriptId;
