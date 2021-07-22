@@ -135,7 +135,7 @@ equals(TEMPLATE, app) {
 use_gold_linker:!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
 
 macx-clang {
-	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.9
+#	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
 	QMAKE_LFLAGS_SONAME = -Wl,-install_name,@rpath/
 }
 
