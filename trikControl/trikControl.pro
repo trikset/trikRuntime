@@ -112,6 +112,8 @@ HEADERS += \
 	$$PWD/src/fifoworker.h \
 	$$PWD/src/datafilter.h \
 	$$PWD/src/lidar.h \
+ #	$$PWD/src/headingSensor.h \
+	$$PWD/src/vectorSensorWorkerIIO.h \
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -175,6 +177,7 @@ SOURCES += \
 	$$PWD/src/fifoworker.cpp \
 	$$PWD/src/datafilter.cpp \
 	$$PWD/src/lidar.cpp \
+	$$PWD/src/vectorSensorWorkerIIO.cpp \
 
 CONFIGS += \
 	$$PWD/configs
