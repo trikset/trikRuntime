@@ -37,8 +37,6 @@ class IIOFileInterface;
 
 namespace trikControl {
 
-class VectorSensorWorkerIIO;
-
 /// Sensor that returns a vector.
 class GyroSensor : public GyroSensorInterface
 {

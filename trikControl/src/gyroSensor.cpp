@@ -19,8 +19,6 @@
 #include <QsLog.h>
 #include <cmath>
 
-#include "vectorSensorWorkerIIO.h"
-
 using namespace trikControl;
 
 static constexpr int GYRO_ARITHM_PRECISION = 0;
