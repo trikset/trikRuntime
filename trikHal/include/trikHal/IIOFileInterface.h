@@ -29,6 +29,5 @@ public:
 
 signals:
 	void newData(QVector<int>, const trikKernel::TimeVal &eventTime);
-
 };
 }

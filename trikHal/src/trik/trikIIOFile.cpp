@@ -24,7 +24,7 @@ bool trikHal::trik::TrikIIOFile::open()
 
 	mSocketNotifier.reset(new QSocketNotifier(mIIOFileDescriptor, QSocketNotifier::Read));
 
-	connect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+	connect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikIIOFile::readFile);
 	mSocketNotifier->setEnabled(true);
 
 	return true;
@@ -38,7 +38,7 @@ bool trikHal::trik::TrikIIOFile::close()
 	}
 
 	if (mSocketNotifier) {
-		disconnect(mSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(readFile()));
+		disconnect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &TrikIIOFile::readFile);
 		mSocketNotifier->setEnabled(false);
 	}
 
