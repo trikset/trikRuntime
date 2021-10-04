@@ -13,6 +13,11 @@ trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName)
 {
 }
 
+trikHal::trik::TrikIIOFile::~TrikIIOFile()
+{
+	close();
+}
+
 bool trikHal::trik::TrikIIOFile::open()
 {
 	QLOG_INFO() << "Openning" << mFileName;

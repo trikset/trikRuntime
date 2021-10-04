@@ -30,7 +30,7 @@ static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer)
 	: mState(deviceName)
-	, mIIOFile(hardwareAbstraction.createIIOFile(deviceName))
+	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByDevice(deviceName, "deviceFile")))
 	, mIsCalibrated(false)
 	, mQ(QQuaternion(1, 0, 0, 0))
 	, mGyroCounter(0)
@@ -38,8 +38,6 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	, mAccelerometer(accelerometer)
 	, mAxesSwapped(false)
 {
-	Q_UNUSED(configurer);
-
 	mBias.resize(3);
 	mCalibrationValues.resize(6);
 	mGyroSum.resize(3);
@@ -50,6 +48,9 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	mCalibrationTimer.setSingleShot(true);
 
 	if (!mState.isFailed()) {
+		if (!mIIOFile.data()->open()) {
+			mState.fail();
+		}
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);

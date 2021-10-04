@@ -12,6 +12,7 @@ class TrikIIOFile : public IIOFileInterface {
 
 public:
 	TrikIIOFile(const QString &fileName);
+	~TrikIIOFile();
 
 	bool open() override;
 	bool close() override;

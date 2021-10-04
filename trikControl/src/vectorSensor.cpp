@@ -25,11 +25,12 @@ using namespace trikControl;
 VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(deviceName)
-	, mIIOFile(hardwareAbstraction.createIIOFile(deviceName))
+	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByDevice(deviceName, "deviceFile")))
 {
-	Q_UNUSED(configurer);
-
 	if (!mState.isFailed()) {
+		if (!mIIOFile.data()->open()) {
+			mState.fail();
+		}
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData
