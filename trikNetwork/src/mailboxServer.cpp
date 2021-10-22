@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2014 - 2021 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,8 +82,7 @@ void MailboxServer::setHullNumber(int hullNumber)
 	mHullNumber = hullNumber;
 	saveSettings();
 	forEveryConnection(
-		[this](Connection *connection) {
-			auto c = qobject_cast<MailboxConnection *>(connection);
+		[this](MailboxConnection *c) {
 			QMetaObject::invokeMethod(c, [c,this]() { c->sendConnectionInfo(mMyIp, mMyPort, mHullNumber); });
 	}
 	, -1);
@@ -114,7 +113,7 @@ void MailboxServer::connectTo(const QString &ip)
 	connectTo(ip, mMyPort);
 }
 
-Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
+MailboxConnection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 {
 	if (ip == mMyIp && port == mMyPort && isListening()) {
 		// do not connect to self
@@ -122,19 +121,20 @@ Connection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 	}
 
 	if (auto connectionObject = connection(ip, port)) {
-		return connectionObject;
+		return qobject_cast<MailboxConnection *>(connectionObject);
 	}
 
-	const auto c = new MailboxConnection();
-	connectConnection(c);
+	const auto c = connectionFactory();
 	connect(this, &MailboxServer::startedConnection, c, [=]() {
 		c->connect(ip, port, mMyPort, mHullNumber);
+		disconnect(this, &MailboxServer::startedConnection, c, nullptr);
 	});
+
 	startConnection(c);
 	return c;
 }
 
-Connection *MailboxServer::connectionFactory()
+MailboxConnection *MailboxServer::connectionFactory()
 {
 	auto connection = new MailboxConnection();
 
@@ -145,9 +145,8 @@ Connection *MailboxServer::connectionFactory()
 	return connection;
 }
 
-void MailboxServer::connectConnection(Connection * connection)
+void MailboxServer::connectConnection(MailboxConnection * c)
 {
-	auto c = qobject_cast<MailboxConnection *>(connection);
 	connect(c, &MailboxConnection::connectionInfo, this, [this](const QHostAddress &ip, int port, int hullNumber){
 		onConnectionInfo(ip, port, hullNumber);
 	});
@@ -177,17 +176,16 @@ QHostAddress MailboxServer::determineMyIp()
 	return QHostAddress(); // Total fail
 }
 
-Connection *MailboxServer::prepareConnection(Endpoint &endpoint)
+MailboxConnection *MailboxServer::prepareConnection(Endpoint &endpoint)
 {
 	// First, trying to reuse existing connection.
 	if (endpoint.connectedPort != -1) {
 		const auto connectionObject = connection(endpoint.ip, endpoint.connectedPort);
 		if (connectionObject != nullptr) {
-			return connectionObject;
+			return qobject_cast<MailboxConnection *>(connectionObject);
 		}
 	}
 
-	endpoint.connectedPort = endpoint.serverPort;
 	return connectTo(endpoint.ip, endpoint.serverPort);
 }
 
@@ -205,8 +203,7 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 
 	if (!knownRobot) {
 		// Propagate information about newly connected robot through robot network.
-		forEveryConnection([ip, serverPort, hullNumber](Connection *connection) {
-			auto c = qobject_cast<MailboxConnection *>(connection);
+		forEveryConnection([ip, serverPort, hullNumber](MailboxConnection *c) {
 			QMetaObject::invokeMethod(c, [=]() {c->sendConnectionInfo(ip, serverPort, hullNumber);});
 		});
 	}
@@ -216,21 +213,23 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 	if (c != nullptr) {
 		mKnownRobotsLock.lockForRead();
 		for (const auto &endpoint : endpoints) {
-			QMetaObject::invokeMethod(c, [this, c, endpoint]() {
-				c->sendConnectionInfo(endpoint.ip, endpoint.serverPort, mKnownRobots.key(endpoint));
+			mKnownRobotsLock.lockForRead();
+			int endpointHullNumber = mKnownRobots.key(endpoint);
+			mKnownRobotsLock.unlock();
+			QMetaObject::invokeMethod(c, [c, endpoint, endpointHullNumber]() {
+				c->sendConnectionInfo(endpoint.ip, endpoint.serverPort, endpointHullNumber);
 			});
 		}
 
 		// Send information about myself.
 		QMetaObject::invokeMethod(c, [this, c]() { c->sendSelfInfo(mHullNumber); });
-		mKnownRobotsLock.unlock();
+
+		if (!knownRobot) {
+			onConnectionInfo(ip, serverPort, hullNumber, clientPort);
+		}
 	} else {
 		QLOG_ERROR() << "Something went wrong, new connection to" << ip << ":" << clientPort << "is dead";
 		return;
-	}
-
-	if (!knownRobot) {
-		onConnectionInfo(ip, serverPort, hullNumber, clientPort);
 	}
 }
 
@@ -362,23 +361,30 @@ void MailboxServer::saveSettings()
 	mAuxiliaryInformationLock.unlock();
 }
 
-void MailboxServer::forEveryConnection(const std::function<void(Connection *)> &method, int hullNumber)
+void MailboxServer::forEveryConnection(const std::function<void(MailboxConnection *)> &method, int hullNumber)
 {
 	mKnownRobotsLock.lockForRead();
-
-	auto endpoints = hullNumber == -1 ? mKnownRobots.values() : mKnownRobots.values(hullNumber);
+	const auto keys = mKnownRobots.keys();
 	mKnownRobotsLock.unlock();
 
-	for (auto &endpoint : endpoints) {
+	for (const auto key : keys) {
+		if (hullNumber != -1 && key != hullNumber) {
+			continue;
+		}
+		mKnownRobotsLock.lockForRead();
+		auto endpoint = mKnownRobots.value(key);
+		mKnownRobotsLock.unlock();
+
 		const auto connection = prepareConnection(endpoint);
 		if (connection == nullptr) {
 			QLOG_ERROR() << "Connection to" << endpoint << "is dead at the moment, message"
 					<< "is not delivered. Will try to reestablish connection on next send.";
 		} else {
+			onConnectionInfo(endpoint.ip, endpoint.serverPort, key, endpoint.serverPort);
 			if (connection->isConnected()) {
 				method(connection);
 			} else {
-				connect(connection, &Connection::connected, this, method);
+				connect(connection, &Connection::connected, this, [method, connection](){method(connection);});
 			}
 		}
 	}

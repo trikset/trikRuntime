@@ -72,7 +72,6 @@ int TrikServer::activeConnections() const
 void TrikServer::incomingConnection(qintptr socketDescriptor)
 {
 	QLOG_INFO() << "New connection, socket descriptor: " << socketDescriptor;
-
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 

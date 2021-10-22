@@ -57,7 +57,7 @@ void Connection::init(const QHostAddress &ip, int port)
 
 	mSocket->connectToHost(ip, port);
 
-	if (!mSocket->waitForConnected()) {
+	if (!mSocket->waitForConnected(1000)) {
 		QLOG_ERROR() << "Connection to" << ip << ":" << port << "failed with " << mSocket->error();
 		doDisconnect();
 		return;
