@@ -211,7 +211,6 @@ void MailboxServer::onNewConnection(const QHostAddress &ip, int clientPort, int 
 	// Send known connection information to newly connected robot.
 	const auto c = qobject_cast<MailboxConnection *>(connection(ip, clientPort));
 	if (c != nullptr) {
-		mKnownRobotsLock.lockForRead();
 		for (const auto &endpoint : endpoints) {
 			mKnownRobotsLock.lockForRead();
 			int endpointHullNumber = mKnownRobots.key(endpoint);
