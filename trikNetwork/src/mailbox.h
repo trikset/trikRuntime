@@ -58,7 +58,7 @@ public:
 
 	Q_INVOKABLE int myHullNumber() const override;
 
-	/// True iff the server is running
+	/// True iff the server is running.
 	Q_INVOKABLE bool hasServer() const;
 
 public slots:
