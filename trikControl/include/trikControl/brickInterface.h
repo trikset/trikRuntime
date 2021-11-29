@@ -35,6 +35,7 @@
 #include "soundSensorInterface.h"
 #include "vectorSensorInterface.h"
 #include "cameraDeviceInterface.h"
+#include "lidarInterface.h"
 #include "i2cDeviceInterface.h"
 
 #include <trikControl/trikControlDeclSpec.h>
@@ -117,6 +118,9 @@ public slots:
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
 	virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
+
+	/// Returns lidar on given port.
+	virtual trikControl::LidarInterface *lidar(const QString &port) = 0;
 
 	/// Returns i2c device object
 	virtual trikControl::I2cDeviceInterface *i2c(int bus, int address) = 0;

@@ -47,6 +47,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/i2cDeviceInterface.h \
 	$$PWD/include/trikControl/utilities.h \
 	$$PWD/include/trikControl/trikControlDeclSpec.h \
+	$$PWD/include/trikControl/lidarInterface.h \
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \
@@ -110,7 +111,7 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/fifoworker.h \
 	$$PWD/src/datafilter.h \
- #	$$PWD/src/headingSensor.h \
+	$$PWD/src/lidar.h \
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -173,7 +174,7 @@ SOURCES += \
  \#	$$PWD/src/headingSensor.cpp \
 	$$PWD/src/fifoworker.cpp \
 	$$PWD/src/datafilter.cpp \
-
+	$$PWD/src/lidar.cpp \
 
 CONFIGS += \
 	$$PWD/configs

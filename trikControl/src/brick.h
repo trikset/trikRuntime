@@ -53,6 +53,7 @@ class TonePlayer;
 class VectorSensor;
 class CameraDeviceInterface;
 class I2cCommunicator;
+class Lidar;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -100,6 +101,8 @@ public slots:
 	PwmCaptureInterface *pwmCapture(const QString &port) override;
 
 	SensorInterface *sensor(const QString &port) override;
+
+	LidarInterface *lidar(const QString &port) override;
 
 	QStringList motorPorts(MotorInterface::Type type) const override;
 
@@ -185,6 +188,7 @@ private:
 	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
 	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
 	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
+	QHash<QString, Lidar *> mLidars;  // Has ownership.
 	QHash<QString, Fifo *> mFifos;  // Has ownership.
 	QHash<QString, EventDeviceInterface *> mEventDevices;  // Has ownership.
 	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices;  // Has ownership.

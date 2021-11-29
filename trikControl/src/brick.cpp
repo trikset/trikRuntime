@@ -56,6 +56,7 @@
 #include "i2cDevice.h"
 #include "mspI2cCommunicator.h"
 #include "i2cCommunicator.h"
+#include "lidar.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -320,6 +321,15 @@ SensorInterface *Brick::sensor(const QString &port)
 		return mDigitalSensors[port];
 	} else if (mRangeSensors.contains(port)) {
 		return mRangeSensors[port];
+	} else {
+		return nullptr;
+	}
+}
+
+LidarInterface *Brick::lidar(const QString &port)
+{
+	if (mLidars.contains(port)) {
+		return mLidars[port];
 	} else {
 		return nullptr;
 	}
