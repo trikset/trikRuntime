@@ -23,7 +23,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/brickInterface.h \
 	$$PWD/include/trikControl/cameraDeviceInterface.h \
 	$$PWD/include/trikControl/colorSensorInterface.h \
-	$$PWD/include/trikControl/declSpec.h \
+	$$PWD/include/trikControl/trikControlDeclSpec.h \
 	$$PWD/include/trikControl/deviceInterface.h \
 	$$PWD/include/trikControl/displayInterface.h \
 	$$PWD/include/trikControl/displayWidgetInterface.h \

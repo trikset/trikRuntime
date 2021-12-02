@@ -36,3 +36,7 @@ trikJsRunnerTests.depends = thirdparty testUtils
 trikCommunicatorTests.depends = thirdparty testUtils
 selftest.depends = thirdparty testUtils
 trikCameraPhotoTests.depends = thirdparty testUtils
+
+OTHER_FILES += \
+    $$PWD/test-model-config.xml \
+    $$PWD/test-system-config.xml \
