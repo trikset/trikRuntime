@@ -41,6 +41,7 @@
 #include <trikControl/keysInterface.h>
 #include <trikControl/ledInterface.h>
 #include <trikControl/markerInterface.h>
+#include <trikControl/lidarInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
 #include "trikScriptControlInterface.h"
@@ -76,6 +77,7 @@
 	TEMPLATE(trikControl::SensorInterface) \
 	TEMPLATE(trikControl::VectorSensorInterface) \
 	TEMPLATE(trikNetwork::MailboxInterface) \
+	TEMPLATE(trikControl::LidarInterface) \
 
 namespace trikScriptRunner {
 
