@@ -20,6 +20,7 @@
 #include <QtCore/QQueue>
 #include <QtNetwork/QHostAddress>
 
+#include "mailboxConnection.h"
 #include "trikServer.h"
 
 namespace trikNetwork {
@@ -80,7 +81,7 @@ public:
 	/// Returns one incoming message or empty string if there are none.
 	Q_INVOKABLE QString receive();
 
-	/// Returns true iff the server was started and is listening
+	/// Returns true iff the server was started and is listening.
 	bool hasServer() const;
 
 signals:
@@ -93,26 +94,28 @@ private slots:
 	void onNewData(const QHostAddress &ip, int port, const QByteArray &data);
 
 private:
-	Connection *connectTo(const QHostAddress &ip, int port);
+	MailboxConnection *connectTo(const QHostAddress &ip, int port);
 
-	Connection *connectionFactory();
+	MailboxConnection *connectionFactory();
 
-	void connectConnection(Connection * connection);
+	void connectConnection(MailboxConnection * connection);
 
 	static QHostAddress determineMyIp();
 
 	struct Endpoint {
 		QHostAddress ip;
+		/// The port that the endpoint robot specified as available for connection.
 		int serverPort;
+		/// The port we are connected to.
 		int connectedPort;
 	};
 
-	Connection *prepareConnection(Endpoint &endpoint);
+	MailboxConnection *prepareConnection(Endpoint &endpoint);
 
 	void loadSettings();
 	void saveSettings();
 
-	void forEveryConnection(const std::function<void(Connection *)> &method, int hullNumber = -1);
+	void forEveryConnection(const std::function<void(MailboxConnection *)> &method, int hullNumber = -1);
 
 	int mHullNumber;
 	QHostAddress mMyIp;
