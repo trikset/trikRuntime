@@ -18,7 +18,7 @@ jobs:
 #            mingw-version: 5.3
 #            mingw-short-version: 53
 #            python-version: 3.5
-          - qt-version: '5.12.10'
+          - qt-version: '5.12.11'
             mingw-version: 7.3
             mingw-short-version: 73
             python-version: 3.8
@@ -28,13 +28,24 @@ jobs:
             python-version: 3.8
     defaults:
       run:
-        shell: bash
+        shell: pwsh #to prevent unexpected Git Bash with wrong MSys DLLs
     steps:
 
       - name: Cancel Previous Workflow Runs
         uses: n1hility/cancel-previous-runs@v2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        shell: bash
+        run: |
+            git config --global core.symlinks true
+            git config --global core.autocrlf true
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 1
 
       - name: 'Disable Windows Just-in-Time Debugger/Error reporting'
         shell: pwsh
@@ -53,22 +64,21 @@ jobs:
           #             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" /v ForceQueue /d 1 /t REG_DWORD /f
           #             reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting\Consent" /v DefaultConsent /d 1 /t REG_DWORD /f
           #
-      - name: Configure git
-        run: |
-            git config --global core.symlinks true
-            git config --global core.autocrlf true
-
-      - uses: actions/checkout@v2
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
         with:
-          submodules: recursive
-          fetch-depth: 1
+          release: true
+          update: false
+          msystem: MINGW32
+          path-type: inherit #strict #inherit #minimal
+          install: >-
+            base
+            rsync
+            git
 
-#      - name: Fetch git tags
-#        run: git fetch --tags --unshallow
-#        shell: bash
-
-      - name: Install RSync
-        run: choco install rsync
+      - name: Purge MinGW conflicting packages
+        run: 'pacman --remove --noconfirm --cascade --recursive --unneeded gcc python3 || :'
+        shell: msys2 {0}
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
@@ -76,7 +86,7 @@ jobs:
           version: ${{matrix.qt-version}}
           arch: win32_mingw${{matrix.mingw-short-version}}
           modules: 'qtscript qtsvg'
-          tools: 'tools_ifw,4.1,qt.tools.ifw.41 tools_mingw,${{matrix.mingw-version}},qt.tools.win32_mingw${{matrix.mingw-short-version}}0'
+          tools: 'tools_mingw,${{matrix.mingw-version}}.0,qt.tools.win32_mingw${{matrix.mingw-short-version}}0'
           extra: '--external 7z'
 
 # After Qt install action, that spoils pythonLocation variable
@@ -86,23 +96,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture: 'x86'
 
-#      - name: Setup MSYS2
-#        uses: msys2/setup-msys2@v2
-#        with:
-#          release: true
-#          update: false
-#          msystem: MINGW32
-#          path-type: strict #strict #inherit #minimal
-#          install: >-
-#            base
-#            rsync
-
-#      - name: Purge MinGW conflicting packages
-#        run: 'pacman --remove --noconfirm --cascade --recursive --unneeded gcc python3 || :'
-#        shell: msys2 {0}
-
       - name: Update PATH
-#        shell: msys2 {0}
+        shell: msys2 {0}
         run: | 
              set -xue
              cygpath -w /usr/bin >> $GITHUB_PATH
@@ -112,34 +107,43 @@ jobs:
              cygpath -w "${Qt5_Dir}/bin" >> $GITHUB_PATH
 
       - name: Check PATH
+        shell: msys2 {0}
         run: |
+             echo "Check for DLL-Hell"
+             where '$PATH:cygwin1.dll' '$PATH:libatomic-1.dll' '$PATH:libgcc_s_dw2-1.dll' '$PATH:libstdc++-6.dll' '$PATH:libwinpthread-1.dll' || :
+             echo '----'
              echo "$GITHUB_PATH"
-             cat $GITHUB_PATH
+             cat "$GITHUB_PATH"
              echo '----'
              echo PATH="$PATH"
 
       - name: Check available tools
+        shell: msys2 {0}
         run: |
              set -xueo pipefail
              uname -a
-             rsync --version
+             which rsync && rsync --version
+             which python3 && python3 --version
+             which g++ && g++ --version
              ls "$IQTA_TOOLS/" "$Qt5_Dir/"
-             qmake --version
-             python3 --version
-             g++ --version
+             which qmake && qmake --version
 
       - name: QMake
+        shell: msys2 {0}
         run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}"'
 
       - name: QMake all
+        shell: msys2 {0}
         timeout-minutes: 5
         run: mingw32-make -j $(nproc) qmake_all
 
       - name: Make all
+        shell: msys2 {0}
         timeout-minutes: 10
         run: mingw32-make -j $(nproc) all
 
       - name: Tests
+        shell: msys2 {0}
         timeout-minutes: 3
         continue-on-error: true
         run: |
