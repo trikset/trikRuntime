@@ -19,6 +19,7 @@
 
 #include "lidarInterface.h"
 #include "deviceState.h"
+#include "fifo.h"
 
 #include <trikControl/trikControlDeclSpec.h>
 
@@ -51,9 +52,27 @@ public:
 public slots:
 	QVector<int> read() const override;
 
+private slots:
+	void onNewData(const QVector<uint8_t> &data);
+
 private:
+	void processBuffer();
+
+	void processData(const QVector<uint8_t> &data);
+
+	bool checkProtocol(const QVector<uint8_t> &data, int start, int size);
+
+	uint16_t countChecksum(const QVector<uint8_t> &data, int start, int end);
+
 	/// State of a lidar. Shared with worker object.
 	DeviceState mState;
+
+	Fifo *mFifo; // Has ownership
+	QThread mWorkerThread;
+
+	QVector<int> mResult;
+	QVector<uint8_t> mBuffer;
+
 };
 
 }
