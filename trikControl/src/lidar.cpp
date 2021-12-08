@@ -34,20 +34,21 @@ const int DATA_START_BYTE = 5;
 const int DATA_SIZE_BYTE = 6;
 const int START_ANGLE_BYTE = 11;
 const int FIRST_DIST_BYTE = 14;
-const int ANGLE_STEP = 36000 / 16;
+
+const int ANGLES_NUMBER = 3600;
+const int ANGLE_STEP = ANGLES_NUMBER / 16;
 
 Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Lidar on" + port)
 	, mFifo(new Fifo(port, configurer, hardwareAbstraction))
-	, mResult(3600, 0)
+	, mResult(ANGLES_NUMBER, 0)
+	, mIsResultChanged(ANGLES_NUMBER, true)
 {
 }
 
 Lidar::~Lidar()
 {
-	mWorkerThread.quit();
-	mWorkerThread.wait();
 }
 
 Lidar::Status Lidar::status() const
@@ -56,6 +57,40 @@ Lidar::Status Lidar::status() const
 }
 
 QVector<int> Lidar::read() const
+{
+	QVector<int> result(360, 0);
+
+	auto it = std::find(mIsResultChanged.begin(), mIsResultChanged.end(), true);
+	while (it != mIsResultChanged.end()) {
+		int index = it - mIsResultChanged.begin();
+		int max = mIsResultChanged[index];
+		int min = mIsResultChanged[index];
+		int mean = 0;
+		const int indexWas = index;
+		while(index % 5 != 0 || index % 10 == 0) { // count (15, 25]
+			mIsResultChanged[index] = false;
+			max = std::max(max, mResult[index]);
+			min = std::min(min, mResult[index]);
+			mean += mResult[index];
+			index--;
+		}
+		index = indexWas + 1;
+		do {
+			mIsResultChanged[index] = false;
+			max = std::max(max, mResult[index]);
+			min = std::min(min, mResult[index]);
+			mean += mResult[index];
+			index++;
+		} while(index % 5 != 0 || index % 10 == 0);
+
+		result[(indexWas + 4) / 10] = (mean - min - max) / 8; // (15, 25] = 2
+		it = std::find(it, mIsResultChanged.end(), true);
+	}
+
+	return result;
+}
+
+QVector<int> Lidar::readRaw() const
 {
 	return mResult;
 }
@@ -108,6 +143,7 @@ void Lidar::processData(const QVector<uint8_t> &data)
 		int distByte = FIRST_DIST_BYTE + i * 3;
 		int distance = ((data[distByte] << 8) + data[distByte + 1]) * 0.25;
 		mResult[angle] = distance;
+		mIsResultChanged[angle] = true;
 	}
 }
 

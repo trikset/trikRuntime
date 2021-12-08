@@ -52,6 +52,8 @@ public:
 public slots:
 	QVector<int> read() const override;
 
+	QVector<int> readRaw() const;
+
 private slots:
 	void onNewData(const QVector<uint8_t> &data);
 
@@ -68,9 +70,9 @@ private:
 	DeviceState mState;
 
 	Fifo *mFifo; // Has ownership
-	QThread mWorkerThread;
 
 	QVector<int> mResult;
+	std::vector<bool> mIsResultChanged;
 	QVector<uint8_t> mBuffer;
 
 };
