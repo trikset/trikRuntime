@@ -582,7 +582,6 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "lidar") {
-			qDebug() << "INSERT LIDAR";
 			mLidars.insert(port, new Lidar(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {
 			QScopedPointer<CameraDeviceInterface> tmp (

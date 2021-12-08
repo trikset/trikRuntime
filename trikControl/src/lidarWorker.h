@@ -1,0 +1,75 @@
+/* Copyright 2021 CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#pragma once
+
+#include <QtCore/QObject>
+#include <QtCore/QThread>
+#include <QtCore/QScopedPointer>
+#include <lidarInterface.h>
+#include <qsemaphore.h>
+
+#include "deviceState.h"
+#include "fifo.h"
+
+#include <trikHal/fifoInterface.h>
+#include <trikHal/hardwareAbstractionInterface.h>
+#include <trikKernel/configurer.h>
+
+namespace trikControl {
+
+class LidarWorker : public QObject, public DeviceInterface
+{
+	Q_OBJECT
+public:
+	explicit LidarWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	~LidarWorker();
+
+	Status status() const override;
+	/// Inits Fifo
+	void init();
+
+	/// Blocks the Thread with QSemaphore until init() method releases it.
+	void waitUntilInited();
+
+	Q_INVOKABLE QVector<int> read() const;
+
+	Q_INVOKABLE QVector<int> readRaw() const;
+
+private slots:
+	void onNewData(const QVector<uint8_t> &data);
+
+private:
+	int countMean(const int i, const int meanWindow) const;
+
+	void processBuffer();
+
+	void processData(const QVector<uint8_t> &data);
+
+	bool checkProtocol(const QVector<uint8_t> &data, uint start);
+	bool checkChecksum(const QVector<uint8_t> &data, uint start, uint size);
+
+	QScopedPointer<Fifo> mFifo; // Has ownership
+	const QString mFifoFileName;
+	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+
+	QVector<int> mResult;
+
+	QMutex mBufferLock;
+	QVector<uint8_t> mBuffer;
+
+	/// Releases when init() is finished
+	QSemaphore mWaitForInit {1};
+};
+}
