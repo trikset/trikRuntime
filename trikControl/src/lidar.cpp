@@ -43,49 +43,44 @@ Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
 	: mState("Lidar on" + port)
 	, mFifo(new Fifo(port, configurer, hardwareAbstraction))
 	, mResult(ANGLES_NUMBER, 0)
-	, mIsResultChanged(ANGLES_NUMBER, true)
 {
-}
-
-Lidar::~Lidar()
-{
+	qDebug() << "LIdAR";
 }
 
 Lidar::Status Lidar::status() const
 {
-	return Status::off;
+	return mFifo->status();
 }
 
 QVector<int> Lidar::read() const
 {
 	QVector<int> result(360, 0);
 
-	auto it = std::find(mIsResultChanged.begin(), mIsResultChanged.end(), true);
-	while (it != mIsResultChanged.end()) {
-		int index = it - mIsResultChanged.begin();
-		int max = mIsResultChanged[index];
-		int min = mIsResultChanged[index];
+	for (int i = 5; i < mResult.size() - 5; i += 10) {
+		int max = mResult[i];
+		int min = mResult[i];
 		int mean = 0;
-		const int indexWas = index;
-		while(index % 5 != 0 || index % 10 == 0) { // count (15, 25]
-			mIsResultChanged[index] = false;
-			max = std::max(max, mResult[index]);
-			min = std::min(min, mResult[index]);
-			mean += mResult[index];
-			index--;
+		for (int j = i; j < i + 10; ++j) {
+			max = std::max(max, mResult[j]);
+			min = std::min(min, mResult[j]);
+			mean += mResult[j];
 		}
-		index = indexWas + 1;
-		do {
-			mIsResultChanged[index] = false;
-			max = std::max(max, mResult[index]);
-			min = std::min(min, mResult[index]);
-			mean += mResult[index];
-			index++;
-		} while(index % 5 != 0 || index % 10 == 0);
-
-		result[(indexWas + 4) / 10] = (mean - min - max) / 8; // (15, 25] = 2
-		it = std::find(it, mIsResultChanged.end(), true);
+		result[(i + 5) / 10] = (mean - min - max) / 8; // [15, 25) = 2
 	}
+
+	int max = mResult[0];
+	int min = mResult[0];
+	for (int i = 0; i < 5; ++i) {
+		max = std::max(max, mResult[i]);
+		min = std::min(min, mResult[i]);
+		result[0] += mResult[i];
+	}
+	for (int i = mResult.size() - 5; i < mResult.size(); ++i) {
+		max = std::max(max, mResult[i]);
+		min = std::min(min, mResult[i]);
+		result[0] += mResult[i];
+	}
+	result[0] = (result[0] - min - max) / 8;
 
 	return result;
 }
@@ -130,7 +125,6 @@ void Lidar::processBuffer()
 			mBuffer = mBuffer.mid(startByte + 1);
 		}
 	}
-
 }
 
 void Lidar::processData(const QVector<uint8_t> &data)
@@ -143,7 +137,6 @@ void Lidar::processData(const QVector<uint8_t> &data)
 		int distByte = FIRST_DIST_BYTE + i * 3;
 		int distance = ((data[distByte] << 8) + data[distByte + 1]) * 0.25;
 		mResult[angle] = distance;
-		mIsResultChanged[angle] = true;
 	}
 }
 
@@ -156,7 +149,8 @@ bool Lidar::checkProtocol(const QVector<uint8_t> &data, int start, int size)
 			checksum == countChecksum(data, start, start + size);
 }
 
-uint16_t countChecksum(const QVector<uint8_t> &data, int start, int end) {
+uint16_t Lidar::countChecksum(const QVector<uint8_t> &data, int start, int end)
+{
 	uint16_t result = 0;
 	for (int i = start; i < end; i++) {
 		result += data[i];

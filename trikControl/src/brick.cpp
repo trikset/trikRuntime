@@ -326,7 +326,7 @@ SensorInterface *Brick::sensor(const QString &port)
 	}
 }
 
-LidarInterface *Brick::lidar(const QString &port)
+trikControl::LidarInterface *Brick::lidar(const QString &port)
 {
 	if (mLidars.contains(port)) {
 		return mLidars[port];
@@ -532,6 +532,9 @@ void Brick::shutdownDevice(const QString &port)
 	} else if (deviceClass == "fifo") {
 		delete mFifos[port];
 		mFifos.remove(port);
+	} else if (deviceClass == "lidar") {
+		delete mLidars[port];
+		mLidars.remove(port);
 	}
 }
 
@@ -578,6 +581,9 @@ void Brick::createDevice(const QString &port)
 			connect(mSoundSensors[port], &SoundSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "lidar") {
+			qDebug() << "INSERT LIDAR";
+			mLidars.insert(port, new Lidar(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {
 			QScopedPointer<CameraDeviceInterface> tmp (
 						new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)

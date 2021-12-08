@@ -45,14 +45,12 @@ public:
 	Lidar(const QString &port, const trikKernel::Configurer &configurer
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	~Lidar() override;
-
 	Status status() const override;
 
 public slots:
 	QVector<int> read() const override;
 
-	QVector<int> readRaw() const;
+	QVector<int> readRaw() const override;
 
 private slots:
 	void onNewData(const QVector<uint8_t> &data);
@@ -72,9 +70,7 @@ private:
 	Fifo *mFifo; // Has ownership
 
 	QVector<int> mResult;
-	std::vector<bool> mIsResultChanged;
 	QVector<uint8_t> mBuffer;
-
 };
 
 }
