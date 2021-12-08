@@ -38,7 +38,7 @@ TrikFifo::~TrikFifo()
 
 bool TrikFifo::open()
 {
-	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_RDONLY | O_NONBLOCK);
+	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_RDONLY);
 
 	if (mFileDescriptor == -1) {
 		QLOG_ERROR() << "Can't open FIFO file" << mFileName;

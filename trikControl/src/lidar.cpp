@@ -16,34 +16,37 @@
 
 #include <trikKernel/configurer.h>
 #include <QDebug>
+#include <QsLog.h>
 
 using namespace trikControl;
 
-const uint8_t PKG_HEADER = 0xAA;
-const int SIZE_BYTE = 1;
+constexpr uint8_t PKG_HEADER = 0xAA;
+constexpr int SIZE_BYTE = 1;
 
-const uint8_t PROTOCOL_VERSION = 0x01;
-const int PROTOCOL_BYTE = 3;
+constexpr uint8_t PROTOCOL_VERSION = 0x01;
+constexpr int PROTOCOL_BYTE = 3;
 
-const uint8_t PKG_TYPE = 0x01;
-const int TYPE_BYTE = 4;
+constexpr uint8_t PKG_TYPE = 0x61;
+constexpr int TYPE_BYTE = 4;
 
-const uint8_t DATA_HEADER = 0xAD;
-const int DATA_START_BYTE = 5;
+constexpr uint8_t DATA_HEADER = 0xAD;
+constexpr int DATA_START_BYTE = 5;
 
-const int DATA_SIZE_BYTE = 6;
-const int START_ANGLE_BYTE = 11;
-const int FIRST_DIST_BYTE = 14;
+constexpr int DATA_SIZE_BYTE = 6;
+constexpr int START_ANGLE_BYTE = 11;
+constexpr int FIRST_DIST_BYTE = 14;
 
-const int ANGLES_NUMBER = 3600;
-const int ANGLE_STEP = ANGLES_NUMBER / 16;
+constexpr int ANGLES_RAW_NUMBER = 3600;
+constexpr int ANGLE_STEP = ANGLES_RAW_NUMBER / 16;
+constexpr int ANGLES_NUMBER = 360;
 
 Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Lidar on" + port)
 	, mFifo(new Fifo(port, configurer, hardwareAbstraction))
-	, mResult(ANGLES_NUMBER, 0)
+	, mResult(ANGLES_RAW_NUMBER, 0)
 {
+	connect(mFifo, &Fifo::newData, this, &Lidar::onNewData);
 	qDebug() << "LIdAR";
 }
 
@@ -54,33 +57,34 @@ Lidar::Status Lidar::status() const
 
 QVector<int> Lidar::read() const
 {
-	QVector<int> result(360, 0);
-
-	for (int i = 5; i < mResult.size() - 5; i += 10) {
-		int max = mResult[i];
-		int min = mResult[i];
+	QVector<int> result(ANGLES_NUMBER, 0);
+	constexpr int meanWindow = ANGLES_RAW_NUMBER / ANGLES_NUMBER; // 10
+	constexpr int halfWindow = meanWindow / 2; // 5
+	for (auto i = halfWindow; i < mResult.size() - halfWindow; i += meanWindow) {
+		auto max = mResult[i];
+		auto min = mResult[i];
 		int mean = 0;
-		for (int j = i; j < i + 10; ++j) {
+		for (auto j = i; j < i + meanWindow; ++j) {
 			max = std::max(max, mResult[j]);
 			min = std::min(min, mResult[j]);
 			mean += mResult[j];
 		}
-		result[(i + 5) / 10] = (mean - min - max) / 8; // [15, 25) = 2
+		result[(i + halfWindow) / meanWindow] = (mean - min - max) / (meanWindow - 2); // [15, 25) = 2
 	}
 
-	int max = mResult[0];
-	int min = mResult[0];
-	for (int i = 0; i < 5; ++i) {
+	auto max = mResult[0];
+	auto min = mResult[0];
+	for (auto i = 0; i < halfWindow; ++i) { // from 3595 to 5
 		max = std::max(max, mResult[i]);
 		min = std::min(min, mResult[i]);
 		result[0] += mResult[i];
 	}
-	for (int i = mResult.size() - 5; i < mResult.size(); ++i) {
+	for (auto i = mResult.size() - halfWindow; i < mResult.size(); ++i) {
 		max = std::max(max, mResult[i]);
 		min = std::min(min, mResult[i]);
 		result[0] += mResult[i];
 	}
-	result[0] = (result[0] - min - max) / 8;
+	result[0] = (result[0] - min - max) / (meanWindow - 2);
 
 	return result;
 }
@@ -98,6 +102,7 @@ void Lidar::onNewData(const QVector<uint8_t> &data)
 
 void Lidar::processBuffer()
 {
+	QLOG_INFO() << "LIDAR" << __PRETTY_FUNCTION__ << "\n" << mBuffer;
 	while (!mBuffer.isEmpty()) {
 		int startByte = 0;
 		while (mBuffer[startByte] != PKG_HEADER) {
@@ -132,28 +137,19 @@ void Lidar::processData(const QVector<uint8_t> &data)
 	uint16_t dataLength = (data[DATA_SIZE_BYTE] << 8) + data[DATA_SIZE_BYTE + 1];
 	uint16_t startAngle = (data[START_ANGLE_BYTE] << 8) + data[START_ANGLE_BYTE + 1];
 	int readNumber = (dataLength - 5) / 3;
-	for (int i = 0; i < readNumber; ++i) {
-		int angle = startAngle + ANGLE_STEP * (i - 1) / readNumber;
-		int distByte = FIRST_DIST_BYTE + i * 3;
-		int distance = ((data[distByte] << 8) + data[distByte + 1]) * 0.25;
+	for (auto i = 0; i < readNumber; ++i) {
+		auto angle = startAngle + ANGLE_STEP * (i - 1) / readNumber;
+		auto distByte = FIRST_DIST_BYTE + i * 3;
+		auto distance = ((data[distByte] << 8) + data[distByte + 1]) * 0.25;
 		mResult[angle] = distance;
 	}
 }
 
-bool Lidar::checkProtocol(const QVector<uint8_t> &data, int start, int size)
+bool Lidar::checkProtocol(const QVector<uint8_t> &data, uint start, uint size)
 {
 	uint16_t checksum = (data[start + size] << 8) + data[start + size + 1];
 	return data[start + PROTOCOL_BYTE] == PROTOCOL_VERSION &&
 			data[start + TYPE_BYTE] == PKG_TYPE &&
 			data[start + DATA_START_BYTE] == DATA_HEADER &&
-			checksum == countChecksum(data, start, start + size);
-}
-
-uint16_t Lidar::countChecksum(const QVector<uint8_t> &data, int start, int end)
-{
-	uint16_t result = 0;
-	for (int i = start; i < end; i++) {
-		result += data[i];
-	}
-	return result;
+			checksum == (std::accumulate(data.begin(), data.end(), 0) & 0xffff);
 }

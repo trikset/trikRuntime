@@ -58,16 +58,15 @@ public:
 
 	Status status() const override;
 
-public slots:
 	/// Reads line from this FIFO file, returning all available data as string.
-	QString read() override;
+	Q_INVOKABLE QString read() override;
 	/// Reads data from this FIFO file, returning all available data as string.
-	QVector<uint8_t> readRaw() override;
+	Q_INVOKABLE QVector<uint8_t> readRaw() override;
 
 	/// Returns true if FIFO has new line in it.
-	bool hasLine() const override;
+	Q_INVOKABLE bool hasLine() const override;
 	/// Returns true if FIFO has new bytes in it.
-	bool hasData() const override;
+	Q_INVOKABLE bool hasData() const override;
 
 private:
 	/// Worker object that handles sensor in separate thread.

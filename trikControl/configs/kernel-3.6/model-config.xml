@@ -133,4 +133,7 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<fifo />
 	</soundSensor>
 	-->
+	<USB>
+		<lidar file="/dev/ttyUSB0" />
+	</USB>
 </config>

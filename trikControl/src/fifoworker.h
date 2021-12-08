@@ -71,6 +71,9 @@ private slots:
 	void onReadError();
 
 private:
+	/// Trying to reopen failed fifo.
+	void reopen();
+
 	const QString &mFifoFileName;
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 	QScopedPointer<trikHal::FifoInterface> mFifo;

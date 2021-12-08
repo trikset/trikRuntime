@@ -47,10 +47,9 @@ public:
 
 	Status status() const override;
 
-public slots:
-	QVector<int> read() const override;
+	Q_INVOKABLE QVector<int> read() const override;
 
-	QVector<int> readRaw() const override;
+	Q_INVOKABLE QVector<int> readRaw() const override;
 
 private slots:
 	void onNewData(const QVector<uint8_t> &data);
@@ -60,7 +59,7 @@ private:
 
 	void processData(const QVector<uint8_t> &data);
 
-	bool checkProtocol(const QVector<uint8_t> &data, int start, int size);
+	bool checkProtocol(const QVector<uint8_t> &data, uint start, uint size);
 
 	uint16_t countChecksum(const QVector<uint8_t> &data, int start, int end);
 

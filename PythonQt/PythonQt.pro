@@ -23,4 +23,6 @@ PythonQtFull.depends += PythonQtCore
 PythonQtCore.subdir = PythonQt/src
 PythonQtFull.file = PythonQtFull.pro
 
-OTHER_FILES += runme.sh trikControl_export.h
+OTHER_FILES += \
+	$$PWD/runme.sh \
+	$$PWD/trikControl_export.h \
