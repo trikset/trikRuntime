@@ -147,6 +147,7 @@ Brick::~Brick()
 	qDeleteAll(mFifos);
 	qDeleteAll(mEventDevices);
 	qDeleteAll(mI2cDevices);
+	qDeleteAll(mLidars);
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
 	mMspCommunicator.reset();
@@ -326,8 +327,9 @@ SensorInterface *Brick::sensor(const QString &port)
 	}
 }
 
-LidarInterface *Brick::lidar(const QString &port)
+LidarInterface *Brick::lidar()
 {
+	auto & port = "LidarPort";
 	if (mLidars.contains(port)) {
 		return mLidars[port];
 	} else {
@@ -532,6 +534,9 @@ void Brick::shutdownDevice(const QString &port)
 	} else if (deviceClass == "fifo") {
 		delete mFifos[port];
 		mFifos.remove(port);
+	} else if (deviceClass == "lidar") {
+		delete mLidars[port];
+		mLidars.remove(port);
 	}
 }
 
@@ -578,6 +583,8 @@ void Brick::createDevice(const QString &port)
 			connect(mSoundSensors[port], &SoundSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "lidar") {
+			mLidars.insert(port, new Lidar(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {
 			QScopedPointer<CameraDeviceInterface> tmp (
 						new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)
