@@ -28,7 +28,7 @@ class TRIKCONTROL_EXPORT LidarInterface : public VectorSensorInterface
 {
 	Q_OBJECT
 
-	/// /// Returns current raw reading of a lidar.
+	/// Returns current raw reading of a lidar.
 	virtual QVector<int> readRaw() const = 0;
 };
 }

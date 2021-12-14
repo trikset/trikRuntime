@@ -2,11 +2,12 @@
 Not in type system
 <object-type name="ConnectionTypes"/>
 <object-type name="MetaTypeDefinedHelper"/>
-<object-type name="QKeyValueIterator"/>
+<object-type name="QFunctorSlotObject"/>
 <object-type name="QMetaTypeTypeFlags"/>
+<object-type name="QSlotObject"/>
+<object-type name="QSlotObjectBase"/>
 <object-type name="QSmartPointerConvertFunctor"/>
 <object-type name="QStaticSlotObject"/>
-<object-type name="QStringView"/>
 ************************************************************************
 
 ************************************************************************
@@ -66,6 +67,7 @@ Generation disabled by type system
 <object-type name="QSharedDataPointer"/>
 <object-type name="QSizePolicy::Bits"/>
 <object-type name="QStaticArrayData"/>
+<object-type name="QStaticAssertFailure"/>
 <object-type name="QStaticByteArrayData"/>
 <object-type name="QStaticStringData"/>
 <object-type name="QString"/>

@@ -44,7 +44,7 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with lidar parameters.
 	Lidar(const QString &port, const trikKernel::Configurer &configurer
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-	~Lidar();
+	~Lidar() override;
 
 	Status status() const override;
 

@@ -66,35 +66,8 @@ QVector<int> LidarWorker::read() const
 	QVector<int> result(ANGLES_NUMBER, 0);
 	constexpr int meanWindow = ANGLES_RAW_NUMBER / ANGLES_NUMBER; // 100
 	constexpr int halfWindow = meanWindow / 2; // 50
-	for (auto i = halfWindow; i < mResult.size() - halfWindow; i += meanWindow) {
-		result[(i + halfWindow) / meanWindow] = countMean(i, meanWindow);
-	}
-
-	auto max = 0;
-	auto min = 1000 * 1000 * 1000;
-	auto meanCounter = 0;
-	for (auto i = 0; i < halfWindow; ++i) { // from 35950 to 50
-		if (mResult[i] != 0) {
-			max = std::max(max, mResult[i]);
-			min = std::min(min, mResult[i]);
-			result[0] += mResult[i];
-			meanCounter++;
-		}
-	}
-	for (auto i = mResult.size() - halfWindow; i < mResult.size(); ++i) {
-		if (mResult[i] != 0) {
-			max = std::max(max, mResult[i]);
-			min = std::min(min, mResult[i]);
-			result[0] += mResult[i];
-			meanCounter++;
-		}
-	}
-	if (meanCounter > 2) {
-		result[0] = (result[0] - min - max) / (meanCounter - 2); // [150, 250) = 2
-	} else {
-		if (meanCounter != 0) {
-			result[0] = result[0] / meanCounter;
-		}
+	for (auto i = halfWindow; i < mResult.size(); i += meanWindow) {
+		result[(i + halfWindow) % ANGLES_RAW_NUMBER / meanWindow] = countMean(i, meanWindow);
 	}
 
 	return result;
@@ -126,7 +99,8 @@ int LidarWorker::countMean(const int i, const int meanWindow) const
 	auto min = 1000 * 1000 * 1000; // big int
 	auto mean = 0;
 	auto meanCounter = 0;
-	for (auto j = i; j < i + meanWindow; ++j) {
+	for (auto j = i; j  < (i + meanWindow) % ANGLES_RAW_NUMBER; ++j) {
+		j %= ANGLES_RAW_NUMBER;
 		if (mResult[j] != 0) {
 			max = std::max(max, mResult[j]);
 			min = std::min(min, mResult[j]);

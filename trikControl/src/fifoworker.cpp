@@ -59,7 +59,6 @@ QString trikControl::FifoWorker::read()
 	QReadLocker r(&mCurrentLock);
 	if (mCurrentLine.isEmpty()) {
 		r.unlock();
-		reopen();
 		QEventLoop l;
 		connect(this, &FifoWorker::newLine, &l, [&l](const QString &newLine) {
 			if (!newLine.isEmpty()) {
@@ -80,7 +79,6 @@ QVector<uint8_t> trikControl::FifoWorker::readRaw()
 	QReadLocker r(&mCurrentLock);
 	if (mCurrentData.isEmpty()) {
 		r.unlock();
-		reopen();
 		QEventLoop l;
 		connect(this, &FifoWorker::newData, &l, [&l](const QVector<uint8_t> &newData) {
 			if (!newData.isEmpty()) {
@@ -94,17 +92,6 @@ QVector<uint8_t> trikControl::FifoWorker::readRaw()
 	QWriteLocker w(&mCurrentLock);
 	result.swap(mCurrentData);
 	return result;
-}
-
-void trikControl::FifoWorker::reopen()
-{
-	if (mState.isFailed()) {
-		if (mFifo->open()) {
-			mState.ready();
-		} else {
-			mState.fail();
-		}
-	}
 }
 
 bool trikControl::FifoWorker::hasLine() const
