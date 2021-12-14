@@ -147,6 +147,7 @@ Brick::~Brick()
 	qDeleteAll(mFifos);
 	qDeleteAll(mEventDevices);
 	qDeleteAll(mI2cDevices);
+	qDeleteAll(mLidars);
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
 	mMspCommunicator.reset();
@@ -326,8 +327,9 @@ SensorInterface *Brick::sensor(const QString &port)
 	}
 }
 
-trikControl::LidarInterface *Brick::lidar(const QString &port)
+LidarInterface *Brick::lidar()
 {
+	auto & port = "LidarPort";
 	if (mLidars.contains(port)) {
 		return mLidars[port];
 	} else {
