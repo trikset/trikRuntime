@@ -36,7 +36,8 @@ constexpr int ANGLES_RAW_NUMBER = 36000;
 constexpr int ANGLE_STEP = ANGLES_RAW_NUMBER / 16;
 constexpr int ANGLES_NUMBER = 360;
 
-trikControl::LidarWorker::LidarWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+trikControl::LidarWorker::LidarWorker(const QString &fileName
+					, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFifoFileName(fileName)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mResult(ANGLES_RAW_NUMBER, 0)

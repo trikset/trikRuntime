@@ -29,10 +29,15 @@
 
 namespace trikControl {
 
+/// Worker object that processes Lidar output and updates stored reading. Meant to be executed in separate
+/// thread.
 class LidarWorker : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 public:
+	/// Constructor.
+	/// @param fileName - name of a FIFO file.
+	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	explicit LidarWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 	~LidarWorker();
 
@@ -43,8 +48,10 @@ public:
 	/// Blocks the Thread with QSemaphore until init() method releases it.
 	void waitUntilInited();
 
+	/// Calculates the arithmetic average of the lidar values and outputs in shorter form.
 	Q_INVOKABLE QVector<int> read() const;
 
+	/// Returning all available raw data.
 	Q_INVOKABLE QVector<int> readRaw() const;
 
 private slots:
