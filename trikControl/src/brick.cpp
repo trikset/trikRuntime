@@ -329,7 +329,7 @@ SensorInterface *Brick::sensor(const QString &port)
 
 LidarInterface *Brick::lidar()
 {
-	auto & port = "lidarPort";
+	auto port = "lidarPort";
 	if (mLidars.contains(port)) {
 		return mLidars[port];
 	} else {

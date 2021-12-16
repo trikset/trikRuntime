@@ -98,15 +98,15 @@ int LidarWorker::countMean(const int i, const int meanWindow) const
 {
 	auto max = 0;
 	auto min = 1000 * 1000 * 1000; // big int
-	auto mean = 0;
-	auto meanCounter = 0;
+	auto mean = 0U;
+	auto meanCounter = 0U;
 	for (auto j = i; j  < (i + meanWindow) % ANGLES_RAW_NUMBER; ++j) {
 		j %= ANGLES_RAW_NUMBER;
 		if (mResult[j] != 0) {
 			max = std::max(max, mResult[j]);
 			min = std::min(min, mResult[j]);
 			mean += mResult[j];
-			meanCounter++;
+			++meanCounter;
 		}
 	}
 	if (meanCounter > 2) {
