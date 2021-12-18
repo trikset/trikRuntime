@@ -20,22 +20,41 @@ using namespace trikControl;
 
 Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mState("Lidar on" + port)
+	: mLidarWorker(new LidarWorker(configurer.attributeByPort(port, "file"), hardwareAbstraction))
 {
-	Q_UNUSED(configurer)
-	Q_UNUSED(hardwareAbstraction)
+	mLidarWorker->moveToThread(&mWorkerThread);
+
+	connect(&mWorkerThread, &QThread::started, mLidarWorker, &LidarWorker::init);
+	connect(&mWorkerThread, &QThread::finished, mLidarWorker, &QObject::deleteLater);
+
+	mWorkerThread.setObjectName(mLidarWorker->metaObject()->className());
+	mWorkerThread.start();
+	mLidarWorker->waitUntilInited();
 }
 
 Lidar::~Lidar()
 {
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
 Lidar::Status Lidar::status() const
 {
-	return Status::off;
+	return mLidarWorker->status();
 }
 
 QVector<int> Lidar::read() const
 {
-	return {};
+	QVector<int> result;
+	QMetaObject::invokeMethod(mLidarWorker, [this, &result](){result = mLidarWorker->read();}
+							, Qt::BlockingQueuedConnection);
+	return result;
+}
+
+QVector<int> Lidar::readRaw() const
+{
+	QVector<int> result;
+	QMetaObject::invokeMethod(mLidarWorker, [this, &result](){result = mLidarWorker->readRaw();}
+							, Qt::BlockingQueuedConnection);
+	return result;
 }

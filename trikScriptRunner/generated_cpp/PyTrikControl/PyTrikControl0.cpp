@@ -19,6 +19,7 @@
 #include <i2cDeviceInterface.h>
 #include <keysInterface.h>
 #include <ledInterface.h>
+#include <lidarInterface.h>
 #include <lineSensorInterface.h>
 #include <markerInterface.h>
 #include <motorInterface.h>
@@ -138,6 +139,8 @@ void PythonQtWrapper_trikControl__I2cDeviceInterface::send(trikControl::I2cDevic
 {
   ( theWrappedObject->send(reg, value));
 }
+
+
 
 
 

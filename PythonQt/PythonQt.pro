@@ -22,3 +22,7 @@ QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
 PythonQtFull.depends += PythonQtCore
 PythonQtCore.subdir = PythonQt/src
 PythonQtFull.file = PythonQtFull.pro
+
+OTHER_FILES += \
+	$$PWD/runme.sh \
+	$$PWD/trikControl_export.h \

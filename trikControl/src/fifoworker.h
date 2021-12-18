@@ -71,7 +71,7 @@ private slots:
 	void onReadError();
 
 private:
-	const QString &mFifoFileName;
+	const QString mFifoFileName;
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 	QScopedPointer<trikHal::FifoInterface> mFifo;
 

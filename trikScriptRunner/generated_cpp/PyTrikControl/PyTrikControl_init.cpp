@@ -35,6 +35,9 @@ PythonQt::priv()->registerClass(&trikControl::KeysInterface::staticMetaObject, "
 PythonQt::self()->addParentClass("trikControl::KeysInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::KeysInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::LedInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__LedInterface>, NULL, module, 0);
 PythonQt::self()->addParentClass("trikControl::LedInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::LedInterface,trikControl::DeviceInterface>());
+PythonQt::priv()->registerClass(&trikControl::LidarInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__LidarInterface>, NULL, module, 0);
+PythonQt::self()->addParentClass("trikControl::LidarInterface", "trikControl::VectorSensorInterface",PythonQtUpcastingOffset<trikControl::LidarInterface,trikControl::VectorSensorInterface>());
+PythonQt::self()->addParentClass("trikControl::LidarInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::LidarInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::LineSensorInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__LineSensorInterface>, NULL, module, 0);
 PythonQt::self()->addParentClass("trikControl::LineSensorInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::LineSensorInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::MarkerInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__MarkerInterface>, NULL, module, 0);
