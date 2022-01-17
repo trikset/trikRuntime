@@ -21,6 +21,7 @@
 #include "trikInputDeviceFile.h"
 #include "trikOutputDeviceFile.h"
 #include "trikFifo.h"
+#include "trikIIOFile.h"
 #include "QsLog.h"
 
 #include "trikV4l2VideoDevice.h"
@@ -62,6 +63,11 @@ EventFileInterface *TrikHardwareAbstraction::createEventFile(const QString &file
 FifoInterface *TrikHardwareAbstraction::createFifo(const QString &fileName) const
 {
 	return new TrikFifo(fileName);
+}
+
+IIOFileInterface *TrikHardwareAbstraction::createIIOFile(const QString &fileName) const
+{
+	return new TrikIIOFile(fileName);
 }
 
 InputDeviceFileInterface *TrikHardwareAbstraction::createInputDeviceFile(const QString &fileName) const
