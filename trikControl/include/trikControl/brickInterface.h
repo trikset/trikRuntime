@@ -120,7 +120,7 @@ public slots:
 	virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns lidar on given port.
-	virtual trikControl::LidarInterface *lidar(const QString &port) = 0;
+	virtual trikControl::LidarInterface *lidar() = 0;
 
 	/// Returns i2c device object
 	virtual trikControl::I2cDeviceInterface *i2c(int bus, int address) = 0;

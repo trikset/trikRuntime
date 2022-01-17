@@ -19,6 +19,7 @@
 
 #include "lidarInterface.h"
 #include "deviceState.h"
+#include "lidarWorker.h"
 
 #include <trikControl/trikControlDeclSpec.h>
 
@@ -43,17 +44,19 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with lidar parameters.
 	Lidar(const QString &port, const trikKernel::Configurer &configurer
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-
 	~Lidar() override;
 
 	Status status() const override;
 
-public slots:
-	QVector<int> read() const override;
+	Q_INVOKABLE QVector<int> read() const override;
+
+	Q_INVOKABLE QVector<int> readRaw() const override;
 
 private:
-	/// State of a lidar. Shared with worker object.
-	DeviceState mState;
+	LidarWorker *mLidarWorker; // Has ownership
+
+	/// Worker thread.
+	QThread mWorkerThread;
 };
 
 }

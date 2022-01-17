@@ -26,3 +26,4 @@
 #include "trikControl/sensorInterface.h"
 #include "trikControl/soundSensorInterface.h"
 #include "trikControl/vectorSensorInterface.h"
+#include "trikControl/lidarInterface.h"

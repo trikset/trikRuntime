@@ -102,7 +102,7 @@ public slots:
 
 	SensorInterface *sensor(const QString &port) override;
 
-	LidarInterface *lidar(const QString &port) override;
+	LidarInterface *lidar() override;
 
 	QStringList motorPorts(MotorInterface::Type type) const override;
 

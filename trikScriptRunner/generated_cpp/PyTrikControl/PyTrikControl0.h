@@ -19,6 +19,7 @@
 #include <i2cDeviceInterface.h>
 #include <keysInterface.h>
 #include <ledInterface.h>
+#include <lidarInterface.h>
 #include <lineSensorInterface.h>
 #include <markerInterface.h>
 #include <motorInterface.h>
@@ -112,6 +113,7 @@ inline trikControl::GyroSensorInterface*  py_q_gyroscope() { return this->gyrosc
 inline trikControl::I2cDeviceInterface*  py_q_i2c(int  bus, int  address) { return this->i2c(bus, address); }
 inline trikControl::KeysInterface*  py_q_keys() { return this->keys(); }
 inline trikControl::LedInterface*  py_q_led() { return this->led(); }
+inline trikControl::LidarInterface*  py_q_lidar() { return this->lidar(); }
 inline trikControl::LineSensorInterface*  py_q_lineSensor(const QString&  port) { return this->lineSensor(port); }
 inline trikControl::MarkerInterface*  py_q_marker() { return this->marker(); }
 inline trikControl::MotorInterface*  py_q_motor(const QString&  port) { return this->motor(port); }
@@ -153,6 +155,7 @@ void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { dele
    trikControl::I2cDeviceInterface*  py_q_i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_i2c(bus, address));}
    trikControl::KeysInterface*  py_q_keys(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_keys());}
    trikControl::LedInterface*  py_q_led(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_led());}
+   trikControl::LidarInterface*  py_q_lidar(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_lidar());}
    trikControl::LineSensorInterface*  py_q_lineSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_lineSensor(port));}
    trikControl::MarkerInterface*  py_q_marker(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_marker());}
    trikControl::MotorInterface*  py_q_motor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_motor(port));}
@@ -493,6 +496,17 @@ void delete_trikControl__LedInterface(trikControl::LedInterface* obj) { delete o
    void py_q_off(trikControl::LedInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__LedInterface*)theWrappedObject)->py_q_off());}
    void py_q_orange(trikControl::LedInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__LedInterface*)theWrappedObject)->py_q_orange());}
    void py_q_red(trikControl::LedInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__LedInterface*)theWrappedObject)->py_q_red());}
+};
+
+
+
+
+
+class PythonQtWrapper_trikControl__LidarInterface : public QObject
+{ Q_OBJECT
+public:
+public slots:
+void delete_trikControl__LidarInterface(trikControl::LidarInterface* obj) { delete obj; } 
 };
 
 

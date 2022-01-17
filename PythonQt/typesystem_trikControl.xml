@@ -23,6 +23,7 @@
  <interface-type name="trikControl::LedInterface" create-shell="no"/>
  <interface-type name="trikControl::GamepadInterface" create-shell="no"/>
  <interface-type name="trikControl::FifoInterface" create-shell="no"/>
+ <interface-type name="trikControl::LidarInterface" create-shell="no"/>
  <interface-type name="trikControl::MarkerInterface" create-shell="no"/>
 
  <interface-type name="trikControl::EventCodeInterface" create-shell="no"/>
