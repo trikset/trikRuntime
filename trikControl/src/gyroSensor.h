@@ -21,6 +21,7 @@
 #include <QReadWriteLock>
 #include <cmath>
 #include <trikKernel/timeVal.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 
 #include "gyroSensorInterface.h"
 #include "deviceState.h"
@@ -31,11 +32,10 @@ class Configurer;
 
 namespace trikHal {
 class HardwareAbstractionInterface;
+class IIOFileInterface;
 }
 
 namespace trikControl {
-
-class VectorSensorWorker;
 
 /// Sensor that returns a vector.
 class GyroSensor : public GyroSensorInterface
@@ -48,8 +48,6 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer);
-
-	~GyroSensor() override;
 
 	Status status() const override;
 
@@ -85,8 +83,7 @@ private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 
-	VectorSensorWorker *mVectorSensorWorker; // Has ownership
-	QThread mWorkerThread;
+	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 
 	QTimer mCalibrationTimer;
 	bool mIsCalibrated;

@@ -43,8 +43,6 @@ public:
 	VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
-	~VectorSensor() override;
-
 	Status status() const override;
 
 public slots:
@@ -54,8 +52,9 @@ private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 
-	VectorSensorWorker *mVectorSensorWorker { nullptr }; /// Is owned by mWorkerThread
-	QThread mWorkerThread;
+	QVector<int> mResult {};
+
+	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 };
 
 }
