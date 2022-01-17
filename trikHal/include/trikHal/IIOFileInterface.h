@@ -16,6 +16,7 @@
 
 #include <QString>
 #include <QObject>
+#include <trikHal/trikHalDeclSpec.h>
 
 namespace trikKernel {
 class TimeVal;
@@ -24,7 +25,7 @@ class TimeVal;
 namespace trikHal {
 
 /// IIO file abstraction.
-class IIOFileInterface : public QObject
+class TRIKHAL_EXPORT IIOFileInterface : public QObject
 {
 	Q_OBJECT
 
