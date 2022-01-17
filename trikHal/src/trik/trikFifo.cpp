@@ -60,8 +60,10 @@ void TrikFifo::readFile()
 	mSocketNotifier->setEnabled(false);
 	auto bytesRead = ::read(mFileDescriptor, bytes.data(), static_cast<size_t>(bytes.size()));
 	if (bytesRead < 0) {
-		QLOG_ERROR() << "FIFO read failed: " << strerror(errno) << "in" << mFileName;
-		emit readError();
+		if (errno != EAGAIN) {
+			QLOG_ERROR() << "FIFO read failed: " << strerror(errno) << "in" << mFileName;
+			emit readError();
+		}
 		mSocketNotifier->setEnabled(true);
 		return;
 	}
