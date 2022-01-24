@@ -49,13 +49,17 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 
 	if (!mState.isFailed()) {
 		if (!mIIOFile.data()->open()) {
+			QLOG_ERROR() << "Gyroscope init failed";
 			mState.fail();
+			return;
 		}
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);
 
 		connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
+
+		QLOG_INFO() << "Starting Gyroscope";
 
 		mState.ready();
 	}

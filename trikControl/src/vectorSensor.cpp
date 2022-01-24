@@ -29,7 +29,9 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 {
 	if (!mState.isFailed()) {
 		if (!mIIOFile.data()->open()) {
+			QLOG_ERROR() << "Gyroscope init failed";
 			mState.fail();
+			return;
 		}
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
