@@ -27,6 +27,7 @@
 
 #include <QRandomGenerator>
 #include <QsLog.h>
+#include <QTimer>
 
 #include "translationsHelper.h"
 #include "version.h"
@@ -105,7 +106,8 @@ void ApplicationInitHelper::init()
 		coreDumpPath = Paths::coreDumpPath();
 	}
 
-	trikKernel::coreDumping::initCoreDumping(coreDumpPath);
+	mDumpingDaemon.reset(new coreDumping::CoreDumpingDaemon(coreDumpPath));
+	QTimer::singleShot(0, mDumpingDaemon.data(), &coreDumping::CoreDumpingDaemon::init);
 
 	mConfigPath = Paths::configsPath();
 	if (mCommandLineParser.isSet("c")) {

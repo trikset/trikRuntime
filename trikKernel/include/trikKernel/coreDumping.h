@@ -16,11 +16,37 @@
 
 #include <QtCore/QString>
 
+#include <QObject>
+#include <QSocketNotifier>
+
 namespace trikKernel {
 
 namespace coreDumping {
-	/// Installs signal handler and initializes core dump in a location specified by trikKernel::Paths.
-	void initCoreDumping(const QString &coreDumpPath);
-}
+	class CoreDumpingDaemon : public QObject
+	{
+		Q_OBJECT
 
+	  public:
+		CoreDumpingDaemon(const QString &coreDumpPath, QObject *parent = 0);
+		~CoreDumpingDaemon() = default;
+
+
+		static void termSignalHandler(int unused);
+
+		/// Installs signal handler and initializes core dump in a location specified by trikKernel::Paths.
+		void initCoreDumping(const QString &coreDumpPath);
+
+	  public slots:
+		void init();
+
+		void handleSigTerm();
+
+	  private:
+//		static int sigtermFd[2];
+
+		QSocketNotifier *snTerm;
+
+		const QString mCoreDumpPath;
+	};
+}
 }

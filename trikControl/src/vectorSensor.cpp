@@ -29,7 +29,7 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 {
 	if (!mState.isFailed()) {
 		if (!mIIOFile.data()->open()) {
-			QLOG_ERROR() << "Gyroscope init failed";
+			QLOG_ERROR() << "VectorSensor init failed";
 			mState.fail();
 			return;
 		}

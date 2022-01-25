@@ -18,6 +18,7 @@
 #include <QtCore/QScopedPointer>
 
 #include "commandLineParser.h"
+#include "coreDumping.h"
 
 namespace trikKernel {
 
@@ -61,6 +62,8 @@ private:
 
 	/// Initializer for logging system.
 	QScopedPointer<LoggingHelper> mLoggingHelper;
+
+	QScopedPointer<coreDumping::CoreDumpingDaemon> mDumpingDaemon;
 };
 
 }

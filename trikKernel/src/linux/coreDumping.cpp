@@ -15,14 +15,22 @@
 #include "coreDumping.h"
 
 #include <QtCore/QDir>
+#include <QsLog.h>
 
 #include <sys/resource.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <csignal>
 #include <unistd.h>
 #include <cstdio>
 #include "paths.h"
 
+#include <QApplication>
+#include <QSocketNotifier>
+#include <coreDumping.h>
+
 void (*oldHandler)(int);
+static int sigtermFd[2];
 
 static void dumpHandler_impl(int signal, char *p)
 {
@@ -78,10 +86,63 @@ static void setCoreLimits()
 	setrlimit(RLIMIT_CORE, &core_limits);
 }
 
-void trikKernel::coreDumping::initCoreDumping(const QString &coreDumpPath)
+static int setup_unix_signal_handlers()
+{
+	struct sigaction term;
+
+	term.sa_handler = trikKernel::coreDumping::CoreDumpingDaemon::CoreDumpingDaemon::termSignalHandler;
+	sigemptyset(&term.sa_mask);
+	term.sa_flags = 0;
+	term.sa_flags |= SA_RESTART;
+
+	if (sigaction(SIGTERM, &term, 0))
+	   return 2;
+
+	return 0;
+}
+
+trikKernel::coreDumping::CoreDumpingDaemon::CoreDumpingDaemon(const QString &coreDumpPath, QObject *parent)
+	: QObject(parent)
+	, mCoreDumpPath(coreDumpPath)
+{
+}
+
+void trikKernel::coreDumping::CoreDumpingDaemon::init()
+{
+	setup_unix_signal_handlers();
+
+	if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sigtermFd))
+		   qFatal("Couldn't create TERM socketpair");
+		snTerm = new QSocketNotifier(sigtermFd[1], QSocketNotifier::Read, this);
+		connect(snTerm, &QSocketNotifier::activated, this, &CoreDumpingDaemon::handleSigTerm);
+
+		initCoreDumping(mCoreDumpPath);
+}
+
+void trikKernel::coreDumping::CoreDumpingDaemon::termSignalHandler(int unused)
+{
+	Q_UNUSED(unused);
+	char a = 1;
+	auto rc = ::write(sigtermFd[0], &a, sizeof(a));
+	Q_UNUSED(rc);
+}
+
+void trikKernel::coreDumping::CoreDumpingDaemon::initCoreDumping(const QString &coreDumpPath)
 {
 	auto const & p = coreDumpPath.toLocal8Bit();
 	dumpHandler_impl(0, strndup(p.constData(), p.size()));
 	initSignals();
 	setCoreLimits();
+}
+
+void trikKernel::coreDumping::CoreDumpingDaemon::handleSigTerm()
+{
+	snTerm->setEnabled(false);
+	char tmp;
+	auto rc = ::read(sigtermFd[1], &tmp, sizeof(tmp));
+	Q_UNUSED(rc);
+	QLOG_INFO() << "GOOOD QUITE";
+	QCoreApplication::quit();
+
+	snTerm->setEnabled(true);
 }
