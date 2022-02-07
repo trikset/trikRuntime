@@ -42,6 +42,7 @@ trikControl::LidarWorker::LidarWorker(const QString &fileName
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mResult(ANGLES_RAW_NUMBER, 0)
 {
+	mBuffer.reserve(ANGLES_RAW_NUMBER);
 	mWaitForInit.acquire(1);
 }
 
