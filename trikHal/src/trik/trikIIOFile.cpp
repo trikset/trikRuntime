@@ -89,19 +89,22 @@ void trikHal::trik::TrikIIOFile::readFile()
 		QLOG_ERROR() << QString("%1: read failed: %2").arg(mFileName).arg(strerror(errno));
 	} else {
 		uint64_t timestamp;
+		bool isAccel = mFileName.endsWith("0");
 		memcpy(&timestamp, &buffer[8], sizeof(timestamp));
 		const uint64_t timestamp_mcsec = timestamp / 1000;
 		trikKernel::TimeVal eventTime(timestamp_mcsec / 1000000, timestamp_mcsec % 1000000);
 
-		// TODO: add comments
-		auto convert_axis = [](uint16_t b_byte, uint16_t s_byte) {
-			return static_cast<int16_t>((b_byte << 8) | s_byte) >> 2;
+		// Quick hack to handle accel and gyro data in a uniform way
+		auto convert_axis = [](bool isAccel, uint16_t b_byte, uint16_t s_byte) {
+			if (isAccel)
+				return static_cast<int16_t>((b_byte << 8) | s_byte) >> 2;
+			return static_cast<int16_t>((s_byte << 8) | b_byte);
 		};
 
 		QVector<int> sensorValues = {
-			convert_axis(buffer[0], buffer[1]),
-			convert_axis(buffer[2], buffer[3]),
-			convert_axis(buffer[4], buffer[5]) };
+			convert_axis(isAccel, buffer[0], buffer[1]),
+			convert_axis(isAccel, buffer[2], buffer[3]),
+			convert_axis(isAccel, buffer[4], buffer[5]) };
 
 		emit newData(sensorValues, eventTime);
 	}
