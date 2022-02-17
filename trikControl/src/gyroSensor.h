@@ -21,6 +21,7 @@
 #include <QReadWriteLock>
 #include <cmath>
 #include <trikKernel/timeVal.h>
+#include <trikHal/hardwareAbstractionInterface.h>
 
 #include "gyroSensorInterface.h"
 #include "deviceState.h"
@@ -31,6 +32,7 @@ class Configurer;
 
 namespace trikHal {
 class HardwareAbstractionInterface;
+class IIOFileInterface;
 }
 
 namespace trikControl {
