@@ -21,6 +21,7 @@
 #include "stubInputDeviceFile.h"
 #include "stubOutputDeviceFile.h"
 #include "stubFifo.h"
+#include "stubIIOFile.h"
 
 #include "QsLog.h"
 
@@ -61,6 +62,11 @@ EventFileInterface *StubHardwareAbstraction::createEventFile(const QString &file
 FifoInterface *StubHardwareAbstraction::createFifo(const QString &fileName) const
 {
 	return new StubFifo(fileName);
+}
+
+IIOFileInterface *StubHardwareAbstraction::createIIOFile(const QString &fileName) const
+{
+	return new StubIIOFile(fileName);
 }
 
 InputDeviceFileInterface *StubHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

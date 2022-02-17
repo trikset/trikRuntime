@@ -143,6 +143,7 @@ jobs:
         run: mingw32-make -j $(nproc) all
 
       - name: Tests
+        id: tests
         shell: msys2 {0}
         timeout-minutes: 3
         continue-on-error: true
@@ -153,7 +154,7 @@ jobs:
           mingw32-make check -k
 
       - name: Prepare for RDP connection
-        continue-on-error: true
+        if: false
         shell: pwsh
         env:
           NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
@@ -162,8 +163,14 @@ jobs:
             Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
             Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
             Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
-#            Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-#            Expand-Archive ngrok.zip
-#            .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
-#            choco install far dependencies
-#           .\ngrok\ngrok.exe tcp 3389
+            Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+            Expand-Archive ngrok.zip
+            .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+            choco install far dependencies
+            .\ngrok\ngrok.exe tcp 3389
+
+      - name: Check errors
+        if: ${{ steps.tests.outcome == 'failure' }}
+        run: |
+            echo Errors occurred in the step Tests
+            exit 1
