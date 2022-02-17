@@ -150,9 +150,9 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mLastUpdate = t;
 	} else {
 
-		const auto r0 = ((mRawData[0] << GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
-		const auto r1 = ((mRawData[1] << GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
-		const auto r2 = ((mRawData[2] << GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
+		const auto r0 = (mRawData[0] * (1 << GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
+		const auto r1 = (mRawData[1] * (1 << GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
+		const auto r2 = (mRawData[2] * (1 << GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
 
 		constexpr auto deltaConst = PI / 180 / 1000 / 1000000 / 2;
 		const auto dt = (t - mLastUpdate) * deltaConst;
