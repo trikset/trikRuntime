@@ -38,11 +38,15 @@ TrikFifo::~TrikFifo()
 
 bool TrikFifo::open()
 {
-	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NOCTTY | O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NOCTTY | O_RDWR | O_NONBLOCK | O_CLOEXEC);
 
 	if (mFileDescriptor == -1) {
-		QLOG_ERROR() << "Can't open FIFO file" << mFileName;
-		return false;
+		QLOG_ERROR() << "Failed to open FIFO file in read-write mode" << mFileName;
+		mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NOCTTY | O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+		if (mFileDescriptor == -1) {
+			QLOG_ERROR() << "Failed to open FIFO file in read-only mode" << mFileName;
+			return false;
+		}
 	}
 
 	if (isatty(mFileDescriptor)) {
