@@ -157,7 +157,7 @@ int TrikV4l2VideoDevice::xioctl(unsigned long request, void *arg, const QString 
 
 void TrikV4l2VideoDevice::openDevice()
 {
-	mFileDescriptor = ::v4l2_open(fileDevicePath.toStdString().c_str(), O_RDWR /* required */ | O_NONBLOCK, 0);
+	mFileDescriptor = ::v4l2_open(fileDevicePath.toStdString().c_str(), O_RDWR /* required */ | O_NONBLOCK | O_CLOEXEC, 0);
 
 	if (mFileDescriptor < 0) {
 		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor ;
