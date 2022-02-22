@@ -17,10 +17,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <cerrno>
+#include <termios.h>
 
 #include <QtCore/QSocketNotifier>
 #include <QtCore/QStringList>
-
 #include <QsLog.h>
 
 using namespace trikHal::trik;
@@ -38,11 +38,33 @@ TrikFifo::~TrikFifo()
 
 bool TrikFifo::open()
 {
-	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+	mFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NOCTTY | O_RDONLY | O_NONBLOCK | O_CLOEXEC);
 
 	if (mFileDescriptor == -1) {
 		QLOG_ERROR() << "Can't open FIFO file" << mFileName;
 		return false;
+	}
+
+	if (isatty(mFileDescriptor)) {
+		termios t {};
+		QLOG_INFO() << "Using tty as FIFO:" << mFileName;
+		if (tcgetattr(mFileDescriptor, &t)) {
+			QLOG_ERROR() << __PRETTY_FUNCTION__ << ": tcgetattr failed for" << mFileName;
+		} else {
+			t.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+			t.c_oflag &= ~(OPOST);
+			t.c_cflag |= CS8;
+			t.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+			t.c_cc[VMIN] = 1;
+			t.c_cc[VTIME] = 0;
+			termios t1 = t;
+			tcsetattr(mFileDescriptor, TCSANOW, &t);
+			if (tcgetattr(mFileDescriptor, &t1)
+					|| std::make_tuple(t.c_iflag, t.c_oflag, t.c_cflag, t.c_lflag)
+						!= std::make_tuple(t1.c_iflag, t1.c_oflag, t1.c_cflag, t1.c_lflag)) {
+				QLOG_ERROR() << __PRETTY_FUNCTION__ << ": tcsetattr failed for" << mFileName;
+			}
+		}
 	}
 
 	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
