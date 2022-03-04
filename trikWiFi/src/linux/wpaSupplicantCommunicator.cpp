@@ -39,7 +39,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	, mLocal(new sockaddr_un())
 	, mDest(new sockaddr_un())
 {
-	mSocket = socket(PF_UNIX, SOCK_DGRAM, 0);
+	mSocket = socket(PF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK | SOCK_CLOEXEC, 0);
 
 	if (mSocket < 0) {
 		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot create a socket:" << strerror(errno);
@@ -64,12 +64,6 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 		close(mSocket);
 		mSocket = -1;
 		return;
-	}
-
-	int flags = fcntl(mSocket, F_GETFL);
-	if (flags >= 0) {
-		flags |= O_NONBLOCK;
-		fcntl(mSocket, F_SETFL, flags);
 	}
 }
 

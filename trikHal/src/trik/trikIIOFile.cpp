@@ -35,7 +35,7 @@ trikHal::trik::TrikIIOFile::~TrikIIOFile()
 bool trikHal::trik::TrikIIOFile::open()
 {
 	QLOG_INFO() << "Openning" << mFileName;
-	mIIOFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NONBLOCK | O_RDONLY);
+	mIIOFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NONBLOCK | O_RDONLY | O_CLOEXEC);
 	if (mIIOFileDescriptor == -1) {
 		QLOG_ERROR() << QString("%1: open failed: %2").arg(mFileName).arg(strerror(errno));
 		return false;

@@ -436,7 +436,7 @@ uint32_t init_i2c_sensors_USBMSP()
 uint32_t connect_USBMSP()
 {
 	// Open USB descriptor for writing
-	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY);
+	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY | O_CLOEXEC);
 	if (usb_out_descr < 0)
 	{
 		QLOG_INFO() << "Error " << errno << " opening " << USB_DEV_NAME << ": " << strerror (errno);
