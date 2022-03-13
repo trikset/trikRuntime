@@ -68,6 +68,12 @@ bool TrikFifo::open()
 						!= std::make_tuple(t1.c_iflag, t1.c_oflag, t1.c_cflag, t1.c_lflag)) {
 				QLOG_ERROR() << __PRETTY_FUNCTION__ << ": tcsetattr failed for" << mFileName;
 			}
+			if (cfsetospeed (&t, B230400)) {
+				QLOG_ERROR() << __PRETTY_FUNCTION__ << ": cfsetospeed 230400 failed for" << mFileName;
+			}
+			if (cfsetispeed (&t, B230400)) {
+				QLOG_ERROR() << __PRETTY_FUNCTION__ << ": cfsetispeed 230400 failed for" << mFileName;
+			}
 		}
 	}
 
