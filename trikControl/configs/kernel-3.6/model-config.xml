@@ -134,6 +134,6 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</soundSensor>
 	-->
 	<lidarPort>
-		<lidar file="/dev/ttyUSB0" />
+		<lidar file="/dev/ttyS1" />
 	</lidarPort>
 </config>
