@@ -57,6 +57,9 @@ public:
 private slots:
 	void onNewData(const QVector<uint8_t> &data);
 
+	/// Called when there is new data on a FIFO.
+	void readFile();
+
 private:
 	int countMean(const int i, const int meanWindow) const;
 
@@ -69,12 +72,16 @@ private:
 
 	QScopedPointer<Fifo> mFifo; // Has ownership
 	const QString mFifoFileName;
+	int mFileDescriptor;
 	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 
 	QVector<int> mResult;
 
 	QMutex mBufferLock;
 	QVector<uint8_t> mBuffer;
+
+	/// Notifier for FIFO file that emits a signal when something is changed in it.
+	QScopedPointer<QSocketNotifier> mSocketNotifier;
 
 	/// Releases when init() is finished
 	QSemaphore mWaitForInit {1};
