@@ -15,11 +15,14 @@
 #include "lidarWorker.h"
 
 #include <QsLog.h>
+#include <QtAlgorithms>
+#ifdef linux
 #include <termios.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#endif
 
 using namespace trikControl;
 
@@ -65,8 +68,10 @@ LidarWorker::Status LidarWorker::status() const
 
 void LidarWorker::init()
 {
-//	mFifo.reset(new Fifo(mFifoFileName, mHardwareAbstraction));
-//	connect(mFifo.data(), &Fifo::newData, this, &LidarWorker::onNewData);
+#ifndef linux
+	mFifo.reset(new Fifo(mFifoFileName, mHardwareAbstraction));
+	connect(mFifo.data(), &Fifo::newData, this, &LidarWorker::onNewData);
+#else
 	mFileDescriptor = ::open(mFifoFileName.toStdString().c_str(), O_NOCTTY | O_RDONLY | O_NONBLOCK | O_CLOEXEC);
 	if (mFileDescriptor == -1) {
 		QLOG_ERROR() << "Failed to open FIFO file in read-only mode" << mFifoFileName << " " << strerror(errno);
@@ -104,7 +109,7 @@ void LidarWorker::init()
 	mSocketNotifier->setEnabled(true);
 
 	QLOG_INFO() << "Opened FIFO file" << mFifoFileName;
-
+#endif
 	mWaitForInit.release(1);
 }
 
@@ -133,6 +138,7 @@ void LidarWorker::waitUntilInited()
 
 void LidarWorker::readFile()
 {
+#ifdef linux
 	QVector<uint8_t> bytes(4000);
 	mSocketNotifier->setEnabled(false);
 	auto bytesRead = ::read(mFileDescriptor, bytes.data(), static_cast<size_t>(bytes.size()));
@@ -147,6 +153,7 @@ void LidarWorker::readFile()
 	mBuffer.append(bytes);
 	processBuffer();
 	mSocketNotifier->setEnabled(true);
+#endif
 }
 
 void LidarWorker::onNewData(const QVector<uint8_t> &data)
@@ -225,6 +232,11 @@ void LidarWorker::processData(const QVector<uint8_t> &data)
 	uint16_t dataLength = (data[DATA_SIZE_BYTE] << 8) | data[DATA_SIZE_BYTE + 1];
 	uint16_t startAngle = (data[START_ANGLE_BYTE] << 8) | data[START_ANGLE_BYTE + 1];
 	int readNumber = (dataLength - 5) / 3;
+
+	// Inefficient. Consider switching to C-style arrays and drop QVector
+	for (auto i = startAngle; i < startAngle + ANGLE_STEP; i++) {
+		mResult[i] = 0;
+	}
 	for (auto i = 0; i < readNumber; ++i) {
 		auto angle = startAngle + ANGLE_STEP * i / readNumber;
 		auto distByte = FIRST_DIST_BYTE + i * 3;
