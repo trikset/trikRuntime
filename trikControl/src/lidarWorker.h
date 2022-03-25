@@ -17,6 +17,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QThread>
 #include <QtCore/QScopedPointer>
+#include <QSocketNotifier>
 #include <lidarInterface.h>
 #include <qsemaphore.h>
 

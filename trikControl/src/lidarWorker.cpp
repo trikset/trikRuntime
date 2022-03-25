@@ -16,7 +16,7 @@
 
 #include <QsLog.h>
 #include <QtAlgorithms>
-#ifdef linux
+#ifdef Q_OS_UNIX
 #include <termios.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -68,7 +68,7 @@ LidarWorker::Status LidarWorker::status() const
 
 void LidarWorker::init()
 {
-#ifndef linux
+#ifndef Q_OS_UNIX
 	mFifo.reset(new Fifo(mFifoFileName, mHardwareAbstraction));
 	connect(mFifo.data(), &Fifo::newData, this, &LidarWorker::onNewData);
 #else
@@ -138,7 +138,7 @@ void LidarWorker::waitUntilInited()
 
 void LidarWorker::readFile()
 {
-#ifdef linux
+#ifdef Q_OS_UNIX
 	QVector<uint8_t> bytes(4000);
 	mSocketNotifier->setEnabled(false);
 	auto bytesRead = ::read(mFileDescriptor, bytes.data(), static_cast<size_t>(bytes.size()));
