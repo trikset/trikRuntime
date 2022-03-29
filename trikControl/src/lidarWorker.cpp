@@ -142,7 +142,6 @@ void LidarWorker::readData()
 					mLidarChunkBytes = 1;
 					mFlagHunt = false;
 				}
-				break;
 			} else {
 				mLidarChunk[mLidarChunkBytes++] = bytes[i];
 				if (mLidarChunkBytes == sizeof(struct Delta2ALayout)) {
