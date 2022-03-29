@@ -16,17 +16,15 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QThread>
-#include <QtCore/QScopedPointer>
-#include <QSocketNotifier>
-#include <lidarInterface.h>
-#include <qsemaphore.h>
+#include <QSemaphore>
+#include <QSerialPort>
 
 #include "deviceState.h"
-#include "fifo.h"
+//#include "fifo.h"
 
-#include <trikHal/fifoInterface.h>
+//#include <trikHal/fifoInterface.h>
 #include <trikHal/hardwareAbstractionInterface.h>
-#include <trikKernel/configurer.h>
+//#include <trikKernel/configurer.h>
 
 namespace trikControl {
 
@@ -56,33 +54,29 @@ public:
 	Q_INVOKABLE QVector<int> readRaw() const;
 
 private slots:
-	void onNewData(const QVector<uint8_t> &data);
-
-	/// Called when there is new data on a FIFO.
-	void readFile();
+	/// Called when there is new data on serial port
+	void readData();
 
 private:
 	int countMean(const int i, const int meanWindow) const;
 
-	void processBuffer();
+	void processData(const void *p);
 
-	void processData(const QVector<uint8_t> &data);
+	bool checkChecksum(const char *data, size_t size);
 
-	bool checkProtocol(const QVector<uint8_t> &data, uint start);
-	bool checkChecksum(const QVector<uint8_t> &data, uint start, uint size);
+	/// serial port QT object
+	QSerialPort mSerial;
 
-	QScopedPointer<Fifo> mFifo; // Has ownership
-	const QString mFifoFileName;
-	int mFileDescriptor;
-	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+	/// buffer for unparsed raw data chunks from serial port
+	char *mLidarChunk;
+	size_t mLidarChunkBytes {0};
+	bool mFlagHunt {true};
 
+	/// processed data from lidar
 	QVector<int> mResult;
 
-	QMutex mBufferLock;
-	QVector<uint8_t> mBuffer;
-
-	/// Notifier for FIFO file that emits a signal when something is changed in it.
-	QScopedPointer<QSocketNotifier> mSocketNotifier;
+	/// DeviceInterface status
+	Status mStatus;
 
 	/// Releases when init() is finished
 	QSemaphore mWaitForInit {1};

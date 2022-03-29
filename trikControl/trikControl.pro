@@ -188,7 +188,7 @@ OTHER_FILES += \
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-QT += xml gui multimedia
+QT += xml gui multimedia serialport
 
 if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
