@@ -121,12 +121,12 @@ void LidarWorker::waitUntilInited()
 
 void LidarWorker::readData()
 {
-	char bytes[256];
+	uint8_t bytes[256];
 	struct Delta2ALayout *s = (struct Delta2ALayout *)mLidarChunk;
 
 	while (!mSerial.atEnd()) {
 		// read data block from serial port
-		auto bytesRead = mSerial.read(bytes, sizeof(bytes));
+		auto bytesRead = mSerial.read((char *)bytes, sizeof(bytes));
 		if (bytesRead == 0)
 			return;
 		if (bytesRead < 0) {
