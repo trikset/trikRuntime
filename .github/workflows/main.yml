@@ -85,7 +85,7 @@ jobs:
         with:
           version: ${{matrix.qt-version}}
           arch: win32_mingw${{matrix.mingw-short-version}}
-          modules: 'qtscript qtsvg'
+          modules: 'qtscript qtsvg qtserialport'
           tools: 'tools_mingw,${{matrix.mingw-version}}.0,qt.tools.win32_mingw${{matrix.mingw-short-version}}0'
           extra: '--external 7z'
 

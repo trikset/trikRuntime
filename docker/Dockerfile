@@ -25,7 +25,7 @@ RUN apt-get update \
 		libglu1-mesa-dev libpng-dev \
 		zlib1g-dev xbitmaps xterm git ccache \
 #qt
-		qt512base qt512multimedia qt512script qt512svg qt512tools qt512wayland \
+		qt512base qt512multimedia qt512script qt512svg qt512tools qt512wayland qt512serialport \
 #for libusb build
                 automake libtool-bin libudev-dev \
 #for TRIK Studio build and tests
