@@ -74,8 +74,8 @@ private:
 	/// processed data from lidar
 	QVector<int> mResult;
 
-	/// DeviceInterface status
-	Status mStatus;
+	/// device state
+	DeviceState mState;
 
 	/// Releases when init() is finished
 	QSemaphore mWaitForInit {1};

@@ -56,8 +56,9 @@ trikControl::LidarWorker::LidarWorker(const QString &fileName
 	: mSerial(fileName)
 	, mLidarChunk(new uint8_t[LIDAR_DATA_CHUNK_SIZE])
 	, mResult(ANGLES_RAW_NUMBER, 0)
-	, mStatus(Status::off)
+	, mState("Lidar on " + fileName)
 {
+	mState.start();
 	mWaitForInit.acquire(1);
 }
 
@@ -67,16 +68,15 @@ LidarWorker::~LidarWorker()
 
 LidarWorker::Status LidarWorker::status() const
 {
-	return mStatus;
+	return mState.status();
 }
 
 void LidarWorker::init()
 {
-	mStatus = Status::starting;
 	if (!mSerial.open(QIODevice::ReadOnly)) {
 		QLOG_ERROR() << "Lidar: failed to open serial port " << mSerial.portName()
 		             << " in read-only mode: " << mSerial.error();
-		mStatus = Status::permanentFailure;
+		mState.fail();
 		mWaitForInit.release(1);
 		return;
 	}
@@ -87,7 +87,7 @@ void LidarWorker::init()
 	mSerial.setFlowControl(QSerialPort::NoFlowControl);
 
 	connect(&mSerial, &QSerialPort::readyRead, this, &LidarWorker::readData);
-	mStatus = Status::ready;
+	mState.ready();
 
 	QLOG_INFO() << "Lidar: opened serial port" << mSerial.portName();
 	mWaitForInit.release(1);
