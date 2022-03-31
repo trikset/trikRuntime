@@ -15,8 +15,6 @@
 #include "lidarWorker.h"
 
 #include <QsLog.h>
-#include <QtAlgorithms>
-#include <stdint.h>
 
 struct Delta2AProbe {
 	uint8_t signal;
@@ -49,15 +47,14 @@ constexpr int ANGLES_NUMBER = 360;
 constexpr qint64 LIDAR_DATA_CHUNK_SIZE = 4096;
 
 static uint16_t get_unaligned_be16(const void *p) {
-	uint16_t ret = (uint16_t)*(const uint8_t*)p;
-	ret = (ret << 8) + *(const uint8_t*)(((const uint8_t*)p)+1);
-	return ret;
+	const uint8_t *data = reinterpret_cast<const uint8_t*>(p);
+	return (((uint16_t)data[0]) << 8) + data[1];
 }
 
 trikControl::LidarWorker::LidarWorker(const QString &fileName
 					, const trikHal::HardwareAbstractionInterface &)
 	: mSerial(fileName)
-	, mLidarChunk(new char[LIDAR_DATA_CHUNK_SIZE])
+	, mLidarChunk(new uint8_t[LIDAR_DATA_CHUNK_SIZE])
 	, mResult(ANGLES_RAW_NUMBER, 0)
 	, mStatus(Status::off)
 {
@@ -66,7 +63,6 @@ trikControl::LidarWorker::LidarWorker(const QString &fileName
 
 LidarWorker::~LidarWorker()
 {
-	delete[] mLidarChunk;
 }
 
 LidarWorker::Status LidarWorker::status() const
@@ -78,7 +74,8 @@ void LidarWorker::init()
 {
 	mStatus = Status::starting;
 	if (!mSerial.open(QIODevice::ReadOnly)) {
-		QLOG_ERROR() << "Lidar: failed to open serial port " << mSerial.portName() << " in read-only mode: " << mSerial.error();
+		QLOG_ERROR() << "Lidar: failed to open serial port " << mSerial.portName()
+		             << " in read-only mode: " << mSerial.error();
 		mStatus = Status::permanentFailure;
 		mWaitForInit.release(1);
 		return;
@@ -122,7 +119,7 @@ void LidarWorker::waitUntilInited()
 void LidarWorker::readData()
 {
 	uint8_t bytes[256];
-	struct Delta2ALayout *s = (struct Delta2ALayout *)mLidarChunk;
+	auto s = reinterpret_cast<struct Delta2ALayout*>(mLidarChunk.data());
 
 	while (!mSerial.atEnd()) {
 		// read data block from serial port
@@ -181,7 +178,7 @@ void LidarWorker::readData()
 				if (mLidarChunkBytes > sizeof(struct Delta2ALayout) &&
 				    mLidarChunkBytes == (size_t)(get_unaligned_be16(&(s->pkg_hdr_length)) + 2)) {
 					// We've done reading the chunk
-					if (checkChecksum(mLidarChunk, get_unaligned_be16(&(s->pkg_hdr_length)))) {
+					if (checkChecksum(mLidarChunk.data(), get_unaligned_be16(&(s->pkg_hdr_length)))) {
 						processData(s);
 					} else {
 						QLOG_ERROR() << "Lidar: chunk checksum mismatch";
@@ -221,12 +218,12 @@ int LidarWorker::countMean(const int i, const int meanWindow) const
 
 void LidarWorker::processData(const void *p)
 {
-	const struct Delta2ALayout *data = (const struct Delta2ALayout*)p;
+	auto data = reinterpret_cast<const struct Delta2ALayout*>(p);
 	uint16_t dataLength = get_unaligned_be16(&(data->data_hdr_length));
 	uint16_t startAngle = get_unaligned_be16(&(data->start_angle));
 	int entries = (dataLength - 5) / 3;
 	// Ugly, but c++-way, since gcc -pedantic forbids flexible array member
-	const struct Delta2AProbe *probes = (const struct Delta2AProbe*)(((const char*)p)+sizeof(struct Delta2ALayout));
+	auto probes = reinterpret_cast<const struct Delta2AProbe*>(&(data[1]));
 
 	// Inefficient. Consider switching to C-style arrays and drop QVector
 	for (auto i = startAngle; i < startAngle + ANGLE_STEP; i++) {
@@ -238,11 +235,11 @@ void LidarWorker::processData(const void *p)
 	}
 }
 
-bool LidarWorker::checkChecksum(const char *data, size_t size)
+bool LidarWorker::checkChecksum(const uint8_t *data, size_t size)
 {
 	uint16_t result = 0;
 	for (size_t i = 0; i < size; i++) {
-		result += (uint8_t)(data[i]);
+		result += data[i];
 	}
 	return result == get_unaligned_be16(data + size);
 }

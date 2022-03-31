@@ -18,13 +18,12 @@
 #include <QtCore/QThread>
 #include <QSemaphore>
 #include <QSerialPort>
+#include <QScopedArrayPointer>
+#include <stdint.h>
 
 #include "deviceState.h"
-//#include "fifo.h"
 
-//#include <trikHal/fifoInterface.h>
 #include <trikHal/hardwareAbstractionInterface.h>
-//#include <trikKernel/configurer.h>
 
 namespace trikControl {
 
@@ -62,14 +61,14 @@ private:
 
 	void processData(const void *p);
 
-	bool checkChecksum(const char *data, size_t size);
+	bool checkChecksum(const uint8_t *data, size_t size);
 
 	/// serial port QT object
 	QSerialPort mSerial;
 
 	/// buffer for unparsed raw data chunks from serial port
-	char *mLidarChunk;
-	size_t mLidarChunkBytes {0};
+	QScopedArrayPointer<uint8_t> mLidarChunk;
+	size_t mLidarChunkBytes {};
 	bool mFlagHunt {true};
 
 	/// processed data from lidar
