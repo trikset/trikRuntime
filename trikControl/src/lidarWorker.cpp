@@ -145,32 +145,26 @@ void LidarWorker::readData()
 					// now we have a header
 					// perform basic sanity checks
 					if (s->pkg_hdr_magic != PKG_HEADER_MAGIC) {
-						QLOG_ERROR() << "Lidar: invalid pkg header magic";
 						mFlagHunt = true;
 						continue;
 					}
 					if (s->version != PROTOCOL_VERSION) {
-						QLOG_ERROR() << "Lidar: invalid protocol version";
 						mFlagHunt = true;
 						continue;
 					}
 					if (s->type != PKG_TYPE) {
-						QLOG_ERROR() << "Lidar: invalid pkg type";
 						mFlagHunt = true;
 						continue;
 					}
 					if (s->data_hdr_magic != DATA_HEADER_MAGIC) {
-						QLOG_ERROR() << "Lidar: invalid data header magic";
 						mFlagHunt = true;
 						continue;
 					}
 					if (get_unaligned_be16(&(s->pkg_hdr_length))+2 > LIDAR_DATA_CHUNK_SIZE) {
-						QLOG_ERROR() << "Lidar: chunk length too long";
 						mFlagHunt = true;
 						continue;
 					}
 					if (get_unaligned_be16(&(s->pkg_hdr_length)) != get_unaligned_be16(&(s->data_hdr_length))+8) {
-						QLOG_ERROR() << "Lidar: chunk length and data length mismatch";
 						mFlagHunt = true;
 						continue;
 					}
