@@ -73,6 +73,24 @@ LidarWorker::Status LidarWorker::status() const
 
 void LidarWorker::init()
 {
+	// TODO: refactor TRIK system config
+	// quick-and-dirty hack to avoid serial port misuse
+	if (mSerial.portName() == "ttyS1" ||
+	    mSerial.portName() == "/dev/ttyS1") {
+		QFile consoleConfig("/etc/default/ttyS1");
+		if (consoleConfig.open(QIODevice::ReadOnly)) {
+			QTextStream in(&consoleConfig);
+			QString line = in.readLine();
+			if (line != "LINE_PROTOCOL=lidar" &&
+			    line != "LINE_PROTOCOL=nothing") {
+				QLOG_ERROR() << "Lidar: the serial port ttyS1 is not designated for lidar";
+				mState.fail();
+				mWaitForInit.release(1);
+				return;
+			}
+		}
+	}
+
 	if (!mSerial.open(QIODevice::ReadOnly)) {
 		QLOG_ERROR() << "Lidar: failed to open serial port " << mSerial.portName()
 		             << " in read-only mode: " << mSerial.error();
