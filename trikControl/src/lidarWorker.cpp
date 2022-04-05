@@ -15,101 +15,99 @@
 #include "lidarWorker.h"
 
 #include <QsLog.h>
-#include <QtAlgorithms>
-#ifdef Q_OS_UNIX
-#include <termios.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
+
+struct Delta2AProbe {
+	uint8_t signal;
+	uint16_t dist;
+} Q_PACKED;
+
+struct Delta2ALayout {
+	uint8_t  pkg_hdr_magic;
+	uint16_t pkg_hdr_length;
+	uint8_t  version;
+	uint8_t  type;
+	uint8_t  data_hdr_magic;
+	uint16_t data_hdr_length;
+	uint8_t  speed;
+	uint16_t zero_offset;
+	uint16_t start_angle;
+} Q_PACKED;
 
 using namespace trikControl;
 
-constexpr uint8_t PKG_HEADER = 0xAA;
-constexpr int SIZE_BYTE = 1;
-
+constexpr uint8_t PKG_HEADER_MAGIC = 0xAA;
 constexpr uint8_t PROTOCOL_VERSION = 0x01;
-constexpr int PROTOCOL_BYTE = 3;
-
 constexpr uint8_t PKG_TYPE = 0x61;
-constexpr int TYPE_BYTE = 4;
-
-constexpr uint8_t DATA_HEADER = 0xAD;
-constexpr int DATA_HEADER_BYTE = 5;
-
-constexpr int DATA_SIZE_BYTE = 6;
-constexpr int START_ANGLE_BYTE = 11;
-constexpr int FIRST_DIST_BYTE = 14;
+constexpr uint8_t DATA_HEADER_MAGIC = 0xAD;
 
 constexpr int ANGLES_RAW_NUMBER = 36000;
 constexpr int ANGLE_STEP = ANGLES_RAW_NUMBER / 16;
 constexpr int ANGLES_NUMBER = 360;
 
+constexpr qint64 LIDAR_DATA_CHUNK_SIZE = 4096;
+
+static uint16_t get_unaligned_be16(const void *p) {
+	const uint8_t *data = reinterpret_cast<const uint8_t*>(p);
+	return (((uint16_t)data[0]) << 8) + data[1];
+}
+
 trikControl::LidarWorker::LidarWorker(const QString &fileName
-					, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mFifoFileName(fileName)
-	, mFileDescriptor(-1)
-	, mHardwareAbstraction(hardwareAbstraction)
+					, const trikHal::HardwareAbstractionInterface &)
+	: mSerial(fileName)
+	, mLidarChunk(new uint8_t[LIDAR_DATA_CHUNK_SIZE])
 	, mResult(ANGLES_RAW_NUMBER, 0)
+	, mState("Lidar on " + fileName)
 {
+	mState.start();
 	mWaitForInit.acquire(1);
 }
 
 LidarWorker::~LidarWorker()
 {
-	mFifo.reset();
 }
 
 LidarWorker::Status LidarWorker::status() const
 {
-	return mFifo->status();
+	return mState.status();
 }
 
 void LidarWorker::init()
 {
-#ifndef Q_OS_UNIX
-	mFifo.reset(new Fifo(mFifoFileName, mHardwareAbstraction));
-	connect(mFifo.data(), &Fifo::newData, this, &LidarWorker::onNewData);
-#else
-	mFileDescriptor = ::open(mFifoFileName.toStdString().c_str(), O_NOCTTY | O_RDONLY | O_NONBLOCK | O_CLOEXEC);
-	if (mFileDescriptor == -1) {
-		QLOG_ERROR() << "Failed to open FIFO file in read-only mode" << mFifoFileName << " " << strerror(errno);
-		mWaitForInit.release(1);
-		return;
-	}
-
-	termios t {};
-	QLOG_INFO() << "Using tty as FIFO:" << mFifoFileName;
-	if (tcgetattr(mFileDescriptor, &t)) {
-		QLOG_ERROR() << __PRETTY_FUNCTION__ << ": tcgetattr failed for" << mFifoFileName;
-	} else {
-		t.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
-		t.c_oflag &= ~(OPOST);
-		t.c_cflag |= CS8;
-		t.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
-		t.c_cc[VMIN] = 1;
-		t.c_cc[VTIME] = 0;
-		termios t1 = t;
-		cfsetospeed (&t, B230400);
-		cfsetispeed (&t, B230400);
-		tcsetattr(mFileDescriptor, TCSANOW, &t);
-		if (tcgetattr(mFileDescriptor, &t1)
-				|| std::make_tuple(t.c_iflag, t.c_oflag, t.c_cflag, t.c_lflag)
-				!= std::make_tuple(t1.c_iflag, t1.c_oflag, t1.c_cflag, t1.c_lflag)
-				|| cfgetispeed(&t1) != B230400
-				|| cfgetospeed(&t1) != B230400) {
-			QLOG_ERROR() << __PRETTY_FUNCTION__ << ": tcsetattr failed for" << mFifoFileName;
+	// TODO: refactor TRIK system config
+	// quick-and-dirty hack to avoid serial port misuse
+	if (mSerial.portName() == "ttyS1" ||
+	    mSerial.portName() == "/dev/ttyS1") {
+		QFile consoleConfig("/etc/default/ttyS1");
+		if (consoleConfig.open(QIODevice::ReadOnly)) {
+			QTextStream in(&consoleConfig);
+			QString line = in.readLine();
+			if (line != "LINE_PROTOCOL=lidar" &&
+			    line != "LINE_PROTOCOL=nothing") {
+				QLOG_ERROR() << "Lidar: the serial port ttyS1 is not designated for lidar";
+				mState.fail();
+				mWaitForInit.release(1);
+				return;
+			}
 		}
 	}
 
-	mSocketNotifier.reset(new QSocketNotifier(mFileDescriptor, QSocketNotifier::Read));
+	if (!mSerial.open(QIODevice::ReadOnly)) {
+		QLOG_ERROR() << "Lidar: failed to open serial port " << mSerial.portName()
+		             << " in read-only mode: " << mSerial.error();
+		mState.fail();
+		mWaitForInit.release(1);
+		return;
+	}
+	mSerial.setBaudRate(230400);
+	mSerial.setDataBits(QSerialPort::Data8);
+	mSerial.setParity(QSerialPort::NoParity);
+	mSerial.setStopBits(QSerialPort::OneStop);
+	mSerial.setFlowControl(QSerialPort::NoFlowControl);
 
-	connect(mSocketNotifier.data(), &QSocketNotifier::activated, this, &LidarWorker::readFile);
-	mSocketNotifier->setEnabled(true);
+	connect(&mSerial, &QSerialPort::readyRead, this, &LidarWorker::readData);
+	mState.ready();
 
-	QLOG_INFO() << "Opened FIFO file" << mFifoFileName;
-#endif
+	QLOG_INFO() << "Lidar: opened serial port" << mSerial.portName();
 	mWaitForInit.release(1);
 }
 
@@ -136,33 +134,72 @@ void LidarWorker::waitUntilInited()
 	mWaitForInit.release(1);
 }
 
-void LidarWorker::readFile()
+void LidarWorker::readData()
 {
-#ifdef Q_OS_UNIX
-	QVector<uint8_t> bytes(4000);
-	mSocketNotifier->setEnabled(false);
-	auto bytesRead = ::read(mFileDescriptor, bytes.data(), static_cast<size_t>(bytes.size()));
-	if (bytesRead < 0) {
-		if (errno != EAGAIN) {
-			QLOG_ERROR() << "FIFO read failed: " << strerror(errno) << "in" << mFifoFileName;
-		}
-		mSocketNotifier->setEnabled(true);
-		return;
-	}
-	bytes.resize(bytesRead);
-	mBuffer.append(bytes);
-	processBuffer();
-	mSocketNotifier->setEnabled(true);
-#endif
-}
+	uint8_t bytes[256];
+	auto s = reinterpret_cast<struct Delta2ALayout*>(mLidarChunk.data());
 
-void LidarWorker::onNewData(const QVector<uint8_t> &data)
-{
-	Q_UNUSED(data)
-	mBufferLock.lock();
-	mBuffer.append(mFifo->readRaw());
-	processBuffer();
-	mBufferLock.unlock();
+	while (!mSerial.atEnd()) {
+		// read data block from serial port
+		auto bytesRead = mSerial.read((char *)bytes, sizeof(bytes));
+		if (bytesRead == 0)
+			return;
+		if (bytesRead < 0) {
+			QLOG_ERROR() << "Lidar: read failed: " << mSerial.error() << " in " << mSerial.portName();
+			return;
+		}
+
+		// feed the data to very simple FSM
+		for (int i = 0; i < bytesRead; i++) {
+			if (mFlagHunt) {
+				if (bytes[i] == PKG_HEADER_MAGIC) {
+					mLidarChunk[0] = bytes[i];
+					mLidarChunkBytes = 1;
+					mFlagHunt = false;
+				}
+			} else {
+				mLidarChunk[mLidarChunkBytes++] = bytes[i];
+				if (mLidarChunkBytes == sizeof(struct Delta2ALayout)) {
+					// now we have a header
+					// perform basic sanity checks
+					if (s->pkg_hdr_magic != PKG_HEADER_MAGIC) {
+						mFlagHunt = true;
+						continue;
+					}
+					if (s->version != PROTOCOL_VERSION) {
+						mFlagHunt = true;
+						continue;
+					}
+					if (s->type != PKG_TYPE) {
+						mFlagHunt = true;
+						continue;
+					}
+					if (s->data_hdr_magic != DATA_HEADER_MAGIC) {
+						mFlagHunt = true;
+						continue;
+					}
+					if (get_unaligned_be16(&(s->pkg_hdr_length))+2 > LIDAR_DATA_CHUNK_SIZE) {
+						mFlagHunt = true;
+						continue;
+					}
+					if (get_unaligned_be16(&(s->pkg_hdr_length)) != get_unaligned_be16(&(s->data_hdr_length))+8) {
+						mFlagHunt = true;
+						continue;
+					}
+				}
+				if (mLidarChunkBytes > sizeof(struct Delta2ALayout) &&
+				    mLidarChunkBytes == (size_t)(get_unaligned_be16(&(s->pkg_hdr_length)) + 2)) {
+					// We've done reading the chunk
+					if (checkChecksum(mLidarChunk.data(), get_unaligned_be16(&(s->pkg_hdr_length)))) {
+						processData(s);
+					} else {
+						QLOG_ERROR() << "Lidar: chunk checksum mismatch";
+					}
+					mFlagHunt = true;
+				}
+			}
+		}
+	}
 }
 
 int LidarWorker::countMean(const int i, const int meanWindow) const
@@ -191,70 +228,30 @@ int LidarWorker::countMean(const int i, const int meanWindow) const
 	}
 }
 
-void LidarWorker::processBuffer()
+void LidarWorker::processData(const void *p)
 {
-	while (!mBuffer.isEmpty()) {
-		int startByte = 0;
-		while (mBuffer[startByte] != PKG_HEADER) {
-			startByte++;
-			if (startByte == mBuffer.size()) {
-				mBuffer.clear();
-				return;
-			}
-		}
-		if (mBuffer.size() - 1 < startByte + DATA_HEADER_BYTE + 1) {
-			mBuffer = mBuffer.mid(startByte);
-			return;
-		}
-		if (!checkProtocol(mBuffer, startByte)) {
-			mBuffer = mBuffer.mid(startByte + 1);
-			return;
-		}
-
-		uint16_t rawDataLength = (mBuffer[startByte + SIZE_BYTE] << 8) | mBuffer[startByte + SIZE_BYTE + 1];
-		if (mBuffer.size() - 1 < startByte + rawDataLength + 1) {
-			mBuffer = mBuffer.mid(startByte);
-			return;
-		}
-
-		if (checkChecksum(mBuffer, startByte, rawDataLength)) {
-			processData(mBuffer.mid(startByte, rawDataLength));
-			mBuffer = mBuffer.mid(startByte + rawDataLength);
-		}
-		else {
-			mBuffer = mBuffer.mid(startByte + 1);
-		}
-	}
-}
-
-void LidarWorker::processData(const QVector<uint8_t> &data)
-{
-	uint16_t dataLength = (data[DATA_SIZE_BYTE] << 8) | data[DATA_SIZE_BYTE + 1];
-	uint16_t startAngle = (data[START_ANGLE_BYTE] << 8) | data[START_ANGLE_BYTE + 1];
-	int readNumber = (dataLength - 5) / 3;
+	auto data = reinterpret_cast<const struct Delta2ALayout*>(p);
+	uint16_t dataLength = get_unaligned_be16(&(data->data_hdr_length));
+	uint16_t startAngle = get_unaligned_be16(&(data->start_angle));
+	int entries = (dataLength - 5) / 3;
+	// Ugly, but c++-way, since gcc -pedantic forbids flexible array member
+	auto probes = reinterpret_cast<const struct Delta2AProbe*>(&(data[1]));
 
 	// Inefficient. Consider switching to C-style arrays and drop QVector
 	for (auto i = startAngle; i < startAngle + ANGLE_STEP; i++) {
 		mResult[i] = 0;
 	}
-	for (auto i = 0; i < readNumber; ++i) {
-		auto angle = startAngle + ANGLE_STEP * i / readNumber;
-		auto distByte = FIRST_DIST_BYTE + i * 3;
-		auto distance = ((((int)(data[distByte])) << 8) + ((int)(data[distByte + 1]))) * 0.25;
-		mResult[angle] = distance;
+	for (auto i = 0; i < entries; ++i) {
+		auto angle = startAngle + ANGLE_STEP * i / entries;
+		mResult[angle] = get_unaligned_be16(&(probes[i].dist)) / 4;
 	}
 }
 
-bool LidarWorker::checkProtocol(const QVector<uint8_t> &data, uint start)
+bool LidarWorker::checkChecksum(const uint8_t *data, size_t size)
 {
-	return data[start + PROTOCOL_BYTE] == PROTOCOL_VERSION &&
-			data[start + TYPE_BYTE] == PKG_TYPE &&
-			data[start + DATA_HEADER_BYTE] == DATA_HEADER;
+	uint16_t result = 0;
+	for (size_t i = 0; i < size; i++) {
+		result += data[i];
+	}
+	return result == get_unaligned_be16(data + size);
 }
-
-bool LidarWorker::checkChecksum(const QVector<uint8_t> &data, uint start, uint size)
-{
-	uint16_t checksum = (data[start + size] << 8) | data[start + size + 1];
-	return checksum == (std::accumulate(data.begin() + start, data.begin() + start + size, 0) & 0xffff);
-}
-
