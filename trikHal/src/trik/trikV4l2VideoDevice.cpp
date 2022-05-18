@@ -146,9 +146,8 @@ int TrikV4l2VideoDevice::xioctl(unsigned long request, void *arg, const QString 
 		}
 
 		if (request != VIDIOC_ENUM_FMT || errno != EINVAL) {
-			QLOG_ERROR() << "ioctl code " << QString("%1").arg(request, 0, 16) << " failed";
-			QLOG_ERROR() << errno << ", " << strerror(errno);
-			QLOG_ERROR() << possibleError;
+			QLOG_ERROR() << "ioctl code " << QString("%1").arg(request, 0, 16) << " failed with errno ="
+			<< errno << ", " << strerror(errno) << ":" << possibleError;
 		}
 	}
 
@@ -193,11 +192,11 @@ void TrikV4l2VideoDevice::setFormat()
 		v4l2_fmtdesc fmtTry {};
 		fmtTry.index = fmtIdx;
 		fmtTry.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		if ( ! xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT fail")) {
+		if ( ! xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT")) {
 
-			QLOG_INFO() << "V4l2: available format: " << fmtTry.pixelformat;
+			QLOG_INFO() << "V4l2: available format: " << hex << fmtTry.pixelformat;
 			mFormat.fmt.pix.pixelformat = fmtTry.pixelformat;
-			memcpy(descPixelFmt, fmtTry.description, 32);
+			memcpy(descPixelFmt, fmtTry.description, sizeof(descPixelFmt));
 
 			// have decoding of those formats:
 			// V4L2_PIX_FMT_YUV422P
@@ -223,17 +222,25 @@ void TrikV4l2VideoDevice::setFormat()
 	}
 
 	v4l2_std_id stdid = V4L2_STD_625_50;
-	if (xioctl(VIDIOC_S_STD, &stdid, "VIDIOC_S_STD in TrikV4l2VideoDevice::setFormat() failed")) {
-		if(!xioctl(VIDIOC_G_STD, &stdid, "VIDIOC_G_STD in TrikV4l2VideoDevice::setFormat() failed")) {
+	if (xioctl(VIDIOC_S_STD, &stdid, "VIDIOC_S_STD in TrikV4l2VideoDevice::setFormat()")) {
+		if(!xioctl(VIDIOC_G_STD, &stdid, "VIDIOC_G_STD in TrikV4l2VideoDevice::setFormat()")) {
 			QLOG_INFO() << "VIDIOC_G_STD returned" << QString("%1").arg(stdid, 0, 16);
 		}
 	}
-
-	if (xioctl (VIDIOC_TRY_FMT, &mFormat, "VIDIOC_TRY_FMT in TrikV4l2VideoDevice::setFormat() failed")) {
-		return;
+	// `v4l2-compliance -d /dev/video2` reports problems for Logitech C920 with old Kernel
+	// fail: ../../../v4l-utils-1.10.1/utils/v4l2-compliance/v4l2-test-formats.cpp(662): Video Capture is valid, but no TRY_FMT was implemented
+	// test VIDIOC_TRY_FMT: FAIL
+	// warn: ../../../v4l-utils-1.10.1/utils/v4l2-compliance/v4l2-test-formats.cpp(933): S_FMT cannot handle an invalid pixelformat.
+	// warn: ../../../v4l-utils-1.10.1/utils/v4l2-compliance/v4l2-test-formats.cpp(934): This may or may not be a problem. For more information see:
+	// warn: ../../../v4l-utils-1.10.1/utils/v4l2-compliance/v4l2-test-formats.cpp(935): http://www.mail-archive.com/linux-media@vger.kernel.org/msg56550.html
+	// fail: ../../../v4l-utils-1.10.1/utils/v4l2-compliance/v4l2-test-formats.cpp(418): expected EINVAL, but got 5 when getting format for buftype 1
+	// fail: ../../../v4l-utils-1.10.1/utils/v4l2-compliance/v4l2-test-formats.cpp(952): Video Capture is valid, but no S_FMT was implemented
+	// test VIDIOC_S_FMT: FAIL
+	if (xioctl (VIDIOC_TRY_FMT, &mFormat, "VIDIOC_TRY_FMT in TrikV4l2VideoDevice::setFormat()")) {
+		QLOG_INFO () << "Read error above, but sometimes it is ok to ignore";
 	}
-	if (xioctl (VIDIOC_S_FMT, &mFormat, "VIDIOC_S_FMT in TrikV4l2VideoDevice::setFormat() failed")) {
-		return;
+	if (xioctl (VIDIOC_S_FMT, &mFormat, "VIDIOC_S_FMT in TrikV4l2VideoDevice::setFormat()")) {
+		QLOG_INFO () << "Read error above, but sometimes it is ok to ignore";
 	}
 }
 
@@ -258,7 +265,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	startCapturing();
 	QTimer::singleShot(1000, &loop, [&loop](){loop.exit(-1);});
 	if (loop.exec() < 0) {
-		QLOG_WARN() << "V4l2 makeShot terminated by watchdog timer";
+		QLOG_WARN() << "V4l2 makeShot terminated by watchdog timer. Device not ready or misconfigured?";
 	}
 
 	stopCapturing();
@@ -267,9 +274,9 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	constexpr auto IMAGE_WIDTH = 320;
 	constexpr auto IMAGE_HEIGHT = 240;
 	// expect yuv format, 4 bytes for 2 pixels
-	if (mFrame.size() / 4 * 2 != IMAGE_HEIGHT * IMAGE_WIDTH) {
-		QLOG_ERROR() << "V4l2: unexpected size of getted image, expect " << IMAGE_HEIGHT * IMAGE_WIDTH
-				<< "bytes, got " << mFrame.size() / 4 * 2 << " bytes";
+	if (mFrame.size() != IMAGE_HEIGHT * IMAGE_WIDTH * 2) {
+		QLOG_ERROR() << "V4l2: unexpected size of obtained image (" << mFrame.size() << "instead of"
+					 << IMAGE_HEIGHT * IMAGE_WIDTH * 2  << ")";
 		QVector<uint8_t>().swap(mFrame);
 	} else {
 		mConvertFunc(mFrame, IMAGE_HEIGHT, IMAGE_WIDTH).swap(mFrame);
@@ -353,19 +360,20 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 	buf.memory = V4L2_MEMORY_MMAP;
 
 	xioctl(VIDIOC_DQBUF, &buf, "V4l2 VIDIOC_DQBUF failed");
-	QVector<uint8_t> res;
 
 	if (buf.index < static_cast<decltype(buf.index)>(buffers.size())) {
 		auto &b = buffers[buf.index];
 		if (buf.bytesused > 0) {
-			res.resize(buf.bytesused);
-			std::copy(b.start, b.start + buf.bytesused, res.begin());
-			QLOG_INFO() << "V4l2 captured " << buf.bytesused << "bytes into buf #" << buf.index;
+			mFrame.resize(buf.bytesused);
+			std::copy(b.start, b.start + buf.bytesused, mFrame.begin());
+			QLOG_DEBUG() << "V4l2 captured " << mFrame.size() << "bytes into buf #" << buf.index;
+		} else {
+			QLOG_INFO() << "V4l2 captured 0 bytes, reset internal frame buffer";
+			decltype(mFrame)().swap(mFrame);
 		}
-		mFrame.swap(res);
 		emit dataReady();
 	}
-	mNotifier->setEnabled(true);
+	//WARN: Do not enable notifier until we store process data from mFrame variable!
 }
 
 void TrikV4l2VideoDevice::stopCapturing()
