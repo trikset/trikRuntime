@@ -19,12 +19,15 @@
 set maxLength 120
 
 foreach fileName [getSourceFileNames] {
-    set lineNumber 1
+    set lineNumber 0
     foreach line [getAllLines $fileName] {
+        incr lineNumber
         set line [string map {"\t" "    "} $line]
+        if {[regexp {^[ \t]*//.+} $line]} {
+	    continue
+	}
         if {[string length $line] > $maxLength} {
             report $fileName $lineNumber "line is longer than $maxLength characters"
         }
-        incr lineNumber
     }
 }

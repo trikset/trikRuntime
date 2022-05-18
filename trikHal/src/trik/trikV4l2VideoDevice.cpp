@@ -373,7 +373,7 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 		}
 		emit dataReady();
 	}
-	//WARN: Do not enable notifier until we store process data from mFrame variable!
+	// WARN: Do not enable notifier until we store process data from mFrame variable!
 }
 
 void TrikV4l2VideoDevice::stopCapturing()
