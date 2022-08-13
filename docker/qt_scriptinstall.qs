@@ -57,7 +57,8 @@ Controller.prototype.TargetDirectoryPageCallback = function() {
 
 Controller.prototype.LicenseAgreementPageCallback = function() {
   console.log("License page");
-  gui.currentPageWidget().AcceptLicenseRadioButton.setChecked(true);
+  var x = gui.currentPageWidget().AcceptLicenseRadioButton || gui.currentPageWidget().AcceptLicenseCheckBox;
+  x.setChecked(true);
   gui.clickButton(buttons.NextButton);
 }
 
