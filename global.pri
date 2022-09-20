@@ -235,7 +235,7 @@ isEmpty(THIS_IS_QS_LOG) {
         INCLUDEPATH += $$GLOBAL_PWD/qslog/qslog
 }
 
-CONFIG += c++11
+CONFIG += c++14
 
 DEFINES += QT_FORCE_ASSERTS
 
