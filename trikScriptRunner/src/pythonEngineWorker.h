@@ -25,10 +25,12 @@
 #include <trikNetwork/mailboxInterface.h>
 
 #include "scriptExecutionControl.h"
-#include "PythonQt_QtAll.h"
-#include "PyTrikControl0.h"
-
+#ifdef TRIK_NOPYTHON
+#else
+#  include "PythonQt_QtAll.h"
+#  include "PyTrikControl0.h"
 void PythonQt_init_PyTrikControl(PyObject* module);
+#endif
 
 namespace trikScriptRunner
 {

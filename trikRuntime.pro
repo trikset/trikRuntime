@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+CONFIG += trik_nopython
+
 TEMPLATE = subdirs
 
 SUBDIRS = \
 	initvars \
 	qslog \
-	PythonQt \
 	trikKernel \
 	trikWiFi \
 	trikNetwork \
@@ -43,18 +44,23 @@ qslog.file = qslog/QsLogSharedLibrary.pro
 qslog.depends = initvars
 translations.depends = initvars
 
-PythonQt.depends = qslog
 trikKernel.depends = qslog translations
 trikHal.depends = trikKernel
 trikControl.depends = trikHal
 trikWiFi.depends = trikKernel
 trikNetwork.depends = trikKernel
 trikRun.depends = trikScriptRunner
-trikScriptRunner.depends = trikControl trikNetwork PythonQt
+trikScriptRunner.depends = trikControl trikNetwork
 trikCommunicator.depends = trikScriptRunner
 trikServer.depends = trikCommunicator
 trikTelemetry.depends = trikControl trikNetwork
 trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikTelemetry
+
+!trik_nopython {
+    SUBDIRS += PythonQt
+    trikScriptRunner.depends += PythonQt
+    PythonQt.depends = qslog
+}
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \

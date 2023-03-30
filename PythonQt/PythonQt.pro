@@ -12,16 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+CONFIG += trik_nopython
+
 TEMPLATE = subdirs
 
 include(../global.pri)
 
-SUBDIRS += PythonQtCore PythonQtFull
-
 QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
-PythonQtFull.depends += PythonQtCore
-PythonQtCore.subdir = PythonQt/src
-PythonQtFull.file = PythonQtFull.pro
+!trik_nopython {
+	SUBDIRS += PythonQtCore PythonQtFull
+	PythonQtFull.depends += PythonQtCore
+	PythonQtCore.subdir = PythonQt/src
+	PythonQtFull.file = PythonQtFull.pro
+}
 
 OTHER_FILES += \
 	$$PWD/runme.sh \
