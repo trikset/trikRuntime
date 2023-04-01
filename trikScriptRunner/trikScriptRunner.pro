@@ -12,23 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-CONFIG += trik_nopython
-
 TEMPLATE = lib
 
 include(../global.pri)
 
 DEBUG_EXT=$${CONFIGURATION_SUFFIX}
-!trik_nopython:include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
-#PythonQt generated files have problems
-INCLUDEPATH *= $$PWD/../trikControl/include/trikControl $$PWD/../trikKernel/include/trikKernel
+
 clang:QMAKE_CXXFLAGS *= -Wno-error -Wno-error=sometimes-uninitialized -Wno-error=writable-strings
 QMAKE_CXXFLAGS *= -Wno-error=cast-qual -Wno-error=redundant-decls
 QMAKE_CXXFLAGS -= -Werror -Werror=pedantic -pedantic-errors -Werror=write-strings
 QT += widgets
-#------
 
-!trik_nopython:include(./generated_cpp/PyTrikControl/PyTrikControl.pri)
+!trik_nopython {
+  #PythonQt generated files have problems
+  INCLUDEPATH *= $$PWD/../trikControl/include/trikControl $$PWD/../trikKernel/include/trikKernel
+  include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
+  include(./generated_cpp/PyTrikControl/PyTrikControl.pri)
+}
 
 !macx:enableFlagIfCan(-Wno-error=cast-function-type)
 
@@ -63,9 +63,13 @@ SOURCES += \
 	HEADERS += \
 		$$PWD/src/pythonEngineWorker.h \
 		$$PWD/include/trikScriptRunner/trikPythonRunner.h
+
 	SOURCES += \
 		$$PWD/src/pythonEngineWorker.cpp \
 		$$PWD/src/trikPythonRunner.cpp
+
+	INCLUDEPATH += \
+		$$PWD/generated_cpp/PyTrikControl \
 }
 
 OTHER_FILES += \
@@ -73,7 +77,6 @@ OTHER_FILES += \
 	$$PWD/TRIK.py \
 
 INCLUDEPATH += \
-	$$PWD/generated_cpp/PyTrikControl \
 	$$PWD/../trikControl/src \
 
 TRANSLATIONS = \

@@ -82,7 +82,7 @@ jobs:
       - name: QMake
         timeout-minutes: 1
         run: |
-            qmake $GITHUB_WORKSPACE/studio.pro CONFIG+=release CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer CONFIG+=sanitize-undefined
+            qmake $GITHUB_WORKSPACE/studio.pro CONFIG+=release CONFIG+=trik_nopython CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer CONFIG+=sanitize-undefined
 
       - name: QMake all
         timeout-minutes: 3
