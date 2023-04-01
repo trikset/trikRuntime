@@ -1,9 +1,10 @@
-name: No Python on CentOS 7
+name: 'No Python on CentOS 7'
 on:
   push:
-    tags:
-      - '*'
+    tags: '*'
+    branches:
   pull_request:
+    branches:
   workflow_dispatch:
 
 jobs:
