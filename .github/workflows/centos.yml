@@ -32,7 +32,7 @@ jobs:
           yum install -y libusbx-devel curl wget devtoolset-${{ matrix.gcc-version }}-{gcc-c++,make,libasan-devel,libubsan-devel} \
                          rh-git227-git-core ccache rsync python3 mesa-libGL-devel systemd-devel fontconfig which
 
-          # yum install -y libxkbcommon-x11 qt5-qtbase-gui #no desire to enumerate all required libraries for QtIFw
+          yum install -y libxkbcommon-x11 qt5-qtbase-gui #no desire to enumerate all required libraries for QtIFw
           yum install -y pulseaudio-libs-glib2 # to run TS and 2D-model even with `minimal` platform
 
           echo "source scl_source enable devtoolset-${{ matrix.gcc-version }} rh-git227" >> ~/.bash_profile
