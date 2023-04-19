@@ -63,7 +63,8 @@ HEADERS += \
 	$$PWD/accelerometerWidget.h \
 	$$PWD/networkWidget.h \
 	$$PWD/fileSystemFilter.h \
-	$$PWD/cameraWidget.h
+	$$PWD/cameraWidget.h \
+	qrcodegen.hpp
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -109,7 +110,8 @@ SOURCES += \
 	$$PWD/accelerometerWidget.cpp \
 	$$PWD/networkWidget.cpp \
 	$$PWD/fileSystemFilter.cpp \
-	$$PWD/cameraWidget.cpp
+	$$PWD/cameraWidget.cpp \
+	qrcodegen.cpp
 
 TRANSLATIONS = \
 	$$PWD/../translations/ru/trikGui_ru.ts \
@@ -125,3 +127,4 @@ PythonQtIncludes()
 links(trikQsLog trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
 
 installs()
+LIBS += -lqrencode
