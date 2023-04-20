@@ -59,9 +59,9 @@ public: class Mode final {
     public: static const Mode BYTE;
 
     public: static const Mode KANJI;
+
     public: static const Mode ECI;
         /*-- Fields --*/
-
         // The mode indicator bits, which is a uint4 value (range 0 to 15).
     private: int modeBits;
         // Number of character count bits for three different version ranges.
