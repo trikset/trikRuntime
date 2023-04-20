@@ -47,13 +47,11 @@ namespace qrcodegen {
  */
 class QrSegment final {
     /*---- Public helper enumeration ----*/
-
     /*
      * Describes how a segment's data bits are interpreted. Immutable.
      */
 public: class Mode final {
         /*-- Constants --*/
-
     public: static const Mode NUMERIC;
 
     public: static const Mode ALPHANUMERIC;
@@ -61,7 +59,6 @@ public: class Mode final {
     public: static const Mode BYTE;
 
     public: static const Mode KANJI;
-
     public: static const Mode ECI;
         /*-- Fields --*/
 
@@ -70,10 +67,8 @@ public: class Mode final {
         // Number of character count bits for three different version ranges.
     private: int numBitsCharCount[3];
         /*-- Constructor --*/
-
     private: Mode(int mode, int cc0, int cc1, int cc2);
         /*-- Methods --*/
-
         /*
          * (Package-private) Returns the mode indicator bits, which is an unsigned 4-bit value (range 0 to 15).
          */
@@ -84,9 +79,6 @@ public: class Mode final {
          */
     public: int numCharCountBits(int ver) const;
     };
-
-
-
     /*---- Static factory functions (mid level) ----*/
 
     /*
