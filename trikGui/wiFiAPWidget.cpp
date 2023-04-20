@@ -24,7 +24,7 @@
 #include <trikKernel/paths.h>
 #include <trikKernel/rcReader.h>
 #include <trikKernel/fileUtils.h>
-#include "qrcodegen.hpp"
+#include "qrcodegen.h"
 
 using namespace trikGui;
 
@@ -42,6 +42,9 @@ WiFiAPWidget::WiFiAPWidget(QWidget *parent)
     mNetworkLabel.setText(tr("Name not found"));
     mKeyLabel.setText(tr("Password not found"));
     mIpLabel.setText(tr("IP address not found"));
+    QImage qrImage(150, 150, QImage::Format_RGB888);
+    qrImage.fill(QColor(Qt::white).rgb());
+    mQRLabel.setPixmap(QPixmap::fromImage(qrImage));
 
     getParameters();
 
@@ -93,20 +96,26 @@ void WiFiAPWidget::getParameters()
 
     std::string wiFiDataString = "WIFI:S:" + name.toStdString() +";T:WPA;P:" + passphrase.toStdString() + ";;";
     const char *wiFiData = wiFiDataString.c_str();
-    qrcodegen::QrCode qr = qrcodegen::QrCode::encodeText(wiFiData, qrcodegen::QrCode::Ecc::MEDIUM);
-    int pixelSize = qr.getSize();
-    int scale = 150 / pixelSize;
-    int sclaledPixelSize = pixelSize*scale;
-    QImage qrImage(sclaledPixelSize, sclaledPixelSize, QImage::Format_RGB888);
-    qrImage.fill(QColor(Qt::white).rgb());
+    enum qrcodegen_Ecc errCorLvl = qrcodegen_Ecc_MEDIUM;
+    uint8_t qrcode[qrcodegen_BUFFER_LEN_MAX];
+    uint8_t tempBuffer[qrcodegen_BUFFER_LEN_MAX];
+    bool ok = qrcodegen_encodeText(wiFiData, tempBuffer, qrcode, errCorLvl,
+                                   qrcodegen_VERSION_MIN, qrcodegen_VERSION_MAX, qrcodegen_Mask_AUTO, true);
+    if (ok){
+        int pixelSize = qrcodegen_getSize(qrcode);
+        int scale = 150 / pixelSize;
+        int sclaledPixelSize = pixelSize*scale;
+        QImage qrImage(sclaledPixelSize, sclaledPixelSize, QImage::Format_RGB888);
+        qrImage.fill(QColor(Qt::white).rgb());
 
-    for (int x = 0; x < sclaledPixelSize; ++x) {
-        for (int y = 0; y < sclaledPixelSize; ++y) {
-            if (qr.getModule(x/scale, y/scale))
-            {
-                qrImage.setPixel(x, y, qRgb(0, 0, 0));
+        for (int x = 0; x < sclaledPixelSize; ++x) {
+            for (int y = 0; y < sclaledPixelSize; ++y) {
+                if (qrcodegen_getModule(qrcode, x/scale, y/scale))
+                {
+                    qrImage.setPixel(x, y, qRgb(0, 0, 0));
+                }
             }
         }
+        mQRLabel.setPixmap(QPixmap::fromImage(qrImage));
     }
-    mQRLabel.setPixmap(QPixmap::fromImage(qrImage));
 }

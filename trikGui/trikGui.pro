@@ -64,7 +64,7 @@ HEADERS += \
         $$PWD/networkWidget.h \
         $$PWD/fileSystemFilter.h \
         $$PWD/cameraWidget.h \
-        qrcodegen.hpp
+        $$PWD/qrcodegen.h \
 
 SOURCES += \
         $$PWD/autoRunner.cpp \
@@ -111,7 +111,7 @@ SOURCES += \
         $$PWD/networkWidget.cpp \
         $$PWD/fileSystemFilter.cpp \
         $$PWD/cameraWidget.cpp \
-        qrcodegen.cpp
+        $$PWD/qrcodegen.cpp \
 
 TRANSLATIONS = \
         $$PWD/../translations/ru/trikGui_ru.ts \
