@@ -55,6 +55,7 @@ private:
 	QLabel mNetworkLabel;
 	QLabel mKeyLabel;
 	QLabel mIpLabel;
+    QLabel mQRLabel;
 };
 
 }
