@@ -15,6 +15,7 @@ jobs:
         shell: bash -l {0} # to force import of ~/.bash_profile
     strategy:
       matrix:
+	qjsengine: [ 'yes', 'no' ]
         include:
           - qt-version: '5.15'
             gcc-version: 11
@@ -59,7 +60,7 @@ jobs:
         run: |
             python3 -m pip install -U pip
             python3 -m pip install aqtinstall
-            aqt install-qt linux desktop ${{ matrix.qt-version }} -O /Qt -m qtscript --archives qtbase qtmultimedia qtsvg qtscript qttools qtserialport qtimageformats icu qtwayland
+	    aqt install-qt linux desktop ${{ matrix.qt-version }} -O /Qt --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland ${{ matrix.qjsengine == 'yes' && 'qtdeclarative' || 'qtscript' }}
             Qt5_Dir=$(ls -1d /Qt/5*/* | head -n 1)
             echo "Qt5_Dir=${Qt5_Dir}" >> $GITHUB_ENV
             echo "${Qt5_Dir}/bin" >> $GITHUB_PATH
@@ -82,7 +83,7 @@ jobs:
       - name: QMake
         timeout-minutes: 1
         run: |
-            qmake CONFIG+=release CONFIG+=trik_nopython CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer CONFIG+=sanitize-undefined $GITHUB_WORKSPACE/ 
+	    qmake CONFIG+=release CONFIG+=trik_nopython CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer CONFIG+=sanitize_undefined ${{ matrix.qjsengine == 'yes' && 'CONFIG+=trik_use_qjsengine' }} $GITHUB_WORKSPACE/
 
       - name: QMake all
         timeout-minutes: 3
