@@ -15,7 +15,8 @@ jobs:
         shell: bash -l {0} # to force import of ~/.bash_profile
     strategy:
       matrix:
-        qjsengine: ['no'] # add 'yes' for CONFIG+=trik_use_qjsengine
+        nopython: ['nopython', '']
+        qjsengine: [''] # add 'qjsengine' for CONFIG+=trik_use_qjsengine
         qt-version: ['5.15']
         gcc-version: ['11']
 
@@ -30,7 +31,8 @@ jobs:
         run: |
           yum install -y epel-release centos-release-scl
           yum install -y libusbx-devel curl wget devtoolset-${{ matrix.gcc-version }}-{gcc-c++,make,libasan-devel,libubsan-devel} \
-                         rh-git227-git-core ccache rsync python3 mesa-libGL-devel systemd-devel fontconfig which
+                         rh-git227-git-core ccache rsync python3${{ matrix.nopython == 'nopython' && '' || '-devel' }} \
+                         mesa-libGL-devel systemd-devel fontconfig which
 
           # yum install -y libxkbcommon-x11 qt5-qtbase-gui #no desire to enumerate all required libraries for QtIFw
           yum install -y pulseaudio-libs-glib2 # to run TS and 2D-model even with `minimal` platform
@@ -60,7 +62,7 @@ jobs:
             python3 -m pip install -U pip
             python3 -m pip install aqtinstall
             aqt install-qt linux desktop ${{ matrix.qt-version }} -O /Qt \
-            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland ${{ matrix.qjsengine == 'yes' && 'qtdeclarative' || '-m qtscript' }}
+            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland ${{ matrix.qjsengine == 'qjsengine' && 'qtdeclarative' || '-m qtscript' }}
             Qt5_Dir=$(ls -1d /Qt/5*/* | head -n 1)
             echo "Qt5_Dir=${Qt5_Dir}" >> $GITHUB_ENV
             echo "${Qt5_Dir}/bin" >> $GITHUB_PATH
@@ -83,7 +85,10 @@ jobs:
       - name: QMake
         timeout-minutes: 1
         run: |
-            qmake CONFIG+=release CONFIG+=trik_nopython CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'yes' && 'trik_use_qjsengine' || '' }} $GITHUB_WORKSPACE/
+            qmake CONFIG+=release CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
+                  CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer \
+                  CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'qjsengine' && 'trik_use_qjsengine' || '' }} \
+                  "$GITHUB_WORKSPACE/"
 
       - name: QMake all
         timeout-minutes: 3
@@ -98,4 +103,5 @@ jobs:
       - name: Unit tests
         timeout-minutes: 5
         run: |
+            ${{ matrix.nopython == 'nopython' || 'export TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")' }}
             make -k check TESTARGS="-platform offscreen"
