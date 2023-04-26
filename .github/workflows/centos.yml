@@ -103,5 +103,10 @@ jobs:
       - name: Unit tests
         timeout-minutes: 5
         run: |
-            ${{ matrix.nopython == 'nopython' || 'export TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")' }}
+            export PYTHONVERBOSE=2
+            export PYTHONDEBUG=2
+            export PYTHONMALLOC=malloc_debug
+            export PYTHONFAULTHANDLER=1
+            export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
+            export TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")
             make -k check TESTARGS="-platform offscreen"
