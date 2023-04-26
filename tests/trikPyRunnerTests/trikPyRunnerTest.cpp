@@ -46,7 +46,9 @@ void TrikPyRunnerTest::TearDown()
 int TrikPyRunnerTest::run(const QString &script)
 {
 	QEventLoop l;
-	QTimer::singleShot(5000, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
+	QTimer t;
+	t.setInterval(5000);
+	QObject::connect(&t, &QTimer::timeout, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
 					 , &l, [&l](const QString &e) { l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR); } );
 	mStdOut.clear();
