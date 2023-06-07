@@ -25,7 +25,7 @@ SUBDIRS = \
 
 #	minimalCppApp
 !trik_nopython {
-  SUBDIRS += trikPyRunnerTests/
+  SUBDIRS += trikPyRunnerTests
   trikPyRunnerTests.depends = thirdparty testUtils
 }
 
