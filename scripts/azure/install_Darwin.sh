@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-REQUIRED_PACKAGES="ccache coreutils python3 pkg-config qt@5"
+REQUIRED_PACKAGES="ccache coreutils python@3.9 pkg-config qt@5"
 export HOMEBREW_TEMP="$HOME/homebrew.tmp"
 export HOMEBREW_LOGS="$HOMEBREW_TEMP"
 #To turn autoupdate on use `unset HOMEBREW_NO_AUTO_UPDATE` in a sub-shell before `brew install`
