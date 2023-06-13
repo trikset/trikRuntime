@@ -17,7 +17,7 @@ jobs:
       matrix:
         nopython: ['nopython', '']
         qjsengine: [''] # add 'qjsengine' for CONFIG+=trik_use_qjsengine
-        qt-version: ['5.15']
+        qt-version: ['5.12']
         gcc-version: ['11']
 
     steps:
@@ -31,13 +31,13 @@ jobs:
         run: |
           yum install -y epel-release centos-release-scl
           yum install -y libusbx-devel curl wget devtoolset-${{ matrix.gcc-version }}-{gcc-c++,make,libasan-devel,libubsan-devel} \
-                         rh-git227-git-core ccache rsync python3${{ matrix.nopython == 'nopython' && '' || '-devel' }} \
+                         rh-git227-git-core ccache rsync rh-python38-python-{${{ matrix.nopython == 'nopython' && '' || '-devel,' }}pip,urllib3} \
                          mesa-libGL-devel systemd-devel fontconfig which
 
           # yum install -y libxkbcommon-x11 qt5-qtbase-gui #no desire to enumerate all required libraries for QtIFw
           yum install -y pulseaudio-libs-glib2 # to run TS and 2D-model even with `minimal` platform
 
-          echo "source scl_source enable devtoolset-${{ matrix.gcc-version }} rh-git227" >> ~/.bash_profile
+          echo "source scl_source enable devtoolset-${{ matrix.gcc-version }} rh-python38 rh-git227" >> ~/.bash_profile
 
       - name: Configure git
         run: |
@@ -105,8 +105,8 @@ jobs:
         run: |
             export PYTHONVERBOSE=2
             export PYTHONDEBUG=2
-            export PYTHONMALLOC=malloc_debug
+            # export PYTHONMALLOC=malloc_debug
             export PYTHONFAULTHANDLER=1
-            export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
+            # export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
             export TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")
             make -k check TESTARGS="-platform offscreen"
