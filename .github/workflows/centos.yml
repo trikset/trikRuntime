@@ -31,7 +31,7 @@ jobs:
         run: |
           yum install -y epel-release centos-release-scl
           yum install -y libusbx-devel curl wget devtoolset-${{ matrix.gcc-version }}-{gcc-c++,make,libasan-devel,libubsan-devel} \
-                         rh-git227-git-core ccache rsync rh-python38-python-{${{ matrix.nopython == 'nopython' && '' || '-devel,' }}pip,urllib3} \
+                         rh-git227-git-core ccache rsync rh-python38-python-{${{ matrix.nopython == 'nopython' && '' || 'devel,' }}pip,urllib3} \
                          mesa-libGL-devel systemd-devel fontconfig which
 
           # yum install -y libxkbcommon-x11 qt5-qtbase-gui #no desire to enumerate all required libraries for QtIFw
