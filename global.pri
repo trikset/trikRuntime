@@ -71,7 +71,8 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
-QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -Og
+QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO *= -Og
+QMAKE_CXXFLAGS_DEBUG *= -Og
 
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
@@ -132,7 +133,7 @@ equals(TEMPLATE, app) {
 }
 
 #Workaround for a known gcc/ld (before 7.3/bionic) issue
-use_gold_linker:!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
+#use_gold_linker:!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
 
 macx-clang {
 #	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12
