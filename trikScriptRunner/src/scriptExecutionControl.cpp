@@ -23,7 +23,7 @@
 #include <QRandomGenerator>
 #include <QsLog.h>
 
-#include "utilities.h"
+#include <trikControl/utilities.h>
 
 using namespace trikScriptRunner;
 

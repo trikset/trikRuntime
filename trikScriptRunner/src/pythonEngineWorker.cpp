@@ -80,9 +80,7 @@ PythonEngineWorker::~PythonEngineWorker()
 		if (Py_FinalizeEx()) {
 			QLOG_ERROR() << "Failed to finalize python engine";
 		}
-
 #endif
-
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
 		}
