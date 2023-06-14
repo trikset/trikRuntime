@@ -109,20 +109,19 @@ isEmpty(TARGET) {
 	isEmpty(R):TARGET = $$TARGET$$CONFIGURATION_SUFFIX
 }
 
-equals(TEMPLATE, app) {
-	!no_rpath {
-		unix:!macx {
-			QMAKE_LFLAGS += -Wl,-rpath-link,$$GLOBAL_DESTDIR
-			QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
-		} macx {
-			QMAKE_LFLAGS += -rpath @executable_path
-			QMAKE_LFLAGS += -rpath @executable_path/../Lib
-			QMAKE_LFLAGS += -rpath @executable_path/../Frameworks
-			QMAKE_LFLAGS += -rpath @executable_path/../../../
-		}
+!no_rpath {
+	unix:!macx {
+		QMAKE_LFLAGS += -Wl,-rpath-link,$$GLOBAL_DESTDIR
+		QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
+	} macx {
+		QMAKE_LFLAGS += -rpath @executable_path
+		QMAKE_LFLAGS += -rpath @executable_path/../Lib
+		QMAKE_LFLAGS += -rpath @executable_path/../Frameworks
+		QMAKE_LFLAGS += -rpath @executable_path/../../../
 	}
-} else:equals(TEMPLATE, lib){
+}
 
+equals(TEMPLATE, lib){
 	CONFIG += create_pc create_libtool
 	QMAKE_PKGCONFIG_NAME=$$TARGET
 	QMAKE_PKGCONFIG_PREFIX = $$INSTALLBASE
