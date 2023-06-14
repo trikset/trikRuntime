@@ -153,7 +153,10 @@ TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore as QtCore");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("import PythonQt");
-	qDebug() << mStdOut;
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("print(dir(PythonQt))");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("print(dir(QtCore))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(100, lambda _ : None)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
