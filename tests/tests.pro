@@ -21,16 +21,17 @@ SUBDIRS = \
 	trikCommunicatorTests \
 	trikKernelTests \
 	trikJsRunnerTests \
-	trikPyRunnerTests \
 	testUtils \
 
 #	minimalCppApp
-
+!trik_nopython {
+  SUBDIRS += trikPyRunnerTests
+  trikPyRunnerTests.depends = thirdparty testUtils
+}
 
 thirdparty.file = thirdparty/googletest.pro
 
 trikKernelTests.depends = thirdparty testUtils
-trikPyRunnerTests.depends = thirdparty testUtils
 trikJsRunnerTests.depends = thirdparty testUtils
 
 trikCommunicatorTests.depends = thirdparty testUtils

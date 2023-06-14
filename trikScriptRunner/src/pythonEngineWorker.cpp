@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QVector>
+#include <QCoreApplication>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
