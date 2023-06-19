@@ -84,7 +84,9 @@ namespace trikScriptRunner {
 enum class ScriptType { // must be 0, 1, ..
 	UNINITIALIZED = -1,
 	JAVASCRIPT,
+#ifndef TRIK_NOPYTHON
 	PYTHON,
+#endif
 	Size // should always be the last
 };
 

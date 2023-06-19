@@ -72,9 +72,12 @@ void TrikScriptRunner::setDefaultRunner(const QString &languageExtension)
 {
 	if (languageExtension.contains("js")) {
 		mLastRunner = ScriptType::JAVASCRIPT;
-	} else if (languageExtension.contains("py")) {
+	}
+#ifndef TRIK_NOPYTHON
+	else if (languageExtension.contains("py")) {
 		mLastRunner = ScriptType::PYTHON;
 	}
+#endif
 }
 
 void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
@@ -104,9 +107,12 @@ QStringList TrikScriptRunner::knownMethodNamesFor(ScriptType t)
 
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
+#ifndef TRIK_NOPYTHON
 	if (fileName.endsWith(".py")) {
 		run(script, ScriptType::PYTHON, fileName);
-	} else { // default JS
+	} else
+#endif
+	{ // default JS
 		run(script, ScriptType::JAVASCRIPT, fileName);
 	}
 }
@@ -120,10 +126,12 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 				QScopedPointer<TrikScriptRunnerInterface>(
 							new TrikJavaScriptRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
+#ifndef TRIK_NOPYTHON
 			case ScriptType::PYTHON:
 				QScopedPointer<TrikScriptRunnerInterface>(
 							new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
+#endif
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
 				return nullptr;

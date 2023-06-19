@@ -13,4 +13,5 @@ leak:*libfreetype.so.6*
 leak:*libdbus-1.so*
 
 #Well, ... we definitely need to address this issue
-leak:*libpython3.*.so*
+leak:PyThread_allocate_lock
+leak:PyInit_posix

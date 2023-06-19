@@ -15,6 +15,7 @@
 #include <QProcess>
 #include <QsLog.h>
 #include <QVector>
+#include <QCoreApplication>
 
 #include <trikNetwork/mailboxInterface.h>
 #include <trikKernel/paths.h>
@@ -38,7 +39,6 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-	PythonQtGILScope _;
 	Py_AddPendingCall(&quitFromPython, nullptr);
 }
 
@@ -56,6 +56,10 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 
 PythonEngineWorker::~PythonEngineWorker()
 {
+	if(thread() != QThread::currentThread()) {
+		QLOG_FATAL() << "~PythonEngineWorker threading issue";
+	}
+
 	stopScript();
 	{
 		// In python at least before 3.7 (3.5,3.6)
@@ -80,9 +84,7 @@ PythonEngineWorker::~PythonEngineWorker()
 		if (Py_FinalizeEx()) {
 			QLOG_ERROR() << "Failed to finalize python engine";
 		}
-
 #endif
-
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
 		}
@@ -112,18 +114,31 @@ void PythonEngineWorker::init()
 		} else {
 			QLOG_INFO() << varName << ":" << path;
 		}
+		PyPreConfig pyPreconfig;
+		PyPreConfig_InitPythonConfig(&pyPreconfig);
+
+		pyPreconfig.utf8_mode = 1; /// Force UTF-8
+
+		if (PyStatus_Exception(Py_PreInitialize(&pyPreconfig))) {
+			auto const *e = "Failed to pre-initialize the Python engine";
+			QLOG_FATAL() << e;
+			throw trikKernel::InternalErrorException(e);
+		}
+
 		/// TODO: Must point to local .zip file
+		/// NB! Py_DecodeLocale requires a pre-initialized Python engine
 		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
 		Py_SetPath(mPythonPath);
 
 		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
 		Py_SetProgramName(mProgramName);
 
-/* uncomment for verbosity
-		Py_VerboseFlag = 3;
-		Py_InspectFlag = 1;
-		Py_DebugFlag = 2;
-// */
+		if (!qgetenv("TRIK_PYTHON_DEBUG").isEmpty()) {
+			Py_VerboseFlag = 3;
+			Py_InspectFlag = 1;
+			Py_DebugFlag = 2;
+		}
+
 		Py_IsolatedFlag = 1;
 		Py_BytesWarningFlag = 3;
 		Py_DontWriteBytecodeFlag = 1;
@@ -143,6 +158,8 @@ void PythonEngineWorker::init()
 #endif
 #endif
 		constexpr auto extractVersionCommand = "(sys.version_info.major,sys.version_info.minor)";
+		PythonQt::setEnableThreadSupport(true);
+		PythonQtGILScope _;
 		PythonQtObjectPtr dict;
 		dict.setNewRef(PyDict_New());
 		PyMapping_SetItemString(dict.object(), "sys", PyImport_ImportModule("sys"));
@@ -179,6 +196,7 @@ void PythonEngineWorker::init()
 		PythonQt_QtAll::init();
 	}
 	if (!mMainContext) {
+		PythonQtGILScope _;
 		mMainContext = PythonQt::self()->getMainModule();
 		recreateContext();
 	}
@@ -225,23 +243,30 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 
 bool PythonEngineWorker::initTrik()
 {
-	mMainContext.evalScript("import sys;"
+	QVariant rc;
+	rc = mMainContext.evalScript("import sys;"
 				"to_delete = [];"
 				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
 				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
 				"[sys.modules.pop(x) for x in to_delete];"
 				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
 				"from gc import collect as gc_collect;"
-				"gc_collect();");
-	PythonQt_init_PyTrikControl(mMainContext);
+				"gc_collect()");
+	if (rc.isNull()) {
+		return false;
+	}
+	PythonQt_init_PyTrikControl	(mMainContext);
 
 	mMainContext.addObject("_trik_brick_cpp", mBrick);
 	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl.data());
 	mMainContext.addObject("_trik_mailbox_cpp", mMailbox);
-	mMainContext.evalScript("import builtins;"
+	rc = mMainContext.evalScript("import builtins;"
 				"builtins._trik_brick_cpp = _trik_brick_cpp;"
 				"builtins._trik_script_cpp = _trik_script_cpp;"
 				"builtins._trik_mailbox_cpp = _trik_mailbox_cpp;");
+	if (rc.isNull()) {
+		return false;
+	}
 
 	return importTrikPy();
 }
@@ -340,6 +365,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	mState = running;
 	auto ok = recreateContext();
 	if (!ok) {
+		QCoreApplication::sendPostedEvents();
 		emit completed(mErrorMessage,0);
 		return;
 	}
@@ -357,6 +383,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	mState = ready;
 	mScriptExecutionControl->reset();
 	if (wasError) {
+		QCoreApplication::sendPostedEvents();
 		emit completed(mErrorMessage, 0);
 	} else {
 		emit completed("", 0);
@@ -380,6 +407,7 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 	mMainContext.evalScript(command);
 	auto wasError = PythonQt::self()->hadError();
 	if (wasError) {
+		QCoreApplication::sendPostedEvents();
 		emit completed(mErrorMessage, 0);
 	} else {
 		emit completed("", 0);
