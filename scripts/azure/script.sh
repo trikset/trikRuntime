@@ -5,9 +5,7 @@ case $AGENT_OS in
 #    export PATH="$TRIK_QT/5.12.7/clang_64/bin:$PATH"
     export PATH="/usr/local/opt/ccache/libexec:$PATH"
     export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-    export PATH="/usr/local/opt/qt@5/bin:$PATH"
-#    export TRIK_PYTHON3_VERSION_MINOR="$(python3 -V | sed 's#^Python [0-9]\.\([0-9]*\)\.[0-9]*$#\1#g')"
-    export TRIK_PYTHON3_VERSION_MINOR=9
+    export PATH="$( ls -1d $HOME/Qt/${TRIK_QT_VERSION}*/*/bin | head -n 1 ):$PATH"
     EXECUTOR=
     ;;
   Linux)
