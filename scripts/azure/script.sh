@@ -6,10 +6,10 @@ case $AGENT_OS in
     export PATH="/usr/local/opt/ccache/libexec:$PATH"
     export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
     export PATH="$( ls -1d $HOME/Qt/${TRIK_QT_VERSION}*/*/bin | head -n 1 ):$PATH"
-    EXECUTOR=
+    EXECUTOR="env TRIK_PYTHON3_VERSION_MINOR=$TRIK_PYTHON3_VERSION_MINOR "
     ;;
   Linux)
-    EXECUTOR="docker exec --interactive builder "
+    EXECUTOR="docker exec --interactive -e BUILDDIR=$BUILDDIR -e CONFIG=$CONFIG -e AGENT_OS=$AGENT_OS builder "
    ;;
   *) exit 1 ;;
 esac
@@ -42,4 +42,4 @@ $EXECUTOR bash -lic " set -x; \
 && ls bin/x86-$CONFIG "
 
 
-exec timeout -k 10s 100s scripts/azure/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests trikPyRunnerTests
+exec bash -c 'eval timeout -k 10s 100s $EXECUTOR scripts/azure/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests trikPyRunnerTests'
