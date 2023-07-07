@@ -23,7 +23,7 @@ TRIK_PYTHON=python3.${TRIK_PYTHON3_VERSION_MINOR}
 "$TRIK_PYTHON" -m pip install -U pip
 "$TRIK_PYTHON" -m pip install aqtinstall
 "$TRIK_PYTHON" -m aqt install-qt -m qtscript -O "$HOME/Qt" mac desktop "${TRIK_QT_VERSION}" \
-            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats qtdeclarative
+            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats
 # Force SDK version compatible with Qt 5.12
 sudo xcode-select -s /Applications/Xcode_11.7.app/Contents/Developer
 xcodebuild -showsdks
