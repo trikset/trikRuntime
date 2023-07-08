@@ -143,8 +143,8 @@ void PythonEngineWorker::init()
 		Py_IsolatedFlag = 1;
 		Py_BytesWarningFlag = 3;
 		Py_DontWriteBytecodeFlag = 1;
-		Py_NoSiteFlag = 1;
-		Py_NoUserSiteDirectory = 1;
+//		Py_NoSiteFlag = 1;
+//		Py_NoUserSiteDirectory = 1;
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #else
