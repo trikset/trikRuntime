@@ -43,3 +43,4 @@ tests/minimalCppApp/*
 # PKG config
 pkg-config_wrapper.sh
 /build/
+tests/**/target_wrapper.sh
