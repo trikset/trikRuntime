@@ -71,7 +71,8 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
-QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -Og
+QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO *= -Og
+QMAKE_CXXFLAGS_DEBUG *= -Og
 
 CONFIG(debug) {
 	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
@@ -108,20 +109,19 @@ isEmpty(TARGET) {
 	isEmpty(R):TARGET = $$TARGET$$CONFIGURATION_SUFFIX
 }
 
-equals(TEMPLATE, app) {
-	!no_rpath {
-		unix:!macx {
-			QMAKE_LFLAGS += -Wl,-rpath-link,$$GLOBAL_DESTDIR
-			QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
-		} macx {
-			QMAKE_LFLAGS += -rpath @executable_path
-			QMAKE_LFLAGS += -rpath @executable_path/../Lib
-			QMAKE_LFLAGS += -rpath @executable_path/../Frameworks
-			QMAKE_LFLAGS += -rpath @executable_path/../../../
-		}
+!no_rpath {
+	unix:!macx {
+		QMAKE_LFLAGS += -Wl,-rpath-link,$$GLOBAL_DESTDIR
+		QMAKE_LFLAGS += -Wl,-O1,-rpath,\'\$$ORIGIN\'
+	} macx {
+		QMAKE_LFLAGS += -rpath @executable_path
+		QMAKE_LFLAGS += -rpath @executable_path/../Lib
+		QMAKE_LFLAGS += -rpath @executable_path/../Frameworks
+		QMAKE_LFLAGS += -rpath @executable_path/../../../
 	}
-} else:equals(TEMPLATE, lib){
+}
 
+equals(TEMPLATE, lib){
 	CONFIG += create_pc create_libtool
 	QMAKE_PKGCONFIG_NAME=$$TARGET
 	QMAKE_PKGCONFIG_PREFIX = $$INSTALLBASE
@@ -132,7 +132,7 @@ equals(TEMPLATE, app) {
 }
 
 #Workaround for a known gcc/ld (before 7.3/bionic) issue
-use_gold_linker:!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
+#use_gold_linker:!clang: QMAKE_LFLAGS += -Wl,--disable-new-dtags
 
 macx-clang {
 #	QMAKE_MACOSX_DEPLOYMENT_TARGET=10.12

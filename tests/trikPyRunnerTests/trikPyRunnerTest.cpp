@@ -35,7 +35,10 @@ void TrikPyRunnerTest::SetUp()
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::PYTHON);
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
-					 &*mScriptRunner, [this](const QString &m) { mStdOut += m; });
+					 &*mScriptRunner, [this](const QString &m) {
+		std::cout << "Incoming:" << m.toStdString() << std::endl;
+		mStdOut += m;
+	});
 // TODO:	mScriptRunner->registerUserFunction("assert", scriptAssert);
 }
 
@@ -48,10 +51,18 @@ int TrikPyRunnerTest::run(const QString &script)
 	QEventLoop l;
 	QTimer::singleShot(5000, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
-					 , &l, [&l](const QString &e) { l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR); } );
+					 , &l, [&l](const QString &e) {
+		auto rc = EXIT_SCRIPT_SUCCESS;
+		if (!e.isEmpty()) {
+			rc = EXIT_SCRIPT_ERROR;
+			std::cerr << qPrintable(e) << std::endl;
+		}
+		l.exit(rc);
+	} );
 	mStdOut.clear();
 	mScriptRunner->run(script, "_.py");
 	auto code = l.exec();
+	std::cout << qPrintable(mStdOut) << std::endl;
 	return code;
 }
 
@@ -59,10 +70,14 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop l;
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
-					 , &l, [&l](const QString &e) { l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR); });
+					 , &l, [&l](const QString &e) {
+					l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
+									   : (qDebug() << e, EXIT_SCRIPT_ERROR));
+	});
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
 	auto code = l.exec();
+	std::cout << mStdOut.toStdString() << std::endl;
 	return code;
 }
 
@@ -135,7 +150,13 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 {
-	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore");
+	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore as QtCore");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("import PythonQt");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("print(dir(PythonQt))");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("print(dir(QtCore))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(100, lambda _ : None)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);

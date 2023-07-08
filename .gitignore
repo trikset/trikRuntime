@@ -42,4 +42,4 @@ tests/minimalCppApp/*
 .ccache
 # PKG config
 pkg-config_wrapper.sh
-
+/build/

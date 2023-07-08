@@ -23,7 +23,7 @@
 #include <QRandomGenerator>
 #include <QsLog.h>
 
-#include "utilities.h"
+#include <trikControl/utilities.h>
 
 using namespace trikScriptRunner;
 
@@ -59,9 +59,9 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 void ScriptExecutionControl::wait(const int &milliseconds)
 {
 	QEventLoop loop;
-	QObject::connect(this, &ScriptExecutionControl::stopWaiting, &loop, &QEventLoop::quit, Qt::DirectConnection);
+	QObject::connect(this, &ScriptExecutionControl::stopWaiting, &loop, &QEventLoop::quit);
 	QTimer t;
-	connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit, Qt::DirectConnection);
+	connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
 	t.start(milliseconds);
 	loop.exec();
 }

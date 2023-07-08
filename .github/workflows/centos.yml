@@ -1,0 +1,113 @@
+name: 'No Python on CentOS 7'
+on:
+  push:
+    branches:
+  pull_request:
+    branches:
+  workflow_dispatch:
+
+jobs:
+  centos:
+    runs-on: ubuntu-latest
+    container: centos:7
+    defaults:
+      run:
+        shell: bash -l {0} # to force import of ~/.bash_profile
+    strategy:
+      matrix:
+        nopython: ['nopython', '']
+        qjsengine: [''] # add 'qjsengine' for CONFIG+=trik_use_qjsengine
+        qt-version: ['5.12']
+        gcc-version: ['11']
+
+    steps:
+
+      - name: Cancel Previous Workflow Runs
+        uses: n1hility/cancel-previous-runs@v2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install CentOS packages
+        run: |
+          yum install -y epel-release centos-release-scl
+          yum install -y libusbx-devel curl wget devtoolset-${{ matrix.gcc-version }}-{gcc-c++,make,libasan-devel,libubsan-devel} \
+                         rh-git227-git-core ccache rsync rh-python38-python-{${{ matrix.nopython == 'nopython' && '' || 'devel,' }}pip,urllib3} \
+                         mesa-libGL-devel systemd-devel fontconfig which
+
+          # yum install -y libxkbcommon-x11 qt5-qtbase-gui #no desire to enumerate all required libraries for QtIFw
+          yum install -y pulseaudio-libs-glib2 # to run TS and 2D-model even with `minimal` platform
+
+          echo "source scl_source enable devtoolset-${{ matrix.gcc-version }} rh-python38 rh-git227" >> ~/.bash_profile
+
+      - name: Configure git
+        run: |
+            git --version
+            git config --global core.symlinks true
+            git config --global core.autocrlf false
+
+            #prepare for actions/checkout, otherwise it fails
+            echo "LC_ALL=en_US.utf8" >> $GITHUB_ENV
+            echo "$(dirname $(realpath $(which git)))" >> $GITHUB_PATH
+            echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH" >> $GITHUB_ENV
+            echo "PERL5LIB=$PERL5LIB" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Install Qt
+        run: |
+            python3 -m pip install -U pip
+            python3 -m pip install aqtinstall
+            aqt install-qt linux desktop ${{ matrix.qt-version }} -O /Qt \
+            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland ${{ matrix.qjsengine == 'qjsengine' && 'qtdeclarative' || '-m qtscript' }}
+            Qt5_Dir=$(ls -1d /Qt/5*/* | head -n 1)
+            echo "Qt5_Dir=${Qt5_Dir}" >> $GITHUB_ENV
+            echo "${Qt5_Dir}/bin" >> $GITHUB_PATH
+
+      - name: Use ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+
+      - name: Check available tools
+        run: |
+             set -xueo pipefail
+             uname -a
+             rsync --version
+             ls "$Qt5_Dir/"
+             qmake --version && qmake -query
+             python3 --version
+             which g++
+             g++ --version
+             ccache --version
+
+      - name: QMake
+        timeout-minutes: 1
+        run: |
+            qmake CONFIG+=release CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
+                  CONFIG+=tests CONFIG+=noPch CONFIG+=ccache CONFIG+=sanitizer \
+                  CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'qjsengine' && 'trik_use_qjsengine' || '' }} \
+                  "$GITHUB_WORKSPACE/"
+
+      - name: QMake all
+        timeout-minutes: 3
+        run: |
+            make -j $(nproc) qmake_all
+
+      - name: Make all
+        timeout-minutes: 10
+        run: |
+            make -j $(nproc) all
+
+      - name: Unit tests
+        timeout-minutes: 5
+        run: |
+            export TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")
+            export PYTHONVERBOSE=2
+            export PYTHONDEBUG=2
+            # export PYTHONMALLOC=malloc_debug
+            export PYTHONFAULTHANDLER=1
+            # export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
+            env | sort
+            make -k check TESTARGS="-platform offscreen"

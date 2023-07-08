@@ -27,8 +27,10 @@ jobs:
           TRANSLATIONS: true
           QMAKE_EXTRA: "CONFIG+=tests CONFIG+=silent CONFIG+=ccache CONFIG+=noPch CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         macOs release:
-          imageName: 'macOS-10.15'
+          imageName: 'macOS-11'
           QMAKE_EXTRA: "CONFIG+=tests CONFIG+=silent CONFIG+=ccache CONFIG+=noPch CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info"
+          TRIK_PYTHON3_VERSION_MINOR: 9
+          TRIK_QT_VERSION: 5.12
 
     pool:
       vmImage: $(imageName)
