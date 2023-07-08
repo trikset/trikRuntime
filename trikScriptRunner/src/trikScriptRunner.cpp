@@ -40,7 +40,8 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   )
 	: mBrick(brick), mMailbox(mailbox), mScriptControl(scriptControl), mLastRunner(ScriptType::JAVASCRIPT)
 {
-		REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
+	mScriptRunnerArray.resize(to_underlying(ScriptType::Size));
+	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
 			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
 				emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
@@ -61,6 +62,8 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 TrikScriptRunner::~TrikScriptRunner()
 {
 	abortAll();
+	// Call it here for dtor to be compiled in this context, rather than in the including file's context
+	mScriptControl.reset();
 }
 
 void TrikScriptRunner::setDefaultRunner(ScriptType t)
@@ -123,12 +126,12 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 	if (cell == nullptr) { // lazy creation
 		switch (stype) {
 			case ScriptType::JAVASCRIPT:
-				QScopedPointer<TrikScriptRunnerInterface>(
+				QSharedPointer<TrikScriptRunnerInterface>(
 							new TrikJavaScriptRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 #ifndef TRIK_NOPYTHON
 			case ScriptType::PYTHON:
-				QScopedPointer<TrikScriptRunnerInterface>(
+				QSharedPointer<TrikScriptRunnerInterface>(
 							new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 #endif

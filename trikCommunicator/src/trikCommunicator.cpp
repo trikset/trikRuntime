@@ -57,6 +57,8 @@ TrikCommunicator::TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikS
 
 TrikCommunicator::~TrikCommunicator()
 {
+	// Call it here for dtor to be compiled in this context, rather than in the including file's context
+	mTrikScriptRunner.reset();
 }
 
 Connection *TrikCommunicator::connectionFactory()

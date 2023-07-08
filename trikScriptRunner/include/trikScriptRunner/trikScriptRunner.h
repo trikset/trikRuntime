@@ -88,7 +88,7 @@ private:
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface * mMailbox;
 	QSharedPointer <TrikScriptControlInterface> mScriptControl;
-	std::array<QScopedPointer<TrikScriptRunnerInterface>, to_underlying(ScriptType::Size)> mScriptRunnerArray;
+	std::vector<QSharedPointer<TrikScriptRunnerInterface>> mScriptRunnerArray;
 	ScriptType mLastRunner;
 };
 

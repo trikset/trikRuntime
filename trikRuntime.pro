@@ -63,7 +63,6 @@ trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikTelemetry
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \
 	$$PWD/resources/lsan.supp \
-	$$PWD/.travis.yml \
 	$$PWD/docker/Dockerfile \
 
 include($$PWD/global.pri)
