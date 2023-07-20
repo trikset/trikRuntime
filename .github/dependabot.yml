@@ -11,10 +11,7 @@ updates:
   - iakov
   assignees:
   - iakov
-- package-ecosystem: docker
-  directory: "/docker"
-  schedule:
-    interval: daily
-    time: "23:59"
-    timezone: Europe/Moscow
-  open-pull-requests-limit: 99
+  groups:
+    submodules:
+      patterns:
+        - "*" # All submodules updates
