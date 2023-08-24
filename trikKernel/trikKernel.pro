@@ -57,7 +57,7 @@ SOURCES += \
 OTHER_FILES += \
 	$$PWD/stubTrikRc \
 
-equals(ARCHITECTURE, arm) {
+equals(ARCHITECTURE, arm):!trik_not_brick {
 	SOURCES += $$PWD/src/trik/paths.cpp
 } else {
 	SOURCES += $$PWD/src/stub/paths.cpp
