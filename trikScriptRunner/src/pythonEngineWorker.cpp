@@ -115,6 +115,7 @@ void PythonEngineWorker::init()
 		} else {
 			QLOG_INFO() << varName << ":" << path;
 		}
+#if PY_MINOR_VERSION >= 8
 		PyPreConfig pyPreconfig;
 		PyPreConfig_InitPythonConfig(&pyPreconfig);
 
@@ -126,8 +127,9 @@ void PythonEngineWorker::init()
 			throw trikKernel::InternalErrorException(e);
 		}
 
-		/// TODO: Must point to local .zip file
 		/// NB! Py_DecodeLocale requires a pre-initialized Python engine
+#endif
+		/// TODO: Must point to local .zip file
 		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
 		Py_SetPath(mPythonPath);
 
