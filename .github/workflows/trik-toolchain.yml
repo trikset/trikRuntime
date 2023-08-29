@@ -74,7 +74,7 @@ jobs:
       - name: Use ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ${{ github.workflow }}
+          key: ${{ github.ref_name }}-${{ github.job }}
 
       - name: Check available tools
         run: |
