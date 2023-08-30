@@ -34,7 +34,7 @@ jobs:
                      || echo "install=true" >> $GITHUB_OUTPUT
 
       - name: Install TRIK toolchain
-        if: steps.trik-toolchain-check.outputs.install == true
+        if: steps.trik-toolchain-check.outputs.install == 'true'
         run: |
             rm -rf /opt/trik-sdk
             curl -O https://dl.trikset.com/distro/latest-full/trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh
@@ -43,7 +43,7 @@ jobs:
             mv trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256 /opt/trik-sdk
 
       - name: Save TRIK toolchain
-        if: steps.trik-toolchain-check.outputs.install == true
+        if: steps.trik-toolchain-check.outputs.install == 'true'
         uses: actions/cache/save@v3
         with:
           path: /opt/trik-sdk
