@@ -37,6 +37,7 @@
 #include "cameraDeviceInterface.h"
 #include "lidarInterface.h"
 #include "i2cDeviceInterface.h"
+#include "irCameraInterface.h"
 
 #include <trikControl/trikControlDeclSpec.h>
 
@@ -154,6 +155,9 @@ public slots:
 
 	/// Returns marker.
 	virtual trikControl::MarkerInterface *marker() = 0;
+
+	/// Returns QVector<uint8_t> with image from IR camera
+	virtual QVector<int32_t> getIrImage() = 0;
 
 	/// Returns custom event device that can be used as a sensor, for example, for custom gamepad support.
 	/// Creates new event device on first access to a file, then returns already opened device.

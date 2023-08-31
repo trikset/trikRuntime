@@ -54,6 +54,7 @@ class VectorSensor;
 class CameraDeviceInterface;
 class I2cCommunicator;
 class Lidar;
+class IrCameraInterface;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -144,6 +145,8 @@ public slots:
 
 	MarkerInterface *marker() override;
 
+	QVector<int32_t> getIrImage() override;
+
 	EventDeviceInterface *eventDevice(const QString &deviceFile) override;
 
 	void stopEventDevice(const QString &deviceFile) override;
@@ -176,6 +179,7 @@ private:
 	QScopedPointer<Gamepad> mGamepad;
 	QScopedPointer<TonePlayer> mTonePlayer;
 	QScopedPointer<CameraDeviceInterface> mCamera;
+	QScopedPointer<IrCameraInterface> mIrCamera;
 
 	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
