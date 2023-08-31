@@ -39,6 +39,7 @@ equal to its class name.
 		#cat /sys/class/pwm/ecap_cap.2/config > /dev/null
 
 		#amixer -q set PCM 127
+		echo 1 > /sys/class/gpio/gpio30/value
 	</initScript>
 
 	<!-- A list of known devices. -->
@@ -70,6 +71,8 @@ equal to its class name.
 		<mailbox port="8889" optional="true" />
 
 		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
+
+                <irCamera />
 	</deviceClasses>
 
 	<devicePorts>
@@ -154,6 +157,7 @@ equal to its class name.
                 <camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 		<lidar port="lidarPort" file="/dev/ttyUSB0" />
+		<irCamera port="irCameraPort" i2cAddress="0x33" />
 	</devicePorts>
 
 	<deviceTypes>
