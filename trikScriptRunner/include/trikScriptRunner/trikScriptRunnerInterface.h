@@ -78,6 +78,7 @@
 	TEMPLATE(trikControl::VectorSensorInterface) \
 	TEMPLATE(trikNetwork::MailboxInterface) \
 	TEMPLATE(trikControl::LidarInterface) \
+	TEMPLATE(trikControl::PwmCaptureInterface) \
 
 namespace trikScriptRunner {
 
