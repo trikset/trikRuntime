@@ -46,17 +46,30 @@ public:
 
 	Status status() const override;
 
+	long minValue() const override;
+
+	long maxValue() const override;
+
 public slots:
 	/// Returns three readings of PWM signal frequency.
 	QVector<int> frequency() override;
 
-	/// Returns PWM signal duty.
-	int duty() override;
+	/// Returns scaled PWM signal duty.
+	long duty() override;
+
+	/// Returns raw PWM signal duty.
+	long dutyRaw() override;
 
 private:
 	QScopedPointer<trikHal::InputDeviceFileInterface> mFrequencyFile;
 	QScopedPointer<trikHal::InputDeviceFileInterface> mDutyFile;
 	DeviceState mState;
+	long mMinValue;
+	long mMaxValue;
+	long mMinValueScaled;
+	long mMaxValueScaled;
+	qreal mK;
+	qreal mB;
 };
 
 }
