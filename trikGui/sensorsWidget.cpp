@@ -24,6 +24,7 @@
 #include "gyroscopeIndicator.h"
 #include "accelerometerWidget.h"
 #include "cameraWidget.h"
+#include "pwmCaptureIndicator.h"
 
 using namespace trikGui;
 
@@ -135,6 +136,9 @@ AbstractIndicator *SensorsWidget::produceIndicator(const QString &port, SensorTy
 	}
 	case SensorType::camera: {
 		return new CameraWidget(mBrick, this);
+	}
+	case SensorType::pwmCapture: {
+		return new PwmCaptureIndicator(port, *mBrick.pwmCapture(port), this);
 	}
 	}
 

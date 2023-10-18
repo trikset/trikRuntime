@@ -49,6 +49,7 @@ public:
 		, gyroscope
 		, accelerometer
 		, camera
+		, pwmCapture
 	};
 
 	/// Constructor.
