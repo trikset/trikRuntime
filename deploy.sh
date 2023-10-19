@@ -10,5 +10,5 @@ else
 fi
 
 ssh root@"$ip" " sh -c 'chmod -x /etc/trik/trikGui.sh && killall trikGui'"
-rsync -avz -e ssh . root@$ip:/home/root/trik
+rsync -avzch --progress -e ssh . root@$ip:/home/root/trik
 ssh root@"$ip" "sh -c 'chmod +x /etc/trik/trikGui.sh && kill -hup 1'"
