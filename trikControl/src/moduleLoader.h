@@ -28,7 +28,7 @@ class ModuleLoader
 public:
 	/// Constructor.
 	/// @param console - system console that is used to issue "modprobe" command.
-	ModuleLoader(trikHal::SystemConsoleInterface &console);
+	explicit ModuleLoader(trikHal::SystemConsoleInterface &console);
 
 	/// Loads given module using modprobe. Returns true if module is loaded.
 	bool load(const QString &module);
