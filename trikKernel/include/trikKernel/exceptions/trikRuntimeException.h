@@ -22,32 +22,17 @@
 namespace trikKernel {
 
 /// Base class for all exceptions in TRIKRuntime.
-class TrikRuntimeException : public std::exception
+class TrikRuntimeException : public std::runtime_error
 {
 public:
 	/// Constructor
 	/// @param msg - message to be returned
-	explicit TrikRuntimeException(const QString &msg):
-		mMessage(msg)
+	explicit TrikRuntimeException(const QString &msg)
+		: std::runtime_error(msg.toStdString())
 	{
-		/// Vera
-		QLOG_ERROR() << message();
+		/// Print before processing the exception
+		QLOG_ERROR() << what();
 	}
-
-	/// Destructor
-	~TrikRuntimeException() = default;
-
-	/// Returns the exception message
-	const char *what() const noexcept override
-	{
-		/// Vera
-		return message().toLatin1().constData();
-	}
-
-	/// Returns the exception message
-	const QString &message() const { return mMessage; }
-private:
-	QString mMessage;
 };
 
 }
