@@ -14,11 +14,14 @@
 
 #include "pwmCapture.h"
 
+#include <algorithm>
+
 #include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
 #include <trikKernel/configurer.h>
 #include <trikHal/hardwareAbstractionInterface.h>
+#include "configurerHelper.h"
 
 #include <QsLog.h>
 
@@ -36,6 +39,21 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 
 	if (!mDutyFile->open()) {
 		mState.fail();
+	}
+
+	mMinValue = ConfigurerHelper::configureLong(configurer, mState, port, "minValue");
+	mMaxValue = ConfigurerHelper::configureLong(configurer, mState, port, "maxValue");
+	mMinValueScaled = ConfigurerHelper::configureLong(configurer, mState, port, "minValueScaled");
+	mMaxValueScaled = ConfigurerHelper::configureLong(configurer, mState, port, "maxValueScaled");
+
+	if (mMinValue == mMaxValue) {
+		QLOG_ERROR() << "PWM Capture configuration error: minValue = maxValue!";
+		mState.fail();
+		mK = 0;
+		mB = 0;
+	} else {
+		mK = static_cast<qreal>(mMaxValueScaled - mMinValueScaled) / (mMaxValue - mMinValue);
+		mB = mMinValueScaled - mK * mMinValue;
 	}
 
 	mState.ready();
@@ -63,15 +81,39 @@ QVector<int> PwmCapture::frequency()
 	return data;
 }
 
-int PwmCapture::duty()
+long PwmCapture::duty()
+{
+	if (!mState.isReady()) {
+		return {};
+	}
+
+	long data = dutyRaw();
+
+	long result = std::min(mMaxValue, std::max(mMinValue, data));
+	result = mK * result + mB;
+
+	return result;
+}
+
+long PwmCapture::dutyRaw()
 {
 	if (!mState.isReady()) {
 		return {};
 	}
 
 	mDutyFile->reset();
-	int data = 0;
+	long data = 0;
 	char c = '\0';
 	mDutyFile->stream() >> data >> c;
 	return data;
+}
+
+long PwmCapture::minValue() const
+{
+	return mMinValueScaled;
+}
+
+long PwmCapture::maxValue() const
+{
+	return mMaxValueScaled;
 }

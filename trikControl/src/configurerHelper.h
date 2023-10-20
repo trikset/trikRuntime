@@ -38,6 +38,14 @@ public:
 	static int configureInt(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
 			, const QString &parameterName);
 
+	/// Reads long integer parameter from configurer, modifies device state. Returns 0 if parameter is incorrect.
+	/// @param configurer - configurer object from which parameter will be read.
+	/// @param state - reference to device state, will be set to "fail" if parameter can not be read correctly.
+	/// @param port - port of a device.
+	/// @param parameterName - name of a parameter to read.
+	static long configureLong(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
+							, const QString &parameterName);
+
 	/// Reads real parameter from configurer, modifies device state. Returns 0.0 if parameter is incorrect.
 	/// @param configurer - configurer object from which parameter will be read.
 	/// @param state - reference to device state, will be set to "fail" if parameter can not be read correctly.

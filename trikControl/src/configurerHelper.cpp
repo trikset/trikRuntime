@@ -45,6 +45,26 @@ int ConfigurerHelper::configureInt(const trikKernel::Configurer &configurer, Dev
 	}
 }
 
+long ConfigurerHelper::configureLong(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
+								   , const QString &parameterName)
+{
+	try {
+		bool ok = false;
+		long parameter = configurer.attributeByPort(port, parameterName).toLong(&ok, 0);
+		if (!ok) {
+			QLOG_ERROR() << QString(R"(Incorrect configuration for parameter "%1" for port "%2": "%3" )")
+								.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
+			state.fail();
+			return 0;
+		}
+
+		return parameter;
+	} catch (trikKernel::MalformedConfigException &) {
+		state.fail();
+		return 0;
+	}
+}
+
 qreal ConfigurerHelper::configureReal(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
 		, const QString &parameterName)
 {

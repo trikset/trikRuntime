@@ -66,6 +66,9 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 
 
 	testingItem->appendRow(new QStandardItem(tr("Analog sensors")));
+	if (mController.brick().pwmCapturePorts().length() != 0) {
+		testingItem->appendRow(new QStandardItem(tr("PWM Capture")));
+	}
 
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)));
 	testingItem->appendRow(new QStandardItem(MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)));
@@ -150,6 +153,13 @@ void StartWidget::launch()
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			emit newWidget(sensorsWidget);
+
+			result = sensorsWidget.exec();
+		} else if (currentItemText == tr("PWM Capture")) {
+			ports = (mController.brick()).pwmCapturePorts();
+			ports.sort();
+			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::pwmCapture);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();

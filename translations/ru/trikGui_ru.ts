@@ -472,48 +472,54 @@
     </message>
     <message>
         <location line="+4"/>
-        <location line="+64"/>
+        <location line="+67"/>
         <source>Testing</source>
         <translation>Тестирование</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-56"/>
         <source>More...</source>
         <translation>Еще...</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location line="+81"/>
+        <location line="+84"/>
         <source>Analog sensors</source>
         <translation>Аналоговые датчики</translation>
     </message>
     <message>
-        <location line="-76"/>
-        <location line="+83"/>
+        <location line="-82"/>
+        <location line="+89"/>
+        <source>PWM Capture</source>
+        <translation>ШИМ захват</translation>
+    </message>
+    <message>
+        <location line="-83"/>
+        <location line="+90"/>
         <source>Digital sensors</source>
         <translation>Цифровые датчики</translation>
     </message>
     <message>
-        <location line="-81"/>
-        <location line="+88"/>
+        <location line="-88"/>
+        <location line="+95"/>
         <source>Encoders</source>
         <translation>Энкодеры</translation>
     </message>
     <message>
-        <location line="-86"/>
-        <location line="+93"/>
+        <location line="-93"/>
+        <location line="+100"/>
         <source>Gyroscope</source>
         <translation>Гироскоп</translation>
     </message>
     <message>
-        <location line="-91"/>
-        <location line="+96"/>
+        <location line="-98"/>
+        <location line="+103"/>
         <source>Accelerometer</source>
         <translation>Акселерометр</translation>
     </message>
     <message>
-        <location line="-94"/>
-        <location line="+99"/>
+        <location line="-101"/>
+        <location line="+106"/>
         <source>Camera</source>
         <translation>Камера</translation>
     </message>
