@@ -51,8 +51,8 @@ jobs:
 
       - name: Install QEMU with binfmt
         run: |
-            sudo apt-get update
-            sudo apt-get install qemu-user-binfmt
+            sudo apt update
+            sudo apt install -y qemu-user-binfmt
 
       - name: Configure git
         run: |
