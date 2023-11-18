@@ -4,14 +4,24 @@ updates:
   directory: "/"
   schedule:
     interval: monthly
-    time: "23:59"
-    timezone: Europe/Moscow
-  open-pull-requests-limit: 99
   reviewers:
   - iakov
   assignees:
   - iakov
   groups:
     submodules:
+      patterns:
+        - "*" # All submodules updates
+
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: monthly
+  reviewers:
+  - iakov
+  assignees:
+  - iakov
+  groups:
+    github-actions:
       patterns:
         - "*" # All submodules updates
