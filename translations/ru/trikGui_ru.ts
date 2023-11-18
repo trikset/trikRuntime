@@ -362,7 +362,7 @@
         <location filename="../../trikGui/networkWidget.cpp" line="+32"/>
         <location line="+39"/>
         <source>Hull number:</source>
-        <translation type="unfinished">Бортномер:</translation>
+        <translation>Бортномер:</translation>
     </message>
     <message>
         <location line="-15"/>

@@ -6,7 +6,7 @@
     <message>
         <location filename="../../trikScriptRunner/src/scriptEngineWorker.cpp" line="+277"/>
         <source>Line %1: %2</source>
-        <translation type="unfinished">Строка %1: %2</translation>
+        <translation>Строка %1: %2</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../../trikScriptRunner/src/scriptThread.cpp" line="+51"/>
         <source>Line %1: %2</source>
-        <translation type="unfinished">Строка %1: %2</translation>
+        <translation>Строка %1: %2</translation>
     </message>
 </context>
 <context>

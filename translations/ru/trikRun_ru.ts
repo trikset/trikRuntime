@@ -21,12 +21,12 @@
     <message>
         <location line="+3"/>
         <source>JavaScript script to be executed directly from command line.</source>
-        <translation>JavaScript cкрипт, который надо исполнить прямо из командной строки.</translation>
+        <translation>JavaScript cкрипт, который надо исполнить напрямую из командной строки.</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Python script to be executed directly from command line.</source>
-        <translation>Python cкрипт, который надо исполнить прямо из командной строки.</translation>
+        <translation>Python cкрипт, который надо исполнить напрямую из командной строки.</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -37,7 +37,7 @@
     <message>
         <location line="+5"/>
         <source>Disable display support. When this flag is active, trikRun can work without QWS or even physical display</source>
-        <translation type="unfinished">Отключает поддержку дисплея. С этим флагом trikRun может работать без ключа -qws и даже без физического дисплея</translation>
+        <translation>Отключает поддержку дисплея. С этим флагом trikRun может работать без ключа -qws и даже без физического дисплея</translation>
     </message>
     <message>
         <location line="+3"/>

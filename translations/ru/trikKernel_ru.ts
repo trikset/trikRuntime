@@ -11,14 +11,14 @@
     <message>
         <location line="+2"/>
         <source>Ignore all locale options and use English language</source>
-        <translation>Игнорировать настройки локали и использовать английский язык (Ignore all locale options and use English language)</translation>
+        <translation>Игнорировать все настройки локали и использовать английский язык (Ignore all locale options and use English language)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Path to a directory where all configs for TRIK runtime are stored. Config files are
 	system-config.xml (system-wide configuration of robot hardware for trikControl library) and
 	model-config.xml (configuration of current model).</source>
-        <translation>Путь к папке, где размещаются конфигурационные файлы среды времени выполнения ТРИК. Конфигурационные файлы - это:
+        <translation>Путь к папке, где размещаются все конфигурационные файлы среды времени выполнения ТРИК. Конфигурационные файлы - это:
 	system-config.xml (системная конфигурация аппаратного обеспечения робота)
 	model-config.xml (настройки конкретной модели).</translation>
     </message>
