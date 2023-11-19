@@ -27,7 +27,7 @@ jobs:
     steps:
 
       - name: Cancel Previous Workflow Runs
-        uses: n1hility/cancel-previous-runs@v2.0
+        uses: n1hility/cancel-previous-runs@v3.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -37,7 +37,7 @@ jobs:
             git config --global core.symlinks true
             git config --global core.autocrlf true
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 1
@@ -87,7 +87,7 @@ jobs:
 
 # After Qt install action, that spoils pythonLocation variable
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           architecture: 'x86'
