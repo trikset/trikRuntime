@@ -68,7 +68,7 @@ jobs:
             echo "${Qt5_Dir}/bin" >> $GITHUB_PATH
 
       - name: Use ccache
-        uses: hendrikmuhs/ccache-action@v1.2
+        uses: hendrikmuhs/ccache-action@v1.2.11
 
       - name: Check available tools
         run: |
