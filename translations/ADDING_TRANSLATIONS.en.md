@@ -1,10 +1,10 @@
-# Adding Translation to the TrikRuntime Project
+# Adding Translation to the TRIK firmware (trik-runtime) Project
 
 1. Fork the repository:
   * Go to the [project repository page](https://github.com/trikset/trikRuntime/tree/master) on GitHub.
   * Click the "Fork" button in the top right corner. This will create a copy of the repository on your account.
 
-2. Clone your forked repository to your computer:
+2. Clone your forked repository to your computer (as always, with Github Desktop client or from command-line):
 ```shell
     git clone https://github.com/your-username/trikRuntime.git
     cd trikRuntime
