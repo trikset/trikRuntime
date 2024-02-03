@@ -36,8 +36,4 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-TRANSLATIONS = \
-	$$PWD/../translations/ru/trikRun_ru.ts \
-	$$PWD/../translations/fr/trikRun_fr.ts \
-
 installs()
