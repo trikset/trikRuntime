@@ -68,9 +68,9 @@ equals(ARCHITECTURE, arm):!trik_not_brick {
 
 DEFINES += TRIKKERNEL_LIBRARY
 
-TRANSLATIONS = \
-	$$PWD/../translations/ru/trikKernel_ru.ts \
-	$$PWD/../translations/fr/trikKernel_fr.ts \
+#TRANSLATIONS += \
+#    $$PWD/../translations/trikRuntime_fr.ts \
+#    $$PWD/../translations/trikRuntime_ru.ts \
 
 links(trikQsLog)
 installs()

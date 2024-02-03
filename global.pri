@@ -285,7 +285,6 @@ QMAKE_CXXFLAGS += -Werror=cast-qual -Werror=write-strings -Werror=redundant-decl
 
 gcc4:QMAKE_CXXFLAGS += -Wno-error=missing-field-initializers
 
-
 # Simple function that checks if given argument is a file or directory.
 # Returns false if argument 1 is a file or does not exist.
 defineTest(isDir) {

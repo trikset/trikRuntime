@@ -79,10 +79,6 @@ OTHER_FILES += \
 INCLUDEPATH += \
 	$$PWD/../trikControl/src \
 
-TRANSLATIONS = \
-	$$PWD/../translations/ru/trikScriptRunner_ru.ts \
-	$$PWD/../translations/fr/trikScriptRunner_fr.ts \
-
 QT += script network
 
 DEFINES += TRIKSCRIPTRUNNER_LIBRARY

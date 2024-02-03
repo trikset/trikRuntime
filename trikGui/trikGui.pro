@@ -113,10 +113,6 @@ SOURCES += \
 	$$PWD/cameraWidget.cpp \
 	$$PWD/pwmCaptureIndicator.cpp
 
-TRANSLATIONS = \
-	$$PWD/../translations/ru/trikGui_ru.ts \
-	$$PWD/../translations/fr/trikGui_fr.ts \
-
 RESOURCES = trikGui.qrc
 
 OTHER_FILES += \

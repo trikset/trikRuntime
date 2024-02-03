@@ -81,7 +81,7 @@ jobs:
           version: ${{matrix.qt-version}}
           arch: win32_mingw${{matrix.mingw-short-version}}
           modules: 'qtscript'
-          archives: 'qtbase qtsvg qtserialport qtmultimedia qtwinextras qtimageformats i686'
+          archives: 'qtbase qtsvg qtserialport qtmultimedia qtwinextras qtimageformats i686 qttools'
           tools: 'tools_mingw,qt.tools.win32_mingw${{matrix.mingw-short-version}}0'
           extra: '--external 7z'
 

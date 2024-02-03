@@ -32,8 +32,11 @@ LanguageSelectionWidget::LanguageSelectionWidget(QWidget *parent)
 	, mTitle(tr("Select language:"))
 {
 	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
-	const QString lastLocale = settings.value("locale", "").toString();
-
+	QString baseLocale = settings.value("locale", "").toString();
+	QString lastLocale = baseLocale;
+	if (baseLocale.contains('_')) {
+		lastLocale = baseLocale.split('_').at(1);
+	}
 	int lastLocaleIndex = 0;
 	const auto english = new QListWidgetItem(tr("English"));
 	english->setData(Qt::UserRole, "en");
@@ -102,16 +105,19 @@ void LanguageSelectionWidget::keyPressEvent(QKeyEvent *event)
 void LanguageSelectionWidget::loadLocales()
 {
 	const QDir translationsDirectory(trikKernel::Paths::translationsPath());
-	QDirIterator directories(translationsDirectory);
-	while (directories.hasNext()) {
-		const QFileInfo localeInfo(directories.next() + "/locale.ini");
+	QDirIterator files(translationsDirectory.absolutePath(), QDir::Files);
+	while (files.hasNext()) {
+		const QFileInfo localeInfo(files.next());
 		if (localeInfo.exists()) {
-			QSettings parsedLocaleInfo(localeInfo.absoluteFilePath(), QSettings::IniFormat);
-			parsedLocaleInfo.setIniCodec("UTF-8");
-			parsedLocaleInfo.sync();
-			const QString localeName = parsedLocaleInfo.value("name", "").toString();
-			if (localeName != "") {
-				mAvailableLocales.insert(localeInfo.dir().dirName(), localeName);
+			QString baseName = localeInfo.baseName();
+			if (!baseName.isEmpty() && baseName.contains('_')) {
+				QStringList parts = baseName.split('_');
+				QString langCode = parts.at(1);
+				QLocale locale(langCode);
+				QString languageName = QLocale::languageToString(locale.language());
+				if (languageName != "") {
+					mAvailableLocales.insert(langCode, languageName);
+				}
 			}
 		}
 	}

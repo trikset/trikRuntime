@@ -24,6 +24,9 @@
     make -j 4
   ```
 
+# Add translations
+  [Details here](https://github.com/kleo-53/trikRuntime/blob/master/translations/ADDING_TRANSLATIONS.en.md)
+
 # Out-of-source-tree build (split-build) is supported
 
 ===========
