@@ -27,7 +27,7 @@ EventCodeInterface *Event::code(int codeNum)
 {
 	if (!mEventCodes.contains(codeNum)) {
 		const QSharedPointer<EventCode> eventCode(new EventCode(codeNum));
-		connect(this, SIGNAL(on(int, int, int)), eventCode.data(), SLOT(onEvent(int, int, int)));
+		connect(this, &Event::on, eventCode.data(), &EventCode::onEvent);
 		mEventCodes.insert(codeNum, eventCode);
 	}
 
