@@ -50,7 +50,6 @@ SOURCES += \
 	$$PWD/src/fileUtils.cpp \
 	$$PWD/src/loggingHelper.cpp \
 	$$PWD/src/rcReader.cpp \
-	$$PWD/src/timeVal.cpp \
 	$$PWD/src/translationsHelper.cpp \
 	$$PWD/src/$$PLATFORM/coreDumping.cpp \
 
