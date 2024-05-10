@@ -64,7 +64,7 @@ jobs:
             python3 -m pip install -U pip
             python3 -m pip install aqtinstall
             aqt install-qt linux desktop ${{ matrix.qt-version }} -O /Qt \
-            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland ${{ matrix.qjsengine == 'qjsengine' && 'qtdeclarative' || '-m qtscript' }}
+            --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland qtdeclarative qtquickcontrols2 ${{ matrix.qjsengine == 'qjsengine' && 'qtdeclarative' || '-m qtscript' }}
             Qt5_Dir=$(ls -1d /Qt/5*/* | head -n 1)
             echo "Qt5_Dir=${Qt5_Dir}" >> $GITHUB_ENV
             echo "${Qt5_Dir}/bin" >> $GITHUB_PATH
