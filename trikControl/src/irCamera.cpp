@@ -1,4 +1,4 @@
-/* Copyright 2023 Nick Ponomarev
+/* Copyright 2023 Nick Ponomarev, Vladimir Kutuev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,15 +104,21 @@ QVector<int32_t> IrCamera::getImage() {
 
 	QVector<uint16_t> frame(FRAME_SIZE);
 	int status = MLX90640_GetFrameData(mI2cAddr, frame.data());
-	if (status != 0) {
+	if (status < 0) {
 		QString info = status == -1 ? "Got NACK." : "Frame is corrupted or can't acquire it.";
 		QLOG_ERROR() << "Failed to get frame from IR. " << info;
 		return QVector<int32_t>();
 	}
 
 	QVector<int32_t> image(IMAGE_SIZE);
-	std::transform(frame.cbegin(), frame.cend() - (FRAME_SIZE - IMAGE_SIZE), image.begin(),
-				   [](uint16_t pixel){ return (pixel & 0xff); });
+
+	std::transform(frame.cbegin(), frame.cend() - (FRAME_SIZE - IMAGE_SIZE),
+		std::begin(mParams.offset),
+		image.begin(),
+		[](uint16_t pixel, uint16_t offset) {
+		return (((static_cast<int16_t>(pixel) - static_cast<int16_t>(offset) + 256)) >> 1) & 0xFF;
+		}
+	);
 
 	return image;
 }
