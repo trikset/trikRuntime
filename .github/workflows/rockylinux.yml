@@ -1,4 +1,4 @@
-name: 'Rocky Linux'
+name: 'Linux Build'
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  centos:
+  rockylinux9:
     runs-on: ubuntu-latest
     container: rockylinux:9
     defaults:
