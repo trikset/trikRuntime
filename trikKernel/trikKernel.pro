@@ -71,5 +71,5 @@ DEFINES += TRIKKERNEL_LIBRARY
 #    $$PWD/../translations/trikRuntime_fr.ts \
 #    $$PWD/../translations/trikRuntime_ru.ts \
 
-links(trikQsLog)
+links(trikRuntimeQsLog)
 installs()

@@ -43,6 +43,6 @@ QT += network
 
 DEFINES += TRIKNETWORK_LIBRARY
 
-links(trikQsLog trikKernel)
+links(trikRuntimeQsLog trikKernel)
 
 installs()

@@ -120,6 +120,6 @@ OTHER_FILES += \
 implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
 transitiveIncludes(trikNetwork)
 PythonQtIncludes()
-links(trikQsLog trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+links(trikRuntimeQsLog trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
 
 installs()

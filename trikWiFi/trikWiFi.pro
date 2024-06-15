@@ -35,6 +35,6 @@ SOURCES += \
 	$$PWD/src/$$PLATFORM/wpaSupplicantCommunicator.cpp \
 
 implementationIncludes(trikKernel)
-links(trikQsLog trikKernel)
+links(trikRuntimeQsLog trikKernel)
 
 installs()
