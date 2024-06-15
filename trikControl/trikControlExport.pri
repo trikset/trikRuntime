@@ -140,7 +140,6 @@ unix:equals(ARCHITECTURE, "x86") {
 		}
 		CONFIG(sanitize-undefined) {
 			# UBSan does not play well with precompiled headers for some reason.
-			noPch()
 			QMAKE_CXXFLAGS += -fsanitize=undefined
 			QMAKE_LFLAGS += -fsanitize=undefined
 		}

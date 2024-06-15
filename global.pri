@@ -219,7 +219,6 @@ MOC_DIR = .build/$$CONFIGURATION/moc
 RCC_DIR = .build/$$CONFIGURATION/rcc
 UI_DIR = .build/$$CONFIGURATION/ui
 
-CONFIG += precompile_header
 precompile_header {
 	PRECOMPILED_HEADER = $$PWD/pch.h
 	QMAKE_CXXFLAGS *= -Wno-error=invalid-pch
@@ -431,13 +430,6 @@ defineTest(installAdditionalSharedFiles) {
 	}
 }
 
-defineTest(noPch) {
-	CONFIG -= precompile_header
-	PRECOMPILED_HEADER =
-	export(CONFIG)
-	export(PRECOMPILED_HEADER)
-}
-
 defineTest(enableFlagIfCan) {
   system(bash -c $$system_quote(echo $$shell_quote(int main(){return 0;}) | $$QMAKE_CXX $$QMAKE_CXXFLAGS $$1 -x c++ -c - -o $$system(bash -c mktemp) 2>/dev/null) ) {
 	QMAKE_CXXFLAGS += $$1
@@ -447,8 +439,4 @@ defineTest(enableFlagIfCan) {
   }
 }
 
-
-CONFIG(noPch) {
-	noPch()
-}
 } # GLOBAL_PRI_INCLUDED
