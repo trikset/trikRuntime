@@ -5,6 +5,9 @@ trigger:
   tags:
     include:
     - '*'
+  paths:
+    exclude:
+    - '.github'
 
 variables:
   BUILDDIR: "$(Build.SourcesDirectory)/build"

@@ -148,7 +148,7 @@ macx-clang {
 	CONFIG += sanitizer
 }
 
-unix:!nosanitizers {
+!nosanitizers {
 
 	# seems like we want USan always, but are afraid of ....
 	!CONFIG(sanitize_address):!CONFIG(sanitize_thread):!CONFIG(sanitize_memory):!CONFIG(sanitize_kernel_address) {
@@ -181,12 +181,12 @@ unix:!nosanitizers {
         }
 
 	sanitize_undefined {
-		macx-clang {
-		# sometimes runtime is missing in clang. this hack allows to avoid runtime dependency.
-		#QMAKE_SANITIZE_UNDEFINED_CFLAGS += -fsanitize-trap=undefined
-		#QMAKE_SANITIZE_UNDEFINED_CXXFLAGS += -fsanitize-trap=undefined
-		#QMAKE_SANITIZE_UNDEFINED_LFLAGS += -fsanitize-trap=undefined
-		}
+		# This hack allows to avoid runtime dependency.
+		win32:isEmpty(TRIK_SANITIZE_UNDEFINED_FLAGS):TRIK_SANITIZE_UNDEFINED_FLAGS = -fsanitize-undefined-trap-on-error
+
+		QMAKE_SANITIZE_UNDEFINED_CFLAGS *= $$TRIK_SANITIZE_UNDEFINED_FLAGS
+		QMAKE_SANITIZE_UNDEFINED_CXXFLAGS *= $$TRIK_SANITIZE_UNDEFINED_FLAGS
+		QMAKE_SANITIZE_UNDEFINED_LFLAGS *= $$TRIK_SANITIZE_UNDEFINED_FLAGS
 		#!clang:QMAKE_LFLAGS_RELEASE *= -static-libubsan
 	}
 
@@ -210,8 +210,16 @@ unix:!nosanitizers {
 		}
 	}
 
-	QMAKE_CFLAGS += -fno-sanitize-recover=all
-	QMAKE_CXXFLAGS += -fno-sanitize-recover=all
+        unix {
+                QMAKE_CFLAGS_RELEASE += -fsanitize-recover=all
+                QMAKE_CXXFLAGS_RELEASE += -fsanitize-recover=all
+
+                QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO += -fno-sanitize-recover=all
+                QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -fno-sanitize-recover=all
+
+                QMAKE_CFLAGS_DEBUG  += -fno-sanitize-recover=all
+                QMAKE_CXXFLAGS_DEBUG += -fno-sanitize-recover=all
+        }
 }
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
