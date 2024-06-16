@@ -90,7 +90,7 @@ equals(ARCHITECTURE, arm):!trik_not_brick {
 
 DEFINES += TRIKHAL_LIBRARY
 
-links(trikQsLog trikKernel)
+links(trikRuntimeQsLog trikKernel)
 implementationIncludes(trikKernel)
 
 if (equals(QT_MAJOR_VERSION, 5)) {

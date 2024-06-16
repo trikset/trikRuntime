@@ -34,6 +34,6 @@ interfaceIncludes(trikNetwork)
 implementationIncludes(trikKernel trikScriptRunner trikControl)
 PythonQtIncludes()
 
-links(trikQsLog trikScriptRunner trikControl trikKernel trikNetwork)
+links(trikRuntimeQsLog trikScriptRunner trikControl trikKernel trikNetwork)
 
 installs()

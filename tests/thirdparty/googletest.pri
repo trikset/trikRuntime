@@ -17,4 +17,4 @@ QMAKE_CXXFLAGS += \
         -isystem $$PWD/googletest/googlemock/include \
         -isystem $$PWD/googletest/googletest/include \
 
-LIBS += -lgoogletest$$CONFIGURATION_SUFFIX
+LIBS += -ltrikRuntime-googletest$$CONFIGURATION_SUFFIX

@@ -36,4 +36,4 @@ SOURCES += \
 	$$files($$PWD/googletest/googlemock/src/*-all.cc) \
 	$$files($$PWD/googletest/googletest/src/*-all.cc) \
 
-noPch()
+TARGET = trikRuntime-googletest$$CONFIGURATION_SUFFIX

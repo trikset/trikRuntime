@@ -96,7 +96,7 @@ jobs:
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             mkdir build-brick
             cd build-brick
-            qmake CONFIG+=release CONFIG+=noPch CONFIG+=ccache \
+            qmake CONFIG+=release CONFIG+=force_debug_info CONFIG+=precompile_header \
                   "$GITHUB_WORKSPACE/"
 
       - name: "[TRIK brick] QMake all"
@@ -119,7 +119,8 @@ jobs:
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             mkdir build-qemu
             cd build-qemu
-            qmake CONFIG+=release CONFIG+=tests CONFIG+=noPch CONFIG+=ccache \
+            qmake CONFIG+=release CONFIG+=tests \
+            CONFIG+=force_debug_info CONFIG+=precompile_header \
                   CONFIG+=trik_not_brick CONFIG+=trik_nopython \
                   "$GITHUB_WORKSPACE/"
 

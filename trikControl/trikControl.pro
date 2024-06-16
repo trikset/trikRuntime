@@ -194,7 +194,7 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-links(trikQsLog trikKernel trikHal)
+links(trikRuntimeQsLog trikKernel trikHal)
 implementationIncludes(trikKernel trikHal)
 
 copyToDestdir( \
