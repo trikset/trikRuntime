@@ -145,7 +145,7 @@ public slots:
 
 	MarkerInterface *marker() override;
 
-	QVector<int32_t> getIrImage() override;
+	IrCameraInterface *irCamera() override;
 
 	EventDeviceInterface *eventDevice(const QString &deviceFile) override;
 

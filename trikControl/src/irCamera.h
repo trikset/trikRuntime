@@ -14,12 +14,13 @@
 
 #pragma once
 
-// #include <QtCore/QScopedPointer>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QThread>
 #include <QtCore/QVector>
 
-// #include <QMutex>
 
 #include "irCameraInterface.h"
+#include "irCameraWorker.h"
 #include "deviceState.h"
 #include <trikControl/trikControlDeclSpec.h>
 #include <MLX90640_API.h>
@@ -37,6 +38,8 @@ namespace trikControl {
 /// Class for ir camera device instantiation
 class TRIKCONTROL_EXPORT IrCamera : public IrCameraInterface
 {
+	Q_OBJECT
+
 public:
 
 	/// IrCamera constructor
@@ -44,24 +47,56 @@ public:
 	/// @param configurer - configurer to get info from config
 	/// @param hardwareAbstraction - realization of HAL
 	IrCamera(const QString &port
-				 , const trikKernel::Configurer &configurer
-				 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+			 , const trikKernel::Configurer &configurer
+			 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+
+	~IrCamera() override;
+
+public Q_SLOTS:
+	void init() override;
+
+	void stop() override;
 
 	QVector<int32_t> getImage() override;
 
+	int8_t readSensor(int m, int n) override;
+
 	Status status() const override;
 
-	~IrCamera() override = default;
+private slots:
+	/// Process new frame with raw data from IrCameraWorker.
+	void onNewFrame(QVector<uint8_t> frame);
+	/// Process IrCameraWorker stopped signal.
+	void onStop();
 
 private:
-	uint8_t mI2cAddr;
+	void updateImage(const QVector<uint8_t> &frame);
+	void updateSensor(const QVector<uint8_t> &frame);
+
 	DeviceState mState;
-	uint8_t mRefreshRate = 0x3; // Corresponds to 4 Hz
-	paramsMLX90640 mParams;
-	static constexpr int EEPROM_SIZE = 832;
-	static constexpr int FRAME_SIZE = 834;
-	static constexpr int IMAGE_SIZE = 768;
-//	QMutex mCameraMutex;
+
+	/// Worker object that read data from ir camera in separate thread.
+	QScopedPointer<IrCameraWorkerMLX90640> mIrCameraWorker;
+
+	/// Worker thread.
+	QThread mWorkerThread;
+
+	QVector<int32_t> mImage;
+
+	QVector<int32_t> mImageBuffer;
+
+	QVector<uint8_t> mSensorData;
+
+	QVector<uint8_t> mSensorDataBuffer;
+
+	QVector<uint32_t> mSensorProcessBuffer;
+
+	uint16_t mSensorHeight;
+	uint16_t mSensorWidth;
+
+	static constexpr int IMAGE_WIDTH = 32;
+	static constexpr int IMAGE_HEIGHT = 24;
+	static constexpr int IMAGE_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT;
 };
 
 }

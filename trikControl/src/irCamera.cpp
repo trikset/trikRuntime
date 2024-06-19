@@ -14,20 +14,13 @@
 
 #include "irCamera.h"
 
-// #include <QtCore/QSysInfo>
-
 #include <QsLog.h>
 #include <trikKernel/configurer.h>
-
-// #include <QEventLoop>
-// #include <QThread>
-// #include <functional>
-
-#include <QVector>
 #include <algorithm>
 
-
 #include "configurerHelper.h"
+#include "exceptions/incorrectDeviceConfigurationException.h"
+
 
 namespace trikControl {
 
@@ -36,95 +29,151 @@ IrCamera::IrCamera(const QString &port, const trikKernel::Configurer &configurer
 {
 	Q_UNUSED(hardwareAbstraction)
 
-	mI2cAddr = ConfigurerHelper::configureInt(configurer, mState, port, "i2cAddress");
-	QLOG_INFO() << "Trying to init IR camera on address " << mI2cAddr;
+	uint8_t i2cAddr = ConfigurerHelper::configureInt(configurer, mState, port, "i2cAddress");
+	QLOG_INFO() << "Trying to init IR camera on address " << i2cAddr;
 
-	// Library written primary in C style, so no exceptions, only error codes
-	int status;
-
-	// Default value is 4 Hz, greater values may require more i2c speed
-	status = MLX90640_SetRefreshRate(mI2cAddr, mRefreshRate);
-	if (status != 0) {
-		QString info = status == -1 ? "Got NACK." : "Written incorrect value";
-		QLOG_ERROR() << "Failed to set IR camera refresh rate. " << info;
+	const int m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
+	if (m <= 0) {
 		mState.fail();
+		throw IncorrectDeviceConfigurationException("Ir Camera shall have 'm' parameter greater than zero");
 	}
+	mSensorHeight = m;
 
-	// Ensure that camera works in recommended mode
-	status = MLX90640_SetChessMode(mI2cAddr);
-	if (status != 0) {
-		QString info = status == -1 ? "Got NACK." : "Written incorrect value";
-		QLOG_ERROR() << "Failed to set IR camera mode to chess. " << info;
+	const int n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
+	if (n <= 0) {
 		mState.fail();
+		throw IncorrectDeviceConfigurationException("Ir Camera shall have 'n' parameter greater than zero");
 	}
+	mSensorWidth = n;
 
-	QVector<uint16_t> eeprom(EEPROM_SIZE);
-	status = MLX90640_DumpEE(mI2cAddr, eeprom.data());
-	if (status == -1) {
-		QLOG_ERROR() << "Failed to dump IR camera EEPROM. Got NACK.";
-		mState.fail();
-	}
+	mImage.resize(IMAGE_SIZE);
+	mImageBuffer.resize(IMAGE_SIZE);
+	mSensorData.resize(mSensorHeight * mSensorWidth);
+	mSensorDataBuffer.resize(mSensorHeight * mSensorWidth);
+	mSensorProcessBuffer.resize(mSensorHeight * mSensorWidth);
 
-	status = MLX90640_ExtractParameters(eeprom.data(), &mParams);
-	if (status == -7) {
-		QLOG_ERROR() << "Failed extract parameters from IR camerea EEPROM.";
-		mState.fail();
-	}
+	mIrCameraWorker.reset(new IrCameraWorkerMLX90640(i2cAddr));
+	mIrCameraWorker->moveToThread(&mWorkerThread);
 
+	connect(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::newFrame, this, &IrCamera::onNewFrame);
+	connect(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::stopped, this, &IrCamera::onStop);
+
+	QLOG_INFO() << "Starting IrCamera worker thread" << &mWorkerThread;
+
+	mWorkerThread.setObjectName(mIrCameraWorker->metaObject()->className());
+	mWorkerThread.start();
 	mState.ready();
 	QLOG_INFO() << "Initialized IR camera";
 }
 
+IrCamera::~IrCamera()
+{
+	mState.stop();
+	if (mWorkerThread.isRunning()) {
+		mWorkerThread.quit();
+		mWorkerThread.wait();
+	}
+}
 
-QVector<int32_t> IrCamera::getImage() {
+void IrCamera::init()
+{
+	QMetaObject::invokeMethod(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::init);
+}
 
-//	QMutexLocker lock(&mCameraMutex);
-//	QVector<uint8_t> photo;
-//	std::function<void()> runFunc = [this, &photo](){ mCameraImpl->getPhoto().swap(photo); };
-// #if QT_VERSION_MAJOR>=5 && QT_VERSION_MINOR>=10 && QT_VERSION_PATCH >= 2
-//	QScopedPointer<QThread> t(QThread::create(std::move(runFunc)));
-// #else
-//	struct CameraThread: public QThread {
-//		explicit CameraThread(std::function<void()> &&f): mF(f) {}
-//		void run() override { mF(); }
-//		std::function<void()> mF;
-//	};
-//	QScopedPointer<QThread> t(new CameraThread(std::move(runFunc)));
-// #endif
-//	QEventLoop l;
-//	QObject::connect(t.data(), &QThread::finished, &l, &QEventLoop::quit);
-//	t->setObjectName(__PRETTY_FUNCTION__);
-//	t->start();
-//	l.exec();
-//	return photo;
+void IrCamera::stop()
+{
+	QMetaObject::invokeMethod(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::stop);
+}
 
+QVector<int32_t> IrCamera::getImage()
+{
 	if (mState.isFailed()) {
 		return QVector<int32_t>();
 	}
 
-	QVector<uint16_t> frame(FRAME_SIZE);
-	int status = MLX90640_GetFrameData(mI2cAddr, frame.data());
-	if (status < 0) {
-		QString info = status == -1 ? "Got NACK." : "Frame is corrupted or can't acquire it.";
-		QLOG_ERROR() << "Failed to get frame from IR. " << info;
-		return QVector<int32_t>();
+	return mImage;
+}
+
+int8_t IrCamera::readSensor(int m, int n)
+{
+	if(m > mSensorHeight || n > mSensorWidth || m <= 0 || n <= 0) {
+		QLOG_WARN() << QString("Incorrect parameters for IrCamera::readSensor: m = %1, n = %2").arg(m).arg(n);
+		return -1;
 	}
 
-	QVector<int32_t> image(IMAGE_SIZE);
+	return mSensorData[m * mSensorWidth + n];
+}
 
-	std::transform(frame.cbegin(), frame.cend() - (FRAME_SIZE - IMAGE_SIZE),
-		std::begin(mParams.offset),
-		image.begin(),
-		[](uint16_t pixel, uint16_t offset) {
-		return (((static_cast<int16_t>(pixel) - static_cast<int16_t>(offset) + 256)) >> 1) & 0xFF;
+void IrCamera::onNewFrame(QVector<uint8_t> frame)
+{
+	updateImage(frame);
+	updateSensor(frame);
+	emit newFrame();
+}
+
+void IrCamera::onStop()
+{
+	emit stopped();
+}
+
+void IrCamera::updateImage(const QVector<uint8_t> &frame)
+{
+	std::transform(frame.cbegin(), frame.cend()
+		, mImageBuffer.begin()
+		, [](uint16_t pixel) {
+			int color;
+			if (pixel < 64) {
+				color = ((pixel * 4) << 16) | 0xFF;
+			} else if (pixel < 128) {
+				color = 0xFF0000 | (0xFF - ((pixel - 64) * 4));
+			} else if (pixel < 192) {
+				color = 0xFF0000 | ((pixel - 128) * 4) << 8;
+			} else {
+				color = (0xFF - ((pixel - 192) * 4)) << 16 | 0xFF00;
+			}
+			return static_cast<int32_t>(color);
 		}
 	);
-
-	return image;
+	mImage.swap(mImageBuffer);
 }
 
+void IrCamera::updateSensor(const QVector<uint8_t> &frame)
+{
+	// Average
 
-IrCamera::Status IrCamera::status() const {
+	for (auto chunkI = 0u, i = 0u; chunkI < mSensorHeight; ++chunkI) {
+		auto nextChunkIStart = i + (IMAGE_HEIGHT - i) / (mSensorHeight - chunkI);
+		nextChunkIStart += ((IMAGE_HEIGHT - i) % (mSensorHeight - chunkI)) ? 1 : 0;
+
+		for (; i < nextChunkIStart; ++i) {
+			for (auto chunkJ = 0u, j = 0u; chunkJ < mSensorWidth; ++chunkJ) {
+				auto nextChunkJStart = j + (IMAGE_WIDTH - j) / (mSensorWidth - chunkJ);
+				nextChunkJStart += ((IMAGE_WIDTH - j) % (mSensorWidth - chunkJ)) ? 1 : 0;
+
+				for (; j < nextChunkJStart; ++j) {
+					mSensorProcessBuffer[chunkI * mSensorWidth + chunkJ] += frame[i * IMAGE_WIDTH + j];
+				}
+			}
+		}
+	}
+
+	for (auto i = 0u; i < mSensorHeight; ++i) {
+		for (auto j = 0u; j < mSensorWidth; ++j) {
+			auto hCount = (IMAGE_HEIGHT / mSensorHeight);
+			hCount += (i < IMAGE_HEIGHT % mSensorHeight) ? 1 : 0;
+			auto wCount = (IMAGE_WIDTH / mSensorWidth);
+			wCount += (j < IMAGE_WIDTH % mSensorWidth) ? 1 : 0;
+			auto tempr = (mSensorProcessBuffer[i * mSensorWidth + j] / (hCount * wCount)) / 51;
+			mSensorDataBuffer[i * mSensorWidth + j] = tempr & 0x07;
+			mSensorProcessBuffer[i * mSensorWidth + j] = 0;
+		}
+	}
+	mSensorData.swap(mSensorDataBuffer);
+}
+
+IrCamera::Status IrCamera::status() const
+{
 	return mState.status();
 }
+
 }

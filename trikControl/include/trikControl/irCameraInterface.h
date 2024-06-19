@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <QtCore/QObject>
 #include <QtCore/QVector>
 #include <QImage>
 #include <trikControl/trikControlDeclSpec.h>
@@ -22,16 +23,36 @@
 namespace trikControl {
 
 /// Interface for camera device representation
-class TRIKCONTROL_EXPORT IrCameraInterface : public DeviceInterface
+class TRIKCONTROL_EXPORT IrCameraInterface : public QObject, public DeviceInterface
 {
-public:
+	Q_OBJECT
 
-	/// Get photo as a vector of uint8_t in Grayscale8 format
+public:
+	~IrCameraInterface() override = default;
+
+public Q_SLOTS:
+	/// Initializes an ir camera and starts frames capturing.
+	virtual void init() = 0;
+
+	/// Stops frames capturing until init() will be called again.
+	virtual void stop() = 0;
+
+	/// Gets photo as a vector of uint8_t in Grayscale8 format.
 	virtual QVector<int32_t> getImage() = 0;
 
-	virtual Status status() const override = 0;
+	/// Returns average value in given cell of a grid.
+	/// @param[in] m row number
+	/// @param[in] n column number
+	virtual int8_t readSensor(int m, int n) = 0;
 
-	~IrCameraInterface() override = default;
+	Status status() const override = 0;
+
+signals:
+	/// Emitted when new frame is ready for processing.
+	void newFrame();
+	/// Emitted when camera is stopped successfully.
+	void stopped();
+
 };
 
 }

@@ -475,12 +475,9 @@ MarkerInterface *Brick::marker()
 	return nullptr;
 }
 
-QVector<int32_t> Brick::getIrImage()
+IrCameraInterface *Brick::irCamera()
 {
-	if (!mIrCamera)
-		return QVector<int32_t>();
-	else
-		return mIrCamera->getImage();
+	return mIrCamera.data();
 }
 
 EventDeviceInterface *Brick::eventDevice(const QString &deviceFile)
