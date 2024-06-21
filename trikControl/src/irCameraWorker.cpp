@@ -1,3 +1,17 @@
+/* Copyright 2024 Vladimir Kutuev
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
 #include "irCameraWorker.h"
 
 #include <QsLog.h>
@@ -5,10 +19,12 @@
 
 namespace trikControl {
 
-IrCameraWorkerMLX90640::IrCameraWorkerMLX90640(uint8_t i2cAddr): mI2cAddr(i2cAddr), mState("IR Camera worker")
+IrCameraWorkerMLX90640::IrCameraWorkerMLX90640(uint8_t i2cAddr, uint16_t m, uint16_t n)
+	: mI2cAddr(i2cAddr), mSensorHeight(m), mSensorWidth(n)
+	, mFrameBuffer(FRAME_SIZE), mImage(IMG_SIZE), mState("Ir Camera worker")
 {
-	mFrame.resize(IMAGE_SIZE);
-	mFrameBuffer.resize(FRAME_SIZE);
+	mSensorProcessBuffer.resize(mSensorHeight * mSensorWidth);
+	mSensorData.resize(mSensorHeight * mSensorWidth);
 }
 
 IrCameraWorkerMLX90640::~IrCameraWorkerMLX90640()
@@ -62,7 +78,7 @@ void IrCameraWorkerMLX90640::init()
 	mState.ready();
 	QLOG_INFO() << "Initialized Ir Camera worker";
 
-	QTimer::singleShot(0, this, &IrCameraWorkerMLX90640::readBuffer);
+	QTimer::singleShot(0, this, &IrCameraWorkerMLX90640::processFrame);
 }
 
 void IrCameraWorkerMLX90640::stop()
@@ -74,7 +90,7 @@ void IrCameraWorkerMLX90640::stop()
 	}
 }
 
-void IrCameraWorkerMLX90640::readBuffer()
+void IrCameraWorkerMLX90640::processFrame()
 {
 	if (!mState.isReady()) {
 		return;
@@ -87,16 +103,70 @@ void IrCameraWorkerMLX90640::readBuffer()
 		return;
 	}
 
-	std::transform(mFrameBuffer.cbegin(), mFrameBuffer.cend() - (FRAME_SIZE - IMAGE_SIZE)
-				, std::begin(mParams.offset)
-				, mFrame.begin()
-				, [](uint16_t pixel, uint16_t offset) {
-						auto col = (((static_cast<int16_t>(pixel) - static_cast<int16_t>(offset) + 256)) >> 1) & 0xFF;
-						return static_cast<uint8_t>(col);
-				});
+	for (auto chunkI = 0u, i = 0u; chunkI < mSensorHeight; ++chunkI) {
+		auto nextChunkIStart = i + (IMG_HEIGHT - i) / (mSensorHeight - chunkI);
+		nextChunkIStart += ((IMG_HEIGHT - i) % (mSensorHeight - chunkI)) ? 1 : 0;
 
-	QTimer::singleShot(0, this, &IrCameraWorkerMLX90640::readBuffer);
-	emit newFrame(mFrame);
+		for (; i < nextChunkIStart; ++i) {
+			for (auto chunkJ = 0u, j = 0u; chunkJ < mSensorWidth; ++chunkJ) {
+				auto nextChunkJStart = j + (IMG_WIDTH - j) / (mSensorWidth - chunkJ);
+				nextChunkJStart += ((IMG_WIDTH - j) % (mSensorWidth - chunkJ)) ? 1 : 0;
+
+				for (; j < nextChunkJStart; ++j) {
+					auto val = mFrameBuffer[i * IMG_WIDTH + j];
+					auto pixel = static_cast<int16_t>(val) - static_cast<int16_t>(mParams.offset[i * IMG_WIDTH + j]);
+					mSensorProcessBuffer[chunkI * mSensorWidth + chunkJ] += pixel;
+					if (pixel < -256) {
+						mImage[i * IMG_WIDTH + j] = 0x000000;
+						continue;
+					} else if (pixel > 256) {
+						mImage[i * IMG_WIDTH + j] = 0xFFFFFF;
+						continue;
+					}
+					pixel = (pixel + 256) >> 1;
+					if (pixel < 64) {
+						mImage[i * IMG_WIDTH + j] = ((pixel * 4) << 16) | 0xFF;
+					} else if (pixel < 128) {
+						mImage[i * IMG_WIDTH + j] = 0xFF0000 | (0xFF - ((pixel - 64) * 4));
+					} else if (pixel < 192) {
+						mImage[i * IMG_WIDTH + j] = 0xFF0000 | ((pixel - 128) * 4) << 8;
+					} else {
+						mImage[i * IMG_WIDTH + j] = (0xFF - ((pixel - 192) * 4)) << 16 | 0xFF00;
+					}
+				}
+			}
+		}
+	}
+	emit newImage(mImage);
+
+	for (auto i = 0u; i < mSensorHeight; ++i) {
+		auto hCount = (IMG_HEIGHT / mSensorHeight);
+		hCount += (i < IMG_HEIGHT % mSensorHeight) ? 1 : 0;
+		for (auto j = 0u; j < mSensorWidth; ++j) {
+			auto wCount = (IMG_WIDTH / mSensorWidth);
+			wCount += (j < IMG_WIDTH % mSensorWidth) ? 1 : 0;
+			auto avg = mSensorProcessBuffer[i * mSensorWidth + j] / (hCount * wCount);
+			if (avg < -120) {
+				mSensorData[i * mSensorWidth + j] = 0;
+			} else if (avg < -80) {
+				mSensorData[i * mSensorWidth + j] = 1;
+			} else if (avg < -20) {
+				mSensorData[i * mSensorWidth + j] = 2;
+			} else if (avg < 20) {
+				mSensorData[i * mSensorWidth + j] = 3;
+			} else if (avg < 90) {
+				mSensorData[i * mSensorWidth + j] = 4;
+			} else if (avg < 200) {
+				mSensorData[i * mSensorWidth + j] = 5;
+			} else {
+				mSensorData[i * mSensorWidth + j] = 6;
+			}
+			mSensorProcessBuffer[i * mSensorWidth + j] = 0;
+		}
+	}
+	emit newSensorData(mSensorData);
+
+	QTimer::singleShot(0, this, &IrCameraWorkerMLX90640::processFrame);
 }
 
 }

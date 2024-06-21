@@ -38,21 +38,24 @@ public Q_SLOTS:
 	virtual void stop() = 0;
 
 	/// Gets photo as a vector of uint8_t in Grayscale8 format.
-	virtual QVector<int32_t> getImage() = 0;
+	virtual QVector<int32_t> getImage() const = 0;
 
 	/// Returns average value in given cell of a grid.
 	/// @param[in] m row number
 	/// @param[in] n column number
-	virtual int8_t readSensor(int m, int n) = 0;
+	virtual int readSensor(int m, int n) const = 0;
 
 	Status status() const override = 0;
 
 signals:
-	/// Emitted when new frame is ready for processing.
-	void newFrame();
+	/// Emitted when new image is ready.
+	void imageUpdated();
+
+	/// Emitted when new sensor data is ready.
+	void sensorUpdated();
+
 	/// Emitted when camera is stopped successfully.
 	void stopped();
-
 };
 
 }

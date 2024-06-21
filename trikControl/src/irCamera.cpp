@@ -1,4 +1,4 @@
-/* Copyright 2023 Nick Ponomarev, Vladimir Kutuev
+/* Copyright 2023-2024 Nick Ponomarev, Vladimir Kutuev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 #include <QsLog.h>
 #include <trikKernel/configurer.h>
-#include <algorithm>
 
 #include "configurerHelper.h"
 #include "exceptions/incorrectDeviceConfigurationException.h"
@@ -25,7 +24,8 @@
 namespace trikControl {
 
 IrCamera::IrCamera(const QString &port, const trikKernel::Configurer &configurer
-				, trikHal::HardwareAbstractionInterface &hardwareAbstraction) : mState("IR Camera")
+				, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mImage(IMAGE_SIZE), mState("IR Camera")
 {
 	Q_UNUSED(hardwareAbstraction)
 
@@ -46,16 +46,14 @@ IrCamera::IrCamera(const QString &port, const trikKernel::Configurer &configurer
 	}
 	mSensorWidth = n;
 
-	mImage.resize(IMAGE_SIZE);
-	mImageBuffer.resize(IMAGE_SIZE);
 	mSensorData.resize(mSensorHeight * mSensorWidth);
-	mSensorDataBuffer.resize(mSensorHeight * mSensorWidth);
-	mSensorProcessBuffer.resize(mSensorHeight * mSensorWidth);
+	mSensorData.fill(-1);
 
-	mIrCameraWorker.reset(new IrCameraWorkerMLX90640(i2cAddr));
+	mIrCameraWorker.reset(new IrCameraWorkerMLX90640(i2cAddr, m, n));
 	mIrCameraWorker->moveToThread(&mWorkerThread);
 
-	connect(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::newFrame, this, &IrCamera::onNewFrame);
+	connect(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::newImage, this, &IrCamera::onNewImage);
+	connect(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::newSensorData, this, &IrCamera::onNewSensorData);
 	connect(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::stopped, this, &IrCamera::onStop);
 
 	QLOG_INFO() << "Starting IrCamera worker thread" << &mWorkerThread;
@@ -77,6 +75,7 @@ IrCamera::~IrCamera()
 
 void IrCamera::init()
 {
+	mSensorData.fill(0);
 	QMetaObject::invokeMethod(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::init);
 }
 
@@ -85,7 +84,7 @@ void IrCamera::stop()
 	QMetaObject::invokeMethod(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::stop);
 }
 
-QVector<int32_t> IrCamera::getImage()
+QVector<int32_t> IrCamera::getImage() const
 {
 	if (mState.isFailed()) {
 		return QVector<int32_t>();
@@ -94,81 +93,33 @@ QVector<int32_t> IrCamera::getImage()
 	return mImage;
 }
 
-int8_t IrCamera::readSensor(int m, int n)
+int IrCamera::readSensor(int m, int n) const
 {
 	if(m > mSensorHeight || n > mSensorWidth || m <= 0 || n <= 0) {
 		QLOG_WARN() << QString("Incorrect parameters for IrCamera::readSensor: m = %1, n = %2").arg(m).arg(n);
 		return -1;
 	}
 
-	return mSensorData[m * mSensorWidth + n];
+	return mSensorData[(m - 1) * mSensorWidth + (n - 1)];
 }
 
-void IrCamera::onNewFrame(QVector<uint8_t> frame)
+void IrCamera::onNewImage(QVector<int32_t> image)
 {
-	updateImage(frame);
-	updateSensor(frame);
-	emit newFrame();
+	mImage.swap(image);
+	emit imageUpdated();
+}
+
+void IrCamera::onNewSensorData(QVector<int32_t> grid)
+{
+	mSensorData.swap(grid);
+	emit sensorUpdated();
 }
 
 void IrCamera::onStop()
 {
+	mImage.fill(0);
+	mSensorData.fill(-1);
 	emit stopped();
-}
-
-void IrCamera::updateImage(const QVector<uint8_t> &frame)
-{
-	std::transform(frame.cbegin(), frame.cend()
-		, mImageBuffer.begin()
-		, [](uint16_t pixel) {
-			int color;
-			if (pixel < 64) {
-				color = ((pixel * 4) << 16) | 0xFF;
-			} else if (pixel < 128) {
-				color = 0xFF0000 | (0xFF - ((pixel - 64) * 4));
-			} else if (pixel < 192) {
-				color = 0xFF0000 | ((pixel - 128) * 4) << 8;
-			} else {
-				color = (0xFF - ((pixel - 192) * 4)) << 16 | 0xFF00;
-			}
-			return static_cast<int32_t>(color);
-		}
-	);
-	mImage.swap(mImageBuffer);
-}
-
-void IrCamera::updateSensor(const QVector<uint8_t> &frame)
-{
-	// Average
-
-	for (auto chunkI = 0u, i = 0u; chunkI < mSensorHeight; ++chunkI) {
-		auto nextChunkIStart = i + (IMAGE_HEIGHT - i) / (mSensorHeight - chunkI);
-		nextChunkIStart += ((IMAGE_HEIGHT - i) % (mSensorHeight - chunkI)) ? 1 : 0;
-
-		for (; i < nextChunkIStart; ++i) {
-			for (auto chunkJ = 0u, j = 0u; chunkJ < mSensorWidth; ++chunkJ) {
-				auto nextChunkJStart = j + (IMAGE_WIDTH - j) / (mSensorWidth - chunkJ);
-				nextChunkJStart += ((IMAGE_WIDTH - j) % (mSensorWidth - chunkJ)) ? 1 : 0;
-
-				for (; j < nextChunkJStart; ++j) {
-					mSensorProcessBuffer[chunkI * mSensorWidth + chunkJ] += frame[i * IMAGE_WIDTH + j];
-				}
-			}
-		}
-	}
-
-	for (auto i = 0u; i < mSensorHeight; ++i) {
-		for (auto j = 0u; j < mSensorWidth; ++j) {
-			auto hCount = (IMAGE_HEIGHT / mSensorHeight);
-			hCount += (i < IMAGE_HEIGHT % mSensorHeight) ? 1 : 0;
-			auto wCount = (IMAGE_WIDTH / mSensorWidth);
-			wCount += (j < IMAGE_WIDTH % mSensorWidth) ? 1 : 0;
-			auto tempr = (mSensorProcessBuffer[i * mSensorWidth + j] / (hCount * wCount)) / 51;
-			mSensorDataBuffer[i * mSensorWidth + j] = tempr & 0x07;
-			mSensorProcessBuffer[i * mSensorWidth + j] = 0;
-		}
-	}
-	mSensorData.swap(mSensorDataBuffer);
 }
 
 IrCamera::Status IrCamera::status() const
