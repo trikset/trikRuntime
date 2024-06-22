@@ -22,16 +22,16 @@ jobs:
       matrix:
         Linux release:
           imageName: 'ubuntu-latest'
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=silentCONFIG+=ccache CONFIG+=force_debug_info CONFIG+=sanitize_undefined CONFIG+=sanitizer"
+          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=ccache CONFIG+=force_debug_info CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         Linux debug:
           imageName: 'ubuntu-latest'
           CONFIG: debug
           VERA: true
           TRANSLATIONS: true
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=silent CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
+          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         macOs release:
           imageName: 'macOS-11'
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=silent CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info"
+          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info"
           TRIK_PYTHON3_VERSION_MINOR: 9
           TRIK_QT_VERSION: 5.12
 
