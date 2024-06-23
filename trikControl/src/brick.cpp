@@ -297,6 +297,10 @@ void Brick::stop()
 		rangeSensor->stop();
 	}
 
+	if (mIrCamera) {
+		mIrCamera->stop();
+	}
+
 	qDeleteAll(mEventDevices);
 	mEventDevices.clear();
 }
