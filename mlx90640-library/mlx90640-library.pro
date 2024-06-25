@@ -1,4 +1,4 @@
-# Copyright 2023 Nick Ponomarev
+# Copyright 2023-2024 Nick Ponomarev, Vladimir Kutuev
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,3 @@ SOURCES += \
 	$$PWD/src/MLX90640_STUB_I2C_Driver.cpp
 }
 
-# This is a foreign library with some flaws in their code
-# We need to silence some errors, otherwise the build fails
-QMAKE_CXXFLAGS += \
-	-Wno-error=unused-parameter

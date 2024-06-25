@@ -1,4 +1,4 @@
-/* Copyright 2023 Nick Ponomarev
+/* Copyright 2023-2024 Nick Ponomarev, Vladimir Kutuev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,23 @@ void MLX90640_I2CInit()
 
 int MLX90640_I2CRead(uint8_t slaveAddr, uint16_t startAddress, uint16_t nMemAddressRead, uint16_t *data)
 {
-    return 0;
+	(void)slaveAddr;
+	(void)startAddress;
+	(void)nMemAddressRead;
+	(void)data;
+	return 0;
 }
 
 void MLX90640_I2CFreqSet(int freq)
 {
+	(void)freq;
 }
 
 int MLX90640_I2CWrite(uint8_t slaveAddr, uint16_t writeAddress, uint16_t data)
 {
-    return 0;
+	(void)slaveAddr;
+	(void)writeAddress;
+	(void)data;
+	return 0;
 }
 
