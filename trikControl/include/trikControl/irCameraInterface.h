@@ -1,4 +1,4 @@
-/* Copyright 2023 Nick Ponomarev
+/* Copyright 2023-2024 Nick Ponomarev, Vladimir Kutuev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
 
 #pragma once
 
+#include <QImage>
 #include <QtCore/QObject>
 #include <QtCore/QVector>
-#include <QImage>
 #include <trikControl/trikControlDeclSpec.h>
+
 #include "deviceInterface.h"
 
 namespace trikControl {

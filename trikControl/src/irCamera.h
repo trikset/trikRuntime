@@ -19,19 +19,18 @@
 #include <QtCore/QVector>
 
 
+#include "deviceState.h"
 #include "irCameraInterface.h"
 #include "irCameraWorker.h"
-#include "deviceState.h"
 #include <trikControl/trikControlDeclSpec.h>
-#include <MLX90640_API.h>
 
 namespace trikKernel {
 class Configurer;
-}
+} // namespace trikKernel
 
 namespace trikHal {
 class HardwareAbstractionInterface;
-}
+} // namespace trikHal
 
 namespace trikControl {
 
@@ -104,4 +103,4 @@ private:
 	static constexpr int IMAGE_SIZE = IMAGE_WIDTH * IMAGE_HEIGHT;
 };
 
-}
+} // namespace trikControl

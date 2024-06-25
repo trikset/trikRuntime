@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include <cinttypes>
 #include <MLX90640_API.h>
 
 #include <QtCore/QObject>
@@ -36,7 +35,7 @@ public:
 	/// @param n - number of columns in sensor grid
 	IrCameraWorkerMLX90640(uint8_t i2cAddr, uint16_t m, uint16_t n);
 
-	~IrCameraWorkerMLX90640();
+	~IrCameraWorkerMLX90640() override;
 
 	/// Initialized i2c ir camera and starts frames capturing.
 	void init();
