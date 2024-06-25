@@ -31,7 +31,4 @@ SOURCES += \
 # This is a foreign library with some flaws in their code
 # We need to silence some errors, otherwise the build fails
 QMAKE_CXXFLAGS += \
-        -Wno-error=redundant-decls \
-	-Wno-error=type-limits \
-	-Wno-error=unused-variable \
 	-Wno-error=unused-parameter
