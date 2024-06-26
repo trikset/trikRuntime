@@ -48,6 +48,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/utilities.h \
 	$$PWD/include/trikControl/trikControlDeclSpec.h \
 	$$PWD/include/trikControl/lidarInterface.h \
+	$$PWD/include/trikControl/irCameraInterface.h \
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \
@@ -113,6 +114,8 @@ HEADERS += \
 	$$PWD/src/datafilter.h \
 	$$PWD/src/lidar.h \
 	$$PWD/src/lidarWorker.h \
+	$$PWD/src/irCamera.h \
+	$$PWD/src/irCameraWorker.h \
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -177,6 +180,8 @@ SOURCES += \
 	$$PWD/src/datafilter.cpp \
 	$$PWD/src/lidar.cpp \
 	$$PWD/src/lidarWorker.cpp \
+	$$PWD/src/irCamera.cpp \
+	$$PWD/src/irCameraWorker.cpp \
 
 CONFIGS += \
 	$$PWD/configs
@@ -194,8 +199,12 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-links(trikRuntimeQsLog trikKernel trikHal)
+links(trikRuntimeQsLog trikKernel trikHal mlx90640-library)
 implementationIncludes(trikKernel trikHal)
+INCLUDEPATH += $$GLOBAL_PWD/mlx90640-library/mlx90640-library/headers
+
+QMAKE_CXXFLAGS += \
+        -Wno-error=redundant-decls \
 
 copyToDestdir( \
 	$$CONFIGS \
