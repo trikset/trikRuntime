@@ -260,6 +260,8 @@ clang {
 
 	#treat Qt includes as system headers
 	SYSTEM_INCLUDE_PREFIX_OPTION += --system-header-prefix=$$[QT_INSTALL_HEADERS]
+
+	equals(QT_MAJOR_VERSION, 5):!greaterThan(QT_MINOR_VERSION, 12): QMAKE_CXXFLAGS *= -Wno-error=deprecated-copy
 }
 
 gcc {
