@@ -256,12 +256,10 @@ gcc5 | clang {
 
 clang {
 	#treat git submodules as system path
-	SYSTEM_INCLUDE_PREFIX_OPTION += $$system(git submodule status 2>/dev/null | sed $$shell_quote('s/^.[0-9a-fA-F]* \\([^ ]*\\).*$/--system-header-prefix=\\1/g'))
+	SYSTEM_INCLUDE_PREFIX_OPTION += $$system(git submodule status 2>/dev/null | sed $$shell_quote('s/^.[0-9a-fA-F]* \\([^ ]*\\).*$/-isystem=\\1/g'))
 
 	#treat Qt includes as system headers
-	SYSTEM_INCLUDE_PREFIX_OPTION += --system-header-prefix=$$[QT_INSTALL_HEADERS]
-
-	equals(QT_MAJOR_VERSION, 5):!greaterThan(QT_MINOR_VERSION, 12): QMAKE_CXXFLAGS *= -Wno-error=deprecated-copy
+	SYSTEM_INCLUDE_PREFIX_OPTION += -isystem=$$[QT_INSTALL_LIBS]
 }
 
 gcc {
