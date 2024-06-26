@@ -39,12 +39,13 @@ equal to its class name.
 		#cat /sys/class/pwm/ecap_cap.2/config > /dev/null
 
 		#amixer -q set PCM 127
+		echo 1 > /sys/class/gpio/gpio30/value
 	</initScript>
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
-				<!-- URI protocol: v4l2, file, qtmultimedia  -->
-				<camera type="v4l2" src="/dev/video0" />
+		<!-- URI protocol: v4l2, file, qtmultimedia  -->
+		<camera type="v4l2" src="/dev/video0" />
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
@@ -70,6 +71,7 @@ equal to its class name.
 		<mailbox port="8889" optional="true" />
 
 		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
+		<irCamera />
 	</deviceClasses>
 
 	<devicePorts>
@@ -150,10 +152,11 @@ equal to its class name.
 		<objectSensor port="video2" />
 		<colorSensor port="video1" />
 		<colorSensor port="video2" />
-                <camera port="video1" />
-                <camera port="video2" />
+		<camera port="video1" />
+		<camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
 		<lidar port="lidarPort" file="/dev/ttyUSB0" />
+		<irCamera port="irCameraPort" i2cAddress="0x33" m="3" n="3" />
 	</devicePorts>
 
 	<deviceTypes>
@@ -164,11 +167,11 @@ equal to its class name.
 				controlMin="-100" controlMax="100" />
 
 		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
-				controlMin="0" controlMax="100" />
+			controlMin="0" controlMax="100" />
 
-                <motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
+		<motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
 
-                <motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
+		<motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
 
 		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
 
@@ -196,7 +199,8 @@ equal to its class name.
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
-                <photo class="camera" type="v4l2" src="/dev/video0" />
+		<photo class="camera" type="v4l2" src="/dev/video0" />
+
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
@@ -208,7 +212,7 @@ equal to its class name.
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 
-        <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
+	<!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
 	<i2cBus1 path="/dev/i2c-1" />
 	<i2cBus2 path="/dev/i2c-2" />
 </config>

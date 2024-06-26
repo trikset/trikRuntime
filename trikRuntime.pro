@@ -28,6 +28,7 @@ SUBDIRS = \
         trikRun \
         trikServer \
         translations \
+        mlx90640-library \
 
 initvars.file = $$PWD/initvars.pre
 
@@ -40,10 +41,11 @@ qslog.file = qslog/QsLogSharedLibrary.pro
 
 qslog.depends = initvars
 translations.depends = initvars
+mlx90640-library.depends = initvars
 
 trikKernel.depends = qslog translations
 trikHal.depends = trikKernel
-trikControl.depends = trikHal
+trikControl.depends = trikHal mlx90640-library
 trikWiFi.depends = trikKernel
 trikNetwork.depends = trikKernel
 trikRun.depends = trikScriptRunner

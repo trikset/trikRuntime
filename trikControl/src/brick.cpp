@@ -57,6 +57,7 @@
 #include "mspI2cCommunicator.h"
 #include "i2cCommunicator.h"
 #include "lidar.h"
+#include "irCamera.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -106,6 +107,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
 
 	for (const QString &port : mConfigurer.ports()) {
+		QLOG_INFO() << "Creating device on port" << port;
 		createDevice(port);
 	}
 
@@ -160,6 +162,7 @@ Brick::~Brick()
 	mDisplay.reset();
 	mLed.reset();
 	mGamepad.reset();
+	mIrCamera.reset();
 }
 
 DisplayWidgetInterface *Brick::graphicsWidget()
@@ -292,6 +295,10 @@ void Brick::stop()
 
 	for (auto &&rangeSensor : mRangeSensors) {
 		rangeSensor->stop();
+	}
+
+	if (mIrCamera) {
+		mIrCamera->stop();
 	}
 
 	qDeleteAll(mEventDevices);
@@ -472,6 +479,11 @@ MarkerInterface *Brick::marker()
 	return nullptr;
 }
 
+IrCameraInterface *Brick::irCamera()
+{
+	return mIrCamera.data();
+}
+
 EventDeviceInterface *Brick::eventDevice(const QString &deviceFile)
 {
 	if (!mEventDevices.contains(deviceFile)) {
@@ -590,6 +602,11 @@ void Brick::createDevice(const QString &port)
 						new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)
 					);
 			mCamera.swap(tmp);
+		} else if (deviceClass == "irCamera") {
+			QScopedPointer<IrCameraInterface> tmp (
+				new IrCamera(port, mConfigurer, *mHardwareAbstraction)
+				);
+			mIrCamera.swap(tmp);
 		}
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();

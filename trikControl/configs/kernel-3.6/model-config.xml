@@ -136,4 +136,8 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<lidarPort>
 		<lidar file="/dev/ttyS1" />
 	</lidarPort>
+
+	<irCameraPort>
+		<irCamera />
+	</irCameraPort>
 </config>
