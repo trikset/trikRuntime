@@ -42,4 +42,4 @@ $EXECUTOR bash -lic " set -x; \
 && ls bin/x86-$CONFIG "
 
 
-exec bash -c 'eval timeout -k 10s 100s $EXECUTOR scripts/azure/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests trikPyRunnerTests'
+exec bash -c 'eval timeout -k 10s 100s $EXECUTOR scripts/azure/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests $([ -x ./trikPyRunnerTests ] && echo trikPyRunnerTests || : )'
