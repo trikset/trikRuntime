@@ -164,21 +164,21 @@ macx-clang {
 	}
 	#LSan can be used without performance degrade even in release build
 	#But at the moment we can not, because of Qt  problems
-        CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_memory):!CONFIG(sanitize_thread):!macx-clang {
-             CONFIG += sanitize_leak
-        }
+	CONFIG(debug):!CONFIG(sanitize_address):!CONFIG(sanitize_memory):!CONFIG(sanitize_thread):!macx-clang {
+	     CONFIG += sanitize_leak
+	}
 
-        sanitize_leak {
+	sanitize_leak {
 		QMAKE_CFLAGS *= -fsanitize=leak
 		QMAKE_CXXFLAGS *= -fsanitize=leak
 		QMAKE_LFLAGS *= -fsanitize=leak
 		#!clang:QMAKE_LFLAGS_RELEASE *= -static-liblsan
 	}
 
-        sanitize_memory {
-                QMAKE_CFLAGS *= -fsanitize-memory-use-after-dtor -fsanitize-memory-track-origins
-                QMAKE_CXXFLAGS *= -fsanitize-memory-use-after-dtor -fsanitize-memory-track-origins
-        }
+	sanitize_memory {
+		QMAKE_CFLAGS *= -fsanitize-memory-use-after-dtor -fsanitize-memory-track-origins
+		QMAKE_CXXFLAGS *= -fsanitize-memory-use-after-dtor -fsanitize-memory-track-origins
+	}
 
 	sanitize_undefined {
 		# This hack allows to avoid runtime dependency.
@@ -210,16 +210,16 @@ macx-clang {
 		}
 	}
 
-        unix {
-                QMAKE_CFLAGS_RELEASE += -fsanitize-recover=all
-                QMAKE_CXXFLAGS_RELEASE += -fsanitize-recover=all
+	unix {
+		QMAKE_CFLAGS_RELEASE += -fsanitize-recover=all
+		QMAKE_CXXFLAGS_RELEASE += -fsanitize-recover=all
 
-                QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO += -fno-sanitize-recover=all
-                QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -fno-sanitize-recover=all
+		QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO += -fno-sanitize-recover=all
+		QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO += -fno-sanitize-recover=all
 
-                QMAKE_CFLAGS_DEBUG  += -fno-sanitize-recover=all
-                QMAKE_CXXFLAGS_DEBUG += -fno-sanitize-recover=all
-        }
+		QMAKE_CFLAGS_DEBUG  += -fno-sanitize-recover=all
+		QMAKE_CXXFLAGS_DEBUG += -fno-sanitize-recover=all
+	}
 }
 
 OBJECTS_DIR = .build/$$CONFIGURATION/obj
@@ -239,7 +239,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 
 THIS_IS_QS_LOG=$$find(PROJECT_NAME, [qQ]s[lL]og)
 isEmpty(THIS_IS_QS_LOG) {
-        INCLUDEPATH += $$GLOBAL_PWD/qslog/qslog
+	INCLUDEPATH += $$GLOBAL_PWD/qslog/qslog
 }
 
 CONFIG += c++14
@@ -259,7 +259,20 @@ clang {
 	SYSTEM_INCLUDE_PREFIX_OPTION += $$system(git submodule status 2>/dev/null | sed $$shell_quote('s/^.[0-9a-fA-F]* \\([^ ]*\\).*$/-isystem=\\1/g'))
 
 	#treat Qt includes as system headers
-	SYSTEM_INCLUDE_PREFIX_OPTION += -isystem=$$[QT_INSTALL_LIBS]
+
+	SYSTEM_INCLUDE_PREFIX_OPTION +=\
+		-cxx-isystem$$shell_quote($$[QT_INSTALL_HEADERS]) \
+		--system-header-prefix=$$shell_quote($$[QT_INSTALL_LIBS]) \
+
+
+#	for(module, QT) {
+#	    equals(module, "testlib"): module = test
+#	    moduleList = $$split(module, )
+#	    SYSTEM_INCLUDE_PREFIX_OPTION += \
+#		-system-header-prefix=$$shell_quote($$[QT_INSTALL_LIBS]/Qt$$upper(\
+#			      $$take_first(moduleList))$$join(moduleList, )).framework/Headers/
+#	}
+#	unset(moduleList)
 }
 
 gcc {
