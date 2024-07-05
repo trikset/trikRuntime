@@ -14,6 +14,10 @@
 
 TEMPLATE = lib
 
+CONFIG += staticlib
+
+TARGET = trik-mlx90640
+
 include(../global.pri)
 
 INCLUDEPATH += $$PWD/mlx90640-library/headers
