@@ -269,7 +269,7 @@ clang {
 	    equals(module, "testlib"): module = test
 	    moduleList = $$split(module, )
 	    SYSTEM_INCLUDE_PREFIX_OPTION += \
-		-system-header-prefix=$$shell_quote($$[QT_INSTALL_LIBS]/Qt$$upper(\
+		-isystem$$shell_quote($$[QT_INSTALL_LIBS]/Qt$$upper(\
 			      $$take_first(moduleList))$$join(moduleList, )).framework/Headers/
 	}
 	unset(moduleList)
