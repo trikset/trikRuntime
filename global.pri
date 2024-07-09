@@ -271,11 +271,10 @@ clang {
 	    SYSTEM_INCLUDE_PREFIX_OPTION += \
 		-isystem$$shell_quote($$[QT_INSTALL_LIBS]/Qt$$upper(\
 			      $$take_first(moduleList))$$join(moduleList, )).framework/Headers/
+	    SYSTEM_INCLUDE_PREFIX_OPTION += \
+		--system-header-prefix=Qt$$upper($$take_first(moduleList))$$join(moduleList, )
 	}
 	unset(moduleList)
-
-	SYSTEM_INCLUDE_PREFIX_OPTION += \
-		--system-header-prefix=QtCore
 }
 
 gcc {
