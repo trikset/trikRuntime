@@ -30,7 +30,7 @@ $EXECUTOR bash -lic " set -x; \
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \
-&&  cd $BUILDDIR && qmake -r PYTHON3_VERSION_MINOR=\$TRIK_PYTHON3_VERSION_MINOR CONFIG+=$CONFIG -Wall $BUILD_SOURCESDIRECTORY/trikRuntime.pro $QMAKE_EXTRA \
+&&  cd $BUILDDIR && qmake -d -r PYTHON3_VERSION_MINOR=\$TRIK_PYTHON3_VERSION_MINOR CONFIG+=$CONFIG -Wall $BUILD_SOURCESDIRECTORY/trikRuntime.pro $QMAKE_EXTRA \
 &&  make -j 2 all \
 && env TRIK_PYTHONPATH=\`python3.\${TRIK_PYTHON3_VERSION_MINOR} -c 'import sys; import os; print(os.pathsep.join(sys.path))'\` \
     PYTHONMALLOC=malloc \
