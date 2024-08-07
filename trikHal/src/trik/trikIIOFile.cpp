@@ -16,15 +16,23 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <trikKernel/exceptions/internalErrorException.h>
 
 #include <QsLog.h>
 
 #include <trikKernel/timeVal.h>
 
 
-trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName)
+trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName, const QString &scanType)
 	: mFileName(fileName)
 {
+	if (scanType == "be:s14/16>>2") {
+	    mScanType = ScanType::AccelType;
+	} else if (scanType == "le:s16/16>>0") {
+	    mScanType = ScanType::GyroType;
+	} else {
+	    mScanType = ScanType::UnknownType;
+	}
 }
 
 trikHal::trik::TrikIIOFile::~TrikIIOFile()
@@ -93,10 +101,18 @@ void trikHal::trik::TrikIIOFile::readFile()
 		const uint64_t timestamp_mcsec = timestamp / 1000;
 		trikKernel::TimeVal eventTime(timestamp_mcsec / 1000000, timestamp_mcsec % 1000000);
 
-		// TODO: add comments
-		auto convert_axis = [](uint16_t b_byte, uint16_t s_byte) {
-			return static_cast<int16_t>((b_byte << 8) | s_byte) >> 2;
-		};
+	    std::function<int16_t(uint8_t, uint8_t)> convert_axis;
+	    if (mScanType == ScanType::AccelType){
+	        convert_axis = [](uint8_t b_byte, uint8_t s_byte) {
+	            return static_cast<int16_t>((b_byte << 8) | s_byte) >> 2;
+	        };
+	    } else if (mScanType == ScanType::GyroType) {
+	        convert_axis = [](uint8_t b_byte, uint8_t s_byte) {
+	            return static_cast<int16_t>((s_byte << 8) | b_byte);
+	        };
+	    } else {
+	        throw trikKernel::InternalErrorException("Unknown scan type for iio device");
+	    }
 
 		QVector<int> sensorValues = {
 			convert_axis(buffer[0], buffer[1]),

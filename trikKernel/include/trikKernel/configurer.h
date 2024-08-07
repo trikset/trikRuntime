@@ -47,6 +47,9 @@ public:
 	/// Ports configured in model config.
 	QStringList ports() const;
 
+	/// Returns type of a device configured on given port.
+	QString deviceType(const QString &port) const;
+
 	/// Returns class of a device configured on given port.
 	QString deviceClass(const QString &port) const;
 

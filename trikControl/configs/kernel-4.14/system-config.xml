@@ -76,8 +76,7 @@ equal to its class name.
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
 		<digitalSensor />
 		<fifo />
-		<accelerometer deviceFile="/dev/iio:device0" optional="true" />
-		<gyroscope deviceFile="/dev/iio:device1" optional="true" />
+                <iioDevice />
 		<lineSensor script="/etc/init.d/line-sensor-ov7670" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
 		<colorSensor script="/etc/init.d/mxn-sensor-ov7670" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
@@ -175,6 +174,8 @@ equal to its class name.
                 <camera port="video1" />
                 <camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
+                <iioDevice port="boardAccelPort" />
+                <iioDevice port="boardGyroPort" />
 	</devicePorts>
 
 	<deviceTypes>
@@ -218,6 +219,9 @@ equal to its class name.
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
                 <photo class="camera" type="v4l2" src="/dev/video0" />
+
+                <accelerometer class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s14/16>>2"/>
+                <gyroscope class="iioDevice" deviceFile="/dev/iio:device1" scanType="le:s16/16>>0"/>
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->

@@ -64,9 +64,9 @@ FifoInterface *StubHardwareAbstraction::createFifo(const QString &fileName) cons
 	return new StubFifo(fileName);
 }
 
-IIOFileInterface *StubHardwareAbstraction::createIIOFile(const QString &fileName) const
+IIOFileInterface *StubHardwareAbstraction::createIIOFile(const QString &fileName, const QString &scanType) const
 {
-	return new StubIIOFile(fileName);
+	return new StubIIOFile(fileName, scanType);
 }
 
 InputDeviceFileInterface *StubHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

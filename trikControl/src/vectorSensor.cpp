@@ -23,9 +23,10 @@
 using namespace trikControl;
 
 VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	    , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &port)
 	: mState(deviceName)
-	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByDevice(deviceName, "deviceFile")))
+	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
+	                                             configurer.attributeByPort(port, "scanType")))
 {
 	if (!mState.isFailed()) {
 		if (!mIIOFile.data()->open()) {
