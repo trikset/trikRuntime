@@ -35,11 +35,11 @@ $EXECUTOR bash -lic " set -x; \
 && env TRIK_PYTHONPATH=\`python3.\${TRIK_PYTHON3_VERSION_MINOR} -c 'import sys; import os; print(os.pathsep.join(sys.path))'\` \
     PYTHONMALLOC=malloc \
     ASAN_OPTIONS=disable_coredump=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0:use_sigaltstack=0 \
-    LSAN_OPTIONS=suppressions=\$PWD/bin/x86-$CONFIG/lsan.supp:fast_unwind_on_malloc=0 \
+    LSAN_OPTIONS=suppressions=\$PWD/bin/lsan.supp:fast_unwind_on_malloc=0 \
     MSAN_OPTIONS=poison_in_dtor=1 \
     QT_QPA_PLATFORM=minimal \
     make -k -j 2 check \
-&& ls bin/x86-$CONFIG "
+&& ls bin"
 
 
 exec bash -c 'eval timeout -k 10s 100s $EXECUTOR scripts/azure/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests $([ -x ./trikPyRunnerTests ] && echo trikPyRunnerTests || : )'

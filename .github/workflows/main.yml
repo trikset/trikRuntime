@@ -128,7 +128,7 @@ jobs:
 
       - name: QMake
         shell: msys2 {0}
-        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}" CONFIG+=force_debug_info CONFIG+=sanitizer CONFIG+=sanitize_undefined'
+        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}" CONFIG+=force_debug_info CONFIG+=sanitizer CONFIG+=sanitize_undefined'
 
       - name: QMake all
         shell: msys2 {0}

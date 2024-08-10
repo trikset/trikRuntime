@@ -11,13 +11,6 @@ mergeable:
       - do: milestone
         no_empty:
           enabled: true
-        must_include:
-          regex: '[0-9]+\.[0-9]+$'
-      - do: approvals
-        min:
-          count: 1
-        required:
-          assignees: true
 
   - when: issues.opened
     validate:

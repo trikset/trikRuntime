@@ -51,12 +51,19 @@ SOURCES += \
 	$$PWD/src/loggingHelper.cpp \
 	$$PWD/src/rcReader.cpp \
 	$$PWD/src/translationsHelper.cpp \
-	$$PWD/src/$$PLATFORM/coreDumping.cpp \
+
+
+macx { PLATFORM = mac } else:win32 { PLATFORM = windows } else:PLATFORM = linux
+
+
+
+SOURCES += $$PWD/src/$$PLATFORM/coreDumping.cpp \
+
 
 OTHER_FILES += \
 	$$PWD/stubTrikRc \
 
-equals(ARCHITECTURE, arm):!trik_not_brick {
+!trik_not_brick {
 	SOURCES += $$PWD/src/trik/paths.cpp
 } else {
 	SOURCES += $$PWD/src/stub/paths.cpp

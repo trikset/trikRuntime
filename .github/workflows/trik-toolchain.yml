@@ -90,7 +90,7 @@ jobs:
              ccache --version
              qemu-arm --version
 
-      - name: "[TRIK brick] QMake"
+      - name: "[TRIK controller] QMake"
         timeout-minutes: 1
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
@@ -99,14 +99,14 @@ jobs:
             qmake CONFIG+=release CONFIG+=force_debug_info CONFIG+=precompile_header \
                   "$GITHUB_WORKSPACE/"
 
-      - name: "[TRIK brick] QMake all"
+      - name: "[TRIK controller] QMake all"
         timeout-minutes: 3
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             cd build-brick
             make -j $(nproc) qmake_all
 
-      - name: "[TRIK brick] Make all"
+      - name: "[TRIK controller] Make all"
         timeout-minutes: 10
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi

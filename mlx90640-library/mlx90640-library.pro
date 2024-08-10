@@ -29,13 +29,11 @@ HEADERS += \
 SOURCES += \
 	$$PWD/mlx90640-library/functions/MLX90640_API.cpp
 
-linux-* {
-SOURCES += \
-	$$PWD/mlx90640-library/functions/MLX90640_LINUX_I2C_Driver.cpp
-}
-
-!linux-* {
-SOURCES += \
+trik_not_brick {
+    SOURCES += \
 	$$PWD/src/MLX90640_STUB_I2C_Driver.cpp
+} else {
+    SOURCES += \
+	$$PWD/mlx90640-library/functions/MLX90640_LINUX_I2C_Driver.cpp
 }
 

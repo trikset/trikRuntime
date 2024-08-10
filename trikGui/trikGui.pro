@@ -105,13 +105,21 @@ SOURCES += \
 	$$PWD/sensorLever.cpp \
 	$$PWD/scriptHolder.cpp \
 	$$PWD/gamepadIndicator.cpp \
-	$$PWD/$$PLATFORM/powerLevel.cpp \
 	$$PWD/gyroscopeIndicator.cpp \
 	$$PWD/accelerometerWidget.cpp \
 	$$PWD/networkWidget.cpp \
 	$$PWD/fileSystemFilter.cpp \
 	$$PWD/cameraWidget.cpp \
 	$$PWD/pwmCaptureIndicator.cpp
+
+
+
+!trik_not_brick {
+    SOURCES += $$PWD/powerLevel.cpp
+} else {
+    SOURCES += $$PWD/powerLevel_stub.cpp
+}
+
 
 RESOURCES = trikGui.qrc
 
