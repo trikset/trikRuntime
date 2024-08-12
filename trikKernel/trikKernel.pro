@@ -51,15 +51,19 @@ SOURCES += \
 	$$PWD/src/loggingHelper.cpp \
 	$$PWD/src/rcReader.cpp \
 	$$PWD/src/translationsHelper.cpp \
-	$$PWD/src/$$PLATFORM/coreDumping.cpp \
+
 
 OTHER_FILES += \
 	$$PWD/stubTrikRc \
 
-equals(ARCHITECTURE, arm):!trik_not_brick {
-	SOURCES += $$PWD/src/trik/paths.cpp
+!trik_not_brick {
+	SOURCES += \
+		$$PWD/src/paths.cpp \
+                $$PWD/src/coreDumping.cpp \
 } else {
-	SOURCES += $$PWD/src/stub/paths.cpp
+	SOURCES += \
+		$$PWD/src/paths_stub.cpp \
+                $$PWD/src/coreDumping_stub.cpp \
 
 	copyToDestdir($$PWD/stubTrikRc, now)
 	copyToDestdir($$PWD/stubHostname, now)

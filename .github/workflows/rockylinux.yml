@@ -84,7 +84,7 @@ jobs:
       - name: QMake
         timeout-minutes: 1
         run: |
-            qmake CONFIG+=release CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
+            qmake CONFIG+=release CONFIG+=trik_not_brick CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
                   CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer \
                   CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'qjsengine' && 'trik_use_qjsengine' || '' }} \
                   "$GITHUB_WORKSPACE/"

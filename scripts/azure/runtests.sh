@@ -10,7 +10,7 @@ export MSAN_OPTIONS=poison_in_dtor=1
 
 for t in "$@"
   do
-    cd  $BUILDDIR/bin/x86-$CONFIG
+    cd  $BUILDDIR/bin
     errCode=0
     if [ $AGENT_OS = linux ] ; then
       ulimit -c unlimited

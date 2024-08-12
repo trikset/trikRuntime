@@ -11,7 +11,7 @@ for t in "$@"
     MSAN_OPTIONS=poison_in_dtor=1 \
     TRIK_PYTHONPATH=$TRIK_PYTHONPATH \
     sh -xc \
-    "cd  $BUILDDIR/bin/x86-$CONFIG && \
+    "cd  $BUILDDIR/bin && \
      { \
        errCode=0 ; \
        if [ $TRAVIS_OS_NAME = linux ] ; then ulimit -c unlimited ; echo core > /proc/sys/kernel/core_pattern ; echo 0 > /proc/sys/kernel/core_uses_pid; fi ; \

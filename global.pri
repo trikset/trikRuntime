@@ -38,24 +38,6 @@ COMPILER_IS_ARM = $$find(COMPILER, arm-.*)
 
 PYTHONQTALL_CONFIG=PythonQtCore
 
-count(COMPILER_IS_ARM, 1) {
-	ARCHITECTURE = arm
-} else {
-	ARCHITECTURE = x86
-}
-
-win32 {
-	PLATFORM = windows
-}
-
-unix:!macx {
-	PLATFORM = linux
-}
-
-macx {
-	PLATFORM = mac
-}
-
 CONFIG *= qt
 
 CONFIG -= app_bundle
@@ -74,16 +56,9 @@ CONFIG = $$unique(CONFIG)
 QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO *= -Og
 QMAKE_CXXFLAGS_DEBUG *= -Og
 
-CONFIG(debug) {
-	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-debug
-	unix {
+unix:debug {
 		QMAKE_CXXFLAGS += -coverage
 		QMAKE_LFLAGS += -coverage
-	}
-	CONFIGURATION_SUFFIX=
-} else {
-	isEmpty(CONFIGURATION): CONFIGURATION = $$ARCHITECTURE-release
-	CONFIGURATION_SUFFIX=
 }
 
 !gcc4:!gcc5:!clang:!win32:gcc:*-g++*:system($$QMAKE_CXX --version | grep -qEe '"\\<5\\.[0-9]+\\."' ){ CONFIG += gcc5 }
@@ -93,7 +68,7 @@ GLOBAL_PWD = $$absolute_path($$PWD)
 GLOBAL_OUTPWD = $$absolute_path($$OUT_PWD)
 
 isEmpty(GLOBAL_DESTDIR) {
-	GLOBAL_DESTDIR = $$GLOBAL_OUTPWD/bin/$$CONFIGURATION
+	GLOBAL_DESTDIR = $$GLOBAL_OUTPWD/bin
 }
 isEmpty(DESTDIR) {
 	DESTDIR = $$GLOBAL_DESTDIR
@@ -221,11 +196,6 @@ macx-clang {
 		QMAKE_CXXFLAGS_DEBUG += -fno-sanitize-recover=all
 	}
 }
-
-OBJECTS_DIR = .build/$$CONFIGURATION/obj
-MOC_DIR = .build/$$CONFIGURATION/moc
-RCC_DIR = .build/$$CONFIGURATION/rcc
-UI_DIR = .build/$$CONFIGURATION/ui
 
 precompile_header {
 	PRECOMPILED_HEADER = $$PWD/pch.h

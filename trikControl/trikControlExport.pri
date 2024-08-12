@@ -31,28 +31,6 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 
 COMPILER = $$(CXX)
 
-COMPILER_IS_ARM = $$find(COMPILER, arm-oe.*)
-
-count(COMPILER_IS_ARM, 1) {
-	ARCHITECTURE = arm
-} else {
-	ARCHITECTURE = x86
-}
-
-win32 {
-	PLATFORM = windows
-} else {
-	PLATFORM = linux
-}
-
-CONFIG(debug, debug | release) {
-	CONFIGURATION = $$ARCHITECTURE-debug
-	CONFIGURATION_SUFFIX = -d
-} else {
-	CONFIGURATION = $$ARCHITECTURE-release
-	CONFIGURATION_SUFFIX =
-}
-
 equals(TEMPLATE, app) {
 	!macx {
 		QMAKE_LFLAGS += -Wl,-O1,-rpath,.
@@ -60,7 +38,7 @@ equals(TEMPLATE, app) {
 	}
 }
 
-isEmpty(TRIK_RUNTIME_BIN_DIR):TRIK_RUNTIME_BIN_DIR = $$TRIK_RUNTIME_DIR/bin/$$CONFIGURATION
+isEmpty(TRIK_RUNTIME_BIN_DIR):TRIK_RUNTIME_BIN_DIR = $$TRIK_RUNTIME_DIR/bin
 
 LIBS += -L$$TRIK_RUNTIME_BIN_DIR
 
@@ -129,24 +107,3 @@ copyToDestdir( \
 	$$PWD/system-config.xml  \
 	$$PWD/../media/ \
 )
-
-# Compiler swithces to enable Google Sanitizers support.
-unix:equals(ARCHITECTURE, "x86") {
-	CONFIG(debug) {
-		QMAKE_CXXFLAGS += -fno-omit-frame-pointer
-		CONFIG(sanitize-address) {
-			QMAKE_CXXFLAGS += -fsanitize=address
-			QMAKE_LFLAGS += -fsanitize=address
-		}
-		CONFIG(sanitize-undefined) {
-			# UBSan does not play well with precompiled headers for some reason.
-			QMAKE_CXXFLAGS += -fsanitize=undefined
-			QMAKE_LFLAGS += -fsanitize=undefined
-		}
-		CONFIG(sanitize-thread) {
-			QMAKE_CXXFLAGS += -fsanitize=thread
-			QMAKE_LFLAGS += -fsanitize=thread
-			LIBS += -ltsan
-		}
-	}
-}
