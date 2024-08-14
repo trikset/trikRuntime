@@ -25,31 +25,26 @@ using namespace trikControl;
 VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(deviceName)
+	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByDevice(deviceName, "deviceFile")))
 {
-	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-			, hardwareAbstraction);
-	mVectorSensorWorker->moveToThread(&mWorkerThread);
-
-	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
-	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
-
-	mWorkerThread.setObjectName(mVectorSensorWorker->metaObject()->className());
-	mWorkerThread.start();
-
 	if (!mState.isFailed()) {
+		if (!mIIOFile.data()->open()) {
+			QLOG_ERROR() << "Gyroscope init failed";
+			mState.fail();
+			return;
+		}
 		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-		connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &VectorSensor::newData);
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData
+				, this, [this](QVector<int> reading, const trikKernel::TimeVal &eventTime){
+					Q_UNUSED(eventTime);
+					mResult = reading;
+		});
 
-		QLOG_INFO() << "Starting VectorSensor worker thread" << &mWorkerThread;
+		QLOG_INFO() << "Starting VectorSensor";
 
 		mState.ready();
 	}
-}
-
-VectorSensor::~VectorSensor()
-{
-	mWorkerThread.quit();
-	mWorkerThread.wait();
 }
 
 VectorSensor::Status VectorSensor::status() const
@@ -59,5 +54,5 @@ VectorSensor::Status VectorSensor::status() const
 
 QVector<int> VectorSensor::read() const
 {
-	return mVectorSensorWorker->read();
+	return mResult;
 }
