@@ -103,8 +103,13 @@ working properly, it tests only that runtime can interact with them).
 	<!-- On-board sensors. -->
 	<!-- If model is not using those, they can be turned off to save system resources, by deleting them or
 		 commenting them out. -->
-	<accelerometer />
-	<gyroscope />
+        <boardAccelPort>
+            <accelerometer />
+        </boardAccelPort>
+
+        <boardGyroPort>
+            <gyroscope />
+        </boardGyroPort>
 
 	<!-- Optional modules -->
 	<gamepad />
