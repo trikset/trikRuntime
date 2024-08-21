@@ -600,7 +600,7 @@ void Brick::createDevice(const QString &port)
 				);
 			mIrCamera.swap(tmp);
 		} else if (deviceClass == "iioDevice") {
-	        const QString &deviceType = mConfigurer.deviceType(port);
+	        const auto &deviceType = mConfigurer.deviceType(port);
 	        if (deviceType == "accelerometer"){
 	            mAccelerometer.reset(new VectorSensor(deviceType, mConfigurer, *mHardwareAbstraction, port));
 	        } else if (deviceType == "gyroscope"){

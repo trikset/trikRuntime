@@ -30,10 +30,10 @@ class TRIKHAL_EXPORT IIOFileInterface : public QObject
 	Q_OBJECT
 
 public:
-	enum ScanType {
-	    AccelType,
-	    GyroType,
-	    UnknownType
+	enum class ScanType {
+	    Undefined,
+	    Accel,
+	    Gyro
 	};
 	/// Opens IIO file and starts listening for events.
 	virtual bool open() = 0;
