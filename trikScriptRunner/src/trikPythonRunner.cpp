@@ -14,11 +14,11 @@
 
 #include <QEventLoop>
 #include <QsLog.h>
+#include <stdexcept>
+#include <PythonQt.h>
 
 #include "trikPythonRunner.h"
-
 #include "src/pythonEngineWorker.h"
-#include <stdexcept>
 
 using namespace trikScriptRunner;
 

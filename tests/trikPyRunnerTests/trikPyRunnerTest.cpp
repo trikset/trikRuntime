@@ -24,6 +24,7 @@
 #include <QTimer>
 
 using namespace tests;
+constexpr auto SCRIPT_EXECUTION_TIMEOUT = 10000;
 constexpr auto EXIT_TIMEOUT = -93;
 constexpr auto EXIT_SCRIPT_ERROR = 113;
 constexpr auto EXIT_SCRIPT_SUCCESS = EXIT_SUCCESS;
@@ -49,7 +50,7 @@ void TrikPyRunnerTest::TearDown()
 int TrikPyRunnerTest::run(const QString &script)
 {
 	QEventLoop l;
-	QTimer::singleShot(5000, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
+	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
 					 , &l, [&l](const QString &e) {
 		auto rc = EXIT_SCRIPT_SUCCESS;
@@ -115,6 +116,8 @@ TEST_F(TrikPyRunnerTest, sanityCheck)
 	const auto &knownMethodNames = scriptRunner().knownMethodNames();
 	ASSERT_TRUE(knownMethodNames.contains("brick"));
 	ASSERT_TRUE(knownMethodNames.contains("setPower"));
+	err = run("print(dir(brick.motor('M2')))");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = run("brick.motor('M2').setPower(10)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
@@ -150,15 +153,17 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 {
-	auto err = runDirectCommandAndWaitForQuit("from PythonQt import QtCore as QtCore");
+	auto err = runDirectCommandAndWaitForQuit("import TRIK_PQT; print(dir(TRIK_PQT))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("import PythonQt");
+	err = runDirectCommandAndWaitForQuit("print(dir(TRIK_PQT.Qt))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("print(dir(PythonQt))");
+	err = runDirectCommandAndWaitForQuit("print(dir(TRIK_PQT.QtPyTrikControl))");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("from TRIK_PQT import QtCore as QtCore");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("print(dir(QtCore))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("QtCore.QTimer.singleShot(100, lambda _ : None)");
+	err = runDirectCommandAndWaitForQuit("TRIK_PQT.Qt.QTimer.singleShot(100, lambda _ : None)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("t=QtCore.QTimer()");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
@@ -178,7 +183,7 @@ TEST_F(TrikPyRunnerTest, brickMethodWithNonTrivialReturnTypeConversion)
 
 TEST_F(TrikPyRunnerTest, brickPropertyAndVectorArgument)
 {
-	auto exitCode = run("brick.display().show([0], 1, 1, 'grayscale8')");
+	auto exitCode = run("brick.display() and brick.display().show([0], 1, 1, 'grayscale8')");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }
 

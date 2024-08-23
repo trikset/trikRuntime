@@ -25,9 +25,12 @@ QT += widgets
 
 !trik_nopython {
   #PythonQt generated files have problems
-  INCLUDEPATH *= $$PWD/../trikControl/include/trikControl $$PWD/../trikKernel/include/trikKernel
+  INCLUDEPATH *= $$PWD/../trikControl/include/trikControl \
+    $$PWD/../trikKernel/include/trikKernel \
+    $$PWD/generated_cpp/pytrikcontrol \
+
   include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
-  include(./generated_cpp/PyTrikControl/PyTrikControl.pri)
+  include(./generated_cpp/pytrikcontrol/pytrikcontrol.pri)
 }
 
 !macx:enableFlagIfCan(-Wno-error=cast-function-type)

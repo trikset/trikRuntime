@@ -29,6 +29,7 @@ INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \
 
 SOURCES = $$PWD/mainTest.cpp
+QT += core
 
 include(thirdparty/googletest.pri)
 

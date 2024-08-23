@@ -28,6 +28,8 @@ QKeySequence::
 QKeySequence::data_ptr
 QKeySequence::isDetached
 QList::begin
+QList::cbegin
+QList::cend
 QList::constBegin
 QList::constEnd
 QList::detach
@@ -41,7 +43,6 @@ QList::node_copy
 QList::node_destruct
 QList::toSet
 QMatrix::
-QMessageLogContext::copy
 QObject::connect
 QObject::connectNotify
 QObject::d_func
@@ -54,9 +55,6 @@ QObject::receivers
 QObject::registerUserData
 QObject::setUserData
 QObject::userData
-QPainterPath::d_func
-QPainterPath::detach
-QPainterPathStroker::d_func
 QPalette::
 QPalette::detach
 QPixmap::
@@ -77,8 +75,12 @@ QSizePolicy::
 QTransform::
 QVector::back
 QVector::begin
+QVector::cbegin
+QVector::cend
 QVector::constBegin
 QVector::constEnd
+QVector::crbegin
+QVector::crend
 QVector::detach
 QVector::end
 QVector::erase
@@ -86,6 +88,8 @@ QVector::front
 QVector::insert
 QVector::isDetached
 QVector::operator+=
+QVector::rbegin
+QVector::rend
 QWidget::create
 QWidget::d_func
 QWidget::find
@@ -104,14 +108,17 @@ QBasicMutex::fastTryLock QMutexData*&
 QBasicMutex::fastTryUnlock QMutexData*&
 QByteArray::QByteArray QByteArrayDataPtr
 QByteArray::QByteArray Qt::Initialization
+QByteArray::fromBase64Encoding QByteArray&&
 QByteArray::fromStdString std::string const&
 QByteArray::reallocData Data::AllocationOptions
-QColor::setColorFromString String const&
+QCursor::bitmap Qt::ReturnByValueConstant
+QCursor::mask Qt::ReturnByValueConstant
 QDataStream::__lshift__ qfloat16
 QDataStream::__lshift__ std::nullptr_t
 QDataStream::__rshift__ qfloat16&
 QDataStream::__rshift__ std::nullptr_t&
 QImage::QImage QImageCleanupFunction
+QList::QList std::initializer_list<T>
 QList::contains_impl QListData::ArrayCompatibleLayout
 QList::contains_impl QListData::NotArrayCompatibleLayout
 QList::count_impl QListData::ArrayCompatibleLayout
@@ -126,23 +133,32 @@ QMetaType::QMetaType QMetaType::ExtensionFlag const
 QMetaType::ctor QMetaTypeInterface const*
 QMetaType::debugStream QDebug&
 QMetaType::isExtended QMetaType::ExtensionFlag const
-QMetaType::registerConverter To
-QMetaType::registerConverter UnaryFunction
 QMetaType::registerNormalizedType QMetaType::Deleter
 QMetaType::registerNormalizedType QMetaType::Destructor
+QMetaType::registerNormalizedType QMetaType::TypedDestructor
 QMetaType::registerStreamOperators QMetaType::SaveOperator
 QMetaType::registerType QMetaType::Deleter
+QMetaType::registerType QMetaType::TypedDestructor
 QPair::QPair QPair<TT1,TT2> const&
 QPair::operator_assign QPair<TT1,TT2> const&
 QPixelFormat::get QPixelFormat::Field
 QPixelFormat::set QPixelFormat::Field
 QPixmap::QPixmap QPlatformPixmap*
+QSignalBlocker::QSignalBlocker QSignalBlocker&&
+QSignalBlocker::operator_assign QSignalBlocker&&
 QSizePolicy::QSizePolicy Bits
+QStringList::QStringList std::initializer_list<QString>
 QTransform::QTransform Qt::Initialization
+QVector::QVector QArrayDataPointerRef<T>
+QVector::QVector std::initializer_list<T>
+QVector::append T&&
 QVector::freeData Data*
 QVector::freeData QVector<T>::Data*
 QVector::fromStdVector std::vector<T> const&
 QVector::isValidIterator QVector<T>::iterator const&
+QVector::operator_assign std::initializer_list<T>
+QVector::prepend T&&
+QVector::realloc QArrayData::AllocationOptions
 QVector::reallocData QArrayData::AllocationOptions
 trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
 trikControl::DisplayInterface::show QVector<int32_t> const&
@@ -160,8 +176,6 @@ QByteArray::rbegin QByteArray::reverse_iterator
 QByteArray::rend QByteArray::const_reverse_iterator
 QByteArray::rend QByteArray::reverse_iterator
 QByteArray::toStdString std::string
-QList::cbegin const_iterator
-QList::cend const_iterator
 QList::crbegin const_reverse_iterator
 QList::crend const_reverse_iterator
 QList::detach_helper_grow Node*
@@ -183,16 +197,31 @@ QRegion::rbegin QRegion::const_reverse_iterator
 QRegion::rend QRegion::const_reverse_iterator
 QSysInfo::macVersion QSysInfo::MacVersion
 QSysInfo::windowsVersion QSysInfo::WinVersion
-QVector::cbegin const_iterator
-QVector::cend const_iterator
-QVector::crbegin const_reverse_iterator
-QVector::crend const_reverse_iterator
-QVector::rbegin const_reverse_iterator
-QVector::rbegin reverse_iterator
-QVector::rend const_reverse_iterator
-QVector::rend reverse_iterator
 QVector::toStdVector std::vector<T>
+Qt::__or__ QFlags<Alignment::enum_type>
+Qt::__or__ QFlags<DockWidgetAreas::enum_type>
+Qt::__or__ QFlags<DropActions::enum_type>
+Qt::__or__ QFlags<Edges::enum_type>
+Qt::__or__ QFlags<GestureFlags::enum_type>
+Qt::__or__ QFlags<ImageConversionFlags::enum_type>
+Qt::__or__ QFlags<InputMethodHints::enum_type>
+Qt::__or__ QFlags<InputMethodQueries::enum_type>
+Qt::__or__ QFlags<ItemFlags::enum_type>
+Qt::__or__ QFlags<KeyboardModifiers::enum_type>
+Qt::__or__ QFlags<MatchFlags::enum_type>
+Qt::__or__ QFlags<MouseButtons::enum_type>
+Qt::__or__ QFlags<MouseEventFlags::enum_type>
+Qt::__or__ QFlags<Orientations::enum_type>
+Qt::__or__ QFlags<ScreenOrientations::enum_type>
+Qt::__or__ QFlags<SplitBehavior::enum_type>
+Qt::__or__ QFlags<TextInteractionFlags::enum_type>
+Qt::__or__ QFlags<ToolBarAreas::enum_type>
+Qt::__or__ QFlags<TouchPointStates::enum_type>
+Qt::__or__ QFlags<WindowFlags::enum_type>
+Qt::__or__ QFlags<WindowStates::enum_type>
+Qt::__or__ QIncompatibleFlag
 trikControl::BrickInterface::getStillImage QVector<uint8_t>
+trikControl::BrickInterface::irCamera trikControl::IrCameraInterface*
 trikControl::CameraDeviceInterface::getPhoto QVector<uint8_t>
 trikControl::CameraDeviceInterface::qImageToQVector QVector<uint8_t>
 trikControl::CameraDeviceInterface::status Status
