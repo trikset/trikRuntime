@@ -31,6 +31,8 @@ PythonQt::self()->addParentClass("trikControl::GyroSensorInterface", "trikContro
 PythonQt::self()->addParentClass("trikControl::GyroSensorInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::GyroSensorInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::I2cDeviceInterface::staticMetaObject, "QtPyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__I2cDeviceInterface>, nullptr, module, 0);
 PythonQt::self()->addParentClass("trikControl::I2cDeviceInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::I2cDeviceInterface,trikControl::DeviceInterface>());
+PythonQt::priv()->registerClass(&trikControl::IrCameraInterface::staticMetaObject, "QtPyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__IrCameraInterface>, nullptr, module, 0);
+PythonQt::self()->addParentClass("trikControl::IrCameraInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::IrCameraInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::KeysInterface::staticMetaObject, "QtPyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__KeysInterface>, nullptr, module, 0);
 PythonQt::self()->addParentClass("trikControl::KeysInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::KeysInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::LedInterface::staticMetaObject, "QtPyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__LedInterface>, nullptr, module, 0);

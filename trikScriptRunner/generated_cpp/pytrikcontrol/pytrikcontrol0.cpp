@@ -159,6 +159,8 @@ void PythonQtWrapper_trikControl__I2cDeviceInterface::send(trikControl::I2cDevic
 
 
 
+
+
 int  PythonQtWrapper_trikControl__MotorInterface::maxControl(trikControl::MotorInterface* theWrappedObject) const
 {
   return ( theWrappedObject->maxControl());

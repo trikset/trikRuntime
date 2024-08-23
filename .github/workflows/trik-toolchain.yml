@@ -151,4 +151,4 @@ jobs:
             # export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
             export QEMU_LD_PREFIX=/opt/trik-sdk/sysroots/arm926ejse-oe-linux-gnueabi/
             env | sort
-            make -k check TESTARGS="-platform offscreen"
+            make -k check
