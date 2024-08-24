@@ -155,6 +155,17 @@ QStringList Configurer::ports() const
 	return mModelConfiguration.keys();
 }
 
+QString Configurer::deviceType(const QString &port) const
+{
+	if (!mModelConfiguration.contains(port)) {
+	    throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
+	}
+
+	const QString &deviceType = mModelConfiguration.value(port).deviceType;
+
+	return deviceType;
+}
+
 QString Configurer::deviceClass(const QString &port) const
 {
 	if (!mModelConfiguration.contains(port)) {

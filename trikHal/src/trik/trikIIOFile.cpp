@@ -22,9 +22,16 @@
 #include <trikKernel/timeVal.h>
 
 
-trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName)
+trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName, const QString &scanType)
 	: mFileName(fileName)
 {
+	if (scanType == "be:s14/16>>2") {
+	    mScanType = ScanType::Accel;
+	} else if (scanType == "le:s16/16>>0") {
+	    mScanType = ScanType::Gyro;
+	} else {
+	    mScanType = ScanType::Undefined;
+	}
 }
 
 trikHal::trik::TrikIIOFile::~TrikIIOFile()
@@ -93,17 +100,28 @@ void trikHal::trik::TrikIIOFile::readFile()
 		const uint64_t timestamp_mcsec = timestamp / 1000;
 		trikKernel::TimeVal eventTime(timestamp_mcsec / 1000000, timestamp_mcsec % 1000000);
 
-		// TODO: add comments
-		auto convert_axis = [](uint16_t b_byte, uint16_t s_byte) {
-			return static_cast<int16_t>((b_byte << 8) | s_byte) >> 2;
-		};
+	    QVector<int> sensorValues;
+	    if (mScanType == ScanType::Accel) {
+	        sensorValues = {
+	            static_cast<int16_t>((buffer[0] << 8) | buffer[1]) >> 2,
+	            static_cast<int16_t>((buffer[2] << 8) | buffer[3]) >> 2,
+	            static_cast<int16_t>((buffer[4] << 8) | buffer[5]) >> 2,
+	        };
+	    } else if (mScanType == ScanType::Gyro) {
+	        sensorValues = {
+	            static_cast<int16_t>((buffer[1] << 8) | buffer[0]),
+	            static_cast<int16_t>((buffer[3] << 8) | buffer[2]),
+	            static_cast<int16_t>((buffer[5] << 8) | buffer[4]),
+	        };
+	    } else {
+	        size_t len = sizeof(buffer) / sizeof(buffer[0]);
+	        for (size_t i = 0; i < len; i++) {
+	            sensorValues.append(static_cast<int>(buffer[i]));
+	        }
+	        QLOG_ERROR() << "Unknown scan type for iio device";
+	    }
 
-		QVector<int> sensorValues = {
-			convert_axis(buffer[0], buffer[1]),
-			convert_axis(buffer[2], buffer[3]),
-			convert_axis(buffer[4], buffer[5]) };
-
-		emit newData(sensorValues, eventTime);
+	    emit newData(std::move(sensorValues), eventTime);
 	}
 
 	mSocketNotifier->setEnabled(true);
