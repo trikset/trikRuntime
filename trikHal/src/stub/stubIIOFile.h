@@ -27,7 +27,7 @@ class StubIIOFile : public IIOFileInterface
 public:
 	/// Constructor.
 	/// @param fileName - file name (with path, relative or absolute) of an IIO file.
-	StubIIOFile(const QString &fileName);
+	StubIIOFile(const QString &fileName, const QString &scanType);
 
 	bool open() override;
 	bool close() override;

@@ -28,9 +28,11 @@ static constexpr auto PI_2 = 1.57079632679489661923f;
 static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer)
+	    , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer
+	    , const QString &port)
 	: mState(deviceName)
-	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByDevice(deviceName, "deviceFile")))
+	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
+	                                             configurer.attributeByPort(port, "scanType")))
 	, mIsCalibrated(false)
 	, mQ(QQuaternion(1, 0, 0, 0))
 	, mGyroCounter(0)

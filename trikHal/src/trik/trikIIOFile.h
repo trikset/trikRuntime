@@ -29,7 +29,7 @@ class TrikIIOFile : public IIOFileInterface
 public:
 	/// Constructor.
 	/// @param fileName - file name (with path, relative or absolute) of an IIO file.
-	TrikIIOFile(const QString &fileName);
+	TrikIIOFile(const QString &fileName, const QString &scanType);
 
 	/// Destructor.
 	/// Closes file descriptor.
@@ -47,6 +47,7 @@ private slots:
 private:
 	int mIIOFileDescriptor {-1};
 	const QString mFileName;
+	IIOFileInterface::ScanType mScanType;
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
 };
 
