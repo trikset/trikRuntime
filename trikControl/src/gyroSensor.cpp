@@ -19,6 +19,8 @@
 #include <QsLog.h>
 #include <cmath>
 
+#include "vectorSensorWorker.h"
+
 using namespace trikControl;
 
 static constexpr int GYRO_ARITHM_PRECISION = 0;
@@ -28,11 +30,9 @@ static constexpr auto PI_2 = 1.57079632679489661923f;
 static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-	    , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer
-	    , const QString &port)
+					, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+	                , VectorSensorInterface *accelerometer, const QString &port)
 	: mState(deviceName)
-	, mIIOFile(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
-	                                             configurer.attributeByPort(port, "scanType")))
 	, mIsCalibrated(false)
 	, mQ(QQuaternion(1, 0, 0, 0))
 	, mGyroCounter(0)
@@ -48,23 +48,46 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	mAccelerometerCounter = 0;
 
 	mCalibrationTimer.setSingleShot(true);
+	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
+
+#ifndef TRIK_IIO_ACCEL_GYRO
+	Q_UNUSED(port)
+	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
+												 , hardwareAbstraction);
+	mVectorSensorWorker->moveToThread(&mWorkerThread);
+
+	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
+	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
+
+	mWorkerThread.setObjectName(mVectorSensorWorker->metaObject()->className());
+	mWorkerThread.start();
+	mCalibrationTimer.moveToThread(&mWorkerThread);
 
 	if (!mState.isFailed()) {
+	    connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::countTilt);
+#else /* ! TRIK_IIO_ACCEL_GYRO */
+	if (!mState.isFailed()) {
+		mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
+														 configurer.attributeByPort(port, "scanType")));
 		if (!mIIOFile.data()->open()) {
 			QLOG_ERROR() << "Gyroscope init failed";
 			mState.fail();
 			return;
 		}
-		qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);
+#endif /* TRIK_IIO_ACCEL_GYRO */
 
-		connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
-
-		QLOG_INFO() << "Starting Gyroscope";
-
-		mState.ready();
+	    connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
+	    QLOG_INFO() << "Starting GyroSensor";
+	    mState.ready();
 	}
+}
+
+GyroSensor::~GyroSensor()
+{
+	mWorkerThread.quit();
+	mWorkerThread.wait();
 }
 
 GyroSensor::Status GyroSensor::status() const
@@ -85,7 +108,11 @@ QVector<int> GyroSensor::readRawData() const
 
 void GyroSensor::calibrate(int msec)
 {
+#ifndef TRIK_IIO_ACCEL_GYRO
+	connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::sumGyroscope);
+#else /* TRIK_IIO_ACCEL_GYRO */
 	connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::sumGyroscope);
+#endif /* TRIK_IIO_ACCEL_GYRO */
 	connect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	mIsCalibrated = false;
@@ -192,7 +219,11 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 void GyroSensor::countCalibrationParameters()
 {
+#ifndef TRIK_IIO_ACCEL_GYRO
+	disconnect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::sumGyroscope);
+#else /* TRIK_IIO_ACCEL_GYRO */
 	disconnect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::sumGyroscope);
+#endif /* TRIK_IIO_ACCEL_GYRO */
 	disconnect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	if (mGyroCounter != 0) {

@@ -36,5 +36,10 @@ OTHER_FILES += \
 	$$PWD/test-system-config.xml \
 	$$PWD/test-model-config.xml \
 
-copyToDestdir($$PWD/test-system-config.xml, now)
-copyToDestdir($$PWD/test-model-config.xml, now)
+trik_new_age {
+    copyToDestdir($$PWD/kernel-4.14/test-system-config.xml, now)
+    copyToDestdir($$PWD/kernel-4.14/test-model-config.xml, now)
+} else {
+    copyToDestdir($$PWD/kernel-3.6/test-system-config.xml, now)
+    copyToDestdir($$PWD/kernel-3.6/test-model-config.xml, now)
+}

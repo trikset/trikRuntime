@@ -37,6 +37,8 @@ class IIOFileInterface;
 
 namespace trikControl {
 
+class VectorSensorWorker;
+
 /// Sensor that returns a vector.
 class GyroSensor : public GyroSensorInterface
 {
@@ -47,8 +49,10 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-	        , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer
-	        , const QString &port);
+	           , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer
+	           , const QString &port);
+
+	~GyroSensor() override;
 
 	Status status() const override;
 
@@ -83,6 +87,9 @@ private:
 
 	/// Device state, shared with worker.
 	DeviceState mState;
+
+	VectorSensorWorker *mVectorSensorWorker; // Has ownership
+	QThread mWorkerThread;
 
 	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 

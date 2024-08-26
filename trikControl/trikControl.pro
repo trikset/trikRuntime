@@ -212,6 +212,10 @@ copyToDestdir( \
 	, now \
 )
 
+trik_new_age {
+    DEFINES += TRIK_IIO_ACCEL_GYRO
+}
+
 installs()
 
 installAdditionalConfigs($$CONFIGS)

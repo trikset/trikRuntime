@@ -113,6 +113,18 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 
 	mBattery.reset(new Battery(*mMspCommunicator));
 
+#ifndef TRIK_IIO_ACCEL_GYRO
+	if (mConfigurer.isEnabled("accelerometer")) {
+	    mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction
+	                                          , "*port*for*accel*only*in*iio*trik*new*age*"));
+	}
+
+	if (mConfigurer.isEnabled("gyroscope")) {
+	    mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
+	                                    , "*port*for*gyro*only*in*iio*trik*new*age*"));
+	}
+#endif /* ! TRIK_IIO_ACCEL_GYRO */
+
 	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
 
 	mLed.reset(new Led(mConfigurer, *mHardwareAbstraction));
@@ -599,7 +611,9 @@ void Brick::createDevice(const QString &port)
 				new IrCamera(port, mConfigurer, *mHardwareAbstraction)
 				);
 			mIrCamera.swap(tmp);
-		} else if (deviceClass == "iioDevice") {
+	    }
+#ifdef TRIK_IIO_ACCEL_GYRO
+	    else if (deviceClass == "iioDevice") {
 	        const auto &deviceType = mConfigurer.deviceType(port);
 	        if (deviceType == "accelerometer"){
 	            mAccelerometer.reset(new VectorSensor(deviceType, mConfigurer, *mHardwareAbstraction, port));
@@ -608,6 +622,7 @@ void Brick::createDevice(const QString &port)
 	                                            , port));
 	        }
 	    }
+#endif /* TRIK_IIO_ACCEL_GYRO */
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();
 		QLOG_ERROR() << "Ignoring device";
