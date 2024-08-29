@@ -45,6 +45,9 @@ void TrikPyRunnerTest::SetUp()
 
 void TrikPyRunnerTest::TearDown()
 {
+	mScriptRunner.reset();
+	mBrick.reset();
+	//QCoreApplication::processEvents();
 }
 
 int TrikPyRunnerTest::run(const QString &script)
@@ -163,7 +166,7 @@ TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("print(dir(QtCore))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("TRIK_PQT.Qt.QTimer.singleShot(100, lambda _ : None)");
+	err = runDirectCommandAndWaitForQuit("TRIK_PQT.Qt.QTimer.singleShot(100, lambda : None);script.wait(200)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("t=QtCore.QTimer()");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);

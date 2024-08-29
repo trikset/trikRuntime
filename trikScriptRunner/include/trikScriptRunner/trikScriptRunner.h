@@ -86,8 +86,8 @@ private:
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &mBrick;
-	trikNetwork::MailboxInterface * mMailbox;
-	QSharedPointer <TrikScriptControlInterface> mScriptControl;
+	trikNetwork::MailboxInterface *mMailbox {};
+	TrikScriptControlInterface *mScriptControl {};
 	std::vector<QSharedPointer<TrikScriptRunnerInterface>> mScriptRunnerArray;
 	ScriptType mLastRunner;
 };

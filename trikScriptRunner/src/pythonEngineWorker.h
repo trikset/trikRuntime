@@ -40,7 +40,7 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	PythonEngineWorker(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
-					   , QSharedPointer<TrikScriptControlInterface> scriptControl
+					   , TrikScriptControlInterface *scriptControl
 					   );
 
 	~PythonEngineWorker();
@@ -104,6 +104,9 @@ public slots:
 	/// Recreates Main Context made by init, returns true when were errors
 	bool recreateContext();
 
+	/// Cleanup Python context
+	void releaseContext();
+
 	/// Plays "beep" sound.
 	/// Can be safely called from other threads.
 	void brickBeep();
@@ -147,7 +150,7 @@ private:
 	void addSearchModuleDirectory(const QDir &path);
 
 	trikControl::BrickInterface *mBrick {};
-	QSharedPointer<TrikScriptControlInterface> mScriptExecutionControl;
+	TrikScriptControlInterface *mScriptExecutionControl {}; // Does not have ownership.
 	trikNetwork::MailboxInterface * const mMailbox {};  // Does not have ownership.
 
 	State mState  { State::ready };

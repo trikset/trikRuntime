@@ -16,6 +16,7 @@
 #include <QsLog.h>
 #include <stdexcept>
 #include <PythonQt.h>
+#include <QCoreApplication>
 
 #include "trikPythonRunner.h"
 #include "src/pythonEngineWorker.h"
@@ -24,13 +25,14 @@ using namespace trikScriptRunner;
 
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface *brick
 								   , trikNetwork::MailboxInterface * const mailbox
-								   , QSharedPointer<TrikScriptControlInterface> scriptControl
+								   , TrikScriptControlInterface *scriptControl
 								   )
 	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl))
 {
-	mScriptEngineWorker->moveToThread(&mWorkerThread);
-	connect(&mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
-	connect(&mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
+	mWorkerThread = new QThread(this);
+	mScriptEngineWorker->moveToThread(mWorkerThread);
+	connect(mWorkerThread, &QThread::finished, mScriptEngineWorker, &PythonEngineWorker::deleteLater);
+	connect(mWorkerThread, &QThread::started, mScriptEngineWorker, &PythonEngineWorker::init);
 	connect(mScriptEngineWorker, &PythonEngineWorker::textInStdOut, this, &TrikPythonRunner::textInStdOut);
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed, this, &TrikPythonRunner::completed);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::startedScript);
@@ -38,20 +40,21 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface *brick
 			, this, &TrikPythonRunner::startedDirectScript);
 
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
-	mWorkerThread.setObjectName(mScriptEngineWorker->metaObject()->className());
-	mWorkerThread.start();
+	mWorkerThread->setObjectName(mScriptEngineWorker->metaObject()->className());
+	mWorkerThread->start();
 	mScriptEngineWorker->waitUntilInited();
 }
 
 TrikPythonRunner::~TrikPythonRunner()
 {
 	QEventLoop wait;
-	connect(&mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
+	connect(mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
 	mScriptEngineWorker->stopScript();
-	mWorkerThread.quit();
+	mWorkerThread->quit();
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
+	delete mWorkerThread;
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
