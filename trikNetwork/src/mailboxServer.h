@@ -84,6 +84,7 @@ public:
 	/// Returns true iff the server was started and is listening.
 	bool hasServer() const;
 
+	/// Sets hull number of this robot and connects to robot by IP and port.
 	Q_INVOKABLE void joinNetwork(const QString &ip = "", int port = -1, int hullNumber = -1);
 
 
