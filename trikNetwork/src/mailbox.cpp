@@ -46,6 +46,11 @@ Mailbox::~Mailbox()
 	}
 }
 
+void Mailbox::joinNetwork(const QString &ip, int port, int hullNumber)
+{
+	QMetaObject::invokeMethod(mWorker.data(), [=](){mWorker->joinNetwork(ip, port, hullNumber);});
+}
+
 bool Mailbox::isConnected() const
 {
 	bool res;

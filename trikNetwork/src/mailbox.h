@@ -61,6 +61,8 @@ public:
 	/// True iff the server is running.
 	Q_INVOKABLE bool hasServer() const;
 
+	Q_INVOKABLE void joinNetwork(const QString &ip, int port = -1, int hullNumber = -1) override;
+
 public slots:
 	void connect(const QString &ip, int port) override;
 

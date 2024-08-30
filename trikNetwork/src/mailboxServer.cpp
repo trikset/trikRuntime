@@ -36,6 +36,21 @@ MailboxServer::MailboxServer(quint16 port)
 	loadSettings();
 }
 
+void MailboxServer::joinNetwork(const QString &ip, int port, int hullNumber)
+{
+	if (hullNumber != - 1) {
+		setHullNumber(hullNumber);
+	}
+	if (ip == "") {
+		return;
+	}
+	if (port == -1) {
+		connectTo(ip, mMyPort);
+		return;
+	}
+	connectTo(ip, port);
+}
+
 bool MailboxServer::isConnected()
 {
 	return activeConnections() > 0;
