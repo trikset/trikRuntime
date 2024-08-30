@@ -42,7 +42,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 
 	TrikPythonRunner(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
-					 , QSharedPointer<TrikScriptControlInterface> scriptControl
+					 , TrikScriptControlInterface *scriptControl
 					 );
 
 	~TrikPythonRunner() override;
@@ -63,7 +63,7 @@ private:
 
 	/// Has ownership, memory is managed by thread and deleteLater().
 	QPointer<PythonEngineWorker> mScriptEngineWorker;
-	QThread mWorkerThread;
+	QThread *mWorkerThread {};
 };
 
 }

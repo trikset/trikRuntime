@@ -88,6 +88,7 @@ jobs:
             qmake CONFIG+=release CONFIG+=trik_not_brick CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
                   CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer CONFIG+="${{ matrix.trik-version }}" \
                   CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'qjsengine' && 'trik_use_qjsengine' || '' }} \
+                  PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') PYTHON_DIR=/usr \
                   "$GITHUB_WORKSPACE/"
 
       - name: QMake all
@@ -110,4 +111,4 @@ jobs:
             export PYTHONFAULTHANDLER=1
             export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
             env | sort
-            make -k check TESTARGS="-platform offscreen"
+            make -k check

@@ -96,7 +96,7 @@ jobs:
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             mkdir build-brick
             cd build-brick
-            qmake CONFIG+=release CONFIG+=force_debug_info CONFIG+=precompile_header \
+            qmake CONFIG+=release CONFIG+=force_debug_info CONFIG+=precompile_header PKGCONFIG+=python3 PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') \
                   "$GITHUB_WORKSPACE/"
 
       - name: "[TRIK controller] QMake all"
@@ -151,4 +151,4 @@ jobs:
             # export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
             export QEMU_LD_PREFIX=/opt/trik-sdk/sysroots/arm926ejse-oe-linux-gnueabi/
             env | sort
-            make -k check TESTARGS="-platform offscreen"
+            make -k check

@@ -35,6 +35,7 @@
  <interface-type name="trikControl::GyroSensorInterface" create-shell="no"/>
  <interface-type name="trikControl::I2cDeviceInterface" create-shell="no"/>
  <interface-type name="trikControl::CameraDeviceInterface" create-shell="no"/>
+ <interface-type name="trikControl::IrCameraInterface" create-shell="no"/>
 
  <interface-type name="trikControl::ColorSensorInterface" create-shell="no"/>
  <interface-type name="trikControl::SoundSensorInterface" create-shell="no"/>

@@ -24,7 +24,10 @@
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
-#include "PythonQtConversion.h"
+#include <PythonQtConversion.h>
+#include <PythonQt_QtAll.h>
+
+void PythonQt_init_QtPyTrikControl(PyObject* module);
 
 using namespace trikScriptRunner;
 
@@ -45,7 +48,7 @@ static void abortPythonInterpreter() {
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 		, trikNetwork::MailboxInterface * const mailbox
-		, QSharedPointer<TrikScriptControlInterface> scriptControl
+		, TrikScriptControlInterface *scriptControl
 		)
 	: mBrick(brick)
 	, mScriptExecutionControl(scriptControl)
@@ -68,6 +71,7 @@ PythonEngineWorker::~PythonEngineWorker()
 		// is destroyed, otherwise python crashes
 		PythonQtGILScope _;
 		Py_MakePendingCalls();
+		releaseContext();
 		mMainContext = nullptr;
 		if (mPyInterpreter) {
 			Py_EndInterpreter(mPyInterpreter);
@@ -76,6 +80,7 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
+		PythonQt::preCleanup();
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #endif
@@ -187,7 +192,7 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
-		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
+		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
 			QTimer::singleShot(0, this, [this, str](){ Q_EMIT this->textInStdOut(str);});
@@ -195,6 +200,7 @@ void PythonEngineWorker::init()
 		});
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
+		PythonQt_init_QtPyTrikControl(mMainContext);
 	}
 	if (!mMainContext) {
 		mMainContext = PythonQt::self()->getMainModule();
@@ -215,6 +221,23 @@ bool PythonEngineWorker::recreateContext()
 	}
 	PythonQt::self()->clearError();
 	return initTrik();
+}
+
+void PythonEngineWorker::releaseContext()
+{
+	if (!mMainContext)
+		return;
+
+	mMainContext.evalScript("import sys;"
+				"to_delete = [];"
+				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
+				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
+				"[sys.modules.pop(x) for x in to_delete];"
+				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
+				"from gc import collect as gc_collect;"
+				"gc_collect();");
+
+
 }
 
 bool PythonEngineWorker::importTrikPy()
@@ -243,18 +266,8 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 
 bool PythonEngineWorker::initTrik()
 {
-	mMainContext.evalScript("import sys;"
-				"to_delete = [];"
-				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
-				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
-				"[sys.modules.pop(x) for x in to_delete];"
-				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
-				"from gc import collect as gc_collect;"
-				"gc_collect();");
-	PythonQt_init_PyTrikControl(mMainContext);
-
 	mMainContext.addObject("_trik_brick_cpp", mBrick);
-	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl.data());
+	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl);
 	mMainContext.addObject("_trik_mailbox_cpp", mMailbox);
 	mMainContext.evalScript("import builtins;"
 				"builtins._trik_brick_cpp = _trik_brick_cpp;"
@@ -374,6 +387,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
 	mScriptExecutionControl->reset();
+	releaseContext();
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {

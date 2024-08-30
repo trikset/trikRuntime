@@ -1,13 +1,5 @@
 ************************************************************************
 Not in type system
-<object-type name="ConnectionTypes"/>
-<object-type name="MetaTypeDefinedHelper"/>
-<object-type name="QFunctorSlotObject"/>
-<object-type name="QMetaTypeTypeFlags"/>
-<object-type name="QSlotObject"/>
-<object-type name="QSlotObjectBase"/>
-<object-type name="QSmartPointerConvertFunctor"/>
-<object-type name="QStaticSlotObject"/>
 ************************************************************************
 
 ************************************************************************
@@ -37,6 +29,7 @@ Generation disabled by type system
 <object-type name="QIntegerForSize>"/>
 <object-type name="QIntegerForSizeof"/>
 <object-type name="QInternal"/>
+<object-type name="QKeyValueIterator"/>
 <object-type name="QLatin1Char"/>
 <object-type name="QLatin1String"/>
 <object-type name="QList::MemoryLayout"/>
@@ -65,15 +58,16 @@ Generation disabled by type system
 <object-type name="QScopedPointerPodDeleter"/>
 <object-type name="QSharedData"/>
 <object-type name="QSharedDataPointer"/>
+<object-type name="QSharedPointer"/>
 <object-type name="QSizePolicy::Bits"/>
 <object-type name="QStaticArrayData"/>
-<object-type name="QStaticAssertFailure"/>
 <object-type name="QStaticByteArrayData"/>
 <object-type name="QStaticStringData"/>
 <object-type name="QString"/>
 <object-type name="QStringDataPtr"/>
 <object-type name="QStringMatcher::Data"/>
 <object-type name="QStringRef"/>
+<object-type name="QStringView"/>
 <object-type name="QTypeInfo"/>
 <object-type name="QTypeInfoMerger"/>
 <object-type name="QTypeInfoQuery"/>

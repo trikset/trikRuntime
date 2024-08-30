@@ -57,13 +57,12 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   )
 	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(&brick))
 {
+	mScriptControl->setParent(this);
 }
 
 TrikScriptRunner::~TrikScriptRunner()
 {
 	abortAll();
-	// Call it here for dtor to be compiled in this context, rather than in the including file's context
-	mScriptControl.reset();
 }
 
 void TrikScriptRunner::setDefaultRunner(ScriptType t)
