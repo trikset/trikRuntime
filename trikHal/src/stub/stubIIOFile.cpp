@@ -16,9 +16,10 @@
 
 #include <QsLog.h>
 
-trikHal::stub::StubIIOFile::StubIIOFile(const QString &fileName)
+trikHal::stub::StubIIOFile::StubIIOFile(const QString &fileName, const QString &scanType)
 	: mFileName(fileName)
 {
+	Q_UNUSED(scanType)
 }
 
 bool trikHal::stub::StubIIOFile::open()

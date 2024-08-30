@@ -14,6 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        trik-version: ['', 'trik_new_age']
         include:
           - qt-version: '5.12'
             mingw-version: 7.3
@@ -101,7 +102,7 @@ jobs:
              cygpath -w /usr/bin >> $GITHUB_PATH
              cygpath -w /mingw32/bin >> $GITHUB_PATH
              cygpath -w "${IQTA_TOOLS}/mingw${{matrix.mingw-short-version}}0_32/bin" >> $GITHUB_PATH
-             cygpath -w "${pythonLocation}" >> $GITHUB_PATH
+             cygpath -w "${pythonLocation}/bin" >> $GITHUB_PATH
              cygpath -w "${QT_ROOT_DIR}/bin" >> $GITHUB_PATH
 
       - name: Check PATH
@@ -128,7 +129,11 @@ jobs:
 
       - name: QMake
         shell: msys2 {0}
-        run: 'qmake trikRuntime.pro -spec win32-g++ CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=release PYTHON_PATH="${pythonLocation}" CONFIG+=force_debug_info CONFIG+=sanitizer CONFIG+=sanitize_undefined'
+        run: |
+          export PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+')
+          qmake trikRuntime.pro -spec win32-g++ CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=release \
+              PYTHON_PATH="${pythonLocation}" PYTHON_VERSION=${PYTHON_VERSION} \
+              CONFIG+=force_debug_info CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+="${{ matrix.trik-version }}"
 
       - name: QMake all
         shell: msys2 {0}

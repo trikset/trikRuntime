@@ -49,7 +49,8 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer);
+	           , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer
+	           , const QString &port);
 
 	~GyroSensor() override;
 
@@ -89,6 +90,8 @@ private:
 
 	VectorSensorWorker *mVectorSensorWorker; // Has ownership
 	QThread mWorkerThread;
+
+	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 
 	QTimer mCalibrationTimer;
 	bool mIsCalibrated;

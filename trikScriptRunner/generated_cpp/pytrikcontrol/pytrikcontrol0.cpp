@@ -1,10 +1,12 @@
-#include "PyTrikControl0.h"
+#include "pytrikcontrol0.h"
 #include <PythonQtConversion.h>
 #include <PythonQtMethodInfo.h>
 #include <PythonQtSignalReceiver.h>
 #include <QVariant>
 #include <batteryInterface.h>
+#include <brickFactory.h>
 #include <brickInterface.h>
+#include <cameraDeviceInterface.h>
 #include <colorSensorInterface.h>
 #include <deviceInterface.h>
 #include <displayInterface.h>
@@ -17,6 +19,7 @@
 #include <gamepadInterface.h>
 #include <gyroSensorInterface.h>
 #include <i2cDeviceInterface.h>
+#include <irCameraInterface.h>
 #include <keysInterface.h>
 #include <ledInterface.h>
 #include <lidarInterface.h>
@@ -110,6 +113,10 @@ trikControl::DisplayWidgetInterface*  PythonQtWrapper_trikControl__DisplayInterf
 
 
 
+trikControl::DisplayWidgetInterface* PythonQtWrapper_trikControl__DisplayWidgetInterface::new_trikControl__DisplayWidgetInterface()
+{ 
+return new trikControl::DisplayWidgetInterface(); }
+
 
 
 
@@ -152,6 +159,8 @@ void PythonQtWrapper_trikControl__I2cDeviceInterface::send(trikControl::I2cDevic
 
 
 
+
+
 int  PythonQtWrapper_trikControl__MotorInterface::maxControl(trikControl::MotorInterface* theWrappedObject) const
 {
   return ( theWrappedObject->maxControl());
@@ -165,6 +174,16 @@ int  PythonQtWrapper_trikControl__MotorInterface::minControl(trikControl::MotorI
 
 
 
+
+long  PythonQtWrapper_trikControl__PwmCaptureInterface::maxValue(trikControl::PwmCaptureInterface* theWrappedObject) const
+{
+  return ( theWrappedObject->maxValue());
+}
+
+long  PythonQtWrapper_trikControl__PwmCaptureInterface::minValue(trikControl::PwmCaptureInterface* theWrappedObject) const
+{
+  return ( theWrappedObject->minValue());
+}
 
 
 

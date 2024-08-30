@@ -17,7 +17,7 @@
 proc getFiles { folder } {
   set listOfFiles ""
 
-  foreach excludeFolder [list *PythonQt* *PyTrikControl* *qslog* *thirdparty* *mlx90640-library*] {
+  foreach excludeFolder [list *PythonQt* *generated_cpp* *qslog* *thirdparty* *mlx90640-library*] {
       if {[string match $excludeFolder $folder] == 1} {
           return ""
       }

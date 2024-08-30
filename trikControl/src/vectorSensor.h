@@ -41,7 +41,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	             , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &port);
 
 	~VectorSensor() override;
 
@@ -56,6 +56,9 @@ private:
 
 	VectorSensorWorker *mVectorSensorWorker { nullptr }; /// Is owned by mWorkerThread
 	QThread mWorkerThread;
+
+	QVector<int> mResult {};
+	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 };
 
 }

@@ -15,6 +15,5 @@
 include(../global.pri)
 
 QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
-PYTHONQTALL_CONFIG *= PythonQtCore
-QT += widgets
+PYTHONQTALL_CONFIG *= PythonQtCore PythonQtGui
 include(PythonQt/extensions/PythonQt_QtAll/PythonQt_QtAll.pro)

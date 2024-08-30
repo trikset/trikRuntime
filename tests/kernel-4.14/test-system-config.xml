@@ -1,3 +1,4 @@
+<!-- Originally it is a generic system-config.xml -->
 <!--
 TrikControl system configuration file. Meant to be written once for each release of OS and shall be the same
 for all models running that OS release.
@@ -23,21 +24,21 @@ equal to its class name.
 <config version="model-2015" >
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
-		/etc/trik/init-ov7670-320x240.sh 0
+                /etc/trik/init-ov7670-320x240.sh 0
 
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_timestamp_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_x_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_y_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_z_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/buffer/enable
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_timestamp_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_x_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_y_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_z_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/buffer/enable
 
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_timestamp_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_x_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_y_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_z_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/buffer/enable
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_timestamp_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_x_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_y_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_z_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/buffer/enable
 
-		echo 1 > /sys/class/gpio/gpio62/value
+                echo 1 > /sys/class/gpio/gpio62/value
 
                 export GP="/sys/class/gpio/"
                 echo 94 > $GP/export
@@ -62,8 +63,8 @@ equal to its class name.
 
 	<!-- A list of known devices. -->
 	<deviceClasses>
-                <!-- URI protocol: v4l2, file, qtmultimedia  -->
-                <camera type="v4l2" src="/dev/video0" />
+				<!-- URI protocol: v4l2, file, qtmultimedia  -->
+				<camera type="v4l2" src="/dev/video0" />
 		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
 		<pwmCapture />
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
@@ -92,39 +93,39 @@ equal to its class name.
 	<devicePorts>
 		<servoMotor
 			port="S1"
-			deviceFile="/sys/class/pwm/pwmchip2/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip2/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip2/pwm0/enable"
+			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
+			periodFile="/sys/class/pwm/ecap.2/period_ns"
+			runFile="/sys/class/pwm/ecap.2/run"
 		/>
 		<servoMotor
 			port="S2"
-			deviceFile="/sys/class/pwm/pwmchip1/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip1/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip1/pwm0/enable"
+			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
+			periodFile="/sys/class/pwm/ecap.1/period_ns"
+			runFile="/sys/class/pwm/ecap.1/run"
 		/>
 		<servoMotor
 			port="S3"
-			deviceFile="/sys/class/pwm/pwmchip0/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip0/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip0/pwm0/enable"
+			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
+			periodFile="/sys/class/pwm/ecap.0/period_ns"
+			runFile="/sys/class/pwm/ecap.0/run"
 		/>
 		<servoMotor
 			port="S4"
-			deviceFile="/sys/class/pwm/pwmchip3/pwm1/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip3/pwm1/period"
-			runFile="/sys/class/pwm/pwmchip3/pwm1/enable"
+			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.0:1/run"
 		/>
 		<servoMotor
 			port="S5"
-			deviceFile="/sys/class/pwm/pwmchip5/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip5/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip5/pwm0/enable"
+			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.1:0/run"
 		/>
 		<servoMotor
 			port="S6"
-			deviceFile="/sys/class/pwm/pwmchip5/pwm1/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip5/pwm1/period"
-			runFile="/sys/class/pwm/pwmchip5/pwm1/enable"
+			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
+			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
+			runFile="/sys/class/pwm/ehrpwm.1:1/run"
 			controlMin="0"
 			controlMax="100"
 		/>
@@ -167,8 +168,8 @@ equal to its class name.
 		<objectSensor port="video2" />
 		<colorSensor port="video1" />
 		<colorSensor port="video2" />
-                <camera port="video1" />
-                <camera port="video2" />
+				<camera port="video1" />
+				<camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
                 <iioDevice port="boardAccelPort" />
                 <iioDevice port="boardGyroPort" />
@@ -214,7 +215,7 @@ equal to its class name.
 
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
-                <photo class="camera" type="v4l2" src="/dev/video0" />
+		<photo class="camera" type="v4l2" src="/dev/video0" />
 
                 <accelerometer class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s14/16>>2"/>
                 <gyroscope class="iioDevice" deviceFile="/dev/iio:device1" scanType="le:s16/16>>0"/>
@@ -229,7 +230,7 @@ equal to its class name.
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
 	<i2c path="/dev/i2c-2" deviceId="0x48" />
 
-        <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
+		<!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
 	<i2cBus1 path="/dev/i2c-1" />
 	<i2cBus2 path="/dev/i2c-2" />
 </config>

@@ -30,15 +30,16 @@ $EXECUTOR bash -lic " set -x; \
 && pkg-config --list-all \
 && { which python3 && python3 -V || true ; } \
 && { which python && python -V || true ; } \
-&&  cd $BUILDDIR && qmake -r PYTHON3_VERSION_MINOR=\$TRIK_PYTHON3_VERSION_MINOR CONFIG+=$CONFIG -Wall $BUILD_SOURCESDIRECTORY/trikRuntime.pro $QMAKE_EXTRA \
-&&  make -j 2 all \
+&& export PYTHON_VERSION=3.\$TRIK_PYTHON3_VERSION_MINOR \
+&&  cd $BUILDDIR && qmake -r PKGCONFIG+=python-\$PYTHON_VERSION-embed CONFIG+=$CONFIG -Wall $BUILD_SOURCESDIRECTORY/trikRuntime.pro $QMAKE_EXTRA \
+&&  make -j \$(nproc) all \
 && env TRIK_PYTHONPATH=\`python3.\${TRIK_PYTHON3_VERSION_MINOR} -c 'import sys; import os; print(os.pathsep.join(sys.path))'\` \
     PYTHONMALLOC=malloc \
     ASAN_OPTIONS=disable_coredump=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0:use_sigaltstack=0 \
     LSAN_OPTIONS=suppressions=\$PWD/bin/lsan.supp:fast_unwind_on_malloc=0 \
     MSAN_OPTIONS=poison_in_dtor=1 \
     QT_QPA_PLATFORM=minimal \
-    make -k -j 2 check \
+    make -k check \
 && ls bin"
 
 

@@ -15,12 +15,8 @@
 #include <gtest/gtest.h>
 
 #include <QtCore/qglobal.h>
+#include <QtCore/QCoreApplication>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QApplication>
-#endif
 
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
@@ -29,7 +25,7 @@ int main(int argc, char *argv[])
 {
 	::testing::InitGoogleTest(&argc, argv);
 
-	QApplication app(argc, argv);
+	QCoreApplication app(argc, argv);
 
 	Q_UNUSED(app);
 
