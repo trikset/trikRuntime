@@ -47,7 +47,6 @@ void TrikPyRunnerTest::TearDown()
 {
 	mScriptRunner.reset();
 	mBrick.reset();
-	//QCoreApplication::processEvents();
 }
 
 int TrikPyRunnerTest::run(const QString &script)
