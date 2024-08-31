@@ -54,6 +54,9 @@ public:
 	/// Returns true if mailbox is enabled in current configuration.
 	virtual bool isEnabled() = 0;
 
+	/// Sets hull number of this robot and connects to robot by IP and port.
+	virtual void joinNetwork(const QString &ip, int port, int hullNumber) = 0;
+
 public slots:
 	/// Connects to robot by IP and port.
 	virtual void connect(const QString &ip, int port) = 0;
