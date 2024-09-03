@@ -63,10 +63,8 @@ int MailboxServer::hullNumber() const
 
 QHostAddress MailboxServer::serverIp()
 {
-	mAuxiliaryInformationLock.lockForRead();
-	const auto result = mServerIp;
-	mAuxiliaryInformationLock.unlock();
-	return result;
+	QReadLocker l(&mAuxiliaryInformationLock);
+	return mServerIp;
 }
 
 QHostAddress MailboxServer::myIp() const
@@ -111,11 +109,11 @@ void MailboxServer::connectTo(const QString &ip, int port)
 	mAuxiliaryInformationLock.unlock();
 
 	if (server.toString() != ip || serverPort != port) {
-		mAuxiliaryInformationLock.lockForWrite();
-		mServerIp = QHostInfo::fromName(ip).addresses().first();
-		mServerPort = port;
-		mAuxiliaryInformationLock.unlock();
-
+		{
+			QWriteLocker l(&mAuxiliaryInformationLock);
+			mServerIp = QHostInfo::fromName(ip).addresses().first();
+			mServerPort = port;
+		}
 		saveSettings();
 	}
 
@@ -286,7 +284,7 @@ void MailboxServer::onConnectionInfo(const QHostAddress &ip, int serverPort, int
 	mKnownRobotsLock.unlock();
 
 	mKnownRobotsLock.lockForWrite();
-	for (const auto &endpoint : toDelete) {
+	for (auto &&endpoint : toDelete) {
 		const auto keys = mKnownRobots.keys(endpoint);
 		for (const auto &key : keys) {
 			mKnownRobots.remove(key, endpoint);
@@ -302,7 +300,7 @@ void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray
 	QLOG_INFO() << "New data received by a mailbox from " << ip << ":" << port << ", data is:" << data;
 	int senderHullNumber = -1;
 	mKnownRobotsLock.lockForRead();
-	for (const auto &endpoint : mKnownRobots) {
+	for (auto &&endpoint : mKnownRobots) {
 		if (endpoint.ip == ip && endpoint.connectedPort == port) {
 			senderHullNumber = mKnownRobots.key(endpoint);
 		}
@@ -323,20 +321,14 @@ void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray
 
 bool MailboxServer::hasMessages()
 {
-	mMessagesQueueLock.lockForRead();
-	const bool result = !mMessagesQueue.isEmpty();
-	mMessagesQueueLock.unlock();
-
-	return result;
+	QReadLocker l(&mMessagesQueueLock);
+	return !mMessagesQueue.isEmpty();
 }
 
 QString MailboxServer::receive()
 {
-	mMessagesQueueLock.lockForWrite();
-	QByteArray const result = !mMessagesQueue.isEmpty() ? mMessagesQueue.dequeue() : QByteArray();
-	mMessagesQueueLock.unlock();
-
-	return result;
+	QWriteLocker l(&mMessagesQueueLock);
+	return !mMessagesQueue.isEmpty() ? mMessagesQueue.dequeue() : QByteArray();
 }
 
 bool MailboxServer::hasServer() const
@@ -366,13 +358,12 @@ void MailboxServer::loadSettings()
 
 void MailboxServer::saveSettings()
 {
-	mAuxiliaryInformationLock.lockForRead();
+	QWriteLocker locker(&mAuxiliaryInformationLock);
 	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 	settings.setValue("hullNumber", mHullNumber);
 	settings.setValue("server", mServerIp.toString());
 	settings.setValue("serverPort", mServerPort);
 	settings.setValue("localIp", mMyIp.toString());
-	mAuxiliaryInformationLock.unlock();
 }
 
 void MailboxServer::forEveryConnection(const std::function<void(MailboxConnection *)> &method, int hullNumber)
@@ -380,25 +371,27 @@ void MailboxServer::forEveryConnection(const std::function<void(MailboxConnectio
 	mKnownRobotsLock.lockForRead();
 	const auto keys = mKnownRobots.keys();
 	mKnownRobotsLock.unlock();
-
+\
 	for (const auto key : keys) {
 		if (hullNumber != -1 && key != hullNumber) {
 			continue;
 		}
 		mKnownRobotsLock.lockForRead();
-		auto endpoint = mKnownRobots.value(key);
+		auto endpoints = mKnownRobots.values(key);
 		mKnownRobotsLock.unlock();
 
-		const auto connection = prepareConnection(endpoint);
-		if (connection == nullptr) {
-			QLOG_ERROR() << "Connection to" << endpoint << "is dead at the moment, message"
-					<< "is not delivered. Will try to reestablish connection on next send.";
-		} else {
-			onConnectionInfo(endpoint.ip, endpoint.serverPort, key, endpoint.serverPort);
-			if (connection->isConnected()) {
-				method(connection);
+		for (auto&& endpoint: endpoints) {
+			const auto connection = prepareConnection(endpoint);
+			if (connection == nullptr) {
+				QLOG_ERROR() << "Connection to" << endpoint << "is dead at the moment, message"
+						<< "is not delivered. Will try to reestablish connection on next send.";
 			} else {
-				connect(connection, &Connection::connected, this, [method, connection](){method(connection);});
+				onConnectionInfo(endpoint.ip, endpoint.serverPort, key, endpoint.serverPort);
+				if (connection->isConnected()) {
+					method(connection);
+				} else {
+					connect(connection, &Connection::connected, this, [method, connection](){method(connection);});
+				}
 			}
 		}
 	}
