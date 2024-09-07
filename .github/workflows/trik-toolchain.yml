@@ -6,38 +6,56 @@ on:
     branches:
   workflow_dispatch:
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
   trik-toolchain:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        trik-version: ['', 'trik_new_age']
     defaults:
       run:
         shell: bash -l {0} # to force import of ~/.bash_profile
-
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
-      cancel-in-progress: true
+    env:
+      SDK_DOWNLOAD_URL: https://dl.trikset.com/distro/${{ matrix.trik-version == 'trik_new_age' && 'kirkstone' || 'latest-full' }}
 
     steps:
       - name: Restore TRIK toolchain
         uses: actions/cache/restore@v4
         with:
           path: /opt/trik-sdk
-          key: trik-sdk
+          key: ${{ matrix.trik-version }}_sdk
 
       - name: Check if TRIK toolchain is up-to-date
         id: trik-toolchain-check
         run: |
-            curl -O https://dl.trikset.com/distro/latest-full/trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256
+            curl -O ${SDK_DOWNLOAD_URL}/trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256
             diff -qN trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256 \
                      /opt/trik-sdk/trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256 \
                      && echo "install=false" >> $GITHUB_OUTPUT \
                      || echo "install=true" >> $GITHUB_OUTPUT
 
+      - name: Check if hash of TRIK toolchain is up-to-date
+        run: |
+            getFileTimestamp () {
+                curl -s --head ${SDK_DOWNLOAD_URL}/$1 \
+                | sed -n 's/^Last-Modified: //Ip' \
+                | xargs -I {} date -d "{}" +%s
+            }
+            timestampSHA256=$(getFileTimestamp trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256)
+            timestampShellScript=$(getFileTimestamp trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh)
+            if [[ $timestampSHA256 -lt $timestampShellScript ]]; then
+                echo "::warning ::The SDK installation script file is newer than its hash. Please update the hash."
+            fi
+
       - name: Install TRIK toolchain
         if: steps.trik-toolchain-check.outputs.install == 'true'
         run: |
             rm -rf /opt/trik-sdk
-            curl -O https://dl.trikset.com/distro/latest-full/trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh
+            curl -O ${SDK_DOWNLOAD_URL}/trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh
             chmod +x ./trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh
             ./trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh -y
             mv trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh.sha256 /opt/trik-sdk
@@ -47,7 +65,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: /opt/trik-sdk
-          key: trik-sdk
+          key: ${{ matrix.trik-version }}_sdk
 
       - name: Install QEMU with binfmt
         run: |
@@ -96,7 +114,10 @@ jobs:
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             mkdir build-brick
             cd build-brick
-            qmake CONFIG+=release CONFIG+=force_debug_info CONFIG+=precompile_header PKGCONFIG+=python3 PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') \
+            qmake CONFIG+=release CONFIG+=force_debug_info CONFIG+=precompile_header \
+            PKGCONFIG+=${{ matrix.trik-version == 'trik_new_age' && 'python3-embed' || 'python3' }} \
+            PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') \
+            CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
 
       - name: "[TRIK controller] QMake all"
@@ -113,7 +134,7 @@ jobs:
             cd build-brick
             make -j $(nproc) all
 
-      - name: "[QEMU + NoPython] QMake"
+      - name: "[QEMU + Tests] QMake"
         timeout-minutes: 1
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
@@ -121,24 +142,27 @@ jobs:
             cd build-qemu
             qmake CONFIG+=release CONFIG+=tests \
             CONFIG+=force_debug_info CONFIG+=precompile_header \
-                  CONFIG+=trik_not_brick CONFIG+=trik_nopython \
+                  CONFIG+=${{ matrix.trik-version != 'trik_new_age' && 'trik_nopython' || '' }} \
+                  CONFIG+=trik_not_brick CONFIG+="${{ matrix.trik-version }}" \
+                  PKGCONFIG+=${{ matrix.trik-version == 'trik_new_age' && 'python3-embed' || 'python3' }} \
+                  PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') \
                   "$GITHUB_WORKSPACE/"
 
-      - name: "[QEMU + NoPython] QMake all"
+      - name: "[QEMU + Tests] QMake all"
         timeout-minutes: 3
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             cd build-qemu
             make -j $(nproc) qmake_all
 
-      - name: "[QEMU + NoPython] Make all"
+      - name: "[QEMU + Tests] Make all"
         timeout-minutes: 10
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             cd build-qemu
             make -j $(nproc) all
 
-      - name: "[QEMU + NoPython] Unit tests"
+      - name: "[QEMU + Tests] Unit tests"
         timeout-minutes: 5
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
@@ -149,6 +173,7 @@ jobs:
             # export PYTHONMALLOC=malloc_debug
             # export PYTHONFAULTHANDLER=1
             # export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
-            export QEMU_LD_PREFIX=/opt/trik-sdk/sysroots/arm926ejse-oe-linux-gnueabi/
+            export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))"),PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1
+            export QEMU_LD_PREFIX=/opt/trik-sdk/sysroots/arm926ejse-oe-linux-gnueabi
             env | sort
             make -k check
