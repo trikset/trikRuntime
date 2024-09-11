@@ -88,7 +88,6 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
-	notPreparedConnections.insert(connectionWorker);
 	auto connectionThread = new QThread(this);
 
 	connectionWorker->moveToThread(connectionThread);

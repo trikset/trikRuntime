@@ -46,6 +46,7 @@ public:
 	/// returns true on successful start
 	Q_INVOKABLE bool startServer(quint16 port);
 
+	/// Track the status to the main init
 	void preinitConnection(Connection * const connection);
 
 public slots:
