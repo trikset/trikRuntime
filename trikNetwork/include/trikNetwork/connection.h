@@ -79,6 +79,21 @@ public:
 
 	/// Sends given byte array to peer.
 	Q_INVOKABLE void send(const QByteArray &data);
+
+	/// Ip and port setter
+	void preinitConnection(const QHostAddress& ip, int port);
+
+	/// Ip getter
+	QHostAddress getIp() const;
+
+	/// Port getter
+	int getPort() const;
+
+	/// It is used to set flag for determine the situation when connection->thread() is running, but the connection is invalid
+	void setIsStarted(bool flag);
+
+	/// It is used to get flag for determine the situation when connection->thread() is running, but the connection is invalid
+	bool getIsStarted() const;
 signals:
 	/// Emitted after connection becomes closed.
 	void disconnected(trikNetwork::Connection *self);
@@ -154,6 +169,15 @@ private:
 
 	/// Socket for this connection.
 	QScopedPointer<QTcpSocket> mSocket;
-};
 
+	/// The port that is stored for working with connection before its main initialization (it can be obtained later with connection->peerPort())
+	int mPort{};
+
+	/// The ip address that is stored for working with connection before its main initialization (it can be obtained later with connection->peerAddress())
+	QHostAddress mIp{};
+
+	/// It is used to determine the situation when connection->thread() is running, but the connection is invalid
+	bool isStarted = false;
+
+};
 }

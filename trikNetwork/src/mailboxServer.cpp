@@ -138,6 +138,8 @@ MailboxConnection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 	}
 
 	const auto c = connectionFactory();
+	c->preinitConnection(ip, port);
+	preinitConnection(c);
 	connect(this, &MailboxServer::startedConnection, c, [=]() {
 		c->connect(ip, port, mMyPort, mHullNumber);
 		disconnect(this, &MailboxServer::startedConnection, c, nullptr);
@@ -369,7 +371,7 @@ void MailboxServer::saveSettings()
 void MailboxServer::forEveryConnection(const std::function<void(MailboxConnection *)> &method, int hullNumber)
 {
 	mKnownRobotsLock.lockForRead();
-	const auto keys = mKnownRobots.keys();
+	const auto keys = mKnownRobots.uniqueKeys();
 	mKnownRobotsLock.unlock();
 \
 	for (const auto key : keys) {

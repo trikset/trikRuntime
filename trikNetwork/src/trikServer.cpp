@@ -27,6 +27,7 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	connect(this, &TrikServer::startedConnection, this, [this](Connection *c) {
 		const bool isFirstConnection = mConnections.isEmpty();
 		mConnections.insert(c->thread(), c);
+		notPreparedConnections.remove(c);
 		if (isFirstConnection) {
 			/// @todo: Emit "connected" signal only when socket is actually connected.
 			emit connected();
@@ -44,6 +45,12 @@ TrikServer::~TrikServer()
 	}
 
 	qDeleteAll(mConnections.keyBegin(), mConnections.keyEnd());
+	notPreparedConnections.clear();
+}
+
+void TrikServer::preinitConnection(Connection * const connection)
+{
+	notPreparedConnections.insert(connection);
 }
 
 bool TrikServer::startServer(quint16 port)
@@ -81,6 +88,7 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 
 void TrikServer::startConnection(Connection * const connectionWorker)
 {
+	notPreparedConnections.insert(connectionWorker);
 	auto connectionThread = new QThread(this);
 
 	connectionWorker->moveToThread(connectionThread);
@@ -88,12 +96,17 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connect(connectionThread, &QThread::finished, connectionWorker, &Connection::deleteLater);
 	connect(connectionThread, &QThread::finished, connectionThread, &QThread::deleteLater);
 	connect(connectionThread, &QThread::started, this, [this, connectionWorker]() {
+		connectionWorker->setIsStarted(true);
 		Q_EMIT startedConnection(connectionWorker);
 	});
 
 	connect(connectionWorker, &Connection::disconnected, this, &TrikServer::onConnectionClosed);
+	connect(connectionThread, &QThread::finished, this, [this, connectionWorker] {
+		notPreparedConnections.remove(connectionWorker);
+	});
 
 	connectionThread->setObjectName(connectionWorker->metaObject()->className());
+
 	connectionThread->start();
 }
 
@@ -106,6 +119,16 @@ Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 			}
 		} else {
 			QLOG_INFO() << "Connection is not valid" << connection;
+		}
+	}
+
+	for (auto&& connection: notPreparedConnections) {
+		if (connection->getPort() == port and connection->getIp() == ip) {
+			auto* connectionThread = connection->thread();
+			if (!connectionThread->isFinished() and !connection->getIsStarted())
+			{
+				return connection;
+			}
 		}
 	}
 
