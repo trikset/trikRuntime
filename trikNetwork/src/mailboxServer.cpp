@@ -38,7 +38,7 @@ MailboxServer::MailboxServer(quint16 port)
 
 void MailboxServer::joinNetwork(const QString &ip, int port, int hullNumber)
 {
-	if (hullNumber != - 1) {
+	if (hullNumber != -1) {
 		setHullNumber(hullNumber);
 	}
 	if (ip == "") {
