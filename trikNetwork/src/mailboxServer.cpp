@@ -373,7 +373,7 @@ void MailboxServer::forEveryConnection(const std::function<void(MailboxConnectio
 	mKnownRobotsLock.lockForRead();
 	const auto keys = mKnownRobots.uniqueKeys();
 	mKnownRobotsLock.unlock();
-\
+
 	for (const auto key : keys) {
 		if (hullNumber != -1 && key != hullNumber) {
 			continue;
