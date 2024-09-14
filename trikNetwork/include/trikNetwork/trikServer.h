@@ -46,6 +46,9 @@ public:
 	/// returns true on successful start
 	Q_INVOKABLE bool startServer(quint16 port);
 
+	/// Track the status to the main init
+	void preinitConnection(Connection * const connection);
+
 public slots:
 	/// Broadcasts message across all opened connections.
 	void sendMessage(const QString &message);
@@ -85,6 +88,8 @@ private:
 
 	/// Function that provides actual connection objects.
 	std::function<Connection *()> mConnectionFactory;
+
+	QSet<Connection *> notPreparedConnections;
 };
 
 }
