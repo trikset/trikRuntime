@@ -93,8 +93,7 @@ private slots:
 
 private:
 	/// Contains configuration entry from wpa-supplicant config.
-	struct NetworkConfiguration
-	{
+	struct NetworkConfiguration {
 		/// Some unique id of a network.
 		int id;
 

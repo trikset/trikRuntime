@@ -42,7 +42,6 @@
 #include "controller.h"
 #include "networkWidget.h"
 
-
 namespace trikGui {
 
 /// Main widget for trikGui application, displays menu which allows to open other widgets.

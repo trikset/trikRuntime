@@ -67,8 +67,8 @@ private:
 	/// Main layout of this widget.
 	QButtonGroup mButtonGroup;
 	QVBoxLayout mLayout;
-	QRadioButton* mAllFSButton = nullptr;  // Has ownership.
-	QRadioButton* mOnlyScriptsButton = nullptr;  // Has ownership.
+	QRadioButton *mAllFSButton = nullptr;  // Has ownership.
+	QRadioButton *mOnlyScriptsButton = nullptr;  // Has ownership.
 };
 
 }

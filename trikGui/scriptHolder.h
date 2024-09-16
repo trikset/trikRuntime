@@ -31,7 +31,7 @@ public:
 	ScriptHolder& operator=(ScriptHolder const&) = delete;
 
 	/// Creates instance of ScriptHolder.
-	static ScriptHolder* instance();
+	static ScriptHolder *instance();
 
 	/// Returns list which contains titles of commands.
 	const QStringList &titles() const;

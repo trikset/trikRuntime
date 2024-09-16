@@ -31,7 +31,7 @@
 #include <QtCore/QString>
 
 namespace trikControl {
-	class MotorInterface;
+class MotorInterface;
 }
 
 namespace trikGui {

@@ -25,8 +25,7 @@
 namespace trikNetwork {
 
 /// Connection protocol variants.
-enum class Protocol
-{
+enum class Protocol {
 	/// Message is in form "<data length in bytes>:<data>".
 	messageLength
 
@@ -35,8 +34,7 @@ enum class Protocol
 };
 
 /// Heartbeat protocol option.
-enum class Heartbeat
-{
+enum class Heartbeat {
 	/// Wait for a packet every N milliseconds, if none is received, assume connection lost and close socket.
 	use
 
