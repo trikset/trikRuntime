@@ -21,7 +21,7 @@
 using namespace trikControl;
 
 EventDeviceWorker::EventDeviceWorker(const QString &deviceFilePath, DeviceState &state
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(state)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mEventFileName(deviceFilePath)

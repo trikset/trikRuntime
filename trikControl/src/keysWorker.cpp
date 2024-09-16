@@ -23,7 +23,7 @@ static const int evSyn = 0;
 static const int evKey = 1;
 
 KeysWorker::KeysWorker(const QString &keysPath, DeviceState &state
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mHardwareAbstraction(hardwareAbstraction)
 	, mKeysPath(keysPath)
 	, mState(state)
@@ -68,12 +68,11 @@ bool KeysWorker::wasPressed(int code)
 }
 
 void KeysWorker::readKeysEvent(int eventType, int code, int value
-		, const trikKernel::TimeVal &eventTime)
+	, const trikKernel::TimeVal &eventTime)
 {
 	Q_UNUSED(eventTime);
 
-	switch (eventType)
-	{
+	switch (eventType) {
 	case evKey:
 		mButtonCode = code;
 		mButtonValue = value;

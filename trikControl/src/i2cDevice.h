@@ -18,7 +18,7 @@
 #include "mspI2cCommunicator.h"
 #include "i2cCommunicator.h"
 
-namespace trikControl{
+namespace trikControl {
 
 /// Abstract i2c device
 class I2cDevice : public I2cDeviceInterface

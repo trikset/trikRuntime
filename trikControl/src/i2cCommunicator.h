@@ -38,7 +38,7 @@ public:
 	/// @param bus - device bus (1 or 2)
 	/// @param deviceId - device address on bus.
 	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
-			, uint8_t bus, uint8_t deviceId);
+		, uint8_t bus, uint8_t deviceId);
 
 	~I2cCommunicator();
 

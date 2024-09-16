@@ -75,4 +75,3 @@ private:
 
 	double mOmega { std::nan("") };
 };
-

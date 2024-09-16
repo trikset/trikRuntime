@@ -21,8 +21,8 @@
 using namespace trikGui;
 
 EncoderIndicator::EncoderIndicator(const QString &port
-		, trikControl::EncoderInterface &encoder
-		, QWidget *parent)
+	, trikControl::EncoderInterface &encoder
+	, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mEncoder(encoder)
 	, mNameLabel(port)

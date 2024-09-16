@@ -56,4 +56,3 @@ private:
 	QHBoxLayout * const mLayout;
 };
 }
-

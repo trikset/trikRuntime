@@ -28,12 +28,11 @@
 using namespace trikControl;
 
 RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Range Sensor on " + port)
 {
 	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
-			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))
-	{
+	    || !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule"))) {
 		QLOG_ERROR() << "Module loading failed";
 		mState.fail();
 		return;
@@ -43,7 +42,7 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
 	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState
-			, hardwareAbstraction, mMinValue, mMaxValue, configurer.attributeByPort(port, "filter")));
+		, hardwareAbstraction, mMinValue, mMaxValue, configurer.attributeByPort(port, "filter")));
 
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);

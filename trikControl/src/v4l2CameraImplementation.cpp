@@ -20,7 +20,7 @@
 using namespace trikControl;
 
 V4l2CameraImplementation::V4l2CameraImplementation(const QString &port
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mHal(hardwareAbstraction)
 	, mPort(port)
 {

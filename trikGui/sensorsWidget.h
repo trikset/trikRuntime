@@ -54,7 +54,7 @@ public:
 
 	/// Constructor.
 	explicit SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports
-			, SensorType sensorType, QWidget *parent = 0);
+		, SensorType sensorType, QWidget *parent = 0);
 
 	~SensorsWidget() override;
 

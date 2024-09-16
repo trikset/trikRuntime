@@ -21,10 +21,10 @@
 #include <QtCore/QSocketNotifier>
 #include <linux/videodev2.h>
 
-using convertFunctionPtr = QVector<uint8_t> (*)(const QVector<uint8_t> &realCameraShot, int height, int width);
+using convertFunctionPtr = QVector<uint8_t>(*)(const QVector<uint8_t> &realCameraShot, int height, int width);
 
 /// Class for working with a camera on a TRIK controller
-class TrikV4l2VideoDevice: public QObject
+class TrikV4l2VideoDevice : public QObject
 {
 	Q_OBJECT
 public:
@@ -66,7 +66,7 @@ private:
 
 	struct buffer {
 		uint8_t *start;
-		size_t  length;
+		size_t length;
 	};
 	QVector<uint8_t> mFrame;
 	QVector<buffer> buffers;
@@ -74,4 +74,3 @@ private:
 	QScopedPointer<QSocketNotifier> mNotifier;
 	convertFunctionPtr mConvertFunc; // convert real camera shot to RGB888
 };
-

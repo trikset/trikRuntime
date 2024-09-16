@@ -37,7 +37,7 @@
 using namespace trikGui;
 
 FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
-		, QWidget *parent)
+	, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mFileIconProvider(new LightFileIconProvider())
 	, mController(controller)
@@ -70,7 +70,6 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	/// This flag and operation is necessary to create file if it doesn't exists
 	deleteAllFile.open(QIODevice::WriteOnly);
 
-
 	mFileSystemModel.setIconProvider(mFileIconProvider.data());
 	mFileSystemModel.setRootPath(mRootDirPath);
 	mFileSystemModel.setFilter(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDot);
@@ -88,7 +87,7 @@ FileManagerWidget::FileManagerWidget(Controller &controller, MainWidget::FileMan
 	mFileSystemView.setFocus();
 
 	connect(mFileSystemView.selectionModel(), &QItemSelectionModel::currentChanged
-			, this, &FileManagerWidget::onSelectionChanged);
+		, this, &FileManagerWidget::onSelectionChanged);
 
 	QSettings settings("trik");
 	mLastSelectedFile = settings.value("lastSelectedFile").toString();
@@ -133,8 +132,12 @@ void FileManagerWidget::remove()
 	const QModelIndex &index = mFilterProxyModel.mapToSource(mFileSystemView.currentIndex());
 	if (!mFileSystemModel.isDir(index)) {
 		if (mFileSystemModel.fileName(index) != mDeleteAllFilesName) {
-			QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
-					, tr("Are you sure you want to delete file?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+			QMessageBox::StandardButton reply = QMessageBox::warning(this,
+				tr("Confirm deletion")
+				,
+				tr("Are you sure you want to delete file?"),
+				QMessageBox::Yes | QMessageBox::No,
+				QMessageBox::No);
 			if (reply == QMessageBox::Yes) {
 				mFileSystemModel.remove(index);
 			}
@@ -145,7 +148,8 @@ void FileManagerWidget::remove()
 void FileManagerWidget::removeAll()
 {
 	QMessageBox::StandardButton reply = QMessageBox::warning(this, tr("Confirm deletion")
-			, tr("Are you sure you want to delete all files?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+		, tr("Are you sure you want to delete all files?"), QMessageBox::Yes | QMessageBox::No,
+		QMessageBox::No);
 	if (reply == QMessageBox::Yes) {
 		QDir dir(trikKernel::Paths::userScriptsPath());
 		dir.setNameFilters({"*.js", "*.py"});
@@ -159,18 +163,18 @@ void FileManagerWidget::removeAll()
 void FileManagerWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return: {
-			open();
-			break;
-		}
-		case Qt::Key_Right: {
-			remove();
-			break;
-		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
+	case Qt::Key_Return: {
+		open();
+		break;
+	}
+	case Qt::Key_Right: {
+		remove();
+		break;
+	}
+	default: {
+		TrikGuiDialog::keyPressEvent(event);
+		break;
+	}
 	}
 }
 

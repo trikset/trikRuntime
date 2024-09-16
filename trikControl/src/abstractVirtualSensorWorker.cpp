@@ -27,7 +27,7 @@
 using namespace trikControl;
 
 AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile
-		, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mSystemConsole(hardwareAbstraction.systemConsole())
 	, mScript(script)
 	, mInputFile(hardwareAbstraction.createOutputDeviceFile(inputFile))
@@ -62,7 +62,8 @@ void AbstractVirtualSensorWorker::init()
 {
 	mOutputFifo.reset(mHardwareAbstraction.createFifo(mOutputFile));
 
-	if (mState.isReady() && QFileInfo::exists(mInputFile->fileName()) && QFileInfo::exists(mOutputFifo->fileName())) {
+	if (mState.isReady() && QFileInfo::exists(mInputFile->fileName()) &&
+	    QFileInfo::exists(mOutputFifo->fileName())) {
 		// Sensor is up and ready.
 		QLOG_ERROR() << "Trying to init video sensor that is already running, ignoring";
 		return;
@@ -127,13 +128,12 @@ void AbstractVirtualSensorWorker::openFifos()
 	QLOG_INFO() << "Opening" << mOutputFifo->fileName();
 
 	connect(mOutputFifo.data(), &trikHal::FifoInterface::newLine
-			, this, &AbstractVirtualSensorWorker::onNewDataInOutputFifo);
+		, this, &AbstractVirtualSensorWorker::onNewDataInOutputFifo);
 
 	if (!mOutputFifo->open()) {
 		mState.fail();
 		return;
 	}
-
 
 	QLOG_INFO() << "Opening" << mInputFile->fileName();
 

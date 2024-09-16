@@ -37,7 +37,7 @@ class Gamepad : public GamepadInterface, public DeviceInterface
 public:
 	/// Constructor.
 	Gamepad(const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Gamepad() override = default;
 
@@ -96,7 +96,7 @@ private:
 	/// Hack for the fact that gamepad does not send button press events, only releases. We count button as "pressed"
 	/// if it was released within 500 milliseconds from this moment. So actually button becomes "pressed" when it is
 	/// released and stays pressed for 500 milliseconds.
-	QHash<int, QTimer*> mButtonStateClearTimers;
+	QHash<int, QTimer *> mButtonStateClearTimers;
 
 	QHash<int, PadStatus> mPads;
 	int mWheelPercent { -101 };

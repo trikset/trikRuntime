@@ -25,8 +25,8 @@ static const int absMisc = 0x28;
 using namespace trikControl;
 
 RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, int minValue, int maxValue, const QString &filterName)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+	, int minValue, int maxValue, const QString &filterName)
 	: mState(state)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mEventFileName(eventFile)

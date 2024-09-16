@@ -19,7 +19,7 @@
 using namespace trikControl;
 
 Gamepad::Gamepad(const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mUnderlyingFifo(configurer.attributeByDevice("gamepad", "file"), hardwareAbstraction)
 {
 	mKeepaliveTimer.setSingleShot(true);

@@ -64,8 +64,8 @@ bool TrikFifo::open()
 			termios t1 = t;
 			tcsetattr(mFileDescriptor, TCSANOW, &t);
 			if (tcgetattr(mFileDescriptor, &t1)
-					|| std::make_tuple(t.c_iflag, t.c_oflag, t.c_cflag, t.c_lflag)
-						!= std::make_tuple(t1.c_iflag, t1.c_oflag, t1.c_cflag, t1.c_lflag)) {
+			    || std::make_tuple(t.c_iflag, t.c_oflag, t.c_cflag, t.c_lflag)
+			    != std::make_tuple(t1.c_iflag, t1.c_oflag, t1.c_cflag, t1.c_lflag)) {
 				QLOG_ERROR() << __PRETTY_FUNCTION__ << ": tcsetattr failed for" << mFileName;
 			}
 			if (cfsetospeed (&t, B230400)) {
@@ -101,7 +101,7 @@ void TrikFifo::readFile()
 	}
 	bytes.resize(bytesRead);
 	emit newData(bytes);
-	mBuffer += QByteArray(reinterpret_cast<char*>(bytes.data()), bytes.size());
+	mBuffer += QByteArray(reinterpret_cast<char *>(bytes.data()), bytes.size());
 	if (mBuffer.contains("\n")) {
 		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
 

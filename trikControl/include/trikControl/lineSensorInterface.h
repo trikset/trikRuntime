@@ -55,4 +55,4 @@ public slots:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::LineSensorInterface*)
+Q_DECLARE_METATYPE(trikControl::LineSensorInterface *)

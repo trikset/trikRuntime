@@ -27,8 +27,7 @@
 #include "scriptExecutionControl.h"
 #include "PythonQtObjectPtr.h"
 
-namespace trikScriptRunner
-{
+namespace trikScriptRunner {
 
 /// Worker object to be run in a separate thread for Python execution.
 class TRIKSCRIPTRUNNER_EXPORT PythonEngineWorker : public QObject
@@ -39,9 +38,9 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	PythonEngineWorker(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
-					   , TrikScriptControlInterface *scriptControl
-					   );
+	PythonEngineWorker(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface *mailbox
+		, TrikScriptControlInterface *scriptControl
+		);
 
 	~PythonEngineWorker();
 
@@ -161,7 +160,7 @@ private:
 
 	PythonQtObjectPtr mMainContext;
 
-	PyThreadState * mPyInterpreter { nullptr };
+	PyThreadState *mPyInterpreter { nullptr };
 
 	/// Directory that would be added to Python's sys.path var when any execution will start.
 	QDir mWorkingDirectory;

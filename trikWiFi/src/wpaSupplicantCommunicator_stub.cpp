@@ -16,16 +16,15 @@
 
 using namespace trikWiFi;
 
-struct sockaddr_un
-{
+struct sockaddr_un {
 	int x;
 };
 
 WpaSupplicantCommunicator::WpaSupplicantCommunicator(
-		const QString &interfaceFile
-		, const QString &daemonFile
-		, QObject *parent
-		)
+	const QString &interfaceFile
+	, const QString &daemonFile
+	, QObject *parent
+	)
 	: QObject(parent)
 	, mLocal(new sockaddr_un())
 	, mDest(new sockaddr_un())

@@ -24,14 +24,14 @@
 using namespace trikControl;
 
 static constexpr int GYRO_ARITHM_PRECISION = 0;
-static constexpr auto GYRO_250DPS = 8.75f / (1 << GYRO_ARITHM_PRECISION) ;
+static constexpr auto GYRO_250DPS = 8.75f / (1 << GYRO_ARITHM_PRECISION);
 static constexpr auto PI = 3.14159265358979323846f;
 static constexpr auto PI_2 = 1.57079632679489661923f;
 static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-					, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-	                , VectorSensorInterface *accelerometer, const QString &port)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+	, VectorSensorInterface *accelerometer, const QString &port)
 	: mState(deviceName)
 	, mIsCalibrated(false)
 	, mQ(QQuaternion(1, 0, 0, 0))
@@ -53,7 +53,7 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 #ifndef TRIK_IIO_ACCEL_GYRO
 	Q_UNUSED(port)
 	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-												 , hardwareAbstraction);
+		, hardwareAbstraction);
 	mVectorSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
@@ -64,11 +64,11 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	mCalibrationTimer.moveToThread(&mWorkerThread);
 
 	if (!mState.isFailed()) {
-	    connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::countTilt);
+		connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &GyroSensor::countTilt);
 #else /* ! TRIK_IIO_ACCEL_GYRO */
 	if (!mState.isFailed()) {
 		mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
-														 configurer.attributeByPort(port, "scanType")));
+			configurer.attributeByPort(port, "scanType")));
 		if (!mIIOFile.data()->open()) {
 			QLOG_ERROR() << "Gyroscope init failed";
 			mState.fail();
@@ -78,9 +78,9 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);
 #endif /* TRIK_IIO_ACCEL_GYRO */
 
-	    connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
-	    QLOG_INFO() << "Starting GyroSensor";
-	    mState.ready();
+		connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
+		QLOG_INFO() << "Starting GyroSensor";
+		mState.ready();
 	}
 }
 
@@ -289,35 +289,35 @@ QVector3D GyroSensor::getEulerAngles(const QQuaternion &q)
 
 	const float squaredLength = xx + yy + zz + w * w;
 	if (!qFuzzyIsNull(squaredLength - 1.0f) && !qFuzzyIsNull(squaredLength)) {
-		   xx /= squaredLength;
-		   xy /= squaredLength;
-		   xz /= squaredLength;
-		   xw /= squaredLength;
-		   yy /= squaredLength;
-		   yz /= squaredLength;
-		   yw /= squaredLength;
-		   zz /= squaredLength;
-		   zw /= squaredLength;
-	   }
+		xx /= squaredLength;
+		xy /= squaredLength;
+		xz /= squaredLength;
+		xw /= squaredLength;
+		yy /= squaredLength;
+		yz /= squaredLength;
+		yw /= squaredLength;
+		zz /= squaredLength;
+		zw /= squaredLength;
+	}
 
-	   pitch = std::asin(-2.0f * (yz - xw));
-	   if (pitch < PI_2) {
-		   if (pitch > -PI_2) {
-			   yaw = std::atan2(2.0f * (xz + yw), 1.0f - 2.0f * (xx + yy));
-			   roll = std::atan2(2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz));
-		   } else {
-			   // not a unique solution
-			   roll = 0.0f;
-			   yaw = -std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
-		   }
-	   } else {
-		   // not a unique solution
-		   roll = 0.0f;
-		   yaw = std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
-	   }
+	pitch = std::asin(-2.0f * (yz - xw));
+	if (pitch < PI_2) {
+		if (pitch > -PI_2) {
+			yaw = std::atan2(2.0f * (xz + yw), 1.0f - 2.0f * (xx + yy));
+			roll = std::atan2(2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz));
+		} else {
+			// not a unique solution
+			roll = 0.0f;
+			yaw = -std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
+		}
+	} else {
+		// not a unique solution
+		roll = 0.0f;
+		yaw = std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
+	}
 
-	   pitch = pitch * RAD_TO_MDEG;
-	   yaw = yaw * RAD_TO_MDEG;
-	   roll = roll * RAD_TO_MDEG;
-	   return {pitch, roll, yaw};
+	pitch = pitch * RAD_TO_MDEG;
+	yaw = yaw * RAD_TO_MDEG;
+	roll = roll * RAD_TO_MDEG;
+	return {pitch, roll, yaw};
 }

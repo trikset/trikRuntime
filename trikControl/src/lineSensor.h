@@ -45,7 +45,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	LineSensor(const QString &port, const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~LineSensor() override;
 

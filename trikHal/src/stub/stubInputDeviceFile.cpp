@@ -19,7 +19,8 @@
 using namespace trikHal::stub;
 
 StubInputDeviceFile::StubInputDeviceFile(const QString &fileName)
-	: mFile(fileName), mStream("")
+	: mFile(fileName)
+	, mStream("")
 {
 }
 

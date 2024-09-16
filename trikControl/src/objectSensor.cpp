@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Object Sensor on" + port)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
@@ -33,7 +33,7 @@ ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &co
 
 	if (!mState.isFailed()) {
 		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState
-				, hardwareAbstraction));
+			, hardwareAbstraction));
 		mObjectSensorWorker->moveToThread(&mWorkerThread);
 		connect(mObjectSensorWorker.data(), SIGNAL(stopped()), this, SLOT(onStopped()), Qt::DirectConnection);
 
@@ -73,7 +73,7 @@ void ObjectSensor::detect()
 	}
 }
 
-QVector<int>  ObjectSensor::read()
+QVector<int> ObjectSensor::read()
 {
 	if (mState.isReady()) {
 		// Read is called synchronously and only takes prepared value from sensor.

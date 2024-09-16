@@ -41,7 +41,7 @@ ProgrammingWidget::ProgrammingWidget(Controller &controller, QWidget *parent)
 	mCommands.selectionModel()->select(
 		mCommands.model()->index(0, 0)
 		, QItemSelectionModel::ClearAndSelect
-	);
+		);
 	mCommands.addItem(tr("Run program"));
 	mCommands.item(mCommands.count() - 1)->setData(Qt::UserRole, QString("Run program"));
 	mCommands.addItem(tr("Clear list"));

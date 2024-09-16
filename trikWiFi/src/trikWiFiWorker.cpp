@@ -24,7 +24,7 @@
 using namespace trikWiFi;
 
 TrikWiFiWorker::TrikWiFiWorker(const QString &interfaceFilePrefix
-		, const QString &daemonFile)
+	, const QString &daemonFile)
 	: mInterfaceFile(interfaceFilePrefix)
 	, mDaemonFile(daemonFile)
 {
@@ -56,7 +56,10 @@ void TrikWiFiWorker::reinit()
 	const int monitorFileDesc = mMonitorInterface->fileDescriptor();
 	if (monitorFileDesc >= 0) {
 		mMonitorFileSocketNotifier.reset(new QSocketNotifier(monitorFileDesc, QSocketNotifier::Read));
-		QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
+		QObject::connect(mMonitorFileSocketNotifier.data(),
+			SIGNAL(activated(int)),
+			this,
+			SLOT(receiveMessages()));
 	} else {
 		QLOG_ERROR() << "Can not get monitor file descriptor";
 	}

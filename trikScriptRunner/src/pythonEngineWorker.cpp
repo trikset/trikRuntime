@@ -27,13 +27,13 @@
 #include <PythonQtConversion.h>
 #include <PythonQt_QtAll.h>
 
-void PythonQt_init_QtPyTrikControl(PyObject* module);
+void PythonQt_init_QtPyTrikControl(PyObject *module);
 
 using namespace trikScriptRunner;
 
 QAtomicInt PythonEngineWorker::initCounter = 0;
 
-static int quitFromPython(void*) {
+static int quitFromPython(void *) {
 	PyErr_SetInterrupt();
 	return 0;
 }
@@ -47,9 +47,9 @@ static void abortPythonInterpreter() {
 }
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
-		, trikNetwork::MailboxInterface * const mailbox
-		, TrikScriptControlInterface *scriptControl
-		)
+	, trikNetwork::MailboxInterface * const mailbox
+	, TrikScriptControlInterface *scriptControl
+	)
 	: mBrick(brick)
 	, mScriptExecutionControl(scriptControl)
 	, mMailbox(mailbox)
@@ -107,8 +107,9 @@ void PythonEngineWorker::init()
 		QLOG_INFO() << "Built with python:" << PY_VERSION << QString::number(PY_VERSION_HEX, 16);
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
 		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
-			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
-							.arg(PY_VERSION).arg(Py_GetVersion());
+			auto const &e = QString(
+				"Incompatible Python runtime detected. Expecting version %1, but found %2")
+			                .arg(PY_VERSION).arg(Py_GetVersion());
 			throw trikKernel::InternalErrorException(e);
 		}
 		constexpr auto varName = "TRIK_PYTHONPATH";
@@ -170,17 +171,20 @@ void PythonEngineWorker::init()
 		dict.setNewRef(PyDict_New());
 		PyMapping_SetItemString(dict.object(), "sys", PyImport_ImportModule("sys"));
 		PythonQtObjectPtr ver;
-		ver.setNewRef(PyRun_StringFlags(extractVersionCommand, Py_eval_input, dict.object(), dict.object(), nullptr));
+		ver.setNewRef(PyRun_StringFlags(extractVersionCommand, Py_eval_input, dict.object(), dict.object(),
+			nullptr));
 		if (ver) {
 			auto major = PyLong_AsLong(PyTuple_GetItem(ver, 0));
 			auto minor = PyLong_AsLong(PyTuple_GetItem(ver, 1));
 			if (major != PY_MAJOR_VERSION || minor != PY_MINOR_VERSION) {
-				auto const &e = QString("Incompatible Python library detected. Expecting version %1, but found %2.%3")
-								.arg(PY_VERSION).arg(major).arg(minor);
+				auto const &e = QString(
+					"Incompatible Python library detected. Expecting version %1, but found %2.%3")
+				                .arg(PY_VERSION).arg(major).arg(minor);
 				throw trikKernel::InternalErrorException(e);
 			}
 		} else {
-			auto e = QString("Failed to extract Python version from provided library, check %1").arg(varName);
+			auto e =
+				QString("Failed to extract Python version from provided library, check %1").arg(varName);
 			QLOG_FATAL() << e;
 			throw trikKernel::InternalErrorException(e);
 		}
@@ -194,8 +198,8 @@ void PythonEngineWorker::init()
 		PythonQtGILScope _;
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
-		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
-			QTimer::singleShot(0, this, [this, str](){ Q_EMIT this->textInStdOut(str);});
+		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str) {
+			QTimer::singleShot(0, this, [this, str]() { Q_EMIT this->textInStdOut(str);});
 			mScriptExecutionControl->wait(0);
 		});
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
@@ -229,14 +233,13 @@ void PythonEngineWorker::releaseContext()
 		return;
 
 	mMainContext.evalScript("import sys;"
-				"to_delete = [];"
-				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
-				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
-				"[sys.modules.pop(x) for x in to_delete];"
-				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
-				"from gc import collect as gc_collect;"
-				"gc_collect();");
-
+		"to_delete = [];"
+		"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
+		"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
+		"[sys.modules.pop(x) for x in to_delete];"
+		"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
+		"from gc import collect as gc_collect;"
+		"gc_collect();");
 
 }
 
@@ -261,7 +264,7 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 		return;
 
 	mMainContext.evalScript("import sys; (lambda x: sys.path.append(x) if not x in sys.path else None)('"
-							+ path.path() + "')");
+		+ path.path() + "')");
 }
 
 bool PythonEngineWorker::initTrik()
@@ -270,9 +273,9 @@ bool PythonEngineWorker::initTrik()
 	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl);
 	mMainContext.addObject("_trik_mailbox_cpp", mMailbox);
 	mMainContext.evalScript("import builtins;"
-				"builtins._trik_brick_cpp = _trik_brick_cpp;"
-				"builtins._trik_script_cpp = _trik_script_cpp;"
-				"builtins._trik_mailbox_cpp = _trik_mailbox_cpp;");
+		"builtins._trik_brick_cpp = _trik_brick_cpp;"
+		"builtins._trik_script_cpp = _trik_script_cpp;"
+		"builtins._trik_mailbox_cpp = _trik_mailbox_cpp;");
 
 	return importTrikPy();
 }
@@ -359,7 +362,7 @@ void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
-	QMetaObject::invokeMethod(this, [this, script, scriptFile](){this->doRun(script, scriptFile);});
+	QMetaObject::invokeMethod(this, [this, script, scriptFile]() {this->doRun(script, scriptFile);});
 }
 
 void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
@@ -371,7 +374,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	mState = running;
 	auto ok = recreateContext();
 	if (!ok) {
-		emit completed(mErrorMessage,0);
+		emit completed(mErrorMessage, 0);
 		return;
 	}
 
@@ -398,7 +401,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 void PythonEngineWorker::runDirect(const QString &command)
 {
 	QMutexLocker locker(&mScriptStateMutex);
-	QMetaObject::invokeMethod(this, [this, &command](){doRunDirect(command);});
+	QMetaObject::invokeMethod(this, [this, &command]() {doRunDirect(command);});
 }
 
 void PythonEngineWorker::doRunDirect(const QString &command)

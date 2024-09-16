@@ -19,13 +19,13 @@
 using namespace trikTelemetry;
 
 TrikTelemetry::TrikTelemetry(trikControl::BrickInterface &brick)
-	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
+	: trikNetwork::TrikServer([this]() { return connectionFactory(); })
 	, mBrick(brick)
 {
 	setObjectName("TrikTelemetry");
 }
 
-Connection * TrikTelemetry::connectionFactory()
+Connection *TrikTelemetry::connectionFactory()
 {
 	return new Connection(mBrick);
 }

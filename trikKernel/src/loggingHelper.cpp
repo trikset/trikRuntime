@@ -25,8 +25,8 @@ using namespace trikKernel;
 LoggingHelper::LoggingHelper(const QString &pathToLog)
 {
 	const QString correctedPath = pathToLog.endsWith(QDir::separator())
-			? pathToLog
-			: pathToLog + QDir::separator();
+	                ? pathToLog
+	                : pathToLog + QDir::separator();
 
 	QDir logDir(correctedPath);
 	if (!logDir.exists()) {
@@ -36,18 +36,17 @@ LoggingHelper::LoggingHelper(const QString &pathToLog)
 	const int maxLogSize = 10 * 1024 * 1024;
 	QsLogging::Logger::instance().setLoggingLevel(QsLogging::TraceLevel);
 	QsLogging::Logger::instance().addDestination(QsLogging::DestinationFactory::MakeFileDestination(
-			correctedPath + "trik.log"
-			, QsLogging::LogRotationOption::EnableLogRotation
-			, QsLogging::MaxSizeBytes(maxLogSize)
-			, QsLogging::MaxOldLogCount(2)));
+		correctedPath + "trik.log"
+		, QsLogging::LogRotationOption::EnableLogRotation
+		, QsLogging::MaxSizeBytes(maxLogSize)
+		, QsLogging::MaxOldLogCount(2)));
 
 	QsLogging::Logger::instance().addDestination(QsLogging::DestinationFactory::MakeFunctorDestination(
-			[](const QsLogging::LogMessage &message) {
-				if (message.level >= QsLogging::ErrorLevel) {
-					std::cerr << qPrintable(message.formatted) << std::endl << std::flush;
-				}
-			}
-			));
+		[](const QsLogging::LogMessage &message) {
+		if (message.level >= QsLogging::ErrorLevel) {
+			std::cerr << qPrintable(message.formatted) << std::endl << std::flush;
+		}
+	}));
 }
 
 LoggingHelper::~LoggingHelper()

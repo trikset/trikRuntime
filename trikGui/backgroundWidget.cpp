@@ -27,8 +27,8 @@
 using namespace trikGui;
 
 BackgroundWidget::BackgroundWidget(
-		const QString &configPath
-		, QWidget *parent)
+	const QString &configPath
+	, QWidget *parent)
 	: QWidget(parent)
 	, mController(configPath)
 	, mBatteryIndicator(mController.brick())
@@ -70,9 +70,12 @@ BackgroundWidget::BackgroundWidget(
 	connect(&mController, &Controller::hideRunningWidget, this, &BackgroundWidget::hideRunningWidget);
 	connect(&mController, &Controller::hideGraphicsWidget, this, &BackgroundWidget::hideGraphicsWidget);
 	connect(&mController, &Controller::hideScriptWidgets, this, &BackgroundWidget::hideScriptWidgets);
-	connect(&mController, &Controller::communicatorStatusChanged,
-			&mCommunicatorIndicator, &OpenSocketIndicator::changeStatus);
-	connect(&mController, &Controller::mailboxStatusChanged, &mMailboxIndicator, &OpenSocketIndicator::changeStatus);
+	connect(&mController,
+		&Controller::communicatorStatusChanged,
+		&mCommunicatorIndicator,
+		&OpenSocketIndicator::changeStatus);
+	connect(&mController, &Controller::mailboxStatusChanged, &mMailboxIndicator,
+		&OpenSocketIndicator::changeStatus);
 
 	connect(&mRunningWidget, &RunningWidget::hideMe, this, &BackgroundWidget::hideRunningWidget);
 

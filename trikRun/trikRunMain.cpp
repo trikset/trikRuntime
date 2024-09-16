@@ -62,21 +62,21 @@ int main(int argc, char *argv[])
 	trikKernel::ApplicationInitHelper initHelper(*app);
 
 	initHelper.commandLineParser().addPositionalArgument("file", QObject::tr("File with script to execute")
-			+ " " + QObject::tr("(optional of -js or -py option is specified)"));
+		+ " " + QObject::tr("(optional of -js or -py option is specified)"));
 
 	initHelper.commandLineParser().addOption("js", "js-script"
-			, QObject::tr("JavaScript script to be executed directly from command line.") + "\n\t"
-							+ QObject::tr("Example:") + " ./trikRun -js \"brick.smile(); script.wait(2000);\"");
+		, QObject::tr("JavaScript script to be executed directly from command line.") + "\n\t"
+		+ QObject::tr("Example:") + " ./trikRun -js \"brick.smile(); script.wait(2000);\"");
 
 	initHelper.commandLineParser().addOption("py", "py-script"
-			, QObject::tr("Python script to be executed directly from command line.") + "\n\t"
-							+ QObject::tr("Example:") + " ./trikRun -py \""
-										  "brick.display().showImage('media/trik_smile_normal.png'); "
-										  "script.wait(2000)\"");
+		, QObject::tr("Python script to be executed directly from command line.") + "\n\t"
+		+ QObject::tr("Example:") + " ./trikRun -py \""
+		"brick.display().showImage('media/trik_smile_normal.png'); "
+		"script.wait(2000)\"");
 
 	initHelper.commandLineParser().addFlag("no-display", "no-display"
-			, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
-								"physical display"));
+		, QObject::tr("Disable display support. When this flag is active, trikRun can work without QWS or even "
+			"physical display"));
 
 	initHelper.commandLineParser().addApplicationDescription(QObject::tr("Runner of JavaScript and Python files."));
 
@@ -90,16 +90,17 @@ int main(int argc, char *argv[])
 
 	const auto run = [&](const QString &script, const QString &fileName, trikScriptRunner::ScriptType stype) {
 		QScopedPointer<trikControl::BrickInterface> brick(
-					trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
-					);
+			trikControl::BrickFactory::create(initHelper.configPath(), trikKernel::Paths::mediaPath())
+			);
 
 		trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
-										  , initHelper.configPath() + "/model-config.xml");
+			, initHelper.configPath() + "/model-config.xml");
 
 		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
 
-		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::completed, app.data(), [&app](const QString &e){
+		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::completed, app.data(),
+			[&app](const QString &e) {
 			if (!e.isEmpty()) {
 				QLOG_ERROR() << "Script reported:" << e;
 			}
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
 		});
 
 		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::textInStdOut, &result,
-				 [](const QString &m){
+			[](const QString &m) {
 			QTextStream(stdout) << m;
 		});
 
@@ -128,7 +129,8 @@ int main(int argc, char *argv[])
 		const QStringList positionalArgs = initHelper.commandLineParser().positionalArgs();
 		if (positionalArgs.size() == 1) {
 			return run(trikKernel::FileUtils::readFromFile(positionalArgs[0]),
-					positionalArgs[0], trikScriptRunner::ScriptType::JAVASCRIPT);
+				positionalArgs[0],
+				trikScriptRunner::ScriptType::JAVASCRIPT);
 		} else {
 			initHelper.commandLineParser().showHelp();
 			return 1;

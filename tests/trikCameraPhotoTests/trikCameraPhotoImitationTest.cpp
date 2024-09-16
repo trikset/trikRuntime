@@ -20,12 +20,13 @@ using namespace trikControl;
 
 void trikCameraPhotoImitationTest::SetUp() {
 	testBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
-			, "./test-model-config.xml", "./media/"));
+		, "./test-model-config.xml", "./media/"));
 }
 
 TEST_F(trikCameraPhotoImitationTest, cameraImitationTest)
 {
-	QVector<uint8_t> expectedPhoto = CameraDeviceInterface::qImageToQVector(QImage("./media/trik_smile_normal.png"));
+	QVector<uint8_t> expectedPhoto =
+		CameraDeviceInterface::qImageToQVector(QImage("./media/trik_smile_normal.png"));
 	QVector<uint8_t> currentPhoto = testBrick->getStillImage();
 	ASSERT_EQ(expectedPhoto, currentPhoto);
 

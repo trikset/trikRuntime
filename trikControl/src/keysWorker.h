@@ -36,7 +36,7 @@ public:
 	/// @param state - device state, worker sets it to "failed" if it can not open file.
 	/// @param hardwareAbstraction - interface to TRIK hardware.
 	KeysWorker(const QString &keysPath, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	/// Execute init() after worker thread started.
 	void init();

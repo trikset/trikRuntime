@@ -18,7 +18,6 @@
 #include <QtCore/QThread>
 #include <QtCore/QVector>
 
-
 #include "deviceState.h"
 #include "irCameraInterface.h"
 #include "irCameraWorker.h"
@@ -45,8 +44,8 @@ public:
 	/// @param configurer - configurer to get info from config
 	/// @param hardwareAbstraction - realization of HAL
 	IrCamera(const QString &port
-			 , const trikKernel::Configurer &configurer
-			 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikKernel::Configurer &configurer
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~IrCamera() override;
 

@@ -38,7 +38,7 @@ QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 
 	if (!context->argument(0).toBool()) {
 		ADD_FAILURE() << "Assertion failure at\n"
-				<< QStringList(context->backtrace().mid(1)).join("\n").toStdString();
+		              << QStringList(context->backtrace().mid(1)).join("\n").toStdString();
 	}
 
 	return {};
@@ -47,11 +47,13 @@ QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
 void TrikJsRunnerTest::SetUp()
 {
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
-					, "./test-model-config.xml", "./media"));
+		, "./test-model-config.xml", "./media"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->registerUserFunction("assert", scriptAssert);
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
-					 mScriptRunner.data(), [this](const QString &m) { mStdOut += m; });
+	QObject::connect(mScriptRunner.data(),
+		&trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
+		mScriptRunner.data(),
+		[this](const QString &m) { mStdOut += m; });
 }
 
 void TrikJsRunnerTest::TearDown()
@@ -66,12 +68,11 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted, &wait]()
-	{
+		, &wait, [&alreadyCompleted, &wait]() {
 		alreadyCompleted = true;
 		Q_ASSERT(wait.isRunning());
 		wait.quit();
-	} ) ;
+	} );
 	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 
 	mScriptRunner->run(script, file);
@@ -87,12 +88,12 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
+	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait,
+		&QEventLoop::quit);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted]()
-	{
+		, &wait, [&alreadyCompleted]() {
 		alreadyCompleted = true;
-	} ) ;
+	} );
 	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
 	mScriptRunner->runDirectCommand(script);
 
@@ -197,11 +198,11 @@ TEST_F(TrikJsRunnerTest, directCommandTest)
 
 	runDirectCommandAndWaitForQuit("script.system('"
 #ifdef Q_OS_WIN
-"DEL"
+		"DEL"
 #else
-"rm"
+		"rm"
 #endif
-	" test', true);");
+		" test', true);");
 	ASSERT_FALSE(testFile.exists());
 	runDirectCommandAndWaitForQuit("script.quit();");
 	tests::utils::Wait::wait(300);
@@ -213,16 +214,16 @@ TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)
 	::remove(testFileName.toStdString().c_str());
 	ASSERT_FALSE(QFileInfo::exists(testFileName));
 	auto exitCode = runDirectCommandAndWaitForQuit("script.system('echo 123 > "
-												   + testFileName + "', true); script.quit();");
+		+ testFileName + "', true); script.quit();");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 	ASSERT_TRUE(QFileInfo::exists(testFileName));
 	tests::utils::Wait::wait(300);
 	runDirectCommandAndWaitForQuit("script.system('"
 #ifdef Q_OS_WIN
-	"DEL"
+		"DEL"
 #else
-	"rm"
+		"rm"
 #endif
-	" " + testFileName + "', true); script.quit();");
+		" " + testFileName + "', true); script.quit();");
 	ASSERT_FALSE(QFileInfo::exists(testFileName));
 }

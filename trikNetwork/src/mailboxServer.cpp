@@ -26,7 +26,7 @@
 using namespace trikNetwork;
 
 MailboxServer::MailboxServer(quint16 port)
-	: TrikServer([this] () { return connectionFactory(); })
+	: TrikServer([this]() { return connectionFactory(); })
 	, mHullNumber(0)
 	, mMyIp(determineMyIp())
 	, mMyPort(port)
@@ -96,9 +96,9 @@ void MailboxServer::setHullNumber(int hullNumber)
 	saveSettings();
 	forEveryConnection(
 		[this](MailboxConnection *c) {
-			QMetaObject::invokeMethod(c, [c,this]() { c->sendConnectionInfo(mMyIp, mMyPort, mHullNumber); });
+		QMetaObject::invokeMethod(c, [c, this]() { c->sendConnectionInfo(mMyIp, mMyPort, mHullNumber); });
 	}
-	, -1);
+		, -1);
 }
 
 void MailboxServer::connectTo(const QString &ip, int port)
@@ -160,9 +160,9 @@ MailboxConnection *MailboxServer::connectionFactory()
 	return connection;
 }
 
-void MailboxServer::connectConnection(MailboxConnection * c)
+void MailboxServer::connectConnection(MailboxConnection *c)
 {
-	connect(c, &MailboxConnection::connectionInfo, this, [this](const QHostAddress &ip, int port, int hullNumber){
+	connect(c, &MailboxConnection::connectionInfo, this, [this](const QHostAddress &ip, int port, int hullNumber) {
 		onConnectionInfo(ip, port, hullNumber);
 	});
 	connect(c, &MailboxConnection::newData, this, &MailboxServer::onNewData);
@@ -171,11 +171,11 @@ void MailboxServer::connectConnection(MailboxConnection * c)
 QHostAddress MailboxServer::determineMyIp()
 {
 	QList<QNetworkInterface> ifs {
-				// TRIK wlan0
-				QNetworkInterface::interfaceFromName("wlan0")
-				// Fallback to localhost
-				, QNetworkInterface::interfaceFromName("lo")
-				, QNetworkInterface::interfaceFromIndex(1)
+		// TRIK wlan0
+		QNetworkInterface::interfaceFromName("wlan0")
+		// Fallback to localhost
+		, QNetworkInterface::interfaceFromName("lo")
+		, QNetworkInterface::interfaceFromIndex(1)
 	};
 	for (auto &&interface : ifs) {
 		if (interface.isValid()) {
@@ -252,9 +252,9 @@ void MailboxServer::send(int hullNumber, const QString &message)
 	const auto data = QString("data:%1").arg(message).toUtf8();
 	forEveryConnection(
 		[data](Connection *c) {
-			QMetaObject::invokeMethod(c, [c, data]() { c->send(data); });
-		}
-	, hullNumber);
+		QMetaObject::invokeMethod(c, [c, data]() { c->send(data); });
+	}
+		, hullNumber);
 }
 
 void MailboxServer::send(const QString &message)
@@ -386,13 +386,15 @@ void MailboxServer::forEveryConnection(const std::function<void(MailboxConnectio
 			const auto connection = prepareConnection(endpoint);
 			if (connection == nullptr) {
 				QLOG_ERROR() << "Connection to" << endpoint << "is dead at the moment, message"
-						<< "is not delivered. Will try to reestablish connection on next send.";
+				             << "is not delivered. Will try to reestablish connection on next send.";
 			} else {
 				onConnectionInfo(endpoint.ip, endpoint.serverPort, key, endpoint.serverPort);
 				if (connection->isConnected()) {
 					method(connection);
 				} else {
-					connect(connection, &Connection::connected, this, [method, connection](){method(connection);});
+					connect(connection, &Connection::connected, this, [method, connection]() {
+						method(connection);
+					});
 				}
 			}
 		}

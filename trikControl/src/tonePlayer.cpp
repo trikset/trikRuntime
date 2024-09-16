@@ -40,11 +40,11 @@ void TonePlayer::initializeAudio()
 	if (!info.isFormatSupported(mFormat)) {
 		mFormat = info.nearestFormat(mFormat);
 		QLOG_INFO() << "Specified format is not supported. The nearest one is:"
-					<< "channel count: " << mFormat.channelCount() << ";"
-					<< "sample rate: " << mFormat.sampleRate() << ";"
-					<< "sample size: " << mFormat.sampleSize() << ";"
-					<< "sample type: " << mFormat.sampleType() << ";"
-					<< "codec: " << mFormat.codec();
+		            << "channel count: " << mFormat.channelCount() << ";"
+		            << "sample rate: " << mFormat.sampleRate() << ";"
+		            << "sample size: " << mFormat.sampleSize() << ";"
+		            << "sample type: " << mFormat.sampleType() << ";"
+		            << "codec: " << mFormat.codec();
 	}
 }
 
@@ -54,24 +54,24 @@ void TonePlayer::play(int freqHz, int durationMs)
 	const auto state = mOutput->state();
 	QLOG_INFO() << "Device started. Output state is" << state;
 	switch (state) {
-		case QAudio::ActiveState:
-			mOutput->suspend();
-			mDevice->reset();
-			mOutput->resume();
-			break;
-		case QAudio::SuspendedState:
-			mOutput->resume();
-			break;
-		case QAudio::StoppedState:
-			mOutput->start(mDevice);
-			break;
-		case QAudio::IdleState:
-			mOutput->start(mDevice);
-			break;
-		case QAudio::InterruptedState:
-				QLOG_ERROR() << "Audio device was interrupted previously";
-				mOutput->start(mDevice);
-			break;
+	case QAudio::ActiveState:
+		mOutput->suspend();
+		mDevice->reset();
+		mOutput->resume();
+		break;
+	case QAudio::SuspendedState:
+		mOutput->resume();
+		break;
+	case QAudio::StoppedState:
+		mOutput->start(mDevice);
+		break;
+	case QAudio::IdleState:
+		mOutput->start(mDevice);
+		break;
+	case QAudio::InterruptedState:
+		QLOG_ERROR() << "Audio device was interrupted previously";
+		mOutput->start(mDevice);
+		break;
 	}
 
 	mTimer.setInterval(durationMs);

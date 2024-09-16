@@ -76,7 +76,7 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
 	Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig
-			, const QString &modelConfig, const QString &mediaPath);
+		, const QString &modelConfig, const QString &mediaPath);
 
 	~Brick() override;
 
@@ -153,9 +153,9 @@ public slots:
 
 private:
 	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
-			, const QString &systemConfig
-			, const QString &modelConfig
-			, const QString &mediaPath);
+		, const QString &systemConfig
+		, const QString &modelConfig
+		, const QString &mediaPath);
 
 	/// Deinitializes and properly shuts down device on a given port.
 	void shutdownDevice(const QString &port);

@@ -36,4 +36,4 @@ public slots:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::BatteryInterface*)
+Q_DECLARE_METATYPE(trikControl::BatteryInterface *)

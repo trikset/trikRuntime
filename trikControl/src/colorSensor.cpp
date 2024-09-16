@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Color Sensor on" + port)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
@@ -33,11 +33,12 @@ ColorSensor::ColorSensor(const QString &port, const trikKernel::Configurer &conf
 	const int m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
 	const int n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
 
-	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState, hardwareAbstraction));
+	mColorSensorWorker.reset(new ColorSensorWorker(script, inputFile, outputFile, m, n, mState,
+		hardwareAbstraction));
 	mColorSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(mColorSensorWorker.data(), &ColorSensorWorker::stopped
-			, this, &ColorSensor::onStopped, Qt::DirectConnection);
+		, this, &ColorSensor::onStopped, Qt::DirectConnection);
 
 	QLOG_INFO() << "Starting ColorSensor worker thread" << &mWorkerThread;
 
@@ -61,7 +62,7 @@ ColorSensor::Status ColorSensor::status() const
 void ColorSensor::init(bool showOnDisplay)
 {
 	QMetaObject::invokeMethod(mColorSensorWorker.data()
-							  , [this, showOnDisplay](){mColorSensorWorker->init(showOnDisplay);});
+		, [this, showOnDisplay]() {mColorSensorWorker->init(showOnDisplay);});
 }
 
 QVector<int> ColorSensor::read(int m, int n)

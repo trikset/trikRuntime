@@ -49,8 +49,8 @@ public:
 	/// @param brick - reference to robot brick.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikCommunicator(trikControl::BrickInterface &brick
-			, trikNetwork::MailboxInterface * mailbox
-			);
+		, trikNetwork::MailboxInterface *mailbox
+		);
 
 	/// Constructor that accepts external script runner and issues commands to it.
 	/// @param runner - script runner that shall be used to execute commands.
@@ -66,7 +66,7 @@ signals:
 
 private:
 	TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikScriptRunner::TrikScriptRunner> &runner
-			, const QString &configVersion);
+		, const QString &configVersion);
 
 	Connection *connectionFactory();
 

@@ -32,11 +32,11 @@ constexpr auto EXIT_SCRIPT_SUCCESS = EXIT_SUCCESS;
 void TrikPyRunnerTest::SetUp()
 {
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
-				   , "./test-model-config.xml", "./media/"));
+		, "./test-model-config.xml", "./media/"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
 	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::PYTHON);
-	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
-					 &*mScriptRunner, [this](const QString &m) {
+	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut, &*mScriptRunner,
+		[this](const QString &m) {
 		std::cout << "Incoming:" << m.toStdString() << std::endl;
 		mStdOut += m;
 	});
@@ -54,7 +54,7 @@ int TrikPyRunnerTest::run(const QString &script)
 	QEventLoop l;
 	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
-					 , &l, [&l](const QString &e) {
+		, &l, [&l](const QString &e) {
 		auto rc = EXIT_SCRIPT_SUCCESS;
 		if (!e.isEmpty()) {
 			rc = EXIT_SCRIPT_ERROR;
@@ -73,9 +73,9 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop l;
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
-					 , &l, [&l](const QString &e) {
-					l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
-									   : (qDebug() << e, EXIT_SCRIPT_ERROR));
+		, &l, [&l](const QString &e) {
+		l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
+			                                                   : (qDebug() << e, EXIT_SCRIPT_ERROR));
 	});
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
@@ -139,7 +139,7 @@ TEST_F(TrikPyRunnerTest, abortWhileTrue)
 	t.setSingleShot(true);
 	using trikScriptRunner::TrikScriptRunnerInterface;
 	QObject::connect(&scriptRunner(), &TrikScriptRunnerInterface::startedScript
-					 , &t, QOverload<>::of(&QTimer::start));
+		, &t, QOverload<>::of(&QTimer::start));
 	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
 	auto err = run("print('before')\nwhile True: pass\nprint('after')");
 	ASSERT_EQ(mStdOut.toStdString(), "before\n");

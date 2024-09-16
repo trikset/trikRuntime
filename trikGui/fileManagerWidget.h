@@ -39,7 +39,8 @@ class FileManagerWidget : public TrikGuiDialog
 	/// Default QFileIconProvider spend about 10 seconds for scanning empty directory for file icons (Qt 5.8.0),
 	/// so here is suggested the light overwrite version of QFileIconProvider class.
 	/// In future it can be used to divide icons for ".py" and ".js" files.
-	class LightFileIconProvider : public QFileIconProvider {
+	class LightFileIconProvider : public QFileIconProvider
+	{
 	public:
 		/// Ligth version of icon method
 		QIcon icon(IconType) const override;
@@ -57,7 +58,7 @@ public:
 	/// @param fileManagerRoot - root directory for file browser.
 	/// @param parent - parent of this widget in Qt object hierarchy.
 	explicit FileManagerWidget(Controller &controller, MainWidget::FileManagerRootType fileManagerRoot
-			, QWidget *parent = 0);
+		, QWidget *parent = 0);
 
 	~FileManagerWidget() override;
 

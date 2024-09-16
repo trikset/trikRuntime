@@ -31,14 +31,14 @@ public:
 	}
 
 private:
-	static QScriptValue toScriptValue(QScriptEngine *engine, T* const &in)
+	static QScriptValue toScriptValue(QScriptEngine *engine, T * const &in)
 	{
 		return engine->newQObject(in);
 	}
 
-	static void fromScriptValue(const QScriptValue &object, T* &out)
+	static void fromScriptValue(const QScriptValue &object, T * &out)
 	{
-		out = qobject_cast<T*>(object.toQObject());
+		out = qobject_cast<T *>(object.toQObject());
 	}
 };
 

@@ -33,8 +33,8 @@
 using namespace trikGui;
 
 MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
-		, trikControl::MotorInterface::Type type
-		, QWidget *parent)
+	, trikControl::MotorInterface::Type type
+	, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mPorts(mBrick.motorPorts(type))
@@ -96,35 +96,33 @@ void MotorsWidget::renewFocus()
 
 bool MotorsWidget::eventFilter(QObject *o, QEvent *event)
 {
-	if(event->type() == QEvent::KeyPress)
-	{
+	if(event->type() == QEvent::KeyPress) {
 		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 
 		switch (keyEvent->key()) {
-			case Qt::Key_Up: {
+		case Qt::Key_Up: {
+			focusPreviousChild();
+			if (dynamic_cast<QScrollArea *>(focusWidget())) {
 				focusPreviousChild();
-				if (dynamic_cast<QScrollArea *>(focusWidget())) {
-					focusPreviousChild();
-				}
-
-				ensureFocusedWidgetVisible();
-				break;
 			}
-			case Qt::Key_Down: {
+
+			ensureFocusedWidgetVisible();
+			break;
+		}
+		case Qt::Key_Down: {
+			focusNextChild();
+			if (dynamic_cast<QScrollArea *>(focusWidget())) {
 				focusNextChild();
-				if (dynamic_cast<QScrollArea *>(focusWidget())) {
-					focusNextChild();
-				}
-
-				ensureFocusedWidgetVisible();
-				break;
 			}
+
+			ensureFocusedWidgetVisible();
+			break;
+		}
 		}
 	}
 
 	return TrikGuiDialog::eventFilter(o, event);
 }
-
 
 void MotorsWidget::keyPressEvent(QKeyEvent *event)
 {

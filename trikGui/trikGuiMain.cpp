@@ -44,10 +44,9 @@ int main(int argc, char *argv[])
 	QString styleSheet = QLatin1String(File.readAll());
 	app.setStyleSheet(styleSheet);
 
-
 	initHelper.commandLineParser().addApplicationDescription(
-				QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
-				);
+		QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
+		);
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;

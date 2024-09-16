@@ -23,7 +23,7 @@ using namespace trikHal;
 #include <trikHal/mspI2cInterface.h>
 
 I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
-		, uint8_t bus, uint8_t deviceId)
+	, uint8_t bus, uint8_t deviceId)
 	: mI2c(i2c)
 	, mState("I2C Communicator")
 {

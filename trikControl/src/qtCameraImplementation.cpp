@@ -30,15 +30,15 @@ QtCameraImplementation::QtCameraImplementation(const QString & port)
 	QLOG_INFO() << "Available cameras:" << QCameraInfo::availableCameras().count();
 	for (auto & cameraInfo : QCameraInfo::availableCameras()) {
 		if (cameraInfo.deviceName() == port) {
-				decltype(mCamera) tmp(new QCamera(cameraInfo));
-				tmp.swap(mCamera);
-				break;
+			decltype(mCamera) tmp(new QCamera(cameraInfo));
+			tmp.swap(mCamera);
+			break;
 		}
 	}
 
 	if (!mCamera) {
 		QLOG_ERROR() << "Failed to initialize camera for " << port
-				<< " from available cameras" << QCameraInfo::availableCameras();
+		             << " from available cameras" << QCameraInfo::availableCameras();
 	}
 }
 
@@ -61,19 +61,17 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::readyForCaptureChanged
 		, &eventLoop, [this, &imageCapture, camera](bool ready) {
-			if (ready) {
-				camera->searchAndLock();
-				imageCapture->capture(getTempDir().filePath("photo.jpg"));
-				camera->unlock();
-			}
+		if (ready) {
+			camera->searchAndLock();
+			imageCapture->capture(getTempDir().filePath("photo.jpg"));
+			camera->unlock();
 		}
-	);
+	});
 
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageCaptured
-			, &eventLoop, [&imageByteVector] (int, const QImage &imgOrig) {
-				imageByteVector = CameraDeviceInterface::qImageToQVector(imgOrig);
-			}
-	);
+		, &eventLoop, [&imageByteVector](int, const QImage &imgOrig) {
+		imageByteVector = CameraDeviceInterface::qImageToQVector(imgOrig);
+	});
 
 	mCamera->setCaptureMode(QCamera::CaptureStillImage);
 	mCamera->start();
@@ -82,10 +80,9 @@ QVector<uint8_t> QtCameraImplementation::getPhoto()
 	watchdog.setSingleShot(true);
 	QObject::connect(&watchdog, &QTimer::timeout, &eventLoop, &QEventLoop::quit);
 	QObject::connect(imageCapture.data(), &QCameraImageCapture::imageAvailable
-			, &eventLoop, [&eventLoop](int, const QVideoFrame &) {
-				eventLoop.quit();
-			}
-		);
+		, &eventLoop, [&eventLoop](int, const QVideoFrame &) {
+		eventLoop.quit();
+	});
 
 	eventLoop.exec();
 	watchdog.stop();

@@ -23,8 +23,8 @@
 using namespace trikControl;
 
 VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-	                       , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-	                       , const QString &port)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+	, const QString &port)
 	: mState(deviceName)
 {
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
@@ -32,7 +32,7 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 #ifndef TRIK_IIO_ACCEL_GYRO
 	Q_UNUSED(port)
 	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-	                                             , hardwareAbstraction);
+		, hardwareAbstraction);
 	mVectorSensorWorker->moveToThread(&mWorkerThread);
 
 	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
@@ -42,26 +42,26 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 	mWorkerThread.start();
 
 	if (!mState.isFailed()) {
-	    connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &VectorSensor::newData);
+		connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &VectorSensor::newData);
 #else /* ! TRIK_IIO_ACCEL_GYRO */
 	if (!mState.isFailed()) {
-	    mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
-	                                               configurer.attributeByPort(port, "scanType")));
-	    if (!mIIOFile.data()->open()) {
-	        QLOG_ERROR() << "Gyroscope init failed";
-	        mState.fail();
-	        return;
-	    }
-	    connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
-	    connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData
-	            , this, [this](QVector<int> reading, const trikKernel::TimeVal &eventTime){
-	                Q_UNUSED(eventTime);
-	                mResult = reading;
-	            });
+		mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
+			configurer.attributeByPort(port, "scanType")));
+		if (!mIIOFile.data()->open()) {
+			QLOG_ERROR() << "Gyroscope init failed";
+			mState.fail();
+			return;
+		}
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData
+			, this, [this](QVector<int> reading, const trikKernel::TimeVal &eventTime) {
+			Q_UNUSED(eventTime);
+			mResult = reading;
+		});
 #endif /* TRIK_IIO_ACCEL_GYRO */
 
-	    QLOG_INFO() << "Starting VectorSensor";
-	    mState.ready();
+		QLOG_INFO() << "Starting VectorSensor";
+		mState.ready();
 	}
 }
 

@@ -41,7 +41,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~DigitalSensor() override;
 

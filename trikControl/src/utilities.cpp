@@ -18,11 +18,11 @@
 
 using namespace trikControl;
 
-QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
+QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
 	// QImage requires 32-bit aligned scan lines
 	// Helper function to convert data
 	uchar *formattedData = nullptr;
-	auto copyAligned = [&](int perLine){
+	auto copyAligned = [&](int perLine) {
 		const auto realSize = perLine * height;
 		if (realSize > array.size()) {
 			QLOG_WARN() << "imageFromBytes: not enough data";

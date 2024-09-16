@@ -34,22 +34,22 @@
 // convertion funtions
 namespace {
 
-	inline unsigned char clip255(int x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
+inline unsigned char clip255(int x) { return x >= 255 ? 255 : (x <= 0)? 0 : static_cast<uint8_t>(x); }
 
-	QVector<uint8_t> yuyvToRgb(const QVector<uint8_t> &shot, int height, int width) {
-		// yuyv (yuv422) convertion to rgb888
-		QVector<uint8_t> result(height * width * 3);
-		int startIndex = 0;
-		for (auto row = 0; row < height; ++ row) {
-			for (auto col = 0; col < width; col+=2) {
-				// format is y0 cb y1 cr, cb and cr are equal for 2 pixels
-				auto y0 = shot[startIndex];
-				auto cb = shot[startIndex + 1];
-				auto y1 = shot[startIndex + 2];
-				auto cr = shot[startIndex + 3];
-				startIndex += 4;
+QVector<uint8_t> yuyvToRgb(const QVector<uint8_t> &shot, int height, int width) {
+	// yuyv (yuv422) convertion to rgb888
+	QVector<uint8_t> result(height * width * 3);
+	int startIndex = 0;
+	for (auto row = 0; row < height; ++row) {
+		for (auto col = 0; col < width; col += 2) {
+			// format is y0 cb y1 cr, cb and cr are equal for 2 pixels
+			auto y0 = shot[startIndex];
+			auto cb = shot[startIndex + 1];
+			auto y1 = shot[startIndex + 2];
+			auto cr = shot[startIndex + 3];
+			startIndex += 4;
 
-				auto resRgb = &result[(row * width + col) * 3];
+			auto resRgb = &result[(row * width + col) * 3];
 //				resRgb[0] = clip255(y0 + 1.402 * (cr - 128)); // red
 //				resRgb[1] = clip255(y0 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
 //				resRgb[2] = clip255(y0 + 1.772 * (cb - 128)); // blue
@@ -58,73 +58,74 @@ namespace {
 //				resRgb[4] = clip255(y1 - 0.3441 * (cb - 128) - 0.7141 * (cr - 128)); // green
 //				resRgb[5] = clip255(y1 + 1.772 * (cb - 128)); // blue
 
-				const auto alpha = 180 * (cr - 128) / 128;
-				const auto beta  = 45 * (cb - 128) / 128;
-				resRgb[0] = clip255(y0 + alpha); // red
-				resRgb[1] = clip255(y0 - beta - alpha / 2); // green
-				resRgb[2] = clip255(y0 + 5 * beta); // blue
+			const auto alpha = 180 * (cr - 128) / 128;
+			const auto beta = 45 * (cb - 128) / 128;
+			resRgb[0] = clip255(y0 + alpha);         // red
+			resRgb[1] = clip255(y0 - beta - alpha / 2);         // green
+			resRgb[2] = clip255(y0 + 5 * beta);         // blue
 
-				resRgb[3] = clip255(y1 + alpha); // red
-				resRgb[4] = clip255(y1 - beta - alpha / 2); // green
-				resRgb[5] = clip255(y1 + 5 * beta); // blue
-			}
+			resRgb[3] = clip255(y1 + alpha);         // red
+			resRgb[4] = clip255(y1 - beta - alpha / 2);         // green
+			resRgb[5] = clip255(y1 + 5 * beta);         // blue
 		}
+	}
 
+	return result;
+}
+
+QVector<uint8_t> yuv422pToRgb(const QVector<uint8_t> &shot, int height, int width) {
+	// yuv422p convertion to rgb888
+	QVector<uint8_t> result(height * width * 3);
+	if ( width <= 0 || height <= 0 ) {
 		return result;
 	}
+	const auto Y = &shot[0];
+	const auto UV = &shot[width * height];
 
-	QVector<uint8_t> yuv422pToRgb(const QVector<uint8_t> &shot, int height, int width) {
-		// yuv422p convertion to rgb888
-		QVector<uint8_t> result(height * width * 3);
-		if ( width <= 0 || height <= 0 ) {
-			return result;
+	for (auto row = 0; row < height; ++row) {
+		for (auto col = 0; col < width; col += 2) {
+			auto startIndex = row * width + col;
+			int const y1 = Y[startIndex] - 16;
+			int const y2 = Y[startIndex + 1] - 16;
+			int const u = UV[startIndex] - 128;
+			int const v = UV[startIndex + 1] - 128;
+			auto _298y1 = 298 * y1;
+			auto _298y2 = 298 * y2;
+			auto _409v = 409 * v;
+			auto _100u = -100 * u;
+			auto _516u = 516 * u;
+			auto _208v = -208 * v;
+			auto r1 = clip255 ((_298y1 + _516u + 128) >> 8);
+			auto g1 = clip255 ((_298y1 + _100u + _208v + 128) >> 8);
+			auto b1 = clip255 ((_298y1 + _409v + 128) >> 8);
+			auto r2 = clip255 ((_298y2 + _516u + 128) >> 8);
+			auto g2 = clip255 ((_298y2 + _100u + _208v + 128) >> 8);
+			auto b2 = clip255 ((_298y2 + _409v + 128) >> 8);
+
+			auto rgb = &result[startIndex * 3];
+			rgb[0] = r1;
+			rgb[1] = g1;
+			rgb[2] = b1;
+			rgb[3] = r2;
+			rgb[4] = g2;
+			rgb[5] = b2;
 		}
-		const auto Y = &shot[0];
-		const auto UV = &shot[width * height];
-
-		for (auto row = 0; row < height; ++row) {
-			for (auto col = 0; col < width; col+=2) {
-				auto startIndex = row * width + col;
-				int const y1 = Y[startIndex] - 16;
-				int const y2 = Y[startIndex+1] - 16;
-				int const u  = UV[startIndex] - 128;
-				int const v  = UV[startIndex+1] - 128;
-				auto _298y1 = 298 * y1;
-				auto _298y2 = 298 * y2;
-				auto _409v  = 409 * v;
-				auto _100u  = -100 * u;
-				auto _516u  = 516 * u;
-				auto _208v  = -208 * v;
-				auto r1 = clip255 ((_298y1 + _516u + 128) >> 8);
-				auto g1 = clip255 ((_298y1 + _100u + _208v + 128) >> 8);
-				auto b1 = clip255 ((_298y1 + _409v + 128) >> 8);
-				auto r2 = clip255 ((_298y2 + _516u + 128) >> 8);
-				auto g2 = clip255 ((_298y2 + _100u + _208v + 128) >> 8);
-				auto b2 = clip255 ((_298y2 + _409v + 128) >> 8);
-
-				auto rgb = &result[startIndex*3];
-				rgb[0] = r1;
-				rgb[1] = g1;
-				rgb[2] = b1;
-				rgb[3] = r2;
-				rgb[4] = g2;
-				rgb[5] = b2;
-			}
-		}
-
-		return result;
 	}
 
-	QVector<uint8_t> convertToEmpty(const QVector<uint8_t> &shot, int height, int width) {
-		Q_UNUSED(shot);
-		Q_UNUSED(height);
-		Q_UNUSED(width);
-		return QVector<uint8_t>();
-	}
+	return result;
+}
+
+QVector<uint8_t> convertToEmpty(const QVector<uint8_t> &shot, int height, int width) {
+	Q_UNUSED(shot);
+	Q_UNUSED(height);
+	Q_UNUSED(width);
+	return QVector<uint8_t>();
+}
 }
 
 TrikV4l2VideoDevice::TrikV4l2VideoDevice(const QString &inputFile)
-	: fileDevicePath(inputFile), mConvertFunc(convertToEmpty)
+	: fileDevicePath(inputFile)
+	, mConvertFunc(convertToEmpty)
 {
 	openDevice();
 	setFormat();
@@ -147,7 +148,7 @@ int TrikV4l2VideoDevice::xioctl(unsigned long request, void *arg, const QString 
 
 		if (request != VIDIOC_ENUM_FMT || errno != EINVAL) {
 			QLOG_ERROR() << "ioctl code " << QString("%1").arg(request, 0, 16) << " failed with errno ="
-			<< errno << ", " << strerror(errno) << ":" << possibleError;
+			             << errno << ", " << strerror(errno) << ":" << possibleError;
 		}
 	}
 
@@ -159,21 +160,20 @@ void TrikV4l2VideoDevice::openDevice()
 	mFileDescriptor = ::v4l2_open(fileDevicePath.toStdString().c_str(), O_RDWR | O_NONBLOCK | O_CLOEXEC, 0);
 
 	if (mFileDescriptor < 0) {
-		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor ;
+		QLOG_ERROR() << "Cannot open '" << fileDevicePath << "', return code is " << mFileDescriptor;
 	} else {
-		QLOG_INFO() << "Open v4l2 camera device" <<  fileDevicePath << ",fd =" << mFileDescriptor;
+		QLOG_INFO() << "Open v4l2 camera device" << fileDevicePath << ",fd =" << mFileDescriptor;
 		v4l2_capability cap {};
 		unsigned requested = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE;
 
 		if(!xioctl(VIDIOC_QUERYCAP, &cap, "VIDIOC_QUERYCAP failed")
-			&& (((cap.capabilities & V4L2_CAP_DEVICE_CAPS)? cap.device_caps : cap.capabilities) & requested)
-			!= requested)
-			{
-				QLOG_ERROR() << "V4l2: The device does not handle single-planar video capture"
-						<< "with streamingdevice_caps = "
-						<< QString("%1").arg(cap.device_caps, 0, 16);
-				closeDevice();
-			}
+		   && (((cap.capabilities & V4L2_CAP_DEVICE_CAPS)? cap.device_caps : cap.capabilities) & requested)
+		   != requested) {
+			QLOG_ERROR() << "V4l2: The device does not handle single-planar video capture"
+			             << "with streamingdevice_caps = "
+			             << QString("%1").arg(cap.device_caps, 0, 16);
+			closeDevice();
+		}
 	}
 
 }
@@ -192,7 +192,7 @@ void TrikV4l2VideoDevice::setFormat()
 		v4l2_fmtdesc fmtTry {};
 		fmtTry.index = fmtIdx;
 		fmtTry.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-		if ( ! xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT")) {
+		if ( !xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT")) {
 
 			QLOG_INFO() << "V4l2: available format: " << hex << fmtTry.pixelformat;
 			mFormat.fmt.pix.pixelformat = fmtTry.pixelformat;
@@ -211,12 +211,12 @@ void TrikV4l2VideoDevice::setFormat()
 				break;
 			}
 		}
-		++ fmtIdx;
+		++fmtIdx;
 	} while (errno != EINVAL); // EINVAL => end of supported formats
 
 	if (mConvertFunc == convertToEmpty) {
 		QLOG_ERROR() << "TRIK Runtime can not convert " << descPixelFmt
-				<< " to RGB888, getPhoto will return empty vector";
+		             << " to RGB888, getPhoto will return empty vector";
 	} else {
 		QLOG_INFO() << "V4l2: setted format " << descPixelFmt;
 	}
@@ -248,14 +248,13 @@ void TrikV4l2VideoDevice::closeDevice()
 {
 	mNotifier.reset();
 	if (::v4l2_close(mFileDescriptor)) {
-		 QLOG_ERROR() << "Failed to close v4l2 camera device descriptor #" << mFileDescriptor
-						<< ", device path: " << fileDevicePath;
+		QLOG_ERROR() << "Failed to close v4l2 camera device descriptor #" << mFileDescriptor
+		             << ", device path: " << fileDevicePath;
 	}
 
 	mFileDescriptor = -1;
-	QLOG_INFO() << "Closed v4l2 camera device " <<  fileDevicePath;
+	QLOG_INFO() << "Closed v4l2 camera device " << fileDevicePath;
 }
-
 
 const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 {
@@ -263,7 +262,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	connect(this, &TrikV4l2VideoDevice::dataReady, &loop, &QEventLoop::quit, Qt::QueuedConnection);
 	initMMAP();
 	startCapturing();
-	QTimer::singleShot(1000, &loop, [&loop](){loop.exit(-1);});
+	QTimer::singleShot(1000, &loop, [&loop]() {loop.exit(-1);});
 	if (loop.exec() < 0) {
 		QLOG_WARN() << "V4l2 makeShot terminated by watchdog timer. Device not ready or misconfigured?";
 	}
@@ -276,7 +275,7 @@ const QVector<uint8_t> & TrikV4l2VideoDevice::makeShot()
 	// expect yuv format, 4 bytes for 2 pixels
 	if (mFrame.size() != IMAGE_HEIGHT * IMAGE_WIDTH * 2) {
 		QLOG_ERROR() << "V4l2: unexpected size of obtained image (" << mFrame.size() << "instead of"
-					 << IMAGE_HEIGHT * IMAGE_WIDTH * 2  << ")";
+		             << IMAGE_HEIGHT * IMAGE_WIDTH * 2 << ")";
 		QVector<uint8_t>().swap(mFrame);
 	} else {
 		mConvertFunc(mFrame, IMAGE_HEIGHT, IMAGE_WIDTH).swap(mFrame);
@@ -291,7 +290,7 @@ void TrikV4l2VideoDevice::initMMAP()
 	req.type = mFormat.type;
 	req.memory = V4L2_MEMORY_MMAP;
 
-	if (xioctl(VIDIOC_REQBUFS, &req, "V4l2 VIDIOC_REQBUFS failed")){
+	if (xioctl(VIDIOC_REQBUFS, &req, "V4l2 VIDIOC_REQBUFS failed")) {
 		return;
 	}
 
@@ -311,8 +310,8 @@ void TrikV4l2VideoDevice::initMMAP()
 
 		buffers[i].length = buf.length;
 		buffers[i].start = static_cast<uint8_t *>(::v4l2_mmap(nullptr, buf.length
-							, PROT_READ | PROT_WRITE, MAP_SHARED
-							, mFileDescriptor, buf.m.offset));
+			, PROT_READ | PROT_WRITE, MAP_SHARED
+			, mFileDescriptor, buf.m.offset));
 
 		if (buffers[i].start == MAP_FAILED) {
 			QLOG_ERROR() << "mmap failed in TrikV4l2VideoDevice::initMMAP()";
@@ -339,7 +338,7 @@ void TrikV4l2VideoDevice::startCapturing()
 		}
 	}
 
-	v4l2_buf_type type {static_cast<v4l2_buf_type> (mFormat.type)};
+	v4l2_buf_type type {static_cast<v4l2_buf_type>(mFormat.type)};
 
 	if (xioctl(VIDIOC_STREAMON, &type, "V4l2 VIDIOC_STREAMON failed")) {
 		return;
@@ -384,7 +383,6 @@ void TrikV4l2VideoDevice::stopCapturing()
 		QLOG_INFO() << "V4l2 camera: stopped capturing";
 	}
 }
-
 
 void TrikV4l2VideoDevice::freeMMAP()
 {

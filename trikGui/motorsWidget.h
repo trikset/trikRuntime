@@ -49,8 +49,8 @@ public:
 	/// @param type - type of motors we want to test.
 	/// @param parent - pointer to a parent widget.
 	MotorsWidget(trikControl::BrickInterface &brick
-				, trikControl::MotorInterface::Type type
-				, QWidget *parent = 0);
+		, trikControl::MotorInterface::Type type
+		, QWidget *parent = 0);
 
 	/// Destructor.
 	~MotorsWidget() override;

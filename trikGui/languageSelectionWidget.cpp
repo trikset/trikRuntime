@@ -60,9 +60,9 @@ LanguageSelectionWidget::LanguageSelectionWidget(QWidget *parent)
 	setLayout(&mLayout);
 
 	mLanguages.selectionModel()->select(
-			mLanguages.model()->index(lastLocaleIndex, 0)
-			, QItemSelectionModel::ClearAndSelect
-			);
+		mLanguages.model()->index(lastLocaleIndex, 0)
+		, QItemSelectionModel::ClearAndSelect
+		);
 
 	mLanguages.setCurrentIndex(mLanguages.model()->index(lastLocaleIndex, 0));
 }
@@ -80,25 +80,25 @@ void LanguageSelectionWidget::renewFocus()
 void LanguageSelectionWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return: {
-			const QString selectedLocale = mLanguages.currentItem()->data(Qt::UserRole).toString();
-			QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
-			settings.setValue("locale", selectedLocale);
-			settings.sync();
+	case Qt::Key_Return: {
+		const QString selectedLocale = mLanguages.currentItem()->data(Qt::UserRole).toString();
+		QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
+		settings.setValue("locale", selectedLocale);
+		settings.sync();
 
-			auto reply = QMessageBox::warning(this, tr("Warning")
-					, tr("GUI will now restart. Do you want to continue?")
-					, QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+		auto reply = QMessageBox::warning(this, tr("Warning")
+			, tr("GUI will now restart. Do you want to continue?")
+			, QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
-			if (reply == QMessageBox::Yes) {
-				QApplication::exit(0);
-			}
-			break;
+		if (reply == QMessageBox::Yes) {
+			QApplication::exit(0);
 		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
+		break;
+	}
+	default: {
+		TrikGuiDialog::keyPressEvent(event);
+		break;
+	}
 	}
 }
 

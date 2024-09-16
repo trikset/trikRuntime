@@ -55,4 +55,4 @@ public slots:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::ObjectSensorInterface*)
+Q_DECLARE_METATYPE(trikControl::ObjectSensorInterface *)

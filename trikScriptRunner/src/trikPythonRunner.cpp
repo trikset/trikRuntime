@@ -24,10 +24,10 @@
 using namespace trikScriptRunner;
 
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface *brick
-								   , trikNetwork::MailboxInterface * const mailbox
-								   , TrikScriptControlInterface *scriptControl
-								   )
-	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl))
+	, trikNetwork::MailboxInterface * const mailbox
+	, TrikScriptControlInterface *scriptControl
+	)
+	:       mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl))
 {
 	mWorkerThread = new QThread(this);
 	mScriptEngineWorker->moveToThread(mWorkerThread);
@@ -37,7 +37,7 @@ TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface *brick
 	connect(mScriptEngineWorker, &PythonEngineWorker::completed, this, &TrikPythonRunner::completed);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedScript, this, &TrikPythonRunner::startedScript);
 	connect(mScriptEngineWorker, &PythonEngineWorker::startedDirectScript
-			, this, &TrikPythonRunner::startedDirectScript);
+		, this, &TrikPythonRunner::startedDirectScript);
 
 	QLOG_INFO() << "Starting TrikPythonRunner worker thread" << &mWorkerThread;
 	mWorkerThread->setObjectName(mScriptEngineWorker->metaObject()->className());
@@ -84,8 +84,9 @@ void TrikPythonRunner::brickBeep()
 
 void TrikPythonRunner::setWorkingDirectory(const QString &workingDir)
 {
-	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir](){
-		mScriptEngineWorker->setWorkingDirectory(workingDir);});
+	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir]() {
+		mScriptEngineWorker->setWorkingDirectory(workingDir);
+	});
 }
 
 void TrikPythonRunner::runDirectCommand(const QString &command)

@@ -29,7 +29,7 @@
 using namespace trikGui;
 
 SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringList &ports
-		, SensorType sensorType, QWidget *parent)
+	, SensorType sensorType, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mBrick(brick)
 	, mInterval(100)
@@ -41,8 +41,8 @@ SensorsWidget::SensorsWidget(trikControl::BrickInterface &brick, const QStringLi
 	int i = 0;
 
 	if (mSensorType == SensorsWidget::SensorType::gyroscope
-			|| mSensorType == SensorsWidget::SensorType::accelerometer
-			|| mSensorType == SensorsWidget::SensorType::camera) {
+	    || mSensorType == SensorsWidget::SensorType::accelerometer
+	    || mSensorType == SensorsWidget::SensorType::camera) {
 		AbstractIndicator *indicator = produceIndicator(QString(""), mSensorType);
 		mIndicators.resize(1);
 
@@ -100,22 +100,22 @@ void SensorsWidget::goHome()
 void SensorsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerOff: {
-			goHome();
-			break;
-		}
-		case Qt::Key_Escape: {
-			exit();
-			break;
-		}
-		case Qt::Key_Return: {
-			mIndicators[0]->setFocus();
-			break;
-		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
+	case Qt::Key_PowerOff: {
+		goHome();
+		break;
+	}
+	case Qt::Key_Escape: {
+		exit();
+		break;
+	}
+	case Qt::Key_Return: {
+		mIndicators[0]->setFocus();
+		break;
+	}
+	default: {
+		TrikGuiDialog::keyPressEvent(event);
+		break;
+	}
 	}
 }
 

@@ -38,7 +38,7 @@ public:
 	/// @param n - vertical dimension of a sensor.
 	/// @param state - shared state of a sensor.
 	ColorSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile, int m, int n
-			, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~ColorSensorWorker() override;
 

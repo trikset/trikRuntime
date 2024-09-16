@@ -17,7 +17,6 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/QCoreApplication>
 
-
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
 

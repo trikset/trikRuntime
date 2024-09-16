@@ -24,8 +24,8 @@
 using namespace trikGui;
 
 SensorIndicator::SensorIndicator(const QString &port
-		, trikControl::SensorInterface &sensor
-		, QWidget *parent)
+	, trikControl::SensorInterface &sensor
+	, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mSensor(sensor)
 	, mNameLabel(port)

@@ -30,9 +30,9 @@ public:
 	/// @param file - file that is failed to open.
 	explicit FailedToOpenFileException(const QFile &file)
 		: TrikRuntimeException(QString("Failed to open %1 %2")
-							   .arg(QFileInfo(file).absoluteFilePath())
-							   .arg((file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading")))
-		  , mFile(file)
+			.arg(QFileInfo(file).absoluteFilePath())
+			.arg((file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading")))
+		, mFile(file)
 	{
 	}
 

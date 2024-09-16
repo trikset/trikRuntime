@@ -64,7 +64,6 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	QStandardItem * const moreItem = new QStandardItem(tr("More..."));
 	mMenuModel.appendRow(moreItem);
 
-
 	testingItem->appendRow(new QStandardItem(tr("Analog sensors")));
 	if (mController.brick().pwmCapturePorts().length() != 0) {
 		testingItem->appendRow(new QStandardItem(tr("PWM Capture")));
@@ -92,9 +91,9 @@ StartWidget::StartWidget(Controller &controller, QWidget *parent)
 	mMenuView.setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	mMenuView.selectionModel()->select(
-			mMenuModel.index(0, 0)
-			, QItemSelectionModel::ClearAndSelect
-			);
+		mMenuModel.index(0, 0)
+		, QItemSelectionModel::ClearAndSelect
+		);
 
 	mLayout.addWidget(&mTitleLabel);
 	mLayout.addWidget(&mNetworkWidget);
@@ -152,7 +151,8 @@ void StartWidget::launch()
 		} else if (currentItemText == tr("Analog sensors")) {
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
 			ports.sort();
-			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			SensorsWidget sensorsWidget(mController.brick(), ports,
+				SensorsWidget::SensorType::analogOrDigitalSensor);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
@@ -166,7 +166,8 @@ void StartWidget::launch()
 		} else if (currentItemText == tr("Digital sensors")) {
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
 			ports.sort();
-			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
+			SensorsWidget sensorsWidget(mController.brick(), ports,
+				SensorsWidget::SensorType::analogOrDigitalSensor);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
@@ -183,7 +184,8 @@ void StartWidget::launch()
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Accelerometer")) {
-			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
+			SensorsWidget sensorsWidget(mController.brick(), ports,
+				SensorsWidget::SensorType::accelerometer);
 			emit newWidget(sensorsWidget);
 
 			result = sensorsWidget.exec();
@@ -207,7 +209,7 @@ void StartWidget::launch()
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, &SystemSettingsWidget::currentFilesDirPath
-					, this, &StartWidget::changeFileManagerRoot);
+				, this, &StartWidget::changeFileManagerRoot);
 
 			emit newWidget(systemSettingsWidget);
 			result = systemSettingsWidget.exec();
@@ -252,9 +254,9 @@ void StartWidget::setRootIndex(const QModelIndex &index)
 	}
 
 	mMenuView.selectionModel()->select(
-			selectedItemIndex
-			, QItemSelectionModel::ClearAndSelect
-			);
+		selectedItemIndex
+		, QItemSelectionModel::ClearAndSelect
+		);
 
 	mMenuView.setCurrentIndex(selectedItemIndex);
 }
@@ -267,26 +269,26 @@ void StartWidget::goHome()
 void StartWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerOff: {
-			goHome();
+	case Qt::Key_PowerOff: {
+		goHome();
+		break;
+	}
+	case Qt::Key_Escape: {
+		QStandardItem const * const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
+		if (rootItem == nullptr) {
 			break;
 		}
-		case Qt::Key_Escape: {
-			QStandardItem const * const rootItem = mMenuModel.itemFromIndex(mMenuView.rootIndex());
-			if (rootItem == nullptr) {
-				break;
-			}
 
-			setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
-			break;
-		}
-		case Qt::Key_Return: {
-			launch();
-			break;
-		}
-		default: {
-			MainWidget::keyPressEvent(event);
-			break;
-		}
+		setRootIndex(mMenuModel.indexFromItem(rootItem->parent()));
+		break;
+	}
+	case Qt::Key_Return: {
+		launch();
+		break;
+	}
+	default: {
+		MainWidget::keyPressEvent(event);
+		break;
+	}
 	}
 }

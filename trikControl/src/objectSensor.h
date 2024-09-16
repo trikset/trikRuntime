@@ -42,7 +42,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	ObjectSensor(const QString &port, const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~ObjectSensor() override;
 

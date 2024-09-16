@@ -44,8 +44,7 @@ public:
 	TestHelper() = default;
 	~TestHelper()
 	{
-		if (!mDestroyed)
-		{
+		if (!mDestroyed) {
 			delete mDestructable;
 		}
 	}
@@ -77,7 +76,7 @@ TEST(differentOwnerPointertest, foreignPointerTest)
 {
 	TestHelper helper;
 	DifferentOwnerPointer<TestHelper::Destructable> *ptr
-			= new DifferentOwnerPointer<TestHelper::Destructable>(*helper.destructable());
+	        = new DifferentOwnerPointer<TestHelper::Destructable>(*helper.destructable());
 
 	delete ptr;
 	ASSERT_FALSE(helper.isDestroyed());
@@ -87,7 +86,7 @@ TEST(differentOwnerPointertest, ownPointerTest)
 {
 	TestHelper helper;
 	DifferentOwnerPointer<TestHelper::Destructable> *ptr
-			= new DifferentOwnerPointer<TestHelper::Destructable>(helper.destructable());
+	        = new DifferentOwnerPointer<TestHelper::Destructable>(helper.destructable());
 
 	delete ptr;
 	ASSERT_TRUE(helper.isDestroyed());
@@ -97,9 +96,9 @@ TEST(differentOwnerPointertest, sharedPointerTest)
 {
 	TestHelper helper;
 	DifferentOwnerPointer<TestHelper::Destructable> *ptr
-			= new DifferentOwnerPointer<TestHelper::Destructable>(
-					QSharedPointer<TestHelper::Destructable>(helper.destructable())
-			);
+	        = new DifferentOwnerPointer<TestHelper::Destructable>(
+		QSharedPointer<TestHelper::Destructable>(helper.destructable())
+		);
 
 	delete ptr;
 	ASSERT_TRUE(helper.isDestroyed());

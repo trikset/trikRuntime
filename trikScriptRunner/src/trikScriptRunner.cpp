@@ -29,32 +29,35 @@ using namespace trikKernel;
 
 Q_DECLARE_METATYPE(QVector<uint8_t>)
 Q_DECLARE_METATYPE(QVector<int>)
-Q_DECLARE_METATYPE(QTimer*)
+Q_DECLARE_METATYPE(QTimer *)
 
 /// Constructor.
 /// @param brick - reference to trikControl::Brick instance.
 /// @param mailbox - mailbox object used to communicate with other robots.
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-								   , trikNetwork::MailboxInterface * const mailbox
-								   , TrikScriptControlInterface * scriptControl
-								   )
-	: mBrick(brick), mMailbox(mailbox), mScriptControl(scriptControl), mLastRunner(ScriptType::JAVASCRIPT)
+	, trikNetwork::MailboxInterface * const mailbox
+	, TrikScriptControlInterface *scriptControl
+	)
+	: mBrick(brick)
+	, mMailbox(mailbox)
+	, mScriptControl(scriptControl)
+	, mLastRunner(ScriptType::JAVASCRIPT)
 {
 	mScriptRunnerArray.resize(to_underlying(ScriptType::Size));
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
-			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
-				emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
-									 .arg(senderNumber)
-									 .arg(message)
-									 );
-			});
+		connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message) {
+			emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
+				.arg(senderNumber)
+				.arg(message)
+				);
+		});
 	}
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-								   , trikNetwork::MailboxInterface * const mailbox
-								   )
+	, trikNetwork::MailboxInterface * const mailbox
+	)
 	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(&brick))
 {
 	mScriptControl->setParent(this);
@@ -119,31 +122,35 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 	}
 }
 
-TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
+TrikScriptRunnerInterface *TrikScriptRunner::fetchRunner(ScriptType stype)
 {
 	auto & cell = mScriptRunnerArray[to_underlying(stype)];
 	if (cell == nullptr) { // lazy creation
 		switch (stype) {
-			case ScriptType::JAVASCRIPT:
-				QSharedPointer<TrikScriptRunnerInterface>(
-							new TrikJavaScriptRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
-				break;
+		case ScriptType::JAVASCRIPT:
+			QSharedPointer<TrikScriptRunnerInterface>(
+				new TrikJavaScriptRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
+			break;
 #ifndef TRIK_NOPYTHON
-			case ScriptType::PYTHON:
-				QSharedPointer<TrikScriptRunnerInterface>(
-							new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
-				break;
+		case ScriptType::PYTHON:
+			QSharedPointer<TrikScriptRunnerInterface>(
+				new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
+			break;
 #endif
-			default:
-				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
-				return nullptr;
+		default:
+			QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
+			return nullptr;
 		}
 		// subscribe on wrapped objects signals
 		connect(&*cell, &TrikScriptRunnerInterface::completed, this, &TrikScriptRunnerInterface::completed);
-		connect(&*cell, &TrikScriptRunnerInterface::startedScript, this, &TrikScriptRunnerInterface::startedScript);
+		connect(&*cell,
+			&TrikScriptRunnerInterface::startedScript,
+			this,
+			&TrikScriptRunnerInterface::startedScript);
 		connect(&*cell, &TrikScriptRunnerInterface::startedDirectScript
-				, this, &TrikScriptRunnerInterface::startedDirectScript);
-		connect(&*cell, &TrikScriptRunnerInterface::textInStdOut, this, &TrikScriptRunnerInterface::textInStdOut);
+			, this, &TrikScriptRunnerInterface::startedDirectScript);
+		connect(&*cell, &TrikScriptRunnerInterface::textInStdOut, this,
+			&TrikScriptRunnerInterface::textInStdOut);
 	}
 
 	setDefaultRunner(stype);

@@ -20,9 +20,6 @@
 #include <trikControl/trikControlDeclSpec.h>
 #include "deviceInterface.h"
 
-
-
-
 namespace trikControl {
 
 /// Sensor that returns a vector.

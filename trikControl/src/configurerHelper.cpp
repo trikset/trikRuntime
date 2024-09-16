@@ -26,14 +26,14 @@
 using namespace trikControl;
 
 int ConfigurerHelper::configureInt(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
-		, const QString &parameterName)
+	, const QString &parameterName)
 {
 	try {
 		bool ok = false;
 		int parameter = configurer.attributeByPort(port, parameterName).toInt(&ok, 0);
 		if (!ok) {
 			QLOG_ERROR() << QString(R"(Incorrect configuration for parameter "%1" for port "%2": "%3" )")
-					.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
+			        .arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
 			state.fail();
 			return 0;
 		}
@@ -46,14 +46,14 @@ int ConfigurerHelper::configureInt(const trikKernel::Configurer &configurer, Dev
 }
 
 long ConfigurerHelper::configureLong(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
-								   , const QString &parameterName)
+	, const QString &parameterName)
 {
 	try {
 		bool ok = false;
 		long parameter = configurer.attributeByPort(port, parameterName).toLong(&ok, 0);
 		if (!ok) {
 			QLOG_ERROR() << QString(R"(Incorrect configuration for parameter "%1" for port "%2": "%3" )")
-								.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
+			        .arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
 			state.fail();
 			return 0;
 		}
@@ -66,14 +66,14 @@ long ConfigurerHelper::configureLong(const trikKernel::Configurer &configurer, D
 }
 
 qreal ConfigurerHelper::configureReal(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
-		, const QString &parameterName)
+	, const QString &parameterName)
 {
 	try {
 		bool ok = false;
 		const qreal parameter = configurer.attributeByPort(port, parameterName).toDouble(&ok);
 		if (!ok) {
 			QLOG_ERROR() << QString(R"(Incorrect configuration for parameter "%1" for port "%2": "%3" )")
-					.arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
+			        .arg(parameterName).arg(port).arg(configurer.attributeByPort(port, parameterName));
 
 			state.fail();
 			return 0;

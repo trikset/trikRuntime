@@ -35,7 +35,8 @@ public:
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
-	static BrickInterface *create(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
+	static BrickInterface *create(const QString &systemConfig, const QString &modelConfig,
+	                              const QString &mediaPath);
 
 	/// Convenience method that creates brick with default config files, "system-config.xml" and "model-config.xml".
 	/// Transfers ownership over BrickInterface object to caller.
@@ -51,10 +52,10 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
 	static BrickInterface *create(
-			trikHal::HardwareAbstractionInterface &hardwareAbstraction
-			, const QString &systemConfig
-			, const QString &modelConfig
-			, const QString &mediaPath);
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction
+		, const QString &systemConfig
+		, const QString &modelConfig
+		, const QString &mediaPath);
 };
 
 }

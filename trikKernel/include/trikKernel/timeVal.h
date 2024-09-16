@@ -29,7 +29,8 @@ public:
 	/// in most cases.
 	/// Formula for translation : mTime = (sec * 10^6 + mcsec) << 8 = sec * 10^6 << mShift + mcsec << mShift =
 	/// = sec * mSecConst << (mShift - 6) + mcsec << mShift
-	TimeVal(int sec, int mcsec) {
+	TimeVal(int sec, int mcsec)
+	{
 		mTime = ((sec * mSecConst) >> (mShift - 6)) + (mcsec >> mShift);
 	}
 
@@ -85,7 +86,6 @@ inline int TimeVal::timeInterval(int packedTimeLeft, int packedTimeRight)
 inline TimeVal::TimeVal(int packedTime)
 	: mTime(packedTime)
 {}
-
 
 }
 

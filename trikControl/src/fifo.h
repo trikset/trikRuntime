@@ -37,7 +37,7 @@ class FifoInterface;
 namespace trikControl {
 
 /// Class that represents linux FIFO file, which is commonly used by various sensors.
-class Fifo: public FifoInterface
+class Fifo : public FifoInterface
 {
 	Q_OBJECT
 
@@ -47,7 +47,7 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with parameters.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	Fifo(const QString &virtualPort, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	/// Constructor. Creates FIFO worker and moves it in a separate thread.
 	/// @param fileName - name of a FIFO file.

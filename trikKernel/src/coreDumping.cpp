@@ -26,7 +26,7 @@ void (*oldHandler)(int);
 
 static void dumpHandler_impl(int signal, char *p)
 {
-	static char* path = nullptr;
+	static char *path = nullptr;
 	if (p) {
 		// Special case: set path for future dumps
 		path = p;
@@ -53,8 +53,9 @@ static void dumpHandler(int signal)
 
 static void initSignals()
 {
-	QList<int> const signalsList({SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGBUS, SIGSYS, SIGTRAP, SIGXCPU, SIGXFSZ
-			, SIGIOT});
+	QList<int> const signalsList({SIGQUIT, SIGILL, SIGABRT, SIGFPE, SIGSEGV, SIGBUS, SIGSYS, SIGTRAP, SIGXCPU,
+		                      SIGXFSZ
+		                      , SIGIOT});
 
 	struct sigaction oldAction {};
 	sigaction(SIGSEGV, nullptr, &oldAction);

@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mDutyFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
 	, mPeriodFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "periodFile")))
 	, mRunFile(hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "runFile")))

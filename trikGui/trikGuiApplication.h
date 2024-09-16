@@ -31,7 +31,7 @@ class TrikGuiApplication : public QApplication
 
 public:
 	/// Constructor with command-line arguments.
-	TrikGuiApplication(int &argc, char **argv);
+	TrikGuiApplication(int &argc, char * *argv);
 
 	bool notify(QObject *receiver, QEvent *event) override;
 

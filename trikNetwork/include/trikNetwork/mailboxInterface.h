@@ -97,4 +97,4 @@ signals:
 
 }
 
-Q_DECLARE_METATYPE(trikNetwork::MailboxInterface*)
+Q_DECLARE_METATYPE(trikNetwork::MailboxInterface *)

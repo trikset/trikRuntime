@@ -25,7 +25,7 @@ static constexpr int MAX_GYROSCOPE_VAL = 100000;
 static constexpr int ARC_DRAWING_CONST = 16;
 
 GyroscopeIndicator::GyroscopeIndicator(trikControl::GyroSensorInterface *gyroscope
-		, QWidget *parent)
+	, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mTitle(tr("Gyroscope"))
 	, mGyroscope(gyroscope)
@@ -104,7 +104,8 @@ void GyroscopeIndicator::paintEvent(QPaintEvent *)
 	// draw z arc
 	painter.setPen(QPen(QBrush(Qt::red), mBounds.width() * 0.02));
 	int startAngle = 90 * ARC_DRAWING_CONST;
-	int spanAngle = constrain(mZ, MAX_GYROSCOPE_VAL, -MAX_GYROSCOPE_VAL) * ARC_DRAWING_CONST / MAX_GYROSCOPE_VAL * 180;
+	int spanAngle =
+		constrain(mZ, MAX_GYROSCOPE_VAL, -MAX_GYROSCOPE_VAL) * ARC_DRAWING_CONST / MAX_GYROSCOPE_VAL * 180;
 	painter.drawArc(mBounds, startAngle, spanAngle);
 
 	mCircle.setPixmap(pixmap);

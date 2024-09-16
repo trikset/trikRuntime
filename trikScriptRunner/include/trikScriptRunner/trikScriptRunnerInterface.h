@@ -47,9 +47,8 @@
 
 #include "trikScriptControlInterface.h"
 
-
 #define REGISTER_METATYPE(TYPE) \
-	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
+	qRegisterMetaType<TYPE *>(TYPE::staticMetaObject.className());
 
 /// Here we define a convenient template that registers all devices used in trik.
 /// When creating a new device(interface), you should append it to this list.
@@ -114,14 +113,12 @@ public:
 	/// (useful when used from outside of the TrikRuntime).
 	virtual QStringList knownMethodNames() const = 0;
 
-	struct Helper
-	{
+	struct Helper {
 		/// Helper function collects all methods names from given metaObject.
 		/// If the returnType of given method name is registered in metaobject system,
 		/// newMetaObject is constructed and procedure is called recursively for it.
 		static void collectMethodNames(QSet<QString> &result, const QMetaObject *obj);
 	};
-
 
 	/// Get status of last direct command/script
 	virtual bool wasError() = 0;
@@ -139,7 +136,6 @@ public slots:
 	/// has no such possibility so we should append function call to the end of the script. So if script will
 	/// run some actions in the global context they will be invoked on each thread start.
 	virtual void run(const QString &script, const QString &fileName = "") = 0;
-
 
 	/// Executes given script as direct command, so it will use existing script execution environment (or create one
 	/// if needed) and will not reset execution state before or after execution. Sequence of direct commands counts

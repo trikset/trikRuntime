@@ -29,7 +29,7 @@
 namespace trikControl {
 
 CameraDevice::CameraDevice(const QString & port, const QString & mediaPath, const trikKernel::Configurer &configurer
-							, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
 	Q_UNUSED(hardwareAbstraction)
 
@@ -39,16 +39,16 @@ CameraDevice::CameraDevice(const QString & port, const QString & mediaPath, cons
 	QString failMessage;
 
 	if (type == "qtmultimedia") {
-			decltype(mCameraImpl)(new QtCameraImplementation(src)).swap(mCameraImpl);
+		decltype(mCameraImpl)(new QtCameraImplementation(src)).swap(mCameraImpl);
 	} else if (type == "v4l2") {
 #ifdef Q_OS_LINUX
-			decltype(mCameraImpl)(new V4l2CameraImplementation(src, hardwareAbstraction)).swap(mCameraImpl);
+		decltype(mCameraImpl)(new V4l2CameraImplementation(src, hardwareAbstraction)).swap(mCameraImpl);
 #else
-			failMessage = "can use v4l2 only on Linux";
+		failMessage = "can use v4l2 only on Linux";
 #endif
 	} else if (type == "file") {
-				QStringList filters = configurer.attributeByPort(port, "filters").split(',');
-				decltype(mCameraImpl)(new ImitationCameraImplementation(filters, mediaPath)).swap(mCameraImpl);
+		QStringList filters = configurer.attributeByPort(port, "filters").split(',');
+		decltype(mCameraImpl)(new ImitationCameraImplementation(filters, mediaPath)).swap(mCameraImpl);
 	} else {
 		failMessage = "unknown camera device type:" + type;
 	}
@@ -61,14 +61,13 @@ CameraDevice::CameraDevice(const QString & port, const QString & mediaPath, cons
 		}
 
 		QLOG_ERROR() << "Failed to initialize camera device for " << src
-				<< ", " << failMessage
-				<< ", creating camera with type=file ("
-				<< mediaPath << ") and filters=\"*.jpg,*.png\"";
-		decltype(mCameraImpl)(new ImitationCameraImplementation(QStringList({"*.jpg","*.png"}), mediaPath))
-				.swap(mCameraImpl);
+		             << ", " << failMessage
+		             << ", creating camera with type=file ("
+		             << mediaPath << ") and filters=\"*.jpg,*.png\"";
+		decltype(mCameraImpl)(new ImitationCameraImplementation(QStringList({"*.jpg", "*.png"}), mediaPath))
+		.swap(mCameraImpl);
 	}
 }
-
 
 QVector<uint8_t> CameraDevice::getPhoto() {
 	if (!mCameraImpl) {
@@ -77,12 +76,12 @@ QVector<uint8_t> CameraDevice::getPhoto() {
 
 	QMutexLocker lock(&mCameraMutex);
 	QVector<uint8_t> photo;
-	std::function<void()> runFunc = [this, &photo](){ mCameraImpl->getPhoto().swap(photo); };
+	std::function<void()> runFunc = [this, &photo]() { mCameraImpl->getPhoto().swap(photo); };
 #if QT_VERSION_MAJOR>=5 && QT_VERSION_MINOR>=10 && QT_VERSION_PATCH >= 2
 	QScopedPointer<QThread> t(QThread::create(std::move(runFunc)));
 #else
-	struct CameraThread: public QThread {
-		explicit CameraThread(std::function<void()> &&f): mF(f) {}
+	struct CameraThread : public QThread {
+		explicit CameraThread(std::function<void()> &&f) : mF(f) {}
 		void run() override { mF(); }
 		std::function<void()> mF;
 	};
@@ -95,7 +94,6 @@ QVector<uint8_t> CameraDevice::getPhoto() {
 	l.exec();
 	return photo;
 }
-
 
 CameraDevice::Status CameraDevice::status() const {
 	return CameraDevice::Status::ready;

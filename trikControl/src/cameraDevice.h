@@ -43,8 +43,8 @@ public:
 	/// @param configurer - configurer to get info from config
 	/// @param hardwareAbstraction - realization of HAL
 	CameraDevice(const QString &port, const QString & mediaPath
-				 , const trikKernel::Configurer &configurer
-				 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikKernel::Configurer &configurer
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	QVector<uint8_t> getPhoto() override;
 

@@ -27,8 +27,8 @@
 using namespace trikWiFi;
 
 TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
-		, const QString &daemonFile
-		, QObject *parent)
+	, const QString &daemonFile
+	, QObject *parent)
 	: QObject(parent)
 	, mWorker(new TrikWiFiWorker(interfaceFilePrefix, daemonFile))
 {
@@ -36,15 +36,15 @@ TrikWiFi::TrikWiFi(const QString &interfaceFilePrefix
 	mWorker->moveToThread(&mWorkerThread);
 
 	QObject::connect(mWorker.data(), &TrikWiFiWorker::scanFinished
-					 , this, &TrikWiFi::scanFinished);
+		, this, &TrikWiFi::scanFinished);
 	QObject::connect(mWorker.data(), &TrikWiFiWorker::connected
-					 , this, &TrikWiFi::connected);
+		, this, &TrikWiFi::connected);
 	QObject::connect(mWorker.data(), &TrikWiFiWorker::disconnected
-			, this, &TrikWiFi::disconnected);
+		, this, &TrikWiFi::disconnected);
 	QObject::connect(mWorker.data(), &TrikWiFiWorker::statusReady
-					 , this, &TrikWiFi::statusReady);
+		, this, &TrikWiFi::statusReady);
 	QObject::connect(mWorker.data(), &TrikWiFiWorker::error
-					 , this, &TrikWiFi::error);
+		, this, &TrikWiFi::error);
 
 	QLOG_INFO() << "Starting TrikWiFi worker thread" << &mWorkerThread;
 
@@ -106,7 +106,7 @@ SignalStrength TrikWiFi::signalStrength()
 
 void TrikWiFi::connect(const QString &ssid)
 {
-	QMetaObject::invokeMethod(mWorker.data(), [this, &ssid](){mWorker->connect(ssid);});
+	QMetaObject::invokeMethod(mWorker.data(), [this, &ssid]() {mWorker->connect(ssid);});
 }
 
 void TrikWiFi::disconnect()

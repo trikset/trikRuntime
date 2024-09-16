@@ -35,8 +35,7 @@ void RcReader::read()
 	}
 
 	QTextStream stream(&mRcFile);
-	while (!stream.atEnd())
-	{
+	while (!stream.atEnd()) {
 		QString line = stream.readLine();
 
 		const int commentStart = line.indexOf('#');
