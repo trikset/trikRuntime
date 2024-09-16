@@ -40,7 +40,7 @@ public:
 	/// @param node - XML node where error was detected.
 	MalformedConfigException(const QString &errorMessage, const QDomNode &node)
 		: MalformedConfigException(QString("Configuration file malformed, line %1, column %2: %3")
-				.arg(node.lineNumber()).arg(node.columnNumber()).arg(errorMessage))
+			.arg(node.lineNumber()).arg(node.columnNumber()).arg(errorMessage))
 	{
 	}
 

@@ -44,7 +44,7 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 	mApp.setApplicationVersion(trikKernel::version);
 
 	trikKernel::TranslationsHelper::initLocale(app.arguments().contains("--no-locale")
-			|| app.arguments().contains("-no-locale"));
+		|| app.arguments().contains("-no-locale"));
 
 	auto *guiApp = qobject_cast<QApplication *>(&app);
 	if (guiApp) {
@@ -55,17 +55,17 @@ ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 
 	mCommandLineParser.addFlag("h", "help", QObject::tr("Print this help text."));
 	mCommandLineParser.addFlag("no-locale", "no-locale"
-			, QObject::tr("Ignore all locale options and use English language"));
+		, QObject::tr("Ignore all locale options and use English language"));
 
 	mCommandLineParser.addOption("c", "config-path"
-			, QObject::tr("Path to a directory where all configs for TRIK runtime are stored. Config files are\n"
+		, QObject::tr("Path to a directory where all configs for TRIK runtime are stored. Config files are\n"
 			"\tsystem-config.xml (system-wide configuration of robot hardware for trikControl library) and\n"
 			"\tmodel-config.xml (configuration of current model).")
-			);
+		);
 
 	mCommandLineParser.addOption("d", "coredump-path"
-			, QObject::tr("Path to a directory where core dump will be saved in case of creation.")
-			);
+		, QObject::tr("Path to a directory where core dump will be saved in case of creation.")
+		);
 
 #ifdef Q_WS_QWS
 	if (!app.arguments().contains("--no-display") && !app.arguments().contains("-no-display")) {

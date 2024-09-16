@@ -20,7 +20,7 @@
 using namespace trikGui;
 
 CommunicationSettingsWidget::CommunicationSettingsWidget(trikNetwork::MailboxInterface &mailbox
-		, QWidget *parent)
+	, QWidget *parent)
 	: TrikGuiDialog(parent)
 	, mTitle(tr("<b>Comm settings</b>"))
 	, mSelectorsHelpLabel(tr("(Press 'Enter' to edit)"))
@@ -69,16 +69,17 @@ CommunicationSettingsWidget::CommunicationSettingsWidget(trikNetwork::MailboxInt
 	connect(&mConnectButton, &ConnectButton::upPressed, this, &CommunicationSettingsWidget::focusUp);
 	connect(&mConnectButton, &ConnectButton::downPressed, this, &CommunicationSettingsWidget::focusDown);
 
-	connect(&mHullNumberSelector, &NumberSelectionWidget::valueChanged,
-		this, &CommunicationSettingsWidget::onHullNumberChanged);
+	connect(&mHullNumberSelector,
+		&NumberSelectionWidget::valueChanged,
+		this,
+		&CommunicationSettingsWidget::onHullNumberChanged);
 
 	connect(&mHullNumberSelector, &NumberSelectionWidget::upPressed, this, &CommunicationSettingsWidget::focusUp);
-	connect(&mHullNumberSelector, &NumberSelectionWidget::downPressed,
-		this, &CommunicationSettingsWidget::focusDown);
+	connect(&mHullNumberSelector, &NumberSelectionWidget::downPressed, this,
+		&CommunicationSettingsWidget::focusDown);
 
-	connect(&mServerIpSelector,  &NumberSelectionWidget::upPressed, this, &CommunicationSettingsWidget::focusUp);
-	connect(&mServerIpSelector,  &NumberSelectionWidget::downPressed,
-		this, &CommunicationSettingsWidget::focusDown);
+	connect(&mServerIpSelector, &NumberSelectionWidget::upPressed, this, &CommunicationSettingsWidget::focusUp);
+	connect(&mServerIpSelector, &NumberSelectionWidget::downPressed, this, &CommunicationSettingsWidget::focusDown);
 }
 
 QString CommunicationSettingsWidget::menuEntry()
@@ -89,8 +90,8 @@ QString CommunicationSettingsWidget::menuEntry()
 void CommunicationSettingsWidget::renewFocus()
 {
 	const QColor buttonColor = mMailbox.isConnected()
-			? QColor(Qt::green)
-			: QPalette().color(QPalette::Background);
+	                ? QColor(Qt::green)
+	                : QPalette().color(QPalette::Background);
 	QPalette palette;
 	palette.setColor(QPalette::Background, buttonColor);
 	palette.setColor(QPalette::Base, buttonColor);

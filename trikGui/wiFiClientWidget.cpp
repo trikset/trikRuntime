@@ -134,18 +134,18 @@ void WiFiClientWidget::onDisconnected(DisconnectReason reason)
 	// Anyway, we are disconnected, so if we are already connecting, we will probably be connected sometime, in other
 	// cases we shall report disconnect.
 	setConnectionStatus(
-			mConnectionState == ConnectionState::connecting
-					? mConnectionState
-					: ConnectionState::notConnected
-			, ""
-			, "");
+		mConnectionState == ConnectionState::connecting
+		                        ? mConnectionState
+		                        : ConnectionState::notConnected
+		, ""
+		, "");
 }
 
 void WiFiClientWidget::onStatusUpdated()
 {
 	const trikWiFi::Status connectionStatus = mWiFi.statusResult();
 	setConnectionStatus(connectionStatus.connected ? ConnectionState::connected : ConnectionState::notConnected
-			, connectionStatus.ipAddress, connectionStatus.ssid);
+		, connectionStatus.ipAddress, connectionStatus.ssid);
 }
 
 void WiFiClientWidget::onError(const QString &message)
@@ -231,9 +231,9 @@ void WiFiClientWidget::updateConnectionStatusesInNetworkList()
 
 	mAvailableNetworksView.setFocus();
 	mAvailableNetworksView.selectionModel()->select(
-			mAvailableNetworksModel.index(0, 0)
-			, QItemSelectionModel::ClearAndSelect
-			);
+		mAvailableNetworksModel.index(0, 0)
+		, QItemSelectionModel::ClearAndSelect
+		);
 
 	mAvailableNetworksView.setCurrentIndex(mAvailableNetworksModel.index(0, 0));
 }
@@ -265,7 +265,8 @@ void WiFiClientWidget::connectToSelectedNetwork()
 		doConnect();
 	} else if (mNetworks[ssid].security == Security::none) {
 		QMessageBox confirmMessageBox(QMessageBox::Warning, tr("Confirm connection")
-				, tr("Are you sure you want to connect to open WiFi network?"), QMessageBox::Yes | QMessageBox::No);
+			, tr("Are you sure you want to connect to open WiFi network?"),
+			QMessageBox::Yes | QMessageBox::No);
 		confirmMessageBox.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint);
 		const int result = confirmMessageBox.exec();
 		if (result == QMessageBox::Yes) {

@@ -38,7 +38,7 @@ public:
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	FifoWorker(const QString &fileName
-			   , const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 	~FifoWorker();
 
 	Status status() const override;

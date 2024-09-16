@@ -28,12 +28,12 @@ BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *
 	connect(&mRenewTimer, &QTimer::timeout, this, &BatteryIndicator::renew);
 
 	mBeepingTimer.setSingleShot(true);
-	connect(&mBeepingTimer, &QTimer::timeout, this, [this](){
+	connect(&mBeepingTimer, &QTimer::timeout, this, [this]() {
 		mBeepTimer.stop();
 		mRenewTimer.start(mRenewInterval);
 	});
 
-	connect(&mBeepTimer, &QTimer::timeout, this, [this](){
+	connect(&mBeepTimer, &QTimer::timeout, this, [this]() {
 		mBrick.playTone(1500, 100);
 	});
 

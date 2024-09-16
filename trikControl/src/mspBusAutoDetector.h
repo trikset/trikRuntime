@@ -34,7 +34,8 @@ public:
 	/// corresponding communicator instance. Transfers ownership to a caller.
 	/// @param configurer - contains preparsed XML configuration.
 	static MspCommunicatorInterface *createCommunicator(const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	                                                    ,
+	                                                    trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 };
 
 }

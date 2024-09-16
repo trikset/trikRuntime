@@ -67,7 +67,7 @@ protected:
 	void incomingConnection(qintptr socketDescriptor) override;
 
 	/// Launches given connection in a separate thread. Takes ownership over connectionWorker object.
-	void startConnection(Connection * connectionWorker);
+	void startConnection(Connection *connectionWorker);
 
 	/// Searches connection to given IP and port in a list of all open connections. Note that if connection is added
 	/// by startConnection() call but not finished to open yet, it will not be found.

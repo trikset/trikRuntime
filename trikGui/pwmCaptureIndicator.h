@@ -37,7 +37,8 @@ public:
 	/// @param port - port to which PWM input is plugged.
 	/// @param pwmCapture - PWM duty value which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	PwmCaptureIndicator(const QString &port, trikControl::PwmCaptureInterface &pwmCapture, QWidget *parent = nullptr);
+	PwmCaptureIndicator(const QString &port, trikControl::PwmCaptureInterface &pwmCapture,
+		QWidget *parent = nullptr);
 
 public slots:
 	void renew() override;

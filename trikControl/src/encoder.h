@@ -37,7 +37,7 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with encoder parameters.
 	/// @param communicator - I2C communicator to use to query encoder.
 	Encoder(const QString &port, const trikKernel::Configurer &configurer
-			, trikControl::MspCommunicatorInterface &communicator);
+		, trikControl::MspCommunicatorInterface &communicator);
 
 	Status status() const override;
 

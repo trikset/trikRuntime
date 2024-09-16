@@ -24,8 +24,8 @@
 using namespace trikGui;
 
 PwmCaptureIndicator::PwmCaptureIndicator(const QString &port
-		, trikControl::PwmCaptureInterface &pwmCapture
-		, QWidget *parent)
+	, trikControl::PwmCaptureInterface &pwmCapture
+	, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mPwmCapture(pwmCapture)
 	, mNameLabel(port)

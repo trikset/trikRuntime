@@ -46,7 +46,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~RangeSensor() override;
 

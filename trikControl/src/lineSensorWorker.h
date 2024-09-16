@@ -38,7 +38,8 @@ public:
 	/// @param toleranceFactor - a value on which hueTolerance, saturationTolerance and valueTolerance is multiplied
 	///        after "detect" command. Higher values allow to count more points on an image as tracked object.
 	LineSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-			, qreal toleranceFactor, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, qreal toleranceFactor, DeviceState &state,
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~LineSensorWorker() override;
 

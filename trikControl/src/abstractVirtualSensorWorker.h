@@ -46,7 +46,7 @@ public:
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param state - shared state of a sensor.
 	AbstractVirtualSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-			, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~AbstractVirtualSensorWorker() override;
 

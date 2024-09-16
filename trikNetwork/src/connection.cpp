@@ -83,8 +83,8 @@ void Connection::send(const QByteArray &data)
 	}
 
 	const QByteArray message = mProtocol == Protocol::messageLength
-			? QByteArray::number(data.size()) + ':' + data
-			: data;
+	                ? QByteArray::number(data.size()) + ':' + data
+	                : data;
 
 	const qint64 sentBytes = mSocket->write(message);
 	if (sentBytes != message.size()) {
@@ -149,8 +149,7 @@ void Connection::onReadyRead()
 void Connection::processBuffer()
 {
 	switch (mProtocol) {
-	case Protocol::messageLength:
-	{
+	case Protocol::messageLength: {
 		while (!mBuffer.isEmpty()) {
 			if (mExpectedBytes == 0) {
 				// Determining the length of a message.
@@ -164,7 +163,9 @@ void Connection::processBuffer()
 					bool ok = false;
 					mExpectedBytes = length.toInt(&ok);
 					if (!ok) {
-						QLOG_ERROR() << "Malformed message, can not determine message length from this:" << length;
+						QLOG_ERROR() <<
+						        "Malformed message, can not determine message length from this:"
+						             << length;
 						mExpectedBytes = 0;
 					}
 				}
@@ -184,8 +185,7 @@ void Connection::processBuffer()
 		}
 		break;
 	}
-	case Protocol::endOfLineSeparator:
-	{
+	case Protocol::endOfLineSeparator: {
 		if (mBuffer.contains('\n')) {
 			const auto messages = mBuffer.split('\n');
 			for (int i = 0; i < messages.size() - 1; ++i) {
@@ -203,7 +203,8 @@ void Connection::handleIncomingData(const QByteArray &data)
 {
 	if (data == "keepalive") {
 		return;
-	} if (data == "version") {
+	}
+	if (data == "version") {
 		send(QString("version: %1").arg(trikKernel::version).toUtf8());
 	} else {
 		processData(data);
@@ -254,7 +255,7 @@ void Connection::resetSocket()
 	connect(mSocket.data(), &QTcpSocket::connected, this, &Connection::onConnect);
 	connect(mSocket.data(), &QTcpSocket::disconnected, this, &Connection::onDisconnect);
 	connect(mSocket.data(), QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error)
-			, this, &Connection::onError);
+		, this, &Connection::onError);
 }
 
 void Connection::doDisconnect()

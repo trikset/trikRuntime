@@ -96,7 +96,6 @@ private:
 	QList<QTimer *> mTimers; // Has ownership.
 	trikControl::BrickInterface *mBrick {}; //Does not have ownership
 
-
 	/// True, if a system is in event-driven running mode, so it shall wait for events when script is executed.
 	/// If it is false, script will exit immediately.
 	bool mInEventDrivenMode = false;

@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 BrickInterface *BrickFactory::create(const QString &systemConfig
-		, const QString &modelConfig, const QString &mediaPath)
+	, const QString &modelConfig, const QString &mediaPath)
 {
 	return new Brick(systemConfig, modelConfig, mediaPath);
 }
@@ -35,11 +35,10 @@ BrickInterface *BrickFactory::create(const QString &configFilesPath, const QStri
 }
 
 BrickInterface *BrickFactory::create(
-		trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, const QString &systemConfig
-		, const QString &modelConfig
-		, const QString &mediaPath)
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction
+	, const QString &systemConfig
+	, const QString &modelConfig
+	, const QString &mediaPath)
 {
 	return new Brick(hardwareAbstraction, systemConfig, modelConfig, mediaPath);
 }
-

@@ -64,13 +64,12 @@
 
 #include <QsLog.h>
 
-
 using namespace trikControl;
 using namespace trikKernel;
 using namespace trikHal;
 
 Brick::Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+	, const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
 	: Brick(createDifferentOwnerPointer(hardwareAbstraction), systemConfig, modelConfig, mediaPath)
 {
 }
@@ -81,9 +80,9 @@ Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QStr
 }
 
 Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
-		, const QString &systemConfig
-		, const QString &modelConfig
-		, const QString &mediaPath)
+	, const QString &systemConfig
+	, const QString &modelConfig
+	, const QString &mediaPath)
 	: mHardwareAbstraction(hardwareAbstraction)
 	, mTonePlayer(new TonePlayer())
 	, mMediaPath(mediaPath)
@@ -115,13 +114,13 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 
 #ifndef TRIK_IIO_ACCEL_GYRO
 	if (mConfigurer.isEnabled("accelerometer")) {
-	    mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction
-	                                          , "*port*for*accel*only*in*iio*trik*new*age*"));
+		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction
+			, "*port*for*accel*only*in*iio*trik*new*age*"));
 	}
 
 	if (mConfigurer.isEnabled("gyroscope")) {
-	    mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
-	                                    , "*port*for*gyro*only*in*iio*trik*new*age*"));
+		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
+			, "*port*for*gyro*only*in*iio*trik*new*age*"));
 	}
 #endif /* ! TRIK_IIO_ACCEL_GYRO */
 
@@ -233,7 +232,6 @@ void Brick::playSound(const QString &soundFileName)
 	}
 }
 
-
 void Brick::playTone(int hzFreq, int msDuration)
 {
 	QLOG_INFO() << "Playing tone (" << hzFreq << "," << msDuration << ")";
@@ -244,8 +242,9 @@ void Brick::playTone(int hzFreq, int msDuration)
 
 	// mHardwareAbstraction->systemSound()->playTone(hzFreq, msDuration);
 	// mTonePlayer->play(hzFreq, msDuration);
-	QMetaObject::invokeMethod(mTonePlayer.data(), [this, hzFreq, msDuration](){
-		mTonePlayer->play(hzFreq, msDuration);});
+	QMetaObject::invokeMethod(mTonePlayer.data(), [this, hzFreq, msDuration]() {
+		mTonePlayer->play(hzFreq, msDuration);
+	});
 }
 
 void Brick::say(const QString &text)
@@ -442,13 +441,12 @@ QVector<uint8_t> Brick::getStillImage()
 		return mCamera->getPhoto();
 }
 
-
 SoundSensorInterface *Brick::soundSensor(const QString &port)
 {
 	return mSoundSensors.contains(port) ? mSoundSensors[port] : nullptr;
 }
 
-KeysInterface* Brick::keys()
+KeysInterface *Brick::keys()
 {
 	return mKeys.data();
 }
@@ -571,7 +569,8 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "digitalSensor") {
 			mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "rangeSensor") {
-			mRangeSensors.insert(port, new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
+			mRangeSensors.insert(port,
+				new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
 
 			/// @todo Range sensor shall be turned on only when needed.
 			mRangeSensors[port]->init();
@@ -603,25 +602,27 @@ void Brick::createDevice(const QString &port)
 			mLidars.insert(port, new Lidar(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "camera") {
 			QScopedPointer<CameraDeviceInterface> tmp (
-						new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)
-					);
+				new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)
+				);
 			mCamera.swap(tmp);
 		} else if (deviceClass == "irCamera") {
 			QScopedPointer<IrCameraInterface> tmp (
 				new IrCamera(port, mConfigurer, *mHardwareAbstraction)
 				);
 			mIrCamera.swap(tmp);
-	    }
+		}
 #ifdef TRIK_IIO_ACCEL_GYRO
-	    else if (deviceClass == "iioDevice") {
-	        const auto &deviceType = mConfigurer.deviceType(port);
-	        if (deviceType == "accelerometer"){
-	            mAccelerometer.reset(new VectorSensor(deviceType, mConfigurer, *mHardwareAbstraction, port));
-	        } else if (deviceType == "gyroscope"){
-	            mGyroscope.reset(new GyroSensor(deviceType, mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
-	                                            , port));
-	        }
-	    }
+		else if (deviceClass == "iioDevice") {
+			const auto &deviceType = mConfigurer.deviceType(port);
+			if (deviceType == "accelerometer") {
+				mAccelerometer.reset(new VectorSensor(deviceType, mConfigurer, *mHardwareAbstraction,
+					port));
+			} else if (deviceType == "gyroscope") {
+				mGyroscope.reset(new GyroSensor(deviceType, mConfigurer, *mHardwareAbstraction,
+					mAccelerometer.data()
+					, port));
+			}
+		}
 #endif /* TRIK_IIO_ACCEL_GYRO */
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();

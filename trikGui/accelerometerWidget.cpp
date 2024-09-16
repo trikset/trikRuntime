@@ -24,7 +24,7 @@
 using namespace trikGui;
 
 AccelerometerWidget::AccelerometerWidget(trikControl::VectorSensorInterface *accelerometer
-		, QWidget *parent)
+	, QWidget *parent)
 	: AbstractIndicator(parent)
 	, mTitle(tr("Accelerometer"))
 	, mAccelerometer(accelerometer)
@@ -98,16 +98,16 @@ void AccelerometerWidget::paintEvent(QPaintEvent *)
 	painter.setPen(QColor(Qt::black));
 	auto quarterLineLength = mBounds.width() * 0.35;
 	painter.drawLine(QPointF(mBounds.left(), mBounds.center().y()),
-				QPointF(mBounds.center().x() - quarterLineLength, mBounds.center().y()));
+		QPointF(mBounds.center().x() - quarterLineLength, mBounds.center().y()));
 
 	painter.drawLine(QPointF(mBounds.center().x() + quarterLineLength, mBounds.center().y()),
-				QPointF(mBounds.right(), mBounds.center().y()));
+		QPointF(mBounds.right(), mBounds.center().y()));
 
 	painter.drawLine(QPointF(mBounds.center().x(), mBounds.top()),
-				QPointF(mBounds.center().x(), mBounds.center().y() - quarterLineLength));
+		QPointF(mBounds.center().x(), mBounds.center().y() - quarterLineLength));
 
 	painter.drawLine(QPointF(mBounds.center().x(), mBounds.center().y() + quarterLineLength),
-				QPointF(mBounds.center().x(), mBounds.bottom()));
+		QPointF(mBounds.center().x(), mBounds.bottom()));
 
 	painter.drawPoint(mBounds.center());
 

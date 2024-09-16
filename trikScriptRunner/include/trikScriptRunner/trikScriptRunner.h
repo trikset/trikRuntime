@@ -35,16 +35,16 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param scriptControl - implementation of script object
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * mailbox
-					 , TrikScriptControlInterface * scriptControl
-					 );
+		, trikNetwork::MailboxInterface *mailbox
+		, TrikScriptControlInterface *scriptControl
+		);
 
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * mailbox
-					 );
+		, trikNetwork::MailboxInterface *mailbox
+		);
 
 	~TrikScriptRunner() override;
 
@@ -83,7 +83,7 @@ public slots:
 	void setWorkingDirectory(const QString &workingDir) override;
 
 private:
-	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
+	TrikScriptRunnerInterface *fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &mBrick;
 	trikNetwork::MailboxInterface *mMailbox {};

@@ -20,12 +20,12 @@
 #include "configurerHelper.h"
 #include "exceptions/incorrectDeviceConfigurationException.h"
 
-
 namespace trikControl {
 
 IrCamera::IrCamera(const QString &port, const trikKernel::Configurer &configurer
-				, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mImage(IMAGE_SIZE), mState("IR Camera")
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mImage(IMAGE_SIZE)
+	, mState("IR Camera")
 {
 	Q_UNUSED(hardwareAbstraction)
 

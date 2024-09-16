@@ -46,12 +46,14 @@ void NetworkWidget::updateIP()
 {
 	const auto & interfaces = QNetworkInterface::allInterfaces();
 	const auto & interface = std::find_if(interfaces.begin(), interfaces.end()
-				, [](const QNetworkInterface & interface) {return interface.name() == "wlan0"; });
+		, [](const QNetworkInterface & interface) {return interface.name() == "wlan0"; });
 
 	if (interface != interfaces.end()) {
 		const auto & entries = interface[0].addressEntries();
 		const auto & entry = std::find_if(entries.begin(), entries.end()
-			, [](const QNetworkAddressEntry & entry) { return entry.ip().protocol() == QAbstractSocket::IPv4Protocol;});
+			, [](const QNetworkAddressEntry & entry) {
+			return entry.ip().protocol() == QAbstractSocket::IPv4Protocol;
+		});
 		if (entry != entries.end()) {
 			mIPLabel.setText(tr("IP: ") + entry[0].ip().toString());
 		}

@@ -37,8 +37,8 @@ public:
 	/// Constructor.
 	/// @param eventFile - event file for this sensor.
 	RangeSensorWorker(const QString &eventFile, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-			, int minValue, int maxValue, const QString &filterName);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
+		, int minValue, int maxValue, const QString &filterName);
 
 	~RangeSensorWorker() override;
 

@@ -30,9 +30,11 @@ public:
 	/// @param deviceName - name of the device.
 	/// @param from - status from which we tried to change.
 	/// @param to - status to which we tried to change.
-	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from, DeviceInterface::Status to)
+	IncorrectStateChangeException(const QString &deviceName,
+		DeviceInterface::Status from,
+		DeviceInterface::Status to)
 		: trikKernel::TrikRuntimeException(QString("%1: incorrect device state change from \"%2\" to \"%3\"")
-					.arg(deviceName).arg(statusToString(from)).arg(statusToString(to)))
+			.arg(deviceName).arg(statusToString(from)).arg(statusToString(to)))
 	{
 	}
 
@@ -41,7 +43,7 @@ public:
 	/// @param from - status from which we tried to change.
 	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from)
 		: trikKernel::TrikRuntimeException(QString("%1 : incorrect attempt to reset failure from \"%2\"")
-										   .arg(deviceName).arg(statusToString(from)))
+			.arg(deviceName).arg(statusToString(from)))
 	{
 	}
 

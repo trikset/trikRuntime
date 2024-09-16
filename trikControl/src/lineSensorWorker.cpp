@@ -17,7 +17,7 @@
 using namespace trikControl;
 
 LineSensorWorker::LineSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-		, qreal toleranceFactor, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, qreal toleranceFactor, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
 	, mToleranceFactor(toleranceFactor)
 {
@@ -79,13 +79,13 @@ void LineSensorWorker::onNewData(const QString &dataLine)
 		const int valueTolerance = parsedLine[6].toInt();
 
 		const QString command = QString("hsv %0 %1 %2 %3 %4 %5 %6\n")
-				.arg(hue)
-				.arg(static_cast<int>(hueTolerance * mToleranceFactor))
-				.arg(saturation)
-				.arg(static_cast<int>(saturationTolerance * mToleranceFactor))
-				.arg(value)
-				.arg(static_cast<int>(valueTolerance * mToleranceFactor))
-				;
+		                        .arg(hue)
+		                        .arg(static_cast<int>(hueTolerance * mToleranceFactor))
+		                        .arg(saturation)
+		                        .arg(static_cast<int>(saturationTolerance * mToleranceFactor))
+		                        .arg(value)
+		                        .arg(static_cast<int>(valueTolerance * mToleranceFactor))
+		;
 
 		sendCommand(command);
 

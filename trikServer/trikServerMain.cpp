@@ -50,12 +50,12 @@ int main(int argc, char *argv[])
 	QLOG_INFO() << "TrikServer started on port" << port;
 
 	QScopedPointer<trikControl::BrickInterface> brick(trikControl::BrickFactory::create(
-			initHelper.configPath(), trikKernel::Paths::mediaPath()));
+		initHelper.configPath(), trikKernel::Paths::mediaPath()));
 
 	trikKernel::Configurer configurer(
-			initHelper.configPath() + "/system-config.xml"
-			, initHelper.configPath() + "/model-config.xml"
-			);
+		initHelper.configPath() + "/system-config.xml"
+		, initHelper.configPath() + "/model-config.xml"
+		);
 
 	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 

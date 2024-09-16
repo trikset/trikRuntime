@@ -22,8 +22,7 @@ class PowerLevel
 public:
 	/// Contains values indicating settings for power threshold. Default value for TRIK is 'twentyVolt' meaning
 	/// that board will automatically switch off when power voltage is lower than 10V (or 9V on older boards).
-	enum class Level
-	{
+	enum class Level {
 		/// Voltage settings for 6V scheme (used by VEX motors and other strange peripherals).
 		sixVolt
 

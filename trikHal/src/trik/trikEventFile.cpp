@@ -48,7 +48,6 @@ bool TrikEventFile::open()
 
 		QTimer::singleShot(2000, mInitWaitingLoop.data(), &QEventLoop::quit);
 
-
 		mInitWaitingLoop->exec();
 	}
 
@@ -114,9 +113,8 @@ void TrikEventFile::readFile()
 
 	mSocketNotifier->setEnabled(false);
 
-	while ((size = ::read(mEventFileDescriptor, static_cast<void*>(&event), sizeof(event)))
-			== static_cast<int>(sizeof(event)))
-	{
+	while ((size = ::read(mEventFileDescriptor, static_cast<void *>(&event), sizeof(event)))
+	       == static_cast<int>(sizeof(event))) {
 		trikKernel::TimeVal eventTime(event.time.tv_sec, event.time.tv_usec);
 		emit newEvent(event.type, event.code, event.value, eventTime);
 	}

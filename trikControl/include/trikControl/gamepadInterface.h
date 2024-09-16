@@ -56,7 +56,6 @@ public slots:
 	/// Returns true if a gamepad was connected
 	virtual bool disconnect() = 0;
 
-
 signals:
 	/// Emitted when user pulls finger off a pad.
 	/// @param pad - id of a pad on which the event occurs.

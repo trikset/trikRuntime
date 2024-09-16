@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Line Sensor on " + port)
 {
 	const QString &script = configurer.attributeByPort(port, "script");
@@ -33,7 +33,7 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 
 	if (!mState.isFailed()) {
 		mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState
-				, hardwareAbstraction));
+			, hardwareAbstraction));
 
 		mLineSensorWorker->moveToThread(&mWorkerThread);
 		connect(mLineSensorWorker.data(), &LineSensorWorker::stopped, this, &LineSensor::onStopped);
@@ -62,7 +62,7 @@ void LineSensor::init(bool showOnDisplay)
 {
 	if (!mState.isFailed()) {
 		QMetaObject::invokeMethod(mLineSensorWorker.data()
-								  , [this, showOnDisplay](){mLineSensorWorker->init(showOnDisplay);});
+			, [this, showOnDisplay]() {mLineSensorWorker->init(showOnDisplay);});
 	}
 }
 

@@ -20,10 +20,9 @@ DataFilter::DataFilter(int minValue, int maxValue, const QString &filterName)
 	, mReadData2(maxValue)
 {
 	if (filterName == "median3") {
-		mFilterFunction = [this](int data){return getMedian3(data);};
-	}
-	else {
-		mFilterFunction = [](int data){return data;};
+		mFilterFunction = [this](int data) {return getMedian3(data);};
+	} else {
+		mFilterFunction = [](int data) {return data;};
 	}
 }
 

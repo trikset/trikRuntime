@@ -67,7 +67,7 @@ bool TrikServer::startServer(quint16 port)
 void TrikServer::sendMessage(const QString &message)
 {
 	for (auto *connection : mConnections) {
-		QMetaObject::invokeMethod(connection, [=](){connection->send(message.toUtf8());});
+		QMetaObject::invokeMethod(connection, [=]() {connection->send(message.toUtf8());});
 	}
 }
 
@@ -83,7 +83,7 @@ void TrikServer::incomingConnection(qintptr socketDescriptor)
 	Connection * const connectionWorker = mConnectionFactory();
 	startConnection(connectionWorker);
 
-	QMetaObject::invokeMethod(connectionWorker, [=](){connectionWorker->init(socketDescriptor);});
+	QMetaObject::invokeMethod(connectionWorker, [=]() {connectionWorker->init(socketDescriptor);});
 }
 
 void TrikServer::startConnection(Connection * const connectionWorker)
@@ -100,7 +100,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	});
 
 	connect(connectionWorker, &Connection::disconnected, this, &TrikServer::onConnectionClosed);
-	connect(connectionThread, &QThread::finished, this, [this, connectionWorker] {
+	connect(connectionThread, &QThread::finished, this, [this, connectionWorker]{
 		notPreparedConnections.remove(connectionWorker);
 	});
 
@@ -123,9 +123,8 @@ Connection *TrikServer::connection(const QHostAddress &ip, int port) const
 
 	for (auto&& connection: notPreparedConnections) {
 		if (connection->getPort() == port and connection->getIp() == ip) {
-			auto* connectionThread = connection->thread();
-			if (!connectionThread->isFinished() and !connection->getIsStarted())
-			{
+			auto *connectionThread = connection->thread();
+			if (!connectionThread->isFinished() and !connection->getIsStarted()) {
 				return connection;
 			}
 		}

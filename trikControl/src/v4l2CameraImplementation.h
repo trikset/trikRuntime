@@ -18,7 +18,6 @@
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikControl/trikControlDeclSpec.h>
 
-
 namespace trikHal {
 class HardwareAbstractionInterface;
 }

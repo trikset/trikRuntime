@@ -33,7 +33,7 @@ bool TrikSystemConsole::startProcess(const QString &processName, const QStringLi
 }
 
 bool TrikSystemConsole::startProcessSynchronously(const QString &processName, const QStringList &arguments
-		, QString * const output)
+	, QString * const output)
 {
 	const QFileInfo executableFileInfo(processName);
 
@@ -46,14 +46,15 @@ bool TrikSystemConsole::startProcessSynchronously(const QString &processName, co
 
 	if (process.state() != QProcess::Running) {
 		QLOG_ERROR() << "Cannot launch process" << executableFileInfo.filePath() << " in "
-				<< executableFileInfo.absolutePath();
+		             << executableFileInfo.absolutePath();
 
 		return false;
 	}
 
 	if (!process.waitForFinished()) {
-		QLOG_ERROR() << "Process" << executableFileInfo.filePath() << " in " << executableFileInfo.absolutePath()
-				<< "hanged up or finished unexpectedly!";
+		QLOG_ERROR() << "Process" << executableFileInfo.filePath() << " in " <<
+		executableFileInfo.absolutePath()
+		             << "hanged up or finished unexpectedly!";
 
 		return false;
 	}

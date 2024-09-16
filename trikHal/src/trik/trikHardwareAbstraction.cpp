@@ -87,10 +87,8 @@ QVector<uint8_t> TrikHardwareAbstraction::captureV4l2StillImage(const QString &p
 
 	QLOG_INFO() << "Start open v4l2 device" << port;
 
-	const QVector<uint8_t> & shot =  device.makeShot();
+	const QVector<uint8_t> & shot = device.makeShot();
 
 	QLOG_INFO() << "Captrured RGB888 " << shot.size() << "bytes image";
 	return shot;
 }
-
-

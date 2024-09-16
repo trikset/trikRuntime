@@ -39,9 +39,9 @@ WiFiModeWidget::WiFiModeWidget(trikWiFi::TrikWiFi &wiFi, QWidget *parent)
 	setLayout(&mLayout);
 
 	mModes.selectionModel()->select(
-			mModes.model()->index(0, 0)
-			, QItemSelectionModel::ClearAndSelect
-			);
+		mModes.model()->index(0, 0)
+		, QItemSelectionModel::ClearAndSelect
+		);
 }
 
 QString WiFiModeWidget::menuEntry()
@@ -57,18 +57,18 @@ void WiFiModeWidget::renewFocus()
 void WiFiModeWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return: {
-			if (mModes.currentItem()->text() == tr("Wi-Fi client")) {
-				setMode(Mode::client);
-			} else {
-				setMode(Mode::accessPoint);
-			}
-			break;
+	case Qt::Key_Return: {
+		if (mModes.currentItem()->text() == tr("Wi-Fi client")) {
+			setMode(Mode::client);
+		} else {
+			setMode(Mode::accessPoint);
 		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
+		break;
+	}
+	default: {
+		TrikGuiDialog::keyPressEvent(event);
+		break;
+	}
 	}
 }
 
@@ -97,26 +97,26 @@ void WiFiModeWidget::setMode(Mode mode)
 	int returnValue = 0;
 
 	switch (mode) {
-		case Mode::client: {
-			if (currentMode != mode) {
-				mWiFi.reinit();
-			}
-			WiFiClientWidget wiFiClientWidget(mWiFi);
-			emit newWidget(wiFiClientWidget);
-			returnValue = wiFiClientWidget.exec();
-			break;
+	case Mode::client: {
+		if (currentMode != mode) {
+			mWiFi.reinit();
 		}
-		case Mode::accessPoint: {
-			mWiFi.dispose();
-			WiFiAPWidget wiFiAPWidget;
-			emit newWidget(wiFiAPWidget);
-			returnValue = wiFiAPWidget.exec();
-			break;
-		}
-		case Mode::unknown: {
-			QLOG_ERROR() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
-			break;
-		}
+		WiFiClientWidget wiFiClientWidget(mWiFi);
+		emit newWidget(wiFiClientWidget);
+		returnValue = wiFiClientWidget.exec();
+		break;
+	}
+	case Mode::accessPoint: {
+		mWiFi.dispose();
+		WiFiAPWidget wiFiAPWidget;
+		emit newWidget(wiFiAPWidget);
+		returnValue = wiFiAPWidget.exec();
+		break;
+	}
+	case Mode::unknown: {
+		QLOG_ERROR() << "Error: unknown WiFi mode in WiFiModeWidget::setMode()";
+		break;
+	}
 	}
 
 	if (returnValue == 1) {

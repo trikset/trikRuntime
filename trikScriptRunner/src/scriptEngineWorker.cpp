@@ -31,7 +31,6 @@
 #define REGISTER_METATYPE_FOR_ENGINE(TYPE) \
 	Scriptable<TYPE>::registerMetatype(engine);
 
-
 using namespace trikScriptRunner;
 
 constexpr auto scriptEngineWorkerName = "__scriptEngineWorker";
@@ -41,11 +40,11 @@ QScriptValue include(QScriptContext *context, QScriptEngine *engine)
 	const auto &filename = context->argument(0).toString();
 
 	const auto & scriptValue = engine->globalObject().property(scriptEngineWorkerName);
-	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *> (scriptValue.toQObject())) {
+	if (auto scriptWorkerValue = qobject_cast<ScriptEngineWorker *>(scriptValue.toQObject())) {
 		auto connection = (QThread::currentThread() != engine->thread()) ?
-					Qt::BlockingQueuedConnection : Qt::DirectConnection;
+		                  Qt::BlockingQueuedConnection : Qt::DirectConnection;
 		QMetaObject::invokeMethod(scriptWorkerValue, [scriptWorkerValue, filename, engine]()
-					{scriptWorkerValue->evalInclude(filename, engine);}, connection);
+		{scriptWorkerValue->evalInclude(filename, engine);}, connection);
 	}
 
 	return QScriptValue();
@@ -58,7 +57,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 	int argumentCount = context->argumentCount();
 	for (int i = 0; i < argumentCount; ++i) {
 		std::function<QString(const QVariant &)> prettyPrinter
-			= [&prettyPrinter](QVariant const & elem) {
+		        = [&prettyPrinter](QVariant const & elem) {
 			auto const &arrayPrettyPrinter = [&prettyPrinter](const QVariantList &array) {
 				qint32 arrayLength = array.length();
 
@@ -79,8 +78,8 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 			};
 
 			return elem.canConvert(QMetaType::QVariantList)
-				? arrayPrettyPrinter(elem.toList())
-				: elem.toString();
+			        ? arrayPrettyPrinter(elem.toList())
+			        : elem.toString();
 		};
 		QScriptValue argument = context->argument(i);
 		result.append(prettyPrinter(argument.toVariant()));
@@ -88,9 +87,9 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 
 	auto scriptValue = engine->globalObject().property("script");
 
-	if (auto script = qobject_cast<TrikScriptControlInterface*> (scriptValue.toQObject())) {
+	if (auto script = qobject_cast<TrikScriptControlInterface *>(scriptValue.toQObject())) {
 		result.append('\n');
-		QTimer::singleShot(0, script, [script, result](){ Q_EMIT script->textInStdOut(result);});
+		QTimer::singleShot(0, script, [script, result]() { Q_EMIT script->textInStdOut(result);});
 		/// In case of user loop with `print' this gives some time for events to be processed
 		script->wait(0);
 	}
@@ -99,17 +98,19 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 }
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
-		, trikNetwork::MailboxInterface * mailbox
-		, TrikScriptControlInterface *scriptControl
-		)
+	, trikNetwork::MailboxInterface *mailbox
+	, TrikScriptControlInterface *scriptControl
+	)
 	: mBrick(brick)
 	, mMailbox(mailbox)
 	, mScriptControl(scriptControl)
 	, mThreading(this, *scriptControl)
 	, mWorkingDirectory(trikKernel::Paths::userScriptsPath())
 {
-	connect(mScriptControl, &TrikScriptControlInterface::quitSignal,
-		this, &ScriptEngineWorker::onScriptRequestingToQuit);
+	connect(mScriptControl,
+		&TrikScriptControlInterface::quitSignal,
+		this,
+		&ScriptEngineWorker::onScriptRequestingToQuit);
 	connect(this, &ScriptEngineWorker::getVariables, &mThreading, &Threading::getVariables);
 	connect(&mThreading, &Threading::variablesReady, this, &ScriptEngineWorker::variablesReady);
 
@@ -154,7 +155,6 @@ void ScriptEngineWorker::stopScript()
 		return;
 	}
 
-
 	QLOG_INFO() << "ScriptEngineWorker: stopping script";
 
 	mState = stopping;
@@ -175,8 +175,8 @@ void ScriptEngineWorker::stopScript()
 		mDirectScriptsEngine->abortEvaluation();
 		QLOG_INFO() << "ScriptEngineWorker : ending interpretation";
 		const auto &msg = mDirectScriptsEngine->hasUncaughtException()
-				   ? mDirectScriptsEngine->uncaughtException().toString()
-				   : "";
+		                   ? mDirectScriptsEngine->uncaughtException().toString()
+		                   : "";
 		// This method is called from script.quit()
 		// Thus deletion of the mDirectScriptsEngine should be postponed
 		// Instead of deleteLater() we use zero timer
@@ -274,7 +274,8 @@ void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngin
 			const auto line = engine->uncaughtExceptionLineNumber();
 			const auto & message = engine->uncaughtException().toString();
 			const auto & backtrace = engine->uncaughtExceptionBacktrace().join("\n");
-			const auto & error = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
+			const auto & error =
+				tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace" + backtrace;
 			emit completed(error, mScriptId);
 			QLOG_ERROR() << "Uncaught exception with error" << error;
 		}
@@ -307,7 +308,7 @@ static void timeValFromScriptValue(const QScriptValue &object, trikKernel::TimeV
 	out = trikKernel::TimeVal(0, object.property("mcsec").toInt32());
 }
 
-QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
+QScriptEngine *ScriptEngineWorker::createScriptEngine(bool supportThreads)
 {
 	QScriptEngine *engine = new QScriptEngine();
 	QLOG_INFO() << "New script engine" << engine << ", thread:" << QThread::currentThread();
@@ -351,7 +352,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 
 QScriptEngine *ScriptEngineWorker::copyScriptEngine(const QScriptEngine * const original)
 {
-	QScriptEngine *const result = createScriptEngine();
+	QScriptEngine * const result = createScriptEngine();
 
 	QScriptValue globalObject = result->globalObject();
 	Utils::copyRecursivelyTo(original->globalObject(), globalObject, result);

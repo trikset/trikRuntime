@@ -19,7 +19,7 @@
 using namespace trikControl;
 
 Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mLidarWorker(new LidarWorker(configurer.attributeByPort(port, "file"), hardwareAbstraction))
 {
 	mLidarWorker->moveToThread(&mWorkerThread);
@@ -46,15 +46,15 @@ Lidar::Status Lidar::status() const
 QVector<int> Lidar::read() const
 {
 	QVector<int> result;
-	QMetaObject::invokeMethod(mLidarWorker, [this, &result](){result = mLidarWorker->read();}
-							, Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(mLidarWorker, [this, &result]() {result = mLidarWorker->read();}
+		, Qt::BlockingQueuedConnection);
 	return result;
 }
 
 QVector<int> Lidar::readRaw() const
 {
 	QVector<int> result;
-	QMetaObject::invokeMethod(mLidarWorker, [this, &result](){result = mLidarWorker->readRaw();}
-							, Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(mLidarWorker, [this, &result]() {result = mLidarWorker->readRaw();}
+		, Qt::BlockingQueuedConnection);
 	return result;
 }

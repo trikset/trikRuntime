@@ -53,7 +53,7 @@ void MailboxConnection::processData(const QByteArray &rawData)
 	const QString selfCommand = "self:";
 	const QString dataCommand = "data:";
 	const auto error = [](const QString &data) {
-			QLOG_ERROR() << "Malformed data: " << data;
+		QLOG_ERROR() << "Malformed data: " << data;
 	};
 
 	const auto parsedString = data.split(":");

@@ -63,7 +63,8 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	QMutexLocker resetMutexLocker(&mResetMutex);
 
 	if (mResetStarted) {
-		QLOG_INFO() << "Threading: can't start new thread" << threadId << "with engine" << engine << "due to reset";
+		QLOG_INFO() << "Threading: can't start new thread" << threadId << "with engine" << engine <<
+		"due to reset";
 		delete engine;
 		return;
 	}
@@ -87,9 +88,9 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	auto thread = new ScriptThread(*this, threadId, engine, script);
 	engine->moveToThread(thread);
 
-	connect(thread, &QThread::finished, this, [this, threadId](){ threadFinished(threadId); });
+	connect(thread, &QThread::finished, this, [this, threadId]() { threadFinished(threadId); });
 	connect(&mScriptControl, &TrikScriptControlInterface::quitSignal, thread
-			, &ScriptThread::stopRunning, Qt::DirectConnection);
+		, &ScriptThread::stopRunning, Qt::DirectConnection);
 	if (threadId == mMainThreadName) {
 		connect(this, &Threading::getVariables, thread, &ScriptThread::onGetVariables);
 		connect(thread, &ScriptThread::variablesReady, this, &Threading::variablesReady);
@@ -104,7 +105,8 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	thread->setObjectName(engine->metaObject()->className());
 	thread->start();
 	wait.exec();
-	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
+	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" <<
+	thread;
 }
 
 void Threading::waitForAll()
@@ -124,8 +126,7 @@ void Threading::joinThread(const QString &threadId)
 	QMutexLocker threadsMutexLocker(&mThreadsMutex);
 
 	while ((!mThreads.contains(threadId) || !mThreads[threadId]->isRunning())
-			&& !mFinishedThreads.contains(threadId))
-	{
+	       && !mFinishedThreads.contains(threadId)) {
 		if (mResetStarted) {
 			return;
 		}
@@ -141,7 +142,7 @@ void Threading::joinThread(const QString &threadId)
 	mThreads[threadId]->wait();
 }
 
-QScriptEngine * Threading::cloneEngine(QScriptEngine *engine)
+QScriptEngine *Threading::cloneEngine(QScriptEngine *engine)
 {
 	QScriptEngine *result = mScriptWorker->copyScriptEngine(engine);
 	result->evaluate(mScript);
@@ -280,7 +281,7 @@ void Threading::killThread(const QString &threadId)
 	if (!mThreads.contains(threadId)) {
 		if (!mFinishedThreads.contains(threadId)) {
 			QLOG_INFO() << "Threading: killing thread that is not started yet," << threadId
-					<< "will be prevented from running";
+			            << "will be prevented from running";
 			mPreventFromStart.insert(threadId);
 		} else {
 			QLOG_INFO() << "Threading: killing already finished thread, ignoring";

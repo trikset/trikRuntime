@@ -38,7 +38,7 @@ TEST(selftest, brickCheck)
 	trikKernel::DeinitializationHelper helper;
 	Q_UNUSED(helper);
 	QScopedPointer<BrickInterface> brick(BrickFactory::create("./test-system-config.xml"
-			, "./test-model-config.xml", "./"));
+		, "./test-model-config.xml", "./"));
 
 	// Give devices some time to initialize.
 	/// @todo: it shall not be here, use asynchronous initialization instead.
@@ -49,7 +49,6 @@ TEST(selftest, brickCheck)
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->battery()->status());
 		EXPECT_THAT(0.0, (DoubleEq(brick->battery()->readVoltage())));
 	}
-
 
 	EXPECT_TRUE(brick->encoder("E1") != nullptr);
 	if (brick->encoder("E1") != nullptr) {
@@ -71,7 +70,6 @@ TEST(selftest, brickCheck)
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->encoder("E4")->status());
 	}
 
-
 	EXPECT_TRUE(brick->keys() != nullptr);
 	if (brick->keys() != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->keys()->status());
@@ -81,7 +79,6 @@ TEST(selftest, brickCheck)
 	if (brick->led() != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->led()->status());
 	}
-
 
 	EXPECT_TRUE(brick->motor("M1") != nullptr);
 	if (brick->motor("M1") != nullptr) {
@@ -102,7 +99,6 @@ TEST(selftest, brickCheck)
 	if (brick->motor("M1") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("M4")->status());
 	}
-
 
 	EXPECT_TRUE(brick->motor("S1") != nullptr);
 	if (brick->motor("S1") != nullptr) {
@@ -133,7 +129,6 @@ TEST(selftest, brickCheck)
 	if (brick->motor("S6") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->motor("S6")->status());
 	}
-
 
 	EXPECT_TRUE(brick->sensor("A1") != nullptr);
 	if (brick->sensor("A1") != nullptr) {
@@ -175,12 +170,10 @@ TEST(selftest, brickCheck)
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("D2")->status());
 	}
 
-
 //	EXPECT_TRUE(brick->sensor("F1") != nullptr);
 	if (brick->sensor("F1") != nullptr) {
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("F1")->status());
 	}
-
 
 	EXPECT_TRUE(brick->accelerometer() != nullptr);
 	if (brick->accelerometer() != nullptr) {

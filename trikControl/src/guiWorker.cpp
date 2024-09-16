@@ -46,7 +46,6 @@ void GuiWorker::init()
 	resetBackground();
 }
 
-
 DisplayWidgetInterface &GuiWorker::graphicsWidget()
 {
 	return *mImageWidget.data();
@@ -71,10 +70,11 @@ void GuiWorker::show(const QVector<int32_t> &array, int width, int height, const
 		QPixmap pixmap(width, height);
 		QPainter painter;
 		painter.begin(&pixmap);
-		painter.fillRect(0, 0, width, height, QBrush(QColor(Qt::GlobalColor::lightGray), Qt::BrushStyle::SolidPattern));
+		painter.fillRect(0, 0, width, height,
+			QBrush(QColor(Qt::GlobalColor::lightGray), Qt::BrushStyle::SolidPattern));
 		QBrush brush(Qt::GlobalColor::red, Qt::BrushStyle::SolidPattern);
-		QPen pen(brush, (width+height)/20+1, Qt::PenStyle::SolidLine
-				, Qt::PenCapStyle::RoundCap, Qt::PenJoinStyle::MiterJoin);
+		QPen pen(brush, (width + height) / 20 + 1, Qt::PenStyle::SolidLine
+			, Qt::PenCapStyle::RoundCap, Qt::PenJoinStyle::MiterJoin);
 		painter.setBrush(brush);
 		painter.setPen(pen);
 		QPainterPath path;

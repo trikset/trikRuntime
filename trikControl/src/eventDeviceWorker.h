@@ -34,7 +34,7 @@ public:
 	/// @param state - device state, worker sets it to "failed" if it can not open file.
 	/// @param hardwareAbstraction - interface to TRIK hardware.
 	EventDeviceWorker(const QString &deviceFilePath, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	/// Execute init() after worker thread started.
 	void init();

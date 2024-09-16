@@ -25,7 +25,7 @@ namespace trikControl {
 class GuiWorker;
 
 /// Implementation of display interface for real robot.
-class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT  Display : public DisplayInterface
+class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT Display : public DisplayInterface
 {
 	Q_OBJECT
 

@@ -19,8 +19,7 @@
 namespace trikWiFi {
 
 /// Enum with possible network security
-enum class Security
-{
+enum class Security {
 	/// Uses some kind of WPA security algorithm. Authorization required.
 	wpa
 
@@ -32,8 +31,7 @@ enum class Security
 };
 
 /// Enum with possible reasons of "disconnect" message.
-enum class DisconnectReason
-{
+enum class DisconnectReason {
 	/// Disconnected ourselves.
 	planned
 
@@ -41,8 +39,7 @@ enum class DisconnectReason
 	, unplanned
 };
 
-enum class SignalStrength
-{
+enum class SignalStrength {
 	undefined
 	, low
 	, medium
@@ -50,8 +47,7 @@ enum class SignalStrength
 };
 
 /// Contains info about current connection.
-struct Status
-{
+struct Status {
 	/// True, if there is active WiFi connection. All other fields are meaningless if this field is false.
 	bool connected = false;
 
@@ -63,8 +59,7 @@ struct Status
 };
 
 /// Contains description of a network obtained by scanning.
-struct ScanResult
-{
+struct ScanResult {
 	/// SSID of a network.
 	QString ssid;
 
@@ -76,4 +71,3 @@ struct ScanResult
 };
 
 }
-

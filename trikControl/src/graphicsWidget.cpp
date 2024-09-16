@@ -70,12 +70,12 @@ void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
 		painter.setFont(textObject.font);
 		painter.drawText(position.first, position.second
 #if (QT_VERSION_MAJOR == 5) && (QT_VERSION_MINOR < 11)
-				, fontMetrics.width(textObject.text)
+			, fontMetrics.width(textObject.text)
 #else
-				, fontMetrics.horizontalAdvance(textObject.text)
+			, fontMetrics.horizontalAdvance(textObject.text)
 #endif
-				, fontMetrics.height()
-				, Qt::TextWordWrap, textObject.text);
+			, fontMetrics.height()
+			, Qt::TextWordWrap, textObject.text);
 	}
 }
 

@@ -19,7 +19,6 @@
 #include <QtWidgets/QStylePainter>
 #include <QtWidgets/QStyleOptionFocusRect>
 
-
 #include <trikControl/motorInterface.h>
 #include <abstractIndicator.h>
 
@@ -52,7 +51,7 @@ MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, 
 	// mOnOffLabel can change its width during work. It will cause mPowerBar
 	// width change. To prevent it, we set fixed width it.
 	mOnOffLabel.setFixedWidth(std::max(AbstractIndicator::fontMetricsHorizontalAdvance(this, tr("off"))
-									   , AbstractIndicator::fontMetricsHorizontalAdvance(this, tr("on"))));
+		, AbstractIndicator::fontMetricsHorizontalAdvance(this, tr("on"))));
 
 	mLayout.addWidget(&mNameLabel);
 	mLayout.addWidget(&mPowerBar);
@@ -71,21 +70,21 @@ MotorLever::~MotorLever()
 void MotorLever::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Right: {
-			setPower(mPower + mPowerStep);
-			break;
-		}
-		case Qt::Key_Left: {
-			setPower(mPower - mPowerStep);
-			break;
-		}
-		case Qt::Key_Return: {
-			turnOnOff();
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-		}
+	case Qt::Key_Right: {
+		setPower(mPower + mPowerStep);
+		break;
+	}
+	case Qt::Key_Left: {
+		setPower(mPower - mPowerStep);
+		break;
+	}
+	case Qt::Key_Return: {
+		turnOnOff();
+		break;
+	}
+	default: {
+		QWidget::keyPressEvent(event);
+	}
 	}
 }
 

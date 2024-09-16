@@ -35,7 +35,7 @@ bool StubSystemConsole::startProcess(const QString &processName, const QStringLi
 }
 
 bool StubSystemConsole::startProcessSynchronously(const QString &processName, const QStringList &arguments
-		, QString * const output)
+	, QString * const output)
 {
 	QLOG_INFO() << "Stub asked to synchronously start process" << processName << "with arguments" << arguments;
 	if (output) {

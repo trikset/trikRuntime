@@ -24,10 +24,10 @@ using namespace trikCommunicator;
 using namespace trikKernel;
 
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface * const mailbox
-		)
+	, trikNetwork::MailboxInterface * const mailbox
+	)
 	: TrikCommunicator(createDifferentOwnerPointer(new trikScriptRunner::TrikScriptRunner(brick, mailbox))
-			, brick.configVersion())
+		, brick.configVersion())
 {
 }
 
@@ -37,19 +37,18 @@ TrikCommunicator::TrikCommunicator(trikScriptRunner::TrikScriptRunner &runner, c
 }
 
 TrikCommunicator::TrikCommunicator(const trikKernel::DifferentOwnerPointer<trikScriptRunner::TrikScriptRunner> &runner
-		, const QString &configVersion)
-	: trikNetwork::TrikServer([this] () { return connectionFactory(); })
+	, const QString &configVersion)
+	: trikNetwork::TrikServer([this]() { return connectionFactory(); })
 	, mTrikScriptRunner(runner)
 	, mConfigVersion(configVersion)
 {
 	setObjectName("TrikCommunicator");
 	qRegisterMetaType<trikScriptRunner::TrikScriptRunner *>("trikScriptRunner::TrikScriptRunner *");
 
-
 	connect(runner.data(), &trikScriptRunner::TrikScriptRunner::textInStdOut
-		, this, [this](const QString &text){
-			sendMessage(QString("print: %1").arg(text));
-		});
+		, this, [this](const QString &text) {
+		sendMessage(QString("print: %1").arg(text));
+	});
 
 	connect(runner.data(), &trikScriptRunner::TrikScriptRunner::sendMailboxMessage
 		, this, &TrikCommunicator::sendMessage);

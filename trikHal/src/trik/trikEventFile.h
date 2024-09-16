@@ -20,7 +20,6 @@
 
 #include "eventFileInterface.h"
 
-
 namespace trikHal {
 namespace trik {
 

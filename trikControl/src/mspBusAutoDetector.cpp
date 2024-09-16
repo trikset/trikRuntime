@@ -25,7 +25,7 @@
 using namespace trikControl;
 
 MspCommunicatorInterface *MspBusAutoDetector::createCommunicator(const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
 	QLOG_INFO() << "Checking USB MSP communicator for availability";
 	QScopedPointer<MspUsbCommunicator> communicator(new MspUsbCommunicator(hardwareAbstraction.mspUsb()));

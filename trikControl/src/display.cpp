@@ -55,17 +55,17 @@ void trikControl::Display::showImage(const QString &fileName)
 {
 	QFileInfo imageFile(fileName);
 	const QString correctedFileName = imageFile.exists() ? fileName : mMediaPath + fileName;
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->showImage(correctedFileName);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->showImage(correctedFileName);});
 }
 
 void trikControl::Display::show(const QVector<int32_t> &array, int width, int height, const QString &format)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->show(array, width, height, format);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->show(array, width, height, format);});
 }
 
 void trikControl::Display::addLabel(const QString &text, int x, int y, int fontSize)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->addLabel(text, x, y, fontSize);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->addLabel(text, x, y, fontSize);});
 }
 
 void trikControl::Display::removeLabels()
@@ -75,7 +75,7 @@ void trikControl::Display::removeLabels()
 
 void trikControl::Display::setBackground(const QString &color)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [this, color](){mGuiWorker->setBackground(color);});
+	QMetaObject::invokeMethod(mGuiWorker, [this, color]() {mGuiWorker->setBackground(color);});
 }
 
 void trikControl::Display::hide()
@@ -100,35 +100,35 @@ void trikControl::Display::redraw()
 
 void trikControl::Display::drawLine(int x1, int y1, int x2, int y2)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->drawLine(x1, y1, x2, y2);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->drawLine(x1, y1, x2, y2);});
 }
 
 void trikControl::Display::drawPoint(int x, int y)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->drawPoint(x, y);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->drawPoint(x, y);});
 }
 
 void trikControl::Display::drawRect(int x, int y, int width, int height, bool filled)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->drawRect(x, y, width, height, filled);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->drawRect(x, y, width, height, filled);});
 }
 
 void trikControl::Display::drawEllipse(int x, int y, int width, int height, bool filled)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->drawEllipse(x, y, width, height, filled);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->drawEllipse(x, y, width, height, filled);});
 }
 
 void trikControl::Display::drawArc(int x, int y, int width, int height, int startAngle, int spanAngle)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->drawArc(x, y, width, height, startAngle, spanAngle);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->drawArc(x, y, width, height, startAngle, spanAngle);});
 }
 
 void trikControl::Display::setPainterColor(const QString &color)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->setPainterColor(color);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->setPainterColor(color);});
 }
 
 void trikControl::Display::setPainterWidth(int penWidth)
 {
-	QMetaObject::invokeMethod(mGuiWorker, [=](){mGuiWorker->setPainterWidth(penWidth);});
+	QMetaObject::invokeMethod(mGuiWorker, [=]() {mGuiWorker->setPainterWidth(penWidth);});
 }

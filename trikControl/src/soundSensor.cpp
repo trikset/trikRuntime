@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Sound Sensor on " + port)
 {
 	const QString script = configurer.attributeByPort(port, "script");
@@ -31,7 +31,8 @@ SoundSensor::SoundSensor(QString const &port, trikKernel::Configurer const &conf
 	const QString outputFile = configurer.attributeByPort(port, "outputFile");
 
 	if (!mState.isFailed()) {
-		mSoundSensorWorker.reset(new SoundSensorWorker(script, inputFile, outputFile, mState, hardwareAbstraction));
+		mSoundSensorWorker.reset(new SoundSensorWorker(script, inputFile, outputFile, mState,
+			hardwareAbstraction));
 
 		mSoundSensorWorker->moveToThread(&mWorkerThread);
 
@@ -60,7 +61,7 @@ SoundSensor::Status SoundSensor::status() const
 void SoundSensor::init(bool showOnDisplay)
 {
 	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), [=](){mSoundSensorWorker->init(showOnDisplay);});
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), [=]() {mSoundSensorWorker->init(showOnDisplay);});
 	}
 }
 
@@ -68,9 +69,7 @@ void SoundSensor::detect()
 {
 	if (mState.isReady()) {
 		QMetaObject::invokeMethod(mSoundSensorWorker.data(), &SoundSensorWorker::detect);
-	}
-	else
-	{
+	} else {
 		QLOG_ERROR() << "Trying to call 'detect' when sensor is not ready, ignoring";
 	}
 }
@@ -78,15 +77,13 @@ void SoundSensor::detect()
 void SoundSensor::volume(int volCoeff)
 {
 	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mSoundSensorWorker.data(), [=](){mSoundSensorWorker->volume(volCoeff);});
-	}
-	else
-	{
+		QMetaObject::invokeMethod(mSoundSensorWorker.data(), [=]() {mSoundSensorWorker->volume(volCoeff);});
+	} else {
 		QLOG_ERROR() << "Trying to call 'volume' when sensor is not ready, ignoring";
 	}
 }
 
-QVector<int>  SoundSensor::read()
+QVector<int> SoundSensor::read()
 {
 	if (mState.isReady()) {
 		// Read is called synchronously and only takes prepared value from sensor.

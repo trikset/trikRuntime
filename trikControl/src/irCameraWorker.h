@@ -24,7 +24,7 @@
 namespace trikControl {
 
 /// Class for ir camera background worker
-class IrCameraWorkerMLX90640: public QObject
+class IrCameraWorkerMLX90640 : public QObject
 {
 	Q_OBJECT
 

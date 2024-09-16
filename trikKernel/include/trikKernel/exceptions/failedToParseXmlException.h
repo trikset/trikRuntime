@@ -34,11 +34,14 @@ public:
 	/// @param errorColumn - column in XML document where error occured.
 	FailedToParseXmlException(const QFile &file, const QString &errorMessage, int errorLine, int errorColumn)
 		: TrikRuntimeException(QString("Failed to parse %1, %2:%3 - %4")
-							   .arg(file.fileName())
-							   .arg(errorLine)
-							   .arg(errorColumn)
-							   .arg(errorMessage))
-		, mFile(file), mErrorMessage(errorMessage), mErrorLine(errorLine), mErrorColumn(errorColumn)
+			.arg(file.fileName())
+			.arg(errorLine)
+			.arg(errorColumn)
+			.arg(errorMessage))
+		, mFile(file)
+		, mErrorMessage(errorMessage)
+		, mErrorLine(errorLine)
+		, mErrorColumn(errorColumn)
 	{
 	}
 

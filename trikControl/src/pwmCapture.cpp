@@ -28,7 +28,7 @@
 using namespace trikControl;
 
 PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFrequencyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "frequencyFile")))
 	, mDutyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "dutyFile")))
 	, mState("PWM Capture on " + port)

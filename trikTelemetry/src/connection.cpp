@@ -40,11 +40,11 @@ void Connection::processData(const QByteArray &data)
 
 	QString answer;
 	if (command.startsWith(dataRequested)) {
-		auto reportSensorReading = [this, &answer] (const QString &port) {
+		auto reportSensorReading = [this, &answer](const QString &port) {
 			answer += QString("%1:%2:%3;")
-					.arg(port)
-					.arg(mBrick.sensor(port)->read())
-					.arg(mBrick.sensor(port)->readRawData());
+			          .arg(port)
+			          .arg(mBrick.sensor(port)->read())
+			          .arg(mBrick.sensor(port)->readRawData());
 		};
 
 		answer = "allData:";
@@ -63,43 +63,47 @@ void Connection::processData(const QByteArray &data)
 
 		for (const QString &port : mBrick.encoderPorts()) {
 			answer += QString("%1:%2:%3;")
-					.arg(port)
-					.arg(mBrick.encoder(port)->read())
-					.arg(mBrick.encoder(port)->readRawData());
+			          .arg(port)
+			          .arg(mBrick.encoder(port)->read())
+			          .arg(mBrick.encoder(port)->readRawData());
 		}
 
 		const QString semicolon = ";";
 
 		answer += QString("AccelerometerPort:") % serializeVector(mBrick.accelerometer()->read()) % semicolon
-				% "GyroscopePort:" % serializeVector(mBrick.gyroscope()->read()) % semicolon
+		          % "GyroscopePort:" % serializeVector(mBrick.gyroscope()->read()) % semicolon
 
-				% "GamepadButton1Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(1)) % semicolon
-				% "GamepadButton2Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(2)) % semicolon
-				% "GamepadButton3Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(3)) % semicolon
-				% "GamepadButton4Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(4)) % semicolon
-				% "GamepadButton5Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(5)) % semicolon
-				% "GamepadWheelPort:" + QString::number(mBrick.gamepad()->wheel()) % semicolon
-				% "GamepadConnectionIndicatorPort:" + QString::number(mBrick.gamepad()->isConnected()) % semicolon
-				% "GamepadPad1PressedPort:" + QString::number(mBrick.gamepad()->isPadPressed(1)) % semicolon
-				% "GamepadPad2PressedPort:" + QString::number(mBrick.gamepad()->isPadPressed(2)) % semicolon
-				% "GamepadPad1PosPort:"
-						+ QString("(%1,%2)").arg(mBrick.gamepad()->padX(1)).arg(mBrick.gamepad()->padY(1)) % semicolon
-				% "GamepadPad2PosPort:"
-						+ QString("(%1,%2)").arg(mBrick.gamepad()->padX(2)).arg(mBrick.gamepad()->padY(2)) % semicolon
+		          % "GamepadButton1Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(1)) % semicolon
+		          % "GamepadButton2Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(2)) % semicolon
+		          % "GamepadButton3Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(3)) % semicolon
+		          % "GamepadButton4Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(4)) % semicolon
+		          % "GamepadButton5Port:" + QString::number(mBrick.gamepad()->buttonIsPressed(5)) % semicolon
+		          % "GamepadWheelPort:" + QString::number(mBrick.gamepad()->wheel()) % semicolon
+		          % "GamepadConnectionIndicatorPort:" + QString::number(mBrick.gamepad()->isConnected()) %
+		          semicolon
+		          % "GamepadPad1PressedPort:" + QString::number(mBrick.gamepad()->isPadPressed(1)) % semicolon
+		          % "GamepadPad2PressedPort:" + QString::number(mBrick.gamepad()->isPadPressed(2)) % semicolon
+		          % "GamepadPad1PosPort:"
+		          + QString("(%1,%2)").arg(mBrick.gamepad()->padX(1)).arg(mBrick.gamepad()->padY(1)) % semicolon
+		          % "GamepadPad2PosPort:"
+		          + QString("(%1,%2)").arg(mBrick.gamepad()->padX(2)).arg(mBrick.gamepad()->padY(2)) % semicolon
 
-				% "Left:" + QString::number(mBrick.keys()->isPressed(105)) % semicolon
-				% "Up:" + QString::number(mBrick.keys()->isPressed(103)) % semicolon
-				% "Down:" + QString::number(mBrick.keys()->isPressed(108)) % semicolon
-				% "Enter:" + QString::number(mBrick.keys()->isPressed(28)) % semicolon
-				% "Right:" + QString::number(mBrick.keys()->isPressed(106)) % semicolon
-				% "Power:" + QString::number(mBrick.keys()->isPressed(116)) % semicolon
-				% "Esc:" + QString::number(mBrick.keys()->isPressed(1));
+		          % "Left:" + QString::number(mBrick.keys()->isPressed(105)) % semicolon
+		          % "Up:" + QString::number(mBrick.keys()->isPressed(103)) % semicolon
+		          % "Down:" + QString::number(mBrick.keys()->isPressed(108)) % semicolon
+		          % "Enter:" + QString::number(mBrick.keys()->isPressed(28)) % semicolon
+		          % "Right:" + QString::number(mBrick.keys()->isPressed(106)) % semicolon
+		          % "Power:" + QString::number(mBrick.keys()->isPressed(116)) % semicolon
+		          % "Esc:" + QString::number(mBrick.keys()->isPressed(1));
 
 	} else if (command.startsWith(portsRequested)) {
 		answer = "ports:";
-		answer += "analog:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).join(",") + ";";
-		answer += "digital:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).join(",") + ";";
-		answer += "special:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor).join(",") + ";";
+		answer += "analog:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).join(",") +
+		          ";";
+		answer += "digital:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).join(",") +
+		          ";";
+		answer += "special:" + mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor).join(",") +
+		          ";";
 		answer += "encoders:" + mBrick.encoderPorts().join(",");
 	} else if (command.startsWith(singleSensorRequested)) {
 		answer = command + ":";
@@ -130,14 +134,15 @@ void Connection::processData(const QByteArray &data)
 			} else if (command == "GamepadPad2PressedPort") {
 				answer += QString::number(mBrick.gamepad()->isPadPressed(2));
 			} else if (command == "GamepadPad1PosPort") {
-				answer += QString("(%1,%2)").arg(mBrick.gamepad()->padX(1)).arg(mBrick.gamepad()->padY(1));
+				answer += QString("(%1,%2)").arg(mBrick.gamepad()->padX(1)).arg(mBrick.gamepad()->padY(
+					1));
 			} else if (command == "GamepadPad2PosPort") {
-				answer += QString("(%1,%2)").arg(mBrick.gamepad()->padX(2)).arg(mBrick.gamepad()->padY(2));
+				answer += QString("(%1,%2)").arg(mBrick.gamepad()->padX(2)).arg(mBrick.gamepad()->padY(
+					2));
 			}
 		} else if (mBrick.sensorPorts(trikControl::SensorInterface::Type::analogSensor).contains(command)
-				|| mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).contains(command)
-				|| mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor).contains(command))
-		{
+		           || mBrick.sensorPorts(trikControl::SensorInterface::Type::digitalSensor).contains(command)
+		           || mBrick.sensorPorts(trikControl::SensorInterface::Type::specialSensor).contains(command)) {
 			answer += QString::number(mBrick.sensor(command)->read());
 		} else if (mBrick.encoderPorts().contains(command)) {
 			answer += QString::number(mBrick.encoder(command)->read());

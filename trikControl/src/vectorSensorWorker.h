@@ -42,7 +42,7 @@ public:
 	/// @param state - state of a device.
 	/// @param thread - background thread where all socket events will be processed.
 	VectorSensorWorker(const QString &eventFile, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	/// Execute init() after worker thread started.
 	void init();

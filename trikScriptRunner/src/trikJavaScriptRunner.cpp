@@ -26,9 +26,9 @@
 using namespace trikScriptRunner;
 
 TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface *brick
-										   , trikNetwork::MailboxInterface * mailbox
-										   , TrikScriptControlInterface *scriptControl
-										   )
+	, trikNetwork::MailboxInterface *mailbox
+	, TrikScriptControlInterface *scriptControl
+	)
 	: mScriptController(scriptControl)
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, mScriptController))
 	, mMaxScriptId(0)
@@ -41,7 +41,7 @@ TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface *brick
 	connect(mScriptEngineWorker, &ScriptEngineWorker::startedScript, this, &TrikJavaScriptRunner::onScriptStart);
 
 	connect(mScriptController, &TrikScriptControlInterface::textInStdOut
-			, this, &TrikJavaScriptRunner::textInStdOut);
+		, this, &TrikJavaScriptRunner::textInStdOut);
 
 	connect(mVariablesServer.data(), &TrikVariablesServer::getVariables
 		, mScriptEngineWorker, &ScriptEngineWorker::getVariables);
@@ -83,7 +83,7 @@ void TrikJavaScriptRunner::brickBeep()
 void TrikJavaScriptRunner::setWorkingDirectory(const QString &workingDir)
 {
 	QMetaObject::invokeMethod(mScriptEngineWorker, [this, workingDir]()
-				{mScriptEngineWorker->setWorkingDir(workingDir);});
+	{mScriptEngineWorker->setWorkingDir(workingDir);});
 }
 
 void TrikJavaScriptRunner::run(const QString &script, const QString &fileName)
@@ -126,5 +126,3 @@ QStringList TrikJavaScriptRunner::knownMethodNames() const
 {
 	return mScriptEngineWorker->knownMethodNames();
 }
-
-

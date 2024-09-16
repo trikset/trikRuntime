@@ -43,7 +43,7 @@ public:
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	ServoMotor(const QString &port, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~ServoMotor() override;
 
@@ -72,7 +72,8 @@ public slots:
 	///        will be sent to a motor unaltered.
 	void setPower(int power, bool constrain = true) override;
 
-	void brake(int /* durationMs */ = 0) override { /** Makes no sense, neither for angular servo nor for rotational */}
+	void brake(int /* durationMs */ = 0) override { /** Makes no sense, neither for angular servo nor for rotational */
+	}
 
 	void setPeriod(int uSec = 20000) override;
 private:

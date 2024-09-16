@@ -28,7 +28,7 @@ using namespace trikGui;
 SystemSettingsWidget::SystemSettingsWidget(MainWidget::FileManagerRootType fileManagerRoot, QWidget *parent)
 	: TrikGuiDialog(parent)
 {
-	QLabel* const allFilesLabel = new QLabel(tr("Directory 'Files' is ..."));
+	QLabel * const allFilesLabel = new QLabel(tr("Directory 'Files' is ..."));
 	allFilesLabel->setAlignment(Qt::AlignCenter);
 
 	mAllFSButton = new QRadioButton(tr("full file system"));
@@ -77,33 +77,33 @@ QString SystemSettingsWidget::menuEntry()
 void SystemSettingsWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Escape: {
-			emitCheckedDirPath();
-			exit();
-			break;
-		}
-		case Qt::Key_PowerOff: {
-			emitCheckedDirPath();
-			goHome();
-			break;
-		}
-		case Qt::Key_Left:
-		case Qt::Key_Up:
-		case Qt::Key_Down:
-		case Qt::Key_Right: {
-			changeDefaultButton();
-			break;
-		}
-		default: {
-			TrikGuiDialog::keyPressEvent(event);
-			break;
-		}
+	case Qt::Key_Escape: {
+		emitCheckedDirPath();
+		exit();
+		break;
+	}
+	case Qt::Key_PowerOff: {
+		emitCheckedDirPath();
+		goHome();
+		break;
+	}
+	case Qt::Key_Left:
+	case Qt::Key_Up:
+	case Qt::Key_Down:
+	case Qt::Key_Right: {
+		changeDefaultButton();
+		break;
+	}
+	default: {
+		TrikGuiDialog::keyPressEvent(event);
+		break;
+	}
 	}
 }
 
 void SystemSettingsWidget::changeDefaultButton()
 {
-	QRadioButton const* const current = qobject_cast<QRadioButton const*>(mButtonGroup.checkedButton());
+	QRadioButton const * const current = qobject_cast<QRadioButton const *>(mButtonGroup.checkedButton());
 	if (current == mOnlyScriptsButton) {
 		mAllFSButton->setChecked(true);
 		mOnlyScriptsButton->setChecked(false);
@@ -115,7 +115,7 @@ void SystemSettingsWidget::changeDefaultButton()
 
 void SystemSettingsWidget::emitCheckedDirPath()
 {
-	QRadioButton const* const current = qobject_cast<QRadioButton const*>(mButtonGroup.checkedButton());
+	QRadioButton const * const current = qobject_cast<QRadioButton const *>(mButtonGroup.checkedButton());
 	if (current == mOnlyScriptsButton) {
 		emit currentFilesDirPath(MainWidget::FileManagerRootType::scriptsDir);
 	} else {

@@ -27,8 +27,7 @@
 #include "scriptExecutionControl.h"
 #include "threading.h"
 
-namespace trikScriptRunner
-{
+namespace trikScriptRunner {
 
 /// Worker object to be run in a separate thread for Qt Script execution. QScriptEngine calls ProcessEvents too
 /// infrequently even when ProcessEventsInterval is set to 1 ms, so there is a need for separate threads to
@@ -43,9 +42,9 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param scriptControl - reference to script execution control object.
 	ScriptEngineWorker(trikControl::BrickInterface *brick
-			, trikNetwork::MailboxInterface *mailbox
-			, TrikScriptControlInterface *scriptControl
-			);
+		, trikNetwork::MailboxInterface *mailbox
+		, TrikScriptControlInterface *scriptControl
+		);
 
 	/// Create and initialize a new script engine.
 	/// Can be safely called from other threads.
@@ -56,7 +55,7 @@ public:
 	/// Note that functions will not be copied to a new engine due to limitations of Qt Scripting engine,
 	/// they need to be re-evaluated manually.
 	/// Can be safely called from other threads (to some extent. Original engine shall not simultaneously evaluate).
-	QScriptEngine *copyScriptEngine(const QScriptEngine * original);
+	QScriptEngine *copyScriptEngine(const QScriptEngine *original);
 
 	/// Registers given C++ function as callable from script, with given name.
 	/// Can be safely called from other threads (but it shall not be called simultaneously with engine creation).
@@ -73,7 +72,6 @@ public:
 	/// worker would be in a ready state.
 	/// Can be safely called from other threads.
 	void stopScript();
-
 
 	/// Gets all method names from executive objects (brick, script, etc.) from ScriptEngineWorker
 	/// (useful when used from outside of the TrikRuntime).
@@ -154,10 +152,10 @@ private:
 	void startScriptEvaluation(int scriptId);
 
 	/// Evaluates "system.js" file in given engine.
-	void evalSystemJs(QScriptEngine * engine);
+	void evalSystemJs(QScriptEngine *engine);
 
 	trikControl::BrickInterface *mBrick{}; // Does not have ownership.
-	trikNetwork::MailboxInterface * mMailbox{};  // Does not have ownership.
+	trikNetwork::MailboxInterface *mMailbox{};   // Does not have ownership.
 	TrikScriptControlInterface *mScriptControl{}; // Does not have ownership.
 	Threading mThreading;
 	QScopedPointer<QScriptEngine> mDirectScriptsEngine;

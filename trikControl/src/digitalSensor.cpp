@@ -23,7 +23,7 @@
 using namespace trikControl;
 
 DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mDeviceFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
 	, mState("Digital Sensor on" + port)
 {

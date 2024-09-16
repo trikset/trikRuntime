@@ -36,14 +36,17 @@ PowerLevel::Level PowerLevel::currentLevel()
 			QLOG_INFO() << "Current low power threshold is set to 12V";
 			return Level::twelveVolt;
 		} else {
-			QLOG_ERROR() << "Invalid value in GPIO file '" << powerLevelGpioPath << "'. Value can be 0 or 1, but was '"
-					<< currentValue << "'. Something is wrong with Linux kernel itself. Defaulting to 6V scheme.";
+			QLOG_ERROR() << "Invalid value in GPIO file '" << powerLevelGpioPath <<
+			"'. Value can be 0 or 1, but was '"
+			             << currentValue <<
+			"'. Something is wrong with Linux kernel itself. Defaulting to 6V scheme.";
 			return Level::sixVolt;
 		}
 	} catch (trikKernel::FailedToOpenFileException &e) {
 		Q_UNUSED(e);
-		QLOG_ERROR() << "Power level GPIO file '" << powerLevelGpioPath << "' not found. It is not exported by kernel"
-				" or file path is incorrect. Defaulting to 6V scheme.";
+		QLOG_ERROR() << "Power level GPIO file '" << powerLevelGpioPath <<
+		"' not found. It is not exported by kernel"
+		        " or file path is incorrect. Defaulting to 6V scheme.";
 		return Level::sixVolt;
 	}
 }

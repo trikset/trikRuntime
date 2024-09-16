@@ -29,7 +29,7 @@ static const int absZ = 0x02;
 using namespace trikControl;
 
 VectorSensorWorker::VectorSensorWorker(const QString &eventFile, DeviceState &state
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState(state)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mEventFileName(eventFile)
@@ -60,7 +60,7 @@ void VectorSensorWorker::init()
 		mLastEventTimer.start();
 	} else {
 		QLOG_WARN() << "Sensor" << mState.deviceName() << ", device file can not be opened, will retry in"
-				<< reopenDelay << "milliseconds";
+		            << reopenDelay << "milliseconds";
 		mTryReopenTimer.start();
 		mState.fail();
 	}
@@ -75,37 +75,36 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 		mState.ready();
 	}
 
-	const auto reportError = [&](){
+	const auto reportError = [&]() {
 		QLOG_ERROR() << "Unknown event type in vector sensor event file" << mEventFile->fileName() << " :"
-				<< eventType << code << value;
+		             << eventType << code << value;
 	};
 
 	switch (eventType) {
-		case evAbs:
-			switch (code) {
-			case absX:
-				mReadingUnsynced[0] = value;
-				break;
-			case absY:
-				mReadingUnsynced[1] = value;
-				break;
-			case absZ:
-				mReadingUnsynced[2] = value;
-				break;
-			default:
-				reportError();
-			}
+	case evAbs:
+		switch (code) {
+		case absX:
+			mReadingUnsynced[0] = value;
 			break;
-		case evSyn:
-		{
-			QWriteLocker locker(&mReadingLock);
-			mReading.swap(mReadingUnsynced);
-			locker.unlock();
-			emit newData(mReading, eventTime);
+		case absY:
+			mReadingUnsynced[1] = value;
 			break;
-		}
+		case absZ:
+			mReadingUnsynced[2] = value;
+			break;
 		default:
 			reportError();
+		}
+		break;
+	case evSyn: {
+		QWriteLocker locker(&mReadingLock);
+		mReading.swap(mReadingUnsynced);
+		locker.unlock();
+		emit newData(mReading, eventTime);
+		break;
+	}
+	default:
+		reportError();
 	}
 }
 
@@ -122,7 +121,8 @@ QVector<int> VectorSensorWorker::read()
 
 void VectorSensorWorker::onSensorHanged()
 {
-	QLOG_WARN() << "Sensor" << mState.deviceName() << "hanged for " << maxEventDelay << "ms, reopening device file...";
+	QLOG_WARN() << "Sensor" << mState.deviceName() << "hanged for " << maxEventDelay <<
+	"ms, reopening device file...";
 	mState.fail();
 	mLastEventTimer.stop();
 

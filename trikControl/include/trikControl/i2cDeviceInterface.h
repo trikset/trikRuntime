@@ -27,7 +27,7 @@ class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInter
 {
 	Q_OBJECT
 
-public :
+public:
 	/// Sends data to current device, if it is connected.
 	virtual void send(int reg, int value) = 0;
 

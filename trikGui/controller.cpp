@@ -46,12 +46,12 @@ Controller::Controller(const QString &configPath)
 	auto correctedConfigPath = configPath.endsWith('/') ? configPath : configPath + '/';
 
 	trikKernel::Configurer configurer(correctedConfigPath + "system-config.xml"
-			, correctedConfigPath + "model-config.xml");
+		, correctedConfigPath + "model-config.xml");
 
 	connect(mBrick->gamepad(), &trikControl::GamepadInterface::disconnected
-			, this, &Controller::gamepadDisconnected);
+		, this, &Controller::gamepadDisconnected);
 	connect(mBrick->gamepad(), &trikControl::GamepadInterface::connected
-			, this, &Controller::gamepadConnected);
+		, this, &Controller::gamepadConnected);
 
 	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick));
@@ -63,31 +63,31 @@ Controller::Controller(const QString &configPath)
 	connect(mWiFi.data(), &trikWiFi::TrikWiFi::disconnected, this, &Controller::wiFiDisconnected);
 
 	connect(mCommunicator.data(), &trikCommunicator::TrikCommunicator::stopCommandReceived
-			, this, &Controller::abortExecution);
+		, this, &Controller::abortExecution);
 	connect(mCommunicator.data(), &trikCommunicator::TrikCommunicator::connected
-			, this, &Controller::updateCommunicatorStatus);
+		, this, &Controller::updateCommunicatorStatus);
 	connect(mCommunicator.data(), &trikCommunicator::TrikCommunicator::disconnected
-			, this, &Controller::updateCommunicatorStatus);
+		, this, &Controller::updateCommunicatorStatus);
 	connect(mTelemetry.data(), &trikTelemetry::TrikTelemetry::connected
-			, this, &Controller::updateCommunicatorStatus);
+		, this, &Controller::updateCommunicatorStatus);
 	connect(mTelemetry.data(), &trikTelemetry::TrikTelemetry::disconnected
-			, this, &Controller::updateCommunicatorStatus);
+		, this, &Controller::updateCommunicatorStatus);
 	connect(mMailbox.data(), &trikNetwork::MailboxInterface::connectionStatusChanged
-			, this, &Controller::mailboxStatusChanged);
+		, this, &Controller::mailboxStatusChanged);
 
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-			, this, &Controller::scriptExecutionCompleted);
+		, this, &Controller::scriptExecutionCompleted);
 
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::textInStdOut
-		, mScriptRunner.data(), [](const QString &m){
+		, mScriptRunner.data(), [](const QString &m) {
 		QTextStream(stdout) << m;
 	});
 
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedScript
-			, this, &Controller::scriptExecutionFromFileStarted);
+		, this, &Controller::scriptExecutionFromFileStarted);
 
 	connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::startedDirectScript
-			, this, &Controller::directScriptExecutionStarted);
+		, this, &Controller::directScriptExecutionStarted);
 
 	connect(mBrick.data(), &trikControl::BrickInterface::stopped, this, &Controller::brickStopped);
 
@@ -108,7 +108,8 @@ void Controller::runFile(const QString &filePath)
 {
 	const QFileInfo fileInfo(filePath);
 	if (fileInfo.suffix() == "qts" || fileInfo.suffix() == "js") {
-		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()), fileInfo.baseName());
+		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()),
+			fileInfo.baseName());
 	} else if (fileInfo.suffix() == "wav" || fileInfo.suffix() == "mp3") {
 		mScriptRunner->run("brick.playSound(\"" + fileInfo.canonicalFilePath() + "\");", fileInfo.baseName());
 	} else if (fileInfo.suffix() == "sh") {
@@ -117,7 +118,8 @@ void Controller::runFile(const QString &filePath)
 		QProcess::startDetached("mono", {filePath});
 	} else if (fileInfo.suffix() == "py") {
 		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()),
-						   trikScriptRunner::ScriptType::PYTHON, fileInfo.baseName());
+			trikScriptRunner::ScriptType::PYTHON,
+			fileInfo.baseName());
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath, {});
 	}
