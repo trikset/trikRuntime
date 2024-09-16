@@ -16,6 +16,8 @@ esac
 export EXECUTOR
 if "$VERA" ; then $EXECUTOR ./runVera++.sh ; fi
 
+if "$LINTER" ; then $EXECUTOR ./run-uncrustify.sh ; fi
+
 if [ "$TRANSLATIONS" = "true" ] ; then $EXECUTOR bash -lic 'lupdate trikRuntime.pro' && $EXECUTOR scripts/checkStatus.sh ; fi
 
 $EXECUTOR bash -lic " set -x; \

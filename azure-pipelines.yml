@@ -27,6 +27,7 @@ jobs:
           imageName: 'ubuntu-latest'
           CONFIG: debug
           VERA: true
+          LINTER: true
           TRANSLATIONS: true
           QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         macOs release:
