@@ -1,5 +1,5 @@
 #!/bin/bash
-set -xeuo pipefail
+set -xeo pipefail
 
 IGNORED_DIRS=(
     "./trikScriptRunner/generated_cpp/pytrikcontrol"
@@ -18,6 +18,10 @@ done
 
 IGNORE_CMD=${IGNORE_CMD% -o}
 
-# clang-format-15
-find . \( $IGNORE_CMD \) -prune -o -name '*.cpp' -o -name '*.h' -print | xargs uncrustify -c trikRuntime.cfg --replace
+if [ -n "$CHECK" ]; then
+    OPTION="--check"
+else
+    OPTION="--replace"
+fi
 
+find . \( $IGNORE_CMD \) -prune -o -name '*.cpp' -o -name '*.h' -print | xargs uncrustify -c trikRuntime.cfg "$OPTION"

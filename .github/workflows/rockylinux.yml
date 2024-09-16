@@ -9,7 +9,16 @@ on:
   workflow_dispatch:
 
 jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run linter"
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends uncrustify
+          CHECK=true ./run-uncrustify.sh
   rockylinux9:
+    needs: linter
     runs-on: ubuntu-latest
     container: rockylinux:9
     defaults:
