@@ -9,7 +9,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: 'false'
+
+      - name: "Run linter"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends uncrustify
+          CHECK=true ./run-uncrustify.sh
+          
   rockylinux9:
+    needs: linter
     runs-on: ubuntu-latest
     container: rockylinux:9
     defaults:
