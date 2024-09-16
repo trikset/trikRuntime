@@ -48,7 +48,7 @@ QScriptValue Utils::clone(const QScriptValue &prototype, QScriptEngine * const e
 	} else if (prototype.isObject()) {
 		if (prototype.toString() == "[object Math]"
 		    || prototype.toString() == "[object Object]"
-		    || prototype.toString() == "[object JSON]")                                           {
+		    || prototype.toString() == "[object JSON]") {
 			// Do not copy intrinsic objects, we will not be able to copy their functions properly anyway.
 			return prototype;
 		}

@@ -53,7 +53,7 @@ bool TrikSystemConsole::startProcessSynchronously(const QString &processName, co
 
 	if (!process.waitForFinished()) {
 		QLOG_ERROR() << "Process" << executableFileInfo.filePath() << " in " <<
-		executableFileInfo.absolutePath()
+		        executableFileInfo.absolutePath()
 		             << "hanged up or finished unexpectedly!";
 
 		return false;

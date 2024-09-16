@@ -122,7 +122,7 @@ QVector<int> VectorSensorWorker::read()
 void VectorSensorWorker::onSensorHanged()
 {
 	QLOG_WARN() << "Sensor" << mState.deviceName() << "hanged for " << maxEventDelay <<
-	"ms, reopening device file...";
+	        "ms, reopening device file...";
 	mState.fail();
 	mLastEventTimer.stop();
 

@@ -64,7 +64,7 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 
 	if (mResetStarted) {
 		QLOG_INFO() << "Threading: can't start new thread" << threadId << "with engine" << engine <<
-		"due to reset";
+		        "due to reset";
 		delete engine;
 		return;
 	}
@@ -106,7 +106,7 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	thread->start();
 	wait.exec();
 	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" <<
-	thread;
+	        thread;
 }
 
 void Threading::waitForAll()

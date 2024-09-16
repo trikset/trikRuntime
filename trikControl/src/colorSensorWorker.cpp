@@ -62,7 +62,7 @@ QVector<int> ColorSensorWorker::read(int m, int n)
 {
 	if(m > mReading.size() || n > mReading[0].size() || m <= 0 || n <= 0) {
 		QLOG_WARN() <<
-		QString("Incorrect parameters for ColorSensorWorker::read: m = %1, n = %2").arg(m).arg(n);
+		        QString("Incorrect parameters for ColorSensorWorker::read: m = %1, n = %2").arg(m).arg(n);
 		return {-1, -1, -1};
 	}
 
