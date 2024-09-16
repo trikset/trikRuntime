@@ -12,6 +12,12 @@ jobs:
   linter:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: 'false'
+
       - name: "Run linter"
         run: |
           sudo apt-get update
