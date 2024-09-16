@@ -18,7 +18,7 @@
 #include "fifoworker.h"
 
 trikControl::FifoWorker::FifoWorker(const QString &fileName
-	, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+                                    , const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mFifoFileName(fileName)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mState("Fifo on '" + fileName + "'")

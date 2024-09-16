@@ -27,7 +27,8 @@
 
 using namespace trikScriptRunner;
 
-ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface *brick): mBrick(brick) {
+ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface *brick) : mBrick(brick)
+{
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 }
 
@@ -48,7 +49,7 @@ void ScriptExecutionControl::reset()
 	mTimers.clear();
 }
 
-QObject* ScriptExecutionControl::timer(int milliseconds)
+QObject *ScriptExecutionControl::timer(int milliseconds)
 {
 	auto result = new QTimer();
 	mTimers.append(result);
@@ -77,7 +78,7 @@ int ScriptExecutionControl::random(int from, int to) const
 		qSwap(from, to);
 	}
 
-	return QRandomGenerator::global()->bounded(from, to+1);
+	return QRandomGenerator::global()->bounded(from, to + 1);
 }
 
 void ScriptExecutionControl::run()
@@ -119,7 +120,7 @@ void ScriptExecutionControl::writeData(const QString &file, const QVector<uint8_
 {
 	QFile out(file);
 	out.open(QIODevice::WriteOnly | QIODevice::Append);
-	out.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
+	out.write(reinterpret_cast<const char *>(bytes.data()), bytes.size());
 }
 
 QStringList ScriptExecutionControl::readAll(const QString &file) const

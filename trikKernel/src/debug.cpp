@@ -25,9 +25,9 @@ Debugger::Debugger(const QString &methodName)
 {
 	const QString indent(mIndent[thread()], ' ');
 	const QString str = QString("%1(Thread %2) Entering %3")
-			.arg(indent)
-			.arg(reinterpret_cast<quintptr>(thread()), QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))
-			.arg(mMethodName);
+	                    .arg(indent)
+	                    .arg(reinterpret_cast<quintptr>(thread()), QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))
+	                    .arg(mMethodName);
 
 	qDebug() << str.toStdString().c_str();
 	++mIndent[thread()];
@@ -38,9 +38,9 @@ Debugger::~Debugger()
 	--mIndent[thread()];
 	const QString indent(mIndent[thread()], ' ');
 	const QString str = QString("%1(Thread %2) Exiting %3")
-			.arg(indent)
-			.arg(reinterpret_cast<quintptr>(thread()), QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))
-			.arg(mMethodName);
+	                    .arg(indent)
+	                    .arg(reinterpret_cast<quintptr>(thread()), QT_POINTER_SIZE * 2, 16, QLatin1Char('0'))
+	                    .arg(mMethodName);
 
 	qDebug() << str.toStdString().c_str();
 }

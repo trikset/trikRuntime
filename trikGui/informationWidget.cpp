@@ -47,7 +47,6 @@ InformationWidget::InformationWidget(QWidget *parent)
 	visit->setOpenExternalLinks(true);
 	mLayout.addWidget(visit);
 
-
 	mLayout.addStretch();
 
 	setLayout(&mLayout);

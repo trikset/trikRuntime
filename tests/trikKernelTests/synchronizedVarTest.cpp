@@ -21,8 +21,7 @@
 using namespace tests;
 using namespace trikKernel;
 
-struct Point
-{
+struct Point {
 	int x;
 	int y;
 };

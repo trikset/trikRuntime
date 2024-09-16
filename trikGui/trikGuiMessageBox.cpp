@@ -27,7 +27,6 @@ TrikGuiMessageBox::TrikGuiMessageBox(QWidget *parent)
 	mMessageLabel.setAlignment(Qt::AlignCenter);
 }
 
-
 int TrikGuiMessageBox::exec(const QString &message)
 {
 	mMessageLabel.setText(message);
@@ -43,18 +42,18 @@ void TrikGuiMessageBox::renewFocus()
 void TrikGuiMessageBox::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_PowerOff: {
-			close();
-			mEventLoop.exit(1);
-			break;
-		}
-		case Qt::Key_Return:
-		case Qt::Key_Escape: {
-			close();
-			mEventLoop.quit();
-			break;
-		}
-		default:
-			MainWidget::keyPressEvent(event);
+	case Qt::Key_PowerOff: {
+		close();
+		mEventLoop.exit(1);
+		break;
+	}
+	case Qt::Key_Return:
+	case Qt::Key_Escape: {
+		close();
+		mEventLoop.quit();
+		break;
+	}
+	default:
+		MainWidget::keyPressEvent(event);
 	}
 }

@@ -12,31 +12,31 @@
     <name>LogWindow</name>
     <message>
         <source>Log window</source>
-        <translation>Окно журнала</translation>
+        <translation type="vanished">Окно журнала</translation>
     </message>
     <message>
         <source>&amp;Pause</source>
-        <translation>&amp;Пауза</translation>
+        <translation type="vanished">&amp;Пауза</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Сохранить</translation>
+        <translation type="vanished">&amp;Сохранить</translation>
     </message>
     <message>
         <source>C&amp;lear</source>
-        <translation>О&amp;чистить</translation>
+        <translation type="vanished">О&amp;чистить</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>&amp;Копировать</translation>
+        <translation type="vanished">&amp;Копировать</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation>Уровень:</translation>
+        <translation type="vanished">Уровень:</translation>
     </message>
     <message>
         <source>&amp;Auto scroll</source>
-        <translation>&amp;Автопрокрутка</translation>
+        <translation type="vanished">&amp;Автопрокрутка</translation>
     </message>
 </context>
 <context>
@@ -112,61 +112,61 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation>Внимание</translation>
+        <translation type="vanished">Внимание</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>Ошибка</translation>
+        <translation type="vanished">Ошибка</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>След</translation>
+        <translation type="vanished">След</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>Отладка</translation>
+        <translation type="vanished">Отладка</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>Инфо</translation>
+        <translation type="vanished">Инфо</translation>
     </message>
     <message>
         <source>Fatal</source>
-        <translation>Фатально</translation>
+        <translation type="vanished">Фатально</translation>
     </message>
 </context>
 <context>
     <name>QsLogging::LogWindowModel</name>
     <message>
         <source>Time</source>
-        <translation>Время</translation>
+        <translation type="vanished">Время</translation>
     </message>
     <message>
         <source>Level</source>
-        <translation>Уровень</translation>
+        <translation type="vanished">Уровень</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Сообщение</translation>
+        <translation type="vanished">Сообщение</translation>
     </message>
 </context>
 <context>
     <name>QsLogging::Window</name>
     <message>
         <source>&amp;Pause</source>
-        <translation>&amp;Пауза</translation>
+        <translation type="vanished">&amp;Пауза</translation>
     </message>
     <message>
         <source>&amp;Resume</source>
-        <translation>&amp;Возобновить</translation>
+        <translation type="vanished">&amp;Возобновить</translation>
     </message>
     <message>
         <source>Save log</source>
-        <translation>Сохранить логи</translation>
+        <translation type="vanished">Сохранить логи</translation>
     </message>
     <message>
         <source>Log file (*.log)</source>
-        <translation>Файл логов (*.log)</translation>
+        <translation type="vanished">Файл логов (*.log)</translation>
     </message>
 </context>
 <context>

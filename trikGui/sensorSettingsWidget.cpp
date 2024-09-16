@@ -109,5 +109,5 @@ QString SensorSettingsWidget::createScript()
 	}
 
 	return QString("    while (!(brick.%1(%2).read() %3 %4)) {\n"
-		"        script.wait(10);\n    }\n").arg(name).arg(mPort).arg(sign).arg(mLever->distance());
+	               "        script.wait(10);\n    }\n").arg(name).arg(mPort).arg(sign).arg(mLever->distance());
 }

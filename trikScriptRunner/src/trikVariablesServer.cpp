@@ -20,8 +20,8 @@
 #include <QsLog.h>
 using namespace trikScriptRunner;
 
-TrikVariablesServer::TrikVariablesServer() :
-	mTcpServer(new QTcpServer(this))
+TrikVariablesServer::TrikVariablesServer()
+	: mTcpServer(new QTcpServer(this))
 {
 	connect(mTcpServer.data(), &QTcpServer::newConnection, this, &TrikVariablesServer::onNewConnection);
 	if (!mTcpServer->listen(QHostAddress::LocalHost, port)) {
@@ -36,10 +36,10 @@ void TrikVariablesServer::sendHTTPResponse(const QJsonObject &json)
 	// TODO: Create other way for endline constant, get rid of define
 #define NL "\r\n"
 	QString header = "HTTP/1.0 200 OK" NL
-					 "Connection: close" NL
-					 "Content-type: text/plain, charset=us-ascii" NL
-					 "Content-length: " + QString::number(jsonBytes.size()) + NL
-					 NL;
+	                 "Connection: close" NL
+	                 "Content-type: text/plain, charset=us-ascii" NL
+	                 "Content-length: " + QString::number(jsonBytes.size()) + NL
+	                 NL;
 #undef NL
 
 	mCurrentConnection->write(header.toLatin1());
@@ -61,8 +61,7 @@ void TrikVariablesServer::processHTTPRequest()
 	// TODO: Make sure, that different connections aren't intersected using mutex or
 	// support multiple connections simultaneously
 	QStringList list;
-	while (mCurrentConnection->canReadLine())
-	{
+	while (mCurrentConnection->canReadLine()) {
 		QString data = QString(mCurrentConnection->readLine());
 		list.append(data);
 	}

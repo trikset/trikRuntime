@@ -105,7 +105,7 @@ void CommandLineParser::showHelp() const
 	};
 
 	const QString generalInfo = mApplicationName
-			+ (mApplicationVersion.isEmpty() ? "" : (" (v " + mApplicationVersion + ")"));
+	                            + (mApplicationVersion.isEmpty() ? "" : (" (v " + mApplicationVersion + ")"));
 
 	print(generalInfo);
 	print(mApplicationDescription);
@@ -118,16 +118,15 @@ void CommandLineParser::showHelp() const
 	}
 
 	const auto printInfo = [&print](const QHash<QString, QString> &descriptions
-			, const QHash<QString, QString> &longNames
-			, const QString &help)
-	{
+	                                , const QHash<QString, QString> &longNames
+	                                , const QString &help) {
 		if (!descriptions.isEmpty()) {
 			print(help + ":");
 			for (const QString &optionShortName : descriptions.keys()) {
 				const QString option = "-" + optionShortName
-						+ (longNames.key(optionShortName).isEmpty()
-								? ""
-								: " (--" + longNames.key(optionShortName) + ")");
+				                       + (longNames.key(optionShortName).isEmpty()
+				                                ? ""
+				                                : " (--" + longNames.key(optionShortName) + ")");
 
 				print(option + ": " + descriptions[optionShortName]);
 			}

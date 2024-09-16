@@ -25,7 +25,7 @@
 
 using namespace trikGui;
 
-TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
+TrikGuiApplication::TrikGuiApplication(int &argc, char * *argv)
 	: QApplication(argc, argv)
 {
 	connect(&mPowerButtonPressedTimer, &QTimer::timeout, this, &TrikGuiApplication::shutdownSoon);
@@ -35,7 +35,8 @@ TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
 }
 
 static bool isTrikPowerOffKey(Qt::Key key) {
-	return key == Qt::Key_PowerOff || ( key == Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier));
+	return key == Qt::Key_PowerOff ||
+	       ( key == Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier));
 }
 
 bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)

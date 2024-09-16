@@ -22,8 +22,12 @@
 namespace trikControl {
 
 IrCameraWorkerMLX90640::IrCameraWorkerMLX90640(uint8_t i2cAddr, uint16_t m, uint16_t n)
-	: mI2cAddr(i2cAddr), mSensorHeight(m), mSensorWidth(n)
-	, mFrameBuffer(FRAME_SIZE), mImage(IMG_SIZE), mState("Ir Camera worker")
+	: mI2cAddr(i2cAddr)
+	, mSensorHeight(m)
+	, mSensorWidth(n)
+	, mFrameBuffer(FRAME_SIZE)
+	, mImage(IMG_SIZE)
+	, mState("Ir Camera worker")
 {
 	mSensorProcessBuffer.resize(mSensorHeight * mSensorWidth);
 	mSensorData.resize(mSensorHeight * mSensorWidth);

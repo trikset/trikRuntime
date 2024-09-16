@@ -9,62 +9,7 @@
     </message>
 </context>
 <context>
-    <name>LogWindow</name>
-    <message>
-        <source>Log window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Level:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Auto scroll</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
-    <message>
-        <source>Trace</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fatal</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Print this help text.</source>
         <translation type="unfinished"></translation>
@@ -125,40 +70,6 @@
     </message>
     <message>
         <source>Runner of JavaScript and Python files.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QsLogging::LogWindowModel</name>
-    <message>
-        <source>Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QsLogging::Window</name>
-    <message>
-        <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Resume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Log file (*.log)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

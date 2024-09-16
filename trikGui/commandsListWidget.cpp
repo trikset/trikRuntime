@@ -32,17 +32,17 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 {
 	QStringList commandsList;
 	commandsList
-		<< tr("Play Tone")
-		<< tr("Smile")
-		<< tr("Sad Smile")
-		<< tr("Timer")
-		<< tr("Motor Forward")
-		<< tr("Motor Backward")
-		<< tr("Motors Stop")
-		<< tr("Wait for Light")
-		<< tr("Wait for Ultrasonic Distance")
-		<< tr("Wait for Infrared Distance")
-		<< tr("Wait for Encoder");
+	        << tr("Play Tone")
+	        << tr("Smile")
+	        << tr("Sad Smile")
+	        << tr("Timer")
+	        << tr("Motor Forward")
+	        << tr("Motor Backward")
+	        << tr("Motors Stop")
+	        << tr("Wait for Light")
+	        << tr("Wait for Ultrasonic Distance")
+	        << tr("Wait for Infrared Distance")
+	        << tr("Wait for Encoder");
 
 	for (int i = 0; i < commandsList.size(); ++i) {
 		mCommands.addItem(commandsList.at(i));
@@ -55,7 +55,7 @@ CommandsListWidget::CommandsListWidget(Controller &controller, const QString &na
 	mCommands.selectionModel()->select(
 		mCommands.model()->index(0, 0)
 		, QItemSelectionModel::ClearAndSelect
-	);
+		);
 
 	setLayout(&mLayout);
 }

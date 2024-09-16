@@ -74,31 +74,31 @@ void WiFiIndicator::changeMode(WiFiModeWidget::Mode mode)
 {
 	mMode = mode;
 	switch (mode) {
-		case WiFiModeWidget::Mode::client:
-			if (mController.wiFi().statusResult().connected) {
-				switch (mController.wiFi().signalStrength()) {
-					case SignalStrength::undefined:
-						setOn();
-						break;
-					case SignalStrength::low:
-						setLowStrength();
-						break;
-					case SignalStrength::medium:
-						setMediumStrength();
-						break;
-					case SignalStrength::high:
-						setHighStrength();
-						break;
-				}
-			} else {
-				setOff();
+	case WiFiModeWidget::Mode::client:
+		if (mController.wiFi().statusResult().connected) {
+			switch (mController.wiFi().signalStrength()) {
+			case SignalStrength::undefined:
+				setOn();
+				break;
+			case SignalStrength::low:
+				setLowStrength();
+				break;
+			case SignalStrength::medium:
+				setMediumStrength();
+				break;
+			case SignalStrength::high:
+				setHighStrength();
+				break;
 			}
-			break;
-		case WiFiModeWidget::Mode::accessPoint:
-			setAPOn();
-			break;
-		case WiFiModeWidget::Mode::unknown:
+		} else {
 			setOff();
+		}
+		break;
+	case WiFiModeWidget::Mode::accessPoint:
+		setAPOn();
+		break;
+	case WiFiModeWidget::Mode::unknown:
+		setOff();
 	}
 }
 

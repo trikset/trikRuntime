@@ -19,9 +19,9 @@
 
 using namespace trikGui;
 
-ScriptHolder* ScriptHolder::instance()
+ScriptHolder *ScriptHolder::instance()
 {
-	static ScriptHolder* holder = new ScriptHolder();
+	static ScriptHolder *holder = new ScriptHolder();
 	return holder;
 }
 

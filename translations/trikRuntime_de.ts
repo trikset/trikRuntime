@@ -12,59 +12,35 @@
     <name>LogWindow</name>
     <message>
         <source>Log window</source>
-        <translation>Protokollfenster</translation>
+        <translation type="vanished">Protokollfenster</translation>
     </message>
     <message>
         <source>&amp;Pause</source>
-        <translation>&amp;Pause</translation>
+        <translation type="vanished">&amp;Pause</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Speichern</translation>
+        <translation type="vanished">&amp;Speichern</translation>
     </message>
     <message>
         <source>C&amp;lear</source>
-        <translation>K&amp;lar</translation>
+        <translation type="vanished">K&amp;lar</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>&amp;Kopieren</translation>
+        <translation type="vanished">&amp;Kopieren</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation>Ebene:</translation>
+        <translation type="vanished">Ebene:</translation>
     </message>
     <message>
         <source>&amp;Auto scroll</source>
-        <translation>&amp;Auto Scroll</translation>
+        <translation type="vanished">&amp;Auto Scroll</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
-    <message>
-        <source>Trace</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Debug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Info</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Fatal</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Print this help text.</source>
         <translation type="unfinished"></translation>
@@ -129,37 +105,10 @@
     </message>
 </context>
 <context>
-    <name>QsLogging::LogWindowModel</name>
-    <message>
-        <source>Time</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Level</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QsLogging::Window</name>
     <message>
         <source>&amp;Pause</source>
-        <translation>&amp;Pause</translation>
-    </message>
-    <message>
-        <source>&amp;Resume</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Save log</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Log file (*.log)</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">&amp;Pause</translation>
     </message>
 </context>
 <context>

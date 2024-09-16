@@ -43,14 +43,14 @@ CameraWidget::CameraWidget(trikControl::BrickInterface &brick, QWidget *parent)
 void CameraWidget::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
-		case Qt::Key_Return: {
-			doPhoto();
-			break;
-		}
-		default: {
-			event->ignore();
-			break;
-		}
+	case Qt::Key_Return: {
+		doPhoto();
+		break;
+	}
+	default: {
+		event->ignore();
+		break;
+	}
 	}
 }
 
@@ -75,7 +75,8 @@ void CameraWidget::doPhoto()
 		if (!dir.exists() && !dir.mkpath(trikKernel::Paths::imagesPath())) {
 			QLOG_ERROR() << "Cannot create directory for images";
 		} else {
-			const auto & name = trikKernel::Paths::imagesPath() + "/photo_" + QString::number(dir.count() - 1) + ".jpg";
+			const auto & name = trikKernel::Paths::imagesPath() + "/photo_" + QString::number(
+				dir.count() - 1) + ".jpg";
 			if (!image.save(name, "JPG")) {
 				QLOG_ERROR() << "Failed to save captured image" << name;
 			}
