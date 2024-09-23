@@ -78,6 +78,9 @@ static void cleanUp(trikNetwork::MailboxInterface *host)
 	delete host;
 	thread->quit();
 	thread->wait();
+	if (!thread->isFinished()) {
+	    Wait::wait(100);
+	}
 	delete thread;
 }
 
@@ -85,6 +88,9 @@ static void cleanUp(QThread *thread)
 {
 	thread->quit();
 	thread->wait();
+	if (!thread->isFinished()) {
+	    Wait::wait(100);
+	}
 	delete thread;
 }
 
