@@ -140,8 +140,8 @@ MailboxConnection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 	const auto c = connectionFactory();
 	c->preinitConnection(ip, port);
 	preinitConnection(c);
-	connect(this, &MailboxServer::startedConnection, c, [=]() {
-		disconnect(this, &MailboxServer::startedConnection, c, nullptr);
+
+	connect(c, &Connection::readyForConnect, c, [=]() {
 		c->connect(ip, port, mMyPort, mHullNumber);
 	});
 

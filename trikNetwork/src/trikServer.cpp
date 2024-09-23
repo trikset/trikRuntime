@@ -96,6 +96,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connect(connectionThread, &QThread::started, this, [this, connectionWorker]() {
 		QMetaObject::invokeMethod(connectionWorker, [=](){
 			connectionWorker->setIsStarted(true);
+			emit connectionWorker->readyForConnect();
 		});
 		Q_EMIT startedConnection(connectionWorker);
 	});

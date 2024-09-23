@@ -101,6 +101,9 @@ signals:
 	/// Emitted after connection is established.
 	void connected(trikNetwork::Connection *self);
 
+	/// Emitted when connection is ready for init socket.
+	void readyForConnect();
+
 protected:
 	/// Creates socket and initializes outgoing connection, shall be called when Connection is already in its own
 	/// thread.
