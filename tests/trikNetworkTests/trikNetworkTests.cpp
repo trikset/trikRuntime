@@ -75,23 +75,25 @@ static void receive(trikNetwork::MailboxInterface *host, QString &answer)
 static void cleanUp(trikNetwork::MailboxInterface *host)
 {
 	auto* thread = host->thread();
-	delete host;
+	host->deleteLater();
 	thread->quit();
-	thread->wait();
-	if (!thread->isFinished()) {
-	    Wait::wait(100);
+	if (!thread->wait(1000)) {
+		qDebug() << "Unable to stop thread" << thread;
 	}
-	delete thread;
+	else {
+		delete thread;
+	}
 }
 
 static void cleanUp(QThread *thread)
 {
 	thread->quit();
-	thread->wait();
-	if (!thread->isFinished()) {
-	    Wait::wait(100);
+	if (!thread->wait(1000)) {
+		qDebug() << "Unable to stop thread" << thread;
 	}
-	delete thread;
+	else {
+		delete thread;
+	}
 }
 
 static void send(trikNetwork::MailboxInterface *host, int hullNumber, const QString &message)
