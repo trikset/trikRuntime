@@ -60,8 +60,8 @@ static trikNetwork::MailboxInterface *prepareHost(int port, int hullNumber, int 
 	auto* host = trikNetwork::MailboxFactory::create(port);
 	host->joinNetwork("127.0.0.1", portToConnect, hullNumber);
 	QThread* thread = new QThread();
-	QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 	QObject::connect(thread, &QThread::finished, host, &trikNetwork::MailboxInterface::deleteLater);
+	QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 	host->moveToThread(thread);
 	thread->start();
 	return host;
@@ -100,7 +100,8 @@ TEST_F(TrikNetworkTests, baseTwoHostCommunicationTest)
 	auto* host = prepareHost(8890, 1, 8889);
 	EXPECT_EQ(false, host->hasMessages());
 	EXPECT_EQ("127.0.0.1", host->myIp());
-//	Wait::wait(100);
+	// It may not be able to connect by that time, and tests isEnabled() and isConnected() won't make sense.
+	Wait::wait(100);
 	EXPECT_EQ(true, host->isEnabled());
 	EXPECT_EQ(true, host->isConnected());
 	EXPECT_EQ(1, host->myHullNumber());
