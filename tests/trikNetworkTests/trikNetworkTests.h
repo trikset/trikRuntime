@@ -23,7 +23,7 @@
 
 namespace tests {
 
-/// Test suite for communicator.
+/// Test suite for trikNetwork module.
 class TrikNetworkTests : public testing::Test
 {
 

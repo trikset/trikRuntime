@@ -42,6 +42,8 @@ TrikServer::~TrikServer()
 			QLOG_ERROR() << "Unable to stop thread" << thread;
 		}
 	}
+
+	qDeleteAll(mConnections.keyBegin(), mConnections.keyEnd());
 	notPreparedConnections.clear();
 }
 
