@@ -41,8 +41,6 @@ void TrikNetworkTests::cleanUp()
 		thread->quit();
 		thread->wait();
 	}
-
-	qDeleteAll(mWorkers);
 }
 
 void TrikNetworkTests::addWorker(QThread *thread)
@@ -77,8 +75,11 @@ trikNetwork::MailboxInterface *TrikNetworkTests::prepareHost(int port, int hullN
 	host->joinNetwork("127.0.0.1", portToConnect, hullNumber);
 	QThread* thread = new QThread();
 	addWorker(thread);
-	QObject::connect(thread, &QThread::finished, host, &trikNetwork::MailboxInterface::deleteLater);
 	host->moveToThread(thread);
+
+	QObject::connect(thread, &QThread::finished, host, &trikNetwork::MailboxInterface::deleteLater);
+	QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+
 	thread->start();
 	return host;
 }
@@ -106,32 +107,26 @@ static void send(trikNetwork::MailboxInterface *host, int hullNumber, const QStr
 /////
 TEST_F(TrikNetworkTests, baseTwoHostCommunicationTest)
 {
-	mailboxInterface()->setHullNumber(3);
-	auto* host = prepareHost(8890, 1, 8889);
-	EXPECT_EQ(false, host->hasMessages());
-	EXPECT_EQ("127.0.0.1", host->myIp());
+	auto* fstHost = prepareHost(8890, 2, 8889);
+	auto* sndHost = prepareHost(8891, 1, 8889);
+	EXPECT_EQ(false, sndHost->hasMessages());
+	EXPECT_EQ("127.0.0.1", sndHost->myIp());
 	// It may not be able to connect by that time, and tests isEnabled() and isConnected() won't make sense.
 	Wait::wait(100);
-	EXPECT_EQ(true, host->isEnabled());
-	EXPECT_EQ(true, host->isConnected());
-	EXPECT_EQ(1, host->myHullNumber());
-	EXPECT_EQ("127.0.0.1", host->serverIp());
+	EXPECT_EQ(true, sndHost->isEnabled());
+	EXPECT_EQ(true, sndHost->isConnected());
+	EXPECT_EQ(1, sndHost->myHullNumber());
+	EXPECT_EQ("127.0.0.1", sndHost->serverIp());
 
 	QString answer;
-	receive(host, answer);
-	send(mailboxInterface(), 1, "message to host 2");
+	receive(sndHost, answer);
+	send(fstHost, 1, "message to host 2");
 	EXPECT_EQ("message to host 2", answer);
 
-	mailboxInterface()->moveToThread(host->thread());
-	receive(mailboxInterface(), answer);
-	send(host, 3, "message to host 1");
+	receive(fstHost, answer);
+	send(sndHost, 2, "message to host 1");
 
 	EXPECT_EQ("message to host 1", answer);
-
-	auto currentThread = QThread::currentThread();
-	QMetaObject::invokeMethod(mailboxInterface(), [this, currentThread](){
-		mailboxInterface()->moveToThread(currentThread);
-	}, Qt::BlockingQueuedConnection);
 }
 
 /////
@@ -163,11 +158,11 @@ TEST_F(TrikNetworkTests, sequentialSendingMessagesTest)
 ///
 TEST_F(TrikNetworkTests, baseMulticastTest)
 {
-	mailboxInterface()->setHullNumber(3);
-	auto* sndHost = prepareHost(8890, 4, 8889);
+	auto *fstHost = prepareHost(8890, 3, 8889);
+	auto *sndHost = prepareHost(8891, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8891, 4, 8889);
+	auto *thdHost = prepareHost(8892, 4, 8889);
 	EXPECT_EQ(4, thdHost->myHullNumber());
 
 	QString sndAnswer;
@@ -176,7 +171,7 @@ TEST_F(TrikNetworkTests, baseMulticastTest)
 	receive(sndHost, sndAnswer);
 	receive(thdHost, thdAnswer);
 
-	send(mailboxInterface(), 4, "message to all hosts");
+	send(fstHost, 4, "message to all hosts");
 
 	EXPECT_EQ("message to all hosts", sndAnswer);
 	EXPECT_EQ("message to all hosts", thdAnswer);
@@ -187,14 +182,9 @@ TEST_F(TrikNetworkTests, baseMulticastTest)
 ///
 TEST_F(TrikNetworkTests, twoHostCycleTest)
 {
-	mailboxInterface()->setHullNumber(3);
-	auto* sndHost = prepareHost(8890, 5, 8889);
+	auto *fstHost = prepareHost(8890, 3, 8889);
+	auto *sndHost = prepareHost(8891, 5, 8889);
 	EXPECT_EQ(5, sndHost->myHullNumber());
-
-	QThread* fstThread = new QThread();
-	addWorker(fstThread);
-	mailboxInterface()->moveToThread(fstThread);
-	fstThread->start();
 
 	QString fstAnswerFstHost;
 	QString sndAnswerFstHost;
@@ -202,18 +192,13 @@ TEST_F(TrikNetworkTests, twoHostCycleTest)
 	QString sndAnswerSndHost;
 
 	receive(sndHost, fstAnswerSndHost);
-	send(mailboxInterface(), 5, "1 message to 2 host");
-	receive(mailboxInterface(), fstAnswerFstHost);
+	send(fstHost, 5, "1 message to 2 host");
+	receive(fstHost, fstAnswerFstHost);
 	send(sndHost, 3, "1 message to 1 host");
 	receive(sndHost, sndAnswerSndHost);
-	send(mailboxInterface(), 5, "2 message to 2 host");
-	receive(mailboxInterface(), sndAnswerFstHost);
+	send(fstHost, 5, "2 message to 2 host");
+	receive(fstHost, sndAnswerFstHost);
 	send(sndHost, 3, "2 message to 1 host");
-
-	auto currentThread = QThread::currentThread();
-	QMetaObject::invokeMethod(mailboxInterface(), [this, currentThread](){
-		mailboxInterface()->moveToThread(currentThread);
-	}, Qt::BlockingQueuedConnection);
 
 	EXPECT_EQ("1 message to 1 host", fstAnswerFstHost);
 	EXPECT_EQ("1 message to 2 host", fstAnswerSndHost);
@@ -226,27 +211,17 @@ TEST_F(TrikNetworkTests, twoHostCycleTest)
 ///
 TEST_F(TrikNetworkTests, sendToIdenticalHullNumberTest)
 {
-	mailboxInterface()->setHullNumber(3);
-	auto* sndHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
+	auto *fstHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
+	auto *sndHost = prepareHost(8891, mailboxInterface()->myHullNumber(), 8889);
 	EXPECT_EQ(mailboxInterface()->myHullNumber(), sndHost->myHullNumber());
-
-	QThread* fstThread = new QThread();
-	addWorker(fstThread);
-	mailboxInterface()->moveToThread(fstThread);
-	fstThread->start();
 
 	QString fstAnswer;
 	QString sndAnswer;
 
 	receive(sndHost, sndAnswer);
-	send(mailboxInterface(), mailboxInterface()->myHullNumber(), "message to 2 host");
-	receive(mailboxInterface(), fstAnswer);
+	send(fstHost, fstHost->myHullNumber(), "message to 2 host");
+	receive(fstHost, fstAnswer);
 	send(sndHost, sndHost->myHullNumber(), "message to 1 host");
-
-	auto currentThread = QThread::currentThread();
-	QMetaObject::invokeMethod(mailboxInterface(), [this, currentThread](){
-		mailboxInterface()->moveToThread(currentThread);
-	}, Qt::BlockingQueuedConnection);
 
 	EXPECT_EQ("message to 1 host", fstAnswer);
 	EXPECT_EQ("message to 2 host", sndAnswer);
@@ -314,18 +289,12 @@ TEST_F(TrikNetworkTests, realMulticastWithIdenticalHullNumber)
 
 TEST_F(TrikNetworkTests, threeHostCycleTest)
 {
-	mailboxInterface()->setHullNumber(3);
-
-	auto* sndHost = prepareHost(8890, 4, 8889);
+	auto *fstHost = prepareHost(8890, 3, 8889);
+	auto* sndHost = prepareHost(8891, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8891, 5, 8889);
+	auto* thdHost = prepareHost(8892, 5, 8889);
 	EXPECT_EQ(5, thdHost->myHullNumber());
-
-	QThread* fstThread = new QThread();
-	QObject::connect(fstThread, &QThread::finished, fstThread, &QThread::deleteLater);
-	mailboxInterface()->moveToThread(fstThread);
-	fstThread->start();
 
 	QString fstAnswer;
 	QString sndAnswer;
@@ -333,8 +302,8 @@ TEST_F(TrikNetworkTests, threeHostCycleTest)
 
 	receive(sndHost, sndAnswer);
 	receive(thdHost, thdAnswer);
-	send(mailboxInterface(), 4, "message to 2 host");
-	receive(mailboxInterface(), fstAnswer);
+	send(fstHost, 4, "message to 2 host");
+	receive(fstHost, fstAnswer);
 	send(sndHost, 5, "message to 3 host");
 	send(thdHost, 3, "message to 1 host");
 
