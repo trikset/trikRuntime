@@ -21,6 +21,7 @@ SUBDIRS = \
 	trikCommunicatorTests \
 	trikKernelTests \
 	trikJsRunnerTests \
+	trikNetworkTests \
 	testUtils \
 
 #	minimalCppApp
@@ -35,6 +36,7 @@ trikKernelTests.depends = thirdparty testUtils
 trikJsRunnerTests.depends = thirdparty testUtils
 
 trikCommunicatorTests.depends = thirdparty testUtils
+trikNetworkTests.depends = thirdparty testUtils
 selftest.depends = thirdparty testUtils
 trikCameraPhotoTests.depends = thirdparty testUtils
 
