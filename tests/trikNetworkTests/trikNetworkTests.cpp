@@ -98,13 +98,13 @@ static void cleanUp(QThread *thread)
 
 static void send(trikNetwork::MailboxInterface *host, int hullNumber, const QString &message)
 {
-	Wait::wait(100);
+	Wait::wait(1000);
 	if (hullNumber == -1) {
 		host->send(message);
 	} else {
 		host->send(hullNumber, message);
 	}
-	Wait::wait(100);
+	Wait::wait(1000);
 }
 
 /////
