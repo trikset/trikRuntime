@@ -27,7 +27,6 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 	connect(this, &TrikServer::startedConnection, this, [this](Connection *c) {
 		const bool isFirstConnection = mConnections.isEmpty();
 		mConnections.insert(c->thread(), c);
-		notPreparedConnections.remove(c);
 		if (isFirstConnection) {
 			/// @todo: Emit "connected" signal only when socket is actually connected.
 			emit connected();
@@ -95,14 +94,14 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connect(connectionThread, &QThread::finished, connectionWorker, &Connection::deleteLater);
 	connect(connectionThread, &QThread::finished, connectionThread, &QThread::deleteLater);
 	connect(connectionThread, &QThread::started, this, [this, connectionWorker]() {
-		connectionWorker->setIsStarted(true);
+		QMetaObject::invokeMethod(connectionWorker, [=](){
+			connectionWorker->setIsStarted(true);
+			emit connectionWorker->readyForConnect();
+		});
 		Q_EMIT startedConnection(connectionWorker);
 	});
 
 	connect(connectionWorker, &Connection::disconnected, this, &TrikServer::onConnectionClosed);
-	connect(connectionThread, &QThread::finished, this, [this, connectionWorker] {
-		notPreparedConnections.remove(connectionWorker);
-	});
 
 	connectionThread->setObjectName(connectionWorker->metaObject()->className());
 
@@ -152,11 +151,13 @@ Connection *TrikServer::connection(const QHostAddress &ip) const
 void TrikServer::onConnectionClosed(Connection *connection)
 {
 	const auto thread = mConnections.key(connection);
-
+	notPreparedConnections.remove(connection);
 	mConnections.remove(thread);
 
 	thread->quit();
-
+	if (!thread->wait(1000)) {
+		QLOG_ERROR() << "Unable to stop thread" << thread;
+	}
 	if (mConnections.isEmpty()) {
 		emit disconnected();
 	}

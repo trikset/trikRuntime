@@ -140,9 +140,9 @@ MailboxConnection *MailboxServer::connectTo(const QHostAddress &ip, int port)
 	const auto c = connectionFactory();
 	c->preinitConnection(ip, port);
 	preinitConnection(c);
-	connect(this, &MailboxServer::startedConnection, c, [=]() {
+
+	connect(c, &Connection::readyForConnect, c, [=]() {
 		c->connect(ip, port, mMyPort, mHullNumber);
-		disconnect(this, &MailboxServer::startedConnection, c, nullptr);
 	});
 
 	startConnection(c);
@@ -388,11 +388,14 @@ void MailboxServer::forEveryConnection(const std::function<void(MailboxConnectio
 				QLOG_ERROR() << "Connection to" << endpoint << "is dead at the moment, message"
 						<< "is not delivered. Will try to reestablish connection on next send.";
 			} else {
-				onConnectionInfo(endpoint.ip, endpoint.serverPort, key, endpoint.serverPort);
 				if (connection->isConnected()) {
+					onConnectionInfo(connection->peerAddress(), endpoint.serverPort, key, connection->peerPort());
 					method(connection);
 				} else {
-					connect(connection, &Connection::connected, this, [method, connection](){method(connection);});
+					connect(connection, &Connection::connected, this, [this, connection, endpoint, method, key](){
+						onConnectionInfo(connection->peerAddress(), endpoint.serverPort, key, connection->peerPort());
+						method(connection);
+					});
 				}
 			}
 		}
