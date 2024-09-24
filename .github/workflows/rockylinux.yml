@@ -16,6 +16,7 @@ jobs:
       run:
         shell: bash -l {0} # to force import of ~/.bash_profile
     strategy:
+      fail-fast: false
       matrix:
         nopython: ['nopython', '']
         trik-version: ['', 'trik_new_age']
