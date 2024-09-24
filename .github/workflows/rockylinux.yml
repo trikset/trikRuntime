@@ -8,6 +8,10 @@ on:
       - '**'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   rockylinux9:
     runs-on: ubuntu-latest
@@ -25,12 +29,7 @@ jobs:
         gcc-version: ['13']
 
     steps:
-
-      - name: Cancel Previous Workflow Runs
-        uses: n1hility/cancel-previous-runs@v3.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+    
       - name: Install packages
         run: |
           yum install -y epel-release
