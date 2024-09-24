@@ -102,9 +102,7 @@ static void send(trikNetwork::MailboxInterface *host, int hullNumber, const QStr
 	Wait::wait(500);
 }
 
-/////
-///// 2 connect to 1; 2 send message to 1; 1 send message to 2
-/////
+// 2 connect to 1; 2 send message to 1; 1 send message to 2
 TEST_F(TrikNetworkTests, baseTwoHostCommunicationTest)
 {
 	auto* fstHost = prepareHost(8890, 2, 8889);
@@ -129,9 +127,7 @@ TEST_F(TrikNetworkTests, baseTwoHostCommunicationTest)
 	EXPECT_EQ("message to host 1", answer);
 }
 
-/////
-///// 2, 3 connect to 1; 1 send message to 2, 3;
-/////
+// 2, 3 connect to 1; 1 send message to 2, 3;
 TEST_F(TrikNetworkTests, sequentialSendingMessagesTest)
 {
 	auto* sndHost = prepareHost(8890, 4, 8889);
@@ -153,9 +149,7 @@ TEST_F(TrikNetworkTests, sequentialSendingMessagesTest)
 	EXPECT_EQ("message to host 3", thdAnswer);
 }
 
-///
-/// 2, 3 connect to 1 with same hull number; 1 send message to 2, 3;
-///
+// 2, 3 connect to 1 with same hull number; 1 send message to 2, 3;
 TEST_F(TrikNetworkTests, baseMulticastTest)
 {
 	auto *fstHost = prepareHost(8890, 3, 8889);
@@ -177,9 +171,7 @@ TEST_F(TrikNetworkTests, baseMulticastTest)
 	EXPECT_EQ("message to all hosts", thdAnswer);
 }
 
-///
-/// Multiple iterations of sending messages between two hosts
-///
+// Multiple iterations of sending messages between two hosts
 TEST_F(TrikNetworkTests, twoHostCycleTest)
 {
 	auto *fstHost = prepareHost(8890, 3, 8889);
@@ -206,9 +198,7 @@ TEST_F(TrikNetworkTests, twoHostCycleTest)
 	EXPECT_EQ("2 message to 2 host", sndAnswerSndHost);
 }
 
-///
-/// The host sends a message with the same hull number as its own
-///
+// The host sends a message with the same hull number as its own
 TEST_F(TrikNetworkTests, sendToIdenticalHullNumberTest)
 {
 	auto *fstHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
