@@ -76,11 +76,9 @@ RangeSensor::Status RangeSensor::status() const
 
 void RangeSensor::init()
 {
-	if (mState.isFailed()) {
-		mState.resetFailure();
+	if (!mState.isFailed()) {
+	    QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::init);
 	}
-
-	QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::init);
 }
 
 int RangeSensor::read()
