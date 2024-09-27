@@ -25,6 +25,9 @@
 #include <QTimer>
 
 using namespace tests;
+constexpr auto SCRIPT_EXECUTION_TIMEOUT = 10000;
+constexpr auto EXIT_TIMEOUT = -93;
+constexpr auto EXIT_SCRIPT_ERROR = 113;
 constexpr auto EXIT_SCRIPT_SUCCESS = EXIT_SUCCESS;
 
 QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
@@ -66,13 +69,16 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted, &wait]()
+					 , &wait, [&alreadyCompleted, &wait](QString error, int)
 	{
 		alreadyCompleted = true;
 		Q_ASSERT(wait.isRunning());
-		wait.quit();
+		if (!error.isEmpty()) {
+			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
+		}
+		wait.exit(error.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR);
 	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 
 	mScriptRunner->run(script, file);
 	auto exitCode = 0;
@@ -87,13 +93,17 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop wait;
 	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted]()
+					 , &wait,  [&alreadyCompleted, &wait](QString error, int)
 	{
 		alreadyCompleted = true;
+		Q_ASSERT(wait.isRunning());
+		if (!error.isEmpty()) {
+			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
+		}
+		wait.exit(error.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR);
 	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 	mScriptRunner->runDirectCommand(script);
 
 	auto exitCode = 0;
@@ -124,6 +134,8 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 {
 	auto errCode = run("1", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
+	errCode = run("/1", "_.js");
+	ASSERT_EQ(errCode, EXIT_SCRIPT_ERROR);
 	errCode = run("1 + 1", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
