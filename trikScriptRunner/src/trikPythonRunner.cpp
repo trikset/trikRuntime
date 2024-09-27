@@ -54,7 +54,6 @@ TrikPythonRunner::~TrikPythonRunner()
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
-	delete mWorkerThread;
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
