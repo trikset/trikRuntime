@@ -81,7 +81,7 @@ equal to its class name.
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!--Device file for keys on a brick -->
-		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
+                <keys deviceFile="/dev/input/by-path/platform-soc@1c00000:gpio-keys-event" />
 
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
