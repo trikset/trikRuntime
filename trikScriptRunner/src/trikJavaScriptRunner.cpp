@@ -63,6 +63,11 @@ TrikJavaScriptRunner::~TrikJavaScriptRunner()
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
+	// The thread has finished, events have been processed above
+	constexpr auto POLITE_TIMEOUT = 100;
+	if (!mWorkerThread.wait(POLITE_TIMEOUT)) {
+		QLOG_FATAL() << "JS thread failed to exit gracefully in" << POLITE_TIMEOUT << "ms";
+	}
 }
 
 void TrikJavaScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
