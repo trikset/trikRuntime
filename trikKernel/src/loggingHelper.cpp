@@ -42,7 +42,7 @@ LoggingHelper::LoggingHelper(const QString &pathToLog, QsLogging::Level consoleL
 			, QsLogging::MaxOldLogCount(2)));
 
 	QsLogging::Logger::instance().addDestination(QsLogging::DestinationFactory::MakeFunctorDestination(
-			[&consoleLogLevel](const QsLogging::LogMessage &message) {
+			[consoleLogLevel](const QsLogging::LogMessage &message) {
 				if (message.level >= consoleLogLevel) {
 					std::cerr << qPrintable(message.formatted) << std::endl << std::flush;
 				}

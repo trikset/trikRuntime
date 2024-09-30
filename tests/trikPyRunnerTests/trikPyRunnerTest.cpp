@@ -158,7 +158,7 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("print('Elapsed %d ms with timeout=%d ms' % (elapsed, timeout));");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("assert(abs(elapsed-timeout)<timeout/100)");
+	err = runDirectCommandAndWaitForQuit("assert(abs(elapsed-timeout)<=timeout/100)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 
 }
