@@ -86,6 +86,8 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 		exitCode = wait.exec();
 	}
 	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
+	if (!mStdOut.isEmpty())
+		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
 }
 
@@ -111,6 +113,8 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 		exitCode = wait.exec();
 	}
 	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
+	if (!mStdOut.isEmpty())
+		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
 }
 

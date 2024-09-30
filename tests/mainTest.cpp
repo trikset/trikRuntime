@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
 	Q_UNUSED(app);
 
-	trikKernel::LoggingHelper loggingHelper(".");
+	trikKernel::LoggingHelper loggingHelper(".", QsLogging::Level::TraceLevel);
 	Q_UNUSED(loggingHelper);
 
 	return RUN_ALL_TESTS();

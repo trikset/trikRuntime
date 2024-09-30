@@ -22,7 +22,7 @@
 
 using namespace trikKernel;
 
-LoggingHelper::LoggingHelper(const QString &pathToLog)
+LoggingHelper::LoggingHelper(const QString &pathToLog, QsLogging::Level consoleLogLevel)
 {
 	const QString correctedPath = pathToLog.endsWith(QDir::separator())
 			? pathToLog
@@ -42,8 +42,8 @@ LoggingHelper::LoggingHelper(const QString &pathToLog)
 			, QsLogging::MaxOldLogCount(2)));
 
 	QsLogging::Logger::instance().addDestination(QsLogging::DestinationFactory::MakeFunctorDestination(
-			[](const QsLogging::LogMessage &message) {
-				if (message.level >= QsLogging::ErrorLevel) {
+			[&consoleLogLevel](const QsLogging::LogMessage &message) {
+				if (message.level >= consoleLogLevel) {
 					std::cerr << qPrintable(message.formatted) << std::endl << std::flush;
 				}
 			}
