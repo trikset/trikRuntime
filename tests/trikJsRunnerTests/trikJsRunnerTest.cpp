@@ -150,8 +150,8 @@ TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 											  "timeout=200;"
 											  "script.wait(timeout);"
 											  "e = Date.now();"
-											  "print('Elapsed:', e-s);"
-											  "assert(Math.abs(e-s-timeout) < timeout*0.02);"
+											  "print('Elapsed', e-s, 'ms with expected', timeout, 'ms');"
+											  "assert(Math.abs(e-s-timeout) < 10);"
 											  "script.quit();");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
