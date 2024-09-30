@@ -61,6 +61,7 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 	QEventLoop loop;
 	QObject::connect(this, &ScriptExecutionControl::stopWaiting, &loop, &QEventLoop::quit);
 	QTimer t;
+	t.setTimerType(Qt::TimerType::PreciseTimer);
 	connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
 	t.start(milliseconds);
 	loop.exec();
