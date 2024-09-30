@@ -55,9 +55,17 @@ TrikPythonRunner::~TrikPythonRunner()
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
 	// The thread has finished, events have been processed above
-	constexpr auto POLITE_TIMEOUT = 100;
+	constexpr auto POLITE_TIMEOUT = 50;
 	if (!mWorkerThread->wait(POLITE_TIMEOUT)) {
-		QLOG_FATAL() << "Python thread failed to exit gracefully in" << POLITE_TIMEOUT << "ms";
+		QLOG_WARN() << "Python thread failed to exit gracefully in" << POLITE_TIMEOUT
+					 << "ms, re-trying with 3x timeout";
+		if (!mWorkerThread->wait(3*POLITE_TIMEOUT)) {
+			QLOG_ERROR() << "Python thread failed to exit gracefully in 3x timeout,"
+						 << " next attempt is unlimited timeout and may hang";
+			mWorkerThread->wait();
+		} else {
+			QLOG_INFO() << "Python thread succeeded to shutdown with 3x timeout";
+		}
 	}
 }
 
