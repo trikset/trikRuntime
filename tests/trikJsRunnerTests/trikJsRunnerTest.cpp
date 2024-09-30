@@ -23,6 +23,8 @@
 #include <QRandomGenerator>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QOperatingSystemVersion>
+
 
 using namespace tests;
 constexpr auto SCRIPT_EXECUTION_TIMEOUT = 10000;
@@ -120,13 +122,17 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 
 int TrikJsRunnerTest::runFromFile(const QString &fileName)
 {
-	auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
+	try {
+		QString fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
 
-#ifdef Q_OS_WIN
-	fileContents = fileContents.replace("&&", ";");
-#endif
-
-	return run(fileContents, fileName);
+		if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::OSType::Windows) {
+			fileContents = fileContents.replace("&&", ";");
+		}
+		return run(fileContents, fileName);
+	} catch (trikKernel::TrikRuntimeException &e) {
+		std::cout << e.what() << std::endl;
+		return EXIT_SCRIPT_ERROR;
+	}
 }
 
 trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
