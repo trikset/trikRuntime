@@ -146,7 +146,13 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 
 TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 {
-	auto err = runDirectCommandAndWaitForQuit("script.wait(50);script.quit();");
+	auto err = runDirectCommandAndWaitForQuit("s = Date.now();"
+											  "timeout=200;"
+											  "script.wait(timeout);"
+											  "e = Date.now();"
+											  "print('Elapsed:', e-s);"
+											  "assert(Math.abs(e-s-timeout) < timeout*0.02);"
+											  "script.quit();");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
 
