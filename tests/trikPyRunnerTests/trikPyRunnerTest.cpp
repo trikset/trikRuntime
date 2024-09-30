@@ -147,9 +147,18 @@ TEST_F(TrikPyRunnerTest, abortWhileTrue)
 	t.stop();
 }
 
-TEST_F(TrikPyRunnerTest, scriptWait500)
+TEST_F(TrikPyRunnerTest, scriptWait)
 {
-	scriptRunner().run("script.wait(500)");
+	constexpr auto timeout = 500;
+	auto err = run(QString("timeout=%1;").arg(timeout)
+			+ "from TRIK_PQT.Qt import QElapsedTimer as T;"
+			+ "t = T(); t.start();"
+			+ "script.wait(timeout);"
+			+ "elapsed = t.elapsed();"
+			+ "print('Elapsed %d ms with timeout=%d ms' % (elapsed, timeout));"
+			+ "assert(abs(elapsed-timeout)<timeout/100)");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+
 }
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
