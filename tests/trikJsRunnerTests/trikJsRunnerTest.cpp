@@ -123,7 +123,7 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 int TrikJsRunnerTest::runFromFile(const QString &fileName)
 {
 	try {
-		QString fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
+		QString fileContents = trikKernel::FileUtils::readFromFile(":/data/"+fileName);
 
 		if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::OSType::Windows) {
 			fileContents = fileContents.replace("&&", ";");
@@ -156,7 +156,7 @@ TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 											  "timeout=200;"
 											  "script.wait(timeout);"
 											  "e = Date.now();"
-											  "print('Elapsed', e-s, 'ms with expected', timeout, 'ms');"
+											  "print('Elapsed ', e-s, ' ms with expected ', timeout, ' ms');"
 											  "assert(Math.abs(e-s-timeout) < 10);"
 											  "script.quit();");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
