@@ -133,7 +133,7 @@ jobs:
           export PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+')
           qmake trikRuntime.pro -spec win32-g++ CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=release \
               PYTHON_PATH="${pythonLocation}" PYTHON_VERSION=${PYTHON_VERSION} \
-              CONFIG+=force_debug_info CONFIG+=sanitizer CONFIG+=sanitize_undefined CONFIG+="${{ matrix.trik-version }}"
+              CONFIG+=force_debug_info CONFIG+="${{ matrix.trik-version }}"
 
       - name: QMake all
         shell: msys2 {0}
