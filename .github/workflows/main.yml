@@ -154,6 +154,7 @@ jobs:
           echo "$PATH"
           echo ------
           export TRIK_PYTHONPATH=$(cygpath -w "$pythonLocation/Lib")
+          export PYTHONDEVMODE=1
           mingw32-make check -k
 
       - name: Prepare for RDP connection
