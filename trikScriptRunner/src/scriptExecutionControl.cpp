@@ -21,6 +21,7 @@
 #include <QtCore/QStringList>
 
 #include <QElapsedTimer>
+#include <QOperatingSystemVersion>
 #include <QRandomGenerator>
 #include <QThread>
 #include <QsLog.h>
@@ -70,24 +71,36 @@ static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::Tim
 
 void ScriptExecutionControl::wait(const int &milliseconds)
 {
-	if (milliseconds <= 0) {
-		QCoreApplication::sendPostedEvents();
-		return;
-	}
 	QElapsedTimer elapsed;
 	elapsed.start();
-	if (milliseconds > 80) {
-		if(waitWithTimerType(this, std::max(milliseconds - 15, 0), Qt::TimerType::CoarseTimer)) {
-			return;
-		}
-	}
+	QCoreApplication::sendPostedEvents();
+	QCoreApplication::processEvents();
 	auto diff = milliseconds - elapsed.elapsed();
-	if (diff >= 9 && waitWithTimerType(this, diff-3, Qt::TimerType::PreciseTimer)) {
-			return;
+	if (diff <= 1) {
+		return;
+	}
+	if (milliseconds > 80 && waitWithTimerType(this, std::max(milliseconds - 15, 0), Qt::TimerType::CoarseTimer)) {
+		return;
 	}
 	diff = milliseconds - elapsed.elapsed();
-	if (diff >= 3) {
-		QThread::usleep( (diff - 1) * 1000);
+	// QThread::usleep does not work for Windows, sleeps too long, about 20 ms
+	constexpr auto usleepDelta =
+			QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 3 : 0;
+	constexpr auto preciseTimerDelta =
+			QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 10 : 5;
+
+	if (diff >= preciseTimerDelta && waitWithTimerType(this, diff - usleepDelta, Qt::TimerType::PreciseTimer)) {
+			return;
+	}
+
+	diff = milliseconds - elapsed.elapsed();
+	if (diff < (milliseconds >> 7)) {
+		// This is enough
+		return;
+	}
+	if (diff > usleepDelta) {
+		static_assert(usleepDelta > 0, "Wrong expression below");
+		QThread::usleep( (diff - usleepDelta) * 1000);
 	}
 	// Ok, spin-lock to wait for a few milliseconds
 	while ((diff = milliseconds - elapsed.elapsed()) > 0 ) {
