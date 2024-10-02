@@ -22,6 +22,7 @@
 
 #include <QElapsedTimer>
 #include <QRandomGenerator>
+#include <QThread>
 #include <QsLog.h>
 
 #include <trikControl/utilities.h>
@@ -81,13 +82,16 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 		}
 	}
 	auto diff = milliseconds - elapsed.elapsed();
-	if (diff > milliseconds / 128) {
-		if (diff >= 9 && waitWithTimerType(this, diff-3, Qt::TimerType::PreciseTimer)) {
+	if (diff >= 9 && waitWithTimerType(this, diff-3, Qt::TimerType::PreciseTimer)) {
 			return;
-		}
-		// Ok, spin-lock to wait for a few milliseconds
-		while ((diff = milliseconds - elapsed.elapsed()) > 0 ) {
-		}
+	}
+	diff = milliseconds - elapsed.elapsed();
+	if (diff >= 3) {
+		QThread::usleep( (diff - 1) * 1000);
+	}
+	// Ok, spin-lock to wait for a few milliseconds
+	while ((diff = milliseconds - elapsed.elapsed()) > 0 ) {
+		/* do nothing */
 	}
 }
 
