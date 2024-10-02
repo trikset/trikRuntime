@@ -152,14 +152,19 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 
 TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 {
-	auto err = runDirectCommandAndWaitForQuit("s = Date.now();"
-											  "timeout=200;"
-											  "script.wait(timeout);"
-											  "e = Date.now();"
-											  "print('Elapsed ', e-s, ' ms with expected ', timeout, ' ms');"
-											  "assert(Math.abs(e-s-timeout) < 10);"
-											  "script.quit();");
-	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	QString test = "s = Date.now();"
+				   "timeout=%1;"
+				   "script.wait(timeout);"
+				   "e = Date.now();"
+				   "print('Elapsed ', e-s, ' ms with expected ', timeout, ' ms');"
+				   "assert(Math.abs(e-s-timeout) < 2);"
+				   "script.quit();";
+
+	for (auto &&t: { 0, 10, 20, 50, 100, 200, 500, 1000 }) {
+		auto err = runDirectCommandAndWaitForQuit(test.arg(t));
+		ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	}
+
 }
 
 TEST_F(TrikJsRunnerTest, twoProgramsTest)

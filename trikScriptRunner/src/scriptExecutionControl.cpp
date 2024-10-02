@@ -20,6 +20,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
 
+#include <QElapsedTimer>
 #include <QRandomGenerator>
 #include <QsLog.h>
 
@@ -56,15 +57,38 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 	return result;
 }
 
+static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::TimerType tt) {
+	QEventLoop loop;
+	QObject::connect(sec, &ScriptExecutionControl::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
+	QTimer t;
+	t.setTimerType(tt);
+	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
+	t.start(ms);
+	return loop.exec();
+}
+
 void ScriptExecutionControl::wait(const int &milliseconds)
 {
-	QEventLoop loop;
-	QObject::connect(this, &ScriptExecutionControl::stopWaiting, &loop, &QEventLoop::quit);
-	QTimer t;
-	t.setTimerType(Qt::TimerType::PreciseTimer);
-	connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
-	t.start(milliseconds);
-	loop.exec();
+	if (milliseconds <= 0) {
+		QCoreApplication::sendPostedEvents();
+		return;
+	}
+	QElapsedTimer elapsed;
+	elapsed.start();
+	if (milliseconds > 80) {
+		if(waitWithTimerType(this, std::max(milliseconds - 15, 0), Qt::TimerType::CoarseTimer)) {
+			return;
+		}
+	}
+	auto diff = milliseconds - elapsed.elapsed();
+	if (diff > milliseconds / 128) {
+		if (diff >= 9 && waitWithTimerType(this, diff-3, Qt::TimerType::PreciseTimer)) {
+			return;
+		}
+		// Ok, spin-lock to wait for a few milliseconds
+		while ((diff = milliseconds - elapsed.elapsed()) > 0 ) {
+		}
+	}
 }
 
 qint64 ScriptExecutionControl::time() const
