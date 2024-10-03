@@ -162,6 +162,7 @@ TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 
 	for (auto &&t: { 3, 10, 20, 50, 100, 200, 500, 1000 }) {
 		auto err = runDirectCommandAndWaitForQuit(test.arg(t));
+		mStdOut.clear();
 		ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	}
 

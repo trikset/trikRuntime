@@ -76,27 +76,32 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 	auto precision = 0;
 
 	QCoreApplication::sendPostedEvents();
-	QCoreApplication::processEvents();
 	auto diff = milliseconds - elapsed.elapsed();
-	if (diff <= 1) {
+	if (diff <= precision) {
 		return;
 	}
 
-	constexpr auto preciseTimerDelta =
-			QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 10 : 5;
+	QCoreApplication::processEvents();
+	diff = milliseconds - elapsed.elapsed();
+	if (diff <= precision) {
+		return;
+	}
 
+	constexpr auto preciseTimerDelta = 20;
 
-	if (milliseconds > 80
-			&& waitWithTimerType(this, std::max(milliseconds - preciseTimerDelta, 0), Qt::TimerType::CoarseTimer)) {
+	if (diff > 100
+			&& waitWithTimerType(this, std::max(diff - preciseTimerDelta, 0ll), Qt::TimerType::CoarseTimer)) {
 		return;
 	}
 	diff = milliseconds - elapsed.elapsed();
 
 	// QThread::usleep does not work for Windows, sleeps too long, about 20 ms
-	const auto usleepDelta =
-			QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 3 : 0;
+	constexpr auto usleepDelta = QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 3 : 0;
+	constexpr auto spinLockDelta = QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 2 : 3;
 
-	if (diff >= preciseTimerDelta && waitWithTimerType(this, diff - usleepDelta, Qt::TimerType::PreciseTimer)) {
+	static_assert(preciseTimerDelta > usleepDelta, "Use timer for longer sleep");
+
+	if (waitWithTimerType(this, std::max(0ll, diff - (usleepDelta+spinLockDelta)), Qt::TimerType::PreciseTimer)) {
 			return;
 	}
 
@@ -106,11 +111,12 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 		return;
 	}
 
-	if (diff > usleepDelta && usleepDelta > 0) {
-		QThread::usleep( (diff - usleepDelta) * 1000);
+
+	if (diff > usleepDelta && usleepDelta > spinLockDelta) {
+		QThread::usleep( (diff - spinLockDelta) * 1000);
 	}
 	// Ok, spin-lock to wait for a few milliseconds
-	while ((diff = milliseconds - elapsed.elapsed()) > precision ) {
+	while ((milliseconds - elapsed.elapsed()) > precision ) {
 		/* do nothing */
 	}
 }
