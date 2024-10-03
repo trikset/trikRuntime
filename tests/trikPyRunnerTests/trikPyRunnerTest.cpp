@@ -158,9 +158,8 @@ TEST_F(TrikPyRunnerTest, scriptWait)
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("print('Elapsed %d ms with expected %d ms' % (elapsed, timeout));");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("assert(abs(elapsed-timeout) < 10)");
+	err = runDirectCommandAndWaitForQuit("assert(abs(elapsed-timeout) < 5)");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-
 }
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)

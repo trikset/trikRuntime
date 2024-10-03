@@ -165,7 +165,6 @@ TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 		mStdOut.clear();
 		ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	}
-
 }
 
 TEST_F(TrikJsRunnerTest, twoProgramsTest)
