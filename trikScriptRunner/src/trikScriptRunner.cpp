@@ -20,6 +20,7 @@
 
 #include <trikKernel/timeVal.h>
 #include "threading.h"
+#include <QCoreApplication>
 #include <QMetaMethod>
 
 using namespace trikControl;
@@ -156,11 +157,15 @@ void TrikScriptRunner::run(const QString &script, ScriptType stype, const QStrin
 	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
 
 	fetchRunner(stype)->run(script, fileName);
+	// Enforce events dispatch before return, f.e. handling of stdout messages
+	QCoreApplication::processEvents();
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
 {
 	fetchRunner(mLastRunner)->runDirectCommand(command);
+	// Enforce events dispatch before return, f.e. handling of stdout messages
+	QCoreApplication::processEvents();
 }
 
 void TrikScriptRunner::abort()

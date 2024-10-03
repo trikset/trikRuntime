@@ -16,7 +16,6 @@
 
 #include <QtCore/QFile>
 #include <QtCore/QDir>
-
 #include "exceptions/failedToOpenFileException.h"
 #include "exceptions/failedToParseXmlException.h"
 

@@ -38,7 +38,7 @@ $EXECUTOR bash -lic " set -x; \
     ASAN_OPTIONS=disable_coredump=0:detect_stack_use_after_return=1:fast_unwind_on_malloc=0:symbolize=1:use_sigaltstack=0 \
     LSAN_OPTIONS=suppressions=\$PWD/bin/lsan.supp:fast_unwind_on_malloc=0 \
     MSAN_OPTIONS=poison_in_dtor=1 \
-    make check -k -j2 \
+    make check -k -j2 TESTARGS='--gtest_death_test_style=threadsafe  --gtest_catch_exceptions=0 --gtest_color=yes --gtest_random_seed=0' \
 && ls bin/x86-$CONFIG"
 
 #exec timeout -k 10s 100s scripts/runtests.sh trikKernelTests trikCameraPhotoTests trikCommunicatorTests trikJsRunnerTests trikPyRunnerTests
