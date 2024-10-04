@@ -150,6 +150,7 @@ TEST_F(TrikPyRunnerTest, abortWhileTrue)
 TEST_F(TrikPyRunnerTest, scriptWait500)
 {
 	scriptRunner().run("script.wait(500)");
+	tests::utils::Wait::wait(600);
 }
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
