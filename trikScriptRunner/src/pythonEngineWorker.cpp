@@ -359,11 +359,13 @@ void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	mState = starting;
+	qDebug() << "Invoke method in worker";
 	QMetaObject::invokeMethod(this, [this, script, scriptFile](){this->doRun(script, scriptFile);});
 }
 
 void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
 {
+	qDebug() << "Start execute script" << script;
 	emit startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
@@ -371,6 +373,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	mState = running;
 	auto ok = recreateContext();
 	if (!ok) {
+		qDebug() << "Error in recreate context";
 		emit completed(mErrorMessage,0);
 		return;
 	}
@@ -380,16 +383,18 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 		addSearchModuleDirectory(scriptFile.canonicalPath());
 	}
 
+		qDebug() << "Before eval script";
 	mMainContext.evalScript(script);
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
-
+	qDebug() << "PythonEngineWorker: evaluation ended";
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
 	QCoreApplication::processEvents(); //dispatch events before reset
 	mScriptExecutionControl->reset();
 	releaseContext();
 	QCoreApplication::processEvents(); //dispatch events before emitting the signal
+	qDebug() << "In pythonengine worker with mErrorMessage" << mErrorMessage;
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {
@@ -413,6 +418,7 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 	}
 	mMainContext.evalScript(command);
 	auto wasError = PythonQt::self()->hadError();
+	QCoreApplication::processEvents();
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {

@@ -111,6 +111,7 @@ QStringList TrikScriptRunner::knownMethodNamesFor(ScriptType t)
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
 #ifndef TRIK_NOPYTHON
+	qDebug() << "IFNDEF NOPYTHON";
 	if (fileName.endsWith(".py")) {
 		run(script, ScriptType::PYTHON, fileName);
 	} else
@@ -154,9 +155,12 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 
 void TrikScriptRunner::run(const QString &script, ScriptType stype, const QString &fileName)
 {
+	qDebug() << "I want run in python runner";
 	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
 
 	fetchRunner(stype)->run(script, fileName);
+
+	// QCoreApplication::processEvents();
 
 	for(QEventLoop l; l.processEvents(); ) {
 	// Enforce events dispatch before return, f.e. handling of stdout messages

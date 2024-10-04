@@ -55,8 +55,10 @@ int TrikPyRunnerTest::run(const QString &script)
 	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &l, std::bind(&QEventLoop::exit, &l, EXIT_TIMEOUT));
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
 					 , &l, [&l](const QString &e) {
+		qDebug() << "In event loop";
 		auto rc = EXIT_SCRIPT_SUCCESS;
 		if (!e.isEmpty()) {
+			qDebug() << "Erorrroror";
 			rc = EXIT_SCRIPT_ERROR;
 			std::cerr << qPrintable(e) << std::endl;
 		}
