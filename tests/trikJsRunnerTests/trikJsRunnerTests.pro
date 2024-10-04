@@ -22,14 +22,10 @@ HEADERS += \
 SOURCES += \
 	$$PWD/trikJsRunnerTest.cpp \
 
-OTHER_FILES += \
-	$$PWD/data/file-test.js \
 
 implementationIncludes(trikKernel trikControl trikScriptRunner tests/testUtils trikNetwork)
 links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
 
-copyToDestdir($$PWD/data/, now)
+RESOURCES += $${TARGET}.qrc
+QTQUICK_COMPILER_SKIPPED_RESOURCES += $$RESOURCES
 
-DISTFILES += \
-	data/sync-system-test.js \
-	data/async-system-test.js

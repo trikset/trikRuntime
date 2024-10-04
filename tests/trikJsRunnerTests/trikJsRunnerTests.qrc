@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/async-system-test.js</file>
+        <file>data/file-test.js</file>
+        <file>data/sync-system-test.js</file>
+    </qresource>
+</RCC>
