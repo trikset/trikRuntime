@@ -62,7 +62,7 @@ int TrikPyRunnerTest::run(const QString &script)
 		}
 		QCoreApplication::processEvents(); // for stdout messages
 		l.exit(rc);
-	} );
+	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
 	mStdOut.clear();
 	mScriptRunner->run(script, "_.py");
 	auto code = l.exec();
@@ -78,7 +78,7 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 			QCoreApplication::processEvents(); // dispatch events for print/stdout
 			l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
 									   : (qDebug() << e, EXIT_SCRIPT_ERROR));
-	});
+	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
 	auto code = l.exec();
