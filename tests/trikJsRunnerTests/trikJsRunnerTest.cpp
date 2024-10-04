@@ -69,12 +69,9 @@ void TrikJsRunnerTest::TearDown()
 int TrikJsRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop wait;
-	auto volatile alreadyCompleted = false;
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted, &wait](QString error, int)
+					 , &wait, [&wait](QString error, int)
 	{
-		alreadyCompleted = true;
-		Q_ASSERT(wait.isRunning());
 		if (!error.isEmpty()) {
 			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
 		}
@@ -83,11 +80,7 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 
 	mScriptRunner->run(script, file);
-	auto exitCode = 0;
-	if (!alreadyCompleted) {
-		exitCode = wait.exec();
-	}
-	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
+	auto exitCode = wait.exec();
 	if (!mStdOut.isEmpty())
 		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
@@ -96,12 +89,9 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop wait;
-	auto volatile alreadyCompleted = false;
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait,  [&alreadyCompleted, &wait](QString error, int)
+					 , &wait,  [&wait](QString error, int)
 	{
-		alreadyCompleted = true;
-		Q_ASSERT(wait.isRunning());
 		if (!error.isEmpty()) {
 			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
 		}
@@ -110,11 +100,7 @@ int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 	mScriptRunner->runDirectCommand(script);
 
-	auto exitCode = 0;
-	if (!alreadyCompleted) {
-		exitCode = wait.exec();
-	}
-	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
+	auto exitCode = wait.exec();
 	if (!mStdOut.isEmpty())
 		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
