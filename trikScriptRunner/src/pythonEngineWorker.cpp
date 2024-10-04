@@ -370,6 +370,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	mBrick->keys()->reset();
 	mState = running;
 	auto ok = recreateContext();
+	QCoreApplication::processEvents();
 	if (!ok) {
 		emit completed(mErrorMessage,0);
 		return;
@@ -386,8 +387,10 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
+	QCoreApplication::processEvents(); //dispatch events before reset
 	mScriptExecutionControl->reset();
 	releaseContext();
+	QCoreApplication::processEvents(); //dispatch events before emitting the signal
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
 	} else {
@@ -410,6 +413,7 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
+	QCoreApplication::processEvents();
 	auto wasError = PythonQt::self()->hadError();
 	if (wasError) {
 		emit completed(mErrorMessage, 0);
