@@ -208,53 +208,71 @@ void ScriptEngineWorker::run(const QString &script, int scriptId)
 {
 	QMutexLocker locker(&mScriptStateMutex);
 	startScriptEvaluation(scriptId);
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	QMetaObject::invokeMethod(this, std::bind(&ScriptEngineWorker::doRun, this, script));
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 }
 
 void ScriptEngineWorker::doRun(const QString &script)
 {
 	/// When starting script execution (by any means), clear button states.
 	mBrick->keys()->reset();
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	mThreading.startMainThread(script);
 	mState = running;
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	mThreading.waitForAll();
 	const QString error = mThreading.errorMessage();
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	emit completed(error, mScriptId);
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
 {
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	QMutexLocker locker(&mScriptStateMutex);
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	if (!mScriptControl->isInEventDrivenMode()) {
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 		QLOG_INFO() << "ScriptEngineWorker: starting interpretation";
 		locker.unlock();
 		stopScript();
 	}
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 
 	QMetaObject::invokeMethod(this, std::bind(&ScriptEngineWorker::doRunDirect, this, command, scriptId));
 }
 
 void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 {
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	if (!mScriptControl->isInEventDrivenMode() && !mDirectScriptsEngine) {
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 		startScriptEvaluation(scriptId);
 		mDirectScriptsEngine.reset(createScriptEngine(false));
 		mScriptControl->run();
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 		mState = running;
 	}
 
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	if (mDirectScriptsEngine) {
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 		mDirectScriptsEngine->evaluate(command);
 
 		/// If script was stopped by quit(), engine will already be reset to nullptr in ScriptEngineWorker::stopScript.
 		QString msg;
 		if (mDirectScriptsEngine && mDirectScriptsEngine->hasUncaughtException()) {
+			QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 			QLOG_INFO() << "ScriptEngineWorker : ending interpretation of direct script";
 			msg = mDirectScriptsEngine->uncaughtException().toString();
 			mDirectScriptsEngine.reset();
 		}
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 		Q_EMIT completed(msg, mScriptId);
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	}
 }
 

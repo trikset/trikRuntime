@@ -72,15 +72,22 @@ int TrikJsRunnerTest::run(const QString &script, const QString &file)
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
 					 , &wait, [&wait](QString error, int)
 	{
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
+
 		if (!error.isEmpty()) {
 			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
 		}
 		wait.exit(error.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR);
+		QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
+
 	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
 	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 
 	mScriptRunner->run(script, file);
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	auto exitCode = wait.exec();
+	QLOG_ERROR() << __PRETTY_FUNCTION__ << __LINE__;
 	if (!mStdOut.isEmpty())
 		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
@@ -128,7 +135,7 @@ trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
 
 TEST_F(TrikJsRunnerTest, sanityCheck)
 {
-	auto errCode = run("1", "_.js");
+	auto errCode = run("1;", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 	errCode = run("1 + 1", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);

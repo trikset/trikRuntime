@@ -24,7 +24,7 @@ SOURCES += \
 
 
 implementationIncludes(trikKernel trikControl trikScriptRunner tests/testUtils trikNetwork)
-links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils)
+links(trikKernel trikControl trikScriptRunner trikNetwork trikHal testUtils trikRuntimeQsLog)
 
 RESOURCES += $${TARGET}.qrc
 QTQUICK_COMPILER_SKIPPED_RESOURCES += $$RESOURCES
