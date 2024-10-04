@@ -8,6 +8,10 @@ on:
     - '**'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   windows:
     runs-on: windows-latest
@@ -28,12 +32,7 @@ jobs:
       run:
         shell: pwsh #to prevent unexpected Git Bash with wrong MSys DLLs
     steps:
-
-      - name: Cancel Previous Workflow Runs
-        uses: n1hility/cancel-previous-runs@v3.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+    
       - name: Configure git
         shell: bash
         run: |
