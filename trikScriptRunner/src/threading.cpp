@@ -98,11 +98,10 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	mThreads[threadId].reset(thread);
 	mFinishedThreads.remove(threadId);
 
+	thread->setObjectName(engine->metaObject()->className());
 	QEventLoop wait;
 	connect(thread, &QThread::started, &wait, &QEventLoop::quit, Qt::QueuedConnection);
-
-	thread->setObjectName(engine->metaObject()->className());
-	thread->start();
+	QTimer::singleShot(0, thread, std::bind(&QThread::start, thread, QThread::InheritPriority));
 	wait.exec();
 	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
 }
