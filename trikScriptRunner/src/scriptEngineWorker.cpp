@@ -25,6 +25,7 @@
 #include "scriptable.h"
 #include "utils.h"
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QsLog.h>
 
@@ -220,6 +221,7 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mThreading.waitForAll();
 	const QString error = mThreading.errorMessage();
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
+	QCoreApplication::processEvents();
 	emit completed(error, mScriptId);
 }
 
@@ -254,6 +256,7 @@ void ScriptEngineWorker::doRunDirect(const QString &command, int scriptId)
 			msg = mDirectScriptsEngine->uncaughtException().toString();
 			mDirectScriptsEngine.reset();
 		}
+		QCoreApplication::processEvents();
 		Q_EMIT completed(msg, mScriptId);
 	}
 }
