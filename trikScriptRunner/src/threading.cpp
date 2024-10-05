@@ -30,7 +30,6 @@ Threading::Threading(ScriptEngineWorker *scriptWorker, TrikScriptControlInterfac
 	: QObject(scriptWorker)
 	, mScriptWorker(scriptWorker)
 	, mScriptControl(scriptControl)
-	, mMainScriptEngine(nullptr)
 {
 }
 
@@ -49,8 +48,8 @@ void Threading::startMainThread(const QString &script)
 	const QRegExp mainRegexp(R"#((.*var main\s*=\s*\w*\s*function\(.*\).*)|(.*function\s+%1\s*\(.*\).*))#");
 	const bool needCallMain = mainRegexp.exactMatch(script) && !script.trimmed().endsWith("main();");
 
-	mMainScriptEngine = mScriptWorker->createScriptEngine();
-	startThread(mMainThreadName, mMainScriptEngine, needCallMain ? script + "\nmain();" : script);
+	auto e = mScriptWorker->createScriptEngine(true);
+	startThread(mMainThreadName, e, needCallMain ? script + "\nmain();" : script);
 }
 
 void Threading::startThread(const QScriptValue &threadId, const QScriptValue &function)
@@ -87,7 +86,6 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	auto thread = new ScriptThread(*this, threadId, engine, script);
 	engine->moveToThread(thread);
 
-	connect(thread, &QThread::finished, this, [this, threadId](){ threadFinished(threadId); }, Qt::QueuedConnection);
 	connect(&mScriptControl, &TrikScriptControlInterface::quitSignal, thread
 			, &ScriptThread::stopRunning, Qt::DirectConnection);
 	if (threadId == mMainThreadName) {
@@ -98,13 +96,13 @@ void Threading::startThread(const QString &threadId, QScriptEngine *engine, cons
 	mThreads[threadId].reset(thread);
 	mFinishedThreads.remove(threadId);
 
-	QEventLoop wait;
-	connect(thread, &QThread::started, &wait, &QEventLoop::quit, Qt::QueuedConnection);
-
 	thread->setObjectName(engine->metaObject()->className());
+	connect(thread, &QThread::finished, this, [this, threadId](){ threadFinished(threadId); }, Qt::QueuedConnection);
+	mThreadInitializationSemaphore.acquire(1);
 	thread->start();
-	wait.exec();
-	QLOG_INFO() << "Threading: started thread" << threadId << "with engine" << engine << ", thread object" << thread;
+	QSemaphoreReleaser _(mThreadInitializationSemaphore);
+	mThreadInitializationSemaphore.acquire(1);
+	QLOG_INFO() << "Threading: started thread" << threadId;
 }
 
 void Threading::waitForAll()
