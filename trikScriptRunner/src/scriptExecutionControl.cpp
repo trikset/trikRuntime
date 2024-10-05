@@ -20,7 +20,10 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
 
+#include <QElapsedTimer>
+#include <QOperatingSystemVersion>
 #include <QRandomGenerator>
+#include <QThread>
 #include <QsLog.h>
 
 #include <trikControl/utilities.h>
@@ -56,14 +59,74 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 	return result;
 }
 
+static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::TimerType tt) {
+	QEventLoop loop;
+	QObject::connect(sec, &ScriptExecutionControl::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
+	QTimer t;
+	t.setTimerType(tt);
+	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
+	t.start(ms);
+	return loop.exec();
+}
+
 void ScriptExecutionControl::wait(const int &milliseconds)
 {
-	QEventLoop loop;
-	QObject::connect(this, &ScriptExecutionControl::stopWaiting, &loop, &QEventLoop::quit);
-	QTimer t;
-	connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
-	t.start(milliseconds);
-	loop.exec();
+	QElapsedTimer elapsed;
+	elapsed.start();
+	auto precision = 0;
+
+	// Try to send all posted events even if timer in ms is very short
+	QCoreApplication::sendPostedEvents();
+	auto diff = milliseconds - elapsed.elapsed();
+	if (diff <= precision) {
+		return;
+	}
+#if 0 // looks useless because QEventLoop.exec with PreciseTimer can do the same
+	QCoreApplication::processEvents();
+	diff = milliseconds - elapsed.elapsed();
+	if (diff <= precision) {
+		return;
+	}
+
+	for(QEventLoop l;l.processEvents();) {
+		diff = milliseconds - elapsed.elapsed();
+		if (diff <= precision) {
+			return;
+		}
+	}
+#endif
+	constexpr auto preciseTimerDelta = 20;
+
+	if (diff > 100
+			&& waitWithTimerType(this, std::max(diff - preciseTimerDelta, 0ll), Qt::TimerType::CoarseTimer)) {
+		return;
+	}
+	diff = milliseconds - elapsed.elapsed();
+
+	// QThread::usleep does not work for Windows, sleeps too long, about 20 ms
+	constexpr auto usleepDelta = QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 3 : 0;
+	constexpr auto spinLockDelta = QOperatingSystemVersion::currentType() != QOperatingSystemVersion::Windows ? 2 : 3;
+
+	static_assert(preciseTimerDelta > usleepDelta, "Use timer for longer sleep");
+
+	if (waitWithTimerType(this, std::max(0ll, diff - (usleepDelta+spinLockDelta)), Qt::TimerType::PreciseTimer)) {
+			return;
+	}
+
+	diff = milliseconds - elapsed.elapsed();
+	if (diff <= precision) {
+		// This is enough
+		return;
+	}
+
+
+	if (diff > usleepDelta && usleepDelta > spinLockDelta) {
+		QThread::usleep( (diff - spinLockDelta) * 1000);
+	}
+	// Ok, spin-lock to wait for a few milliseconds
+	while ((milliseconds - elapsed.elapsed()) > precision ) {
+		/* do nothing */
+	}
 }
 
 qint64 ScriptExecutionControl::time() const
