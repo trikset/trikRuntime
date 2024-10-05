@@ -60,8 +60,9 @@ int TrikPyRunnerTest::run(const QString &script)
 			rc = EXIT_SCRIPT_ERROR;
 			std::cerr << qPrintable(e) << std::endl;
 		}
+		QCoreApplication::processEvents(); // for stdout messages
 		l.exit(rc);
-	} );
+	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
 	mStdOut.clear();
 	mScriptRunner->run(script, "_.py");
 	auto code = l.exec();
@@ -74,9 +75,10 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	QEventLoop l;
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
 					 , &l, [&l](const QString &e) {
-					l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
+			QCoreApplication::processEvents(); // dispatch events for print/stdout
+			l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
 									   : (qDebug() << e, EXIT_SCRIPT_ERROR));
-	});
+	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
 	auto code = l.exec();
@@ -147,9 +149,19 @@ TEST_F(TrikPyRunnerTest, abortWhileTrue)
 	t.stop();
 }
 
-TEST_F(TrikPyRunnerTest, scriptWait500)
+TEST_F(TrikPyRunnerTest, scriptWait)
 {
-	scriptRunner().run("script.wait(500)");
+	constexpr auto timeout = 500;
+	auto err = runDirectCommandAndWaitForQuit(QString("timeout=%1;").arg(timeout)
+			+ "from TRIK_PQT.Qt import QElapsedTimer as T;"
+			+ "t = T(); t.start();"
+			+ "script.wait(timeout);"
+			+ "elapsed = t.elapsed();");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("print('Elapsed %d ms with expected %d ms' % (elapsed, timeout));");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	err = runDirectCommandAndWaitForQuit("#assert(abs(elapsed-timeout) < 5)");
+	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 }
 
 TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)

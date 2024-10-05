@@ -38,6 +38,7 @@ ScriptThread::~ScriptThread()
 
 void ScriptThread::run()
 {
+	mThreading.releaseThreadInitializationSemaphore();
 	QLOG_INFO() << "Started thread" << this;
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
