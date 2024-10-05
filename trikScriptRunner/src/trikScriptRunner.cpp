@@ -20,6 +20,7 @@
 
 #include <trikKernel/timeVal.h>
 #include "threading.h"
+#include <QCoreApplication>
 #include <QMetaMethod>
 
 using namespace trikControl;
