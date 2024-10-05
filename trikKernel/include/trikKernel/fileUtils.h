@@ -17,6 +17,7 @@
 #include <QtCore/QString>
 #include <QtXml/QDomElement>
 #include "trikKernelDeclSpec.h"
+#include "exceptions/trikRuntimeException.h"
 
 namespace trikKernel {
 
