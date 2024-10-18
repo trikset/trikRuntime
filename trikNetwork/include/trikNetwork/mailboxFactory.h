@@ -15,6 +15,7 @@
 #pragma once
 
 #include "trikNetworkDeclSpec.h"
+#include "mailboxInterface.h"
 
 namespace trikKernel {
 class Configurer;
@@ -26,9 +27,12 @@ class MailboxInterface;
 
 /*
  * Each mailboxServer contains a server that listens for connections on an open port.
- * This mailboxServer is desired to be used both in the visual language of TRIKStudio and in the textual interpretation.
- * However, for the expected connection, we need to reuse the same open port, existing connections, etc.
- * For this purpose, a weak_ptr to the already existing mailbox is stored, and in the case of invalidity, it is recreated.
+ * This mailboxServer is desired to be used both in the visual language
+ * of TRIKStudio and in the textual interpretation.
+ * However, for the expected connection, we need to reuse the same open port,
+ *  existing connections, etc.
+ * For this purpose, a weak_ptr to the already existing mailbox is stored,
+ *  and in the case of invalidity, it is recreated.
 */
 
 /// Factory that creates real mailbox object.
