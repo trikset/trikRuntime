@@ -53,9 +53,9 @@ Controller::Controller(const QString &configPath)
 	connect(mBrick->gamepad(), &trikControl::GamepadInterface::connected
 			, this, &Controller::gamepadConnected);
 
-	mMailbox.reset(trikNetwork::MailboxFactory::create(configurer));
+	mMailbox = trikNetwork::MailboxFactory::create(configurer);
 	mTelemetry.reset(new trikTelemetry::TrikTelemetry(*mBrick));
-	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox.data()));
+	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, mMailbox));
 	mCommunicator.reset(new trikCommunicator::TrikCommunicator(*mScriptRunner, configurer.version()));
 
 	mWiFi.reset(new trikWiFi::TrikWiFi("/tmp/trikwifi", "/var/run/wpa_supplicant/wlan0", this));

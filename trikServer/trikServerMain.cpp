@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
 			, initHelper.configPath() + "/model-config.xml"
 			);
 
-	QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+	QSharedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
 
-	trikCommunicator::TrikCommunicator communicator(*brick, mailbox.data());
+	trikCommunicator::TrikCommunicator communicator(*brick, mailbox);
 	communicator.startServer(port);
 
 	return app.exec();

@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
 		trikKernel::Configurer configurer(initHelper.configPath() + "/system-config.xml"
 										  , initHelper.configPath() + "/model-config.xml");
 
-		QScopedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
-		trikScriptRunner::TrikScriptRunner result(*brick, mailbox.data());
+		QSharedPointer<trikNetwork::MailboxInterface> mailbox(trikNetwork::MailboxFactory::create(configurer));
+		trikScriptRunner::TrikScriptRunner result(*brick, mailbox);
 
 		QObject::connect(&result, &trikScriptRunner::TrikScriptRunner::completed, app.data(), [&app](const QString &e){
 			if (!e.isEmpty()) {

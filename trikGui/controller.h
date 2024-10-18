@@ -122,7 +122,7 @@ private slots:
 
 private:
 	QScopedPointer<trikControl::BrickInterface> mBrick;
-	QScopedPointer<trikNetwork::MailboxInterface> mMailbox;
+	QSharedPointer<trikNetwork::MailboxInterface> mMailbox;
 	QScopedPointer<trikScriptRunner::TrikScriptRunner> mScriptRunner;
 	QScopedPointer<trikCommunicator::TrikCommunicator> mCommunicator;
 	QScopedPointer<trikTelemetry::TrikTelemetry> mTelemetry;
