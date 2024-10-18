@@ -24,7 +24,7 @@ using namespace trikCommunicator;
 using namespace trikKernel;
 
 TrikCommunicator::TrikCommunicator(trikControl::BrickInterface &brick
-		, trikNetwork::MailboxInterface * const mailbox
+		, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 		)
 	: TrikCommunicator(createDifferentOwnerPointer(new trikScriptRunner::TrikScriptRunner(brick, mailbox))
 			, brick.configVersion())

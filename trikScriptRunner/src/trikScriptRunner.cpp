@@ -36,15 +36,15 @@ Q_DECLARE_METATYPE(QTimer*)
 /// @param brick - reference to trikControl::Brick instance.
 /// @param mailbox - mailbox object used to communicate with other robots.
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-								   , trikNetwork::MailboxInterface * const mailbox
-								   , TrikScriptControlInterface * scriptControl
+				, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
+				, TrikScriptControlInterface * scriptControl
 								   )
 	: mBrick(brick), mMailbox(mailbox), mScriptControl(scriptControl), mLastRunner(ScriptType::JAVASCRIPT)
 {
 	mScriptRunnerArray.resize(to_underlying(ScriptType::Size));
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
-			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
+			connect(mailbox.data(), &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
 				emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
 									 .arg(senderNumber)
 									 .arg(message)
@@ -54,8 +54,8 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
-								   , trikNetwork::MailboxInterface * const mailbox
-								   )
+				, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
+				)
 	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(&brick))
 {
 	mScriptControl->setParent(this);

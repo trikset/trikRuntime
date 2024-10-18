@@ -100,7 +100,7 @@ QScriptValue print(QScriptContext *context, QScriptEngine *engine)
 }
 
 ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
-		, trikNetwork::MailboxInterface * mailbox
+		, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 		, TrikScriptControlInterface *scriptControl
 		)
 	: mBrick(brick)
@@ -329,7 +329,7 @@ QScriptEngine * ScriptEngineWorker::createScriptEngine(bool supportThreads)
 	engine->globalObject().setProperty(scriptEngineWorkerName, engine->newQObject(this));
 
 	if (mMailbox) {
-		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox));
+		engine->globalObject().setProperty("mailbox", engine->newQObject(mMailbox.data()));
 	}
 
 	// Gamepad can still be accessed from script as brick.gamepad(), 'gamepad' variable is here for backwards

@@ -24,9 +24,8 @@
 using namespace trikScriptRunner;
 
 TrikPythonRunner::TrikPythonRunner(trikControl::BrickInterface *brick
-								   , trikNetwork::MailboxInterface * const mailbox
-								   , TrikScriptControlInterface *scriptControl
-								   )
+					, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
+					, TrikScriptControlInterface *scriptControl)
 	:	mScriptEngineWorker(new PythonEngineWorker(brick, mailbox, scriptControl))
 {
 	mWorkerThread = new QThread(this);

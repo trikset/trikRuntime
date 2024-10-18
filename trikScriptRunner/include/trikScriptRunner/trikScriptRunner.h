@@ -35,7 +35,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param scriptControl - implementation of script object
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * mailbox
+					 , const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 					 , TrikScriptControlInterface * scriptControl
 					 );
 
@@ -43,7 +43,7 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikScriptRunner(trikControl::BrickInterface &brick
-					 , trikNetwork::MailboxInterface * mailbox
+					 , const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 					 );
 
 	~TrikScriptRunner() override;
@@ -86,7 +86,7 @@ private:
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &mBrick;
-	trikNetwork::MailboxInterface *mMailbox {};
+	QSharedPointer<trikNetwork::MailboxInterface> mMailbox;
 	TrikScriptControlInterface *mScriptControl {};
 	std::vector<QSharedPointer<TrikScriptRunnerInterface>> mScriptRunnerArray;
 	ScriptType mLastRunner;

@@ -26,8 +26,8 @@
 using namespace trikScriptRunner;
 
 TrikJavaScriptRunner::TrikJavaScriptRunner(trikControl::BrickInterface *brick
-										   , trikNetwork::MailboxInterface * mailbox
-										   , TrikScriptControlInterface *scriptControl
+					, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
+					, TrikScriptControlInterface *scriptControl
 										   )
 	: mScriptController(scriptControl)
 	, mScriptEngineWorker(new ScriptEngineWorker(brick, mailbox, mScriptController))

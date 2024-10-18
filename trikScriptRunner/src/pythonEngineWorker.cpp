@@ -47,7 +47,7 @@ static void abortPythonInterpreter() {
 }
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
-		, trikNetwork::MailboxInterface * const mailbox
+		, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 		, TrikScriptControlInterface *scriptControl
 		)
 	: mBrick(brick)
@@ -268,7 +268,7 @@ bool PythonEngineWorker::initTrik()
 {
 	mMainContext.addObject("_trik_brick_cpp", mBrick);
 	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl);
-	mMainContext.addObject("_trik_mailbox_cpp", mMailbox);
+	mMainContext.addObject("_trik_mailbox_cpp", mMailbox.data());
 	mMainContext.evalScript("import builtins;"
 				"builtins._trik_brick_cpp = _trik_brick_cpp;"
 				"builtins._trik_script_cpp = _trik_script_cpp;"

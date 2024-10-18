@@ -15,20 +15,48 @@
 #include "mailboxFactory.h"
 
 #include <trikKernel/configurer.h>
-
+#include <trikKernel/exceptions/malformedConfigException.h>
 #include "mailbox.h"
 
 using namespace trikNetwork;
 
-MailboxInterface *MailboxFactory::create(int port)
+QHash<int, QWeakPointer<MailboxInterface>> MailboxFactory::mailbox;
+
+QSharedPointer<MailboxInterface> MailboxFactory::prepare(int port)
 {
-	return new Mailbox(port);
+	auto sharedMailbox = QSharedPointer<MailboxInterface>(new Mailbox(port));
+	mailbox.insert(port, sharedMailbox.toWeakRef());
+	return sharedMailbox;
 }
 
-MailboxInterface *MailboxFactory::create(const trikKernel::Configurer &configurer)
+QSharedPointer<MailboxInterface> MailboxFactory::create(int port)
 {
+	if (mailbox.contains(port)) {
+		auto sharedMailbox = mailbox[port].toStrongRef();
+
+		if (!sharedMailbox) {
+			return prepare(port);
+		}
+
+		return sharedMailbox;
+	}
+
+	return prepare(port);
+
+}
+
+QSharedPointer<MailboxInterface> MailboxFactory::create(const trikKernel::Configurer &configurer)
+{	
 	if (configurer.isEnabled("mailbox")) {
-		return new Mailbox(configurer);
+
+		bool ok = false;
+		const int port = configurer.attributeByDevice("mailbox", "port").toInt(&ok);
+		if (!ok) {
+			throw trikKernel::MalformedConfigException("Incorrect mailbox port");
+		}
+
+		return create(port);
+
 	} else {
 		return nullptr;
 	}

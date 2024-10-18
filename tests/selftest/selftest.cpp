@@ -196,6 +196,6 @@ TEST(selftest, brickCheck)
 TEST(selftest, mailboxCheck)
 {
 	trikKernel::Configurer configurer("./test-system-config.xml", "./test-model-config.xml");
-	QScopedPointer<MailboxInterface> mailbox(MailboxFactory::create(configurer));
+	QSharedPointer<MailboxInterface> mailbox(MailboxFactory::create(configurer));
 	ASSERT_FALSE(mailbox.isNull());
 }

@@ -27,7 +27,7 @@ void TrikNetworkTests::SetUp()
 {
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
 			, "./test-model-config.xml", "./"));
-	mMailboxInterface.reset(trikNetwork::MailboxFactory::create(port));
+	mMailboxInterface = trikNetwork::MailboxFactory::create(port);
 }
 
 void TrikNetworkTests::TearDown()
@@ -48,9 +48,9 @@ void TrikNetworkTests::addWorker(QThread *thread)
 	mWorkers.append(thread);
 }
 
-trikNetwork::MailboxInterface *TrikNetworkTests::mailboxInterface()
+QSharedPointer<trikNetwork::MailboxInterface> &TrikNetworkTests::mailboxInterface()
 {
-	return mMailboxInterface.data();
+	return mMailboxInterface;
 }
 
 TEST_F(TrikNetworkTests, basePropertyTests)
@@ -69,29 +69,29 @@ TEST_F(TrikNetworkTests, baseHullNumberTest)
 	EXPECT_EQ(3, mailboxInterface()->myHullNumber());
 }
 
-trikNetwork::MailboxInterface *TrikNetworkTests::prepareHost(int port, int hullNumber, int portToConnect)
+QSharedPointer<trikNetwork::MailboxInterface> TrikNetworkTests::prepareHost(int port, int hullNumber, int portToConnect)
 {
-	auto* host = trikNetwork::MailboxFactory::create(port);
+	auto host = trikNetwork::MailboxFactory::create(port);
 	host->joinNetwork("127.0.0.1", portToConnect, hullNumber);
 	QThread* thread = new QThread();
 	addWorker(thread);
 	host->moveToThread(thread);
 
-	QObject::connect(thread, &QThread::finished, host, &trikNetwork::MailboxInterface::deleteLater);
+	QObject::connect(thread, &QThread::finished, host.data(), &trikNetwork::MailboxInterface::deleteLater);
 	QObject::connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
 	thread->start();
 	return host;
 }
 
-static void receive(trikNetwork::MailboxInterface *host, QString &answer)
+static void receive(QSharedPointer<trikNetwork::MailboxInterface> &host, QString &answer)
 {
-	QMetaObject::invokeMethod(host, [host, &answer](){
+	QMetaObject::invokeMethod(host.data(), [&host, &answer](){
 		answer = host->receive(true);
 	});
 }
 
-static void send(trikNetwork::MailboxInterface *host, int hullNumber, const QString &message)
+static void send(QSharedPointer<trikNetwork::MailboxInterface> &host, int hullNumber, const QString &message)
 {
 	Wait::wait(500);
 	if (hullNumber == -1) {
@@ -105,8 +105,8 @@ static void send(trikNetwork::MailboxInterface *host, int hullNumber, const QStr
 // 2 connect to 1; 2 send message to 1; 1 send message to 2
 TEST_F(TrikNetworkTests, baseTwoHostCommunicationTest)
 {
-	auto* fstHost = prepareHost(8890, 2, 8889);
-	auto* sndHost = prepareHost(8891, 1, 8889);
+	auto fstHost = prepareHost(8890, 2, 8889);
+	auto sndHost = prepareHost(8891, 1, 8889);
 	EXPECT_EQ(false, sndHost->hasMessages());
 	EXPECT_EQ("127.0.0.1", sndHost->myIp());
 	// It may not be able to connect by that time, and tests isEnabled() and isConnected() won't make sense.
@@ -130,10 +130,10 @@ TEST_F(TrikNetworkTests, baseTwoHostCommunicationTest)
 // 2, 3 connect to 1; 1 send message to 2, 3;
 TEST_F(TrikNetworkTests, sequentialSendingMessagesTest)
 {
-	auto* sndHost = prepareHost(8890, 4, 8889);
+	auto sndHost = prepareHost(8890, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8891, 5, 8889);
+	auto thdHost = prepareHost(8891, 5, 8889);
 	EXPECT_EQ(5, thdHost->myHullNumber());
 
 	QString sndAnswer;
@@ -152,11 +152,11 @@ TEST_F(TrikNetworkTests, sequentialSendingMessagesTest)
 // 2, 3 connect to 1 with same hull number; 1 send message to 2, 3;
 TEST_F(TrikNetworkTests, baseMulticastTest)
 {
-	auto *fstHost = prepareHost(8890, 3, 8889);
-	auto *sndHost = prepareHost(8891, 4, 8889);
+	auto fstHost = prepareHost(8890, 3, 8889);
+	auto sndHost = prepareHost(8891, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto *thdHost = prepareHost(8892, 4, 8889);
+	auto thdHost = prepareHost(8892, 4, 8889);
 	EXPECT_EQ(4, thdHost->myHullNumber());
 
 	QString sndAnswer;
@@ -174,8 +174,8 @@ TEST_F(TrikNetworkTests, baseMulticastTest)
 // Multiple iterations of sending messages between two hosts
 TEST_F(TrikNetworkTests, twoHostCycleTest)
 {
-	auto *fstHost = prepareHost(8890, 3, 8889);
-	auto *sndHost = prepareHost(8891, 5, 8889);
+	auto fstHost = prepareHost(8890, 3, 8889);
+	auto sndHost = prepareHost(8891, 5, 8889);
 	EXPECT_EQ(5, sndHost->myHullNumber());
 
 	QString fstAnswerFstHost;
@@ -201,8 +201,8 @@ TEST_F(TrikNetworkTests, twoHostCycleTest)
 // The host sends a message with the same hull number as its own
 TEST_F(TrikNetworkTests, sendToIdenticalHullNumberTest)
 {
-	auto *fstHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
-	auto *sndHost = prepareHost(8891, mailboxInterface()->myHullNumber(), 8889);
+	auto fstHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
+	auto sndHost = prepareHost(8891, mailboxInterface()->myHullNumber(), 8889);
 	EXPECT_EQ(mailboxInterface()->myHullNumber(), sndHost->myHullNumber());
 
 	QString fstAnswer;
@@ -221,16 +221,16 @@ TEST_F(TrikNetworkTests, realMulticastWithIdenticalHullNumber)
 {
 	mailboxInterface()->setHullNumber(3);
 
-	auto* sndHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
+	auto sndHost = prepareHost(8890, mailboxInterface()->myHullNumber(), 8889);
 	EXPECT_EQ(mailboxInterface()->myHullNumber(), sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8891, mailboxInterface()->myHullNumber(), 8889);
+	auto thdHost = prepareHost(8891, mailboxInterface()->myHullNumber(), 8889);
 	EXPECT_EQ(mailboxInterface()->myHullNumber(), thdHost->myHullNumber());
 
-	auto* fourthHost = prepareHost(8892, mailboxInterface()->myHullNumber(), 8889);
+	auto fourthHost = prepareHost(8892, mailboxInterface()->myHullNumber(), 8889);
 	EXPECT_EQ(mailboxInterface()->myHullNumber(), fourthHost->myHullNumber());
 
-	auto* fifthHost = prepareHost(8893, mailboxInterface()->myHullNumber(), 8889);
+	auto fifthHost = prepareHost(8893, mailboxInterface()->myHullNumber(), 8889);
 	EXPECT_EQ(mailboxInterface()->myHullNumber(), fifthHost->myHullNumber());
 
 	auto firstIterationMessage = "firstIteration";
@@ -279,11 +279,11 @@ TEST_F(TrikNetworkTests, realMulticastWithIdenticalHullNumber)
 
 TEST_F(TrikNetworkTests, threeHostCycleTest)
 {
-	auto *fstHost = prepareHost(8890, 3, 8889);
-	auto* sndHost = prepareHost(8891, 4, 8889);
+	auto fstHost = prepareHost(8890, 3, 8889);
+	auto sndHost = prepareHost(8891, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8892, 5, 8889);
+	auto thdHost = prepareHost(8892, 5, 8889);
 	EXPECT_EQ(5, thdHost->myHullNumber());
 
 	QString fstAnswer;
@@ -306,10 +306,10 @@ TEST_F(TrikNetworkTests, sendWithoutParamTest)
 {
 	mailboxInterface()->setHullNumber(3);
 
-	auto* sndHost = prepareHost(8890, 4, 8889);
+	auto sndHost = prepareHost(8890, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8891, 5, 8889);
+	auto thdHost = prepareHost(8891, 5, 8889);
 	EXPECT_EQ(5, thdHost->myHullNumber());
 
 	QString sndAnswer;
@@ -326,10 +326,10 @@ TEST_F(TrikNetworkTests, sendWithoutParamTest)
 TEST_F(TrikNetworkTests, multicastDontSendExtraPacketsTest)
 {
 	mailboxInterface()->setHullNumber(3);
-	auto* sndHost = prepareHost(8890, 4, 8889);
+	auto sndHost = prepareHost(8890, 4, 8889);
 	EXPECT_EQ(4, sndHost->myHullNumber());
 
-	auto* thdHost = prepareHost(8891, 5, 8889);
+	auto thdHost = prepareHost(8891, 5, 8889);
 	EXPECT_EQ(5, thdHost->myHullNumber());
 
 	QString sndAnswer;

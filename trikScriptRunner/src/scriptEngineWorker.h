@@ -43,7 +43,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	/// @param scriptControl - reference to script execution control object.
 	ScriptEngineWorker(trikControl::BrickInterface *brick
-			, trikNetwork::MailboxInterface *mailbox
+			, const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 			, TrikScriptControlInterface *scriptControl
 			);
 
@@ -157,7 +157,7 @@ private:
 	void evalSystemJs(QScriptEngine * engine);
 
 	trikControl::BrickInterface *mBrick{}; // Does not have ownership.
-	trikNetwork::MailboxInterface * mMailbox{};  // Does not have ownership.
+	QSharedPointer<trikNetwork::MailboxInterface> mMailbox;  // Does not have ownership.
 	TrikScriptControlInterface *mScriptControl{}; // Does not have ownership.
 	Threading mThreading;
 	QScopedPointer<QScriptEngine> mDirectScriptsEngine;

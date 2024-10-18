@@ -39,7 +39,8 @@ public:
 	/// Constructor.
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
-	PythonEngineWorker(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
+	PythonEngineWorker(trikControl::BrickInterface *brick
+			   , const QSharedPointer<trikNetwork::MailboxInterface> &mailbox
 					   , TrikScriptControlInterface *scriptControl
 					   );
 
@@ -151,7 +152,7 @@ private:
 
 	trikControl::BrickInterface *mBrick {};
 	TrikScriptControlInterface *mScriptExecutionControl {}; // Does not have ownership.
-	trikNetwork::MailboxInterface * const mMailbox {};  // Does not have ownership.
+	QSharedPointer<trikNetwork::MailboxInterface> mMailbox;  // Does not have ownership.
 
 	State mState  { State::ready };
 

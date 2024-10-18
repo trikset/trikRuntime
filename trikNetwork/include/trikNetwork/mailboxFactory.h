@@ -24,6 +24,13 @@ namespace trikNetwork {
 
 class MailboxInterface;
 
+/*
+ * Each mailboxServer contains a server that listens for connections on an open port.
+ * This mailboxServer is desired to be used both in the visual language of TRIKStudio and in the textual interpretation.
+ * However, for the expected connection, we need to reuse the same open port, existing connections, etc.
+ * For this purpose, a weak_ptr to the already existing mailbox is stored, and in the case of invalidity, it is recreated.
+*/
+
 /// Factory that creates real mailbox object.
 class TRIKNETWORK_EXPORT MailboxFactory
 {
@@ -31,13 +38,18 @@ public:
 	/// Method that creates mailbox object.
 	/// Transfers ownership over MailboxInterface object to caller.
 	/// @param port - TCP port of mailbox server.
-	static MailboxInterface *create(int port);
+	static QSharedPointer<MailboxInterface> create(int port);
 
 	/// Method that creates mailbox object.
 	/// Transfers ownership over MailboxInterface object to caller.
 	/// @param configurer - configurer object that contains preparsed XML config. If configuration is incorrect,
 	///        uninitialized mailbox object will be returned.
-	static MailboxInterface *create(const trikKernel::Configurer &configurer);
+	static QSharedPointer<MailboxInterface> create(const trikKernel::Configurer &configurer);
+private:
+
+	static QSharedPointer<MailboxInterface> prepare(int port);
+
+	static QHash<int, QWeakPointer<MailboxInterface>> mailbox;
 };
 
 }
