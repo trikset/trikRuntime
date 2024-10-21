@@ -291,7 +291,7 @@ void PythonEngineWorker::resetBrick()
 
 void PythonEngineWorker::brickBeep()
 {
-	mBrick->playTone(2500, 20);
+	mBrick->playTone(2500, 150);
 }
 
 void PythonEngineWorker::stopScript()
