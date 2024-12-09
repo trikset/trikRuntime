@@ -33,6 +33,14 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 	, mDutyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "dutyFile")))
 	, mState("PWM Capture on " + port)
 {
+	QScopedPointer<trikHal::OutputDeviceFileInterface> captureFile
+	    (hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "captureFile")));
+	if (!captureFile->open()) {
+	    mState.fail();
+	    return;
+	}
+	captureFile->write(QString::number(1));
+
 	if (!mFrequencyFile->open()) {
 		mState.fail();
 	}
