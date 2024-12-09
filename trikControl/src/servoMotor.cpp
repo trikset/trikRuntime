@@ -33,6 +33,16 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 	, mRun(false)
 	, mState("Servomotor on " + port)
 {
+	    if (port == "S1" || port == "S2" || port == "S3") {
+	        QScopedPointer<trikHal::OutputDeviceFileInterface> captureFile
+	                (hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "captureFile")));
+	        if (!captureFile->open()) {
+	            mState.fail();
+	            return;
+	        }
+	        captureFile->write(QString::number(0));
+	    }
+
 	const auto configure = [this, &port, &configurer](const QString &parameterName) {
 		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
 	};
