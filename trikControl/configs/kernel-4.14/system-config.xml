@@ -95,18 +95,21 @@ equal to its class name.
 			deviceFile="/sys/class/pwm/pwmchip2/pwm0/duty_cycle"
 			periodFile="/sys/class/pwm/pwmchip2/pwm0/period"
 			runFile="/sys/class/pwm/pwmchip2/pwm0/enable"
+                        captureFile="/sys/class/pwm/pwmchip2/pwm0/capture"
 		/>
 		<servoMotor
 			port="S2"
 			deviceFile="/sys/class/pwm/pwmchip1/pwm0/duty_cycle"
 			periodFile="/sys/class/pwm/pwmchip1/pwm0/period"
 			runFile="/sys/class/pwm/pwmchip1/pwm0/enable"
+                        captureFile="/sys/class/pwm/pwmchip1/pwm0/capture"
 		/>
 		<servoMotor
 			port="S3"
 			deviceFile="/sys/class/pwm/pwmchip0/pwm0/duty_cycle"
 			periodFile="/sys/class/pwm/pwmchip0/pwm0/period"
 			runFile="/sys/class/pwm/pwmchip0/pwm0/enable"
+                        captureFile="/sys/class/pwm/pwmchip0/pwm0/capture"
 		/>
 		<servoMotor
 			port="S4"
@@ -132,16 +135,19 @@ equal to its class name.
 			port="S1"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+                        captureFile="/sys/class/pwm/ecap_cap.2/capture"
 		/>
 		<pwmCapture
 			port="S2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
+                        captureFile="/sys/class/pwm/ecap_cap.1/capture"
 		/>
 		<pwmCapture
 			port="S3"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
+                        captureFile="/sys/class/pwm/ecap_cap.0/capture"
 		/>
 		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
