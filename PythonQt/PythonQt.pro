@@ -26,6 +26,7 @@ QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
 	tests {
 		SUBDIRS *= tests
 		tests.subdir += $$PWD/PythonQt/tests
+		tests.depends += PythonQtFull
 	}
 }
 
