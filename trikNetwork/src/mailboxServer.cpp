@@ -103,11 +103,6 @@ void MailboxServer::setHullNumber(int hullNumber)
 
 void MailboxServer::connectTo(const QString &ip, int port)
 {
-	QHostAddress address;
-	if (!address.setAddress(ip)) {
-		QLOG_INFO() << "Connect to ip " << ip << "and port" << port << "with not valid ip";
-		return;
-;	}
 	mAuxiliaryInformationLock.lockForRead();
 	auto server = mServerIp;
 	auto serverPort = mServerPort;
