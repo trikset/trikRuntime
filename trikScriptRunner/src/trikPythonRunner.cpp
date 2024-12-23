@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <PythonQt.h>
 #include <QCoreApplication>
+#include <QAbstractEventDispatcher>
 
 #include "trikPythonRunner.h"
 #include "src/pythonEngineWorker.h"
@@ -51,6 +52,16 @@ TrikPythonRunner::~TrikPythonRunner()
 	connect(mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
 	mScriptEngineWorker->stopScript();
 	mWorkerThread->quit();
+
+	auto *dispatcher = QAbstractEventDispatcher::instance(mWorkerThread);
+	if (dispatcher) {
+		connect(dispatcher, &QAbstractEventDispatcher::aboutToBlock, [dispatcher]() {
+			if (dispatcher) {
+				dispatcher->interrupt();
+			}
+		    });
+	}
+
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
