@@ -78,18 +78,21 @@ equal to its class name.
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 			runFile="/sys/class/pwm/ecap.2/run"
+                        captureFile="/sys/class/pwm/ecap.2/capture"
 		/>
 		<servoMotor
 			port="S2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 			runFile="/sys/class/pwm/ecap.1/run"
+                        captureFile="/sys/class/pwm/ecap.1/capture"
 		/>
 		<servoMotor
 			port="S3"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 			runFile="/sys/class/pwm/ecap.0/run"
+                        captureFile="/sys/class/pwm/ecap.0/capture"
 		/>
 		<servoMotor
 			port="S4"
@@ -113,18 +116,21 @@ equal to its class name.
 		/>
 		<pwmCapture
 			port="S1"
-			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+                        frequencyFile="/sys/class/pwm/ecap.2/period_freq"
+                        dutyFile="/sys/class/pwm/ecap.2/duty_ns"
+                        captureFile="/sys/class/pwm/ecap.2/capture"
 		/>
 		<pwmCapture
 			port="S2"
-			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
+                        frequencyFile="/sys/class/pwm/ecap.1/period_freq"
+                        dutyFile="/sys/class/pwm/ecap.1/duty_ns"
+                        captureFile="/sys/class/pwm/ecap.1/capture"
 		/>
 		<pwmCapture
-			port="S3"
-			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
+                        port="S3"
+                        frequencyFile="/sys/class/pwm/ecap.0/period_freq"
+                        dutyFile="/sys/class/pwm/ecap.0/duty_ns"
+                        captureFile="/sys/class/pwm/ecap.0/capture"
 		/>
 		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />

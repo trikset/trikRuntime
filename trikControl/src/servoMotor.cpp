@@ -33,6 +33,18 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 	, mRun(false)
 	, mState("Servomotor on " + port)
 {
+	QString captureFileAttribute = "";
+	captureFileAttribute = configurer.attributeByPort(port, "captureFile", &captureFileAttribute);
+	if (!captureFileAttribute.isEmpty()) {
+	    QScopedPointer<trikHal::OutputDeviceFileInterface> captureFile
+	            (hardwareAbstraction.createOutputDeviceFile(captureFileAttribute));
+	    if (!captureFile->open()) {
+	        mState.fail();
+	        return;
+	    }
+	    captureFile->write(QString::number(0));
+	}
+
 	const auto configure = [this, &port, &configurer](const QString &parameterName) {
 		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
 	};
@@ -57,13 +69,16 @@ ServoMotor::ServoMotor(const QString &port, const trikKernel::Configurer &config
 		mRunFile->write(QString::number(mRun ? 1 : 0));
 	}
 
-	setPeriod(mPeriod / 1000);
 
 	if (!mDutyFile->open()) {
 		mState.fail();
+		return;
 	} else {
+		mDutyFile->write(QString::number(0));
 		mState.ready();
 	}
+
+	setPeriod(mPeriod / 1000);
 }
 
 ServoMotor::~ServoMotor()
@@ -107,13 +122,10 @@ void ServoMotor::powerOff()
 		return;
 	}
 
-	mDutyFile->write(QString::number(mStop));
 	mRunFile->write(QString::number(0));
+	mDutyFile->write(QString::number(mStop));
 	mRun = false;
 	mCurrentPower = 0;
-
-	mRun = false;
-	mRunFile->write(QString::number(mRun));
 }
 
 void ServoMotor::setPeriod(int uSec)
@@ -151,10 +163,12 @@ void ServoMotor::setPower(int power, bool constrain)
 
 	mCurrentDutyPercent = 100 * duty / mPeriod;
 
-	mDutyFile->write(command);
-
 	if (!mRun) {
 		mRun = true;
 		mRunFile->write(QString::number(mRun));
 	}
+
+	// After switching from capture mode to servo mode,
+	// a faster response occurs if you set duty after run.
+	mDutyFile->write(command);
 }
