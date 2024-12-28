@@ -51,6 +51,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 									 );
 			});
 	}
+	mScriptControl->setParent(this);
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
@@ -58,7 +59,6 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   )
 	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(&brick))
 {
-	mScriptControl->setParent(this);
 }
 
 TrikScriptRunner::~TrikScriptRunner()

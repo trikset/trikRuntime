@@ -111,7 +111,12 @@ void MailboxServer::connectTo(const QString &ip, int port)
 	if (server.toString() != ip || serverPort != port) {
 		{
 			QWriteLocker l(&mAuxiliaryInformationLock);
-			mServerIp = QHostInfo::fromName(ip).addresses().first();
+			auto addresses = QHostInfo::fromName(ip).addresses();
+			if (addresses.isEmpty()) {
+				QLOG_INFO() << "Not found addresses for ip " << ip;
+				return;
+			}
+			mServerIp = addresses.first();
 			mServerPort = port;
 		}
 		saveSettings();

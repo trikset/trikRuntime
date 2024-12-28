@@ -66,6 +66,7 @@ int TrikPyRunnerTest::run(const QString &script)
 	mStdOut.clear();
 	mScriptRunner->run(script, "_.py");
 	auto code = l.exec();
+	QCoreApplication::processEvents(); // for stdout messages
 	std::cout << qPrintable(mStdOut) << std::endl;
 	return code;
 }
@@ -82,6 +83,7 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 	mStdOut.clear();
 	mScriptRunner->runDirectCommand(script);
 	auto code = l.exec();
+	QCoreApplication::processEvents(); // dispatch events for print/stdout
 	std::cout << mStdOut.toStdString() << std::endl;
 	return code;
 }

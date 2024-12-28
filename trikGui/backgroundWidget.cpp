@@ -76,7 +76,7 @@ BackgroundWidget::BackgroundWidget(
 
 	connect(&mRunningWidget, &RunningWidget::hideMe, this, &BackgroundWidget::hideRunningWidget);
 
-	mController.brick().playTone(2000, 10);
+	mController.brick().playTone(2000, 150);
 }
 
 BackgroundWidget::~BackgroundWidget()

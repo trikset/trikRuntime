@@ -120,7 +120,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick->playTone(2500, 20);
+	mBrick->playTone(2500, 150);
 }
 
 void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * const engine)

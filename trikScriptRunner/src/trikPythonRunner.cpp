@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <PythonQt.h>
 #include <QCoreApplication>
+#include <QAbstractEventDispatcher>
 
 #include "trikPythonRunner.h"
 #include "src/pythonEngineWorker.h"
@@ -51,6 +52,16 @@ TrikPythonRunner::~TrikPythonRunner()
 	connect(mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
 	mScriptEngineWorker->stopScript();
 	mWorkerThread->quit();
+
+	// HACK: fix dead-lock in QThread::wait after QThread::quit
+	// Chaotic use of `processEvents' in code results in dead lock
+	// in the main thread event loop in the internal processEvents call.
+	// See commit message for details
+	if (auto *dispatcher = QAbstractEventDispatcher::instance(mWorkerThread)) {
+		connect(dispatcher, &QAbstractEventDispatcher::aboutToBlock
+			, dispatcher, &QAbstractEventDispatcher::interrupt);
+	}
+
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
