@@ -46,8 +46,9 @@ public slots:
 	/// Initializes a camera.
 	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
 	void init(bool showOnDisplay);
-
-	/// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale.
+	
+	/// Returns dominant color in given cell of a grid as a vector [R; G; B] in RGB color scale or
+	/// a vector [H, S, V] in HSV color scale.
 	/// If m or n are out of range, returns [-1; -1; -1].
 	/// Can be accessed directly from other thread.
 	QVector<int> read(int m, int n);
@@ -56,6 +57,8 @@ private:
 	QString sensorName() const override;
 
 	void onNewData(const QString &dataLine) override;
+
+	QVector<int> hsvToRgb(QVector<int> hsv);
 
 	/// Current stored reading of a sensor. First two vectors are m*n matrix, inner vector contains 3 values --- red,
 	/// green and blue components of a dominant color in this cell.
