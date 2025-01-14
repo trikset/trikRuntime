@@ -63,11 +63,11 @@ public:
 private slots:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(trikGui::MainWidget &widget);
+	void addMainWidget(MainWidget *widget);
 
 	/// Add a RunningWidget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addRunningWidget(trikGui::MainWidget &widget);
+	void addRunningWidget(MainWidget *widget);
 
 	/// Add a GraphicsWidget to main widgets layout and show RunningWidget.
 	/// @param widget - reference to the widget.
@@ -99,7 +99,7 @@ private slots:
 private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
-	void resetWidgetLayout(MainWidget &widget);
+	void resetWidgetLayout(MainWidget *widget);
 
 	/// Makes current main widget be shown as something like fullscreen, without layout margins.
 	void expandMainWidget();

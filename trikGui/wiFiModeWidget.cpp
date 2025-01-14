@@ -87,7 +87,7 @@ void WiFiModeWidget::setMode(Mode mode)
 
 	if (currentMode != mode) {
 		WiFiInitWidget wiFiInitWidget;
-		emit newWidget(wiFiInitWidget);
+		Q_EMIT newWidget(&wiFiInitWidget);
 		if (wiFiInitWidget.init(mode) == WiFiInitWidget::Result::fail) {
 			QLOG_ERROR() << "Failed to init WiFi widget in mode" << currentModeText;
 			return;
@@ -102,14 +102,14 @@ void WiFiModeWidget::setMode(Mode mode)
 				mWiFi.reinit();
 			}
 			WiFiClientWidget wiFiClientWidget(mWiFi);
-			emit newWidget(wiFiClientWidget);
+			Q_EMIT newWidget(&wiFiClientWidget);
 			returnValue = wiFiClientWidget.exec();
 			break;
 		}
 		case Mode::accessPoint: {
 			mWiFi.dispose();
 			WiFiAPWidget wiFiAPWidget;
-			emit newWidget(wiFiAPWidget);
+			Q_EMIT newWidget(&wiFiAPWidget);
 			returnValue = wiFiAPWidget.exec();
 			break;
 		}
