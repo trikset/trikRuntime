@@ -120,13 +120,13 @@ void BackgroundWidget::addLazyWidget(LazyMainWidget &widget)
 	connect(&widget, &LazyMainWidget::hideMe, this, &BackgroundWidget::hideGraphicsWidget);
 }
 
-void BackgroundWidget::showMainWidget(MainWidget &widget)
+void BackgroundWidget::showMainWidget(MainWidget *widget)
 {
-	if (&widget == mBrickDisplayWidgetWrapper.data()) {
+	if (widget == mBrickDisplayWidgetWrapper.data()) {
 		expandMainWidget();
 	}
 
-	const int index = mMainWidgetsLayout.indexOf(&widget);
+	const int index = mMainWidgetsLayout.indexOf(widget);
 	if (index >= 0) {
 		mMainWidgetsLayout.setCurrentIndex(index);
 	}

@@ -30,7 +30,7 @@ AutoRunner::AutoRunner(Controller &controller)
 	if (autorunFileInfo.exists() && autorunFileInfo.isReadable()) {
 		/// Timer is needed to wait for trikControl to initialize.
 		/// @todo Make underlying components emit signal when they are ready for script execution.
-		QTimer::singleShot(1000, this, SLOT(doLaunch()));
+		QTimer::singleShot(1000, this, &AutoRunner::doLaunch);
 	}
 }
 

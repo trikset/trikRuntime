@@ -130,6 +130,7 @@ void NumberSelectionWidget::focusInEvent(QFocusEvent *event)
 QList<DigitSelector *> NumberSelectionWidget::lineEdits() const
 {
 	QList<DigitSelector *> result;
+	result.reserve(mLayout.count());
 	for (int i = 0; i < mLayout.count(); ++i) {
 		const auto digitSelector = dynamic_cast<DigitSelector *>(mLayout.itemAt(i)->widget());
 		if (digitSelector) {

@@ -26,11 +26,12 @@ trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName, const QString &
 	: mFileName(fileName)
 {
 	if (scanType == "be:s14/16>>2") {
-	    mScanType = ScanType::Accel;
+		mScanType = ScanType::Accel;
 	} else if (scanType == "le:s16/16>>0") {
-	    mScanType = ScanType::Gyro;
+		mScanType = ScanType::Gyro;
 	} else {
-	    mScanType = ScanType::Undefined;
+		mScanType = ScanType::Undefined;
+		QLOG_ERROR() << "Unknown scan type" << scanType << "for iio device" << mFileName;
 	}
 }
 
@@ -44,7 +45,7 @@ bool trikHal::trik::TrikIIOFile::open()
 	QLOG_INFO() << "Openning" << mFileName;
 	mIIOFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NONBLOCK | O_RDONLY | O_CLOEXEC);
 	if (mIIOFileDescriptor == -1) {
-		QLOG_ERROR() << QString("%1: open failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: open failed: %2").arg(mFileName, strerror(errno));
 		return false;
 	}
 
@@ -69,7 +70,7 @@ bool trikHal::trik::TrikIIOFile::close()
 	}
 
 	if (::close(mIIOFileDescriptor) != 0) {
-		QLOG_ERROR() << QString("%1: close failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: close failed: %2").arg(mFileName, strerror(errno));
 		return false;
 	}
 
@@ -93,35 +94,33 @@ void trikHal::trik::TrikIIOFile::readFile()
 
 	uint8_t buffer[16];
 	if (::read(mIIOFileDescriptor, &buffer, sizeof(buffer)) == -1) {
-		QLOG_ERROR() << QString("%1: read failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: read failed: %2").arg(mFileName, strerror(errno));
 	} else {
 		uint64_t timestamp;
 		memcpy(&timestamp, &buffer[8], sizeof(timestamp));
 		const uint64_t timestamp_mcsec = timestamp / 1000;
 		trikKernel::TimeVal eventTime(timestamp_mcsec / 1000000, timestamp_mcsec % 1000000);
 
-	    QVector<int> sensorValues;
-	    if (mScanType == ScanType::Accel) {
-	        sensorValues = {
-	            static_cast<int16_t>((buffer[0] << 8) | buffer[1]) >> 2,
-	            static_cast<int16_t>((buffer[2] << 8) | buffer[3]) >> 2,
-	            static_cast<int16_t>((buffer[4] << 8) | buffer[5]) >> 2,
-	        };
-	    } else if (mScanType == ScanType::Gyro) {
-	        sensorValues = {
-	            static_cast<int16_t>((buffer[1] << 8) | buffer[0]),
-	            static_cast<int16_t>((buffer[3] << 8) | buffer[2]),
-	            static_cast<int16_t>((buffer[5] << 8) | buffer[4]),
-	        };
-	    } else {
-	        size_t len = sizeof(buffer) / sizeof(buffer[0]);
-	        for (size_t i = 0; i < len; i++) {
-	            sensorValues.append(static_cast<int>(buffer[i]));
-	        }
-	        QLOG_ERROR() << "Unknown scan type for iio device";
-	    }
+		QVector<int> sensorValues;
+		if (mScanType == ScanType::Accel) {
+			sensorValues = {
+				static_cast<int16_t>((buffer[0] << 8) | buffer[1]) >> 2,
+				static_cast<int16_t>((buffer[2] << 8) | buffer[3]) >> 2,
+				static_cast<int16_t>((buffer[4] << 8) | buffer[5]) >> 2,
+			};
+		} else if (mScanType == ScanType::Gyro) {
+			sensorValues = {
+				static_cast<int16_t>((buffer[1] << 8) | buffer[0]),
+				static_cast<int16_t>((buffer[3] << 8) | buffer[2]),
+				static_cast<int16_t>((buffer[5] << 8) | buffer[4]),
+			};
+		} else {
+			size_t len = sizeof(buffer) / sizeof(buffer[0]);
+			sensorValues.resize(len);
+			std::copy(buffer, buffer + len, sensorValues.begin());
+		}
 
-	    emit newData(std::move(sensorValues), eventTime);
+		emit newData(std::move(sensorValues), eventTime);
 	}
 
 	mSocketNotifier->setEnabled(true);

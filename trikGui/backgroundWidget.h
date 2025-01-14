@@ -81,7 +81,7 @@ private slots:
 
 	/// Show a widget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showMainWidget(trikGui::MainWidget &widget);
+	void showMainWidget(trikGui::MainWidget *widget);
 
 	/// Show a RunningWidget which is contained in main widgets layout.
 	void showRunningWidget(const QString &fileName, int scriptId);

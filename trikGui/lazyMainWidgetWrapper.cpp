@@ -40,5 +40,5 @@ LazyMainWidgetWrapper::~LazyMainWidgetWrapper()
 
 void LazyMainWidgetWrapper::emitShowMe()
 {
-	emit showMe(*this);
+	Q_EMIT showMe(this);
 }

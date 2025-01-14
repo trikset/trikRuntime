@@ -82,16 +82,6 @@ public slots:
 	/// Resets script execution state, clearing all flags and stopping all timers.
 	void reset() override;
 
-signals:
-	/// Emitted when script requested system to abort execution.
-	void quitSignal();
-
-	/// To be connected to quit() slot of local event loops that are used for waiting.
-	void stopWaiting();
-
-	/// Requests sending a message to a desktop.
-	void textInStdOut(const QString &text);
-
 private:
 	QList<QTimer *> mTimers; // Has ownership.
 	trikControl::BrickInterface *mBrick {}; //Does not have ownership
