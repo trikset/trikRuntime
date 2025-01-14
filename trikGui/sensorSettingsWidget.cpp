@@ -49,8 +49,8 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	mContinueButton->setAutoFillBackground(true);
 	mLayout.addWidget(mContinueButton.data());
 
-	connect(mContinueButton.data(), SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(mContinueButton.data(), SIGNAL(downPressed()), this, SLOT(focus()));
+	connect(mContinueButton.data(), &ConnectButton::upPressed, this, &SensorSettingsWidget::focus);
+	connect(mContinueButton.data(), &ConnectButton::downPressed, this, &SensorSettingsWidget::focus);
 
 	setLayout(&mLayout);
 }

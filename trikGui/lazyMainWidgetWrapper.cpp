@@ -21,8 +21,8 @@ using namespace trikGui;
 LazyMainWidgetWrapper::LazyMainWidgetWrapper(trikControl::DisplayWidgetInterface *wrappedWidget, QWidget *parent)
 		: LazyMainWidget(parent), mWrappedWidget(wrappedWidget), mLayout(new QHBoxLayout(this))
 {
-	connect(wrappedWidget, SIGNAL(shown()), this, SLOT(emitShowMe()));
-	connect(wrappedWidget, SIGNAL(hidden()), this, SIGNAL(hideMe()));
+	connect(wrappedWidget, &trikControl::DisplayWidgetInterface::shown, this, &LazyMainWidgetWrapper::emitShowMe);
+	connect(wrappedWidget, &trikControl::DisplayWidgetInterface::hidden, this, &LazyMainWidget::hideMe);
 
 	mLayout->addWidget(mWrappedWidget);
 }
