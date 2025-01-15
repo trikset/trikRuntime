@@ -61,7 +61,7 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 
 static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::TimerType tt) {
 	QEventLoop loop;
-	QObject::connect(sec, &ScriptExecutionControl::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
+	QObject::connect(sec, &TrikScriptControlInterface::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
 	QTimer t;
 	t.setTimerType(tt);
 	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
