@@ -108,7 +108,7 @@ void PythonEngineWorker::init()
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
 		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
 			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
-							.arg(PY_VERSION).arg(Py_GetVersion());
+							.arg(PY_VERSION, Py_GetVersion());
 			throw trikKernel::InternalErrorException(e);
 		}
 		constexpr auto varName = "TRIK_PYTHONPATH";
@@ -141,7 +141,7 @@ void PythonEngineWorker::init()
 		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
 		Py_SetProgramName(mProgramName);
 
-		if (!qgetenv("TRIK_PYTHON_DEBUG").isEmpty()) {
+		if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
 			Py_VerboseFlag = 3;
 			Py_InspectFlag = 1;
 			Py_DebugFlag = 2;
@@ -193,7 +193,7 @@ void PythonEngineWorker::init()
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
 		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::ExternalModule
-			       | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
+				   | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
 			QTimer::singleShot(0, this, [this, str](){ Q_EMIT this->textInStdOut(str);});

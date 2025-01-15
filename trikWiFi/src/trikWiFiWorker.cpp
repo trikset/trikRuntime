@@ -56,7 +56,8 @@ void TrikWiFiWorker::reinit()
 	const int monitorFileDesc = mMonitorInterface->fileDescriptor();
 	if (monitorFileDesc >= 0) {
 		mMonitorFileSocketNotifier.reset(new QSocketNotifier(monitorFileDesc, QSocketNotifier::Read));
-		QObject::connect(mMonitorFileSocketNotifier.data(), SIGNAL(activated(int)), this, SLOT(receiveMessages()));
+		QObject::connect(mMonitorFileSocketNotifier.data(), &QSocketNotifier::activated
+						 , this, &TrikWiFiWorker::receiveMessages);
 	} else {
 		QLOG_ERROR() << "Can not get monitor file descriptor";
 	}

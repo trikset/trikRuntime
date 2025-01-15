@@ -49,8 +49,8 @@ SensorSettingsWidget::SensorSettingsWidget(const QString &port, bool isEncoder, 
 	mContinueButton->setAutoFillBackground(true);
 	mLayout.addWidget(mContinueButton.data());
 
-	connect(mContinueButton.data(), SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(mContinueButton.data(), SIGNAL(downPressed()), this, SLOT(focus()));
+	connect(mContinueButton.data(), &ConnectButton::upPressed, this, &SensorSettingsWidget::focus);
+	connect(mContinueButton.data(), &ConnectButton::downPressed, this, &SensorSettingsWidget::focus);
 
 	setLayout(&mLayout);
 }
@@ -109,5 +109,5 @@ QString SensorSettingsWidget::createScript()
 	}
 
 	return QString("    while (!(brick.%1(%2).read() %3 %4)) {\n"
-		"        script.wait(10);\n    }\n").arg(name).arg(mPort).arg(sign).arg(mLever->distance());
+		"        script.wait(10);\n    }\n").arg(name, mPort, sign, QString::number(mLever->distance()));
 }

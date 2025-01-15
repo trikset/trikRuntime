@@ -23,7 +23,7 @@ DeinitializationHelper::~DeinitializationHelper()
 {
 	QEventLoop loop;
 	QTimer t;
-	QObject::connect(&t, SIGNAL(timeout()), &loop, SLOT(quit()), Qt::DirectConnection);
+	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit, Qt::DirectConnection);
 	t.setSingleShot(true);
 	t.start(0);
 	loop.exec();

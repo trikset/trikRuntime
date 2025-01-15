@@ -67,7 +67,7 @@ public:
 	/// Counts time interval between two packed data of time using TimeVal
 	Q_INVOKABLE virtual int timeInterval(int packedTimeLeft, int packedTimeRight) = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Starts event loop for script.
 	virtual void run() = 0;
 
@@ -77,7 +77,7 @@ public slots:
 	/// Resets script execution state, clearing all flags and stopping all timers.
 	virtual void reset() = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();
 
