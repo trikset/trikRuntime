@@ -94,13 +94,13 @@ void TrikFifo::readFile()
 	if (bytesRead < 0) {
 		if (errno != EAGAIN) {
 			QLOG_ERROR() << "FIFO read failed: " << strerror(errno) << "in" << mFileName;
-			emit readError();
+			Q_EMIT readError();
 		}
 		mSocketNotifier->setEnabled(true);
 		return;
 	}
 	bytes.resize(bytesRead);
-	emit newData(bytes);
+	Q_EMIT newData(bytes);
 	mBuffer += QByteArray(reinterpret_cast<char*>(bytes.data()), bytes.size());
 	if (mBuffer.contains("\n")) {
 		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
@@ -109,7 +109,7 @@ void TrikFifo::readFile()
 		lines.removeLast();
 
 		for (auto &&line : lines) {
-			emit newLine(line);
+			Q_EMIT newLine(line);
 		}
 	}
 

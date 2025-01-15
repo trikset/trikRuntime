@@ -106,5 +106,5 @@ QVector<int> ObjectSensor::getDetectParameters() const
 
 void ObjectSensor::onStopped()
 {
-	emit stopped();
+	Q_EMIT stopped();
 }

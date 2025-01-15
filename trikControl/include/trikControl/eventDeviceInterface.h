@@ -28,11 +28,11 @@ class TRIKCONTROL_EXPORT EventDeviceInterface : public QObject, public DeviceInt
 {
 	Q_OBJECT
 
-public slots:
+public Q_SLOTS:
 	/// Returns object that allows to selectively subscribe only to event with given code.
 	virtual EventInterface *onEvent(int eventType) = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when there is new event in an event file.
 	/// @param event - type of the event.
 	/// @param code - code of the event inside a type.

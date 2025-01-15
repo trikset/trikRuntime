@@ -113,7 +113,7 @@ void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const tri
 		break;
 	case evSyn:
 		locker.unlock();
-		emit newData(mDistance, mRawDistance, eventTime);
+		Q_EMIT newData(mDistance, mRawDistance, eventTime);
 		break;
 	default:
 		QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;

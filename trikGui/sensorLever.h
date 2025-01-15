@@ -47,7 +47,7 @@ protected:
 
 	void paintEvent(QPaintEvent *) override;
 
-private slots:
+private Q_SLOTS:
 	/// Sets the distance which is necessary to trigger sensor.
 	/// @param distance - required distance.
 	void setDistance(int distance);

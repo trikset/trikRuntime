@@ -29,7 +29,7 @@ public:
 	/// @param controller is used to get the current network info
 	explicit WiFiIndicator(Controller &controller, QWidget *parent = 0);
 
-private slots:
+private Q_SLOTS:
 	/// Updates the status to 'connected'.
 	void setOn();
 

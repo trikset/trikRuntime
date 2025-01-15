@@ -30,7 +30,7 @@ public:
 	/// @param code - code of the event to filter, see evtest output for a list of codes for specific device.
 	explicit EventCode(int code);
 
-public slots:
+public Q_SLOTS:
 	/// Supposed to be called by event type filter when new event is emitted. Filters events of this
 	/// type by code and re-emits signal.
 	void onEvent(int code, int value, int eventTime);

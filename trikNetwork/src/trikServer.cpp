@@ -29,7 +29,7 @@ TrikServer::TrikServer(const std::function<Connection *()> &connectionFactory)
 		mConnections.insert(c->thread(), c);
 		if (isFirstConnection) {
 			/// @todo: Emit "connected" signal only when socket is actually connected.
-			emit connected();
+			Q_EMIT connected();
 		}
 	});
 }
@@ -96,7 +96,7 @@ void TrikServer::startConnection(Connection * const connectionWorker)
 	connect(connectionThread, &QThread::started, this, [this, connectionWorker]() {
 		QMetaObject::invokeMethod(connectionWorker, [=](){
 			connectionWorker->setIsStarted(true);
-			emit connectionWorker->readyForConnect();
+			Q_EMIT connectionWorker->readyForConnect();
 		});
 		Q_EMIT startedConnection(connectionWorker);
 	});
@@ -159,6 +159,6 @@ void TrikServer::onConnectionClosed(Connection *connection)
 		QLOG_ERROR() << "Unable to stop thread" << thread;
 	}
 	if (mConnections.isEmpty()) {
-		emit disconnected();
+		Q_EMIT disconnected();
 	}
 }

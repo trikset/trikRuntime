@@ -40,7 +40,7 @@ public:
 	QString fileName() const override;
 	bool isOpened() const override;
 
-private slots:
+private Q_SLOTS:
 	/// Called when there is a new event in a file.
 	void readFile();
 

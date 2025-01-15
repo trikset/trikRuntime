@@ -92,20 +92,20 @@ void TrikWiFiWorker::connect(const QString &ssid)
 
 	if (networkId == -1) {
 		// wpa_supplicant failed for some reason.
-		emit error("connect");
+		Q_EMIT error("connect");
 		return;
 	}
 
 	QString reply;
 	int result = mControlInterface->request("DISCONNECT", reply);
 	if (result < 0 || reply != "OK\n") {
-		emit error("connect");
+		Q_EMIT error("connect");
 		return;
 	}
 
 	result = mControlInterface->request("SELECT_NETWORK " + QString::number(networkId), reply);
 	if (result < 0 || reply != "OK\n") {
-		emit error("connect");
+		Q_EMIT error("connect");
 		return;
 	}
 }
@@ -117,7 +117,7 @@ void TrikWiFiWorker::disconnect()
 	QString reply;
 	const int result = mControlInterface->request("DISCONNECT", reply);
 	if (result != 0 || reply != "OK\n") {
-		emit error("disconnect");
+		Q_EMIT error("disconnect");
 	}
 }
 
@@ -128,7 +128,7 @@ void TrikWiFiWorker::scanRequest()
 	mIgnoreScanResults = false;
 	const int result = mControlInterface->request("SCAN", reply);
 	if (result != 0 || reply != "OK\n") {
-		emit error("scanRequest");
+		Q_EMIT error("scanRequest");
 	}
 }
 
@@ -138,7 +138,7 @@ void TrikWiFiWorker::statusRequest()
 	QString reply;
 
 	if (mControlInterface->request(command, reply) < 0) {
-		emit error("statusRequest");
+		Q_EMIT error("statusRequest");
 		return;
 	}
 
@@ -154,7 +154,7 @@ void TrikWiFiWorker::statusRequest()
 	}
 
 	mStatus.sync();
-	emit statusReady();
+	Q_EMIT statusReady();
 }
 
 Status TrikWiFiWorker::statusResult()
@@ -168,7 +168,7 @@ void TrikWiFiWorker::processScanResults()
 
 	mIgnoreScanResults = true;
 
-	forever {
+	Q_FOREVER {
 		const QString command = "BSS " + QString::number(index++);
 		QString reply;
 
@@ -208,7 +208,7 @@ void TrikWiFiWorker::processScanResults()
 	mScanResult.sync();
 	mScanResult->clear();
 
-	emit scanFinished();
+	Q_EMIT scanFinished();
 }
 
 QList<ScanResult> TrikWiFiWorker::scanResult()
@@ -221,7 +221,7 @@ void TrikWiFiWorker::listKnownNetworks()
 	QString reply;
 	const int result = mControlInterface->request("LIST_NETWORKS", reply);
 	if (result < 0 || reply.isEmpty() || reply.startsWith("FAIL")) {
-		emit error("listNetworksRequest");
+		Q_EMIT error("listNetworksRequest");
 		return;
 	}
 
@@ -259,9 +259,9 @@ void TrikWiFiWorker::processMessage(const QString &message)
 		dhcpProcess.start("udhcpc", {"-i", "wlan0"});
 		dhcpProcess.waitForFinished(3000);
 		statusRequest();
-		emit connected();
+		Q_EMIT connected();
 	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
-		emit disconnected(mPlannedDisconnect ? DisconnectReason::planned : DisconnectReason::unplanned);
+		Q_EMIT disconnected(mPlannedDisconnect ? DisconnectReason::planned : DisconnectReason::unplanned);
 	}
 }
 

@@ -129,9 +129,9 @@ void TrikJavaScriptRunner::abort()
 void TrikJavaScriptRunner::onScriptStart(int scriptId)
 {
 	if (scriptId != -1 && mScriptFileNames.contains(scriptId)) {
-		emit startedScript(mScriptFileNames[scriptId], scriptId);
+		Q_EMIT startedScript(mScriptFileNames[scriptId], scriptId);
 	} else {
-		emit startedDirectScript(scriptId);
+		Q_EMIT startedDirectScript(scriptId);
 	}
 }
 

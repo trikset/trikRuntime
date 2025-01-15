@@ -71,6 +71,6 @@ void TrikVariablesServer::processHTTPRequest()
 	const QStringList words = cleanString.split(QRegExp("\\s+"), QString::SkipEmptyParts);
 
 	if (words[1] == "/web/") {
-		emit getVariables("web");
+		Q_EMIT getVariables("web");
 	}
 }

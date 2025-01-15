@@ -94,7 +94,7 @@ public:
 
 	/// It is used to get flag for determine the situation when connection->thread() is running, but the connection is invalid
 	bool getIsStarted() const;
-signals:
+Q_SIGNALS:
 	/// Emitted after connection becomes closed.
 	void disconnected(trikNetwork::Connection *self);
 
@@ -111,7 +111,7 @@ protected:
 	/// @param port - target port.
 	void init(const QHostAddress &ip, int port);
 
-private slots:
+private Q_SLOTS:
 	/// New data is ready on a socket.
 	void onReadyRead();
 

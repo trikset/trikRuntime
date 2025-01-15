@@ -45,7 +45,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
 			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
-				emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
+				Q_EMIT sendMailboxMessage(QString("mail: sender: %1 contents: %2")
 									 .arg(senderNumber)
 									 .arg(message)
 									 );

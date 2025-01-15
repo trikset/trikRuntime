@@ -323,7 +323,7 @@ void MailboxServer::onNewData(const QHostAddress &ip, int port, const QByteArray
 	mMessagesQueue.enqueue(data);
 	mMessagesQueueLock.unlock();
 
-	emit newMessage(senderHullNumber, QString(data));
+	Q_EMIT newMessage(senderHullNumber, QString(data));
 }
 
 bool MailboxServer::hasMessages()

@@ -33,7 +33,7 @@ public:
 	/// @param status - initial connection status
 	OpenSocketIndicator(const QString &openFilePic, bool status, QWidget *parent = 0);
 
-public slots:
+public Q_SLOTS:
 	/// Changes status of indicator to a given value.
 	void changeStatus(bool status);
 

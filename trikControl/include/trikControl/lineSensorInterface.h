@@ -30,7 +30,7 @@ class TRIKCONTROL_EXPORT LineSensorInterface : public QObject, public DeviceInte
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 	/// Emitted when sensor is stopped successfully.
 	void stopped();
 

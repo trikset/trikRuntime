@@ -48,13 +48,13 @@ public:
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
 
-public slots:
+public Q_SLOTS:
 	void renewFocus() override;
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
+private Q_SLOTS:
 	/// Called when 'Connect' button is pressed, initiates connection to leader robot.
 	void onConnectButtonClicked();
 

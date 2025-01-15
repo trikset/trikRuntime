@@ -57,7 +57,7 @@ public:
 	/// Sets hull number of this robot and connects to robot by IP and port.
 	virtual void joinNetwork(const QString &ip, int port, int hullNumber) = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Connects to robot by IP and port.
 	virtual void connect(const QString &ip, int port) = 0;
 
@@ -85,7 +85,7 @@ public slots:
 	/// Returns hull number of this robot.
 	virtual int myHullNumber() const = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new message is received from a robot with given hull number. Note that if receive() and
 	/// handler for newMessage() is used simultaneously, message will be delivered twice --- first for receive(), then
 	/// to handler (or handlers).

@@ -65,10 +65,10 @@ public:
 	QStringList knownMethodNames() const override;
 	/// Execute script with a corresponding engine of specified type
 	void run(const QString &script, ScriptType stype, const QString &fileName = "");
-signals:
+Q_SIGNALS:
 	/// Broadcasts message to all opened mailboxes.
 	void sendMailboxMessage(QString msg);
-public slots:
+public Q_SLOTS:
 	/// See corresponding TrikScriptRunnerInterface method
 	void run(const QString &script, const QString &fileName = "") override;
 	/// See corresponding TrikScriptRunnerInterface method

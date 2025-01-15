@@ -28,12 +28,12 @@ class TRIKCONTROL_EXPORT EventInterface : public QObject
 {
 	Q_OBJECT
 
-public slots:
+public Q_SLOTS:
 	/// Returns object that emits only events with specific code. See evtest output for a list of codes for
 	/// specific device.
 	virtual EventCodeInterface *code(int code) = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when there is new event in an event file.
 	/// @param code - code of the event inside a type.
 	/// @param value - value sent with the event.

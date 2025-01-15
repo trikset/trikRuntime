@@ -60,7 +60,7 @@ public:
 
 	~BackgroundWidget() override;
 
-private slots:
+private Q_SLOTS:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
 	void addMainWidget(MainWidget *widget);

@@ -365,7 +365,7 @@ void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 
 void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
 {
-	emit startedScript("", 0);
+	Q_EMIT startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick->keys()->reset();
@@ -373,7 +373,7 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	auto ok = recreateContext();
 	QCoreApplication::processEvents();
 	if (!ok) {
-		emit completed(mErrorMessage,0);
+		Q_EMIT completed(mErrorMessage,0);
 		return;
 	}
 
@@ -393,9 +393,9 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 	releaseContext();
 	QCoreApplication::processEvents(); //dispatch events before emitting the signal
 	if (wasError) {
-		emit completed(mErrorMessage, 0);
+		Q_EMIT completed(mErrorMessage, 0);
 	} else {
-		emit completed("", 0);
+		Q_EMIT completed("", 0);
 	}
 }
 
@@ -407,7 +407,7 @@ void PythonEngineWorker::runDirect(const QString &command)
 
 void PythonEngineWorker::doRunDirect(const QString &command)
 {
-	emit startedDirectScript(0);
+	Q_EMIT startedDirectScript(0);
 	if (PythonQt::self()->hadError()) {
 		PythonQt::self()->clearError();
 		mErrorMessage.clear();
@@ -417,9 +417,9 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 	QCoreApplication::processEvents();
 	auto wasError = PythonQt::self()->hadError();
 	if (wasError) {
-		emit completed(mErrorMessage, 0);
+		Q_EMIT completed(mErrorMessage, 0);
 	} else {
-		emit completed("", 0);
+		Q_EMIT completed("", 0);
 	}
 }
 

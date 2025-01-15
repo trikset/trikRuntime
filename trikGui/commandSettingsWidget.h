@@ -59,7 +59,7 @@ public:
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
+private Q_SLOTS:
 	/// Called by child widgets when they need to move input focus up or down.
 	void focus();
 

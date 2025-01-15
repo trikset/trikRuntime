@@ -143,5 +143,5 @@ QList<DigitSelector *> NumberSelectionWidget::lineEdits() const
 
 void NumberSelectionWidget::onValueChanged()
 {
-	emit valueChanged(value());
+	Q_EMIT valueChanged(value());
 }

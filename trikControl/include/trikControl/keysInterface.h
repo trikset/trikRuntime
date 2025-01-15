@@ -27,7 +27,7 @@ class TRIKCONTROL_EXPORT KeysInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 
-public slots:
+public Q_SLOTS:
 	/// Clear data about previous key pressures.
 	virtual void reset() = 0;
 
@@ -40,7 +40,7 @@ public slots:
 	/// Returns a code of a pressed button.
 	virtual int buttonCode(bool wait = true) = 0;
 
-signals:
+Q_SIGNALS:
 	/// Triggered when button state changed (pressed or released).
 	/// @param code - key code.
 	/// @param value - key state.

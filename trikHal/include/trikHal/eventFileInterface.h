@@ -42,7 +42,7 @@ public:
 	/// Returns true if a file is opened.
 	virtual bool isOpened() const = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when there is new event in an event file.
 	/// @param eventType - low-level type of an event.
 	/// @param code - low-level event code.

@@ -69,7 +69,7 @@ public:
 	Q_SLOT void setCalibrationValues(const QVector<int> &values) override;
 
 
-private slots:
+private Q_SLOTS:
 	/// Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
 	/// and packed time of current event.
 	void countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t);

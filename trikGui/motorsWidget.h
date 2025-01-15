@@ -68,7 +68,7 @@ protected:
 private:
 	void ensureFocusedWidgetVisible();
 
-private slots:
+private Q_SLOTS:
 	/// Hack to work around odd QScrollArea behavior which incorrectly positions inner widget when there is no need for
 	/// vertical scrollbar.
 	void fixLeversPosition();

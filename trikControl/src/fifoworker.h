@@ -43,7 +43,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	/// Work with DeviceState and connections.
 	void init();
 	/// Reads line from this FIFO file, returning all available data as string.
@@ -59,13 +59,13 @@ public slots:
 	/// Blocks the Thread with QSemaphore until init() method releases it.
 	void waitUntilInited();
 
-signals:
+Q_SIGNALS:
 	/// Emitted once per each text line that arrives to FIFO.
 	void newLine(const QString &data);
 	/// Emitted when new bytes have arrived to FIFO file.
 	void newData(const QVector<uint8_t> &data);
 
-private slots:
+private Q_SLOTS:
 	void onNewLine(const QString &line);
 	void onNewData(const QVector<uint8_t> &data);
 	void onReadError();

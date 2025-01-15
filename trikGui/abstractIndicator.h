@@ -42,7 +42,7 @@ public:
 	#endif
 	}
 
-public slots:
+public Q_SLOTS:
 	/// Rereads sensor and updates widget contents.
 	virtual void renew() = 0;
 };

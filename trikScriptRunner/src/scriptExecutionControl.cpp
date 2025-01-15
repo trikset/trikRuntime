@@ -42,7 +42,7 @@ ScriptExecutionControl::~ScriptExecutionControl()
 void ScriptExecutionControl::reset()
 {
 	mInEventDrivenMode = false;
-	emit stopWaiting();
+	Q_EMIT stopWaiting();
 	for (auto &&timer : mTimers) {
 		QMetaObject::invokeMethod(timer, &QTimer::stop, Qt::QueuedConnection);
 		timer->deleteLater();
@@ -155,7 +155,7 @@ bool ScriptExecutionControl::isInEventDrivenMode() const
 
 void ScriptExecutionControl::quit()
 {
-	emit quitSignal();
+	Q_EMIT quitSignal();
 }
 
 void ScriptExecutionControl::system(const QString &command, bool synchronously)

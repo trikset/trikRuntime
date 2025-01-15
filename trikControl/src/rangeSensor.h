@@ -56,11 +56,11 @@ public:
 
 	int maxValue() const override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new data is received from a sensor.
 	void newData(int distance, int rawDistance, const trikKernel::TimeVal &eventTime);
 
-public slots:
+public Q_SLOTS:
 	/// Initializes sensor and begins receiving events from it.
 	void init();
 

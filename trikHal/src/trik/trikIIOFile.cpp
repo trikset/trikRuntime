@@ -120,7 +120,7 @@ void trikHal::trik::TrikIIOFile::readFile()
 			std::copy(buffer, buffer + len, sensorValues.begin());
 		}
 
-		emit newData(std::move(sensorValues), eventTime);
+		Q_EMIT newData(std::move(sensorValues), eventTime);
 	}
 
 	mSocketNotifier->setEnabled(true);

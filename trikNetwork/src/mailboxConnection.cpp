@@ -68,7 +68,7 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
 			} else {
-				emit newConnection(peerAddress(), peerPort(), serverPort, hullNumber);
+				Q_EMIT newConnection(peerAddress(), peerPort(), serverPort, hullNumber);
 			}
 		}
 	} else if (data.startsWith(connectionCommand)) {
@@ -80,7 +80,7 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			if (!serverPortOk || !hullNumberOk) {
 				error(data);
 			} else {
-				emit connectionInfo(QHostAddress(parsedString[1]), serverPort, hullNumber);
+				Q_EMIT connectionInfo(QHostAddress(parsedString[1]), serverPort, hullNumber);
 			}
 		}
 	} else if (data.startsWith(selfCommand)) {
@@ -92,12 +92,12 @@ void MailboxConnection::processData(const QByteArray &rawData)
 			if (!hullNumberOk) {
 				error(data);
 			} else {
-				emit connectionInfo(peerAddress(), peerPort(), hullNumber);
+				Q_EMIT connectionInfo(peerAddress(), peerPort(), hullNumber);
 			}
 		}
 	} else if (data.startsWith(dataCommand)) {
 		auto parsedString = data;
 		parsedString.remove(0, dataCommand.length());
-		emit newData(peerAddress(), peerPort(), parsedString.toUtf8());
+		Q_EMIT newData(peerAddress(), peerPort(), parsedString.toUtf8());
 	}
 }

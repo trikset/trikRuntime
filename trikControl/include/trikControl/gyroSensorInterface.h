@@ -28,7 +28,7 @@ class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 
 	/// Emites when average mean of bias is counted.
 	void calibrationFinished();

@@ -81,7 +81,7 @@ public:
 	/// Release thread initialization semaphore on thread initialization
 	void releaseThreadInitializationSemaphore() { mThreadInitializationSemaphore.release(1); }
 
-signals:
+Q_SIGNALS:
 	/// Signals that all threads have finished.
 	void finished();
 

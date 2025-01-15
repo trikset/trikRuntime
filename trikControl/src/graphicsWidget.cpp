@@ -39,13 +39,13 @@ GraphicsWidget::~GraphicsWidget()
 void GraphicsWidget::showCommand()
 {
 	show();
-	emit shown();
+	Q_EMIT shown();
 }
 
 void GraphicsWidget::hideCommand()
 {
 	hide();
-	emit hidden();
+	Q_EMIT hidden();
 }
 
 void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)

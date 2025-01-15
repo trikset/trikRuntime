@@ -49,7 +49,7 @@ public:
 
 	Q_INVOKABLE Status status() const override = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new image is ready.
 	void imageUpdated();
 

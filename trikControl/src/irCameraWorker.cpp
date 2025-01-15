@@ -87,7 +87,7 @@ void IrCameraWorkerMLX90640::stop()
 {
 	if (mState.isReady()) {
 		mState.stop();
-		emit stopped();
+		Q_EMIT stopped();
 		mState.off();
 	}
 }
@@ -143,7 +143,7 @@ void IrCameraWorkerMLX90640::processFrame()
 			}
 		}
 	}
-	emit newImage(mImage);
+	Q_EMIT newImage(mImage);
 
 	auto heightsDivMod = std::div(IMG_HEIGHT, mSensorHeight);
 	auto widthsDivMod = std::div(IMG_WIDTH, mSensorWidth);
@@ -162,7 +162,7 @@ void IrCameraWorkerMLX90640::processFrame()
 			in = 0;
 		}
 	}
-	emit newSensorData(mSensorData);
+	Q_EMIT newSensorData(mSensorData);
 
 	QTimer::singleShot(0, this, &IrCameraWorkerMLX90640::processFrame);
 }

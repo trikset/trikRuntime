@@ -28,7 +28,7 @@ class TRIKCONTROL_EXPORT EventCodeInterface : public QObject
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 	/// Emitted when there is new event with specific type and code in an event file.
 	/// @param value - value sent with the event.
 	/// @param eventTime - time stamp of the event, in milliseconds from start of the Unix time (modulo 2^32).

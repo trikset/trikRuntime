@@ -79,7 +79,7 @@ public:
 	/// (useful when used from outside of the TrikRuntime).
 	QStringList knownMethodNames() const;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
@@ -97,7 +97,7 @@ signals:
 	/// @param json - JSON container for variables values
 	void variablesReady(const QJsonObject &data);
 
-public slots:
+public Q_SLOTS:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
 	/// It is a caller's responsibility to ensure that ScriptEngineWorker is in ready state before a call to run()
@@ -124,7 +124,7 @@ public slots:
 	/// Set default directory for includes (not a working dir, actually...)
 	void setWorkingDir(const QString &workingDir);
 
-private slots:
+private Q_SLOTS:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 

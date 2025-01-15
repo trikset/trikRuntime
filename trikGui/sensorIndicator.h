@@ -39,7 +39,7 @@ public:
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QWidget *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
 	void renew() override;
 
 private:

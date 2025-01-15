@@ -126,7 +126,7 @@ public:
 	/// Get status of last direct command/script
 	virtual bool wasError() = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Executes given script asynchronously. If some script is already executing, it will be aborted.
 	/// For event-driven mode (where script has brick.run() command) script counts as finished
 	/// when it requests to quit by itself or was aborted. When script is finished, completed() signal will be emitted.
@@ -159,7 +159,7 @@ public slots:
 	/// Set working directory -- path to all project files
 	virtual void setWorkingDirectory(const QString &workingDir) = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when current script completes execution (for event-driven mode it means that script requested to quit
 	/// or was aborted).
 	/// @param error - localized error message if any error occured during script execution or empty string
