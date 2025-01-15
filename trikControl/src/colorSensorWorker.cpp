@@ -75,7 +75,7 @@ QString ColorSensorWorker::sensorName() const
 
 void ColorSensorWorker::onNewData(const QString &dataLine)
 {
-	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
+	QStringList const parsedLine = dataLine.split(" ", Qt::SkipEmptyParts);
 
 	if (parsedLine[0] == "color:") {
 

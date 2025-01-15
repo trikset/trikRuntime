@@ -55,7 +55,7 @@ QString ObjectSensorWorker::sensorName() const
 
 void ObjectSensorWorker::onNewData(const QString &dataLine)
 {
-	QStringList const parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
+	QStringList const parsedLine = dataLine.split(" ", Qt::SkipEmptyParts);
 
 	if (parsedLine[0] == "loc:") {
 		const int x = parsedLine[1].toInt();

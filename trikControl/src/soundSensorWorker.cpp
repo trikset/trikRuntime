@@ -58,7 +58,7 @@ QString SoundSensorWorker::sensorName() const
 
 void SoundSensorWorker::onNewData(const QString &dataLine)
 {
-	const QStringList parsedLine = dataLine.split(" ", QString::SkipEmptyParts);
+	const QStringList parsedLine = dataLine.split(" ", Qt::SkipEmptyParts);
 
 	if (parsedLine[0] == "sound:") {
 		const int angle = parsedLine[1].toInt();

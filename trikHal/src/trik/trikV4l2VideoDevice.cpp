@@ -194,7 +194,7 @@ void TrikV4l2VideoDevice::setFormat()
 		fmtTry.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 		if ( ! xioctl(VIDIOC_ENUM_FMT, &fmtTry, "VIDIOC_ENUM_FMT")) {
 
-			QLOG_INFO() << "V4l2: available format: " << hex << fmtTry.pixelformat;
+			QLOG_INFO() << "V4l2: available format: " << Qt::hex << fmtTry.pixelformat;
 			mFormat.fmt.pix.pixelformat = fmtTry.pixelformat;
 			memcpy(descPixelFmt, fmtTry.description, sizeof(descPixelFmt));
 

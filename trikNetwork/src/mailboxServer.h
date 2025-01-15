@@ -130,7 +130,7 @@ private:
 	int mServerPort{};
 
 
-	inline uint qHash(const Endpoint &key)
+	inline size_t qHash(const Endpoint &key)
 	{
 		return ::qHash(key.ip.toString()) ^ static_cast<uint>(key.serverPort);
 	}

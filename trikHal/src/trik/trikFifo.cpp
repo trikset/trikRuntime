@@ -103,7 +103,7 @@ void TrikFifo::readFile()
 	Q_EMIT newData(bytes);
 	mBuffer += QByteArray(reinterpret_cast<char*>(bytes.data()), bytes.size());
 	if (mBuffer.contains("\n")) {
-		QStringList lines = mBuffer.split('\n', QString::KeepEmptyParts);
+		QStringList lines = mBuffer.split('\n', Qt::KeepEmptyParts);
 
 		mBuffer = lines.last();
 		lines.removeLast();
