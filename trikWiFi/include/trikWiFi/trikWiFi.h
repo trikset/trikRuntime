@@ -73,7 +73,7 @@ public:
 	/// Return signal strength of current Wi-Fi connection
 	SignalStrength signalStrength();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
 	/// and ready to be obtained by scanResults() method.
 	void scanFinished();

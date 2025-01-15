@@ -42,7 +42,7 @@ ScriptExecutionControl::~ScriptExecutionControl()
 void ScriptExecutionControl::reset()
 {
 	mInEventDrivenMode = false;
-	emit stopWaiting();
+	Q_EMIT stopWaiting();
 	for (auto &&timer : mTimers) {
 		QMetaObject::invokeMethod(timer, &QTimer::stop, Qt::QueuedConnection);
 		timer->deleteLater();
@@ -61,7 +61,7 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 
 static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::TimerType tt) {
 	QEventLoop loop;
-	QObject::connect(sec, &ScriptExecutionControl::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
+	QObject::connect(sec, &TrikScriptControlInterface::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
 	QTimer t;
 	t.setTimerType(tt);
 	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -155,7 +155,7 @@ bool ScriptExecutionControl::isInEventDrivenMode() const
 
 void ScriptExecutionControl::quit()
 {
-	emit quitSignal();
+	Q_EMIT quitSignal();
 }
 
 void ScriptExecutionControl::system(const QString &command, bool synchronously)

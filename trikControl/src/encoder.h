@@ -41,7 +41,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	int read() override;
 
 	int readRawData() override;

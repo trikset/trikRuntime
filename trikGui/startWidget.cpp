@@ -131,89 +131,89 @@ void StartWidget::launch()
 		if (currentItemText == FileManagerWidget::menuEntry()) {
 			/// @todo Why widgets are created every time?
 			FileManagerWidget fileManagerWidget(mController, mFileManagerRoot);
-			emit newWidget(fileManagerWidget);
+			Q_EMIT newWidget(&fileManagerWidget);
 			result = fileManagerWidget.exec();
 		} else if (currentItemText == WiFiModeWidget::menuEntry()) {
 			WiFiModeWidget wiFiModeWidget(mController.wiFi());
-			emit newWidget(wiFiModeWidget);
+			Q_EMIT newWidget(&wiFiModeWidget);
 			result = wiFiModeWidget.exec();
 		} else if (currentItemText == ProgrammingWidget::menuEntry()) {
 			ProgrammingWidget programmingWidget(mController);
-			emit newWidget(programmingWidget);
+			Q_EMIT newWidget(&programmingWidget);
 			result = programmingWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::powerMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::powerMotor);
-			emit newWidget(motorsWidget);
+			Q_EMIT newWidget(&motorsWidget);
 			result = motorsWidget.exec();
 		} else if (currentItemText == MotorsWidget::menuEntry(MotorInterface::Type::servoMotor)) {
 			MotorsWidget motorsWidget(mController.brick(), MotorInterface::Type::servoMotor);
-			emit newWidget(motorsWidget);
+			Q_EMIT newWidget(&motorsWidget);
 			result = motorsWidget.exec();
 		} else if (currentItemText == tr("Analog sensors")) {
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::analogSensor);
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("PWM Capture")) {
 			ports = (mController.brick()).pwmCapturePorts();
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::pwmCapture);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Digital sensors")) {
 			ports = (mController.brick()).sensorPorts(trikControl::SensorInterface::Type::digitalSensor);
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::analogOrDigitalSensor);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Encoders")) {
 			ports = (mController.brick()).encoderPorts();
 			ports.sort();
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::encoder);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Gyroscope")) {
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::gyroscope);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Accelerometer")) {
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::accelerometer);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == tr("Camera")) {
 			SensorsWidget sensorsWidget(mController.brick(), ports, SensorsWidget::SensorType::camera);
-			emit newWidget(sensorsWidget);
+			Q_EMIT newWidget(&sensorsWidget);
 
 			result = sensorsWidget.exec();
 		} else if (currentItemText == CommunicationSettingsWidget::menuEntry()) {
 			if (mController.mailbox()) {
 				CommunicationSettingsWidget communicationSettingsWidget(*mController.mailbox());
-				emit newWidget(communicationSettingsWidget);
+				Q_EMIT newWidget(&communicationSettingsWidget);
 				result = communicationSettingsWidget.exec();
 			} else {
 				Q_ASSERT(!"Mailbox is disabled but commmunications widget still tries to be shown");
 			}
 		} else if (currentItemText == InformationWidget::menuEntry()) {
 			InformationWidget versionWidget;
-			emit newWidget(versionWidget);
+			Q_EMIT newWidget(&versionWidget);
 			result = versionWidget.exec();
 		} else if (currentItemText == SystemSettingsWidget::menuEntry()) {
 			SystemSettingsWidget systemSettingsWidget(mFileManagerRoot);
 			connect(&systemSettingsWidget, &SystemSettingsWidget::currentFilesDirPath
 					, this, &StartWidget::changeFileManagerRoot);
 
-			emit newWidget(systemSettingsWidget);
+			Q_EMIT newWidget(&systemSettingsWidget);
 			result = systemSettingsWidget.exec();
 		} else if (currentItemText == LanguageSelectionWidget::menuEntry()) {
 			LanguageSelectionWidget languageSelectionWidget;
-			emit newWidget(languageSelectionWidget);
+			Q_EMIT newWidget(&languageSelectionWidget);
 			result = languageSelectionWidget.exec();
 		}
 

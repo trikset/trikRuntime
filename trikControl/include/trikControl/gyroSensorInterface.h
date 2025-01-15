@@ -28,31 +28,32 @@ class TRIKCONTROL_EXPORT GyroSensorInterface : public VectorSensorInterface
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 
 	/// Emites when average mean of bias is counted.
 	void calibrationFinished();
 
-public slots:
+public Q_SLOTS:
 	/// Calibrates bias value of sensor, sets new bias value, resets other values include tilt values.
 	/// Preffered duration of calibration -- 15-20 seconds.
 	/// @param msec - duration of calibration in milliseconds
 	virtual void calibrate(int msec) = 0;
 
-	/// Returns vector with calibration values, which consists of 6 elements:
-	/// 0-2 -- gyroscope bias, 3-5 -- average accelerometer values.
-	/// Updated values is available only after calibration is done.
-	virtual QVector<int> getCalibrationValues() = 0;
-
 	/// Sets vector with calibration values to gyroscope sensor.
 	/// It consists of 6 elements: 0-2 -- gyroscope bias, 3-5 -- average accelerometer values at rest.
 	virtual void setCalibrationValues(const QVector<int> &values) = 0;
 
+public:
+	/// Returns vector with calibration values, which consists of 6 elements:
+	/// 0-2 -- gyroscope bias, 3-5 -- average accelerometer values.
+	/// Updated values is available only after calibration is done.
+	Q_INVOKABLE virtual QVector<int> getCalibrationValues() = 0;
+
 	/// Checks if bias is counted or not.
-	virtual bool isCalibrated() const = 0;
+	Q_INVOKABLE virtual bool isCalibrated() const = 0;
 
 	/// Returns current raw reading of a sensor.
-	virtual QVector<int> readRawData() const = 0;
+	Q_INVOKABLE virtual QVector<int> readRawData() const = 0;
 };
 
 }

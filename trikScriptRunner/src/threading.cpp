@@ -206,7 +206,7 @@ void Threading::threadFinished(const QString &id)
 	}
 
 	if (mThreads.isEmpty()) {
-		emit finished();
+		Q_EMIT finished();
 	}
 }
 

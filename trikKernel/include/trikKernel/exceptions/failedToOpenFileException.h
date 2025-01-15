@@ -23,15 +23,16 @@
 namespace trikKernel {
 
 /// Exception that is thrown when file opening operation failed.
-class TRIKKERNEL_EXPORT FailedToOpenFileException : public TrikRuntimeException
+class TRIKKERNEL_EXPORT FailedToOpenFileException // clazy:exclude=copyable-polymorphic
+		: public TrikRuntimeException
 {
 public:
 	/// Constructor.
 	/// @param file - file that is failed to open.
 	explicit FailedToOpenFileException(const QFile &file)
 		: TrikRuntimeException(QString("Failed to open %1 %2")
-							   .arg(QFileInfo(file).absoluteFilePath())
-							   .arg((file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading")))
+							   .arg(QFileInfo(file).absoluteFilePath()
+									, (file.openMode() & QIODevice::WriteOnly ? "for writing" : "for reading")))
 		  , mFile(file)
 	{
 	}

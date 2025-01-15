@@ -22,7 +22,8 @@ namespace trikControl {
 
 /// Exception for semantically incorrect device config, for example, trying to init MxN color sensor with negative
 /// grid size.
-class IncorrectDeviceConfigurationException : public trikKernel::TrikRuntimeException
+class IncorrectDeviceConfigurationException // clazy:exclude=copyable-polymorphic
+	: public trikKernel::TrikRuntimeException
 {
 public:
 	/// Constructor.

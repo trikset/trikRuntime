@@ -97,7 +97,7 @@ void PowerMotor::brake(int durationMs)
 	if (durationMs <= 0)
 		brake();
 	setPower(0x7f, false);
-	QTimer::singleShot(durationMs, this, SLOT(powerOff()));
+	QTimer::singleShot(durationMs, this, &PowerMotor::powerOff);
 }
 
 void PowerMotor::setPeriod(int period)

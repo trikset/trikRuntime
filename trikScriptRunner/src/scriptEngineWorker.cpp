@@ -183,7 +183,7 @@ void ScriptEngineWorker::stopScript()
 		// Instead of deleteLater() we use zero timer
 		QTimer::singleShot(0, this, [this]() { mDirectScriptsEngine.reset(); });
 
-		emit completed(msg, mScriptId);
+		Q_EMIT completed(msg, mScriptId);
 	}
 
 	mState = ready;
@@ -222,7 +222,7 @@ void ScriptEngineWorker::doRun(const QString &script)
 	const QString error = mThreading.errorMessage();
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
 	QCoreApplication::processEvents();
-	emit completed(error, mScriptId);
+	Q_EMIT completed(error, mScriptId);
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
@@ -266,7 +266,7 @@ void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 	QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
 	mState = starting;
 	mScriptId = scriptId;
-	emit startedScript(mScriptId);
+	Q_EMIT startedScript(mScriptId);
 }
 
 void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngine * const engine)
@@ -278,11 +278,11 @@ void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngin
 			const auto & message = engine->uncaughtException().toString();
 			const auto & backtrace = engine->uncaughtExceptionBacktrace().join("\n");
 			const auto & error = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
-			emit completed(error, mScriptId);
+			Q_EMIT completed(error, mScriptId);
 			QLOG_ERROR() << "Uncaught exception with error" << error;
 		}
 	} else {
-		emit completed(tr("File %1 not found").arg(filepath), mScriptId);
+		Q_EMIT completed(tr("File %1 not found").arg(filepath), mScriptId);
 		QLOG_ERROR() << "File for eval not found, path:" << filepath;
 	}
 }

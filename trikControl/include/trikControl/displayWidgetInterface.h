@@ -35,7 +35,7 @@ public:
 	DisplayWidgetInterface() = default;
 	~DisplayWidgetInterface() override = default;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when widget is shown.
 	void shown();
 

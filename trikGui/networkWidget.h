@@ -29,7 +29,7 @@ public:
 	/// Constructor
 	explicit NetworkWidget(QWidget *parent = 0);
 
-private slots:
+private Q_SLOTS:
 	void updateIP();
 	void updateHostname();
 	void updateHullNumber();

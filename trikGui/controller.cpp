@@ -130,7 +130,7 @@ void Controller::runScript(const QString &script)
 
 void Controller::abortExecution()
 {
-	emit hideScriptWidgets();
+	Q_EMIT hideScriptWidgets();
 	mScriptRunner->abort();
 
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
@@ -168,16 +168,16 @@ bool Controller::gamepadConnectionStatus() const
 
 void Controller::updateCommunicatorStatus()
 {
-	emit communicatorStatusChanged(communicatorConnectionStatus());
+	Q_EMIT communicatorStatusChanged(communicatorConnectionStatus());
 }
 
 void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 {
 	if (error.isEmpty()) {
-		emit hideRunningWidget(scriptId);
+		Q_EMIT hideRunningWidget(scriptId);
 	} else {
 		mCommunicator->sendMessage("error: " + error);
-		emit showError(error, scriptId);
+		Q_EMIT showError(error, scriptId);
 	}
 
 	mBrick->reset();
@@ -191,7 +191,7 @@ void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 
 void Controller::scriptExecutionFromFileStarted(const QString &fileName, int scriptId)
 {
-	emit showRunningWidget(fileName, scriptId);
+	Q_EMIT showRunningWidget(fileName, scriptId);
 }
 
 void Controller::directScriptExecutionStarted(int scriptId)

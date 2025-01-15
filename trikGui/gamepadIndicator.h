@@ -29,7 +29,7 @@ public:
 	/// @param controller is used to get the current gamepad info
 	explicit GamepadIndicator(Controller &controller, QWidget *parent = 0);
 
-public slots:
+public Q_SLOTS:
 	/// Updates the status to 'connect'.
 	void setOn();
 

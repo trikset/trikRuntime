@@ -37,9 +37,9 @@ public:
 	/// @param parent - parent of that widget in terms of Qt parent/child widget relations.
 	LazyMainWidget(QWidget *parent = 0) : MainWidget (parent) {}
 
-signals:
+Q_SIGNALS:
 	/// Emitted when the widget wants it to be shown.
-	void showMe(trikGui::MainWidget &widget);
+	void showMe(trikGui::MainWidget *widget);
 
 	/// Emitted when the widget wants it to be hidden.
 	void hideMe();

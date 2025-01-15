@@ -47,7 +47,7 @@ public:
 	/// Writes a given message to inner socket.
 	void sendMessage(const QString &message);
 
-signals:
+Q_SIGNALS:
 	/// Emitted when a stop command received from a computer.
 	void stopCommandReceived();
 

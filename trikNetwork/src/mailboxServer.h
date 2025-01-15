@@ -88,11 +88,11 @@ public:
 	Q_INVOKABLE void joinNetwork(const QString &ip = "", int port = -1, int hullNumber = -1);
 
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new message was received from a robot with given hull number.
 	void newMessage(int senderHullNumber, const QString &message);
 
-private slots:
+private Q_SLOTS:
 	void onNewConnection(const QHostAddress &ip, int connectedPort, int serverPort, int hullNumber);
 	void onConnectionInfo(const QHostAddress &ip, int serverPort, int hullNumber, int connectedPort = -1);
 	void onNewData(const QHostAddress &ip, int port, const QByteArray &data);

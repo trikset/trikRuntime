@@ -39,7 +39,7 @@ public:
 	/// Execute init() after worker thread started.
 	void init();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when there is new event in an event file.
 	/// @param event - type of the event.
 	/// @param code - code of the event inside a type.
@@ -47,7 +47,7 @@ signals:
 	/// @param eventTime - time stamp of the event, in msecs form start of the epoch.
 	void newEvent(int onEvent, int code, int value, int eventTime);
 
-private slots:
+private Q_SLOTS:
 	/// Called every time underlying event file produces an event.
 	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 

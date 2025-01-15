@@ -77,5 +77,5 @@ void ColorSensor::stop()
 
 void ColorSensor::onStopped()
 {
-	emit stopped();
+	Q_EMIT stopped();
 }

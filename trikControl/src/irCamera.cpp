@@ -106,20 +106,20 @@ int IrCamera::readSensor(int m, int n) const
 void IrCamera::onNewImage(QVector<int32_t> image)
 {
 	mImage.swap(image);
-	emit imageUpdated();
+	Q_EMIT imageUpdated();
 }
 
 void IrCamera::onNewSensorData(QVector<int32_t> grid)
 {
 	mSensorData.swap(grid);
-	emit sensorUpdated();
+	Q_EMIT sensorUpdated();
 }
 
 void IrCamera::onStop()
 {
 	mImage.fill(0);
 	mSensorData.fill(-1);
-	emit stopped();
+	Q_EMIT stopped();
 }
 
 IrCamera::Status IrCamera::status() const

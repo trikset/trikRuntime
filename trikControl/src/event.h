@@ -35,7 +35,7 @@ public:
 
 	EventCodeInterface *code(int codeNum) override;
 
-public slots:
+public Q_SLOTS:
 	/// Supposed to be called by event device when new event is emitted by event device file. Filters events by type
 	/// and re-emits signal.
 	void onEvent(int onEvent, int code, int value, int eventTime);

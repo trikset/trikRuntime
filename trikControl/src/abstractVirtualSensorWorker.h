@@ -52,11 +52,11 @@ public:
 
 	Status status() const override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when sensor is stopped successfully.
 	void stopped();
 
-public slots:
+public Q_SLOTS:
 	/// Stops detection until init() will be called again.
 	virtual void stop();
 
@@ -67,7 +67,7 @@ protected:
 	/// If sensor is ready, sends a command to its input FIFO, otherwise queues this command and sends it later.
 	void sendCommand(const QString &command);
 
-private slots:
+private Q_SLOTS:
 	/// Updates current reading when new value is ready.
 	void onNewDataInOutputFifo(const QString &data);
 

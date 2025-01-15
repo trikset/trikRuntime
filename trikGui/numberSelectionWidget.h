@@ -52,7 +52,7 @@ public:
 	/// True, if widget or one of its children has keyboard input focus.
 	bool hasFocusInside();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when number is changed by user.
 	void valueChanged(int newValue);
 
@@ -68,7 +68,7 @@ protected:
 	void keyPressEvent(QKeyEvent *event) override;
 	void focusInEvent(QFocusEvent *event) override;
 
-private slots:
+private Q_SLOTS:
 	void onValueChanged();
 
 private:

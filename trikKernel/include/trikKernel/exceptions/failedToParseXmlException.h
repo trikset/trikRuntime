@@ -24,7 +24,8 @@
 namespace trikKernel {
 
 /// Exception that is thrown when XML file is corrupt and "setContent" method of QDomDocument has failed.
-class TRIKKERNEL_EXPORT FailedToParseXmlException : public TrikRuntimeException
+class TRIKKERNEL_EXPORT FailedToParseXmlException // clazy:exclude=copyable-polymorphic
+		: public TrikRuntimeException
 {
 public:
 	/// Constructor.

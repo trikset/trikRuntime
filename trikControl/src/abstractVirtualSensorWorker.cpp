@@ -168,7 +168,7 @@ void AbstractVirtualSensorWorker::deinitialize()
 		QLOG_INFO() << QString("Successfully stopped %1 sensor").arg(sensorName());
 	}
 
-	emit stopped();
+	Q_EMIT stopped();
 
 	mState.off();
 }

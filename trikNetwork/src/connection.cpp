@@ -63,7 +63,7 @@ void Connection::init(const QHostAddress &ip, int port)
 		return;
 	}
 
-	emit connected(this);
+	Q_EMIT connected(this);
 }
 
 void Connection::send(const QByteArray &data)
@@ -267,7 +267,7 @@ void Connection::doDisconnect()
 
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
-	emit disconnected(this);
+	Q_EMIT disconnected(this);
 }
 
 void Connection::restartKeepalive()

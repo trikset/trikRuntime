@@ -53,7 +53,7 @@ public:
 
 	int maxControl() const override;
 
-public slots:
+public Q_SLOTS:
 	int power() const override;
 
 	/// Returns currently set frequency of PWM signal supplied to the motor.

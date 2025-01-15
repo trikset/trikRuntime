@@ -107,5 +107,5 @@ QVector<int> LineSensor::getDetectParameters() const
 
 void LineSensor::onStopped()
 {
-	emit stopped();
+	Q_EMIT stopped();
 }

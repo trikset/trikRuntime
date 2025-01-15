@@ -49,10 +49,10 @@ public:
 	/// String that shall appear in menu for this widget.
 	static QString menuEntry();
 
-public slots:
+public Q_SLOTS:
 	void renewFocus() override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when we want to save current FilesManagerRoot
 	void currentFilesDirPath(MainWidget::FileManagerRootType const& path);
 

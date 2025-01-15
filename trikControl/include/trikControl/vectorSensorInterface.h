@@ -30,11 +30,11 @@ class TRIKCONTROL_EXPORT VectorSensorInterface : public QObject, public DeviceIn
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new sensor reading is ready.
 	void newData(QVector<int> reading, const trikKernel::TimeVal &eventTime);
 
-public slots:
+public Q_SLOTS:
 	/// Returns current raw reading of a sensor.
 	virtual QVector<int> read() const = 0;
 };

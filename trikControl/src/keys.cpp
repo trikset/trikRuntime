@@ -81,7 +81,7 @@ bool Keys::isPressed(int code)
 void Keys::changeButtonState(int code, int value)
 {
 	mKeysPressed[code] = value;
-	emit buttonStateChanged();
+	Q_EMIT buttonStateChanged();
 }
 
 int Keys::buttonCode(bool wait)

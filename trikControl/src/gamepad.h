@@ -43,7 +43,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	void reset() override;
 
 	bool buttonWasPressed(int buttonNumber) override;
@@ -62,7 +62,7 @@ public slots:
 
 	bool disconnect() override;
 
-private slots:
+private Q_SLOTS:
 	void onNewData(const QString &data);
 
 	void onButtonStateClearTimerTimeout();

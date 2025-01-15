@@ -42,7 +42,7 @@ public:
 
 	~ColorSensorWorker() override;
 
-public slots:
+public Q_SLOTS:
 	/// Initializes a camera.
 	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
 	void init(bool showOnDisplay);

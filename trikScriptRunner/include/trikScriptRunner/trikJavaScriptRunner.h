@@ -53,14 +53,14 @@ public:
 
 	bool wasError() override { return false; }
 
-public slots:
+public Q_SLOTS:
 	void run(const QString &script, const QString &fileName = "") override;
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
 	void brickBeep() override;
 	void setWorkingDirectory(const QString &workingDir) override;
 
-private slots:
+private Q_SLOTS:
 	void onScriptStart(int scriptId);
 
 private:

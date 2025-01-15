@@ -22,8 +22,8 @@ GamepadIndicator::GamepadIndicator(Controller &controller, QWidget *parent)
 	: QLabel(parent)
 	, mController(controller)
 {
-	connect(&mController, SIGNAL(gamepadDisconnected()), this, SLOT(setOff()));
-	connect(&mController, SIGNAL(gamepadConnected()), this, SLOT(setOn()));
+	connect(&mController, &Controller::gamepadDisconnected, this, &GamepadIndicator::setOff);
+	connect(&mController, &Controller::gamepadConnected, this, &GamepadIndicator::setOn);
 }
 
 void GamepadIndicator::setOn()

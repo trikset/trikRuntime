@@ -69,7 +69,7 @@ private:
 	QLabel mBreakMessage;
 	QProcess mProcess;
 
-private slots:
+private Q_SLOTS:
 	void onProcessFinished(int, QProcess::ExitStatus exitStatus);
 	void onProcessError(QProcess::ProcessError error);
 };

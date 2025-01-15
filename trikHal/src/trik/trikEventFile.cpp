@@ -118,7 +118,7 @@ void TrikEventFile::readFile()
 			== static_cast<int>(sizeof(event)))
 	{
 		trikKernel::TimeVal eventTime(event.time.tv_sec, event.time.tv_usec);
-		emit newEvent(event.type, event.code, event.value, eventTime);
+		Q_EMIT newEvent(event.type, event.code, event.value, eventTime);
 	}
 
 	if (0 <= size && size < static_cast<int>(sizeof(event))) {

@@ -69,7 +69,7 @@ public:
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
+private Q_SLOTS:
 	void onDirectoryLoaded(const QString &path);
 	void renewCurrentIndex();
 	void onSelectionChanged(QModelIndex current, QModelIndex previous);

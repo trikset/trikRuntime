@@ -27,7 +27,7 @@ class TRIKCONTROL_EXPORT EncoderInterface : public QObject, public DeviceInterfa
 {
 	Q_OBJECT
 
-public slots:
+public Q_SLOTS:
 	/// Returns current encoder reading (in degrees).
 	virtual int read() = 0;
 

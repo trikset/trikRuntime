@@ -42,11 +42,11 @@ public:
 
 	~RangeSensorWorker() override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new data is received from a sensor.
 	void newData(int distance, int rawDistance, const trikKernel::TimeVal &eventTime);
 
-public slots:
+public Q_SLOTS:
 	/// Initializes sensor and begins receiving events from it.
 	void init();
 
@@ -59,7 +59,7 @@ public slots:
 	/// Stops sensor until init() will be called again.
 	void stop();
 
-private slots:
+private Q_SLOTS:
 	/// Updates current reading when new value is ready in event file.
 	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 

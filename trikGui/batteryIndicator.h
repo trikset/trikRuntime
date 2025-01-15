@@ -39,7 +39,7 @@ public:
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
 	explicit BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent = 0);
 
-private slots:
+private Q_SLOTS:
 	void renew();
 
 private:

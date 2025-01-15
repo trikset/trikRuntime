@@ -61,7 +61,7 @@ public:
 
 	void renewFocus() override;
 
-private slots:
+private Q_SLOTS:
 	/// Change current FilesManegerRoot
 	void changeFileManagerRoot(MainWidget::FileManagerRootType const& path);
 

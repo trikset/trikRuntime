@@ -46,7 +46,7 @@ public:
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	EncoderIndicator(const QString &port, trikControl::EncoderInterface &encoder, QWidget *parent = 0);
 
-public slots:
+public Q_SLOTS:
 	void renew() override;
 
 private:

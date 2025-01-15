@@ -101,7 +101,7 @@ void VectorSensorWorker::onNewEvent(int eventType, int code, int value, const tr
 			QWriteLocker locker(&mReadingLock);
 			mReading.swap(mReadingUnsynced);
 			locker.unlock();
-			emit newData(mReading, eventTime);
+			Q_EMIT newData(mReading, eventTime);
 			break;
 		}
 		default:

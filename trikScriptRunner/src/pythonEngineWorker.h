@@ -63,7 +63,7 @@ public:
 	/// Blocks the Thread with QSemaphore until init() method releases it.
 	void waitUntilInited();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
@@ -80,7 +80,7 @@ signals:
 	/// Some message to send, for example, from stdout
 	void textInStdOut(const QString&);
 
-public slots:
+public Q_SLOTS:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
 	/// It is a caller's responsibility to ensure that PythonEngineWorker is in ready state before a call to run()
@@ -111,7 +111,7 @@ public slots:
 	/// Can be safely called from other threads.
 	void brickBeep();
 
-private slots:
+private Q_SLOTS:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 

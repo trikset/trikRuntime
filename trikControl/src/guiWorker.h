@@ -45,7 +45,7 @@ public:
 	/// Returns a widget on which everything is drawn.
 	DisplayWidgetInterface &graphicsWidget();
 
-public slots:
+public Q_SLOTS:
 	/// Shows image with given filename on display. Image is scaled to fill the screen and is cached on first read
 	/// for better performance.
 	void showImage(const QString &fileName);

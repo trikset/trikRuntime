@@ -65,7 +65,7 @@ MotorsWidget::MotorsWidget(trikControl::BrickInterface &brick
 	this->setLayout(outerLayout);
 	mScrollArea->setWidget(leversWidget);
 
-	QTimer::singleShot(0, this, SLOT(fixLeversPosition()));
+	QTimer::singleShot(0, this, &MotorsWidget::fixLeversPosition);
 }
 
 MotorsWidget::~MotorsWidget()
