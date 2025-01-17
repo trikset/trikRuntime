@@ -59,7 +59,7 @@ int TrikPyRunnerTest::run(const QString &script)
 		if (!e.isEmpty()) {
 			rc = EXIT_SCRIPT_ERROR;
 			std::cerr << qPrintable(e) << std::endl;
-		}		
+		}
 		l.exit(rc);
 	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
 	mStdOut.clear();
@@ -74,7 +74,7 @@ int TrikPyRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop l;
 	QObject::connect(&*mScriptRunner, &trikScriptRunner::TrikScriptRunnerInterface::completed
-					 , &l, [&l](const QString &e) {			
+					 , &l, [&l](const QString &e) {
 			l.exit(e.isEmpty() ? EXIT_SCRIPT_SUCCESS
 									   : (qDebug() << e, EXIT_SCRIPT_ERROR));
 	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
@@ -104,7 +104,7 @@ trikScriptRunner::TrikScriptRunner &TrikPyRunnerTest::scriptRunner()
 
 TEST_F(TrikPyRunnerTest, abortBeforeRun)
 {
-	scriptRunner().abortAll();
+	scriptRunner().abort();
 }
 
 TEST_F(TrikPyRunnerTest, syntaxErrorReport)

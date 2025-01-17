@@ -20,6 +20,7 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 #include <QtCore/QDir>
+#include <QtCore/QPointer>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -156,9 +157,9 @@ private:
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * engine);
 
-	trikControl::BrickInterface *mBrick{}; // Does not have ownership.
-	trikNetwork::MailboxInterface * mMailbox{};  // Does not have ownership.
-	TrikScriptControlInterface *mScriptControl{}; // Does not have ownership.
+	QPointer<trikControl::BrickInterface> mBrick; // Does not have ownership.
+	QPointer<trikNetwork::MailboxInterface> mMailbox;  // Does not have ownership.
+	QPointer<TrikScriptControlInterface> mScriptControl; // Does not have ownership.
 	Threading mThreading;
 	QScopedPointer<QScriptEngine> mDirectScriptsEngine;
 	int mScriptId = 0;

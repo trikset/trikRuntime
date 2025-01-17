@@ -16,9 +16,10 @@
 
 #include "trikScriptControlInterface.h"
 #include "trikScriptRunnerInterface.h"
-#include <QFileInfo>
-#include <QMutex>
-#include <QScopedPointer>
+#include <QtCore/QFileInfo>
+#include <QtCore/QMutex>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QPointer>
 #include <array>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -46,7 +47,7 @@ public:
 					 , trikNetwork::MailboxInterface * mailbox
 					 );
 
-	~TrikScriptRunner() override;
+	~TrikScriptRunner() override = default;
 
 	/// Choose default runner type (Python or JavaScript)
 	void setDefaultRunner(ScriptType t);
@@ -75,8 +76,6 @@ public Q_SLOTS:
 	void runDirectCommand(const QString &command) override;
 	/// See corresponding TrikScriptRunnerInterface method
 	void abort() override;
-	/// Aborts all scripts from all engines.
-	void abortAll();
 	/// See corresponding TrikScriptRunnerInterface method
 	void brickBeep() override;
 
@@ -86,8 +85,8 @@ private:
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
 
 	trikControl::BrickInterface &mBrick;
-	trikNetwork::MailboxInterface *mMailbox {};
-	TrikScriptControlInterface *mScriptControl {};
+	QPointer<trikNetwork::MailboxInterface> mMailbox;
+	QPointer<TrikScriptControlInterface> mScriptControl;
 	std::vector<QSharedPointer<TrikScriptRunnerInterface>> mScriptRunnerArray;
 	ScriptType mLastRunner;
 };

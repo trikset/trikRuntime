@@ -61,11 +61,6 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 {
 }
 
-TrikScriptRunner::~TrikScriptRunner()
-{
-	abortAll();
-}
-
 void TrikScriptRunner::setDefaultRunner(ScriptType t)
 {
 	mLastRunner = t;
@@ -154,9 +149,13 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 
 void TrikScriptRunner::run(const QString &script, ScriptType stype, const QString &fileName)
 {
-	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
-
-	fetchRunner(stype)->run(script, fileName);
+	abort();
+	auto prevRunner = mLastRunner;
+	auto runner = fetchRunner(stype);
+	if (prevRunner != stype) {
+		runner->abort();
+	}
+	runner->run(script, fileName);
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
@@ -167,15 +166,6 @@ void TrikScriptRunner::runDirectCommand(const QString &command)
 void TrikScriptRunner::abort()
 {
 	fetchRunner(mLastRunner)->abort();
-}
-
-void TrikScriptRunner::abortAll()
-{
-	for (auto && r: mScriptRunnerArray) {
-		if (r != nullptr) {
-			r->abort();
-		}
-	}
 }
 
 void TrikScriptRunner::brickBeep()
