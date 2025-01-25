@@ -140,6 +140,21 @@ TEST_F(TrikJsRunnerTest, syntaxErrorCheck)
 	ASSERT_EQ(errCode, EXIT_SCRIPT_ERROR);
 }
 
+TEST_F(TrikJsRunnerTest, AbortWhileTrueCheck)
+{
+	QTimer t;
+	t.setInterval(1000);
+	t.setSingleShot(true);
+	using trikScriptRunner::TrikScriptRunnerInterface;
+	QObject::connect(&scriptRunner(), &TrikScriptRunnerInterface::startedScript
+					 , &t, QOverload<>::of(&QTimer::start));
+	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
+	auto err = run("print('before'); while(1) { /**/ } print('after');", "_.js");
+	ASSERT_EQ(mStdOut.toStdString(), "before\n");
+	ASSERT_NE(err, EXIT_TIMEOUT);
+	t.stop();
+}
+
 TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 {
 	const QString test = "s = Date.now();"
