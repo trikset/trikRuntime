@@ -198,32 +198,48 @@ void ScriptEngineWorker::resetBrick()
 	QLOG_INFO() << "Stopping robot";
 	auto currentThread = QThread::currentThread();
 	if ( currentThread != thread()) {
-		QLOG_ERROR() << "Unsafe call to" << __PRETTY_FUNCTION__
+		QLOG_WARN() << "Unsafe call to" << __PRETTY_FUNCTION__
 					 << "from thread" << currentThread
 					 << "instead of" << thread();
+		QEventLoop w;
+		connect(this, &ScriptEngineWorker::resetCompleted, &w, &QEventLoop::quit, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(this, &ScriptEngineWorker::resetBrick);
+		w.exec();
 		return;
 	}
 
 	if (mMailbox) {
-		if (currentThread != mMailbox->thread()) {
-			auto mb = mMailbox;
-			QMetaObject::invokeMethod(mMailbox, [mb](){
-				mb->stopWaiting();
-				mb->clearQueue();
-			}, Qt::BlockingQueuedConnection);
-		} else {
-			mMailbox->stopWaiting();
-			mMailbox->clearQueue();
+		QEventLoop w;
+		QTimer t;
+		t.setSingleShot(true);
+		t.setTimerType(Qt::TimerType::CoarseTimer);
+		t.setInterval(200);
+		connect(&t, &QTimer::timeout, &w, [&w](){ w.exit(-1); }, Qt::QueuedConnection);
+		connect(mMailbox, &trikNetwork::MailboxInterface::resetCompleted, &w, &QEventLoop::quit, Qt::QueuedConnection);
+		t.start();
+		QMetaObject::invokeMethod(mMailbox, &trikNetwork::MailboxInterface::reset);
+		auto rc = w.exec();
+		if (rc < 0) {
+			QLOG_ERROR() << "Mailbox shutdown timeout exceeded";
 		}
 	}
 
 	if (mBrick) {
-		if (currentThread != mBrick->thread()) {
-			QMetaObject::invokeMethod(mBrick, &trikControl::BrickInterface::reset, Qt::BlockingQueuedConnection);
-		} else {
-			mBrick->reset();
+		QEventLoop w;
+		QTimer t;
+		t.setSingleShot(true);
+		t.setTimerType(Qt::TimerType::CoarseTimer);
+		t.setInterval(200000);
+		connect(&t, &QTimer::timeout, &w, [&w](){ w.exit(-1); }, Qt::QueuedConnection);
+		connect(mBrick, &trikControl::BrickInterface::resetCompleted, &w, &QEventLoop::quit, Qt::QueuedConnection);
+		t.start();
+		QMetaObject::invokeMethod(mBrick, &trikControl::BrickInterface::reset);
+		auto rc = w.exec();
+		if (rc < 0) {
+			QLOG_ERROR() << "Brick shutdown timeout exceeded";
 		}
 	}
+	Q_EMIT resetCompleted();
 }
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)

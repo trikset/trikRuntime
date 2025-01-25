@@ -36,26 +36,27 @@ public:
 	/// Returns true if at least one opened mailbox connection presents at the moment.
 	virtual bool isConnected() const = 0;
 
-	/// Sets hull number of this robot and sends a message to update hull number to all known robots.
-	virtual void setHullNumber(int myHullNumber) = 0;
-
 	/// Returns IP of a leader robot, or empty QHostAddress if we are not connected.
 	virtual QString serverIp() const = 0;
 
 	/// Returns our IP address, or empty QHostAddress if we are not connected.
 	virtual QString myIp() const = 0;
 
-	/// Clears message queue.
-	virtual void clearQueue() = 0;
-
-	/// Stops waiting for messages.
-	virtual void stopWaiting() = 0;
-
 	/// Returns true if mailbox is enabled in current configuration.
 	virtual bool isEnabled() = 0;
 
-	/// Sets hull number of this robot and connects to robot by IP and port.
-	virtual void joinNetwork(const QString &ip, int port, int hullNumber) = 0;
+	/// Receives and returns one incoming message. If there is already a message in a queue, returns immediately,
+	/// otherwise blocks until a message is received. Note that if receive() and handler for newMessage() is used
+	/// simultaneously, message will be delivered twice --- first for receive(), then to handler (or handlers).
+	/// @param wait - if false, doesn't wait for new messages and returns empty string if message queue is empty
+	virtual QString receive(bool wait = true) = 0;
+
+	/// Returns hull number of this robot.
+	virtual int myHullNumber() const = 0;
+
+	/// Returns true if there are incoming messages. Returns immediately.
+	virtual bool hasMessages() = 0;
+
 
 public Q_SLOTS:
 	/// Connects to robot by IP and port.
@@ -70,20 +71,24 @@ public Q_SLOTS:
 	/// Sends message to all known robots.
 	virtual void send(const QString &message) = 0;
 
-	/// Returns true if there are incoming messages. Returns immediately.
-	virtual bool hasMessages() = 0;
-
 	/// Tries to get renewed IP address.
 	virtual void renewIp() = 0;
 
-	/// Receives and returns one incoming message. If there is already a message in a queue, returns immediately,
-	/// otherwise blocks until a message is received. Note that if receive() and handler for newMessage() is used
-	/// simultaneously, message will be delivered twice --- first for receive(), then to handler (or handlers).
-	/// @param wait - if false, doesn't wait for new messages and returns empty string if message queue is empty
-	virtual QString receive(bool wait = true) = 0;
+	/// Sets hull number of this robot and sends a message to update hull number to all known robots.
+	virtual void setHullNumber(int myHullNumber) = 0;
 
-	/// Returns hull number of this robot.
-	virtual int myHullNumber() const = 0;
+	/// Sets hull number of this robot and connects to robot by IP and port.
+	virtual void joinNetwork(const QString &ip, int port, int hullNumber) = 0;
+
+	/// Clears message queue.
+	virtual void clearQueue() = 0;
+
+	/// Stops waiting for messages.
+	virtual void stopWaiting() = 0;
+
+	/// Reset to default state. Clear queue, stop waiting messages, etc.
+	/// Must emit resetCompleted
+	virtual void reset() = 0;
 
 Q_SIGNALS:
 	/// Emitted when new message is received from a robot with given hull number. Note that if receive() and
@@ -93,6 +98,9 @@ Q_SIGNALS:
 
 	/// Emitted when a mailbox either receives the first connection (connected == true) or loses the last one.
 	void connectionStatusChanged(bool connected);
+
+	/// Emitted when object reset to default state is finished
+	void resetCompleted();
 };
 
 }
