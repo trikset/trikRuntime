@@ -62,6 +62,7 @@ TrikJavaScriptRunner::~TrikJavaScriptRunner()
 	mWorkerThread.quit();
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
+	mFinishing = true;
 	wait.exec();
 	// The thread has finished, events have been processed above
 	constexpr auto POLITE_TIMEOUT = 100;
@@ -120,7 +121,8 @@ void TrikJavaScriptRunner::runDirectCommand(const QString &command)
 
 void TrikJavaScriptRunner::abort()
 {
-	if (mScriptEngineWorker) {
+	// Ugly and unsafe to call these methods from an incorrect thread, but who cares ...
+	if (mScriptEngineWorker && !mFinishing ) {
 		mScriptEngineWorker->stopScript();
 		mScriptEngineWorker->resetBrick();
 	}

@@ -74,6 +74,7 @@ private:
 
 	QHash<int, QString> mScriptFileNames;
 	QScopedPointer<TrikVariablesServer> mVariablesServer;
+	QAtomicInt mFinishing { 0 };
 };
 
 }
