@@ -196,13 +196,34 @@ void ScriptEngineWorker::stopScript()
 void ScriptEngineWorker::resetBrick()
 {
 	QLOG_INFO() << "Stopping robot";
-
-	if (mMailbox) {
-		mMailbox->stopWaiting();
-		mMailbox->clearQueue();
+	auto currentThread = QThread::currentThread();
+	if ( currentThread != thread()) {
+		QLOG_ERROR() << "Unsafe call to" << __PRETTY_FUNCTION__
+					 << "from thread" << currentThread
+					 << "instead of" << thread();
+		return;
 	}
 
-	mBrick->reset();
+	if (mMailbox) {
+		if (currentThread != mMailbox->thread()) {
+			auto mb = mMailbox;
+			QMetaObject::invokeMethod(mMailbox, [mb](){
+				mb->stopWaiting();
+				mb->clearQueue();
+			}, Qt::BlockingQueuedConnection);
+		} else {
+			mMailbox->stopWaiting();
+			mMailbox->clearQueue();
+		}
+	}
+
+	if (mBrick) {
+		if (currentThread != mBrick->thread()) {
+			QMetaObject::invokeMethod(mBrick, &trikControl::BrickInterface::reset, Qt::BlockingQueuedConnection);
+		} else {
+			mBrick->reset();
+		}
+	}
 }
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)
