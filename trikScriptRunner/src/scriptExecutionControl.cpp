@@ -81,20 +81,6 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 	if (diff <= precision) {
 		return;
 	}
-#if 0 // looks useless because QEventLoop.exec with PreciseTimer can do the same
-	QCoreApplication::processEvents();
-	diff = milliseconds - elapsed.elapsed();
-	if (diff <= precision) {
-		return;
-	}
-
-	for(QEventLoop l;l.processEvents();) {
-		diff = milliseconds - elapsed.elapsed();
-		if (diff <= precision) {
-			return;
-		}
-	}
-#endif
 	constexpr auto preciseTimerDelta = 20;
 
 	if (diff > 100
