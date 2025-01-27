@@ -139,6 +139,8 @@ private Q_SLOTS:
 	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
 
 private:
+	Q_SIGNAL void resetCompleted();
+
 	/// State of a script
 	/// @value ready - worker is waiting for a new script
 	/// @value starting - worker is preparing itself to running a script

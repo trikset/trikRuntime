@@ -53,8 +53,10 @@ public:
 	/// Registers required metatypes
 	BrickInterface();
 
-	/// Do reset (stop motors, reset keys, clear screen, etc). We should call it before executing any script
+	/// Do reset (stop motors, reset keys, clear screen, etc).
+	/// Should be called before executing any script
 	/// with this instance.
+	/// Must emit resetCompleted signal
 	virtual void reset() = 0;
 
 	/// Returns a widget on which display output is drawn.
@@ -173,6 +175,9 @@ Q_SIGNALS:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no
 	/// deferred deinitialization (no video sensors are on, for example), signal will NOT be emitted.
 	void stopped();
+
+	/// Emitted when brick finished resetting to default stopped state
+	void resetCompleted();
 };
 
 }

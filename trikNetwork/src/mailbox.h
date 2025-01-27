@@ -80,6 +80,8 @@ public Q_SLOTS:
 
 	void setHullNumber(int myHullNumber) override;
 
+	void reset() override;
+
 Q_SIGNALS:
 	/// Used to interrupt waiting for new message.
 	void stopWaitingSignal();

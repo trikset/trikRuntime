@@ -66,6 +66,13 @@ void Mailbox::setHullNumber(int hullNumber)
 	}
 }
 
+void Mailbox::reset()
+{
+	stopWaiting();
+	clearQueue();
+	Q_EMIT resetCompleted();
+}
+
 int Mailbox::myHullNumber() const
 {
 	int res;
