@@ -47,7 +47,7 @@ public:
 
 	int maxValue() const override;
 
-public slots:
+public Q_SLOTS:
 	/// Returns current reading of a sensor.
 	int read() override;
 

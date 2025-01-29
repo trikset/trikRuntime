@@ -48,7 +48,7 @@ public:
 
 	int exec() override;
 
-public slots:
+public Q_SLOTS:
 	void renewFocus() override;
 
 private:

@@ -39,7 +39,7 @@ public:
 
 	~SoundSensorWorker() override;
 
-public slots:
+public Q_SLOTS:
 	/// Initializes an ALSA.
 	/// @param showOnDisplay - true if we want an image from a DSP to be drawn on robot display.
 	void init(bool showOnDisplay);

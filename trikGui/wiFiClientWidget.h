@@ -85,7 +85,7 @@ public:
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
+private Q_SLOTS:
 	/// Called when information about networks in range is changed in WiFi controller.
 	void onNetworksInfoUpdated();
 

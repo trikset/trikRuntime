@@ -37,6 +37,6 @@ EventCodeInterface *Event::code(int codeNum)
 void Event::onEvent(int event, int code, int value, int eventTime)
 {
 	if (event == mEventType) {
-		emit on(code, value, eventTime);
+		Q_EMIT on(code, value, eventTime);
 	}
 }

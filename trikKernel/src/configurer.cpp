@@ -76,13 +76,21 @@ QString Configurer::attributeByDevice(const QString &deviceClass, const QString 
 	}
 
 	throw MalformedConfigException(
-				QString("Unknown attribute '%1' of device '%2'").arg(attributeName).arg(deviceClass));
+				QString("Unknown attribute '%1' of device '%2'").arg(attributeName, deviceClass));
 }
 
-QString Configurer::attributeByPort(const QString &port, const QString &attributeName) const
+QString Configurer::getDefaultOrException(QString *defaultValue, const QString &error) const
+{
+	if (defaultValue){
+		return *defaultValue;
+	}
+	throw MalformedConfigException(error);
+}
+
+QString Configurer::attributeByPort(const QString &port, const QString &attributeName, QString *defaultValue) const
 {
 	if (!mModelConfiguration.contains(port)) {
-		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
+		return getDefaultOrException(defaultValue, QString("Port '%1' is not configured").arg(port));
 	}
 
 	if (mModelConfiguration[port].attributes.contains(attributeName)) {
@@ -110,13 +118,13 @@ QString Configurer::attributeByPort(const QString &port, const QString &attribut
 			}
 
 			if (!device.portSpecificAttributes.contains(port)) {
-				throw MalformedConfigException(QString("Device type '%1' is not allowed on port %2.")
-						.arg(deviceType).arg(port));
+				return getDefaultOrException(defaultValue, QString("Device type '%1' is not allowed on port %2.")
+						.arg(deviceType, port));
 			}
 		} else {
-			throw MalformedConfigException(
+			return getDefaultOrException(defaultValue,
 					QString("Device type '%1' has device class '%2' which is not listed in 'deviceClasses' section.")
-							.arg(deviceType).arg(deviceClass));
+							.arg(deviceType, deviceClass));
 		}
 	}
 
@@ -133,8 +141,8 @@ QString Configurer::attributeByPort(const QString &port, const QString &attribut
 		}
 	}
 
-	throw MalformedConfigException(QString("Unknown attribute '%1' of device '%2' on port '%3'")
-			.arg(attributeName).arg(deviceType).arg(port));
+	return getDefaultOrException(defaultValue, QString("Unknown attribute '%1' of device '%2' on port '%3'")
+			.arg(attributeName, deviceType, port));
 }
 
 bool Configurer::isEnabled(const QString &deviceName) const
@@ -158,7 +166,7 @@ QStringList Configurer::ports() const
 QString Configurer::deviceType(const QString &port) const
 {
 	if (!mModelConfiguration.contains(port)) {
-	    throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
+		throw MalformedConfigException(QString("Port '%1' is not configured").arg(port));
 	}
 
 	const QString &deviceType = mModelConfiguration.value(port).deviceType;
@@ -179,8 +187,7 @@ QString Configurer::deviceClass(const QString &port) const
 
 	if (!mDevices.contains(deviceType)) {
 		throw MalformedConfigException(QString("Port '%1' is configured to use unknown device class '%2'")
-				.arg(port)
-				.arg(deviceType));
+				.arg(port, deviceType));
 	}
 
 	return deviceType;

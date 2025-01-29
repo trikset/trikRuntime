@@ -37,7 +37,7 @@ public:
 	/// @param height - height of a digit.
 	DigitSelector(bool &editingMode, int height);
 
-signals:
+Q_SIGNALS:
 	/// Digit is changed by user.
 	void valueChanged(int newValue);
 

@@ -38,6 +38,7 @@ ScriptThread::~ScriptThread()
 
 void ScriptThread::run()
 {
+	mThreading.releaseThreadInitializationSemaphore();
 	QLOG_INFO() << "Started thread" << this;
 
 	qsrand(QDateTime::currentMSecsSinceEpoch());
@@ -68,7 +69,7 @@ void ScriptThread::abort()
 	if (isEvaluating()) {
 		mEngine->abortEvaluation();
 	}
-	emit stopRunning();
+	Q_EMIT stopRunning();
 }
 
 QString ScriptThread::id() const
@@ -97,6 +98,6 @@ void ScriptThread::onGetVariables(const QString &propertyName)
 			it.next();
 			json[it.name()] = it.value().toString();
 		}
-		emit variablesReady(json);
+		Q_EMIT variablesReady(json);
 	}
 }

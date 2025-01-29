@@ -48,7 +48,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	void init(bool showOnDisplay) override;
 
 	void detect() override;

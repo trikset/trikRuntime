@@ -37,6 +37,9 @@ OTHER_FILES += \
 	$$PWD/test-system-config.xml \
 	$$PWD/test-model-config.xml \
 
+implementationIncludes(tests/testUtils)
+links(testUtils)
+
 trik_new_age {
     copyToDestdir($$PWD/kernel-4.14/test-system-config.xml, now)
     copyToDestdir($$PWD/kernel-4.14/test-model-config.xml, now)

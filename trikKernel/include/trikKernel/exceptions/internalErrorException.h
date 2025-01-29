@@ -21,7 +21,8 @@
 namespace trikKernel {
 
 /// Exception that is thrown when something is wrong with implementation of trikRuntime.
-class InternalErrorException : public TrikRuntimeException
+class InternalErrorException // clazy:exclude=copyable-polymorphic
+		: public TrikRuntimeException
 {
 public:
 	/// Constructor.

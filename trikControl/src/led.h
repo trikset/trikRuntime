@@ -46,7 +46,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	void red() override;
 
 	void green() override;

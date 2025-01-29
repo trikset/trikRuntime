@@ -25,6 +25,7 @@
 #include "scriptable.h"
 #include "utils.h"
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QsLog.h>
 
@@ -119,7 +120,7 @@ ScriptEngineWorker::ScriptEngineWorker(trikControl::BrickInterface *brick
 
 void ScriptEngineWorker::brickBeep()
 {
-	mBrick->playTone(2500, 20);
+	mBrick->playTone(2500, 150);
 }
 
 void ScriptEngineWorker::evalInclude(const QString &filename, QScriptEngine * const engine)
@@ -182,7 +183,7 @@ void ScriptEngineWorker::stopScript()
 		// Instead of deleteLater() we use zero timer
 		QTimer::singleShot(0, this, [this]() { mDirectScriptsEngine.reset(); });
 
-		emit completed(msg, mScriptId);
+		Q_EMIT completed(msg, mScriptId);
 	}
 
 	mState = ready;
@@ -195,13 +196,50 @@ void ScriptEngineWorker::stopScript()
 void ScriptEngineWorker::resetBrick()
 {
 	QLOG_INFO() << "Stopping robot";
-
-	if (mMailbox) {
-		mMailbox->stopWaiting();
-		mMailbox->clearQueue();
+	auto currentThread = QThread::currentThread();
+	if ( currentThread != thread()) {
+		QLOG_WARN() << "Unsafe call to" << __PRETTY_FUNCTION__
+					 << "from thread" << currentThread
+					 << "instead of" << thread();
+		QEventLoop w;
+		connect(this, &ScriptEngineWorker::resetCompleted, &w, &QEventLoop::quit, Qt::QueuedConnection);
+		QMetaObject::invokeMethod(this, &ScriptEngineWorker::resetBrick);
+		w.exec();
+		return;
 	}
 
-	mBrick->reset();
+	if (mMailbox) {
+		QEventLoop w;
+		QTimer t;
+		t.setSingleShot(true);
+		t.setTimerType(Qt::TimerType::CoarseTimer);
+		t.setInterval(200);
+		connect(&t, &QTimer::timeout, &w, [&w](){ w.exit(-1); }, Qt::QueuedConnection);
+		connect(mMailbox, &trikNetwork::MailboxInterface::resetCompleted, &w, &QEventLoop::quit, Qt::QueuedConnection);
+		t.start();
+		QMetaObject::invokeMethod(mMailbox, &trikNetwork::MailboxInterface::reset);
+		auto rc = w.exec();
+		if (rc < 0) {
+			QLOG_ERROR() << "Mailbox shutdown timeout exceeded";
+		}
+	}
+
+	if (mBrick) {
+		QEventLoop w;
+		QTimer t;
+		t.setSingleShot(true);
+		t.setTimerType(Qt::TimerType::CoarseTimer);
+		t.setInterval(200000);
+		connect(&t, &QTimer::timeout, &w, [&w](){ w.exit(-1); }, Qt::QueuedConnection);
+		connect(mBrick, &trikControl::BrickInterface::resetCompleted, &w, &QEventLoop::quit, Qt::QueuedConnection);
+		t.start();
+		QMetaObject::invokeMethod(mBrick, &trikControl::BrickInterface::reset);
+		auto rc = w.exec();
+		if (rc < 0) {
+			QLOG_ERROR() << "Brick shutdown timeout exceeded";
+		}
+	}
+	Q_EMIT resetCompleted();
 }
 
 void ScriptEngineWorker::run(const QString &script, int scriptId)
@@ -220,7 +258,7 @@ void ScriptEngineWorker::doRun(const QString &script)
 	mThreading.waitForAll();
 	const QString error = mThreading.errorMessage();
 	QLOG_INFO() << "ScriptEngineWorker: evaluation ended with message" << error;
-	emit completed(error, mScriptId);
+	Q_EMIT completed(error, mScriptId);
 }
 
 void ScriptEngineWorker::runDirect(const QString &command, int scriptId)
@@ -263,7 +301,7 @@ void ScriptEngineWorker::startScriptEvaluation(int scriptId)
 	QLOG_INFO() << "ScriptEngineWorker: starting script" << scriptId << ", thread:" << QThread::currentThread();
 	mState = starting;
 	mScriptId = scriptId;
-	emit startedScript(mScriptId);
+	Q_EMIT startedScript(mScriptId);
 }
 
 void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngine * const engine)
@@ -275,11 +313,11 @@ void ScriptEngineWorker::evalExternalFile(const QString & filepath, QScriptEngin
 			const auto & message = engine->uncaughtException().toString();
 			const auto & backtrace = engine->uncaughtExceptionBacktrace().join("\n");
 			const auto & error = tr("Line %1: %2").arg(QString::number(line), message) + "\nBacktrace"+ backtrace;
-			emit completed(error, mScriptId);
+			Q_EMIT completed(error, mScriptId);
 			QLOG_ERROR() << "Uncaught exception with error" << error;
 		}
 	} else {
-		emit completed(tr("File %1 not found").arg(filepath), mScriptId);
+		Q_EMIT completed(tr("File %1 not found").arg(filepath), mScriptId);
 		QLOG_ERROR() << "File for eval not found, path:" << filepath;
 	}
 }

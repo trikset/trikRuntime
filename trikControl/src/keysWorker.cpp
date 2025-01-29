@@ -45,7 +45,7 @@ void KeysWorker::init()
 void KeysWorker::reset()
 {
 	mLock.lockForWrite();
-	emit stopWaiting();
+	Q_EMIT stopWaiting();
 	mWasPressed.clear();
 	mButtonCode = 0;
 	mButtonValue = 0;
@@ -85,7 +85,7 @@ void KeysWorker::readKeysEvent(int eventType, int code, int value
 			mLock.unlock();
 		}
 
-		emit buttonPressed(mButtonCode, mButtonValue);
+		Q_EMIT buttonPressed(mButtonCode, mButtonValue);
 
 		mButtonCode = 0;
 		mButtonValue = 0;

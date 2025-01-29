@@ -34,7 +34,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	float readVoltage() override;
 
 	float readRawDataVoltage() override;

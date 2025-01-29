@@ -72,7 +72,7 @@ public:
 	/// Counts time interval between two packed data of time using TimeVal
 	Q_INVOKABLE int timeInterval(int packedTimeLeft, int packedTimeRight) override;
 
-public slots:
+public Q_SLOTS:
 	/// Starts event loop for script.
 	void run() override;
 
@@ -82,7 +82,10 @@ public slots:
 	/// Resets script execution state, clearing all flags and stopping all timers.
 	void reset() override;
 
-signals:
+
+	// NOTE: If this incorrectly overriden signals removed, JS test expose the problem:
+	// quitSignal and stopWaiting are not delivered to the recivers. Very strange.
+Q_SIGNALS:
 	/// Emitted when script requested system to abort execution.
 	void quitSignal();
 

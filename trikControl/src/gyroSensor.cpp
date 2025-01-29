@@ -213,7 +213,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 		mResult[6] = -euler.y();
 		locker.unlock();
 
-		emit newData(mResult, t);
+		Q_EMIT newData(mResult, t);
 	}
 }
 
@@ -245,7 +245,7 @@ void GyroSensor::countCalibrationParameters()
 	setCalibrationValues(mCalibrationValues);
 
 	mIsCalibrated = true;
-	emit calibrationFinished();
+	Q_EMIT calibrationFinished();
 }
 
 void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const trikKernel::TimeVal &t)

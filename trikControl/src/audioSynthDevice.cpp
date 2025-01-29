@@ -51,7 +51,7 @@ void AudioSynthDevice::start(int hzFreq)
 		mBuffer.resize(length);
 		generate(mBuffer.data(), length);
 	}
-	emit readyRead();
+	Q_EMIT readyRead();
 }
 
 void AudioSynthDevice::stop()

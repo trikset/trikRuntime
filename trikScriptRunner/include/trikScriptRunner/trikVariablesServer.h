@@ -28,17 +28,17 @@ public:
 	/// Constructor
 	TrikVariablesServer();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when there is a new connection with a HTTP-request of variables values
 	/// @param propertyName - name of variables prefix, i.e prefix "web" for variable "web.light"
 	void getVariables(const QString &propertyName);
 
-public slots:
+public Q_SLOTS:
 	/// Sends HTTP response with JSON data about variables
 	/// @param json - JSON container for variables values
 	void sendHTTPResponse(const QJsonObject &json);
 
-private slots:
+private Q_SLOTS:
 	/// Appends new connection for handling it
 	void onNewConnection();
 

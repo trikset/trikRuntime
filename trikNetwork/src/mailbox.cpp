@@ -66,6 +66,13 @@ void Mailbox::setHullNumber(int hullNumber)
 	}
 }
 
+void Mailbox::reset()
+{
+	stopWaiting();
+	clearQueue();
+	Q_EMIT resetCompleted();
+}
+
 int Mailbox::myHullNumber() const
 {
 	int res;
@@ -111,7 +118,7 @@ void Mailbox::clearQueue()
 
 void Mailbox::stopWaiting()
 {
-	emit stopWaitingSignal();
+	Q_EMIT stopWaitingSignal();
 }
 
 bool Mailbox::isEnabled()
@@ -190,5 +197,5 @@ void Mailbox::updateConnectionStatus()
 	int activeConnections;
 	QMetaObject::invokeMethod(mWorker.data(), [this, &activeConnections](){
 							activeConnections = mWorker->activeConnections();}, Qt::BlockingQueuedConnection);
-	emit connectionStatusChanged(activeConnections > 0);
+	Q_EMIT connectionStatusChanged(activeConnections > 0);
 }

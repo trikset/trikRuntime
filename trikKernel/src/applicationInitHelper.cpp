@@ -39,7 +39,7 @@ using namespace trikKernel;
 
 ApplicationInitHelper::ApplicationInitHelper(QCoreApplication &app)
 	: mApp(app)
-	, mLoggingHelper(new LoggingHelper(Paths::logsPath()))
+	, mLoggingHelper(new LoggingHelper(Paths::logsPath(), QsLogging::ErrorLevel))
 {
 	mApp.setApplicationVersion(trikKernel::version);
 

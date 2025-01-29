@@ -22,7 +22,7 @@ namespace trikGui {
 class Controller;
 
 /// Launches "autorun.js" file in "scripts" directory if it exists.
-class AutoRunner : QObject
+class AutoRunner : public QObject
 {
 	Q_OBJECT
 
@@ -31,7 +31,7 @@ public:
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	explicit AutoRunner(Controller &controller);
 
-private slots:
+private Q_SLOTS:
 	void doLaunch();
 
 private:

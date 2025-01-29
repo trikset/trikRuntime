@@ -40,7 +40,7 @@ public:
 	/// Gets maximal possible value for sensor reading received by read() slot.
 	virtual int maxValue() const = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Returns current reading of a sensor.
 	virtual int read() = 0;
 

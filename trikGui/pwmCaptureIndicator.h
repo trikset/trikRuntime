@@ -39,7 +39,7 @@ public:
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	PwmCaptureIndicator(const QString &port, trikControl::PwmCaptureInterface &pwmCapture, QWidget *parent = nullptr);
 
-public slots:
+public Q_SLOTS:
 	void renew() override;
 
 private:

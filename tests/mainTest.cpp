@@ -17,9 +17,10 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/QCoreApplication>
 
-
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
+
+#include <testUtils/eventFilter.h>
 
 int main(int argc, char *argv[])
 {
@@ -27,9 +28,11 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 
-	Q_UNUSED(app);
+	tests::utils::EventFilter eventFilter;
+	// useful to debug events
+	// app.installEventFilter(&eventFilter);
 
-	trikKernel::LoggingHelper loggingHelper(".");
+	trikKernel::LoggingHelper loggingHelper(".", QsLogging::Level::WarnLevel);
 	Q_UNUSED(loggingHelper);
 
 	return RUN_ALL_TESTS();

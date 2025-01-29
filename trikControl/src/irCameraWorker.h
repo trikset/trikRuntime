@@ -43,7 +43,7 @@ public:
 	/// Stops frames capturing.
 	void stop();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new image provided by worker.
 	void newImage(QVector<int32_t>);
 
@@ -53,7 +53,7 @@ signals:
 	/// Emitted when frames capturing successfully stopped.
 	void stopped();
 
-private slots:
+private Q_SLOTS:
 	/// Reads new frame with raw data from IR camera.
 	void processFrame();
 

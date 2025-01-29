@@ -69,7 +69,7 @@ public:
 	/// Returns a list of currently known available WiFi networks. Use scanRequest() method to refresh.
 	QList<ScanResult> scanResult();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when scanning for available networks initiated by scan() is finished and results are available
 	/// and ready to be obtained by scanResults method.
 	void scanFinished();
@@ -87,7 +87,7 @@ signals:
 	/// Emitted when something goes wrong.
 	void error(const QString &message);
 
-private slots:
+private Q_SLOTS:
 	/// Slot that processes messages from wpa_supplicant.
 	void receiveMessages();
 

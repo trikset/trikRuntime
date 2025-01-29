@@ -24,6 +24,6 @@ EventCode::EventCode(int code)
 void EventCode::onEvent(int code, int value, int eventTime)
 {
 	if (code == mEventCode) {
-		emit on(value, eventTime);
+		Q_EMIT on(value, eventTime);
 	}
 }

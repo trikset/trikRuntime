@@ -48,7 +48,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	void reset() override;
 
 	bool wasPressed(int code) override;
@@ -57,11 +57,11 @@ public slots:
 
 	int buttonCode(bool wait = true) override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when a button's state changed.
 	void buttonStateChanged();
 
-private slots:
+private Q_SLOTS:
 	void changeButtonState(int code, int value);
 
 private:

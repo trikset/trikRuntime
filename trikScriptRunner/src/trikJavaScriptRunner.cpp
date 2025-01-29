@@ -62,7 +62,21 @@ TrikJavaScriptRunner::~TrikJavaScriptRunner()
 	mWorkerThread.quit();
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
+	mFinishing = true;
 	wait.exec();
+	// The thread has finished, events have been processed above
+	constexpr auto POLITE_TIMEOUT = 100;
+	if (!mWorkerThread.wait(POLITE_TIMEOUT)) {
+		QLOG_WARN() << "JS thread failed to exit gracefully in" << POLITE_TIMEOUT
+					 << "ms, re-trying with 3x timeout";
+		if (!mWorkerThread.wait(3*POLITE_TIMEOUT)) {
+			QLOG_ERROR() << "JS thread failed to exit gracefully in 3x timeout,"
+						 << " next attempt is unlimited timeout and may hang";
+			mWorkerThread.wait();
+		} else {
+			QLOG_INFO() << "JS thread succeeded to shutdown with 3x timeout";
+		}
+	}
 }
 
 void TrikJavaScriptRunner::registerUserFunction(const QString &name, QScriptEngine::FunctionSignature function)
@@ -107,7 +121,8 @@ void TrikJavaScriptRunner::runDirectCommand(const QString &command)
 
 void TrikJavaScriptRunner::abort()
 {
-	if (mScriptEngineWorker) {
+	// Ugly and unsafe to call these methods from an incorrect thread, but who cares ...
+	if (mScriptEngineWorker && !mFinishing ) {
 		mScriptEngineWorker->stopScript();
 		mScriptEngineWorker->resetBrick();
 	}
@@ -116,9 +131,9 @@ void TrikJavaScriptRunner::abort()
 void TrikJavaScriptRunner::onScriptStart(int scriptId)
 {
 	if (scriptId != -1 && mScriptFileNames.contains(scriptId)) {
-		emit startedScript(mScriptFileNames[scriptId], scriptId);
+		Q_EMIT startedScript(mScriptFileNames[scriptId], scriptId);
 	} else {
-		emit startedDirectScript(scriptId);
+		Q_EMIT startedDirectScript(scriptId);
 	}
 }
 

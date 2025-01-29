@@ -37,8 +37,11 @@ public:
 	/// Returns value of given attribute of given device.
 	QString attributeByDevice(const QString &deviceClass, const QString &attributeName) const;
 
+	/// Checks if there is a desired default value or if an exception can be thrown.
+	QString getDefaultOrException(QString *defaultValue, const QString &error) const;
+
 	/// Returns value of given attribute of a device on given port.
-	QString attributeByPort(const QString &port, const QString &attributeName) const;
+	QString attributeByPort(const QString &port, const QString &attributeName, QString *defaultValue = nullptr) const;
 
 	/// Returns true if device is enabled in current configuration (either explicitly enabled in model configuration
 	/// or can not be disabled at all).

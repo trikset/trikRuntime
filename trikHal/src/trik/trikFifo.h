@@ -39,7 +39,7 @@ public:
 	bool close() override;
 	QString fileName() override;
 
-private slots:
+private Q_SLOTS:
 	/// Called when there is new data on a FIFO.
 	void readFile();
 

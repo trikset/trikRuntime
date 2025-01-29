@@ -50,7 +50,7 @@ public:
 
 	long maxValue() const override;
 
-public slots:
+public Q_SLOTS:
 	/// Returns three readings of PWM signal frequency.
 	QVector<int> frequency() override;
 

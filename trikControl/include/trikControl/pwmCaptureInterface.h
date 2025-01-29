@@ -35,7 +35,7 @@ public:
 	/// Gets maximal possible value for PWM capture reading received by duty() slot.
 	virtual long maxValue() const = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Returns three readings of PWM signal frequency.
 	virtual QVector<int> frequency() = 0;
 

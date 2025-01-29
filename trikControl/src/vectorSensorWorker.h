@@ -47,15 +47,15 @@ public:
 	/// Execute init() after worker thread started.
 	void init();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new sensor reading is ready.
 	void newData(QVector<int> reading, const trikKernel::TimeVal &eventTime);
 
-public slots:
+public Q_SLOTS:
 	/// Returns current raw reading of a sensor.
 	QVector<int> read();
 
-private slots:
+private Q_SLOTS:
 	/// Updates current reading when new value is ready in event file.
 	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 

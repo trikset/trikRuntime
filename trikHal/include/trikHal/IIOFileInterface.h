@@ -47,7 +47,7 @@ public:
 	/// Returns true if a file is opened.
 	virtual bool isOpened() const = 0;
 
-signals:
+Q_SIGNALS:
 	void newData(QVector<int>, const trikKernel::TimeVal &eventTime);
 };
 }

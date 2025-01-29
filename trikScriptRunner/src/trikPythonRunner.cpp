@@ -17,6 +17,7 @@
 #include <stdexcept>
 #include <PythonQt.h>
 #include <QCoreApplication>
+#include <QAbstractEventDispatcher>
 
 #include "trikPythonRunner.h"
 #include "src/pythonEngineWorker.h"
@@ -51,10 +52,32 @@ TrikPythonRunner::~TrikPythonRunner()
 	connect(mWorkerThread, &QThread::finished, &wait, &QEventLoop::quit);
 	mScriptEngineWorker->stopScript();
 	mWorkerThread->quit();
+
+	// HACK: fix dead-lock in QThread::wait after QThread::quit
+	// Chaotic use of `processEvents' in code results in dead lock
+	// in the main thread event loop in the internal processEvents call.
+	// See commit message for details
+	if (auto *dispatcher = QAbstractEventDispatcher::instance(mWorkerThread)) {
+		connect(dispatcher, &QAbstractEventDispatcher::aboutToBlock
+			, dispatcher, &QAbstractEventDispatcher::interrupt);
+	}
+
 	// We need an event loop to process pending calls from dying thread to the current
 	// mWorkerThread.wait(); // <-- !!! blocks pending calls
 	wait.exec();
-	delete mWorkerThread;
+	// The thread has finished, events have been processed above
+	constexpr auto POLITE_TIMEOUT = 100;
+	if (!mWorkerThread->wait(POLITE_TIMEOUT)) {
+		QLOG_WARN() << "Python thread failed to exit gracefully in" << POLITE_TIMEOUT
+					 << "ms, re-trying with 3x timeout";
+		if (!mWorkerThread->wait(3*POLITE_TIMEOUT)) {
+			QLOG_ERROR() << "Python thread failed to exit gracefully in 3x timeout,"
+						 << " next attempt is unlimited timeout and may hang";
+			mWorkerThread->wait();
+		} else {
+			QLOG_INFO() << "Python thread succeeded to shutdown with 3x timeout";
+		}
+	}
 }
 
 void TrikPythonRunner::run(const QString &script, const QString &fileName)

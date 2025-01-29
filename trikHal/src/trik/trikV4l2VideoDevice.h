@@ -41,11 +41,11 @@ public:
 	/// Get last frame
 	const QVector<uint8_t> & getFrame() const { return mFrame; }
 
-signals:
+Q_SIGNALS:
 	/// Signal when photo was made
 	void dataReady();
 
-public slots:
+public Q_SLOTS:
 	/// Read data from v4l2 buffers
 	/// @param fd - file descriptor
 	void readFrameData(int fd);

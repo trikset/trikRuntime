@@ -17,10 +17,8 @@
 #include <QtCore/QString>
 #include <memory>
 #include <trikKernel/trikKernelDeclSpec.h>
-
-namespace QsLogging {
-class Destination;
-}
+#include <QsLogLevel.h>
+#include <QsLogDest.h>
 
 namespace trikKernel {
 
@@ -30,7 +28,7 @@ class TRIKKERNEL_EXPORT LoggingHelper
 public:
 	/// Constructor. Initializes logger with default settings, supposed to be alive until program finishes (RAII idiom).
 	/// @param pathToLog - path to "trik.log" file that will be created or appended by logger. Supposed to end with "/".
-	LoggingHelper(const QString &pathToLog);
+	LoggingHelper(const QString &pathToLog, QsLogging::Level consoleLogLevel);
 
 	~LoggingHelper();
 

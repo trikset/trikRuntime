@@ -79,7 +79,7 @@ bool Gamepad::disconnect()
 	if (wasConnected) {
 		mConnected = false;
 		reset();
-		emit disconnected();
+		Q_EMIT disconnected();
 	}
 	return wasConnected;
 }
@@ -88,7 +88,7 @@ void Gamepad::onNewData(const QString &data)
 {
 	if (!isConnected()) {
 		mConnected = true;
-		emit connected();
+		Q_EMIT connected();
 	}
 
 	const QStringList cmd = data.split(" ", QString::SkipEmptyParts);
@@ -145,13 +145,13 @@ void Gamepad::onNewData(const QString &data)
 void Gamepad::handlePadUp(int padId)
 {
 	mPads[padId].isPressed = false;
-	emit padUp(padId);
+	Q_EMIT padUp(padId);
 }
 
 void Gamepad::handleWheel(int percent)
 {
 	mWheelPercent = percent;
-	emit wheelEvent(percent);
+	Q_EMIT wheelEvent(percent);
 }
 
 void Gamepad::handlePad(int padId, int x, int y)
@@ -159,7 +159,7 @@ void Gamepad::handlePad(int padId, int x, int y)
 	mPads[padId].isPressed = true;
 	mPads[padId].x = x;
 	mPads[padId].y = y;
-	emit pad(padId, x, y);
+	Q_EMIT pad(padId, x, y);
 }
 
 void Gamepad::handleButton(int button, int pressed)
@@ -179,7 +179,7 @@ void Gamepad::handleButton(int button, int pressed)
 
 	tmr->start();
 
-	emit Gamepad::button(button, pressed);
+	Q_EMIT Gamepad::button(button, pressed);
 }
 
 void Gamepad::handleKeepalive(int waitForMs)
@@ -194,7 +194,7 @@ void Gamepad::handleKeepalive(int waitForMs)
 void Gamepad::handleCustom(const QString &message)
 {
 	mLastCustomMessage = message;
-	emit custom(message);
+	Q_EMIT custom(message);
 }
 
 void Gamepad::onButtonStateClearTimerTimeout()

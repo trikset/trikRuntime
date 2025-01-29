@@ -39,7 +39,7 @@ public:
 
 	DisplayWidgetInterface &graphicsWidget() override;
 
-public slots:
+public Q_SLOTS:
 	void setBackground(const QString &color) override;
 	void showImage(const QString &fileName) override;
 

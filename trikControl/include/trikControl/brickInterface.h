@@ -53,8 +53,10 @@ public:
 	/// Registers required metatypes
 	BrickInterface();
 
-	/// Do reset (stop motors, reset keys, clear screen, etc). We should call it before executing any script
+	/// Do reset (stop motors, reset keys, clear screen, etc).
+	/// Should be called before executing any script
 	/// with this instance.
+	/// Must emit resetCompleted signal
 	virtual void reset() = 0;
 
 	/// Returns a widget on which display output is drawn.
@@ -63,7 +65,7 @@ public:
 	/// Returns version of system configuration file.
 	virtual QString configVersion() const = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Configures given device on given port. Port must be listed in model-config.xml, device shall be listed
 	/// in system-config.xml, and device shall be able to be configured on a port (it is also described
 	/// in system-config.xml). Previously configured device is properly shut down, and new device is created
@@ -87,90 +89,95 @@ public slots:
 	/// Returns reference to motor of a given type on a given port
 	virtual trikControl::MotorInterface *motor(const QString &port) = 0;
 
+	/// Stops listening given event device and destroys its watcher object.
+	virtual void stopEventDevice(const QString &deviceFile) = 0;
+
+public:
 	/// Returns reference to PWM signal capture device on a given port.
-	virtual trikControl::PwmCaptureInterface *pwmCapture(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::PwmCaptureInterface *pwmCapture(const QString &port) = 0;
 
 	/// Returns reference to sensor on a given port.
-	virtual trikControl::SensorInterface *sensor(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::SensorInterface *sensor(const QString &port) = 0;
 
 	/// Retruns list of ports for motors of a given type.
-	virtual QStringList motorPorts(MotorInterface::Type type) const = 0;
+	Q_INVOKABLE virtual QStringList motorPorts(MotorInterface::Type type) const = 0;
 
 	/// Returns list of PWM signal capture device ports.
-	virtual QStringList pwmCapturePorts() const = 0;
+	Q_INVOKABLE virtual QStringList pwmCapturePorts() const = 0;
 
 	/// Returns list of ports for sensors of a given type.
-	virtual QStringList sensorPorts(SensorInterface::Type type) const = 0;
+	Q_INVOKABLE virtual QStringList sensorPorts(SensorInterface::Type type) const = 0;
 
 	/// Returns list of encoder ports
-	virtual QStringList encoderPorts() const = 0;
+	Q_INVOKABLE virtual QStringList encoderPorts() const = 0;
 
 	/// Returns on-board accelerometer.
-	virtual trikControl::VectorSensorInterface *accelerometer() = 0;
+	Q_INVOKABLE virtual trikControl::VectorSensorInterface *accelerometer() = 0;
 
 	/// Returns on-board gyroscope.
-	virtual trikControl::GyroSensorInterface *gyroscope() = 0;
+	Q_INVOKABLE virtual trikControl::GyroSensorInterface *gyroscope() = 0;
 
 	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
-	virtual trikControl::LineSensorInterface *lineSensor(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::LineSensorInterface *lineSensor(const QString &port) = 0;
 
 	/// Returns high-level color sensor using camera on given port (video0 or video1).
-	virtual trikControl::ColorSensorInterface *colorSensor(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::ColorSensorInterface *colorSensor(const QString &port) = 0;
 
 	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
-	virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns lidar on given port.
-	virtual trikControl::LidarInterface *lidar() = 0;
+	Q_INVOKABLE virtual trikControl::LidarInterface *lidar() = 0;
 
 	/// Returns i2c device object
-	virtual trikControl::I2cDeviceInterface *i2c(int bus, int address) = 0;
+	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *i2c(int bus, int address) = 0;
 
 	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
-	virtual QVector<uint8_t> getStillImage() = 0;
+	Q_INVOKABLE virtual QVector<uint8_t> getStillImage() = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
-	virtual trikControl::SoundSensorInterface *soundSensor(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::SoundSensorInterface *soundSensor(const QString &port) = 0;
 
 	/// Returns encoder on given port.
-	virtual trikControl::EncoderInterface *encoder(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::EncoderInterface *encoder(const QString &port) = 0;
 
 	/// Returns battery.
-	virtual trikControl::BatteryInterface *battery() = 0;
+	Q_INVOKABLE virtual trikControl::BatteryInterface *battery() = 0;
 
 	/// Returns keys on a control brick.
-	virtual trikControl::KeysInterface *keys() = 0;
+	Q_INVOKABLE virtual trikControl::KeysInterface *keys() = 0;
 
 	/// Returns class that provides drawing on display.
-	virtual trikControl::DisplayInterface *display() = 0;
+	Q_INVOKABLE virtual trikControl::DisplayInterface *display() = 0;
 
 	/// Returns LED control class.
-	virtual trikControl::LedInterface *led() = 0;
+	Q_INVOKABLE virtual trikControl::LedInterface *led() = 0;
 
 	/// Returns handler for Android gamepad.
-	virtual trikControl::GamepadInterface *gamepad() = 0;
+	Q_INVOKABLE virtual trikControl::GamepadInterface *gamepad() = 0;
 
 	/// Returns custom FIFO file which can be used as sensor.
-	virtual trikControl::FifoInterface *fifo(const QString &port) = 0;
+	Q_INVOKABLE virtual trikControl::FifoInterface *fifo(const QString &port) = 0;
 
 	/// Returns marker.
-	virtual trikControl::MarkerInterface *marker() = 0;
+	Q_INVOKABLE virtual trikControl::MarkerInterface *marker() = 0;
 
 	/// Returns IR camera
-	virtual trikControl::IrCameraInterface *irCamera() = 0;
+	Q_INVOKABLE virtual trikControl::IrCameraInterface *irCamera() = 0;
 
 	/// Returns custom event device that can be used as a sensor, for example, for custom gamepad support.
 	/// Creates new event device on first access to a file, then returns already opened device.
 	/// Ownership retained by brick.
-	virtual trikControl::EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
+	Q_INVOKABLE virtual trikControl::EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
 
-	/// Stops listening given event device and destroys its watcher object.
-	virtual void stopEventDevice(const QString &deviceFile) = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no
 	/// deferred deinitialization (no video sensors are on, for example), signal will NOT be emitted.
 	void stopped();
+
+	/// Emitted when brick finished resetting to default stopped state
+	void resetCompleted();
 };
 
 }

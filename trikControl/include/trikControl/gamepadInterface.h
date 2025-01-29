@@ -25,39 +25,40 @@ class TRIKCONTROL_EXPORT GamepadInterface : public QObject
 {
 	Q_OBJECT
 
-public slots:
+public Q_SLOTS:
 	/// Clear data about previous pad events.
 	virtual void reset() = 0;
 
+public:
 	/// Returns true, if given pad button is pressed, and clears "pressed" state for that button.
 	/// Buttons have indexes from 1 to 5.
-	virtual bool buttonWasPressed(int buttonNumber) = 0;
+	Q_INVOKABLE virtual bool buttonWasPressed(int buttonNumber) = 0;
 
 	/// Returns true, if given pad button is pressed now. Buttons have indexes from 1 to 5.
-	virtual bool buttonIsPressed(int buttonNumber) = 0;
+	Q_INVOKABLE virtual bool buttonIsPressed(int buttonNumber) = 0;
 
 	/// Returns current state of the pad, true if pressed.
-	virtual bool isPadPressed(int pad) const = 0;
+	Q_INVOKABLE virtual bool isPadPressed(int pad) const = 0;
 
 	/// Returns current X coordinate of given pad or -1 if this pad is not pressed.
-	virtual int padX(int pad) const = 0;
+	Q_INVOKABLE virtual int padX(int pad) const = 0;
 
 	/// Returns current Y coordinate of given pad or -1 if this pad is not pressed.
-	virtual int padY(int pad) const = 0;
+	Q_INVOKABLE virtual int padY(int pad) const = 0;
 
 	/// Returns current tilt angle of Android device when "wheel" is turned on.
-	virtual int wheel() const = 0;
+	Q_INVOKABLE virtual int wheel() const = 0;
 
 	/// Returns true if a gamepad is currently connected to a robot.
-	virtual bool isConnected() const = 0;
+	Q_INVOKABLE virtual bool isConnected() const = 0;
 
 	/// Disconnects a gamepad.
 	/// Emits `disconnected` signal and then resets button state if a gamepad was connected to a robot.
 	/// Returns true if a gamepad was connected
-	virtual bool disconnect() = 0;
+	Q_INVOKABLE virtual bool disconnect() = 0;
 
 
-signals:
+Q_SIGNALS:
 	/// Emitted when user pulls finger off a pad.
 	/// @param pad - id of a pad on which the event occurs.
 	void padUp(int pad);

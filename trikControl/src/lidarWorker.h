@@ -52,7 +52,7 @@ public:
 	/// Returning all available raw data.
 	Q_INVOKABLE QVector<int> readRaw() const;
 
-private slots:
+private Q_SLOTS:
 	/// Called when there is new data on serial port
 	void readData();
 

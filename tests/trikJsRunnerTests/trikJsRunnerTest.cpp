@@ -23,8 +23,13 @@
 #include <QRandomGenerator>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QOperatingSystemVersion>
+
 
 using namespace tests;
+constexpr auto SCRIPT_EXECUTION_TIMEOUT = 10000;
+constexpr auto EXIT_TIMEOUT = -93;
+constexpr auto EXIT_SCRIPT_ERROR = 113;
 constexpr auto EXIT_SCRIPT_SUCCESS = EXIT_SUCCESS;
 
 QScriptValue scriptAssert(QScriptContext *context, QScriptEngine *engine)
@@ -64,55 +69,56 @@ void TrikJsRunnerTest::TearDown()
 int TrikJsRunnerTest::run(const QString &script, const QString &file)
 {
 	QEventLoop wait;
-	auto volatile alreadyCompleted = false;
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted, &wait]()
+					 , &wait, [&wait](QString error, int)
 	{
-		alreadyCompleted = true;
-		Q_ASSERT(wait.isRunning());
-		wait.quit();
-	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+		if (!error.isEmpty()) {
+			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
+		}
+		wait.exit(error.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR);
+	}, Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
+	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 
 	mScriptRunner->run(script, file);
-	auto exitCode = 0;
-	if (!alreadyCompleted) {
-		exitCode = wait.exec();
-	}
-	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
+	auto exitCode = wait.exec();
+	if (!mStdOut.isEmpty())
+		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
 }
 
 int TrikJsRunnerTest::runDirectCommandAndWaitForQuit(const QString &script)
 {
 	QEventLoop wait;
-	auto volatile alreadyCompleted = false;
-	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed, &wait, &QEventLoop::quit);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunner::completed
-					 , &wait, [&alreadyCompleted]()
+					 , &wait,  [&wait](QString error, int)
 	{
-		alreadyCompleted = true;
-	} ) ;
-	QTimer::singleShot(10000, &wait, std::bind(&QEventLoop::exit, &wait, -1));
+		if (!error.isEmpty()) {
+			std::cout << "Engine returned error:" << error.toStdString() << std::endl;
+		}
+		wait.exit(error.isEmpty() ? EXIT_SCRIPT_SUCCESS : EXIT_SCRIPT_ERROR);
+	} , Qt::QueuedConnection ) ; // prevent `exit` before `exec` via QueuedConnection
+	QTimer::singleShot(SCRIPT_EXECUTION_TIMEOUT, &wait, std::bind(&QEventLoop::exit, &wait, EXIT_TIMEOUT));
 	mScriptRunner->runDirectCommand(script);
 
-	auto exitCode = 0;
-	if (!alreadyCompleted) {
-		exitCode = wait.exec();
-	}
-	tests::utils::Wait::wait(0); // process events to get latest update for mStdOut
+	auto exitCode = wait.exec();
+	if (!mStdOut.isEmpty())
+		std::cout << "stdout:" << mStdOut.toStdString() << std::endl;
 	return exitCode;
 }
 
 int TrikJsRunnerTest::runFromFile(const QString &fileName)
 {
-	auto fileContents = trikKernel::FileUtils::readFromFile("data/" + fileName);
+	try {
+		QString fileContents = trikKernel::FileUtils::readFromFile(":/data/"+fileName);
 
-#ifdef Q_OS_WIN
-	fileContents = fileContents.replace("&&", ";");
-#endif
-
-	return run(fileContents, fileName);
+		if (QOperatingSystemVersion::currentType() == QOperatingSystemVersion::OSType::Windows) {
+			fileContents = fileContents.replace("&&", ";");
+		}
+		return run(fileContents, fileName);
+	} catch (trikKernel::TrikRuntimeException &e) {
+		std::cout << e.what() << std::endl;
+		return EXIT_SCRIPT_ERROR;
+	}
 }
 
 trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
@@ -120,7 +126,7 @@ trikScriptRunner::TrikScriptRunner &TrikJsRunnerTest::scriptRunner()
 	return *mScriptRunner;
 }
 
-TEST_F(TrikJsRunnerTest, sanityCheckJs)
+TEST_F(TrikJsRunnerTest, sanityCheck)
 {
 	auto errCode = run("1", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
@@ -128,10 +134,42 @@ TEST_F(TrikJsRunnerTest, sanityCheckJs)
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
+TEST_F(TrikJsRunnerTest, syntaxErrorCheck)
+{
+	auto errCode = run("/1", "_.js");
+	ASSERT_EQ(errCode, EXIT_SCRIPT_ERROR);
+}
+
+TEST_F(TrikJsRunnerTest, AbortWhileTrueCheck)
+{
+	QTimer t;
+	t.setInterval(1000);
+	t.setSingleShot(true);
+	using trikScriptRunner::TrikScriptRunnerInterface;
+	QObject::connect(&scriptRunner(), &TrikScriptRunnerInterface::startedScript
+					 , &t, QOverload<>::of(&QTimer::start));
+	QObject::connect(&t, &QTimer::timeout, &scriptRunner(), &TrikScriptRunnerInterface::abort);
+	auto err = run("print('before'); while(1) { /**/ } print('after');", "_.js");
+	ASSERT_EQ(mStdOut.toStdString(), "before\n");
+	ASSERT_NE(err, EXIT_TIMEOUT);
+	t.stop();
+}
+
 TEST_F(TrikJsRunnerTest, scriptWaitQuit)
 {
-	auto err = runDirectCommandAndWaitForQuit("script.wait(50);script.quit();");
-	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
+	const QString test = "s = Date.now();"
+				   "timeout=%1;"
+				   "script.wait(timeout);"
+				   "e = Date.now();"
+				   "print('Elapsed ', e-s, ' ms with expected ', timeout, ' ms');"
+				   "/*assert(Math.abs(e-s-timeout) <= Math.max(2, timeout/111));*/"
+				   "script.quit();";
+
+	for (auto &&t: { 1000, 500, 200, 100, 50, 20, 10, 5, 3, 0}) {
+		auto err = runDirectCommandAndWaitForQuit(test.arg(t));
+		EXPECT_EQ(err, EXIT_SCRIPT_SUCCESS);
+		mStdOut.clear();
+	}
 }
 
 TEST_F(TrikJsRunnerTest, twoProgramsTest)
@@ -204,7 +242,6 @@ TEST_F(TrikJsRunnerTest, directCommandTest)
 	" test', true);");
 	ASSERT_FALSE(testFile.exists());
 	runDirectCommandAndWaitForQuit("script.quit();");
-	tests::utils::Wait::wait(300);
 }
 
 TEST_F(TrikJsRunnerTest, directCommandThatQuitsImmediatelyTest)

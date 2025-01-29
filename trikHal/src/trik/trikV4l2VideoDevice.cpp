@@ -371,7 +371,7 @@ void TrikV4l2VideoDevice::readFrameData(int fd) {
 			QLOG_INFO() << "V4l2 captured 0 bytes, reset internal frame buffer";
 			decltype(mFrame)().swap(mFrame);
 		}
-		emit dataReady();
+		Q_EMIT dataReady();
 	}
 	// WARN: Do not enable notifier until we store process data from mFrame variable!
 }

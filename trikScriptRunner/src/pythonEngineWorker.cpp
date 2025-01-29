@@ -108,7 +108,7 @@ void PythonEngineWorker::init()
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
 		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
 			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
-							.arg(PY_VERSION).arg(Py_GetVersion());
+							.arg(PY_VERSION, Py_GetVersion());
 			throw trikKernel::InternalErrorException(e);
 		}
 		constexpr auto varName = "TRIK_PYTHONPATH";
@@ -141,7 +141,7 @@ void PythonEngineWorker::init()
 		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
 		Py_SetProgramName(mProgramName);
 
-		if (!qgetenv("TRIK_PYTHON_DEBUG").isEmpty()) {
+		if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
 			Py_VerboseFlag = 3;
 			Py_InspectFlag = 1;
 			Py_DebugFlag = 2;
@@ -192,7 +192,8 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
-		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
+		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::ExternalModule
+				   | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
 			QTimer::singleShot(0, this, [this, str](){ Q_EMIT this->textInStdOut(str);});
@@ -291,7 +292,7 @@ void PythonEngineWorker::resetBrick()
 
 void PythonEngineWorker::brickBeep()
 {
-	mBrick->playTone(2500, 20);
+	mBrick->playTone(2500, 150);
 }
 
 void PythonEngineWorker::stopScript()
@@ -364,14 +365,15 @@ void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 
 void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
 {
-	emit startedScript("", 0);
+	Q_EMIT startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick->keys()->reset();
 	mState = running;
 	auto ok = recreateContext();
+	QCoreApplication::processEvents();
 	if (!ok) {
-		emit completed(mErrorMessage,0);
+		Q_EMIT completed(mErrorMessage,0);
 		return;
 	}
 
@@ -386,12 +388,14 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
+	QCoreApplication::processEvents(); //dispatch events before reset
 	mScriptExecutionControl->reset();
 	releaseContext();
+	QCoreApplication::processEvents(); //dispatch events before emitting the signal
 	if (wasError) {
-		emit completed(mErrorMessage, 0);
+		Q_EMIT completed(mErrorMessage, 0);
 	} else {
-		emit completed("", 0);
+		Q_EMIT completed("", 0);
 	}
 }
 
@@ -403,18 +407,19 @@ void PythonEngineWorker::runDirect(const QString &command)
 
 void PythonEngineWorker::doRunDirect(const QString &command)
 {
-	emit startedDirectScript(0);
+	Q_EMIT startedDirectScript(0);
 	if (PythonQt::self()->hadError()) {
 		PythonQt::self()->clearError();
 		mErrorMessage.clear();
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
+	QCoreApplication::processEvents();
 	auto wasError = PythonQt::self()->hadError();
 	if (wasError) {
-		emit completed(mErrorMessage, 0);
+		Q_EMIT completed(mErrorMessage, 0);
 	} else {
-		emit completed("", 0);
+		Q_EMIT completed("", 0);
 	}
 }
 
