@@ -26,6 +26,6 @@ TRIK_PYTHON=python3.${TRIK_PYTHON3_VERSION_MINOR}
             --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats
 # Force SDK version compatible with Qt 5.12
 system_profiler -json SPDeveloperToolsDataType | jq '.SPDeveloperToolsDataType[].spdevtools_path' || :
-sudo xcode-select -s /Applications/Xcode_13.1.app/Contents/Developer
+sudo xcode-select -s /Applications/Xcode_14.3.app/Contents/Developer
 xcodebuild -showsdks
 xcrun -sdk macosx --show-sdk-path
