@@ -42,5 +42,5 @@ void EventDeviceWorker::init()
 
 void EventDeviceWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
 {
-	emit newEvent(eventType, code, value, eventTime.packedUInt32());
+	Q_EMIT newEvent(eventType, code, value, eventTime.packedUInt32());
 }

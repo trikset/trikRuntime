@@ -50,14 +50,14 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	void init(bool showOnDisplay) override;
 
 	QVector<int> read(int m, int n) override;
 
 	void stop() override;
 
-private slots:
+private Q_SLOTS:
 	void onStopped();
 
 private:

@@ -15,25 +15,24 @@
 #include <gtest/gtest.h>
 
 #include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QApplication>
-#endif
+#include <QtCore/QCoreApplication>
 
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
+
+#include <testUtils/eventFilter.h>
 
 int main(int argc, char *argv[])
 {
 	::testing::InitGoogleTest(&argc, argv);
 
-	QApplication app(argc, argv);
+	QCoreApplication app(argc, argv);
 
-	Q_UNUSED(app);
+	tests::utils::EventFilter eventFilter;
+	// useful to debug events
+	// app.installEventFilter(&eventFilter);
 
-	trikKernel::LoggingHelper loggingHelper(".");
+	trikKernel::LoggingHelper loggingHelper(".", QsLogging::Level::WarnLevel);
 	Q_UNUSED(loggingHelper);
 
 	return RUN_ALL_TESTS();

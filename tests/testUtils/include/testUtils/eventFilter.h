@@ -1,4 +1,4 @@
-/* Copyright 2016 CyberTech Labs Ltd.
+/* Copyright 2024, Iakov Kirilenko
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11,12 +11,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License. */
+#pragma once
+#include <QObject>
+#include "testUtilsDeclSpec.h"
 
-#include "powerLevel.h"
+namespace tests {
+namespace utils {
 
-using namespace trikGui;
-
-PowerLevel::Level PowerLevel::currentLevel()
+/// Event filter for debug purposes
+class TESTUTILS_EXPORT EventFilter: public QObject
 {
-	return Level::twelveVolt;
+	Q_OBJECT
+public:
+	/// ctor
+	explicit EventFilter(QObject *parent = nullptr):QObject(parent) {}
+
+	/// default method to filter events
+	bool eventFilter(QObject *o, QEvent *e) override;
+};
+
+}
 }

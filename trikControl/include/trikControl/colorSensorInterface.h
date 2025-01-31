@@ -28,11 +28,11 @@ class TRIKCONTROL_EXPORT ColorSensorInterface : public QObject, public DeviceInt
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 	/// Emitted when sensor is stopped successfully.
 	void stopped();
 
-public slots:
+public Q_SLOTS:
 	/// Initializes a camera.
 	/// @param showOnDisplay - true if we want an image from a camera to be drawn on robot display.
 	virtual void init(bool showOnDisplay) = 0;

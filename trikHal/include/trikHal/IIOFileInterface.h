@@ -30,6 +30,11 @@ class TRIKHAL_EXPORT IIOFileInterface : public QObject
 	Q_OBJECT
 
 public:
+	enum class ScanType {
+	    Undefined,
+	    Accel,
+	    Gyro
+	};
 	/// Opens IIO file and starts listening for events.
 	virtual bool open() = 0;
 
@@ -42,7 +47,7 @@ public:
 	/// Returns true if a file is opened.
 	virtual bool isOpened() const = 0;
 
-signals:
+Q_SIGNALS:
 	void newData(QVector<int>, const trikKernel::TimeVal &eventTime);
 };
 }

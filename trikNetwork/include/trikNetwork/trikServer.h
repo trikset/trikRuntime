@@ -46,11 +46,14 @@ public:
 	/// returns true on successful start
 	Q_INVOKABLE bool startServer(quint16 port);
 
-public slots:
+	/// Track the status to the main init
+	void preinitConnection(Connection * const connection);
+
+public Q_SLOTS:
 	/// Broadcasts message across all opened connections.
 	void sendMessage(const QString &message);
 
-signals:
+Q_SIGNALS:
 	/// Emitted when we get the first connection established.
 	void connected();
 
@@ -75,7 +78,7 @@ protected:
 	/// by startConnection() call but not finished to open yet, it will not be found.
 	Connection *connection(const QHostAddress &ip) const;
 
-private slots:
+private Q_SLOTS:
 	/// Called when connection thread finishes.
 	void onConnectionClosed(trikNetwork::Connection *connection);
 
@@ -85,6 +88,8 @@ private:
 
 	/// Function that provides actual connection objects.
 	std::function<Connection *()> mConnectionFactory;
+
+	QSet<Connection *> notPreparedConnections;
 };
 
 }

@@ -13,15 +13,15 @@
 # limitations under the License.
 
 proc ClassSection { old line } {
-  if { [regexp {public:} $line] || [regexp {public slots:} $line] || [regexp {signals:} $line] } {
+  if { [regexp {public:} $line] || [regexp {public (Q_SLOTS|slots):} $line] || [regexp {(Q_SIGNALS|signals):} $line] } {
     return "public"
   }
 
-  if { [regexp {protected:} $line] || [regexp {protected slots:} $line] } {
+  if { [regexp {protected:} $line] || [regexp {protected (Q_SLOTS|slots):} $line] } {
     return "protected"
   }
 
-  if { [regexp {private:} $line] || [regexp {private slots:} $line] } {
+  if { [regexp {private:} $line] || [regexp {private (Q_SLOTS|slots):} $line] } {
     return "private"
   }
 

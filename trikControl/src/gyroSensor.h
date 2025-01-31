@@ -49,7 +49,8 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer);
+	           , const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer
+	           , const QString &port);
 
 	~GyroSensor() override;
 
@@ -68,7 +69,7 @@ public:
 	Q_SLOT void setCalibrationValues(const QVector<int> &values) override;
 
 
-private slots:
+private Q_SLOTS:
 	/// Counts current angle velocities (3-axis) in mdps, current tilts (3-axis) in mdps
 	/// and packed time of current event.
 	void countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t);
@@ -89,6 +90,8 @@ private:
 
 	VectorSensorWorker *mVectorSensorWorker; // Has ownership
 	QThread mWorkerThread;
+
+	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 
 	QTimer mCalibrationTimer;
 	bool mIsCalibrated;

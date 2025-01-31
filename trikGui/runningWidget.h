@@ -57,7 +57,7 @@ public:
 
 	void renewFocus() override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when running widget wants to hide itself.
 	void hideMe(int scriptId);
 

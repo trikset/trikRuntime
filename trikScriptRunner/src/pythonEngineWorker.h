@@ -25,12 +25,7 @@
 #include <trikNetwork/mailboxInterface.h>
 
 #include "scriptExecutionControl.h"
-#ifdef TRIK_NOPYTHON
-#else
-#  include "PythonQt_QtAll.h"
-#  include "PyTrikControl0.h"
-void PythonQt_init_PyTrikControl(PyObject* module);
-#endif
+#include "PythonQtObjectPtr.h"
 
 namespace trikScriptRunner
 {
@@ -45,7 +40,7 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	PythonEngineWorker(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
-					   , QSharedPointer<TrikScriptControlInterface> scriptControl
+					   , TrikScriptControlInterface *scriptControl
 					   );
 
 	~PythonEngineWorker();
@@ -68,7 +63,7 @@ public:
 	/// Blocks the Thread with QSemaphore until init() method releases it.
 	void waitUntilInited();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
@@ -85,7 +80,7 @@ signals:
 	/// Some message to send, for example, from stdout
 	void textInStdOut(const QString&);
 
-public slots:
+public Q_SLOTS:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
 	/// It is a caller's responsibility to ensure that PythonEngineWorker is in ready state before a call to run()
@@ -109,11 +104,14 @@ public slots:
 	/// Recreates Main Context made by init, returns true when were errors
 	bool recreateContext();
 
+	/// Cleanup Python context
+	void releaseContext();
+
 	/// Plays "beep" sound.
 	/// Can be safely called from other threads.
 	void brickBeep();
 
-private slots:
+private Q_SLOTS:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
@@ -152,7 +150,7 @@ private:
 	void addSearchModuleDirectory(const QDir &path);
 
 	trikControl::BrickInterface *mBrick {};
-	QSharedPointer<TrikScriptControlInterface> mScriptExecutionControl;
+	TrikScriptControlInterface *mScriptExecutionControl {}; // Does not have ownership.
 	trikNetwork::MailboxInterface * const mMailbox {};  // Does not have ownership.
 
 	State mState  { State::ready };

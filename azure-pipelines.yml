@@ -22,16 +22,16 @@ jobs:
       matrix:
         Linux release:
           imageName: 'ubuntu-latest'
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=ccache CONFIG+=force_debug_info CONFIG+=sanitize_undefined CONFIG+=sanitizer"
+          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=ccache CONFIG+=force_debug_info CONFIG+=sanitize_undefined CONFIG+=trik_not_brick CONFIG+=sanitizer"
         Linux debug:
           imageName: 'ubuntu-latest'
           CONFIG: debug
           VERA: true
           TRANSLATIONS: true
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
+          QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         macOs release:
           imageName: 'macOS-12'
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info CONFIG+=trik_nopython"
+          QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info CONFIG+=trik_nopython"
           TRIK_PYTHON3_VERSION_MINOR: 10
           TRIK_QT_VERSION: 5.15
 
@@ -57,6 +57,6 @@ jobs:
       displayName: Process caches
     - bash: scripts/azure/script.sh
       displayName: Build
-      timeoutInMinutes: 20
+      timeoutInMinutes: 25
     - bash: scripts/azure/after_script.sh
       displayName: After script

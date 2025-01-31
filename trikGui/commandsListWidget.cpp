@@ -95,7 +95,7 @@ void CommandsListWidget::keyPressEvent(QKeyEvent *event)
 		case 3: {
 			const QString title(tr("Choose waiting time (ms):"));
 			CommandSettingsWidget commandSettingsWidget(title, 5);
-			emit newWidget(commandSettingsWidget);
+			Q_EMIT newWidget(&commandSettingsWidget);
 			commandSettingsWidget.exec();
 
 			const int value = commandSettingsWidget.value();
@@ -168,7 +168,7 @@ void CommandsListWidget::motorBehaviour()
 {
 	const QString title(tr("Choose motors power (%): "));
 	CommandSettingsWidget commandSettingsWidget(title, 2);
-	emit newWidget(commandSettingsWidget);
+	Q_EMIT newWidget(&commandSettingsWidget);
 	commandSettingsWidget.exec();
 
 	mValue = mCommands.currentItem()->text();
@@ -187,7 +187,7 @@ void CommandsListWidget::motorBehaviour()
 void CommandsListWidget::sensorBehaviour(const QString &port, bool isEncoder)
 {
 	SensorSettingsWidget sensorSettingsWidget(port, isEncoder);
-	emit newWidget(sensorSettingsWidget);
+	Q_EMIT newWidget(&sensorSettingsWidget);
 	sensorSettingsWidget.exec();
 
 	mValue = mCommands.currentItem()->text();

@@ -22,6 +22,6 @@ using namespace tests::utils;
 void Wait::wait(int msecs)
 {
 	QEventLoop loop;
-	QTimer::singleShot(msecs, &loop, &QEventLoop::quit);
+	QTimer::singleShot(msecs, Qt::TimerType::PreciseTimer, &loop, &QEventLoop::quit);
 	loop.exec();
 }

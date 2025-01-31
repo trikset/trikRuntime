@@ -117,8 +117,8 @@ void SystemSettingsWidget::emitCheckedDirPath()
 {
 	QRadioButton const* const current = qobject_cast<QRadioButton const*>(mButtonGroup.checkedButton());
 	if (current == mOnlyScriptsButton) {
-		emit currentFilesDirPath(MainWidget::FileManagerRootType::scriptsDir);
+		Q_EMIT currentFilesDirPath(MainWidget::FileManagerRootType::scriptsDir);
 	} else {
-		emit currentFilesDirPath(MainWidget::FileManagerRootType::allFS);
+		Q_EMIT currentFilesDirPath(MainWidget::FileManagerRootType::allFS);
 	}
 }

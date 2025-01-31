@@ -42,7 +42,7 @@ public:
 	QString fileName() const override;
 	bool isOpened() const override;
 
-private slots:
+private Q_SLOTS:
 	/// Tries to open event file and if opened successfully stops waiting event loop.
 	void tryOpenEventFile();
 

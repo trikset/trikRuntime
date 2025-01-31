@@ -48,7 +48,7 @@ public:
 	/// @returns true if the script engine is evaluating a script at the moment
 	bool isEvaluating() const;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when event loop must be stopped.
 	void stopRunning();
 
@@ -56,7 +56,7 @@ signals:
 	/// @param json - JSON container for variables values
 	void variablesReady(const QJsonObject &json);
 
-public slots:
+public Q_SLOTS:
 	/// Catch variables values from current script execution
 	/// @param propertyName - name of variables prefix, i.e prefix "web" for variable "web.light"
 	void onGetVariables(const QString &propertyName);

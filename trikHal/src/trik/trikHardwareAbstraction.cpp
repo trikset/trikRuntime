@@ -65,9 +65,9 @@ FifoInterface *TrikHardwareAbstraction::createFifo(const QString &fileName) cons
 	return new TrikFifo(fileName);
 }
 
-IIOFileInterface *TrikHardwareAbstraction::createIIOFile(const QString &fileName) const
+IIOFileInterface *TrikHardwareAbstraction::createIIOFile(const QString &fileName, const QString &scanType) const
 {
-	return new TrikIIOFile(fileName);
+	return new TrikIIOFile(fileName, scanType);
 }
 
 InputDeviceFileInterface *TrikHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

@@ -24,7 +24,10 @@
 
 #include "pythonEngineWorker.h"
 #include <Python.h>
-#include "PythonQtConversion.h"
+#include <PythonQtConversion.h>
+#include <PythonQt_QtAll.h>
+
+void PythonQt_init_QtPyTrikControl(PyObject* module);
 
 using namespace trikScriptRunner;
 
@@ -45,7 +48,7 @@ static void abortPythonInterpreter() {
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 		, trikNetwork::MailboxInterface * const mailbox
-		, QSharedPointer<TrikScriptControlInterface> scriptControl
+		, TrikScriptControlInterface *scriptControl
 		)
 	: mBrick(brick)
 	, mScriptExecutionControl(scriptControl)
@@ -68,6 +71,7 @@ PythonEngineWorker::~PythonEngineWorker()
 		// is destroyed, otherwise python crashes
 		PythonQtGILScope _;
 		Py_MakePendingCalls();
+		releaseContext();
 		mMainContext = nullptr;
 		if (mPyInterpreter) {
 			Py_EndInterpreter(mPyInterpreter);
@@ -76,6 +80,7 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
+		PythonQt::preCleanup();
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #endif
@@ -103,7 +108,7 @@ void PythonEngineWorker::init()
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
 		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
 			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
-							.arg(PY_VERSION).arg(Py_GetVersion());
+							.arg(PY_VERSION, Py_GetVersion());
 			throw trikKernel::InternalErrorException(e);
 		}
 		constexpr auto varName = "TRIK_PYTHONPATH";
@@ -136,7 +141,7 @@ void PythonEngineWorker::init()
 		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
 		Py_SetProgramName(mProgramName);
 
-		if (!qgetenv("TRIK_PYTHON_DEBUG").isEmpty()) {
+		if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
 			Py_VerboseFlag = 3;
 			Py_InspectFlag = 1;
 			Py_DebugFlag = 2;
@@ -187,7 +192,8 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
-		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::PythonAlreadyInitialized);
+		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::ExternalModule
+				   | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
 			QTimer::singleShot(0, this, [this, str](){ Q_EMIT this->textInStdOut(str);});
@@ -195,6 +201,7 @@ void PythonEngineWorker::init()
 		});
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
+		PythonQt_init_QtPyTrikControl(mMainContext);
 	}
 	if (!mMainContext) {
 		mMainContext = PythonQt::self()->getMainModule();
@@ -215,6 +222,23 @@ bool PythonEngineWorker::recreateContext()
 	}
 	PythonQt::self()->clearError();
 	return initTrik();
+}
+
+void PythonEngineWorker::releaseContext()
+{
+	if (!mMainContext)
+		return;
+
+	mMainContext.evalScript("import sys;"
+				"to_delete = [];"
+				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
+				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
+				"[sys.modules.pop(x) for x in to_delete];"
+				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
+				"from gc import collect as gc_collect;"
+				"gc_collect();");
+
+
 }
 
 bool PythonEngineWorker::importTrikPy()
@@ -243,18 +267,8 @@ void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 
 bool PythonEngineWorker::initTrik()
 {
-	mMainContext.evalScript("import sys;"
-				"to_delete = [];"
-				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
-				"to_delete = [x for x in sys.modules.keys() if x not in _init_m];"
-				"[sys.modules.pop(x) for x in to_delete];"
-				"[delattr(sys.modules[__name__], x) for x in dir() if x[0] != '_' and x != 'sys'];"
-				"from gc import collect as gc_collect;"
-				"gc_collect();");
-	PythonQt_init_PyTrikControl(mMainContext);
-
 	mMainContext.addObject("_trik_brick_cpp", mBrick);
-	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl.data());
+	mMainContext.addObject("_trik_script_cpp", mScriptExecutionControl);
 	mMainContext.addObject("_trik_mailbox_cpp", mMailbox);
 	mMainContext.evalScript("import builtins;"
 				"builtins._trik_brick_cpp = _trik_brick_cpp;"
@@ -278,7 +292,7 @@ void PythonEngineWorker::resetBrick()
 
 void PythonEngineWorker::brickBeep()
 {
-	mBrick->playTone(2500, 20);
+	mBrick->playTone(2500, 150);
 }
 
 void PythonEngineWorker::stopScript()
@@ -351,14 +365,15 @@ void PythonEngineWorker::run(const QString &script, const QFileInfo &scriptFile)
 
 void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFile)
 {
-	emit startedScript("", 0);
+	Q_EMIT startedScript("", 0);
 	mErrorMessage.clear();
 	/// When starting script execution (by any means), clear button states.
 	mBrick->keys()->reset();
 	mState = running;
 	auto ok = recreateContext();
+	QCoreApplication::processEvents();
 	if (!ok) {
-		emit completed(mErrorMessage,0);
+		Q_EMIT completed(mErrorMessage,0);
 		return;
 	}
 
@@ -373,11 +388,14 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 
 	auto wasError = mState != ready && PythonQt::self()->hadError();
 	mState = ready;
+	QCoreApplication::processEvents(); //dispatch events before reset
 	mScriptExecutionControl->reset();
+	releaseContext();
+	QCoreApplication::processEvents(); //dispatch events before emitting the signal
 	if (wasError) {
-		emit completed(mErrorMessage, 0);
+		Q_EMIT completed(mErrorMessage, 0);
 	} else {
-		emit completed("", 0);
+		Q_EMIT completed("", 0);
 	}
 }
 
@@ -389,18 +407,19 @@ void PythonEngineWorker::runDirect(const QString &command)
 
 void PythonEngineWorker::doRunDirect(const QString &command)
 {
-	emit startedDirectScript(0);
+	Q_EMIT startedDirectScript(0);
 	if (PythonQt::self()->hadError()) {
 		PythonQt::self()->clearError();
 		mErrorMessage.clear();
 		recreateContext();
 	}
 	mMainContext.evalScript(command);
+	QCoreApplication::processEvents();
 	auto wasError = PythonQt::self()->hadError();
 	if (wasError) {
-		emit completed(mErrorMessage, 0);
+		Q_EMIT completed(mErrorMessage, 0);
 	} else {
-		emit completed("", 0);
+		Q_EMIT completed("", 0);
 	}
 }
 

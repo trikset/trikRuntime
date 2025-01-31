@@ -22,9 +22,17 @@
 #include <trikKernel/timeVal.h>
 
 
-trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName)
+trikHal::trik::TrikIIOFile::TrikIIOFile(const QString &fileName, const QString &scanType)
 	: mFileName(fileName)
 {
+	if (scanType == "be:s14/16>>2") {
+		mScanType = ScanType::Accel;
+	} else if (scanType == "le:s16/16>>0") {
+		mScanType = ScanType::Gyro;
+	} else {
+		mScanType = ScanType::Undefined;
+		QLOG_ERROR() << "Unknown scan type" << scanType << "for iio device" << mFileName;
+	}
 }
 
 trikHal::trik::TrikIIOFile::~TrikIIOFile()
@@ -37,7 +45,7 @@ bool trikHal::trik::TrikIIOFile::open()
 	QLOG_INFO() << "Openning" << mFileName;
 	mIIOFileDescriptor = ::open(mFileName.toStdString().c_str(), O_NONBLOCK | O_RDONLY | O_CLOEXEC);
 	if (mIIOFileDescriptor == -1) {
-		QLOG_ERROR() << QString("%1: open failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: open failed: %2").arg(mFileName, strerror(errno));
 		return false;
 	}
 
@@ -62,7 +70,7 @@ bool trikHal::trik::TrikIIOFile::close()
 	}
 
 	if (::close(mIIOFileDescriptor) != 0) {
-		QLOG_ERROR() << QString("%1: close failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: close failed: %2").arg(mFileName, strerror(errno));
 		return false;
 	}
 
@@ -86,24 +94,33 @@ void trikHal::trik::TrikIIOFile::readFile()
 
 	uint8_t buffer[16];
 	if (::read(mIIOFileDescriptor, &buffer, sizeof(buffer)) == -1) {
-		QLOG_ERROR() << QString("%1: read failed: %2").arg(mFileName).arg(strerror(errno));
+		QLOG_ERROR() << QString("%1: read failed: %2").arg(mFileName, strerror(errno));
 	} else {
 		uint64_t timestamp;
 		memcpy(&timestamp, &buffer[8], sizeof(timestamp));
 		const uint64_t timestamp_mcsec = timestamp / 1000;
 		trikKernel::TimeVal eventTime(timestamp_mcsec / 1000000, timestamp_mcsec % 1000000);
 
-		// TODO: add comments
-		auto convert_axis = [](uint16_t b_byte, uint16_t s_byte) {
-			return static_cast<int16_t>((b_byte << 8) | s_byte) >> 2;
-		};
+		QVector<int> sensorValues;
+		if (mScanType == ScanType::Accel) {
+			sensorValues = {
+				static_cast<int16_t>((buffer[0] << 8) | buffer[1]) >> 2,
+				static_cast<int16_t>((buffer[2] << 8) | buffer[3]) >> 2,
+				static_cast<int16_t>((buffer[4] << 8) | buffer[5]) >> 2,
+			};
+		} else if (mScanType == ScanType::Gyro) {
+			sensorValues = {
+				static_cast<int16_t>((buffer[1] << 8) | buffer[0]),
+				static_cast<int16_t>((buffer[3] << 8) | buffer[2]),
+				static_cast<int16_t>((buffer[5] << 8) | buffer[4]),
+			};
+		} else {
+			size_t len = sizeof(buffer) / sizeof(buffer[0]);
+			sensorValues.resize(len);
+			std::copy(buffer, buffer + len, sensorValues.begin());
+		}
 
-		QVector<int> sensorValues = {
-			convert_axis(buffer[0], buffer[1]),
-			convert_axis(buffer[2], buffer[3]),
-			convert_axis(buffer[4], buffer[5]) };
-
-		emit newData(sensorValues, eventTime);
+		Q_EMIT newData(std::move(sensorValues), eventTime);
 	}
 
 	mSocketNotifier->setEnabled(true);

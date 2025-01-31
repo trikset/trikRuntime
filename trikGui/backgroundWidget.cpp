@@ -50,7 +50,7 @@ BackgroundWidget::BackgroundWidget(
 	mStatusBarLayout.addWidget(&mMailboxIndicator);
 	mStatusBarLayout.addWidget(&mCommunicatorIndicator);
 	mStatusBarLayout.addWidget(&mWiFiIndicator);
-	addMainWidget(mStartWidget);
+	addMainWidget(&mStartWidget);
 	mBrickDisplayWidgetWrapper.reset(new LazyMainWidgetWrapper(mController.brick().graphicsWidget()));
 	addLazyWidget(*mBrickDisplayWidgetWrapper);
 	mMainWidgetsLayout.addWidget(&mRunningWidget);
@@ -76,7 +76,7 @@ BackgroundWidget::BackgroundWidget(
 
 	connect(&mRunningWidget, &RunningWidget::hideMe, this, &BackgroundWidget::hideRunningWidget);
 
-	mController.brick().playTone(2000, 10);
+	mController.brick().playTone(2000, 150);
 }
 
 BackgroundWidget::~BackgroundWidget()
@@ -86,47 +86,47 @@ BackgroundWidget::~BackgroundWidget()
 	disconnect(&mMainWidgetsLayout, 0, 0, 0);
 }
 
-void BackgroundWidget::resetWidgetLayout(MainWidget &widget)
+void BackgroundWidget::resetWidgetLayout(MainWidget *widget)
 {
+	Q_ASSERT(widget);
 	// If the widget has layout, remove its margins because main widgets layout has its own margins.
-	QLayout *layout = widget.layout();
-	if (layout != nullptr) {
+	if (auto *layout = widget->layout()) {
 		layout->setContentsMargins(0, 0, 0, 0);
 	}
 }
 
-void BackgroundWidget::addMainWidget(MainWidget &widget)
+void BackgroundWidget::addMainWidget(MainWidget *widget)
 {
 	resetWidgetLayout(widget);
 
-	mMainWidgetIndex.push(mMainWidgetsLayout.addWidget(&widget));
+	mMainWidgetIndex.push(mMainWidgetsLayout.addWidget(widget));
 	mMainWidgetsLayout.setCurrentIndex(mMainWidgetIndex.top());
 
-	connect(&widget, &MainWidget::newWidget, this, &BackgroundWidget::addMainWidget);
+	connect(widget, &MainWidget::newWidget, this, &BackgroundWidget::addMainWidget);
 }
 
-void BackgroundWidget::addRunningWidget(MainWidget &widget)
+void BackgroundWidget::addRunningWidget(MainWidget *widget)
 {
 	resetWidgetLayout(widget);
-	mMainWidgetsLayout.addWidget(&widget);
+	mMainWidgetsLayout.addWidget(widget);
 }
 
 void BackgroundWidget::addLazyWidget(LazyMainWidget &widget)
 {
-	resetWidgetLayout(widget);
+	resetWidgetLayout(&widget);
 	mMainWidgetsLayout.addWidget(&widget);
 
 	connect(&widget, &LazyMainWidget::showMe, this, &BackgroundWidget::showMainWidget);
 	connect(&widget, &LazyMainWidget::hideMe, this, &BackgroundWidget::hideGraphicsWidget);
 }
 
-void BackgroundWidget::showMainWidget(MainWidget &widget)
+void BackgroundWidget::showMainWidget(MainWidget *widget)
 {
-	if (&widget == mBrickDisplayWidgetWrapper.data()) {
+	if (widget == mBrickDisplayWidgetWrapper.data()) {
 		expandMainWidget();
 	}
 
-	const int index = mMainWidgetsLayout.indexOf(&widget);
+	const int index = mMainWidgetsLayout.indexOf(widget);
 	if (index >= 0) {
 		mMainWidgetsLayout.setCurrentIndex(index);
 	}

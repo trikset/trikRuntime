@@ -61,7 +61,7 @@ public:
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
 
-private slots:
+private Q_SLOTS:
 	/// Defines behaviour for commands "Motor Forward" and "Motor Backward".
 	void motorBehaviour();
 

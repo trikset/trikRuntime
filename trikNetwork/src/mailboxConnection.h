@@ -39,7 +39,7 @@ public:
 	/// Send our hull number. Used in response for connection request.
 	Q_INVOKABLE void sendSelfInfo(int hullNumber);
 
-signals:
+Q_SIGNALS:
 	/// Emitted when "register" command is received.
 	/// @param ip - remote robot IP.
 	/// @param clientPort - remote robot client port (peer port), for reuse of this new connection.

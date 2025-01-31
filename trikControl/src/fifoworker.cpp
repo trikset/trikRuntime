@@ -117,7 +117,7 @@ void trikControl::FifoWorker::onNewLine(const QString &line)
 	QWriteLocker w(&mCurrentLock);
 	mCurrentLine = line;
 	w.unlock();
-	emit newLine(mCurrentLine);
+	Q_EMIT newLine(mCurrentLine);
 }
 
 void trikControl::FifoWorker::onNewData(const QVector<uint8_t> &data)
@@ -129,7 +129,7 @@ void trikControl::FifoWorker::onNewData(const QVector<uint8_t> &data)
 		mCurrentData.clear();
 	}
 	w.unlock();
-	emit newData(mCurrentData);
+	Q_EMIT newData(mCurrentData);
 }
 
 void trikControl::FifoWorker::onReadError()

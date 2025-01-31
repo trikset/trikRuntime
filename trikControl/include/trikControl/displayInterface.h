@@ -33,7 +33,7 @@ public:
 	/// Returns widget on which everything is drawn.
 	virtual DisplayWidgetInterface &graphicsWidget() = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
 	///        supported formats, but .jpg, .png, .bmp, .gif are supported.

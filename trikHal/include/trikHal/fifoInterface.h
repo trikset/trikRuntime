@@ -37,7 +37,7 @@ public:
 	/// Returns file name of a FIFO file.
 	virtual QString fileName() = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new data is read from FIFO.
 	void newData(QVector<uint8_t> data);
 	/// Emitted for each line from FIFO.

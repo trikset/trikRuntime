@@ -14,6 +14,8 @@
 
 #include "irCameraWorker.h"
 
+#include <array>
+
 #include <QsLog.h>
 #include <QTimer>
 
@@ -85,7 +87,7 @@ void IrCameraWorkerMLX90640::stop()
 {
 	if (mState.isReady()) {
 		mState.stop();
-		emit stopped();
+		Q_EMIT stopped();
 		mState.off();
 	}
 }
@@ -103,68 +105,64 @@ void IrCameraWorkerMLX90640::processFrame()
 		return;
 	}
 
+	static constexpr std::array<int32_t, 16> color_map = {
+		0x00003d, 0x00009e, 0x0000ff, 0x006cef
+		, 0x0097c6, 0x00b4a1, 0x00d444, 0x00ff00
+		, 0x99917e, 0xb270b3, 0xfb00ff, 0xff0082
+		, 0xff0000, 0xfc814e, 0xffd800, 0xffff00
+	};
+
 	for (auto chunkI = 0u, i = 0u; chunkI < mSensorHeight; ++chunkI) {
-		auto nextChunkIStart = i + (IMG_HEIGHT - i) / (mSensorHeight - chunkI);
-		nextChunkIStart += ((IMG_HEIGHT - i) % (mSensorHeight - chunkI)) ? 1 : 0;
+		auto hChunkDivMod = std::ldiv(IMG_HEIGHT - i, mSensorHeight - chunkI);
+		auto nextChunkIStart = i + hChunkDivMod.quot;
+		nextChunkIStart += (hChunkDivMod.rem) ? 1 : 0;
 
 		for (; i < nextChunkIStart; ++i) {
 			for (auto chunkJ = 0u, j = 0u; chunkJ < mSensorWidth; ++chunkJ) {
-				auto nextChunkJStart = j + (IMG_WIDTH - j) / (mSensorWidth - chunkJ);
-				nextChunkJStart += ((IMG_WIDTH - j) % (mSensorWidth - chunkJ)) ? 1 : 0;
+				auto wChunkDivMod = std::ldiv(IMG_WIDTH - j, mSensorWidth - chunkJ);
+				auto nextChunkJStart = j + wChunkDivMod.quot;
+				nextChunkJStart += (wChunkDivMod.rem) ? 1 : 0;
 
 				for (; j < nextChunkJStart; ++j) {
-					auto val = mFrameBuffer[i * IMG_WIDTH + j];
-					auto pixel = static_cast<int16_t>(val) - static_cast<int16_t>(mParams.offset[i * IMG_WIDTH + j]);
+					auto index = i * IMG_WIDTH + j;
+					auto val = mFrameBuffer[index];
+					auto param = mParams.offset[index];
+					auto pixel = static_cast<int16_t>(val) - static_cast<int16_t>(param);
 					mSensorProcessBuffer[chunkI * mSensorWidth + chunkJ] += pixel;
+					auto &out = mImage[index];
 					if (pixel < -256) {
-						mImage[i * IMG_WIDTH + j] = 0x000000;
+						out = 0x000000;
 						continue;
 					} else if (pixel > 256) {
-						mImage[i * IMG_WIDTH + j] = 0xFFFFFF;
+						out = 0xffffff;
 						continue;
 					}
-					pixel = (pixel + 256) >> 1;
-					if (pixel < 64) {
-						mImage[i * IMG_WIDTH + j] = ((pixel * 4) << 16) | 0xFF;
-					} else if (pixel < 128) {
-						mImage[i * IMG_WIDTH + j] = 0xFF0000 | (0xFF - ((pixel - 64) * 4));
-					} else if (pixel < 192) {
-						mImage[i * IMG_WIDTH + j] = 0xFF0000 | ((pixel - 128) * 4) << 8;
-					} else {
-						mImage[i * IMG_WIDTH + j] = (0xFF - ((pixel - 192) * 4)) << 16 | 0xFF00;
-					}
+					pixel = (pixel + 256) >> 5;
+					out = color_map[pixel];
 				}
 			}
 		}
 	}
-	emit newImage(mImage);
+	Q_EMIT newImage(mImage);
 
-	for (auto i = 0u; i < mSensorHeight; ++i) {
-		auto hCount = (IMG_HEIGHT / mSensorHeight);
-		hCount += (i < IMG_HEIGHT % mSensorHeight) ? 1 : 0;
-		for (auto j = 0u; j < mSensorWidth; ++j) {
-			auto wCount = (IMG_WIDTH / mSensorWidth);
-			wCount += (j < IMG_WIDTH % mSensorWidth) ? 1 : 0;
-			auto avg = mSensorProcessBuffer[i * mSensorWidth + j] / (hCount * wCount);
-			if (avg < -120) {
-				mSensorData[i * mSensorWidth + j] = 0;
-			} else if (avg < -80) {
-				mSensorData[i * mSensorWidth + j] = 1;
-			} else if (avg < -20) {
-				mSensorData[i * mSensorWidth + j] = 2;
-			} else if (avg < 20) {
-				mSensorData[i * mSensorWidth + j] = 3;
-			} else if (avg < 90) {
-				mSensorData[i * mSensorWidth + j] = 4;
-			} else if (avg < 200) {
-				mSensorData[i * mSensorWidth + j] = 5;
-			} else {
-				mSensorData[i * mSensorWidth + j] = 6;
-			}
-			mSensorProcessBuffer[i * mSensorWidth + j] = 0;
+	auto heightsDivMod = std::div(IMG_HEIGHT, mSensorHeight);
+	auto widthsDivMod = std::div(IMG_WIDTH, mSensorWidth);
+	for (auto i = 0; i < mSensorHeight; ++i) {
+		auto hCount = heightsDivMod.quot;
+		hCount += (i < heightsDivMod.rem) ? 1 : 0;
+		for (auto j = 0; j < mSensorWidth; ++j) {
+			auto wCount = widthsDivMod.quot;
+			wCount += (j < widthsDivMod.rem) ? 1 : 0;
+			auto index = i * mSensorWidth + j;
+			auto &in = mSensorProcessBuffer[index];
+			const auto avg = in / (hCount * wCount);
+			static constexpr std::array<int16_t, 6> temp = {-120, -80, -20, 20, 90, 200};
+			mSensorData[index] = std::lower_bound(temp.begin(), temp.end(), avg) - temp.begin();
+			// Probably faster: mSensorData[index] = std::find_if(temp.begin(), temp.end(), [avg](auto x) { return x >= avg; }) - temp.begin();
+			in = 0;
 		}
 	}
-	emit newSensorData(mSensorData);
+	Q_EMIT newSensorData(mSensorData);
 
 	QTimer::singleShot(0, this, &IrCameraWorkerMLX90640::processFrame);
 }

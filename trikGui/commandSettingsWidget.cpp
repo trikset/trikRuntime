@@ -36,11 +36,11 @@ CommandSettingsWidget::CommandSettingsWidget(const QString &title, const int dig
 	setLayout(&mLayout);
 
 	mContinueButton.setAutoFillBackground(true);
-	connect(&mContinueButton, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mContinueButton, SIGNAL(downPressed()), this, SLOT(focus()));
+	connect(&mContinueButton, &ConnectButton::upPressed, this, &CommandSettingsWidget::focus);
+	connect(&mContinueButton, &ConnectButton::downPressed, this, &CommandSettingsWidget::focus);
 
-	connect(&mValueSelector, SIGNAL(upPressed()), this, SLOT(focus()));
-	connect(&mValueSelector, SIGNAL(downPressed()), this, SLOT(focus()));
+	connect(&mValueSelector, &NumberSelectionWidget::upPressed, this, &CommandSettingsWidget::focus);
+	connect(&mValueSelector, &NumberSelectionWidget::downPressed, this, &CommandSettingsWidget::focus);
 }
 
 QString CommandSettingsWidget::menuEntry()

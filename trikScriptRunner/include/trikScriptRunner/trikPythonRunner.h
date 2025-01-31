@@ -42,7 +42,7 @@ public:
 	/// @param mailbox - mailbox object used to communicate with other robots.
 
 	TrikPythonRunner(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
-					 , QSharedPointer<TrikScriptControlInterface> scriptControl
+					 , TrikScriptControlInterface *scriptControl
 					 );
 
 	~TrikPythonRunner() override;
@@ -52,7 +52,7 @@ public:
 	QStringList knownMethodNames() const override;
 	bool wasError() override;
 
-public slots:
+public Q_SLOTS:
 	void run(const QString &script, const QString &fileName = "") override;
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
@@ -63,7 +63,7 @@ private:
 
 	/// Has ownership, memory is managed by thread and deleteLater().
 	QPointer<PythonEngineWorker> mScriptEngineWorker;
-	QThread mWorkerThread;
+	QThread *mWorkerThread {};
 };
 
 }

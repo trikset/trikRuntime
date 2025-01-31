@@ -42,8 +42,8 @@ public:
 	/// Set focus properly on this widget or one of its children.
 	virtual void renewFocus() = 0;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when the widget created a new one and wants it to be shown.
-	void newWidget(trikGui::MainWidget &widget);
+	void newWidget(trikGui::MainWidget *widget);
 };
 }

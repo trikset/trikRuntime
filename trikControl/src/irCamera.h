@@ -61,7 +61,7 @@ public Q_SLOTS:
 
 	Status status() const override;
 
-private slots:
+private Q_SLOTS:
 	/// Process new image from IrCameraWorker.
 	void onNewImage(QVector<int32_t> image);
 

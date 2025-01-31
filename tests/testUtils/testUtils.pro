@@ -18,7 +18,7 @@ TEMPLATE = lib
 
 DEFINES += TESTUTILS_LIBRARY
 
-QT += network
+QT += network core-private
 
 interfaceIncludes(trikNetwork)
 links(trikNetwork)
@@ -27,7 +27,9 @@ HEADERS += \
 	$$PWD/include/testUtils/tcpClientSimulator.h \
 	$$PWD/include/testUtils/wait.h \
 	$$PWD/include/testUtils/testUtilsDeclSpec.h \
+	$$PWD/include/testUtils/eventFilter.h
 
 SOURCES += \
 	$$PWD/src/tcpClientSimulator.cpp \
 	$$PWD/src/wait.cpp \
+	$$PWD/src/eventFilter.cpp \	

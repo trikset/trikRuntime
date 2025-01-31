@@ -110,7 +110,7 @@ void ProgrammingWidget::addCommand()
 {
 	const QString text(mCommands.currentItem()->text());
 	CommandsListWidget commandsListWidget(mController, text);
-	emit newWidget(commandsListWidget);
+	Q_EMIT newWidget(&commandsListWidget);
 	commandsListWidget.exec();
 
 	const QString value(commandsListWidget.value());

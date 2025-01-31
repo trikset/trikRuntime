@@ -121,7 +121,7 @@ void WiFiInitWidget::onProcessFinished(int, QProcess::ExitStatus exitStatus)
 		}
 		case QProcess::CrashExit: {
 			TrikGuiMessageBox messageBox;
-			emit newWidget(messageBox);
+			Q_EMIT newWidget(&messageBox);
 			messageBox.exec(tr("Network initialization" "\n"
 					"failed"));
 

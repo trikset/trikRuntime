@@ -22,7 +22,7 @@
 namespace trikKernel {
 
 /// Base class for all exceptions in TRIKRuntime.
-class TrikRuntimeException : public std::runtime_error
+class TrikRuntimeException : public std::runtime_error // clazy:exclude=copyable-polymorphic
 {
 public:
 	/// Constructor

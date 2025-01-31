@@ -49,7 +49,7 @@ public:
 
 	int maxControl() const override;
 
-public slots:
+public Q_SLOTS:
 	void setPower(int power, bool constrain = true) override;
 
 	int power() const override;

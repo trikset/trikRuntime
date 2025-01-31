@@ -23,7 +23,8 @@
 namespace trikControl {
 
 /// Exception for incorrect device state change, for example, from "off" to "stopping".
-class IncorrectStateChangeException : public trikKernel::TrikRuntimeException
+class IncorrectStateChangeException // clazy:exclude=copyable-polymorphic
+		: public trikKernel::TrikRuntimeException
 {
 public:
 	/// Constructor.
@@ -32,7 +33,7 @@ public:
 	/// @param to - status to which we tried to change.
 	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from, DeviceInterface::Status to)
 		: trikKernel::TrikRuntimeException(QString("%1: incorrect device state change from \"%2\" to \"%3\"")
-					.arg(deviceName).arg(statusToString(from)).arg(statusToString(to)))
+					.arg(deviceName, statusToString(from), statusToString(to)))
 	{
 	}
 
@@ -41,7 +42,7 @@ public:
 	/// @param from - status from which we tried to change.
 	IncorrectStateChangeException(const QString &deviceName, DeviceInterface::Status from)
 		: trikKernel::TrikRuntimeException(QString("%1 : incorrect attempt to reset failure from \"%2\"")
-										   .arg(deviceName).arg(statusToString(from)))
+										   .arg(deviceName, statusToString(from)))
 	{
 	}
 

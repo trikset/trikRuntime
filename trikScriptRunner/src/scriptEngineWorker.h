@@ -20,6 +20,7 @@
 #include <QtCore/QThread>
 #include <QtScript/QScriptEngine>
 #include <QtCore/QDir>
+#include <QtCore/QPointer>
 
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -79,7 +80,7 @@ public:
 	/// (useful when used from outside of the TrikRuntime).
 	QStringList knownMethodNames() const;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when current script execution is completed or is aborted by reset() call.
 	/// @param error - localized error message or empty string.
 	/// @param scriptId - unique identifier of a script completed
@@ -97,7 +98,7 @@ signals:
 	/// @param json - JSON container for variables values
 	void variablesReady(const QJsonObject &data);
 
-public slots:
+public Q_SLOTS:
 	/// Starts script evaluation, emits startedScript() signal and returns. Script will be executed asynchronously.
 	/// completed() signal is emitted upon script abortion or completion.
 	/// It is a caller's responsibility to ensure that ScriptEngineWorker is in ready state before a call to run()
@@ -124,7 +125,7 @@ public slots:
 	/// Set default directory for includes (not a working dir, actually...)
 	void setWorkingDir(const QString &workingDir);
 
-private slots:
+private Q_SLOTS:
 	/// Abort script execution.
 	void onScriptRequestingToQuit();
 
@@ -138,6 +139,8 @@ private slots:
 	void evalExternalFile(const QString &filepath, QScriptEngine * const engine);
 
 private:
+	Q_SIGNAL void resetCompleted();
+
 	/// State of a script
 	/// @value ready - worker is waiting for a new script
 	/// @value starting - worker is preparing itself to running a script
@@ -156,9 +159,9 @@ private:
 	/// Evaluates "system.js" file in given engine.
 	void evalSystemJs(QScriptEngine * engine);
 
-	trikControl::BrickInterface *mBrick{}; // Does not have ownership.
-	trikNetwork::MailboxInterface * mMailbox{};  // Does not have ownership.
-	TrikScriptControlInterface *mScriptControl{}; // Does not have ownership.
+	QPointer<trikControl::BrickInterface> mBrick; // Does not have ownership.
+	QPointer<trikNetwork::MailboxInterface> mMailbox;  // Does not have ownership.
+	QPointer<TrikScriptControlInterface> mScriptControl; // Does not have ownership.
 	Threading mThreading;
 	QScopedPointer<QScriptEngine> mDirectScriptsEngine;
 	int mScriptId = 0;

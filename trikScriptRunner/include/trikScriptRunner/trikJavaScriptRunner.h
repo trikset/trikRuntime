@@ -42,7 +42,7 @@ public:
 	/// @param brick - reference to trikControl::Brick instance.
 	/// @param mailbox - mailbox object used to communicate with other robots.
 	TrikJavaScriptRunner(trikControl::BrickInterface *brick, trikNetwork::MailboxInterface * mailbox
-						 , QSharedPointer<TrikScriptControlInterface> scriptControl);
+						 , TrikScriptControlInterface *scriptControl);
 
 	~TrikJavaScriptRunner() override;
 
@@ -53,18 +53,18 @@ public:
 
 	bool wasError() override { return false; }
 
-public slots:
+public Q_SLOTS:
 	void run(const QString &script, const QString &fileName = "") override;
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
 	void brickBeep() override;
 	void setWorkingDirectory(const QString &workingDir) override;
 
-private slots:
+private Q_SLOTS:
 	void onScriptStart(int scriptId);
 
 private:
-	QSharedPointer<TrikScriptControlInterface> mScriptController;
+	TrikScriptControlInterface *mScriptController; //does not have ownership
 
 	/// Has ownership, memory is managed by thread and deleteLater().
 	QPointer<ScriptEngineWorker> mScriptEngineWorker;
@@ -74,6 +74,7 @@ private:
 
 	QHash<int, QString> mScriptFileNames;
 	QScopedPointer<TrikVariablesServer> mVariablesServer;
+	QAtomicInt mFinishing { 0 };
 };
 
 }

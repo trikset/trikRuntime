@@ -60,7 +60,7 @@ public:
 
 	~TrikCommunicator() override;
 
-signals:
+Q_SIGNALS:
 	/// Emitted when stop command received from a computer.
 	void stopCommandReceived();
 

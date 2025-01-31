@@ -37,7 +37,7 @@ public:
 	/// @param parent - parent of this widget in Qt widget parent-child system.
 	explicit AccelerometerWidget(trikControl::VectorSensorInterface *accelerometer, QWidget *parent = 0);
 
-public slots:
+public Q_SLOTS:
 	void renew() override;
 
 private:

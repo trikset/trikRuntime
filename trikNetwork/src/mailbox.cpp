@@ -46,6 +46,11 @@ Mailbox::~Mailbox()
 	}
 }
 
+void Mailbox::joinNetwork(const QString &ip, int port, int hullNumber)
+{
+	QMetaObject::invokeMethod(mWorker.data(), [=](){mWorker->joinNetwork(ip, port, hullNumber);});
+}
+
 bool Mailbox::isConnected() const
 {
 	bool res;
@@ -59,6 +64,13 @@ void Mailbox::setHullNumber(int hullNumber)
 	if (isEnabled()) {
 		QMetaObject::invokeMethod(mWorker.data(), [this, hullNumber](){mWorker->setHullNumber(hullNumber);});
 	}
+}
+
+void Mailbox::reset()
+{
+	stopWaiting();
+	clearQueue();
+	Q_EMIT resetCompleted();
 }
 
 int Mailbox::myHullNumber() const
@@ -106,7 +118,7 @@ void Mailbox::clearQueue()
 
 void Mailbox::stopWaiting()
 {
-	emit stopWaitingSignal();
+	Q_EMIT stopWaitingSignal();
 }
 
 bool Mailbox::isEnabled()
@@ -185,5 +197,5 @@ void Mailbox::updateConnectionStatus()
 	int activeConnections;
 	QMetaObject::invokeMethod(mWorker.data(), [this, &activeConnections](){
 							activeConnections = mWorker->activeConnections();}, Qt::BlockingQueuedConnection);
-	emit connectionStatusChanged(activeConnections > 0);
+	Q_EMIT connectionStatusChanged(activeConnections > 0);
 }

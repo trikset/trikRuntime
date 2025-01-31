@@ -24,20 +24,39 @@ equal to its class name.
 <config version="model-2015" >
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
-		/etc/trik/init-ov7670-320x240.sh 0
+                /etc/trik/init-ov7670-320x240.sh 0
 
-		echo 1 > /sys/class/gpio/gpio62/value
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_timestamp_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_x_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_y_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_z_en
+                echo 1 > /sys/bus/iio/devices/iio\:device0/buffer/enable
 
-		echo 1 > /sys/class/pwm/ehrpwm.1:1/request
-		echo 1 > /sys/class/pwm/ehrpwm.1:0/request
-		echo 1 > /sys/class/pwm/ehrpwm.0:1/request
-		echo 1 > /sys/class/pwm/ecap.0/request
-		echo 1 > /sys/class/pwm/ecap.1/request
-		echo 1 > /sys/class/pwm/ecap.2/request
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_timestamp_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_x_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_y_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_z_en
+                echo 1 > /sys/bus/iio/devices/iio\:device1/buffer/enable
 
-		#cat /sys/class/pwm/ecap_cap.0/config > /dev/null
-		#cat /sys/class/pwm/ecap_cap.1/config > /dev/null
-		#cat /sys/class/pwm/ecap_cap.2/config > /dev/null
+                echo 1 > /sys/class/gpio/gpio62/value
+
+                export GP="/sys/class/gpio/"
+                echo 94 > $GP/export
+                echo high > $GP/gpio94/direction
+                echo 35 > $GP/export
+                echo high > $GP/gpio35/direction
+                echo 36 > $GP/export
+                echo high > $GP/gpio36/direction
+                echo 37 > $GP/export
+                echo high > $GP/gpio37/direction
+
+                export PWM="/sys/class/pwm/pwmchip"
+                echo 0 > ${PWM}0/export
+                echo 0 > ${PWM}1/export
+                echo 0 > ${PWM}2/export
+                echo 1 > ${PWM}3/export
+                echo 1 > ${PWM}5/export
+                echo 0 > ${PWM}5/export
 
 		#amixer -q set PCM 127
 	</initScript>
@@ -54,8 +73,7 @@ equal to its class name.
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
 		<digitalSensor />
 		<fifo />
-		<accelerometer deviceFile="/dev/input/by-path/platform-i2c_davinci.2-event" optional="true" />
-		<gyroscope deviceFile="/dev/input/by-path/platform-spi_davinci.1-event" optional="true" />
+                <iioDevice />
 		<lineSensor script="/etc/init.d/line-sensor-ov7670" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
 		<colorSensor script="/etc/init.d/mxn-sensor-ov7670" inputFile="/run/mxn-sensor.in.fifo" outputFile="/run/mxn-sensor.out.fifo" m="3" n="3" />
@@ -64,7 +82,7 @@ equal to its class name.
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!--Device file for keys on a brick -->
-		<keys deviceFile="/dev/input/by-path/platform-gpio-keys-event" />
+		<keys deviceFile="/dev/input/by-path/platform-soc@1c00000:gpio-keys-event" />
 
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
@@ -78,18 +96,21 @@ equal to its class name.
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 			runFile="/sys/class/pwm/ecap.2/run"
+			captureFile="/sys/class/pwm/ecap.2/capture"
 		/>
 		<servoMotor
 			port="S2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 			runFile="/sys/class/pwm/ecap.1/run"
+			captureFile="/sys/class/pwm/ecap.1/capture"
 		/>
 		<servoMotor
 			port="S3"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 			runFile="/sys/class/pwm/ecap.0/run"
+			captureFile="/sys/class/pwm/ecap.0/capture"
 		/>
 		<servoMotor
 			port="S4"
@@ -115,16 +136,19 @@ equal to its class name.
 			port="S1"
 			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
+			captureFile="/sys/class/pwm/ecap.2/capture"
 		/>
 		<pwmCapture
 			port="S2"
 			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
+			captureFile="/sys/class/pwm/ecap.1/capture"
 		/>
 		<pwmCapture
 			port="S3"
 			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
+			captureFile="/sys/class/pwm/ecap.0/capture"
 		/>
 		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
 		<powerMotor port="M2" i2cCommandNumber="0x15" />
@@ -153,6 +177,8 @@ equal to its class name.
 				<camera port="video1" />
 				<camera port="video2" />
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
+                <iioDevice port="boardAccelPort" />
+                <iioDevice port="boardGyroPort" />
 	</devicePorts>
 
 	<deviceTypes>
@@ -196,6 +222,9 @@ equal to its class name.
 		<colorSensor3x3 class="colorSensor" m="3" n="3" />
 
 		<photo class="camera" type="v4l2" src="/dev/video0" />
+
+                <accelerometer class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s14/16>>2"/>
+                <gyroscope class="iioDevice" deviceFile="/dev/iio:device1" scanType="le:s16/16>>0"/>
 	</deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->

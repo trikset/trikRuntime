@@ -20,6 +20,7 @@
 
 #include <trikKernel/timeVal.h>
 #include "threading.h"
+#include <QCoreApplication>
 #include <QMetaMethod>
 
 using namespace trikControl;
@@ -44,12 +45,13 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
 			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
-				emit sendMailboxMessage(QString("mail: sender: %1 contents: %2")
+				Q_EMIT sendMailboxMessage(QString("mail: sender: %1 contents: %2")
 									 .arg(senderNumber)
 									 .arg(message)
 									 );
 			});
 	}
+	mScriptControl->setParent(this);
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
@@ -57,13 +59,6 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 								   )
 	: TrikScriptRunner(brick, mailbox, new ScriptExecutionControl(&brick))
 {
-}
-
-TrikScriptRunner::~TrikScriptRunner()
-{
-	abortAll();
-	// Call it here for dtor to be compiled in this context, rather than in the including file's context
-	mScriptControl.reset();
 }
 
 void TrikScriptRunner::setDefaultRunner(ScriptType t)
@@ -154,9 +149,13 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 
 void TrikScriptRunner::run(const QString &script, ScriptType stype, const QString &fileName)
 {
-	abortAll(); // FIXME: or fetchRunner(stype)->abort()? or abort(/*last*/)?
-
-	fetchRunner(stype)->run(script, fileName);
+	abort();
+	auto prevRunner = mLastRunner;
+	auto runner = fetchRunner(stype);
+	if (prevRunner != stype) {
+		runner->abort();
+	}
+	runner->run(script, fileName);
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
@@ -167,15 +166,6 @@ void TrikScriptRunner::runDirectCommand(const QString &command)
 void TrikScriptRunner::abort()
 {
 	fetchRunner(mLastRunner)->abort();
-}
-
-void TrikScriptRunner::abortAll()
-{
-	for (auto && r: mScriptRunnerArray) {
-		if (r != nullptr) {
-			r->abort();
-		}
-	}
 }
 
 void TrikScriptRunner::brickBeep()

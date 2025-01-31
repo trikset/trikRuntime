@@ -63,7 +63,7 @@ void Connection::init(const QHostAddress &ip, int port)
 		return;
 	}
 
-	emit connected(this);
+	Q_EMIT connected(this);
 }
 
 void Connection::send(const QByteArray &data)
@@ -92,6 +92,12 @@ void Connection::send(const QByteArray &data)
 	}
 }
 
+void Connection::preinitConnection(const QHostAddress& ip, int port)
+{
+	mIp = ip;
+	mPort = port;
+}
+
 void Connection::init(qintptr socketDescriptor)
 {
 	resetSocket();
@@ -102,6 +108,26 @@ void Connection::init(qintptr socketDescriptor)
 	}
 
 	restartKeepalive();
+}
+
+QHostAddress Connection::getIp() const
+{
+	return mIp;
+}
+
+int Connection::getPort() const
+{
+	return mPort;
+}
+
+void Connection::setIsStarted(bool flag)
+{
+	isStarted = flag;
+}
+
+bool Connection::getIsStarted() const
+{
+	return isStarted;
 }
 
 void Connection::onReadyRead()
@@ -241,7 +267,7 @@ void Connection::doDisconnect()
 
 	QLOG_INFO() << "Connection" << mSocket->socketDescriptor() << "disconnected.";
 
-	emit disconnected(this);
+	Q_EMIT disconnected(this);
 }
 
 void Connection::restartKeepalive()

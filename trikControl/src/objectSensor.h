@@ -48,7 +48,7 @@ public:
 
 	Status status() const override;
 
-public slots:
+public Q_SLOTS:
 	void init(bool showOnDisplay) override;
 
 	void detect() override;
@@ -59,7 +59,7 @@ public slots:
 
 	QVector<int> getDetectParameters() const override;
 
-private slots:
+private Q_SLOTS:
 	void onStopped();
 
 private:

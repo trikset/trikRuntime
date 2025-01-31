@@ -31,7 +31,7 @@ public:
 	/// Constructor
 	TonePlayer();
 
-public slots:
+public Q_SLOTS:
 
 	/// Play sound
 	void play(int freqHz, int durationMs);
@@ -49,7 +49,7 @@ private:
 	static constexpr int SAMPLE_RATE = 16000;
 	static constexpr int SAMPLE_SIZE = 16;
 
-public slots:
+public Q_SLOTS:
 	/// Stop playing
 	void stop();
 };

@@ -29,6 +29,7 @@ INCLUDEPATH += \
 	$$_PRO_FILE_PWD_/ \
 
 SOURCES = $$PWD/mainTest.cpp
+QT += core
 
 include(thirdparty/googletest.pri)
 
@@ -36,5 +37,13 @@ OTHER_FILES += \
 	$$PWD/test-system-config.xml \
 	$$PWD/test-model-config.xml \
 
-copyToDestdir($$PWD/test-system-config.xml, now)
-copyToDestdir($$PWD/test-model-config.xml, now)
+implementationIncludes(tests/testUtils)
+links(testUtils)
+
+trik_new_age {
+    copyToDestdir($$PWD/kernel-4.14/test-system-config.xml, now)
+    copyToDestdir($$PWD/kernel-4.14/test-model-config.xml, now)
+} else {
+    copyToDestdir($$PWD/kernel-3.6/test-system-config.xml, now)
+    copyToDestdir($$PWD/kernel-3.6/test-model-config.xml, now)
+}

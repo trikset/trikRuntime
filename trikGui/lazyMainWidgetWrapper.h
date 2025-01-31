@@ -42,7 +42,7 @@ public:
 	~LazyMainWidgetWrapper() override;
 	void renewFocus() override;
 
-private slots:
+private Q_SLOTS:
 	/// Helper slot to re-emit a signal with correct parameter (life without Qt5 is pain).
 	void emitShowMe();
 

@@ -27,7 +27,7 @@ class TRIKCONTROL_EXPORT LedInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT
 
-public slots:
+public Q_SLOTS:
 	/// Turn LED on with red color.
 	virtual void red() = 0;
 

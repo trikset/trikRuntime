@@ -44,14 +44,14 @@ public:
 	/// Clear data about previous key pressures.
 	void reset();
 
-public slots:
+public Q_SLOTS:
 	/// Returns true if a key with given code was pressed.
 	bool wasPressed(int code);
 
-private slots:
+private Q_SLOTS:
 	void readKeysEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
 
-signals:
+Q_SIGNALS:
 	/// Triggered when button state changed (pressed or released).
 	/// @param code - key code.
 	/// @param value - key state.

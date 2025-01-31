@@ -23,11 +23,11 @@ void ConnectButton::keyPressEvent(QKeyEvent *event)
 {
 	switch (event->key()) {
 	case Qt::Key_Up: {
-		emit upPressed();
+		Q_EMIT upPressed();
 		return;
 	}
 	case Qt::Key_Down: {
-		emit downPressed();
+		Q_EMIT downPressed();
 		return;
 	}
 	default: {

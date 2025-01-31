@@ -43,7 +43,7 @@ public:
 	/// Stops frames capturing.
 	void stop();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when new image provided by worker.
 	void newImage(QVector<int32_t>);
 
@@ -53,7 +53,7 @@ signals:
 	/// Emitted when frames capturing successfully stopped.
 	void stopped();
 
-private slots:
+private Q_SLOTS:
 	/// Reads new frame with raw data from IR camera.
 	void processFrame();
 
@@ -97,19 +97,19 @@ private:
 	DeviceState mState;
 
 	/// Size of eeprom in words
-	static constexpr int EEPROM_SIZE = 832;
+	static constexpr std::size_t EEPROM_SIZE = 832;
 
 	/// Size of frame data in words
-	static constexpr int FRAME_SIZE = 834;
+	static constexpr std::size_t FRAME_SIZE = 834;
 
 	/// Number of rows in image
-	static constexpr int IMG_HEIGHT = 24;
+	static constexpr std::size_t IMG_HEIGHT = 24;
 
 	/// Number of columns in image
-	static constexpr int IMG_WIDTH = 32;
+	static constexpr std::size_t IMG_WIDTH = 32;
 
 	/// Size of image in pixels
-	static constexpr int IMG_SIZE = IMG_HEIGHT * IMG_WIDTH;
+	static constexpr std::size_t IMG_SIZE = IMG_HEIGHT * IMG_WIDTH;
 };
 
 } // namespace trikControl

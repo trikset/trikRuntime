@@ -28,11 +28,11 @@ class TRIKCONTROL_EXPORT SoundSensorInterface : public QObject, public DeviceInt
 {
 	Q_OBJECT
 
-signals:
+Q_SIGNALS:
 	/// Emitted when sensor is stopped successfully.
 	void stopped();
 
-public slots:
+public Q_SLOTS:
 	/// Initializes an ALSA
 	/// @param showOnDisplay - true if we want an image from DSP to be drawn on robot display.
 	virtual void init(bool showOnDisplay) = 0;

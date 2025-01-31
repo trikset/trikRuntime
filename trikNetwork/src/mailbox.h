@@ -61,7 +61,9 @@ public:
 	/// True iff the server is running.
 	Q_INVOKABLE bool hasServer() const;
 
-public slots:
+	Q_INVOKABLE void joinNetwork(const QString &ip, int port = -1, int hullNumber = -1) override;
+
+public Q_SLOTS:
 	void connect(const QString &ip, int port) override;
 
 	void connect(const QString &ip) override;
@@ -78,11 +80,13 @@ public slots:
 
 	void setHullNumber(int myHullNumber) override;
 
-signals:
+	void reset() override;
+
+Q_SIGNALS:
 	/// Used to interrupt waiting for new message.
 	void stopWaitingSignal();
 
-private slots:
+private Q_SLOTS:
 	void updateConnectionStatus();
 
 private:

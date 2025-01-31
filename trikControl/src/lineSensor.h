@@ -51,18 +51,20 @@ public:
 
 	Status status() const override;
 
-public slots:
+	Q_INVOKABLE QVector<int> read() override;
+
+	Q_INVOKABLE QVector<int> getDetectParameters() const override;
+
+public Q_SLOTS:
 	void init(bool showOnDisplay) override;
 
 	void detect() override;
 
-	QVector<int> read() override;
-
 	void stop() override;
 
-	QVector<int> getDetectParameters() const override;
+private Q_SLOTS:
 
-private slots:
+	/// emit Stopped signal
 	void onStopped();
 
 private:

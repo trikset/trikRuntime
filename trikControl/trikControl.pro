@@ -199,7 +199,7 @@ if (equals(QT_MAJOR_VERSION, 5)) {
 	QT += widgets
 }
 
-links(trikRuntimeQsLog trikKernel trikHal mlx90640-library)
+links(trikRuntimeQsLog trikKernel trikHal trik-mlx90640)
 implementationIncludes(trikKernel trikHal)
 INCLUDEPATH += $$GLOBAL_PWD/mlx90640-library/mlx90640-library/headers
 
@@ -211,6 +211,10 @@ copyToDestdir( \
 	$$PWD/../media/ \
 	, now \
 )
+
+trik_new_age {
+    DEFINES += TRIK_IIO_ACCEL_GYRO
+}
 
 installs()
 

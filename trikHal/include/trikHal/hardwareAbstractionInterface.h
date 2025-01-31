@@ -58,7 +58,7 @@ public:
 
 	/// Creates new IIO file, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of a FIFO file.
-	virtual IIOFileInterface *createIIOFile(const QString &fileName) const = 0;
+	virtual IIOFileInterface *createIIOFile(const QString &fileName, const QString &scanType) const = 0;
 
 	/// Creates new input device file, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of a device file.

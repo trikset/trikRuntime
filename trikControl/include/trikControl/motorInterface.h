@@ -39,7 +39,7 @@ public:
 	/// Returns maximal value of control accepted by a motor (-90..90, 0..100, for example).
 	virtual int maxControl() const = 0;
 
-public slots:
+public Q_SLOTS:
 	/// Sets current motor power to specified value, 0 to stop motor.
 	/// @param power - power of a motor, from -100 (full reverse) to 100 (full forward), 0 --- break.
 	/// @param constrain - if true, power will be constrained in an interval [-100, 100], if false, "power" value

@@ -8,10 +8,6 @@ updates:
   - iakov
   assignees:
   - iakov
-  groups:
-    submodules:
-      patterns:
-        - "*" # All submodules updates
 
 - package-ecosystem: github-actions
   directory: "/"

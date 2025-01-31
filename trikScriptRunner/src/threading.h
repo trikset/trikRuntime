@@ -22,6 +22,8 @@
 
 #include <QtScript/QScriptEngine>
 
+#include <QSemaphore>
+
 #include "scriptExecutionControl.h"
 
 namespace trikScriptRunner {
@@ -76,7 +78,10 @@ public:
 	/// Returns true if the script is being evaluated in event-driven mode.
 	bool inEventDrivenMode() const;
 
-signals:
+	/// Release thread initialization semaphore on thread initialization
+	void releaseThreadInitializationSemaphore() { mThreadInitializationSemaphore.release(1); }
+
+Q_SIGNALS:
 	/// Signals that all threads have finished.
 	void finished();
 
@@ -119,8 +124,9 @@ private:
 	TrikScriptControlInterface &mScriptControl;
 	QString mScript;
 
-	QScriptEngine *mMainScriptEngine; // Doesn't have ownership.
 	const QString mMainThreadName = "main";
+
+	QSemaphore mThreadInitializationSemaphore { 1 };
 };
 
 }

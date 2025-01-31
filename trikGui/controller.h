@@ -69,11 +69,11 @@ public:
 	/// Returns gamepad connection status.
 	bool gamepadConnectionStatus() const;
 
-public slots:
+public Q_SLOTS:
 	/// Cancels execution of current program.
 	void abortExecution();
 
-signals:
+Q_SIGNALS:
 	/// Emitted when a new script starts and therefore a running widget must be shown with the script's name.
 	void showRunningWidget(const QString &fileName, int scriptId);
 
@@ -112,7 +112,7 @@ signals:
 	/// Emitted when Mailbox server's status changes.
 	void mailboxStatusChanged(bool connected);
 
-private slots:
+private Q_SLOTS:
 	void scriptExecutionCompleted(const QString &error, int scriptId);
 
 	void scriptExecutionFromFileStarted(const QString &fileName, int scriptId);

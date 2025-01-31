@@ -41,6 +41,7 @@
 int main(int argc, char *argv[])
 {
 	QStringList params;
+	params.reserve(argc);
 	for (int i = 1; i < argc; ++i) {
 		params << QString(argv[i]);
 	}

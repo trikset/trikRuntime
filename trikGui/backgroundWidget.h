@@ -60,14 +60,14 @@ public:
 
 	~BackgroundWidget() override;
 
-private slots:
+private Q_SLOTS:
 	/// Add a widget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addMainWidget(trikGui::MainWidget &widget);
+	void addMainWidget(MainWidget *widget);
 
 	/// Add a RunningWidget to main widgets layout and show it.
 	/// @param widget - reference to the widget.
-	void addRunningWidget(trikGui::MainWidget &widget);
+	void addRunningWidget(MainWidget *widget);
 
 	/// Add a GraphicsWidget to main widgets layout and show RunningWidget.
 	/// @param widget - reference to the widget.
@@ -81,7 +81,7 @@ private slots:
 
 	/// Show a widget which is contained in main widgets layout.
 	/// @param widget - reference to the widget.
-	void showMainWidget(trikGui::MainWidget &widget);
+	void showMainWidget(trikGui::MainWidget *widget);
 
 	/// Show a RunningWidget which is contained in main widgets layout.
 	void showRunningWidget(const QString &fileName, int scriptId);
@@ -99,7 +99,7 @@ private slots:
 private:
 	/// Remove widget margins.
 	/// @param widget - reference to the widget.
-	void resetWidgetLayout(MainWidget &widget);
+	void resetWidgetLayout(MainWidget *widget);
 
 	/// Makes current main widget be shown as something like fullscreen, without layout margins.
 	void expandMainWidget();

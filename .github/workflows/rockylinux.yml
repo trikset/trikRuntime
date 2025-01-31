@@ -8,6 +8,10 @@ on:
       - '**'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   rockylinux9:
     runs-on: ubuntu-latest
@@ -16,19 +20,16 @@ jobs:
       run:
         shell: bash -l {0} # to force import of ~/.bash_profile
     strategy:
+      fail-fast: false
       matrix:
         nopython: ['nopython', '']
+        trik-version: ['', 'trik_new_age']
         qjsengine: [''] # add 'qjsengine' for CONFIG+=trik_use_qjsengine
         qt-version: ['5.12']
         gcc-version: ['13']
 
     steps:
-
-      - name: Cancel Previous Workflow Runs
-        uses: n1hility/cancel-previous-runs@v3.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
+    
       - name: Install packages
         run: |
           yum install -y epel-release
@@ -84,9 +85,10 @@ jobs:
       - name: QMake
         timeout-minutes: 1
         run: |
-            qmake CONFIG+=release CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
-                  CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer \
+            qmake CONFIG+=release CONFIG+=trik_not_brick CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
+                  CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer CONFIG+="${{ matrix.trik-version }}" \
                   CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'qjsengine' && 'trik_use_qjsengine' || '' }} \
+                  PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') PYTHON_DIR=/usr \
                   "$GITHUB_WORKSPACE/"
 
       - name: QMake all
@@ -109,4 +111,4 @@ jobs:
             export PYTHONFAULTHANDLER=1
             export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
             env | sort
-            make -k check TESTARGS="-platform offscreen"
+            make -k check

@@ -35,26 +35,26 @@ void DigitSelector::keyPressEvent(QKeyEvent *event)
 	switch (event->key()) {
 	case Qt::Key_Up: {
 		if (!mEditingMode) {
-			emit upPressed();
+			Q_EMIT upPressed();
 			return;
 		}
 
 		int digit = text().toInt();
 		digit = (digit + 1) % 10;
 		setText(QString::number(digit));
-		emit valueChanged(digit);
+		Q_EMIT valueChanged(digit);
 		return;
 	}
 	case Qt::Key_Down: {
 		if (!mEditingMode) {
-			emit downPressed();
+			Q_EMIT downPressed();
 			return;
 		}
 
 		int digit = text().toInt();
 		digit = (digit - 1 + 10) % 10;
 		setText(QString::number(digit));
-		emit valueChanged(digit);
+		Q_EMIT valueChanged(digit);
 		return;
 	}
 	default: {
