@@ -16,6 +16,8 @@ TEMPLATE = lib
 
 include(../../global.pri)
 
+CONFIG += c++17
+
 clang:QMAKE_CXXFLAGS += -Wno-error=undef -Wno-error=switch-enum -Wno-error=missing-prototypes \
 		-Wno-error=shadow -Wno-error=disabled-macro-expansion
 
