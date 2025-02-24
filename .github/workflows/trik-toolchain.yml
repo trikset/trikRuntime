@@ -172,7 +172,7 @@ jobs:
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             cd build-qemu            
             # PYTHONDEVMODE=1 only from 3.7, overrides PYTHONMALLOC and some other
-            export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))"),PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1
+            export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))"),TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))"),PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1
             export QEMU_LD_PREFIX=/opt/trik-sdk/sysroots/arm926ejse-oe-linux-gnueabi
             env | sort
             make -k check
