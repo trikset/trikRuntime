@@ -111,6 +111,7 @@ jobs:
              $CXX --version
              ccache --version
              qemu-arm --version
+             pkg-config --list-all | grep -i python
              echo "TARGET_PYTHON_VERSION_MINOR=$(python3 --version | sed 's#^.*3\.\([^.]\+\).*$#\1#g')" >> $GITHUB_ENV             
 
       - name: "QMake"
@@ -120,7 +121,7 @@ jobs:
             mkdir build
             cd build
             qmake CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
-            PKGCONFIG+=python3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
+            PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
             PYTHON_VERSION=3.${TAGET_PYTHON_VERSION_MINOR} \
             CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
