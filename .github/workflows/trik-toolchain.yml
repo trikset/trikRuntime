@@ -122,7 +122,7 @@ jobs:
             cd build
             qmake CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
             PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
-            PYTHON_VERSION=3.${TAGET_PYTHON_VERSION_MINOR} \
+            PYTHON_VERSION=3.${TARGET_PYTHON_VERSION_MINOR} \
             CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
 
