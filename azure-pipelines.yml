@@ -30,10 +30,10 @@ jobs:
           TRANSLATIONS: true
           QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         macOs release:
-          imageName: 'macOS-12'
+          imageName: 'macOS-13'
           QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info CONFIG+=trik_nopython"
           TRIK_PYTHON3_VERSION_MINOR: 10
-          TRIK_QT_VERSION: 5.12
+          TRIK_QT_VERSION: 5.15
 
     pool:
       vmImage: $(imageName)
