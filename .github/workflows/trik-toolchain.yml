@@ -140,6 +140,7 @@ jobs:
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             mkdir -p build
             cd build
+            rm -rf .* *
             qmake CONFIG+=trik_not_brick \
             CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
             PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
