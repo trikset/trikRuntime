@@ -114,33 +114,47 @@ jobs:
              pkg-config --list-all | grep -i python
              echo "TARGET_PYTHON_VERSION_MINOR=$(python3 --version | sed 's#^.*3\.\([^.]\+\).*$#\1#g')" >> $GITHUB_ENV             
 
-      - name: "QMake"
+      - name: "[TRIK] QMake"
         timeout-minutes: 1
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
-            mkdir build
+            mkdir -p build
             cd build
-            qmake CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
+            qmake \
+            CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
             PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
             PYTHON_VERSION=3.${TARGET_PYTHON_VERSION_MINOR} \
             CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
 
-      - name: "QMake all"
-        timeout-minutes: 3
-        run: |
-            . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
-            cd build
-            make -j $(nproc) qmake_all
-
-      - name: "Make all"
+      - name: "[TRIK] Make all"
         timeout-minutes: 10
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             cd build
             make -j $(nproc) all
 
-      - name: "[QEMU + Tests] Unit tests"
+      - name: "[QEMU] QMake"
+        timeout-minutes: 1
+        run: |
+            . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
+            mkdir -p build
+            cd build
+            qmake CONFIG+=trik_not_brick \
+            CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
+            PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
+            PYTHON_VERSION=3.${TARGET_PYTHON_VERSION_MINOR} \
+            CONFIG+="${{ matrix.trik-version }}" \
+                  "$GITHUB_WORKSPACE/"
+
+      - name: "[QEMU] Make all"
+        timeout-minutes: 10
+        run: |
+            . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
+            cd build
+            make -j $(nproc) all
+
+      - name: "[QEMU] Unit tests"
         timeout-minutes: 5
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
@@ -150,8 +164,8 @@ jobs:
             export QEMU_LD_PREFIX="${OECORE_TARGET_SYSROOT}"
             #Inside qemu-user python resolves paths to host's root,
             # but .so libs are being searched by QEMU relative to target's sysroot (QEMU_LD_PREFIX)
-            TARGET_PYTHON_PATH=.:/usr/lib/lib-dynload:${QEMU_LD_PREFIX}/usr/lib/python3.${TARGET_PYTHON_VERSION_MINOR}:${QEMU_LD_PREFIX}/usr/lib/python3${TARGET_PYTHON_VERSION_MINOR}.zip
-            export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1,PYTHONPATH=${TARGET_PYTHON_PATH}
+            TARGET_PYTHONPATH=.:/usr/lib/lib-dynload:${QEMU_LD_PREFIX}/usr/lib/python3.${TARGET_PYTHON_VERSION_MINOR}:${QEMU_LD_PREFIX}/usr/lib/python3${TARGET_PYTHON_VERSION_MINOR}.zip
+            export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1,PYTHONPATH=${TARGET_PYTHONPATH},TRIK_PYTHONPATH=${TARGET_PYTHONPATH}
             
             env | sort
             make -k check
