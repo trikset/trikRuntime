@@ -19,11 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         trik-version: ['', 'trik_new_age']
-        libs:
-          - qt-version: '5.12'
-            mingw-version: '7.3'
-            mingw-short-version: 73
-            python-version: '3.9'
+        include:
           - qt-version: '5.15'
             mingw-version: '8.1'
             mingw-short-version: 81
@@ -77,21 +73,21 @@ jobs:
         run: 'pacman --remove --noconfirm --cascade --recursive --unneeded gcc python3 || :'
         shell: msys2 {0}
 
-      - name: Install Qt ${{ matrix.libs.qt-version }}
+      - name: Install Qt ${{ matrix.qt-version }}
         uses: jurplel/install-qt-action@v4
         with:
-          version: ${{matrix.libs.qt-version}}
-          arch: win32_mingw${{matrix.libs.mingw-short-version}}
+          version: ${{matrix.qt-version}}
+          arch: win32_mingw${{matrix.mingw-short-version}}
           modules: 'qtscript'
           archives: 'qtbase qtsvg qtserialport qtmultimedia qtwinextras qtimageformats i686 qttools qtdeclarative qtquickcontrols2'
-          tools: 'tools_mingw,qt.tools.win32_mingw${{matrix.libs.mingw-short-version}}0'
+          tools: 'tools_mingw,qt.tools.win32_mingw${{matrix.mingw-short-version}}0'
           extra: '--external 7z'
 
 # After Qt install action, that spoils pythonLocation variable
-      - name: Set up Python ${{ matrix.libs.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.libs.python-version }}
+          python-version: ${{ matrix.python-version }}
           architecture: 'x86'
 
       - name: Update PATH
@@ -100,7 +96,7 @@ jobs:
              set -xue
              cygpath -w /usr/bin >> $GITHUB_PATH
              cygpath -w /mingw32/bin >> $GITHUB_PATH
-             cygpath -w "${IQTA_TOOLS}/mingw${{matrix.libs.mingw-short-version}}0_32/bin" >> $GITHUB_PATH
+             cygpath -w "${IQTA_TOOLS}/mingw${{matrix.mingw-short-version}}0_32/bin" >> $GITHUB_PATH
              cygpath -w "${pythonLocation}/bin" >> $GITHUB_PATH
              cygpath -w "${QT_ROOT_DIR}/bin" >> $GITHUB_PATH
 
