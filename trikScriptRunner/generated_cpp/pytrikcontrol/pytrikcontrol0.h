@@ -137,42 +137,66 @@ inline void py_q_stopEventDevice(const QString&  deviceFile) { this->stopEventDe
 class PythonQtWrapper_trikControl__BrickInterface : public QObject
 { Q_OBJECT
 public:
-public Q_SLOTS:
+public slots:
 void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { delete obj; }
+   trikControl::VectorSensorInterface*  accelerometer(trikControl::BrickInterface* theWrappedObject);
    trikControl::VectorSensorInterface*  py_q_accelerometer(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_accelerometer());}
+   trikControl::BatteryInterface*  battery(trikControl::BrickInterface* theWrappedObject);
    trikControl::BatteryInterface*  py_q_battery(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_battery());}
+   trikControl::ColorSensorInterface*  colorSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::ColorSensorInterface*  py_q_colorSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_colorSensor(port));}
    QString  configVersion(trikControl::BrickInterface* theWrappedObject) const;
    QString  py_q_configVersion(trikControl::BrickInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_configVersion());}
    void py_q_configure(trikControl::BrickInterface* theWrappedObject, const QString&  portName, const QString&  deviceName){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_configure(portName, deviceName));}
+   trikControl::DisplayInterface*  display(trikControl::BrickInterface* theWrappedObject);
    trikControl::DisplayInterface*  py_q_display(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_display());}
+   trikControl::EncoderInterface*  encoder(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::EncoderInterface*  py_q_encoder(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_encoder(port));}
+   QStringList  encoderPorts(trikControl::BrickInterface* theWrappedObject) const;
    QStringList  py_q_encoderPorts(trikControl::BrickInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_encoderPorts());}
+   trikControl::EventDeviceInterface*  eventDevice(trikControl::BrickInterface* theWrappedObject, const QString&  deviceFile);
    trikControl::EventDeviceInterface*  py_q_eventDevice(trikControl::BrickInterface* theWrappedObject, const QString&  deviceFile){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_eventDevice(deviceFile));}
+   trikControl::FifoInterface*  fifo(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::FifoInterface*  py_q_fifo(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_fifo(port));}
+   trikControl::GamepadInterface*  gamepad(trikControl::BrickInterface* theWrappedObject);
    trikControl::GamepadInterface*  py_q_gamepad(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gamepad());}
    trikControl::DisplayWidgetInterface*  graphicsWidget(trikControl::BrickInterface* theWrappedObject);
    trikControl::DisplayWidgetInterface*  py_q_graphicsWidget(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_graphicsWidget());}
+   trikControl::GyroSensorInterface*  gyroscope(trikControl::BrickInterface* theWrappedObject);
    trikControl::GyroSensorInterface*  py_q_gyroscope(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gyroscope());}
+   trikControl::I2cDeviceInterface*  i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address);
    trikControl::I2cDeviceInterface*  py_q_i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_i2c(bus, address));}
+   trikControl::IrCameraInterface*  irCamera(trikControl::BrickInterface* theWrappedObject);
    trikControl::IrCameraInterface*  py_q_irCamera(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_irCamera());}
+   trikControl::KeysInterface*  keys(trikControl::BrickInterface* theWrappedObject);
    trikControl::KeysInterface*  py_q_keys(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_keys());}
+   trikControl::LedInterface*  led(trikControl::BrickInterface* theWrappedObject);
    trikControl::LedInterface*  py_q_led(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_led());}
+   trikControl::LidarInterface*  lidar(trikControl::BrickInterface* theWrappedObject);
    trikControl::LidarInterface*  py_q_lidar(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_lidar());}
+   trikControl::LineSensorInterface*  lineSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::LineSensorInterface*  py_q_lineSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_lineSensor(port));}
+   trikControl::MarkerInterface*  marker(trikControl::BrickInterface* theWrappedObject);
    trikControl::MarkerInterface*  py_q_marker(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_marker());}
    trikControl::MotorInterface*  py_q_motor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_motor(port));}
+   QStringList  motorPorts(trikControl::BrickInterface* theWrappedObject, trikControl::MotorInterface::Type  type) const;
    QStringList  py_q_motorPorts(trikControl::BrickInterface* theWrappedObject, trikControl::MotorInterface::Type  type) const{  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_motorPorts(type));}
+   trikControl::ObjectSensorInterface*  objectSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::ObjectSensorInterface*  py_q_objectSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_objectSensor(port));}
    void py_q_playSound(trikControl::BrickInterface* theWrappedObject, const QString&  soundFileName){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_playSound(soundFileName));}
    void py_q_playTone(trikControl::BrickInterface* theWrappedObject, int  hzFreq, int  msDuration){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_playTone(hzFreq, msDuration));}
+   trikControl::PwmCaptureInterface*  pwmCapture(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::PwmCaptureInterface*  py_q_pwmCapture(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_pwmCapture(port));}
+   QStringList  pwmCapturePorts(trikControl::BrickInterface* theWrappedObject) const;
    QStringList  py_q_pwmCapturePorts(trikControl::BrickInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_pwmCapturePorts());}
    void reset(trikControl::BrickInterface* theWrappedObject);
    void py_q_reset(trikControl::BrickInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_reset());}
    void py_q_say(trikControl::BrickInterface* theWrappedObject, const QString&  text){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_say(text));}
+   trikControl::SensorInterface*  sensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::SensorInterface*  py_q_sensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_sensor(port));}
+   QStringList  sensorPorts(trikControl::BrickInterface* theWrappedObject, trikControl::SensorInterface::Type  type) const;
    QStringList  py_q_sensorPorts(trikControl::BrickInterface* theWrappedObject, trikControl::SensorInterface::Type  type) const{  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_sensorPorts(type));}
+   trikControl::SoundSensorInterface*  soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::SoundSensorInterface*  py_q_soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_soundSensor(port));}
    void py_q_stop(trikControl::BrickInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_stop());}
    void py_q_stopEventDevice(trikControl::BrickInterface* theWrappedObject, const QString&  deviceFile){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_stopEventDevice(deviceFile));}
@@ -375,8 +399,11 @@ class PythonQtWrapper_trikControl__FifoInterface : public QObject
 public:
 public Q_SLOTS:
 void delete_trikControl__FifoInterface(trikControl::FifoInterface* obj) { delete obj; }
+   bool  hasData(trikControl::FifoInterface* theWrappedObject) const;
    bool  py_q_hasData(trikControl::FifoInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__FifoInterface*)theWrappedObject)->py_q_hasData());}
+   bool  hasLine(trikControl::FifoInterface* theWrappedObject) const;
    bool  py_q_hasLine(trikControl::FifoInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__FifoInterface*)theWrappedObject)->py_q_hasLine());}
+   QString  read(trikControl::FifoInterface* theWrappedObject);
    QString  py_q_read(trikControl::FifoInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__FifoInterface*)theWrappedObject)->py_q_read());}
 };
 
@@ -402,14 +429,22 @@ class PythonQtWrapper_trikControl__GamepadInterface : public QObject
 public:
 public Q_SLOTS:
 void delete_trikControl__GamepadInterface(trikControl::GamepadInterface* obj) { delete obj; }
+   bool  buttonIsPressed(trikControl::GamepadInterface* theWrappedObject, int  buttonNumber);
    bool  py_q_buttonIsPressed(trikControl::GamepadInterface* theWrappedObject, int  buttonNumber){  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_buttonIsPressed(buttonNumber));}
+   bool  buttonWasPressed(trikControl::GamepadInterface* theWrappedObject, int  buttonNumber);
    bool  py_q_buttonWasPressed(trikControl::GamepadInterface* theWrappedObject, int  buttonNumber){  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_buttonWasPressed(buttonNumber));}
+   bool  disconnect(trikControl::GamepadInterface* theWrappedObject);
    bool  py_q_disconnect(trikControl::GamepadInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_disconnect());}
+   bool  isConnected(trikControl::GamepadInterface* theWrappedObject) const;
    bool  py_q_isConnected(trikControl::GamepadInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_isConnected());}
+   bool  isPadPressed(trikControl::GamepadInterface* theWrappedObject, int  pad) const;
    bool  py_q_isPadPressed(trikControl::GamepadInterface* theWrappedObject, int  pad) const{  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_isPadPressed(pad));}
+   int  padX(trikControl::GamepadInterface* theWrappedObject, int  pad) const;
    int  py_q_padX(trikControl::GamepadInterface* theWrappedObject, int  pad) const{  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_padX(pad));}
+   int  padY(trikControl::GamepadInterface* theWrappedObject, int  pad) const;
    int  py_q_padY(trikControl::GamepadInterface* theWrappedObject, int  pad) const{  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_padY(pad));}
    void py_q_reset(trikControl::GamepadInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_reset());}
+   int  wheel(trikControl::GamepadInterface* theWrappedObject) const;
    int  py_q_wheel(trikControl::GamepadInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__GamepadInterface*)theWrappedObject)->py_q_wheel());}
 };
 
@@ -432,8 +467,11 @@ public:
 public Q_SLOTS:
 void delete_trikControl__GyroSensorInterface(trikControl::GyroSensorInterface* obj) { delete obj; }
    void py_q_calibrate(trikControl::GyroSensorInterface* theWrappedObject, int  msec){  (((PythonQtPublicPromoter_trikControl__GyroSensorInterface*)theWrappedObject)->py_q_calibrate(msec));}
+   QVector<int >  getCalibrationValues(trikControl::GyroSensorInterface* theWrappedObject);
    QVector<int >  py_q_getCalibrationValues(trikControl::GyroSensorInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__GyroSensorInterface*)theWrappedObject)->py_q_getCalibrationValues());}
+   bool  isCalibrated(trikControl::GyroSensorInterface* theWrappedObject) const;
    bool  py_q_isCalibrated(trikControl::GyroSensorInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__GyroSensorInterface*)theWrappedObject)->py_q_isCalibrated());}
+   QVector<int >  readRawData(trikControl::GyroSensorInterface* theWrappedObject) const;
    QVector<int >  py_q_readRawData(trikControl::GyroSensorInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__GyroSensorInterface*)theWrappedObject)->py_q_readRawData());}
    void py_q_setCalibrationValues(trikControl::GyroSensorInterface* theWrappedObject, const QVector<int >&  values){  (((PythonQtPublicPromoter_trikControl__GyroSensorInterface*)theWrappedObject)->py_q_setCalibrationValues(values));}
 };
@@ -444,7 +482,9 @@ void delete_trikControl__GyroSensorInterface(trikControl::GyroSensorInterface* o
 
 class PythonQtPublicPromoter_trikControl__I2cDeviceInterface : public trikControl::I2cDeviceInterface
 { public:
-inline int  py_q_read(int  reg) { return this->read(reg); }
+inline int  py_q_read16(int  reg) { return this->read16(reg); }
+inline int  py_q_read32(int  reg) { return this->read32(reg); }
+inline int  py_q_read8(int  reg) { return this->read8(reg); }
 inline void py_q_send(int  reg, int  value) { this->send(reg, value); }
 };
 
@@ -453,8 +493,12 @@ class PythonQtWrapper_trikControl__I2cDeviceInterface : public QObject
 public:
 public Q_SLOTS:
 void delete_trikControl__I2cDeviceInterface(trikControl::I2cDeviceInterface* obj) { delete obj; }
-   int  read(trikControl::I2cDeviceInterface* theWrappedObject, int  reg);
-   int  py_q_read(trikControl::I2cDeviceInterface* theWrappedObject, int  reg){  return (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_read(reg));}
+   int  read16(trikControl::I2cDeviceInterface* theWrappedObject, int  reg);
+   int  py_q_read16(trikControl::I2cDeviceInterface* theWrappedObject, int  reg){  return (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_read16(reg));}
+   int  read32(trikControl::I2cDeviceInterface* theWrappedObject, int  reg);
+   int  py_q_read32(trikControl::I2cDeviceInterface* theWrappedObject, int  reg){  return (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_read32(reg));}
+   int  read8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg);
+   int  py_q_read8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg){  return (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_read8(reg));}
    void send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value);
    void py_q_send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value){  (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_send(reg, value));}
 };
@@ -476,6 +520,7 @@ public:
 public Q_SLOTS:
 void delete_trikControl__IrCameraInterface(trikControl::IrCameraInterface* obj) { delete obj; }
    void py_q_init(trikControl::IrCameraInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__IrCameraInterface*)theWrappedObject)->py_q_init());}
+   int  readSensor(trikControl::IrCameraInterface* theWrappedObject, int  m, int  n) const;
    int  py_q_readSensor(trikControl::IrCameraInterface* theWrappedObject, int  m, int  n) const{  return (((PythonQtPublicPromoter_trikControl__IrCameraInterface*)theWrappedObject)->py_q_readSensor(m, n));}
    void py_q_stop(trikControl::IrCameraInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__IrCameraInterface*)theWrappedObject)->py_q_stop());}
 };
@@ -556,8 +601,10 @@ public:
 public Q_SLOTS:
 void delete_trikControl__LineSensorInterface(trikControl::LineSensorInterface* obj) { delete obj; }
    void py_q_detect(trikControl::LineSensorInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_detect());}
+   QVector<int >  getDetectParameters(trikControl::LineSensorInterface* theWrappedObject) const;
    QVector<int >  py_q_getDetectParameters(trikControl::LineSensorInterface* theWrappedObject) const{  return (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_getDetectParameters());}
    void py_q_init(trikControl::LineSensorInterface* theWrappedObject, bool  showOnDisplay){  (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_init(showOnDisplay));}
+   QVector<int >  read(trikControl::LineSensorInterface* theWrappedObject);
    QVector<int >  py_q_read(trikControl::LineSensorInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_read());}
    void py_q_stop(trikControl::LineSensorInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_stop());}
 };

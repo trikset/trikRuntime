@@ -16,10 +16,12 @@ Generation disabled by type system
 <object-type name="QByteArrayDataPtr"/>
 <object-type name="QChar"/>
 <object-type name="QCharRef"/>
+<object-type name="QColor::CT"/>
 <object-type name="QEnableSharedFromThis"/>
 <object-type name="QExplicitlySharedDataPointer"/>
 <object-type name="QFlag"/>
 <object-type name="QFlags"/>
+<object-type name="QGradient::QGradientData"/>
 <object-type name="QHash"/>
 <object-type name="QHashData"/>
 <object-type name="QHashDummyValue"/>
