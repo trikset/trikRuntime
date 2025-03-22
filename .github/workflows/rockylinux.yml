@@ -60,7 +60,7 @@ jobs:
       - name: Install Qt
         run: |
             python3 -m pip install -U pip
-            python3 -m pip install aqtinstall
+            python3 -m pip install aqtinstall==3.2.0
             aqt install-qt linux desktop ${{ matrix.qt-version }} -O /Qt \
             --archives qtbase qtmultimedia qtsvg qttools qtserialport qtimageformats icu qtwayland qtdeclarative qtquickcontrols2 ${{ matrix.qjsengine == 'qjsengine' && 'qtdeclarative' || '-m qtscript' }}
             QT_ROOT_DIR=$(ls -1d /Qt/5*/* | head -n 1)
