@@ -36,8 +36,14 @@ public Q_SLOTS:
 	/// Sends data to current device, if it is connected.
 	void send(int reg, int value) override;
 
-	/// Reads data by given I2C command number and returns the result.
-	int read(int reg) override;
+	/// Reads byte by given I2C command number and returns the result.
+	int read8(int reg) override;
+
+	/// Reads word by given I2C command number and returns the result.
+	int read16(int reg) override;
+
+	/// Reads 4 bytes by given I2C command number and returns the result.
+	int read32(int reg) override;
 
 private:
 	DeviceState mState;
