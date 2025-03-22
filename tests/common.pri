@@ -16,6 +16,8 @@ include($$PWD/../global.pri)
 
 QT += widgets
 
+CONFIG += c++17 #for GTest
+
 #Workaround for MinGW build. Qt incorrectly sets it to empty string on Win32 for bash
 mingw: TEST_TARGET_DIR = .
 

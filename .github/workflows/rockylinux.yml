@@ -25,7 +25,7 @@ jobs:
         nopython: ['nopython', '']
         trik-version: ['', 'trik_new_age']
         qjsengine: [''] # add 'qjsengine' for CONFIG+=trik_use_qjsengine
-        qt-version: ['5.12']
+        qt-version: ['5.15']
         gcc-version: ['13']
 
     steps:
