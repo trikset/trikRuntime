@@ -10,6 +10,7 @@ Generation disabled by type system
 <enum-type name="QSysInfo::WinVersion"/>
 <enum-type name="Qt::Initialization"/>
 <enum-type name="Qt::Modifier"/>
+<enum-type name="Qt::ReturnByValueConstant"/>
 <enum-type name="enum_1"/>
 ************************************************************************
 

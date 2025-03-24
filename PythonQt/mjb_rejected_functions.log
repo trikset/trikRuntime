@@ -43,7 +43,6 @@ QList::node_copy
 QList::node_destruct
 QList::toSet
 QMatrix::
-QMessageLogContext::copy
 QObject::connect
 QObject::connectNotify
 QObject::d_func
@@ -56,9 +55,6 @@ QObject::receivers
 QObject::registerUserData
 QObject::setUserData
 QObject::userData
-QPainterPath::d_func
-QPainterPath::detach
-QPainterPathStroker::d_func
 QPalette::
 QPalette::detach
 QPixmap::
@@ -112,13 +108,17 @@ QBasicMutex::fastTryLock QMutexData*&
 QBasicMutex::fastTryUnlock QMutexData*&
 QByteArray::QByteArray QByteArrayDataPtr
 QByteArray::QByteArray Qt::Initialization
+QByteArray::fromBase64Encoding QByteArray&&
 QByteArray::fromStdString std::string const&
 QByteArray::reallocData Data::AllocationOptions
+QCursor::bitmap Qt::ReturnByValueConstant
+QCursor::mask Qt::ReturnByValueConstant
 QDataStream::__lshift__ qfloat16
 QDataStream::__lshift__ std::nullptr_t
 QDataStream::__rshift__ qfloat16&
 QDataStream::__rshift__ std::nullptr_t&
 QImage::QImage QImageCleanupFunction
+QList::QList std::initializer_list<T>
 QList::contains_impl QListData::ArrayCompatibleLayout
 QList::contains_impl QListData::NotArrayCompatibleLayout
 QList::count_impl QListData::ArrayCompatibleLayout
@@ -144,13 +144,21 @@ QPair::operator_assign QPair<TT1,TT2> const&
 QPixelFormat::get QPixelFormat::Field
 QPixelFormat::set QPixelFormat::Field
 QPixmap::QPixmap QPlatformPixmap*
+QSignalBlocker::QSignalBlocker QSignalBlocker&&
+QSignalBlocker::operator_assign QSignalBlocker&&
 QSizePolicy::QSizePolicy Bits
+QStringList::QStringList std::initializer_list<QString>
 QTransform::QTransform Qt::Initialization
+QVector::QVector QArrayDataPointerRef<T>
+QVector::QVector std::initializer_list<T>
+QVector::append T&&
 QVector::freeData Data*
 QVector::freeData QVector<T>::Data*
 QVector::fromStdVector std::vector<T> const&
 QVector::isValidIterator QVector<T>::iterator const&
+QVector::operator_assign std::initializer_list<T>
 QVector::prepend T&&
+QVector::realloc QArrayData::AllocationOptions
 QVector::reallocData QArrayData::AllocationOptions
 trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
 trikControl::DisplayInterface::show QVector<int32_t> const&
@@ -205,6 +213,7 @@ Qt::__or__ QFlags<MouseButtons::enum_type>
 Qt::__or__ QFlags<MouseEventFlags::enum_type>
 Qt::__or__ QFlags<Orientations::enum_type>
 Qt::__or__ QFlags<ScreenOrientations::enum_type>
+Qt::__or__ QFlags<SplitBehavior::enum_type>
 Qt::__or__ QFlags<TextInteractionFlags::enum_type>
 Qt::__or__ QFlags<ToolBarAreas::enum_type>
 Qt::__or__ QFlags<TouchPointStates::enum_type>

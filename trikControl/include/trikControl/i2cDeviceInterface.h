@@ -31,8 +31,14 @@ public :
 	/// Sends data to current device, if it is connected.
 	virtual void send(int reg, int value) = 0;
 
-	/// Reads data by given I2C command number and returns the result.
-	virtual int read(int reg) = 0;
+	/// Reads byte by given I2C command number and returns the result.
+	virtual int read8(int reg) = 0;
+
+	/// Reads byte by given I2C command number and returns the result.
+	virtual int read16(int reg) = 0;
+
+	/// Reads 4 bytes by given I2C command number and returns the result.
+	virtual int read32(int reg) = 0;
 };
 
 }

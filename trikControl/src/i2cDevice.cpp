@@ -40,10 +40,25 @@ void I2cDevice::send(int reg, int value)
 	}
 }
 
-int I2cDevice::read(int reg)
+int I2cDevice::read8(int reg)
+{
+	QByteArray command(1, reg & 0xFF);
+	return mCommunicator.read(command);
+}
+
+int I2cDevice::read16(int reg)
 {
 	QByteArray command(2, '\0');
 	command[0] = reg & 0xFF;
 	command[1] = static_cast<char>(0x00);
-	return mCommunicator.read(command) & 0xFF;
+	return mCommunicator.read(command);
+}
+
+int I2cDevice::read32(int reg)
+{
+	QByteArray command(3, '\0');
+	command[0] = reg & 0xFF;
+	command[1] = static_cast<char>(0x00);
+	command[2] = static_cast<char>(0x00);
+	return mCommunicator.read(command);
 }

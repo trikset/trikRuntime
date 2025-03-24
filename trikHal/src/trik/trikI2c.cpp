@@ -41,17 +41,27 @@ static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
 	union i2c_smbus_data data {};
 	if (i2c_smbus_access(file, I2C_SMBUS_READ, command, I2C_SMBUS_WORD_DATA, &data)) {
 		return -1;
-	} else {
-		return 0x0FFFF & data.word;
 	}
+	return 0x0FFFF & data.word;
+}
+
+static inline __s32 i2c_smbus_read_byte_data(int file, __u8 command)
+{
+	union i2c_smbus_data data {};
+
+	if (i2c_smbus_access(file, I2C_SMBUS_READ, command, I2C_SMBUS_BYTE_DATA, &data)) {
+		return -1;
+	}
+
+	return 0x0FF & data.byte;
 }
 
 static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 length, __u8 *values)
 {
 	union i2c_smbus_data data {};
 
-	if (length > 32) {
-		length = 32;
+	if (length > I2C_SMBUS_BLOCK_MAX) {
+		length = I2C_SMBUS_BLOCK_MAX;
 	}
 
 	data.block[0] = length;
@@ -60,13 +70,13 @@ static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 l
 			, &data))
 	{
 			return -1;
-	} else {
-			for (int i = 1; i <= data.block[0]; i++) {
-					values[i - 1] = data.block[i];
-			}
-
-			return data.block[0];
 	}
+
+	for (int i = 1; i <= data.block[0]; i++) {
+			values[i - 1] = data.block[i];
+	}
+
+	return data.block[0];
 }
 
 static inline __s32 i2c_smbus_write_word_data(int file, __u8 command, __u16 value)
@@ -99,13 +109,15 @@ void TrikI2c::send(const QByteArray &data)
 
 int TrikI2c::read(const QByteArray &data)
 {
+	if (data.size() == 1) {
+		return i2c_smbus_read_byte_data(mDeviceFileDescriptor, data[0]);
+	}
 	if (data.size() == 2) {
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
-	} else {
-		std::array<uint8_t, 4> buffer {};
-		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
-		return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
 	}
+	std::array<uint8_t, 4> buffer {};
+	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
+	return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
 }
 
 bool TrikI2c::connect(const QString &devicePath, int deviceId)
