@@ -33,8 +33,12 @@ public:
 	void disconnect() override;
 
 private:
+	bool checkFuncs(int size);
+
 	/// Low-level descriptor of I2C device file.
 	int mDeviceFileDescriptor = -1;
+
+	unsigned long mFuncs = 0;
 };
 
 }

@@ -98,11 +98,26 @@ TrikI2c::~TrikI2c()
 	disconnect();
 }
 
+bool TrikI2c::checkFuncs(int size) {
+	if (!(mFuncs & size)) {
+		QLOG_ERROR() << "Device with file descriptor "
+			     << mDeviceFileDescriptor << "doesnot support " << size << "operation";
+		return false;
+	}
+	return true;
+}
+
 void TrikI2c::send(const QByteArray &data)
 {
 	if (data.size() == 3) {
+		if (!checkFuncs(I2C_FUNC_SMBUS_WRITE_BYTE_DATA)) {
+			return;
+		}
 		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
 	} else {
+		if (!checkFuncs(I2C_FUNC_SMBUS_WRITE_WORD_DATA)) {
+			return;
+		}
 		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[2] | (data[3] << 8));
 	}
 }
@@ -110,10 +125,19 @@ void TrikI2c::send(const QByteArray &data)
 int TrikI2c::read(const QByteArray &data)
 {
 	if (data.size() == 1) {
+		if (!checkFuncs(I2C_FUNC_SMBUS_READ_BYTE_DATA)) {
+			return -1;
+		}
 		return i2c_smbus_read_byte_data(mDeviceFileDescriptor, data[0]);
 	}
 	if (data.size() == 2) {
+		if (!checkFuncs(I2C_FUNC_SMBUS_READ_WORD_DATA)) {
+			return -1;
+		}
 		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+	}
+	if (!checkFuncs(I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
+		return -1;
 	}
 	std::array<uint8_t, 4> buffer {};
 	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
@@ -125,6 +149,11 @@ bool TrikI2c::connect(const QString &devicePath, int deviceId)
 	mDeviceFileDescriptor = open(devicePath.toStdString().c_str(), O_RDWR);
 	if (mDeviceFileDescriptor < 0) {
 		QLOG_ERROR() << "Failed to open I2C device file " << devicePath;
+		return false;
+	}
+
+	if (ioctl(mDeviceFileDescriptor, I2C_FUNCS, &mFuncs)) {
+		QLOG_ERROR() << "Failed to get I2C_FUNCS for " << devicePath;
 		return false;
 	}
 

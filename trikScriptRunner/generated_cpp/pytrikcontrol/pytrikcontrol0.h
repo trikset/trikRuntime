@@ -485,7 +485,8 @@ class PythonQtPublicPromoter_trikControl__I2cDeviceInterface : public trikContro
 inline int  py_q_read16(int  reg) { return this->read16(reg); }
 inline int  py_q_read32(int  reg) { return this->read32(reg); }
 inline int  py_q_read8(int  reg) { return this->read8(reg); }
-inline void py_q_send(int  reg, int  value) { this->send(reg, value); }
+inline void py_q_send16(int  reg, int  value) { this->send16(reg, value); }
+inline void py_q_send8(int  reg, int  value) { this->send8(reg, value); }
 };
 
 class PythonQtWrapper_trikControl__I2cDeviceInterface : public QObject
@@ -499,8 +500,10 @@ void delete_trikControl__I2cDeviceInterface(trikControl::I2cDeviceInterface* obj
    int  py_q_read32(trikControl::I2cDeviceInterface* theWrappedObject, int  reg){  return (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_read32(reg));}
    int  read8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg);
    int  py_q_read8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg){  return (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_read8(reg));}
-   void send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value);
-   void py_q_send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value){  (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_send(reg, value));}
+   void send16(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value);
+   void py_q_send16(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value){  (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_send16(reg, value));}
+   void send8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value);
+   void py_q_send8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value){  (((PythonQtPublicPromoter_trikControl__I2cDeviceInterface*)theWrappedObject)->py_q_send8(reg, value));}
 };
 
 

@@ -28,13 +28,26 @@ I2cDevice::Status I2cDevice::status() const
 	return combine(mCommunicator, mState.status());
 }
 
-void I2cDevice::send(int reg, int value)
+void I2cDevice::send8(int reg, int value)
 {
 	if (status() == DeviceInterface::Status::ready) {
 		QByteArray command(3, '\0');
 		command[0] = reg & 0xFF;
 		command[1] = static_cast<char>(0x00);
 		command[2] = value & 0xFF;
+
+		mCommunicator.send(command);
+	}
+}
+
+void I2cDevice::send16(int reg, int value)
+{
+	if (status() == DeviceInterface::Status::ready) {
+		QByteArray command(4, '\0');
+		command[0] = reg & 0xFF;
+		command[1] = static_cast<char>(0x00);
+		command[2] = value & 0xFF;
+		command[3] = (value >> 8) & 0xFF;
 
 		mCommunicator.send(command);
 	}

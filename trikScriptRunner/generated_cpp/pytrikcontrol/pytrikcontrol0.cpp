@@ -342,9 +342,14 @@ int  PythonQtWrapper_trikControl__I2cDeviceInterface::read8(trikControl::I2cDevi
   return ( theWrappedObject->read8(reg));
 }
 
-void PythonQtWrapper_trikControl__I2cDeviceInterface::send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value)
+void PythonQtWrapper_trikControl__I2cDeviceInterface::send16(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value)
 {
-  ( theWrappedObject->send(reg, value));
+  ( theWrappedObject->send16(reg, value));
+}
+
+void PythonQtWrapper_trikControl__I2cDeviceInterface::send8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value)
+{
+  ( theWrappedObject->send8(reg, value));
 }
 
 
