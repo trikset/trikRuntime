@@ -52,6 +52,12 @@ public:
 	/// @param thread - background thread where all socket events will be processed.
 	virtual EventFileInterface *createEventFile(const QString &fileName) const = 0;
 
+	/// Create MSP I2C bus implementation. The caller take ownership.
+	/// The generation of TrikI2c is not the responsibility of the TrikHardwareAbstraction class, however,
+	/// this decision was made to better understand the interaction of the TrikControl and TrikHal modules,
+	/// because all the work of TrikHal in brickInterface is encapsulated by TrikHardwareAbstractionInterface
+	virtual MspI2cInterface *createMspI2c() = 0;
+
 	/// Creates new FIFO, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of a FIFO file.
 	virtual FifoInterface *createFifo(const QString &fileName) const = 0;

@@ -16,7 +16,10 @@
 
 #include "i2cDeviceInterface.h"
 #include "mspI2cCommunicator.h"
-#include "i2cCommunicator.h"
+
+namespace trikHal {
+class MspI2cInterface;
+}
 
 namespace trikControl{
 
@@ -28,8 +31,9 @@ class I2cDevice : public I2cDeviceInterface
 public:
 	/// Constructor.
 	/// @param configurer - contains preparsed XML configuration.
-	I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c, int bus, int address);
-
+	/// Takes ownership of i2c
+	I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface *i2c, int bus, int address);
+	~I2cDevice();
 	Status status() const override;
 
 public Q_SLOTS:
@@ -47,7 +51,8 @@ public Q_SLOTS:
 
 private:
 	DeviceState mState;
-	I2cCommunicator mCommunicator;
+	QScopedPointer<trikHal::MspI2cInterface> mInterface;
+	QScopedPointer<MspCommunicatorInterface> mCommunicator;
 };
 
 }

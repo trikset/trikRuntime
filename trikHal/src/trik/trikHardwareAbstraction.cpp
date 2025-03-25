@@ -50,6 +50,12 @@ MspUsbInterface &TrikHardwareAbstraction::mspUsb()
 	return *mUsb.data();
 }
 
+MspI2cInterface *TrikHardwareAbstraction::createMspI2c()
+{
+	return new TrikI2c();
+}
+
+
 SystemConsoleInterface &TrikHardwareAbstraction::systemConsole()
 {
 	return *mSystemConsole.data();

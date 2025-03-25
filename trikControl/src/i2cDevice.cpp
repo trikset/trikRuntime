@@ -12,20 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+// FIXME: Transfer ownership of the i2c object to another class, such as Brick or TrikHardwareAbstraction.
+#include <trikHal/mspI2cInterface.h>
 #include "i2cDevice.h"
 
 using namespace trikControl;
 
-I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c, int bus, int address)
+I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface *i2c, int bus, int address)
 	: mState("I2cDevice")
-	, mCommunicator(configurer, i2c, bus, address)
+	, mInterface(i2c)
+	, mCommunicator(new MspI2cCommunicator(configurer, *i2c, bus, address))
 {
 	mState.ready();
 }
 
+I2cDevice::~I2cDevice() {}
+
 I2cDevice::Status I2cDevice::status() const
 {
-	return combine(mCommunicator, mState.status());
+	return combine(*mCommunicator, mState.status());
 }
 
 void I2cDevice::send(int reg, int value)
@@ -36,14 +41,14 @@ void I2cDevice::send(int reg, int value)
 		command[1] = static_cast<char>(0x00);
 		command[2] = value & 0xFF;
 
-		mCommunicator.send(command);
+		mCommunicator->send(command);
 	}
 }
 
 int I2cDevice::read8(int reg)
 {
 	QByteArray command(1, reg & 0xFF);
-	return mCommunicator.read(command);
+	return mCommunicator->read(command);
 }
 
 int I2cDevice::read16(int reg)
@@ -51,7 +56,7 @@ int I2cDevice::read16(int reg)
 	QByteArray command(2, '\0');
 	command[0] = reg & 0xFF;
 	command[1] = static_cast<char>(0x00);
-	return mCommunicator.read(command);
+	return mCommunicator->read(command);
 }
 
 int I2cDevice::read32(int reg)
@@ -60,5 +65,5 @@ int I2cDevice::read32(int reg)
 	command[0] = reg & 0xFF;
 	command[1] = static_cast<char>(0x00);
 	command[2] = static_cast<char>(0x00);
-	return mCommunicator.read(command);
+	return mCommunicator->read(command);
 }

@@ -37,6 +37,13 @@ public:
 	/// @param configurer - contains preparsed XML configuration.
 	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
 
+	/// The constructor with two parameters is used to access a device on bus 2
+	/// with address 0x48 (see system-config.xml) and effectively uses it to get
+	/// information about the battery and so on.
+	/// However, there are i2c ports for external peripherals that require a device address.
+	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
+				, uint8_t bus, uint8_t deviceId);
+
 	~MspI2cCommunicator() override;
 
 	/// Send data to current device, if it is connected.
