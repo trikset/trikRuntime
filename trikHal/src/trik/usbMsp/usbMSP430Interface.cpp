@@ -1103,10 +1103,8 @@ uint32_t read_Sensor(const uint16_t dev_address)
 }
 }
 
-using namespace trikHal::trik;
-
 /// Connect to USB MSP430 device
-uint32_t connect_USBMSP()
+uint32_t trikHal::trik::connect_USBMSP()
 {
 	// Open USB descriptor for writing
 	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY | O_CLOEXEC);
@@ -1145,7 +1143,7 @@ uint32_t connect_USBMSP()
 }
 
 /// Disconnect from USB MSP430 device
-uint32_t disconnect_USBMSP()
+uint32_t trikHal::trik::disconnect_USBMSP()
 {
 	if (usb_out_descr < 0)
 	{
@@ -1158,7 +1156,7 @@ uint32_t disconnect_USBMSP()
 }
 
 /// Send data to MSP430 via USB
-uint32_t send_USBMSP(uint16_t deviceAddress, uint16_t value, bool isWord)
+uint32_t trikHal::trik::send_USBMSP(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
 	Q_UNUSED(isWord)
 	if (isPowerMotor(deviceAddress) || isServoMotor(deviceAddress)) {
@@ -1174,7 +1172,7 @@ uint32_t send_USBMSP(uint16_t deviceAddress, uint16_t value, bool isWord)
 }
 
 /// Read data from MSP430 via USB
-uint32_t read_USBMSP(uint16_t deviceAddress, uint16_t numberOfBytes)
+uint32_t trikHal::trik::read_USBMSP(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
 	Q_UNUSED(numberOfBytes);
 	if (isSensor(deviceAddress)) {
