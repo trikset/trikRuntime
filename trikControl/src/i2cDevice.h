@@ -37,8 +37,11 @@ public:
 	Status status() const override;
 
 public Q_SLOTS:
-	/// Sends data to current device, if it is connected.
-	void send(int reg, int value) override;
+	/// Sends byte data to current device, if it is connected.
+	void send8(int reg, int value) override;
+
+	/// Sends word data to current device, if it is connected.
+	void send16(int reg, int value) override;
 
 	/// Reads byte by given I2C command number and returns the result.
 	int read8(int reg) override;

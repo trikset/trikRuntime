@@ -18,14 +18,14 @@
 
 using namespace trikHal::stub;
 
-void StubMspUsb::send(const QByteArray &data)
+void StubMspUsb::send(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
-	QLOG_INFO() << "Sending thru MSP USB stub" << data;
+	QLOG_INFO() << "Sending thru MSP USB stub" << deviceAddress << value << isWord;
 }
 
-int StubMspUsb::read(const QByteArray &data)
+QVariant StubMspUsb::read(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
-	QLOG_INFO() << "Reading from MSP USB stub" << data;
+	QLOG_INFO() << "Reading from MSP USB stub" << deviceAddress << numberOfBytes;
 	return 0;
 }
 

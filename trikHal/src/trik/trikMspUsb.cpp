@@ -25,14 +25,14 @@ TrikMspUsb::~TrikMspUsb()
 {
 }
 
-void TrikMspUsb::send(const QByteArray &data)
+void TrikMspUsb::send(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
-	send_USBMSP(data);
+	send_USBMSP(deviceAddress, value, isWord);
 }
 
-int TrikMspUsb::read(const QByteArray &data)
+QVariant TrikMspUsb::read(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
-	return read_USBMSP(data);
+	return read_USBMSP(deviceAddress, numberOfBytes);
 }
 
 bool TrikMspUsb::connect()

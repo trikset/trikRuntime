@@ -79,11 +79,7 @@ int AnalogSensor::readRawData()
 		return 0;
 	}
 
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-
-	return mCommunicator.read(command);
+	return mCommunicator.read(mI2cCommandNumber, 2).toInt();
 }
 
 void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)

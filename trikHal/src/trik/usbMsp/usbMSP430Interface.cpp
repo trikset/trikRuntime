@@ -34,6 +34,18 @@
 #include "usbMSP430Defines.h"
 #include "usbMSP430Interface.h"
 
+/// Delays class
+class Sleeper : public QThread
+{
+	Q_OBJECT
+public:
+	static void usleep(unsigned long usecs){QThread::usleep(usecs);}
+	static void msleep(unsigned long msecs){QThread::msleep(msecs);}
+	static void sleep(unsigned long secs){QThread::sleep(secs);}
+};
+
+namespace {
+
 volatile uint16_t mper;			// Global PWM motor period
 volatile uint16_t sper;			// Global software PWM period
 int usb_out_descr;			// Input/Output USB device descriptor
@@ -49,16 +61,6 @@ uint8_t addr_table_i2c_usb[84] =	// Correspondence address table (between I2C an
 		0, 0, 0, SPWM1, SPWM2, SPWM3, SPWM4, SPWM5, SPWM6, SPWM7,
 		SPWM8, SPWM9, SPWM10, SPWM11, SPWM12, SPWM13, SPWM14, I2C1, I2C2, I2C3,
 		I2C4, I2C5, I2C6, I2C7};
-
-/// Delays class
-class Sleeper : public QThread
-{
-	Q_OBJECT
-public:
-	static void usleep(unsigned long usecs){QThread::usleep(usecs);}
-	static void msleep(unsigned long msecs){QThread::msleep(msecs);}
-	static void sleep(unsigned long secs){QThread::sleep(secs);}
-};
 
 /// Extract number from packet
 uint32_t hex2num(char *string
@@ -432,59 +434,23 @@ uint32_t init_i2c_sensors_USBMSP()
 	return NO_ERROR;
 }
 
-/// Connect to USB MSP430 device
-uint32_t connect_USBMSP()
-{
-	// Open USB descriptor for writing
-	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY | O_CLOEXEC);
-	if (usb_out_descr < 0)
-	{
-		QLOG_INFO() << "Error " << errno << " opening " << USB_DEV_NAME << ": " << strerror (errno);
-		return DEVICE_ERROR;
-	}
-
-	// Init USB STTY device with serial port parameters
-	init_USBTTYDevice();
-
-	// Init servo motors
-	init_servomotors_USBMSP();
-
-	// Init I2C sensors
-	init_i2c_sensors_USBMSP();
-
-	// Init DHTxx sensors
-	init_dhtxx_sensors_USBMSP();
-
-	// Init motors
-	init_motors_USBMSP();
-
-	// Init encoders
-	init_encoders_USBMSP();
-
-	// Init sensors
-	init_sensors_USBMSP();
-
-	// Default alternative function
-	alt_func_flag = ALT_ANALOG;
-
-	return NO_ERROR;
+static bool isPowerMotor(uint16_t deviceAddress) {
+	return (deviceAddress == i2cMOT1) || (deviceAddress == i2cMOT2) ||
+			(deviceAddress == i2cMOT3) || (deviceAddress == i2cMOT4);
 }
 
-/// Disconnect from USB MSP430 device
-uint32_t disconnect_USBMSP()
-{
-	if (usb_out_descr < 0)
-	{
-		QLOG_ERROR() << "Error device descriptor" << errno << " : " << strerror (errno);
-		return DEVICE_ERROR;
-	}
-	close(usb_out_descr);
-
-	return NO_ERROR;
+static bool isServoMotor(uint16_t deviceAddress) {
+	return (deviceAddress == i2cSERV1) || (deviceAddress == i2cSERV2) ||
+		(deviceAddress == i2cSERV3) || (deviceAddress == i2cSERV4) ||
+		(deviceAddress == i2cSERV5) || (deviceAddress == i2cSERV6) ||
+		(deviceAddress == i2cSERV7) || (deviceAddress == i2cSERV8) ||
+		(deviceAddress == i2cSERV9) || (deviceAddress == i2cSERV10) ||
+		(deviceAddress == i2cSERV11) || (deviceAddress == i2cSERV12) ||
+		(deviceAddress == i2cSERV13) || (deviceAddress == i2cSERV14);
 }
 
 /// Motor power control function
-uint32_t power_Motor(QByteArray const &i2c_data)
+uint32_t power_Motor(const uint16_t dev_address, const int8_t reg_value)
 {
 	uint16_t mdut;				    // Motor PWM duty
 	uint16_t mctl;				    // Motor control register
@@ -492,15 +458,9 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 	uint16_t sctl;				    // Software PWM control register
 	int8_t mtmp;				    // Temp variable
 	char s1[MAX_STRING_LENGTH];		    // Temp string variable
-	const int8_t reg_value = i2c_data[2];	    // Register value
-	const uint16_t dev_address = (uint16_t)i2c_data[0] +
-		((uint16_t)i2c_data[1] << 8);	    // Device address
 
-	// Power motors
-	if ((dev_address == i2cMOT1) || (dev_address == i2cMOT2) ||
-			(dev_address == i2cMOT3) || (dev_address == i2cMOT4))
+	if (isPowerMotor(dev_address))
 	{
-
 		// qDebug() << "Dev address (power_motor): " << dev_address << " " << reg_value;
 		mtmp = reg_value;
 		mctl = MOT_ENABLE;
@@ -524,14 +484,7 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMCTL, mctl);
 		sendUSBPacket(s1, s1);
 	}
-	// Servo motors
-	else if ((dev_address == i2cSERV1) || (dev_address == i2cSERV2) ||
-		 (dev_address == i2cSERV3) || (dev_address == i2cSERV4) ||
-		 (dev_address == i2cSERV5) || (dev_address == i2cSERV6) ||
-		 (dev_address == i2cSERV7) || (dev_address == i2cSERV8) ||
-		 (dev_address == i2cSERV9) || (dev_address == i2cSERV10) ||
-		 (dev_address == i2cSERV11) || (dev_address == i2cSERV12) ||
-		 (dev_address == i2cSERV13) || (dev_address == i2cSERV14))
+	else if (isServoMotor(dev_address))
 	{
 
 		// qDebug() << "Dev address (servo_motor): " << dev_address << " " << reg_value;
@@ -576,73 +529,60 @@ uint32_t power_Motor(QByteArray const &i2c_data)
 	return NO_ERROR;
 }
 
-/// Set motor frequency function
-uint32_t freq_Motor(QByteArray const &i2c_data)
-{
-	char s1[MAX_STRING_LENGTH];					// Temp string variable
-	const uint16_t reg_value = ((i2c_data[3] << 8) | i2c_data[2]);	// Register value
-	const uint16_t dev_address = (uint16_t)i2c_data[0] +
-		((uint16_t)i2c_data[1] << 8);	    // Device address
+static bool isFreqMotor(uint16_t deviceAddress) {
+	return (deviceAddress == i2cPWMMOT1) || (deviceAddress == i2cPWMMOT2) ||
+		(deviceAddress == i2cPWMMOT3) || (deviceAddress == i2cPWMMOT4);
+}
 
-	if ((dev_address == i2cPWMMOT1) || (dev_address == i2cPWMMOT2) ||
-			(dev_address == i2cPWMMOT3) || (dev_address == i2cPWMMOT4))
-	{
-		// qDebug() << "Dev address (freq_motor): " << dev_address << " " << reg_value;
-		if (reg_value > 0)
-		{
-			mper = (uint16_t)(24 / 8 * (float)reg_value);
-			if (mper < 1)
-				mper = 1;
-		}
-		else
-		{
-			mper = 1;
-		}
-		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMPER, mper);
-		sendUSBPacket(s1, s1);
-	}
-	else
-	{
+/// Set motor frequency function
+uint32_t freq_Motor(uint16_t dev_address, uint16_t reg_value)
+{
+	char s1[MAX_STRING_LENGTH];
+
+	if (!isFreqMotor(dev_address)) {
 		return DEV_ADDR_ERROR;
 	}
+
+	QLOG_INFO() << "Dev address (freq_motor): " << dev_address << " " << reg_value;
+	mper = reg_value > 0 ?
+		std::max((uint16_t)1, (uint16_t)(24 / 8 * (float)reg_value)) : 1;
+
+	makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], MMPER, mper);
+	sendUSBPacket(s1, s1);
 
 	return NO_ERROR;
 }
 
-/// Reset encoder function
-uint32_t reset_Encoder(QByteArray const &i2c_data)
-{
-	char s1[MAX_STRING_LENGTH];		    // Temp string variable
-	const uint8_t reg_value = i2c_data[2];	    // Register value
-	const uint16_t dev_address = (uint16_t)i2c_data[0] +
-		((uint16_t)i2c_data[1] << 8);	    // Device address
+static bool isEncoder(uint16_t deviceAddress) {
+	return (deviceAddress == i2cENC1) || (deviceAddress == i2cENC2)
+		|| (deviceAddress == i2cENC3) || (deviceAddress == i2cENC4);
+}
 
-	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
-		||	(dev_address == i2cENC3) || (dev_address == i2cENC4))
-	{
-		// qDebug() << "Dev address (reset_encoder): " << dev_address << " " << reg_value;
-		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
-			|| (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
-			|| (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
-		{
-		}
-		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
-				   EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
-		sendUSBPacket(s1, s1);
-		makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL, reg_value);
-		sendUSBPacket(s1, s1);
-		alt_func_flag = ALT_ENC;
-	}
-	else
-	{
+/// Reset encoder function
+uint32_t reset_Encoder(uint16_t dev_address, uint8_t reg_value)
+{
+	char s1[MAX_STRING_LENGTH];
+	if (!isEncoder(dev_address)) {
 		return DEV_ADDR_ERROR;
 	}
+
+	if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
+		|| (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
+		|| (alt_func_flag == ALT_DHTXX) || (alt_func_flag == ALT_ANALOG))
+	{
+	}
+	makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address],
+			   EECTL, ENC_ENABLE + ENC_2WIRES + ENC_PUPEN + ENC_FALL);
+	sendUSBPacket(s1, s1);
+	makeWriteRegPacket(s1, addr_table_i2c_usb[dev_address], EEVAL, reg_value);
+	sendUSBPacket(s1, s1);
+	alt_func_flag = ALT_ENC;
 
 	return NO_ERROR;
 }
 
 /// Read encoder function
-uint32_t read_Encoder(QByteArray const &i2c_data)
+uint32_t read_Encoder(const uint16_t dev_address)
 {
 	char s1[MAX_STRING_LENGTH] {};		    // Temp string variable
 	char s2[MAX_STRING_LENGTH] {};		    // Temp string variable
@@ -653,11 +593,8 @@ uint32_t read_Encoder(QByteArray const &i2c_data)
 	uint8_t regaddr;			    // Returned register address
 	uint32_t regval=UINT32_MAX;		    // Returned register value
 	uint16_t tmout = 0;			    // Reading timeout
-	const uint16_t dev_address = (uint16_t)i2c_data[0] +
-		((uint16_t)i2c_data[1] << 8);	    // Device address
 
-	if ((dev_address == i2cENC1) || (dev_address == i2cENC2)
-		||  (dev_address == i2cENC3) || (dev_address == i2cENC4))
+	if (isEncoder(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING) || (alt_func_flag == ALT_SERVO)
 			|| (alt_func_flag == ALT_I2C) || (alt_func_flag == ALT_USART)
@@ -755,8 +692,63 @@ uint32_t read_URM04_dist(uint8_t dev_addr, uint8_t urm04_addr)
 	}
 }
 
+static bool isAnalogSensor(uint16_t dev_address) {
+	return (dev_address == i2cSENS1)
+		|| (dev_address == i2cSENS2)
+		|| (dev_address == i2cSENS3)
+		|| (dev_address == i2cSENS4)
+		|| (dev_address == i2cSENS5)
+		|| (dev_address == i2cSENS6)
+		|| (dev_address == i2cBATT);
+}
+
+static bool isI2cSensor(uint16_t dev_address) {
+	return (dev_address == i2cTEMP1)
+		|| (dev_address == i2cTEMP2)
+		|| (dev_address == i2cTEMP3)
+		|| (dev_address == i2cW1)
+		|| (dev_address == i2cW2)
+		|| (dev_address == i2cW3)
+		|| (dev_address == i2cW4);
+}
+
+static bool isDHT11TempSensor(uint16_t dev_address) {
+	return (dev_address >= TEMP_DHT11_1)
+			&& (dev_address <= TEMP_DHT11_14);
+}
+
+static bool isDHT11HumSensor(uint16_t dev_address) {
+	return (dev_address >= HUM_DHT11_1)
+			&& (dev_address <= HUM_DHT11_14);
+}
+
+static bool isDHT22TempSensor(uint16_t dev_address) {
+	return (dev_address >= TEMP_DHT22_1)
+			&& (dev_address <= TEMP_DHT22_14);
+}
+
+static bool isDHT22HumSensor(uint16_t dev_address) {
+	return (dev_address >= HUM_DHT22_1)
+			&& (dev_address <= HUM_DHT22_14);
+}
+
+static bool isURM04Sensor(uint16_t dev_address) {
+	return (dev_address >= i2cU1_0x11)
+			&& (dev_address <= i2cU7_0x20);
+}
+
+static bool isSensor(uint16_t dev_address) {
+	return isAnalogSensor(dev_address)
+		|| isI2cSensor(dev_address)
+		|| isDHT11TempSensor(dev_address)
+		|| isDHT11HumSensor(dev_address)
+		|| isDHT22TempSensor(dev_address)
+		|| isDHT22HumSensor(dev_address)
+		|| isURM04Sensor(dev_address);
+}
+
 /// Read sensor function
-uint32_t read_Sensor(QByteArray const &i2c_data)
+uint32_t read_Sensor(const uint16_t dev_address)
 {
 	char s1[MAX_STRING_LENGTH];		    // Temp string variable
 	char s2[MAX_STRING_LENGTH];		    // Temp string variable
@@ -767,17 +759,9 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 	uint8_t regaddr;			    // Returned register address
 	uint32_t regval=UINT32_MAX;		    // Returned register value
 	uint16_t tmout = 0;			    // Reading timeout
-	const uint16_t dev_address = (uint16_t)i2c_data[0] +
-		((uint16_t)i2c_data[1] << 8);	    // Device address
 
 	// Analog sensors
-	if ((dev_address == i2cSENS1)
-			|| (dev_address == i2cSENS2)
-			|| (dev_address == i2cSENS3)
-			|| (dev_address == i2cSENS4)
-			|| (dev_address == i2cSENS5)
-			|| (dev_address == i2cSENS6)
-			|| (dev_address == i2cBATT))
+	if (isAnalogSensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -805,13 +789,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		return regval;
 	}
 	// I2C sensors
-	else if ((dev_address == i2cTEMP1)
-			|| (dev_address == i2cTEMP2)
-			|| (dev_address == i2cTEMP3)
-			|| (dev_address == i2cW1)
-			|| (dev_address == i2cW2)
-			|| (dev_address == i2cW3)
-			|| (dev_address == i2cW4))
+	else if (isI2cSensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -836,8 +814,9 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		// qDebug() << "Dev address (i2c_sensor): " << dev_address << " " << regval;
 		return regval;
 	}
+
 	// DHT11 sensors (temperature)
-	else if ((dev_address >= TEMP_DHT11_1) && (dev_address <= TEMP_DHT11_14))
+	else if (isDHT11TempSensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -867,7 +846,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		return regval;
 	}
 	// DHT11 sensors (humidity)
-	else if ((dev_address >= HUM_DHT11_1) && (dev_address <= HUM_DHT11_14))
+	else if (isDHT11HumSensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -896,7 +875,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		return regval;
 	}
 	// DHT22 sensors (temperature)
-	else if ((dev_address >= TEMP_DHT22_1) && (dev_address <= TEMP_DHT22_14))
+	else if (isDHT22TempSensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -926,7 +905,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		return regval;
 	}
 	// DHT22 sensors (humidity)
-	else if ((dev_address >= HUM_DHT22_1) && (dev_address <= HUM_DHT22_14))
+	else if (isDHT22HumSensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -956,7 +935,7 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 		return regval;
 	}
 	// URM04 sensors
-	else if ((dev_address >= i2cU1_0x11) && (dev_address <= i2cU7_0x20))
+	else if (isURM04Sensor(dev_address))
 	{
 		if ((alt_func_flag == ALT_NOTHING)
 				|| (alt_func_flag == ALT_SERVO)
@@ -1122,35 +1101,88 @@ uint32_t read_Sensor(QByteArray const &i2c_data)
 
 	return NO_ERROR;
 }
+}
+
+using namespace trikHal::trik;
+
+/// Connect to USB MSP430 device
+uint32_t connect_USBMSP()
+{
+	// Open USB descriptor for writing
+	usb_out_descr = open(USB_DEV_NAME, O_RDWR | O_NONBLOCK | O_NDELAY | O_CLOEXEC);
+
+	if (usb_out_descr < 0)
+	{
+		QLOG_INFO() << "Error " << errno << " opening " << USB_DEV_NAME << ": " << strerror (errno);
+		return DEVICE_ERROR;
+	}
+
+	// Init USB STTY device with serial port parameters
+	init_USBTTYDevice();
+
+	// Init servo motors
+	init_servomotors_USBMSP();
+
+	// Init I2C sensors
+	init_i2c_sensors_USBMSP();
+
+	// Init DHTxx sensors
+	init_dhtxx_sensors_USBMSP();
+
+	// Init motors
+	init_motors_USBMSP();
+
+	// Init encoders
+	init_encoders_USBMSP();
+
+	// Init sensors
+	init_sensors_USBMSP();
+
+	// Default alternative function
+	alt_func_flag = ALT_ANALOG;
+
+	return NO_ERROR;
+}
+
+/// Disconnect from USB MSP430 device
+uint32_t disconnect_USBMSP()
+{
+	if (usb_out_descr < 0)
+	{
+		QLOG_ERROR() << "Error device descriptor" << errno << " : " << strerror (errno);
+		return DEVICE_ERROR;
+	}
+	close(usb_out_descr);
+
+	return NO_ERROR;
+}
 
 /// Send data to MSP430 via USB
-uint32_t send_USBMSP(QByteArray const &i2c_data)
+uint32_t send_USBMSP(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
-	switch (i2c_data.size())
-	{
-		case 3:
-			power_Motor(i2c_data);
-			reset_Encoder(i2c_data);
-			break;
-		case 4:
-			freq_Motor(i2c_data);
-			break;
-		default:
-			break;
+	Q_UNUSED(isWord)
+	if (isPowerMotor(deviceAddress) || isServoMotor(deviceAddress)) {
+		power_Motor(deviceAddress, value);
+	}
+	if (isEncoder(deviceAddress)) {
+		reset_Encoder(deviceAddress, value);
+	}
+	if (isFreqMotor(deviceAddress)) {
+		freq_Motor(deviceAddress, value);
 	}
 	return NO_ERROR;
 }
 
 /// Read data from MSP430 via USB
-uint32_t read_USBMSP(QByteArray const &i2c_data)
+uint32_t read_USBMSP(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
-	switch (i2c_data.size())
-	{
-		case 2:
-			return read_Sensor(i2c_data);
-		case 3:
-			return read_Encoder(i2c_data);
-		default:
-			return NO_ERROR;
+	Q_UNUSED(numberOfBytes);
+	if (isSensor(deviceAddress)) {
+		read_Sensor(deviceAddress);
 	}
+	if (isEncoder(deviceAddress)) {
+		read_Encoder(deviceAddress);
+	}
+
+	return NO_ERROR;
 }

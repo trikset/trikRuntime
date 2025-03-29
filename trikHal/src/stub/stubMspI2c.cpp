@@ -13,19 +13,18 @@
  * limitations under the License. */
 
 #include "stubMspI2c.h"
-
 #include <QsLog.h>
 
 using namespace trikHal::stub;
 
-void StubMspI2C::send(const QByteArray &data)
+void StubMspI2C::send(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
-	QLOG_INFO() << "Sending thru MSP I2C stub" << data;
+	QLOG_INFO() << "Sending thru MSP I2C stub" << deviceAddress << value << isWord;
 }
 
-int StubMspI2C::read(const QByteArray &data)
+QVariant StubMspI2C::read(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
-	QLOG_INFO() << "Reading from MSP I2C stub" << data;
+	QLOG_INFO() << "Reading from MSP I2C stub" << deviceAddress << numberOfBytes;
 	return 0;
 }
 

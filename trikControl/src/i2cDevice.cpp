@@ -33,37 +33,31 @@ I2cDevice::Status I2cDevice::status() const
 	return combine(*mCommunicator, mState.status());
 }
 
-void I2cDevice::send(int reg, int value)
+void I2cDevice::send8(int reg, int value)
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(3, '\0');
-		command[0] = reg & 0xFF;
-		command[1] = static_cast<char>(0x00);
-		command[2] = value & 0xFF;
+		mCommunicator->send(reg & 0xFF, value & 0xFF, false);
+	}
+}
 
-		mCommunicator->send(command);
+void I2cDevice::send16(int reg, int value)
+{
+	if (status() == DeviceInterface::Status::ready) {
+		mCommunicator->send(reg & 0xFF, value & 0xFF, true);
 	}
 }
 
 int I2cDevice::read8(int reg)
 {
-	QByteArray command(1, reg & 0xFF);
-	return mCommunicator->read(command);
+	return mCommunicator->read(reg & 0xFF, 1).toInt();
 }
 
 int I2cDevice::read16(int reg)
 {
-	QByteArray command(2, '\0');
-	command[0] = reg & 0xFF;
-	command[1] = static_cast<char>(0x00);
-	return mCommunicator->read(command);
+	return mCommunicator->read(reg & 0xFF, 2).toInt();
 }
 
 int I2cDevice::read32(int reg)
 {
-	QByteArray command(3, '\0');
-	command[0] = reg & 0xFF;
-	command[1] = static_cast<char>(0x00);
-	command[2] = static_cast<char>(0x00);
-	return mCommunicator->read(command);
+	return mCommunicator->read(reg & 0xFF, 4).toInt();
 }

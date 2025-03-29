@@ -68,13 +68,7 @@ void PowerMotor::setPower(int power, bool constrain)
 
 
 	power = mInvert ? -power : power;
-
-	QByteArray command(3, '\0');
-	command[0] = static_cast<char>(mMspCommandNumber & 0xFF);
-	command[1] = static_cast<char>((mMspCommandNumber >> 8) & 0xFF);
-	command[2] = static_cast<char>(power & 0xFF);
-
-	mCommunicator.send(command);
+	mCommunicator.send(mMspCommandNumber, power & 0xFF, true);
 }
 
 int PowerMotor::power() const
@@ -103,11 +97,7 @@ void PowerMotor::brake(int durationMs)
 void PowerMotor::setPeriod(int period)
 {
 	mCurrentPeriod = period;
-	QByteArray command(4, '\0');
-	command[0] = static_cast<char>((mMspCommandNumber - 4) & 0xFF);
-	command[2] = static_cast<char>(period & 0xFF);
-	command[3] = static_cast<char>(period >> 8);
-	mCommunicator.send(command);
+	mCommunicator.send((mMspCommandNumber - 4) & 0xFF, false);
 }
 
 void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configurer &configurer)

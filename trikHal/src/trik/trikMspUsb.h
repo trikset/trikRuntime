@@ -26,8 +26,8 @@ public:
 	TrikMspUsb() = default;
 	~TrikMspUsb() override;
 
-	void send(const QByteArray &data) override;
-	int read(const QByteArray &data) override;
+	void send(uint16_t deviceAddress, uint16_t value, bool isWord = false) override;
+	QVariant read(uint16_t deviceAddress, uint16_t numberOfBytes) override;
 	bool connect() override;
 	void disconnect() override;
 };

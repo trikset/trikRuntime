@@ -17,7 +17,7 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "mspI2cCommunicator.h"
+#include "mspCommunicatorInterface.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
@@ -42,12 +42,7 @@ Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, 
 void Encoder::reset()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(3, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-		command[2] = static_cast<char>(0x00);
-
-		mCommunicator.send(command);
+		mCommunicator.send(mI2cCommandNumber, 0x00, true);
 	}
 }
 
@@ -64,12 +59,7 @@ int Encoder::read()
 int Encoder::readRawData()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(3, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-		command[2] = static_cast<char>(0x00);
-
-		return mCommunicator.read(command);
+		return mCommunicator.read(mI2cCommandNumber, 2).toInt();
 	} else {
 		return 0;
 	}

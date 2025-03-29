@@ -98,25 +98,25 @@ TrikI2c::~TrikI2c()
 	disconnect();
 }
 
-void TrikI2c::send(const QByteArray &data)
+void TrikI2c::send(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
-	if (data.size() == 3) {
-		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
+	if (isWord) {
+		i2c_smbus_write_word_data(mDeviceFileDescriptor, deviceAddress, value);
 	} else {
-		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[2] | (data[3] << 8));
+		i2c_smbus_write_byte_data(mDeviceFileDescriptor, deviceAddress, value);
 	}
 }
 
-int TrikI2c::read(const QByteArray &data)
+QVariant TrikI2c::read(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
-	if (data.size() == 1) {
-		return i2c_smbus_read_byte_data(mDeviceFileDescriptor, data[0]);
+	if (numberOfBytes == 1) {
+		return i2c_smbus_read_byte_data(mDeviceFileDescriptor, deviceAddress);
 	}
-	if (data.size() == 2) {
-		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+	if (numberOfBytes == 2) {
+		return i2c_smbus_read_word_data(mDeviceFileDescriptor, deviceAddress);
 	}
 	std::array<uint8_t, 4> buffer {};
-	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
+	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, deviceAddress, 4, buffer.data());
 	return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
 }
 

@@ -16,6 +16,7 @@
 
 #include <QtCore/QByteArray>
 #include <trikHal/trikHalDeclSpec.h>
+#include <QVariant>
 
 namespace trikHal {
 
@@ -28,10 +29,10 @@ public:
 	virtual ~MspUsbInterface() = default;
 
 	/// Send data to MSP.
-	virtual void send(const QByteArray &data) = 0;
+	virtual void send(uint16_t deviceAddress, uint16_t value, bool isWord = false) = 0;
 
 	/// Reads data by given MSP command number and returns the result.
-	virtual int read(const QByteArray &data) = 0;
+	virtual QVariant read(uint16_t deviceAddress, uint16_t numberOfBytes) = 0;
 
 	/// Establish connection with MSP over USB bus.
 	virtual bool connect() = 0;

@@ -39,7 +39,7 @@ MspUsbCommunicator::~MspUsbCommunicator()
 	}
 }
 
-void MspUsbCommunicator::send(const QByteArray &data)
+void MspUsbCommunicator::send(uint16_t deviceAddress, uint16_t value, bool isWord)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through USB I2C communicator which is not ready, ignoring";
@@ -47,10 +47,10 @@ void MspUsbCommunicator::send(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	mUsb.send(data);
+	mUsb.send(deviceAddress, value, isWord);
 }
 
-int MspUsbCommunicator::read(const QByteArray &data)
+QVariant MspUsbCommunicator::read(uint16_t deviceAddress, uint16_t numberOfBytes)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to read data from USB I2C communicator which is not ready, ignoring";
@@ -58,7 +58,7 @@ int MspUsbCommunicator::read(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	return mUsb.read(data);
+	return mUsb.read(deviceAddress, numberOfBytes);
 }
 
 DeviceInterface::Status MspUsbCommunicator::status() const

@@ -27,10 +27,10 @@ class MspCommunicatorInterface : public DeviceInterface
 {
 public:
 	/// Send data to current device, if it is connected.
-	virtual void send(const QByteArray &data) = 0;
+	virtual void send(uint16_t deviceAddress, uint16_t value, bool isWord = false) = 0;
 
 	/// Reads data by given I2C command number and returns the result.
-	virtual int read(const QByteArray &data) = 0;
+	virtual QVariant read(uint16_t deviceAddress, uint16_t numberOfBytes) = 0;
 };
 
 }

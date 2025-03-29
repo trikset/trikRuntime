@@ -40,10 +40,10 @@ public:
 	~MspUsbCommunicator() override;
 
 	/// Send data to current device, if it is connected.
-	void send(const QByteArray &data) override;
+	void send(uint16_t deviceAddress, uint16_t value, bool isWord = false) override;
 
 	/// Reads data by given I2C command number and returns the result.
-	int read(const QByteArray &data) override;
+	QVariant read(uint16_t deviceAddress, uint16_t numberOfBytes) override;
 
 	Status status() const override;
 
