@@ -33,31 +33,36 @@ I2cDevice::Status I2cDevice::status() const
 	return combine(*mCommunicator, mState.status());
 }
 
-void I2cDevice::send8(int reg, int value)
+void I2cDevice::send8(uint16_t reg, uint8_t value)
 {
 	if (status() == DeviceInterface::Status::ready) {
-		mCommunicator->send(reg & 0xFF, value & 0xFF, false);
+		mCommunicator->send(reg, value, false);
 	}
 }
 
-void I2cDevice::send16(int reg, int value)
+void I2cDevice::send16(uint16_t reg, uint16_t value)
 {
 	if (status() == DeviceInterface::Status::ready) {
-		mCommunicator->send(reg & 0xFF, value & 0xFF, true);
+		mCommunicator->send(reg, value, true);
 	}
 }
 
-int I2cDevice::read8(int reg)
+int I2cDevice::read8(uint16_t reg)
 {
-	return mCommunicator->read(reg & 0xFF, 1).toInt();
+	return read(reg, 1);
 }
 
-int I2cDevice::read16(int reg)
+int I2cDevice::read16(uint16_t reg)
 {
-	return mCommunicator->read(reg & 0xFF, 2).toInt();
+	return read(reg, 2);
 }
 
-int I2cDevice::read32(int reg)
+int I2cDevice::read32(uint16_t reg)
 {
-	return mCommunicator->read(reg & 0xFF, 4).toInt();
+	return read(reg, 4);
+}
+
+int I2cDevice::read(uint16_t reg, uint16_t number)
+{
+	return mCommunicator->read(reg, number).toInt();
 }

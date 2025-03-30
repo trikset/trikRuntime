@@ -38,21 +38,22 @@ public:
 
 public Q_SLOTS:
 	/// Sends byte data to current device, if it is connected.
-	void send8(int reg, int value) override;
+	void send8(uint16_t reg, uint8_t value) override;
 
 	/// Sends word data to current device, if it is connected.
-	void send16(int reg, int value) override;
+	void send16(uint16_t reg, uint16_t value) override;
 
 	/// Reads byte by given I2C command number and returns the result.
-	int read8(int reg) override;
+	int read8(uint16_t reg) override;
 
 	/// Reads word by given I2C command number and returns the result.
-	int read16(int reg) override;
+	int read16(uint16_t reg) override;
 
 	/// Reads 4 bytes by given I2C command number and returns the result.
-	int read32(int reg) override;
+	int read32(uint16_t reg) override;
 
 private:
+	int read(uint16_t reg, uint16_t number);
 	DeviceState mState;
 	QScopedPointer<trikHal::MspI2cInterface> mInterface;
 	QScopedPointer<MspCommunicatorInterface> mCommunicator;

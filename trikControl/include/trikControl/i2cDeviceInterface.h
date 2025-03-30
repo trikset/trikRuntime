@@ -29,19 +29,19 @@ class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInter
 
 public :
 	/// Sends byte data to current device, if it is connected.
-	virtual void send8(int reg, int value) = 0;
+	virtual void send8(uint16_t reg, uint8_t value) = 0;
 
 	/// Sends word data to current device, if it is connected.
-	virtual void send16(int reg, int value) = 0;
+	virtual void send16(uint16_t reg, uint16_t value) = 0;
 
 	/// Reads byte by given I2C command number and returns the result.
-	virtual int read8(int reg) = 0;
+	virtual int read8(uint16_t reg) = 0;
 
 	/// Reads byte by given I2C command number and returns the result.
-	virtual int read16(int reg) = 0;
+	virtual int read16(uint16_t reg) = 0;
 
 	/// Reads 4 bytes by given I2C command number and returns the result.
-	virtual int read32(int reg) = 0;
+	virtual int read32(uint16_t reg) = 0;
 };
 
 }
