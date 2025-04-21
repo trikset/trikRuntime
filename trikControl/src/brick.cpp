@@ -55,7 +55,6 @@
 #include "cameraDevice.h"
 #include "i2cDevice.h"
 #include "mspI2cCommunicator.h"
-#include "i2cCommunicator.h"
 #include "lidar.h"
 #include "irCamera.h"
 

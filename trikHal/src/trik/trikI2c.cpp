@@ -56,17 +56,6 @@ static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
 	return 0x0FFFF & data.word;
 }
 
-static inline __s32 i2c_smbus_read_byte_data(int file, __u8 command)
-{
-	union i2c_smbus_data data {};
-
-	if (i2c_smbus_access(file, I2C_SMBUS_READ, command, I2C_SMBUS_BYTE_DATA, &data)) {
-		return -1;
-	}
-
-	return 0x0FF & data.byte;
-}
-
 static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 length, __u8 *values)
 {
 	union i2c_smbus_data data {};

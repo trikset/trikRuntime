@@ -133,9 +133,9 @@ trikControl::GyroSensorInterface*  PythonQtWrapper_trikControl__BrickInterface::
   return ( theWrappedObject->gyroscope());
 }
 
-trikControl::I2cDeviceInterface*  PythonQtWrapper_trikControl__BrickInterface::i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address)
+trikControl::I2cDeviceInterface*  PythonQtWrapper_trikControl__BrickInterface::i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize)
 {
-  return ( theWrappedObject->i2c(bus, address));
+  return ( theWrappedObject->i2c(bus, address, regSize));
 }
 
 trikControl::IrCameraInterface*  PythonQtWrapper_trikControl__BrickInterface::irCamera(trikControl::BrickInterface* theWrappedObject)
@@ -327,24 +327,14 @@ QVector<int >  PythonQtWrapper_trikControl__GyroSensorInterface::readRawData(tri
 
 
 
-int  PythonQtWrapper_trikControl__I2cDeviceInterface::read16(trikControl::I2cDeviceInterface* theWrappedObject, int  reg)
+int  PythonQtWrapper_trikControl__I2cDeviceInterface::read(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, const QString&  mode)
 {
-  return ( theWrappedObject->read16(reg));
+  return ( theWrappedObject->read(reg, mode));
 }
 
-int  PythonQtWrapper_trikControl__I2cDeviceInterface::read32(trikControl::I2cDeviceInterface* theWrappedObject, int  reg)
+int  PythonQtWrapper_trikControl__I2cDeviceInterface::send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value, const QString&  mode)
 {
-  return ( theWrappedObject->read32(reg));
-}
-
-int  PythonQtWrapper_trikControl__I2cDeviceInterface::read8(trikControl::I2cDeviceInterface* theWrappedObject, int  reg)
-{
-  return ( theWrappedObject->read8(reg));
-}
-
-void PythonQtWrapper_trikControl__I2cDeviceInterface::send(trikControl::I2cDeviceInterface* theWrappedObject, int  reg, int  value)
-{
-  ( theWrappedObject->send(reg, value));
+  return ( theWrappedObject->send(reg, value, mode));
 }
 
 

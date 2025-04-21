@@ -16,7 +16,6 @@
 
 #include "i2cDeviceInterface.h"
 #include "mspI2cCommunicator.h"
-#include "i2cCommunicator.h"
 
 namespace trikHal {
 

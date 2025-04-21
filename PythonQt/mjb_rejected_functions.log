@@ -225,6 +225,7 @@ trikControl::CameraDeviceInterface::getPhoto QVector<uint8_t>
 trikControl::CameraDeviceInterface::qImageToQVector QVector<uint8_t>
 trikControl::CameraDeviceInterface::status Status
 trikControl::FifoInterface::readRaw QVector<uint8_t>
+trikControl::I2cDeviceInterface::readX QVector<uint8_t>
 trikControl::IrCameraInterface::getImage QVector<int32_t>
 trikControl::IrCameraInterface::status Status
 trikKernel::TimeVal::packedUInt32 uint32_t
