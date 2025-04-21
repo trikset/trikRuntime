@@ -25,9 +25,9 @@ TrikMspUsb::~TrikMspUsb()
 {
 }
 
-void TrikMspUsb::send(const QByteArray &data)
+int TrikMspUsb::send(const QByteArray &data)
 {
-	send_USBMSP(data);
+	return send_USBMSP(data);
 }
 
 int TrikMspUsb::read(const QByteArray &data)

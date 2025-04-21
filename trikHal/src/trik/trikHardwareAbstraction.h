@@ -29,6 +29,7 @@ public:
 	~TrikHardwareAbstraction() override;
 
 	MspI2cInterface &mspI2c() override;
+	MspI2cInterface *createMspI2c() override;
 	MspUsbInterface &mspUsb() override;
 	SystemConsoleInterface &systemConsole() override;
 

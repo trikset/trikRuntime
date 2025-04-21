@@ -41,6 +41,9 @@ public:
 	/// Returns MSP I2C bus implementation.
 	virtual MspI2cInterface &mspI2c() = 0;
 
+	/// Create MSP I2C bus implementation.
+	virtual MspI2cInterface *createMspI2c() = 0;
+
 	/// Returns MSP USB bus implementation.
 	virtual MspUsbInterface &mspUsb() = 0;
 

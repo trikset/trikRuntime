@@ -18,9 +18,10 @@
 
 using namespace trikHal::stub;
 
-void StubMspUsb::send(const QByteArray &data)
+int StubMspUsb::send(const QByteArray &data)
 {
 	QLOG_INFO() << "Sending thru MSP USB stub" << data;
+	return 0;
 }
 
 int StubMspUsb::read(const QByteArray &data)

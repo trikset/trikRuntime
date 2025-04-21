@@ -42,6 +42,29 @@ MspI2cCommunicator::MspI2cCommunicator(const trikKernel::Configurer &configurer,
 	}
 }
 
+MspI2cCommunicator::MspI2cCommunicator(const trikKernel::Configurer &configurer,
+		trikHal::MspI2cInterface &i2c, uint8_t bus, uint8_t deviceId)
+	: mI2c(i2c)
+	, mState("I2C Communicator")
+{
+	QString devicePath;
+	if (bus == 1) {
+		devicePath = configurer.attributeByDevice("i2cBus1", "path");
+	} else if (bus == 2) {
+		devicePath = configurer.attributeByDevice("i2cBus2", "path");
+	} else {
+		QLOG_ERROR() << "Incorrect I2C bus " << bus;
+		mState.fail();
+		return;
+	}
+
+	if (mI2c.connect(devicePath, deviceId)) {
+		mState.ready();
+	} else {
+		mState.fail();
+	}
+}
+
 MspI2cCommunicator::~MspI2cCommunicator()
 {
 	if (mState.isReady()) {
@@ -49,15 +72,15 @@ MspI2cCommunicator::~MspI2cCommunicator()
 	}
 }
 
-void MspI2cCommunicator::send(const QByteArray &data)
+int MspI2cCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through I2C communicator which is not ready, ignoring";
-		return;
+		return -1;
 	}
 
 	QMutexLocker lock(&mLock);
-	mI2c.send(data);
+	return mI2c.send(data);
 }
 
 int MspI2cCommunicator::read(const QByteArray &data)
@@ -69,6 +92,16 @@ int MspI2cCommunicator::read(const QByteArray &data)
 
 	QMutexLocker lock(&mLock);
 	return mI2c.read(data);
+}
+
+QVector<uint8_t> MspI2cCommunicator::readX(const QByteArray &data) {
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to read data from I2C communicator which is not ready, ignoring";
+		return {};
+	}
+
+	QMutexLocker lock(&mLock);
+	return mI2c.readX(data);
 }
 
 DeviceInterface::Status MspI2cCommunicator::status() const

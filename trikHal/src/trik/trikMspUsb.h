@@ -26,7 +26,7 @@ public:
 	TrikMspUsb() = default;
 	~TrikMspUsb() override;
 
-	void send(const QByteArray &data) override;
+	int send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
 	bool connect() override;
 	void disconnect() override;

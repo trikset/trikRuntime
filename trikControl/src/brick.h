@@ -123,7 +123,7 @@ public Q_SLOTS:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	I2cDeviceInterface *i2c(int bus, int address) override;
+	I2cDeviceInterface *i2c(int bus, int address, int regSize = 8) override;
 
 	QVector<uint8_t> getStillImage() override;
 
