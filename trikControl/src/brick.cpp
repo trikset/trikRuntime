@@ -55,7 +55,6 @@
 #include "cameraDevice.h"
 #include "i2cDevice.h"
 #include "mspI2cCommunicator.h"
-#include "i2cCommunicator.h"
 #include "lidar.h"
 #include "irCamera.h"
 
@@ -422,7 +421,7 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mObjectSensors.contains(port) ? mObjectSensors[port] : nullptr;
 }
 
-I2cDeviceInterface *Brick::i2c(int bus, int address)
+I2cDeviceInterface *Brick::i2c(int bus, int address, int regSize)
 {
 	uint8_t _bus = bus & 0xFF;
 	uint8_t _address = address & 0xFF;
@@ -430,7 +429,19 @@ I2cDeviceInterface *Brick::i2c(int bus, int address)
 	if (mI2cDevices.contains(mhash)) {
 		return mI2cDevices[mhash];
 	} else {
-		I2cDevice *i2cDevice = new I2cDevice(mConfigurer, mHardwareAbstraction->mspI2c(), _bus, _address);
+		if (regSize != 8) {
+			return nullptr;
+		}
+
+		auto i2cDeviceUnique = std::make_unique<I2cDevice>(mConfigurer,
+						mHardwareAbstraction->createMspI2c(), _bus, _address);
+
+		if (i2cDeviceUnique->status() ==  DeviceInterface::Status::permanentFailure) {
+			QLOG_ERROR() << "Could not open device on bus" << bus << "and address " << address;
+			return nullptr;
+		}
+
+		auto *i2cDevice = i2cDeviceUnique.release();
 		mI2cDevices.insert(mhash, i2cDevice);
 		return i2cDevice;
 	}

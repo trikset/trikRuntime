@@ -44,6 +44,10 @@ MspI2cInterface &StubHardwareAbstraction::mspI2c()
 	return *mMspI2cBus.data();
 }
 
+MspI2cInterface *StubHardwareAbstraction::createMspI2c() {
+	return new StubMspI2C();
+}
+
 MspUsbInterface &StubHardwareAbstraction::mspUsb()
 {
 	return *mMspUsbBus.data();

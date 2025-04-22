@@ -37,13 +37,19 @@ public:
 	/// @param configurer - contains preparsed XML configuration.
 	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
 
+	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
+				, uint8_t bus, uint8_t deviceId);
+
 	~MspI2cCommunicator() override;
 
 	/// Send data to current device, if it is connected.
-	void send(const QByteArray &data) override;
+	int send(const QByteArray &data) override;
 
 	/// Reads data by given I2C command number and returns the result.
 	int read(const QByteArray &data) override;
+
+	/// Reads data by given I2C command number and returns the result.
+	QVector<uint8_t> readX(const QByteArray &data) override;
 
 	Status status() const override;
 

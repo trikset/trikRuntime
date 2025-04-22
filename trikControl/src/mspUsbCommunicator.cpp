@@ -39,15 +39,15 @@ MspUsbCommunicator::~MspUsbCommunicator()
 	}
 }
 
-void MspUsbCommunicator::send(const QByteArray &data)
+int MspUsbCommunicator::send(const QByteArray &data)
 {
 	if (!mState.isReady()) {
 		QLOG_ERROR() << "Trying to send data through USB I2C communicator which is not ready, ignoring";
-		return;
+		return -1;
 	}
 
 	QMutexLocker lock(&mLock);
-	mUsb.send(data);
+	return mUsb.send(data);
 }
 
 int MspUsbCommunicator::read(const QByteArray &data)
@@ -59,6 +59,13 @@ int MspUsbCommunicator::read(const QByteArray &data)
 
 	QMutexLocker lock(&mLock);
 	return mUsb.read(data);
+}
+
+QVector<uint8_t> MspUsbCommunicator::readX(const QByteArray &data)
+{
+	Q_UNUSED(data);
+	QLOG_INFO() << "readX not supported for MspUsbCommunicator";
+	return {};
 }
 
 DeviceInterface::Status MspUsbCommunicator::status() const

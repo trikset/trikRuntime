@@ -42,7 +42,7 @@ Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, 
 void Encoder::reset()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(3, '\0');
+		QByteArray command(5, '\0');
 		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
 		command[2] = static_cast<char>(0x00);
@@ -67,7 +67,14 @@ int Encoder::readRawData()
 		QByteArray command(3, '\0');
 		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
 		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-		command[2] = static_cast<char>(0x00);
+
+		command[2] = static_cast<char>(0x02);
+		command[3] = static_cast<char>(0x00);
+
+		// The MSP usb module uses a matching of the required action by the length of the QByteArray.
+		// The last byte is added for processing compatibility
+		// TODO: rewrite MspUSB module
+		command[4] = static_cast<char>(0x00);
 
 		return mCommunicator.read(command);
 	} else {

@@ -45,6 +45,10 @@ MspI2cInterface &TrikHardwareAbstraction::mspI2c()
 	return *mI2c.data();
 }
 
+MspI2cInterface *TrikHardwareAbstraction::createMspI2c() {
+	return new TrikI2c();
+}
+
 MspUsbInterface &TrikHardwareAbstraction::mspUsb()
 {
 	return *mUsb.data();

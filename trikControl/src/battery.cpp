@@ -25,21 +25,18 @@ Battery::Battery(MspCommunicatorInterface &communicator)
 
 float Battery::readVoltage()
 {
-	QByteArray command(2, '\0');
-	command[0] = static_cast<char>(0x26);
-	command[1] = static_cast<char>(0x00);
-
-	const int parrot = mCommunicator.read(command);
-
 	/// @todo: Remove these arcane numbers, or Something may be unexpectedly summoned by them.
-	return (static_cast<float>(parrot) / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
+	return (readRawDataVoltage() / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
 }
 
 float Battery::readRawDataVoltage()
 {
-	QByteArray command(2, '\0');
+	QByteArray command(4, '\0');
 	command[0] = static_cast<char>(0x26);
 	command[1] = static_cast<char>(0x00);
+
+	command[2] = static_cast<char>(0x02);
+	command[3] = static_cast<char>(0x00);
 
 	return mCommunicator.read(command);
 }

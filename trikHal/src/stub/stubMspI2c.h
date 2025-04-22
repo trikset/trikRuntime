@@ -23,8 +23,9 @@ namespace stub {
 class StubMspI2C : public MspI2cInterface
 {
 public:
-	void send(const QByteArray &data) override;
+	int send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
+	QVector<uint8_t> readX(const QByteArray &data) override;
 	bool connect(const QString &devicePath, int deviceId) override;
 	void disconnect() override;
 };

@@ -16,7 +16,13 @@
 
 #include "i2cDeviceInterface.h"
 #include "mspI2cCommunicator.h"
-#include "i2cCommunicator.h"
+
+namespace trikHal {
+
+/// The current implementation of SMBus MspI2c is suitable for interacting
+/// with many devices, so it was decided to extend this interface from trikHal.
+class MspI2cInterface;
+}
 
 namespace trikControl{
 
@@ -28,26 +34,30 @@ class I2cDevice : public I2cDeviceInterface
 public:
 	/// Constructor.
 	/// @param configurer - contains preparsed XML configuration.
-	I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c, int bus, int address);
+	/// @param i2c - interface for i2c communication
+	/// @param bus - bus for i2c communication
+	/// @param address - address for device on bus
+	/// Takes ownership of i2c
+	I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface *i2c, int bus, int address);
+
+	/// For implicit forward declaration
+	~I2cDevice();
 
 	Status status() const override;
-
 public Q_SLOTS:
-	/// Sends data to current device, if it is connected.
-	void send(int reg, int value) override;
 
-	/// Reads byte by given I2C command number and returns the result.
-	int read8(int reg) override;
+	/// Sends byte/word data to current device, if it is connected.
+	int send(int reg, int value, const QString &mode = "b") override;
 
-	/// Reads word by given I2C command number and returns the result.
-	int read16(int reg) override;
+	/// Reads byte/word data by given I2C command number and returns the result.
+	int read(int reg, const QString &mode = "b") override;
 
-	/// Reads 4 bytes by given I2C command number and returns the result.
-	int read32(int reg) override;
-
+	/// Reads data by given I2C command number and returns the result.
+	QVector<uint8_t> readX(int reg, int size) override;
 private:
 	DeviceState mState;
-	I2cCommunicator mCommunicator;
+	QScopedPointer<trikHal::MspI2cInterface> mInterface;
+	QScopedPointer<MspCommunicatorInterface> mCommunicator;
 };
 
 }

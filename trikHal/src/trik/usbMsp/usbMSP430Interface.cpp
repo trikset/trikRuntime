@@ -1146,9 +1146,9 @@ uint32_t read_USBMSP(QByteArray const &i2c_data)
 {
 	switch (i2c_data.size())
 	{
-		case 2:
+		case 4:
 			return read_Sensor(i2c_data);
-		case 3:
+		case 5:
 			return read_Encoder(i2c_data);
 		default:
 			return NO_ERROR;

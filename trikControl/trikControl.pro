@@ -109,7 +109,6 @@ HEADERS += \
 	$$PWD/src/v4l2CameraImplementation.h \
 	$$PWD/src/imitationCameraImplementation.h \
 	$$PWD/src/i2cDevice.h \
-	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/fifoworker.h \
 	$$PWD/src/datafilter.h \
 	$$PWD/src/lidar.h \
@@ -172,7 +171,6 @@ SOURCES += \
 	$$PWD/src/imitationCameraImplementation.cpp \
 	$$PWD/src/cameraDeviceInterface.cpp \
 	$$PWD/src/i2cDevice.cpp \
-	$$PWD/src/i2cCommunicator.cpp \
 	$$PWD/src/utilities.cpp \
 	$$PWD/src/brickInterface.cpp \
  \#	$$PWD/src/headingSensor.cpp \

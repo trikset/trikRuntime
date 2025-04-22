@@ -12,53 +12,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
+#include <trikHal/mspI2cInterface.h>
 #include "i2cDevice.h"
 
 using namespace trikControl;
 
-I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c, int bus, int address)
+I2cDevice::I2cDevice(const trikKernel::Configurer &configurer,
+		     trikHal::MspI2cInterface *i2c, int bus, int address)
 	: mState("I2cDevice")
-	, mCommunicator(configurer, i2c, bus, address)
+	, mInterface(i2c)
+	, mCommunicator(new MspI2cCommunicator(configurer, *i2c, bus, address))
 {
 	mState.ready();
 }
 
+I2cDevice::~I2cDevice() {
+
+}
+
 I2cDevice::Status I2cDevice::status() const
 {
-	return combine(mCommunicator, mState.status());
+	return combine(*mCommunicator, mState.status());
 }
 
-void I2cDevice::send(int reg, int value)
+int I2cDevice::send(int reg, int value, const QString &mode)
 {
-	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(3, '\0');
-		command[0] = reg & 0xFF;
-		command[1] = static_cast<char>(0x00);
-		command[2] = value & 0xFF;
-
-		mCommunicator.send(command);
+	if (status() != DeviceInterface::Status::ready) {
+		return -1;
 	}
+
+	QByteArray command;
+
+	command.append(static_cast<char>(reg & 0xFF));
+	command.append(static_cast<char>((reg >> 8) & 0xFF));
+	command.append(static_cast<char>(value & 0xFF));
+
+	if (mode == "b") {
+		return mCommunicator->send(command);
+	}
+
+	if (mode == "w") {
+		command.append(static_cast<char>((value >> 8) & 0xFF));
+		return mCommunicator->send(command);
+	}
+
+	return -1;
 }
 
-int I2cDevice::read8(int reg)
-{
-	QByteArray command(1, reg & 0xFF);
-	return mCommunicator.read(command);
+int I2cDevice::read(int reg, const QString &mode) {
+	QByteArray command;
+
+	command.append(static_cast<char>(reg & 0xFF));
+	command.append(static_cast<char>((reg >> 8) & 0xFF));
+
+	if (mode == "w") {
+		command.append(static_cast<char>(0x02));
+		command.append(static_cast<char>(0x00));
+		return mCommunicator->read(command);
+	}
+
+	command.append(static_cast<char>(0x01));
+	command.append(static_cast<char>(0x00));
+	return mCommunicator->read(command);
 }
 
-int I2cDevice::read16(int reg)
-{
-	QByteArray command(2, '\0');
-	command[0] = reg & 0xFF;
-	command[1] = static_cast<char>(0x00);
-	return mCommunicator.read(command);
-}
+QVector<uint8_t> I2cDevice::readX(int reg, int size) {
+	QByteArray command;
 
-int I2cDevice::read32(int reg)
-{
-	QByteArray command(3, '\0');
-	command[0] = reg & 0xFF;
-	command[1] = static_cast<char>(0x00);
-	command[2] = static_cast<char>(0x00);
-	return mCommunicator.read(command);
+	command.append(static_cast<char>(reg & 0xFF));
+	command.append(static_cast<char>((reg >> 8) & 0xFF));
+
+	command.append(static_cast<char>(size & 0xFF));
+	command.append(static_cast<char>((size >> 8) & 0xFF));
+
+	return mCommunicator->readX(command);
 }

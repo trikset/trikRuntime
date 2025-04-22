@@ -36,15 +36,6 @@ static inline __s32 i2c_smbus_access(int file, __u8 read_write, __u8 command
 	return ioctl(file, I2C_SMBUS, &args);
 }
 
-static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
-{
-	union i2c_smbus_data data {};
-	if (i2c_smbus_access(file, I2C_SMBUS_READ, command, I2C_SMBUS_WORD_DATA, &data)) {
-		return -1;
-	}
-	return 0x0FFFF & data.word;
-}
-
 static inline __s32 i2c_smbus_read_byte_data(int file, __u8 command)
 {
 	union i2c_smbus_data data {};
@@ -54,6 +45,15 @@ static inline __s32 i2c_smbus_read_byte_data(int file, __u8 command)
 	}
 
 	return 0x0FF & data.byte;
+}
+
+static inline __s32 i2c_smbus_read_word_data(int file, __u8 command)
+{
+	union i2c_smbus_data data {};
+	if (i2c_smbus_access(file, I2C_SMBUS_READ, command, I2C_SMBUS_WORD_DATA, &data)) {
+		return -1;
+	}
+	return 0x0FFFF & data.word;
 }
 
 static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 length, __u8 *values)
@@ -98,26 +98,52 @@ TrikI2c::~TrikI2c()
 	disconnect();
 }
 
-void TrikI2c::send(const QByteArray &data)
+int TrikI2c::send(const QByteArray &data)
 {
 	if (data.size() == 3) {
-		i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
+		return i2c_smbus_write_byte_data(mDeviceFileDescriptor, data[0], data[2]);
 	} else {
-		i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[2] | (data[3] << 8));
+		return i2c_smbus_write_word_data(mDeviceFileDescriptor, data[0], data[2] | (data[3] << 8));
 	}
 }
 
+// data[0] | ( data[1] << 8) --- register address
+// data[2] | ( data[3] << 8) --- number of bytes for smbus read
 int TrikI2c::read(const QByteArray &data)
 {
-	if (data.size() == 1) {
+	auto dataSize = data.size();
+
+	// We expect at least two bytes of the register and two bytes indicating the size
+	if (dataSize < 4) {
+		return -1;
+	}
+
+	auto smbusReadSize = data[2] | (data[3] << 8);
+
+	if (smbusReadSize == 1) {
 		return i2c_smbus_read_byte_data(mDeviceFileDescriptor, data[0]);
 	}
-	if (data.size() == 2) {
-		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+
+	// smbusReadSize == 2;
+	return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+}
+
+// data[0] | ( data[1] << 8) --- register address
+// data[2] | ( data[3] << 8) --- number of bytes for smbus read
+QVector<uint8_t> TrikI2c::readX(const QByteArray &data)
+{
+	auto dataSize = data.size();
+
+	// We expect at least two bytes of the register and two bytes indicating the size
+	if (dataSize < 4) {
+		return {};
 	}
-	std::array<uint8_t, 4> buffer {};
-	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
-	return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
+
+	auto smbusReadSize = data[2] | (data[3] << 8);
+
+	QVector<uint8_t> buffer(std::min(32, std::max(smbusReadSize, 0)), '\0');
+	i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], smbusReadSize, buffer.data());
+	return buffer;
 }
 
 bool TrikI2c::connect(const QString &devicePath, int deviceId)

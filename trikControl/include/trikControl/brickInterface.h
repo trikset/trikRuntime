@@ -130,7 +130,7 @@ public:
 	Q_INVOKABLE virtual trikControl::LidarInterface *lidar() = 0;
 
 	/// Returns i2c device object
-	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *i2c(int bus, int address) = 0;
+	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *i2c(int bus, int address, int regSize = 8) = 0;
 
 	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
 	Q_INVOKABLE virtual QVector<uint8_t> getStillImage() = 0;
