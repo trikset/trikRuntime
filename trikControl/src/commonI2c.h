@@ -22,11 +22,13 @@ public:
 	/// Reads data by given I2C command number and returns the result.
 	QVector<uint8_t> readX(const QByteArray &data) override;
 
-	/// Perform i2c transfer operation
+	/// Perform I2c transfer operation.
 	int transfer(const QVector<I2cDeviceInterface::Message> &vector) override;
 
+	/// Establish I2C connection.
 	bool connect(const QString &devicePath, int deviceId) override;
 
+	/// Close I2C Connection.
 	void disconnect() override;
 
 private:

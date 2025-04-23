@@ -8,7 +8,7 @@ namespace trikControl {
 class CommonI2cDeviceInterface : public trikHal::MspI2cInterface
 {
 public:
-	/// Perform i2c transfer operation
+	/// Perform i2c transfer operation.
 	virtual int transfer(const QVector<I2cDeviceInterface::Message> &vector) = 0;
 };
 }

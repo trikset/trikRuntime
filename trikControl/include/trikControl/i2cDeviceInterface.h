@@ -28,10 +28,15 @@ class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInter
 	Q_OBJECT
 
 public :
+	/// A structure that will be inserted into the user
+	/// javascript interface to generate arbitrary sequences for use in i2c_transfer
+	/// It does not describe all the possibilities i2transfer from i2c-tools
+	///  (for example, suffixes for generating larger data blocks).
+	/// But it is quite enough to describe the general format of the commmand
+	/// {r|w}<length_of_message>[@address].
 	struct Message {
 		QString type; // "read" or "write"
 		QVector<uint8_t> data;
-
 	};
 
 	/// Sends byte/word data to current device, if it is connected.
@@ -43,7 +48,7 @@ public :
 	/// Reads data by given I2C command number and returns the result as QVector.
 	virtual QVector<uint8_t> readX(int reg, int size) = 0;
 
-	/// Perform I2c transfer operation
+	/// Perform I2c transfer operation.
 	virtual int transfer(const QVector<Message> &vector) = 0;
 };
 

@@ -92,7 +92,7 @@ HEADERS += \
 	$$PWD/src/rangeSensorWorker.h \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/soundSensor.h \
-	$$PWD/src/soundSensoi2crWorker.h \
+	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/tonePlayer.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
