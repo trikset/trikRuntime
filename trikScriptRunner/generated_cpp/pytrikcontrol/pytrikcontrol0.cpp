@@ -203,6 +203,11 @@ QStringList  PythonQtWrapper_trikControl__BrickInterface::sensorPorts(trikContro
   return ( theWrappedObject->sensorPorts(type));
 }
 
+trikControl::I2cDeviceInterface*  PythonQtWrapper_trikControl__BrickInterface::smBusI2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address)
+{
+  return ( theWrappedObject->smBusI2c(bus, address));
+}
+
 trikControl::SoundSensorInterface*  PythonQtWrapper_trikControl__BrickInterface::soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port)
 {
   return ( theWrappedObject->soundSensor(port));

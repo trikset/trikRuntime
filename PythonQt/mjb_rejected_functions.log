@@ -163,6 +163,7 @@ QVector::reallocData QArrayData::AllocationOptions
 trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
 trikControl::DisplayInterface::show QVector<int32_t> const&
 trikControl::FifoInterface::newData QVector<uint8_t> const&
+trikControl::I2cDeviceInterface::transfer QVector<trikControl::I2cDeviceInterface::Message> const&
 trikKernel::TimeVal::fromPackedUInt32 uint32_t
 ************************************************************************
 
