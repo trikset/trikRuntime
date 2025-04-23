@@ -44,6 +44,9 @@ public:
 	/// Create MSP I2C bus implementation.
 	virtual MspI2cInterface *createMspI2c() = 0;
 
+	/// Create Common I2C bus implementation.
+	virtual MspI2cInterface *createCommonI2c(uint8_t regSize) = 0;
+
 	/// Returns MSP USB bus implementation.
 	virtual MspUsbInterface &mspUsb() = 0;
 

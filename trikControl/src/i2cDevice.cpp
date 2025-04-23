@@ -89,8 +89,3 @@ QVector<uint8_t> I2cDevice::readX(int reg, int size) {
 
 	return mCommunicator->readX(command);
 }
-
-int I2cDevice::transfer(
-		const QVector<trikControl::I2cDeviceInterface::Message> &vector) {
-	return mCommunicator->transfer(vector);
-}

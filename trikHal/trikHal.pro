@@ -33,6 +33,7 @@ PUBLIC_HEADERS += \
 	HEADERS += \
 		$$PWD/src/trik/trikHardwareAbstraction.h \
 		$$PWD/src/trik/trikI2c.h \
+		$$PWD/src/trik/commonI2c.h \
 		$$PWD/src/trik/trikMspUsb.h \
 		$$PWD/src/trik/trikSystemConsole.h \
 		$$PWD/src/trik/trikEventFile.h \
@@ -55,11 +56,13 @@ HEADERS += \
 	$$PWD/src/stub/stubOutputDeviceFile.h \
 	$$PWD/src/stub/stubFifo.h \
 	$$PWD/src/stub/stubIIOFile.h \
+	$$PWD/src/stub/stubCommonI2c.h
 
 !win32:!macx {
 	SOURCES += \
 		$$PWD/src/trik/trikHardwareAbstraction.cpp \
 		$$PWD/src/trik/trikI2c.cpp \
+		$$PWD/src/trik/commonI2c.cpp \
 		$$PWD/src/trik/trikMspUsb.cpp \
 		$$PWD/src/trik/trikSystemConsole.cpp \
 		$$PWD/src/trik/trikEventFile.cpp \
@@ -81,6 +84,7 @@ SOURCES += \
 	$$PWD/src/stub/stubOutputDeviceFile.cpp \
 	$$PWD/src/stub/stubFifo.cpp \
 	$$PWD/src/stub/stubIIOFile.cpp \
+	$$PWD/src/stub/stubCommonI2c.cpp
 
 !trik_not_brick {
 	SOURCES += $$PWD/src/trik/hardwareAbstractionFactory.cpp

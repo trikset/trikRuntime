@@ -14,45 +14,22 @@
 
 #pragma once
 
-#include <QtCore/QByteArray>
-#include "commonI2cDeviceInterface.h"
+#include "mspI2cInterface.h"
 
-namespace trikControl {
+namespace trikHal {
+namespace stub {
 
-/// Implementing an I2c device using linux I2c and I2c_RDRW
-class CommonI2c: public CommonI2cDeviceInterface
+/// Empty implementation of I2C bus communicator.
+class StubCommonI2c : public MspI2cInterface
 {
 public:
-
-	/// Constructor
-	explicit CommonI2c(uint16_t regSize): mRegSize(regSize) {};
-
-	~CommonI2c() override;
-
-	/// Send data to a device.
 	int send(const QByteArray &data) override;
-
-	/// Reads data by given I2C command number and returns the result.
 	int read(const QByteArray &data) override;
-
-	/// Reads data by given I2C command number and returns the result.
 	QVector<uint8_t> readX(const QByteArray &data) override;
-
-	/// Perform I2c transfer operation.
-	int transfer(const QVector<I2cDeviceInterface::Message> &vector) override;
-
-	/// Establish I2C connection.
 	bool connect(const QString &devicePath, int deviceId) override;
-
-	/// Close I2C Connection.
+	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
 	void disconnect() override;
-
-private:
-	uint16_t mRegSize;
-	int mDeviceFileDescriptor = -1;
-	ushort mDeviceAddress = 0;
-	int write(uchar* writeData__u8, ushort length);
-
 };
 
+}
 }

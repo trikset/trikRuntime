@@ -26,9 +26,6 @@ class I2cCommunicatorInterface : public MspCommunicatorInterface
 public:
 	/// Reads data by given I2C command number and returns the result.
 	virtual QVector<uint8_t> readX(const QByteArray &data) = 0;
-
-	/// Perform I2C transfer operation.
-	virtual int transfer(const QVector<I2cDeviceInterface::Message> &vector) = 0;
 };
 
 }

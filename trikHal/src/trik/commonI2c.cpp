@@ -21,7 +21,7 @@
 #include <QsLog.h>
 #include <QVector>
 
-using namespace trikControl;
+using namespace trikHal::trik;
 
 void CommonI2c::disconnect()
 {
@@ -147,7 +147,7 @@ int CommonI2c::write(__u8* writeData, __u16 length)
 	return ioctl(mDeviceFileDescriptor, I2C_RDWR, &i2c_messageset);
 }
 
-int CommonI2c::transfer(const QVector<I2cDeviceInterface::Message> &vector) {
+int CommonI2c::transfer(const QVector<MspI2cInterface::Message> &vector) {
 
 	if (vector.size() > I2C_RDRW_IOCTL_MAX_MSGS) {
 		return -1;

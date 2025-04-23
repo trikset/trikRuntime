@@ -115,9 +115,6 @@ HEADERS += \
 	$$PWD/src/lidarWorker.h \
 	$$PWD/src/irCamera.h \
 	$$PWD/src/irCameraWorker.h \
-	$$PWD/src/commonI2cDeviceInterface.h \
-	$$PWD/src/commonI2c.h \
-	$$PWD/src/commonI2cDeviceInterface.h \
 	$$PWD/src/i2cCommunicatorInterface.h
 
 SOURCES += \
@@ -184,12 +181,6 @@ SOURCES += \
 	$$PWD/src/lidarWorker.cpp \
 	$$PWD/src/irCamera.cpp \
 	$$PWD/src/irCameraWorker.cpp \
-
-!win32:!macx {
-        SOURCES += \
-                $$PWD/src/commonI2c.cpp \
-}
-
 
 CONFIGS += \
 	$$PWD/configs

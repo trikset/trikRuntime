@@ -51,9 +51,6 @@ public:
 	/// Reads data by given I2C command number and returns the result.
 	QVector<uint8_t> readX(const QByteArray &data) override;
 
-	/// Perform I2c transfer operation.
-	int transfer(const QVector<I2cDeviceInterface::Message> &vector) override;
-
 	Status status() const override;
 
 private:

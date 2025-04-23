@@ -54,7 +54,6 @@
 #include "cameraDeviceInterface.h"
 #include "cameraDevice.h"
 #include "i2cDevice.h"
-#include "commonI2c.h"
 #include "mspI2cCommunicator.h"
 #include "lidar.h"
 #include "irCamera.h"
@@ -451,7 +450,8 @@ I2cDeviceInterface *Brick::i2c(int bus, int address, int regSize)
 	}
 
 	return createI2cDevice(bus, address,
-			       [regSize](){ return new CommonI2c(regSize);});
+			       [this, regSize](){
+					return mHardwareAbstraction->createCommonI2c(regSize);});
 }
 
 I2cDeviceInterface *Brick::smBusI2c(int bus, int address)

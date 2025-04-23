@@ -23,7 +23,7 @@
 #include "trikFifo.h"
 #include "trikIIOFile.h"
 #include "QsLog.h"
-
+#include "commonI2c.h"
 #include "trikV4l2VideoDevice.h"
 
 using namespace trikHal;
@@ -48,6 +48,11 @@ MspI2cInterface &TrikHardwareAbstraction::mspI2c()
 MspI2cInterface *TrikHardwareAbstraction::createMspI2c() {
 	return new TrikI2c();
 }
+
+MspI2cInterface *TrikHardwareAbstraction::createCommonI2c(uint8_t regSize) {
+	return new CommonI2c(regSize);
+}
+
 
 MspUsbInterface &TrikHardwareAbstraction::mspUsb()
 {

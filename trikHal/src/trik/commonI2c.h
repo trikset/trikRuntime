@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2025 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,46 @@
 
 #pragma once
 
-#include "mspI2cInterface.h"
+#include <QtCore/QByteArray>
+#include <trikHal/mspI2cInterface.h>
 
 namespace trikHal {
-namespace stub {
+namespace trik {
 
-/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
-class StubMspI2C : public MspI2cInterface
+/// Implementing an I2c device using linux I2c and I2c_RDRW
+class CommonI2c: public trikHal::MspI2cInterface
 {
 public:
+
+	/// Constructor
+	explicit CommonI2c(uint8_t regSize): mRegSize(regSize) {};
+
+	~CommonI2c() override;
+
+	/// Send data to a device.
 	int send(const QByteArray &data) override;
+
+	/// Reads data by given I2C command number and returns the result.
 	int read(const QByteArray &data) override;
+
+	/// Reads data by given I2C command number and returns the result.
 	QVector<uint8_t> readX(const QByteArray &data) override;
+
+	/// Establish I2C connection.
 	bool connect(const QString &devicePath, int deviceId) override;
-	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
+
+	/// Close I2C Connection.
 	void disconnect() override;
+
+	/// Perform I2c transfer operation.
+	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
+
+private:
+	uint16_t mRegSize;
+	int mDeviceFileDescriptor = -1;
+	ushort mDeviceAddress = 0;
+	int write(uchar* writeData__u8, ushort length);
+
 };
 
 }
