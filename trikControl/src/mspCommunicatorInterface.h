@@ -31,9 +31,6 @@ public:
 
 	/// Reads data by given I2C command number and returns the result.
 	virtual int read(const QByteArray &data) = 0;
-
-	/// Reads data by given I2C command number and returns the result.
-	virtual QVector<uint8_t> readX(const QByteArray &data) = 0;
 };
 
 }

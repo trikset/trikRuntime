@@ -61,13 +61,6 @@ int MspUsbCommunicator::read(const QByteArray &data)
 	return mUsb.read(data);
 }
 
-QVector<uint8_t> MspUsbCommunicator::readX(const QByteArray &data)
-{
-	Q_UNUSED(data);
-	QLOG_INFO() << "readX not supported for MspUsbCommunicator";
-	return {};
-}
-
 DeviceInterface::Status MspUsbCommunicator::status() const
 {
 	return mState.status();

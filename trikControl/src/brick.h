@@ -19,11 +19,12 @@
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/differentOwnerPointer.h>
-
+#include <functional>
 #include "brickInterface.h"
 
 namespace trikHal {
 class HardwareAbstractionInterface;
+class MspI2cInterface;
 }
 
 namespace trikControl {
@@ -123,7 +124,9 @@ public Q_SLOTS:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	I2cDeviceInterface *i2c(int bus, int address, int regSize = 8) override;
+	I2cDeviceInterface *i2c(int bus, int address, int regSize = 1) override;
+
+	I2cDeviceInterface *smBusI2c(int bus, int address) override;
 
 	QVector<uint8_t> getStillImage() override;
 
@@ -162,6 +165,9 @@ private:
 
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
+
+	I2cDeviceInterface* createI2cDevice(int bus, int address,
+					    std::function<trikHal::MspI2cInterface *(void)> factory);
 
 	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
 	/// Has or hasn't ownership depending on whether it was created by Brick itself or passed from outside.

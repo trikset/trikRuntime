@@ -14,6 +14,8 @@
 
 #include <trikHal/mspI2cInterface.h>
 #include "i2cDevice.h"
+#include "i2cCommunicatorInterface.h"
+#include "QsLog.h"
 
 using namespace trikControl;
 
@@ -86,4 +88,9 @@ QVector<uint8_t> I2cDevice::readX(int reg, int size) {
 	command.append(static_cast<char>((size >> 8) & 0xFF));
 
 	return mCommunicator->readX(command);
+}
+
+int I2cDevice::transfer(
+		const QVector<trikControl::I2cDeviceInterface::Message> &vector) {
+	return mCommunicator->transfer(vector);
 }

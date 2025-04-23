@@ -45,9 +45,6 @@ public:
 	/// Reads data by given I2C command number and returns the result.
 	int read(const QByteArray &data) override;
 
-	/// Reads data by given I2C command number and returns the result.
-	QVector<uint8_t> readX(const QByteArray &data) override;
-
 	Status status() const override;
 
 private:

@@ -13,9 +13,9 @@
  * limitations under the License. */
 
 #include "src/mspI2cCommunicator.h"
-
+#include "src/commonI2c.h"
 #include <trikKernel/configurer.h>
-
+#include "commonI2cDeviceInterface.h"
 #include <trikHal/mspI2cInterface.h>
 #include <QsLog.h>
 
@@ -107,6 +107,15 @@ QVector<uint8_t> MspI2cCommunicator::readX(const QByteArray &data) {
 DeviceInterface::Status MspI2cCommunicator::status() const
 {
 	return mState.status();
+}
+
+int MspI2cCommunicator::transfer(const QVector<I2cDeviceInterface::Message> &vector) {
+
+	if (auto *communicator = dynamic_cast<CommonI2cDeviceInterface *>(&mI2c)) {
+		return communicator->transfer(vector);
+	}
+
+	return -1;
 }
 
 void MspI2cCommunicator::disconnect()

@@ -92,7 +92,7 @@ HEADERS += \
 	$$PWD/src/rangeSensorWorker.h \
 	$$PWD/src/servoMotor.h \
 	$$PWD/src/soundSensor.h \
-	$$PWD/src/soundSensorWorker.h \
+	$$PWD/src/soundSensoi2crWorker.h \
 	$$PWD/src/tonePlayer.h \
 	$$PWD/src/vectorSensor.h \
 	$$PWD/src/vectorSensorWorker.h \
@@ -115,6 +115,10 @@ HEADERS += \
 	$$PWD/src/lidarWorker.h \
 	$$PWD/src/irCamera.h \
 	$$PWD/src/irCameraWorker.h \
+	$$PWD/src/commonI2cDeviceInterface.h \
+	$$PWD/src/commonI2c.h \
+	$$PWD/src/commonI2cDeviceInterface.h \
+	$$PWD/src/i2cCommunicatorInterface.h
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -180,6 +184,12 @@ SOURCES += \
 	$$PWD/src/lidarWorker.cpp \
 	$$PWD/src/irCamera.cpp \
 	$$PWD/src/irCameraWorker.cpp \
+
+!win32:!macx {
+        SOURCES += \
+                $$PWD/src/commonI2c.cpp \
+}
+
 
 CONFIGS += \
 	$$PWD/configs
