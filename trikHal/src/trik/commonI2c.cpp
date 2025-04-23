@@ -110,7 +110,6 @@ int CommonI2c::read(const QByteArray &data)
 }
 
 int CommonI2c::send(const QByteArray &data) {
-
 	auto dataSize = data.size();
 
 	if (dataSize < 3) {
@@ -148,7 +147,6 @@ int CommonI2c::write(__u8* writeData, __u16 length)
 }
 
 int CommonI2c::transfer(const QVector<MspI2cInterface::Message> &vector) {
-
 	if (vector.size() > I2C_RDRW_IOCTL_MAX_MSGS) {
 		return -1;
 	}

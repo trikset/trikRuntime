@@ -24,7 +24,6 @@ namespace trik {
 class CommonI2c: public trikHal::MspI2cInterface
 {
 public:
-
 	/// Constructor
 	explicit CommonI2c(uint8_t regSize): mRegSize(regSize) {};
 
@@ -49,11 +48,10 @@ public:
 	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
 
 private:
-	uint16_t mRegSize;
+	uint8_t mRegSize;
 	int mDeviceFileDescriptor = -1;
 	ushort mDeviceAddress = 0;
 	int write(uchar* writeData__u8, ushort length);
-
 };
 
 }

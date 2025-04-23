@@ -19,7 +19,7 @@
 namespace trikHal {
 namespace stub {
 
-/// Empty implementation of I2C bus communicator.
+/// Stub implementation of I2C bus communicator.
 class StubCommonI2c : public MspI2cInterface
 {
 public:
