@@ -17,7 +17,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMutex>
 
-#include "mspCommunicatorInterface.h"
+#include "i2cCommunicatorInterface.h"
 
 namespace trikKernel {
 class Configurer;
@@ -30,7 +30,7 @@ class MspI2cInterface;
 namespace trikControl {
 
 /// Provides direct interaction with I2C device.
-class MspI2cCommunicator : public MspCommunicatorInterface
+class MspI2cCommunicator : public I2cCommunicatorInterface
 {
 public:
 	/// Constructor.

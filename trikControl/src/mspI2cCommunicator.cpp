@@ -13,9 +13,7 @@
  * limitations under the License. */
 
 #include "src/mspI2cCommunicator.h"
-
 #include <trikKernel/configurer.h>
-
 #include <trikHal/mspI2cInterface.h>
 #include <QsLog.h>
 

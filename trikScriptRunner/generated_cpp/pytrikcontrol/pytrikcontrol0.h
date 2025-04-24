@@ -111,7 +111,7 @@ inline trikControl::FifoInterface*  py_q_fifo(const QString&  port) { return thi
 inline trikControl::GamepadInterface*  py_q_gamepad() { return this->gamepad(); }
 inline trikControl::DisplayWidgetInterface*  py_q_graphicsWidget() { return this->graphicsWidget(); }
 inline trikControl::GyroSensorInterface*  py_q_gyroscope() { return this->gyroscope(); }
-inline trikControl::I2cDeviceInterface*  py_q_i2c(int  bus, int  address, int  regSize = 8) { return this->i2c(bus, address, regSize); }
+inline trikControl::I2cDeviceInterface*  py_q_i2c(int  bus, int  address, int  regSize = 1) { return this->i2c(bus, address, regSize); }
 inline trikControl::IrCameraInterface*  py_q_irCamera() { return this->irCamera(); }
 inline trikControl::KeysInterface*  py_q_keys() { return this->keys(); }
 inline trikControl::LedInterface*  py_q_led() { return this->led(); }
@@ -129,6 +129,7 @@ inline void py_q_reset() { this->reset(); }
 inline void py_q_say(const QString&  text) { this->say(text); }
 inline trikControl::SensorInterface*  py_q_sensor(const QString&  port) { return this->sensor(port); }
 inline QStringList  py_q_sensorPorts(trikControl::SensorInterface::Type  type) const { return this->sensorPorts(type); }
+inline trikControl::I2cDeviceInterface*  py_q_smBusI2c(int  bus, int  address) { return this->smBusI2c(bus, address); }
 inline trikControl::SoundSensorInterface*  py_q_soundSensor(const QString&  port) { return this->soundSensor(port); }
 inline void py_q_stop() { this->stop(); }
 inline void py_q_stopEventDevice(const QString&  deviceFile) { this->stopEventDevice(deviceFile); }
@@ -164,8 +165,8 @@ void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { dele
    trikControl::DisplayWidgetInterface*  py_q_graphicsWidget(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_graphicsWidget());}
    trikControl::GyroSensorInterface*  gyroscope(trikControl::BrickInterface* theWrappedObject);
    trikControl::GyroSensorInterface*  py_q_gyroscope(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gyroscope());}
-   trikControl::I2cDeviceInterface*  i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize = 8);
-   trikControl::I2cDeviceInterface*  py_q_i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize = 8){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_i2c(bus, address, regSize));}
+   trikControl::I2cDeviceInterface*  i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize = 1);
+   trikControl::I2cDeviceInterface*  py_q_i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize = 1){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_i2c(bus, address, regSize));}
    trikControl::IrCameraInterface*  irCamera(trikControl::BrickInterface* theWrappedObject);
    trikControl::IrCameraInterface*  py_q_irCamera(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_irCamera());}
    trikControl::KeysInterface*  keys(trikControl::BrickInterface* theWrappedObject);
@@ -196,6 +197,8 @@ void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { dele
    trikControl::SensorInterface*  py_q_sensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_sensor(port));}
    QStringList  sensorPorts(trikControl::BrickInterface* theWrappedObject, trikControl::SensorInterface::Type  type) const;
    QStringList  py_q_sensorPorts(trikControl::BrickInterface* theWrappedObject, trikControl::SensorInterface::Type  type) const{  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_sensorPorts(type));}
+   trikControl::I2cDeviceInterface*  smBusI2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address);
+   trikControl::I2cDeviceInterface*  py_q_smBusI2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_smBusI2c(bus, address));}
    trikControl::SoundSensorInterface*  soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::SoundSensorInterface*  py_q_soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_soundSensor(port));}
    void py_q_stop(trikControl::BrickInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_stop());}

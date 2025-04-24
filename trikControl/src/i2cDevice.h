@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include "i2cDeviceInterface.h"
 #include "mspI2cCommunicator.h"
 
 namespace trikHal {
@@ -54,10 +53,11 @@ public Q_SLOTS:
 
 	/// Reads data by given I2C command number and returns the result.
 	QVector<uint8_t> readX(int reg, int size) override;
+
 private:
 	DeviceState mState;
 	QScopedPointer<trikHal::MspI2cInterface> mInterface;
-	QScopedPointer<MspCommunicatorInterface> mCommunicator;
+	QScopedPointer<I2cCommunicatorInterface> mCommunicator;
 };
 
 }

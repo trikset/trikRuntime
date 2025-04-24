@@ -31,6 +31,7 @@ public:
 	int read(const QByteArray &data) override;
 	QVector<uint8_t> readX(const QByteArray &data) override;
 	bool connect(const QString &devicePath, int deviceId) override;
+	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
 	void disconnect() override;
 
 private:

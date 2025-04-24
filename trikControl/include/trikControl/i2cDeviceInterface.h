@@ -28,6 +28,7 @@ class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInter
 	Q_OBJECT
 
 public :
+
 	/// Sends byte/word data to current device, if it is connected.
 	virtual int send(int reg, int value, const QString &mode = "b") = 0;
 

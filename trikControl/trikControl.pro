@@ -115,6 +115,7 @@ HEADERS += \
 	$$PWD/src/lidarWorker.h \
 	$$PWD/src/irCamera.h \
 	$$PWD/src/irCameraWorker.h \
+	$$PWD/src/i2cCommunicatorInterface.h
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \

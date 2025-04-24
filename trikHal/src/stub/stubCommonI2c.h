@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2025 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@
 namespace trikHal {
 namespace stub {
 
-/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
-class StubMspI2C : public MspI2cInterface
+/// Stub implementation of I2C bus communicator.
+class StubCommonI2c : public MspI2cInterface
 {
 public:
 	int send(const QByteArray &data) override;

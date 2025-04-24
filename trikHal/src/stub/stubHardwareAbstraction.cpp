@@ -22,7 +22,7 @@
 #include "stubOutputDeviceFile.h"
 #include "stubFifo.h"
 #include "stubIIOFile.h"
-
+#include "stubCommonI2c.h"
 #include "QsLog.h"
 
 using namespace trikHal;
@@ -46,6 +46,11 @@ MspI2cInterface &StubHardwareAbstraction::mspI2c()
 
 MspI2cInterface *StubHardwareAbstraction::createMspI2c() {
 	return new StubMspI2C();
+}
+
+MspI2cInterface *StubHardwareAbstraction::createCommonI2c(uint8_t regSize) {
+	Q_UNUSED(regSize)
+	return new StubCommonI2c();
 }
 
 MspUsbInterface &StubHardwareAbstraction::mspUsb()

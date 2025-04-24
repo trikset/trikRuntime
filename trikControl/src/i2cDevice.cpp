@@ -14,6 +14,8 @@
 
 #include <trikHal/mspI2cInterface.h>
 #include "i2cDevice.h"
+#include "i2cCommunicatorInterface.h"
+#include "QsLog.h"
 
 using namespace trikControl;
 

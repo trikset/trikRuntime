@@ -30,6 +30,7 @@ public:
 
 	MspI2cInterface &mspI2c() override;
 	MspI2cInterface *createMspI2c() override;
+	MspI2cInterface *createCommonI2c(uint8_t regSize) override;
 	MspUsbInterface &mspUsb() override;
 	SystemConsoleInterface &systemConsole() override;
 
