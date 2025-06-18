@@ -125,7 +125,17 @@ int TrikI2c::read(const QByteArray &data)
 	}
 
 	// smbusReadSize == 2;
-	return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+	if (smbusReadSize == 2) {
+		return i2c_smbus_read_word_data(mDeviceFileDescriptor, data[0]);
+	}
+
+	if (smbusReadSize <= 4) {
+		QVector<uint8_t> buffer(4);
+		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
+		return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
+	}
+
+	return -1;
 }
 
 // data[0] | ( data[1] << 8) --- register address
