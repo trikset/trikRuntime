@@ -42,7 +42,13 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
+#if PY_VERSION_HEX < 0x03090000
 	Py_AddPendingCall(&quitFromPython, nullptr);
+#else
+	// https://github.com/python/cpython/issues/95820
+	PythonQtGILScope _;
+	Py_AddPendingCall(&quitFromPython, nullptr);
+#endif
 }
 
 PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
