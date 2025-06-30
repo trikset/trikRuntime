@@ -42,7 +42,6 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-	PythonQtGILScope _;
 	Py_AddPendingCall(&quitFromPython, nullptr);
 }
 
@@ -214,12 +213,10 @@ void PythonEngineWorker::init()
 
 bool PythonEngineWorker::recreateContext()
 {
-	{
-		PythonQtGILScope _;
-		Py_MakePendingCalls();
-		PyErr_CheckSignals();
-		PyErr_Clear();
-	}
+	PythonQtGILScope _;
+	Py_MakePendingCalls();
+	PyErr_CheckSignals();
+	PyErr_Clear();
 	PythonQt::self()->clearError();
 	return initTrik();
 }
@@ -229,6 +226,7 @@ void PythonEngineWorker::releaseContext()
 	if (!mMainContext)
 		return;
 
+	PythonQtGILScope _;
 	mMainContext.evalScript("import sys;"
 				"to_delete = [];"
 				"_init_m = sys.modules.keys() if '_init_m' not in globals() else _init_m;"
@@ -251,6 +249,8 @@ bool PythonEngineWorker::importTrikPy()
 	}
 
 	addSearchModuleDirectory(trikKernel::Paths::systemScriptsPath());
+
+	PythonQtGILScope _;
 	mMainContext.evalScript("from TRIK import *");
 
 	return true;
@@ -258,6 +258,7 @@ bool PythonEngineWorker::importTrikPy()
 
 void PythonEngineWorker::addSearchModuleDirectory(const QDir &path)
 {
+	PythonQtGILScope _;
 	if (path.path().indexOf("'") != -1)
 		return;
 
@@ -382,7 +383,10 @@ void PythonEngineWorker::doRun(const QString &script, const QFileInfo &scriptFil
 		addSearchModuleDirectory(scriptFile.canonicalPath());
 	}
 
-	mMainContext.evalScript(script);
+	{
+		PythonQtGILScope _;
+		mMainContext.evalScript(script);
+	}
 
 	QLOG_INFO() << "PythonEngineWorker: evaluation ended";
 
@@ -413,7 +417,10 @@ void PythonEngineWorker::doRunDirect(const QString &command)
 		mErrorMessage.clear();
 		recreateContext();
 	}
-	mMainContext.evalScript(command);
+	{
+		PythonQtGILScope _;
+		mMainContext.evalScript(command);
+	}
 	QCoreApplication::processEvents();
 	auto wasError = PythonQt::self()->hadError();
 	if (wasError) {
