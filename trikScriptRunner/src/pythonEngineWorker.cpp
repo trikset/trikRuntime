@@ -33,12 +33,6 @@ using namespace trikScriptRunner;
 
 QAtomicInt PythonEngineWorker::initCounter = 0;
 
-extern "C" {
-	void _PyEval_AddPendingCall(PyInterpreterState *interp,
-	                            int (*func)(void *), void *arg,
-	                            int mainthreadonly);
-}
-
 static int quitFromPython(void*) {
 	PyErr_SetInterrupt();
 	return 0;
@@ -51,8 +45,10 @@ static void abortPythonInterpreter() {
 #if PY_VERSION_HEX < 0x03090000
 	Py_AddPendingCall(&quitFromPython, nullptr);
 #else
-	PyInterpreterState *interp = PyInterpreterState_Main();
-	_PyEval_AddPendingCall(interp, &quitFromPython, nullptr, 0);
+	Py_AddPendingCall(&quitFromPython, nullptr);
+	{
+		PythonQtGILScope _;
+	}
 #endif
 }
 
