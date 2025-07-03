@@ -42,13 +42,12 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-#if PY_VERSION_HEX < 0x03090000
+// 1. `Py_AddPendingCall` does not require `GIL` and `PythonQtGILScope _` before it,
+// and causes a lock when trying to stop the script because the `GIL`  is be held by instructions from the user script.
 	Py_AddPendingCall(&quitFromPython, nullptr);
-#else
-	Py_AddPendingCall(&quitFromPython, nullptr);
-	{
-		PythonQtGILScope _;
-	}
+#if PY_VERSION_HEX >= 0x03090000
+// 2. More correct recovery after handling `PyErr_SetInterrupt` while holding the `GIL`.
+	PythonQtGILScope _;
 #endif
 }
 
