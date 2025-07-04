@@ -42,11 +42,17 @@ static void abortPythonInterpreter() {
 	if(!Py_IsInitialized()) {
 		return;
 	}
-// 1. `Py_AddPendingCall` does not require `GIL` and `PythonQtGILScope _` before it,
-// and causes a lock when trying to stop the script because the `GIL`  is be held by instructions from the user script.
+// 1. Ideally, `Py_AddPendingCall` does not require `GIL` and `PythonQtGILScope _`.
 	Py_AddPendingCall(&quitFromPython, nullptr);
 #if PY_VERSION_HEX >= 0x03090000
-// 2. More correct recovery after handling `PyErr_SetInterrupt` while holding the `GIL`.
+// 2. When interpreting bytecode in the main loop, some of the bytecode instructions
+// call a handler function to check for pending events added using Py_AddPendingCall.
+// However, starting with Python3.9, for some reason, the handler function checks
+// that the task was queued from the main thread: https://github.com/python/cpython/issues/95820.
+// This issue can be resolved by using _PyEval_AddPendingCall,
+// which is part of the public API but is not stable, to correctly queue a task from another thread.
+// A workaround is to capture and release the GIL, as the handler function is called not only when the
+// flags are changed after calling Py_AddPendingCall, but also when trying to capture the GIL from another thread
 	PythonQtGILScope _;
 #endif
 }
