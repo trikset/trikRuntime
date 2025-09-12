@@ -96,21 +96,18 @@ equal to its class name.
 			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
 			periodFile="/sys/class/pwm/ecap.2/period_ns"
 			runFile="/sys/class/pwm/ecap.2/run"
-			captureFile="/sys/class/pwm/ecap.2/capture"
 		/>
 		<servoMotor
 			port="S2"
 			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
 			periodFile="/sys/class/pwm/ecap.1/period_ns"
 			runFile="/sys/class/pwm/ecap.1/run"
-			captureFile="/sys/class/pwm/ecap.1/capture"
 		/>
 		<servoMotor
 			port="S3"
 			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
 			periodFile="/sys/class/pwm/ecap.0/period_ns"
 			runFile="/sys/class/pwm/ecap.0/run"
-			captureFile="/sys/class/pwm/ecap.0/capture"
 		/>
 		<servoMotor
 			port="S4"
@@ -164,9 +161,9 @@ equal to its class name.
 		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
 		<encoder port="E3" i2cCommandNumber="0x33" />
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
-		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="jd1_hcsr04" />
-		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="jd2_hcsr04" />
-		<rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="jf1_hcsr04" />
+		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="hcsr04" />
+		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="hcsr04" />
+		<rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="hcsr04" />
 		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<lineSensor port="video1" />
 		<lineSensor port="video2" />
