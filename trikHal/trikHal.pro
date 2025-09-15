@@ -94,6 +94,12 @@ SOURCES += \
 
 DEFINES += TRIKHAL_LIBRARY
 
+trik_new_age {
+    DEFINES += TRIK_V4L2_OV7670_FMT=V4L2_PIX_FMT_NV16
+} else {
+    DEFINES += TRIK_V4L2_OV7670_FMT=V4L2_PIX_FMT_YUV422P
+}
+
 links(trikRuntimeQsLog trikKernel)
 implementationIncludes(trikKernel)
 

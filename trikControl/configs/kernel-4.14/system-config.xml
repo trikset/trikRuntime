@@ -87,6 +87,7 @@ equal to its class name.
 		<mailbox port="8889" optional="true" />
 
 		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
+                <irCamera />
 	</deviceClasses>
 
 	<devicePorts>
@@ -175,6 +176,7 @@ equal to its class name.
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
                 <iioDevice port="boardAccelPort" />
                 <iioDevice port="boardGyroPort" />
+                <irCamera port="irCameraPort" i2cAddress="0x33" m="3" n="3" />
 	</devicePorts>
 
 	<deviceTypes>
