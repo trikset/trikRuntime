@@ -23,7 +23,8 @@ equal to its class name.
 <config version="model-2015" >
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
-		/etc/trik/init-ov7670-320x240.sh 0
+                <!-- In linux 4.14 settings from this file are set in driver -->
+                # /etc/trik/init-ov7670-320x240.sh 0
 
 		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_timestamp_en
 		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_x_en
