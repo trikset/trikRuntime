@@ -213,6 +213,7 @@ copyToDestdir( \
 
 trik_new_age {
     DEFINES += TRIK_IIO_ACCEL_GYRO
+    DEFINES += TRIK_NEW_OV7670
 }
 
 installs()
