@@ -138,4 +138,8 @@ Note that device, even if listed here, may fail by itself, then it also will not
 		<fifo />
 	</soundSensor>
 	-->
+
+        <irCameraPort>
+                <irCamera />
+        </irCameraPort>
 </config>

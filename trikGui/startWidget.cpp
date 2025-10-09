@@ -118,8 +118,11 @@ void StartWidget::launch()
 	const QStandardItem * const currentItem = mMenuModel.itemFromIndex(currentIndex);
 	if (currentItem->hasChildren()) {
 		if (currentItem->text() == tr("Testing")) {
+#ifndef TRIK_NEW_OV7670
+			// In linux 4.14 settings from this file are set in driver
 			QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"0"});
 			QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"1"});
+#endif
 		}
 		setRootIndex(currentIndex);
 	} else {

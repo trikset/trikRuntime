@@ -183,9 +183,12 @@ void TrikV4l2VideoDevice::setFormat()
 	mFormat.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	mFormat.fmt.pix.width = 320;
 	mFormat.fmt.pix.height = 240;
+#ifdef TRIK_NEW_OV7670
+	mFormat.fmt.pix.pixelformat = V4L2_PIX_FMT_NV16; // will be resetted, if inappropriate
+#else
 	mFormat.fmt.pix.pixelformat = V4L2_PIX_FMT_YUV422P; // will be resetted, if inappropriate
+#endif
 	mFormat.fmt.pix.field = V4L2_FIELD_NONE;
-
 	char descPixelFmt[32] = {0}; // 32 - size of v4l2_fmtdesc.description
 	__u32 fmtIdx = 0;
 	do {
@@ -199,9 +202,10 @@ void TrikV4l2VideoDevice::setFormat()
 			memcpy(descPixelFmt, fmtTry.description, sizeof(descPixelFmt));
 
 			// have decoding of those formats:
+			// V4L2_PIX_FMT_NV16
 			// V4L2_PIX_FMT_YUV422P
 			// V4L2_PIX_FMT_YUYV
-			if (fmtTry.pixelformat == V4L2_PIX_FMT_YUV422P) {
+			if (fmtTry.pixelformat == V4L2_PIX_FMT_YUV422P || fmtTry.pixelformat == V4L2_PIX_FMT_NV16) {
 				QLOG_INFO() << "V4l2: found format V4L2_PIX_FMT_YUV422P";
 				mConvertFunc = yuv422pToRgb;
 				break;
