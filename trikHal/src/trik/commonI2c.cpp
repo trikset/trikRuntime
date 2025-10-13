@@ -106,7 +106,7 @@ int CommonI2c::read(const QByteArray &data)
 		return vector[0];
 	}
 
-	return (vector[0] << 8) | vector[1];
+	return (vector[1] << 8) | vector[0];
 }
 
 int CommonI2c::send(const QByteArray &data) {
@@ -119,19 +119,19 @@ int CommonI2c::send(const QByteArray &data) {
 	if (mRegSize == 1) {
 		if (dataSize == 4) {
 			char cmd[3] = {data[0], data[3], data[2]};
-			return write((__u8*)cmd, dataSize);
+			return write((__u8 *)cmd, sizeof(cmd));
 		}
-		char cmd[3] = {data[0], data[2]};
-		return write((__u8*)cmd, dataSize);
+		char cmd[2] = {data[0], data[2]};
+		return write((__u8 *)cmd, sizeof(cmd));
 	}
 
 	if (dataSize == 4) {
 		char cmd[4] = {data[1], data[0], data[3], data[2]};
-		return write((__u8*)cmd, dataSize);
+		return write((__u8 *)cmd, sizeof(cmd));
 	}
 
 	char cmd[3] = {data[1], data[0], data[2]};
-	return write((__u8*)cmd, dataSize);
+	return write((__u8 *)cmd, sizeof(cmd));
 }
 
 
