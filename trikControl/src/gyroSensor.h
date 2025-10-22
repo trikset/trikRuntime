@@ -85,6 +85,10 @@ private Q_SLOTS:
 private:
 	QVector3D getEulerAngles(const QQuaternion &q);
 
+	void readModelName(const QString modelNameFile);
+
+	std::function<QVector<int>(const QVector<int>&)> getCorrectGyroValues;
+
 	/// Device state, shared with worker.
 	DeviceState mState;
 

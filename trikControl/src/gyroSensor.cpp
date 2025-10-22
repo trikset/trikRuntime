@@ -29,6 +29,9 @@ static constexpr auto PI = 3.14159265358979323846f;
 static constexpr auto PI_2 = 1.57079632679489661923f;
 static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
+#define L3GD20_GYRO_NAME "l3gd20"
+#define L3GD20H_GYRO_NAME "l3gd20h"
+
 GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
 					, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
 	                , VectorSensorInterface *accelerometer, const QString &port)
@@ -49,6 +52,11 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 
 	mCalibrationTimer.setSingleShot(true);
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
+
+	// if modelNameFile is not in system-config, gyroModelNameFile will be empty
+	QString gyroModelNameFile = "";
+	gyroModelNameFile = configurer.attributeByPort(port, "modelNameFile", &gyroModelNameFile);
+	readModelName(gyroModelNameFile);
 
 #ifndef TRIK_IIO_ACCEL_GYRO
 	Q_UNUSED(port)
@@ -88,6 +96,40 @@ GyroSensor::~GyroSensor()
 {
 	mWorkerThread.quit();
 	mWorkerThread.wait();
+}
+
+void GyroSensor::readModelName(QString modelNameFile)
+{
+	QString usedModelName = QString::fromUtf8(L3GD20_GYRO_NAME);
+
+	// set default for L3GD20_GYRO_NAME
+	getCorrectGyroValues = [](const QVector<int> &gyroData) {
+		return QVector<int>{-gyroData[1], -gyroData[0], gyroData[2]};
+	};
+
+	if (!modelNameFile.isEmpty()) {
+		QFile file(modelNameFile);
+
+		if (!file.exists()) {
+			QLOG_INFO() << "Model file " << modelNameFile << " doesn't exist";
+		} else if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+			QLOG_INFO() << "Can't open " << modelNameFile;
+		} else {
+			QTextStream in(&file);
+			in.setCodec("UTF-8");
+			QString modelName = in.readAll().trimmed();
+
+			if (modelName == QString::fromUtf8(L3GD20H_GYRO_NAME)) {
+				getCorrectGyroValues = [](const QVector<int> &gyroData) {
+					return QVector<int>{gyroData[0], -gyroData[1], gyroData[2]};
+				};
+				usedModelName = QString::fromUtf8(L3GD20H_GYRO_NAME);
+			}
+		}
+	}
+
+	QLOG_INFO() << "Set gyro axes for model " << usedModelName;
+
 }
 
 GyroSensor::Status GyroSensor::status() const
@@ -154,10 +196,8 @@ bool GyroSensor::isCalibrated() const
 
 void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 {
+	mRawData = getCorrectGyroValues(gyroData);
 	mRawData.resize(4);
-	mRawData[0] = -gyroData[1];
-	mRawData[1] = -gyroData[0];
-	mRawData[2] = gyroData[2];
 	mRawData[3] = t.packedUInt32();
 
 	static bool timeInited = false;
@@ -260,9 +300,10 @@ void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const t
 
 void GyroSensor::sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &)
 {
-	mGyroSum[0] -= gyroData[1];
-	mGyroSum[1] -= gyroData[0];
-	mGyroSum[2] += gyroData[2];
+	QVector<int> correctGyroData =  getCorrectGyroValues(gyroData);
+	mGyroSum[0] += correctGyroData[0];
+	mGyroSum[1] += correctGyroData[1];
+	mGyroSum[2] += correctGyroData[2];
 	mGyroCounter++;
 }
 
