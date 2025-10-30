@@ -14,13 +14,11 @@
 
 #include "lidar.h"
 
-#include <trikKernel/configurer.h>
-
 using namespace trikControl;
 
-Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
+Lidar::Lidar(SerialDeviceInterface *serialDevice
 		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mLidarWorker(new LidarWorker(configurer.attributeByPort(port, "file"), hardwareAbstraction))
+	: mLidarWorker(new LidarWorker(serialDevice, hardwareAbstraction))
 {
 	mLidarWorker->moveToThread(&mWorkerThread);
 

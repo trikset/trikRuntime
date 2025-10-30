@@ -22,6 +22,7 @@
 #include "lidarWorker.h"
 
 #include <trikControl/trikControlDeclSpec.h>
+#include "serialDeviceInterface.h"
 
 namespace trikKernel {
 class Configurer;
@@ -42,7 +43,7 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with lidar parameters.
-	Lidar(const QString &port, const trikKernel::Configurer &configurer
+	Lidar(SerialDeviceInterface *serialDevice
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 	~Lidar() override;
 

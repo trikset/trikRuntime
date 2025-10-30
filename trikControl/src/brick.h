@@ -128,6 +128,8 @@ public Q_SLOTS:
 
 	I2cDeviceInterface *smBusI2c(int bus, int address) override;
 
+	SerialDeviceInterface *serialDevice(QString port) override;
+
 	QVector<uint8_t> getStillImage() override;
 
 	SoundSensorInterface *soundSensor(const QString &port) override;
@@ -202,6 +204,7 @@ private:
 	QHash<QString, Fifo *> mFifos;  // Has ownership.
 	QHash<QString, EventDeviceInterface *> mEventDevices;  // Has ownership.
 	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices;  // Has ownership.
+	QHash<QString, SerialDeviceInterface *> mSerialDevices; // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;

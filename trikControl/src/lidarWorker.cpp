@@ -51,12 +51,12 @@ static uint16_t get_unaligned_be16(const void *p) {
 	return (((uint16_t)data[0]) << 8) + data[1];
 }
 
-trikControl::LidarWorker::LidarWorker(const QString &fileName
+trikControl::LidarWorker::LidarWorker(SerialDeviceInterface *serialDevice
 					, const trikHal::HardwareAbstractionInterface &)
-	: mSerial(fileName)
+	: mSerialDevice(serialDevice)
 	, mLidarChunk(new uint8_t[LIDAR_DATA_CHUNK_SIZE])
 	, mResult(ANGLES_RAW_NUMBER, 0)
-	, mState("Lidar on " + fileName)
+	, mState("Lidar on ")
 {
 	mState.start();
 	mWaitForInit.acquire(1);
@@ -73,41 +73,12 @@ LidarWorker::Status LidarWorker::status() const
 
 void LidarWorker::init()
 {
-	// TODO: refactor TRIK system config
-	// quick-and-dirty hack to avoid serial port misuse
-	if (mSerial.portName() == "ttyS1" ||
-	    mSerial.portName() == "/dev/ttyS1") {
-		QFile consoleConfig("/etc/default/ttyS1");
-		if (consoleConfig.open(QIODevice::ReadOnly)) {
-			QTextStream in(&consoleConfig);
-			QString line = in.readLine();
-			if (line != "LINE_PROTOCOL=lidar" &&
-			    line != "LINE_PROTOCOL=nothing") {
-				QLOG_ERROR() << "Lidar: the serial port ttyS1 is not designated for lidar";
-				mState.fail();
-				mWaitForInit.release(1);
-				return;
-			}
-		}
-	}
+	mSerialDevice->enableConnect();
 
-	if (!mSerial.open(QIODevice::ReadOnly)) {
-		QLOG_ERROR() << "Lidar: failed to open serial port " << mSerial.portName()
-		             << " in read-only mode: " << mSerial.error();
-		mState.fail();
-		mWaitForInit.release(1);
-		return;
-	}
-	mSerial.setBaudRate(230400);
-	mSerial.setDataBits(QSerialPort::Data8);
-	mSerial.setParity(QSerialPort::NoParity);
-	mSerial.setStopBits(QSerialPort::OneStop);
-	mSerial.setFlowControl(QSerialPort::NoFlowControl);
-
-	connect(&mSerial, &QSerialPort::readyRead, this, &LidarWorker::readData);
+	connect(mSerialDevice, &SerialDeviceInterface::newData, this, &LidarWorker::readData);
 	mState.ready();
 
-	QLOG_INFO() << "Lidar: opened serial port" << mSerial.portName();
+	QLOG_INFO() << "Lidar inited";
 	mWaitForInit.release(1);
 }
 
@@ -139,13 +110,13 @@ void LidarWorker::readData()
 	uint8_t bytes[256];
 	auto s = reinterpret_cast<struct Delta2ALayout*>(mLidarChunk.data());
 
-	while (!mSerial.atEnd()) {
+	while (!mSerialDevice->atEnd()) {
 		// read data block from serial port
-		auto bytesRead = mSerial.read((char *)bytes, sizeof(bytes));
+		auto bytesRead = mSerialDevice->read((char *)bytes, sizeof(bytes));
 		if (bytesRead == 0)
 			return;
 		if (bytesRead < 0) {
-			QLOG_ERROR() << "Lidar: read failed: " << mSerial.error() << " in " << mSerial.portName();
+			QLOG_ERROR() << "Lidar: read failed";
 			return;
 		}
 
