@@ -18,7 +18,7 @@ using namespace trikControl;
 
 ObjectSensorWorker::ObjectSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, qreal toleranceFactor, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction, "Object sensor")
 	, mToleranceFactor(toleranceFactor)
 {
 }
@@ -46,11 +46,6 @@ QVector<int> ObjectSensorWorker::read()
 QVector<int> ObjectSensorWorker::getDetectParameters() const
 {
 	return mDetectParameters;
-}
-
-QString ObjectSensorWorker::sensorName() const
-{
-	return "Object sensor";
 }
 
 void ObjectSensorWorker::onNewData(const QString &dataLine)

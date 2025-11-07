@@ -46,7 +46,8 @@ public:
 	/// @param outputFile - sensor output fifo. Note that we will read sensor data from here.
 	/// @param state - shared state of a sensor.
 	AbstractVirtualSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
-			, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+			, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction
+			, const QString &sensorName);
 
 	~AbstractVirtualSensorWorker() override;
 
@@ -72,9 +73,6 @@ private Q_SLOTS:
 	void onNewDataInOutputFifo(const QString &data);
 
 private:
-	/// Provides user-friendly name of a sensor used in debug output.
-	virtual QString sensorName() const = 0;
-
 	/// Called when new data is available in sensor output fifo, called separately for each line.
 	virtual void onNewData(const QString &dataLine) = 0;
 
@@ -121,6 +119,9 @@ private:
 
 	/// Name of an output file.
 	const QString mOutputFile;
+
+	/// Name of sensor
+	const QString mSensorName;
 };
 
 }

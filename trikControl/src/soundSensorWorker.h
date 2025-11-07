@@ -55,8 +55,6 @@ public Q_SLOTS:
 	QVector<int> read();
 
 private:
-	QString sensorName() const override;
-
 	void onNewData(QString const &dataLine) override;
 
 	/// Current stored reading of a sensor.
