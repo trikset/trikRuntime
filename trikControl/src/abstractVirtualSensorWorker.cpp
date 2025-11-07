@@ -27,13 +27,15 @@
 using namespace trikControl;
 
 AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile
-		, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+		, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction
+		, const QString &sensorName)
 	: mSystemConsole(hardwareAbstraction.systemConsole())
 	, mScript(script)
 	, mInputFile(hardwareAbstraction.createOutputDeviceFile(inputFile))
 	, mState(state)
 	, mHardwareAbstraction(hardwareAbstraction)
 	, mOutputFile(outputFile)
+	, mSensorName(sensorName)
 {
 }
 
@@ -93,7 +95,7 @@ void AbstractVirtualSensorWorker::onNewDataInOutputFifo(const QString &data)
 
 bool AbstractVirtualSensorWorker::launchSensorScript(const QString &command)
 {
-	QLOG_INFO() << "Sending" << command << "command to" << sensorName() << "sensor";
+	QLOG_INFO() << "Sending" << command << "command to" << mSensorName << "sensor";
 
 	QString processOutput;
 	if (!mSystemConsole.startProcessSynchronously(mScript, {command}, &processOutput)) {
@@ -102,7 +104,7 @@ bool AbstractVirtualSensorWorker::launchSensorScript(const QString &command)
 	}
 
 	if (processOutput.contains("error")) {
-		QLOG_ERROR() << sensorName() << "script reported error:" << processOutput;
+		QLOG_ERROR() << mSensorName << "script reported error:" << processOutput;
 		mState.fail();
 		return false;
 	}
@@ -115,7 +117,7 @@ bool AbstractVirtualSensorWorker::launchSensorScript(const QString &command)
 void AbstractVirtualSensorWorker::startVirtualSensor()
 {
 	if (launchSensorScript("start")) {
-		QLOG_INFO() << sensorName() << "sensor started, waiting for it to initialize...";
+		QLOG_INFO() << mSensorName << "sensor started, waiting for it to initialize...";
 		openFifos();
 	}
 }
@@ -142,7 +144,7 @@ void AbstractVirtualSensorWorker::openFifos()
 		return;
 	}
 
-	QLOG_INFO() << sensorName() + " initialization completed";
+	QLOG_INFO() << mSensorName + " initialization completed";
 
 	sync();
 }
@@ -162,10 +164,10 @@ void AbstractVirtualSensorWorker::deinitialize()
 	mInputFile->close();
 
 	if (!launchSensorScript("stop")) {
-		QLOG_ERROR() << QString("Failed to stop %1 sensor!").arg(sensorName());
+		QLOG_ERROR() << QString("Failed to stop %1 sensor!").arg(mSensorName);
 		mState.fail();
 	} else {
-		QLOG_INFO() << QString("Successfully stopped %1 sensor").arg(sensorName());
+		QLOG_INFO() << QString("Successfully stopped %1 sensor").arg(mSensorName);
 	}
 
 	Q_EMIT stopped();

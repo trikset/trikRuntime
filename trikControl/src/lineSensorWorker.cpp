@@ -18,7 +18,7 @@ using namespace trikControl;
 
 LineSensorWorker::LineSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, qreal toleranceFactor, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction, "Line sensor")
 	, mToleranceFactor(toleranceFactor)
 {
 }
@@ -48,11 +48,6 @@ QVector<int> LineSensorWorker::getDetectParameters() const
 {
 	QReadLocker locker(&mDetectParametersLock);
 	return mDetectParameters;
-}
-
-QString LineSensorWorker::sensorName() const
-{
-	return "Line sensor";
 }
 
 void LineSensorWorker::onNewData(const QString &dataLine)

@@ -22,7 +22,7 @@ using namespace trikControl;
 
 ColorSensorWorker::ColorSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, int m, int n, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction, "Color sensor")
 {
 	if (m <= 0) {
 		state.fail();
@@ -66,11 +66,6 @@ QVector<int> ColorSensorWorker::read(int m, int n)
 	}
 
 	return mReading[m - 1][n - 1];
-}
-
-QString ColorSensorWorker::sensorName() const
-{
-	return "Color sensor";
 }
 
 void ColorSensorWorker::onNewData(const QString &dataLine)

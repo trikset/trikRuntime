@@ -53,8 +53,6 @@ public Q_SLOTS:
 	QVector<int> read(int m, int n);
 
 private:
-	QString sensorName() const override;
-
 	void onNewData(const QString &dataLine) override;
 
 	/// Current stored reading of a sensor. First two vectors are m*n matrix, inner vector contains 3 values --- red,

@@ -18,7 +18,7 @@ using namespace trikControl;
 
 SoundSensorWorker::SoundSensorWorker(const QString &script, const QString &inputFile, const QString &outputFile
 		, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction)
+	: AbstractVirtualSensorWorker(script, inputFile, outputFile, state, hardwareAbstraction, "Sound sensor")
 {
 }
 
@@ -49,11 +49,6 @@ QVector<int> SoundSensorWorker::read()
 	mLock.unlock();
 
 	return result;
-}
-
-QString SoundSensorWorker::sensorName() const
-{
-	return "Sound sensor";
 }
 
 void SoundSensorWorker::onNewData(const QString &dataLine)
