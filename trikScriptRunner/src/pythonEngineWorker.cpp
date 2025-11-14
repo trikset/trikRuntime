@@ -91,7 +91,7 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 
 	if (--initCounter == 0) {
-		PythonQt::preCleanup();
+		PythonQt::cleanup();
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #endif
@@ -102,10 +102,6 @@ PythonEngineWorker::~PythonEngineWorker()
 			QLOG_ERROR() << "Failed to finalize python engine";
 		}
 #endif
-		if (PythonQt::self()) {
-			PythonQt::cleanup();
-		}
-
 		PyMem_RawFree(mProgramName);
 		PyMem_RawFree(mPythonPath);
 	}
@@ -203,7 +199,7 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
-		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::ExternalModule
+		PythonQt::init(PythonQt::RedirectStdOut
 				   | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
