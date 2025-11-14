@@ -89,19 +89,20 @@ PythonEngineWorker::~PythonEngineWorker()
 			mPyInterpreter = nullptr;
 		}
 	}
-
 	if (--initCounter == 0) {
-		PythonQt::cleanup();
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #endif
+		if (Py_IsInitialized()) {
 #if PY_MINOR_VERSION < 6
-		Py_Finalize();
+			Py_Finalize();
 #else
-		if (Py_FinalizeEx()) {
-			QLOG_ERROR() << "Failed to finalize python engine";
-		}
+			if (Py_FinalizeEx()) {
+				QLOG_ERROR() << "Failed to finalize python engine";
+			}
 #endif
+		}
+		PythonQt::cleanup();
 		PyMem_RawFree(mProgramName);
 		PyMem_RawFree(mPythonPath);
 	}
