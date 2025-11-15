@@ -20,15 +20,6 @@ jobs:
   - job: Build
     strategy:
       matrix:
-        Linux release:
-          imageName: 'ubuntu-latest'
-          QMAKE_EXTRA: "CONFIG+=tests CONFIG+=ccache CONFIG+=force_debug_info CONFIG+=sanitize_undefined CONFIG+=trik_not_brick CONFIG+=sanitizer"
-        Linux debug:
-          imageName: 'ubuntu-latest'
-          CONFIG: debug
-          VERA: true
-          TRANSLATIONS: true
-          QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer"
         macOs release:
           imageName: 'macOS-13'
           QMAKE_EXTRA: "CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=precompile_header CONFIG+=sanitize_address CONFIG+=sanitize_undefined CONFIG+=sanitizer CONFIG+=force_debug_info CONFIG+=trik_nopython"

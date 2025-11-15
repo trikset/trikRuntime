@@ -27,7 +27,54 @@
 #include <PythonQtConversion.h>
 #include <PythonQt_QtAll.h>
 
-void PythonQt_init_QtPyTrikControl(PyObject* module);
+#if PY_VERSION_HEX >= 0x03080000 && defined(__linux__)
+#include <dlfcn.h>
+#include <link.h>
+#include <cstring>
+#include <iostream>
+#include <string>
+
+namespace {
+enum class LibraryLoadStatus {
+	NotFound = 0,
+	Loaded = 1,
+	NotLoaded = 2
+};
+
+LibraryLoadStatus find_loaded_library(const std::string& libraryName) {
+	struct CallbackData {
+		const std::string name;
+		LibraryLoadStatus status = LibraryLoadStatus::NotFound;
+	};
+
+	CallbackData data = {libraryName};
+
+	auto callback = [](dl_phdr_info* info, size_t, void* ptr) -> int {
+		auto* cbData = static_cast<CallbackData*>(ptr);
+		if (info->dlpi_name && std::strstr(info->dlpi_name, cbData->name.c_str())) {
+			if (!dlopen(info->dlpi_name, RTLD_GLOBAL | RTLD_NOLOAD | RTLD_LAZY)) {
+				const char* dlErr = dlerror();
+				std::cerr << "Library '" << cbData->name << "' found at "
+				<< info->dlpi_name << ", but not loaded. Reason: "
+				<< (dlErr ? dlErr : "Unknown error") << std::endl;
+				cbData->status = LibraryLoadStatus::NotLoaded;
+				return static_cast<int>(LibraryLoadStatus::NotLoaded);
+			}
+
+			cbData->status = LibraryLoadStatus::Loaded;
+			return static_cast<int>(LibraryLoadStatus::Loaded);
+		}
+
+		return 0;
+	};
+
+	dl_iterate_phdr(callback, &data);
+	return data.status;
+}
+}
+#endif
+
+void PythonQt_init_PyTrikControl(PyObject* module);
 
 using namespace trikScriptRunner;
 
@@ -89,23 +136,20 @@ PythonEngineWorker::~PythonEngineWorker()
 			mPyInterpreter = nullptr;
 		}
 	}
-
 	if (--initCounter == 0) {
-		PythonQt::preCleanup();
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #endif
+		if (Py_IsInitialized()) {
 #if PY_MINOR_VERSION < 6
-		Py_Finalize();
+			Py_Finalize();
 #else
-		if (Py_FinalizeEx()) {
-			QLOG_ERROR() << "Failed to finalize python engine";
-		}
+			if (Py_FinalizeEx()) {
+				QLOG_ERROR() << "Failed to finalize python engine";
+			}
 #endif
-		if (PythonQt::self()) {
-			PythonQt::cleanup();
 		}
-
+		PythonQt::cleanup();
 		PyMem_RawFree(mProgramName);
 		PyMem_RawFree(mPythonPath);
 	}
@@ -114,7 +158,15 @@ PythonEngineWorker::~PythonEngineWorker()
 void PythonEngineWorker::init()
 {
 	if (initCounter++ == 0) {
-
+#if PY_VERSION_HEX >= 0x03080000 && defined(__linux__)
+		LibraryLoadStatus status = find_loaded_library("libpython");
+		if (status == LibraryLoadStatus::NotFound) {
+			qFatal("The libpython library was not found among the dynamic dependencies.");
+		}
+		if (status == LibraryLoadStatus::NotLoaded) {
+			qFatal("Problems with loading the libpython library");
+		}
+#endif
 		QLOG_INFO() << "Built with python:" << PY_VERSION << QString::number(PY_VERSION_HEX, 16);
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
 		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
@@ -203,7 +255,7 @@ void PythonEngineWorker::init()
 	if (!PythonQt::self()) {
 		PythonQt::setEnableThreadSupport(true);
 		PythonQtGILScope _;
-		PythonQt::init(PythonQt::RedirectStdOut | PythonQt::ExternalModule
+		PythonQt::init(PythonQt::RedirectStdOut
 				   | PythonQt::PythonAlreadyInitialized, "TRIK_PQT");
 		connect(PythonQt::self(), &PythonQt::pythonStdErr, this, &PythonEngineWorker::updateErrorMessage);
 		connect(PythonQt::self(), &PythonQt::pythonStdOut, this, [this](const QString& str){
@@ -212,7 +264,7 @@ void PythonEngineWorker::init()
 		});
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
-		PythonQt_init_QtPyTrikControl(mMainContext);
+		PythonQt_init_PyTrikControl(mMainContext);
 	}
 	if (!mMainContext) {
 		mMainContext = PythonQt::self()->getMainModule();

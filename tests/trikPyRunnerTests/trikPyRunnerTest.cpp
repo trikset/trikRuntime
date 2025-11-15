@@ -170,7 +170,7 @@ TEST_F(TrikPyRunnerTest, directCommandContextWithTimersAndQtCore)
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("print(dir(TRIK_PQT.Qt))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
-	err = runDirectCommandAndWaitForQuit("print(dir(TRIK_PQT.QtPyTrikControl))");
+	err = runDirectCommandAndWaitForQuit("print(dir(TRIK_PQT.PyTrikControl))");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
 	err = runDirectCommandAndWaitForQuit("from TRIK_PQT import QtCore as QtCore");
 	ASSERT_EQ(err, EXIT_SCRIPT_SUCCESS);
