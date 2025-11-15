@@ -24,6 +24,7 @@
 #include "deviceState.h"
 
 #include <trikHal/hardwareAbstractionInterface.h>
+#include "serialDeviceInterface.h"
 
 namespace trikControl {
 
@@ -36,7 +37,7 @@ public:
 	/// Constructor.
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
-	explicit LidarWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	explicit LidarWorker(SerialDeviceInterface *serialDevice, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 	~LidarWorker();
 
 	Status status() const override;
@@ -63,8 +64,7 @@ private:
 
 	bool checkChecksum(const uint8_t *data, size_t size);
 
-	/// serial port QT object
-	QSerialPort mSerial;
+	SerialDeviceInterface *mSerialDevice;
 
 	/// buffer for unparsed raw data chunks from serial port
 	QScopedArrayPointer<uint8_t> mLidarChunk;
