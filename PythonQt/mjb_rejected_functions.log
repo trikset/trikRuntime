@@ -117,7 +117,13 @@ QDataStream::__lshift__ qfloat16
 QDataStream::__lshift__ std::nullptr_t
 QDataStream::__rshift__ qfloat16&
 QDataStream::__rshift__ std::nullptr_t&
+QFont::qt_static_metacall QMetaObject::Call
+QGradient::qt_static_metacall QMetaObject::Call
+QIODevice::qt_metacall QMetaObject::Call
+QIODevice::qt_static_metacall QMetaObject::Call
 QImage::QImage QImageCleanupFunction
+QImage::qt_static_metacall QMetaObject::Call
+QKeySequence::qt_static_metacall QMetaObject::Call
 QList::QList std::initializer_list<T>
 QList::contains_impl QListData::ArrayCompatibleLayout
 QList::contains_impl QListData::NotArrayCompatibleLayout
@@ -129,6 +135,11 @@ QList::isValidIterator iterator const&
 QList::op_eq_impl QListData::ArrayCompatibleLayout
 QList::op_eq_impl QListData::NotArrayCompatibleLayout
 QMatrix::QMatrix Qt::Initialization
+QMetaObject::invokeMethod QGenericArgument
+QMetaObject::invokeMethod QGenericReturnArgument
+QMetaObject::metacall QMetaObject::Call
+QMetaObject::newInstance QGenericArgument
+QMetaObject::static_metacall QMetaObject::Call
 QMetaType::QMetaType QMetaType::ExtensionFlag const
 QMetaType::ctor QMetaTypeInterface const*
 QMetaType::debugStream QDebug&
@@ -139,14 +150,18 @@ QMetaType::registerNormalizedType QMetaType::TypedDestructor
 QMetaType::registerStreamOperators QMetaType::SaveOperator
 QMetaType::registerType QMetaType::Deleter
 QMetaType::registerType QMetaType::TypedDestructor
+QObject::qt_metacall QMetaObject::Call
+QObject::qt_static_metacall QMetaObject::Call
 QPair::QPair QPair<TT1,TT2> const&
 QPair::operator_assign QPair<TT1,TT2> const&
+QPalette::qt_static_metacall QMetaObject::Call
 QPixelFormat::get QPixelFormat::Field
 QPixelFormat::set QPixelFormat::Field
 QPixmap::QPixmap QPlatformPixmap*
 QSignalBlocker::QSignalBlocker QSignalBlocker&&
 QSignalBlocker::operator_assign QSignalBlocker&&
 QSizePolicy::QSizePolicy Bits
+QSizePolicy::qt_static_metacall QMetaObject::Call
 QStringList::QStringList std::initializer_list<QString>
 QTransform::QTransform Qt::Initialization
 QVector::QVector QArrayDataPointerRef<T>
@@ -160,9 +175,61 @@ QVector::operator_assign std::initializer_list<T>
 QVector::prepend T&&
 QVector::realloc QArrayData::AllocationOptions
 QVector::reallocData QArrayData::AllocationOptions
+QWidget::qt_metacall QMetaObject::Call
+QWidget::qt_static_metacall QMetaObject::Call
+trikControl::BatteryInterface::qt_metacall QMetaObject::Call
+trikControl::BatteryInterface::qt_static_metacall QMetaObject::Call
 trikControl::BrickFactory::create trikHal::HardwareAbstractionInterface&
+trikControl::BrickInterface::qt_metacall QMetaObject::Call
+trikControl::BrickInterface::qt_static_metacall QMetaObject::Call
+trikControl::ColorSensorInterface::qt_metacall QMetaObject::Call
+trikControl::ColorSensorInterface::qt_static_metacall QMetaObject::Call
+trikControl::DisplayInterface::qt_metacall QMetaObject::Call
+trikControl::DisplayInterface::qt_static_metacall QMetaObject::Call
 trikControl::DisplayInterface::show QVector<int32_t> const&
+trikControl::DisplayWidgetInterface::qt_metacall QMetaObject::Call
+trikControl::DisplayWidgetInterface::qt_static_metacall QMetaObject::Call
+trikControl::EncoderInterface::qt_metacall QMetaObject::Call
+trikControl::EncoderInterface::qt_static_metacall QMetaObject::Call
+trikControl::EventCodeInterface::qt_metacall QMetaObject::Call
+trikControl::EventCodeInterface::qt_static_metacall QMetaObject::Call
+trikControl::EventDeviceInterface::qt_metacall QMetaObject::Call
+trikControl::EventDeviceInterface::qt_static_metacall QMetaObject::Call
+trikControl::EventInterface::qt_metacall QMetaObject::Call
+trikControl::EventInterface::qt_static_metacall QMetaObject::Call
 trikControl::FifoInterface::newData QVector<uint8_t> const&
+trikControl::FifoInterface::qt_metacall QMetaObject::Call
+trikControl::FifoInterface::qt_static_metacall QMetaObject::Call
+trikControl::GamepadInterface::qt_metacall QMetaObject::Call
+trikControl::GamepadInterface::qt_static_metacall QMetaObject::Call
+trikControl::GyroSensorInterface::qt_metacall QMetaObject::Call
+trikControl::GyroSensorInterface::qt_static_metacall QMetaObject::Call
+trikControl::I2cDeviceInterface::qt_metacall QMetaObject::Call
+trikControl::I2cDeviceInterface::qt_static_metacall QMetaObject::Call
+trikControl::IrCameraInterface::qt_metacall QMetaObject::Call
+trikControl::IrCameraInterface::qt_static_metacall QMetaObject::Call
+trikControl::KeysInterface::qt_metacall QMetaObject::Call
+trikControl::KeysInterface::qt_static_metacall QMetaObject::Call
+trikControl::LedInterface::qt_metacall QMetaObject::Call
+trikControl::LedInterface::qt_static_metacall QMetaObject::Call
+trikControl::LidarInterface::qt_metacall QMetaObject::Call
+trikControl::LidarInterface::qt_static_metacall QMetaObject::Call
+trikControl::LineSensorInterface::qt_metacall QMetaObject::Call
+trikControl::LineSensorInterface::qt_static_metacall QMetaObject::Call
+trikControl::MarkerInterface::qt_metacall QMetaObject::Call
+trikControl::MarkerInterface::qt_static_metacall QMetaObject::Call
+trikControl::MotorInterface::qt_metacall QMetaObject::Call
+trikControl::MotorInterface::qt_static_metacall QMetaObject::Call
+trikControl::ObjectSensorInterface::qt_metacall QMetaObject::Call
+trikControl::ObjectSensorInterface::qt_static_metacall QMetaObject::Call
+trikControl::PwmCaptureInterface::qt_metacall QMetaObject::Call
+trikControl::PwmCaptureInterface::qt_static_metacall QMetaObject::Call
+trikControl::SensorInterface::qt_metacall QMetaObject::Call
+trikControl::SensorInterface::qt_static_metacall QMetaObject::Call
+trikControl::SoundSensorInterface::qt_metacall QMetaObject::Call
+trikControl::SoundSensorInterface::qt_static_metacall QMetaObject::Call
+trikControl::VectorSensorInterface::qt_metacall QMetaObject::Call
+trikControl::VectorSensorInterface::qt_static_metacall QMetaObject::Call
 trikKernel::TimeVal::fromPackedUInt32 uint32_t
 ************************************************************************
 
@@ -189,6 +256,7 @@ QMessageLogger::debug QDebug
 QMessageLogger::info QDebug
 QMessageLogger::noDebug QNoDebug
 QMessageLogger::warning QDebug
+QMetaObject::connect Connection
 QObject::connectImpl QMetaObject::Connection
 QPixmap::handle QPlatformPixmap*
 QRegion::crbegin QRegion::const_reverse_iterator

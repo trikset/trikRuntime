@@ -1,5 +1,39 @@
 ************************************************************************
 Not in type system
+<object-type name="QArgument"/>
+<object-type name="QGenericArgument"/>
+<object-type name="QGenericReturnArgument"/>
+<object-type name="QIODevice::QPrivateSignal"/>
+<object-type name="QMetaObject::Connection"/>
+<object-type name="QMetaObject::SuperData"/>
+<object-type name="QObject::QPrivateSignal"/>
+<object-type name="QReturnArgument"/>
+<object-type name="QWidget::QPrivateSignal"/>
+<object-type name="trikControl::BatteryInterface::QPrivateSignal"/>
+<object-type name="trikControl::BrickInterface::QPrivateSignal"/>
+<object-type name="trikControl::ColorSensorInterface::QPrivateSignal"/>
+<object-type name="trikControl::DisplayInterface::QPrivateSignal"/>
+<object-type name="trikControl::DisplayWidgetInterface::QPrivateSignal"/>
+<object-type name="trikControl::EncoderInterface::QPrivateSignal"/>
+<object-type name="trikControl::EventCodeInterface::QPrivateSignal"/>
+<object-type name="trikControl::EventDeviceInterface::QPrivateSignal"/>
+<object-type name="trikControl::EventInterface::QPrivateSignal"/>
+<object-type name="trikControl::FifoInterface::QPrivateSignal"/>
+<object-type name="trikControl::GamepadInterface::QPrivateSignal"/>
+<object-type name="trikControl::GyroSensorInterface::QPrivateSignal"/>
+<object-type name="trikControl::I2cDeviceInterface::QPrivateSignal"/>
+<object-type name="trikControl::IrCameraInterface::QPrivateSignal"/>
+<object-type name="trikControl::KeysInterface::QPrivateSignal"/>
+<object-type name="trikControl::LedInterface::QPrivateSignal"/>
+<object-type name="trikControl::LidarInterface::QPrivateSignal"/>
+<object-type name="trikControl::LineSensorInterface::QPrivateSignal"/>
+<object-type name="trikControl::MarkerInterface::QPrivateSignal"/>
+<object-type name="trikControl::MotorInterface::QPrivateSignal"/>
+<object-type name="trikControl::ObjectSensorInterface::QPrivateSignal"/>
+<object-type name="trikControl::PwmCaptureInterface::QPrivateSignal"/>
+<object-type name="trikControl::SensorInterface::QPrivateSignal"/>
+<object-type name="trikControl::SoundSensorInterface::QPrivateSignal"/>
+<object-type name="trikControl::VectorSensorInterface::QPrivateSignal"/>
 ************************************************************************
 
 ************************************************************************
