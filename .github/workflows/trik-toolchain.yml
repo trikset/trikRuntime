@@ -172,4 +172,4 @@ jobs:
             export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1,PYTHONPATH=${TARGET_PYTHONPATH},TRIK_PYTHONPATH=${TARGET_PYTHONPATH}
             
             env | sort
-            make -k check
+            make -k check TESTARGS="-platform minimal"
