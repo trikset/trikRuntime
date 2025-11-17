@@ -5,6 +5,7 @@
  <load-typesystem name="typesystem_trikHal.xml"  generate="no" />
  <load-typesystem name="typesystem_trikKernel.xml"  generate="no" />
  <load-typesystem name="typesystem_general.xml"  generate="no" />
+ <load-typesystem name="typesystem_stdint.xml"  generate="no" />
 
  <namespace-type name="trikControl" />
 

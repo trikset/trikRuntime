@@ -1,11 +1,13 @@
 ************************************************************************
 Not in type system
+<enum-type name="QMetaObject::Call"/>
 ************************************************************************
 
 ************************************************************************
 Generation disabled by type system
 <enum-type name="QFont::ResolveProperties"/>
 <enum-type name="QGradient::InterpolationMode"/>
+<enum-type name="QMetaType::Type"/>
 <enum-type name="QSysInfo::MacVersion"/>
 <enum-type name="QSysInfo::WinVersion"/>
 <enum-type name="Qt::Initialization"/>
