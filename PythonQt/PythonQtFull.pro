@@ -12,5 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+include(../global.pri)
+
+QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors -Werror=cast-qual
 PYTHONQTALL_CONFIG *= PythonQtCore PythonQtGui
 include(PythonQt/extensions/PythonQt_QtAll/PythonQt_QtAll.pro)

@@ -89,7 +89,7 @@ trik_nopython:DEFINES += TRIK_NOPYTHON
 
 copyToDestdir($$PWD/system.js, NOW)
 copyToDestdir($$PWD/TRIK.py, NOW)
-
+linux:LIBS += -ldl
 links(trikRuntimeQsLog trikKernel trikControl trikNetwork)
 implementationIncludes(trikKernel trikNetwork trikControl)
 PythonQtIncludes()
