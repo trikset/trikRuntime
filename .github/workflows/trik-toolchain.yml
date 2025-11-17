@@ -112,7 +112,9 @@ jobs:
              ccache --version
              qemu-arm --version
              pkg-config --list-all | grep -i python
-             echo "TARGET_PYTHON_VERSION_MINOR=$(python3 --version | sed 's#^.*3\.\([^.]\+\).*$#\1#g')" >> $GITHUB_ENV             
+             echo "TARGET_PYTHON_VERSION_MINOR=$(python3 --version | sed 's#^.*3\.\([^.]\+\).*$#\1#g')" >> $GITHUB_ENV
+             QT_VERSION=$(qmake -query QT_VERSION)
+             echo "QT_VERSION=$QT_VERSION" >> $GITHUB_ENV
 
       - name: "[TRIK] QMake"
         timeout-minutes: 1
@@ -124,6 +126,7 @@ jobs:
             CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
             PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
             PYTHON_VERSION=3.${TARGET_PYTHON_VERSION_MINOR} \
+            PYTHONQT_GENERATED_PATH="${{ github.workspace }}/PythonQt/PythonQt/generated_cpp_${QT_VERSION}_triksdk" \
             CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
 
@@ -146,6 +149,7 @@ jobs:
             CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
             PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
             PYTHON_VERSION=3.${TARGET_PYTHON_VERSION_MINOR} \
+            PYTHONQT_GENERATED_PATH="${{ github.workspace }}/PythonQt/PythonQt/generated_cpp_${QT_VERSION}_triksdk" \
             CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
 
