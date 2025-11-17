@@ -74,7 +74,7 @@ LibraryLoadStatus find_loaded_library(const std::string& libraryName) {
 }
 
 #endif
-void PythonQt_init_QtPyTrikControl(PyObject* module);
+void PythonQt_init_PyTrikControl(PyObject* module);
 
 using namespace trikScriptRunner;
 
@@ -267,7 +267,7 @@ void PythonEngineWorker::init()
 		});
 		PythonQtRegisterListTemplateConverter(QVector, uint8_t)
 		PythonQt_QtAll::init();
-		PythonQt_init_QtPyTrikControl(mMainContext);
+		PythonQt_init_PyTrikControl(mMainContext);
 	}
 	if (!mMainContext) {
 		mMainContext = PythonQt::self()->getMainModule();
