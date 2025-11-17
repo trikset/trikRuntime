@@ -57,6 +57,9 @@ equal to its class name.
                 echo 1 > ${PWM}5/export
                 echo 0 > ${PWM}5/export
 
+                # gpio for detect and set the power supply voltage level (2S or 3S)
+                echo 56 > /sys/class/gpio/export
+
 		#amixer -q set PCM 127
 	</initScript>
 
