@@ -111,4 +111,4 @@ jobs:
             export PYTHONFAULTHANDLER=1
             export PYTHONDEVMODE=1 #only from 3.7, overrides PYTHONMALLOC and some other
             env | sort
-            make -k check
+            make -k check TESTARGS="-platform minimal"
