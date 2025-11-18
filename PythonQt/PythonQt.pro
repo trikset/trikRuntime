@@ -20,7 +20,7 @@ QMAKE_CXXFLAGS -= -Werror=pedantic -pedantic-errors
 !trik_nopython {
 	SUBDIRS += PythonQtCore PythonQtFull
 	PythonQtFull.depends += PythonQtCore
-	PythonQtCore.subdir = PythonQt/src
+	PythonQtCore.subdir = $$PWD/src
 	PythonQtFull.file = PythonQtFull.pro
 	
 	tests {
