@@ -44,6 +44,7 @@
 #include <trikControl/markerInterface.h>
 #include <trikControl/lidarInterface.h>
 #include <trikNetwork/mailboxInterface.h>
+#include <trikControl/serialDeviceInterface.h>
 
 #include "trikScriptControlInterface.h"
 
@@ -68,6 +69,7 @@
 	TEMPLATE(trikControl::GamepadInterface) \
 	TEMPLATE(trikControl::GyroSensorInterface) \
 	TEMPLATE(trikControl::I2cDeviceInterface) \
+	TEMPLATE(trikControl::SerialDeviceInterface) \
 	TEMPLATE(trikControl::IrCameraInterface) \
 	TEMPLATE(trikControl::KeysInterface) \
 	TEMPLATE(trikControl::LedInterface) \
