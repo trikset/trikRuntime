@@ -89,7 +89,7 @@ jobs:
             echo "PERL5LIB=$PERL5LIB" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
           submodules: recursive
