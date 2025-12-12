@@ -173,7 +173,7 @@ static void check_pystatus(PyStatus status, const char* errorMessage) {
 	}
 }
 
-void PythonEngineWorker::initializePythonAfter38(const QString& path)
+void PythonEngineWorker::initializePython(const QString& path)
 {
 	PyPreConfig pyPreconfig;
 	// NB! Py_DecodeLocale requires a pre-initialized Python engine
@@ -226,7 +226,7 @@ void PythonEngineWorker::initializePythonAfter38(const QString& path)
 	check_pystatus(status, "Failed to initialize the Python engine");
 }
 #else
-void PythonEngineWorker::initializePythonBefore38(const QString& path)
+void PythonEngineWorker::initializePython(const QString& path)
 {
 	/// TODO: Must point to local .zip file
 	PyMemPtr currentPath(Py_DecodeLocale(path.toStdString().data(), nullptr));
@@ -249,14 +249,6 @@ void PythonEngineWorker::initializePythonBefore38(const QString& path)
 //		Py_NoUserSiteDirectory = 1;
 }
 #endif
-
-void PythonEngineWorker::initializePython(const QString& path) {
-#if PY_VERSION_HEX >= 0x03080000
-	initializePythonAfter38(path);
-#else
-	initializePythonBefore38(path);
-#endif
-}
 
 void PythonEngineWorker::init()
 {

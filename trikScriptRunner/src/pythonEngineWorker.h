@@ -20,7 +20,8 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QSemaphore>
-
+#include <memory>
+#include <vector>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -150,8 +151,6 @@ private:
 	void addSearchModuleDirectory(const QDir &path);
 
 	void initializePython(const QString& path);
-	void initializePythonAfter38(const QString& path);
-	void initializePythonBefore38(const QString& path);
 
 	trikControl::BrickInterface *mBrick {};
 	TrikScriptControlInterface *mScriptExecutionControl {}; // Does not have ownership.
