@@ -171,15 +171,6 @@ private:
 	QString mErrorMessage;
 
 	QSemaphore mWaitForInitSemaphore {1};
-
-	struct PyMemDeleter {
-	    void operator()(wchar_t* ptr) const noexcept;
-	};
-
-	using PyMemPtr = std::unique_ptr<wchar_t, PyMemDeleter>;
-	PyMemPtr mProgramName { nullptr };
-	std::vector<PyMemPtr> mPythonPath;
-
 	static QAtomicInt initCounter;
 };
 

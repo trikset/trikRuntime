@@ -119,13 +119,6 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 	mWaitForInitSemaphore.acquire(1);
 }
 
-void PythonEngineWorker::PyMemDeleter::operator()(wchar_t* ptr) const noexcept {
-	if (ptr) {
-		PyMem_RawFree(ptr);
-	}
-}
-
-
 PythonEngineWorker::~PythonEngineWorker()
 {
 	if(thread() != QThread::currentThread()) {
@@ -191,16 +184,17 @@ void PythonEngineWorker::initializePython(const QString& path)
 	auto &&pathList = path.split(separator);
 
 	for (auto &&path: pathList) {
-		PyMemPtr currentPath(Py_DecodeLocale(path.toStdString().data(), nullptr));
-		status = PyWideStringList_Append(&config.module_search_paths, currentPath.get());
-		mPythonPath.push_back(std::move(currentPath));
+		auto *wchar_path = Py_DecodeLocale(path.toStdString().data(), nullptr);
+		status = PyWideStringList_Append(&config.module_search_paths, wchar_path);
+		PyMem_RawFree(wchar_path);
 		check_pystatus(status, "Failed to set TRIK_PYTHONPATH");
 	}
 
 	config.module_search_paths_set  = 1;
 
-	mProgramName.reset(Py_DecodeLocale("trikPythonRuntime", nullptr));
-	status = PyConfig_SetString(&config, &config.program_name, mProgramName.get());
+	auto *programName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+	status = PyConfig_SetString(&config, &config.program_name, programName);
+	PyMem_RawFree(programName);
 	check_pystatus(status, "Failed to set trikPythonRuntime program name");
 
 	if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
@@ -229,12 +223,13 @@ void PythonEngineWorker::initializePython(const QString& path)
 void PythonEngineWorker::initializePython(const QString& path)
 {
 	/// TODO: Must point to local .zip file
-	PyMemPtr currentPath(Py_DecodeLocale(path.toStdString().data(), nullptr));
-	Py_SetPath(currentPath.get());
-	mPythonPath.push_back(std::move(currentPath));
+	auto *wchar_path = Py_DecodeLocale(path.toStdString().data(), nullptr);
+	Py_SetPath(wchar_path);
+	PyMem_RawFree(wchar_path);
 
-	mProgramName = PyMemPtr(Py_DecodeLocale("trikPythonRuntime", nullptr));
-	Py_SetProgramName(mProgramName.get());
+	auto *programName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+	Py_SetProgramName(programName);
+	PyMem_RawFree(programName);
 
 	if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
 		Py_VerboseFlag = 3;
