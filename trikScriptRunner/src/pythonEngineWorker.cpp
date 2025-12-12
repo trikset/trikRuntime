@@ -119,7 +119,7 @@ PythonEngineWorker::PythonEngineWorker(trikControl::BrickInterface *brick
 	mWaitForInitSemaphore.acquire(1);
 }
 
-void PythonEngineWorker::PyMemDeleter::operator()(wchar_t* ptr) const {
+void PythonEngineWorker::PyMemDeleter::operator()(wchar_t* ptr) const noexcept {
 	if (ptr) {
 		PyMem_RawFree(ptr);
 	}
@@ -166,13 +166,13 @@ PythonEngineWorker::~PythonEngineWorker()
 	}
 }
 
+#if PY_VERSION_HEX >= 0x03080000
 static void check_pystatus(PyStatus status, const char* errorMessage) {
 	if (PyStatus_Exception(status)) {
 		qFatal("%s", errorMessage);
 	}
 }
 
-#if PY_VERSION_HEX >= 0x03080000
 void PythonEngineWorker::initializePythonAfter38(const QString& path)
 {
 	PyPreConfig pyPreconfig;

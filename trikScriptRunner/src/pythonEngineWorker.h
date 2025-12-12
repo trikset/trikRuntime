@@ -174,7 +174,7 @@ private:
 	QSemaphore mWaitForInitSemaphore {1};
 
 	struct PyMemDeleter {
-	    void operator()(wchar_t* ptr) const;
+	    void operator()(wchar_t* ptr) const noexcept;
 	};
 
 	using PyMemPtr = std::unique_ptr<wchar_t, PyMemDeleter>;
