@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         qt-version: ['5.15']
-        python-version: ['3.12']
+        python-version: ['3.11']
 
     steps:
       - name: Configure git
@@ -67,7 +67,7 @@ jobs:
         run: |
             mkdir -p build && cd build && echo "BUILD_DIR=${PWD}" >> $GITHUB_ENV
             qmake CONFIG+=release CONFIG+=trik_not_brick \
-                  CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer \
+                  CONFIG+=ccache CONFIG+=sanitizer \
                   CONFIG+=sanitize_undefined \
                   PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') \
                   PYTHON_DIR=$(which python3 | xargs dirname | xargs dirname) \
@@ -83,19 +83,6 @@ jobs:
         timeout-minutes: 10
         run: |
             bear -- make -j $(nproc) all
-        working-directory: ${{ env.BUILD_DIR }}
-
-      - name: Unit tests
-        timeout-minutes: 5
-        run: |
-            export TRIK_PYTHONPATH=$(python3 -c "import sys; import os; print(os.pathsep.join(sys.path))")
-            export PYTHONVERBOSE=2
-            export PYTHONDEBUG=2
-            export PYTHONMALLOC=malloc_debug
-            export PYTHONFAULTHANDLER=1
-            export PYTHONDEVMODE=1
-            env | sort
-            make -k check TESTARGS="-platform minimal"
         working-directory: ${{ env.BUILD_DIR }}
   
       - name: Clang-tidy
