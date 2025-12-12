@@ -149,6 +149,10 @@ private:
 	/// Adds @value path to the Python's sys.path array.
 	void addSearchModuleDirectory(const QDir &path);
 
+	void initializePython(const QString& path);
+	void initializePythonAfter38(const QString& path);
+	void initializePythonBefore38(const QString& path);
+
 	trikControl::BrickInterface *mBrick {};
 	TrikScriptControlInterface *mScriptExecutionControl {}; // Does not have ownership.
 	trikNetwork::MailboxInterface * const mMailbox {};  // Does not have ownership.
@@ -169,8 +173,13 @@ private:
 
 	QSemaphore mWaitForInitSemaphore {1};
 
-	wchar_t *mProgramName { nullptr };
-	wchar_t *mPythonPath { nullptr };
+	struct PyMemDeleter {
+	    void operator()(wchar_t* ptr) const;
+	};
+
+	using PyMemPtr = std::unique_ptr<wchar_t, PyMemDeleter>;
+	PyMemPtr mProgramName { nullptr };
+	std::vector<PyMemPtr> mPythonPath;
 
 	static QAtomicInt initCounter;
 };
