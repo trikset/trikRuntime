@@ -32,7 +32,7 @@ jobs:
             git config --global core.autocrlf false
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
           submodules: recursive
