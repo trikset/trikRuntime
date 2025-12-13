@@ -100,3 +100,16 @@ jobs:
       - name: Clang-tidy exit
         if: ${{ steps.linter.outputs.checks-failed > 0 }}
         run: exit 1   
+
+      - name: Clazy-standalone
+        uses: MinyazevR/clazy-standalone-action@v0.3.3
+        with:
+          checks: 'level0,level1,level2'
+          database: ${{ env.BUILD_DIR }}
+          fail-on-warning: true
+          install-stable: true
+          only-diff: true
+          ignore-dirs: '^(PythonQt|mlx90640-library)$'
+          root-dir: ${{ github.workspace }}
+          ignore-header-deps: true
+          ignore-external-files: true
