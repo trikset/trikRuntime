@@ -94,7 +94,7 @@ static void abortPythonInterpreter() {
 	}
 // 1. Ideally, `Py_AddPendingCall` does not require `GIL` and `PythonQtGILScope _`.
 	Py_AddPendingCall(&quitFromPython, nullptr);
-#if PY_VERSION_HEX >= 0x03090000
+#if PY_VERSION_HEX >= 0x03090000 && PY_VERSION_HEX < 0x030D0000
 // 2. When interpreting bytecode in the main loop, some of the bytecode instructions
 // call a handler function to check for pending events added using Py_AddPendingCall.
 // However, starting with Python3.9, for some reason, the handler function checks
