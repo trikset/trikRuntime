@@ -20,7 +20,6 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QSemaphore>
-
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -43,7 +42,7 @@ public:
 					   , TrikScriptControlInterface *scriptControl
 					   );
 
-	~PythonEngineWorker();
+	~PythonEngineWorker() override;
 
 	/// Clears execution state and stops robot.
 	/// Can be safely called from other threads.
@@ -149,6 +148,8 @@ private:
 	/// Adds @value path to the Python's sys.path array.
 	void addSearchModuleDirectory(const QDir &path);
 
+	void initializePython(const QString& path);
+
 	trikControl::BrickInterface *mBrick {};
 	TrikScriptControlInterface *mScriptExecutionControl {}; // Does not have ownership.
 	trikNetwork::MailboxInterface * const mMailbox {};  // Does not have ownership.
@@ -168,10 +169,6 @@ private:
 	QString mErrorMessage;
 
 	QSemaphore mWaitForInitSemaphore {1};
-
-	wchar_t *mProgramName { nullptr };
-	wchar_t *mPythonPath { nullptr };
-
 	static QAtomicInt initCounter;
 };
 

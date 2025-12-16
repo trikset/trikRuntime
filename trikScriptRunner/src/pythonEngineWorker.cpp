@@ -27,7 +27,9 @@
 #include <PythonQtConversion.h>
 #include <PythonQt_QtAll.h>
 
-#if PY_VERSION_HEX >= 0x03080000 && defined(__linux__)
+#if PY_VERSION_HEX >= 0x03080000
+#include <pyconfig.h>
+#if defined(__linux__)
 #include <dlfcn.h>
 #include <link.h>
 #include <cstring>
@@ -73,6 +75,7 @@ LibraryLoadStatus find_loaded_library(const std::string& libraryName) {
 }
 }
 
+#endif
 #endif
 void PythonQt_init_PyTrikControl(PyObject* module);
 
@@ -153,10 +156,94 @@ PythonEngineWorker::~PythonEngineWorker()
 		if (PythonQt::self()) {
 			PythonQt::cleanup();
 		}
-		PyMem_RawFree(mProgramName);
-		PyMem_RawFree(mPythonPath);
 	}
 }
+
+#if PY_VERSION_HEX >= 0x03080000
+static void check_pystatus(PyStatus status, const char* errorMessage) {
+	if (PyStatus_Exception(status)) {
+		qFatal("%s", errorMessage);
+	}
+}
+
+void PythonEngineWorker::initializePython(const QString& path)
+{
+	PyPreConfig pyPreconfig;
+	// NB! Py_DecodeLocale requires a pre-initialized Python engine
+	PyPreConfig_InitPythonConfig(&pyPreconfig);
+	pyPreconfig.utf8_mode = 1;
+
+	check_pystatus(Py_PreInitialize(&pyPreconfig),
+		"Failed to pre-initialize the Python engine");
+
+	PyConfig config;
+	PyConfig_InitPythonConfig(&config);
+	PyStatus status;
+
+	const auto &separator = QDir::listSeparator();
+	auto &&pathList = path.split(separator);
+
+	for (auto &&path: pathList) {
+		auto *wchar_path = Py_DecodeLocale(path.toStdString().data(), nullptr);
+		status = PyWideStringList_Append(&config.module_search_paths, wchar_path);
+		PyMem_RawFree(wchar_path);
+		check_pystatus(status, "Failed to set TRIK_PYTHONPATH");
+	}
+
+	config.module_search_paths_set  = 1;
+
+	auto *programName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+	status = PyConfig_SetString(&config, &config.program_name, programName);
+	PyMem_RawFree(programName);
+	check_pystatus(status, "Failed to set trikPythonRuntime program name");
+
+	if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
+		// Py_VerboseFlag = 3;
+		config.verbose = 3;
+		// Py_InspectFlag = 1;
+		config.inspect = 1;
+		// Py_DebugFlag = 2;
+		config.parser_debug = 2;
+	}
+
+	config.isolated = 1;
+
+	// Py_BytesWarningFlag = 3;
+	config.bytes_warning = 3;
+
+	// Py_DontWriteBytecodeFlag = 1;
+	config.write_bytecode = 0;
+
+	status = Py_InitializeFromConfig(&config);
+	PyConfig_Clear(&config);
+
+	check_pystatus(status, "Failed to initialize the Python engine");
+}
+#else
+void PythonEngineWorker::initializePython(const QString& path)
+{
+	/// TODO: Must point to local .zip file
+	auto *wchar_path = Py_DecodeLocale(path.toStdString().data(), nullptr);
+	Py_SetPath(wchar_path);
+	PyMem_RawFree(wchar_path);
+
+	auto *programName = Py_DecodeLocale("trikPythonRuntime", nullptr);
+	Py_SetProgramName(programName);
+	PyMem_RawFree(programName);
+
+	if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
+		Py_VerboseFlag = 3;
+		Py_InspectFlag = 1;
+		Py_DebugFlag = 2;
+	}
+
+	Py_IsolatedFlag = 1;
+	Py_BytesWarningFlag = 3;
+	Py_DontWriteBytecodeFlag = 1;
+//		Py_NoSiteFlag = 1;
+//		Py_NoUserSiteDirectory = 1;
+}
+#endif
 
 void PythonEngineWorker::init()
 {
@@ -172,13 +259,13 @@ void PythonEngineWorker::init()
 #endif
 		QLOG_INFO() << "Built with python:" << PY_VERSION << QString::number(PY_VERSION_HEX, 16);
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
-		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
+		if (strncmp(PY_VERSION, Py_GetVersion(), 4) != 0) {
 			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
 							.arg(PY_VERSION, Py_GetVersion());
 			throw trikKernel::InternalErrorException(e);
 		}
 		constexpr auto varName = "TRIK_PYTHONPATH";
-		auto const &path = QProcessEnvironment::systemEnvironment().value(varName);
+		const auto &path = QProcessEnvironment::systemEnvironment().value(varName);
 		if (path.isEmpty()) {
 			auto const &e = QString("%1 must be set to correct value").arg(varName);
 			QLOG_FATAL() << e;
@@ -186,38 +273,7 @@ void PythonEngineWorker::init()
 		} else {
 			QLOG_INFO() << varName << ":" << path;
 		}
-#if PY_MINOR_VERSION >= 8
-		PyPreConfig pyPreconfig;
-		PyPreConfig_InitPythonConfig(&pyPreconfig);
-
-		pyPreconfig.utf8_mode = 1; /// Force UTF-8
-
-		if (PyStatus_Exception(Py_PreInitialize(&pyPreconfig))) {
-			auto const *e = "Failed to pre-initialize the Python engine";
-			QLOG_FATAL() << e;
-			throw trikKernel::InternalErrorException(e);
-		}
-
-		/// NB! Py_DecodeLocale requires a pre-initialized Python engine
-#endif
-		/// TODO: Must point to local .zip file
-		mPythonPath = Py_DecodeLocale(path.toStdString().data(), nullptr);
-		Py_SetPath(mPythonPath);
-
-		mProgramName = Py_DecodeLocale("trikPythonRuntime", nullptr);
-		Py_SetProgramName(mProgramName);
-
-		if (qEnvironmentVariableIsSet("TRIK_PYTHON_DEBUG")) {
-			Py_VerboseFlag = 3;
-			Py_InspectFlag = 1;
-			Py_DebugFlag = 2;
-		}
-
-		Py_IsolatedFlag = 1;
-		Py_BytesWarningFlag = 3;
-		Py_DontWriteBytecodeFlag = 1;
-//		Py_NoSiteFlag = 1;
-//		Py_NoUserSiteDirectory = 1;
+		initializePython(path);
 #if PY_MAJOR_VERSION != 3
 #error "Unsupported PYTHON version"
 #else
@@ -410,7 +466,7 @@ QStringList PythonEngineWorker::knownNames() const
 		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
 	}
 /// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
-	return result.toList();
+	return result.values();
 }
 
 void PythonEngineWorker::setWorkingDirectory(const QDir &workingDir)
