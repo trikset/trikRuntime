@@ -172,7 +172,7 @@ jobs:
             # but .so libs are being searched by QEMU relative to target's sysroot (QEMU_LD_PREFIX)
             TARGET_PYTHONPATH=.:/usr/lib/lib-dynload:${QEMU_LD_PREFIX}/usr/lib/python3.${TARGET_PYTHON_VERSION_MINOR}:${QEMU_LD_PREFIX}/usr/lib/python3${TARGET_PYTHON_VERSION_MINOR}.zip
             if python --version 2>&1 | grep -q "Python 3\.5"; then
-                export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1,TRIK_PYTHONPATH=${TARGET_PYTHONPATH}
+                export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,TRIK_PYTHONPATH=${TARGET_PYTHONPATH}
             else
                 export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,PYTHONDEVMODE=1,PYTHONVERBOSE=2,PYTHONDEBUG=2,PYTHONMALLOC=malloc_debug,PYTHONFAULTHANDLER=1,PYTHONPATH=${TARGET_PYTHONPATH},TRIK_PYTHONPATH=${TARGET_PYTHONPATH}
             fi
