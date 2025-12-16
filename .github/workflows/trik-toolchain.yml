@@ -137,7 +137,7 @@ jobs:
             cd build
             make -j $(nproc) all
 
-      - name: "[QEMU] QMake ${{ matrix.trik-version || 'NO PYTHON' }}"
+      - name: "[QEMU] QMake ${{ matrix.trik-version }}"
         timeout-minutes: 1
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
@@ -145,7 +145,7 @@ jobs:
             cd build
             rm -rf .* *
             qmake CONFIG+=trik_not_brick \
-            CONFIG+=${{ matrix.trik-version || 'trik_nopython' }} \
+            CONFIG+=${{ matrix.trik-version }} \
             CONFIG+=release CONFIG+=tests CONFIG+=force_debug_info CONFIG+=precompile_header \
             PKGCONFIG+=python-3.${TARGET_PYTHON_VERSION_MINOR}${{ matrix.trik-version && '-embed' || '' }} \
             PYTHON_VERSION=3.${TARGET_PYTHON_VERSION_MINOR} \
@@ -153,14 +153,14 @@ jobs:
             CONFIG+="${{ matrix.trik-version }}" \
                   "$GITHUB_WORKSPACE/"
 
-      - name: "[QEMU] Make all ${{ matrix.trik-version || 'NO PYTHON' }}"
+      - name: "[QEMU] Make all ${{ matrix.trik-version }}"
         timeout-minutes: 10
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
             cd build
             make -j $(nproc) all
 
-      - name: "[QEMU] Unit tests ${{ matrix.trik-version || 'NO PYTHON' }}"
+      - name: "[QEMU] Unit tests ${{ matrix.trik-version }}"
         timeout-minutes: 5
         run: |
             . /opt/trik-sdk/environment-setup-arm926ejse-oe-linux-gnueabi
