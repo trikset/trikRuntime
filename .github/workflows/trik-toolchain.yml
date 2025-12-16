@@ -170,7 +170,7 @@ jobs:
             export QEMU_LD_PREFIX="${OECORE_TARGET_SYSROOT}"
             #Inside qemu-user python resolves paths to host's root,
             # but .so libs are being searched by QEMU relative to target's sysroot (QEMU_LD_PREFIX)
-            TARGET_PYTHONPATH=.:/usr/lib/lib-dynload:${QEMU_LD_PREFIX}/usr/lib/python3.${TARGET_PYTHON_VERSION_MINOR}:${QEMU_LD_PREFIX}/usr/lib/python3${TARGET_PYTHON_VERSION_MINOR}.zip
+            TARGET_PYTHONPATH=.:${QEMU_LD_PREFIX}/usr/lib/lib-dynload:${QEMU_LD_PREFIX}/usr/lib/python3.${TARGET_PYTHON_VERSION_MINOR}:${QEMU_LD_PREFIX}/usr/lib/python3${TARGET_PYTHON_VERSION_MINOR}.zip
             if python --version 2>&1 | grep -q "Python 3\.5"; then
                 export QEMU_SET_ENV=LD_LIBRARY_PATH=${PWD}/bin,TRIK_PYTHONPATH=${TARGET_PYTHONPATH}
             else
