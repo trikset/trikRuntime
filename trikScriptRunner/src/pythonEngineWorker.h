@@ -20,8 +20,6 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QSemaphore>
-#include <memory>
-#include <vector>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
 
@@ -44,7 +42,7 @@ public:
 					   , TrikScriptControlInterface *scriptControl
 					   );
 
-	~PythonEngineWorker();
+	~PythonEngineWorker() override;
 
 	/// Clears execution state and stops robot.
 	/// Can be safely called from other threads.

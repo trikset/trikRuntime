@@ -259,7 +259,7 @@ void PythonEngineWorker::init()
 #endif
 		QLOG_INFO() << "Built with python:" << PY_VERSION << QString::number(PY_VERSION_HEX, 16);
 		QLOG_INFO() << "Running with python:" << Py_GetVersion();
-		if (strncmp(PY_VERSION, Py_GetVersion(), 4)) {
+		if (strncmp(PY_VERSION, Py_GetVersion(), 4) != 0) {
 			auto const &e = QString("Incompatible Python runtime detected. Expecting version %1, but found %2")
 							.arg(PY_VERSION, Py_GetVersion());
 			throw trikKernel::InternalErrorException(e);
@@ -466,7 +466,7 @@ QStringList PythonEngineWorker::knownNames() const
 		TrikScriptRunnerInterface::Helper::collectMethodNames(result, mMailbox->metaObject());
 	}
 /// TODO:	TrikScriptRunnerInterface::Helper::collectMethodNames(result, mThreading.metaObject());
-	return result.toList();
+	return result.values();
 }
 
 void PythonEngineWorker::setWorkingDirectory(const QDir &workingDir)
