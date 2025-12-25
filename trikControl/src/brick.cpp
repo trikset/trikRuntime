@@ -57,6 +57,8 @@
 #include "mspI2cCommunicator.h"
 #include "lidar.h"
 #include "irCamera.h"
+#include "serialDeviceInterface.h"
+#include "serialDevice.h"
 
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
@@ -460,6 +462,15 @@ I2cDeviceInterface *Brick::smBusI2c(int bus, int address)
 			       [this](){ return mHardwareAbstraction->createMspI2c();});
 }
 
+SerialDeviceInterface *Brick::serialDevice(QString port)
+{
+	if (mSerialDevices.contains(port)) {
+		return mSerialDevices[port];
+	} else {
+		return nullptr;
+	}
+}
+
 QVector<uint8_t> Brick::getStillImage()
 {
 	if (!mCamera)
@@ -625,8 +636,13 @@ void Brick::createDevice(const QString &port)
 			connect(mSoundSensors[port], &SoundSensor::stopped, this, &Brick::stopped);
 		} else if (deviceClass == "fifo") {
 			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "lidar") {
-			mLidars.insert(port, new Lidar(port, mConfigurer, *mHardwareAbstraction));
+		} else if (deviceClass == "serialDevice") {
+			const auto &deviceType = mConfigurer.deviceType(port);
+			if (deviceType == "lidar") {
+				mLidars.insert(port, new Lidar(new SerialDevice(port, mConfigurer), *mHardwareAbstraction));
+			} else if (deviceType == "commonSerialDevice") {
+				mSerialDevices.insert(port, new SerialDevice(port, mConfigurer));
+			}
 		} else if (deviceClass == "camera") {
 			QScopedPointer<CameraDeviceInterface> tmp (
 						new CameraDevice(port, mMediaPath, mConfigurer, *mHardwareAbstraction)

@@ -139,9 +139,13 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</soundSensor>
 	-->
 
-        <lidarPort>
-                <lidar file="/dev/ttyS1" />
-        </lidarPort>
+        <serialPort>
+            <commonSerialDevice file="/dev/ttyS1" />
+        </serialPort>
+
+<!--        <usbPort>
+            <commonSerialDevice file="/dev/ttyUSB0" />
+        </usbPort>-->
 
         <irCameraPort>
                 <irCamera />
