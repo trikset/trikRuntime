@@ -65,7 +65,50 @@ QVector<int> ColorSensorWorker::read(int m, int n)
 		return {-1, -1, -1};
 	}
 
-	return mReading[m - 1][n - 1];
+	return hsvToRgb(mReading[m - 1][n - 1]);
+}
+
+QVector<int> ColorSensorWorker::hsvToRgb(QVector<int> hsv)
+{
+	int H = hsv[0];
+	int S = hsv[1];
+	int V = hsv[2];
+
+	QVector<int> resultRGB({0, 0, 0});
+
+	float r = 0;
+	float g = 0;
+	float b = 0;
+
+	float h = H / 255.0f;
+	float s = S / 255.0f;
+	float v = V / 255.0f;
+
+	v = v < 0.2 ? 0 : v;
+	s = s < 0.2 ? 0 : 1;
+
+	int i = h*6;
+	float f = h*6-i;
+	float p = v * (1 - s);
+	float q = v * (1 - f * s);
+	double t = v * (1 - (1 - f) * s);
+
+	switch(i % 6) {
+		case 0: r = v; g = t; b = p; break;
+		case 1: r = q; g = v; b = p; break;
+		case 2: r = p; g = v; b = t; break;
+		case 3: r = p; g = q; b = v; break;
+		case 4: r = t; g = p; b = v; break;
+		case 5: r = v; g = p; b = q; break;
+	}
+
+	int ri = r*255;
+	int gi = g*255;
+	int bi = b*255;
+
+	resultRGB = {ri, gi, bi};
+
+	return resultRGB;
 }
 
 void ColorSensorWorker::onNewData(const QString &dataLine)
@@ -83,10 +126,10 @@ void ColorSensorWorker::onNewData(const QString &dataLine)
 		for (int i = 0; i < mReadingBuffer.size(); ++i) {
 			for (int j = 0; j < mReadingBuffer[i].size(); ++j) {
 				unsigned const int colorValue = parsedLine[i * mReadingBuffer.size() + j + 1].toUInt();
-				const int r = (colorValue >> 16) & 0xFF;
-				const int g = (colorValue >> 8) & 0xFF;
-				const int b = colorValue & 0xFF;
-				mReadingBuffer[i][j] = {r, g, b};
+				const int C1 = (colorValue >> 16) & 0xFF;
+				const int C2 = (colorValue >> 8) & 0xFF;
+				const int C3 = colorValue & 0xFF;
+				mReadingBuffer[i][j] = {C1, C2, C3};
 			}
 		}
 
