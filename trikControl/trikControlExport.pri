@@ -40,10 +40,6 @@ equals(TEMPLATE, app) {
 
 isEmpty(TRIK_RUNTIME_BIN_DIR):TRIK_RUNTIME_BIN_DIR = $$TRIK_RUNTIME_DIR/bin
 
-LIBS += -L$$TRIK_RUNTIME_BIN_DIR
-
-LIBS += -lqslog$$CONFIGURATION_SUFFIX
-
 if (equals(QT_MAJOR_VERSION, 5)) {
 	CONFIG += c++11
 }
@@ -75,7 +71,6 @@ defineTest(uses) {
 	PROJECTS = $$1
 
 	for(PROJECT, PROJECTS) {
-		LIBS += -l$$PROJECT$$CONFIGURATION_SUFFIX
 		INCLUDEPATH += $$TRIK_RUNTIME_DIR/$$PROJECT/include
 		!win32 {
 			macx {
@@ -93,14 +88,12 @@ defineTest(uses) {
 			copyToDestdir($$TRIK_RUNTIME_BIN_DIR/$$PROJECT$${CONFIGURATION_SUFFIX}.dll)
 		}
 	}
-
-	export(LIBS)
 	export(INCLUDEPATH)
 }
 
 # Libs and includepathes for trikControl and related.
 uses(trikControl trikKernel trikRuntimeQsLog trikHal)
-
+links(trikControl trikKernel trikRuntimeQsLog trikHal)
 # Files to be present in destdir for trikRuntime to work.
 copyToDestdir( \
 	$$PWD/model-config.xml  \

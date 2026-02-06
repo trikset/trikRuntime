@@ -436,4 +436,9 @@ defineTest(enableFlagIfCan) {
   }
 }
 
+!isEmpty(EXTERNAL_SETTINGS):exists($$EXTERNAL_SETTINGS) {
+    include($$EXTERNAL_SETTINGS)
+    message("External settings loaded from: $$EXTERNAL_SETTINGS")
+}
+
 } # GLOBAL_PRI_INCLUDED
