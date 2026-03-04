@@ -52,6 +52,12 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 			});
 	}
 	mScriptControl->setParent(this);
+
+#ifndef TRIK_NOPYTHON
+	// TrikPythonRunner must be initialized early during trikGui startup;
+	// otherwise the first script execution can take over 6 seconds.
+	fetchRunner(ScriptType::PYTHON);
+#endif
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
