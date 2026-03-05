@@ -54,6 +54,7 @@ void TrikJsRunnerTest::SetUp()
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
 					, "./test-model-config.xml", "./media"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
+	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::JAVASCRIPT);
 	mScriptRunner->registerUserFunction("assert", scriptAssert);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
 					 mScriptRunner.data(), [this](const QString &m) { mStdOut += m; });
