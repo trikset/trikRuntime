@@ -23,7 +23,7 @@ jobs:
       run:
         shell: bash -l {0} # to force import of ~/.bash_profile
     env:
-      SDK_DOWNLOAD_URL: https://dl.trikset.com/distro/${{ matrix.trik-version == 'trik_new_age' && 'kirkstone' || 'latest-full' }}
+      SDK_DOWNLOAD_URL: https://dl.trikset.com/distro/${{ matrix.trik-version == 'trik_new_age' && 'latest-full' || 'legacy/testing' }}
       TRIK_SDK_FILENAME: trik-sdk-x86_64-arm926ejse-toolchain-trik-nodistro.0.sh
 
     steps:
