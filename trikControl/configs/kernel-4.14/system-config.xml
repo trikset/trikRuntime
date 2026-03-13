@@ -75,7 +75,7 @@ equal to its class name.
 		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
 		<digitalSensor />
 		<fifo />
-                <lidar />
+                <serialDevice />
                 <iioDevice />
 		<lineSensor script="/etc/init.d/line-sensor-ov7670" inputFile="/run/line-sensor.in.fifo" outputFile="/run/line-sensor.out.fifo" toleranceFactor="1.0" />
 		<objectSensor script="/etc/init.d/object-sensor-ov7670" inputFile="/run/object-sensor.in.fifo" outputFile="/run/object-sensor.out.fifo" toleranceFactor="1.0" />
@@ -180,7 +180,8 @@ equal to its class name.
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
                 <iioDevice port="boardAccelPort" />
                 <iioDevice port="boardGyroPort" />
-                <lidar port="lidarPort" file="/dev/ttyUSB0" />
+                <serialDevice port="serialPort"/>
+                <serialDevice port="usbPort"/>
                 <irCamera port="irCameraPort" i2cAddress="0x33" m="3" n="3" />
 	</devicePorts>
 
@@ -228,7 +229,9 @@ equal to its class name.
 
                 <accelerometer class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s14/16>>2"/>
                 <gyroscope class="iioDevice" deviceFile="/dev/iio:device1" scanType="le:s16/16>>0" modelNameFile="/sys/bus/iio/devices/iio:device1/name"/>
-	</deviceTypes>
+                <lidar class="serialDevice" />
+                <commonSerialDevice class="serialDevice" />
+        </deviceTypes>
 
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
 	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;" />

@@ -49,6 +49,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/trikControlDeclSpec.h \
 	$$PWD/include/trikControl/lidarInterface.h \
 	$$PWD/include/trikControl/irCameraInterface.h \
+        $$PWD/include/trikControl/serialDeviceInterface.h \
 #	$$PWD/include/trikControl/headingSensorInterface.h \
 
 HEADERS += \
@@ -115,7 +116,8 @@ HEADERS += \
 	$$PWD/src/lidarWorker.h \
 	$$PWD/src/irCamera.h \
 	$$PWD/src/irCameraWorker.h \
-	$$PWD/src/i2cCommunicatorInterface.h
+	$$PWD/src/i2cCommunicatorInterface.h \
+        $$PWD/src/serialDevice.h \
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -181,6 +183,7 @@ SOURCES += \
 	$$PWD/src/lidarWorker.cpp \
 	$$PWD/src/irCamera.cpp \
 	$$PWD/src/irCameraWorker.cpp \
+        $$PWD/src/serialDevice.cpp \
 
 CONFIGS += \
 	$$PWD/configs
