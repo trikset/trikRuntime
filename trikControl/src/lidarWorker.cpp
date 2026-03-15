@@ -47,23 +47,19 @@ constexpr int ANGLES_NUMBER = 360;
 constexpr qint64 LIDAR_DATA_CHUNK_SIZE = 4096;
 
 static uint16_t get_unaligned_be16(const void *p) {
-	const uint8_t *data = reinterpret_cast<const uint8_t*>(p);
+	auto *data = reinterpret_cast<const uint8_t*>(p);
 	return (((uint16_t)data[0]) << 8) + data[1];
 }
 
 trikControl::LidarWorker::LidarWorker(const QString &fileName
 					, const trikHal::HardwareAbstractionInterface &)
 	: mSerial(fileName)
-	, mLidarChunk(new uint8_t[LIDAR_DATA_CHUNK_SIZE])
+	, mLidarChunk(std::make_unique<uint8_t[]>(LIDAR_DATA_CHUNK_SIZE))
 	, mResult(ANGLES_RAW_NUMBER, 0)
 	, mState("Lidar on " + fileName)
 {
 	mState.start();
 	mWaitForInit.acquire(1);
-}
-
-LidarWorker::~LidarWorker()
-{
 }
 
 LidarWorker::Status LidarWorker::status() const
@@ -137,7 +133,7 @@ void LidarWorker::waitUntilInited()
 void LidarWorker::readData()
 {
 	uint8_t bytes[256];
-	auto s = reinterpret_cast<struct Delta2ALayout*>(mLidarChunk.data());
+	auto s = reinterpret_cast<struct Delta2ALayout*>(mLidarChunk.get());
 
 	while (!mSerial.atEnd()) {
 		// read data block from serial port
@@ -190,7 +186,7 @@ void LidarWorker::readData()
 				if (mLidarChunkBytes > sizeof(struct Delta2ALayout) &&
 				    mLidarChunkBytes == (size_t)(get_unaligned_be16(&(s->pkg_hdr_length)) + 2)) {
 					// We've done reading the chunk
-					if (checkChecksum(mLidarChunk.data(), get_unaligned_be16(&(s->pkg_hdr_length)))) {
+					if (checkChecksum(mLidarChunk.get(), get_unaligned_be16(&(s->pkg_hdr_length)))) {
 						processData(s);
 					} else {
 						QLOG_ERROR() << "Lidar: chunk checksum mismatch";
@@ -206,8 +202,8 @@ int LidarWorker::countMean(const int i, const int meanWindow) const
 {
 	auto max = 0;
 	auto min = 1000 * 1000 * 1000; // big int
-	auto mean = 0U;
-	auto meanCounter = 0U;
+	auto mean = 0;
+	auto meanCounter = 0;
 	for (auto j = i; j  < (i + meanWindow) % ANGLES_RAW_NUMBER; ++j) {
 		j %= ANGLES_RAW_NUMBER;
 		if (mResult[j] != 0) {
