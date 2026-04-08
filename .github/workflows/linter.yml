@@ -46,7 +46,8 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y --no-install-recommends \
           make qtscript5-dev qttools5-dev-tools qtmultimedia5-dev libqt5serialport5-dev \
-          qtbase5-private-dev bear
+          qtbase5-private-dev qtdeclarative5-dev libqt5svg5-dev \
+          qtquickcontrols2-5-dev bear
  
       - name: Ccache
         uses: hendrikmuhs/ccache-action@v1.2.20
