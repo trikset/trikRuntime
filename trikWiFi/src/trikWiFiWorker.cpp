@@ -74,6 +74,7 @@ void TrikWiFiWorker::dispose()
 		mMonitorInterface->detach();
 	}
 
+	mMonitorFileSocketNotifier.reset();
 	mControlInterface.reset();
 	mMonitorInterface.reset();
 }

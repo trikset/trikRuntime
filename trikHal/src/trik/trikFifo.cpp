@@ -119,6 +119,7 @@ void TrikFifo::readFile()
 bool TrikFifo::close()
 {
 	if (mFileDescriptor != -1) {
+		mSocketNotifier.reset();
 		bool result = ::close(mFileDescriptor) == 0;
 		mFileDescriptor = -1;
 		return result;
