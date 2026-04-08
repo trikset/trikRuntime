@@ -17,7 +17,7 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 #else
-	#include <QtWidgets/QApplication>
+	#include <QtGui/QGuiApplication>
 #endif
 
 #include <QtCore/QFileInfo>
@@ -88,8 +88,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
-	const bool hasGui = (qobject_cast<QApplication *>(QCoreApplication::instance()) != nullptr);
-
+	const bool hasGui = (qobject_cast<QGuiApplication *>(QCoreApplication::instance()) != nullptr);
 	if (hasGui) {
 		mDisplay.reset(new Display(mediaPath));
 	} else {

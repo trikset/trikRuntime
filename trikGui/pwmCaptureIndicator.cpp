@@ -23,41 +23,21 @@
 
 using namespace trikGui;
 
-PwmCaptureIndicator::PwmCaptureIndicator(const QString &port
-		, trikControl::PwmCaptureInterface &pwmCapture
-		, QWidget *parent)
-	: AbstractIndicator(parent)
-	, mPwmCapture(pwmCapture)
-	, mNameLabel(port)
-	, mValueLabel("0")
-{
-	mValueBar.setOrientation(Qt::Horizontal);
-	mValueBar.setMaximum(pwmCapture.maxValue());
-	mValueBar.setMinimum(pwmCapture.minValue());
-	mValueBar.setValue(0);
-	mValueBar.setTextVisible(false);
-	mValueBar.setAlignment(Qt::AlignRight);
+PwmCaptureIndicator::PwmCaptureIndicator(const QString &port, trikControl::PwmCaptureInterface &pwmCapture,
+					 QObject *parent)
+	: AbstractIndicator(parent), mPwmCapture(pwmCapture), mMinValue(pwmCapture.minValue()),
+	  mMaxValue(pwmCapture.maxValue()), mValue(0), mNameLabel(port) {}
 
-	mNameLabel.setAlignment(Qt::AlignLeft);
-	mValueLabel.setAlignment(Qt::AlignRight);
-	// mValueLabel can change its width during work. It will cause mValueBar
-	// width change. To prevent it, we set fixed width for mValueLabel.
-	// It is equal to maximum width of the widget which it achieves
-	// when the label text is set to "100".
-	mValueLabel.setFixedWidth(fontMetricsHorizontalAdvance(this, "WWWW"));
-	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mValueBar);
-	mLayout.addWidget(&mValueLabel);
-	setLayout(&mLayout);
+void PwmCaptureIndicator::renew() {
+	long value = mPwmCapture.duty();
 
-	setFocusPolicy(Qt::StrongFocus);
+	value = std::max(value, mMinValue);
+	value = std::min(value, mMaxValue);
+	mValue = value;
+	Q_EMIT valueChanged();
 }
 
-void PwmCaptureIndicator::renew()
-{
-	int value = mPwmCapture.duty();
-	mValueLabel.setText(QString::number(value));
-	value = std::max(value, mValueBar.minimum());
-	value = std::min(value, mValueBar.maximum());
-	mValueBar.setValue(value);
-}
+long PwmCaptureIndicator::maxValue() { return mMaxValue; }
+long PwmCaptureIndicator::minValue() { return mMinValue; }
+long PwmCaptureIndicator::value() { return mValue; }
+QString PwmCaptureIndicator::nameLabel() { return mNameLabel; }

@@ -28,7 +28,7 @@
 #include <trikNetwork/mailboxFactory.h>
 #include <trikWiFi/trikWiFi.h>
 
-#include "runningWidget.h"
+#include "runningCode.h"
 #include "autoRunner.h"
 
 using namespace trikGui;
@@ -132,7 +132,6 @@ void Controller::abortExecution()
 {
 	Q_EMIT hideScriptWidgets();
 	mScriptRunner->abort();
-
 	// Now script engine will stop (after some time maybe) and send "completed" signal, which will be caught and
 	// processed as if a script finished by itself.
 }
@@ -175,7 +174,7 @@ void Controller::scriptExecutionCompleted(const QString &error, int scriptId)
 {
 	if (error.isEmpty()) {
 		Q_EMIT hideRunningWidget(scriptId);
-	} else {
+	} else if (!error.isEmpty()) {
 		mCommunicator->sendMessage("error: " + error);
 		Q_EMIT showError(error, scriptId);
 	}

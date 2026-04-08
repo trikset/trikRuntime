@@ -15,8 +15,6 @@ TEMPLATE = lib
 
 include(../global.pri)
 
-#QT += multimediawidgets
-
 PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/batteryInterface.h \
 	$$PWD/include/trikControl/brickFactory.h \
@@ -192,11 +190,7 @@ OTHER_FILES += \
 
 DEFINES += TRIKCONTROL_LIBRARY
 
-QT += xml gui multimedia serialport
-
-if (equals(QT_MAJOR_VERSION, 5)) {
-	QT += widgets
-}
+QT += xml gui multimedia serialport quick
 
 links(trikRuntimeQsLog trikKernel trikHal trik-mlx90640)
 implementationIncludes(trikKernel trikHal)

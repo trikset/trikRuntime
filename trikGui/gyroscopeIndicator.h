@@ -14,11 +14,8 @@
 
 #pragma once
 
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QRectF>
-
 #include "abstractIndicator.h"
+#include <QVector>
 
 namespace trikControl {
 class GyroSensorInterface;
@@ -30,32 +27,23 @@ namespace trikGui {
 class GyroscopeIndicator : public AbstractIndicator
 {
 	Q_OBJECT
+	Q_PROPERTY(QVector<int> coords READ coords NOTIFY coordsChanged)
 
 public:
 	/// Constructor.
 	/// @param gyroscope - gyroscope which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	explicit GyroscopeIndicator(trikControl::GyroSensorInterface *gyroscope, QWidget *parent = 0);
+	explicit GyroscopeIndicator(trikControl::GyroSensorInterface *gyroscope, QObject *parent = nullptr);
 
 public Q_SLOTS:
 	void renew() override;
 
 private:
-	void resizeEvent(QResizeEvent *) override;
-	void paintEvent(QPaintEvent *) override;
-
-	QRectF mBounds;
-
-	QLabel mTitle;
-	QLabel mValueX;
-	QLabel mValueY;
-	QLabel mValueZ;
-	QLabel mCircle;
-	QVBoxLayout mLayout;
-
-	int mX {};
-	int mY {};
-	int mZ {};
 	trikControl::GyroSensorInterface *mGyroscope;
+	QVector<int> mCoords;
+	QVector<int> coords();
+Q_SIGNALS:
+	/// Emitted when coords changed
+	void coordsChanged();
 };
 }

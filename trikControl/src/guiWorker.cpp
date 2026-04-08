@@ -14,22 +14,14 @@
 
 #include "guiWorker.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QStackedLayout>
-	#include <QtGui/QApplication>
-#else
-	#include <QtWidgets/QStackedLayout>
-	#include <QtWidgets/QPushButton>
-	#include <QtWidgets/QApplication>
-	#include <QtWidgets/QDialog>
-#endif
-
 #include <QtGui/QPixmap>
 
 #include "QsLog.h"
 #include "utilities.h"
 
 #include <QPainterPath>
+#include <QtQml/qqml.h>
+#include <QGuiApplication>
 
 using namespace trikControl;
 
@@ -41,7 +33,7 @@ void GuiWorker::init()
 {
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
 	mImageWidget.reset(new GraphicsWidget());
-	mImageWidget->setWindowFlags(mImageWidget->windowFlags() | Qt::WindowStaysOnTopHint);
+	qmlRegisterSingletonInstance<GraphicsWidget>("com.trikGui", 1, 0, "GraphicsWidget", mImageWidget.data());
 	resetBackground();
 }
 
@@ -55,7 +47,7 @@ void GuiWorker::showImage(const QString &fileName)
 {
 	if (!mImagesCache.contains(fileName)) {
 		QPixmap pixmap(fileName);
-		pixmap = pixmap.scaled(mImageWidget->size() - QSize(20, 20), Qt::KeepAspectRatio);
+		pixmap = pixmap.scaled(mImageWidget->size().toSize() - QSize(20, 20), Qt::KeepAspectRatio);
 		mImagesCache.insert(fileName, pixmap);
 	}
 
@@ -104,17 +96,13 @@ void GuiWorker::removeLabels()
 
 void GuiWorker::setBackground(const QString &color)
 {
-	QPalette palette = mImageWidget->palette();
-	palette.setColor(QPalette::Window, colorByName(color));
-	mImageWidget->setPalette(palette);
+	mImageWidget->setFillColor(colorByName(color));
 	mImageWidget->showCommand();
 }
 
 void GuiWorker::resetBackground()
 {
-	QPalette palette = mImageWidget->palette();
-	palette.setColor(QPalette::Window, Qt::transparent);
-	mImageWidget->setPalette(palette);
+	mImageWidget->setFillColor(Qt::transparent);
 }
 
 void GuiWorker::setPainterColor(const QString &color)
@@ -132,14 +120,15 @@ void GuiWorker::clear()
 	mImageWidget->deleteAllItems();
 	mImageWidget->setPainterColor("black");
 	mImageWidget->setPainterWidth(1);
-	mImageWidget->hideCommand();
+	// Do not call hideCommand() here: clear() only resets drawing state.
+	// The display is hidden explicitly via hide() or reset().
 	resetBackground();
 }
 
 void GuiWorker::reset()
 {
-	QApplication::removePostedEvents(this, QEvent::MetaCall);
-	QApplication::removePostedEvents(mImageWidget.data(), QEvent::Paint);
+	QGuiApplication::removePostedEvents(this, QEvent::MetaCall);
+	QGuiApplication::removePostedEvents(mImageWidget.data(), QEvent::Paint);
 	clear();
 }
 

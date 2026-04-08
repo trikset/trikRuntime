@@ -15,19 +15,7 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QProgressBar>
-#else
-	#include <QtWidgets/QWidget>
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QProgressBar>
-#endif
-
+#include <QObject>
 #include <QtCore/QString>
 
 namespace trikControl {
@@ -38,27 +26,36 @@ namespace trikGui {
 
 /// Widget that allows to set power value of a motor and turn it on and off.
 /// It is designed to use as a part of MotorsWidget.
-class MotorLever : public QFrame
+class MotorLever : public QObject
 {
 	Q_OBJECT
+	Q_PROPERTY(QString nameLabel READ nameLabel CONSTANT)
+	Q_PROPERTY(bool isOn READ isOn WRITE setIsOn NOTIFY isOnChanged)
+	Q_PROPERTY(int maxPower READ maxPower CONSTANT)
+	Q_PROPERTY(int minPower READ minPower CONSTANT)
+	Q_PROPERTY(int powerStep READ powerStep CONSTANT)
+	Q_PROPERTY(int power READ power WRITE setPower NOTIFY powerChanged)
 
 public:
 	/// Constructor.
 	/// @param port - name of a port which the motor is connected to.
 	/// @param motor - pointer to an instance representing the motor.
 	/// @param parent - pointer to a parent widget.
-	MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent = 0);
+	MotorLever(const QString &port, trikControl::MotorInterface &motor, QObject *parent = nullptr);
 
 	/// Destructor.
 	~MotorLever() override;
 
-protected:
-	void keyPressEvent(QKeyEvent *event) override;
-
 private:
 	void setPower(int power);
+	void setIsOn(bool isOn);
 
-	void turnOnOff();
+	QString nameLabel();
+	bool isOn();
+	int maxPower();
+	int minPower();
+	int powerStep();
+	int power();
 
 	trikControl::MotorInterface &mMotor;
 	bool mIsOn;
@@ -66,11 +63,12 @@ private:
 	const int mMinPower;
 	const int mPowerStep;
 	int mPower;
-
-	QHBoxLayout mLayout;
-	QLabel mNameLabel;
-	QProgressBar mPowerBar;
-	QLabel mOnOffLabel;
+	QString mNameLabel;
+Q_SIGNALS:
+	/// Emitted when activation status changed
+	void isOnChanged();
+	/// Emitted when power changed
+	void powerChanged();
 };
 
 }

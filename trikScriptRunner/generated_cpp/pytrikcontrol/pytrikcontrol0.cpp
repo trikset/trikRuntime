@@ -32,26 +32,13 @@
 #include <PythonQtMethodInfo.h>
 #include <PythonQtSignalReceiver.h>
 #include <QVariant>
-#include <QtWidgets/qsizepolicy.h>
-#include <QtWidgets/qwidget.h>
 #include <qbytearray.h>
-#include <qcursor.h>
-#include <qfont.h>
-#include <qfontinfo.h>
-#include <qfontmetrics.h>
+#include <qcoreevent.h>
 #include <qimage.h>
-#include <qkeysequence.h>
 #include <qlist.h>
-#include <qmargins.h>
+#include <qmetaobject.h>
 #include <qobject.h>
 #include <qobjectdefs.h>
-#include <qpaintdevice.h>
-#include <qpalette.h>
-#include <qpixmap.h>
-#include <qpoint.h>
-#include <qrect.h>
-#include <qregion.h>
-#include <qsize.h>
 #include <qstringlist.h>
 #include <qvector.h>
 
@@ -489,10 +476,6 @@ QString  PythonQtWrapper_trikControl__DisplayInterface::static_trikControl__Disp
 }
 
 
-
-trikControl::DisplayWidgetInterface* PythonQtWrapper_trikControl__DisplayWidgetInterface::new_trikControl__DisplayWidgetInterface()
-{ 
-return new trikControl::DisplayWidgetInterface(); }
 
 void PythonQtWrapper_trikControl__DisplayWidgetInterface::hidden(trikControl::DisplayWidgetInterface* theWrappedObject)
 {

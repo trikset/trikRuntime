@@ -14,12 +14,10 @@
 
 #include "gamepadIndicator.h"
 
-#include "trikKernel/paths.h"
-
 using namespace trikGui;
 
-GamepadIndicator::GamepadIndicator(Controller &controller, QWidget *parent)
-	: QLabel(parent)
+GamepadIndicator::GamepadIndicator(Controller &controller, QObject *parent)
+	: QObject(parent)
 	, mController(controller)
 {
 	connect(&mController, &Controller::gamepadDisconnected, this, &GamepadIndicator::setOff);
@@ -28,17 +26,22 @@ GamepadIndicator::GamepadIndicator(Controller &controller, QWidget *parent)
 
 void GamepadIndicator::setOn()
 {
-	QPixmap icon("://resources/gamepad_on.png");
-	setPixmap(icon);
-	show();
+	mIsConnected = true;
+	Q_EMIT isConnectedChanged();
 }
 
 void GamepadIndicator::setOff()
 {
-	hide();
+	mIsConnected = false;
+	Q_EMIT isConnectedChanged();
 }
 
 void GamepadIndicator::connected(bool connected)
 {
 	connected ? setOn() : setOff();
+}
+
+bool GamepadIndicator::isConnected()
+{
+	return mIsConnected;
 }

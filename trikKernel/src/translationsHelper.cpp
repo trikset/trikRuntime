@@ -28,18 +28,26 @@
 
 using namespace trikKernel;
 
+static QList<QTranslator *> gInstalledTranslators;
+
 void TranslationsHelper::loadTranslators(const QString &locale)
 {
-	const QDir translationsDirectory(Paths::translationsPath());
+	for (QTranslator *t : gInstalledTranslators) {
+		QCoreApplication::removeTranslator(t);
+		delete t;
+	}
+	gInstalledTranslators.clear();
 
-	QDirIterator files(translationsDirectory);
+	const QDir translationsDirectory(Paths::translationsPath());
+	QDirIterator files(translationsDirectory.absolutePath(), QDir::Files);
 	while (files.hasNext()) {
 		const QFileInfo &translatorFile = QFileInfo(files.next());
 		if (translatorFile.isFile() && translatorFile.baseName().split('_').at(1) == locale) {
-			QLOG_INFO() << "Loading translations from" << translatorFile.absolutePath();
-			QTranslator *translator = new QTranslator(qApp);
+			QLOG_INFO() << "Loading translations from" << translatorFile.absoluteFilePath();
+			QTranslator *translator = new QTranslator(nullptr);
 			translator->load(translatorFile.absoluteFilePath());
 			QCoreApplication::installTranslator(translator);
+			gInstalledTranslators.append(translator);
 		}
 	}
 }
@@ -54,7 +62,6 @@ void TranslationsHelper::initLocale(bool localizationDisabled)
 	QSettings settings(trikKernel::Paths::localSettings(), QSettings::IniFormat);
 	QString locale = settings.value("locale", "").toString();
 	const QString lastLocale = locale;
-
 	const QFileInfo trikRc(trikKernel::Paths::trikRcName());
 	if (locale.isEmpty() && trikRc.exists()) {
 		const RcReader rcReader(trikKernel::Paths::trikRcName());

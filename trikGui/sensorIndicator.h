@@ -15,9 +15,6 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QProgressBar>
 
 #include "abstractIndicator.h"
 
@@ -31,24 +28,34 @@ namespace trikGui {
 class SensorIndicator : public AbstractIndicator
 {
 	Q_OBJECT
+	Q_PROPERTY(QString nameLabel READ nameLabel CONSTANT)
+	Q_PROPERTY(int maxValue READ maxValue CONSTANT)
+	Q_PROPERTY(int minValue READ minValue CONSTANT)
+	Q_PROPERTY(int value READ value NOTIFY valueChanged)
 
 public:
 	/// Constructor.
 	/// @param port - port to which sensor is plugged.
 	/// @param sensor - sensor which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QWidget *parent = nullptr);
+	SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QObject *parent = nullptr);
 
 public Q_SLOTS:
 	void renew() override;
 
 private:
 	trikControl::SensorInterface &mSensor;
-
-	QHBoxLayout mLayout;
-	QLabel mNameLabel;
-	QProgressBar mValueBar;
-	QLabel mValueLabel;
+	int mMinValue;
+	int mMaxValue;
+	int mValue;
+	QString mNameLabel;
+	QString nameLabel();
+	int maxValue();
+	int minValue();
+	int value();
+Q_SIGNALS:
+	/// Emitted when sensor value changed
+	void valueChanged();
 };
 
 }

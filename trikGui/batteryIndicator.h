@@ -17,32 +17,31 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/QTimer>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QLabel>
-#else
-	#include <QtWidgets/QLabel>
-#endif
-
+#include <QObject>
 #include <trikControl/brickInterface.h>
 #include "powerLevel.h"
 
 namespace trikGui {
 
 /// Label showing battery voltage.
-class BatteryIndicator : public QLabel
+class BatteryIndicator : public QObject
 {
 	Q_OBJECT
+	Q_PROPERTY(QString voltageValue READ voltageValue NOTIFY voltageValueChanged)
 
 public:
 	/// Constructor.
 	/// @param brick - object that provides interface to a hardware.
 	/// @param parent - parent of this widget in terms of Qt parent-child widget relations.
-	explicit BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent = 0);
+	explicit BatteryIndicator(trikControl::BrickInterface &brick, QObject *parent = nullptr);
 
 private Q_SLOTS:
 	void renew();
 
 private:
+	/// Get current voltage value
+	QString voltageValue();
+
 	/// Provides current low voltage warning threshold (in volts) based on currently selected power level.
 	float warningThreshold() const;
 
@@ -89,6 +88,13 @@ private:
 	/// Voltage threshold that defines lowest possible voltage reading that is considered correct. So if for some
 	/// reason battery voltage is not available, indicator will not panic and turn off robot.
 	const float mSanityThreshold = 1.0;
+
+	/// Current voltage value
+	QString mVoltageValue;
+
+Q_SIGNALS:
+	/// Emitted when voltage value changed.
+	void voltageValueChanged();
 };
 
 }

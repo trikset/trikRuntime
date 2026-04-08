@@ -23,36 +23,53 @@
 #include <trikKernel/deinitializationHelper.h>
 #include <QsLog.h>
 
+#include "mainMenuManager.h"
+#include "modeManager.h"
 #include "trikGuiApplication.h"
-#include "backgroundWidget.h"
+#include <QFont>
+#include <QObject>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QSettings>
+#include <QQuickStyle>
+#include <QSurfaceFormat>
 
 using namespace trikGui;
 
+void setStyle(int argc, char *argv[]) {
+	QQuickStyle::setStyle("TrikStyle");
+	if (argc >= 3) {
+		for (int i = 1; i < argc - 1; i++) {
+			QString current_arg(argv[i]);
+			if (current_arg == "-style" || current_arg == "--style") {
+				QQuickStyle::setStyle(argv[i + 1]);
+				QQuickStyle::setFallbackStyle("TrikStyle");
+				break;
+			}
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
+	setStyle(argc, argv);
 	TrikGuiApplication app(argc, argv);
-
+	setStyle(argc, argv);
 	trikKernel::DeinitializationHelper helper;
 	Q_UNUSED(helper);
-
 	trikKernel::ApplicationInitHelper initHelper(app);
 
-	app.setApplicationName("TrikGui");
+	auto *engine = new QQmlApplicationEngine(&app);
 
-	QFile File(":/resources/stylesheet.qss");
-	File.open(QFile::ReadOnly);
-	QString styleSheet = QLatin1String(File.readAll());
-	app.setStyleSheet(styleSheet);
-
-
+	ModeManager::initMode();
+	engine->rootContext()->setContextProperty("ThemeMode", ModeManager::getCurrentMode());
 	initHelper.commandLineParser().addApplicationDescription(
-				QObject::tr("Graphical user interface, TRIK Studio runtime environment and script runner of a robot")
-				);
+		QObject::tr("Graphical user interface, TRIK Studio runtime environment "
+			"and script runner of a robot"));
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;
 	}
-
 	initHelper.init();
 
 	if (QDir::current().exists("scripts")) {
@@ -61,8 +78,16 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikGui started";
 
-	BackgroundWidget w(initHelper.configPath());
-	w.show();
+	MainMenuManager mainMenuManager(initHelper.configPath(), engine);
+	const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
+	QObject::connect(
+		engine, &QQmlApplicationEngine::objectCreated, &app,
+		[url](QObject *obj, const QUrl &objUrl) {
+			if (!obj && url == objUrl)
+				QCoreApplication::exit(-1);
+		},
+		Qt::QueuedConnection);
+	engine->load(url);
 
 	return app.exec();
 }

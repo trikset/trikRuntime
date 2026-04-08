@@ -16,23 +16,22 @@
 
 #include <QtCore/qglobal.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QWidget>
-#else
-	#include <QtWidgets/QWidget>
-#endif
+#include <QtQuick/QQuickPaintedItem>
 
 #include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
 
 /// Interface for widget on which Brick draws its graphics. Can notify when it shows or hides itself.
-class TRIKCONTROL_EXPORT DisplayWidgetInterface : public QWidget
+class TRIKCONTROL_EXPORT DisplayWidgetInterface : public QQuickPaintedItem
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(DisplayWidgetInterface)
 public:
-	DisplayWidgetInterface() = default;
+	explicit DisplayWidgetInterface(QQuickItem *parent = nullptr)
+		: QQuickPaintedItem(parent)
+	{}
+
 	~DisplayWidgetInterface() override = default;
 
 Q_SIGNALS:
