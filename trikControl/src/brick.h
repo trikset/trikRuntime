@@ -167,7 +167,7 @@ private:
 	void createDevice(const QString &port);
 
 	I2cDeviceInterface* createI2cDevice(int bus, int address,
-					    std::function<trikHal::MspI2cInterface *(void)> factory);
+						const std::function<trikHal::MspI2cInterface *(void)> &factory);
 
 	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
 	/// Has or hasn't ownership depending on whether it was created by Brick itself or passed from outside.

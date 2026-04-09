@@ -359,7 +359,7 @@ QStringList Brick::motorPorts(MotorInterface::Type type) const
 	}
 	}
 
-	return QStringList();
+	return {};
 }
 
 QStringList Brick::pwmCapturePorts() const
@@ -421,7 +421,7 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 }
 
 I2cDeviceInterface* Brick::createI2cDevice(int bus, int address,
-					   std::function<trikHal::MspI2cInterface *()> factory) {
+					   const std::function<trikHal::MspI2cInterface *()> &factory) {
 	uint8_t _bus = bus & 0xFF;
 	uint8_t _address = address & 0xFF;
 	uint16_t mhash = (_bus << 8) | _address;
@@ -462,7 +462,7 @@ I2cDeviceInterface *Brick::smBusI2c(int bus, int address)
 QVector<uint8_t> Brick::getStillImage()
 {
 	if (!mCamera)
-		return QVector<uint8_t>();
+		return {};
 	else
 		return mCamera->getPhoto();
 }
