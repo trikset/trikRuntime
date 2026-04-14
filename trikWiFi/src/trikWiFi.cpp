@@ -106,7 +106,7 @@ SignalStrength TrikWiFi::signalStrength()
 
 void TrikWiFi::connect(const QString &ssid)
 {
-	QMetaObject::invokeMethod(mWorker.data(), [this, &ssid](){mWorker->connect(ssid);});
+	QMetaObject::invokeMethod(mWorker.data(), [this, ssid](){mWorker->connect(ssid);});
 }
 
 void TrikWiFi::disconnect()
