@@ -37,8 +37,6 @@ class IIOFileInterface;
 
 namespace trikControl {
 
-class VectorSensorWorker;
-
 /// Sensor that returns a vector.
 class GyroSensor : public GyroSensorInterface
 {
@@ -92,7 +90,6 @@ private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 
-	VectorSensorWorker *mVectorSensorWorker; // Has ownership
 	QThread mWorkerThread;
 
 	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;

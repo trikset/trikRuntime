@@ -18,8 +18,8 @@
 #include <QtCore/QThread>
 
 #include "vectorSensorInterface.h"
-#include "vectorSensorWorker.h"
 #include "deviceState.h"
+#include <trikHal/hardwareAbstractionInterface.h>
 
 namespace trikKernel {
 class Configurer;
@@ -53,7 +53,6 @@ private:
 	/// Device state, shared with worker.
 	DeviceState mState;
 
-	VectorSensorWorker *mVectorSensorWorker { nullptr }; /// Is owned by mWorkerThread
 	QThread mWorkerThread;
 
 	QVector<int> mResult {};

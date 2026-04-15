@@ -18,8 +18,6 @@
 #include <trikKernel/timeVal.h>
 #include <QsLog.h>
 
-#include "vectorSensorWorker.h"
-
 using namespace trikControl;
 
 VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
@@ -29,26 +27,11 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 {
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
-#ifndef TRIK_IIO_ACCEL_GYRO
-	Q_UNUSED(port)
-	mVectorSensorWorker = new VectorSensorWorker(configurer.attributeByDevice(deviceName, "deviceFile"), mState
-	                                             , hardwareAbstraction);
-	mVectorSensorWorker->moveToThread(&mWorkerThread);
-
-	connect(&mWorkerThread, &QThread::started, mVectorSensorWorker, &VectorSensorWorker::init);
-	connect(&mWorkerThread, &QThread::finished, mVectorSensorWorker, &VectorSensorWorker::deleteLater);
-
-	mWorkerThread.setObjectName(mVectorSensorWorker->metaObject()->className());
-	mWorkerThread.start();
-
-	if (!mState.isFailed()) {
-	    connect(mVectorSensorWorker, &VectorSensorWorker::newData, this, &VectorSensor::newData);
-#else /* ! TRIK_IIO_ACCEL_GYRO */
 	if (!mState.isFailed()) {
 	    mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
 	                                               configurer.attributeByPort(port, "scanType")));
 	    if (!mIIOFile.data()->open()) {
-	        QLOG_ERROR() << "Gyroscope init failed";
+			QLOG_ERROR() << "Accelerometer init failed";
 	        mState.fail();
 	        return;
 	    }
@@ -58,7 +41,6 @@ VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configur
 	                Q_UNUSED(eventTime);
 	                mResult = reading;
 	            });
-#endif /* TRIK_IIO_ACCEL_GYRO */
 
 	    QLOG_INFO() << "Starting VectorSensor";
 	    mState.ready();
@@ -78,9 +60,5 @@ VectorSensor::Status VectorSensor::status() const
 
 QVector<int> VectorSensor::read() const
 {
-#ifndef TRIK_IIO_ACCEL_GYRO
-	return mVectorSensorWorker->read();
-#else /* TRIK_IIO_ACCEL_GYRO */
 	return mResult;
-#endif /* TRIK_IIO_ACCEL_GYRO */
 }
