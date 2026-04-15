@@ -18,7 +18,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        trik-version: ['', 'trik_new_age']
         include:
           - qt-version: '5.15'
             mingw-version: '8.1'
@@ -128,7 +127,7 @@ jobs:
           export PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+')
           qmake trikRuntime.pro -spec win32-g++ CONFIG+=trik_not_brick CONFIG+=tests CONFIG+=release \
               PYTHON_PATH="${pythonLocation}" PYTHON_VERSION=${PYTHON_VERSION} \
-              CONFIG+=force_debug_info CONFIG+="${{ matrix.trik-version }}"
+              CONFIG+=force_debug_info
 
       - name: QMake all
         shell: msys2 {0}

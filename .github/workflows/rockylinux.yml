@@ -23,7 +23,6 @@ jobs:
       fail-fast: false
       matrix:
         nopython: ['nopython', '']
-        trik-version: ['', 'trik_new_age']
         qjsengine: [''] # add 'qjsengine' for CONFIG+=trik_use_qjsengine
         qt-version: ['5.15']
         gcc-version: ['13']
@@ -86,7 +85,7 @@ jobs:
         timeout-minutes: 1
         run: |
             qmake CONFIG+=release CONFIG+=trik_not_brick CONFIG+=${{ matrix.nopython == 'nopython' && 'trik_nopython' || '' }} \
-                  CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer CONFIG+="${{ matrix.trik-version }}" \
+                  CONFIG+=tests CONFIG+=ccache CONFIG+=sanitizer \
                   CONFIG+=sanitize_undefined CONFIG+=${{ matrix.qjsengine == 'qjsengine' && 'trik_use_qjsengine' || '' }} \
                   PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') PYTHON_DIR=/usr \
                   "$GITHUB_WORKSPACE/"
