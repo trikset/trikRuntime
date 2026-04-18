@@ -44,7 +44,7 @@ void TranslationsHelper::loadTranslators(const QString &locale)
 		const QFileInfo &translatorFile = QFileInfo(files.next());
 		if (translatorFile.isFile() && translatorFile.baseName().split('_').at(1) == locale) {
 			QLOG_INFO() << "Loading translations from" << translatorFile.absoluteFilePath();
-			QTranslator *translator = new QTranslator(nullptr);
+			auto *translator = new QTranslator(qApp);
 			translator->load(translatorFile.absoluteFilePath());
 			QCoreApplication::installTranslator(translator);
 			gInstalledTranslators.append(translator);

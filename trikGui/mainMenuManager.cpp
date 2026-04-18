@@ -81,7 +81,11 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	mController.brick().playTone(2000, 150);
 }
 
-MainMenuManager::~MainMenuManager() {}
+MainMenuManager::~MainMenuManager() {
+	// MainMenuManager children (e.g. WiFiIndicator) must die before mController destroys his 
+	// members (f.e. TrikWiFi), otherwise QML timer callbacks still call isConnected() on freed memory.
+	qDeleteAll(children());
+}
 
 void MainMenuManager::createApp(AppType appType) {
 	switch (appType) {
