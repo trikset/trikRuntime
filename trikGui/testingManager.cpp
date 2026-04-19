@@ -22,9 +22,6 @@ TestingManager::TestingManager(Controller &controller, QQmlApplicationEngine *en
 	: QObject(parent), mController(controller), mEngine(engine) {
 }
 
-TestingManager::~TestingManager() {
-}
-
 void TestingManager::createSensors(SensorType type) {
 	QStringList ports;
 	switch (static_cast<Sensors::SensorType>(type)) {
@@ -46,7 +43,7 @@ void TestingManager::createSensors(SensorType type) {
 	default:
 		break;
 	}
-	Sensors *sensors = new Sensors(mController.brick(), ports, static_cast<Sensors::SensorType>(type), mEngine, this);
+	auto *sensors = new Sensors(mController.brick(), ports, static_cast<Sensors::SensorType>(type), mEngine, this);
 	mEngine->rootContext()->setContextProperty("Sensors", sensors);
 }
 
@@ -64,18 +61,12 @@ void TestingManager::createMotors(MotorType type) {
 	default:
 		break;
 	}
-	Motors *motors = new Motors(mController.brick(), ports, this);
+	auto *motors = new Motors(mController.brick(), ports, this);
 	mEngine->rootContext()->setContextProperty("MotorsManager", motors);
 }
 
 void TestingManager::setQmlParent(QObject *parent) {
 	setParent(parent);
-}
-
-void TestingManager::configureVideoModule()
-{
-	QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"0"});
-	QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"1"});
 }
 
 bool TestingManager::checkPwmCapture() { return mController.brick().pwmCapturePorts().length() != 0; }

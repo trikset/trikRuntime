@@ -10,35 +10,11 @@ Rectangle {
     property var idList: _listTesting
     color: activeTheme.backgroundColor
     Component.onCompleted: {
-        // testingManager.configureVideoModule();
         testingManager.setQmlParent(_mainItem);
     }
 
     ListModel {
         id: dataModelTesting
-
-        // ListElement {
-        //     iconPath: "analog.png"
-        //     filePath: "AnalogDigitalSensors.qml"
-        //     text: qsTr("Analog sensors")
-        //     type: Type.AnalogSensor
-        // }
-        // ListElement {
-        //     iconPath: "digital.png"
-        //     filePath: "AnalogDigitalSensors.qml"
-        //     text: qsTr("Digital sensors")
-        //     type: Type.DigitalSensor
-        // }
-        // Component.onCompleted: {
-        //     if (testingManager.checkPwmCapture()) {
-        //         dataModelTesting.insert(1, {
-        //             "iconPath": "pwmcapture.png",
-        //             "filePath": "AnalogDigitalSensors.qml",
-        //             "text": qsTr("PWM capture"),
-        //             "type": Type.PwmCapture
-        //         });
-        //     }
-        // }
 
         ListElement {
             iconPath: "digital.png"
