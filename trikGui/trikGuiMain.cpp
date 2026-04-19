@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikGui started";
 
-	MainMenuManager mainMenuManager(initHelper.configPath(), engine);
+	MainMenuManager mainMenuManager(initHelper.configPath(), engine, &app);
 	const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
 	QObject::connect(
 		engine, &QQmlApplicationEngine::objectCreated, &app,

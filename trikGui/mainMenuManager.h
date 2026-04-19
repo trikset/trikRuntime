@@ -18,6 +18,7 @@
 #include <QObject>
 #include <QQmlApplicationEngine>
 #include <QtQml/qqml.h>
+#include "trikGuiApplication.h"
 
 namespace trikGui {
 
@@ -29,8 +30,8 @@ class MainMenuManager : public QObject
 	QML_UNCREATABLE("Use MainMenuManager singleton")
 public:
 	/// Constructor
-	explicit MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine, QObject *parent = nullptr);
-	~MainMenuManager();
+	explicit MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine, TrikGuiApplication *trikGuiApp);
+	~MainMenuManager() override;
 	enum class AppType {
 		Files,
 		Testing,

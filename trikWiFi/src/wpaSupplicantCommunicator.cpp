@@ -80,12 +80,12 @@ WpaSupplicantCommunicator::~WpaSupplicantCommunicator()
 	}
 }
 
-int WpaSupplicantCommunicator::fileDescriptor()
+int WpaSupplicantCommunicator::fileDescriptor() const
 {
 	return mSocket;
 }
 
-int WpaSupplicantCommunicator::attach()
+int WpaSupplicantCommunicator::attach() const
 {
 	if (mSocket < 0) {
 		QLOG_ERROR() << __PRETTY_FUNCTION__ <<  "Cannot attach, because socket doesn't exist.";
@@ -102,7 +102,7 @@ int WpaSupplicantCommunicator::attach()
 	}
 }
 
-int WpaSupplicantCommunicator::detach()
+int WpaSupplicantCommunicator::detach() const
 {
 	if (mSocket < 0) {
 		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot detach, because socket doesn't exist.";
@@ -119,7 +119,7 @@ int WpaSupplicantCommunicator::detach()
 	}
 }
 
-int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
+int WpaSupplicantCommunicator::request(const QString &command, QString &reply) const
 {
 	if (mSocket < 0) {
 		QLOG_ERROR() << __PRETTY_FUNCTION__ << "Cannot request, because socket doesn't exist.";
@@ -161,7 +161,7 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 	}
 }
 
-bool WpaSupplicantCommunicator::isPending()
+bool WpaSupplicantCommunicator::isPending() const
 {
 	struct timeval tv {};
 	fd_set rfds;
@@ -173,11 +173,11 @@ bool WpaSupplicantCommunicator::isPending()
 	return FD_ISSET(mSocket, &rfds);
 }
 
-int WpaSupplicantCommunicator::receive(QString &message)
+int WpaSupplicantCommunicator::receive(QString &message) const
 {
 	const int bufferSize = 256;
 	char buffer[bufferSize];
-	const int messageLen = recv(mSocket, buffer, bufferSize, 0);
+	const ssize_t messageLen = recv(mSocket, buffer, bufferSize - 1, 0);
 	if (messageLen < 0) {
 		QLOG_ERROR() << "Cannot receive a message from the daemon:" << strerror(errno);
 		return -1;

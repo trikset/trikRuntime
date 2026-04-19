@@ -31,7 +31,7 @@ class TestingManager : public QObject
 public:
 	/// Constructor
 	explicit TestingManager(Controller &controller, QQmlApplicationEngine *engine, QObject *parent = nullptr);
-	~TestingManager();
+	~TestingManager() override = default;
 
 	enum class MotorType {
 		PowerMotor = static_cast<int>(Motors::MotorType::PowerMotor),
@@ -56,8 +56,6 @@ public:
 	Q_INVOKABLE void setQmlParent(QObject *parent);
 
 	Q_INVOKABLE bool checkPwmCapture();
-
-	Q_INVOKABLE void configureVideoModule();
 
 private:
 	Controller &mController;

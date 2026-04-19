@@ -28,7 +28,6 @@
 #include "openSocketIndicator.h"
 #include "testingManager.h"
 #include "wiFiIndicator.h"
-#include "trikGuiApplication.h"
 #include <QProcess>
 #include <QQmlContext>
 #include "fileManager.h"
@@ -40,8 +39,8 @@
 #include <QExposeEvent>
 
 using namespace trikGui;
-MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine, QObject *parent)
-	: QObject(parent), mController(configPath), mEngine(engine)
+MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine, TrikGuiApplication *trikGuiApp)
+	: QObject(trikGuiApp), mController(configPath), mEngine(engine)
 	, mFileManagerRoot(SystemSettings::FileManagerRootType::ScriptsDir) {
 	qmlRegisterTypesAndRevisions<MainMenuManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<TestingManager>("com.trikGui", 1);
@@ -74,9 +73,8 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	qmlRegisterSingletonInstance<OpenSocketIndicator>("com.trikGui", 1, 0, "CommunicatorIndicator",
 							  communicatorIndicator);
 
-	auto *trikApp = qobject_cast<TrikGuiApplication *>(qApp);
-	connect(trikApp, &TrikGuiApplication::showPowerConfirm, this, &MainMenuManager::showPowerConfirm);
-	connect(trikApp, &TrikGuiApplication::hidePowerConfirm, this, &MainMenuManager::hidePowerConfirm);
+	connect(trikGuiApp, &TrikGuiApplication::showPowerConfirm, this, &MainMenuManager::showPowerConfirm);
+	connect(trikGuiApp, &TrikGuiApplication::hidePowerConfirm, this, &MainMenuManager::hidePowerConfirm);
 
 	mController.brick().playTone(2000, 150);
 }
@@ -90,29 +88,29 @@ MainMenuManager::~MainMenuManager() {
 void MainMenuManager::createApp(AppType appType) {
 	switch (appType) {
 	case AppType::Files: {
-		FileManager *fileManager = new FileManager(mController, mFileManagerRoot, this);
+		auto *fileManager = new FileManager(mController, mFileManagerRoot, this);
 		mEngine->rootContext()->setContextProperty("FileManagerServer", fileManager);
 		break;
 	}
 	case AppType::Testing: {
 		QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"0"});
 		QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"1"});
-		TestingManager *testingManager = new TestingManager(mController, mEngine, this);
+		auto *testingManager = new TestingManager(mController, mEngine, this);
 		mEngine->rootContext()->setContextProperty("TestingManager", testingManager);
 		break;
 	}
 	case AppType::Network: {
 #ifndef DESKTOP
-		WiFiMode *wiFiMode = new WiFiMode(mController.wiFi(), mEngine, this);
+		auto *wiFiMode = new WiFiMode(mController.wiFi(), mEngine, this);
 #else
-		WiFiModeMock *wiFiMode = new WiFiModeMock(mEngine, this);
+		auto *wiFiMode = new WiFiModeMock(mEngine, this);
 #endif
 		mEngine->rootContext()->setContextProperty("WiFiModeServer", wiFiMode);
 		break;
 	}
 	case AppType::CommSettings: {
 		if (mController.mailbox()) {
-			CommunicationSettings *communicationSettings =
+			auto *communicationSettings =
 			    new CommunicationSettings(*mController.mailbox(), this);
 			mEngine->rootContext()->setContextProperty("CommunicationSettingsServer",
 								   communicationSettings);
