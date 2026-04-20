@@ -54,17 +54,6 @@
     </message>
 </context>
 <context>
-    <name>Feedback</name>
-    <message>
-        <source>Please leave an anonymous review about our new interface.</source>
-        <translation type="vanished">Пожалуйста оставьте анонимный отзыв о нашем новом интерфейсе</translation>
-    </message>
-    <message>
-        <source>Please leave an anonymous review about new interface.</source>
-        <translation>Пожалуйста оставьте анонимный отзыв о новом интерфейсе</translation>
-    </message>
-</context>
-<context>
     <name>FileManager</name>
     <message>
         <source>Confirm delition</source>
@@ -277,8 +266,8 @@
         <translation>Бортномер: </translation>
     </message>
     <message>
-        <source>Feedback</source>
-        <translation>Отзыв</translation>
+        <source>Network</source>
+        <translation>Сеть</translation>
     </message>
 </context>
 <context>
@@ -436,10 +425,6 @@
 </context>
 <context>
     <name>Settings</name>
-    <message>
-        <source>Network</source>
-        <translation>Сеть</translation>
-    </message>
     <message>
         <source>Comm settings</source>
         <translation>Взаимодействие</translation>
