@@ -56,8 +56,11 @@ HEADERS += \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 	$$PWD/src/scriptThread.h \
+	$$PWD/src/cppEngineWorker.h \
 	$$PWD/include/trikScriptRunner/trikScriptRunnerInterface.h \
 	$$PWD/include/trikScriptRunner/trikJavaScriptRunner.h \
+	$$PWD/include/trikScriptRunner/trikCppRunner.h \
+	$$PWD/include/trikScriptRunner/trikCppProgram.h \
 	$$PWD/include/trikScriptRunner/trikVariablesServer.h \
 	$$PWD/include/trikScriptRunner/trikScriptRunnerDeclSpec.h
 
@@ -66,6 +69,8 @@ SOURCES += \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/trikJavaScriptRunner.cpp \
+	$$PWD/src/trikCppRunner.cpp \
+	$$PWD/src/cppEngineWorker.cpp \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
