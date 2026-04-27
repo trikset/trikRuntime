@@ -37,11 +37,14 @@ public:
 	Q_INVOKABLE void setQmlParent(QObject *parent);
 
 	/// Called when 'Connect' button is pressed, initiates connection to leader robot.
-	Q_INVOKABLE void connectToLeader(QString newThirdFourthIpPart);
+	Q_INVOKABLE void connectToLeader(const QString &newThirdFourthIpPart);
 
 	/// Called when hull number of this robot is changed. Hull number is stored in local settings, but used only after
 	/// reconnect.
 	Q_INVOKABLE void setHullNumber(int newHullNumber);
+
+Q_SIGNALS:
+	void invalidIpEntered();
 
 private:
 	/// Reference to mailbox object.
@@ -51,8 +54,8 @@ private:
 
 	int mThirdFourthIpPart;
 
-	QString hullNumber();
-	QString thirdFourthIpPart();
+	QString hullNumber() const;
+	QString thirdFourthIpPart() const;
 };
 
 }

@@ -36,13 +36,20 @@ CommunicationSettings::CommunicationSettings(trikNetwork::MailboxInterface &mail
 	}
 }
 
-void CommunicationSettings::connectToLeader(QString newThirdFourthIpPart) {
+static bool isValidOctet(const QString &s)
+{
+	bool ok;
+	const int v = s.toInt(&ok);
+	return ok && v >= 0 && v <= 255;
+}
+
+void CommunicationSettings::connectToLeader(const QString &newThirdFourthIpPart) {
 	mMailbox.renewIp();
 	QStringList result = mMailbox.myIp().split('.');
 	QStringList thirdFourthIpPart = newThirdFourthIpPart.split('.');
 
 	if (result.size() != 4 || thirdFourthIpPart.size() != 2) {
-		/// @todo Properly notify user that the robot is not connected.
+		Q_EMIT invalidIpEntered();
 		return;
 	}
 
@@ -50,17 +57,21 @@ void CommunicationSettings::connectToLeader(QString newThirdFourthIpPart) {
 	const QString fourthPart = thirdFourthIpPart[1].replace(QRegExp("^0+"), "");
 	result[2] = thirdPart.isEmpty() ? "0" : thirdPart;
 	result[3] = fourthPart.isEmpty() ? "0" : fourthPart;
+
+	if (!isValidOctet(result[2]) || !isValidOctet(result[3])) {
+		Q_EMIT invalidIpEntered();
+		return;
+	}
+
 	mMailbox.connect(result.join("."));
 }
 
-QString CommunicationSettings::hullNumber() {
-	const QString hullNumber = QString("%1").arg(mHullNumber, 2, 10, QChar('0'));
-	return hullNumber;
+QString CommunicationSettings::hullNumber() const {
+	return QString("%1").arg(mHullNumber, 2, 10, QChar('0'));;
 }
 
-QString CommunicationSettings::thirdFourthIpPart() {
-	const QString thirdFourthIpPart = QString("%1").arg(mThirdFourthIpPart, 6, 10, QChar('0')).insert(3, ".");
-	return thirdFourthIpPart;
+QString CommunicationSettings::thirdFourthIpPart() const {
+	return QString("%1").arg(mThirdFourthIpPart, 6, 10, QChar('0')).insert(3, ".");;
 }
 
 void CommunicationSettings::setHullNumber(int newHullNumber) { mMailbox.setHullNumber(newHullNumber); }
