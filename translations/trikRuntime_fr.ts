@@ -102,6 +102,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Wi-Fi adapter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Serial mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Icons by</source>
         <translation type="unfinished"></translation>
     </message>
@@ -528,6 +536,17 @@
     <name>trikGui::Controller</name>
     <message>
         <source>direct command</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::Information</name>
+    <message>
+        <source>USB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Built-in</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

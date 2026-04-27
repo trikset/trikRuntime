@@ -106,11 +106,11 @@
     <name>Information</name>
     <message>
         <source>OS version:</source>
-        <translation>версия ОС:</translation>
+        <translation>Версия ОС:</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Неизвестна</translation>
+        <translation>Неизвестно</translation>
     </message>
     <message>
         <source>MAC address:</source>
@@ -123,6 +123,14 @@
     <message>
         <source>Icons by</source>
         <translation>Иконки</translation>
+    </message>
+    <message>
+        <source>Wi-Fi adapter:</source>
+        <translation>Wi-Fi адаптер:</translation>
+    </message>
+    <message>
+        <source>Serial mode:</source>
+        <translation>Режим serial:</translation>
     </message>
     <message>
         <source>Icons8,</source>
@@ -880,6 +888,14 @@
     <message>
         <source>Version</source>
         <translation type="obsolete">Версия ПО</translation>
+    </message>
+    <message>
+        <source>USB</source>
+        <translation>USB</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation>встроенный</translation>
     </message>
 </context>
 <context>
