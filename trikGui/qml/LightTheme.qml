@@ -26,6 +26,8 @@ QtObject {
     property color gyroAccelBackColor: elementsOfListColor
     property color gyroAccelBordersColor: "black"
     property color commSettingsBorderColor: gyroAccelBordersColor
+    property color errorColorLight: '#e74c3c'
+    property color errorColor: '#96281b'
     property color informationColor: '#8B8B8B'
     property color linkColor: 'blue'
 }

@@ -9,6 +9,15 @@ Rectangle {
     property var objectForQmlParentSetting: communicationSettings
     property var idList: _listDigitsHull
 
+    property bool showIpError: false
+
+    Connections {
+        target: communicationSettings
+        function onInvalidIpEntered() {
+            _communication.showIpError = true;
+        }
+    }
+
     Component.onCompleted: {
         communicationSettings.setQmlParent(_communication);
     }
@@ -61,32 +70,39 @@ Rectangle {
                     model: countOfHullElems
                     width: parent.width
                     height: parent.height
+
                     function applyHullNumber() {
                         var result = 0;
-                        for (var i = 0; i < _listDigitsHull.count; i++) {
-                            var delegate = _listDigitsHull.itemAt(i);
-                            result = result * 10 + delegate.currentValue;
-                        }
+                        for (var i = 0; i < count; i++)
+                            result = result * 10 + itemAt(i).currentValue;
                         _communication.communicationSettings.setHullNumber(result);
+                    }
+
+                    function moveTo(idx) {
+                        currentIndex = idx;
+                        itemAt(idx).focus = true;
                     }
 
                     delegate: Rectangle {
                         id: _digitHull
+                        readonly property bool isActive: _listsDigits.whatFocused === "hull" && _listDigitsHull.currentIndex === index
+                        readonly property bool isEditing: isActive && _listDigitsHull.focusDigit
+                        property int currentValue: parseInt(_listDigitsHull.hullNumberStr[index])
+
                         width: parent.width / 2
                         height: parent.height
                         radius: 5
                         color: activeTheme.cellsColor
-                        property int currentValue: parseInt(_listDigitsHull.hullNumberStr[index])
-                        border {
-                            color: (_listDigitsHull.focusDigit && _listsDigits.whatFocused === "hull" && _listDigitsHull.currentIndex === index) ? "red" : (_listsDigits.whatFocused === "hull" && _listDigitsHull.currentIndex === index) ? activeTheme.lightOrStandartGreenColor : activeTheme.commSettingsBorderColor
-                            width: (_listDigitsHull.focusDigit && _listsDigits.whatFocused === "hull" && _listDigitsHull.currentIndex === index) ? 3 : (_listsDigits.whatFocused === "hull" && _listDigitsHull.currentIndex === index) ? 3 : 1
-                        }
+                        border.color: isEditing ? "red" : isActive ? activeTheme.lightOrStandartGreenColor : activeTheme.commSettingsBorderColor
+                        border.width: (isEditing || isActive) ? 3 : 1
+
                         Text {
                             anchors.centerIn: parent
                             text: currentValue
                             font.pointSize: fontSizes.medium
                             color: activeTheme.textColor
                         }
+
                         Keys.onPressed: {
                             switch (event.key) {
                             case Qt.Key_Return:
@@ -107,20 +123,16 @@ Rectangle {
                                     _listDigitsHull.applyHullNumber();
                                 } else {
                                     _listsDigits.whatFocused = "ip";
-                                    _listDigitsIp.itemAt(_listDigitsIp.currentIndex).focus = true;
+                                    _listDigitsIp.moveTo(_listDigitsIp.currentIndex);
                                 }
                                 break;
                             case Qt.Key_Right:
-                                if (index < _listDigitsHull.countOfHullElems - 1) {
-                                    _listDigitsHull.currentIndex = index + 1;
-                                    _listDigitsHull.itemAt(_listDigitsHull.currentIndex).focus = true;
-                                }
+                                if (index < _listDigitsHull.countOfHullElems - 1)
+                                    _listDigitsHull.moveTo(index + 1);
                                 break;
                             case Qt.Key_Left:
-                                if (index > 0) {
-                                    _listDigitsHull.currentIndex = index - 1;
-                                    _listDigitsHull.itemAt(_listDigitsHull.currentIndex).focus = true;
-                                }
+                                if (index > 0)
+                                    _listDigitsHull.moveTo(index - 1);
                                 break;
                             default:
                                 break;
@@ -163,27 +175,46 @@ Rectangle {
                     model: countOfIpElems
                     width: parent.width
                     height: parent.height
+
+                    function nextDigitIndex(from, delta) {
+                        var next = from + delta;
+                        if (next === indexOfSeparator)
+                            next += delta;
+                        return next;
+                    }
+
+                    function moveTo(idx) {
+                        currentIndex = idx;
+                        itemAt(idx).focus = true;
+                    }
+
                     delegate: Rectangle {
                         id: _digitIp
-                        width: (index !== _listDigitsIp.indexOfSeparator) ? parent.width / 7 : parent.width / 11
+                        readonly property bool isSeparator: index === _listDigitsIp.indexOfSeparator
+                        readonly property bool isActive: !isSeparator && _listsDigits.whatFocused === "ip" && _listDigitsIp.currentIndex === index
+                        readonly property bool isEditing: isActive && _listDigitsIp.focusDigit
+                        // First digit of each octet: 0–2 (octet max is 255).
+                        // Other digits: 0–9, full range; server validates the combination.
+                        readonly property int maxValue: (index === 0 || index === 4) ? 3 : 10
+                        property int currentValue: isSeparator ? 0 : parseInt(_listDigitsIp.ip[index])
+
+                        width: isSeparator ? parent.width / 11 : parent.width / 7
                         height: parent.height
                         radius: 5
-                        property var currentValue: index !== _listDigitsIp.indexOfSeparator ? parseInt(_listDigitsIp.ip[index]) : "."
-                        property real maxValue: index === 0 || index === 4 ? 3 : 6
-                        color: index !== _listDigitsIp.indexOfSeparator ? activeTheme.cellsColor : activeTheme.backgroundColor
-                        border {
-                            color: (_listDigitsIp.focusDigit && _listsDigits.whatFocused === "ip" && _listDigitsIp.currentIndex === index) ? "red" : (_listsDigits.whatFocused === "ip" && _listDigitsIp.currentIndex === index) ? activeTheme.lightOrStandartGreenColor : (index !== _listDigitsIp.indexOfSeparator) ? activeTheme.commSettingsBorderColor : "transparent"
-                            width: (_listDigitsIp.focusDigit && _listsDigits.whatFocused === "ip" && _listDigitsIp.currentIndex === index) ? 3 : (_listsDigits.whatFocused === "ip" && _listDigitsIp.currentIndex === index) ? 3 : 1
-                        }
+                        color: isSeparator ? activeTheme.backgroundColor : activeTheme.cellsColor
+                        border.color: isEditing ? "red" : isActive ? activeTheme.lightOrStandartGreenColor : isSeparator ? "transparent" : activeTheme.commSettingsBorderColor
+                        border.width: (isEditing || isActive) ? 3 : 1
 
                         Text {
                             anchors.centerIn: parent
-                            text: currentValue
-                            font.pointSize: index !== _listDigitsIp.indexOfSeparator ? fontSizes.medium : fontSizes.separator
+                            text: isSeparator ? "." : currentValue
+                            font.pointSize: isSeparator ? fontSizes.separator : fontSizes.medium
                             color: activeTheme.textColor
                         }
 
                         Keys.onPressed: {
+                            if (isSeparator)
+                                return;
                             switch (event.key) {
                             case Qt.Key_Return:
                                 _listDigitsIp.focusDigit = !_listDigitsIp.focusDigit;
@@ -193,7 +224,7 @@ Rectangle {
                                     currentValue = (currentValue + 1) % maxValue;
                                 } else {
                                     _listsDigits.whatFocused = "hull";
-                                    _listDigitsHull.itemAt(_listDigitsHull.currentIndex).focus = true;
+                                    _listDigitsHull.moveTo(_listDigitsHull.currentIndex);
                                 }
                                 break;
                             case Qt.Key_Down:
@@ -205,23 +236,19 @@ Rectangle {
                                 }
                                 break;
                             case Qt.Key_Right:
-                                if (index !== 2 && index < _listDigitsIp.countOfIpElems - 1) {
-                                    _listDigitsIp.currentIndex = index + 1;
-                                    _listDigitsIp.itemAt(_listDigitsIp.currentIndex).focus = true;
-                                } else if (index === 2) {
-                                    _listDigitsIp.currentIndex = index + 2;
-                                    _listDigitsIp.itemAt(_listDigitsIp.currentIndex).focus = true;
+                                {
+                                    var next = _listDigitsIp.nextDigitIndex(index, 1);
+                                    if (next < _listDigitsIp.countOfIpElems)
+                                        _listDigitsIp.moveTo(next);
+                                    break;
                                 }
-                                break;
                             case Qt.Key_Left:
-                                if (index !== 4 && index > 0) {
-                                    _listDigitsIp.currentIndex = index - 1;
-                                    _listDigitsIp.itemAt(_listDigitsIp.currentIndex).focus = true;
-                                } else if (index === 4) {
-                                    _listDigitsIp.currentIndex = index - 2;
-                                    _listDigitsIp.itemAt(_listDigitsIp.currentIndex).focus = true;
+                                {
+                                    var prev = _listDigitsIp.nextDigitIndex(index, -1);
+                                    if (prev >= 0)
+                                        _listDigitsIp.moveTo(prev);
+                                    break;
                                 }
-                                break;
                             default:
                                 break;
                             }
@@ -236,9 +263,17 @@ Rectangle {
             anchors.right: parent.right
             anchors.margins: 8
             height: parent.height / 10
+            background: Rectangle {
+                radius: 10
+                color: {
+                    if (_communication.showIpError)
+                        return _button.focus ? activeTheme.errorColor : activeTheme.errorColorLight;
+                    return _button.focus ? activeTheme.darkTrikColor : activeTheme.buttonsColor;
+                }
+            }
 
             contentItem: Text {
-                text: qsTr("Connect")
+                text: _communication.showIpError ? qsTr("Invalid IP") : qsTr("Connect")
                 font.pointSize: fontSizes.medium
                 color: "white"
                 horizontalAlignment: Text.AlignHCenter
@@ -246,25 +281,27 @@ Rectangle {
             }
 
             function applyConnect() {
+                _communication.showIpError = false;
                 var result = "";
                 for (var i = 0; i < _listDigitsIp.count; i++) {
-                    var delegate = _listDigitsIp.itemAt(i);
-                    result = result + delegate.currentValue;
+                    var d = _listDigitsIp.itemAt(i);
+                    result += d.isSeparator ? "." : d.currentValue;
                 }
                 _communication.communicationSettings.connectToLeader(result);
             }
+
             Keys.onPressed: {
                 switch (event.key) {
                 case Qt.Key_Up:
                     _listsDigits.whatFocused = "ip";
-                    _listDigitsIp.itemAt(_listDigitsIp.currentIndex).focus = true;
+                    _listDigitsIp.moveTo(_listDigitsIp.currentIndex);
                     break;
                 case Qt.Key_Return:
                     _button.applyConnect();
                     break;
                 case Qt.Key_Down:
                     _listsDigits.whatFocused = "hull";
-                    _listDigitsHull.itemAt(_listDigitsHull.currentIndex).focus = true;
+                    _listDigitsHull.moveTo(_listDigitsHull.currentIndex);
                     break;
                 default:
                     break;

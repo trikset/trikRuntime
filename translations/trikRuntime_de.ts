@@ -41,6 +41,10 @@
         <source>Connect</source>
         <translation type="unfinished">Verbinden</translation>
     </message>
+    <message>
+        <source>Invalid IP</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfirmAction</name>

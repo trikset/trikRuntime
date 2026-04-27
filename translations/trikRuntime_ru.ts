@@ -41,6 +41,10 @@
         <source>Connect</source>
         <translation>Подключиться</translation>
     </message>
+    <message>
+        <source>Invalid IP</source>
+        <translation>Некорректный IP</translation>
+    </message>
 </context>
 <context>
     <name>ConfirmAction</name>
