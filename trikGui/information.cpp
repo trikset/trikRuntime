@@ -16,6 +16,8 @@
 #include <trikKernel/version.h>
 
 #include <QFile>
+#include <QFileInfo>
+#include <QTextStream>
 #include <QtNetwork/QNetworkInterface>
 
 using namespace trikGui;
@@ -43,6 +45,28 @@ QString Information::osVersion() const {
 	version.open(QIODevice::ReadOnly);
 
 	return QString::fromUtf8(version.readAll()).trimmed();
+}
+
+QString Information::wlanAdapterType() const
+{
+	// Resolve the sysfs symlink for wlan0. If the real path contains "/usb", it's a USB adapter.
+	const QString sysfsPath = QFileInfo("/sys/class/net/wlan0").canonicalFilePath();
+	qInfo() << sysfsPath;
+	if (sysfsPath.isEmpty()) {
+		return "";
+	}
+	return sysfsPath.contains("/usb") ? tr("USB") : tr("Built-in");
+}
+
+QString Information::serialMode() const
+{
+	QFile config("/etc/default/ttyS1");
+	if (!config.open(QIODevice::ReadOnly)) {
+		return "";
+	}
+	QTextStream in(&config);
+	// File contains a single line like "LINE_PROTOCOL=lidar"
+	return in.readLine().section('=', 1);
 }
 
 void Information::setQmlParent(QObject *parent)

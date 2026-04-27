@@ -6,9 +6,11 @@ Rectangle {
     property var systemInformation: SystemInformation
     property string osVersion: systemInformation.osVersion()
     property string macAddress: systemInformation.macAddress()
+    property string wlanAdapterType: systemInformation.wlanAdapterType()
+    property string serialMode: systemInformation.serialMode()
     color: activeTheme.backgroundColor
     Component.onCompleted: {
-        systemInformation.setQmlParent(_information)
+        systemInformation.setQmlParent(_information);
     }
     Rectangle {
         anchors.fill: parent
@@ -22,13 +24,13 @@ Rectangle {
             Text {
                 text: qsTr("OS version:")
                 wrapMode: Text.Wrap
-                font.pointSize: fontSizes.large
+                font.pointSize: fontSizes.medium
                 color: activeTheme.textColor
             }
             Text {
                 text: osVersion ? osVersion : qsTr("Unknown")
                 wrapMode: Text.Wrap
-                font.pointSize: fontSizes.medium
+                font.pointSize: fontSizes.body
                 color: activeTheme.informationColor
             }
             Rectangle {
@@ -40,13 +42,13 @@ Rectangle {
             Text {
                 text: qsTr("MAC address:")
                 wrapMode: Text.Wrap
-                font.pointSize: fontSizes.large
+                font.pointSize: fontSizes.medium
                 color: activeTheme.textColor
             }
             Text {
                 text: macAddress ? macAddress : qsTr("Not found")
                 wrapMode: Text.Wrap
-                font.pointSize: fontSizes.medium
+                font.pointSize: fontSizes.body
                 color: activeTheme.informationColor
             }
             Rectangle {
@@ -54,24 +56,61 @@ Rectangle {
                 color: activeTheme.informationColor
                 Layout.fillWidth: true
             }
+
+            Text {
+                text: qsTr("Wi-Fi adapter:")
+                wrapMode: Text.Wrap
+                font.pointSize: fontSizes.medium
+                color: activeTheme.textColor
+            }
+            Text {
+                text: wlanAdapterType ? wlanAdapterType : qsTr("Not found")
+                wrapMode: Text.Wrap
+                font.pointSize: fontSizes.body
+                color: activeTheme.informationColor
+            }
+            Rectangle {
+                height: 1
+                color: activeTheme.informationColor
+                Layout.fillWidth: true
+            }
+
+            Text {
+                text: qsTr("Serial mode:")
+                wrapMode: Text.Wrap
+                font.pointSize: fontSizes.medium
+                color: activeTheme.textColor
+            }
+            Text {
+                text: serialMode ? serialMode : qsTr("Unknown")
+                wrapMode: Text.Wrap
+                font.pointSize: fontSizes.body
+                color: activeTheme.informationColor
+            }
+            Rectangle {
+                height: 1
+                color: activeTheme.informationColor
+                Layout.fillWidth: true
+            }
+
             GridLayout {
-                columns: 2
+                rows: 1
                 Text {
                     text: qsTr("Icons by")
                     wrapMode: Text.Wrap
-                    font.pointSize: fontSizes.small
+                    font.pointSize: fontSizes.microscopic
                     color: activeTheme.informationColor
                 }
                 Text {
                     text: qsTr("Icons8,")
                     wrapMode: Text.Wrap
-                    font.pointSize: fontSizes.small
+                    font.pointSize: fontSizes.microscopic
                     color: activeTheme.informationColor
                     font.underline: true
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            Qt.openUrlExternally("https://icons8.com/")
+                            Qt.openUrlExternally("https://icons8.com/");
                         }
                         cursorShape: Qt.PointingHandCursor
                     }
@@ -79,13 +118,13 @@ Rectangle {
                 Text {
                     text: qsTr("Flaticon,")
                     wrapMode: Text.Wrap
-                    font.pointSize: fontSizes.small
+                    font.pointSize: fontSizes.microscopic
                     color: activeTheme.informationColor
                     font.underline: true
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            Qt.openUrlExternally("https://www.flaticon.com/")
+                            Qt.openUrlExternally("https://www.flaticon.com/");
                         }
                         cursorShape: Qt.PointingHandCursor
                     }
@@ -93,13 +132,13 @@ Rectangle {
                 Text {
                     text: qsTr("Svgrepo")
                     wrapMode: Text.Wrap
-                    font.pointSize: fontSizes.small
+                    font.pointSize: fontSizes.microscopic
                     color: activeTheme.informationColor
                     font.underline: true
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            Qt.openUrlExternally("https://www.svgrepo.com/")
+                            Qt.openUrlExternally("https://www.svgrepo.com/");
                         }
                         cursorShape: Qt.PointingHandCursor
                     }
@@ -116,7 +155,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        Qt.openUrlExternally("https://trikset.com/")
+                        Qt.openUrlExternally("https://trikset.com/");
                     }
 
                     cursorShape: Qt.PointingHandCursor

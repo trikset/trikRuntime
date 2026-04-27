@@ -105,6 +105,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Wi-Fi adapter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Serial mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Icons by</source>
         <translation type="unfinished"></translation>
     </message>
@@ -570,6 +578,17 @@
     <message>
         <source>Delete all...</source>
         <translation type="vanished">alles löschen</translation>
+    </message>
+</context>
+<context>
+    <name>trikGui::Information</name>
+    <message>
+        <source>USB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

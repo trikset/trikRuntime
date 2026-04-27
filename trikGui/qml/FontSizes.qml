@@ -1,6 +1,7 @@
 import QtQuick 2.15
 
 QtObject {
+    property int microscopic: 6 // info just to have it there, f.e. icon links
     property int tiny: 8       // hints, minor notes (was ~10px)
     property int small: 9      // status bar, captions (was ~12px)
     property int body: 11      // dialog text, info labels (was ~14px)

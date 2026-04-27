@@ -36,6 +36,12 @@ public:
 	/// Returns mac address.
 	Q_INVOKABLE QString macAddress() const;
 
+	/// Returns wlan0 adapter type: "USB" if the current wlan0 interface is a USB adapter, "Built-in" otherwise.
+	Q_INVOKABLE QString wlanAdapterType() const;
+
+	/// Returns the current serial port mode from /etc/default/ttyS1 (e.g. "lidar", "ppp", "login").
+	Q_INVOKABLE QString serialMode() const;
+
 	Q_INVOKABLE void setQmlParent(QObject *parent);
 };
 
