@@ -87,7 +87,7 @@ jobs:
         working-directory: ${{ env.BUILD_DIR }}
   
       - name: Clang-tidy
-        uses: cpp-linter/cpp-linter-action@v2.17.0
+        uses: cpp-linter/cpp-linter-action@v2.18.0
         id: linter
         with:
          style: ''
