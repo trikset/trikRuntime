@@ -92,7 +92,8 @@ void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::
 
 void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
-	fetchRunner(mLastRunner)->addCustomEngineInitStep(step);
+	// The function is only called during JavaScript engine registration
+	fetchRunner(ScriptType::JAVASCRIPT)->addCustomEngineInitStep(step);
 }
 
 bool TrikScriptRunner::wasError()
