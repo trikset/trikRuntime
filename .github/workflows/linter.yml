@@ -96,7 +96,7 @@ jobs:
          database: ${{ env.BUILD_DIR }}
          verbosity: 'info'
          files-changed-only: true
-         ignore-tidy: 'PythonQt/**|mlx90640-library/**'
+         ignore-tidy: 'PythonQt/**|mlx90640-library/**|**/generated_cpp/**'
    
       - name: Clang-tidy exit
         if: ${{ steps.linter.outputs.checks-failed > 0 }}

@@ -147,6 +147,8 @@ public Q_SLOTS:
 	/// and thus to have an opportunity to start concrete function from the given file. But QScriptEngine API
 	/// has no such possibility so we should append function call to the end of the script. So if script will
 	/// run some actions in the global context they will be invoked on each thread start.
+	// TODO: The default parameter is part of the public API. Consider backward compatibility
+	// NOLINTNEXTLINE(google-default-arguments)
 	virtual void run(const QString &script, const QString &fileName = "") = 0;
 
 
