@@ -23,7 +23,7 @@ QMAKE_CXXFLAGS *= -Wno-error=cast-qual -Wno-error=redundant-decls
 QMAKE_CXXFLAGS -= -Werror -Werror=pedantic -pedantic-errors -Werror=write-strings
 QT += widgets
 
-engines_init_internal_types {
+!contains(CONFIG, exclude_init_internal_types) {
   DEFINES += ENGINES_INIT_INTERNAL_TYPES
 }
 
@@ -36,7 +36,7 @@ engines_init_internal_types {
 
   include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
   include(./generated_cpp/pytrikcontrol/pytrikcontrol.pri)
-  engines_init_internal_types {
+  !contains(CONFIG, exclude_init_internal_types) {
     include(./generated_cpp/pytrikcontrolinternal/pytrikcontrolinternal.pri)
     INCLUDEPATH *= \
       $$PWD/generated_cpp/pytrikcontrolinternal
