@@ -18,8 +18,6 @@
 #include <QtCore/QString>
 #include <QVector>
 
-#include "displayWidgetInterface.h"
-
 #include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {

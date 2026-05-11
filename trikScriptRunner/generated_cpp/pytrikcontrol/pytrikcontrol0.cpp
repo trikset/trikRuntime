@@ -4,10 +4,8 @@
 #include <PythonQtSignalReceiver.h>
 #include <QVariant>
 #include <qbytearray.h>
-#include <qcoreevent.h>
 #include <qimage.h>
 #include <qlist.h>
-#include <qmetaobject.h>
 #include <qobject.h>
 #include <qobjectdefs.h>
 #include <qstringlist.h>
