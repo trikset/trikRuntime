@@ -20,7 +20,7 @@
 namespace trikControl {
 
 /// An interface for accessing internal infrastructure.
-class InternalBrickInterface: public BrickInterface
+class TRIKCONTROL_EXPORT InternalBrickInterface: public BrickInterface
 {
 	Q_OBJECT
 public:

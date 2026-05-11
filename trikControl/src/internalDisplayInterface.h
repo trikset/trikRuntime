@@ -20,7 +20,7 @@
 namespace trikControl {
 
 /// An interface for accessing internal infrastructure.
-class InternalDisplayInterface: public DisplayInterface
+class TRIKCONTROL_EXPORT InternalDisplayInterface: public DisplayInterface
 {
 	Q_OBJECT
 public:

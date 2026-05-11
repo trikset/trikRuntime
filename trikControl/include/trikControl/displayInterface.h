@@ -22,6 +22,9 @@
 
 namespace trikControl {
 
+// TODO: The default parameter is part of the public API. Consider backward compatibility
+// NOLINTBEGIN(google-default-arguments)
+
 /// Provides ability to draw something on robot display.
 class TRIKCONTROL_EXPORT DisplayInterface : public QObject
 {
@@ -113,5 +116,5 @@ public Q_SLOTS:
 };
 
 }
-
+// NOLINTEND(google-default-arguments)
 Q_DECLARE_METATYPE(trikControl::DisplayInterface *)

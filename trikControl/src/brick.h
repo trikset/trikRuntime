@@ -124,7 +124,7 @@ public Q_SLOTS:
 
 	ObjectSensorInterface *objectSensor(const QString &port) override;
 
-	I2cDeviceInterface *i2c(int bus, int address, int regSize = 1) override;
+	I2cDeviceInterface *i2c(int bus, int address, int regSize) override;
 
 	I2cDeviceInterface *smBusI2c(int bus, int address) override;
 

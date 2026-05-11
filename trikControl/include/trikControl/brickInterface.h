@@ -130,6 +130,8 @@ public:
 	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *smBusI2c(int bus, int address) = 0;
 
 	/// Returns i2c device object
+	// TODO: The default parameter is part of the public API. Consider backward compatibility
+	// NOLINTNEXTLINE(google-default-arguments)
 	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *i2c(int bus, int address, int regSize = 1) = 0;
 
 	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
