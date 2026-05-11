@@ -6,6 +6,7 @@ which -a clang-format-15 > /dev/null \
 
 IGNORED_DIRS=(
     "./trikScriptRunner/generated_cpp/pytrikcontrol"
+    "./trikScriptRunner/generated_cpp/pytrikcontrolinternal"
     "./trikHal/src/trik/usbMsp"
 )
 

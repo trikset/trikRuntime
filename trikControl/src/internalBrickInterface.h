@@ -15,6 +15,7 @@
  * limitations under the License. */
 
 #include "brickInterface.h"
+#include "displayWidgetInterface.h"
 
 namespace trikControl {
 
