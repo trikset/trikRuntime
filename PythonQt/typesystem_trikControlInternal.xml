@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<typesystem package="PyTrikControlInternal" >
+ <load-typesystem name="typesystem_trikControl.xml" generate="no" />
+ <load-typesystem name="typesystem_quick.xml" generate="no" />
+ <namespace-type name="trikControl" />
+ <interface-type name="trikControl::InternalBrickInterface" create-shell="no" />
+ <interface-type name="trikControl::InternalDisplayInterface" create-shell="no" />
+ <interface-type name="trikControl::DisplayWidgetInterface" create-shell="no" />
+</typesystem>

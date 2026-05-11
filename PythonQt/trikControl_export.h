@@ -7,7 +7,6 @@
 #include "trikControl/declSpec.h"
 #include "trikControl/deviceInterface.h"
 #include "trikControl/displayInterface.h"
-#include "trikControl/displayWidgetInterface.h"
 #include "trikControl/encoderInterface.h"
 #include "trikControl/eventCodeInterface.h"
 #include "trikControl/eventDeviceInterface.h"

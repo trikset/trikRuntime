@@ -28,11 +28,6 @@ namespace trikControl {
 class TRIKCONTROL_EXPORT DisplayInterface : public QObject
 {
 	Q_OBJECT
-
-public:
-	/// Returns widget on which everything is drawn.
-	virtual DisplayWidgetInterface &graphicsWidget() = 0;
-
 public Q_SLOTS:
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for

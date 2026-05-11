@@ -196,6 +196,8 @@ TEST_F(TrikJsRunnerTest, brickInterfaceAccess)
 	ASSERT_TRUE(knownMethodNames.contains("setPower"));
 	auto errCode = run("brick.sensor(A1).read()", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
+	errCode = run("brick.graphicsWidget()", "_.js");
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 
 TEST_F(TrikJsRunnerTest, fileTestJs)

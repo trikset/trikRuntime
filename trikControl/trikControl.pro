@@ -72,6 +72,8 @@ HEADERS += \
 	$$PWD/src/gamepad.h \
 	$$PWD/src/graphicsWidget.h \
 	$$PWD/src/guiWorker.h \
+	$$PWD/src/internalBrickInterface.h \
+	$$PWD/src/internalDisplayInterface.h \
 	$$PWD/src/keys.h \
 	$$PWD/src/keysWorker.h \
 	$$PWD/src/led.h \

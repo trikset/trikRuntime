@@ -23,14 +23,24 @@ QMAKE_CXXFLAGS *= -Wno-error=cast-qual -Wno-error=redundant-decls
 QMAKE_CXXFLAGS -= -Werror -Werror=pedantic -pedantic-errors -Werror=write-strings
 QT += widgets
 
+engines_init_internal_types {
+  DEFINES += ENGINES_INIT_INTERNAL_TYPES
+}
+
 !trik_nopython {
   #PythonQt generated files have problems
   INCLUDEPATH *= $$PWD/../trikControl/include/trikControl \
     $$PWD/../trikKernel/include/trikKernel \
     $$PWD/generated_cpp/pytrikcontrol \
+    $$PWD/generated_cpp/pytrikcontrolinternal
 
   include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
   include(./generated_cpp/pytrikcontrol/pytrikcontrol.pri)
+  engines_init_internal_types {
+    include(./generated_cpp/pytrikcontrolinternal/pytrikcontrolinternal.pri)
+    INCLUDEPATH *= \
+      $$PWD/generated_cpp/pytrikcontrolinternal
+  }
 }
 
 !macx:enableFlagIfCan(-Wno-error=cast-function-type)

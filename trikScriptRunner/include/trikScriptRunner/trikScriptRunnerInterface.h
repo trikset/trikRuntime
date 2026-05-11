@@ -48,6 +48,14 @@
 #include "trikScriptControlInterface.h"
 
 
+#ifdef ENGINES_INIT_INTERNAL_TYPES
+#include <trikControl/displayWidgetInterface.h>
+#define OPTIONAL_DEVICES(TEMPLATE) \
+	TEMPLATE(trikControl::DisplayWidgetInterface)
+#else
+	#define OPTIONAL_DEVICES(TEMPLATE)
+#endif
+
 #define REGISTER_METATYPE(TYPE) \
 	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
 
@@ -57,6 +65,7 @@
 /// that uses devices.
 /// ATTENTION: do not forget to append newly created device to this list!
 #define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
+	OPTIONAL_DEVICES(TEMPLATE) \
 	TEMPLATE(trikControl::BatteryInterface) \
 	TEMPLATE(trikControl::ColorSensorInterface) \
 	TEMPLATE(trikControl::FifoInterface) \

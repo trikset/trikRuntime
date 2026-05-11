@@ -11,7 +11,6 @@
 
  <interface-type name="trikControl::BatteryInterface" create-shell="no"/>
  <interface-type name="trikControl::DisplayInterface" create-shell="no"/>
- <interface-type name="trikControl::DisplayWidgetInterface" create-shell="no"/>
  <interface-type name="trikControl::BrickInterface" create-shell="no"/>
  <interface-type name="trikControl::KeysInterface" create-shell="no"/>
  <interface-type name="trikControl::DeviceInterface" create-shell="no"/>

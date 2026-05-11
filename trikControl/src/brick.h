@@ -20,7 +20,7 @@
 #include <trikKernel/configurer.h>
 #include <trikKernel/differentOwnerPointer.h>
 #include <functional>
-#include "brickInterface.h"
+#include "internalBrickInterface.h"
 
 namespace trikHal {
 class HardwareAbstractionInterface;
@@ -60,7 +60,7 @@ class IrCameraInterface;
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
 /// Is NOT thread-safe.
-class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT Brick : public BrickInterface
+class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT Brick : public InternalBrickInterface
 {
 	Q_OBJECT
 
@@ -83,7 +83,7 @@ public:
 
 	void reset() override;
 
-	DisplayWidgetInterface *graphicsWidget() override;
+	trikControl::DisplayWidgetInterface *graphicsWidget() override;
 
 	QString configVersion() const override;
 
