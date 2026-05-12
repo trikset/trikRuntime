@@ -55,6 +55,5 @@
  <object-type name="trikControl::Display" create-shell="no"/>
  <object-type name="trikControl::Keys"/>
 --> 
- <object-type name="trikControl::BrickFactory" create-shell="no"/>
 
 </typesystem>

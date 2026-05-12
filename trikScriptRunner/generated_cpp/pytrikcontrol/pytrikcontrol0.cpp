@@ -11,7 +11,6 @@
 #include <qstringlist.h>
 #include <qvector.h>
 #include <trikControl/batteryInterface.h>
-#include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
 #include <trikControl/cameraDeviceInterface.h>
 #include <trikControl/colorSensorInterface.h>
@@ -69,22 +68,6 @@ QString  PythonQtWrapper_trikControl__BatteryInterface::static_trikControl__Batt
 QString  PythonQtWrapper_trikControl__BatteryInterface::static_trikControl__BatteryInterface_trUtf8(const char*  s, const char*  c, int  n)
 {
   return (trikControl::BatteryInterface::trUtf8(s, c, n));
-}
-
-
-
-trikControl::BrickFactory* PythonQtWrapper_trikControl__BrickFactory::new_trikControl__BrickFactory()
-{ 
-return new trikControl::BrickFactory(); }
-
-trikControl::BrickInterface*  PythonQtWrapper_trikControl__BrickFactory::static_trikControl__BrickFactory_create(const QString&  configFilesPath, const QString&  mediaPath)
-{
-  return (trikControl::BrickFactory::create(configFilesPath, mediaPath));
-}
-
-trikControl::BrickInterface*  PythonQtWrapper_trikControl__BrickFactory::static_trikControl__BrickFactory_create(const QString&  systemConfig, const QString&  modelConfig, const QString&  mediaPath)
-{
-  return (trikControl::BrickFactory::create(systemConfig, modelConfig, mediaPath));
 }
 
 

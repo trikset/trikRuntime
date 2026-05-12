@@ -6,4 +6,5 @@
  <interface-type name="trikControl::InternalBrickInterface" create-shell="no" />
  <interface-type name="trikControl::InternalDisplayInterface" create-shell="no" />
  <interface-type name="trikControl::DisplayWidgetInterface" create-shell="no" />
+ <object-type name="trikControl::BrickFactory" create-shell="no"/>
 </typesystem>

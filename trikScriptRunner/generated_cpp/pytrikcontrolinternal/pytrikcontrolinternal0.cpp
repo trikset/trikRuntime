@@ -19,6 +19,7 @@
 #include <qtransform.h>
 #include <qvector.h>
 #include <trikControl/batteryInterface.h>
+#include <trikControl/brickInterface.h>
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/displayWidgetInterface.h>
@@ -40,6 +41,22 @@
 #include <trikControl/sensorInterface.h>
 #include <trikControl/soundSensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+
+trikControl::BrickFactory* PythonQtWrapper_trikControl__BrickFactory::new_trikControl__BrickFactory()
+{ 
+return new trikControl::BrickFactory(); }
+
+trikControl::BrickInterface*  PythonQtWrapper_trikControl__BrickFactory::static_trikControl__BrickFactory_create(const QString&  configFilesPath, const QString&  mediaPath)
+{
+  return (trikControl::BrickFactory::create(configFilesPath, mediaPath));
+}
+
+trikControl::BrickInterface*  PythonQtWrapper_trikControl__BrickFactory::static_trikControl__BrickFactory_create(const QString&  systemConfig, const QString&  modelConfig, const QString&  mediaPath)
+{
+  return (trikControl::BrickFactory::create(systemConfig, modelConfig, mediaPath));
+}
+
+
 
 void PythonQtWrapper_trikControl__DisplayWidgetInterface::hidden(trikControl::DisplayWidgetInterface* theWrappedObject)
 {

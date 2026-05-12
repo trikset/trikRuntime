@@ -9,7 +9,6 @@
 #include <qstringlist.h>
 #include <qvector.h>
 #include <trikControl/batteryInterface.h>
-#include <trikControl/brickFactory.h>
 #include <trikControl/brickInterface.h>
 #include <trikControl/cameraDeviceInterface.h>
 #include <trikControl/colorSensorInterface.h>
@@ -72,20 +71,6 @@ void delete_trikControl__BatteryInterface(trikControl::BatteryInterface* obj) { 
    float  py_q_readVoltage(trikControl::BatteryInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BatteryInterface*)theWrappedObject)->py_q_readVoltage());}
    QString  static_trikControl__BatteryInterface_tr(const char*  s, const char*  c = nullptr, int  n = -1);
    QString  static_trikControl__BatteryInterface_trUtf8(const char*  s, const char*  c = nullptr, int  n = -1);
-};
-
-
-
-
-
-class PythonQtWrapper_trikControl__BrickFactory : public QObject
-{ Q_OBJECT
-public:
-public Q_SLOTS:
-trikControl::BrickFactory* new_trikControl__BrickFactory();
-void delete_trikControl__BrickFactory(trikControl::BrickFactory* obj) { delete obj; }
-   trikControl::BrickInterface*  static_trikControl__BrickFactory_create(const QString&  configFilesPath = ".", const QString&  mediaPath = ".");
-   trikControl::BrickInterface*  static_trikControl__BrickFactory_create(const QString&  systemConfig, const QString&  modelConfig, const QString&  mediaPath);
 };
 
 

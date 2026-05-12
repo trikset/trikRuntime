@@ -1,6 +1,5 @@
 #include <QObject>
 #include "trikControl/batteryInterface.h"
-#include "trikControl/brickFactory.h"
 #include "trikControl/brickInterface.h"
 #include "trikControl/cameraDeviceInterface.h"
 #include "trikControl/colorSensorInterface.h"
