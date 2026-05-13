@@ -48,6 +48,14 @@
 #include "trikScriptControlInterface.h"
 
 
+#ifdef ENGINES_INIT_INTERNAL_TYPES
+#include <trikControl/displayWidgetInterface.h>
+#define OPTIONAL_DEVICES(TEMPLATE) \
+	TEMPLATE(trikControl::DisplayWidgetInterface)
+#else
+	#define OPTIONAL_DEVICES(TEMPLATE)
+#endif
+
 #define REGISTER_METATYPE(TYPE) \
 	qRegisterMetaType<TYPE*>(TYPE::staticMetaObject.className());
 
@@ -57,6 +65,7 @@
 /// that uses devices.
 /// ATTENTION: do not forget to append newly created device to this list!
 #define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
+	OPTIONAL_DEVICES(TEMPLATE) \
 	TEMPLATE(trikControl::BatteryInterface) \
 	TEMPLATE(trikControl::ColorSensorInterface) \
 	TEMPLATE(trikControl::FifoInterface) \
@@ -138,6 +147,8 @@ public Q_SLOTS:
 	/// and thus to have an opportunity to start concrete function from the given file. But QScriptEngine API
 	/// has no such possibility so we should append function call to the end of the script. So if script will
 	/// run some actions in the global context they will be invoked on each thread start.
+	// TODO: The default parameter is part of the public API. Consider backward compatibility
+	// NOLINTNEXTLINE(google-default-arguments)
 	virtual void run(const QString &script, const QString &fileName = "") = 0;
 
 

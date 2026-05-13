@@ -188,6 +188,12 @@ TEST_F(TrikPyRunnerTest, propertyAndMethodWithSimpleType)
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }
 
+TEST_F(TrikPyRunnerTest, methodsIsAccessible)
+{
+	auto exitCode = run("brick.graphicsWidget()");
+	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
+}
+
 TEST_F(TrikPyRunnerTest, brickMethodWithNonTrivialReturnTypeConversion)
 {
 	auto exitCode = run("brick.getStillImage()");

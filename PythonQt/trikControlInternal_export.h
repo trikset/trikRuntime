@@ -1,0 +1,5 @@
+#include "trikControl/displayWidgetInterface.h"
+#include "trikControl/brickFactory.h"
+#include "trikControl_export.h"
+#include "internalBrickInterface.h"
+#include "internalDisplayInterface.h"

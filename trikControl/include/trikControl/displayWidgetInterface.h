@@ -43,3 +43,5 @@ Q_SIGNALS:
 };
 
 }
+
+Q_DECLARE_METATYPE(trikControl::DisplayWidgetInterface *)

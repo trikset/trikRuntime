@@ -1,19 +1,22 @@
 ************************************************************************
 Not in type system
+<enum-type name="QCoreApplication::enum_1"/>
 <enum-type name="QMetaObject::Call"/>
+<enum-type name="enum_3"/>
 ************************************************************************
 
 ************************************************************************
 Generation disabled by type system
 <enum-type name="QFont::ResolveProperties"/>
-<enum-type name="QGradient::InterpolationMode"/>
 <enum-type name="QMetaType::Type"/>
 <enum-type name="QSysInfo::MacVersion"/>
 <enum-type name="QSysInfo::WinVersion"/>
+<enum-type name="QWheelEvent::enum_1"/>
 <enum-type name="Qt::Initialization"/>
 <enum-type name="Qt::Modifier"/>
 <enum-type name="Qt::ReturnByValueConstant"/>
 <enum-type name="enum_1"/>
+<enum-type name="enum_2"/>
 ************************************************************************
 
 ************************************************************************

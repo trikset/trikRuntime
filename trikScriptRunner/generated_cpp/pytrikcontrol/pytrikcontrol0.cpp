@@ -1,46 +1,42 @@
 #include "pytrikcontrol0.h"
-#include <../trikControl/include/trikControl/batteryInterface.h>
-#include <../trikControl/include/trikControl/brickFactory.h>
-#include <../trikControl/include/trikControl/brickInterface.h>
-#include <../trikControl/include/trikControl/cameraDeviceInterface.h>
-#include <../trikControl/include/trikControl/colorSensorInterface.h>
-#include <../trikControl/include/trikControl/deviceInterface.h>
-#include <../trikControl/include/trikControl/displayInterface.h>
-#include <../trikControl/include/trikControl/displayWidgetInterface.h>
-#include <../trikControl/include/trikControl/encoderInterface.h>
-#include <../trikControl/include/trikControl/eventCodeInterface.h>
-#include <../trikControl/include/trikControl/eventDeviceInterface.h>
-#include <../trikControl/include/trikControl/eventInterface.h>
-#include <../trikControl/include/trikControl/fifoInterface.h>
-#include <../trikControl/include/trikControl/gamepadInterface.h>
-#include <../trikControl/include/trikControl/gyroSensorInterface.h>
-#include <../trikControl/include/trikControl/i2cDeviceInterface.h>
-#include <../trikControl/include/trikControl/irCameraInterface.h>
-#include <../trikControl/include/trikControl/keysInterface.h>
-#include <../trikControl/include/trikControl/ledInterface.h>
-#include <../trikControl/include/trikControl/lidarInterface.h>
-#include <../trikControl/include/trikControl/lineSensorInterface.h>
-#include <../trikControl/include/trikControl/markerInterface.h>
-#include <../trikControl/include/trikControl/motorInterface.h>
-#include <../trikControl/include/trikControl/objectSensorInterface.h>
-#include <../trikControl/include/trikControl/pwmCaptureInterface.h>
-#include <../trikControl/include/trikControl/sensorInterface.h>
-#include <../trikControl/include/trikControl/soundSensorInterface.h>
-#include <../trikControl/include/trikControl/vectorSensorInterface.h>
-#include <../trikKernel/include/trikKernel/timeVal.h>
 #include <PythonQtConversion.h>
 #include <PythonQtMethodInfo.h>
 #include <PythonQtSignalReceiver.h>
 #include <QVariant>
 #include <qbytearray.h>
-#include <qcoreevent.h>
 #include <qimage.h>
 #include <qlist.h>
-#include <qmetaobject.h>
 #include <qobject.h>
 #include <qobjectdefs.h>
 #include <qstringlist.h>
 #include <qvector.h>
+#include <trikControl/batteryInterface.h>
+#include <trikControl/brickInterface.h>
+#include <trikControl/cameraDeviceInterface.h>
+#include <trikControl/colorSensorInterface.h>
+#include <trikControl/deviceInterface.h>
+#include <trikControl/displayInterface.h>
+#include <trikControl/encoderInterface.h>
+#include <trikControl/eventCodeInterface.h>
+#include <trikControl/eventDeviceInterface.h>
+#include <trikControl/eventInterface.h>
+#include <trikControl/fifoInterface.h>
+#include <trikControl/gamepadInterface.h>
+#include <trikControl/gyroSensorInterface.h>
+#include <trikControl/i2cDeviceInterface.h>
+#include <trikControl/irCameraInterface.h>
+#include <trikControl/keysInterface.h>
+#include <trikControl/ledInterface.h>
+#include <trikControl/lidarInterface.h>
+#include <trikControl/lineSensorInterface.h>
+#include <trikControl/markerInterface.h>
+#include <trikControl/motorInterface.h>
+#include <trikControl/objectSensorInterface.h>
+#include <trikControl/pwmCaptureInterface.h>
+#include <trikControl/sensorInterface.h>
+#include <trikControl/soundSensorInterface.h>
+#include <trikControl/vectorSensorInterface.h>
+#include <trikKernel/timeVal.h>
 
 
 
@@ -72,22 +68,6 @@ QString  PythonQtWrapper_trikControl__BatteryInterface::static_trikControl__Batt
 QString  PythonQtWrapper_trikControl__BatteryInterface::static_trikControl__BatteryInterface_trUtf8(const char*  s, const char*  c, int  n)
 {
   return (trikControl::BatteryInterface::trUtf8(s, c, n));
-}
-
-
-
-trikControl::BrickFactory* PythonQtWrapper_trikControl__BrickFactory::new_trikControl__BrickFactory()
-{ 
-return new trikControl::BrickFactory(); }
-
-trikControl::BrickInterface*  PythonQtWrapper_trikControl__BrickFactory::static_trikControl__BrickFactory_create(const QString&  configFilesPath, const QString&  mediaPath)
-{
-  return (trikControl::BrickFactory::create(configFilesPath, mediaPath));
-}
-
-trikControl::BrickInterface*  PythonQtWrapper_trikControl__BrickFactory::static_trikControl__BrickFactory_create(const QString&  systemConfig, const QString&  modelConfig, const QString&  mediaPath)
-{
-  return (trikControl::BrickFactory::create(systemConfig, modelConfig, mediaPath));
 }
 
 
@@ -150,11 +130,6 @@ trikControl::GamepadInterface*  PythonQtWrapper_trikControl__BrickInterface::gam
 QVector<uint8_t >  PythonQtWrapper_trikControl__BrickInterface::getStillImage(trikControl::BrickInterface* theWrappedObject)
 {
   return ( theWrappedObject->getStillImage());
-}
-
-trikControl::DisplayWidgetInterface*  PythonQtWrapper_trikControl__BrickInterface::graphicsWidget(trikControl::BrickInterface* theWrappedObject)
-{
-  return ( theWrappedObject->graphicsWidget());
 }
 
 trikControl::GyroSensorInterface*  PythonQtWrapper_trikControl__BrickInterface::gyroscope(trikControl::BrickInterface* theWrappedObject)
@@ -405,11 +380,6 @@ void PythonQtWrapper_trikControl__DisplayInterface::drawRect(trikControl::Displa
   ( theWrappedObject->drawRect(x, y, width, height, filled));
 }
 
-trikControl::DisplayWidgetInterface*  PythonQtWrapper_trikControl__DisplayInterface::graphicsWidget(trikControl::DisplayInterface* theWrappedObject)
-{
-  return &( theWrappedObject->graphicsWidget());
-}
-
 void PythonQtWrapper_trikControl__DisplayInterface::hide(trikControl::DisplayInterface* theWrappedObject)
 {
   ( theWrappedObject->hide());
@@ -473,38 +443,6 @@ QString  PythonQtWrapper_trikControl__DisplayInterface::static_trikControl__Disp
 QString  PythonQtWrapper_trikControl__DisplayInterface::static_trikControl__DisplayInterface_trUtf8(const char*  s, const char*  c, int  n)
 {
   return (trikControl::DisplayInterface::trUtf8(s, c, n));
-}
-
-
-
-void PythonQtWrapper_trikControl__DisplayWidgetInterface::hidden(trikControl::DisplayWidgetInterface* theWrappedObject)
-{
-  ( theWrappedObject->hidden());
-}
-
-const QMetaObject*  PythonQtWrapper_trikControl__DisplayWidgetInterface::metaObject(trikControl::DisplayWidgetInterface* theWrappedObject) const
-{
-  return ( theWrappedObject->metaObject());
-}
-
-void*  PythonQtWrapper_trikControl__DisplayWidgetInterface::qt_metacast(trikControl::DisplayWidgetInterface* theWrappedObject, const char*  arg__1)
-{
-  return ( theWrappedObject->qt_metacast(arg__1));
-}
-
-void PythonQtWrapper_trikControl__DisplayWidgetInterface::shown(trikControl::DisplayWidgetInterface* theWrappedObject)
-{
-  ( theWrappedObject->shown());
-}
-
-QString  PythonQtWrapper_trikControl__DisplayWidgetInterface::static_trikControl__DisplayWidgetInterface_tr(const char*  s, const char*  c, int  n)
-{
-  return (trikControl::DisplayWidgetInterface::tr(s, c, n));
-}
-
-QString  PythonQtWrapper_trikControl__DisplayWidgetInterface::static_trikControl__DisplayWidgetInterface_trUtf8(const char*  s, const char*  c, int  n)
-{
-  return (trikControl::DisplayWidgetInterface::trUtf8(s, c, n));
 }
 
 

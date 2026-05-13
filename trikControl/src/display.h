@@ -18,14 +18,14 @@
 #include <QtCore/QThread>
 #include <QtCore/QString>
 
-#include "displayInterface.h"
+#include "internalDisplayInterface.h"
 
 namespace trikControl {
 
 class GuiWorker;
 
 /// Implementation of display interface for real robot.
-class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT  Display : public DisplayInterface
+class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT  Display : public InternalDisplayInterface
 {
 	Q_OBJECT
 
@@ -45,7 +45,7 @@ public Q_SLOTS:
 
 	void show(const QVector<int32_t> &array, int width, int height, const QString &format) override;
 
-	void addLabel(const QString &text, int x, int y, int fontSize = -1) override;
+	void addLabel(const QString &text, int x, int y, int fontSize) override;
 	void removeLabels() override;
 
 	void setPainterColor(const QString &color) override;
@@ -53,8 +53,8 @@ public Q_SLOTS:
 
 	void drawLine(int x1, int y1, int x2, int y2) override;
 	void drawPoint(int x, int y) override;
-	void drawRect(int x, int y, int width, int height, bool filled = false) override;
-	void drawEllipse(int x, int y, int width, int height, bool filled = false) override;
+	void drawRect(int x, int y, int width, int height, bool filled) override;
+	void drawEllipse(int x, int y, int width, int height, bool filled) override;
 	void drawArc(int x, int y, int width, int height, int startAngle, int spanAngle) override;
 
 	void hide() override;
