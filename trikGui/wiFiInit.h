@@ -36,23 +36,33 @@ public:
 	~WiFiInit() override;
 
 	enum class Result {
-		success
-		, fail
+		success   // script exited 0 — mode switch complete
+		, cancelled // user cancelled, sigterm_handler restored previous mode (exit 2)
+		, fail    // script error (exit 1 or crash)
 	};
+
+	Q_PROPERTY(bool restoring READ isRestoring NOTIFY restoringChanged)
+	bool isRestoring() const { return mRestoring; }
 
 	/// Initialize wi-fi on the controller.
 	/// @param mode - wi-fi mode which we want to initialize.
-	/// @return WiFiInitWidget::success if wi-fi was succesfully initialized and WiFiInitWidget::fail otherwise.
 	Result init(WiFiMode::Mode mode);
 
 	Q_INVOKABLE void exit();
 
+	Q_INVOKABLE void setQmlParent(QObject *parent);
+
+Q_SIGNALS:
+	void restoringChanged();
+
 private:
+	bool mRestoring = false;
+
 	QEventLoop mEventLoop;
 	QProcess mProcess;
 
 private Q_SLOTS:
-	void onProcessFinished(int, QProcess::ExitStatus exitStatus);
+	void onProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
 	void onProcessError(QProcess::ProcessError error);
 };
 

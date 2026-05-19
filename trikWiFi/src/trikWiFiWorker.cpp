@@ -44,6 +44,15 @@ void TrikWiFiWorker::reinit()
 		mMonitorInterface->detach();
 	}
 
+	// destroy old communicators first so their destructors unlink the socket files
+	// before new communicators bind to the same paths
+	mMonitorFileSocketNotifier.reset();
+	mControlInterface.reset();
+	mMonitorInterface.reset();
+
+	// Pointers must be null here. WpaSupplicantCommunicator binds a UNIX socket file on construction
+	// and unlinks it on destruction. reset(new T) destroys the old object AFTER the new one binds,
+	// so the old destructor would unlink the new socket file — breaking network restoration.
 	mControlInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "ctrl", mDaemonFile));
 	mMonitorInterface.reset(new WpaSupplicantCommunicator(mInterfaceFile + "mon", mDaemonFile));
 

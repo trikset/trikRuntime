@@ -18,6 +18,15 @@ ApplicationWindow {
     property var activeTheme: ThemeMode === "light" ? _lightTheme : _darkTheme
     property var fontSizes: _fontSizes
 
+    function navigateBack() {
+        if (stack.depth > 1) {
+            stack.pop();
+            if (stack.currentItem && stack.currentItem.idList) {
+                stack.currentItem.idList.focus = true;
+            }
+        }
+    }
+
     LightTheme {
         id: _lightTheme
     }

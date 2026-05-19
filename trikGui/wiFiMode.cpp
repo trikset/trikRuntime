@@ -29,13 +29,13 @@ WiFiMode::WiFiMode(trikWiFi::TrikWiFi &wiFi, QQmlApplicationEngine *engine, QObj
 	: QObject(parent), mWiFi(wiFi), mEngine(engine), mRcReader(trikKernel::Paths::trikRcName()) {}
 
 void WiFiMode::createWiFiClient() {
-	WiFiClient *wiFiClient = new WiFiClient(mWiFi, this);
+	auto *wiFiClient = new WiFiClient(mWiFi, this);
 	mEngine->rootContext()->setContextProperty("WiFiClientServer", wiFiClient);
 	wiFiClient->scanWiFi();
 }
 
 void WiFiMode::createWiFiAP() {
-	WiFiAP *wiFiAP = new WiFiAP(this);
+	auto *wiFiAP = new WiFiAP(this);
 	mEngine->rootContext()->setContextProperty("WiFiAPServer", wiFiAP);
 }
 
@@ -51,11 +51,26 @@ void WiFiMode::setMode(Mode mode) {
 	}
 
 	if (currentMode != mode) {
-		WiFiInit wiFiInit;
-		mEngine->rootContext()->setContextProperty("WiFiInitServer", &wiFiInit);
+		auto *wiFiInit = new WiFiInit(this);
+		mEngine->rootContext()->setContextProperty("WiFiInitServer", wiFiInit);
 		mInitStatus = "start";
 		Q_EMIT initStatusChanged();
-		if (wiFiInit.init(mode) == WiFiInit::Result::fail) {
+		const auto initResult = wiFiInit->init(mode);
+
+		if (initResult == WiFiInit::Result::cancelled) {
+			// User pressed Escape. bash sigterm_handler restored currentMode.
+			// Sync C++ WiFi state to match.
+			if (currentMode == Mode::Client) {
+				mWiFi.reinit();
+			} else if (currentMode == Mode::AccessPoint) {
+				mWiFi.dispose();
+			}
+			mInitStatus = "error";
+			Q_EMIT initStatusChanged();
+			return;
+		}
+
+		if (initResult == WiFiInit::Result::fail) {
 			QLOG_ERROR() << "Failed to init WiFi in mode" << currentModeText;
 			mInitStatus = "error";
 			Q_EMIT initStatusChanged();

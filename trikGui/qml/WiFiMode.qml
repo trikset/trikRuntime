@@ -10,15 +10,14 @@ Rectangle {
     property var wiFiSelectionComponent: null
     color: activeTheme.backgroundColor
     Component.onCompleted: {
-        wiFiMode.setQmlParent(_mainItem)
-
-        var currentMode = wiFiMode.currentMode()
+        wiFiMode.setQmlParent(_mainItem);
+        var currentMode = wiFiMode.currentMode();
         if (currentMode === Mode.Client) {
-            wiFiMode.setMode(Mode.Client)
+            wiFiMode.setMode(Mode.Client);
         } else if (currentMode === Mode.AccessPoint) {
-            wiFiMode.setMode(Mode.AccessPoint)
+            wiFiMode.setMode(Mode.AccessPoint);
         } else {
-            pageLoader.setSource("WiFiModeSelection.qml")
+            pageLoader.setSource("WiFiModeSelection.qml");
         }
     }
     Loader {
@@ -26,9 +25,9 @@ Rectangle {
         anchors.fill: parent
         onLoaded: {
             if (pageLoader.item.idList) {
-                pageLoader.item.idList.focus = true
+                pageLoader.item.idList.focus = true;
             } else {
-                pageLoader.item.focus = true
+                pageLoader.item.focus = true;
             }
         }
     }
@@ -38,19 +37,17 @@ Rectangle {
         function onInitStatusChanged() {
             switch (wiFiMode.initStatus) {
             case "start":
-                pageLoader.setSource("WiFiInit.qml")
-                break
+                pageLoader.setSource("WiFiInit.qml");
+                break;
             case "WiFiClient":
-                pageLoader.setSource("WiFiClient.qml")
-                break
+                pageLoader.setSource("WiFiClient.qml");
+                break;
             case "WiFiAP":
-                pageLoader.setSource("WiFiAP.qml")
-                break
+                pageLoader.setSource("WiFiAP.qml");
+                break;
             case "error":
-                stack.currentItem.destroy()
-                stack.pop()
-                stack.currentItem.idList.focus = true
-                break
+                root.navigateBack();
+                break;
             }
         }
     }

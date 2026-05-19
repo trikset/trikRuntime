@@ -3,25 +3,30 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Rectangle {
+    id: _mainItem
     color: activeTheme.backgroundColor
     property var wiFiInit: WiFiInitServer
+
+    Component.onCompleted: {
+        wiFiInit.setQmlParent(_mainItem);
+    }
 
     Keys.onPressed: {
         switch (event.key) {
         case Qt.Key_Escape:
-            wiFiInit.exit()
-            event.accepted = true
-            break
+            wiFiInit.exit();
+            event.accepted = true;
+            break;
         case Qt.Key_PowerOff:
-            event.accepted = true
-            break
+            event.accepted = true;
+            break;
         case Qt.Key_W:
             if (event.modifiers & Qt.ControlModifier) {
-                event.accepted = true
+                event.accepted = true;
             }
-            break
+            break;
         default:
-            break
+            break;
         }
     }
     ColumnLayout {
@@ -31,9 +36,10 @@ Rectangle {
         spacing: 10
 
         Text {
-            text: qsTr("Network initialization in process")
+            text: wiFiInit.restoring ? qsTr("Restoring previous network mode") : qsTr("Network initialization in process")
             wrapMode: Text.Wrap
             Layout.fillWidth: true
+            Layout.preferredHeight: font.pixelSize * 4
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: fontSizes.medium
             color: activeTheme.textColor

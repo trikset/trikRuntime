@@ -624,6 +624,10 @@
         <source>Press Escape for break</source>
         <translation>Нажмите Escape, чтобы выйти</translation>
     </message>
+    <message>
+        <source>Restoring previous network mode</source>
+        <translation>Восстановление режима сети</translation>
+    </message>
 </context>
 <context>
     <name>WiFiMode</name>
