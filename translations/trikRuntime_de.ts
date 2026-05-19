@@ -509,6 +509,10 @@
 <context>
     <name>WiFiInit</name>
     <message>
+        <source>Restoring previous network mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Network initialization in process</source>
         <translation type="unfinished"></translation>
     </message>
