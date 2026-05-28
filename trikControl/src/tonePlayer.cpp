@@ -81,6 +81,10 @@ void TonePlayer::play(int freqHz, int durationMs)
 void TonePlayer::stop()
 {
 	mTimer.stop();
-	mOutput->suspend();
-	mOutput->reset();
+	// Calling suspend()/reset() on an already-stopped output crashes ALSA with
+	// snd_pcm_drain assertion failure (pcm == nullptr).
+	if (mOutput->state() != QAudio::StoppedState) {
+		mOutput->suspend();
+		mOutput->reset();
+	}
 }

@@ -14,6 +14,8 @@
 
 #include "runningCode.h"
 
+#include <QTimer>
+
 using namespace trikGui;
 
 RunningCode::RunningCode(Controller &controller, QObject *parent) : QObject(parent), mController(controller) {
@@ -36,9 +38,13 @@ void RunningCode::setProgram(const QString &programName, int scriptId) {
 	mProgramName = programName;
 	mScriptId = scriptId;
 }
+
 void RunningCode::abortScript()
 {
-	mController.abortExecution();
+	// Defer to the next event loop iteration so the QML signal handler that
+	// called us (RunningCodeComponent or GraphicsWidget) finishes before abort()
+	// runs and eventually destroys the component.
+	QTimer::singleShot(0, &mController, &Controller::abortExecution);
 }
 
 int RunningCode::scriptId() const { return mScriptId; }

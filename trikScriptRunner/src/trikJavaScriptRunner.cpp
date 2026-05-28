@@ -104,7 +104,6 @@ void TrikJavaScriptRunner::run(const QString &script, const QString &fileName)
 {
 	const int scriptId = mMaxScriptId++;
 	QLOG_INFO() << "TrikJavaScriptRunner: new script" << scriptId << "from file" << fileName;
-	mScriptEngineWorker->stopScript();
 
 	if (!fileName.isEmpty()) {
 		mScriptFileNames[scriptId] = fileName;
@@ -124,6 +123,12 @@ void TrikJavaScriptRunner::abort()
 	// Ugly and unsafe to call these methods from an incorrect thread, but who cares ...
 	if (mScriptEngineWorker && !mFinishing ) {
 		mScriptEngineWorker->stopScript();
+	}
+}
+
+void TrikJavaScriptRunner::resetBrick()
+{
+	if (mScriptEngineWorker && !mFinishing) {
 		mScriptEngineWorker->resetBrick();
 	}
 }
