@@ -96,6 +96,7 @@ namespace trikScriptRunner {
 enum class ScriptType { // must be 0, 1, ..
 	UNINITIALIZED = -1,
 	JAVASCRIPT,
+	CPP,
 #ifndef TRIK_NOPYTHON
 	PYTHON,
 #endif

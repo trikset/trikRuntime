@@ -17,6 +17,7 @@
 #include "trikScriptRunner.h"
 #include "trikJavaScriptRunner.h"
 #include "trikPythonRunner.h"
+#include "trikCppRunner.h"
 
 #include <trikKernel/timeVal.h>
 #include "threading.h"
@@ -142,6 +143,10 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 							new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 #endif
+			case ScriptType::CPP:
+				QSharedPointer<TrikScriptRunnerInterface>(
+							new TrikCppRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
+				break;
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
 				return nullptr;

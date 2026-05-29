@@ -27,6 +27,7 @@
 #include <trikControl/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikWiFi/trikWiFi.h>
+#include <QLibrary>
 
 #include "runningCode.h"
 #include "autoRunner.h"
@@ -118,6 +119,8 @@ void Controller::runFile(const QString &filePath)
 	} else if (fileInfo.suffix() == "py") {
 		mScriptRunner->run(trikKernel::FileUtils::readFromFile(fileInfo.canonicalFilePath()),
 						   trikScriptRunner::ScriptType::PYTHON, fileInfo.baseName());
+	} else if (QLibrary::isLibrary(filePath)) {
+		mScriptRunner->run("", trikScriptRunner::ScriptType::CPP, fileInfo.fileName());
 	} else if (fileInfo.isExecutable()) {
 		QProcess::startDetached(filePath, {});
 	}
