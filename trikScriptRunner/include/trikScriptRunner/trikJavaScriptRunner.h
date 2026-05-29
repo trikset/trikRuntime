@@ -57,6 +57,7 @@ public Q_SLOTS:
 	void run(const QString &script, const QString &fileName = "") override;
 	void runDirectCommand(const QString &command) override;
 	void abort() override;
+	void resetBrick() override;
 	void brickBeep() override;
 	void setWorkingDirectory(const QString &workingDir) override;
 

@@ -54,6 +54,13 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	}
 	mScriptControl->setParent(this);
 
+	connect(this, &TrikScriptRunnerInterface::startedScript,
+			this, [this](const QString &, int) { mScriptRunning = true; });
+	connect(this, &TrikScriptRunnerInterface::startedDirectScript,
+			this, [this](int) { mScriptRunning = true; });
+	connect(this, &TrikScriptRunnerInterface::completed,
+			this, [this](const QString &, int) { mScriptRunning = false; });
+
 #ifndef TRIK_NOPYTHON
 	// TrikPythonRunner must be initialized early during trikGui startup;
 	// otherwise the first script execution can take over 6 seconds.
@@ -161,13 +168,37 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 
 void TrikScriptRunner::run(const QString &script, ScriptType stype, const QString &fileName)
 {
-	abort();
-	auto prevRunner = mLastRunner;
-	auto runner = fetchRunner(stype);
-	if (prevRunner != stype) {
-		runner->abort();
+	if (mAbortInProgress) {
+		// Abort is in progress (we're inside wait.exec()). Save as pending — will run after abort finishes.
+		QLOG_INFO() << "Run deferred, abort in progress";
+		mPendingRun.reset(new PendingRun{script, stype, fileName});
+		return;
 	}
-	runner->run(script, fileName);
+
+	abort();
+
+	// Abort() calls runPending() at the end — if a newer run arrived during the wait
+	// or during resetBrick()'s inner loop, it was already started (mScriptRunning=true).
+	// Skip this older run to avoid double-starting.
+	if (mScriptRunning) {
+		QLOG_INFO() << "Run skipped, pending script was started inside abort";
+		return;
+	}
+
+	// startedScript arrives via queued connection (worker thread),
+	// so the next run() call could arrive before mScriptRunning becomes true from the signal.
+	mScriptRunning = true;
+	fetchRunner(stype)->run(script, fileName);
+}
+
+void TrikScriptRunner::runPending()
+{
+	if (!mPendingRun) {
+		return;
+	}
+	auto pending = *mPendingRun;
+	mPendingRun.reset();
+	run(pending.script, pending.stype, pending.fileName);
 }
 
 void TrikScriptRunner::runDirectCommand(const QString &command)
@@ -177,7 +208,41 @@ void TrikScriptRunner::runDirectCommand(const QString &command)
 
 void TrikScriptRunner::abort()
 {
+	mPendingRun.reset();
+
+	if (!mScriptRunning) {
+		return;
+	}
+
+	if (mAbortInProgress) {
+		return;
+	}
+
+	mAbortInProgress = true;
+	QEventLoop wait;
+	auto conn = connect(this, &TrikScriptRunnerInterface::completed,
+						&wait, &QEventLoop::quit);
 	fetchRunner(mLastRunner)->abort();
+	// Do not proceed with further script launch code — instead wait for complete 
+	// termination until the completed signal arrives. Since everything is asynchronous, 
+	// exact on-time stopping is not guaranteed, but this works in practice and fixes 
+	// the button-spamming hang in TrikStudio and on the controller.
+	wait.exec();
+	disconnect(conn);
+
+	// Keep mAbortInProgress=true during resetBrick() — it internally spins its own
+	// QEventLoop (cross-thread invoke). Any run() calls arriving there will be
+	// deferred as pending and started after abort() fully returns.
+	fetchRunner(mLastRunner)->resetBrick();
+	mAbortInProgress = false;
+	// If a run() arrived during wait.exec() or resetBrick()'s inner loop, start it now.
+	// This covers the case where abort() is called directly (not via run()), e.g. from abortExecution().
+	runPending();
+}
+
+void TrikScriptRunner::resetBrick()
+{
+	fetchRunner(mLastRunner)->resetBrick();
 }
 
 void TrikScriptRunner::brickBeep()

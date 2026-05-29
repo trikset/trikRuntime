@@ -27,6 +27,15 @@ Rectangle {
         }
 
         function onShowRunningCodeComponent(programName) {
+            // If a RunningCodeComponent is already on the stack, replace it
+            // instead of pushing a second one (happens when a new script starts
+            // before the previous one's hide signal arrives).
+            if (runningCodeObject !== null) {
+                if (runningCodeObject === stack.currentItem) {
+                    stack.pop();
+                }
+                runningCodeObject = null;
+            }
             var page = stack.push("RunningCodeComponent.qml");
             if (page) {
                 if (programName === "direct command") {
@@ -88,14 +97,12 @@ Rectangle {
                 // "Object destroyed while signal handler is in progress" crash.
                 var saved = _mainMenuView.graphicsWidgetObject;
                 _mainMenuView.graphicsWidgetObject = null;
-                Qt.callLater(function () {
-                    if (saved === stack.currentItem) {
-                        stack.pop();
-                        if (stack.currentItem && stack.currentItem.idList) {
-                            stack.currentItem.idList.focus = true;
-                        }
+                if (saved === stack.currentItem) {
+                    stack.pop();
+                    if (stack.currentItem && stack.currentItem.idList) {
+                        stack.currentItem.idList.focus = true;
                     }
-                });
+                }
             } else {
                 _mainMenuView.graphicsWidgetObject = null;
             }
