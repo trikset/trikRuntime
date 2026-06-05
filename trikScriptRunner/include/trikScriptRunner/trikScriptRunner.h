@@ -77,18 +77,33 @@ public Q_SLOTS:
 	/// See corresponding TrikScriptRunnerInterface method
 	void abort() override;
 	/// See corresponding TrikScriptRunnerInterface method
+	void resetBrick() override;
+	/// See corresponding TrikScriptRunnerInterface method
 	void brickBeep() override;
 
 	void setWorkingDirectory(const QString &workingDir) override;
 
 private:
 	TrikScriptRunnerInterface * fetchRunner(ScriptType stype);
+	void runPending();
+
+
+	// For the script for deferred launch if a start signal
+	// arrives before the previous one has stopped.
+	struct PendingRun {
+		QString script;
+		ScriptType stype;
+		QString fileName;
+	};
 
 	trikControl::BrickInterface &mBrick;
 	QPointer<trikNetwork::MailboxInterface> mMailbox;
 	QPointer<TrikScriptControlInterface> mScriptControl;
 	std::vector<QSharedPointer<TrikScriptRunnerInterface>> mScriptRunnerArray;
 	ScriptType mLastRunner;
+	bool mScriptRunning = false;
+	bool mAbortInProgress = false;
+	QScopedPointer<PendingRun> mPendingRun;
 };
 
 }

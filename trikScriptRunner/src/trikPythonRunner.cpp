@@ -83,7 +83,6 @@ TrikPythonRunner::~TrikPythonRunner()
 void TrikPythonRunner::run(const QString &script, const QString &fileName)
 {
 	QFileInfo scriptFile = QFileInfo(fileName);
-	mScriptEngineWorker->stopScript();
 	mScriptEngineWorker->run(script, scriptFile);
 }
 
@@ -121,6 +120,12 @@ void TrikPythonRunner::abort()
 {
 	if (mScriptEngineWorker) {
 		mScriptEngineWorker->stopScript();
+	}
+}
+
+void TrikPythonRunner::resetBrick()
+{
+	if (mScriptEngineWorker) {
 		mScriptEngineWorker->resetBrick();
 	}
 }

@@ -165,6 +165,10 @@ public Q_SLOTS:
 	/// be stopped as well.
 	virtual void abort() = 0;
 
+	/// Resets brick hardware (motors, sensors, audio) after script has stopped.
+	/// Must be called only after completed() signal is received.
+	virtual void resetBrick() = 0;
+
 	/// Plays "beep" sound.
 	virtual void brickBeep() = 0;
 
