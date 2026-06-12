@@ -77,6 +77,19 @@ Rectangle {
         }
     }
 
+    // Set GraphicsWidget dimensions early, before the widget
+    // is drawn — required for correct image scaling in brick.display().showImage().
+    Binding {
+        target: GraphicsWidget
+        property: "width"
+        value: _mainMenuView.width
+    }
+    Binding {
+        target: GraphicsWidget
+        property: "height"
+        value: _mainMenuView.height
+    }
+
     Connections {
         target: GraphicsWidget
 
