@@ -10,18 +10,18 @@ Rectangle {
     Keys.onPressed: {
         switch (event.key) {
         case Qt.Key_Escape:
-            event.accepted = true
-            break
+            event.accepted = true;
+            break;
         case Qt.Key_PowerOff:
-            RunningCode.abortScript()
-            event.accepted = true
-            break
+            RunningCode.abortScript();
+            event.accepted = true;
+            break;
         case Qt.Key_W:
             if (event.modifiers & Qt.ControlModifier) {
-                RunningCode.abortScript()
-                event.accepted = true
+                RunningCode.abortScript();
+                event.accepted = true;
             }
-            break
+            break;
         }
     }
 

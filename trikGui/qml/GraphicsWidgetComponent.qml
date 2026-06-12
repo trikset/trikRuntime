@@ -5,17 +5,6 @@ Rectangle {
     id: _graphicsContainer
     color: "transparent"
 
-    Binding {
-        target: GraphicsWidget
-        property: "width"
-        value: _graphicsContainer.width
-    }
-    Binding {
-        target: GraphicsWidget
-        property: "height"
-        value: _graphicsContainer.height
-    }
-
     Component.onCompleted: {
         GraphicsWidget.parent = _graphicsContainer;
     }
