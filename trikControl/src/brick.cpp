@@ -119,6 +119,19 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		mGamepad.reset(new Gamepad(mConfigurer, *mHardwareAbstraction));
 	}
 
+	// Accelerometer must be created before gyroscope — gyro depends on it for calibration.
+	// Cannot rely on createDevice loop: XML may list gyroscope first.
+	if (mConfigurer.ports().contains("boardAccelPort")
+			&& mConfigurer.deviceClass("boardAccelPort") == "iioDevice") {
+		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction, "boardAccelPort"));
+	}
+
+	if (mConfigurer.ports().contains("boardGyroPort")
+			&& mConfigurer.deviceClass("boardGyroPort") == "iioDevice") {
+		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
+									, "boardGyroPort"));
+	}
+
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");
 	mPlayMp3FileCommand = mConfigurer.attributeByDevice("playMp3File", "command");
 }
@@ -624,15 +637,6 @@ void Brick::createDevice(const QString &port)
 				new IrCamera(port, mConfigurer, *mHardwareAbstraction)
 				);
 			mIrCamera.swap(tmp);
-		}
-		else if (deviceClass == "iioDevice") {
-			const auto &deviceType = mConfigurer.deviceType(port);
-			if (deviceType == "accelerometer"){
-				mAccelerometer.reset(new VectorSensor(deviceType, mConfigurer, *mHardwareAbstraction, port));
-			} else if (deviceType == "gyroscope"){
-				mGyroscope.reset(new GyroSensor(deviceType, mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
-												, port));
-			}
 		}
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();
