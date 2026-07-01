@@ -51,7 +51,7 @@ jobs:
             echo "LC_ALL=C.UTF-8" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
           submodules: recursive
