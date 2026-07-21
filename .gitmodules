@@ -13,3 +13,7 @@
 [submodule "mlx90640-library/mlx90640-library"]
 	path = mlx90640-library/mlx90640-library
 	url = https://github.com/trikset/trik-mlx90640-library.git
+
+[submodule "trikGui/Qt-QrCodeGenerator"]
+	path = trikGui/Qt-QrCodeGenerator
+	url = https://github.com/alex-spataru/Qt-QrCodeGenerator.git

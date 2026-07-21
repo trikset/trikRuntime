@@ -42,10 +42,5 @@ OTHER_FILES += \
 implementationIncludes(tests/testUtils)
 links(testUtils)
 
-trik_new_age {
-    copyToDestdir($$PWD/kernel-4.14/test-system-config.xml, now)
-    copyToDestdir($$PWD/kernel-4.14/test-model-config.xml, now)
-} else {
-    copyToDestdir($$PWD/kernel-3.6/test-system-config.xml, now)
-    copyToDestdir($$PWD/kernel-3.6/test-model-config.xml, now)
-}
+copyToDestdir($$PWD/kernel-4.14/test-system-config.xml, now)
+copyToDestdir($$PWD/kernel-4.14/test-model-config.xml, now)

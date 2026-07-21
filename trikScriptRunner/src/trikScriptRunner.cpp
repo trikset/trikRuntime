@@ -17,11 +17,13 @@
 #include "trikScriptRunner.h"
 #include "trikJavaScriptRunner.h"
 #include "trikPythonRunner.h"
+#include "trikCppRunner.h"
 
 #include <trikKernel/timeVal.h>
 #include "threading.h"
 #include <QCoreApplication>
 #include <QMetaMethod>
+#include <QStack>
 
 using namespace trikControl;
 using namespace trikScriptRunner;
@@ -44,7 +46,7 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 	mScriptRunnerArray.resize(to_underlying(ScriptType::Size));
 	REGISTER_DEVICES_WITH_TEMPLATE(REGISTER_METATYPE)
 	if (mailbox) {
-			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, QString message){
+			connect(mailbox, &MailboxInterface::newMessage, this, [this](int senderNumber, const QString &message){
 				Q_EMIT sendMailboxMessage(QString("mail: sender: %1 contents: %2")
 									 .arg(senderNumber)
 									 .arg(message)
@@ -52,6 +54,12 @@ TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
 			});
 	}
 	mScriptControl->setParent(this);
+
+#ifndef TRIK_NOPYTHON
+	// TrikPythonRunner must be initialized early during trikGui startup;
+	// otherwise the first script execution can take over 6 seconds.
+	fetchRunner(ScriptType::PYTHON);
+#endif
 }
 
 TrikScriptRunner::TrikScriptRunner(trikControl::BrickInterface &brick
@@ -85,7 +93,8 @@ void TrikScriptRunner::registerUserFunction(const QString &name, QScriptEngine::
 
 void TrikScriptRunner::addCustomEngineInitStep(const std::function<void (QScriptEngine *)> &step)
 {
-	fetchRunner(mLastRunner)->addCustomEngineInitStep(step);
+	// The function is only called during JavaScript engine registration
+	fetchRunner(ScriptType::JAVASCRIPT)->addCustomEngineInitStep(step);
 }
 
 bool TrikScriptRunner::wasError()
@@ -103,6 +112,9 @@ QStringList TrikScriptRunner::knownMethodNamesFor(ScriptType t)
 	return fetchRunner(t)->knownMethodNames();
 }
 
+// Removing the default parameter would require changes in many other places.
+// TODO: revisit later.
+// NOLINTBEGIN(google-default-arguments)
 void TrikScriptRunner::run(const QString &script, const QString &fileName)
 {
 #ifndef TRIK_NOPYTHON
@@ -114,6 +126,7 @@ void TrikScriptRunner::run(const QString &script, const QString &fileName)
 		run(script, ScriptType::JAVASCRIPT, fileName);
 	}
 }
+// NOLINTEND(google-default-arguments)
 
 TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 {
@@ -130,6 +143,10 @@ TrikScriptRunnerInterface * TrikScriptRunner::fetchRunner(ScriptType stype)
 							new TrikPythonRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
 				break;
 #endif
+			case ScriptType::CPP:
+				QSharedPointer<TrikScriptRunnerInterface>(
+							new TrikCppRunner(&mBrick, mMailbox, mScriptControl)).swap(cell);
+				break;
 			default:
 				QLOG_ERROR() << "Can't handle script with unrecognized type: " << to_underlying(stype);
 				return nullptr;
@@ -178,16 +195,29 @@ void TrikScriptRunner::setWorkingDirectory(const QString &workingDir)
 	fetchRunner(mLastRunner)->setWorkingDirectory(workingDir);
 }
 
-void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj) {
-	for (int i = obj->methodOffset(); i < obj->methodCount(); ++i) {
-		auto const &metaMethod = obj->method(i);
-		auto const &methodName = QString::fromLatin1(metaMethod.name());
-		result.insert(methodName);
+void TrikScriptRunnerInterface::Helper::collectMethodNames(QSet<QString> &result, const QMetaObject *obj)
+{
+	QSet<const QMetaObject *> visited;
+	QStack<const QMetaObject *> stack;
+	stack.push(obj);
 
-		auto const &methodReturnTypeId = metaMethod.returnType();
-		const QMetaObject *newObj = QMetaType::metaObjectForType(methodReturnTypeId);
-		if (newObj) {
-			collectMethodNames(result, newObj);
+	while (!stack.isEmpty()) {
+		const QMetaObject *cur = stack.pop();
+		if (!cur || visited.contains(cur)) {
+			continue;
+		}
+		visited.insert(cur);
+
+		for (int i = cur->methodOffset(); i < cur->methodCount(); ++i) {
+			const auto metaMethod = cur->method(i);
+			result.insert(QString::fromLatin1(metaMethod.name()));
+
+			const int returnTypeId = metaMethod.returnType();
+			if (const QMetaObject *next = QMetaType::metaObjectForType(returnTypeId)) {
+				if (!visited.contains(next)) {
+					stack.push(next);
+				}
+			}
 		}
 	}
 }

@@ -121,7 +121,7 @@ private:
 	};
 
 	/// Draw all elements.
-	virtual void paintEvent(QPaintEvent *paintEvent);
+	void paint(QPainter *painter) override;
 
 	void addShape(Shape *shape);
 

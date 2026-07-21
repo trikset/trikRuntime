@@ -8,22 +8,22 @@ working properly, it tests only that runtime can interact with them).
 	</initScript>
 
 	<S1>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S1>
 	<S2>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S2>
 	<S3>
-		<angularServomotor  />
+		<angularServomotor180  />
 	</S3>
 	<S4>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S4>
 	<S5>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S5>
 	<S6>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S6>
 
 	<A1>

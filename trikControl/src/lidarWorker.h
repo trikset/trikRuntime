@@ -19,7 +19,8 @@
 #include <QSemaphore>
 #include <QSerialPort>
 #include <QScopedArrayPointer>
-#include <stdint.h>
+#include <cstdint>
+#include <memory>
 
 #include "deviceState.h"
 
@@ -37,7 +38,7 @@ public:
 	/// @param fileName - name of a FIFO file.
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	explicit LidarWorker(const QString &fileName, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-	~LidarWorker();
+	~LidarWorker() override = default;
 
 	Status status() const override;
 	/// Inits Fifo
@@ -67,7 +68,7 @@ private:
 	QSerialPort mSerial;
 
 	/// buffer for unparsed raw data chunks from serial port
-	QScopedArrayPointer<uint8_t> mLidarChunk;
+	std::unique_ptr<uint8_t[]> mLidarChunk;
 	size_t mLidarChunkBytes {};
 	bool mFlagHunt {true};
 

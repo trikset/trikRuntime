@@ -54,6 +54,7 @@ void TrikJsRunnerTest::SetUp()
 	mBrick.reset(trikControl::BrickFactory::create("./test-system-config.xml"
 					, "./test-model-config.xml", "./media"));
 	mScriptRunner.reset(new trikScriptRunner::TrikScriptRunner(*mBrick, nullptr));
+	mScriptRunner->setDefaultRunner(trikScriptRunner::ScriptType::JAVASCRIPT);
 	mScriptRunner->registerUserFunction("assert", scriptAssert);
 	QObject::connect(mScriptRunner.data(), &trikScriptRunner::TrikScriptRunnerInterface::textInStdOut,
 					 mScriptRunner.data(), [this](const QString &m) { mStdOut += m; });
@@ -194,6 +195,8 @@ TEST_F(TrikJsRunnerTest, brickInterfaceAccess)
 	ASSERT_TRUE(knownMethodNames.contains("brick"));
 	ASSERT_TRUE(knownMethodNames.contains("setPower"));
 	auto errCode = run("brick.sensor(A1).read()", "_.js");
+	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
+	errCode = run("brick.graphicsWidget()", "_.js");
 	ASSERT_EQ(errCode, EXIT_SCRIPT_SUCCESS);
 }
 

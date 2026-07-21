@@ -10,98 +10,86 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * This file was modified by Yurii Litvinov to make it comply with the requirements of trikRuntime
- * project. See git revision history for detailed changes. */
+ * limitations under the License. */
 
 #include "trikGuiApplication.h"
 
-#include <QtGui/QKeyEvent>
-#include <QtCore/QProcess>
-#include <QtWidgets/QWidget>
-
-#include "backgroundWidget.h"
+#include <QKeyEvent>
+#include <QProcess>
+#include <QCoreApplication>
+#include <QGuiApplication>
+#include <QQuickWindow>
+#include <QExposeEvent>
 
 using namespace trikGui;
 
 TrikGuiApplication::TrikGuiApplication(int &argc, char **argv)
-	: QApplication(argc, argv)
+	: QGuiApplication(argc, argv)
 {
 	connect(&mPowerButtonPressedTimer, &QTimer::timeout, this, &TrikGuiApplication::shutdownSoon);
 	connect(&mShutdownDelayTimer, &QTimer::timeout, this, &TrikGuiApplication::shutdown);
 	mPowerButtonPressedTimer.setSingleShot(true);
 	mShutdownDelayTimer.setSingleShot(true);
+	installEventFilter(this);
 }
 
-static bool isTrikPowerOffKey(Qt::Key key) {
-	return key == Qt::Key_PowerOff || ( key == Qt::Key_W && (QApplication::keyboardModifiers() & Qt::ControlModifier));
-}
-
-bool TrikGuiApplication::notify(QObject *receiver, QEvent *event)
+static bool isTrikPowerOffKey(const QKeyEvent *ke)
 {
+	return ke->key() == Qt::Key_PowerOff
+		|| (ke->key() == Qt::Key_W && (ke->modifiers() & Qt::ControlModifier));
+}
+
+bool TrikGuiApplication::eventFilter(QObject *obj, QEvent *event)
+{
+	Q_UNUSED(obj);
+
 	if (event->type() == QEvent::KeyPress) {
-		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
-		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
-			if (keyEvent->isAutoRepeat()) {
-				//	if (!mPowerButtonPressedTimer.isActive()) {
-				//	mPowerButtonPressedTimer.start(2000);
-				//	}
-			} else {
-				if (!mPowerButtonPressedTimer.isActive()) {
-					mPowerButtonPressedTimer.start(1500);
-				}
-				mIsShutdownRequested = true;
-				refreshWidgets(); // refresh display if not auto-repeat
+		auto *keyEvent = static_cast<QKeyEvent *>(event);
+		if (!keyEvent->isAutoRepeat() && isTrikPowerOffKey(keyEvent)) {
+			if (!mPowerButtonPressedTimer.isActive()) {
+				mPowerButtonPressedTimer.start(1500);
 			}
-			static QKeyEvent evntKeyPowerOff(QEvent::KeyPress, Qt::Key_PowerOff, Qt::NoModifier);
-			event = &evntKeyPowerOff;
+			mIsShutdownRequested = true;
+			forceRepaint();
 		}
 	} else if (event->type() == QEvent::KeyRelease) {
-		QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
-		if (isTrikPowerOffKey(static_cast<Qt::Key>(keyEvent->key()))) {
-			if (!keyEvent->isAutoRepeat()) {
-				mIsShutdownRequested = false;
-//				if (mPowerButtonPressedTimer.isActive()) {
-//					mPowerButtonPressedTimer.stop();
-//				}
-			} else {
-			}
-			static QKeyEvent evntKeyPowerOff(QEvent::KeyRelease, Qt::Key_PowerOff, Qt::NoModifier);
-			event = &evntKeyPowerOff;
+		auto *keyEvent = static_cast<QKeyEvent *>(event);
+		if (!keyEvent->isAutoRepeat() && isTrikPowerOffKey(keyEvent)) {
+			mIsShutdownRequested = false;
 		}
 	}
-
-	return QApplication::notify(receiver, event);
-}
-
-void TrikGuiApplication::refreshWidgets()
-{
-	if (dynamic_cast<BackgroundWidget *>(QApplication::activeWindow())) {
-		for (const auto widget : QApplication::allWidgets()) {
-			widget->update();
-		}
-	}
-}
-
-void TrikGuiApplication::shutdown()
-{
-	if(!mIsShutdownRequested) {
-		setStyleSheet(mSavedStyleSheet);
-		return;
-	}
-
-	QProcess::startDetached("/sbin/shutdown", {"-h", "-P", "now" });
-	QCoreApplication::quit();
+	return false;
 }
 
 void TrikGuiApplication::shutdownSoon()
 {
-	if(mShutdownDelayTimer.isActive() || !mIsShutdownRequested) {
+	if (mShutdownDelayTimer.isActive() || !mIsShutdownRequested) {
 		return;
 	}
 
-	mSavedStyleSheet = styleSheet();
-	setStyleSheet(mSavedStyleSheet + " QWidget { background-color:red; } ");
+	Q_EMIT showPowerConfirm();
 	mShutdownDelayTimer.start(1500);
+}
+
+void TrikGuiApplication::shutdown()
+{
+	if (!mIsShutdownRequested) {
+		Q_EMIT hidePowerConfirm();
+		return;
+	}
+
+	QProcess::startDetached("/sbin/shutdown", {"-h", "-P", "now"});
+	QCoreApplication::quit();
+}
+
+// Quick fix, we need the ability to redraw the GUI
+// if we have occupied the display buffer, for example, with video sensors.
+void TrikGuiApplication::forceRepaint()
+{
+	for (auto *window : QGuiApplication::allWindows()) {
+		if (auto *quickWindow = qobject_cast<QQuickWindow *>(window)) {
+			QRect fullRect(0, 0, quickWindow->width(), quickWindow->height());
+			QCoreApplication::postEvent(quickWindow, new QExposeEvent(QRegion(fullRect)));
+		}
+	}
 }

@@ -32,7 +32,7 @@ jobs:
             git config --global core.autocrlf false
 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 1
           submodules: recursive
@@ -46,7 +46,8 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y --no-install-recommends \
           make qtscript5-dev qttools5-dev-tools qtmultimedia5-dev libqt5serialport5-dev \
-          qtbase5-private-dev bear
+          qtbase5-private-dev qtdeclarative5-dev libqt5svg5-dev \
+          qtquickcontrols2-5-dev bear
  
       - name: Ccache
         uses: hendrikmuhs/ccache-action@v1.2.20
@@ -86,7 +87,7 @@ jobs:
         working-directory: ${{ env.BUILD_DIR }}
   
       - name: Clang-tidy
-        uses: cpp-linter/cpp-linter-action@v2.16.7
+        uses: cpp-linter/cpp-linter-action@v2.20.0
         id: linter
         with:
          style: ''
@@ -95,7 +96,7 @@ jobs:
          database: ${{ env.BUILD_DIR }}
          verbosity: 'info'
          files-changed-only: true
-         ignore-tidy: '^(PythonQt|mlx90640-library)$'
+         ignore-tidy: 'PythonQt/**|mlx90640-library/**|**/generated_cpp/**'
    
       - name: Clang-tidy exit
         if: ${{ steps.linter.outputs.checks-failed > 0 }}

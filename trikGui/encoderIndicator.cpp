@@ -20,32 +20,13 @@
 
 using namespace trikGui;
 
-EncoderIndicator::EncoderIndicator(const QString &port
-		, trikControl::EncoderInterface &encoder
-		, QWidget *parent)
-	: AbstractIndicator(parent)
-	, mEncoder(encoder)
-	, mNameLabel(port)
-	, mValueLabel("0")
-{
-	mNameLabel.setAlignment(Qt::AlignCenter);
-	mValueLabel.setAlignment(Qt::AlignCenter);
+EncoderIndicator::EncoderIndicator(const QString &port, trikControl::EncoderInterface &encoder, QObject *parent)
+	: AbstractIndicator(parent), mEncoder(encoder), mValue(0), mNameLabel(port) {}
 
-	mValueDial.setMinimum(0);
-	mValueDial.setMaximum(360);
-	mValueDial.setWrapping(true);
-
-	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mValueDial);
-	mLayout.addWidget(&mValueLabel);
-	setLayout(&mLayout);
-
-	setFocusPolicy(Qt::StrongFocus);
+void EncoderIndicator::renew() {
+	mValue = mEncoder.read();
+	Q_EMIT valueChanged();
 }
 
-void EncoderIndicator::renew()
-{
-	const int value = mEncoder.read();
-	mValueLabel.setText(QString::number(value));
-	mValueDial.setValue(value);
-}
+int EncoderIndicator::value() { return mValue; }
+QString EncoderIndicator::nameLabel() { return mNameLabel; }

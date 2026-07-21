@@ -37,28 +37,28 @@ public:
 	WpaSupplicantCommunicator(const QString &interfaceFile, const QString &daemonFile, QObject *parent = nullptr);
 
 	/// Destructor.
-	~WpaSupplicantCommunicator();
+	~WpaSupplicantCommunicator() override;
 
 	/// Handle of a file
-	int fileDescriptor();
+	int fileDescriptor() const;
 
 	/// Attach communicator to wpa_supplicant to be able to receive network events.
-	int attach();
+	int attach() const;
 
 	/// Detach communicator from wpa_supplicant.
-	int detach();
+	int detach() const;
 
 	/// Send a request to wpa_supplicant.
 	/// @param command - command to wpa_supplicant. List of available commands is here:
 	///        http://hostap.epitest.fi/wpa_supplicant/devel/ctrl_iface_page.html
 	/// @param reply - reply from wpa_supplicant.
-	int request(const QString &command, QString &reply);
+	int request(const QString &command, QString &reply) const;
 
 	/// Returns true if there are unread incoming messages from wpa_supplicant.
-	bool isPending();
+	bool isPending() const;
 
 	/// Receive next incoming message from wpa_supplicant.
-	int receive(QString &message);
+	int receive(QString &message) const;
 
 private:
 	int mSocket;

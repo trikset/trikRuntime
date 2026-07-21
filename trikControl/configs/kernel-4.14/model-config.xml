@@ -26,19 +26,19 @@ Note that device, even if listed here, may fail by itself, then it also will not
 
 	<!-- Servomotor or PWM capture ports. -->
 	<S1>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S1>
 	<S2>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S2>
 	<S3>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S3>
 	<S4>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S4>
 	<S5>
-		<angularServomotor />
+		<angularServomotor180 />
 	</S5>
 	<S6>
 		<manipulatorServomotor />

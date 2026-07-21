@@ -28,7 +28,7 @@ using namespace trikControl;
 
 GraphicsWidget::GraphicsWidget()
 {
-	setAutoFillBackground(true);
+	setRenderTarget(QQuickPaintedItem::Image);
 }
 
 GraphicsWidget::~GraphicsWidget()
@@ -38,43 +38,39 @@ GraphicsWidget::~GraphicsWidget()
 
 void GraphicsWidget::showCommand()
 {
-	show();
 	Q_EMIT shown();
 }
 
 void GraphicsWidget::hideCommand()
 {
-	hide();
 	Q_EMIT hidden();
 }
 
-void GraphicsWidget::paintEvent(QPaintEvent *paintEvent)
+void GraphicsWidget::paint(QPainter *painter)
 {
-	Q_UNUSED(paintEvent)
-
-	QPainter painter(this);
-
 	if (!mPicture.isNull()) {
-		painter.drawPixmap(geometry(), mPicture);
+		painter->drawPixmap(QRect(0, 0, static_cast<int>(width()), static_cast<int>(height())), mPicture);
 	}
 
 	for (Shape *shape : mElements) {
-		shape->draw(&painter);
+		shape->draw(painter);
 	}
 
 	for (const auto & position : mLabels.keys()) {
-		painter.setPen(mCurrentPenColor);
+		painter->setPen(mCurrentPenColor);
 		auto & textObject = mLabels[position];
 		QFontMetrics fontMetrics(textObject.font);
-		painter.setPen(textObject.currentPenColor);
-		painter.setFont(textObject.font);
-		painter.drawText(position.first, position.second
+		painter->setPen(textObject.currentPenColor);
+		painter->setFont(textObject.font);
+		painter->drawText(position.first, position.second
 #if (QT_VERSION_MAJOR == 5) && (QT_VERSION_MINOR < 11)
 				, fontMetrics.width(textObject.text)
 #else
-				, fontMetrics.horizontalAdvance(textObject.text)
+				// +1 is needed because in fact the content may
+				// overflow the allocated size a little and the display will break
+				, fontMetrics.horizontalAdvance(textObject.text) + 1
 #endif
-				, fontMetrics.height()
+				, fontMetrics.height() + 1
 				, Qt::TextWordWrap, textObject.text);
 	}
 }
@@ -85,6 +81,7 @@ void GraphicsWidget::deleteAllItems()
 	mElements.clear();
 	deleteLabels();
 	mPicture = QPixmap();
+	update();
 }
 
 void GraphicsWidget::deleteLabels()
@@ -133,12 +130,14 @@ void GraphicsWidget::addShape(Shape *shape)
 	if (found == mElements.end())
 		mElements << shape;
 	else *found = shape;
+	update();
 }
 
 void GraphicsWidget::addLabel(const QString &text, int x, int y, int fontSize)
 {
 	TextObject newTextObject(text, mCurrentPenColor, fontSize);
 	mLabels[qMakePair(x, y)] = newTextObject;
+	update();
 }
 
 void GraphicsWidget::setPixmap(QPixmap &&picture)

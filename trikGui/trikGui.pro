@@ -13,104 +13,96 @@
 # limitations under the License.
 
 TEMPLATE = app
-QT += network xml widgets
+QT += network xml core qml quick quickcontrols2 gui
+
+QML_IMPORT_NAME = com.trikGui
+QML_IMPORT_MAJOR_VERSION = 1
+CONFIG += qmltypes
 
 include(../global.pri)
+include(Qt-QrCodeGenerator/Qt-QrCodeGenerator.pri)
 
 HEADERS += \
 	$$PWD/abstractIndicator.h \
 	$$PWD/autoRunner.h \
-	$$PWD/backgroundWidget.h \
 	$$PWD/batteryIndicator.h \
-	$$PWD/connectButton.h \
 	$$PWD/controller.h \
-	$$PWD/digitSelector.h \
 	$$PWD/encoderIndicator.h \
-	$$PWD/fileManagerWidget.h \
-	$$PWD/informationWidget.h \
-	$$PWD/languageSelectionWidget.h \
-	$$PWD/lazyMainWidget.h \
-	$$PWD/lazyMainWidgetWrapper.h \
-	$$PWD/mainWidget.h \
+	$$PWD/fileManager.h \
+	$$PWD/information.h \
+	$$PWD/languageSelection.h \
 	$$PWD/motorLever.h \
-	$$PWD/motorsWidget.h \
-	$$PWD/numberSelectionWidget.h \
-	$$PWD/communicationSettingsWidget.h \
-	$$PWD/runningWidget.h \
+	$$PWD/motors.h \
+	$$PWD/communicationSettings.h \
+	$$PWD/runningCode.h \
 	$$PWD/sensorIndicator.h \
-	$$PWD/sensorsWidget.h \
-	$$PWD/startWidget.h \
-	$$PWD/systemSettingsWidget.h \
-	$$PWD/trikGuiApplication.h \
-	$$PWD/trikGuiDialog.h \
-	$$PWD/trikGuiMessageBox.h \
-	$$PWD/updateWidget.h \
-	$$PWD/wiFiAPWidget.h \
-	$$PWD/wiFiClientWidget.h \
-	$$PWD/wiFiInitWidget.h \
-	$$PWD/wiFiModeWidget.h \
+	$$PWD/sensors.h \
+	$$PWD/systemSettings.h \
+	$$PWD/wiFiAP.h \
+	$$PWD/wiFiClient.h \
+	$$PWD/wiFiInit.h \
+	$$PWD/wiFiMode.h \
 	$$PWD/wiFiIndicator.h \
 	$$PWD/openSocketIndicator.h \
-	$$PWD/commandSettingsWidget.h \
-	$$PWD/commandsListWidget.h \
-	$$PWD/programmingWidget.h \
-	$$PWD/sensorSettingsWidget.h \
-	$$PWD/sensorLever.h \
-	$$PWD/scriptHolder.h \
 	$$PWD/gamepadIndicator.h \
 	$$PWD/powerLevel.h \
 	$$PWD/gyroscopeIndicator.h \
-	$$PWD/accelerometerWidget.h \
-	$$PWD/networkWidget.h \
-	$$PWD/fileSystemFilter.h \
-	$$PWD/cameraWidget.h \
-	$$PWD/pwmCaptureIndicator.h
+	$$PWD/accelerometer.h \
+	$$PWD/network.h \
+	$$PWD/camera.h \
+	$$PWD/pwmCaptureIndicator.h \
+	$$PWD/mainMenuManager.h \
+	$$PWD/managers.h \
+	$$PWD/testingManager.h \
+	$$PWD/accelerometerMock.h \
+	$$PWD/encoderMock.h \
+	$$PWD/gyroscopeMock.h \
+	$$PWD/sensorMock.h \
+	$$PWD/modeManager.h \
+	$$PWD/wiFiAPMock.h \
+	$$PWD/wiFiClientMock.h \
+	$$PWD/wiFiModeMock.h \
+	$$PWD/trikGuiApplication.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
-	$$PWD/backgroundWidget.cpp \
 	$$PWD/batteryIndicator.cpp \
-	$$PWD/communicationSettingsWidget.cpp \
-	$$PWD/connectButton.cpp \
+	$$PWD/communicationSettings.cpp \
 	$$PWD/controller.cpp \
-	$$PWD/digitSelector.cpp \
 	$$PWD/encoderIndicator.cpp \
-	$$PWD/fileManagerWidget.cpp \
-	$$PWD/informationWidget.cpp \
-	$$PWD/languageSelectionWidget.cpp \
-	$$PWD/lazyMainWidgetWrapper.cpp \
+	$$PWD/fileManager.cpp \
+	$$PWD/information.cpp \
+	$$PWD/languageSelection.cpp \
 	$$PWD/trikGuiMain.cpp \
 	$$PWD/motorLever.cpp \
-	$$PWD/motorsWidget.cpp \
-	$$PWD/numberSelectionWidget.cpp \
-	$$PWD/runningWidget.cpp \
+	$$PWD/motors.cpp \
+	$$PWD/runningCode.cpp \
 	$$PWD/sensorIndicator.cpp \
-	$$PWD/sensorsWidget.cpp \
-	$$PWD/startWidget.cpp \
-	$$PWD/systemSettingsWidget.cpp \
-	$$PWD/trikGuiApplication.cpp \
-	$$PWD/trikGuiDialog.cpp \
-	$$PWD/trikGuiMessageBox.cpp \
-	$$PWD/updateWidget.cpp \
-	$$PWD/wiFiAPWidget.cpp \
-	$$PWD/wiFiClientWidget.cpp \
-	$$PWD/wiFiInitWidget.cpp \
-	$$PWD/wiFiModeWidget.cpp \
+	$$PWD/sensors.cpp \
+	$$PWD/systemSettings.cpp \
+	$$PWD/wiFiAP.cpp \
+	$$PWD/wiFiClient.cpp \
+	$$PWD/wiFiInit.cpp \
+	$$PWD/wiFiMode.cpp \
 	$$PWD/wiFiIndicator.cpp \
 	$$PWD/openSocketIndicator.cpp \
-	$$PWD/commandSettingsWidget.cpp \
-	$$PWD/commandsListWidget.cpp \
-	$$PWD/programmingWidget.cpp \
-	$$PWD/sensorSettingsWidget.cpp \
-	$$PWD/sensorLever.cpp \
-	$$PWD/scriptHolder.cpp \
 	$$PWD/gamepadIndicator.cpp \
 	$$PWD/gyroscopeIndicator.cpp \
-	$$PWD/accelerometerWidget.cpp \
-	$$PWD/networkWidget.cpp \
-	$$PWD/fileSystemFilter.cpp \
-	$$PWD/cameraWidget.cpp \
-	$$PWD/pwmCaptureIndicator.cpp
+	$$PWD/accelerometer.cpp \
+	$$PWD/network.cpp \
+	$$PWD/camera.cpp \
+	$$PWD/pwmCaptureIndicator.cpp \
+	$$PWD/mainMenuManager.cpp \
+	$$PWD/testingManager.cpp \
+	$$PWD/accelerometerMock.cpp \
+	$$PWD/encoderMock.cpp \
+	$$PWD/gyroscopeMock.cpp \
+	$$PWD/sensorMock.cpp \
+	$$PWD/modeManager.cpp \
+	$$PWD/wiFiAPMock.cpp \
+	$$PWD/wiFiClientMock.cpp \
+	$$PWD/wiFiModeMock.cpp \
+	$$PWD/trikGuiApplication.cpp
 
 
 
@@ -118,6 +110,7 @@ SOURCES += \
     SOURCES += $$PWD/powerLevel.cpp
 } else {
     SOURCES += $$PWD/powerLevel_stub.cpp
+    DEFINES += DESKTOP
 }
 
 

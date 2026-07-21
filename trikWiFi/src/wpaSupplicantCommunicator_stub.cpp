@@ -27,6 +27,7 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 		, QObject *parent
 		)
 	: QObject(parent)
+	, mSocket(-1)
 	, mLocal(new sockaddr_un())
 	, mDest(new sockaddr_un())
 {
@@ -34,26 +35,24 @@ WpaSupplicantCommunicator::WpaSupplicantCommunicator(
 	Q_UNUSED(daemonFile);
 }
 
-WpaSupplicantCommunicator::~WpaSupplicantCommunicator()
-{
-}
+WpaSupplicantCommunicator::~WpaSupplicantCommunicator() = default;
 
-int WpaSupplicantCommunicator::fileDescriptor()
+int WpaSupplicantCommunicator::fileDescriptor() const
 {
 	return -1;
 }
 
-int WpaSupplicantCommunicator::attach()
+int WpaSupplicantCommunicator::attach() const
 {
 	return -1;
 }
 
-int WpaSupplicantCommunicator::detach()
+int WpaSupplicantCommunicator::detach() const
 {
 	return -1;
 }
 
-int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
+int WpaSupplicantCommunicator::request(const QString &command, QString &reply) const
 {
 	Q_UNUSED(command);
 	Q_UNUSED(reply);
@@ -61,12 +60,12 @@ int WpaSupplicantCommunicator::request(const QString &command, QString &reply)
 	return -1;
 }
 
-bool WpaSupplicantCommunicator::isPending()
+bool WpaSupplicantCommunicator::isPending() const
 {
 	return false;
 }
 
-int WpaSupplicantCommunicator::receive(QString &message)
+int WpaSupplicantCommunicator::receive(QString &message) const
 {
 	Q_UNUSED(message);
 

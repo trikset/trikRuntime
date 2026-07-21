@@ -16,10 +16,12 @@
 
 #include <QtCore/QString>
 
+#include "trikKernelDeclSpec.h"
+
 namespace trikKernel {
 
 /// Service for loading translations corresponding to current locale settings.
-class TranslationsHelper
+class TRIKKERNEL_EXPORT TranslationsHelper
 {
 public:
 	/// Initializes locale and loads translations.

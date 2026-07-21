@@ -15,11 +15,9 @@
 #pragma once
 
 #include <QtCore/qglobal.h>
-#include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QProgressBar>
 
 #include "abstractIndicator.h"
+#include <QObject>
 
 namespace trikControl {
 class PwmCaptureInterface;
@@ -31,24 +29,34 @@ namespace trikGui {
 class PwmCaptureIndicator : public AbstractIndicator
 {
 	Q_OBJECT
+	Q_PROPERTY(QString nameLabel READ nameLabel CONSTANT)
+	Q_PROPERTY(int maxValue READ maxValue CONSTANT)
+	Q_PROPERTY(int minValue READ minValue CONSTANT)
+	Q_PROPERTY(int value READ value NOTIFY valueChanged)
 
 public:
 	/// Constructor.
 	/// @param port - port to which PWM input is plugged.
 	/// @param pwmCapture - PWM duty value which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	PwmCaptureIndicator(const QString &port, trikControl::PwmCaptureInterface &pwmCapture, QWidget *parent = nullptr);
+	PwmCaptureIndicator(const QString &port, trikControl::PwmCaptureInterface &pwmCapture, QObject *parent = nullptr);
 
 public Q_SLOTS:
 	void renew() override;
 
 private:
 	trikControl::PwmCaptureInterface &mPwmCapture;
-
-	QHBoxLayout mLayout;
-	QLabel mNameLabel;
-	QProgressBar mValueBar;
-	QLabel mValueLabel;
+	long mMinValue;
+	long mMaxValue;
+	long mValue;
+	QString mNameLabel;
+	QString nameLabel();
+	long maxValue();
+	long minValue();
+	long value();
+Q_SIGNALS:
+	/// Emitted when value changed
+	void valueChanged();
 };
 
 }

@@ -29,6 +29,7 @@ SUBDIRS = \
         trikServer \
         translations \
         mlx90640-library \
+        trikCppProgram \
 
 initvars.file = $$PWD/initvars.pre
 
@@ -54,6 +55,7 @@ trikCommunicator.depends = trikScriptRunner
 trikServer.depends = trikCommunicator
 trikTelemetry.depends = trikControl trikNetwork
 trikGui.depends = trikCommunicator trikScriptRunner trikWiFi trikTelemetry
+trikCppProgram.depends = trikKernel trikControl trikNetwork trikScriptRunner
 
 !trik_nopython {
     SUBDIRS += PythonQt

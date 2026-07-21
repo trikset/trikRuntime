@@ -17,7 +17,7 @@
 #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 	#include <QtGui/QApplication>
 #else
-	#include <QtWidgets/QApplication>
+	#include <QtGui/QGuiApplication>
 #endif
 
 #include <QtCore/QFileInfo>
@@ -88,8 +88,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
-	const bool hasGui = (qobject_cast<QApplication *>(QCoreApplication::instance()) != nullptr);
-
+	const bool hasGui = (qobject_cast<QGuiApplication *>(QCoreApplication::instance()) != nullptr);
 	if (hasGui) {
 		mDisplay.reset(new Display(mediaPath));
 	} else {
@@ -112,24 +111,25 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 
 	mBattery.reset(new Battery(*mMspCommunicator));
 
-#ifndef TRIK_IIO_ACCEL_GYRO
-	if (mConfigurer.isEnabled("accelerometer")) {
-		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction
-											  , "*port*for*accel*only*in*iio*trik*new*age*"));
-	}
-
-	if (mConfigurer.isEnabled("gyroscope")) {
-		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
-										, "*port*for*gyro*only*in*iio*trik*new*age*"));
-	}
-#endif /* ! TRIK_IIO_ACCEL_GYRO */
-
 	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
 
 	mLed.reset(new Led(mConfigurer, *mHardwareAbstraction));
 
 	if (mConfigurer.isEnabled("gamepad")) {
 		mGamepad.reset(new Gamepad(mConfigurer, *mHardwareAbstraction));
+	}
+
+	// Accelerometer must be created before gyroscope — gyro depends on it for calibration.
+	// Cannot rely on createDevice loop: XML may list gyroscope first.
+	if (mConfigurer.ports().contains("boardAccelPort")
+			&& mConfigurer.deviceClass("boardAccelPort") == "iioDevice") {
+		mAccelerometer.reset(new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction, "boardAccelPort"));
+	}
+
+	if (mConfigurer.ports().contains("boardGyroPort")
+			&& mConfigurer.deviceClass("boardGyroPort") == "iioDevice") {
+		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
+									, "boardGyroPort"));
 	}
 
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");
@@ -360,7 +360,7 @@ QStringList Brick::motorPorts(MotorInterface::Type type) const
 	}
 	}
 
-	return QStringList();
+	return {};
 }
 
 QStringList Brick::pwmCapturePorts() const
@@ -422,7 +422,7 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 }
 
 I2cDeviceInterface* Brick::createI2cDevice(int bus, int address,
-					   std::function<trikHal::MspI2cInterface *()> factory) {
+					   const std::function<trikHal::MspI2cInterface *()> &factory) {
 	uint8_t _bus = bus & 0xFF;
 	uint8_t _address = address & 0xFF;
 	uint16_t mhash = (_bus << 8) | _address;
@@ -463,7 +463,7 @@ I2cDeviceInterface *Brick::smBusI2c(int bus, int address)
 QVector<uint8_t> Brick::getStillImage()
 {
 	if (!mCamera)
-		return QVector<uint8_t>();
+		return {};
 	else
 		return mCamera->getPhoto();
 }
@@ -638,17 +638,6 @@ void Brick::createDevice(const QString &port)
 				);
 			mIrCamera.swap(tmp);
 		}
-#ifdef TRIK_IIO_ACCEL_GYRO
-		else if (deviceClass == "iioDevice") {
-			const auto &deviceType = mConfigurer.deviceType(port);
-			if (deviceType == "accelerometer"){
-				mAccelerometer.reset(new VectorSensor(deviceType, mConfigurer, *mHardwareAbstraction, port));
-			} else if (deviceType == "gyroscope"){
-				mGyroscope.reset(new GyroSensor(deviceType, mConfigurer, *mHardwareAbstraction, mAccelerometer.data()
-												, port));
-			}
-		}
-#endif /* TRIK_IIO_ACCEL_GYRO */
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();
 		QLOG_ERROR() << "Ignoring device";

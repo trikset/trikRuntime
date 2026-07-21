@@ -14,102 +14,48 @@
 
 #include "motorLever.h"
 
-#include <QtGui/QKeyEvent>
-
-#include <QtWidgets/QStylePainter>
-#include <QtWidgets/QStyleOptionFocusRect>
-
-
 #include <trikControl/motorInterface.h>
 #include <abstractIndicator.h>
 
 using namespace trikGui;
 
-MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, QWidget *parent)
-	: QFrame(parent)
-	, mMotor(motor)
-	, mIsOn(false)
-	, mMaxPower(motor.maxControl())
-	, mMinPower(motor.minControl())
-	, mPowerStep(10)
-	, mPower(0)
-	, mNameLabel(port)
-	, mOnOffLabel(tr("off"))
-{
-	mMotor.powerOff();
-
-	mPowerBar.setOrientation(Qt::Horizontal);
-	mPowerBar.setMinimum(mMinPower);
-	mPowerBar.setMaximum(mMaxPower);
-	mPowerBar.setValue(0);
-	mPowerBar.setTextVisible(true);
-	mPowerBar.setFormat("%v");
-
-	mNameLabel.setAlignment(Qt::AlignLeft);
-	mPowerBar.setAlignment(Qt::AlignCenter);
-	mOnOffLabel.setAlignment(Qt::AlignRight);
-
-	// mOnOffLabel can change its width during work. It will cause mPowerBar
-	// width change. To prevent it, we set fixed width it.
-	mOnOffLabel.setFixedWidth(std::max(AbstractIndicator::fontMetricsHorizontalAdvance(this, tr("off"))
-									   , AbstractIndicator::fontMetricsHorizontalAdvance(this, tr("on"))));
-
-	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mPowerBar);
-	mLayout.addWidget(&mOnOffLabel);
-	setLayout(&mLayout);
-
-	setFocusPolicy(Qt::StrongFocus);
-	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::QSizePolicy::MinimumExpanding);
-}
-
-MotorLever::~MotorLever()
-{
+MotorLever::MotorLever(const QString &port, trikControl::MotorInterface &motor, QObject *parent)
+	: QObject(parent), mMotor(motor), mIsOn(false), mMaxPower(motor.maxControl()), mMinPower(motor.minControl()),
+	  mPowerStep(10), mPower(0), mNameLabel(port) {
 	mMotor.powerOff();
 }
 
-void MotorLever::keyPressEvent(QKeyEvent *event)
-{
-	switch (event->key()) {
-		case Qt::Key_Right: {
-			setPower(mPower + mPowerStep);
-			break;
-		}
-		case Qt::Key_Left: {
-			setPower(mPower - mPowerStep);
-			break;
-		}
-		case Qt::Key_Return: {
-			turnOnOff();
-			break;
-		}
-		default: {
-			QWidget::keyPressEvent(event);
-		}
-	}
-}
+MotorLever::~MotorLever() { mMotor.powerOff(); }
 
-void MotorLever::setPower(int power)
-{
+QString MotorLever::nameLabel() { return mNameLabel; }
+
+int MotorLever::maxPower() { return mMaxPower; }
+int MotorLever::minPower() { return mMinPower; }
+int MotorLever::powerStep() { return mPowerStep; }
+int MotorLever::power() { return mPower; }
+
+void MotorLever::setPower(int power) {
+
 	if (power > mMaxPower || power < mMinPower) {
 		return;
 	}
 
 	mPower = power;
-	mPowerBar.setValue(power);
+
 	if (mIsOn) {
 		mMotor.setPower(power);
 	}
+	Q_EMIT powerChanged();
 }
 
-void MotorLever::turnOnOff()
-{
-	mIsOn = !mIsOn;
+void MotorLever::setIsOn(bool isOn) {
+	mIsOn = isOn;
 	if (mIsOn) {
-		mOnOffLabel.setText(tr("on"));
 		mMotor.setPower(mPower);
 	} else {
-		mOnOffLabel.setText(tr("off"));
 		mMotor.powerOff();
 	}
+	Q_EMIT isOnChanged();
 }
+
+bool MotorLever::isOn() { return mIsOn; }

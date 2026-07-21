@@ -16,16 +16,6 @@
 
 #include <QtCore/qglobal.h>
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QHBoxLayout>
-	#include <QtGui/QLabel>
-	#include <QtGui/QDial>
-#else
-	#include <QtWidgets/QHBoxLayout>
-	#include <QtWidgets/QLabel>
-	#include <QtWidgets/QDial>
-#endif
-
 #include "abstractIndicator.h"
 
 namespace trikControl {
@@ -38,24 +28,28 @@ namespace trikGui {
 class EncoderIndicator : public AbstractIndicator
 {
 	Q_OBJECT
+	Q_PROPERTY(QString nameLabel READ nameLabel CONSTANT)
+	Q_PROPERTY(int value READ value NOTIFY valueChanged)
 
 public:
 	/// Constructor.
 	/// @param port - port to which sensor is plugged.
 	/// @param encoder - encoder which we will read.
 	/// @param parent - parent of this widget in Qt widget parent-child system.
-	EncoderIndicator(const QString &port, trikControl::EncoderInterface &encoder, QWidget *parent = 0);
+	EncoderIndicator(const QString &port, trikControl::EncoderInterface &encoder, QObject *parent = nullptr);
 
 public Q_SLOTS:
 	void renew() override;
 
 private:
 	trikControl::EncoderInterface &mEncoder;
-
-	QHBoxLayout mLayout;
-	QLabel mNameLabel;
-	QDial mValueDial;
-	QLabel mValueLabel;
+	int mValue;
+	QString mNameLabel;
+	QString nameLabel();
+	int value();
+Q_SIGNALS:
+	/// Emitted when value changed
+	void valueChanged();
 };
 
 }

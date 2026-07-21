@@ -20,15 +20,12 @@
 #include <trikScriptRunner/trikScriptRunner.h>
 #include <trikTelemetry/trikTelemetry.h>
 
-#include "lazyMainWidget.h"
-
 namespace trikWiFi {
 class TrikWiFi;
 }
 
 namespace trikGui {
 
-class RunningWidget;
 class AutoRunner;
 
 /// Provides backend features like Qt Script runner for frontend.
@@ -59,9 +56,6 @@ public:
 
 	/// Reference to WiFi manager.
 	trikWiFi::TrikWiFi &wiFi();
-
-	/// Asks controller to correctly close given running widget.
-	void doCloseRunningWidget(MainWidget &widget);
 
 	/// Returns communicator connection status (whether or not both Telemetry and Communicator servers are connected).
 	bool communicatorConnectionStatus();
@@ -129,7 +123,6 @@ private:
 	QScopedPointer<trikWiFi::TrikWiFi> mWiFi;
 	QScopedPointer<AutoRunner> mAutoRunner;
 
-	QHash<int, RunningWidget *> mRunningWidgets;  // Has ownership.
 };
 
 }

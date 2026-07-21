@@ -19,29 +19,23 @@
 
 using namespace trikGui;
 
-BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QWidget *parent)
-	: QLabel(parent)
-	, mBrick(brick)
-	, mCurrentLevel(PowerLevel::currentLevel())
-{
+BatteryIndicator::BatteryIndicator(trikControl::BrickInterface &brick, QObject *parent)
+	: QObject(parent), mBrick(brick), mCurrentLevel(PowerLevel::currentLevel()) {
 	mRenewTimer.setSingleShot(true);
 	connect(&mRenewTimer, &QTimer::timeout, this, &BatteryIndicator::renew);
 
 	mBeepingTimer.setSingleShot(true);
-	connect(&mBeepingTimer, &QTimer::timeout, this, [this](){
+	connect(&mBeepingTimer, &QTimer::timeout, this, [this]() {
 		mBeepTimer.stop();
 		mRenewTimer.start(mRenewInterval);
 	});
 
-	connect(&mBeepTimer, &QTimer::timeout, this, [this](){
-		mBrick.playTone(1500, 150);
-	});
+	connect(&mBeepTimer, &QTimer::timeout, this, [this]() { mBrick.playTone(1500, 150); });
 
 	renew();
 }
 
-void BatteryIndicator::renew()
-{
+void BatteryIndicator::renew() {
 	if (mBrick.battery()->status() == trikControl::DeviceInterface::Status::ready) {
 		const auto voltage = mBrick.battery()->readVoltage();
 		if (voltage > mSanityThreshold && voltage < shutdownThreshold()) {
@@ -50,17 +44,18 @@ void BatteryIndicator::renew()
 			mBeepTimer.start(500);
 			mBeepingTimer.start(mBeepingInterval);
 		}
-		setText(QString::number(voltage, 'f', 1) + " V");
+		mVoltageValue = QString::number(voltage, 'f', 1) + " V";
+		Q_EMIT voltageValueChanged();
 		mRenewTimer.start(mRenewInterval);
 	}
 }
 
-float BatteryIndicator::warningThreshold() const
-{
+float BatteryIndicator::warningThreshold() const {
 	return mCurrentLevel == PowerLevel::Level::twelveVolt ? m12VWarningThreshold : m6VWarningThreshold;
 }
 
-float BatteryIndicator::shutdownThreshold() const
-{
+float BatteryIndicator::shutdownThreshold() const {
 	return mCurrentLevel == PowerLevel::Level::twelveVolt ? m12VShutdownThreshold : m6VShutdownThreshold;
 }
+
+QString BatteryIndicator::voltageValue() { return mVoltageValue; }

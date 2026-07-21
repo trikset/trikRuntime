@@ -13,51 +13,21 @@
  * limitations under the License. */
 
 #include "sensorIndicator.h"
-
-#include <QtWidgets/QStylePainter>
-#include <QtWidgets/QStyleOptionFocusRect>
-
 #include <QtCore/QString>
-
 #include <trikControl/sensorInterface.h>
 
 using namespace trikGui;
 
-SensorIndicator::SensorIndicator(const QString &port
-		, trikControl::SensorInterface &sensor
-		, QWidget *parent)
-	: AbstractIndicator(parent)
-	, mSensor(sensor)
-	, mNameLabel(port)
-	, mValueLabel("0")
-{
-	mValueBar.setOrientation(Qt::Horizontal);
-	mValueBar.setMaximum(sensor.maxValue());
-	mValueBar.setMinimum(sensor.minValue());
-	mValueBar.setValue(0);
-	mValueBar.setTextVisible(false);
-	mValueBar.setAlignment(Qt::AlignRight);
+SensorIndicator::SensorIndicator(const QString &port, trikControl::SensorInterface &sensor, QObject *parent)
+	: AbstractIndicator(parent), mSensor(sensor), mMinValue(sensor.minValue()), mMaxValue(sensor.maxValue()), mValue(0),
+	  mNameLabel(port) {}
 
-	mNameLabel.setAlignment(Qt::AlignLeft);
-	mValueLabel.setAlignment(Qt::AlignRight);
-	// mValueLabel can change its width during work. It will cause mValueBar
-	// width change. To prevent it, we set fixed width for mValueLabel.
-	// It is equal to maximum width of the widget which it achieves
-	// when the label text is set to "100".
-	mValueLabel.setFixedWidth(fontMetricsHorizontalAdvance(this, "WWWW"));
-	mLayout.addWidget(&mNameLabel);
-	mLayout.addWidget(&mValueBar);
-	mLayout.addWidget(&mValueLabel);
-	setLayout(&mLayout);
-
-	setFocusPolicy(Qt::StrongFocus);
+void SensorIndicator::renew() {
+	mValue = mSensor.read();
+	Q_EMIT valueChanged();
 }
 
-void SensorIndicator::renew()
-{
-	int value = mSensor.read();
-	mValueLabel.setText(QString::number(value));
-	value = std::max(value, mValueBar.minimum());
-	value = std::min(value, mValueBar.maximum());
-	mValueBar.setValue(value);
-}
+int SensorIndicator::maxValue() { return mMaxValue; }
+int SensorIndicator::minValue() { return mMinValue; }
+int SensorIndicator::value() { return mValue; }
+QString SensorIndicator::nameLabel() { return mNameLabel; }

@@ -18,21 +18,17 @@
 #include <QtCore/QString>
 #include <QVector>
 
-#include "displayWidgetInterface.h"
-
 #include <trikControl/trikControlDeclSpec.h>
 
 namespace trikControl {
+
+// TODO: The default parameter is part of the public API. Consider backward compatibility
+// NOLINTBEGIN(google-default-arguments)
 
 /// Provides ability to draw something on robot display.
 class TRIKCONTROL_EXPORT DisplayInterface : public QObject
 {
 	Q_OBJECT
-
-public:
-	/// Returns widget on which everything is drawn.
-	virtual DisplayWidgetInterface &graphicsWidget() = 0;
-
 public Q_SLOTS:
 	/// Shows given image on a display.
 	/// @param fileName - file name (with path) of an image to show. Refer to Qt documentation for
@@ -120,5 +116,5 @@ public Q_SLOTS:
 };
 
 }
-
+// NOLINTEND(google-default-arguments)
 Q_DECLARE_METATYPE(trikControl::DisplayInterface *)

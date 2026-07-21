@@ -23,14 +23,24 @@ QMAKE_CXXFLAGS *= -Wno-error=cast-qual -Wno-error=redundant-decls
 QMAKE_CXXFLAGS -= -Werror -Werror=pedantic -pedantic-errors -Werror=write-strings
 QT += widgets
 
+!contains(CONFIG, exclude_init_internal_types) {
+  DEFINES += ENGINES_INIT_INTERNAL_TYPES
+}
+
 !trik_nopython {
   #PythonQt generated files have problems
   INCLUDEPATH *= $$PWD/../trikControl/include/trikControl \
     $$PWD/../trikKernel/include/trikKernel \
     $$PWD/generated_cpp/pytrikcontrol \
+    $$PWD/generated_cpp/pytrikcontrolinternal
 
   include($$PWD/../PythonQt/PythonQt/build/PythonQt_QtAll.prf)
   include(./generated_cpp/pytrikcontrol/pytrikcontrol.pri)
+  !contains(CONFIG, exclude_init_internal_types) {
+    include(./generated_cpp/pytrikcontrolinternal/pytrikcontrolinternal.pri)
+    INCLUDEPATH *= \
+      $$PWD/generated_cpp/pytrikcontrolinternal
+  }
 }
 
 !macx:enableFlagIfCan(-Wno-error=cast-function-type)
@@ -46,8 +56,11 @@ HEADERS += \
 	$$PWD/src/threading.h \
 	$$PWD/src/utils.h \
 	$$PWD/src/scriptThread.h \
+	$$PWD/src/cppEngineWorker.h \
 	$$PWD/include/trikScriptRunner/trikScriptRunnerInterface.h \
 	$$PWD/include/trikScriptRunner/trikJavaScriptRunner.h \
+	$$PWD/include/trikScriptRunner/trikCppRunner.h \
+	$$PWD/include/trikScriptRunner/trikCppProgram.h \
 	$$PWD/include/trikScriptRunner/trikVariablesServer.h \
 	$$PWD/include/trikScriptRunner/trikScriptRunnerDeclSpec.h
 
@@ -56,6 +69,8 @@ SOURCES += \
 	$$PWD/src/scriptEngineWorker.cpp \
 	$$PWD/src/trikScriptRunner.cpp \
 	$$PWD/src/trikJavaScriptRunner.cpp \
+	$$PWD/src/trikCppRunner.cpp \
+	$$PWD/src/cppEngineWorker.cpp \
 	$$PWD/src/threading.cpp \
 	$$PWD/src/utils.cpp \
 	$$PWD/src/scriptThread.cpp \
