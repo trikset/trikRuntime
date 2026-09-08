@@ -6,6 +6,10 @@
 	path = tests/thirdparty/googletest
 	url = https://github.com/google/googletest
 	branch = main
+[submodule "trikDsp/trik-media-sensors"]
+	path = trikDsp/trik-media-sensors
+	url = https://github.com/trikset/trik-media-sensors.git
+	branch = main
 [submodule "qslog/qslog"]
 	path = qslog/qslog
 	url = https://github.com/trikset/trik-qslog
