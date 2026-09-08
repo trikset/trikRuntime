@@ -14,45 +14,117 @@
 
 #pragma once
 
-#include <QtGlobal>
+#include <QtCore/QString>
+#include <type_traits>
 
-class QString;
+#include <trikKernel/configurer.h>
+#include <trikKernel/exceptions/malformedConfigException.h>
 
-namespace trikKernel {
-class Configurer;
-}
+#include <QsLog.h>
+
+#include "deviceState.h"
 
 namespace trikControl {
-
-class DeviceState;
 
 /// Helper for trikKernel::Configurer.
 class ConfigurerHelper
 {
 public:
 	/// Reads integer parameter from configurer, modifies device state. Returns 0 if parameter is incorrect.
-	/// @param configurer - configurer object from which parameter will be read.
-	/// @param state - reference to device state, will be set to "fail" if parameter can not be read correctly.
-	/// @param port - port of a device.
-	/// @param parameterName - name of a parameter to read.
-	static int configureInt(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
-			, const QString &parameterName);
+	inline static int configureInt(const trikKernel::Configurer &configurer, DeviceState &state
+			, const QString &port, const QString &parameterName)
+	{
+		return configure<int>(state, parameterName
+				, [&]() { return configurer.attributeByPort(port, parameterName); });
+	}
 
 	/// Reads long integer parameter from configurer, modifies device state. Returns 0 if parameter is incorrect.
-	/// @param configurer - configurer object from which parameter will be read.
-	/// @param state - reference to device state, will be set to "fail" if parameter can not be read correctly.
-	/// @param port - port of a device.
-	/// @param parameterName - name of a parameter to read.
-	static long configureLong(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
-							, const QString &parameterName);
+	inline static long configureLong(const trikKernel::Configurer &configurer, DeviceState &state
+			, const QString &port, const QString &parameterName)
+	{
+		return configure<long>(state, parameterName
+				, [&]() { return configurer.attributeByPort(port, parameterName); });
+	}
 
 	/// Reads real parameter from configurer, modifies device state. Returns 0.0 if parameter is incorrect.
-	/// @param configurer - configurer object from which parameter will be read.
-	/// @param state - reference to device state, will be set to "fail" if parameter can not be read correctly.
-	/// @param port - port of a device.
-	/// @param parameterName - name of a parameter to read.
-	static qreal configureReal(const trikKernel::Configurer &configurer, DeviceState &state, const QString &port
-			, const QString &parameterName);
+	inline static qreal configureReal(const trikKernel::Configurer &configurer, DeviceState &state
+			, const QString &port, const QString &parameterName)
+	{
+		return configure<qreal>(state, parameterName
+				, [&]() { return configurer.attributeByPort(port, parameterName); });
+	}
+
+	/// Reads integer child parameter by port, modifies device state. Returns 0 if parameter is incorrect.
+	inline static int configureChildInt(const trikKernel::Configurer &configurer, DeviceState &state
+			, const QString &port, const QString &childDeviceClass, const QString &parameterName)
+	{
+		return configure<int>(state, parameterName
+				, [&]() { return configurer.childAttributeByPort(port, childDeviceClass, parameterName); });
+	}
+
+	/// Reads long integer child parameter by port, modifies device state. Returns 0 if parameter is incorrect.
+	inline static long configureChildLong(const trikKernel::Configurer &configurer, DeviceState &state
+			, const QString &port, const QString &childDeviceClass, const QString &parameterName)
+	{
+		return configure<long>(state, parameterName
+				, [&]() { return configurer.childAttributeByPort(port, childDeviceClass, parameterName); });
+	}
+
+	/// Reads real child parameter by port, modifies device state. Returns 0.0 if parameter is incorrect.
+	inline static qreal configureChildReal(const trikKernel::Configurer &configurer, DeviceState &state
+			, const QString &port, const QString &childDeviceClass, const QString &parameterName)
+	{
+		return configure<qreal>(state, parameterName
+				, [&]() { return configurer.childAttributeByPort(port, childDeviceClass, parameterName); });
+	}
+
+	/// Reads parameter via a callable, modifies device state.
+	/// @param state - device state, will be set to "fail" on error.
+	/// @param parameterName - name of a parameter (for error logging).
+	/// @param query - callable returning QString, captures configurer internally if needed.
+	/// @param args - arguments forwarded to the callable.
+	template<typename T, typename Fn, typename... Args>
+	static T configure(DeviceState &state, const QString &parameterName, Fn &&query, Args&&... args)
+	{
+		try {
+			const QString raw = std::forward<Fn>(query)(std::forward<Args>(args)...);
+			bool ok = false;
+			T parameter = convert<T>(raw, ok);
+			if (!ok) {
+				QLOG_ERROR() << QString(R"(Incorrect configuration for parameter "%1": "%2")")
+						.arg(parameterName, raw);
+				state.fail();
+				return {};
+			}
+
+			return parameter;
+		} catch (trikKernel::MalformedConfigException &) {
+			state.fail();
+			return {};
+		}
+	}
+
+private:
+	template<typename T>
+	static typename std::enable_if<std::is_same<T, int>::value, T>::type
+	convert(const QString &s, bool &ok)
+	{
+		return s.toInt(&ok, 0);
+	}
+
+	template<typename T>
+	static typename std::enable_if<std::is_same<T, long>::value, T>::type
+	convert(const QString &s, bool &ok)
+	{
+		return s.toLong(&ok, 0);
+	}
+
+	template<typename T>
+	static typename std::enable_if<std::is_same<T, qreal>::value, T>::type
+	convert(const QString &s, bool &ok)
+	{
+		return s.toDouble(&ok);
+	}
 };
 
 }
