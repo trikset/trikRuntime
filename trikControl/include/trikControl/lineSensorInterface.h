@@ -21,6 +21,7 @@
 #include "deviceInterface.h"
 
 #include <trikControl/trikControlDeclSpec.h>
+#include <trikControl/videoSensorStopFlags.h>
 
 namespace trikControl {
 
@@ -43,7 +44,9 @@ public Q_SLOTS:
 	virtual void detect() = 0;
 
 	/// Stops detection until init() will be called again.
-	virtual void stop() = 0;
+	/// @param flags - how far to tear the camera down (StopAll by default), OR-ed
+	///                from VideoSensorStopFlag.
+	virtual void stop(int flags = trikControl::StopAll) = 0; // NOLINT(google-default-arguments)
 
 public:
 	/// Returns current raw x coordinate of detected object. Sensor returns 0 if detect() was not called.
@@ -56,4 +59,4 @@ public:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::LineSensorInterface*)
+Q_DECLARE_METATYPE(trikControl::LineSensorInterface*) // NOLINT(misc-no-recursion)
