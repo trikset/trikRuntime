@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,98 +14,109 @@
 
 #include "lineSensor.h"
 
-#include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "lineSensorWorker.h"
+#include <trikKernel/configurer.h>
+
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mState("Line Sensor on " + port)
+LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &configurer)
+	: m("Line Sensor on " + port, configurer, port, trikDsp::Algorithm::Line)
 {
-	const QString &script = configurer.attributeByPort(port, "script");
-	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
-	const QString &outputFile = configurer.attributeByPort(port, "outputFile");
-	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
+	mToleranceFactor = ConfigurerHelper::configureChildReal(
+	                       configurer, m.state(), port, "lineSensor", "toleranceFactor");
 
-	if (!mState.isFailed()) {
-		mLineSensorWorker.reset(new LineSensorWorker(script, inputFile, outputFile, toleranceFactor, mState
-				, hardwareAbstraction));
+	QString lineIsEdgeDefault = "false";
+	mIsEdge = configurer.attributeByPort(port, "lineIsEdge", &lineIsEdgeDefault) == "true";
 
-		mLineSensorWorker->moveToThread(&mWorkerThread);
-		connect(mLineSensorWorker.data(), &LineSensorWorker::stopped, this, &LineSensor::onStopped);
-
-		QLOG_INFO() << "Starting LineSensor worker thread" << &mWorkerThread;
-
-		mWorkerThread.setObjectName(mLineSensorWorker->metaObject()->className());
-		mWorkerThread.start();
+	if (!m.state().isFailed()) {
+		m.state().ready();
 	}
 }
 
 LineSensor::~LineSensor()
 {
-	if (mWorkerThread.isRunning()) {
-		mWorkerThread.quit();
-		mWorkerThread.wait();
-	}
+	Q_EMIT stopped();
 }
 
 LineSensor::Status LineSensor::status() const
 {
-	return mState.status();
+	return m.state().status();
 }
 
 void LineSensor::init(bool showOnDisplay)
 {
-	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mLineSensorWorker.data()
-								  , [this, showOnDisplay](){mLineSensorWorker->init(showOnDisplay);});
-	}
+	if (!m.doInit(showOnDisplay))
+		return;
+
+	Q_EMIT activateRequested(m.inArgs(), showOnDisplay, true);
 }
 
 void LineSensor::detect()
 {
-	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mLineSensorWorker.data(), &LineSensorWorker::detect);
-	} else {
-		QLOG_WARN() << "Calling 'detect' for sensor which is not ready";
+	if (status() == Status::ready) {
+		m.inArgs().autoDetect = true;
+		Q_EMIT activateRequested(m.inArgs(), m.videoOut(), false);
 	}
 }
 
 QVector<int> LineSensor::read()
 {
-	if (mState.isReady()) {
-		// Read is called synchronously and only takes prepared value from sensor.
-		return mLineSensorWorker->read();
-	} else {
-		QLOG_WARN() << "Calling 'read' for sensor which is not ready";
-		return {};
-	}
+	QReadLocker locker(&mReadingLock);
+	return mReading;
 }
 
-void LineSensor::stop()
+void LineSensor::stop(int flags) // NOLINT(google-default-arguments)
 {
-	if (mState.isReady()) {
-		/// @todo Correctly stop starting sensor.
-		QMetaObject::invokeMethod(mLineSensorWorker.data(), &LineSensorWorker::stop);
-	}
+	m.doStop();
+	Q_EMIT stopRequested(flags);
+	Q_EMIT stopped();
 }
 
 QVector<int> LineSensor::getDetectParameters() const
 {
-	if (mState.isReady()) {
-		// Read is called synchronously and only takes prepared value from sensor.
-		return mLineSensorWorker->getDetectParameters();
-	} else {
-		QLOG_WARN() << "Calling 'read' for sensor which is not ready";
-		return {};
+	QReadLocker locker(&mDetectParametersLock);
+	return mDetectParameters;
+}
+
+bool LineSensor::isEdge() const
+{
+	return mIsEdge;
+}
+
+void LineSensor::onResult(const trikDsp::OutArgs &result)
+{
+	bool hsvUpdated = false;
+
+	if (result.autoDetect) {
+		// The DSP tagged this frame as the one-shot detect result. Consume it:
+		// clear the pending host flag and feed the detected range back to the
+		// DSP, widening it by the config toleranceFactor (as the old worker did
+		// before re-sending). A plain local flag can't be used here: frames that
+		// were already in flight before detect() reached the DSP would race with
+		// the real detect frame.
+		m.inArgs().autoDetect = false;
+		m.inArgs().params = result.detected;
+		applyToleranceFactor(m.inArgs().params, mToleranceFactor);
+		hsvUpdated = true;
+	}
+
+	// The DSP Line algorithm reports crossroads probability in `y` and the
+	// line "mass" in `size` (see line_sensor.hpp): {x, crossroads, mass}.
+	{
+		QWriteLocker locker(&mReadingLock);
+		mReading = {result.location.x, result.location.y,
+		            static_cast<int>(result.location.size)};
+	}
+
+	if (hsvUpdated) {
+		{
+			QWriteLocker locker(&mDetectParametersLock);
+			mDetectParameters = toDetectParameters(result.detected);
+		}
+		Q_EMIT activateRequested(m.inArgs(), m.videoOut(), false);
 	}
 }
 
-void LineSensor::onStopped()
-{
-	Q_EMIT stopped();
-}
