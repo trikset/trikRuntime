@@ -30,7 +30,7 @@ class GraphicsWidget : public DisplayWidgetInterface
 	Q_OBJECT
 public:
 	GraphicsWidget();
-	~GraphicsWidget();
+	~GraphicsWidget() override;
 
 	/// Show this GraphicsWidget.
 	void showCommand();
@@ -98,7 +98,7 @@ private:
 	struct TextObject {
 		TextObject() = default;
 
-		TextObject(const QString &text, const QColor &color, int fontSize)
+		TextObject(const QString &text, const QColor &color, int fontSize) // NOLINT(modernize-pass-by-value)
 			: text(text)
 			, currentPenColor(color)
 		{

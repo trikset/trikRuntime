@@ -29,7 +29,7 @@ public:
 	/// Get photo as a vector of uint8t in RGB 888 format
 	virtual QVector<uint8_t> getPhoto() = 0;
 
-	virtual Status status() const override = 0;
+	Status status() const override = 0;
 
 	~CameraDeviceInterface() override = default;
 

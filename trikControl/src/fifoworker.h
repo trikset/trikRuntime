@@ -39,7 +39,7 @@ public:
 	/// @param hardwareAbstraction - interface to underlying hardware or operating system capabilities of a robot.
 	FifoWorker(const QString &fileName
 			   , const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-	~FifoWorker();
+	~FifoWorker() override;
 
 	Status status() const override;
 

@@ -18,7 +18,7 @@
 
 using namespace trikControl;
 
-DeviceState::DeviceState(const QString &deviceName)
+DeviceState::DeviceState(const QString &deviceName) // NOLINT(modernize-pass-by-value)
 	: mDeviceName(deviceName)
 {
 }
@@ -34,6 +34,17 @@ bool DeviceState::isReady() const
 	// Read operation is atomic here, so it does not require locking.
 	return mStatus == DeviceInterface::Status::ready;
 }
+
+bool DeviceState::isStarting() const
+{
+	return mStatus == DeviceInterface::Status::starting;
+}
+
+bool DeviceState::isStopped() const
+{
+	return mStatus == DeviceInterface::Status::stopping;
+}
+
 
 bool DeviceState::isFailed() const
 {

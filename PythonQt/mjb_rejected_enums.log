@@ -3,6 +3,7 @@ Not in type system
 <enum-type name="QCoreApplication::enum_1"/>
 <enum-type name="QMetaObject::Call"/>
 <enum-type name="enum_3"/>
+<enum-type name="trikControl::VideoSensorStopFlag"/>
 ************************************************************************
 
 ************************************************************************

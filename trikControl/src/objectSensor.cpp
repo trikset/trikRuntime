@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,96 +15,96 @@
 #include "objectSensor.h"
 
 #include <trikKernel/configurer.h>
-#include <QsLog.h>
 
-#include "objectSensorWorker.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mState("Object Sensor on" + port)
+ObjectSensor::ObjectSensor(const QString &port, const trikKernel::Configurer &configurer)
+	: m("Object Sensor on " + port, configurer, port, trikDsp::Algorithm::Object)
 {
-	const QString &script = configurer.attributeByPort(port, "script");
-	const QString &inputFile = configurer.attributeByPort(port, "inputFile");
-	const QString &outputFile = configurer.attributeByPort(port, "outputFile");
-	const qreal toleranceFactor = ConfigurerHelper::configureReal(configurer, mState, port, "toleranceFactor");
+	mToleranceFactor = ConfigurerHelper::configureChildReal(
+	                       configurer, m.state(), port, "objectSensor", "toleranceFactor");
 
-	if (!mState.isFailed()) {
-		mObjectSensorWorker.reset(new ObjectSensorWorker(script, inputFile, outputFile, toleranceFactor, mState
-				, hardwareAbstraction));
-		mObjectSensorWorker->moveToThread(&mWorkerThread);
-		connect(mObjectSensorWorker.data(), &AbstractVirtualSensorWorker::stopped
-				, this, &ObjectSensor::onStopped, Qt::DirectConnection);
-
-		QLOG_INFO() << "Starting ObjectSensor worker thread" << &mWorkerThread;
-
-		mWorkerThread.setObjectName(mObjectSensorWorker->metaObject()->className());
-		mWorkerThread.start();
+	if (!m.state().isFailed()) {
+		m.state().ready();
 	}
 }
 
 ObjectSensor::~ObjectSensor()
 {
-	if (mWorkerThread.isRunning()) {
-		mWorkerThread.quit();
-		mWorkerThread.wait();
-	}
+	Q_EMIT stopped();
 }
 
 ObjectSensor::Status ObjectSensor::status() const
 {
-	return mState.status();
+	return m.state().status();
 }
 
 void ObjectSensor::init(bool showOnDisplay)
 {
-	if (!mState.isFailed()) {
-		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "init", Q_ARG(bool, showOnDisplay));
-	}
+	if (!m.doInit(showOnDisplay))
+		return;
+
+	Q_EMIT activateRequested(m.inArgs(), showOnDisplay, true);
 }
 
 void ObjectSensor::detect()
 {
-	if (mState.isReady()) {
-		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "detect");
-	} else {
-		QLOG_ERROR() << "Trying to call 'detect' when sensor is not ready, ignoring";
+	if (status() == Status::ready) {
+		m.inArgs().autoDetect = true;
+		Q_EMIT activateRequested(m.inArgs(), m.videoOut(), false);
 	}
 }
 
-QVector<int>  ObjectSensor::read()
+QVector<int> ObjectSensor::read()
 {
-	if (mState.isReady()) {
-		// Read is called synchronously and only takes prepared value from sensor.
-		return mObjectSensorWorker->read();
-	} else {
-		QLOG_ERROR() << "Trying to call 'read' when sensor is not ready, ignoring";
-		return {};
-	}
+	QReadLocker locker(&mReadingLock);
+	return mReading;
 }
 
-void ObjectSensor::stop()
+void ObjectSensor::stop(int flags) // NOLINT(google-default-arguments)
 {
-	if (mState.isReady()) {
-		/// @todo Correctly stop starting sensors.
-		QMetaObject::invokeMethod(mObjectSensorWorker.data(), "stop");
-	}
+	m.doStop();
+	Q_EMIT stopRequested(flags);
+	Q_EMIT stopped();
 }
 
 QVector<int> ObjectSensor::getDetectParameters() const
 {
-	if (mState.isReady()) {
-		// Read is called synchronously and only takes prepared value from sensor.
-		return mObjectSensorWorker->getDetectParameters();
-	} else {
-		QLOG_ERROR() << "Trying to call 'read' when sensor is not ready, ignoring";
-		return {};
+	QReadLocker locker(&mDetectParametersLock);
+	return mDetectParameters;
+}
+
+void ObjectSensor::onResult(const trikDsp::OutArgs &result)
+{
+	bool hsvUpdated = false;
+
+	if (result.autoDetect) {
+		// The DSP tagged this frame as the one-shot detect result. Consume it:
+		// clear the pending host flag and feed the detected range back to the
+		// DSP, widening it by the config toleranceFactor (as the old worker did
+		// before re-sending). A plain local flag can't be used here: frames that
+		// were already in flight before detect() reached the DSP would race with
+		// the real detect frame.
+		m.inArgs().autoDetect = false;
+		m.inArgs().params = result.detected;
+		applyToleranceFactor(m.inArgs().params, mToleranceFactor);
+		hsvUpdated = true;
+	}
+
+	{
+		QWriteLocker locker(&mReadingLock);
+		mReading = {result.location.x, result.location.y,
+		            static_cast<int>(result.location.size)};
+	}
+
+	if (hsvUpdated) {
+		{
+			QWriteLocker locker(&mDetectParametersLock);
+			mDetectParameters = toDetectParameters(result.detected);
+		}
+		Q_EMIT activateRequested(m.inArgs(), m.videoOut(), false);
 	}
 }
 
-void ObjectSensor::onStopped()
-{
-	Q_EMIT stopped();
-}

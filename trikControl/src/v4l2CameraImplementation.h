@@ -14,33 +14,26 @@
 
 #pragma once
 
+#include <QtCore/QSharedPointer>
 #include "cameraImplementationInterface.h"
-#include <trikHal/hardwareAbstractionInterface.h>
 #include <trikControl/trikControlDeclSpec.h>
 
-
-namespace trikHal {
-class HardwareAbstractionInterface;
+namespace trikControl {
+class CameraManager;
 }
 
 namespace trikControl {
 
-/// Camera implementation using v4l2
 class V4l2CameraImplementation : public CameraImplementationInterface
 {
 public:
-
-	/// V4l2 camera constructor
-	/// @param port - name of device, i.e. "/dev/video0"
-	/// @param hardwareAbstraction - realization of HAL
-	V4l2CameraImplementation(const QString &port, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	V4l2CameraImplementation(const QString &port, const QSharedPointer<CameraManager> &cameraManager);
 
 	QVector<uint8_t> getPhoto() override;
 
-	~V4l2CameraImplementation() override = default;
 private:
-	trikHal::HardwareAbstractionInterface & mHal;
 	QString mPort;
+	QSharedPointer<CameraManager> mCameraManager;
 };
 
 }

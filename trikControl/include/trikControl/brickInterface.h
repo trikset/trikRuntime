@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QStringList>
+#include <QtCore/QVariant>
 
 #include "batteryInterface.h"
 #include "colorSensorInterface.h"
@@ -83,6 +84,29 @@ public Q_SLOTS:
 	/// Stops all motors and shuts down all current activity.
 	virtual void stop() = 0;
 
+	/// Starts video translation (streaming) of the camera on @p port.
+	///
+	/// Kicks every other client off the port first: the video sensor (if any)
+	/// is stopped. For an ov7670 camera port (video1/video2) the DSP JPEG
+	/// encoder is scheduled and mjpg-streamer is fed through its FIFO; for a
+	/// usb-camera port the device is released so mjpg-streamer can open it
+	/// directly over UVC.
+	///
+	/// @param port  camera port (video1/video2 or usb-camera).
+	/// @param params  optional named parameters as a map/dict (Python dict or JS
+	///   object), passed as a QVariant:
+	///   - "jpeg-qual"   (int)  JPEG quality 1..100 (ov7670 ports only, default 40)
+	///   - "white-black" (bool) grayscale JPEG (ov7670 ports only, default false)
+	///   - "detached"    (bool) keep the stream alive after stop()/script end (default false)
+	virtual void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) = 0; // NOLINT(google-default-arguments)
+
+	/// Stops a video translation previously started on @p port, regardless of
+	/// whether it was started with "detached". Symmetric to startVideoTranslation():
+	/// runs the streamer stop script and stops the DSP JPEG encoder (video
+	/// ports) so the port can be reused. No-op if there is no translation on
+	/// @p port.
+	virtual void stopVideoTranslation(const QString &port) = 0;
+
 	/// Returns reference to motor of a given type on a given port
 	virtual trikControl::MotorInterface *motor(const QString &port) = 0;
 
@@ -114,13 +138,13 @@ public:
 	/// Returns on-board gyroscope.
 	Q_INVOKABLE virtual trikControl::GyroSensorInterface *gyroscope() = 0;
 
-	/// Returns high-level line detector sensor using camera on given port (video0 or video1).
+	/// Returns high-level line detector sensor using camera on given port (video1 or video2).
 	Q_INVOKABLE virtual trikControl::LineSensorInterface *lineSensor(const QString &port) = 0;
 
-	/// Returns high-level color sensor using camera on given port (video0 or video1).
+	/// Returns high-level color sensor using camera on given port (video1 or video2).
 	Q_INVOKABLE virtual trikControl::ColorSensorInterface *colorSensor(const QString &port) = 0;
 
-	/// Returns high-level object detector sensor using camera on given port (video0 or video1).
+	/// Returns high-level object detector sensor using camera on given port (video1 or video2).
 	Q_INVOKABLE virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns lidar on given port.
@@ -134,8 +158,10 @@ public:
 	// NOLINTNEXTLINE(google-default-arguments)
 	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *i2c(int bus, int address, int regSize = 1) = 0;
 
-	/// Returns QVector<uin8_t> with image using camera on given port (video0 or video1).
-	Q_INVOKABLE virtual QVector<uint8_t> getStillImage() = 0;
+	/// Returns QVector<uint8_t> with image using camera on given port (video1 or video2).
+	// TODO: The default parameter is part of the public API. Consider backward compatibility
+	// NOLINTNEXTLINE(google-default-arguments)
+	Q_INVOKABLE virtual QVector<uint8_t> getStillImage(const QString &port = "video1") = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
 	Q_INVOKABLE virtual trikControl::SoundSensorInterface *soundSensor(const QString &port) = 0;
@@ -173,9 +199,10 @@ public:
 	Q_INVOKABLE virtual trikControl::EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
 
 
-Q_SIGNALS:
-	/// Emitted when all deferred deinitialization is completed and brick completely stopped. Note that if there is no
-	/// deferred deinitialization (no video sensors are on, for example), signal will NOT be emitted.
+	Q_SIGNALS:
+	/// Emitted when brick is fully stopped (all devices, including video sensors
+	/// and their cameras, are down and the framebuffer is closed). Connected by
+	/// the GUI to repaint the screen and clear leftover video frames.
 	void stopped();
 
 	/// Emitted when brick finished resetting to default stopped state

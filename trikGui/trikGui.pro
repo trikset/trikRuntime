@@ -13,7 +13,7 @@
 # limitations under the License.
 
 TEMPLATE = app
-QT += network xml core qml quick quickcontrols2 gui
+QT += network xml core qml quick quickcontrols2 gui concurrent
 
 QML_IMPORT_NAME = com.trikGui
 QML_IMPORT_MAJOR_VERSION = 1

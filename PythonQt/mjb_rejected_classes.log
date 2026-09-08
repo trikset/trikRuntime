@@ -25,6 +25,7 @@ Not in type system
 <object-type name="QQuickTransform::QPrivateSignal"/>
 <object-type name="QReturnArgument"/>
 <object-type name="QmlTypeAndRevisionsRegistration"/>
+<object-type name="_IO_FILE"/>
 <object-type name="trikControl::BatteryInterface::QPrivateSignal"/>
 <object-type name="trikControl::BrickInterface::QPrivateSignal"/>
 <object-type name="trikControl::ColorSensorInterface::QPrivateSignal"/>

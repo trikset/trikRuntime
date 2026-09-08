@@ -50,4 +50,4 @@ public Q_SLOTS:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::SensorInterface *)
+Q_DECLARE_METATYPE(trikControl::SensorInterface *) // NOLINT(misc-no-recursion)

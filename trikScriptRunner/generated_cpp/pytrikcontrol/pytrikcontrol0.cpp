@@ -36,6 +36,7 @@
 #include <trikControl/sensorInterface.h>
 #include <trikControl/soundSensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+#include <trikControl/videoSensorStopFlags.h>
 #include <trikKernel/timeVal.h>
 
 
@@ -127,9 +128,9 @@ trikControl::GamepadInterface*  PythonQtWrapper_trikControl__BrickInterface::gam
   return ( theWrappedObject->gamepad());
 }
 
-QVector<uint8_t >  PythonQtWrapper_trikControl__BrickInterface::getStillImage(trikControl::BrickInterface* theWrappedObject)
+QVector<uint8_t >  PythonQtWrapper_trikControl__BrickInterface::getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port)
 {
-  return ( theWrappedObject->getStillImage());
+  return ( theWrappedObject->getStillImage(port));
 }
 
 trikControl::GyroSensorInterface*  PythonQtWrapper_trikControl__BrickInterface::gyroscope(trikControl::BrickInterface* theWrappedObject)
@@ -252,6 +253,11 @@ trikControl::SoundSensorInterface*  PythonQtWrapper_trikControl__BrickInterface:
   return ( theWrappedObject->soundSensor(port));
 }
 
+void PythonQtWrapper_trikControl__BrickInterface::startVideoTranslation(trikControl::BrickInterface* theWrappedObject, const QString&  port, const QVariant&  params)
+{
+  ( theWrappedObject->startVideoTranslation(port, params));
+}
+
 void PythonQtWrapper_trikControl__BrickInterface::stop(trikControl::BrickInterface* theWrappedObject)
 {
   ( theWrappedObject->stop());
@@ -260,6 +266,11 @@ void PythonQtWrapper_trikControl__BrickInterface::stop(trikControl::BrickInterfa
 void PythonQtWrapper_trikControl__BrickInterface::stopEventDevice(trikControl::BrickInterface* theWrappedObject, const QString&  deviceFile)
 {
   ( theWrappedObject->stopEventDevice(deviceFile));
+}
+
+void PythonQtWrapper_trikControl__BrickInterface::stopVideoTranslation(trikControl::BrickInterface* theWrappedObject, const QString&  port)
+{
+  ( theWrappedObject->stopVideoTranslation(port));
 }
 
 void PythonQtWrapper_trikControl__BrickInterface::stopped(trikControl::BrickInterface* theWrappedObject)
@@ -311,9 +322,9 @@ QVector<int >  PythonQtWrapper_trikControl__ColorSensorInterface::read(trikContr
   return ( theWrappedObject->read(m, n));
 }
 
-void PythonQtWrapper_trikControl__ColorSensorInterface::stop(trikControl::ColorSensorInterface* theWrappedObject)
+void PythonQtWrapper_trikControl__ColorSensorInterface::stop(trikControl::ColorSensorInterface* theWrappedObject, int  flags)
 {
-  ( theWrappedObject->stop());
+  ( theWrappedObject->stop(flags));
 }
 
 void PythonQtWrapper_trikControl__ColorSensorInterface::stopped(trikControl::ColorSensorInterface* theWrappedObject)
@@ -1000,9 +1011,9 @@ QVector<int >  PythonQtWrapper_trikControl__LineSensorInterface::read(trikContro
   return ( theWrappedObject->read());
 }
 
-void PythonQtWrapper_trikControl__LineSensorInterface::stop(trikControl::LineSensorInterface* theWrappedObject)
+void PythonQtWrapper_trikControl__LineSensorInterface::stop(trikControl::LineSensorInterface* theWrappedObject, int  flags)
 {
-  ( theWrappedObject->stop());
+  ( theWrappedObject->stop(flags));
 }
 
 void PythonQtWrapper_trikControl__LineSensorInterface::stopped(trikControl::LineSensorInterface* theWrappedObject)
@@ -1151,9 +1162,9 @@ QVector<int >  PythonQtWrapper_trikControl__ObjectSensorInterface::read(trikCont
   return ( theWrappedObject->read());
 }
 
-void PythonQtWrapper_trikControl__ObjectSensorInterface::stop(trikControl::ObjectSensorInterface* theWrappedObject)
+void PythonQtWrapper_trikControl__ObjectSensorInterface::stop(trikControl::ObjectSensorInterface* theWrappedObject, int  flags)
 {
-  ( theWrappedObject->stop());
+  ( theWrappedObject->stop(flags));
 }
 
 void PythonQtWrapper_trikControl__ObjectSensorInterface::stopped(trikControl::ObjectSensorInterface* theWrappedObject)

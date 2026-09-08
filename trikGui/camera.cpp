@@ -15,6 +15,8 @@
 #include "camera.h"
 
 #include <QDir>
+#include <QPointer>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include "trikControl/brickInterface.h"
 #include "trikControl/utilities.h"
@@ -39,16 +41,37 @@ void Camera::renew()
 	// Camera takes a single photo on construction. Periodic renew() is not needed.
 }
 
-void Camera::doPhoto()
+void Camera::doPhoto(const QString &port)
 {
 	if (mIsCreatingPhoto.exchange(true)) {
 		return;
 	}
 
-	auto const photo = trikControl::Utilities::rescalePhoto(mBrick.getStillImage());
-	// imageFromBytes allocates memory and delete it when it is necessery
-	auto image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb32");
+	// Capture on a worker thread so the GUI thread (and the QML signal handler
+	// that triggered us) never blocks. Synchronous capture runs getStillImage()
+	// -> CameraDevice::getPhoto(), which spins a nested event loop on the GUI
+	// thread; during that loop the view may be destroyed while the handler is
+	// still on the stack ("Object destroyed while one of its QML signal
+	// handlers is in progress").
+	const QPointer<Camera> self(this);
 
+	QtConcurrent::run([self, &brick = mBrick, port]() {
+		const auto &photo = trikControl::Utilities::rescalePhoto(brick.getStillImage(port));
+		// imageFromBytes allocates memory and deletes it when it is necessary
+		const auto &image = trikControl::Utilities::imageFromBytes(photo, 160, 120, "rgb32");
+
+		// Deliver back to the GUI thread. The QPointer is used as the receiver
+		// context, so the call is dropped if the Camera was destroyed meanwhile.
+		QMetaObject::invokeMethod(self, [self, image]() {
+			if (self) {
+				self->onPhotoReady(image);
+			}
+		}, Qt::QueuedConnection);
+	});
+}
+
+void Camera::onPhotoReady(const QImage &image)
+{
 	if (!image.isNull()) {
 		mPhoto = image;
 		Q_EMIT imageChanged();

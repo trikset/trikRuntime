@@ -1,4 +1,5 @@
 ---
+HeaderFilterRegex: '/trikRuntime/(trikKernel|trikControl|trikHal|trikDsp/(include|src))/'
 Checks: '-*,
 bugprone-argument-comment,
 bugprone-assert-side-effect,

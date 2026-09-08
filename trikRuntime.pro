@@ -20,6 +20,7 @@ SUBDIRS = \
         trikWiFi \
         trikNetwork \
         trikHal \
+        trikDsp \
         trikControl \
         trikTelemetry \
         trikCommunicator \
@@ -46,7 +47,8 @@ mlx90640-library.depends = initvars
 
 trikKernel.depends = qslog translations
 trikHal.depends = trikKernel
-trikControl.depends = trikHal mlx90640-library
+trikDsp.depends = trikKernel trikHal
+trikControl.depends = trikHal trikDsp mlx90640-library
 trikWiFi.depends = trikKernel
 trikNetwork.depends = trikKernel
 trikRun.depends = trikScriptRunner

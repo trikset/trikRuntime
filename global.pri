@@ -53,6 +53,13 @@ release:CONFIG -= debug
 no-sanitizers: CONFIG *= nosanitizers
 CONFIG = $$unique(CONFIG)
 
+# Debug FPS counters in the camera pipeline (CameraManager / DspFramePipeline /
+# JpegEncoderSensor). Off by default; enable at qmake configure time with
+# `CONFIG += debug_fps`, which compiles trikKernel::FpsCounter in.
+CONFIG(debug_fps) {
+	DEFINES += TRIK_DEBUG_FPS
+}
+
 QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO *= -Og
 QMAKE_CXXFLAGS_DEBUG *= -Og
 

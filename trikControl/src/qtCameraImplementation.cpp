@@ -45,7 +45,7 @@ QtCameraImplementation::QtCameraImplementation(const QString & port)
 QVector<uint8_t> QtCameraImplementation::getPhoto()
 {
 	if(!mCamera)
-		return QVector<uint8_t>();
+		return {};
 
 	QScopedPointer<QCameraImageCapture> imageCapture (new QCameraImageCapture(mCamera.data()));
 

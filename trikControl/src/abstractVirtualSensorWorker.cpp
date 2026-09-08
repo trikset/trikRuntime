@@ -26,9 +26,9 @@
 
 using namespace trikControl;
 
-AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile
-		, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, const QString &sensorName)
+AbstractVirtualSensorWorker::AbstractVirtualSensorWorker(const QString &script, const QString &inputFile // NOLINT(modernize-pass-by-value)
+		, const QString &outputFile, DeviceState &state, trikHal::HardwareAbstractionInterface &hardwareAbstraction // NOLINT(modernize-pass-by-value)
+		, const QString &sensorName) // NOLINT(modernize-pass-by-value)
 	: mSystemConsole(hardwareAbstraction.systemConsole())
 	, mScript(script)
 	, mInputFile(hardwareAbstraction.createOutputDeviceFile(inputFile))

@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,68 +14,64 @@
 
 #pragma once
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QThread>
-#include <QtCore/QScopedPointer>
+#include <QtCore/QReadWriteLock>
 #include <QtCore/QVector>
 
+#include <trikDsp/dspTypes.h>
+
 #include "lineSensorInterface.h"
-#include "deviceState.h"
+#include "dspSensorBase.h"
 
-namespace trikKernel {
-class Configurer;
-}
-
-namespace trikHal {
-class HardwareAbstractionInterface;
-}
+namespace trikKernel { class Configurer; }
 
 namespace trikControl {
 
-class LineSensorWorker;
-
-/// Implementation of virtual line sensor for real robot.
 class LineSensor : public LineSensorInterface
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param port - port on which this sensor is configured.
-	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	LineSensor(const QString &port, const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-
+	/// Reads the port's toleranceFactor and marks the sensor ready.
+	LineSensor(const QString &port, const trikKernel::Configurer &configurer);
 	~LineSensor() override;
 
 	Status status() const override;
 
+	/// Returns {x, crossroadsProbability, mass} from the last DSP result.
 	Q_INVOKABLE QVector<int> read() override;
 
+	/// Returns {hue, sat, val, hueTol, satTol, valTol} of the last detect().
 	Q_INVOKABLE QVector<int> getDetectParameters() const override;
+
+	/// Returns true when the port is configured as an edge line sensor
+	/// (port property "lineIsEdge"), which drives the EdgeLine DSP algorithm.
+	bool isEdge() const;
+
+	/// Consumes a DSP result: updates the reading and, for a detect() frame,
+	/// applies the tolerance factor and re-activates the DSP with the new range.
+	void onResult(const trikDsp::OutArgs &result);
+
+Q_SIGNALS:
+	/// Requests the VideoSensorManager to (re)activate the DSP channel.
+	void activateRequested(const trikDsp::InArgs &args, bool videoOut, bool canOpen);
+	/// Requests the VideoSensorManager to tear the camera down by @p flags.
+	void stopRequested(int flags);
 
 public Q_SLOTS:
 	void init(bool showOnDisplay) override;
-
 	void detect() override;
-
-	void stop() override;
-
-private Q_SLOTS:
-
-	/// emit Stopped signal
-	void onStopped();
+	void stop(int flags = StopAll) override; // NOLINT(google-default-arguments)
 
 private:
-	/// State of the device, shared with worker.
-	DeviceState mState;
+	DspSensorHelper m;
+	qreal mToleranceFactor = 1.0;
+	bool mIsEdge = false;
 
-	/// Worker object that handles sensor in separate thread.
-	QScopedPointer<LineSensorWorker> mLineSensorWorker;
-
-	/// Worker thread.
-	QThread mWorkerThread;
+	QVector<int> mReading{0, 0, 0};
+	QVector<int> mDetectParameters{0, 0, 0, 0, 0, 0};
+	mutable QReadWriteLock mReadingLock;
+	mutable QReadWriteLock mDetectParametersLock;
 };
 
 }
+

@@ -76,6 +76,10 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	connect(trikGuiApp, &TrikGuiApplication::showPowerConfirm, this, &MainMenuManager::showPowerConfirm);
 	connect(trikGuiApp, &TrikGuiApplication::hidePowerConfirm, this, &MainMenuManager::hidePowerConfirm);
 
+	// When the brick fully stops (video sensors down, framebuffer closed), repaint
+	// the GUI so leftover video frames on /dev/fb0 are cleared.
+	connect(&mController, &Controller::brickStopped, trikGuiApp, &TrikGuiApplication::forceRepaint);
+
 	mController.brick().playTone(2000, 150);
 }
 

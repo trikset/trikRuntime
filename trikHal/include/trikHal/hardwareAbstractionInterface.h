@@ -23,6 +23,8 @@
 #include "mspI2cInterface.h"
 #include "mspUsbInterface.h"
 #include "systemConsoleInterface.h"
+#include "VideoDeviceFileInterface.h"
+#include "fbOutputInterface.h"
 
 #include <trikHal/trikHalDeclSpec.h>
 #include <QtCore/QDir>
@@ -74,10 +76,22 @@ public:
 	/// @param fileName - file name (with path, relative or absolute) of a device file.
 	virtual OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const = 0;
 
-	/// Returns QVector with info about picture pixels
-	/// @param port - port name for device
-	/// @param pathToPic - path to picture
-	virtual QVector<uint8_t> captureV4l2StillImage(const QString &port, const QDir &pathToPic) const = 0;
+	virtual VideoDeviceFileInterface *createVideoDeviceFile( // NOLINT(google-default-arguments)
+			const QString &devicePath, uint32_t width, uint32_t height,
+			uint32_t fourcc, bool isWebcam = false) const = 0;
+
+	/// Initialize an analog video sensor (ov7670) before it is opened. Mirrors
+	/// the media-sensor init-ov7670 script: prefer the kernel driver's `reinit`
+	/// sysfs interface when available, otherwise pulse the reset GPIO and program
+	/// the sensor registers over I2C.
+	/// @param deviceFile - the /dev/videoN path the sensor is bound to.
+	/// @param i2cBus - I2C bus number the sensor is connected to.
+	/// @param i2cAddress - I2C address of the sensor.
+	/// @param gpioNumber - GPIO number used for the sensor reset pulse.
+	virtual bool initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress,
+			int gpioNumber) const = 0;
+
+	virtual FbOutputInterface *createFbOutput() const = 0;
 };
 
 }

@@ -16,11 +16,13 @@
 
 #include <QtCore/QHash>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QSharedPointer>
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/differentOwnerPointer.h>
 #include <functional>
 #include "internalBrickInterface.h"
+#include "translation.h"
 
 namespace trikHal {
 class HardwareAbstractionInterface;
@@ -56,6 +58,8 @@ class CameraDeviceInterface;
 class I2cCommunicator;
 class Lidar;
 class IrCameraInterface;
+class VideoSensorManager;
+class CameraManager;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -76,8 +80,8 @@ public:
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
-	Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig
-			, const QString &modelConfig, const QString &mediaPath);
+	Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig,
+		const QString &modelConfig, const QString &mediaPath);
 
 	~Brick() override;
 
@@ -97,6 +101,11 @@ public Q_SLOTS:
 	void say(const QString &text) override;
 
 	void stop() override;
+
+	// NOLINTNEXTLINE(google-default-arguments)
+	void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) override;
+
+	void stopVideoTranslation(const QString &port) override;
 
 	MotorInterface *motor(const QString &port) override;
 
@@ -128,7 +137,7 @@ public Q_SLOTS:
 
 	I2cDeviceInterface *smBusI2c(int bus, int address) override;
 
-	QVector<uint8_t> getStillImage() override;
+	QVector<uint8_t> getStillImage(const QString &port) override;
 
 	SoundSensorInterface *soundSensor(const QString &port) override;
 
@@ -155,10 +164,17 @@ public Q_SLOTS:
 	void stopEventDevice(const QString &deviceFile) override;
 
 private:
-	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction
-			, const QString &systemConfig
-			, const QString &modelConfig
-			, const QString &mediaPath);
+	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction,
+		const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
+
+	/// Stops the translation on @p port. If @p keepCamera is true the camera is
+	/// only streamed off (kept acquired) so a subsequent sensor init can switch
+	/// the DSP algorithm without a slow camera reopen; otherwise it is released.
+	void stopVideoTranslationInternal(const QString &port, bool keepCamera);
+
+	/// Stops any mjpg-streamer daemons left over from a previous (crashed) run,
+	/// so a fresh Brick starts clean instead of leaving orphaned streamers.
+	void stopOrphanedStreamers();
 
 	/// Deinitializes and properly shuts down device on a given port.
 	void shutdownDevice(const QString &port);
@@ -166,8 +182,8 @@ private:
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
 
-	I2cDeviceInterface* createI2cDevice(int bus, int address,
-						const std::function<trikHal::MspI2cInterface *(void)> &factory);
+	I2cDeviceInterface *createI2cDevice(int bus, int address,
+		const std::function<trikHal::MspI2cInterface *(void)> &factory);
 
 	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
 	/// Has or hasn't ownership depending on whether it was created by Brick itself or passed from outside.
@@ -184,28 +200,29 @@ private:
 	QScopedPointer<Led> mLed;
 	QScopedPointer<Gamepad> mGamepad;
 	QScopedPointer<TonePlayer> mTonePlayer;
-	QScopedPointer<CameraDeviceInterface> mCamera;
+	QHash<QString, CameraDeviceInterface *> mCameras; // Has ownership, keyed by port.
 	QScopedPointer<IrCameraInterface> mIrCamera;
-
-	QHash<QString, ServoMotor *> mServoMotors;  // Has ownership.
-	QHash<QString, PwmCapture *> mPwmCaptures;  // Has ownership.
-	QHash<QString, PowerMotor *> mPowerMotors;  // Has ownership.
-	QHash<QString, AnalogSensor *> mAnalogSensors;  // Has ownership.
-	QHash<QString, Encoder *> mEncoders;  // Has ownership.
-	QHash<QString, DigitalSensor *> mDigitalSensors;  // Has ownership.
-	QHash<QString, RangeSensor *> mRangeSensors;  // Has ownership.
-	QHash<QString, LineSensor *> mLineSensors;  // Has ownership.
-	QHash<QString, ColorSensor *> mColorSensors;  // Has ownership.
-	QHash<QString, ObjectSensor *> mObjectSensors;  // Has ownership.
-	QHash<QString, SoundSensor *> mSoundSensors;  // Has ownership.
-	QHash<QString, Lidar *> mLidars;  // Has ownership.
-	QHash<QString, Fifo *> mFifos;  // Has ownership.
-	QHash<QString, EventDeviceInterface *> mEventDevices;  // Has ownership.
-	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices;  // Has ownership.
+	QScopedPointer<VideoSensorManager> mVideoSensorManager;
+	QSharedPointer<CameraManager> mCameraManager;
+	QHash<QString, ServoMotor *> mServoMotors; // Has ownership.
+	QHash<QString, PwmCapture *> mPwmCaptures; // Has ownership.
+	QHash<QString, PowerMotor *> mPowerMotors; // Has ownership.
+	QHash<QString, AnalogSensor *> mAnalogSensors; // Has ownership.
+	QHash<QString, Encoder *> mEncoders; // Has ownership.
+	QHash<QString, DigitalSensor *> mDigitalSensors; // Has ownership.
+	QHash<QString, RangeSensor *> mRangeSensors; // Has ownership.
+	QHash<QString, SoundSensor *> mSoundSensors; // Has ownership.
+	QHash<QString, Lidar *> mLidars; // Has ownership.
+	QHash<QString, Fifo *> mFifos; // Has ownership.
+	QHash<QString, EventDeviceInterface *> mEventDevices; // Has ownership.
+	QHash<uint16_t, I2cDeviceInterface *> mI2cDevices; // Has ownership.
 
 	QString mPlayWavFileCommand;
 	QString mPlayMp3FileCommand;
 	QString mMediaPath;
+
+	/// Active translations keyed by port.
+	QHash<QString, Translation> mTranslations;
 
 	trikKernel::Configurer mConfigurer;
 };

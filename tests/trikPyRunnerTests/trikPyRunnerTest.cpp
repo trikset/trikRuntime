@@ -196,7 +196,7 @@ TEST_F(TrikPyRunnerTest, methodsIsAccessible)
 
 TEST_F(TrikPyRunnerTest, brickMethodWithNonTrivialReturnTypeConversion)
 {
-	auto exitCode = run("brick.getStillImage()");
+	auto exitCode = run("brick.getStillImage(\"imitationCameraPort\")");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }
 
@@ -220,6 +220,6 @@ TEST_F(TrikPyRunnerTest, scriptExecutionControl)
 
 TEST_F(TrikPyRunnerTest, globalFunction)
 {
-	auto exitCode = run("script.getPhoto()");
+	auto exitCode = run("script.getPhoto(\"imitationCameraPort\")");
 	ASSERT_EQ(exitCode, EXIT_SCRIPT_SUCCESS);
 }

@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,61 +14,53 @@
 
 #pragma once
 
-#include <QtCore/QThread>
-#include <QtCore/QScopedPointer>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QVector>
+
+#include <trikDsp/dspTypes.h>
 
 #include "colorSensorInterface.h"
-#include "deviceState.h"
+#include "dspSensorBase.h"
 
-#include <trikControl/trikControlDeclSpec.h>
-
-namespace trikKernel {
-class Configurer;
-}
-
-namespace trikHal {
-class HardwareAbstractionInterface;
-}
+namespace trikKernel { class Configurer; }
 
 namespace trikControl {
 
-class ColorSensorWorker;
-
-/// Implementation of color sensor for real robot.
 class ColorSensor : public ColorSensorInterface
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param port - port on which this sensor is configured.
-	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	ColorSensor(const QString &port, const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-
+	/// Reads the port's grid size (m/n) and marks the sensor ready.
+	ColorSensor(const QString &port, const trikKernel::Configurer &configurer);
 	~ColorSensor() override;
 
 	Status status() const override;
 
-public Q_SLOTS:
-	void init(bool showOnDisplay) override;
+	/// Consumes a DSP result and fills the mxn grid of dominant colors.
+	void onResult(const trikDsp::OutArgs &result);
 
+	/// Returns the RGB dominant color of cell (m, n), or {-1,-1,-1} on bad indices.
 	QVector<int> read(int m, int n) override;
 
-	void stop() override;
+Q_SIGNALS:
+	/// Requests the VideoSensorManager to (re)activate the DSP channel.
+	void activateRequested(const trikDsp::InArgs &args, bool videoOut, bool canOpen);
+	/// Requests the VideoSensorManager to tear the camera down by @p flags.
+	void stopRequested(int flags);
 
-private Q_SLOTS:
-	void onStopped();
+public Q_SLOTS:
+	void init(bool showOnDisplay) override;
+	void stop(int flags = StopAll) override; // NOLINT(google-default-arguments)
 
 private:
-	/// State of a sensor. Shared with worker object.
-	DeviceState mState;
+	DspSensorHelper m;
 
-	/// Worker object that handles sensor in separate thread.
-	QScopedPointer<ColorSensorWorker> mColorSensorWorker;
-
-	/// Worker thread.
-	QThread mWorkerThread;
+	QVector<QVector<QVector<int>>> mReading;
+	int mM = 0;
+	int mN = 0;
+	mutable QReadWriteLock mReadingLock;
 };
 
 }
+

@@ -18,7 +18,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QStringList>
+#include <QtCore/QVariantMap>
 
 #include <QElapsedTimer>
 #include <QOperatingSystemVersion>
@@ -61,7 +63,7 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 
 static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::TimerType tt) {
 	QEventLoop loop;
-	QObject::connect(sec, &TrikScriptControlInterface::stopWaiting, &loop, std::bind(&QEventLoop::exit, &loop,  -1));
+	QObject::connect(sec, &TrikScriptControlInterface::stopWaiting, &loop, [&loop]() { loop.exit(-1); });
 	QTimer t;
 	t.setTimerType(tt);
 	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -84,7 +86,7 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 	constexpr auto preciseTimerDelta = 20;
 
 	if (diff > 100
-			&& waitWithTimerType(this, std::max(diff - preciseTimerDelta, 0ll), Qt::TimerType::CoarseTimer)) {
+			&& waitWithTimerType(this, static_cast<int>(std::max(diff - preciseTimerDelta, 0ll)), Qt::TimerType::CoarseTimer)) {
 		return;
 	}
 	diff = milliseconds - elapsed.elapsed();
@@ -95,7 +97,7 @@ void ScriptExecutionControl::wait(const int &milliseconds)
 
 	static_assert(preciseTimerDelta > usleepDelta, "Use timer for longer sleep");
 
-	if (waitWithTimerType(this, std::max(0ll, diff - (usleepDelta+spinLockDelta)), Qt::TimerType::PreciseTimer)) {
+	if (waitWithTimerType(this, static_cast<int>(std::max(0ll, diff - (usleepDelta+spinLockDelta))), Qt::TimerType::PreciseTimer)) {
 			return;
 	}
 
@@ -144,8 +146,54 @@ void ScriptExecutionControl::quit()
 	Q_EMIT quitSignal();
 }
 
+bool ScriptExecutionControl::redirectLegacyMjpgStreaming(const QString &command)
+{
+	// The old generated code started/stopped video streaming by running the
+	// mjpg-encoder-ov7670 / mjpg-streamer-ov7670 init scripts directly:
+	//   script.system("/etc/init.d/mjpg-encoder-ov7670 start --jpeg-qual 30 --white-black false"
+	//                 " && /etc/init.d/mjpg-streamer-ov7670 start");
+	//   script.system("/etc/init.d/mjpg-streamer-ov7670 stop"
+	//                 " && /etc/init.d/mjpg-encoder-ov7670 stop");
+	// These are intercepted here and redirected to the Brick translation API for
+	// the ov7670 port (video1), so old scripts keep working on the new runtime.
+
+	if (command.contains(QStringLiteral("mjpg-encoder-ov7670 start"))) {
+		QVariantMap params;
+		const static QRegularExpression qualRe(QStringLiteral("--jpeg-qual\\s+(\\d+)"));
+		const auto &qualMatch = qualRe.match(command);
+		if (qualMatch.hasMatch()) {
+			params.insert(QStringLiteral("jpeg-qual"), qualMatch.captured(1).toInt());
+		}
+
+		const static QRegularExpression bwRe(QStringLiteral("--white-black\\s+(\\w+)"));
+		const auto &bwMatch = bwRe.match(command);
+		if (bwMatch.hasMatch()) {
+			const auto &value = bwMatch.captured(1);
+			params.insert(QStringLiteral("white-black"),
+			              value == QStringLiteral("true") || value == QStringLiteral("1"));
+		}
+
+		QLOG_INFO() << "Redirecting legacy mjpg-encoder start to startVideoTranslation(video1)";
+		mBrick->startVideoTranslation(QStringLiteral("video1"), params);
+		return true;
+	}
+
+	if (command.contains(QStringLiteral("mjpg-streamer-ov7670 stop"))) {
+		QLOG_INFO() << "Redirecting legacy mjpg-streamer stop to stopVideoTranslation(video1)";
+		mBrick->stopVideoTranslation(QStringLiteral("video1"));
+		return true;
+	}
+
+	return false;
+}
+
+// NOLINTNEXTLINE(google-default-arguments)
 void ScriptExecutionControl::system(const QString &command, bool synchronously)
 {
+	if (redirectLegacyMjpgStreaming(command)) {
+		return;
+	}
+
 	if (!synchronously) {
 		QStringList args{"-c", command};
 		QLOG_INFO() << "Running: " << "sh" << args;
@@ -200,7 +248,8 @@ int ScriptExecutionControl::timeInterval(int packedTimeLeft, int packedTimeRight
 	return trikKernel::TimeVal::timeInterval(packedTimeLeft, packedTimeRight);
 }
 
-QVector<int32_t> ScriptExecutionControl::getPhoto()
+// NOLINTNEXTLINE(google-default-arguments)
+QVector<int32_t> ScriptExecutionControl::getPhoto(const QString &port)
 {
-	return trikControl::Utilities::rescalePhoto(mBrick->getStillImage());
+	return trikControl::Utilities::rescalePhoto(mBrick->getStillImage(port));
 }

@@ -33,8 +33,10 @@ public:
 	/// If it is false, script will exit immediately.
 	virtual bool isInEventDrivenMode() const = 0;
 
-	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image
-	Q_INVOKABLE virtual QVector<int32_t> getPhoto() = 0;
+	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image from the camera on @p port.
+	// TODO: The default parameter is part of the public API. Consider backward compatibility
+	// NOLINTNEXTLINE(google-default-arguments)
+	Q_INVOKABLE virtual QVector<int32_t> getPhoto(const QString &port = QStringLiteral("video1")) = 0;
 
 	/// Starts a new timer with given interval and returns reference to it.
 	/// QObject - hack to be able to inherit together QTimer and AbstractTimer from the studio
@@ -50,6 +52,8 @@ public:
 	Q_INVOKABLE virtual int random(int from, int to) const = 0;
 
 	/// Execute given sh command.
+	// TODO: The default parameter is part of the public API. Consider backward compatibility
+	// NOLINTNEXTLINE(google-default-arguments)
 	Q_INVOKABLE virtual void system(const QString &command, bool synchronously = false) = 0;
 
 	/// Appends given text to the end of a file.

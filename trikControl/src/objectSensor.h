@@ -1,4 +1,4 @@
-/* Copyright 2014 - 2015 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,63 +14,59 @@
 
 #pragma once
 
-#include <QtCore/QThread>
-#include <QtCore/QScopedPointer>
+#include <QtCore/QReadWriteLock>
+#include <QtCore/QVector>
+
+#include <trikDsp/dspTypes.h>
 
 #include "objectSensorInterface.h"
-#include "deviceState.h"
+#include "dspSensorBase.h"
 
-namespace trikKernel {
-class Configurer;
-}
-
-namespace trikHal {
-class HardwareAbstractionInterface;
-}
+namespace trikKernel { class Configurer; }
 
 namespace trikControl {
 
-class ObjectSensorWorker;
-
-/// Implementation of object sensor for real robot.
 class ObjectSensor : public ObjectSensorInterface
 {
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param port - port on which this sensor is configured.
-	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	ObjectSensor(const QString &port, const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
-
+	/// Reads the port's toleranceFactor and marks the sensor ready.
+	ObjectSensor(const QString &port, const trikKernel::Configurer &configurer);
 	~ObjectSensor() override;
 
 	Status status() const override;
 
-public Q_SLOTS:
-	void init(bool showOnDisplay) override;
+	/// Consumes a DSP result: updates the reading and, for a detect() frame,
+	/// applies the tolerance factor and re-activates the DSP with the new range.
+	void onResult(const trikDsp::OutArgs &result);
 
-	void detect() override;
-
+	/// Returns {x, y, size} from the last DSP result.
 	QVector<int> read() override;
 
-	void stop() override;
-
+	/// Returns {hue, sat, val, hueTol, satTol, valTol} of the last detect().
 	QVector<int> getDetectParameters() const override;
 
-private Q_SLOTS:
-	void onStopped();
+Q_SIGNALS:
+	/// Requests the VideoSensorManager to (re)activate the DSP channel.
+	void activateRequested(const trikDsp::InArgs &args, bool videoOut, bool canOpen);
+	/// Requests the VideoSensorManager to tear the camera down by @p flags.
+	void stopRequested(int flags);
+
+public Q_SLOTS:
+	void init(bool showOnDisplay) override;
+	void detect() override;
+	void stop(int flags = StopAll) override; // NOLINT(google-default-arguments)
 
 private:
-	/// Sensor state.
-	DeviceState mState;
+	DspSensorHelper m;
+	qreal mToleranceFactor = 1.0;
 
-	/// Worker object that handles sensor in separate thread.
-	QScopedPointer<ObjectSensorWorker> mObjectSensorWorker;
-
-	/// Worker thread.
-	QThread mWorkerThread;
+	QVector<int> mReading{0, 0, 0};
+	QVector<int> mDetectParameters{0, 0, 0, 0, 0, 0};
+	mutable QReadWriteLock mReadingLock;
+	mutable QReadWriteLock mDetectParametersLock;
 };
 
 }
+

@@ -70,4 +70,4 @@ public:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::DeviceInterface *)
+Q_DECLARE_METATYPE(trikControl::DeviceInterface *) // NOLINT(misc-no-recursion)

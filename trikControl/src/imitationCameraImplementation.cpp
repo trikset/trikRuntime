@@ -22,7 +22,7 @@
 
 using namespace trikControl;
 
-ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &filter, const QString &path)
+ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &filter, const QString &path) // NOLINT(modernize-pass-by-value)
 	: mFilters(filter)
 {
 	setTempDir(path);
@@ -46,7 +46,7 @@ ImitationCameraImplementation::ImitationCameraImplementation(const QStringList &
 
 QVector<uint8_t> ImitationCameraImplementation::getPhoto() {
 	if (mFiles.isEmpty()) {
-		return QVector<uint8_t>();
+		return {};
 	}
 	auto const &path = mFiles[++mCurrentFileIndex %= mFiles.size()].absoluteFilePath();
 	QImage imgOrig(path);
@@ -55,7 +55,7 @@ QVector<uint8_t> ImitationCameraImplementation::getPhoto() {
 		QLOG_INFO() << "getPhoto: using " << path;
 	} else {
 		QLOG_ERROR() << "getPhoto: can not open file " << path;
-		return QVector<uint8_t>();
+		return {};
 	}
 
 	return CameraDeviceInterface::qImageToQVector(imgOrig);

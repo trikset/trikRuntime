@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <QtCore/QByteArray>
 #include <QtCore/QString>
 #include <trikHal/trikHalDeclSpec.h>
 
@@ -25,17 +26,34 @@ class TRIKHAL_EXPORT OutputDeviceFileInterface
 {
 	Q_DISABLE_COPY(OutputDeviceFileInterface)
 public:
+	/// How the file is opened. Determines the write semantics.
+	enum class OpenMode {
+		/// Text command write to a device file (the historic behaviour): the file
+		/// is opened write-only and @c write(QString) is used. Opening may block.
+		Text,
+
+		/// Raw non-blocking binary write, intended for streaming frames (e.g. JPEG)
+		/// into a Linux FIFO. The FIFO node is created on demand, the descriptor is
+		/// opened read-write + non-blocking, and @c write(QByteArray) drops data
+		/// instead of blocking when the pipe is full.
+		NonBlockingBinary,
+	};
+
 	OutputDeviceFileInterface() = default;
 	virtual ~OutputDeviceFileInterface() = default;
 
 	/// Open a file. File name must be set previously.
-	virtual bool open() = 0;
+	virtual bool open(OpenMode mode = OpenMode::Text) = 0; // NOLINT(google-default-arguments)
 
 	/// Close a file.
 	virtual void close() = 0;
 
 	/// Write data to a file using UTF-8 encoding.
 	virtual void write(const QString &data) = 0;
+
+	/// Write raw bytes to a file. Non-blocking in @c NonBlockingBinary mode.
+	/// @returns true if the whole buffer was written (false when dropped).
+	virtual bool write(const QByteArray &data) = 0;
 
 	/// Returns name of a file.
 	virtual QString fileName() const = 0;
