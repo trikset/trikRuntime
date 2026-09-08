@@ -47,6 +47,8 @@ public:
 	Q_ENUM(AppType)
 	Q_INVOKABLE void createApp(AppType appType);
 
+	trikControl::BrickInterface &brick() { return mController.brick(); }
+
 private Q_SLOTS:
 	void changeFileManagerRoot(SystemSettings::FileManagerRootType const &path);
 

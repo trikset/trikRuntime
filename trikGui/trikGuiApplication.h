@@ -35,13 +35,16 @@ Q_SIGNALS:
 	void showPowerConfirm();
 	void hidePowerConfirm();
 
+public Q_SLOTS:
+	/// Redraw the GUI immediately. Needed after the display buffer has been
+	/// occupied by video sensors and then released, to clear leftover frames.
+	void forceRepaint();
+
 private Q_SLOTS:
 	void shutdownSoon();
 	void shutdown();
 
 private:
-	void forceRepaint();
-
 	QTimer mPowerButtonPressedTimer;
 	QTimer mShutdownDelayTimer;
 	bool mIsShutdownRequested{false};
