@@ -15,46 +15,46 @@
 #pragma once
 
 #include <QtCore/QScopedPointer>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QVector>
-
 #include <QMutex>
 
 #include "cameraDeviceInterface.h"
 #include "cameraImplementationInterface.h"
 #include <trikControl/trikControlDeclSpec.h>
 
+class QObject;
+class QThread;
+
 namespace trikKernel {
 class Configurer;
 }
-
-namespace trikHal {
-class HardwareAbstractionInterface;
+namespace trikControl {
+class CameraManager;
 }
 
 namespace trikControl {
 
-/// Class for camera device instantiation
-class TRIKCONTROL_EXPORT CameraDevice : public CameraDeviceInterface
+class CameraDevice : public CameraDeviceInterface
 {
 public:
-
-	/// CameraDevice constructor
-	/// @param mediaPath - path where program should save photos
-	/// @param configurer - configurer to get info from config
-	/// @param hardwareAbstraction - realization of HAL
-	CameraDevice(const QString &port, const QString & mediaPath
-				 , const trikKernel::Configurer &configurer
-				 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	CameraDevice(const QString &port, const QString &mediaPath, const trikKernel::Configurer &configurer,
+		const QSharedPointer<CameraManager> &cameraManager);
 
 	QVector<uint8_t> getPhoto() override;
-
 	Status status() const override;
-
-	~CameraDevice() override = default;
+	~CameraDevice() override;
 
 private:
 	QMutex mCameraMutex;
 	QScopedPointer<CameraImplementationInterface> mCameraImpl;
+	/// Persistent worker thread the photo capture runs on. Created once in the
+	/// constructor and reused for every getPhoto(), so a thread is not spawned
+	/// per photo.
+	QScopedPointer<QThread> mCameraThread;
+	/// Context QObject living on mCameraThread, used as the target for queued
+	/// functor invocations (a plain QObject is enough).
+	QScopedPointer<QObject> mCameraWorker;
 };
 
 }

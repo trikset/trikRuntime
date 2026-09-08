@@ -28,7 +28,7 @@ class TRIKCONTROL_EXPORT QtCameraImplementation : public CameraImplementationInt
 public:
 
 	/// Qt camera constructor
-	/// @param port - use this as name of device, i.e. "/dev/video0"
+	/// @param port - use this as name of device, i.e. "/dev/video1"
 	explicit QtCameraImplementation(const QString & port);
 
 	QVector<uint8_t> getPhoto() override;
