@@ -30,9 +30,10 @@ public:
 	/// @param fileName - file name (with path, relative or absolute) of a device file.
 	explicit StubOutputDeviceFile(const QString &fileName);
 
-	bool open() override;
+	bool open(OpenMode mode = OpenMode::Text) override; // NOLINT(google-default-arguments)
 	void close() override;
 	void write(const QString &data) override;
+	bool write(const QByteArray &data) override;
 	QString fileName() const override;
 
 private:

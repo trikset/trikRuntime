@@ -135,6 +135,12 @@ int CommonI2c::send(const QByteArray &data) {
 }
 
 
+int CommonI2c::writeRegister(uint8_t reg, uint8_t value)
+{
+	uchar cmd[2] = { reg, value };
+	return write(cmd, sizeof(cmd));
+}
+
 int CommonI2c::write(__u8* writeData, __u16 length)
 {
 	struct i2c_msg i2c_messages[1];

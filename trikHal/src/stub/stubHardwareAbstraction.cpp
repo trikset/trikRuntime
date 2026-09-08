@@ -22,6 +22,8 @@
 #include "stubOutputDeviceFile.h"
 #include "stubFifo.h"
 #include "stubIIOFile.h"
+#include "stubVideoDeviceFile.h"
+#include "stubFbOutput.h"
 #include "stubCommonI2c.h"
 #include "QsLog.h"
 
@@ -36,8 +38,7 @@ StubHardwareAbstraction::StubHardwareAbstraction()
 }
 
 StubHardwareAbstraction::~StubHardwareAbstraction()
-{
-}
+= default;
 
 MspI2cInterface &StubHardwareAbstraction::mspI2c()
 {
@@ -88,9 +89,28 @@ OutputDeviceFileInterface *StubHardwareAbstraction::createOutputDeviceFile(const
 	return new StubOutputDeviceFile(fileName);
 }
 
-QVector<uint8_t> StubHardwareAbstraction::captureV4l2StillImage(const QString &port, const QDir &pathToPic) const
+VideoDeviceFileInterface *StubHardwareAbstraction::createVideoDeviceFile( // NOLINT(google-default-arguments)
+		const QString &devicePath, uint32_t width, uint32_t height,
+		uint32_t fourcc, bool isWebcam) const
 {
-	Q_UNUSED(pathToPic);
-	QLOG_INFO() << "Call stub HAL captureV4l2StillImage on port " + port;
-	return QVector<uint8_t>();
+	Q_UNUSED(width);
+	Q_UNUSED(height);
+	Q_UNUSED(fourcc);
+	Q_UNUSED(isWebcam);
+	return new StubVideoDeviceFile(devicePath);
+}
+
+bool StubHardwareAbstraction::initVideoSensor(const QString &deviceFile, int i2cBus,
+                                              int i2cAddress, int gpioNumber) const
+{
+	Q_UNUSED(deviceFile);
+	Q_UNUSED(i2cBus);
+	Q_UNUSED(i2cAddress);
+	Q_UNUSED(gpioNumber);
+	return true;
+}
+
+FbOutputInterface *StubHardwareAbstraction::createFbOutput() const
+{
+	return new stub::StubFbOutput();
 }

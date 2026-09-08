@@ -23,8 +23,9 @@ StubOutputDeviceFile::StubOutputDeviceFile(const QString &fileName)
 {
 }
 
-bool StubOutputDeviceFile::open()
+bool StubOutputDeviceFile::open(OpenMode mode) // NOLINT(google-default-arguments)
 {
+	Q_UNUSED(mode)
 	QLOG_INFO() << "Opening stub output device file" << mFile.fileName();
 	return true;
 }
@@ -37,6 +38,12 @@ void StubOutputDeviceFile::close()
 void StubOutputDeviceFile::write(const QString &data)
 {
 	QLOG_INFO() << "Writing to stub output device file" << mFile.fileName() << ":" << data;
+}
+
+bool StubOutputDeviceFile::write(const QByteArray &data)
+{
+	QLOG_INFO() << "Writing" << data.size() << "raw bytes to stub output device file" << mFile.fileName();
+	return true;
 }
 
 QString StubOutputDeviceFile::fileName() const
