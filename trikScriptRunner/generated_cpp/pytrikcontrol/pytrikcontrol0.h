@@ -34,6 +34,7 @@
 #include <trikControl/sensorInterface.h>
 #include <trikControl/soundSensorInterface.h>
 #include <trikControl/vectorSensorInterface.h>
+#include <trikControl/videoSensorStopFlags.h>
 #include <trikKernel/timeVal.h>
 
 
@@ -90,7 +91,7 @@ inline QStringList  py_q_encoderPorts() const { return this->encoderPorts(); }
 inline trikControl::EventDeviceInterface*  py_q_eventDevice(const QString&  deviceFile) { return this->eventDevice(deviceFile); }
 inline trikControl::FifoInterface*  py_q_fifo(const QString&  port) { return this->fifo(port); }
 inline trikControl::GamepadInterface*  py_q_gamepad() { return this->gamepad(); }
-inline QVector<uint8_t >  py_q_getStillImage() { return this->getStillImage(); }
+inline QVector<uint8_t >  py_q_getStillImage(const QString&  port = "video1") { return this->getStillImage(port); }
 inline trikControl::GyroSensorInterface*  py_q_gyroscope() { return this->gyroscope(); }
 inline trikControl::I2cDeviceInterface*  py_q_i2c(int  bus, int  address, int  regSize = 1) { return this->i2c(bus, address, regSize); }
 inline trikControl::IrCameraInterface*  py_q_irCamera() { return this->irCamera(); }
@@ -114,8 +115,10 @@ inline trikControl::SensorInterface*  py_q_sensor(const QString&  port) { return
 inline QStringList  py_q_sensorPorts(trikControl::SensorInterface::Type  type) const { return this->sensorPorts(type); }
 inline trikControl::I2cDeviceInterface*  py_q_smBusI2c(int  bus, int  address) { return this->smBusI2c(bus, address); }
 inline trikControl::SoundSensorInterface*  py_q_soundSensor(const QString&  port) { return this->soundSensor(port); }
+inline void py_q_startVideoTranslation(const QString&  port, const QVariant&  params = QVariant()) { this->startVideoTranslation(port, params); }
 inline void py_q_stop() { this->stop(); }
 inline void py_q_stopEventDevice(const QString&  deviceFile) { this->stopEventDevice(deviceFile); }
+inline void py_q_stopVideoTranslation(const QString&  port) { this->stopVideoTranslation(port); }
 };
 
 class PythonQtWrapper_trikControl__BrickInterface : public QObject
@@ -145,8 +148,8 @@ void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { dele
    trikControl::FifoInterface*  py_q_fifo(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_fifo(port));}
    trikControl::GamepadInterface*  gamepad(trikControl::BrickInterface* theWrappedObject);
    trikControl::GamepadInterface*  py_q_gamepad(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gamepad());}
-   QVector<uint8_t >  getStillImage(trikControl::BrickInterface* theWrappedObject);
-   QVector<uint8_t >  py_q_getStillImage(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_getStillImage());}
+   QVector<uint8_t >  getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port = "video1");
+   QVector<uint8_t >  py_q_getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port = "video1"){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_getStillImage(port));}
    trikControl::GyroSensorInterface*  gyroscope(trikControl::BrickInterface* theWrappedObject);
    trikControl::GyroSensorInterface*  py_q_gyroscope(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gyroscope());}
    trikControl::I2cDeviceInterface*  i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize = 1);
@@ -194,10 +197,14 @@ void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { dele
    trikControl::I2cDeviceInterface*  py_q_smBusI2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_smBusI2c(bus, address));}
    trikControl::SoundSensorInterface*  soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port);
    trikControl::SoundSensorInterface*  py_q_soundSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_soundSensor(port));}
+   void startVideoTranslation(trikControl::BrickInterface* theWrappedObject, const QString&  port, const QVariant&  params = QVariant());
+   void py_q_startVideoTranslation(trikControl::BrickInterface* theWrappedObject, const QString&  port, const QVariant&  params = QVariant()){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_startVideoTranslation(port, params));}
    void stop(trikControl::BrickInterface* theWrappedObject);
    void py_q_stop(trikControl::BrickInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_stop());}
    void stopEventDevice(trikControl::BrickInterface* theWrappedObject, const QString&  deviceFile);
    void py_q_stopEventDevice(trikControl::BrickInterface* theWrappedObject, const QString&  deviceFile){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_stopEventDevice(deviceFile));}
+   void stopVideoTranslation(trikControl::BrickInterface* theWrappedObject, const QString&  port);
+   void py_q_stopVideoTranslation(trikControl::BrickInterface* theWrappedObject, const QString&  port){  (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_stopVideoTranslation(port));}
    void stopped(trikControl::BrickInterface* theWrappedObject);
    QString  static_trikControl__BrickInterface_tr(const char*  s, const char*  c = nullptr, int  n = -1);
    QString  static_trikControl__BrickInterface_trUtf8(const char*  s, const char*  c = nullptr, int  n = -1);
@@ -232,7 +239,7 @@ inline void py_q_init(bool  showOnDisplay) { this->init(showOnDisplay); }
 inline const QMetaObject*  py_q_metaObject() const { return trikControl::ColorSensorInterface::metaObject(); }
 inline void*  py_q_qt_metacast(const char*  arg__1) { return trikControl::ColorSensorInterface::qt_metacast(arg__1); }
 inline QVector<int >  py_q_read(int  m, int  n) { return this->read(m, n); }
-inline void py_q_stop() { this->stop(); }
+inline void py_q_stop(int  flags = trikControl::StopAll) { this->stop(flags); }
 };
 
 class PythonQtWrapper_trikControl__ColorSensorInterface : public QObject
@@ -248,8 +255,8 @@ void delete_trikControl__ColorSensorInterface(trikControl::ColorSensorInterface*
    void*  py_q_qt_metacast(trikControl::ColorSensorInterface* theWrappedObject, const char*  arg__1){  return (((PythonQtPublicPromoter_trikControl__ColorSensorInterface*)theWrappedObject)->py_q_qt_metacast(arg__1));}
    QVector<int >  read(trikControl::ColorSensorInterface* theWrappedObject, int  m, int  n);
    QVector<int >  py_q_read(trikControl::ColorSensorInterface* theWrappedObject, int  m, int  n){  return (((PythonQtPublicPromoter_trikControl__ColorSensorInterface*)theWrappedObject)->py_q_read(m, n));}
-   void stop(trikControl::ColorSensorInterface* theWrappedObject);
-   void py_q_stop(trikControl::ColorSensorInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__ColorSensorInterface*)theWrappedObject)->py_q_stop());}
+   void stop(trikControl::ColorSensorInterface* theWrappedObject, int  flags = trikControl::StopAll);
+   void py_q_stop(trikControl::ColorSensorInterface* theWrappedObject, int  flags = trikControl::StopAll){  (((PythonQtPublicPromoter_trikControl__ColorSensorInterface*)theWrappedObject)->py_q_stop(flags));}
    void stopped(trikControl::ColorSensorInterface* theWrappedObject);
    QString  static_trikControl__ColorSensorInterface_tr(const char*  s, const char*  c = nullptr, int  n = -1);
    QString  static_trikControl__ColorSensorInterface_trUtf8(const char*  s, const char*  c = nullptr, int  n = -1);
@@ -764,7 +771,7 @@ inline void py_q_init(bool  showOnDisplay) { this->init(showOnDisplay); }
 inline const QMetaObject*  py_q_metaObject() const { return trikControl::LineSensorInterface::metaObject(); }
 inline void*  py_q_qt_metacast(const char*  arg__1) { return trikControl::LineSensorInterface::qt_metacast(arg__1); }
 inline QVector<int >  py_q_read() { return this->read(); }
-inline void py_q_stop() { this->stop(); }
+inline void py_q_stop(int  flags = trikControl::StopAll) { this->stop(flags); }
 };
 
 class PythonQtWrapper_trikControl__LineSensorInterface : public QObject
@@ -784,8 +791,8 @@ void delete_trikControl__LineSensorInterface(trikControl::LineSensorInterface* o
    void*  py_q_qt_metacast(trikControl::LineSensorInterface* theWrappedObject, const char*  arg__1){  return (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_qt_metacast(arg__1));}
    QVector<int >  read(trikControl::LineSensorInterface* theWrappedObject);
    QVector<int >  py_q_read(trikControl::LineSensorInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_read());}
-   void stop(trikControl::LineSensorInterface* theWrappedObject);
-   void py_q_stop(trikControl::LineSensorInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_stop());}
+   void stop(trikControl::LineSensorInterface* theWrappedObject, int  flags = trikControl::StopAll);
+   void py_q_stop(trikControl::LineSensorInterface* theWrappedObject, int  flags = trikControl::StopAll){  (((PythonQtPublicPromoter_trikControl__LineSensorInterface*)theWrappedObject)->py_q_stop(flags));}
    void stopped(trikControl::LineSensorInterface* theWrappedObject);
    QString  static_trikControl__LineSensorInterface_tr(const char*  s, const char*  c = nullptr, int  n = -1);
    QString  static_trikControl__LineSensorInterface_trUtf8(const char*  s, const char*  c = nullptr, int  n = -1);
@@ -885,7 +892,7 @@ inline void py_q_init(bool  showOnDisplay) { this->init(showOnDisplay); }
 inline const QMetaObject*  py_q_metaObject() const { return trikControl::ObjectSensorInterface::metaObject(); }
 inline void*  py_q_qt_metacast(const char*  arg__1) { return trikControl::ObjectSensorInterface::qt_metacast(arg__1); }
 inline QVector<int >  py_q_read() { return this->read(); }
-inline void py_q_stop() { this->stop(); }
+inline void py_q_stop(int  flags = trikControl::StopAll) { this->stop(flags); }
 };
 
 class PythonQtWrapper_trikControl__ObjectSensorInterface : public QObject
@@ -905,8 +912,8 @@ void delete_trikControl__ObjectSensorInterface(trikControl::ObjectSensorInterfac
    void*  py_q_qt_metacast(trikControl::ObjectSensorInterface* theWrappedObject, const char*  arg__1){  return (((PythonQtPublicPromoter_trikControl__ObjectSensorInterface*)theWrappedObject)->py_q_qt_metacast(arg__1));}
    QVector<int >  read(trikControl::ObjectSensorInterface* theWrappedObject);
    QVector<int >  py_q_read(trikControl::ObjectSensorInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__ObjectSensorInterface*)theWrappedObject)->py_q_read());}
-   void stop(trikControl::ObjectSensorInterface* theWrappedObject);
-   void py_q_stop(trikControl::ObjectSensorInterface* theWrappedObject){  (((PythonQtPublicPromoter_trikControl__ObjectSensorInterface*)theWrappedObject)->py_q_stop());}
+   void stop(trikControl::ObjectSensorInterface* theWrappedObject, int  flags = trikControl::StopAll);
+   void py_q_stop(trikControl::ObjectSensorInterface* theWrappedObject, int  flags = trikControl::StopAll){  (((PythonQtPublicPromoter_trikControl__ObjectSensorInterface*)theWrappedObject)->py_q_stop(flags));}
    void stopped(trikControl::ObjectSensorInterface* theWrappedObject);
    QString  static_trikControl__ObjectSensorInterface_tr(const char*  s, const char*  c = nullptr, int  n = -1);
    QString  static_trikControl__ObjectSensorInterface_trUtf8(const char*  s, const char*  c = nullptr, int  n = -1);
