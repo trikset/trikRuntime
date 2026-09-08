@@ -51,31 +51,31 @@ Led::Status Led::status() const
 void Led::red()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile->write("1");
-		mGreenDeviceFile->write("0");
+		mRedDeviceFile->write(QStringLiteral("1"));
+		mGreenDeviceFile->write(QStringLiteral("0"));
 	}
 }
 
 void Led::green()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile->write("0");
-		mGreenDeviceFile->write("1");
+		mRedDeviceFile->write(QStringLiteral("0"));
+		mGreenDeviceFile->write(QStringLiteral("1"));
 	}
 }
 
 void Led::orange()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile->write("1");
-		mGreenDeviceFile->write("1");
+		mRedDeviceFile->write(QStringLiteral("1"));
+		mGreenDeviceFile->write(QStringLiteral("1"));
 	}
 }
 
 void Led::off()
 {
 	if (mState.isReady()) {
-		mRedDeviceFile->write("0");
-		mGreenDeviceFile->write("0");
+		mRedDeviceFile->write(QStringLiteral("0"));
+		mGreenDeviceFile->write(QStringLiteral("0"));
 	}
 }

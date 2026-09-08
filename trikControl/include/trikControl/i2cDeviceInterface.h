@@ -30,10 +30,10 @@ class TRIKCONTROL_EXPORT I2cDeviceInterface : public QObject, public DeviceInter
 public :
 
 	/// Sends byte/word data to current device, if it is connected.
-	virtual int send(int reg, int value, const QString &mode = "b") = 0;
+	virtual int send(int reg, int value, const QString &mode = "b") = 0; // NOLINT(google-default-arguments)
 
 	/// Reads byte/word data by given I2C command number and returns the result.
-	virtual int read(int reg, const QString &mode = "b") = 0;
+	virtual int read(int reg, const QString &mode = "b") = 0; // NOLINT(google-default-arguments)
 
 	/// Reads data by given I2C command number and returns the result as QVector.
 	virtual QVector<uint8_t> readX(int reg, int size) = 0;
@@ -41,4 +41,4 @@ public :
 
 }
 
-Q_DECLARE_METATYPE(trikControl::I2cDeviceInterface *)
+Q_DECLARE_METATYPE(trikControl::I2cDeviceInterface *) // NOLINT(misc-no-recursion)
