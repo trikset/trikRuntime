@@ -174,13 +174,13 @@ bool ScriptExecutionControl::redirectLegacyMjpgStreaming(const QString &command)
 		}
 
 		QLOG_INFO() << "Redirecting legacy mjpg-encoder start to startVideoTranslation(video1)";
-		mBrick->startVideoTranslation(QStringLiteral("video1"), params);
+		mBrick->startVideoTranslation(QStringLiteral("video2"), params);
 		return true;
 	}
 
 	if (command.contains(QStringLiteral("mjpg-streamer-ov7670 stop"))) {
-		QLOG_INFO() << "Redirecting legacy mjpg-streamer stop to stopVideoTranslation(video1)";
-		mBrick->stopVideoTranslation(QStringLiteral("video1"));
+		QLOG_INFO() << "Redirecting legacy mjpg-streamer stop to stopVideoTranslation(video2)";
+		mBrick->stopVideoTranslation(QStringLiteral("video2"));
 		return true;
 	}
 

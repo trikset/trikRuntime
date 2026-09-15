@@ -91,7 +91,7 @@ inline QStringList  py_q_encoderPorts() const { return this->encoderPorts(); }
 inline trikControl::EventDeviceInterface*  py_q_eventDevice(const QString&  deviceFile) { return this->eventDevice(deviceFile); }
 inline trikControl::FifoInterface*  py_q_fifo(const QString&  port) { return this->fifo(port); }
 inline trikControl::GamepadInterface*  py_q_gamepad() { return this->gamepad(); }
-inline QVector<uint8_t >  py_q_getStillImage(const QString&  port = "video1") { return this->getStillImage(port); }
+inline QVector<uint8_t >  py_q_getStillImage(const QString&  port = "video2") { return this->getStillImage(port); }
 inline trikControl::GyroSensorInterface*  py_q_gyroscope() { return this->gyroscope(); }
 inline trikControl::I2cDeviceInterface*  py_q_i2c(int  bus, int  address, int  regSize = 1) { return this->i2c(bus, address, regSize); }
 inline trikControl::IrCameraInterface*  py_q_irCamera() { return this->irCamera(); }
@@ -148,8 +148,8 @@ void delete_trikControl__BrickInterface(trikControl::BrickInterface* obj) { dele
    trikControl::FifoInterface*  py_q_fifo(trikControl::BrickInterface* theWrappedObject, const QString&  port){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_fifo(port));}
    trikControl::GamepadInterface*  gamepad(trikControl::BrickInterface* theWrappedObject);
    trikControl::GamepadInterface*  py_q_gamepad(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gamepad());}
-   QVector<uint8_t >  getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port = "video1");
-   QVector<uint8_t >  py_q_getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port = "video1"){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_getStillImage(port));}
+   QVector<uint8_t >  getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port = "video2");
+   QVector<uint8_t >  py_q_getStillImage(trikControl::BrickInterface* theWrappedObject, const QString&  port = "video2"){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_getStillImage(port));}
    trikControl::GyroSensorInterface*  gyroscope(trikControl::BrickInterface* theWrappedObject);
    trikControl::GyroSensorInterface*  py_q_gyroscope(trikControl::BrickInterface* theWrappedObject){  return (((PythonQtPublicPromoter_trikControl__BrickInterface*)theWrappedObject)->py_q_gyroscope());}
    trikControl::I2cDeviceInterface*  i2c(trikControl::BrickInterface* theWrappedObject, int  bus, int  address, int  regSize = 1);
