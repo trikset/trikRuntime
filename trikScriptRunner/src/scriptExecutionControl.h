@@ -41,7 +41,7 @@ public:
 
 	/// Returns repacked RGB88 from 3 x uint8_t into int32_t image from the camera on @p port.
 	// NOLINTNEXTLINE(google-default-arguments)
-	Q_INVOKABLE QVector<int32_t> getPhoto(const QString &port = QStringLiteral("video1")) override;
+	Q_INVOKABLE QVector<int32_t> getPhoto(const QString &port = QStringLiteral("video2")) override;
 
 	/// Starts a new timer with given interval and returns reference to it.
 	Q_INVOKABLE QObject *timer(int milliseconds) override;

@@ -68,7 +68,7 @@ public:
 	TrikCppProgram (const TrikCppProgram&) = delete;
 	TrikCppProgram &operator=(const TrikCppProgram&) = delete;
 
-	QVector<int32_t> getPhoto(const QString &port = QStringLiteral("video1")) {
+	QVector<int32_t> getPhoto(const QString &port = QStringLiteral("video2")) {
 		return trikControl::Utilities::rescalePhoto(mBrick->getStillImage(port));
 	}
 
