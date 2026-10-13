@@ -23,6 +23,7 @@
 #include <functional>
 #include "internalBrickInterface.h"
 #include "translation.h"
+#include "transports/policies.h"
 
 namespace trikHal {
 class HardwareAbstractionInterface;
@@ -31,27 +32,29 @@ class MspI2cInterface;
 
 namespace trikControl {
 
-class AnalogSensor;
+template<typename Policy> class PwmCapture;
+template<typename Policy> class ServoMotor;
+template<typename Policy> class AnalogSensor;
 class Battery;
 class ColorSensor;
 class DigitalSensor;
 class Display;
-class Encoder;
+template<typename Policy> class Encoder;
+class MotorInterface;
+class PwmCaptureInterface;
 class EventDevice;
 class Fifo;
 class Gamepad;
 class GyroSensor;
-class MspCommunicatorInterface;
+class CommunicatorProvider;
 class Keys;
 class Led;
 class LineSensor;
 class ModuleLoader;
 class ObjectSensor;
 class SoundSensor;
-class PowerMotor;
-class PwmCapture;
+template<typename Policy> class PowerMotor;
 class RangeSensor;
-class ServoMotor;
 class TonePlayer;
 class VectorSensor;
 class CameraDeviceInterface;
@@ -189,7 +192,7 @@ private:
 	/// Has or hasn't ownership depending on whether it was created by Brick itself or passed from outside.
 	trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> mHardwareAbstraction;
 
-	QScopedPointer<MspCommunicatorInterface> mMspCommunicator;
+	QScopedPointer<CommunicatorProvider> mCommunicatorProvider;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;
@@ -204,11 +207,11 @@ private:
 	QScopedPointer<IrCameraInterface> mIrCamera;
 	QScopedPointer<VideoSensorManager> mVideoSensorManager;
 	QSharedPointer<CameraManager> mCameraManager;
-	QHash<QString, ServoMotor *> mServoMotors; // Has ownership.
-	QHash<QString, PwmCapture *> mPwmCaptures; // Has ownership.
-	QHash<QString, PowerMotor *> mPowerMotors; // Has ownership.
-	QHash<QString, AnalogSensor *> mAnalogSensors; // Has ownership.
-	QHash<QString, Encoder *> mEncoders; // Has ownership.
+	QHash<QString, MotorInterface *> mServoMotors; // Has ownership.
+	QHash<QString, PwmCaptureInterface *> mPwmCaptures; // Has ownership.
+	QHash<QString, MotorInterface *> mPowerMotors; // Has ownership.
+	QHash<QString, SensorInterface *> mAnalogSensors; // Has ownership.
+	QHash<QString, EncoderInterface *> mEncoders; // Has ownership.
 	QHash<QString, DigitalSensor *> mDigitalSensors; // Has ownership.
 	QHash<QString, RangeSensor *> mRangeSensors; // Has ownership.
 	QHash<QString, SoundSensor *> mSoundSensors; // Has ownership.

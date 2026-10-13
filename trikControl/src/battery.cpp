@@ -14,12 +14,13 @@
 
 #include "battery.h"
 
-#include "mspI2cCommunicator.h"
+#include "communicatorCommand.h"
+#include "peripheryDriverInterface.h"
 
 using namespace trikControl;
 
-Battery::Battery(MspCommunicatorInterface &communicator)
-	: mCommunicator(communicator)
+Battery::Battery(PeripheryDriverInterface &driver)
+	: mDriver(driver)
 {
 }
 
@@ -31,17 +32,17 @@ float Battery::readVoltage()
 
 float Battery::readRawDataVoltage()
 {
-	QByteArray command(4, '\0');
-	command[0] = static_cast<char>(0x26);
-	command[1] = static_cast<char>(0x00);
+	CommunicatorCommand command;
+	command.device = 0x26;
 
-	command[2] = static_cast<char>(0x02);
-	command[3] = static_cast<char>(0x00);
+	QByteArray data(2, '\0');
+	data[0] = static_cast<char>(0x02);
+	command.data = data;
 
-	return mCommunicator.read(command);
+	return mDriver.read(command);
 }
 
 Battery::Status Battery::status() const
 {
-	return mCommunicator.status();
+	return mDriver.status();
 }

@@ -59,6 +59,8 @@ HEADERS += \
 	$$PWD/src/cameraDevice.h \
 	$$PWD/src/cameraImplementationInterface.h \
 	$$PWD/src/colorSensor.h \
+	$$PWD/src/communicatorCommand.h \
+	$$PWD/src/communicatorProvider.h \
 	$$PWD/src/configurerHelper.h \
 	$$PWD/src/deviceState.h \
 	$$PWD/src/dspSensorBase.h \
@@ -84,6 +86,8 @@ HEADERS += \
 	$$PWD/src/mspBusAutoDetector.h \
 	$$PWD/src/mspI2cCommunicator.h \
 	$$PWD/src/mspUsbCommunicator.h \
+	$$PWD/src/mspDriver.h \
+	$$PWD/src/peripheryDriverInterface.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
@@ -117,20 +121,23 @@ HEADERS += \
 	$$PWD/src/irCamera.h \
 	$$PWD/src/irCameraWorker.h \
 	$$PWD/src/i2cCommunicatorInterface.h \
-	$$PWD/src/jpegEncoderSensor.h
+	$$PWD/src/jpegEncoderSensor.h \
+	$$PWD/src/createDevice.h \
+	$$PWD/src/transports/policies.h \
+	$$PWD/src/transports/transportTraits.h \
+	$$PWD/src/transports/transportType.h
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
-	$$PWD/src/analogSensor.cpp \
 	$$PWD/src/battery.cpp \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
+	$$PWD/src/communicatorProvider.cpp \
 	$$PWD/src/deviceState.cpp \
 	$$PWD/src/dspSensorBase.cpp \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
-	$$PWD/src/encoder.cpp \
 	$$PWD/src/event.cpp \
 	$$PWD/src/eventCode.cpp \
 	$$PWD/src/eventDevice.cpp \
@@ -145,14 +152,12 @@ SOURCES += \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/mspBusAutoDetector.cpp \
+	$$PWD/src/mspDriver.cpp \
 	$$PWD/src/mspI2cCommunicator.cpp \
 	$$PWD/src/mspUsbCommunicator.cpp \
 	$$PWD/src/objectSensor.cpp \
-	$$PWD/src/powerMotor.cpp \
-	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/rangeSensorWorker.cpp \
-	$$PWD/src/servoMotor.cpp \
 	$$PWD/src/soundSensor.cpp \
 	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/tonePlayer.cpp \

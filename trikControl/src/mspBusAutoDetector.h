@@ -14,8 +14,6 @@
 
 #pragma once
 
-#include "mspCommunicatorInterface.h"
-
 namespace trikHal {
 class HardwareAbstractionInterface;
 }
@@ -26,14 +24,21 @@ class Configurer;
 
 namespace trikControl {
 
+class MspUsbCommunicator;
+class MspI2cCommunicator;
+
 /// Service to automatically select USB or I2C MSP communicator. It tries to use USB when possible.
 class MspBusAutoDetector
 {
 public:
-	/// Factory method that tries to determine which interface is to be used for MSP communication and creates
-	/// corresponding communicator instance. Transfers ownership to a caller.
+	/// Tries to create a USB MSP communicator. Returns nullptr if USB is not available.
+	/// Transfers ownership to a caller.
+	/// @param hardwareAbstraction - hardware abstraction to obtain the USB interface.
+	static MspUsbCommunicator *createUsbCommunicator(trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+
+	/// Creates an I2C MSP communicator (fallback path). Transfers ownership to a caller.
 	/// @param configurer - contains preparsed XML configuration.
-	static MspCommunicatorInterface *createCommunicator(const trikKernel::Configurer &configurer
+	static MspI2cCommunicator *createI2cCommunicator(const trikKernel::Configurer &configurer
 			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 };
 

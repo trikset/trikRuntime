@@ -14,8 +14,6 @@
 
 #include "mspBusAutoDetector.h"
 
-#include <QtCore/QScopedPointer>
-
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <QsLog.h>
 
@@ -24,16 +22,24 @@
 
 using namespace trikControl;
 
-MspCommunicatorInterface *MspBusAutoDetector::createCommunicator(const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+MspUsbCommunicator *MspBusAutoDetector::createUsbCommunicator(
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
 	QLOG_INFO() << "Checking USB MSP communicator for availability";
-	QScopedPointer<MspUsbCommunicator> communicator(new MspUsbCommunicator(hardwareAbstraction.mspUsb()));
+	auto *communicator = new MspUsbCommunicator(hardwareAbstraction.mspUsb());
 	if (communicator->status() == DeviceInterface::Status::permanentFailure) {
-		QLOG_INFO() << "Using I2C MSP communicator";
-		return new MspI2cCommunicator(configurer, hardwareAbstraction.mspI2c());
+		QLOG_INFO() << "USB MSP communicator unavailable, falling back to I2C";
+		delete communicator;
+		return nullptr;
 	}
 
 	QLOG_INFO() << "Using USB MSP communicator";
-	return communicator.take();
+	return communicator;
+}
+
+MspI2cCommunicator *MspBusAutoDetector::createI2cCommunicator(const trikKernel::Configurer &configurer
+		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+{
+	QLOG_INFO() << "Using I2C MSP communicator";
+	return new MspI2cCommunicator(configurer, hardwareAbstraction.mspI2c());
 }
