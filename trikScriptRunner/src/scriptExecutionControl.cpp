@@ -29,10 +29,12 @@
 #include <QThread>
 #include <QsLog.h>
 
+#ifdef Q_OS_LINUX
 #include <dirent.h>
-#include <signal.h>
+#include <csignal>
 #include <sys/types.h>
 #include <unistd.h>
+#endif
 
 #include <cstdlib>
 
@@ -40,6 +42,7 @@
 
 using namespace trikScriptRunner;
 
+#ifdef Q_OS_LINUX
 namespace {
 
 // TODO(Qt >= 6.2): remove this native killall workaround together with the
@@ -79,6 +82,7 @@ void killProcessesByName(const QString &processName)
 }
 
 } // namespace
+#endif
 
 ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface *brick): mBrick(brick) {
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
@@ -242,6 +246,7 @@ void ScriptExecutionControl::system(const QString &command, bool synchronously)
 		return;
 	}
 
+#ifdef Q_OS_LINUX
 	// "killall aplay"/"killall vlc" are sent by the client to stop leftover
 	// media players. Forking a helper script for this from the script thread
 	// can deadlock in QtCore's post-fork code:
@@ -261,6 +266,7 @@ void ScriptExecutionControl::system(const QString &command, bool synchronously)
 			return;
 		}
 	}
+#endif
 
 	if (!synchronously) {
 		auto args = QStringList{"-c", command};
