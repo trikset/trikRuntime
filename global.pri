@@ -261,7 +261,7 @@ clang {
 gcc {
 	#treat Qt includes as system headers
 	#but -isystem causes problems in OE thud
-	!count(COMPILER_IS_ARM, 1):SYSTEM_INCLUDE_PREFIX_OPTION *= -isystem $$[QT_INSTALL_HEADERS]
+#	!count(COMPILER_IS_ARM, 1):SYSTEM_INCLUDE_PREFIX_OPTION *= -isystem $$[QT_INSTALL_HEADERS]
 }
 
 QMAKE_CXXFLAGS += $$SYSTEM_INCLUDE_PREFIX_OPTION

@@ -22,15 +22,18 @@ DEFINES += TRIKDSP_LIBRARY
 INCLUDEPATH += \
 	$$PWD/trik-media-sensors/shared/include
 
-!trik_not_brick {
-	INCLUDEPATH += \
-		$$PWD/trik-media-sensors/ipc-libs/include \
-		$$PWD/trik-media-sensors/ipc-libs/specific-trik-include
-
-	LIBS += \
-		-L$$PWD/trik-media-sensors/ipc-libs/lib \
-		-ltiipc -ltiipcutils -ltitransportrpmsg
-}
+# TODO: temporary for the new board bring-up/testing — every build uses the DSP
+# stub, so no TI IPC headers or libraries are required. Re-enable the real
+# backend (or port the media stack) once the new board work is done.
+# !trik_not_brick {
+# 	INCLUDEPATH += \
+# 		$$PWD/trik-media-sensors/ipc-libs/include \
+# 		$$PWD/trik-media-sensors/ipc-libs/specific-trik-include
+#
+# 	LIBS += \
+# 		-L$$PWD/trik-media-sensors/ipc-libs/lib \
+# 		-ltiipc -ltiipcutils -ltitransportrpmsg
+# }
 
 PUBLIC_HEADERS += \
 	$$PWD/include/trikDsp/trikDspDeclSpec.h \
@@ -46,14 +49,10 @@ HEADERS += \
 	$$PWD/src/dspServer_p.h \
 	$$PWD/src/dspConverters.h
 
-!trik_not_brick {
-	SOURCES += $$PWD/src/dspServer.cpp
-	SOURCES += $$PWD/src/dspServerImpl.cpp
-} else {
-	DEFINES += TRIK_DSP_STUB
-	SOURCES += $$PWD/src/stubs/dspServerStub.cpp
-	SOURCES += $$PWD/src/stubs/dspServerStubImpl.cpp
-}
+# TODO: temporary for the new board bring-up/testing — always build the stub.
+DEFINES += TRIK_DSP_STUB
+SOURCES += $$PWD/src/stubs/dspServerStub.cpp
+SOURCES += $$PWD/src/stubs/dspServerStubImpl.cpp
 
 QMAKE_CXXFLAGS += \
 	-Wno-error=redundant-decls \
