@@ -83,6 +83,11 @@ equal to its class name.
 		<!-- Device files for LED on a brick. -->
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
+		<!-- Battery channel through the SARADC analog mux (X4).
+		     12V -> 100K -> 2K -> X4, X4 -> 18K -> GND (12VS_DIV18):
+		     divider = (100K + 2K + 18K) / 18K = 6.6666667 -->
+		<battery deviceFile="/sys/bus/iio/devices/iio:device1/in_voltage4_raw" divider="6.6666667" />
+
 		<!-- Settings for mailbox server (which enables communication between robots) -->
 		<mailbox port="8889" optional="true" />
 

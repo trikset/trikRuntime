@@ -27,7 +27,7 @@ bool TrikInputDeviceFile::open()
 {
 	QLOG_INFO() << "Opening input device file" << mFile.fileName();
 
-	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Truncate | QIODevice::Unbuffered | QIODevice::Text)) {
+	if (!mFile.open(QIODevice::ReadOnly | QIODevice::Unbuffered | QIODevice::Text)) {
 		QLOG_ERROR() << "File " << mFile.fileName() << " failed to open for reading";
 		return false;
 	}
