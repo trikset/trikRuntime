@@ -42,7 +42,8 @@ class Keys : public KeysInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	Keys(const trikKernel::Configurer &configurer,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Keys() override;
 
@@ -55,6 +56,7 @@ public Q_SLOTS:
 
 	bool isPressed(int code) override;
 
+	// NOLINTNEXTLINE(google-default-arguments)
 	int buttonCode(bool wait = true) override;
 
 	/// Called from QML when a virtual key is pressed.

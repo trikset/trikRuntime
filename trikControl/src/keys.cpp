@@ -69,6 +69,7 @@ void Keys::emulateKeyPress(int code)
 	Q_EMIT buttonStateChanged();
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 int Keys::buttonCode(bool wait)
 {
 	if (wait) {

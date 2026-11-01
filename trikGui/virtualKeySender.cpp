@@ -34,9 +34,9 @@ void VirtualKeySender::sendKeyPress(int keyCode)
 	}
 
 	// Send press then release to emulate a full key tap
-	QKeyEvent press{QEvent::KeyPress, keyCode, Qt::NoModifier};
+	QKeyEvent press {QEvent::KeyPress, keyCode, Qt::NoModifier};
 	QCoreApplication::sendEvent(window, &press);
 
-	QKeyEvent release{QEvent::KeyRelease, keyCode, Qt::NoModifier};
+	QKeyEvent release {QEvent::KeyRelease, keyCode, Qt::NoModifier};
 	QCoreApplication::sendEvent(window, &release);
 }
