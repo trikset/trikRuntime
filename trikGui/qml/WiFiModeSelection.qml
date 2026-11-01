@@ -38,7 +38,7 @@ Rectangle {
             Keys.onPressed: {
                 switch (event.key) {
                 case Qt.Key_Return:
-                    wiFiMode.setMode(model.mode)
+                    _delegateMode.chooseMode()
                     break
                 case Qt.Key_Down:
                     if (_listWiFiModes.currentIndex === dataModelModes.count - 1) {
@@ -60,6 +60,14 @@ Rectangle {
                     break
                 }
             }
+            function chooseMode() {
+                wiFiMode.setMode(model.mode)
+            }
+            MouseArea {
+                anchors.fill: parent
+                onPressed: { _listWiFiModes.currentIndex = model.index; }
+                onClicked: { _delegateMode.chooseMode(); }
+            }
             Rectangle {
                 id: _mode
                 focus: isCurrent
@@ -71,11 +79,11 @@ Rectangle {
                     height: parent.height
                     anchors.left: parent.left
                     anchors.leftMargin: 7
-                    spacing: parent.width < 400 ? 5 : 15
+                    spacing: parent.width < 600 ? 5 : 15
                     Image {
                         source: iconsPath + model.iconPath
-                        width: parent.width < 400 ? parent.width / 7 : parent.width / 23
-                        height: parent.width < 400 ? parent.width / 7 : parent.width / 23
+                        width: parent.width < 600 ? parent.width / 7 : parent.width / 23
+                        height: parent.width < 600 ? parent.width / 7 : parent.width / 23
                         anchors.verticalCenter: parent.verticalCenter
                     }
                     Text {

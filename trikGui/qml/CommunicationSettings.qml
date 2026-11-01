@@ -110,8 +110,7 @@ Rectangle {
                                 break;
                             case Qt.Key_Up:
                                 if (_listDigitsHull.focusDigit) {
-                                    currentValue = (currentValue + 1) % 10;
-                                    _listDigitsHull.applyHullNumber();
+                                    _digitHull.changeValue(+1);
                                 } else {
                                     _listsDigits.whatFocused = "button";
                                     _button.focus = true;
@@ -119,8 +118,7 @@ Rectangle {
                                 break;
                             case Qt.Key_Down:
                                 if (_listDigitsHull.focusDigit) {
-                                    currentValue = (currentValue - 1 + 10) % 10;
-                                    _listDigitsHull.applyHullNumber();
+                                    _digitHull.changeValue(-1);
                                 } else {
                                     _listsDigits.whatFocused = "ip";
                                     _listDigitsIp.moveTo(_listDigitsIp.currentIndex);
@@ -136,6 +134,24 @@ Rectangle {
                                 break;
                             default:
                                 break;
+                            }
+                        }
+                        function changeValue(delta) {
+                            currentValue = (currentValue + delta + 10) % 10;
+                            _listDigitsHull.applyHullNumber();
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                var relY = mouseY / height;
+                                if (relY < 0.4) {
+                                    _digitHull.changeValue(+1);
+                                } else if (relY > 0.6) {
+                                    _digitHull.changeValue(-1);
+                                } else {
+                                    _listDigitsHull.currentIndex = index;
+                                    _listsDigits.whatFocused = "hull";
+                                }
                             }
                         }
                     }
@@ -221,7 +237,7 @@ Rectangle {
                                 break;
                             case Qt.Key_Up:
                                 if (_listDigitsIp.focusDigit) {
-                                    currentValue = (currentValue + 1) % maxValue;
+                                    _digitIp.changeValue(+1);
                                 } else {
                                     _listsDigits.whatFocused = "hull";
                                     _listDigitsHull.moveTo(_listDigitsHull.currentIndex);
@@ -229,7 +245,7 @@ Rectangle {
                                 break;
                             case Qt.Key_Down:
                                 if (_listDigitsIp.focusDigit) {
-                                    currentValue = (currentValue - 1 + maxValue) % maxValue;
+                                    _digitIp.changeValue(-1);
                                 } else {
                                     _listsDigits.whatFocused = "button";
                                     _button.focus = true;
@@ -251,6 +267,24 @@ Rectangle {
                                 }
                             default:
                                 break;
+                            }
+                        }
+                        function changeValue(delta) {
+                            currentValue = (currentValue + delta + maxValue) % maxValue;
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if (isSeparator) return;
+                                var relY = mouseY / height;
+                                if (relY < 0.4) {
+                                    _digitIp.changeValue(+1);
+                                } else if (relY > 0.6) {
+                                    _digitIp.changeValue(-1);
+                                } else {
+                                    _listDigitsIp.currentIndex = index;
+                                    _listsDigits.whatFocused = "ip";
+                                }
                             }
                         }
                     }

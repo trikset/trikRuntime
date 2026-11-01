@@ -32,6 +32,7 @@
 #include <QQmlContext>
 #include "fileManager.h"
 #include "runningCode.h"
+#include <trikControl/keysInterface.h>
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQuickWindow>
@@ -55,6 +56,11 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 
 	auto *batteryIndicator = new BatteryIndicator(mController.brick(), this);
 	qmlRegisterSingletonInstance<BatteryIndicator>("com.trikGui", 1, 0, "BatteryIndicator", batteryIndicator);
+
+	auto *keys = mController.brick().keys();
+	if (keys) {
+		engine->rootContext()->setContextProperty("KeysController", keys);
+	}
 
 	auto *wiFiIndicator = new WiFiIndicator(mController, this);
 	qmlRegisterSingletonInstance<WiFiIndicator>("com.trikGui", 1, 0, "WiFiIndicator", wiFiIndicator);

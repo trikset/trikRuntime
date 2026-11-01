@@ -26,6 +26,7 @@
 #include "mainMenuManager.h"
 #include "modeManager.h"
 #include "trikGuiApplication.h"
+#include "virtualKeySender.h"
 #include <QFont>
 #include <QObject>
 #include <QQmlApplicationEngine>
@@ -71,6 +72,9 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	initHelper.init();
+
+	VirtualKeySender virtualKeySender;
+	engine->rootContext()->setContextProperty("VirtualKeySender", &virtualKeySender);
 
 	if (QDir::current().exists("scripts")) {
 		QDir::setCurrent("scripts");

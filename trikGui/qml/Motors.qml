@@ -64,6 +64,10 @@ Rectangle {
                     break
                 }
             }
+            MouseArea {
+                anchors.fill: parent
+                onPressed: { _listMotorsLevers.currentIndex = model.index; }
+            }
             Rectangle {
                 id: _motorLever
                 anchors.fill: parent

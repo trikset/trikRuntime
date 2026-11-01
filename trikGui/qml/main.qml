@@ -8,10 +8,8 @@ import com.trikGui 1.0
 ApplicationWindow {
     id: root
     visible: true
-    minimumHeight: 320
-    minimumWidth: 240
-    maximumHeight: 320
-    maximumWidth: 240
+    height: 854
+    width: 480
     title: qsTr("TRIK")
 
     property string iconsPath: "../resourcesQml/"
@@ -150,6 +148,11 @@ ApplicationWindow {
         MainMenu {
             id: _mainMenu
             color: activeTheme.backgroundColor
+        }
+        VirtualKeyPanel {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 60
+            z: 10
         }
     }
 }

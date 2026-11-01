@@ -53,6 +53,7 @@
         <file>resourcesQml/language.png</file>
         <file>resourcesQml/communicationsettings.png</file>
         <file>qml/main.qml</file>
+        <file>qml/VirtualKeyPanel.qml</file>
         <file>qml/StatusBar.qml</file>
         <file>resourcesQml/accessPoint.png</file>
         <file>resourcesQml/wiFiIndicator.png</file>

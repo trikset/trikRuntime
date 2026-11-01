@@ -62,7 +62,8 @@ HEADERS += \
 	$$PWD/wiFiAPMock.h \
 	$$PWD/wiFiClientMock.h \
 	$$PWD/wiFiModeMock.h \
-	$$PWD/trikGuiApplication.h
+	$$PWD/trikGuiApplication.h \
+	$$PWD/virtualKeySender.h
 
 SOURCES += \
 	$$PWD/autoRunner.cpp \
@@ -102,7 +103,8 @@ SOURCES += \
 	$$PWD/wiFiAPMock.cpp \
 	$$PWD/wiFiClientMock.cpp \
 	$$PWD/wiFiModeMock.cpp \
-	$$PWD/trikGuiApplication.cpp
+	$$PWD/trikGuiApplication.cpp \
+	$$PWD/virtualKeySender.cpp
 
 
 
