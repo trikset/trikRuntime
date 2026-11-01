@@ -76,7 +76,6 @@ HEADERS += \
 	$$PWD/src/internalBrickInterface.h \
 	$$PWD/src/internalDisplayInterface.h \
 	$$PWD/src/keys.h \
-	$$PWD/src/keysWorker.h \
 	$$PWD/src/led.h \
 	$$PWD/src/lineSensor.h \
 	$$PWD/src/moduleLoader.h \
@@ -140,7 +139,6 @@ SOURCES += \
 	$$PWD/src/graphicsWidget.cpp \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/keys.cpp \
-	$$PWD/src/keysWorker.cpp \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/moduleLoader.cpp \
