@@ -105,12 +105,12 @@ Rectangle {
             width: parent.width
             height: parent.height
             Layout.alignment: Qt.AlignLeft
-            spacing: connectionStateIconPath !== "" ? (_mainWiFiClient.width < 400 ? 5 : 15) : 0
+            spacing: connectionStateIconPath !== "" ? (_mainWiFiClient.width < 600 ? 5 : 15) : 0
             Image {
                 id: _connectionStatus
                 source: connectionStateIconPath
-                width: connectionStateIconPath !== "" ? _mainWiFiClient.width < 400 ? _mainWiFiClient.width / 10 : _mainWiFiClient.width / 25 : 0
-                height: connectionStateIconPath !== "" ? _mainWiFiClient.width < 400 ? _mainWiFiClient.width / 10 : _mainWiFiClient.width / 25 : 0
+                width: connectionStateIconPath !== "" ? _mainWiFiClient.width < 600 ? _mainWiFiClient.width / 10 : _mainWiFiClient.width / 25 : 0
+                height: connectionStateIconPath !== "" ? _mainWiFiClient.width < 600 ? _mainWiFiClient.width / 10 : _mainWiFiClient.width / 25 : 0
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -208,16 +208,7 @@ Rectangle {
                     Keys.onPressed: {
                         switch (event.key) {
                         case Qt.Key_Return:
-                            if (display.ssid !== _listNetworks.currentSsid) {
-                                if (display.isKnown) {
-                                    wiFiClient.connectToSelectedNetwork(display.ssid);
-                                } else if (display.security === "none") {
-                                    _listNetworks.focus = false;
-                                    _confirm.focus = true;
-                                    _confirm.visible = true;
-                                    _confirm.buttonNo.focus = true;
-                                }
-                            }
+                            _delegateNetworks.connectToNetwork();
                             break;
                         case Qt.Key_Up:
                             if (index === 0) {
@@ -233,6 +224,23 @@ Rectangle {
                             break;
                         }
                     }
+                    function connectToNetwork() {
+                        if (display.ssid !== _listNetworks.currentSsid) {
+                            if (display.isKnown) {
+                                wiFiClient.connectToSelectedNetwork(display.ssid);
+                            } else if (display.security === "none") {
+                                _listNetworks.focus = false;
+                                _confirm.focus = true;
+                                _confirm.visible = true;
+                                _confirm.buttonNo.focus = true;
+                            }
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: { _listNetworks.currentIndex = model.index; }
+                        onClicked: { _delegateNetworks.connectToNetwork(); }
+                    }
                     Rectangle {
                         id: _wiFiSsid
                         anchors.fill: parent
@@ -245,12 +253,12 @@ Rectangle {
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.left: parent.left
                             anchors.leftMargin: 3
-                            spacing: connectionWiFiStateIconPath ? (_mainWiFiClient.width < 400 ? 5 : 15) : 0
+                            spacing: connectionWiFiStateIconPath ? (_mainWiFiClient.width < 600 ? 5 : 15) : 0
                             Image {
                                 id: _wiFiStatus
                                 source: connectionWiFiStateIconPath ? connectionWiFiStateIconPath : ""
-                                Layout.preferredWidth: connectionWiFiStateIconPath ? _mainWiFiClient.width < 400 ? _mainWiFiClient.width / 9 : _mainWiFiClient.width / 25 : 0
-                                Layout.preferredHeight: connectionWiFiStateIconPath ? _mainWiFiClient.width < 400 ? _mainWiFiClient.width / 9 : _mainWiFiClient.width / 25 : 0
+                                Layout.preferredWidth: connectionWiFiStateIconPath ? _mainWiFiClient.width < 600 ? _mainWiFiClient.width / 9 : _mainWiFiClient.width / 25 : 0
+                                Layout.preferredHeight: connectionWiFiStateIconPath ? _mainWiFiClient.width < 600 ? _mainWiFiClient.width / 9 : _mainWiFiClient.width / 25 : 0
                                 Layout.alignment: Qt.AlignVCenter
                             }
                             Text {

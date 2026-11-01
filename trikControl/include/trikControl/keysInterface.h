@@ -38,7 +38,12 @@ public Q_SLOTS:
 	virtual bool isPressed(int code) = 0;
 
 	/// Returns a code of a pressed button.
+	// NOLINTNEXTLINE(google-default-arguments)
 	virtual int buttonCode(bool wait = true) = 0;
+
+	/// Called from QML when a virtual key is pressed.
+	/// Replaces the physical GPIO button input with software-emulated events.
+	virtual void emulateKeyPress(int code) = 0;
 
 Q_SIGNALS:
 	/// Triggered when button state changed (pressed or released).
@@ -49,4 +54,5 @@ Q_SIGNALS:
 
 }
 
+// NOLINTNEXTLINE(misc-no-recursion)
 Q_DECLARE_METATYPE(trikControl::KeysInterface *)

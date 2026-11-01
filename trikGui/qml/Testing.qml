@@ -144,12 +144,12 @@ Rectangle {
                     id: _row
                     anchors.fill: parent
                     anchors.leftMargin: 7
-                    spacing: parent.width < 400 ? 10 : 15
+                    spacing: parent.width < 600 ? 10 : 15
                     Image {
                         id: _iconDevice
                         source: iconsPath + model.iconPath
-                        Layout.preferredWidth: parent.width < 400 ? _mainItem.width / 5.5 : _mainItem.width / 23
-                        Layout.preferredHeight: parent.width < 400 ? _mainItem.width / 5.5 : _mainItem.width / 23
+                        Layout.preferredWidth: parent.width < 600 ? _mainItem.width / 5.5 : _mainItem.width / 23
+                        Layout.preferredHeight: parent.width < 600 ? _mainItem.width / 5.5 : _mainItem.width / 23
                         Layout.alignment: Qt.AlignVCenter
                     }
                     Text {

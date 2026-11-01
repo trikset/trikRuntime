@@ -6,6 +6,10 @@ Rectangle {
     color: activeTheme.statusBarColor
     property var network: Network
 
+    // Keep status bar icons square. Stretching them to the full bar height
+    // distorts the source images (they are 20x20 / 30x30 / 70x70).
+    readonly property int indicatorSize: Math.round(height * 0.5)
+
     Rectangle {
         anchors.bottom: parent.bottom
         width: parent.width
@@ -56,32 +60,36 @@ Rectangle {
             id: _communicatorIndicator
             source: CommunicatorIndicator.isConnected ? iconsPath + "communicatorConnected.png" : ""
             // source: iconsPath + "communicatorConnected.png"
-            Layout.preferredHeight: parent.height * 0.75
-            Layout.preferredWidth: 20
+            Layout.preferredHeight: indicatorSize
+            Layout.preferredWidth: indicatorSize
+            fillMode: Image.PreserveAspectFit
             visible: CommunicatorIndicator.isConnected
         }
         Image {
             id: _gamepadIndicator
             source: GamepadIndicator.isConnected ? iconsPath + "gamepad.png" : ""
             // source: iconsPath + "gamepad.png"
-            Layout.preferredHeight: parent.height * 0.75
-            Layout.preferredWidth: 20
+            Layout.preferredHeight: indicatorSize
+            Layout.preferredWidth: indicatorSize
+            fillMode: Image.PreserveAspectFit
             visible: GamepadIndicator.isConnected
         }
         Image {
             id: _mailboxIndicator
             source: MailboxIndicator.isConnected ? iconsPath + "mailbox.png" : ""
             // source: iconsPath + "mailbox.png"
-            Layout.preferredHeight: parent.height * 0.75
-            Layout.preferredWidth: 20
+            Layout.preferredHeight: indicatorSize
+            Layout.preferredWidth: indicatorSize
+            fillMode: Image.PreserveAspectFit
             visible: MailboxIndicator.isConnected
         }
         Image {
             id: _wiFiIndicator
             source: ""
             // source: iconsPath + "wiFiIndicator.png"
-            Layout.preferredHeight: parent.height * 0.75
-            Layout.preferredWidth: 20
+            Layout.preferredHeight: indicatorSize
+            Layout.preferredWidth: indicatorSize
+            fillMode: Image.PreserveAspectFit
             visible: false
         }
         Text {

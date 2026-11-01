@@ -15,9 +15,10 @@
 #pragma once
 
 #include <QtCore/QObject>
-#include <QtCore/QThread>
-#include <QtCore/QScopedPointer>
 #include <QtCore/QHash>
+#include <QtCore/QMutex>
+#include <QtCore/QSet>
+#include <QtCore/QWaitCondition>
 
 #include "keysInterface.h"
 #include "deviceState.h"
@@ -32,9 +33,8 @@ class HardwareAbstractionInterface;
 
 namespace trikControl {
 
-class KeysWorker;
-
 /// Implementation of handler for keys on a brick for a real robot.
+/// Reads key events from QML virtual key panel instead of physical GPIO buttons.
 class Keys : public KeysInterface
 {
 	Q_OBJECT
@@ -42,7 +42,8 @@ class Keys : public KeysInterface
 public:
 	/// Constructor.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	Keys(const trikKernel::Configurer &configurer,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~Keys() override;
 
@@ -55,24 +56,24 @@ public Q_SLOTS:
 
 	bool isPressed(int code) override;
 
+	// NOLINTNEXTLINE(google-default-arguments)
 	int buttonCode(bool wait = true) override;
+
+	/// Called from QML when a virtual key is pressed.
+	Q_INVOKABLE void emulateKeyPress(int code) override;
 
 Q_SIGNALS:
 	/// Emitted when a button's state changed.
 	void buttonStateChanged();
 
-private Q_SLOTS:
-	void changeButtonState(int code, int value);
-
 private:
 	int pressedButton();
 
-	/// Device state, shared with worker object.
 	DeviceState mState;
-
-	QScopedPointer<KeysWorker> mKeysWorker;
-	QThread mWorkerThread;
 	QHash<int, int> mKeysPressed;
+	QSet<int> mWasPressed;
+	QMutex mMutex;
+	QWaitCondition mWaitCondition;
 };
 
 }

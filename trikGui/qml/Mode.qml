@@ -83,6 +83,11 @@ Rectangle {
                             break
                         }
                     }
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: { _listModes.currentIndex = model.index; }
+                        onClicked: { modeSelection.switchMode(model.mode); }
+                    }
                     Rectangle {
                         id: _modeName
                         anchors.fill: parent

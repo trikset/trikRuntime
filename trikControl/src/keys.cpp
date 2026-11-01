@@ -14,48 +14,21 @@
 
 #include "keys.h"
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-	#include <QtGui/QApplication>
-#else
-	#include <QtGui/QGuiApplication>
-#endif
-
-#include <unistd.h>
-
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
-
-#include "keysWorker.h"
 
 using namespace trikControl;
 
 Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Keys")
 {
-	mKeysWorker.reset(new KeysWorker(configurer.attributeByDevice("keys", "deviceFile"), mState, hardwareAbstraction));
-	if (!mState.isFailed()) {
-		mKeysWorker->moveToThread(&mWorkerThread);
-
-		connect(mKeysWorker.data(), &KeysWorker::buttonPressed, this, &Keys::buttonPressed);
-		connect(mKeysWorker.data(), &KeysWorker::buttonPressed, this, &Keys::changeButtonState);
-		connect(&mWorkerThread, &QThread::started, mKeysWorker.data(), &KeysWorker::init);
-
-		QLOG_INFO() << "Starting Keys worker thread" << &mWorkerThread;
-
-		mWorkerThread.setObjectName(mKeysWorker->metaObject()->className());
-		mWorkerThread.start();
-
-		mState.ready();
-	}
+	Q_UNUSED(configurer)
+	Q_UNUSED(hardwareAbstraction)
+	mState.ready();
+	QLOG_INFO() << "Keys initialized (virtual, no physical buttons)";
 }
 
-Keys::~Keys()
-{
-	if (mWorkerThread.isRunning()) {
-		mWorkerThread.quit();
-		mWorkerThread.wait();
-	}
-}
+Keys::~Keys() = default;
 
 Keys::Status Keys::status() const
 {
@@ -64,33 +37,49 @@ Keys::Status Keys::status() const
 
 void Keys::reset()
 {
-	mKeysWorker->reset();
+	mMutex.lock();
 	mKeysPressed.clear();
+	mWasPressed.clear();
+	mMutex.unlock();
 }
 
 bool Keys::wasPressed(int code)
 {
-	return mKeysWorker->wasPressed(code);
+	QMutexLocker lock(&mMutex);
+	if (mWasPressed.contains(code)) {
+		mWasPressed.remove(code);
+		return true;
+	}
+	return false;
 }
 
 bool Keys::isPressed(int code)
 {
+	QMutexLocker lock(&mMutex);
 	return mKeysPressed.value(code, false);
 }
 
-void Keys::changeButtonState(int code, int value)
+void Keys::emulateKeyPress(int code)
 {
-	mKeysPressed[code] = value;
+	QMutexLocker lock(&mMutex);
+	mKeysPressed[code] = 1;
+	mWasPressed.insert(code);
+	mWaitCondition.wakeOne();
+	Q_EMIT buttonPressed(code, 1);
 	Q_EMIT buttonStateChanged();
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 int Keys::buttonCode(bool wait)
 {
 	if (wait) {
-		QEventLoop l;
-		connect(this, &Keys::buttonStateChanged, &l, &QEventLoop::quit);
-		connect(mKeysWorker.data(), &KeysWorker::stopWaiting, &l, &QEventLoop::quit);
-		l.exec();
+		QMutexLocker lock(&mMutex);
+		while (mWasPressed.isEmpty()) {
+			mWaitCondition.wait(&mMutex);
+		}
+		int code = *mWasPressed.begin();
+		mWasPressed.remove(code);
+		return code;
 	}
 
 	return pressedButton();
@@ -98,6 +87,7 @@ int Keys::buttonCode(bool wait)
 
 int Keys::pressedButton()
 {
+	QMutexLocker lock(&mMutex);
 	for (int button : mKeysPressed.keys()) {
 		if (mKeysPressed[button]) {
 			return button;

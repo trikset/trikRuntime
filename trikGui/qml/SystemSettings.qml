@@ -83,6 +83,11 @@ Rectangle {
                             break
                         }
                     }
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: { _listSettings.currentIndex = model.index; }
+                        onClicked: { systemSettings.fileManagerRootType = model.type; }
+                    }
 
                     Rectangle {
                         id: _settingsName

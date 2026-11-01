@@ -80,29 +80,37 @@ Rectangle {
             Keys.onPressed: {
                 switch (event.key) {
                 case Qt.Key_Return:
-                    MainMenuManager.createApp(model.appType);
-                    var page = stack.push(model.filePath);
-                    if (page) {
-                        if (model.appType === AppType.CommSettings) {
-                            if (page.idList) {
-                                page.idList.itemAt(page.idList.currentIndex).focus = true;
-                            } else {
-                                page.focus = true;
-                            }
-                        } else {
-                            if (page.idList) {
-                                page.idList.focus = true;
-                            } else {
-                                page.focus = true;
-                            }
-                        }
-                    } else if (component.status === Component.Error) {
-                        console.error("Error loading component:", component.errorString());
-                    }
+                    _delegate.selectItem();
                     break;
                 default:
                     break;
                 }
+            }
+            function selectItem() {
+                MainMenuManager.createApp(model.appType);
+                var page = stack.push(model.filePath);
+                if (page) {
+                    if (model.appType === AppType.CommSettings) {
+                        if (page.idList) {
+                            page.idList.itemAt(page.idList.currentIndex).focus = true;
+                        } else {
+                            page.focus = true;
+                        }
+                    } else {
+                        if (page.idList) {
+                            page.idList.focus = true;
+                        } else {
+                            page.focus = true;
+                        }
+                    }
+                } else if (component.status === Component.Error) {
+                    console.error("Error loading component:", component.errorString());
+                }
+            }
+            MouseArea {
+                anchors.fill: parent
+                onPressed: { _listSettings.currentIndex = model.index; }
+                onClicked: { _delegate.selectItem(); }
             }
             Rectangle {
                 id: _mode
@@ -117,12 +125,12 @@ Rectangle {
                     id: _row
                     anchors.fill: parent
                     anchors.leftMargin: 7
-                    spacing: parent.width < 400 ? 10 : 15
+                    spacing: parent.width < 600 ? 10 : 15
                     Image {
                         id: _iconDevice
                         source: iconsPath + model.iconPath
-                        Layout.preferredWidth: parent.width < 400 ? _mainItem.width / 5.5 : _mainItem.width / 23
-                        Layout.preferredHeight: parent.width < 400 ? _mainItem.width / 5.5 : _mainItem.width / 23
+                        Layout.preferredWidth: parent.width < 600 ? _mainItem.width / 5.5 : _mainItem.width / 23
+                        Layout.preferredHeight: parent.width < 600 ? _mainItem.width / 5.5 : _mainItem.width / 23
                         Layout.alignment: Qt.AlignVCenter
                     }
                     Text {

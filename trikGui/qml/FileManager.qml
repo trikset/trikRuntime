@@ -118,11 +118,7 @@ Rectangle {
                                 fileManager.open(index);
                                 break;
                             case Qt.Key_Right:
-                                _confirm.deleteAll = false;
-                                _listFiles.focus = false;
-                                _confirm.focus = true;
-                                _confirm.visible = true;
-                                _confirm.buttonNo.focus = true;
+                                _delegateFiles.showDeleteConfirm();
                                 break;
                             case Qt.Key_Down:
                                 if (_listFiles.count - 1 === index) {
@@ -138,6 +134,18 @@ Rectangle {
                                 break;
                             }
                         }
+                        function showDeleteConfirm() {
+                            _confirm.deleteAll = false;
+                            _listFiles.focus = false;
+                            _confirm.focus = true;
+                            _confirm.visible = true;
+                            _confirm.buttonNo.focus = true;
+                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: { _listFiles.currentIndex = index; }
+                            onClicked: { fileManager.open(index); }
+                        }
                         Rectangle {
                             id: _fileName
                             anchors.fill: parent
@@ -150,8 +158,8 @@ Rectangle {
                                 Image {
                                     id: _fileIcon
                                     source: _listFiles.getFileIcon(isDir, fileName)
-                                    Layout.preferredWidth: _fileManager.width < 400 ? _fileManager.width / 9 : _fileManager.width / 25
-                                    Layout.preferredHeight: _fileManager.width < 400 ? _fileManager.width / 9 : _fileManager.width / 25
+                                    Layout.preferredWidth: _fileManager.width < 600 ? _fileManager.width / 9 : _fileManager.width / 25
+                                    Layout.preferredHeight: _fileManager.width < 600 ? _fileManager.width / 9 : _fileManager.width / 25
                                     Layout.alignment: Qt.AlignVCenter
                                 }
                                 Text {

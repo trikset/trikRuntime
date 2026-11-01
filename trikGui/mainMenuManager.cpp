@@ -13,7 +13,7 @@
  * limitations under the License. */
 
 #ifdef DESKTOP
-#include "wiFiModeMock.h"
+#	include "wiFiModeMock.h"
 #endif
 
 #include "batteryIndicator.h"
@@ -32,6 +32,7 @@
 #include <QQmlContext>
 #include "fileManager.h"
 #include "runningCode.h"
+#include <trikControl/keysInterface.h>
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQuickWindow>
@@ -39,9 +40,13 @@
 #include <QExposeEvent>
 
 using namespace trikGui;
-MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine, TrikGuiApplication *trikGuiApp)
-	: QObject(trikGuiApp), mController(configPath), mEngine(engine)
-	, mFileManagerRoot(SystemSettings::FileManagerRootType::ScriptsDir) {
+MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine,
+	TrikGuiApplication *trikGuiApp)
+	: QObject(trikGuiApp)
+	, mController(configPath)
+	, mEngine(engine)
+	, mFileManagerRoot(SystemSettings::FileManagerRootType::ScriptsDir)
+{
 	qmlRegisterTypesAndRevisions<MainMenuManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<TestingManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<WiFiMode>("com.trikGui", 1);
@@ -56,6 +61,11 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	auto *batteryIndicator = new BatteryIndicator(mController.brick(), this);
 	qmlRegisterSingletonInstance<BatteryIndicator>("com.trikGui", 1, 0, "BatteryIndicator", batteryIndicator);
 
+	auto *keys = mController.brick().keys();
+	if (keys) {
+		engine->rootContext()->setContextProperty("KeysController", keys);
+	}
+
 	auto *wiFiIndicator = new WiFiIndicator(mController, this);
 	qmlRegisterSingletonInstance<WiFiIndicator>("com.trikGui", 1, 0, "WiFiIndicator", wiFiIndicator);
 
@@ -66,12 +76,11 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	connect(&mController, &Controller::mailboxStatusChanged, mailboxIndicator, &OpenSocketIndicator::changeStatus);
 	qmlRegisterSingletonInstance<OpenSocketIndicator>("com.trikGui", 1, 0, "MailboxIndicator", mailboxIndicator);
 
-	auto *communicatorIndicator =
-	    new OpenSocketIndicator(mController.communicatorConnectionStatus(), this);
+	auto *communicatorIndicator = new OpenSocketIndicator(mController.communicatorConnectionStatus(), this);
 	connect(&mController, &Controller::communicatorStatusChanged, communicatorIndicator,
 		&OpenSocketIndicator::changeStatus);
 	qmlRegisterSingletonInstance<OpenSocketIndicator>("com.trikGui", 1, 0, "CommunicatorIndicator",
-							  communicatorIndicator);
+		communicatorIndicator);
 
 	connect(trikGuiApp, &TrikGuiApplication::showPowerConfirm, this, &MainMenuManager::showPowerConfirm);
 	connect(trikGuiApp, &TrikGuiApplication::hidePowerConfirm, this, &MainMenuManager::hidePowerConfirm);
@@ -83,13 +92,15 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	mController.brick().playTone(2000, 150);
 }
 
-MainMenuManager::~MainMenuManager() {
-	// MainMenuManager children (e.g. WiFiIndicator) must die before mController destroys his 
+MainMenuManager::~MainMenuManager()
+{
+	// MainMenuManager children (e.g. WiFiIndicator) must die before mController destroys his
 	// members (f.e. TrikWiFi), otherwise QML timer callbacks still call isConnected() on freed memory.
 	qDeleteAll(children());
 }
 
-void MainMenuManager::createApp(AppType appType) {
+void MainMenuManager::createApp(AppType appType)
+{
 	switch (appType) {
 	case AppType::Files: {
 		auto *fileManager = new FileManager(mController, mFileManagerRoot, this);
@@ -114,10 +125,9 @@ void MainMenuManager::createApp(AppType appType) {
 	}
 	case AppType::CommSettings: {
 		if (mController.mailbox()) {
-			auto *communicationSettings =
-			    new CommunicationSettings(*mController.mailbox(), this);
+			auto *communicationSettings = new CommunicationSettings(*mController.mailbox(), this);
 			mEngine->rootContext()->setContextProperty("CommunicationSettingsServer",
-								   communicationSettings);
+				communicationSettings);
 		} else {
 			Q_ASSERT(!"Mailbox is disabled but "
 				  "commmunications widget "
@@ -153,7 +163,8 @@ void MainMenuManager::createApp(AppType appType) {
 	}
 }
 
-void MainMenuManager::changeFileManagerRoot(SystemSettings::FileManagerRootType const &path) {
+void MainMenuManager::changeFileManagerRoot(SystemSettings::FileManagerRootType const &path)
+{
 	mFileManagerRoot = path;
 	Q_EMIT fileManagerRootChanged(mFileManagerRoot);
 }

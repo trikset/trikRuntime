@@ -26,6 +26,7 @@
 #include "mainMenuManager.h"
 #include "modeManager.h"
 #include "trikGuiApplication.h"
+#include "virtualKeySender.h"
 #include <QFont>
 #include <QObject>
 #include <QQmlApplicationEngine>
@@ -36,7 +37,8 @@
 
 using namespace trikGui;
 
-void setStyle(int argc, char *argv[]) {
+void setStyle(int argc, char *argv[])
+{
 	QQuickStyle::setStyle("TrikStyle");
 	if (argc >= 3) {
 		for (int i = 1; i < argc - 1; i++) {
@@ -65,12 +67,15 @@ int main(int argc, char *argv[])
 	engine->rootContext()->setContextProperty("ThemeMode", ModeManager::getCurrentMode());
 	initHelper.commandLineParser().addApplicationDescription(
 		QObject::tr("Graphical user interface, TRIK Studio runtime environment "
-			"and script runner of a robot"));
+			    "and script runner of a robot"));
 
 	if (!initHelper.parseCommandLine()) {
 		return 0;
 	}
 	initHelper.init();
+
+	VirtualKeySender virtualKeySender;
+	engine->rootContext()->setContextProperty("VirtualKeySender", &virtualKeySender);
 
 	if (QDir::current().exists("scripts")) {
 		QDir::setCurrent("scripts");
@@ -80,13 +85,10 @@ int main(int argc, char *argv[])
 
 	MainMenuManager mainMenuManager(initHelper.configPath(), engine, &app);
 	const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
-	QObject::connect(
-		engine, &QQmlApplicationEngine::objectCreated, &app,
-		[url](QObject *obj, const QUrl &objUrl) {
-			if (!obj && url == objUrl)
-				QCoreApplication::exit(-1);
-		},
-		Qt::QueuedConnection);
+	QObject::connect(engine, &QQmlApplicationEngine::objectCreated, &app, [url](QObject *obj, const QUrl &objUrl) {
+		if (!obj && url == objUrl)
+			QCoreApplication::exit(-1);
+	}, Qt::QueuedConnection);
 	engine->load(url);
 
 	return app.exec();

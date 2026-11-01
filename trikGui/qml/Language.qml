@@ -100,14 +100,22 @@ Rectangle {
                     Keys.onPressed: {
                         switch (event.key) {
                         case Qt.Key_Return:
-                            _confirm.targetLanguage = display;
-                            _confirm.focus = true;
-                            _confirm.visible = true;
-                            _confirm.buttonNo.focus = true;
+                            _delegateLanguages.confirmLanguage();
                             break;
                         default:
                             break;
                         }
+                    }
+                    function confirmLanguage() {
+                        _confirm.targetLanguage = display;
+                        _confirm.focus = true;
+                        _confirm.visible = true;
+                        _confirm.buttonNo.focus = true;
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onPressed: { _listLanguages.currentIndex = model.index; }
+                        onClicked: { _delegateLanguages.confirmLanguage(); }
                     }
                     Rectangle {
                         id: _languageName
@@ -121,8 +129,8 @@ Rectangle {
                             Image {
                                 id: _languageIcon
                                 source: _listLanguages.getLanguageIcon(display)
-                                Layout.preferredWidth: _languageSelection.width < 400 ? _languageSelection.width / 9 : _languageSelection.width / 25
-                                Layout.preferredHeight: _languageSelection.width < 400 ? _languageSelection.width / 9 : _languageSelection.width / 25
+                                Layout.preferredWidth: _languageSelection.width < 600 ? _languageSelection.width / 9 : _languageSelection.width / 25
+                                Layout.preferredHeight: _languageSelection.width < 600 ? _languageSelection.width / 9 : _languageSelection.width / 25
                                 Layout.alignment: Qt.AlignVCenter
                             }
                             Text {
