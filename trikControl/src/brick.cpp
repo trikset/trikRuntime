@@ -113,7 +113,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		createDevice(port);
 	}
 
-	mBattery.reset(new Battery(*mMspCommunicator));
+	mBattery.reset(new Battery(mConfigurer, *mHardwareAbstraction));
 
 	mKeys.reset(new Keys(mConfigurer, *mHardwareAbstraction));
 

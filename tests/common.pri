@@ -42,5 +42,5 @@ OTHER_FILES += \
 implementationIncludes(tests/testUtils)
 links(testUtils)
 
-copyToDestdir($$PWD/kernel-4.14/test-system-config.xml, now)
-copyToDestdir($$PWD/kernel-4.14/test-model-config.xml, now)
+copyToDestdir($$PWD/kernel-6.12/test-system-config.xml, now)
+copyToDestdir($$PWD/kernel-6.12/test-model-config.xml, now)

@@ -82,6 +82,9 @@ equal to its class name.
 		<!-- Device files for LED on a brick. -->
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
+		<!-- Battery channel through the SARADC analog mux (X4). -->
+		<battery deviceFile="/sys/bus/iio/devices/iio:device1/in_voltage4_raw" divider="6.6666667" />
+
 		<!--Device file for keys on a brick -->
 		<keys deviceFile="/dev/input/by-path/platform-soc@1c00000:gpio-keys-event" />
 

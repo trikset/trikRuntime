@@ -15,22 +15,36 @@
 #pragma once
 
 #include <QtCore/QObject>
+#include <QtCore/QScopedPointer>
 
 #include "batteryInterface.h"
+#include "deviceState.h"
+
+namespace trikKernel {
+class Configurer;
+}
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class InputDeviceFileInterface;
+}
 
 namespace trikControl {
 
-class MspCommunicatorInterface;
-
 /// Implements battery voltage sensor for real hardware.
+/// Reads the battery channel through an IIO device (SARADC + analog mux).
 class /* TRIKCONTROL_EXPORT for ScriptRunner/PythonQt */ TRIKCONTROL_EXPORT Battery : public BatteryInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param communicator - I2C communicator to use to query battery status.
-	Battery(MspCommunicatorInterface &communicator);
+	/// @param configurer - configurer object with the battery device file.
+	/// @param hardwareAbstraction - hardware abstraction used to open the IIO channel.
+	Battery(const trikKernel::Configurer &configurer,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+
+	~Battery() override;
 
 	Status status() const override;
 
@@ -40,7 +54,10 @@ public Q_SLOTS:
 	float readRawDataVoltage() override;
 
 private:
-	MspCommunicatorInterface &mCommunicator;
+	QScopedPointer<trikHal::InputDeviceFileInterface> mVoltageFile;
+	DeviceState mState;
+	double mScaleMv = 1.7578125;
+	double mDivider = 1.0;
 };
 
 }

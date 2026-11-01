@@ -14,34 +14,97 @@
 
 #include "battery.h"
 
-#include "mspI2cCommunicator.h"
+#include <QtCore/QFileInfo>
+#include <QtCore/QTextStream>
+
+#include <trikKernel/configurer.h>
+#include <trikKernel/exceptions/malformedConfigException.h>
+#include <trikHal/hardwareAbstractionInterface.h>
+#include <trikHal/inputDeviceFileInterface.h>
+
+#include <QsLog.h>
 
 using namespace trikControl;
 
-Battery::Battery(MspCommunicatorInterface &communicator)
-	: mCommunicator(communicator)
+Battery::Battery(const trikKernel::Configurer &configurer,
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mState("Battery")
 {
+	auto deviceFile = QString();
+	try {
+		deviceFile = configurer.attributeByDevice("battery", "deviceFile");
+	} catch (trikKernel::MalformedConfigException &) {
+		QLOG_ERROR() << "Battery: deviceFile is not configured";
+		mState.fail();
+		return;
+	}
+
+	mVoltageFile.reset(hardwareAbstraction.createInputDeviceFile(deviceFile));
+	if (!mVoltageFile->open()) {
+		QLOG_ERROR() << "Battery: failed to open" << deviceFile;
+		mState.fail();
+		return;
+	}
+
+	const auto scaleFile = QFileInfo(deviceFile).absolutePath() + QStringLiteral("/in_voltage_scale");
+	QScopedPointer<trikHal::InputDeviceFileInterface> scaleFileHandle(
+		hardwareAbstraction.createInputDeviceFile(scaleFile));
+	if (scaleFileHandle->open()) {
+		auto scale = 0.0;
+		scaleFileHandle->stream() >> scale;
+		scaleFileHandle->close();
+		if (scale > 0.0) {
+			mScaleMv = scale;
+		}
+	} else {
+		QLOG_WARN() << "Battery: failed to open" << scaleFile << ", using default scale";
+	}
+
+	try {
+		mDivider = configurer.attributeByDevice("battery", "divider").toDouble();
+		if (mDivider <= 0.0) {
+			QLOG_ERROR() << "Battery: divider must be positive";
+			mState.fail();
+		}
+	} catch (trikKernel::MalformedConfigException &) {
+		QLOG_ERROR() << "Battery: divider is not configured";
+		mState.fail();
+	}
+
+	if (mState.isFailed()) {
+		return;
+	}
+
+	mState.ready();
+}
+
+Battery::~Battery()
+{
+	if (mVoltageFile) {
+		mVoltageFile->close();
+	}
 }
 
 float Battery::readVoltage()
 {
-	/// @todo: Remove these arcane numbers, or Something may be unexpectedly summoned by them.
-	return (readRawDataVoltage() / 1023.0) * 3.3 * (7.15 + 2.37) / 2.37;
+	return static_cast<float>(readRawDataVoltage() * mScaleMv * mDivider / 1000.0);
 }
 
 float Battery::readRawDataVoltage()
 {
-	QByteArray command(4, '\0');
-	command[0] = static_cast<char>(0x26);
-	command[1] = static_cast<char>(0x00);
+	if (!mState.isReady()) {
+		return 0;
+	}
 
-	command[2] = static_cast<char>(0x02);
-	command[3] = static_cast<char>(0x00);
+	mVoltageFile->reset();
 
-	return mCommunicator.read(command);
+	auto raw = 0;
+	mVoltageFile->stream() >> raw;
+
+	return static_cast<float>(raw);
 }
 
 Battery::Status Battery::status() const
 {
-	return mCommunicator.status();
+	return mState.status();
 }
