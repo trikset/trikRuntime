@@ -7,24 +7,31 @@ working properly, it tests only that runtime can interact with them).
 	<initScript>
 	</initScript>
 
-	<S1>
+	<A7>
 		<angularServomotor180 />
-	</S1>
-	<S2>
+	</A7>
+	<A8>
 		<angularServomotor180 />
-	</S2>
-	<S3>
-		<angularServomotor180  />
-	</S3>
-	<S4>
+	</A8>
+	<A9>
 		<angularServomotor180 />
-	</S4>
-	<S5>
+	</A9>
+	<A10>
 		<angularServomotor180 />
-	</S5>
-	<S6>
+	</A10>
+
+	<B7>
 		<angularServomotor180 />
-	</S6>
+	</B7>
+	<B8>
+		<angularServomotor180 />
+	</B8>
+	<B9>
+		<angularServomotor180 />
+	</B9>
+	<B10>
+		<angularServomotor180 />
+	</B10>
 
 	<A1>
 		<sharpGP2Sensor />

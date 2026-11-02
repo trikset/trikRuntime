@@ -61,6 +61,8 @@ HEADERS += \
 	$$PWD/src/cameraImplementationInterface.h \
 	$$PWD/src/colorSensor.h \
 	$$PWD/src/configurerHelper.h \
+	$$PWD/src/createDevice.h \
+	$$PWD/src/deviceFactory.h \
 	$$PWD/src/deviceState.h \
 	$$PWD/src/dspSensorBase.h \
 	$$PWD/src/digitalSensor.h \
@@ -88,6 +90,7 @@ HEADERS += \
 	$$PWD/src/peripheryDriverInterface.h \
 	$$PWD/src/communicatorCommand.h \
 	$$PWD/src/communicatorProvider.h \
+	$$PWD/src/transports/transportType.h \
 	$$PWD/src/mspBusAutoDetector.h \
 	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/objectSensor.h \
@@ -95,7 +98,9 @@ HEADERS += \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
 	$$PWD/src/rangeSensorWorker.h \
-	$$PWD/src/servoMotor.h \
+	$$PWD/src/servoMotor/base.h \
+	$$PWD/src/servoMotor/communicator.h \
+	$$PWD/src/servoMotor/internal.h \
 	$$PWD/src/soundSensor.h \
 	$$PWD/src/videoSensorManager.h \
 	$$PWD/src/cameraManager.h \
@@ -133,6 +138,7 @@ SOURCES += \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
+	$$PWD/src/deviceFactory.cpp \
 	$$PWD/src/deviceState.cpp \
 	$$PWD/src/dspSensorBase.cpp \
 	$$PWD/src/digitalSensor.cpp \
@@ -161,7 +167,9 @@ SOURCES += \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/rangeSensorWorker.cpp \
-	$$PWD/src/servoMotor.cpp \
+	$$PWD/src/servoMotor/base.cpp \
+	$$PWD/src/servoMotor/communicator.cpp \
+	$$PWD/src/servoMotor/internal.cpp \
 	$$PWD/src/soundSensor.cpp \
 	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/tonePlayer.cpp \

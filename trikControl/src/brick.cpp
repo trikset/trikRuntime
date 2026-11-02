@@ -49,7 +49,8 @@
 #include "powerMotor.h"
 #include "pwmCapture.h"
 #include "rangeSensor.h"
-#include "servoMotor.h"
+#include "servoMotor/communicator.h"
+#include "servoMotor/internal.h"
 #include "soundSensor.h"
 #include "tonePlayer.h"
 #include "vectorSensor.h"
@@ -62,6 +63,7 @@
 #include "irCamera.h"
 
 #include "communicatorProvider.h"
+#include "createDevice.h"
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
 
@@ -76,15 +78,17 @@ namespace {
 /// Creates a device that talks to the periphery module through the shared
 /// driver. Logs and skips the device when the driver is unavailable.
 template<typename Device, typename Container>
-void insertPeripheryDevice(Container &devices, const QString &port, const QString &deviceClass,
+Device *insertPeripheryDevice(Container &devices, const QString &port, const QString &deviceClass,
 	const trikKernel::Configurer &configurer, PeripheryDriverInterface *driver)
 {
 	if (!driver) {
 		QLOG_ERROR() << "No periphery driver for" << deviceClass << "on port" << port;
-		return;
+		return nullptr;
 	}
 
-	devices.insert(port, new Device(port, configurer, *driver));
+	auto *device = new Device(port, configurer, *driver);
+	devices.insert(port, device);
+	return device;
 }
 
 } // namespace
@@ -129,6 +133,8 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	mCommunicatorProvider.reset(new CommunicatorProvider(mConfigurer, *mHardwareAbstraction));
 	mPeripheryDriver = mCommunicatorProvider->communicator();
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
+
+	registerDeviceFactories();
 
 	for (const QString &port : mConfigurer.ports()) {
 		QLOG_INFO() << "Creating device on port" << port;
@@ -816,9 +822,11 @@ void Brick::shutdownDevice(const QString &port)
 {
 	const QString &deviceClass = mConfigurer.deviceClass(port);
 	if (deviceClass == "servoMotor") {
-		mServoMotors[port]->powerOff();
-		delete mServoMotors[port];
-		mServoMotors.remove(port);
+		if (mServoMotors.contains(port)) {
+			mServoMotors[port]->powerOff();
+			delete mServoMotors[port];
+			mServoMotors.remove(port);
+		}
 	} else if (deviceClass == "pwmCapture") {
 		delete mPwmCaptures[port];
 		mPwmCaptures.remove(port);
@@ -848,40 +856,90 @@ void Brick::shutdownDevice(const QString &port)
 	}
 }
 
+void Brick::registerDeviceFactories()
+{
+	mDeviceFactory.registerDevice(QStringLiteral("servoMotor"), [this](const QString &port) {
+		auto *device = makeDevice<InternalServoMotor, CommunicatorServoMotor, ServoMotorBase>(port, mConfigurer,
+			*mHardwareAbstraction, mPeripheryDriver);
+
+		if (device) {
+			mServoMotors.insert(port, device);
+		}
+
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("pwmCapture"), [this](const QString &port) {
+		auto *device = new PwmCapture(port, mConfigurer, *mHardwareAbstraction);
+		mPwmCaptures.insert(port, device);
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("powerMotor"), [this](const QString &port) {
+		auto *device = new PowerMotor(port, mConfigurer, *mHardwareAbstraction);
+		mPowerMotors.insert(port, device);
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("analogSensor"), [this](const QString &port) {
+		return insertPeripheryDevice<AnalogSensor>(mAnalogSensors, port, QStringLiteral("analogSensor"),
+			mConfigurer, mPeripheryDriver);
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("digitalSensor"), [this](const QString &port) {
+		auto *device = new DigitalSensor(port, mConfigurer, *mHardwareAbstraction);
+		mDigitalSensors.insert(port, device);
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("rangeSensor"), [this](const QString &port) {
+		auto *device = new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction);
+		mRangeSensors.insert(port, device);
+
+		/// @todo Range sensor shall be turned on only when needed.
+		device->init();
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("encoder"), [this](const QString &port) {
+		return insertPeripheryDevice<Encoder>(mEncoders, port, QStringLiteral("encoder"), mConfigurer,
+			mPeripheryDriver);
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("soundSensor"), [this](const QString &port) {
+		auto *device = new SoundSensor(port, mConfigurer, *mHardwareAbstraction);
+		mSoundSensors.insert(port, device);
+
+		/// @todo This will work only in case when there can be only one sound sensor launched at a time.
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("fifo"), [this](const QString &port) {
+		auto *device = new Fifo(port, mConfigurer, *mHardwareAbstraction);
+		mFifos.insert(port, device);
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("lidar"), [this](const QString &port) {
+		auto *device = new Lidar(port, mConfigurer, *mHardwareAbstraction);
+		mLidars.insert(port, device);
+		return device;
+	});
+
+	mDeviceFactory.registerDevice(QStringLiteral("irCamera"), [this](const QString &port) {
+		QScopedPointer<IrCameraInterface> tmp(new IrCamera(port, mConfigurer, *mHardwareAbstraction));
+		auto *device = tmp.data();
+		mIrCamera.swap(tmp);
+		return device;
+	});
+}
+
 void Brick::createDevice(const QString &port)
 {
 	try {
-		const QString &deviceClass = mConfigurer.deviceClass(port);
-		if (deviceClass == "servoMotor") {
-			mServoMotors.insert(port, new ServoMotor(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "pwmCapture") {
-			mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "powerMotor") {
-			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "analogSensor") {
-			insertPeripheryDevice<AnalogSensor>(mAnalogSensors, port, deviceClass, mConfigurer,
-				mPeripheryDriver);
-		} else if (deviceClass == "digitalSensor") {
-			mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "rangeSensor") {
-			mRangeSensors.insert(port,
-				new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction));
-
-			/// @todo Range sensor shall be turned on only when needed.
-			mRangeSensors[port]->init();
-		} else if (deviceClass == "encoder") {
-			insertPeripheryDevice<Encoder>(mEncoders, port, deviceClass, mConfigurer, mPeripheryDriver);
-		} else if (deviceClass == "soundSensor") {
-			mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
-
-			/// @todo This will work only in case when there can be only one sound sensor launched at a time.
-		} else if (deviceClass == "fifo") {
-			mFifos.insert(port, new Fifo(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "lidar") {
-			mLidars.insert(port, new Lidar(port, mConfigurer, *mHardwareAbstraction));
-		} else if (deviceClass == "irCamera") {
-			QScopedPointer<IrCameraInterface> tmp(new IrCamera(port, mConfigurer, *mHardwareAbstraction));
-			mIrCamera.swap(tmp);
+		const auto deviceClass = mConfigurer.deviceClass(port);
+		if (!mDeviceFactory.create(deviceClass, port)) {
+			QLOG_DEBUG() << "No device factory for class" << deviceClass << "on port" << port;
 		}
 	} catch (MalformedConfigException &e) {
 		QLOG_ERROR() << "Config for port" << port << "is malformed:" << e.errorMessage();

@@ -22,6 +22,7 @@
 #include <trikKernel/differentOwnerPointer.h>
 #include <functional>
 #include "boardImu.h"
+#include "deviceFactory.h"
 #include "internalBrickInterface.h"
 #include "translation.h"
 
@@ -54,7 +55,7 @@ class SoundSensor;
 class PowerMotor;
 class PwmCapture;
 class RangeSensor;
-class ServoMotor;
+class ServoMotorBase;
 class TonePlayer;
 class VectorSensor;
 class CameraDeviceInterface;
@@ -185,6 +186,9 @@ private:
 	/// Creates and configures a device on a given port.
 	void createDevice(const QString &port);
 
+	/// Registers device creators keyed by configured device class name.
+	void registerDeviceFactories();
+
 	I2cDeviceInterface *createI2cDevice(int bus, int address,
 		const std::function<trikHal::PeripheryI2cInterface *(void)> &factory);
 
@@ -196,6 +200,7 @@ private:
 	QScopedPointer<CommunicatorProvider> mCommunicatorProvider;
 	PeripheryDriverInterface *mPeripheryDriver = nullptr;
 	QScopedPointer<ModuleLoader> mModuleLoader;
+	DeviceFactory mDeviceFactory;
 
 	QScopedPointer<VectorSensor> mAccelerometer;
 	QScopedPointer<GyroSensor> mGyroscope;
@@ -210,7 +215,7 @@ private:
 	QScopedPointer<IrCameraInterface> mIrCamera;
 	QScopedPointer<VideoSensorManager> mVideoSensorManager;
 	QSharedPointer<CameraManager> mCameraManager;
-	QHash<QString, ServoMotor *> mServoMotors; // Has ownership.
+	QHash<QString, ServoMotorBase *> mServoMotors; // Has ownership.
 	QHash<QString, PwmCapture *> mPwmCaptures; // Has ownership.
 	QHash<QString, PowerMotor *> mPowerMotors; // Has ownership.
 	QHash<QString, AnalogSensor *> mAnalogSensors; // Has ownership.
