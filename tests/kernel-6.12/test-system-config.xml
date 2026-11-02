@@ -151,10 +151,34 @@ equal to its class name.
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
 			captureFile="/sys/class/pwm/ecap.0/capture"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
-		<powerMotor port="M2" i2cCommandNumber="0x15" />
-		<powerMotor port="M3" i2cCommandNumber="0x16" />
-		<powerMotor port="M4" i2cCommandNumber="0x17" />
+		<powerMotor port="M1" invert="true"
+			dutyFile="/tmp/trik-test/m1/duty"
+			periodFile="/tmp/trik-test/m1/period"
+			runFile="/tmp/trik-test/m1/enable"
+			dirFile="/tmp/trik-test/m1/dir"
+			sense="/tmp/trik-test/m1/sense"
+			nFault="/tmp/trik-test/m1/fault" />
+		<powerMotor port="M2"
+			dutyFile="/tmp/trik-test/m2/duty"
+			periodFile="/tmp/trik-test/m2/period"
+			runFile="/tmp/trik-test/m2/enable"
+			dirFile="/tmp/trik-test/m2/dir"
+			sense="/tmp/trik-test/m2/sense"
+			nFault="/tmp/trik-test/m2/fault" />
+		<powerMotor port="M3"
+			dutyFile="/tmp/trik-test/m3/duty"
+			periodFile="/tmp/trik-test/m3/period"
+			runFile="/tmp/trik-test/m3/enable"
+			dirFile="/tmp/trik-test/m3/dir"
+			sense="/tmp/trik-test/m3/sense"
+			nFault="/tmp/trik-test/m3/fault" />
+		<powerMotor port="M4"
+			dutyFile="/tmp/trik-test/m4/duty"
+			periodFile="/tmp/trik-test/m4/period"
+			runFile="/tmp/trik-test/m4/enable"
+			dirFile="/tmp/trik-test/m4/dir"
+			sense="/tmp/trik-test/m4/sense"
+			nFault="/tmp/trik-test/m4/fault" />
 		<analogSensor port="A1" i2cCommandNumber="0x25" />
 		<analogSensor port="A2" i2cCommandNumber="0x24" />
 		<analogSensor port="A3" i2cCommandNumber="0x23" />

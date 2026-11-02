@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2016 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
+/* Copyright 2013 - 2026 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,65 +14,158 @@
 
 #include "powerMotor.h"
 
+#include <QtCore/QFileInfo>
+#include <QtCore/QTimer>
+
+#include <trikHal/hardwareAbstractionInterface.h>
+#include <trikHal/inputDeviceFileInterface.h>
+#include <trikHal/outputDeviceFileInterface.h>
 #include <trikKernel/configurer.h>
 #include <trikKernel/exceptions/malformedConfigException.h>
-#include <trikKernel/exceptions/internalErrorException.h>
-#include <QTimer>
-#include "i2cCommunicator.h"
+#include <QsLog.h>
+
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-static const int maxControlValue = 100;
-static const int minControlValue = -100;
+PowerMotor::~PowerMotor() = default;
 
 PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer,
-	PeripheryCommunicatorInterface &communicator)
-	: mCommunicator(communicator)
-	, mInvert(configurer.attributeByPort(port, "invert") == "false")
-	, mCurrentPower(0)
-	, mState("Power Motor on" + port)
+	trikHal::HardwareAbstractionInterface &hw)
+	: mState("Power Motor on " + port)
 {
-	mMspCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
+	const auto dutyPath = configurer.attributeByPort(port, "dutyFile");
+	const auto periodPath = configurer.attributeByPort(port, "periodFile");
+	const auto runPath = configurer.attributeByPort(port, "runFile");
+	const auto dirPath = configurer.attributeByPort(port, "dirFile");
 
-	mCurrentPeriod = ConfigurerHelper::configureInt(configurer, mState, port, "period");
-	setPeriod(mCurrentPeriod);
+	mDutyFile.reset(hw.createOutputDeviceFile(dutyPath));
+	mPeriodFile.reset(hw.createOutputDeviceFile(periodPath));
+	mRunFile.reset(hw.createOutputDeviceFile(runPath));
+	mDirFile.reset(hw.createOutputDeviceFile(dirPath));
 
-	mPowerMap.reserve(maxControlValue + 1);
+	if (!mDutyFile || !mPeriodFile || !mRunFile || !mDirFile) {
+		throw trikKernel::MalformedConfigException(
+			"PowerMotor on " + port + " requires periodFile, dutyFile, runFile, dirFile");
+	}
+
+	const int periodUs = ConfigurerHelper::configureInt(configurer, mState, port, "period");
+	if (periodUs <= 0) {
+		QLOG_ERROR() << "PowerMotor on" << port << "has invalid period:" << periodUs;
+		mState.fail();
+		return;
+	}
+	mPeriodNs = periodUs * 1000;
+
+	auto openFile = [&](auto &file, const QString &path) {
+		if (!file->open()) {
+			QLOG_ERROR() << "PowerMotor on" << port << "failed to open" << path;
+			mState.fail();
+			return false;
+		}
+
+		return true;
+	};
+
+	if (!openFile(mPeriodFile, periodPath) || !openFile(mRunFile, runPath) || !openFile(mDutyFile, dutyPath)
+		|| !openFile(mDirFile, dirPath)) {
+		return;
+	}
+
+	mPeriodFile->write(QString::number(mPeriodNs));
+	mRunFile->write(QString::number(0));
+	mDutyFile->write(QString::number(0));
+
+	QString sensePath;
+	sensePath = configurer.attributeByPort(port, "sense", &sensePath);
+	if (!sensePath.isEmpty()) {
+		mSenseFile.reset(hw.createInputDeviceFile(sensePath));
+		if (!mSenseFile || !mSenseFile->open()) {
+			QLOG_WARN() << "PowerMotor on" << port << "cannot open sense file" << sensePath;
+			mSenseFile.reset();
+		} else {
+			const auto scaleFile =
+				QFileInfo(sensePath).absolutePath() + QStringLiteral("/in_voltage_scale");
+			std::unique_ptr<trikHal::InputDeviceFileInterface> scaleFileHandle(
+				hw.createInputDeviceFile(scaleFile));
+			if (scaleFileHandle && scaleFileHandle->open()) {
+				auto scale = 0.0;
+				scaleFileHandle->stream() >> scale;
+				scaleFileHandle->close();
+				if (scale > 0.0) {
+					mSenseScaleMv = scale;
+				}
+			} else {
+				QLOG_WARN() << "PowerMotor on" << port << "cannot open" << scaleFile
+					    << ", using default sense scale";
+			}
+		}
+	} else {
+		QLOG_WARN() << "PowerMotor on" << port << "has no sense file configured";
+	}
+
+	QString faultPath;
+	faultPath = configurer.attributeByPort(port, "nFault", &faultPath);
+	if (!faultPath.isEmpty()) {
+		mFaultFile.reset(hw.createInputDeviceFile(faultPath));
+		if (!mFaultFile || !mFaultFile->open()) {
+			QLOG_WARN() << "PowerMotor on" << port << "cannot open nFault file" << faultPath;
+			mFaultFile.reset();
+		}
+	} else {
+		QLOG_WARN() << "PowerMotor on" << port << "has no nFault file configured";
+	}
+
+	mPowerMap.reserve(powerMotorMaxControl + 1);
 	lineariseMotor(port, configurer);
 
+	mInvert = configurer.attributeByPort(port, "invert") == "false";
 	mState.ready();
 }
 
-PowerMotor::~PowerMotor() = default;
-
 PowerMotor::Status PowerMotor::status() const
 {
-	return combine(mCommunicator, mState.status());
+	return mState.status();
+}
+
+int PowerMotor::minControl() const
+{
+	return powerMotorMinControl;
+}
+
+int PowerMotor::maxControl() const
+{
+	return powerMotorMaxControl;
 }
 
 // NOLINTNEXTLINE(google-default-arguments)
 void PowerMotor::setPower(int power, bool constrain)
 {
 	if (constrain) {
-		if (power > maxControlValue) {
-			power = maxControlValue;
-		} else if (power < minControlValue) {
-			power = minControlValue;
+		if (power > powerMotorMaxControl) {
+			power = powerMotorMaxControl;
+		} else if (power < powerMotorMinControl) {
+			power = powerMotorMinControl;
 		}
-		power = power <= 0 ? -mPowerMap[-power] : mPowerMap[power];
 	}
 
 	mCurrentPower = power;
-
 	power = mInvert ? -power : power;
 
-	QByteArray command(3, '\0');
-	command[0] = static_cast<char>(mMspCommandNumber & 0xFF);
-	command[1] = static_cast<char>((mMspCommandNumber >> 8) & 0xFF);
-	command[2] = static_cast<char>(power & 0xFF);
+	int mapPower = power;
+	if (mapPower > powerMotorMaxControl) {
+		mapPower = powerMotorMaxControl;
+	} else if (mapPower < powerMotorMinControl) {
+		mapPower = powerMotorMinControl;
+	}
 
-	mCommunicator.send(command);
+	const int pct = mapPower >= 0 ? mPowerMap[mapPower] : mPowerMap[-mapPower];
+	const int dutyNs = mPeriodNs * pct / 100;
+
+	mRunFile->write(QString::number(0));
+	mDirFile->write(QString::number(power >= 0 ? 1 : 0));
+	mDutyFile->write(QString::number(dutyNs));
+	mRunFile->write(QString::number(1));
 }
 
 int PowerMotor::power() const
@@ -80,14 +173,11 @@ int PowerMotor::power() const
 	return mCurrentPower;
 }
 
-int PowerMotor::period() const
-{
-	return mCurrentPeriod;
-}
-
 void PowerMotor::powerOff()
 {
-	setPower(0, false); // ignore power units translation (linearisation)
+	mRunFile->write(QString::number(0));
+	mDutyFile->write(QString::number(0));
+	mCurrentPower = 0;
 }
 
 // NOLINTNEXTLINE(google-default-arguments)
@@ -97,18 +187,20 @@ void PowerMotor::brake(int durationMs)
 		durationMs = 500;
 	}
 
-	setPower(0x7f, false);
+	setPower(0, false);
 	QTimer::singleShot(durationMs, this, &PowerMotor::powerOff);
 }
 
-void PowerMotor::setPeriod(int period)
+void PowerMotor::setPeriod(int uSec)
 {
-	mCurrentPeriod = period;
-	QByteArray command(4, '\0');
-	command[0] = static_cast<char>((mMspCommandNumber - 4) & 0xFF);
-	command[2] = static_cast<char>(period & 0xFF);
-	command[3] = static_cast<char>(period >> 8);
-	mCommunicator.send(command);
+	if (uSec <= 0) {
+		QLOG_ERROR() << "PowerMotor has invalid period:" << uSec;
+		mState.fail();
+		return;
+	}
+
+	mPeriodNs = uSec * 1000;
+	mPeriodFile->write(QString::number(mPeriodNs));
 }
 
 void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configurer &configurer)
@@ -116,50 +208,77 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 	QVector<QPair<double, double>> powerGraph;
 	for (const QString &str : configurer.attributeByPort(port, "measures").split(")")) {
 		if (!str.isEmpty()) {
-			QPair<double, double> temp;
-			temp.first = str.mid(1).split(";").at(0).toInt();
-			temp.second = str.mid(1).split(";").at(1).toInt();
-			powerGraph.append(temp);
+			QPair<double, double> t;
+			t.first = str.mid(1).split(";").at(0).toInt();
+			t.second = str.mid(1).split(";").at(1).toInt();
+			powerGraph.append(t);
 		}
 	}
 
-	const int graphLength = powerGraph.size();
-	const int maxValue = static_cast<int>(powerGraph[graphLength - 1].second);
-
-	for (int i = 0; i < graphLength; i++) {
-		powerGraph[i].second *= maxControlValue;
-		powerGraph[i].second /= maxValue;
+	if (powerGraph.isEmpty()) {
+		for (int i = 0; i <= powerMotorMaxControl; ++i) {
+			mPowerMap.append(i);
+		}
+		return;
 	}
 
-	for (int i = 0; i < maxControlValue; i++) {
+	const int gl = powerGraph.size();
+	if (gl < 2) {
+		throw trikKernel::MalformedConfigException("PowerMotor requires at least two measure points");
+	}
+
+	const double maxV = powerGraph[gl - 1].second;
+	if (maxV <= 0.0) {
+		throw trikKernel::MalformedConfigException("PowerMotor measure range must be positive");
+	}
+
+	for (int i = 0; i < gl; i++) {
+		powerGraph[i].second *= powerMotorMaxControl;
+		powerGraph[i].second /= maxV;
+	}
+	for (int i = 0; i < powerMotorMaxControl; i++) {
 		int k = 0;
 		while (i >= powerGraph[k].second) {
 			k++;
 		}
-
 		k--;
-
-		const double measureDifference = powerGraph[k + 1].second - powerGraph[k].second;
-		const double axeDifferenece = powerGraph[k + 1].first - powerGraph[k].first;
-
-		if (measureDifference < 0 || axeDifferenece < 0) {
+		const double md = powerGraph[k + 1].second - powerGraph[k].second;
+		const double ad = powerGraph[k + 1].first - powerGraph[k].first;
+		if (md <= 0 || ad < 0) {
 			throw trikKernel::MalformedConfigException("Nonmonotonic function");
 		}
+		mPowerMap.append(static_cast<int>(powerGraph[k].first + ad / md * (i - powerGraph[k].second)));
+	}
+	mPowerMap.append(powerMotorMaxControl);
+}
 
-		const double coef = axeDifferenece / measureDifference;
-		const int power = static_cast<int>(powerGraph[k].first + coef * (i - powerGraph[k].second));
-		mPowerMap.append(power);
+int PowerMotor::readRawSense()
+{
+	if (!mState.isReady() || !mSenseFile) {
+		return 0;
 	}
 
-	mPowerMap.append(maxControlValue);
+	mSenseFile->reset();
+
+	auto raw = 0;
+	mSenseFile->stream() >> raw;
+	return raw;
 }
 
-int PowerMotor::minControl() const
+float PowerMotor::readSense()
 {
-	return minControlValue;
+	return static_cast<float>(readRawSense() * mSenseScaleMv / 1000.0);
 }
 
-int PowerMotor::maxControl() const
+bool PowerMotor::hasFault() const
 {
-	return maxControlValue;
+	if (!mFaultFile) {
+		return false;
+	}
+
+	mFaultFile->reset();
+
+	auto value = 1;
+	mFaultFile->stream() >> value;
+	return value == 0;
 }

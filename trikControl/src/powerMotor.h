@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2016 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
+/* Copyright 2013 - 2026 Yurii Litvinov, Anastasiia Kornilova and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QVector>
@@ -25,11 +27,18 @@ namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+class InputDeviceFileInterface;
+class OutputDeviceFileInterface;
+}
+
 namespace trikControl {
 
-class PeripheryCommunicatorInterface;
+static const int powerMotorMaxControl = 100;
+static const int powerMotorMinControl = -100;
 
-/// TRIK power motor.
+/// Power motor driven by on-board hardware through sysfs.
 class PowerMotor : public MotorInterface
 {
 	Q_OBJECT
@@ -38,16 +47,14 @@ public:
 	/// Constructor.
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
-	/// @param communicator - I2C communicator to use to query sensor.
+	/// @param hw - hardware abstraction layer implementation.
 	PowerMotor(const QString &port, const trikKernel::Configurer &configurer,
-		PeripheryCommunicatorInterface &communicator);
+		trikHal::HardwareAbstractionInterface &hw);
 
 	~PowerMotor() override;
 
 	Status status() const override;
-
 	int minControl() const override;
-
 	int maxControl() const override;
 
 public Q_SLOTS:
@@ -58,25 +65,36 @@ public Q_SLOTS:
 
 	void powerOff() override;
 
-	/// Returns currently set period of a motor.
-	int period() const;
+	void setPeriod(int uSec) override;
 
-	/// Sets current motor period.
-	/// Period of pulses is a time interval between two characteristic points of two adjacent pulses.
-	void setPeriod(int period) override;
-
-	/// Force brake for a short period of time followed by power off
+	/// Force brake for a short period of time followed by power off.
 	// NOLINTNEXTLINE(google-default-arguments)
 	void brake(int durationMs = 500) override;
+
+	/// Returns the latest raw SARADC value of the motor current-sense channel.
+	int readRawSense();
+
+	/// Returns the latest motor current-sense voltage in volts.
+	float readSense();
+
+	/// Returns true when the driver reports an active-low fault.
+	bool hasFault() const;
 
 private:
 	void lineariseMotor(const QString &port, const trikKernel::Configurer &configurer);
 
-	PeripheryCommunicatorInterface &mCommunicator;
-	int mMspCommandNumber;
-	const bool mInvert;
-	int mCurrentPower;
-	int mCurrentPeriod;
+	std::unique_ptr<trikHal::OutputDeviceFileInterface> mPeriodFile;
+	std::unique_ptr<trikHal::OutputDeviceFileInterface> mDutyFile;
+	std::unique_ptr<trikHal::OutputDeviceFileInterface> mRunFile;
+	std::unique_ptr<trikHal::OutputDeviceFileInterface> mDirFile;
+
+	std::unique_ptr<trikHal::InputDeviceFileInterface> mSenseFile;
+	std::unique_ptr<trikHal::InputDeviceFileInterface> mFaultFile;
+
+	int mCurrentPower = 0;
+	int mPeriodNs = 50000;
+	bool mInvert = false;
+	double mSenseScaleMv = 1.7578125;
 	DeviceState mState;
 	QVector<int> mPowerMap;
 };

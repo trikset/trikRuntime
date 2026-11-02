@@ -857,7 +857,7 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "pwmCapture") {
 			mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "powerMotor") {
-			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mPeripheryCommunicator));
+			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "analogSensor") {
 			insertPeripheryDevice<AnalogSensor>(mAnalogSensors, port, deviceClass, mConfigurer,
 				mPeripheryDriver);
