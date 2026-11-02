@@ -81,6 +81,9 @@ HEADERS += \
 	$$PWD/src/lineSensor.h \
 	$$PWD/src/moduleLoader.h \
 	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/nrfUsbCommunicator.h \
+	$$PWD/src/nrfUsbProtocol.h \
+	$$PWD/src/communicatorCommand.h \
 	$$PWD/src/peripheryCommunicatorInterface.h \
 	$$PWD/src/mspBusAutoDetector.h \
 	$$PWD/src/mspUsbCommunicator.h \
@@ -145,6 +148,7 @@ SOURCES += \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/i2cCommunicator.cpp \
+	$$PWD/src/nrfUsbCommunicator.cpp \
 	$$PWD/src/mspBusAutoDetector.cpp \
 	$$PWD/src/mspUsbCommunicator.cpp \
 	$$PWD/src/objectSensor.cpp \
