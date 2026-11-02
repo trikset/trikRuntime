@@ -152,10 +152,34 @@ equal to its class name.
 			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
                         captureFile="/sys/class/pwm/ecap_cap.0/capture"
 		/>
-		<powerMotor port="M1" i2cCommandNumber="0x14" invert="true" />
-		<powerMotor port="M2" i2cCommandNumber="0x15" />
-		<powerMotor port="M3" i2cCommandNumber="0x16" />
-		<powerMotor port="M4" i2cCommandNumber="0x17" />
+		<powerMotor port="M1" invert="true"
+			dutyFile="/sys/class/pwm/pwmchip3/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip3/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip3/pwm0/enable"
+			dirFile="/sys/class/gpio/gpio149/value"
+			nFault="/sys/class/gpio/gpio131/value"
+			sense="/sys/bus/iio/devices/iio:device1/in_voltage0_raw" />
+		<powerMotor port="M2"
+			dutyFile="/sys/class/pwm/pwmchip4/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip4/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip4/pwm0/enable"
+			dirFile="/sys/class/gpio/gpio150/value"
+			nFault="/sys/class/gpio/gpio137/value"
+			sense="/sys/bus/iio/devices/iio:device1/in_voltage1_raw" />
+		<powerMotor port="M3"
+			dutyFile="/sys/class/pwm/pwmchip14/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip14/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip14/pwm0/enable"
+			dirFile="/sys/class/gpio/gpio124/value"
+			nFault="/sys/class/gpio/gpio143/value"
+			sense="/sys/bus/iio/devices/iio:device1/in_voltage2_raw" />
+		<powerMotor port="M4"
+			dutyFile="/sys/class/pwm/pwmchip15/pwm0/duty_cycle"
+			periodFile="/sys/class/pwm/pwmchip15/pwm0/period"
+			runFile="/sys/class/pwm/pwmchip15/pwm0/enable"
+			dirFile="/sys/class/gpio/gpio123/value"
+			nFault="/sys/class/gpio/gpio142/value"
+			sense="/sys/bus/iio/devices/iio:device1/in_voltage3_raw" />
 		<analogSensor port="A1" i2cCommandNumber="0x25" />
 		<analogSensor port="A2" i2cCommandNumber="0x24" />
 		<analogSensor port="A3" i2cCommandNumber="0x23" />
