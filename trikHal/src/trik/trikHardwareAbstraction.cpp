@@ -16,6 +16,7 @@
 
 #include "trikI2c.h"
 #include "trikMspUsb.h"
+#include "trikUsbDevice.h"
 #include "trikSystemConsole.h"
 #include "trikEventFile.h"
 #include "trikInputDeviceFile.h"
@@ -30,6 +31,7 @@
 #include <trikKernel/videoUtils.h>
 
 #include <QtCore/QScopedPointer>
+#include <sys/stat.h>
 #include <unistd.h>
 
 using namespace trikHal;
@@ -92,31 +94,42 @@ const Ov7670Reg ov7670RegisterDefaults[] = {
 
 TrikHardwareAbstraction::TrikHardwareAbstraction()
 	: mI2c(new TrikI2c())
-	, mUsb(new TrikMspUsb())
 	, mSystemConsole(new TrikSystemConsole())
 {
 }
 
 TrikHardwareAbstraction::~TrikHardwareAbstraction() = default;
 
-MspI2cInterface &TrikHardwareAbstraction::mspI2c()
+PeripheryI2cInterface &TrikHardwareAbstraction::peripheryI2c()
 {
 	return *mI2c.data();
 }
 
-MspI2cInterface *TrikHardwareAbstraction::createMspI2c()
+PeripheryI2cInterface *TrikHardwareAbstraction::createPeripheryI2c()
 {
 	return new TrikI2c();
 }
 
-MspI2cInterface *TrikHardwareAbstraction::createCommonI2c(uint8_t regSize)
+PeripheryI2cInterface *TrikHardwareAbstraction::createCommonI2c(uint8_t regSize)
 {
 	return new CommonI2c(regSize);
 }
 
-MspUsbInterface &TrikHardwareAbstraction::mspUsb()
+UsbDeviceInterface *TrikHardwareAbstraction::createUsbDevice()
 {
-	return *mUsb.data();
+#ifdef TRIK_PERIPHERY_NRF
+#	ifndef TRIK_NOT_BRICK
+	struct stat st {};
+	if (::stat("/dev/nrf0", &st) == 0 && S_ISCHR(st.st_mode)) {
+		QLOG_INFO() << "TrikHardwareAbstraction: using kernel nrf driver";
+		return new TrikUsbDevice();
+	}
+	QLOG_ERROR() << "TrikHardwareAbstraction: /dev/nrf0 not found - kernel driver not loaded";
+#	endif
+	return nullptr;
+#else
+	return new TrikMspUsb();
+#endif
 }
 
 SystemConsoleInterface &TrikHardwareAbstraction::systemConsole()

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "mspCommunicatorInterface.h"
+#include "peripheryCommunicatorInterface.h"
 
 namespace trikHal {
 class HardwareAbstractionInterface;
@@ -33,8 +33,8 @@ public:
 	/// Factory method that tries to determine which interface is to be used for MSP communication and creates
 	/// corresponding communicator instance. Transfers ownership to a caller.
 	/// @param configurer - contains preparsed XML configuration.
-	static MspCommunicatorInterface *createCommunicator(const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	static PeripheryCommunicatorInterface *createCommunicator(const trikKernel::Configurer &configurer,
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 };
 
 }

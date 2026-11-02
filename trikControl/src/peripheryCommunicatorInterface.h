@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 #include <QtCore/QByteArray>
 
 #include "deviceInterface.h"
@@ -21,16 +23,29 @@
 
 namespace trikControl {
 
-/// Abstract interface for communication with MSP, may be implemented by I2C or USB buses, depending on current MSP
-/// configuration.
-class MspCommunicatorInterface : public DeviceInterface
+/// Abstract interface for communication with the periphery module over any
+/// supported transport (USB, I2C, ...).
+class PeripheryCommunicatorInterface : public DeviceInterface
 {
 public:
-	/// Send data to current device, if it is connected.
+	/// Send data to the current device, if it is connected.
 	virtual int send(const QByteArray &data) = 0;
 
-	/// Reads data by given I2C command number and returns the result.
+	/// Reads data by the given command and returns the result.
 	virtual int read(const QByteArray &data) = 0;
+
+	/// Sends several commands as one batch, if the transport supports it.
+	/// The default implementation falls back to a single send().
+	virtual int sendBatch(const QByteArray &data)
+	{
+		return send(data);
+	}
+
+	/// Maximum payload size of one batch, or 0 when batching is unsupported.
+	virtual std::size_t batchMaxPayload() const
+	{
+		return 0;
+	}
 };
 
 }

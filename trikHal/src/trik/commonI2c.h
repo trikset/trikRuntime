@@ -1,4 +1,4 @@
-/* Copyright 2025 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,18 @@
 #pragma once
 
 #include <QtCore/QByteArray>
-#include <trikHal/mspI2cInterface.h>
+#include <trikHal/peripheryI2cInterface.h>
 
 namespace trikHal {
 namespace trik {
 
 /// Implementing an I2c device using linux I2c and I2c_RDRW
-class CommonI2c: public trikHal::MspI2cInterface
+class CommonI2c : public trikHal::PeripheryI2cInterface
 {
 public:
 	/// Constructor
-	explicit CommonI2c(uint8_t regSize): mRegSize(regSize) {};
+	explicit CommonI2c(uint8_t regSize)
+		: mRegSize(regSize) {};
 
 	~CommonI2c() override;
 
@@ -45,7 +46,7 @@ public:
 	void disconnect() override;
 
 	/// Perform I2c transfer operation.
-	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
+	int transfer(const QVector<PeripheryI2cInterface::Message> &vector) override;
 
 	/// Write a single register: an 8-bit register address followed by an 8-bit
 	/// value (used for devices with 1-byte registers, e.g. ov7670).
@@ -55,7 +56,7 @@ private:
 	uint8_t mRegSize;
 	int mDeviceFileDescriptor = -1;
 	ushort mDeviceAddress = 0;
-	int write(uchar* writeData, ushort length);
+	int write(uchar *writeData, ushort length);
 };
 
 }

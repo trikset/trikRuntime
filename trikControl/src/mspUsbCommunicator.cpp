@@ -14,18 +14,20 @@
 
 #include "src/mspUsbCommunicator.h"
 
+#include <utility>
+
 #include <trikKernel/configurer.h>
-#include <trikHal/mspUsbInterface.h>
+#include <trikHal/usbDeviceInterface.h>
 
 #include <QsLog.h>
 
 using namespace trikControl;
 
-MspUsbCommunicator::MspUsbCommunicator(trikHal::MspUsbInterface &usb)
-	: mUsb(usb)
+MspUsbCommunicator::MspUsbCommunicator(std::unique_ptr<trikHal::UsbDeviceInterface> usb)
+	: mUsb(std::move(usb))
 	, mState("MSP USB Communicator")
 {
-	if (mUsb.connect()) {
+	if (mUsb->connect()) {
 		mState.ready();
 	} else {
 		mState.fail();
@@ -47,7 +49,7 @@ int MspUsbCommunicator::send(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	return mUsb.send(data);
+	return mUsb->send(data);
 }
 
 int MspUsbCommunicator::read(const QByteArray &data)
@@ -58,7 +60,7 @@ int MspUsbCommunicator::read(const QByteArray &data)
 	}
 
 	QMutexLocker lock(&mLock);
-	return mUsb.read(data);
+	return mUsb->read(data);
 }
 
 DeviceInterface::Status MspUsbCommunicator::status() const
@@ -70,6 +72,6 @@ void MspUsbCommunicator::disconnect()
 {
 	mState.stop();
 	QMutexLocker lock(&mLock);
-	mUsb.disconnect();
+	mUsb->disconnect();
 	mState.off();
 }

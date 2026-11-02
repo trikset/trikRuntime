@@ -14,26 +14,34 @@
 
 #include "mspBusAutoDetector.h"
 
+#include <memory>
+
 #include <QtCore/QScopedPointer>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <QsLog.h>
 
-#include "mspI2cCommunicator.h"
+#include "i2cCommunicator.h"
 #include "mspUsbCommunicator.h"
 
 using namespace trikControl;
 
-MspCommunicatorInterface *MspBusAutoDetector::createCommunicator(const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+PeripheryCommunicatorInterface *MspBusAutoDetector::createCommunicator(const trikKernel::Configurer &configurer,
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 {
-	QLOG_INFO() << "Checking USB MSP communicator for availability";
-	QScopedPointer<MspUsbCommunicator> communicator(new MspUsbCommunicator(hardwareAbstraction.mspUsb()));
-	if (communicator->status() == DeviceInterface::Status::permanentFailure) {
-		QLOG_INFO() << "Using I2C MSP communicator";
-		return new MspI2cCommunicator(configurer, hardwareAbstraction.mspI2c());
+	QLOG_INFO() << "Checking USB periphery communicator for availability";
+	std::unique_ptr<trikHal::UsbDeviceInterface> usb(hardwareAbstraction.createUsbDevice());
+	if (!usb) {
+		QLOG_INFO() << "Using I2C periphery communicator";
+		return new I2cCommunicator(configurer, hardwareAbstraction.peripheryI2c());
 	}
 
-	QLOG_INFO() << "Using USB MSP communicator";
+	QScopedPointer<PeripheryCommunicatorInterface> communicator(new MspUsbCommunicator(std::move(usb)));
+	if (communicator->status() == DeviceInterface::Status::permanentFailure) {
+		QLOG_INFO() << "Using I2C periphery communicator";
+		return new I2cCommunicator(configurer, hardwareAbstraction.peripheryI2c());
+	}
+
+	QLOG_INFO() << "Using USB periphery communicator";
 	return communicator.take();
 }

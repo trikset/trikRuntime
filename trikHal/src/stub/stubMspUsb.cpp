@@ -14,29 +14,29 @@
 
 #include "stubMspUsb.h"
 
-#include <QsLog.h>
-
 using namespace trikHal::stub;
 
 int StubMspUsb::send(const QByteArray &data)
 {
-	QLOG_INFO() << "Sending thru MSP USB stub" << data;
-	return 0;
+	return mDevice.send(data);
 }
 
 int StubMspUsb::read(const QByteArray &data)
 {
-	QLOG_INFO() << "Reading from MSP USB stub" << data;
-	return 0;
+	return mDevice.read(data);
 }
 
 bool StubMspUsb::connect()
 {
-	QLOG_INFO() << "Connecting to MSP USB stub";
-	return true;
+	return mDevice.connect();
 }
 
 void StubMspUsb::disconnect()
 {
-	QLOG_INFO() << "Disconnecting from MSP USB stub";
+	mDevice.disconnect();
+}
+
+bool StubMspUsb::isConnected() const
+{
+	return mDevice.isConnected();
 }

@@ -21,8 +21,8 @@
 #include "fifoInterface.h"
 #include "IIOFileInterface.h"
 #include "ImuFileInterface.h"
-#include "mspI2cInterface.h"
-#include "mspUsbInterface.h"
+#include "peripheryI2cInterface.h"
+#include "usbDeviceInterface.h"
 #include "systemConsoleInterface.h"
 #include "VideoDeviceFileInterface.h"
 #include "fbOutputInterface.h"
@@ -41,17 +41,19 @@ public:
 
 	virtual ~HardwareAbstractionInterface() = default;
 
-	/// Returns MSP I2C bus implementation.
-	virtual MspI2cInterface &mspI2c() = 0;
+	/// Returns the periphery module I2C bus implementation.
+	virtual PeripheryI2cInterface &peripheryI2c() = 0;
 
-	/// Create MSP I2C bus implementation.
-	virtual MspI2cInterface *createMspI2c() = 0;
+	/// Creates the periphery module I2C bus implementation.
+	virtual PeripheryI2cInterface *createPeripheryI2c() = 0;
 
 	/// Create Common I2C bus implementation.
-	virtual MspI2cInterface *createCommonI2c(uint8_t regSize) = 0;
+	virtual PeripheryI2cInterface *createCommonI2c(uint8_t regSize) = 0;
 
-	/// Returns MSP USB bus implementation.
-	virtual MspUsbInterface &mspUsb() = 0;
+	/// Creates a USB transport for the periphery module. Passes ownership to
+	/// the caller. The concrete implementation is selected at build time.
+	/// Returns nullptr when the selected transport is not available.
+	virtual UsbDeviceInterface *createUsbDevice() = 0;
 
 	/// Returns system console wrapper, able to execute system command and launch processes.
 	virtual SystemConsoleInterface &systemConsole() = 0;

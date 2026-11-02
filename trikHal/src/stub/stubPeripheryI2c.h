@@ -1,4 +1,4 @@
-/* Copyright 2025 CyberTech Labs Ltd.
+/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
 
 #pragma once
 
-#include "mspI2cInterface.h"
+#include "peripheryI2cInterface.h"
 
 namespace trikHal {
 namespace stub {
 
-/// Stub implementation of I2C bus communicator.
-class StubCommonI2c : public MspI2cInterface
+/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
+class StubPeripheryI2c : public PeripheryI2cInterface
 {
 public:
 	int send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
 	QVector<uint8_t> readX(const QByteArray &data) override;
 	bool connect(const QString &devicePath, int deviceId) override;
-	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
+	int transfer(const QVector<PeripheryI2cInterface::Message> &vector) override;
 	void disconnect() override;
 };
 

@@ -60,6 +60,18 @@ CONFIG(debug_fps) {
 	DEFINES += TRIK_DEBUG_FPS
 }
 
+# Stub/desktop build without real robot hardware.
+CONFIG(trik_not_brick) {
+	DEFINES += TRIK_NOT_BRICK
+}
+
+# Select the periphery module used by the HAL USB transport.
+# Default is the legacy MSP path; pass `CONFIG += trik_periphery_nrf` for the
+# nRF52833 kernel-driver transport.
+CONFIG(trik_periphery_nrf) {
+	DEFINES += TRIK_PERIPHERY_NRF
+}
+
 QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO *= -Og
 QMAKE_CXXFLAGS_DEBUG *= -Og
 

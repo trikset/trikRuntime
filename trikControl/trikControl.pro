@@ -80,9 +80,9 @@ HEADERS += \
 	$$PWD/src/led.h \
 	$$PWD/src/lineSensor.h \
 	$$PWD/src/moduleLoader.h \
-	$$PWD/src/mspCommunicatorInterface.h \
+	$$PWD/src/i2cCommunicator.h \
+	$$PWD/src/peripheryCommunicatorInterface.h \
 	$$PWD/src/mspBusAutoDetector.h \
-	$$PWD/src/mspI2cCommunicator.h \
 	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/powerMotor.h \
@@ -144,8 +144,8 @@ SOURCES += \
 	$$PWD/src/led.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/moduleLoader.cpp \
+	$$PWD/src/i2cCommunicator.cpp \
 	$$PWD/src/mspBusAutoDetector.cpp \
-	$$PWD/src/mspI2cCommunicator.cpp \
 	$$PWD/src/mspUsbCommunicator.cpp \
 	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/powerMotor.cpp \

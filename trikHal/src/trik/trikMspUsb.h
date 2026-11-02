@@ -24,12 +24,16 @@ class TrikMspUsb : public MspUsbInterface
 {
 public:
 	TrikMspUsb() = default;
-	~TrikMspUsb() override;
+	~TrikMspUsb() override = default;
 
 	int send(const QByteArray &data) override;
 	int read(const QByteArray &data) override;
 	bool connect() override;
 	void disconnect() override;
+	bool isConnected() const override;
+
+private:
+	bool mConnected = false;
 };
 
 }

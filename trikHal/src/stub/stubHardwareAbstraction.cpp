@@ -14,8 +14,9 @@
 
 #include "stubHardwareAbstraction.h"
 
-#include "stubMspI2c.h"
+#include "stubPeripheryI2c.h"
 #include "stubMspUsb.h"
+#include "stubUsbDevice.h"
 #include "stubSystemConsole.h"
 #include "stubEventFile.h"
 #include "stubInputDeviceFile.h"
@@ -25,40 +26,42 @@
 #include "stubImuFile.h"
 #include "stubVideoDeviceFile.h"
 #include "stubFbOutput.h"
-#include "stubCommonI2c.h"
 #include "QsLog.h"
 
 using namespace trikHal;
 using namespace trikHal::stub;
 
 StubHardwareAbstraction::StubHardwareAbstraction()
-	: mMspI2cBus(new StubMspI2C())
-	, mMspUsbBus(new StubMspUsb())
+	: mI2c(new StubPeripheryI2c())
 	, mSystemConsole(new StubSystemConsole())
 {
 }
 
 StubHardwareAbstraction::~StubHardwareAbstraction() = default;
 
-MspI2cInterface &StubHardwareAbstraction::mspI2c()
+PeripheryI2cInterface &StubHardwareAbstraction::peripheryI2c()
 {
-	return *mMspI2cBus.data();
+	return *mI2c.data();
 }
 
-MspI2cInterface *StubHardwareAbstraction::createMspI2c()
+PeripheryI2cInterface *StubHardwareAbstraction::createPeripheryI2c()
 {
-	return new StubMspI2C();
+	return new StubPeripheryI2c();
 }
 
-MspI2cInterface *StubHardwareAbstraction::createCommonI2c(uint8_t regSize)
+PeripheryI2cInterface *StubHardwareAbstraction::createCommonI2c(uint8_t regSize)
 {
 	Q_UNUSED(regSize)
-	return new StubCommonI2c();
+	return new StubPeripheryI2c();
 }
 
-MspUsbInterface &StubHardwareAbstraction::mspUsb()
+UsbDeviceInterface *StubHardwareAbstraction::createUsbDevice()
 {
-	return *mMspUsbBus.data();
+#ifdef TRIK_PERIPHERY_NRF
+	return new StubUsbDevice();
+#else
+	return new StubMspUsb();
+#endif
 }
 
 SystemConsoleInterface &StubHardwareAbstraction::systemConsole()

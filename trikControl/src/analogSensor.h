@@ -27,7 +27,7 @@ class Configurer;
 
 namespace trikControl {
 
-class MspCommunicatorInterface;
+class PeripheryCommunicatorInterface;
 
 /// Analog TRIK sensor.
 class AnalogSensor : public SensorInterface
@@ -39,7 +39,8 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	/// @param communicator - I2C communicator used to query sensor.
-	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator);
+	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer,
+		PeripheryCommunicatorInterface &communicator);
 
 	Status status() const override;
 
@@ -55,19 +56,19 @@ public Q_SLOTS:
 	int readRawData() override;
 
 private:
-	enum class Type
-	{
+	enum class Type {
 		/// Calibrated IR sensor.
 		sharpGP2
 
 		/// Normalized IR sensor.
-		, analog
+		,
+		analog
 	};
 
 	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
-	MspCommunicatorInterface &mCommunicator;
+	PeripheryCommunicatorInterface &mCommunicator;
 	int mI2cCommandNumber {0};
 	Type mIRType;
 

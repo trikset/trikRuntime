@@ -17,13 +17,13 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "mspCommunicatorInterface.h"
+#include "peripheryCommunicatorInterface.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer
-		, MspCommunicatorInterface &communicator)
+AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer,
+	PeripheryCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 	, mState("Analog Sensor on" + port)
 {
@@ -44,7 +44,7 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 	// normalizedValue = s / (rawValue + l) + n
 	// To calculate s, l and n we need sensor readings at three distances.
 
-	if (mIRType == Type::sharpGP2){
+	if (mIRType == Type::sharpGP2) {
 		calculateLNS(port, configurer);
 	} else {
 		calculateKB(port, configurer);
@@ -65,8 +65,7 @@ int AnalogSensor::read()
 	if (mIRType == Type::sharpGP2) {
 		const auto quotient = raw + mL;
 		result = quotient != 0 ? mS / quotient + mN : 0;
-	}
-	else {
+	} else {
 		result = mK * raw + mB;
 	}
 
@@ -104,8 +103,8 @@ void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configure
 	const int y3 = result[5].toInt();
 
 	// Counted from equations x1 = mS/(y1 + mL) + mN, x2 = mS/(y2 + mL) + mN, x3 = mS/(y3 + mL) + mN
-	mL = (-x1 * y1 * y3 - x3 * y2 * y3 + x3 * y1 * y3 + x1 * y1 * y2 + x2 * y2 * y3 - x2 * y1 * y2) /
-			(x1 * y3 - x2 * y3 + x2 * y1 - x1 * y2 + x3 * y2 - x3 * y1);
+	mL = (-x1 * y1 * y3 - x3 * y2 * y3 + x3 * y1 * y3 + x1 * y1 * y2 + x2 * y2 * y3 - x2 * y1 * y2)
+	     / (x1 * y3 - x2 * y3 + x2 * y1 - x1 * y2 + x3 * y2 - x3 * y1);
 
 	mS = (x1 - x2) * (y1 + mL) * (y2 + mL) / (y2 - y1);
 	mN = x1 - mS / (y1 + mL);
@@ -118,7 +117,7 @@ void AnalogSensor::calculateKB(const QString &port, const trikKernel::Configurer
 	const int normalizedValue1 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue1");
 	const int normalizedValue2 = ConfigurerHelper::configureInt(configurer, mState, port, "normalizedValue2");
 	if (rawValue1 == rawValue2) {
-		QLOG_ERROR() <<  "Sensor calibration error: rawValue1 = rawValue2!";
+		QLOG_ERROR() << "Sensor calibration error: rawValue1 = rawValue2!";
 		mState.fail();
 		mK = 0;
 		mB = 0;

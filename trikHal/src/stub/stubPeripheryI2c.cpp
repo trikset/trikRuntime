@@ -12,43 +12,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "stubMspI2c.h"
+#include "stubPeripheryI2c.h"
 
 #include <QsLog.h>
 
 using namespace trikHal::stub;
 
-int StubMspI2C::send(const QByteArray &data)
+int StubPeripheryI2c::send(const QByteArray &data)
 {
-	QLOG_INFO() << "Sending thru MSP I2C stub" << data;
+	QLOG_INFO() << "Sending thru periphery I2C stub" << data;
 	return 0;
 }
 
-int StubMspI2C::read(const QByteArray &data)
+int StubPeripheryI2c::read(const QByteArray &data)
 {
-	QLOG_INFO() << "Reading from MSP I2C stub" << data;
+	QLOG_INFO() << "Reading from periphery I2C stub" << data;
 	return 0;
 }
 
-QVector<uint8_t> StubMspI2C::readX(const QByteArray &data)
+QVector<uint8_t> StubPeripheryI2c::readX(const QByteArray &data)
 {
-	QLOG_INFO() << "Reading x bytes from MSP I2C stub" << data;
+	QLOG_INFO() << "Reading x bytes from periphery I2C stub" << data;
 	return {};
 }
 
-bool StubMspI2C::connect(const QString &devicePath, int deviceId)
+bool StubPeripheryI2c::connect(const QString &devicePath, int deviceId)
 {
-	QLOG_INFO() << "Connecting to MSP I2C stub, devicePath:" << devicePath << "deviceId" << deviceId;
+	QLOG_INFO() << "Connecting to periphery I2C stub, devicePath:" << devicePath << "deviceId" << deviceId;
 	return true;
 }
 
-int StubMspI2C::transfer(const QVector<MspI2cInterface::Message> &vector)
+int StubPeripheryI2c::transfer(const QVector<PeripheryI2cInterface::Message> &vector)
 {
 	Q_UNUSED(vector);
 	return -1;
 }
 
-void StubMspI2C::disconnect()
+void StubPeripheryI2c::disconnect()
 {
-	QLOG_INFO() << "Disconnecting from MSP I2C stub";
+	QLOG_INFO() << "Disconnecting from periphery I2C stub";
 }

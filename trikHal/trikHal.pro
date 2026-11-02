@@ -23,7 +23,8 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/fifoInterface.h \
 	$$PWD/include/trikHal/eventFileInterface.h \
 	$$PWD/include/trikHal/inputDeviceFileInterface.h \
-	$$PWD/include/trikHal/mspI2cInterface.h \
+	$$PWD/include/trikHal/usbDeviceInterface.h \
+	$$PWD/include/trikHal/peripheryI2cInterface.h \
 	$$PWD/include/trikHal/mspUsbInterface.h \
 	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
@@ -54,9 +55,14 @@ PUBLIC_HEADERS += \
 		$$PWD/src/trik/trikFbOutput.h \
 }
 
+!trik_not_brick {
+	HEADERS += $$PWD/src/trik/trikUsbDevice.h
+}
+
 HEADERS += \
 	$$PWD/src/stub/stubHardwareAbstraction.h \
-	$$PWD/src/stub/stubMspI2c.h \
+	$$PWD/src/stub/stubUsbDevice.h \
+	$$PWD/src/stub/stubPeripheryI2c.h \
 	$$PWD/src/stub/stubMspUsb.h \
 	$$PWD/src/stub/stubSystemConsole.h \
 	$$PWD/src/stub/stubEventFile.h \
@@ -67,7 +73,6 @@ HEADERS += \
 	$$PWD/src/stub/stubImuFile.h \
 	$$PWD/src/stub/stubVideoDeviceFile.h \
 	$$PWD/src/stub/stubFbOutput.h \
-	$$PWD/src/stub/stubCommonI2c.h
 
 !win32:!macx {
 	SOURCES += \
@@ -91,7 +96,8 @@ HEADERS += \
 
 SOURCES += \
 	$$PWD/src/stub/stubHardwareAbstraction.cpp \
-	$$PWD/src/stub/stubMspI2c.cpp \
+	$$PWD/src/stub/stubUsbDevice.cpp \
+	$$PWD/src/stub/stubPeripheryI2c.cpp \
 	$$PWD/src/stub/stubMspUsb.cpp \
 	$$PWD/src/stub/stubSystemConsole.cpp \
 	$$PWD/src/stub/stubEventFile.cpp \
@@ -102,10 +108,10 @@ SOURCES += \
 	$$PWD/src/stub/stubImuFile.cpp \
 	$$PWD/src/stub/stubVideoDeviceFile.cpp \
 	$$PWD/src/stub/stubFbOutput.cpp \
-	$$PWD/src/stub/stubCommonI2c.cpp
 
 !trik_not_brick {
 	SOURCES += $$PWD/src/trik/hardwareAbstractionFactory.cpp
+	SOURCES += $$PWD/src/trik/trikUsbDevice.cpp
 } else {
 	SOURCES += $$PWD/src/stub/hardwareAbstractionFactory.cpp
 }

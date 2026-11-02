@@ -14,30 +14,30 @@
 
 #pragma once
 
-#include <QtCore/QByteArray>
-#include <trikHal/trikHalDeclSpec.h>
+#include "usbDeviceInterface.h"
 
 namespace trikHal {
 
-/// Communicates with MSP processor over USB bus.
-class TRIKHAL_EXPORT MspUsbInterface
+/// Communicates with the MSP processor over USB. Kept as a concrete flavor of
+/// the common USB transport interface.
+class TRIKHAL_EXPORT MspUsbInterface : public UsbDeviceInterface
 {
 	Q_DISABLE_COPY(MspUsbInterface)
 public:
 	MspUsbInterface() = default;
-	virtual ~MspUsbInterface() = default;
+	~MspUsbInterface() override = default;
 
-	/// Send data to MSP.
-	virtual int send(const QByteArray &data) = 0;
+	/// Sends one command to MSP.
+	int send(const QByteArray &data) override = 0;
 
-	/// Reads data by given MSP command number and returns the result.
-	virtual int read(const QByteArray &data) = 0;
+	/// Reads a value for the given MSP command.
+	int read(const QByteArray &data) override = 0;
 
-	/// Establish connection with MSP over USB bus.
-	virtual bool connect() = 0;
+	/// Establishes connection with MSP over USB.
+	bool connect() override = 0;
 
-	/// Disconnect from MSP.
-	virtual void disconnect() = 0;
+	/// Disconnects from MSP.
+	void disconnect() override = 0;
 };
 
 }

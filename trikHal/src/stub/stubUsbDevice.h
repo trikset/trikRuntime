@@ -1,4 +1,4 @@
-/* Copyright 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,28 @@
 
 #pragma once
 
-#include "mspI2cInterface.h"
+#include "usbDeviceInterface.h"
 
 namespace trikHal {
 namespace stub {
 
-/// Empty implementation of I2C bus communicator. Only logs operations, returns 0 on all "read" calls.
-class StubMspI2C : public MspI2cInterface
+/// Stub USB device for desktop builds and tests. Logs operations.
+class StubUsbDevice : public UsbDeviceInterface
 {
 public:
-	int send(const QByteArray &data) override;
-	int read(const QByteArray &data) override;
-	QVector<uint8_t> readX(const QByteArray &data) override;
-	bool connect(const QString &devicePath, int deviceId) override;
-	int transfer(const QVector<MspI2cInterface::Message> &vector) override;
+	StubUsbDevice();
+
+	bool connect() override;
 	void disconnect() override;
+	bool isConnected() const override;
+	int send(const QByteArray &data) override;
+	bool controlWrite(uint8_t bRequest, const QByteArray &data, int timeoutMs) override;
+	void setDataCallback(DataCallback callback, void *userData) override;
+	void setTelemetryPeriodUs(uint32_t periodUs, u_int32_t isoPacketsPerUrb) override;
+	int read(const QByteArray &data) override;
+
+private:
+	bool mConnected = false;
 };
 
 }

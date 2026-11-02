@@ -25,8 +25,7 @@
 
 using namespace trikHal::trik;
 
-static inline __s32 i2c_smbus_access(int file, __u8 read_write, __u8 command
-		, __u32 size, union i2c_smbus_data *data)
+static inline __s32 i2c_smbus_access(int file, __u8 read_write, __u8 command, __u32 size, union i2c_smbus_data *data)
 {
 	struct i2c_smbus_ioctl_data args {};
 	args.read_write = read_write;
@@ -65,15 +64,13 @@ static inline __s32 i2c_smbus_read_i2c_block_data(int file, __u8 command, __u8 l
 	}
 
 	data.block[0] = length;
-	if (i2c_smbus_access(file, I2C_SMBUS_READ, command
-			, length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN : I2C_SMBUS_I2C_BLOCK_DATA
-			, &data))
-	{
-			return -1;
+	if (i2c_smbus_access(file, I2C_SMBUS_READ, command,
+		    length == 32 ? I2C_SMBUS_I2C_BLOCK_BROKEN : I2C_SMBUS_I2C_BLOCK_DATA, &data)) {
+		return -1;
 	}
 
 	for (int i = 1; i <= data.block[0]; i++) {
-			values[i - 1] = data.block[i];
+		values[i - 1] = data.block[i];
 	}
 
 	return data.block[0];
@@ -132,7 +129,7 @@ int TrikI2c::read(const QByteArray &data)
 	if (smbusReadSize <= 4) {
 		QVector<uint8_t> buffer(4);
 		i2c_smbus_read_i2c_block_data(mDeviceFileDescriptor, data[0], 4, buffer.data());
-		return buffer[3] << 24 | buffer[2] <<  16 | buffer[1] << 8 | buffer[0];
+		return buffer[3] << 24 | buffer[2] << 16 | buffer[1] << 8 | buffer[0];
 	}
 
 	return -1;
@@ -172,7 +169,7 @@ bool TrikI2c::connect(const QString &devicePath, int deviceId)
 	return true;
 }
 
-int TrikI2c::transfer(const QVector<MspI2cInterface::Message> &vector)
+int TrikI2c::transfer(const QVector<PeripheryI2cInterface::Message> &vector)
 {
 	Q_UNUSED(vector)
 	return -1;
