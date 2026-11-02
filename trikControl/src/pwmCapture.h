@@ -31,6 +31,10 @@ class InputDeviceFileInterface;
 namespace trikControl {
 
 /// Implementation of PWM capture for real robot.
+///
+/// PWM capture is available only on the onboard (main) module and not on the
+/// peripheral one, same as motors. This implementation does not require a
+/// communicator.
 class PwmCapture : public PwmCaptureInterface
 {
 	Q_OBJECT
@@ -39,8 +43,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	PwmCapture(const QString &port, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	PwmCapture(const QString &port, const trikKernel::Configurer &configurer,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~PwmCapture() override;
 
@@ -51,7 +55,7 @@ public:
 	long maxValue() const override;
 
 public Q_SLOTS:
-	/// Returns three readings of PWM signal frequency.
+	/// Returns period and cycle readings from PWM capture.
 	QVector<int> frequency() override;
 
 	/// Returns scaled PWM signal duty.
@@ -61,15 +65,14 @@ public Q_SLOTS:
 	long dutyRaw() override;
 
 private:
-	QScopedPointer<trikHal::InputDeviceFileInterface> mFrequencyFile;
-	QScopedPointer<trikHal::InputDeviceFileInterface> mDutyFile;
+	QScopedPointer<trikHal::InputDeviceFileInterface> mCaptureFile;
 	DeviceState mState;
-	long mMinValue;
-	long mMaxValue;
-	long mMinValueScaled;
-	long mMaxValueScaled;
-	qreal mK;
-	qreal mB;
+	long mMinValue = 0;
+	long mMaxValue = 0;
+	long mMinValueScaled = 0;
+	long mMaxValueScaled = 0;
+	qreal mK = 0;
+	qreal mB = 0;
 };
 
 }

@@ -36,7 +36,7 @@ public:
 	virtual long maxValue() const = 0;
 
 public Q_SLOTS:
-	/// Returns three readings of PWM signal frequency.
+	/// Returns period and cycle readings from PWM capture.
 	virtual QVector<int> frequency() = 0;
 
 	/// Returns scaled PWM signal duty.
@@ -48,4 +48,4 @@ public Q_SLOTS:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::PwmCaptureInterface *)
+Q_DECLARE_METATYPE(trikControl::PwmCaptureInterface *) // NOLINT(misc-no-recursion)
