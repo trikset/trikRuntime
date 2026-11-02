@@ -42,6 +42,7 @@
 #include "gyroSensor.h"
 #include "keys.h"
 #include "led.h"
+#include "boardImu.h"
 #include "videoSensorManager.h"
 #include "lineSensor.h"
 #include "objectSensor.h"
@@ -133,17 +134,20 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 		connect(mVideoSensorManager.data(), &VideoSensorManager::sensorStopped, this, &Brick::stopped);
 	}
 
-	// Accelerometer must be created before gyroscope - gyro depends on it for calibration.
-	// Cannot rely on createDevice loop: XML may list gyroscope first.
-	if (mConfigurer.ports().contains("boardAccelPort")
-		&& mConfigurer.deviceClass("boardAccelPort") == "iioDevice") {
+	// Single-stream IMU (ICM-42670) or legacy two-device IMU.
+	if (mConfigurer.ports().contains("boardImuPort")
+		&& mConfigurer.deviceClass("boardImuPort") == "iioSensorGroup") {
+		mBoardImu.reset(new BoardImu("boardImuPort", mConfigurer, *mHardwareAbstraction));
+	} else if (mConfigurer.ports().contains("boardAccelPort")
+		   && mConfigurer.deviceClass("boardAccelPort") == "iioDevice") {
 		mAccelerometer.reset(
 			new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction, "boardAccelPort"));
-	}
 
-	if (mConfigurer.ports().contains("boardGyroPort") && mConfigurer.deviceClass("boardGyroPort") == "iioDevice") {
-		mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction, mAccelerometer.data(),
-			"boardGyroPort"));
+		if (mConfigurer.ports().contains("boardGyroPort")
+			&& mConfigurer.deviceClass("boardGyroPort") == "iioDevice") {
+			mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction,
+				mAccelerometer.data(), "boardGyroPort"));
+		}
 	}
 
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");
@@ -184,6 +188,7 @@ Brick::~Brick()
 
 	mAccelerometer.reset();
 	mGyroscope.reset();
+	mBoardImu.reset();
 	mBattery.reset();
 	mKeys.reset();
 	mDisplay.reset();
@@ -634,12 +639,20 @@ BatteryInterface *Brick::battery()
 
 VectorSensorInterface *Brick::accelerometer()
 {
-	return mAccelerometer.data();
+	if (mAccelerometer) {
+		return mAccelerometer.data();
+	}
+
+	return mBoardImu ? mBoardImu->accelerometer() : nullptr;
 }
 
 GyroSensorInterface *Brick::gyroscope()
 {
-	return mGyroscope.data();
+	if (mGyroscope) {
+		return mGyroscope.data();
+	}
+
+	return mBoardImu ? mBoardImu->gyroscope() : nullptr;
 }
 
 LineSensorInterface *Brick::lineSensor(const QString &port)

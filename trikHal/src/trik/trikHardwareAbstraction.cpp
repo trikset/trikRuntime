@@ -22,6 +22,7 @@
 #include "trikOutputDeviceFile.h"
 #include "trikFifo.h"
 #include "trikIIOFile.h"
+#include "trikImuFile.h"
 #include "trikVideoDevice.h"
 #include "QsLog.h"
 #include "commonI2c.h"
@@ -136,6 +137,11 @@ FifoInterface *TrikHardwareAbstraction::createFifo(const QString &fileName) cons
 IIOFileInterface *TrikHardwareAbstraction::createIIOFile(const QString &fileName, const QString &scanType) const
 {
 	return new TrikIIOFile(fileName, scanType);
+}
+
+ImuFileInterface *TrikHardwareAbstraction::createImuFile(const QString &fileName) const
+{
+	return new TrikImuFile(fileName);
 }
 
 InputDeviceFileInterface *TrikHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

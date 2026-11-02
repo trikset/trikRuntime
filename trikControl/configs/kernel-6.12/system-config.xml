@@ -27,13 +27,11 @@ equal to its class name.
 		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_x_en
 		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_y_en
 		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_z_en
+		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_anglvel_x_en
+		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_anglvel_y_en
+		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_anglvel_z_en
+		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_temp_en
 		echo 1 > /sys/bus/iio/devices/iio\:device0/buffer/enable
-
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_timestamp_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_x_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_y_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_z_en
-		echo 1 > /sys/bus/iio/devices/iio\:device1/buffer/enable
 
 		echo 1 > /sys/class/gpio/gpio62/value
 
@@ -75,6 +73,7 @@ equal to its class name.
 		<fifo />
                 <lidar />
                 <iioDevice />
+		<iioSensorGroup />
 		<videoDevice />
 		<lineSensor toleranceFactor="1.0" />
 		<objectSensor toleranceFactor="1.0" />
@@ -175,10 +174,12 @@ equal to its class name.
 		<videoDevice port="usb-camera" device="/dev/usb-camera-dev" format="yuv422" width="320" height="240"
 				mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
-                <iioDevice port="boardAccelPort" />
-                <iioDevice port="boardGyroPort" />
-                <lidar port="lidarPort" file="/dev/ttyUSB0" />
-                <irCamera port="irCameraPort" i2cAddress="0x33" m="3" n="3" />
+		<iioSensorGroup port="boardImuPort" />
+		<!-- Legacy two-device IMU, not used by the new board. -->
+		<iioDevice port="boardAccelPort" />
+		<iioDevice port="boardGyroPort" />
+		<lidar port="lidarPort" file="/dev/ttyUSB0" />
+		<irCamera port="irCameraPort" i2cAddress="0x33" m="3" n="3" />
 	</devicePorts>
 
 	<deviceTypes>
@@ -226,8 +227,10 @@ equal to its class name.
 
 		<photo class="camera" type="v4l2"/>
 
-		<accelerometer class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s14/16>>2"/>
-		<gyroscope class="iioDevice" deviceFile="/dev/iio:device1" scanType="le:s16/16>>0" modelNameFile="/sys/bus/iio/devices/iio:device1/name"/>
+		<!-- Legacy two-device IMU, not used by the new board. -->
+		<accelerometer class="iioDevice" deviceFile="/dev/iio:device1" scanType="be:s16/16>>0"/>
+		<gyroscope class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s16/16>>0"/>
+		<boardImu class="iioSensorGroup" deviceFile="/dev/iio:device0"/>
 	</deviceTypes>
 
 	<deviceGroups>

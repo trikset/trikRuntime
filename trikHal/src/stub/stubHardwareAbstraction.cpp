@@ -22,6 +22,7 @@
 #include "stubOutputDeviceFile.h"
 #include "stubFifo.h"
 #include "stubIIOFile.h"
+#include "stubImuFile.h"
 #include "stubVideoDeviceFile.h"
 #include "stubFbOutput.h"
 #include "stubCommonI2c.h"
@@ -37,19 +38,20 @@ StubHardwareAbstraction::StubHardwareAbstraction()
 {
 }
 
-StubHardwareAbstraction::~StubHardwareAbstraction()
-= default;
+StubHardwareAbstraction::~StubHardwareAbstraction() = default;
 
 MspI2cInterface &StubHardwareAbstraction::mspI2c()
 {
 	return *mMspI2cBus.data();
 }
 
-MspI2cInterface *StubHardwareAbstraction::createMspI2c() {
+MspI2cInterface *StubHardwareAbstraction::createMspI2c()
+{
 	return new StubMspI2C();
 }
 
-MspI2cInterface *StubHardwareAbstraction::createCommonI2c(uint8_t regSize) {
+MspI2cInterface *StubHardwareAbstraction::createCommonI2c(uint8_t regSize)
+{
 	Q_UNUSED(regSize)
 	return new StubCommonI2c();
 }
@@ -79,6 +81,11 @@ IIOFileInterface *StubHardwareAbstraction::createIIOFile(const QString &fileName
 	return new StubIIOFile(fileName, scanType);
 }
 
+ImuFileInterface *StubHardwareAbstraction::createImuFile(const QString &fileName) const
+{
+	return new StubImuFile(fileName);
+}
+
 InputDeviceFileInterface *StubHardwareAbstraction::createInputDeviceFile(const QString &fileName) const
 {
 	return new StubInputDeviceFile(fileName);
@@ -90,8 +97,7 @@ OutputDeviceFileInterface *StubHardwareAbstraction::createOutputDeviceFile(const
 }
 
 VideoDeviceFileInterface *StubHardwareAbstraction::createVideoDeviceFile( // NOLINT(google-default-arguments)
-		const QString &devicePath, uint32_t width, uint32_t height,
-		uint32_t fourcc, bool isWebcam) const
+	const QString &devicePath, uint32_t width, uint32_t height, uint32_t fourcc, bool isWebcam) const
 {
 	Q_UNUSED(width);
 	Q_UNUSED(height);
@@ -100,8 +106,8 @@ VideoDeviceFileInterface *StubHardwareAbstraction::createVideoDeviceFile( // NOL
 	return new StubVideoDeviceFile(devicePath);
 }
 
-bool StubHardwareAbstraction::initVideoSensor(const QString &deviceFile, int i2cBus,
-                                              int i2cAddress, int gpioNumber) const
+bool StubHardwareAbstraction::initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress,
+	int gpioNumber) const
 {
 	Q_UNUSED(deviceFile);
 	Q_UNUSED(i2cBus);

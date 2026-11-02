@@ -37,12 +37,13 @@ public:
 	EventFileInterface *createEventFile(const QString &fileName) const override;
 	FifoInterface *createFifo(const QString &fileName) const override;
 	IIOFileInterface *createIIOFile(const QString &fileName, const QString &scanType) const override;
+	ImuFileInterface *createImuFile(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
-	VideoDeviceFileInterface *createVideoDeviceFile(const QString &devicePath, uint32_t width, uint32_t height, // NOLINT(google-default-arguments)
-	                                                uint32_t fourcc, bool isWebcam = false) const override;
-	bool initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress,
-	                     int gpioNumber) const override;
+	// NOLINTNEXTLINE(google-default-arguments)
+	VideoDeviceFileInterface *createVideoDeviceFile(const QString &devicePath, uint32_t width, uint32_t height,
+		uint32_t fourcc, bool isWebcam = false) const override;
+	bool initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress, int gpioNumber) const override;
 	FbOutputInterface *createFbOutput() const override;
 
 private:

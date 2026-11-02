@@ -20,34 +20,38 @@
 
 using namespace trikControl;
 
-VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-	                       , const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-	                       , const QString &port)
+VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer,
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &port)
 	: mState(deviceName)
 {
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
 
 	if (!mState.isFailed()) {
-	    mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
-	                                               configurer.attributeByPort(port, "scanType")));
-	    if (!mIIOFile.data()->open()) {
+		mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
+			configurer.attributeByPort(port, "scanType")));
+		if (!mIIOFile.data()->open()) {
 			QLOG_ERROR() << "Accelerometer init failed";
-	        mState.fail();
-	        return;
-	    }
-	    connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
-	    connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData
-	            , this, [this](QVector<int> reading, const trikKernel::TimeVal &eventTime){
-	                Q_UNUSED(eventTime);
-	                // Possible performance issues due to locks, otherwise it works.
-	                // Faults with concurrent reader/writer across threads — see commit message for details.
-	                QWriteLocker locker(&mResultLock);
-	                mResult = std::move(reading);
-	            });
+			mState.fail();
+			return;
+		}
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this,
+			[this](QVector<int> reading, const trikKernel::TimeVal &eventTime) {
+			Q_UNUSED(eventTime);
+			QWriteLocker locker(&mResultLock);
+			mResult = std::move(reading);
+		});
 
-	    QLOG_INFO() << "Starting VectorSensor";
-	    mState.ready();
+		QLOG_INFO() << "Starting VectorSensor";
+		mState.ready();
 	}
+}
+
+VectorSensor::VectorSensor(const QString &deviceName)
+	: mState(deviceName)
+{
+	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
+	mState.ready();
 }
 
 VectorSensor::~VectorSensor()
@@ -63,7 +67,14 @@ VectorSensor::Status VectorSensor::status() const
 
 QVector<int> VectorSensor::read() const
 {
-	// Possible performance issues
 	QReadLocker locker(&mResultLock);
 	return mResult;
+}
+
+void VectorSensor::onNewData(QVector<int> reading, const trikKernel::TimeVal &eventTime)
+{
+	Q_UNUSED(eventTime);
+	QWriteLocker locker(&mResultLock);
+	mResult = std::move(reading);
+	Q_EMIT newData(mResult, eventTime);
 }

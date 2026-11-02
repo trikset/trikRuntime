@@ -28,6 +28,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
 	$$PWD/include/trikHal/IIOFileInterface.h \
+	$$PWD/include/trikHal/ImuFileInterface.h \
 	$$PWD/include/trikHal/VideoDeviceFileInterface.h \
 	$$PWD/include/trikHal/fbOutputInterface.h
 
@@ -47,6 +48,7 @@ PUBLIC_HEADERS += \
 		$$PWD/src/trik/usbMsp/usbMSP430Interface.h \
 		$$PWD/src/trik/usbMsp/usbMSP430Defines.h \
 		$$PWD/src/trik/trikIIOFile.h \
+		$$PWD/src/trik/trikImuFile.h \
 		$$PWD/src/trik/trikVideoDevice.h \
 		$$PWD/src/trik/videoDeviceFileBase.h \
 		$$PWD/src/trik/trikFbOutput.h \
@@ -62,6 +64,7 @@ HEADERS += \
 	$$PWD/src/stub/stubOutputDeviceFile.h \
 	$$PWD/src/stub/stubFifo.h \
 	$$PWD/src/stub/stubIIOFile.h \
+	$$PWD/src/stub/stubImuFile.h \
 	$$PWD/src/stub/stubVideoDeviceFile.h \
 	$$PWD/src/stub/stubFbOutput.h \
 	$$PWD/src/stub/stubCommonI2c.h
@@ -79,6 +82,7 @@ HEADERS += \
 		$$PWD/src/trik/trikFifo.cpp \
 		$$PWD/src/trik/usbMsp/usbMSP430Interface.cpp \
 		$$PWD/src/trik/trikIIOFile.cpp \
+		$$PWD/src/trik/trikImuFile.cpp \
 		$$PWD/src/trik/trikVideoDevice.cpp \
 		$$PWD/src/trik/videoDeviceFileBase.cpp \
 		$$PWD/src/trik/trikFbOutput.cpp \
@@ -95,6 +99,7 @@ SOURCES += \
 	$$PWD/src/stub/stubOutputDeviceFile.cpp \
 	$$PWD/src/stub/stubFifo.cpp \
 	$$PWD/src/stub/stubIIOFile.cpp \
+	$$PWD/src/stub/stubImuFile.cpp \
 	$$PWD/src/stub/stubVideoDeviceFile.cpp \
 	$$PWD/src/stub/stubFbOutput.cpp \
 	$$PWD/src/stub/stubCommonI2c.cpp
