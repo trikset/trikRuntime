@@ -95,61 +95,33 @@ equal to its class name.
 	</deviceClasses>
 
 	<devicePorts>
+		<servoMotor port="A7" />
+		<servoMotor port="A8" />
+		<servoMotor port="A9" />
+		<servoMotor port="A10" />
 		<servoMotor
-			port="S1"
-			deviceFile="/sys/class/pwm/ecap.2/duty_ns"
-			periodFile="/sys/class/pwm/ecap.2/period_ns"
-			runFile="/sys/class/pwm/ecap.2/run"
-		/>
-		<servoMotor
-			port="S2"
-			deviceFile="/sys/class/pwm/ecap.1/duty_ns"
-			periodFile="/sys/class/pwm/ecap.1/period_ns"
-			runFile="/sys/class/pwm/ecap.1/run"
+			port="B7"
+			deviceFile="/tmp/trik-test/b7/duty"
+			periodFile="/tmp/trik-test/b7/period"
+			runFile="/tmp/trik-test/b7/enable"
 		/>
 		<servoMotor
-			port="S3"
-			deviceFile="/sys/class/pwm/ecap.0/duty_ns"
-			periodFile="/sys/class/pwm/ecap.0/period_ns"
-			runFile="/sys/class/pwm/ecap.0/run"
+			port="B8"
+			deviceFile="/tmp/trik-test/b8/duty"
+			periodFile="/tmp/trik-test/b8/period"
+			runFile="/tmp/trik-test/b8/enable"
 		/>
 		<servoMotor
-			port="S4"
-			deviceFile="/sys/class/pwm/ehrpwm.0:1/duty_ns"
-			periodFile="/sys/class/pwm/ehrpwm.0:1/period_ns"
-			runFile="/sys/class/pwm/ehrpwm.0:1/run"
+			port="B9"
+			deviceFile="/tmp/trik-test/b9/duty"
+			periodFile="/tmp/trik-test/b9/period"
+			runFile="/tmp/trik-test/b9/enable"
 		/>
 		<servoMotor
-			port="S5"
-			deviceFile="/sys/class/pwm/ehrpwm.1:0/duty_ns"
-			periodFile="/sys/class/pwm/ehrpwm.1:0/period_ns"
-			runFile="/sys/class/pwm/ehrpwm.1:0/run"
-		/>
-		<servoMotor
-			port="S6"
-			deviceFile="/sys/class/pwm/ehrpwm.1:1/duty_ns"
-			periodFile="/sys/class/pwm/ehrpwm.1:1/period_ns"
-			runFile="/sys/class/pwm/ehrpwm.1:1/run"
-			controlMin="0"
-			controlMax="100"
-		/>
-		<pwmCapture
-			port="S1"
-			frequencyFile="/sys/class/pwm/ecap_cap.2/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.2/duty_percentage"
-			captureFile="/sys/class/pwm/ecap.2/capture"
-		/>
-		<pwmCapture
-			port="S2"
-			frequencyFile="/sys/class/pwm/ecap_cap.1/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.1/duty_percentage"
-			captureFile="/sys/class/pwm/ecap.1/capture"
-		/>
-		<pwmCapture
-			port="S3"
-			frequencyFile="/sys/class/pwm/ecap_cap.0/freq"
-			dutyFile="/sys/class/pwm/ecap_cap.0/duty_percentage"
-			captureFile="/sys/class/pwm/ecap.0/capture"
+			port="B10"
+			deviceFile="/tmp/trik-test/b10/duty"
+			periodFile="/tmp/trik-test/b10/period"
+			runFile="/tmp/trik-test/b10/enable"
 		/>
 		<powerMotor port="M1" invert="true"
 			dutyFile="/tmp/trik-test/m1/duty"
