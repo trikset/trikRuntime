@@ -27,7 +27,7 @@ class Configurer;
 
 namespace trikControl {
 
-class PeripheryCommunicatorInterface;
+class PeripheryDriverInterface;
 
 /// Analog TRIK sensor.
 class AnalogSensor : public SensorInterface
@@ -38,9 +38,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	/// @param communicator - I2C communicator used to query sensor.
-	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer,
-		PeripheryCommunicatorInterface &communicator);
+	/// @param driver - non-owning periphery driver used to query sensor; must outlive the sensor.
+	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver);
 
 	Status status() const override;
 
@@ -68,8 +67,8 @@ private:
 	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
 
-	PeripheryCommunicatorInterface &mCommunicator;
-	int mI2cCommandNumber {0};
+	/// Non-owning; the shared driver is owned by CommunicatorProvider.
+	PeripheryDriverInterface &mDriver;
 	Type mIRType;
 
 	/// Linear approximation coefficient k. Normalized value is calculated as normalizedValue = k * rawValue + b.
@@ -98,6 +97,7 @@ private:
 
 	/// State of a device.
 	DeviceState mState;
+	const QString mPort;
 
 	QScopedPointer<DataFilter> mDataFilter;
 };
