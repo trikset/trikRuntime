@@ -55,7 +55,7 @@ PUBLIC_HEADERS += \
 		$$PWD/src/trik/trikFbOutput.h \
 }
 
-!trik_not_brick {
+!trik_not_brick:trik_periphery_nrf {
 	HEADERS += $$PWD/src/trik/trikUsbDevice.h
 }
 
@@ -111,9 +111,12 @@ SOURCES += \
 
 !trik_not_brick {
 	SOURCES += $$PWD/src/trik/hardwareAbstractionFactory.cpp
-	SOURCES += $$PWD/src/trik/trikUsbDevice.cpp
 } else {
 	SOURCES += $$PWD/src/stub/hardwareAbstractionFactory.cpp
+}
+
+!trik_not_brick:trik_periphery_nrf {
+	SOURCES += $$PWD/src/trik/trikUsbDevice.cpp
 }
 
 DEFINES += TRIKHAL_LIBRARY
