@@ -21,6 +21,7 @@
 #include <trikKernel/configurer.h>
 #include <trikKernel/differentOwnerPointer.h>
 #include <functional>
+#include "boardImu.h"
 #include "internalBrickInterface.h"
 #include "translation.h"
 
@@ -194,6 +195,7 @@ private:
 
 	QScopedPointer<VectorSensor> mAccelerometer;
 	QScopedPointer<GyroSensor> mGyroscope;
+	QScopedPointer<BoardImu> mBoardImu;
 	QScopedPointer<Battery> mBattery;
 	QScopedPointer<Keys> mKeys;
 	QScopedPointer<Display> mDisplay;

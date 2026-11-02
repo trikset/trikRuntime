@@ -21,18 +21,13 @@
 
 using namespace trikControl;
 
-static constexpr int GYRO_ARITHM_PRECISION = 0;
-static constexpr auto GYRO_250DPS = 8.75f / (1 << GYRO_ARITHM_PRECISION) ;
 static constexpr auto PI = 3.14159265358979323846f;
 static constexpr auto PI_2 = 1.57079632679489661923f;
 static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
-#define L3GD20_GYRO_NAME "l3gd20"
-#define L3GD20H_GYRO_NAME "l3gd20h"
-
-GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer
-					, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-	                , VectorSensorInterface *accelerometer, const QString &port)
+GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer,
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer,
+	const QString &port)
 	: mState(deviceName)
 	, mIsCalibrated(false)
 	, mQ(QQuaternion(1, 0, 0, 0))
@@ -40,6 +35,55 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 	, mLastUpdate(trikKernel::TimeVal(0, 0))
 	, mAccelerometer(accelerometer)
 	, mAxesSwapped(false)
+{
+	initCommon();
+
+	if (!mState.isFailed()) {
+		const auto deviceFile = configurer.attributeByPort(port, "deviceFile");
+		mIIOFile.reset(
+			hardwareAbstraction.createIIOFile(deviceFile, configurer.attributeByPort(port, "scanType")));
+		if (!mIIOFile.data()->open()) {
+			QLOG_ERROR() << "Gyroscope init failed";
+			mState.fail();
+			return;
+		}
+
+		if (!readGyroScale(deviceFile, false)) {
+			QLOG_ERROR() << "Gyroscope scale init failed";
+			mState.fail();
+			return;
+		}
+
+		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);
+		connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
+		QLOG_INFO() << "Starting GyroSensor";
+		mState.ready();
+	}
+}
+
+GyroSensor::GyroSensor(const QString &deviceName, const QString &deviceFile, VectorSensorInterface *accelerometer)
+	: mState(deviceName)
+	, mIsCalibrated(false)
+	, mQ(QQuaternion(1, 0, 0, 0))
+	, mGyroCounter(0)
+	, mLastUpdate(trikKernel::TimeVal(0, 0))
+	, mAccelerometer(accelerometer)
+	, mAxesSwapped(false)
+{
+	initCommon();
+
+	if (!readGyroScale(deviceFile, true)) {
+		QLOG_ERROR() << "Gyroscope scale init failed";
+		mState.fail();
+		return;
+	}
+
+	connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
+	QLOG_INFO() << "Starting GyroSensor (shared IIO)";
+	mState.ready();
+}
+
+void GyroSensor::initCommon()
 {
 	mBias.resize(3);
 	mCalibrationValues.resize(6);
@@ -50,26 +94,6 @@ GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &
 
 	mCalibrationTimer.setSingleShot(true);
 	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-
-	// if modelNameFile is not in system-config, gyroModelNameFile will be empty
-	QString gyroModelNameFile = "";
-	gyroModelNameFile = configurer.attributeByPort(port, "modelNameFile", &gyroModelNameFile);
-	readModelName(gyroModelNameFile);
-
-	if (!mState.isFailed()) {
-		mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
-														 configurer.attributeByPort(port, "scanType")));
-		if (!mIIOFile.data()->open()) {
-			QLOG_ERROR() << "Gyroscope init failed";
-			mState.fail();
-			return;
-		}
-
-		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);
-	    connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
-	    QLOG_INFO() << "Starting GyroSensor";
-	    mState.ready();
-	}
 }
 
 GyroSensor::~GyroSensor()
@@ -78,38 +102,40 @@ GyroSensor::~GyroSensor()
 	mWorkerThread.wait();
 }
 
-void GyroSensor::readModelName(QString modelNameFile)
+bool GyroSensor::readGyroScale(const QString &deviceFile, bool required)
 {
-	QString usedModelName = QString::fromUtf8(L3GD20_GYRO_NAME);
+	auto sysfsDevice = deviceFile;
+	sysfsDevice.replace(QLatin1String("/dev/"), QLatin1String("/sys/bus/iio/devices/"));
+	const QString scaleFile = sysfsDevice + QLatin1String("/in_anglvel_scale");
 
-	// set default for L3GD20_GYRO_NAME
-	getCorrectGyroValues = [](const QVector<int> &gyroData) {
-		return QVector<int>{-gyroData[1], -gyroData[0], gyroData[2]};
-	};
-
-	if (!modelNameFile.isEmpty()) {
-		QFile file(modelNameFile);
-
-		if (!file.exists()) {
-			QLOG_INFO() << "Model file " << modelNameFile << " doesn't exist";
-		} else if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-			QLOG_INFO() << "Can't open " << modelNameFile;
-		} else {
-			QTextStream in(&file);
-			in.setCodec("UTF-8");
-			QString modelName = in.readAll().trimmed();
-
-			if (modelName == QString::fromUtf8(L3GD20H_GYRO_NAME)) {
-				getCorrectGyroValues = [](const QVector<int> &gyroData) {
-					return QVector<int>{gyroData[0], -gyroData[1], gyroData[2]};
-				};
-				usedModelName = QString::fromUtf8(L3GD20H_GYRO_NAME);
-			}
+	QFile file(scaleFile);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		if (required) {
+			QLOG_ERROR() << "Can't open" << scaleFile;
+			return false;
 		}
+
+		QLOG_WARN() << "Can't open" << scaleFile << ", using default gyro scale";
+		mGyroScale = 8.75;
+		return true;
 	}
 
-	QLOG_INFO() << "Set gyro axes for model " << usedModelName;
+	bool ok = false;
+	const double scaleRadPerSec = QString::fromUtf8(file.readAll()).trimmed().toDouble(&ok);
+	if (!ok) {
+		if (required) {
+			QLOG_ERROR() << "Can't parse gyro scale from" << scaleFile;
+			return false;
+		}
 
+		QLOG_WARN() << "Can't parse gyro scale from" << scaleFile << ", using default gyro scale";
+		mGyroScale = 8.75;
+		return true;
+	}
+
+	mGyroScale = scaleRadPerSec * RAD_TO_MDEG;
+	QLOG_INFO() << "Gyro scale:" << mGyroScale << "mdps per LSB";
+	return true;
 }
 
 GyroSensor::Status GyroSensor::status() const
@@ -150,7 +176,7 @@ void GyroSensor::setCalibrationValues(const QVector<int> &values)
 
 	QLOG_INFO() << "Gyro bias(raw): " << mBias;
 
-	QVector3D acc(values[3], values[4], values[5]);
+	QVector3D acc(static_cast<float>(values[3]), static_cast<float>(values[4]), static_cast<float>(values[5]));
 	acc.normalize();
 	QLOG_INFO() << "Calibrated accelerometer: " << acc;
 
@@ -172,26 +198,25 @@ bool GyroSensor::isCalibrated() const
 
 void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 {
-	mRawData = getCorrectGyroValues(gyroData);
+	mRawData = gyroData;
 	mRawData.resize(4);
-	mRawData[3] = t.packedUInt32();
+	mRawData[3] = static_cast<int>(t.packedUInt32());
 
 	static bool timeInited = false;
 	if (!timeInited) {
 		timeInited = true;
 		mLastUpdate = t;
 	} else {
-
-		const auto r0 = (mRawData[0] * (1 << GYRO_ARITHM_PRECISION) - mBias[0]) * GYRO_250DPS;
-		const auto r1 = (mRawData[1] * (1 << GYRO_ARITHM_PRECISION) - mBias[1]) * GYRO_250DPS;
-		const auto r2 = (mRawData[2] * (1 << GYRO_ARITHM_PRECISION) - mBias[2]) * GYRO_250DPS;
+		const auto r0 = (mRawData[0] - mBias[0]) * mGyroScale;
+		const auto r1 = (mRawData[1] - mBias[1]) * mGyroScale;
+		const auto r2 = (mRawData[2] - mBias[2]) * mGyroScale;
 
 		constexpr auto deltaConst = PI / 180 / 1000 / 1000000 / 2;
-		const auto dt = (t - mLastUpdate) * deltaConst;
+		const auto dt = static_cast<float>(t - mLastUpdate) * deltaConst;
 
-		auto x = r0 * dt;
-		auto y = r1 * dt;
-		auto z = r2 * dt;
+		auto x = static_cast<float>(r0 * dt);
+		auto y = static_cast<float>(r1 * dt);
+		auto z = static_cast<float>(r2 * dt);
 
 		if (mAxesSwapped) {
 			std::swap(x, z);
@@ -219,14 +244,14 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 		QWriteLocker locker(&mResultLock);
 		mResult.resize(7);
-		mResult[0] = r0;
-		mResult[1] = r1;
-		mResult[2] = r2;
-		mResult[3] = t.packedUInt32();
+		mResult[0] = static_cast<int>(r0);
+		mResult[1] = static_cast<int>(r1);
+		mResult[2] = static_cast<int>(r2);
+		mResult[3] = static_cast<int>(t.packedUInt32());
 
-		mResult[4] = euler.x();
-		mResult[5] = euler.z();
-		mResult[6] = -euler.y();
+		mResult[4] = static_cast<int>(euler.x());
+		mResult[5] = static_cast<int>(euler.z());
+		mResult[6] = static_cast<int>(-euler.y());
 		locker.unlock();
 
 		Q_EMIT newData(mResult, t);
@@ -266,16 +291,14 @@ void GyroSensor::sumAccelerometer(const QVector<int> &accelerometerData, const t
 	mAccelerometerSum[0] += accelerometerData[0];
 	mAccelerometerSum[1] += accelerometerData[1];
 	mAccelerometerSum[2] += accelerometerData[2];
-
 	mAccelerometerCounter++;
 }
 
 void GyroSensor::sumGyroscope(const QVector<int> &gyroData, const trikKernel::TimeVal &)
 {
-	QVector<int> correctGyroData =  getCorrectGyroValues(gyroData);
-	mGyroSum[0] += correctGyroData[0];
-	mGyroSum[1] += correctGyroData[1];
-	mGyroSum[2] += correctGyroData[2];
+	mGyroSum[0] += gyroData[0];
+	mGyroSum[1] += gyroData[1];
+	mGyroSum[2] += gyroData[2];
 	mGyroCounter++;
 }
 
@@ -302,35 +325,38 @@ QVector3D GyroSensor::getEulerAngles(const QQuaternion &q)
 
 	const float squaredLength = xx + yy + zz + w * w;
 	if (!qFuzzyIsNull(squaredLength - 1.0f) && !qFuzzyIsNull(squaredLength)) {
-		   xx /= squaredLength;
-		   xy /= squaredLength;
-		   xz /= squaredLength;
-		   xw /= squaredLength;
-		   yy /= squaredLength;
-		   yz /= squaredLength;
-		   yw /= squaredLength;
-		   zz /= squaredLength;
-		   zw /= squaredLength;
-	   }
+		xx /= squaredLength;
+		xy /= squaredLength;
+		xz /= squaredLength;
+		xw /= squaredLength;
+		yy /= squaredLength;
+		yz /= squaredLength;
+		yw /= squaredLength;
+		zz /= squaredLength;
+		zw /= squaredLength;
+	}
 
-	   pitch = std::asin(-2.0f * (yz - xw));
-	   if (pitch < PI_2) {
-		   if (pitch > -PI_2) {
-			   yaw = std::atan2(2.0f * (xz + yw), 1.0f - 2.0f * (xx + yy));
-			   roll = std::atan2(2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz));
-		   } else {
-			   // not a unique solution
-			   roll = 0.0f;
-			   yaw = -std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
-		   }
-	   } else {
-		   // not a unique solution
-		   roll = 0.0f;
-		   yaw = std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
-	   }
+	pitch = std::asin(-2.0f * (yz - xw));
+	if (pitch < PI_2) {
+		if (pitch > -PI_2) {
+			yaw = std::atan2(2.0f * (xz + yw), 1.0f - 2.0f * (xx + yy));
+			roll = std::atan2(2.0f * (xy + zw), 1.0f - 2.0f * (xx + zz));
+		} else {
+			roll = 0.0f;
+			yaw = -std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
+		}
+	} else {
+		roll = 0.0f;
+		yaw = std::atan2(-2.0f * (xy - zw), 1.0f - 2.0f * (yy + zz));
+	}
 
-	   pitch = pitch * RAD_TO_MDEG;
-	   yaw = yaw * RAD_TO_MDEG;
-	   roll = roll * RAD_TO_MDEG;
-	   return {pitch, roll, yaw};
+	pitch = pitch * RAD_TO_MDEG;
+	yaw = yaw * RAD_TO_MDEG;
+	roll = roll * RAD_TO_MDEG;
+	return {pitch, roll, yaw};
+}
+
+void GyroSensor::onNewData(const QVector<int> &data, const trikKernel::TimeVal &eventTime)
+{
+	countTilt(data, eventTime);
 }

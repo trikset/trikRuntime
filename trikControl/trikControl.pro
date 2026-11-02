@@ -55,6 +55,7 @@ HEADERS += \
 	$$PWD/src/analogSensor.h \
 	$$PWD/src/audioSynthDevice.h \
 	$$PWD/src/battery.h \
+	$$PWD/src/boardImu.h \
 	$$PWD/src/brick.h \
 	$$PWD/src/cameraDevice.h \
 	$$PWD/src/cameraImplementationInterface.h \
@@ -122,6 +123,7 @@ SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
 	$$PWD/src/analogSensor.cpp \
 	$$PWD/src/battery.cpp \
+	$$PWD/src/boardImu.cpp \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
