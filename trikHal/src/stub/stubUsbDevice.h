@@ -31,7 +31,7 @@ public:
 	int send(const QByteArray &data) override;
 	bool controlWrite(uint8_t bRequest, const QByteArray &data, int timeoutMs) override;
 	void setDataCallback(DataCallback callback, void *userData) override;
-	void setTelemetryPeriodUs(uint32_t periodUs, u_int32_t isoPacketsPerUrb) override;
+	void setTelemetryPeriodUs(uint32_t periodUs, uint32_t isoPacketsPerUrb) override;
 	int read(const QByteArray &data) override;
 
 private:

@@ -69,7 +69,7 @@ public:
 	}
 
 	/// Configures telemetry timing, if supported.
-	virtual void setTelemetryPeriodUs(uint32_t periodUs, u_int32_t isoPacketsPerUrb)
+	virtual void setTelemetryPeriodUs(uint32_t periodUs, uint32_t isoPacketsPerUrb)
 	{
 		Q_UNUSED(periodUs)
 		Q_UNUSED(isoPacketsPerUrb)

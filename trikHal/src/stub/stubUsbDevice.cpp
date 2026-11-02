@@ -60,7 +60,7 @@ bool StubUsbDevice::controlWrite(uint8_t bRequest, const QByteArray &data, int t
 	return true;
 }
 
-void StubUsbDevice::setTelemetryPeriodUs(uint32_t periodUs, u_int32_t isoPacketsPerUrb)
+void StubUsbDevice::setTelemetryPeriodUs(uint32_t periodUs, uint32_t isoPacketsPerUrb)
 {
 	Q_UNUSED(periodUs)
 	Q_UNUSED(isoPacketsPerUrb)
