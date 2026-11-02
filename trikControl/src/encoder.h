@@ -24,7 +24,7 @@ class Configurer;
 
 namespace trikControl {
 
-class PeripheryCommunicatorInterface;
+class PeripheryDriverInterface;
 
 /// Implementation of encoder for real robot.
 class Encoder : public EncoderInterface
@@ -35,9 +35,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this encoder is configured.
 	/// @param configurer - configurer object containing preparsed XML files with encoder parameters.
-	/// @param communicator - I2C communicator to use to query encoder.
-	Encoder(const QString &port, const trikKernel::Configurer &configurer,
-		trikControl::PeripheryCommunicatorInterface &communicator);
+	/// @param driver - periphery driver used to query encoder.
+	Encoder(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver);
 
 	Status status() const override;
 
@@ -49,12 +48,12 @@ public Q_SLOTS:
 	void reset() override;
 
 private:
-	PeripheryCommunicatorInterface &mCommunicator;
-	int mI2cCommandNumber;
+	PeripheryDriverInterface &mDriver;
 	int mPassedTicks;
 	int mPassedDegrees;
 	const bool mInvert;
 	DeviceState mState;
+	const QString mPort;
 };
 
 }

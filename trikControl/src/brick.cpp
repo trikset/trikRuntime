@@ -71,6 +71,24 @@ using namespace trikControl;
 using namespace trikKernel;
 using namespace trikHal;
 
+namespace {
+
+/// Creates a device that talks to the periphery module through the shared
+/// driver. Logs and skips the device when the driver is unavailable.
+template<typename Device, typename Container>
+void insertPeripheryDevice(Container &devices, const QString &port, const QString &deviceClass,
+	const trikKernel::Configurer &configurer, PeripheryDriverInterface *driver)
+{
+	if (!driver) {
+		QLOG_ERROR() << "No periphery driver for" << deviceClass << "on port" << port;
+		return;
+	}
+
+	devices.insert(port, new Device(port, configurer, *driver));
+}
+
+} // namespace
+
 Brick::Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig,
 	const QString &modelConfig, const QString &mediaPath)
 	: Brick(createDifferentOwnerPointer(hardwareAbstraction), systemConfig, modelConfig, mediaPath)
@@ -841,11 +859,8 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "powerMotor") {
 			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mPeripheryCommunicator));
 		} else if (deviceClass == "analogSensor") {
-			if (mPeripheryDriver) {
-				mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mPeripheryDriver));
-			} else {
-				QLOG_ERROR() << "No periphery driver for analog sensor on port" << port;
-			}
+			insertPeripheryDevice<AnalogSensor>(mAnalogSensors, port, deviceClass, mConfigurer,
+				mPeripheryDriver);
 		} else if (deviceClass == "digitalSensor") {
 			mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "rangeSensor") {
@@ -855,7 +870,7 @@ void Brick::createDevice(const QString &port)
 			/// @todo Range sensor shall be turned on only when needed.
 			mRangeSensors[port]->init();
 		} else if (deviceClass == "encoder") {
-			mEncoders.insert(port, new Encoder(port, mConfigurer, *mPeripheryCommunicator));
+			insertPeripheryDevice<Encoder>(mEncoders, port, deviceClass, mConfigurer, mPeripheryDriver);
 		} else if (deviceClass == "soundSensor") {
 			mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
 

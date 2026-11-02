@@ -17,18 +17,18 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "i2cCommunicator.h"
+#include "communicatorCommand.h"
 #include "configurerHelper.h"
+#include "peripheryDriverInterface.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer,
-	PeripheryCommunicatorInterface &communicator)
-	: mCommunicator(communicator)
+Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver)
+	: mDriver(driver)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mState("Encoder on" + port)
+	, mPort(port)
 {
-	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mPassedTicks = ConfigurerHelper::configureInt(configurer, mState, port, "ticks");
 	mPassedDegrees = ConfigurerHelper::configureInt(configurer, mState, port, "degrees");
 
@@ -43,18 +43,17 @@ Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer,
 void Encoder::reset()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(3, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-		command[2] = static_cast<char>(0x00);
-
-		mCommunicator.send(command);
+		CommunicatorCommand command;
+		command.device = communicatorCommand::kDevicePort;
+		command.portName = mPort;
+		command.operation = communicatorCommand::kPortReset;
+		mDriver.send(command);
 	}
 }
 
 Encoder::Status Encoder::status() const
 {
-	return combine(mCommunicator, mState.status());
+	return combine(mDriver, mState.status());
 }
 
 int Encoder::read()
@@ -65,19 +64,7 @@ int Encoder::read()
 int Encoder::readRawData()
 {
 	if (status() == DeviceInterface::Status::ready) {
-		QByteArray command(5, '\0');
-		command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-		command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-
-		command[2] = static_cast<char>(0x04);
-		command[3] = static_cast<char>(0x00);
-
-		// The MSP usb module uses a matching of the required action by the length of the QByteArray.
-		// The last byte is added for processing compatibility
-		// TODO: rewrite MspUSB module
-		command[4] = static_cast<char>(0x00);
-
-		return mCommunicator.read(command);
+		return mDriver.readAsync(mPort);
 	} else {
 		return 0;
 	}
