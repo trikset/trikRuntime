@@ -51,6 +51,7 @@ public:
 	int maxControl() const override;
 
 public Q_SLOTS:
+	// NOLINTNEXTLINE(google-default-arguments)
 	void setPower(int power, bool constrain = true) override;
 
 	int power() const override;
@@ -65,6 +66,7 @@ public Q_SLOTS:
 	void setPeriod(int period) override;
 
 	/// Force brake for a short period of time followed by power off
+	// NOLINTNEXTLINE(google-default-arguments)
 	void brake(int durationMs = 500) override;
 
 private:
@@ -81,4 +83,5 @@ private:
 
 }
 
+// NOLINTNEXTLINE(misc-no-recursion)
 Q_DECLARE_METATYPE(trikControl::PowerMotor *)

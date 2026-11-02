@@ -64,9 +64,9 @@ int AnalogSensor::read()
 	auto result = raw;
 	if (mIRType == Type::sharpGP2) {
 		const auto quotient = raw + mL;
-		result = quotient != 0 ? mS / quotient + mN : 0;
+		result = quotient != 0 ? static_cast<int>(mS / quotient + mN) : 0;
 	} else {
-		result = mK * raw + mB;
+		result = static_cast<int>(mK * raw + mB);
 	}
 
 	return !mDataFilter ? result : mDataFilter->applyFilter(result);

@@ -44,15 +44,14 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	mState.ready();
 }
 
-PowerMotor::~PowerMotor()
-{
-}
+PowerMotor::~PowerMotor() = default;
 
 PowerMotor::Status PowerMotor::status() const
 {
 	return combine(mCommunicator, mState.status());
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 void PowerMotor::setPower(int power, bool constrain)
 {
 	if (constrain) {
@@ -91,10 +90,13 @@ void PowerMotor::powerOff()
 	setPower(0, false); // ignore power units translation (linearisation)
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 void PowerMotor::brake(int durationMs)
 {
-	if (durationMs <= 0)
-		brake();
+	if (durationMs <= 0) {
+		durationMs = 500;
+	}
+
 	setPower(0x7f, false);
 	QTimer::singleShot(durationMs, this, &PowerMotor::powerOff);
 }
@@ -122,7 +124,7 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 	}
 
 	const int graphLength = powerGraph.size();
-	const int maxValue = powerGraph[graphLength - 1].second;
+	const int maxValue = static_cast<int>(powerGraph[graphLength - 1].second);
 
 	for (int i = 0; i < graphLength; i++) {
 		powerGraph[i].second *= maxControlValue;
@@ -145,7 +147,7 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 		}
 
 		const double coef = axeDifferenece / measureDifference;
-		const int power = powerGraph[k].first + coef * (i - powerGraph[k].second);
+		const int power = static_cast<int>(powerGraph[k].first + coef * (i - powerGraph[k].second));
 		mPowerMap.append(power);
 	}
 
