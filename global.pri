@@ -60,14 +60,15 @@ CONFIG(debug_fps) {
 	DEFINES += TRIK_DEBUG_FPS
 }
 
-# Stub/desktop build without real robot hardware.
+# Stub/desktop build without real robot hardware. The stub build emulates the
+# nRF periphery module, so TRIK_PERIPHERY_NRF is enabled automatically.
 CONFIG(trik_not_brick) {
 	DEFINES += TRIK_NOT_BRICK
+	DEFINES += TRIK_PERIPHERY_NRF
 }
 
 # Select the periphery module used by the HAL USB transport.
-# Default is the legacy MSP path; pass `CONFIG += trik_periphery_nrf` for the
-# nRF52833 kernel-driver transport.
+# Stub builds select nRF automatically; real legacy builds can omit this.
 CONFIG(trik_periphery_nrf) {
 	DEFINES += TRIK_PERIPHERY_NRF
 }
