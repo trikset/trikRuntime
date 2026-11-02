@@ -8,13 +8,18 @@ import com.trikGui 1.0
 ApplicationWindow {
     id: root
     visible: true
-    height: 854
+    x: 0
+    y: 0
     width: 480
+    height: 854
+    flags: Qt.Window | Qt.BypassWindowManagerHint
     title: qsTr("TRIK")
 
     property string iconsPath: "../resourcesQml/"
     property var activeTheme: ThemeMode === "light" ? _lightTheme : _darkTheme
     property var fontSizes: _fontSizes
+
+    Component.onCompleted: root.requestActivate()
 
     function navigateBack() {
         if (stack.depth > 1) {
