@@ -67,7 +67,7 @@ jobs:
       - name: QMake
         run: |
             mkdir -p build && cd build && echo "BUILD_DIR=${PWD}" >> $GITHUB_ENV
-            qmake CONFIG+=release CONFIG+=trik_not_brick \
+            qmake CONFIG+=release CONFIG+=trik_not_brick CONFIG+=tests \
                   CONFIG+=ccache CONFIG+=sanitizer \
                   CONFIG+=sanitize_undefined \
                   PYTHON_VERSION=$(python3 --version | grep -o '3\.[^.]\+') \
