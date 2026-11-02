@@ -19,19 +19,25 @@
 using namespace trikHal::stub;
 
 StubInputDeviceFile::StubInputDeviceFile(const QString &fileName)
-	: mFile(fileName), mStream("")
+	: mFile(fileName)
+	, mStream("")
 {
 }
 
 bool StubInputDeviceFile::open()
 {
 	QLOG_INFO() << "Opening stub input device file" << mFile.fileName();
+	if (mFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+		mStream.setDevice(&mFile);
+	}
+
 	return true;
 }
 
 void StubInputDeviceFile::close()
 {
 	QLOG_INFO() << "Closing stub input device file" << mFile.fileName();
+	mFile.close();
 }
 
 QTextStream &StubInputDeviceFile::stream()
@@ -42,4 +48,5 @@ QTextStream &StubInputDeviceFile::stream()
 void StubInputDeviceFile::reset()
 {
 	QLOG_INFO() << "Resetting stub input device file" << mFile.fileName();
+	mStream.seek(0);
 }

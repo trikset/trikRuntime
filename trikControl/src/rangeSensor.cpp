@@ -27,13 +27,12 @@
 
 using namespace trikControl;
 
-RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader,
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Range Sensor on " + port)
 {
 	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
-			|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule")))
-	{
+		|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule"))) {
 		QLOG_ERROR() << "Module loading failed";
 		mState.fail();
 		return;
@@ -42,8 +41,20 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
 
-	mSensorWorker.reset(new RangeSensorWorker(configurer.attributeByPort(port, "eventFile"), mState
-			, hardwareAbstraction, mMinValue, mMaxValue, configurer.attributeByPort(port, "filter")));
+	const auto samplingFrequency = ConfigurerHelper::configureInt(configurer, mState, port, "samplingFrequency");
+	if (samplingFrequency <= 0) {
+		QLOG_ERROR() << "Invalid range sensor sampling frequency:" << samplingFrequency;
+		mState.fail();
+		return;
+	}
+
+	auto samplingPeriodMs = 1000 / samplingFrequency;
+	if (samplingPeriodMs < 1) {
+		samplingPeriodMs = 1;
+	}
+
+	mSensorWorker.reset(new RangeSensorWorker(hardwareAbstraction, configurer.attributeByPort(port, "sensorFile"),
+		mState, mMinValue, mMaxValue, configurer.attributeByPort(port, "filter"), samplingPeriodMs));
 
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);
@@ -64,6 +75,11 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 RangeSensor::~RangeSensor()
 {
 	if (mWorkerThread.isRunning()) {
+		if (mState.isReady() || mState.isStarting()) {
+			QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::stop,
+				Qt::BlockingQueuedConnection);
+		}
+
 		mWorkerThread.quit();
 		mWorkerThread.wait();
 	}
@@ -77,7 +93,7 @@ RangeSensor::Status RangeSensor::status() const
 void RangeSensor::init()
 {
 	if (!mState.isFailed()) {
-	    QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::init);
+		QMetaObject::invokeMethod(mSensorWorker.data(), &RangeSensorWorker::init);
 	}
 }
 

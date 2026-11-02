@@ -52,12 +52,9 @@ working properly, it tests only that runtime can interact with them).
 		<sharpGP2Sensor />
 	</A6>
 
-	<D1>
+	<B1>
 		<rangeSensor />
-	</D1>
-	<D2>
-		<rangeSensor />
-	</D2>
+	</B1>
 	<!--
 	<F1>
 		<volumeSensor />

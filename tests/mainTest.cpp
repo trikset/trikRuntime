@@ -16,6 +16,7 @@
 
 #include <QtCore/qglobal.h>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
 
 #include <trikKernel/coreDumping.h>
 #include <trikKernel/loggingHelper.h>
@@ -27,6 +28,12 @@ int main(int argc, char *argv[])
 	::testing::InitGoogleTest(&argc, argv);
 
 	QCoreApplication app(argc, argv);
+
+	QFile srf04Distance("test-srf04-distance.txt");
+	if (srf04Distance.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+		srf04Distance.write("0\n");
+		srf04Distance.close();
+	}
 
 	tests::utils::EventFilter eventFilter;
 	// useful to debug events

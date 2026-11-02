@@ -73,19 +73,21 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</A6>
 
 	<!-- Digital sensor ports. -->
-	<D1>
+	<B1>
 		<sonarSensor />
-	</D1>
-	<D2>
-		<sonarSensor />
-	</D2>
-        <D3>
-                <sonarSensor />
-        </D3>
+	</B1>
 	<!--
-	<D3>
+	<B2>
+		<sonarSensor />
+	</B2>
+	<B3>
+		<sonarSensor />
+	</B3>
+	-->
+	<!--
+	<B3>
 		<volumeSensor />
-	</D3>
+	</B3>
 	-->
 
 	<!-- Encoder ports. -->

@@ -70,7 +70,7 @@ equal to its class name.
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" filter="" />
 		<encoder invert="false" />
-		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
+		<rangeSensor commonModule="srf04" minValue="0" maxValue="100" filter="median3" samplingFrequency="20" />
 		<digitalSensor />
 		<fifo />
         	<iioDevice />
@@ -161,10 +161,8 @@ equal to its class name.
 		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
 		<encoder port="E3" i2cCommandNumber="0x33" />
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
-		<rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="hcsr04" />
-		<rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="hcsr04" />
-		<rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="hcsr04" />
-		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
+		<rangeSensor port="B1" sensorFile="test-srf04-distance.txt" module="srf04" />
+		<!-- <digitalSensor port="B3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<videoDevice port="imitationCameraPort" device="/dev/device" format="yuv422" width="320" height="240" mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
                 <iioDevice port="boardAccelPort" />
