@@ -140,14 +140,14 @@ TEST(selftest, brickCheck)
 		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("A6")->status());
 	}
 
-	//	EXPECT_TRUE(brick->sensor("D1") != nullptr);
-	if (brick->sensor("D1") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("D1")->status());
+	//	EXPECT_TRUE(brick->sensor("B1") != nullptr);
+	if (brick->sensor("B1") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("B1")->status());
 	}
 
-	//	EXPECT_TRUE(brick->sensor("D2") != nullptr);
-	if (brick->sensor("D2") != nullptr) {
-		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("D2")->status());
+	//	EXPECT_TRUE(brick->sensor("B2") != nullptr);
+	if (brick->sensor("B2") != nullptr) {
+		EXPECT_EQ(DeviceInterface::Status::ready, brick->sensor("B2")->status());
 	}
 
 	//	EXPECT_TRUE(brick->sensor("F1") != nullptr);

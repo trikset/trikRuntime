@@ -68,7 +68,10 @@ equal to its class name.
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
 		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" filter="" />
 		<encoder invert="false" />
-		<rangeSensor commonModule="hcsr04" minValue="0" maxValue="100" filter="median3" />
+		<!-- The mainline srf04 IIO driver is also protocol-compatible with HC-SR04.
+		     If the kernel does not know the "hc-sr04" compatible string, use
+		     "devantech,srf04" in the device tree. -->
+		<rangeSensor commonModule="srf04" minValue="0" maxValue="100" filter="median3" samplingFrequency="20" />
 		<digitalSensor />
 		<fifo />
                 <lidar />
@@ -164,10 +167,12 @@ equal to its class name.
 		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
 		<encoder port="E3" i2cCommandNumber="0x33" />
 		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
-                <rangeSensor port="D1" eventFile="/dev/input/by-path/platform-trik_jd1-event" module="hcsr04" />
-                <rangeSensor port="D2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="hcsr04" />
-                <rangeSensor port="D3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="hcsr04" />
-		<!-- <digitalSensor port="D3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
+		<rangeSensor port="B1" sensorFile="/sys/bus/iio/devices/iio:device1/in_distance_raw" module="srf04" />
+		<!--
+		<rangeSensor port="B2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="hcsr04" />
+		<rangeSensor port="B3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="hcsr04" />
+		-->
+		<!-- <digitalSensor port="B3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<videoDevice port="video1" device="/dev/video1-dev" format="nv16" width="320" height="240"
 				i2cBus="1" i2cAddress="0x21" gpioNumber="109"
 				mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>

@@ -14,25 +14,26 @@
 
 #include "src/rangeSensorWorker.h"
 
+#include <QtCore/QTextStream>
 #include <QtCore/QThread>
 #include <QsLog.h>
 
-static const int evSyn = 0;
-static const int evAbs = 3;
-static const int absDistance = 0x19;
-static const int absMisc = 0x28;
+#include <trikHal/hardwareAbstractionInterface.h>
+#include <trikHal/inputDeviceFileInterface.h>
+
+#include <utility>
 
 using namespace trikControl;
 
-RangeSensorWorker::RangeSensorWorker(const QString &eventFile, DeviceState &state // NOLINT(modernize-pass-by-value)
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, int minValue, int maxValue, const QString &filterName) // NOLINT(modernize-pass-by-value)
-	: mState(state)
+RangeSensorWorker::RangeSensorWorker(const trikHal::HardwareAbstractionInterface &hardwareAbstraction,
+	QString sensorFile, DeviceState &state, int minValue, int maxValue, QString filterName, int samplingPeriodMs)
+	: mSamplingPeriodMs(samplingPeriodMs)
 	, mHardwareAbstraction(hardwareAbstraction)
-	, mEventFileName(eventFile)
+	, mState(state)
+	, mSensorFile(std::move(sensorFile))
 	, mMinValue(minValue)
 	, mMaxValue(maxValue)
-	, mFilterName(filterName)
+	, mFilterName(std::move(filterName))
 {
 	mState.start();
 }
@@ -48,19 +49,25 @@ void RangeSensorWorker::stop()
 {
 	if (mState.isReady()) {
 		mState.stop();
-		if (mEventFile->close()) {
-			mState.off();
-		} else {
-			mState.fail();
+		if (mReadTimer) {
+			mReadTimer->stop();
 		}
+
+		if (mDistanceFile) {
+			mDistanceFile->close();
+		}
+
+		mState.off();
 	} else if (mState.status() == DeviceInterface::Status::starting) {
-		// Maybe event file still waits for a driver to create event file, abort waiting.
-		mEventFile->cancelWaiting();
+		// Sensor was not yet started, abort waiting.
+		if (mReadTimer) {
+			mReadTimer->stop();
+		}
 
-		// In case of file is already opened --- close it. On unopened file "close" will do nothing.
-		mEventFile->close();
+		if (mDistanceFile) {
+			mDistanceFile->close();
+		}
 
-		// Officially shut down sensor.
 		mState.ready();
 		mState.off();
 	} else {
@@ -70,54 +77,60 @@ void RangeSensorWorker::stop()
 
 void RangeSensorWorker::init()
 {
-	mEventFile.reset(mHardwareAbstraction.createEventFile(mEventFileName));
+	mDistanceFile.reset(mHardwareAbstraction.createInputDeviceFile(mSensorFile));
 
-	connect(mEventFile.data(), &trikHal::EventFileInterface::newEvent, this, &RangeSensorWorker::onNewEvent);
-
-	if (mEventFile->open()) {
-		mState.ready();
-	} else {
+	if (!mDistanceFile->open()) {
 		if (mState.status() == DeviceInterface::Status::off) {
 			// Launching was aborted, do nothing.
 			return;
 		}
 
-		// Sensor launch failed for some reason, assuming permanent failure.
+		QLOG_ERROR() << "Failed to open IIO sensor file" << mSensorFile;
 		mState.fail();
+		return;
 	}
 
 	if (mFilterName == "median3") {
 		mDataFilter.reset(new DataFilter(mMinValue, mMaxValue, "median3"));
 	}
+
+	mElapsedTimer.start();
+
+	mReadTimer.reset(new QTimer(this));
+	mReadTimer->setInterval(mSamplingPeriodMs);
+	connect(mReadTimer.data(), &QTimer::timeout, this, &RangeSensorWorker::onTimer);
+	mReadTimer->start();
+
+	mState.ready();
 }
 
-void RangeSensorWorker::onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime)
+void RangeSensorWorker::onTimer()
 {
 	if (!mState.isReady()) {
 		return;
 	}
 
-	QWriteLocker locker(&mDistanceLock);
-	switch (eventType) {
-	case evAbs:
-		switch (code) {
-		case absDistance:
-			mDistance = !mDataFilter ? value : mDataFilter->applyFilter(value);
-			break;
-		case absMisc:
-			mRawDistance = value;
-			break;
-		default:
-			QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;
-		}
-		break;
-	case evSyn:
-		locker.unlock();
-		Q_EMIT newData(mDistance, mRawDistance, eventTime);
-		break;
-	default:
-		QLOG_ERROR() << "Unknown event in range sensor event file:" << eventType << code << value;
+	mDistanceFile->reset();
+	auto &stream = mDistanceFile->stream();
+	stream.resetStatus();
+
+	auto value = 0;
+	stream >> value;
+	if (stream.status() != QTextStream::Ok) {
+		QLOG_ERROR() << "Failed to parse IIO sensor value from" << mSensorFile;
+		return;
 	}
+
+	const auto elapsedMs = mElapsedTimer.elapsed();
+	const trikKernel::TimeVal eventTime(static_cast<int>(elapsedMs / 1000),
+		static_cast<int>((elapsedMs % 1000) * 1000));
+
+	QWriteLocker locker(&mDistanceLock);
+	mRawDistance = value;
+	mDistance = !mDataFilter ? value : mDataFilter->applyFilter(value);
+	locker.unlock();
+
+	Q_EMIT newData(mDistance, mRawDistance, eventTime);
 }
 
 int RangeSensorWorker::read()
@@ -138,5 +151,6 @@ int RangeSensorWorker::readRawData()
 		return -1;
 	}
 
+	QReadLocker locker(&mDistanceLock);
 	return mRawDistance;
 }

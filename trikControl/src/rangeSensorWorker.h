@@ -14,16 +14,22 @@
 
 #pragma once
 
+#include <QtCore/QElapsedTimer>
 #include <QtCore/QObject>
-#include <QtCore/QString>
 #include <QtCore/QScopedPointer>
+#include <QtCore/QString>
+#include <QtCore/QTimer>
 #include <QReadWriteLock>
 
-#include <trikHal/hardwareAbstractionInterface.h>
 #include <trikKernel/timeVal.h>
 
 #include "datafilter.h"
 #include "deviceState.h"
+
+namespace trikHal {
+class HardwareAbstractionInterface;
+class InputDeviceFileInterface;
+}
 
 namespace trikControl {
 
@@ -35,10 +41,11 @@ class RangeSensorWorker : public QObject
 
 public:
 	/// Constructor.
-	/// @param eventFile - event file for this sensor.
-	RangeSensorWorker(const QString &eventFile, DeviceState &state
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction
-			, int minValue, int maxValue, const QString &filterName);
+	/// @param hardwareAbstraction - hardware abstraction used to create the input device file.
+	/// @param sensorFile - path to the IIO sysfs file with distance value (in_distance_raw).
+	/// @param samplingPeriodMs - how often the sensor file is polled, in milliseconds.
+	RangeSensorWorker(const trikHal::HardwareAbstractionInterface &hardwareAbstraction, QString sensorFile,
+		DeviceState &state, int minValue, int maxValue, QString filterName, int samplingPeriodMs);
 
 	~RangeSensorWorker() override;
 
@@ -47,7 +54,7 @@ Q_SIGNALS:
 	void newData(int distance, int rawDistance, const trikKernel::TimeVal &eventTime);
 
 public Q_SLOTS:
-	/// Initializes sensor and begins receiving events from it.
+	/// Initializes sensor and begins receiving readings from it.
 	void init();
 
 	/// Returns current raw reading of a sensor.
@@ -60,23 +67,33 @@ public Q_SLOTS:
 	void stop();
 
 private Q_SLOTS:
-	/// Updates current reading when new value is ready in event file.
-	void onNewEvent(int eventType, int code, int value, const trikKernel::TimeVal &eventTime);
+	/// Reads value from sysfs and updates current reading.
+	void onTimer();
 
 private:
-	/// Event file of a sensor driver.
-	QScopedPointer<trikHal::EventFileInterface> mEventFile;
+	/// IIO sysfs file this sensor reads from.
+	QScopedPointer<trikHal::InputDeviceFileInterface> mDistanceFile;
+
+	/// Timer that triggers periodic sysfs read.
+	QScopedPointer<QTimer> mReadTimer;
+
+	/// How often the sensor file is polled, in milliseconds.
+	int mSamplingPeriodMs;
+
+	/// Monotonic timer used for event timestamps.
+	QElapsedTimer mElapsedTimer;
 
 	int mDistance {-1};
 
 	int mRawDistance {-1};
 
+	/// Hardware abstraction used to create the input device file.
+	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
+
 	/// State of a sensor, shared with proxy.
 	DeviceState &mState;
 
-	const trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
-
-	const QString mEventFileName;
+	const QString mSensorFile;
 
 	int mMinValue;
 	int mMaxValue;
