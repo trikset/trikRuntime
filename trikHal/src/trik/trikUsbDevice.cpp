@@ -135,7 +135,7 @@ void TrikUsbDevice::setDataCallback(DataCallback callback, void *userData)
 	mDataCallbackUserData = userData;
 }
 
-void TrikUsbDevice::setTelemetryPeriodUs(uint32_t periodUs, u_int32_t isoPacketsPerUrb)
+void TrikUsbDevice::setTelemetryPeriodUs(uint32_t periodUs, uint32_t isoPacketsPerUrb)
 {
 	Q_UNUSED(periodUs)
 	Q_UNUSED(isoPacketsPerUrb)
