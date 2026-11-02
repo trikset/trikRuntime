@@ -259,4 +259,7 @@ equal to its class name.
         <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
 	<i2cBus1 path="/dev/i2c-1" />
 	<i2cBus2 path="/dev/i2c-2" />
+
+	<!-- nRF52833 periphery module over USB. -->
+	<nrfUsb telemetryPeriodUs="1000" isoPacketsPerUrb="4" />
 </config>
