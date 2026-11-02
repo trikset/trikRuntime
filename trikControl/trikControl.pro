@@ -83,8 +83,11 @@ HEADERS += \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/nrfUsbCommunicator.h \
 	$$PWD/src/nrfUsbProtocol.h \
-	$$PWD/src/communicatorCommand.h \
+	$$PWD/src/nrfDriver.h \
 	$$PWD/src/peripheryCommunicatorInterface.h \
+	$$PWD/src/peripheryDriverInterface.h \
+	$$PWD/src/communicatorCommand.h \
+	$$PWD/src/communicatorProvider.h \
 	$$PWD/src/mspBusAutoDetector.h \
 	$$PWD/src/mspUsbCommunicator.h \
 	$$PWD/src/objectSensor.h \
@@ -149,6 +152,8 @@ SOURCES += \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/i2cCommunicator.cpp \
 	$$PWD/src/nrfUsbCommunicator.cpp \
+	$$PWD/src/nrfDriver.cpp \
+	$$PWD/src/communicatorProvider.cpp \
 	$$PWD/src/mspBusAutoDetector.cpp \
 	$$PWD/src/mspUsbCommunicator.cpp \
 	$$PWD/src/objectSensor.cpp \
