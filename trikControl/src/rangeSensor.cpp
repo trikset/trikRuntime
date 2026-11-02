@@ -50,7 +50,8 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 
 	auto samplingPeriodMs = 1000 / samplingFrequency;
 	if (samplingPeriodMs < 1) {
-		samplingPeriodMs = 1;
+		// Fall back to the default 20 Hz sampling period.
+		samplingPeriodMs = 50;
 	}
 
 	mSensorWorker.reset(new RangeSensorWorker(hardwareAbstraction, configurer.attributeByPort(port, "sensorFile"),
