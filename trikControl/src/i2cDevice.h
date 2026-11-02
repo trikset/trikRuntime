@@ -14,16 +14,23 @@
 
 #pragma once
 
-#include "mspI2cCommunicator.h"
+#include <QtCore/QScopedPointer>
+
+#include "i2cDeviceInterface.h"
+#include "i2cCommunicatorInterface.h"
+
+namespace trikKernel {
+class Configurer;
+}
 
 namespace trikHal {
 
-/// The current implementation of SMBus MspI2c is suitable for interacting
+/// The current implementation of the SMBus periphery I2C is suitable for interacting
 /// with many devices, so it was decided to extend this interface from trikHal.
-class MspI2cInterface;
+class PeripheryI2cInterface;
 }
 
-namespace trikControl{
+namespace trikControl {
 
 /// Abstract i2c device
 class I2cDevice : public I2cDeviceInterface
@@ -37,18 +44,20 @@ public:
 	/// @param bus - bus for i2c communication
 	/// @param address - address for device on bus
 	/// Takes ownership of i2c
-	I2cDevice(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface *i2c, int bus, int address);
+	I2cDevice(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface *i2c, int bus, int address);
 
 	/// For implicit forward declaration
-	~I2cDevice();
+	~I2cDevice() override;
 
 	Status status() const override;
 public Q_SLOTS:
 
 	/// Sends byte/word data to current device, if it is connected.
+	// NOLINTNEXTLINE(google-default-arguments)
 	int send(int reg, int value, const QString &mode = "b") override;
 
 	/// Reads byte/word data by given I2C command number and returns the result.
+	// NOLINTNEXTLINE(google-default-arguments)
 	int read(int reg, const QString &mode = "b") override;
 
 	/// Reads data by given I2C command number and returns the result.
@@ -56,7 +65,7 @@ public Q_SLOTS:
 
 private:
 	DeviceState mState;
-	QScopedPointer<trikHal::MspI2cInterface> mInterface;
+	QScopedPointer<trikHal::PeripheryI2cInterface> mInterface;
 	QScopedPointer<I2cCommunicatorInterface> mCommunicator;
 };
 

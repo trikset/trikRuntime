@@ -17,19 +17,20 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "mspI2cCommunicator.h"
+#include "i2cCommunicator.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, MspCommunicatorInterface &communicator)
+Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer,
+	PeripheryCommunicatorInterface &communicator)
 	: mCommunicator(communicator)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mState("Encoder on" + port)
 {
 	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
-	mPassedTicks= ConfigurerHelper::configureInt(configurer, mState, port, "ticks");
-	mPassedDegrees= ConfigurerHelper::configureInt(configurer, mState, port, "degrees");
+	mPassedTicks = ConfigurerHelper::configureInt(configurer, mState, port, "ticks");
+	mPassedDegrees = ConfigurerHelper::configureInt(configurer, mState, port, "degrees");
 
 	if (mPassedTicks == 0) {
 		QLOG_ERROR() << "'ticks' parameter can not be 0";

@@ -14,28 +14,30 @@
 
 #pragma once
 
+#include <memory>
+
 #include <QtCore/QString>
 #include <QtCore/QMutex>
 
-#include "mspCommunicatorInterface.h"
+#include "peripheryCommunicatorInterface.h"
 
 namespace trikKernel {
 class Configurer;
 }
 
 namespace trikHal {
-class MspUsbInterface;
+class UsbDeviceInterface;
 }
 
 namespace trikControl {
 
-/// Provides direct interaction with I2C device.
-class MspUsbCommunicator : public MspCommunicatorInterface
+/// Provides direct interaction with the periphery module over USB.
+class MspUsbCommunicator : public PeripheryCommunicatorInterface
 {
 public:
 	/// Constructor.
-	/// @param usb - USB bus communicator.
-	MspUsbCommunicator(trikHal::MspUsbInterface &usb);
+	/// @param usb - USB transport, takes ownership.
+	explicit MspUsbCommunicator(std::unique_ptr<trikHal::UsbDeviceInterface> usb);
 
 	~MspUsbCommunicator() override;
 
@@ -51,7 +53,7 @@ private:
 	void disconnect();
 
 	QMutex mLock;
-	trikHal::MspUsbInterface &mUsb;
+	std::unique_ptr<trikHal::UsbDeviceInterface> mUsb;
 	DeviceState mState;
 };
 

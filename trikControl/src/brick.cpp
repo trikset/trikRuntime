@@ -57,7 +57,7 @@
 #include "cameraDevice.h"
 #include "cameraManager.h"
 #include "i2cDevice.h"
-#include "mspI2cCommunicator.h"
+#include "i2cCommunicator.h"
 #include "lidar.h"
 #include "irCamera.h"
 
@@ -106,7 +106,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	// new translation starts, so a fresh run begins from a clean state.
 	stopOrphanedStreamers();
 
-	mMspCommunicator.reset(MspBusAutoDetector::createCommunicator(mConfigurer, *mHardwareAbstraction));
+	mPeripheryCommunicator.reset(MspBusAutoDetector::createCommunicator(mConfigurer, *mHardwareAbstraction));
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
 
 	for (const QString &port : mConfigurer.ports()) {
@@ -183,7 +183,7 @@ Brick::~Brick()
 	qDeleteAll(mCameras);
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
-	mMspCommunicator.reset();
+	mPeripheryCommunicator.reset();
 	mModuleLoader.reset();
 
 	mAccelerometer.reset();
@@ -671,7 +671,7 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 }
 
 I2cDeviceInterface *Brick::createI2cDevice(int bus, int address,
-	const std::function<trikHal::MspI2cInterface *()> &factory)
+	const std::function<trikHal::PeripheryI2cInterface *()> &factory)
 {
 	uint8_t _bus = bus & 0xFF;
 	uint8_t _address = address & 0xFF;
@@ -704,7 +704,7 @@ I2cDeviceInterface *Brick::i2c(int bus, int address, int regSize)
 
 I2cDeviceInterface *Brick::smBusI2c(int bus, int address)
 {
-	return createI2cDevice(bus, address, [this]() { return mHardwareAbstraction->createMspI2c(); });
+	return createI2cDevice(bus, address, [this]() { return mHardwareAbstraction->createPeripheryI2c(); });
 }
 
 QVector<uint8_t> Brick::getStillImage(const QString &port)
@@ -834,9 +834,9 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "pwmCapture") {
 			mPwmCaptures.insert(port, new PwmCapture(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "powerMotor") {
-			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mMspCommunicator));
+			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mPeripheryCommunicator));
 		} else if (deviceClass == "analogSensor") {
-			mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mMspCommunicator));
+			mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mPeripheryCommunicator));
 		} else if (deviceClass == "digitalSensor") {
 			mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "rangeSensor") {
@@ -846,7 +846,7 @@ void Brick::createDevice(const QString &port)
 			/// @todo Range sensor shall be turned on only when needed.
 			mRangeSensors[port]->init();
 		} else if (deviceClass == "encoder") {
-			mEncoders.insert(port, new Encoder(port, mConfigurer, *mMspCommunicator));
+			mEncoders.insert(port, new Encoder(port, mConfigurer, *mPeripheryCommunicator));
 		} else if (deviceClass == "soundSensor") {
 			mSoundSensors.insert(port, new SoundSensor(port, mConfigurer, *mHardwareAbstraction));
 

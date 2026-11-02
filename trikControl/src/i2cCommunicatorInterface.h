@@ -1,4 +1,4 @@
-/* Copyright 2025 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,17 @@
 #pragma once
 
 #include <QtCore/QByteArray>
-#include "i2cDeviceInterface.h"
-#include "mspCommunicatorInterface.h"
+#include <QtCore/QVector>
+
+#include "peripheryCommunicatorInterface.h"
 
 namespace trikControl {
 
-/// Interface with I2C-specific commands.
-class I2cCommunicatorInterface : public MspCommunicatorInterface
+/// Interface with I2C-specific commands, adds readX to PeripheryCommunicatorInterface.
+class I2cCommunicatorInterface : public PeripheryCommunicatorInterface
 {
 public:
-	/// Reads data by given I2C command number and returns the result.
+	/// Reads raw bytes via I2C (used by I2cDevice).
 	virtual QVector<uint8_t> readX(const QByteArray &data) = 0;
 };
 

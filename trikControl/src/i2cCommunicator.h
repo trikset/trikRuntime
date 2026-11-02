@@ -1,4 +1,4 @@
-/* Copyright 2013 - 2015 Yurii Litvinov and CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,43 @@
 
 #pragma once
 
-#include <QtCore/QString>
+#include <memory>
+
 #include <QtCore/QMutex>
+#include <QtCore/QString>
 
 #include "i2cCommunicatorInterface.h"
+#include "deviceState.h"
 
 namespace trikKernel {
 class Configurer;
 }
 
 namespace trikHal {
-class MspI2cInterface;
+class PeripheryI2cInterface;
 }
 
 namespace trikControl {
 
-/// Provides direct interaction with I2C device.
-class MspI2cCommunicator : public I2cCommunicatorInterface
+/// Communicator with the periphery module over I2C.
+/// Implements I2cCommunicatorInterface for environments without USB.
+class I2cCommunicator : public I2cCommunicatorInterface
 {
 public:
-	/// Constructor.
-	/// @param configurer - contains preparsed XML configuration.
-	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c);
+	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface &i2c);
 
-	MspI2cCommunicator(const trikKernel::Configurer &configurer, trikHal::MspI2cInterface &i2c
-				, uint8_t bus, uint8_t deviceId);
+	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface &i2c, uint8_t bus,
+		uint8_t deviceId);
 
-	~MspI2cCommunicator() override;
+	I2cCommunicator(const trikKernel::Configurer &configurer,
+		std::unique_ptr<trikHal::PeripheryI2cInterface> ownedI2c);
 
-	/// Send data to current device, if it is connected.
+	~I2cCommunicator() override;
+
 	int send(const QByteArray &data) override;
-
-	/// Reads data by given I2C command number and returns the result.
 	int read(const QByteArray &data) override;
 
-	/// Reads data by given I2C command number and returns the result.
+	/// Reads raw bytes via I2C (used by I2cDevice).
 	QVector<uint8_t> readX(const QByteArray &data) override;
 
 	Status status() const override;
@@ -57,7 +59,8 @@ private:
 	void disconnect();
 
 	QMutex mLock;
-	trikHal::MspI2cInterface &mI2c;
+	trikHal::PeripheryI2cInterface *mI2c;
+	std::unique_ptr<trikHal::PeripheryI2cInterface> mOwnedI2c;
 	DeviceState mState;
 };
 

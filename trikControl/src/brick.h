@@ -27,7 +27,7 @@
 
 namespace trikHal {
 class HardwareAbstractionInterface;
-class MspI2cInterface;
+class PeripheryI2cInterface;
 }
 
 namespace trikControl {
@@ -42,7 +42,7 @@ class EventDevice;
 class Fifo;
 class Gamepad;
 class GyroSensor;
-class MspCommunicatorInterface;
+class PeripheryCommunicatorInterface;
 class Keys;
 class Led;
 class LineSensor;
@@ -184,13 +184,13 @@ private:
 	void createDevice(const QString &port);
 
 	I2cDeviceInterface *createI2cDevice(int bus, int address,
-		const std::function<trikHal::MspI2cInterface *(void)> &factory);
+		const std::function<trikHal::PeripheryI2cInterface *(void)> &factory);
 
 	/// Hardware absraction object that is used to provide communication with real robot hardware or to simulate it.
 	/// Has or hasn't ownership depending on whether it was created by Brick itself or passed from outside.
 	trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> mHardwareAbstraction;
 
-	QScopedPointer<MspCommunicatorInterface> mMspCommunicator;
+	QScopedPointer<PeripheryCommunicatorInterface> mPeripheryCommunicator;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;

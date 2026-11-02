@@ -12,31 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include <trikHal/mspI2cInterface.h>
+#include <trikHal/peripheryI2cInterface.h>
 #include "i2cDevice.h"
-#include "i2cCommunicatorInterface.h"
+#include "i2cCommunicator.h"
 #include "QsLog.h"
 
 using namespace trikControl;
 
-I2cDevice::I2cDevice(const trikKernel::Configurer &configurer,
-		     trikHal::MspI2cInterface *i2c, int bus, int address)
+I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface *i2c, int bus,
+	int address)
 	: mState("I2cDevice")
 	, mInterface(i2c)
-	, mCommunicator(new MspI2cCommunicator(configurer, *i2c, bus, address))
+	, mCommunicator(new I2cCommunicator(configurer, *i2c, bus, address))
 {
 	mState.ready();
 }
 
-I2cDevice::~I2cDevice() {
-
-}
+I2cDevice::~I2cDevice() = default;
 
 I2cDevice::Status I2cDevice::status() const
 {
 	return combine(*mCommunicator, mState.status());
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 int I2cDevice::send(int reg, int value, const QString &mode)
 {
 	if (status() != DeviceInterface::Status::ready) {
@@ -61,7 +60,9 @@ int I2cDevice::send(int reg, int value, const QString &mode)
 	return -1;
 }
 
-int I2cDevice::read(int reg, const QString &mode) {
+// NOLINTNEXTLINE(google-default-arguments)
+int I2cDevice::read(int reg, const QString &mode)
+{
 	QByteArray command;
 
 	command.append(static_cast<char>(reg & 0xFF));
@@ -78,7 +79,8 @@ int I2cDevice::read(int reg, const QString &mode) {
 	return mCommunicator->read(command);
 }
 
-QVector<uint8_t> I2cDevice::readX(int reg, int size) {
+QVector<uint8_t> I2cDevice::readX(int reg, int size)
+{
 	QByteArray command;
 
 	command.append(static_cast<char>(reg & 0xFF));

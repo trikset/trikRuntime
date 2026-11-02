@@ -15,11 +15,12 @@
 #pragma once
 
 #include "mspUsbInterface.h"
+#include "stubUsbDevice.h"
 
 namespace trikHal {
 namespace stub {
 
-/// Empty implementation of MSP USB bus communicator. Only logs operations, returns 0 on all "read" calls.
+/// MSP USB stub, implemented as a thin wrapper over StubUsbDevice.
 class StubMspUsb : public MspUsbInterface
 {
 public:
@@ -27,6 +28,10 @@ public:
 	int read(const QByteArray &data) override;
 	bool connect() override;
 	void disconnect() override;
+	bool isConnected() const override;
+
+private:
+	StubUsbDevice mDevice;
 };
 
 }

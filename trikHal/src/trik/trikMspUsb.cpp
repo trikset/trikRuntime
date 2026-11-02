@@ -21,18 +21,14 @@
 
 using namespace trikHal::trik;
 
-TrikMspUsb::~TrikMspUsb()
-{
-}
-
 int TrikMspUsb::send(const QByteArray &data)
 {
-	return send_USBMSP(data);
+	return static_cast<int>(send_USBMSP(data));
 }
 
 int TrikMspUsb::read(const QByteArray &data)
 {
-	return read_USBMSP(data);
+	return static_cast<int>(read_USBMSP(data));
 }
 
 bool TrikMspUsb::connect()
@@ -46,11 +42,18 @@ bool TrikMspUsb::connect()
 		return false;
 	}
 
+	mConnected = true;
 	return true;
 #endif /* I_UNDERSTAND_ALL_RISKS */
 }
 
 void TrikMspUsb::disconnect()
 {
+	mConnected = false;
 	disconnect_USBMSP();
+}
+
+bool TrikMspUsb::isConnected() const
+{
+	return mConnected;
 }

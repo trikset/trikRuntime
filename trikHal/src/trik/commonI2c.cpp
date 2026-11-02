@@ -1,4 +1,4 @@
-/* Copyright 2025 CyberTech Labs Ltd.
+/* Copyright 2026 CyberTech Labs Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ CommonI2c::~CommonI2c()
 	disconnect();
 }
 
-
 bool CommonI2c::connect(const QString &devicePath, int deviceId)
 {
 	mDeviceFileDescriptor = open(devicePath.toStdString().c_str(), O_RDWR);
@@ -52,7 +51,6 @@ bool CommonI2c::connect(const QString &devicePath, int deviceId)
 	return true;
 }
 
-
 QVector<uint8_t> CommonI2c::readX(const QByteArray &data)
 {
 	if (data.size() < 4) {
@@ -64,26 +62,26 @@ QVector<uint8_t> CommonI2c::readX(const QByteArray &data)
 
 	char cmd[2] = {0, 0};
 
-	if  (mRegSize == 2) {
+	if (mRegSize == 2) {
 		cmd[0] = data[1];
 		cmd[1] = data[0];
 	} else {
 		cmd[0] = data[0];
 	}
 
-	i2c_messages[0] = {mDeviceAddress, 0, mRegSize, (__u8*)cmd};
+	i2c_messages[0] = {mDeviceAddress, 0, mRegSize, (__u8 *)cmd};
 
-	const auto  sizeForRead = static_cast<ushort>((data[3] << 8) | data[2]);
+	const auto sizeForRead = static_cast<ushort>((data[3] << 8) | data[2]);
 	QVector<uint8_t> vector(sizeForRead, 0);
 
-	i2c_messages[1] = {mDeviceAddress, I2C_M_RD, sizeForRead, (__u8*)vector.data()};
+	i2c_messages[1] = {mDeviceAddress, I2C_M_RD, sizeForRead, (__u8 *)vector.data()};
 
 	i2c_messageset[0].msgs = i2c_messages;
 	i2c_messageset[0].nmsgs = 2;
 
 	if (ioctl(mDeviceFileDescriptor, I2C_RDWR, &i2c_messageset) < 0) {
-	      QLOG_INFO() << "Failed read dataSize" << sizeForRead;
-	      return {};
+		QLOG_INFO() << "Failed read dataSize" << sizeForRead;
+		return {};
 	}
 
 	return vector;
@@ -109,7 +107,8 @@ int CommonI2c::read(const QByteArray &data)
 	return (vector[1] << 8) | vector[0];
 }
 
-int CommonI2c::send(const QByteArray &data) {
+int CommonI2c::send(const QByteArray &data)
+{
 	auto dataSize = data.size();
 
 	if (dataSize < 3) {
@@ -134,14 +133,13 @@ int CommonI2c::send(const QByteArray &data) {
 	return write((__u8 *)cmd, sizeof(cmd));
 }
 
-
 int CommonI2c::writeRegister(uint8_t reg, uint8_t value)
 {
-	uchar cmd[2] = { reg, value };
+	uchar cmd[2] = {reg, value};
 	return write(cmd, sizeof(cmd));
 }
 
-int CommonI2c::write(__u8* writeData, __u16 length)
+int CommonI2c::write(__u8 *writeData, __u16 length)
 {
 	struct i2c_msg i2c_messages[1];
 	struct i2c_rdwr_ioctl_data i2c_messageset[1];
@@ -152,7 +150,8 @@ int CommonI2c::write(__u8* writeData, __u16 length)
 	return ioctl(mDeviceFileDescriptor, I2C_RDWR, &i2c_messageset);
 }
 
-int CommonI2c::transfer(const QVector<MspI2cInterface::Message> &vector) {
+int CommonI2c::transfer(const QVector<PeripheryI2cInterface::Message> &vector)
+{
 	if (vector.size() > I2C_RDRW_IOCTL_MAX_MSGS) {
 		return -1;
 	}
@@ -161,7 +160,7 @@ int CommonI2c::transfer(const QVector<MspI2cInterface::Message> &vector) {
 	struct i2c_rdwr_ioctl_data rdwr {};
 
 	int counter = 0;
-	for (auto &&message: vector) {
+	for (auto &&message : vector) {
 		__u16 flags = 0;
 		if (message.type == "read") {
 			flags |= I2C_M_RD;
@@ -171,7 +170,7 @@ int CommonI2c::transfer(const QVector<MspI2cInterface::Message> &vector) {
 		msgs[counter].flags = flags;
 		auto lenght = data.size();
 		msgs[counter].len = lenght;
-		msgs[counter].buf = (__u8*)data.data();
+		msgs[counter].buf = (__u8 *)data.data();
 	}
 
 	rdwr.msgs = msgs;

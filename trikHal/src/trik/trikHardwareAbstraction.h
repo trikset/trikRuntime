@@ -28,10 +28,10 @@ public:
 	TrikHardwareAbstraction();
 	~TrikHardwareAbstraction() override;
 
-	MspI2cInterface &mspI2c() override;
-	MspI2cInterface *createMspI2c() override;
-	MspI2cInterface *createCommonI2c(uint8_t regSize) override;
-	MspUsbInterface &mspUsb() override;
+	PeripheryI2cInterface &peripheryI2c() override;
+	PeripheryI2cInterface *createPeripheryI2c() override;
+	PeripheryI2cInterface *createCommonI2c(uint8_t regSize) override;
+	UsbDeviceInterface *createUsbDevice() override;
 	SystemConsoleInterface &systemConsole() override;
 
 	EventFileInterface *createEventFile(const QString &fileName) const override;
@@ -48,10 +48,7 @@ public:
 
 private:
 	/// I2C bus communicator.
-	QScopedPointer<MspI2cInterface> mI2c;
-
-	/// USB bus communicator.
-	QScopedPointer<MspUsbInterface> mUsb;
+	QScopedPointer<PeripheryI2cInterface> mI2c;
 
 	/// System console abstraction.
 	QScopedPointer<SystemConsoleInterface> mSystemConsole;
