@@ -42,8 +42,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this motor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
-	ServoMotor(const QString &port, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	ServoMotor(const QString &port, const trikKernel::Configurer &configurer,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
 
 	~ServoMotor() override;
 
@@ -70,11 +70,17 @@ public Q_SLOTS:
 	///        rotation servos --- power, allowed values are from -100 to 100.
 	/// @param constrain - if true, power will be constrained in an interval [-100, 100], if false, "power" value
 	///        will be sent to a motor unaltered.
+	// NOLINTNEXTLINE(google-default-arguments)
 	void setPower(int power, bool constrain = true) override;
 
-	void brake(int /* durationMs */ = 0) override { /** Makes no sense, neither for angular servo nor for rotational */}
+	// NOLINTNEXTLINE(google-default-arguments)
+	void brake(int /* durationMs */ = 0) override
+	{ /** Makes no sense, neither for angular servo nor for rotational */
+	}
 
+	// NOLINTNEXTLINE(google-default-arguments)
 	void setPeriod(int uSec = 20000) override;
+
 private:
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
 	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
