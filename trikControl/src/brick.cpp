@@ -61,6 +61,7 @@
 #include "lidar.h"
 #include "irCamera.h"
 
+#include "communicatorProvider.h"
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
 
@@ -107,6 +108,8 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	stopOrphanedStreamers();
 
 	mPeripheryCommunicator.reset(MspBusAutoDetector::createCommunicator(mConfigurer, *mHardwareAbstraction));
+	mCommunicatorProvider.reset(new CommunicatorProvider(mConfigurer, *mHardwareAbstraction));
+	mPeripheryDriver = mCommunicatorProvider->communicator();
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
 
 	for (const QString &port : mConfigurer.ports()) {
@@ -184,6 +187,8 @@ Brick::~Brick()
 
 	// Clean up devices before killing hardware abstraction since their finalization may depend on it.
 	mPeripheryCommunicator.reset();
+	mPeripheryDriver = nullptr;
+	mCommunicatorProvider.reset();
 	mModuleLoader.reset();
 
 	mAccelerometer.reset();
@@ -836,7 +841,11 @@ void Brick::createDevice(const QString &port)
 		} else if (deviceClass == "powerMotor") {
 			mPowerMotors.insert(port, new PowerMotor(port, mConfigurer, *mPeripheryCommunicator));
 		} else if (deviceClass == "analogSensor") {
-			mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mPeripheryCommunicator));
+			if (mPeripheryDriver) {
+				mAnalogSensors.insert(port, new AnalogSensor(port, mConfigurer, *mPeripheryDriver));
+			} else {
+				QLOG_ERROR() << "No periphery driver for analog sensor on port" << port;
+			}
 		} else if (deviceClass == "digitalSensor") {
 			mDigitalSensors.insert(port, new DigitalSensor(port, mConfigurer, *mHardwareAbstraction));
 		} else if (deviceClass == "rangeSensor") {

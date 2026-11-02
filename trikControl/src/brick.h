@@ -43,6 +43,8 @@ class Fifo;
 class Gamepad;
 class GyroSensor;
 class PeripheryCommunicatorInterface;
+class CommunicatorProvider;
+class PeripheryDriverInterface;
 class Keys;
 class Led;
 class LineSensor;
@@ -191,6 +193,8 @@ private:
 	trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> mHardwareAbstraction;
 
 	QScopedPointer<PeripheryCommunicatorInterface> mPeripheryCommunicator;
+	QScopedPointer<CommunicatorProvider> mCommunicatorProvider;
+	PeripheryDriverInterface *mPeripheryDriver = nullptr;
 	QScopedPointer<ModuleLoader> mModuleLoader;
 
 	QScopedPointer<VectorSensor> mAccelerometer;

@@ -17,17 +17,17 @@
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
-#include "peripheryCommunicatorInterface.h"
+#include "peripheryDriverInterface.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;
 
 AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer,
-	PeripheryCommunicatorInterface &communicator)
-	: mCommunicator(communicator)
+	PeripheryDriverInterface &driver)
+	: mDriver(driver)
 	, mState("Analog Sensor on" + port)
+	, mPort(port)
 {
-	mI2cCommandNumber = ConfigurerHelper::configureInt(configurer, mState, port, "i2cCommandNumber");
 	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;
 	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");
@@ -55,7 +55,7 @@ AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &co
 
 AnalogSensor::Status AnalogSensor::status() const
 {
-	return DeviceInterface::combine(mCommunicator, mState.status());
+	return DeviceInterface::combine(mDriver, mState.status());
 }
 
 int AnalogSensor::read()
@@ -74,18 +74,11 @@ int AnalogSensor::read()
 
 int AnalogSensor::readRawData()
 {
-	if (!mState.isReady() || mCommunicator.status() != DeviceInterface::Status::ready) {
+	if (!mState.isReady() || mDriver.status() != DeviceInterface::Status::ready) {
 		return 0;
 	}
 
-	QByteArray command(4, '\0');
-	command[0] = static_cast<char>(mI2cCommandNumber & 0xFF);
-	command[1] = static_cast<char>((mI2cCommandNumber >> 8) & 0xFF);
-
-	command[2] = static_cast<char>(0x02);
-	command[3] = static_cast<char>(0x00);
-
-	return mCommunicator.read(command);
+	return mDriver.readAsync(mPort);
 }
 
 void AnalogSensor::calculateLNS(const QString &port, const trikKernel::Configurer &configurer)
