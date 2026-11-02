@@ -16,7 +16,6 @@
 
 #include <algorithm>
 
-#include <QtCore/QByteArray>
 #include <QtCore/QTextStream>
 
 #include <trikKernel/configurer.h>
@@ -27,26 +26,20 @@
 
 using namespace trikControl;
 
-PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mFrequencyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "frequencyFile")))
-	, mDutyFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "dutyFile")))
+/// The current platform has PWM blocks whose channels can work as inputs using
+/// the same sysfs files as for output. The kernel already guards switching to
+/// capture mode: if period or duty is not zero, the port simply will not be
+/// switched into this mode. It is therefore the responsibility of devices that
+/// use PWM (servoMotor, powerMotor) to reset period and duty to zero in their
+/// destructors/stop()/powerOff(); PwmCapture does not reset them itself.
+PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer,
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
+	: mCaptureFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "captureFile")))
 	, mState("PWM Capture on " + port)
 {
-	QScopedPointer<trikHal::OutputDeviceFileInterface> captureFile
-	    (hardwareAbstraction.createOutputDeviceFile(configurer.attributeByPort(port, "captureFile")));
-	if (!captureFile->open()) {
-	    mState.fail();
-	    return;
-	}
-	captureFile->write(QString::number(1));
-
-	if (!mFrequencyFile->open()) {
+	if (!mCaptureFile->open()) {
 		mState.fail();
-	}
-
-	if (!mDutyFile->open()) {
-		mState.fail();
+		return;
 	}
 
 	mMinValue = ConfigurerHelper::configureLong(configurer, mState, port, "minValue");
@@ -60,16 +53,14 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 		mK = 0;
 		mB = 0;
 	} else {
-		mK = static_cast<qreal>(mMaxValueScaled - mMinValueScaled) / (mMaxValue - mMinValue);
-		mB = mMinValueScaled - mK * mMinValue;
+		mK = static_cast<qreal>(mMaxValueScaled - mMinValueScaled) / static_cast<qreal>(mMaxValue - mMinValue);
+		mB = static_cast<qreal>(mMinValueScaled) - mK * static_cast<qreal>(mMinValue);
 	}
 
 	mState.ready();
 }
 
-PwmCapture::~PwmCapture()
-{
-}
+PwmCapture::~PwmCapture() = default;
 
 PwmCapture::Status PwmCapture::status() const
 {
@@ -82,11 +73,11 @@ QVector<int> PwmCapture::frequency()
 		return {};
 	}
 
-	mFrequencyFile->reset();
-	QVector<int> data(3);
-	char c = '\0';
-	mFrequencyFile->stream() >> data[0] >> c >> data[1] >> c >> data[2] >> c;
-	return data;
+	mCaptureFile->reset();
+	auto period = 0;
+	auto cycle = 0;
+	mCaptureFile->stream() >> period >> cycle;
+	return {period, cycle};
 }
 
 long PwmCapture::duty()
@@ -95,10 +86,10 @@ long PwmCapture::duty()
 		return {};
 	}
 
-	long data = dutyRaw();
+	auto data = dutyRaw();
 
-	long result = std::min(mMaxValue, std::max(mMinValue, data));
-	result = mK * result + mB;
+	auto result = std::min(mMaxValue, std::max(mMinValue, data));
+	result = static_cast<long>(mK * static_cast<qreal>(result) + mB);
 
 	return result;
 }
@@ -109,11 +100,11 @@ long PwmCapture::dutyRaw()
 		return {};
 	}
 
-	mDutyFile->reset();
-	long data = 0;
-	char c = '\0';
-	mDutyFile->stream() >> data >> c;
-	return data;
+	mCaptureFile->reset();
+	auto period = 0;
+	auto cycle = 0;
+	mCaptureFile->stream() >> period >> cycle;
+	return cycle;
 }
 
 long PwmCapture::minValue() const
