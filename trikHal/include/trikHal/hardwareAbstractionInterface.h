@@ -26,6 +26,8 @@
 #include "systemConsoleInterface.h"
 #include "VideoDeviceFileInterface.h"
 #include "fbOutputInterface.h"
+#include "dmaHeapInterface.h"
+#include "rgaInterface.h"
 
 #include <trikHal/trikHalDeclSpec.h>
 #include <QtCore/QDir>
@@ -98,6 +100,12 @@ public:
 	virtual bool initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress, int gpioNumber) const = 0;
 
 	virtual FbOutputInterface *createFbOutput() const = 0;
+
+	/// Creates the RGA (2D accelerator) wrapper. Ownership passes to the caller.
+	virtual RgaInterface *createRga() const = 0;
+
+	/// Creates the DMA heap used for RGA-compatible buffers. Ownership passes to the caller.
+	virtual DmaHeapInterface *createDmaHeap() const = 0;
 };
 
 }

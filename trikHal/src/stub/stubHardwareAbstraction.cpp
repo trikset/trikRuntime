@@ -26,6 +26,8 @@
 #include "stubImuFile.h"
 #include "stubVideoDeviceFile.h"
 #include "stubFbOutput.h"
+#include "stubRga.h"
+#include "stubDmaHeap.h"
 #include "QsLog.h"
 
 using namespace trikHal;
@@ -122,4 +124,14 @@ bool StubHardwareAbstraction::initVideoSensor(const QString &deviceFile, int i2c
 FbOutputInterface *StubHardwareAbstraction::createFbOutput() const
 {
 	return new stub::StubFbOutput();
+}
+
+RgaInterface *StubHardwareAbstraction::createRga() const
+{
+	return new stub::StubRga();
+}
+
+DmaHeapInterface *StubHardwareAbstraction::createDmaHeap() const
+{
+	return new stub::StubDmaHeap();
 }
