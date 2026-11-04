@@ -32,9 +32,16 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/ImuFileInterface.h \
 	$$PWD/include/trikHal/VideoDeviceFileInterface.h \
 	$$PWD/include/trikHal/fbOutputInterface.h \
-	$$PWD/include/trikHal/dmaHeapInterface.h
+	$$PWD/include/trikHal/dmaHeapInterface.h \
+	$$PWD/include/trikHal/rgaInterface.h
 
 !win32:!macx {
+	packagesExist(librga) {
+		CONFIG += link_pkgconfig
+		PKGCONFIG += librga
+		DEFINES += TRIK_HAS_RGA
+	}
+
 	PUBLIC_HEADERS += $$PWD/include/trikHal/physicalMemoryMapper.h
 	HEADERS += \
 		$$PWD/include/trikHal/physicalMemoryMapper.h \
@@ -56,6 +63,7 @@ PUBLIC_HEADERS += \
 		$$PWD/src/trik/trikFbOutput.h \
 		$$PWD/src/trik/trikDmaHeap.h \
 		$$PWD/src/trik/trikDmaBuffer.h \
+		$$PWD/src/trik/trikRga.h \
 }
 
 !trik_not_brick:trik_periphery_nrf {
@@ -77,6 +85,7 @@ HEADERS += \
 	$$PWD/src/stub/stubVideoDeviceFile.h \
 	$$PWD/src/stub/stubFbOutput.h \
 	$$PWD/src/stub/stubDmaHeap.h \
+	$$PWD/src/stub/stubRga.h \
 
 !win32:!macx {
 	SOURCES += \
@@ -97,6 +106,7 @@ HEADERS += \
 		$$PWD/src/trik/trikFbOutput.cpp \
 		$$PWD/src/trik/trikDmaHeap.cpp \
 		$$PWD/src/trik/trikDmaBuffer.cpp \
+		$$PWD/src/trik/trikRga.cpp \
 		$$PWD/src/trik/physicalMemoryMapper.cpp \
 }
 
@@ -115,6 +125,7 @@ SOURCES += \
 	$$PWD/src/stub/stubVideoDeviceFile.cpp \
 	$$PWD/src/stub/stubFbOutput.cpp \
 	$$PWD/src/stub/stubDmaHeap.cpp \
+	$$PWD/src/stub/stubRga.cpp \
 
 !trik_not_brick {
 	SOURCES += $$PWD/src/trik/hardwareAbstractionFactory.cpp

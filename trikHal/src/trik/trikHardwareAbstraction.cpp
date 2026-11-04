@@ -28,6 +28,8 @@
 #include "QsLog.h"
 #include "commonI2c.h"
 #include "trikFbOutput.h"
+#include "trikRga.h"
+#include "trikDmaHeap.h"
 #include <trikKernel/videoUtils.h>
 
 #include <QtCore/QScopedPointer>
@@ -241,4 +243,14 @@ bool TrikHardwareAbstraction::initVideoSensor(const QString &deviceFile, int i2c
 FbOutputInterface *TrikHardwareAbstraction::createFbOutput() const
 {
 	return new trik::TrikFbOutput();
+}
+
+RgaInterface *TrikHardwareAbstraction::createRga() const
+{
+	return new trik::TrikRga();
+}
+
+DmaHeapInterface *TrikHardwareAbstraction::createDmaHeap() const
+{
+	return new trik::TrikDmaHeap();
 }

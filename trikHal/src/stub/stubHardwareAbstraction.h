@@ -45,6 +45,8 @@ public:
 		uint32_t fourcc, bool isWebcam = false) const override;
 	bool initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress, int gpioNumber) const override;
 	FbOutputInterface *createFbOutput() const override;
+	RgaInterface *createRga() const override;
+	DmaHeapInterface *createDmaHeap() const override;
 
 private:
 	QScopedPointer<PeripheryI2cInterface> mI2c;
