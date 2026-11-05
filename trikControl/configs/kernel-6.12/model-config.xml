@@ -119,17 +119,17 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</M4>
 
 	<!-- Video sensor ports. -->
-	<video1>
-	    <videoDevice />
-	</video1>
-
-	<video2>
+	<usb-camera-1>
 		<videoDevice />
-	</video2>
+	</usb-camera-1>
 
-	<usb-camera>
+	<usb-camera-2>
 		<videoDevice />
-	</usb-camera>
+	</usb-camera-2>
+
+	<usb-camera-3>
+		<videoDevice />
+	</usb-camera-3>
 	<!-- On-board sensors. -->
 	<!-- If model is not using those, they can be turned off to save system resources, by deleting them or
 		 commenting them out. -->
@@ -140,7 +140,6 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<!-- Optional modules -->
 	<gamepad />
 	<mailbox />
-	<dspServer/>
 	<!-- Example of custom FIFO sensor -->
 	<!--
 	<soundSensor>

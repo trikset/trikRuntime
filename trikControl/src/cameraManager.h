@@ -31,10 +31,6 @@
 
 #include <trikKernel/videoUtils.h>
 
-#ifdef Q_OS_LINUX
-#	include <trikHal/physicalMemoryMapper.h>
-#endif
-
 #ifdef TRIK_DEBUG_FPS
 #	include <trikKernel/fpsCounter.h>
 #endif
@@ -117,8 +113,7 @@ public:
 		return mToken != nullptr;
 	}
 
-	/// V4L2 buffer index inside the port's capture region. The DSP reads the
-	/// frame from in_buff[inputRegion * buffersPerRegion + bufferIndex()].
+	/// V4L2 buffer index inside the port's capture queue.
 	uint32_t bufferIndex() const
 	{
 		return mToken ? mToken->bufferIdx : 0;
@@ -282,26 +277,28 @@ public:
 	/// Static + negotiated per-port info needed to set up the DSP. Thread-safe:
 	/// config fields are immutable and the negotiated format is atomic.
 	struct PortInfo {
-		uint32_t width = 0;
-		uint32_t height = 0;
+		uint32_t width = 0; ///< Configured width.
+		uint32_t height = 0; ///< Configured height.
+		uint32_t actualWidth = 0; ///< Negotiated width (0 if not opened yet).
+		uint32_t actualHeight = 0; ///< Negotiated height (0 if not opened yet).
 		uint32_t fourcc = 0;
 		trikKernel::PixelFormat format = trikKernel::PixelFormat::Unknown;
 		uint32_t lineLength = 0;
 		uint32_t inputRegion = 0;
 		uint32_t inputBuffersPerRegion = 0;
+
+		/// Resolves the capture geometry for a payload of @p frameBytes.
+		///
+		/// Uses the negotiated size, advertised lineLength and a packed-stride
+		/// fallback for truncated frames. Returns false when the geometry is
+		/// unknown/invalid or the payload is too small even for the packed layout.
+		bool captureGeometry(size_t frameBytes, uint32_t *width, uint32_t *height, uint32_t *stride) const;
 	};
 	PortInfo info(const QString &port) const;
 	PortInfo info(int portId) const;
 
-	/// Number of capture buffers in one port region.
-	uint32_t inputBuffersPerRegion() const;
-
-	/// Number of capture buffers per port region (compile-time constant, shared
-	/// with the DSP geometry in trikKernel).
-	static constexpr uint32_t inputBuffersPerRegionValue = trikKernel::dspInputBuffersPerRegion;
-
-	/// Capture region index (0..regions-1) assigned to @p port.
-	uint32_t inputRegion(const QString &port) const;
+	/// Number of V4L2 capture buffers per port.
+	static constexpr uint32_t captureBufferCount = 3;
 
 	/// Stable 0-based id assigned to @p port, or -1 if the port is unknown.
 	int portId(const QString &port) const;
@@ -343,19 +340,13 @@ private:
 		QString devFile;
 		QString mjpgStreamerScript;
 		uint32_t w = 0, h = 0, fmt = 0; ///< Format from the config.
-		int i2cBus = 0; ///< ov7670 analog ports only.
-		int i2cAddress = 0;
-		int gpioNumber = 0;
 		bool ready = false; ///< Config for the port is valid.
-		uint32_t inputRegion = 0; ///< DSP input region assigned to the port.
 
 		// -- runtime, manager thread only --
 		std::unique_ptr<trikHal::VideoDeviceFileInterface> dev;
 		int refCount = 0; ///< Number of active clients.
 		bool stopLatched = false; ///< stopStreaming() requested; park on last release.
 		bool streaming = false; ///< Whether the stream is currently on.
-		bool sensorInitialized = false; ///< ov7670 already configured once, so a
-		///< re-open (hot-plug) skips init.
 		uint32_t captureSeq = 0; ///< Monotonic per-capture counter.
 
 		// -- negotiated at acquire time (manager thread), read cross-thread
@@ -363,6 +354,8 @@ private:
 		//    release/acquire pair on `latest`. Plain fields keep Entry movable. --
 		uint32_t negotiatedFourcc = 0;
 		uint32_t lineLength = 0;
+		uint32_t negotiatedWidth = 0;
+		uint32_t negotiatedHeight = 0;
 
 		// -- frame delivery, guarded by CameraManager::mFrameLock --
 		/// Pool of one Token per capture buffer, allocated once in makeEntry.
@@ -375,7 +368,7 @@ private:
 
 	/// Build a port Entry from the config (no device is opened). Private static
 	/// so the config parsing stays out of the constructor's hot body.
-	static Entry makeEntry(const trikKernel::Configurer &configurer, const QString &port, uint32_t region);
+	static Entry makeEntry(const trikKernel::Configurer &configurer, const QString &port);
 
 	/// Opens (or reuses) the device of @p id using its static config format and
 	/// bumps its refcount. Runs in the manager's thread.
@@ -394,19 +387,9 @@ private:
 	/// thread (with mFrameLock).
 	void dropLatest(Entry &entry);
 
-#ifdef Q_OS_LINUX
-	/// Map the capture region (fixed physical address) into host virtual memory
-	/// via /dev/mem, so the VPIF DMA engine can capture straight into it.
-	/// Runs in the constructor. Returns true on success.
-	bool mapInputRegion();
-#endif
-
 	/// Stop, close and destroy the open device of a single port, reset its
 	/// refcount/streaming/latch. Runs in the manager's thread.
 	void tearDownPort(int id);
-
-	/// Eagerly initialize every ov7670 analog port off the GUI thread.
-	void initSensors();
 
 	/// Runs @p fn in the manager's thread, blocking the caller if it lives in
 	/// another thread. Used by the destructor and close(), which must not return
@@ -454,7 +437,6 @@ private:
 #ifdef Q_OS_LINUX
 	/// RAII-mapped capture region (mmap'd /dev/mem). Written once in the
 	/// constructor; munmaps itself on destruction.
-	trikHal::MappedMemory mInputMap;
 #endif
 
 #ifdef TRIK_DEBUG_FPS

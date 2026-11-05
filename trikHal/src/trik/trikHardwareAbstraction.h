@@ -16,9 +16,14 @@
 
 #include "hardwareAbstractionInterface.h"
 
+#include <memory>
+
 #include <QtCore/QScopedPointer>
 
 namespace trikHal {
+
+class FramePoolAllocator;
+
 namespace trik {
 
 /// Hardware abstraction layer for a real robot.
@@ -43,10 +48,10 @@ public:
 	VideoDeviceFileInterface *createVideoDeviceFile( // NOLINT(google-default-arguments)
 		const QString &devicePath, uint32_t width, uint32_t height, uint32_t fourcc,
 		bool isWebcam = false) const override;
-	bool initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress, int gpioNumber) const override;
 	FbOutputInterface *createFbOutput() const override;
 	RgaInterface *createRga() const override;
 	DmaHeapInterface *createDmaHeap() const override;
+	FrameBufferPtr acquireFrameBuffer(const FrameFormat &format, int count) override;
 
 private:
 	/// I2C bus communicator.
@@ -54,6 +59,9 @@ private:
 
 	/// System console abstraction.
 	QScopedPointer<SystemConsoleInterface> mSystemConsole;
+
+	/// Hidden source of reusable output buffers.
+	std::shared_ptr<FramePoolAllocator> mFramePoolAllocator;
 };
 
 }

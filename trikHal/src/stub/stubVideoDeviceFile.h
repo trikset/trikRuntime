@@ -49,6 +49,8 @@ public:
 
 	uint32_t actualFourcc() const override { return 0; }
 	uint32_t bytesPerLine() const override { return 0; }
+	uint32_t actualWidth() const override { return 0; }
+	uint32_t actualHeight() const override { return 0; }
 
 private:
 	QString mFileName;

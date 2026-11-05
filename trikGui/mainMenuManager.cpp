@@ -108,8 +108,6 @@ void MainMenuManager::createApp(AppType appType)
 		break;
 	}
 	case AppType::Testing: {
-		QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"0"});
-		QProcess::startDetached("/etc/trik/init-ov7670-320x240.sh", {"1"});
 		auto *testingManager = new TestingManager(mController, mEngine, this);
 		mEngine->rootContext()->setContextProperty("TestingManager", testingManager);
 		break;
