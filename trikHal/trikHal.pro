@@ -33,6 +33,11 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/VideoDeviceFileInterface.h \
 	$$PWD/include/trikHal/fbOutputInterface.h \
 	$$PWD/include/trikHal/dmaHeapInterface.h \
+	$$PWD/include/trikHal/frameFormat.h \
+	$$PWD/include/trikHal/frameBuffer.h \
+	$$PWD/include/trikHal/framePool.h \
+	$$PWD/include/trikHal/dmaFramePool.h \
+	$$PWD/include/trikHal/framePoolAllocator.h \
 	$$PWD/include/trikHal/rgaInterface.h
 
 !win32:!macx {
@@ -111,6 +116,8 @@ HEADERS += \
 }
 
 SOURCES += \
+	$$PWD/src/dmaFramePool.cpp \
+	$$PWD/src/framePoolAllocator.cpp \
 	$$PWD/src/stub/stubHardwareAbstraction.cpp \
 	$$PWD/src/stub/stubUsbDevice.cpp \
 	$$PWD/src/stub/stubPeripheryI2c.cpp \
