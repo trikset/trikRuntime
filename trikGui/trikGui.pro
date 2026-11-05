@@ -22,9 +22,6 @@ CONFIG += qmltypes
 include(../global.pri)
 include(Qt-QrCodeGenerator/Qt-QrCodeGenerator.pri)
 
-# EGL dma-buf import for zero-copy video preview textures.
-LIBS += -lEGL
-
 HEADERS += \
 	$$PWD/abstractIndicator.h \
 	$$PWD/autoRunner.h \
@@ -53,9 +50,6 @@ HEADERS += \
 	$$PWD/accelerometer.h \
 	$$PWD/network.h \
 	$$PWD/camera.h \
-	$$PWD/videoPreviewItem.h \
-	$$PWD/videoDmaTexture.h \
-	$$PWD/videoOverlayTexture.h \
 	$$PWD/pwmCaptureIndicator.h \
 	$$PWD/mainMenuManager.h \
 	$$PWD/managers.h \
@@ -98,9 +92,6 @@ SOURCES += \
 	$$PWD/accelerometer.cpp \
 	$$PWD/network.cpp \
 	$$PWD/camera.cpp \
-	$$PWD/videoPreviewItem.cpp \
-	$$PWD/videoDmaTexture.cpp \
-	$$PWD/videoOverlayTexture.cpp \
 	$$PWD/pwmCaptureIndicator.cpp \
 	$$PWD/mainMenuManager.cpp \
 	$$PWD/testingManager.cpp \
@@ -116,6 +107,19 @@ SOURCES += \
 	$$PWD/virtualKeySender.cpp
 
 
+
+!trik_not_brick:unix:!macx {
+    # EGL dma-buf import for zero-copy video preview textures.
+    LIBS += -lEGL
+    HEADERS += \
+        $$PWD/videoPreviewItem.h \
+        $$PWD/videoDmaTexture.h \
+        $$PWD/videoOverlayTexture.h
+    SOURCES += \
+        $$PWD/videoPreviewItem.cpp \
+        $$PWD/videoDmaTexture.cpp \
+        $$PWD/videoOverlayTexture.cpp
+}
 
 !trik_not_brick {
     SOURCES += $$PWD/powerLevel.cpp
