@@ -41,6 +41,10 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/soundSensorInterface.h \
 	$$PWD/include/trikControl/vectorSensorInterface.h \
 	$$PWD/include/trikControl/videoSensorStopFlags.h \
+	$$PWD/include/trikControl/videoPreviewTypes.h \
+	$$PWD/include/trikControl/videoPreviewSink.h \
+	$$PWD/include/trikControl/videoPreviewSource.h \
+	$$PWD/include/trikControl/videoPreviewHub.h \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
 	$$PWD/include/trikControl/markerInterface.h \
 	$$PWD/include/trikControl/i2cDeviceInterface.h \
@@ -138,6 +142,7 @@ SOURCES += \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
+	$$PWD/src/videoPreviewHub.cpp \
 	$$PWD/src/deviceFactory.cpp \
 	$$PWD/src/deviceState.cpp \
 	$$PWD/src/dspSensorBase.cpp \

@@ -108,6 +108,19 @@ SOURCES += \
 
 
 
+!trik_not_brick:unix:!macx {
+    # EGL dma-buf import for zero-copy video preview textures.
+    LIBS += -lEGL
+    HEADERS += \
+        $$PWD/videoPreviewItem.h \
+        $$PWD/videoDmaTexture.h \
+        $$PWD/videoOverlayTexture.h
+    SOURCES += \
+        $$PWD/videoPreviewItem.cpp \
+        $$PWD/videoDmaTexture.cpp \
+        $$PWD/videoOverlayTexture.cpp
+}
+
 !trik_not_brick {
     SOURCES += $$PWD/powerLevel.cpp
 } else {
@@ -120,9 +133,9 @@ RESOURCES = trikGui.qrc
 
 OTHER_FILES += \
 
-implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry)
+implementationIncludes(trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikHal)
 transitiveIncludes(trikNetwork)
 PythonQtIncludes()
-links(trikRuntimeQsLog trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork)
+links(trikRuntimeQsLog trikKernel trikControl trikCommunicator trikScriptRunner trikWiFi trikTelemetry trikNetwork trikHal)
 
 installs()
