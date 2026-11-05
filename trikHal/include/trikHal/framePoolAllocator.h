@@ -55,7 +55,6 @@ public:
 	/// over budget). Returns nullptr when the heap cannot allocate.
 	std::shared_ptr<FramePool> acquire(const FrameFormat &format, int count);
 
-
 private:
 	void recycle(const std::shared_ptr<DmaFramePool> &pool);
 	std::shared_ptr<DmaFramePool> takeIdleLocked(size_t neededCapacity, int count);

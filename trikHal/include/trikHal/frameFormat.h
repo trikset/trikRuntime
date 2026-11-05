@@ -35,15 +35,21 @@ struct FrameFormat {
 	uint32_t stride = 0;
 	PixelFormat format = PixelFormat::Unknown;
 
-	size_t byteSize() const { return static_cast<size_t>(stride) * height; }
+	size_t byteSize() const
+	{
+		return static_cast<size_t>(stride) * height;
+	}
 
 	bool operator==(const FrameFormat &other) const
 	{
 		return width == other.width && height == other.height && stride == other.stride
-			&& format == other.format;
+		       && format == other.format;
 	}
 
-	bool operator!=(const FrameFormat &other) const { return !(*this == other); }
+	bool operator!=(const FrameFormat &other) const
+	{
+		return !(*this == other);
+	}
 };
 
 } // namespace trikHal

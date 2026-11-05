@@ -73,8 +73,8 @@ bool DmaFramePool::init(DmaHeapInterface &heap, int count)
 FrameBufferPtr DmaFramePool::acquire(const FrameFormat &format)
 {
 	if (format.width == 0 || format.height == 0 || format.stride == 0 || format.byteSize() > mBufferCapacity) {
-		QLOG_WARN() << "DmaFramePool: frame" << format.width << "x" << format.height << "stride" << format.stride
-			    << "does not fit into" << mBufferCapacity << "bytes";
+		QLOG_WARN() << "DmaFramePool: frame" << format.width << "x" << format.height << "stride"
+			    << format.stride << "does not fit into" << mBufferCapacity << "bytes";
 		return nullptr;
 	}
 
