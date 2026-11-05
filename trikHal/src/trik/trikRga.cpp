@@ -49,6 +49,8 @@ int rgaFormat(RgaFormat format)
 		return RK_FORMAT_YCbCr_422_SP;
 	case RgaFormat::Rgb888:
 		return RK_FORMAT_RGB_888;
+	case RgaFormat::Bgra8888:
+		return RK_FORMAT_BGRA_8888;
 	case RgaFormat::Unknown:
 		break;
 	}
@@ -94,6 +96,15 @@ bool noRga(QString *error)
 #endif
 
 } // namespace
+
+bool TrikRga::isAvailable() const
+{
+#ifdef TRIK_HAS_RGA
+	return true;
+#else
+	return false;
+#endif
+}
 
 bool TrikRga::convert(const RgaImage &src, const RgaImage &dst, QString *error)
 {

@@ -19,6 +19,11 @@
 using namespace trikHal;
 using namespace trikHal::stub;
 
+bool StubRga::isAvailable() const
+{
+	return false;
+}
+
 bool StubRga::convert(const RgaImage &src, const RgaImage &dst, QString *error)
 {
 	Q_UNUSED(src);

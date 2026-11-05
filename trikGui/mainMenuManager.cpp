@@ -32,7 +32,10 @@
 #include <QQmlContext>
 #include "fileManager.h"
 #include "runningCode.h"
+#include "videoPreviewItem.h"
 #include <trikControl/keysInterface.h>
+#include <trikControl/videoPreviewHub.h>
+#include <QWindow>
 #include <QCoreApplication>
 #include <QGuiApplication>
 #include <QQuickWindow>
@@ -41,15 +44,19 @@
 
 using namespace trikGui;
 MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine,
-	TrikGuiApplication *trikGuiApp)
+	TrikGuiApplication *trikGuiApp, std::shared_ptr<trikControl::VideoPreviewHub> previewHub)
 	: QObject(trikGuiApp)
-	, mController(configPath)
+	, mPreviewHub(previewHub)
+	, mController(configPath, mPreviewHub)
 	, mEngine(engine)
 	, mFileManagerRoot(SystemSettings::FileManagerRootType::ScriptsDir)
 {
 	qmlRegisterTypesAndRevisions<MainMenuManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<TestingManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<WiFiMode>("com.trikGui", 1);
+	qmlRegisterType<VideoPreviewOverlayItem>("com.trikGui", 1, 0, "VideoPreviewOverlayItem");
+	qmlRegisterSingletonInstance<trikControl::VideoPreviewHub>("com.trikGui", 1, 0, "VideoPreviewHub",
+		mPreviewHub.get());
 	qmlRegisterSingletonInstance<MainMenuManager>("com.trikGui", 1, 0, "MainMenuManager", this);
 
 	auto *runningCode = new RunningCode(mController, this);
@@ -85,8 +92,8 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	connect(trikGuiApp, &TrikGuiApplication::showPowerConfirm, this, &MainMenuManager::showPowerConfirm);
 	connect(trikGuiApp, &TrikGuiApplication::hidePowerConfirm, this, &MainMenuManager::hidePowerConfirm);
 
-	// When the brick fully stops (video sensors down, framebuffer closed), repaint
-	// the GUI so leftover video frames on /dev/fb0 are cleared.
+	// When the brick fully stops, repaint the GUI so any display leftovers are
+	// cleared.
 	connect(&mController, &Controller::brickStopped, trikGuiApp, &TrikGuiApplication::forceRepaint);
 
 	mController.brick().playTone(2000, 150);

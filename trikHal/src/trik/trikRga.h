@@ -23,6 +23,7 @@ namespace trik {
 class TrikRga : public RgaInterface
 {
 public:
+	bool isAvailable() const override;
 	bool convert(const RgaImage &src, const RgaImage &dst, QString *error) override;
 	bool resize(const RgaImage &src, const RgaImage &dst, QString *error) override;
 	bool process(const RgaImage &src, const RgaImage &dst, QString *error) override;

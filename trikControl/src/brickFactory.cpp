@@ -14,32 +14,50 @@
 
 #include "brickFactory.h"
 
+#include <memory>
+
 #include <QtCore/QDir>
 
 #include <trikKernel/fileUtils.h>
+#include <trikControl/videoPreviewHub.h>
 
 #include "brick.h"
 
 using namespace trikControl;
 
-BrickInterface *BrickFactory::create(const QString &systemConfig
-		, const QString &modelConfig, const QString &mediaPath)
+BrickInterface *BrickFactory::create(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
 {
-	return new Brick(systemConfig, modelConfig, mediaPath);
+	return create(systemConfig, modelConfig, mediaPath, std::make_shared<VideoPreviewHub>());
+}
+
+BrickInterface *BrickFactory::create(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+	const std::shared_ptr<VideoPreviewSink> &previewSink)
+{
+	return new Brick(systemConfig, modelConfig, mediaPath, previewSink);
 }
 
 BrickInterface *BrickFactory::create(const QString &configFilesPath, const QString &mediaPath)
 {
-	const QString correctedPath = trikKernel::FileUtils::normalizePath(configFilesPath);
-	return new Brick(correctedPath + "system-config.xml", correctedPath + "model-config.xml", mediaPath);
+	return create(configFilesPath, mediaPath, std::make_shared<VideoPreviewHub>());
 }
 
-BrickInterface *BrickFactory::create(
-		trikHal::HardwareAbstractionInterface &hardwareAbstraction
-		, const QString &systemConfig
-		, const QString &modelConfig
-		, const QString &mediaPath)
+BrickInterface *BrickFactory::create(const QString &configFilesPath, const QString &mediaPath,
+	const std::shared_ptr<VideoPreviewSink> &previewSink)
 {
-	return new Brick(hardwareAbstraction, systemConfig, modelConfig, mediaPath);
+	const QString correctedPath = trikKernel::FileUtils::normalizePath(configFilesPath);
+	return new Brick(correctedPath + "system-config.xml", correctedPath + "model-config.xml", mediaPath,
+		previewSink);
 }
 
+BrickInterface *BrickFactory::create(trikHal::HardwareAbstractionInterface &hardwareAbstraction,
+	const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+{
+	return create(hardwareAbstraction, systemConfig, modelConfig, mediaPath, std::make_shared<VideoPreviewHub>());
+}
+
+BrickInterface *BrickFactory::create(trikHal::HardwareAbstractionInterface &hardwareAbstraction,
+	const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+	const std::shared_ptr<VideoPreviewSink> &previewSink)
+{
+	return new Brick(hardwareAbstraction, systemConfig, modelConfig, mediaPath, previewSink);
+}
