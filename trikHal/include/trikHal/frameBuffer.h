@@ -63,19 +63,43 @@ public:
 	/// Stable id of this buffer allocation. Unlike fd(), it is unique for the
 	/// lifetime of the process and never reused, so consumers can cache derived
 	/// GPU resources by it.
-	uint64_t id() const { return mId; }
+	uint64_t id() const
+	{
+		return mId;
+	}
 
-	const FrameFormat &format() const { return mFormat; }
+	const FrameFormat &format() const
+	{
+		return mFormat;
+	}
 
 	/// Re-types the buffer. The pool calls this only while the buffer is free;
 	/// no consumer may hold the FrameBuffer at that moment.
-	void setFormat(const FrameFormat &format) { mFormat = format; }
+	void setFormat(const FrameFormat &format)
+	{
+		mFormat = format;
+	}
 
-	int fd() const { return mDma->fd(); }
-	void *data() const { return mDma->data(); }
-	size_t size() const { return mDma->size(); }
-	bool syncStart(bool write) { return mDma->syncStart(write); }
-	bool syncEnd(bool write) { return mDma->syncEnd(write); }
+	int fd() const
+	{
+		return mDma->fd();
+	}
+	void *data() const
+	{
+		return mDma->data();
+	}
+	size_t size() const
+	{
+		return mDma->size();
+	}
+	bool syncStart(bool write)
+	{
+		return mDma->syncStart(write);
+	}
+	bool syncEnd(bool write)
+	{
+		return mDma->syncEnd(write);
+	}
 
 private:
 	std::unique_ptr<DmaBufferInterface> mDma;

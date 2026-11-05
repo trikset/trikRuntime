@@ -62,11 +62,11 @@ std::shared_ptr<FramePool> FramePoolAllocator::acquire(const FrameFormat &format
 	// lease. On release it is returned to the idle cache, or destroyed when the
 	// allocator is already gone.
 	auto weak = std::weak_ptr<FramePoolAllocator>(shared_from_this());
-	return std::shared_ptr<FramePool>(pool.get(), [weak, pool](FramePool *) {
+	return {pool.get(), [weak, pool](FramePool *) {
 		if (auto allocator = weak.lock()) {
 			allocator->recycle(pool);
 		}
-	});
+	}};
 }
 
 void FramePoolAllocator::recycle(const std::shared_ptr<DmaFramePool> &pool)

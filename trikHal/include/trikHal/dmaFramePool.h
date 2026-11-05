@@ -39,13 +39,19 @@ public:
 	~DmaFramePool() override;
 
 	FrameBufferPtr acquire(const FrameFormat &format) override;
-	size_t bufferCapacity() const override { return mBufferCapacity; }
-	int capacity() const override { return static_cast<int>(mSlots.size()); }
+	size_t bufferCapacity() const override
+	{
+		return mBufferCapacity;
+	}
+	int capacity() const override
+	{
+		return static_cast<int>(mSlots.size());
+	}
 
 private:
 	struct Slot;
 
-	DmaFramePool(size_t bufferCapacity);
+	explicit DmaFramePool(size_t bufferCapacity);
 	bool init(DmaHeapInterface &heap, int count);
 
 	size_t mBufferCapacity;
