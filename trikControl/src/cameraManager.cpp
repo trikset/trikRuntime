@@ -22,7 +22,6 @@
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikKernel/configurer.h>
 #include <trikKernel/videoUtils.h>
-#include <trikDsp/dspTypes.h>
 #include <QsLog.h>
 
 #include <algorithm>
@@ -47,8 +46,8 @@ void Frame::release() noexcept
 		if (mToken->refs.fetch_sub(1, std::memory_order_acq_rel) == 1) {
 			auto *owner = mOwner.get();
 			if (owner && mToken->entryId >= 0) {
-				QMetaObject::invokeMethod(owner, [owner,
-					id = mToken->entryId, idx = mToken->bufferIdx]() {
+				QMetaObject::invokeMethod(owner,
+					[owner, id = mToken->entryId, idx = mToken->bufferIdx]() {
 					owner->returnBufferToDriverById(id, idx);
 				}, Qt::QueuedConnection);
 			}
@@ -67,44 +66,25 @@ CameraManager::CameraManager(const trikKernel::Configurer &configurer, const tri
 	// Single pass over the config: build the static per-port state. The
 	// Configurer is never touched after this loop - all later lookups go
 	// through mPortId + mEntries.
-	auto nextRegion = 0u;
 	for (auto &&port : configurer.ports()) {
 		if (configurer.deviceClass(port) != QStringLiteral("videoDevice")) {
 			continue;
 		}
 
-		const auto region = nextRegion;
-		nextRegion = (nextRegion + 1) % trikKernel::dspInputRegions;
-
 		mPortId.insert(port, static_cast<int>(mEntries.size()));
-		mEntries.push_back(makeEntry(configurer, port, region));
+		mEntries.push_back(makeEntry(configurer, port));
 
 		const auto &entry = mEntries.back();
 		QLOG_INFO() << "CameraManager: registered port" << port << "->" << entry.devFile << entry.w << 'x'
-			    << entry.h << "ready=" << entry.ready << "region=" << region;
+			    << entry.h << "ready=" << entry.ready;
 	}
-
-#ifdef Q_OS_LINUX
-	// Map the capture region up front (before the DSP's INIT response): the
-	// manager hands the per-port virtual addresses to V4L2 as USERPTR targets.
-	if (mapInputRegion()) {
-		QLOG_INFO() << "CameraManager: capture region mapped, zero-copy streaming available";
-	} else {
-		QLOG_WARN() << "CameraManager: capture region unavailable, USERPTR disabled (MMAP fallback)";
-	}
-#endif
 
 	// Run the manager (and its V4L2 devices / QSocketNotifiers) on a dedicated
-	// thread, so the slow sensor initialization and device I/O never block the
-	// GUI thread.
+	// thread, so the device I/O never blocks the GUI thread.
 	mThread.reset(new QThread);
 	mThread->setObjectName(QStringLiteral("CameraManager"));
 	moveToThread(mThread.data());
 	mThread->start();
-
-	// Kick off the (possibly slow) ov7670 initialization on the worker thread,
-	// so the Brick constructor never blocks.
-	runAsync([this]() { initSensors(); });
 }
 
 CameraManager::~CameraManager()
@@ -118,11 +98,9 @@ CameraManager::~CameraManager()
 
 	mThread->quit();
 	mThread->wait();
-	// mInputMap munmaps itself (RAII).
 }
 
-CameraManager::Entry CameraManager::makeEntry(const trikKernel::Configurer &configurer, const QString &port,
-	uint32_t region)
+CameraManager::Entry CameraManager::makeEntry(const trikKernel::Configurer &configurer, const QString &port)
 {
 	Entry entry;
 	DeviceState state("videoDevice");
@@ -136,30 +114,12 @@ CameraManager::Entry CameraManager::makeEntry(const trikKernel::Configurer &conf
 	const auto fmt = configurer.attributeByPort(port, "format", &fmtStr);
 	const auto streamerScript = configurer.attributeByPort(port, "mjpgStreamerScript", &defaultStreamerScript);
 
-	// The ov7670 analog ports (named "video*") carry the I2C bus/address and
-	// reset GPIO used for sensor initialization. Only those ports have them.
-	if (port.startsWith(QStringLiteral("video"))) {
-		const auto optInt = [&configurer, &port](const QString &name) {
-			try {
-				bool ok = false;
-				const int v = configurer.attributeByPort(port, name).toInt(&ok, 0);
-				return ok ? v : 0;
-			} catch (const trikKernel::MalformedConfigException &) {
-				return 0;
-			}
-		};
-		entry.i2cBus = optInt(QStringLiteral("i2cBus"));
-		entry.i2cAddress = optInt(QStringLiteral("i2cAddress"));
-		entry.gpioNumber = optInt(QStringLiteral("gpioNumber"));
-	}
-
 	entry.devFile = devFile;
 	entry.mjpgStreamerScript = streamerScript;
-	entry.inputRegion = region;
-	entry.tokens = std::make_unique<Frame::Token[]>(inputBuffersPerRegionValue);
+	entry.tokens = std::make_unique<Frame::Token[]>(captureBufferCount);
 	entry.ready = !state.isFailed() && !devFile.isEmpty() && !fmt.isEmpty();
 	if (entry.ready) {
-		entry.fmt = static_cast<uint32_t>(trikKernel::toV4l2Fourcc(trikDsp::pixelFormatFromString(fmt)));
+		entry.fmt = static_cast<uint32_t>(trikKernel::toV4l2Fourcc(trikKernel::pixelFormatFromString(fmt)));
 	} else {
 		QLOG_WARN() << "CameraManager: port" << port << "has an invalid config, marked not ready";
 	}
@@ -167,22 +127,7 @@ CameraManager::Entry CameraManager::makeEntry(const trikKernel::Configurer &conf
 	return entry;
 }
 
-#ifdef Q_OS_LINUX
-bool CameraManager::mapInputRegion()
-{
-	const auto regionLen = trikKernel::dspInputBufferTotal * trikKernel::dspInputFrameSize;
-	mInputMap = trikHal::mapPhysicalMemory(trikKernel::dspInputPhysAddress, regionLen);
-	if (!mInputMap) {
-		QLOG_WARN() << "CameraManager: failed to map capture region at 0x" << Qt::hex
-			    << trikKernel::dspInputPhysAddress;
-		return false;
-	}
 
-	QLOG_INFO() << "CameraManager: mapped capture region at" << static_cast<void *>(mInputMap.data()) << "size"
-		    << regionLen;
-	return true;
-}
-#endif // Q_OS_LINUX
 
 bool CameraManager::openDeviceLocked(int id, Entry &entry)
 {
@@ -190,30 +135,9 @@ bool CameraManager::openDeviceLocked(int id, Entry &entry)
 		return true;
 	}
 
-	// The analog ov7670 cameras (ports named "video*") are initialized over
-	// I2C; the USB webcam is not. Done only once per process lifetime.
-	const bool isVideoPort = entry.portName.startsWith(QStringLiteral("video"));
-	if (isVideoPort && !entry.sensorInitialized) {
-		entry.sensorInitialized =
-			mHal.initVideoSensor(entry.devFile, entry.i2cBus, entry.i2cAddress, entry.gpioNumber);
-	}
-
+	const bool isWebcam = entry.portName.startsWith(QStringLiteral("usb-camera"));
 	std::unique_ptr<trikHal::VideoDeviceFileInterface> dev(
-		mHal.createVideoDeviceFile(entry.devFile, entry.w, entry.h, entry.fmt, !isVideoPort));
-
-	// Zero-copy: capture straight into the port's DSP input region (USERPTR).
-#ifdef Q_OS_LINUX
-	if (mInputMap) {
-		const auto base = entry.inputRegion * trikKernel::dspInputBuffersPerRegion;
-		QVector<void *> buffers;
-		buffers.reserve(static_cast<int>(trikKernel::dspInputBuffersPerRegion));
-		for (uint32_t i = 0; i < trikKernel::dspInputBuffersPerRegion; ++i) {
-			buffers.append(mInputMap.data() + (base + i) * trikKernel::dspInputFrameSize);
-		}
-		dev->setUserPtrBuffers(buffers, trikKernel::dspInputFrameSize);
-		QLOG_INFO() << "CameraManager: port" << entry.portName << "capturing into region" << entry.inputRegion;
-	}
-#endif
+		mHal.createVideoDeviceFile(entry.devFile, entry.w, entry.h, entry.fmt, isWebcam));
 
 	if (!dev->open()) {
 		QLOG_ERROR() << "CameraManager: failed to open" << entry.devFile;
@@ -223,6 +147,8 @@ bool CameraManager::openDeviceLocked(int id, Entry &entry)
 	// Cache the actual negotiated format and bytes-per-line for the DSP.
 	entry.negotiatedFourcc = dev->actualFourcc();
 	entry.lineLength = dev->bytesPerLine();
+	entry.negotiatedWidth = dev->actualWidth();
+	entry.negotiatedHeight = dev->actualHeight();
 
 	QLOG_DEBUG() << "CameraManager: port" << entry.portName << "opened, actualFourcc=0x" << Qt::hex
 		     << dev->actualFourcc() << Qt::dec << "lineLength" << entry.lineLength;
@@ -235,7 +161,6 @@ bool CameraManager::openDeviceLocked(int id, Entry &entry)
 	});
 
 	entry.dev = std::move(dev);
-	entry.dev->fixExposure();
 	return true;
 }
 
@@ -300,7 +225,7 @@ void CameraManager::dropLatest(Entry &entry)
 	// STREAMOFF already returned every buffer to the driver; forget the
 	// per-buffer "captured" marks, otherwise the first frame after a restart
 	// would double-queue a buffer that is already in the driver's queue.
-	for (uint32_t i = 0; i < inputBuffersPerRegionValue; ++i) {
+	for (uint32_t i = 0; i < captureBufferCount; ++i) {
 		entry.tokens[i].captured = false;
 	}
 }
@@ -492,24 +417,6 @@ void CameraManager::tearDownPort(int id)
 	e.stopLatched = false;
 }
 
-void CameraManager::initSensors()
-{
-	// Runs in the worker thread (posted from the constructor). Only ov7670
-	// ports carry an I2C bus; initVideoSensor() returns false when no sensor is
-	// physically wired, so such a port is retried lazily on acquire().
-	for (auto &e : mEntries) {
-		if (!e.ready || e.i2cBus <= 0 || e.sensorInitialized) {
-			continue;
-		}
-		e.sensorInitialized = mHal.initVideoSensor(e.devFile, e.i2cBus, e.i2cAddress, e.gpioNumber);
-	}
-}
-
-uint32_t CameraManager::inputBuffersPerRegion() const
-{
-	return inputBuffersPerRegionValue;
-}
-
 int CameraManager::portId(const QString &port) const
 {
 	return mPortId.value(port, -1);
@@ -521,12 +428,6 @@ QString CameraManager::portName(int portId) const
 		return {};
 	}
 	return mEntries[portId].portName;
-}
-
-uint32_t CameraManager::inputRegion(const QString &port) const
-{
-	const int id = mPortId.value(port, -1);
-	return id >= 0 ? mEntries[id].inputRegion : 0;
 }
 
 uint32_t CameraManager::width(const QString &port) const
@@ -572,6 +473,42 @@ QString CameraManager::streamerScript(const QString &port) const
 	return id >= 0 ? mEntries[id].mjpgStreamerScript : QString();
 }
 
+bool CameraManager::PortInfo::captureGeometry(size_t frameBytes, uint32_t *width, uint32_t *height,
+	uint32_t *stride) const
+{
+	const uint32_t w = actualWidth > 0 ? actualWidth : this->width;
+	const uint32_t h = actualHeight > 0 ? actualHeight : this->height;
+	if (w == 0 || h == 0 || format == trikKernel::PixelFormat::Unknown) {
+		return false;
+	}
+
+	auto packedStride = [this](uint32_t width) {
+		return format == trikKernel::PixelFormat::Yuyv ? width * 2 : width;
+	};
+	auto byteSize = [this, h](uint32_t s) {
+		return (format == trikKernel::PixelFormat::Nv16 ? 2 : 1) * static_cast<size_t>(s) * h;
+	};
+
+	uint32_t s = lineLength > 0 ? lineLength : packedStride(w);
+	if (frameBytes < byteSize(s)) {
+		s = packedStride(w);
+		if (frameBytes < byteSize(s)) {
+			return false;
+		}
+	}
+
+	if (width) {
+		*width = w;
+	}
+	if (height) {
+		*height = h;
+	}
+	if (stride) {
+		*stride = s;
+	}
+	return true;
+}
+
 CameraManager::PortInfo CameraManager::info(const QString &port) const
 {
 	return info(mPortId.value(port, -1));
@@ -586,11 +523,13 @@ CameraManager::PortInfo CameraManager::info(int portId) const
 	const auto &e = mEntries[portId];
 	result.width = e.w;
 	result.height = e.h;
+	result.actualWidth = e.negotiatedWidth;
+	result.actualHeight = e.negotiatedHeight;
 	result.fourcc = e.fmt;
 	result.format = trikKernel::fromV4l2Fourcc(e.negotiatedFourcc);
 	result.lineLength = e.lineLength;
-	result.inputRegion = e.inputRegion;
-	result.inputBuffersPerRegion = inputBuffersPerRegionValue;
+	result.inputRegion = 0;
+	result.inputBuffersPerRegion = captureBufferCount;
 	return result;
 }
 

@@ -8,7 +8,7 @@ Rectangle {
     property var idList: _portsList
     property var cameraObject: null
     property int photoCounter: 0
-    property string port: "video1"
+    property string port: "usb-camera-1"
     property bool showPhoto: false
     color: activeTheme.backgroundColor
 
@@ -20,9 +20,9 @@ Rectangle {
 
     ListModel {
         id: _portsModel
-        ListElement { portName: "video2" }
-        ListElement { portName: "video1" }
-        ListElement { portName: "usb-camera" }
+        ListElement { portName: "usb-camera-1" }
+        ListElement { portName: "usb-camera-2" }
+        ListElement { portName: "usb-camera-3" }
     }
     ListView {
         id: _listSensors

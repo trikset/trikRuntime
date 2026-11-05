@@ -49,7 +49,7 @@ public:
 	int transfer(const QVector<PeripheryI2cInterface::Message> &vector) override;
 
 	/// Write a single register: an 8-bit register address followed by an 8-bit
-	/// value (used for devices with 1-byte registers, e.g. ov7670).
+	/// value (used for devices with 1-byte registers).
 	int writeRegister(uint8_t reg, uint8_t value);
 
 private:

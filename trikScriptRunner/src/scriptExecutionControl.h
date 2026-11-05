@@ -98,11 +98,6 @@ Q_SIGNALS:
 	void textInStdOut(const QString &text);
 
 private:
-	/// Redirects the legacy mjpg-encoder-ov7670 / mjpg-streamer-ov7670 shell
-	/// commands (old codegen) to Brick::startVideoTranslation / stopVideoTranslation
-	/// for the ov7670 port (video1). Returns true if the command was intercepted.
-	bool redirectLegacyMjpgStreaming(const QString &command);
-
 	QList<QTimer *> mTimers; // Has ownership.
 	trikControl::BrickInterface *mBrick {}; //Does not have ownership
 

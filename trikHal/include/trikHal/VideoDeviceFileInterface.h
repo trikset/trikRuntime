@@ -16,7 +16,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtCore/QVector>
 #include <cstdint>
 #include <cstddef>
 #include "trikHal/trikHalDeclSpec.h"
@@ -55,17 +54,10 @@ public:
 	virtual uint32_t actualFourcc() const = 0;
 	virtual uint32_t bytesPerLine() const = 0;
 
-	/// Configure the device to capture into caller-managed buffers (USERPTR
-	/// mode) instead of driver-allocated MMAP buffers. Must be called before
-	/// open(). Each entry of @p buffers is a physically contiguous buffer the
-	/// VPIF DMA engine writes one frame into; all of them are queued so the
-	/// camera streams continuously. Pass an empty vector to use the default
-	/// MMAP mode. The default implementation is a no-op (MMAP only).
-	virtual void setUserPtrBuffers(const QVector<void *> &buffers, size_t bufferSize)
-	{
-		Q_UNUSED(buffers);
-		Q_UNUSED(bufferSize);
-	}
+	/// Actual (negotiated) capture size. May differ from the requested config
+	/// size when the driver adjusts it; 0 means "not known yet".
+	virtual uint32_t actualWidth() const = 0;
+	virtual uint32_t actualHeight() const = 0;
 
 Q_SIGNALS:
 	/// Emitted when a frame is captured into buffer @p bufferIdx.  @p data is

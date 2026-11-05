@@ -28,9 +28,9 @@ class QSocketNotifier;
 
 namespace trikHal {
 
-/// Shared V4L2 capture implementation (mmap or USERPTR buffers, notifier-driven
-/// dequeue) for the target hardware. Streams start/stop and USB-webcam exposure
-/// handling live here; concrete devices only plug in their format negotiation.
+/// Shared V4L2 capture implementation (MMAP buffers, notifier-driven dequeue)
+/// for the target hardware. Streams start/stop and USB-webcam exposure handling
+/// live here; concrete devices only plug in their format negotiation.
 class VideoDeviceFileBase : public VideoDeviceFileInterface
 {
 	Q_OBJECT
@@ -38,10 +38,9 @@ class VideoDeviceFileBase : public VideoDeviceFileInterface
 public:
 	/// Records the requested capture parameters. The device is not touched until
 	/// open() is called. @p bufferCount is the number of V4L2 buffers to
-	/// allocate in MMAP mode (USERPTR mode uses the caller-provided list); the
-	/// default matches the shared DSP input geometry.
+	/// allocate.
 	VideoDeviceFileBase(const QString &devicePath, uint32_t width, uint32_t height, uint32_t preferredFourcc,
-		uint32_t bufferCount = trikKernel::dspInputBuffersPerRegion, bool isWebcam = false,
+		uint32_t bufferCount = 3, bool isWebcam = false,
 		QObject *parent = nullptr);
 
 	/// Closes the device (idempotent).
@@ -73,9 +72,14 @@ public:
 	{
 		return mLineLen;
 	}
-
-	/// See VideoDeviceFileInterface::setUserPtrBuffers().
-	void setUserPtrBuffers(const QVector<void *> &buffers, size_t bufferSize) override;
+	uint32_t actualWidth() const override
+	{
+		return mWidth;
+	}
+	uint32_t actualHeight() const override
+	{
+		return mHeight;
+	}
 
 protected:
 	/// Sets the capture format via VIDIOC_S_FMT. May be overridden to add extra
@@ -121,9 +125,6 @@ protected:
 	};
 	QVector<MmapBuf> mMmapBufs;
 
-	bool mUseUserPtr = false;
-	QVector<void *> mUserPtrBuffers;
-	size_t mUserPtrSize = 0;
 
 private Q_SLOTS:
 	void onActivated(int fd);

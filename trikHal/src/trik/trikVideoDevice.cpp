@@ -36,12 +36,7 @@ bool TrikVideoDevice::setFormat()
 		return false;
 	}
 
-	// TODO: the analog ov7670 ports deliberately do not set the PAL standard
-	// (VIDIOC_S_STD V4L2_STD_625_50) here. The sensor is brought up by the
-	// kernel driver's reinit sysfs node / I2C register programming in
-	// initVideoSensor(), and the target firmware does not require the legacy
-	// `v4l2-ctl -s pal` step. Revisit only if the analog camera ever reports
-	// wrong timings.
+	// USB cameras are opened directly; no legacy PAL standard setup is needed.
 
 	for (uint32_t i = 0;; ++i) {
 		v4l2_fmtdesc fdesc = {};

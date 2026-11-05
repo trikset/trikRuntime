@@ -25,8 +25,8 @@
 #include "stubIIOFile.h"
 #include "stubImuFile.h"
 #include "stubVideoDeviceFile.h"
-#include "stubFbOutput.h"
 #include "stubRga.h"
+#include "stubFbOutput.h"
 #include "stubDmaHeap.h"
 #include "QsLog.h"
 
@@ -111,16 +111,6 @@ VideoDeviceFileInterface *StubHardwareAbstraction::createVideoDeviceFile( // NOL
 	return new StubVideoDeviceFile(devicePath);
 }
 
-bool StubHardwareAbstraction::initVideoSensor(const QString &deviceFile, int i2cBus, int i2cAddress,
-	int gpioNumber) const
-{
-	Q_UNUSED(deviceFile);
-	Q_UNUSED(i2cBus);
-	Q_UNUSED(i2cAddress);
-	Q_UNUSED(gpioNumber);
-	return true;
-}
-
 FbOutputInterface *StubHardwareAbstraction::createFbOutput() const
 {
 	return new stub::StubFbOutput();
@@ -134,4 +124,11 @@ RgaInterface *StubHardwareAbstraction::createRga() const
 DmaHeapInterface *StubHardwareAbstraction::createDmaHeap() const
 {
 	return new stub::StubDmaHeap();
+}
+
+FrameBufferPtr StubHardwareAbstraction::acquireFrameBuffer(const FrameFormat &format, int count)
+{
+	Q_UNUSED(format);
+	Q_UNUSED(count);
+	return nullptr;
 }

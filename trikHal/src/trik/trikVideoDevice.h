@@ -29,7 +29,7 @@ class TrikVideoDevice : public trikHal::VideoDeviceFileBase
 public:
 	/// Forwards capture parameters to VideoDeviceFileBase.
 	TrikVideoDevice(const QString &devicePath, uint32_t width, uint32_t height, uint32_t fourcc,
-		uint32_t bufferCount = trikKernel::dspInputBuffersPerRegion, bool isWebcam = false);
+		uint32_t bufferCount = 3, bool isWebcam = false);
 
 protected:
 	/// Negotiates the format and reports whether the driver emulated it.

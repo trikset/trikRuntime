@@ -18,9 +18,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
-#include <QtCore/QRegularExpression>
 #include <QtCore/QStringList>
-#include <QtCore/QVariantMap>
 
 #include <QElapsedTimer>
 #include <QOperatingSystemVersion>
@@ -146,53 +144,9 @@ void ScriptExecutionControl::quit()
 	Q_EMIT quitSignal();
 }
 
-bool ScriptExecutionControl::redirectLegacyMjpgStreaming(const QString &command)
-{
-	// The old generated code started/stopped video streaming by running the
-	// mjpg-encoder-ov7670 / mjpg-streamer-ov7670 init scripts directly:
-	//   script.system("/etc/init.d/mjpg-encoder-ov7670 start --jpeg-qual 30 --white-black false"
-	//                 " && /etc/init.d/mjpg-streamer-ov7670 start");
-	//   script.system("/etc/init.d/mjpg-streamer-ov7670 stop"
-	//                 " && /etc/init.d/mjpg-encoder-ov7670 stop");
-	// These are intercepted here and redirected to the Brick translation API for
-	// the ov7670 port (video1), so old scripts keep working on the new runtime.
-
-	if (command.contains(QStringLiteral("mjpg-encoder-ov7670 start"))) {
-		QVariantMap params;
-		const static QRegularExpression qualRe(QStringLiteral("--jpeg-qual\\s+(\\d+)"));
-		const auto &qualMatch = qualRe.match(command);
-		if (qualMatch.hasMatch()) {
-			params.insert(QStringLiteral("jpeg-qual"), qualMatch.captured(1).toInt());
-		}
-
-		const static QRegularExpression bwRe(QStringLiteral("--white-black\\s+(\\w+)"));
-		const auto &bwMatch = bwRe.match(command);
-		if (bwMatch.hasMatch()) {
-			const auto &value = bwMatch.captured(1);
-			params.insert(QStringLiteral("white-black"),
-			              value == QStringLiteral("true") || value == QStringLiteral("1"));
-		}
-
-		QLOG_INFO() << "Redirecting legacy mjpg-encoder start to startVideoTranslation(video1)";
-		mBrick->startVideoTranslation(QStringLiteral("video2"), params);
-		return true;
-	}
-
-	if (command.contains(QStringLiteral("mjpg-streamer-ov7670 stop"))) {
-		QLOG_INFO() << "Redirecting legacy mjpg-streamer stop to stopVideoTranslation(video2)";
-		mBrick->stopVideoTranslation(QStringLiteral("video2"));
-		return true;
-	}
-
-	return false;
-}
-
 // NOLINTNEXTLINE(google-default-arguments)
 void ScriptExecutionControl::system(const QString &command, bool synchronously)
 {
-	if (redirectLegacyMjpgStreaming(command)) {
-		return;
-	}
 
 	if (!synchronously) {
 		QStringList args{"-c", command};
