@@ -32,7 +32,9 @@
 #include <QQmlContext>
 #include "fileManager.h"
 #include "runningCode.h"
-#include "videoPreviewItem.h"
+#if !defined(TRIK_NOT_BRICK) && defined(Q_OS_LINUX)
+#	include "videoPreviewItem.h"
+#endif
 #include <trikControl/keysInterface.h>
 #include <trikControl/videoPreviewHub.h>
 #include <QWindow>
@@ -54,7 +56,9 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	qmlRegisterTypesAndRevisions<MainMenuManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<TestingManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<WiFiMode>("com.trikGui", 1);
+#if !defined(TRIK_NOT_BRICK) && defined(Q_OS_LINUX)
 	qmlRegisterType<VideoPreviewOverlayItem>("com.trikGui", 1, 0, "VideoPreviewOverlayItem");
+#endif
 	qmlRegisterSingletonInstance<trikControl::VideoPreviewHub>("com.trikGui", 1, 0, "VideoPreviewHub",
 		mPreviewHub.get());
 	qmlRegisterSingletonInstance<MainMenuManager>("com.trikGui", 1, 0, "MainMenuManager", this);
