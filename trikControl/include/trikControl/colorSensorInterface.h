@@ -24,7 +24,11 @@
 
 namespace trikControl {
 
+/// Maximum supported M and N of a color sensor grid.
+constexpr int maxColorSensorGridSize = 10;
+
 /// Uses virtual color sensor to detect dominant color in every cell of m * n grid of camera field of view.
+/// M and N are limited to maxColorSensorGridSize.
 class TRIKCONTROL_EXPORT ColorSensorInterface : public QObject, public DeviceInterface
 {
 	Q_OBJECT

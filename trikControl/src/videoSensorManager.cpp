@@ -25,8 +25,8 @@
 namespace trikControl {
 
 VideoSensorManager::VideoSensorManager(const trikKernel::Configurer &configurer,
-	trikHal::HardwareAbstractionInterface &hardwareAbstraction,
-	const QSharedPointer<CameraManager> &cameraManager, std::shared_ptr<VideoPreviewSink> previewSink)
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QSharedPointer<CameraManager> &cameraManager,
+	std::shared_ptr<VideoPreviewSink> previewSink)
 	: mConfigurer(configurer)
 	, mHardwareAbstractionInterface(hardwareAbstraction)
 	, mCameraManager(cameraManager)
@@ -53,7 +53,7 @@ bool VideoSensorManager::checkManagerState(const QString &message) const
 
 void VideoSensorManager::createSensor(const QString &port, const QString &deviceClass)
 {
-	const int portId = mCameraManager->portId(port);
+	const auto portId = mCameraManager->portId(port);
 	if (portId < 0) {
 		QLOG_ERROR() << "VideoSensorManager: unknown port" << port;
 		return;
@@ -68,8 +68,7 @@ void VideoSensorManager::createSensor(const QString &port, const QString &device
 		return;
 	}
 
-	auto *s = new ColorSensor(port, mConfigurer, mCameraManager, mHardwareAbstractionInterface,
-		mPreviewSink.get());
+	auto *s = new ColorSensor(port, mConfigurer, mCameraManager, mHardwareAbstractionInterface, mPreviewSink);
 	mColorSensors.insert(portId, s);
 }
 
@@ -100,7 +99,7 @@ void VideoSensorManager::clear()
 
 void VideoSensorManager::releasePort(const QString &port)
 {
-	const int portId = mCameraManager->portId(port);
+	const auto portId = mCameraManager->portId(port);
 	auto it = mColorSensors.find(portId);
 	if (it != mColorSensors.end()) {
 		(*it)->stop();
@@ -114,7 +113,7 @@ bool VideoSensorManager::isVideoSensor(const QString &deviceClass)
 
 ColorSensorInterface *VideoSensorManager::colorSensor(const QString &port)
 {
-	const int id = mCameraManager->portId(port);
+	const auto id = mCameraManager->portId(port);
 	auto it = mColorSensors.find(id);
 	return it == mColorSensors.end() ? nullptr : *it;
 }

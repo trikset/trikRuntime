@@ -36,9 +36,9 @@ class VideoPreviewSink;
 
 /// Owns the CPU-backed video sensors and their camera lifetime.
 ///
-/// There is no DSP: a sensor runs entirely on the ARM CPU and pulls frames
-/// from CameraManager. The manager only creates/destroys sensors and forwards
-/// their stopped() notifications to the GUI.
+/// A sensor runs entirely on the ARM CPU and pulls frames from CameraManager.
+/// The manager only creates/destroys sensors and forwards their stopped()
+/// notifications to the GUI.
 class VideoSensorManager : public QObject
 {
 	Q_OBJECT
@@ -46,8 +46,7 @@ class VideoSensorManager : public QObject
 public:
 	explicit VideoSensorManager(const trikKernel::Configurer &configurer,
 		trikHal::HardwareAbstractionInterface &hardwareAbstraction,
-		const QSharedPointer<CameraManager> &cameraManager,
-		std::shared_ptr<VideoPreviewSink> previewSink);
+		const QSharedPointer<CameraManager> &cameraManager, std::shared_ptr<VideoPreviewSink> previewSink);
 	~VideoSensorManager() override;
 
 	ColorSensorInterface *colorSensor(const QString &port);
