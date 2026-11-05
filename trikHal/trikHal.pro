@@ -31,7 +31,6 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/IIOFileInterface.h \
 	$$PWD/include/trikHal/ImuFileInterface.h \
 	$$PWD/include/trikHal/VideoDeviceFileInterface.h \
-	$$PWD/include/trikHal/fbOutputInterface.h \
 	$$PWD/include/trikHal/dmaHeapInterface.h \
 	$$PWD/include/trikHal/frameFormat.h \
 	$$PWD/include/trikHal/frameBuffer.h \
@@ -47,9 +46,7 @@ PUBLIC_HEADERS += \
 		DEFINES += TRIK_HAS_RGA
 	}
 
-	PUBLIC_HEADERS += $$PWD/include/trikHal/physicalMemoryMapper.h
 	HEADERS += \
-		$$PWD/include/trikHal/physicalMemoryMapper.h \
 		$$PWD/src/trik/trikHardwareAbstraction.h \
 		$$PWD/src/trik/trikI2c.h \
 		$$PWD/src/trik/commonI2c.h \
@@ -65,7 +62,6 @@ PUBLIC_HEADERS += \
 		$$PWD/src/trik/trikImuFile.h \
 		$$PWD/src/trik/trikVideoDevice.h \
 		$$PWD/src/trik/videoDeviceFileBase.h \
-		$$PWD/src/trik/trikFbOutput.h \
 		$$PWD/src/trik/trikDmaHeap.h \
 		$$PWD/src/trik/trikDmaBuffer.h \
 		$$PWD/src/trik/trikRga.h \
@@ -88,7 +84,6 @@ HEADERS += \
 	$$PWD/src/stub/stubIIOFile.h \
 	$$PWD/src/stub/stubImuFile.h \
 	$$PWD/src/stub/stubVideoDeviceFile.h \
-	$$PWD/src/stub/stubFbOutput.h \
 	$$PWD/src/stub/stubDmaHeap.h \
 	$$PWD/src/stub/stubRga.h \
 
@@ -108,11 +103,9 @@ HEADERS += \
 		$$PWD/src/trik/trikImuFile.cpp \
 		$$PWD/src/trik/trikVideoDevice.cpp \
 		$$PWD/src/trik/videoDeviceFileBase.cpp \
-		$$PWD/src/trik/trikFbOutput.cpp \
 		$$PWD/src/trik/trikDmaHeap.cpp \
 		$$PWD/src/trik/trikDmaBuffer.cpp \
 		$$PWD/src/trik/trikRga.cpp \
-		$$PWD/src/trik/physicalMemoryMapper.cpp \
 }
 
 SOURCES += \
@@ -130,7 +123,6 @@ SOURCES += \
 	$$PWD/src/stub/stubIIOFile.cpp \
 	$$PWD/src/stub/stubImuFile.cpp \
 	$$PWD/src/stub/stubVideoDeviceFile.cpp \
-	$$PWD/src/stub/stubFbOutput.cpp \
 	$$PWD/src/stub/stubDmaHeap.cpp \
 	$$PWD/src/stub/stubRga.cpp \
 

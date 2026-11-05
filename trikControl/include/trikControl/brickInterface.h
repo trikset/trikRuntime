@@ -87,22 +87,21 @@ public Q_SLOTS:
 	/// Starts video translation (streaming) of the camera on @p port.
 	///
 	/// Kicks every other client off the port first: the video sensor (if any)
-	/// is stopped. For an ov7670 camera port (video1/video2) the DSP JPEG
-	/// encoder is scheduled and mjpg-streamer is fed through its FIFO; for a
-	/// usb-camera port the device is released so mjpg-streamer can open it
+	/// is stopped. For a usb-camera port the device is released so
+	/// mjpg-streamer can open it directly over UVC.
 	/// directly over UVC.
 	///
-	/// @param port  camera port (video1/video2 or usb-camera).
+	/// @param port  camera port (usb-camera-1, usb-camera-2, ...).
 	/// @param params  optional named parameters as a map/dict (Python dict or JS
 	///   object), passed as a QVariant:
-	///   - "jpeg-qual"   (int)  JPEG quality 1..100 (ov7670 ports only, default 40)
-	///   - "white-black" (bool) grayscale JPEG (ov7670 ports only, default false)
+	///   - "jpeg-qual"   (int)  JPEG quality 1..100 (ignored, kept for compatibility)
+	///   - "white-black" (bool) grayscale JPEG (ignored, kept for compatibility)
 	///   - "detached"    (bool) keep the stream alive after stop()/script end (default false)
 	virtual void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) = 0; // NOLINT(google-default-arguments)
 
 	/// Stops a video translation previously started on @p port, regardless of
 	/// whether it was started with "detached". Symmetric to startVideoTranslation():
-	/// runs the streamer stop script and stops the DSP JPEG encoder (video
+	/// runs the streamer stop script (video
 	/// ports) so the port can be reused. No-op if there is no translation on
 	/// @p port.
 	virtual void stopVideoTranslation(const QString &port) = 0;
@@ -138,13 +137,13 @@ public:
 	/// Returns on-board gyroscope.
 	Q_INVOKABLE virtual trikControl::GyroSensorInterface *gyroscope() = 0;
 
-	/// Returns high-level line detector sensor using camera on given port (video1 or video2).
+	/// Line sensor API is kept for compatibility; it is not available on the CPU-only video pipeline.
 	Q_INVOKABLE virtual trikControl::LineSensorInterface *lineSensor(const QString &port) = 0;
 
-	/// Returns high-level color sensor using camera on given port (video1 or video2).
+	/// Returns high-level color sensor using the camera on the given port.
 	Q_INVOKABLE virtual trikControl::ColorSensorInterface *colorSensor(const QString &port) = 0;
 
-	/// Returns high-level object detector sensor using camera on given port (video1 or video2).
+	/// Object sensor API is kept for compatibility; it is not available on the CPU-only video pipeline.
 	Q_INVOKABLE virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
 	/// Returns lidar on given port.
@@ -158,10 +157,10 @@ public:
 	// NOLINTNEXTLINE(google-default-arguments)
 	Q_INVOKABLE virtual trikControl::I2cDeviceInterface *i2c(int bus, int address, int regSize = 1) = 0;
 
-	/// Returns QVector<uint8_t> with image using camera on given port (video1 or video2).
+	/// Returns QVector<uint8_t> with an image from the camera on the given port.
 	// TODO: The default parameter is part of the public API. Consider backward compatibility
 	// NOLINTNEXTLINE(google-default-arguments)
-	Q_INVOKABLE virtual QVector<uint8_t> getStillImage(const QString &port = "video2") = 0;
+	Q_INVOKABLE virtual QVector<uint8_t> getStillImage(const QString &port = "usb-camera-1") = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
 	Q_INVOKABLE virtual trikControl::SoundSensorInterface *soundSensor(const QString &port) = 0;

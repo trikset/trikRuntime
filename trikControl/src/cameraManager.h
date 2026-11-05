@@ -284,8 +284,6 @@ public:
 		uint32_t fourcc = 0;
 		trikKernel::PixelFormat format = trikKernel::PixelFormat::Unknown;
 		uint32_t lineLength = 0;
-		uint32_t inputRegion = 0;
-		uint32_t inputBuffersPerRegion = 0;
 
 		/// Resolves the capture geometry for a payload of @p frameBytes.
 		///

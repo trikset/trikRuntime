@@ -28,7 +28,6 @@
 #include "QsLog.h"
 #include "commonI2c.h"
 #include "trikRga.h"
-#include "trikFbOutput.h"
 #include "trikDmaHeap.h"
 #include <trikHal/framePoolAllocator.h>
 
@@ -128,11 +127,6 @@ VideoDeviceFileInterface *TrikHardwareAbstraction::createVideoDeviceFile( // NOL
 	const QString &devicePath, uint32_t width, uint32_t height, uint32_t fourcc, bool isWebcam) const
 {
 	return new TrikVideoDevice(devicePath, width, height, fourcc, defaultVideoBufferCount, isWebcam);
-}
-
-FbOutputInterface *TrikHardwareAbstraction::createFbOutput() const
-{
-	return new trik::TrikFbOutput();
 }
 
 RgaInterface *TrikHardwareAbstraction::createRga() const

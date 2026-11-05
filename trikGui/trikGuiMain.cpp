@@ -18,6 +18,7 @@
 #include <QtCore/qglobal.h>
 
 #include <QtCore/QDir>
+#include <memory>
 
 #include <trikKernel/applicationInitHelper.h>
 #include <trikKernel/deinitializationHelper.h>
@@ -30,6 +31,7 @@
 #include <QFont>
 #include <QObject>
 #include <QQmlApplicationEngine>
+#include <trikControl/videoPreviewHub.h>
 #include <QQmlContext>
 #include <QSettings>
 #include <QQuickStyle>
@@ -55,6 +57,7 @@ void setStyle(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	setStyle(argc, argv);
+	std::shared_ptr<trikControl::VideoPreviewHub> previewHub;
 	TrikGuiApplication app(argc, argv);
 	setStyle(argc, argv);
 	trikKernel::DeinitializationHelper helper;
@@ -74,6 +77,8 @@ int main(int argc, char *argv[])
 	}
 	initHelper.init();
 
+	previewHub = std::make_shared<trikControl::VideoPreviewHub>();
+
 	VirtualKeySender virtualKeySender;
 	engine->rootContext()->setContextProperty("VirtualKeySender", &virtualKeySender);
 
@@ -83,7 +88,7 @@ int main(int argc, char *argv[])
 
 	QLOG_INFO() << "TrikGui started";
 
-	MainMenuManager mainMenuManager(initHelper.configPath(), engine, &app);
+	MainMenuManager mainMenuManager(initHelper.configPath(), engine, &app, previewHub);
 	const QUrl url(QStringLiteral("qrc:/qml/main.qml"));
 	QObject::connect(engine, &QQmlApplicationEngine::objectCreated, &app, [url](QObject *obj, const QUrl &objUrl) {
 		if (!obj && url == objUrl)

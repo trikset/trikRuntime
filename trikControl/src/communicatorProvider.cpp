@@ -66,14 +66,13 @@ void CommunicatorProvider::createUsbCommunicator()
 
 		usb->setTelemetryPeriodUs(telemetryPeriodUs, isoPacketsPerUrb);
 
-		auto *nrf = new NrfUsbCommunicator(std::move(usb), telemetryPeriodUs);
+		auto nrf = std::make_unique<NrfUsbCommunicator>(std::move(usb), telemetryPeriodUs);
 		if (!nrf->connect()) {
 			QLOG_ERROR() << "CommunicatorProvider: NrfUsbCommunicator connect failed";
-			delete nrf;
 			return;
 		}
 
-		mUsb.reset(nrf);
+		mUsb.reset(nrf.release());
 		QLOG_INFO() << "CommunicatorProvider: using USB nRF communicator";
 	} catch (const trikKernel::MalformedConfigException &e) {
 		QLOG_INFO() << "CommunicatorProvider: nrfUsb is not configured, skipping:" << e.errorMessage();

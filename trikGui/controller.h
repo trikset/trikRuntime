@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <trikCommunicator/trikCommunicator.h>
 #include <trikControl/brickInterface.h>
 #include <trikNetwork/mailboxInterface.h>
@@ -22,6 +24,10 @@
 
 namespace trikWiFi {
 class TrikWiFi;
+}
+
+namespace trikControl {
+class VideoPreviewHub;
 }
 
 namespace trikGui {
@@ -37,7 +43,8 @@ public:
 
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
-	explicit Controller(const QString &configPath);
+	explicit Controller(const QString &configPath,
+		std::shared_ptr<trikControl::VideoPreviewHub> previewHub);
 
 	~Controller() override;
 

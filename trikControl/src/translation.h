@@ -16,9 +16,8 @@
 
 #include <QtCore/QScopedPointer>
 #include <QtCore/QSharedPointer>
+#include <QtCore/QProcess>
 #include <QtCore/QString>
-
-class QProcess;
 
 namespace trikControl {
 
@@ -26,7 +25,6 @@ namespace trikControl {
 struct Translation {
 	QString streamerScript;
 	bool detached = false;
-	bool isUsb = false;
 
 	/// RAII owner of the mjpg_streamer process. QProcess is thread-affine (its
 	/// socket notifiers are bound to the creating thread), and start() may run on

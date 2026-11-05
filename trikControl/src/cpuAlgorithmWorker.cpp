@@ -1,0 +1,304 @@
+/* Copyright 2026 CyberTech Labs Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License. */
+
+#include "cpuAlgorithmWorker.h"
+
+#include <algorithm>
+#include <cstring>
+#include <utility>
+
+#include <QsLog.h>
+
+using namespace trikControl;
+
+namespace {
+
+trikHal::RgaFormat toRgaFormat(trikKernel::PixelFormat format)
+{
+	switch (format) {
+	case trikKernel::PixelFormat::Nv16:
+		return trikHal::RgaFormat::Nv16;
+	case trikKernel::PixelFormat::Yuyv:
+		return trikHal::RgaFormat::Yuyv;
+	default:
+		return trikHal::RgaFormat::Unknown;
+	}
+}
+
+} // namespace
+
+CpuAlgorithmWorker::CpuAlgorithmWorker(QSharedPointer<CameraManager> camera, int portId, QString port,
+	trikHal::HardwareAbstractionInterface &hal, VideoPreviewSink *previewSink, int previewBufferCount,
+	QObject *parent)
+	: QThread(parent)
+	, mCamera(std::move(camera))
+	, mPortId(portId)
+	, mPort(std::move(port))
+	, mHal(hal)
+	, mSink(previewSink)
+	, mRga(mHal.createRga())
+	, mDmaHeap(mHal.createDmaHeap())
+	, mPreviewBufferCount(previewBufferCount)
+{
+	mAvailable = mRga && mRga->isAvailable() && mDmaHeap;
+	if (!mAvailable) {
+		QLOG_ERROR() << "CpuAlgorithmWorker: RGA is not available on" << mPort;
+	}
+}
+
+CpuAlgorithmWorker::~CpuAlgorithmWorker()
+{
+	stop(true);
+}
+
+void CpuAlgorithmWorker::start(bool showOnDisplay)
+{
+	if (!mAvailable || !mCamera || isRunning()) {
+		return;
+	}
+
+	if (mCamera && mPortId >= 0 && !mCameraAcquired) {
+		mCamera->acquire(mPortId);
+		mCameraAcquired = true;
+	}
+
+	if (showOnDisplay && mSink) {
+		mSink->activate(mPortId);
+		mPreviewEnabled = true;
+	}
+
+	mRunning.store(true, std::memory_order_release);
+	mAbort.store(false, std::memory_order_release);
+	QThread::start();
+}
+
+void CpuAlgorithmWorker::stop(bool releaseCamera)
+{
+	mRunning.store(false, std::memory_order_release);
+	mAbort.store(true, std::memory_order_release);
+
+	if (mCamera) {
+		mCamera->abortFrameWaits(&mAbort);
+	}
+
+	if (isRunning()) {
+		wait();
+	}
+
+	if (mPreviewEnabled && mSink) {
+		mSink->deactivate(mPortId);
+		mPreviewEnabled = false;
+	}
+
+	if (releaseCamera && mCamera && mCameraAcquired) {
+		mCamera->release(mPortId);
+		mCameraAcquired = false;
+	}
+}
+
+void CpuAlgorithmWorker::run()
+{
+	if (!mCamera) {
+		QLOG_ERROR() << "CpuAlgorithmWorker: no camera manager for" << mPort;
+		return;
+	}
+
+	QLOG_INFO() << "CpuAlgorithmWorker: loop started on" << QThread::currentThread() << "for" << mPort;
+
+	uint32_t seenSeq = 0;
+	while (mRunning.load(std::memory_order_acquire)) {
+		Frame frame = mCamera->getFrame(mPortId, seenSeq, -1, &mAbort);
+		if (!mRunning.load(std::memory_order_acquire)) {
+			break;
+		}
+		if (!frame.isValid()) {
+			continue;
+		}
+
+		seenSeq = frame.sequence();
+		processSourceFrame(frame);
+	}
+
+	QLOG_INFO() << "CpuAlgorithmWorker: loop stopped for" << mPort;
+}
+
+void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
+{
+	const auto info = mCamera->info(mPortId);
+	uint32_t srcWidth = 0;
+	uint32_t srcHeight = 0;
+	uint32_t srcStride = 0;
+	if (!frame.data() || !info.captureGeometry(frame.size(), &srcWidth, &srcHeight, &srcStride)) {
+		if (!mGeometryWarned) {
+			QLOG_ERROR() << "CpuAlgorithmWorker: invalid capture frame on" << mPort << "(" << frame.size()
+				     << "bytes)";
+			mGeometryWarned = true;
+		}
+		frame.release();
+		return;
+	}
+
+	const auto dstFormat = scaledFormat(static_cast<int>(srcWidth), static_cast<int>(srcHeight));
+	if (dstFormat.width == 0 || dstFormat.height == 0 || dstFormat.stride == 0) {
+		frame.release();
+		return;
+	}
+
+	// Prefer a pooled buffer from HAL so the same dma-buf can go to the GPU.
+	// If every buffer is held by a consumer, fall back to a private scratch
+	// buffer and skip publishing: the algorithm must keep working regardless
+	// of display load.
+	trikHal::FrameBufferPtr previewBuffer;
+	trikHal::FrameBuffer *dst = nullptr;
+
+	if (mPreviewEnabled && mSink) {
+		previewBuffer = mHal.acquireFrameBuffer(dstFormat, mPreviewBufferCount);
+		dst = previewBuffer.get();
+	}
+
+	if (!dst) {
+		if (!ensureScratch(dstFormat)) {
+			frame.release();
+			return;
+		}
+		dst = mScratch.get();
+	}
+
+	BgraFrameView view;
+	if (!scaleWithRga(frame, static_cast<int>(srcWidth), static_cast<int>(srcHeight), static_cast<int>(srcStride),
+			info.format, dstFormat, *dst, &view)) {
+		frame.release();
+		return;
+	}
+
+	frame.release();
+
+	if (!processFrame(view)) {
+		dst->syncEnd(false);
+		return;
+	}
+
+	if (previewBuffer && mSink) {
+		const auto overlay = buildOverlay(view);
+
+		VideoPreviewFrame preview;
+		preview.buffer = previewBuffer;
+		preview.overlay = overlay.overlay;
+		preview.overlayGeneration = overlay.generation;
+		mSink->publish(mPortId, preview);
+	}
+
+	dst->syncEnd(false);
+}
+
+bool CpuAlgorithmWorker::ensureInputBuffer(size_t bytes)
+{
+	if (mScaleInput && mScaleInput->size() >= bytes) {
+		return true;
+	}
+
+	if (!mDmaHeap) {
+		return false;
+	}
+
+	mScaleInput.reset(mDmaHeap->allocate(bytes));
+	return mScaleInput != nullptr;
+}
+
+bool CpuAlgorithmWorker::ensureScratch(const trikHal::FrameFormat &format)
+{
+	if (!mDmaHeap) {
+		return false;
+	}
+
+	if (mScratch && mScratch->size() >= format.byteSize()) {
+		mScratch->setFormat(format);
+		return true;
+	}
+
+	std::unique_ptr<trikHal::DmaBufferInterface> dma(mDmaHeap->allocate(format.byteSize()));
+	if (!dma) {
+		return false;
+	}
+
+	mScratch.reset(new trikHal::FrameBuffer(std::move(dma), format));
+	return true;
+}
+
+bool CpuAlgorithmWorker::scaleWithRga(const Frame &src, int srcWidth, int srcHeight, int srcStride,
+	trikKernel::PixelFormat srcFormat, const trikHal::FrameFormat &dstFormat,
+	trikHal::FrameBuffer &dst, BgraFrameView *out)
+{
+	if (!mRga || !mDmaHeap) {
+		return false;
+	}
+
+	const auto rgaFormat = toRgaFormat(srcFormat);
+	if (rgaFormat == trikHal::RgaFormat::Unknown) {
+		if (!mRgaErrorLogged) {
+			QLOG_ERROR() << "CpuAlgorithmWorker: RGA does not support the capture format on" << mPort;
+			mRgaErrorLogged = true;
+		}
+		return false;
+	}
+
+	const bool yuyv = srcFormat == trikKernel::PixelFormat::Yuyv;
+	const auto srcStridePixels = static_cast<int>(yuyv ? srcStride / 2 : srcStride);
+	const size_t srcBytes = yuyv
+		? static_cast<size_t>(srcStride) * srcHeight
+		: static_cast<size_t>(srcStride) * srcHeight * 2;
+
+	if (!ensureInputBuffer(std::max(srcBytes, src.size()))) {
+		if (!mRgaErrorLogged) {
+			QLOG_ERROR() << "CpuAlgorithmWorker: failed to allocate RGA input on" << mPort;
+			mRgaErrorLogged = true;
+		}
+		return false;
+	}
+
+	if (dst.size() < dstFormat.byteSize()) {
+		if (!mRgaErrorLogged) {
+			QLOG_ERROR() << "CpuAlgorithmWorker: RGA output buffer too small on" << mPort << "(" << dst.size()
+				     << "<" << dstFormat.byteSize() << ")";
+			mRgaErrorLogged = true;
+		}
+		return false;
+	}
+
+	mScaleInput->syncStart(true);
+	std::memcpy(mScaleInput->data(), src.data(), std::min(src.size(), mScaleInput->size()));
+	mScaleInput->syncEnd(true);
+
+	const trikHal::RgaImage srcImage {mScaleInput->fd(), srcWidth, srcHeight, rgaFormat, srcStridePixels};
+	const trikHal::RgaImage dstImage {dst.fd(), static_cast<int>(dstFormat.width),
+		static_cast<int>(dstFormat.height), trikHal::RgaFormat::Bgra8888,
+		static_cast<int>(dstFormat.stride / 4)};
+
+	QString error;
+	if (!mRga->process(srcImage, dstImage, &error)) {
+		if (!mRgaErrorLogged) {
+			QLOG_ERROR() << "CpuAlgorithmWorker: RGA process failed on" << mPort << ":" << error;
+			mRgaErrorLogged = true;
+		}
+		return false;
+	}
+
+	dst.syncStart(false);
+
+	out->data = static_cast<const uint8_t *>(dst.data());
+	out->width = static_cast<int>(dstFormat.width);
+	out->height = static_cast<int>(dstFormat.height);
+	out->stride = static_cast<int>(dstFormat.stride);
+	return true;
+}

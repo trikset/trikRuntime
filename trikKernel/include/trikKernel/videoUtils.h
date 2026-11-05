@@ -29,20 +29,9 @@ static constexpr uint32_t V4L2_PIX_FMT_YUYV = 0x56595559; // 'Y', 'U', 'Y', 'V'
 
 namespace trikKernel {
 
-/// DSP capture geometry. Single source of truth for the ARM side; the DSP
-/// firmware keeps its own copy in
-/// trikDsp/trik-media-sensors/shared/include/trik/buffer.h (IMG_WIDTH/IMG_HEIGHT/
-/// BUFFER_SIZE/TRIK_INPUT_*). trikDsp static_asserts these against the firmware
-/// header, so a drift is caught at compile time. The firmware linker places the
-/// input region (`in_buff`) at dspInputPhysAddress; VPIF DMA captures into it
-/// via V4L2 USERPTR and the DSP reads each frame from base + slot offset.
-constexpr uint32_t dspInputWidth = 320; ///< IMG_WIDTH
-constexpr uint32_t dspInputHeight = 240; ///< IMG_HEIGHT
-constexpr uint32_t dspInputFrameSize = dspInputWidth * dspInputHeight * 2; ///< BUFFER_SIZE
-constexpr uint32_t dspInputRegions = 3; ///< TRIK_INPUT_REGIONS
-constexpr uint32_t dspInputBuffersPerRegion = 3; ///< TRIK_INPUT_BUFFERS
-constexpr uint32_t dspInputBufferTotal = dspInputRegions * dspInputBuffersPerRegion; ///< TRIK_INPUT_TOTAL
-constexpr uintptr_t dspInputPhysAddress = 0xc4000100; ///< firmware linker map
+/// Preview geometry used by the CPU video algorithms.
+constexpr uint32_t videoPreviewWidth = 320;
+constexpr uint32_t videoPreviewHeight = 240;
 
 enum class PixelFormat { Nv16, Yuyv, Unknown };
 

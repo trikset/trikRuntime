@@ -18,11 +18,12 @@
 
 using namespace trikControl;
 
-QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format){
+QImage Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int height, const QString &format)
+{
 	// QImage requires 32-bit aligned scan lines
 	// Helper function to convert data
 	uchar *formattedData = nullptr;
-	auto copyAligned = [&](int perLine){
+	auto copyAligned = [&](int perLine) {
 		const auto realSize = perLine * height;
 		if (realSize > array.size()) {
 			QLOG_WARN() << "imageFromBytes: not enough data";
@@ -59,7 +60,11 @@ QImage  Utilities::imageFromBytes(const QVector<int32_t> &array, int width, int 
 	if (!formattedData) {
 		return QImage();
 	} else {
-		static auto cleanUp = [](void *p) { if (p) delete [](static_cast<decltype (formattedData)>(p)); };
+		static auto cleanUp = [](void *p) {
+			if (p) {
+				delete[] static_cast<decltype(formattedData)>(p);
+			}
+		};
 		return QImage(formattedData, width, height, fmt, cleanUp, formattedData);
 	}
 }
@@ -84,8 +89,8 @@ QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> &data)
 	constexpr auto IMAGE_WIDTH = 320;
 	constexpr auto IMAGE_HEIGHT = 240;
 	if (data.size() >= IMAGE_WIDTH * IMAGE_HEIGHT * 3) {
-		for(int row = 0; row < IMAGE_HEIGHT; row += 2) {
-			for(int col = 0; col < IMAGE_WIDTH; col += 2) {
+		for (int row = 0; row < IMAGE_HEIGHT; row += 2) {
+			for (int col = 0; col < IMAGE_WIDTH; col += 2) {
 				auto row1 = &data[(row * IMAGE_WIDTH + col) * 3];
 				auto row2 = row1 + IMAGE_WIDTH * 3;
 				auto r1 = row1[0];
@@ -101,9 +106,8 @@ QVector<int32_t> Utilities::rescalePhoto(const QVector<uchar> &data)
 				auto g4 = row2[4];
 				auto b4 = row2[5];
 
-				result.push_back((getMedian(r1, r2, r3, r4) << 16)
-					| (getMedian(g1, g2, g3, g4) << 8)
-					| getMedian(b1, b2, b3, b4));
+				result.push_back((getMedian(r1, r2, r3, r4) << 16) | (getMedian(g1, g2, g3, g4) << 8)
+						 | getMedian(b1, b2, b3, b4));
 			}
 		}
 	}

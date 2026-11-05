@@ -90,7 +90,6 @@ equal to its class name.
 		<mailbox port="8889" optional="true" />
 
 		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
-		<dspServer optional="true" />
                 <irCamera />
 	</deviceClasses>
 

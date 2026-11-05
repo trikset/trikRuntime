@@ -15,6 +15,7 @@
 #pragma once
 
 #include <QtCore/QString>
+#include <memory>
 
 #include <trikControl/trikControlDeclSpec.h>
 
@@ -25,6 +26,7 @@ class HardwareAbstractionInterface;
 namespace trikControl {
 
 class BrickInterface;
+class VideoPreviewSink;
 
 /// Factory that creates brick object for a real robot.
 class TRIKCONTROL_EXPORT BrickFactory
@@ -35,13 +37,15 @@ public:
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
-	static BrickInterface *create(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
+	static BrickInterface *create(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+		const std::shared_ptr<VideoPreviewSink> &previewSink = nullptr);
 
 	/// Convenience method that creates brick with default config files, "system-config.xml" and "model-config.xml".
 	/// Transfers ownership over BrickInterface object to caller.
 	/// @param configFilesPath - path to system-config.xml and model-config.xml.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
-	static BrickInterface *create(const QString &configFilesPath = ".", const QString &mediaPath = ".");
+	static BrickInterface *create(const QString &configFilesPath = ".", const QString &mediaPath = ".",
+		const std::shared_ptr<VideoPreviewSink> &previewSink = nullptr);
 
 	/// Method that creates brick using given hardware abstraction layer, to be called from tests (they can use dummy
 	/// hardware implementation to check trikControl configuration, device management and conversions capability).
@@ -54,7 +58,8 @@ public:
 			trikHal::HardwareAbstractionInterface &hardwareAbstraction
 			, const QString &systemConfig
 			, const QString &modelConfig
-			, const QString &mediaPath);
+			, const QString &mediaPath
+			, const std::shared_ptr<VideoPreviewSink> &previewSink = nullptr);
 };
 
 }

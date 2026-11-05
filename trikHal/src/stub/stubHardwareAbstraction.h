@@ -43,7 +43,6 @@ public:
 	// NOLINTNEXTLINE(google-default-arguments)
 	VideoDeviceFileInterface *createVideoDeviceFile(const QString &devicePath, uint32_t width, uint32_t height,
 		uint32_t fourcc, bool isWebcam = false) const override;
-	FbOutputInterface *createFbOutput() const override;
 	RgaInterface *createRga() const override;
 	DmaHeapInterface *createDmaHeap() const override;
 	FrameBufferPtr acquireFrameBuffer(const FrameFormat &format, int count) override;

@@ -27,7 +27,6 @@
 #include "VideoDeviceFileInterface.h"
 #include "dmaHeapInterface.h"
 #include "frameBuffer.h"
-#include "fbOutputInterface.h"
 #include "rgaInterface.h"
 
 #include <trikHal/trikHalDeclSpec.h>
@@ -91,7 +90,6 @@ public:
 		bool isWebcam = false) const = 0;
 
 	/// Creates the RGA (2D accelerator) wrapper. Ownership passes to the caller.
-	virtual FbOutputInterface *createFbOutput() const = 0;
 	virtual RgaInterface *createRga() const = 0;
 
 	/// Creates the DMA heap used for RGA-compatible buffers. Ownership passes to the caller.

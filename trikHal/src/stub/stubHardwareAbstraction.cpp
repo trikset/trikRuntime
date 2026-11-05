@@ -26,7 +26,6 @@
 #include "stubImuFile.h"
 #include "stubVideoDeviceFile.h"
 #include "stubRga.h"
-#include "stubFbOutput.h"
 #include "stubDmaHeap.h"
 #include "QsLog.h"
 
@@ -109,11 +108,6 @@ VideoDeviceFileInterface *StubHardwareAbstraction::createVideoDeviceFile( // NOL
 	Q_UNUSED(fourcc);
 	Q_UNUSED(isWebcam);
 	return new StubVideoDeviceFile(devicePath);
-}
-
-FbOutputInterface *StubHardwareAbstraction::createFbOutput() const
-{
-	return new stub::StubFbOutput();
 }
 
 RgaInterface *StubHardwareAbstraction::createRga() const

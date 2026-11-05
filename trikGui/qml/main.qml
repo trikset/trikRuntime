@@ -7,19 +7,22 @@ import com.trikGui 1.0
 
 ApplicationWindow {
     id: root
-    visible: true
+    flags: Qt.Window | Qt.BypassWindowManagerHint
     x: 0
     y: 0
     width: 480
     height: 854
-    flags: Qt.Window | Qt.BypassWindowManagerHint
+    visible: false
     title: qsTr("TRIK")
+
+    Component.onCompleted: {
+        root.visible = true
+        root.requestActivate()
+    }
 
     property string iconsPath: "../resourcesQml/"
     property var activeTheme: ThemeMode === "light" ? _lightTheme : _darkTheme
     property var fontSizes: _fontSizes
-
-    Component.onCompleted: root.requestActivate()
 
     function navigateBack() {
         if (stack.depth > 1) {
@@ -159,5 +162,12 @@ ApplicationWindow {
             Layout.preferredHeight: 60
             z: 10
         }
+    }
+
+    VideoPreviewOverlay {
+        anchors.top: parent.top
+        anchors.topMargin: 0.08 * root.height
+        anchors.horizontalCenter: parent.horizontalCenter
+        z: 100
     }
 }

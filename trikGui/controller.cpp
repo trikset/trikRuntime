@@ -24,6 +24,7 @@
 #include <trikKernel/paths.h>
 #include <trikKernel/exceptions/internalErrorException.h>
 #include <trikControl/brickFactory.h>
+#include <trikControl/videoPreviewHub.h>
 #include <trikControl/gamepadInterface.h>
 #include <trikNetwork/mailboxFactory.h>
 #include <trikWiFi/trikWiFi.h>
@@ -37,8 +38,8 @@ using namespace trikGui;
 const int communicatorPort = 8888;
 const int telemetryPort = 9000;
 
-Controller::Controller(const QString &configPath)
-	: mBrick(trikControl::BrickFactory::create(configPath, trikKernel::Paths::mediaPath()))
+Controller::Controller(const QString &configPath, std::shared_ptr<trikControl::VideoPreviewHub> previewHub)
+	: mBrick(trikControl::BrickFactory::create(configPath, trikKernel::Paths::mediaPath(), previewHub))
 {
 	if (configPath.isEmpty()) {
 		throw trikKernel::InternalErrorException("Config path is empty");
