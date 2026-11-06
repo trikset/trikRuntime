@@ -24,7 +24,7 @@ namespace trikControl {
 
 /// Read-only side of the video preview pipeline.
 ///
-/// A display consumer (for example VideoPreviewOverlayItem) depends only on
+/// A display consumer (for example VideoPreviewStreamItem) depends only on
 /// this interface: it asks for the latest frame or the set of active ids and
 /// subscribes to change notifications. Frame production is described by
 /// VideoPreviewSink, so producers do not need Qt signals, QML or the concrete

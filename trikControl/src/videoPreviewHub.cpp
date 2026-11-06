@@ -18,11 +18,16 @@
 
 #include <QtCore/QMutexLocker>
 
+#include "videoPreviewModel.h"
+
 using namespace trikControl;
 
 VideoPreviewHub::VideoPreviewHub(QObject *parent)
 	: VideoPreviewSource(parent)
 {
+	mPreviewModel = new VideoPreviewModel(this);
+	connect(this, &VideoPreviewHub::previewOpened, mPreviewModel, &VideoPreviewModel::addId);
+	connect(this, &VideoPreviewHub::previewClosed, mPreviewModel, &VideoPreviewModel::removeId);
 }
 
 void VideoPreviewHub::rebuildActiveIdsLocked()
@@ -48,6 +53,7 @@ int VideoPreviewHub::openPreview()
 	}
 
 	Q_EMIT activeChanged();
+	Q_EMIT previewOpened(id);
 	return id;
 }
 
@@ -64,6 +70,7 @@ void VideoPreviewHub::closePreview(int id)
 
 	if (changed) {
 		Q_EMIT activeChanged();
+		Q_EMIT previewClosed(id);
 	}
 }
 
@@ -104,4 +111,9 @@ QVariantList VideoPreviewHub::activeIds() const
 {
 	QMutexLocker locker(&mMutex);
 	return mActiveIds;
+}
+
+QAbstractItemModel *VideoPreviewHub::previewModel() const
+{
+	return mPreviewModel;
 }

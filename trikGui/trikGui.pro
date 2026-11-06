@@ -112,11 +112,11 @@ SOURCES += \
     # EGL dma-buf import for zero-copy video preview textures.
     LIBS += -lEGL
     HEADERS += \
-        $$PWD/videoPreviewItem.h \
+        $$PWD/videoPreviewStreamItem.h \
         $$PWD/videoDmaTexture.h \
         $$PWD/videoOverlayTexture.h
     SOURCES += \
-        $$PWD/videoPreviewItem.cpp \
+        $$PWD/videoPreviewStreamItem.cpp \
         $$PWD/videoDmaTexture.cpp \
         $$PWD/videoOverlayTexture.cpp
 }

@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <QtCore/QAbstractItemModel>
 #include <QtCore/QHash>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
@@ -24,6 +25,8 @@
 #include <trikControl/videoPreviewSource.h>
 
 namespace trikControl {
+
+class VideoPreviewModel;
 
 /// Concrete latest-wins store shared by preview producers and consumers.
 ///
@@ -50,6 +53,7 @@ class TRIKCONTROL_EXPORT VideoPreviewHub : public VideoPreviewSource, public Vid
 {
 	Q_OBJECT
 	Q_PROPERTY(QVariantList activeIds READ activeIds NOTIFY activeChanged)
+	Q_PROPERTY(QAbstractItemModel *previewModel READ previewModel CONSTANT)
 
 public:
 	/// Creates an empty store. @p parent is passed to QObject.
@@ -86,6 +90,20 @@ public:
 	/// used by QML; activeChanged() is its NOTIFY signal.
 	QVariantList activeIds() const override;
 
+	/// Incremental model of the currently open preview ids.
+	///
+	/// Unlike activeIds(), which is a snapshot rebuild on every change, this
+	/// model emits row insertions/removals, so a Repeater keeps untouched
+	/// delegates alive when one sensor is opened or stopped.
+	QAbstractItemModel *previewModel() const;
+
+Q_SIGNALS:
+	/// Emitted after a new preview id has been added to previewModel().
+	void previewOpened(int id);
+
+	/// Emitted after @p id has been removed from previewModel().
+	void previewClosed(int id);
+
 private:
 	/// Per-id latest frame and its publication counter.
 	struct Entry {
@@ -111,6 +129,9 @@ private:
 
 	/// Sorted snapshot exposed to consumers and QML. Rebuilt under mMutex.
 	QVariantList mActiveIds;
+
+	/// Incremental preview-id model fed by previewOpened()/previewClosed().
+	VideoPreviewModel *mPreviewModel = nullptr;
 };
 
 } // namespace trikControl

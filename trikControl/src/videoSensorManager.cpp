@@ -64,13 +64,6 @@ void VideoSensorManager::createSensor(const QString &port, const QString &device
 	}
 
 	if (deviceClass == QStringLiteral("colorSensor")) {
-		auto lineIt = mLineSensors.find(portId);
-		if (lineIt != mLineSensors.end()) {
-			(*lineIt)->stop();
-			delete *lineIt;
-			mLineSensors.erase(lineIt);
-		}
-
 		if (mColorSensors.contains(portId)) {
 			return;
 		}
@@ -82,13 +75,6 @@ void VideoSensorManager::createSensor(const QString &port, const QString &device
 	}
 
 	if (deviceClass == QStringLiteral("lineSensor")) {
-		auto colorIt = mColorSensors.find(portId);
-		if (colorIt != mColorSensors.end()) {
-			(*colorIt)->stop();
-			delete *colorIt;
-			mColorSensors.erase(colorIt);
-		}
-
 		if (mLineSensors.contains(portId)) {
 			return;
 		}

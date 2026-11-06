@@ -34,7 +34,7 @@
 #include "fileManager.h"
 #include "runningCode.h"
 #if !defined(TRIK_NOT_BRICK) && defined(Q_OS_LINUX)
-#	include "videoPreviewItem.h"
+#	include "videoPreviewStreamItem.h"
 #endif
 #include <trikControl/keysInterface.h>
 #include <trikControl/videoPreviewHub.h>
@@ -58,7 +58,7 @@ MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngin
 	qmlRegisterTypesAndRevisions<TestingManager>("com.trikGui", 1);
 	qmlRegisterTypesAndRevisions<WiFiMode>("com.trikGui", 1);
 #if !defined(TRIK_NOT_BRICK) && defined(Q_OS_LINUX)
-	qmlRegisterType<VideoPreviewOverlayItem>("com.trikGui", 1, 0, "VideoPreviewOverlayItem");
+	qmlRegisterType<VideoPreviewStreamItem>("com.trikGui", 1, 0, "VideoPreviewStreamItem");
 #endif
 	qmlRegisterSingletonInstance<trikControl::VideoPreviewHub>("com.trikGui", 1, 0, "VideoPreviewHub",
 		mPreviewHub.get());

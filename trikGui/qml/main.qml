@@ -23,6 +23,7 @@ ApplicationWindow {
     property string iconsPath: "../resourcesQml/"
     property var activeTheme: ThemeMode === "light" ? _lightTheme : _darkTheme
     property var fontSizes: _fontSizes
+    readonly property real statusBarHeightRatio: 0.07
 
     function navigateBack() {
         if (stack.depth > 1) {
@@ -51,7 +52,7 @@ ApplicationWindow {
             id: _statusBar
             z: 10
             Layout.fillWidth: true
-            Layout.preferredHeight: 0.08 * parent.height
+            Layout.preferredHeight: root.statusBarHeightRatio * parent.height
             Layout.alignment: Qt.AlignTop
         }
 
@@ -158,16 +159,22 @@ ApplicationWindow {
             color: activeTheme.backgroundColor
         }
         VirtualKeyPanel {
+            id: _virtualKeyPanel
             Layout.fillWidth: true
             Layout.preferredHeight: 60
             z: 10
         }
     }
 
-    VideoPreviewOverlay {
+    // Status bar and the virtual key panel are non-active areas: previews live
+    // strictly between them and never overlap either.
+    VideoPreviewList {
         anchors.top: parent.top
-        anchors.topMargin: 0.08 * root.height
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.topMargin: _statusBar.height
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: _virtualKeyPanel.height
+        anchors.left: parent.left
+        anchors.right: parent.right
         z: 100
     }
 }

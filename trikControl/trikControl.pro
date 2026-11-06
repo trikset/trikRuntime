@@ -110,6 +110,7 @@ HEADERS += \
 	$$PWD/src/servoMotor/internal.h \
 	$$PWD/src/soundSensor.h \
 	$$PWD/src/videoSensorManager.h \
+	$$PWD/src/videoPreviewModel.h \
 	$$PWD/src/cameraManager.h \
 	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/tonePlayer.h \
@@ -148,6 +149,7 @@ SOURCES += \
 	$$PWD/src/algorithm/cpuAlgorithmWorker.cpp \
 	$$PWD/src/algorithm/lineSensorWorker.cpp \
 	$$PWD/src/videoPreviewHub.cpp \
+	$$PWD/src/videoPreviewModel.cpp \
 	$$PWD/src/deviceFactory.cpp \
 	$$PWD/src/deviceState.cpp \
 	$$PWD/src/digitalSensor.cpp \
