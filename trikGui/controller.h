@@ -44,7 +44,7 @@ public:
 	/// Constructor.
 	/// @param configPath - path to config file for trikControl, for example, /home/root/trik/.
 	explicit Controller(const QString &configPath,
-		std::shared_ptr<trikControl::VideoPreviewHub> previewHub);
+		const std::shared_ptr<trikControl::VideoPreviewHub> &previewHub);
 
 	~Controller() override;
 

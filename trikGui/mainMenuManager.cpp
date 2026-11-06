@@ -30,6 +30,7 @@
 #include "wiFiIndicator.h"
 #include <QProcess>
 #include <QQmlContext>
+#include <utility>
 #include "fileManager.h"
 #include "runningCode.h"
 #if !defined(TRIK_NOT_BRICK) && defined(Q_OS_LINUX)
@@ -48,7 +49,7 @@ using namespace trikGui;
 MainMenuManager::MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine,
 	TrikGuiApplication *trikGuiApp, std::shared_ptr<trikControl::VideoPreviewHub> previewHub)
 	: QObject(trikGuiApp)
-	, mPreviewHub(previewHub)
+	, mPreviewHub(std::move(previewHub))
 	, mController(configPath, mPreviewHub)
 	, mEngine(engine)
 	, mFileManagerRoot(SystemSettings::FileManagerRootType::ScriptsDir)

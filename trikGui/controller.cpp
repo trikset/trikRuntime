@@ -38,7 +38,7 @@ using namespace trikGui;
 const int communicatorPort = 8888;
 const int telemetryPort = 9000;
 
-Controller::Controller(const QString &configPath, std::shared_ptr<trikControl::VideoPreviewHub> previewHub)
+Controller::Controller(const QString &configPath, const std::shared_ptr<trikControl::VideoPreviewHub> &previewHub)
 	: mBrick(trikControl::BrickFactory::create(configPath, trikKernel::Paths::mediaPath(), previewHub))
 {
 	if (configPath.isEmpty()) {

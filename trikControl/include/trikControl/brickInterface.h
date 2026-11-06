@@ -98,7 +98,8 @@ public Q_SLOTS:
 	///   - "jpeg-qual"   (int)  JPEG quality 1..100 (ov7670 ports only, default 40)
 	///   - "white-black" (bool) grayscale JPEG (ov7670 ports only, default false)
 	///   - "detached"    (bool) keep the stream alive after stop()/script end (default false)
-	virtual void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) = 0; // NOLINT(google-default-arguments)
+	// NOLINTNEXTLINE(google-default-arguments)
+	virtual void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) = 0;
 
 	/// Stops a video translation previously started on @p port, regardless of
 	/// whether it was started with "detached". Symmetric to startVideoTranslation():
@@ -211,4 +212,4 @@ public:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::BrickInterface *)
+Q_DECLARE_METATYPE(trikControl::BrickInterface *) // NOLINT(misc-no-recursion)
