@@ -64,11 +64,12 @@ HEADERS += \
 	$$PWD/src/cameraDevice.h \
 	$$PWD/src/cameraImplementationInterface.h \
 	$$PWD/src/colorSensor.h \
+	$$PWD/src/colorSensorWorker.h \
+	$$PWD/src/cpuAlgorithmWorker.h \
 	$$PWD/src/configurerHelper.h \
 	$$PWD/src/createDevice.h \
 	$$PWD/src/deviceFactory.h \
 	$$PWD/src/deviceState.h \
-	$$PWD/src/dspSensorBase.h \
 	$$PWD/src/digitalSensor.h \
 	$$PWD/src/display.h \
 	$$PWD/src/encoder.h \
@@ -84,7 +85,6 @@ HEADERS += \
 	$$PWD/src/internalDisplayInterface.h \
 	$$PWD/src/keys.h \
 	$$PWD/src/led.h \
-	$$PWD/src/lineSensor.h \
 	$$PWD/src/moduleLoader.h \
 	$$PWD/src/i2cCommunicator.h \
 	$$PWD/src/nrfUsbCommunicator.h \
@@ -97,7 +97,6 @@ HEADERS += \
 	$$PWD/src/transports/transportType.h \
 	$$PWD/src/mspBusAutoDetector.h \
 	$$PWD/src/mspUsbCommunicator.h \
-	$$PWD/src/objectSensor.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
 	$$PWD/src/rangeSensor.h \
@@ -108,7 +107,6 @@ HEADERS += \
 	$$PWD/src/soundSensor.h \
 	$$PWD/src/videoSensorManager.h \
 	$$PWD/src/cameraManager.h \
-	$$PWD/src/dspFramePipeline.h \
 	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/tonePlayer.h \
 	$$PWD/src/translation.h \
@@ -132,7 +130,6 @@ HEADERS += \
 	$$PWD/src/irCamera.h \
 	$$PWD/src/irCameraWorker.h \
 	$$PWD/src/i2cCommunicatorInterface.h \
-	$$PWD/src/jpegEncoderSensor.h
 
 SOURCES += \
 	$$PWD/src/abstractVirtualSensorWorker.cpp \
@@ -142,10 +139,11 @@ SOURCES += \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
+	$$PWD/src/colorSensorWorker.cpp \
+	$$PWD/src/cpuAlgorithmWorker.cpp \
 	$$PWD/src/videoPreviewHub.cpp \
 	$$PWD/src/deviceFactory.cpp \
 	$$PWD/src/deviceState.cpp \
-	$$PWD/src/dspSensorBase.cpp \
 	$$PWD/src/digitalSensor.cpp \
 	$$PWD/src/display.cpp \
 	$$PWD/src/encoder.cpp \
@@ -159,7 +157,6 @@ SOURCES += \
 	$$PWD/src/guiWorker.cpp \
 	$$PWD/src/keys.cpp \
 	$$PWD/src/led.cpp \
-	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/moduleLoader.cpp \
 	$$PWD/src/i2cCommunicator.cpp \
 	$$PWD/src/nrfUsbCommunicator.cpp \
@@ -167,7 +164,6 @@ SOURCES += \
 	$$PWD/src/communicatorProvider.cpp \
 	$$PWD/src/mspBusAutoDetector.cpp \
 	$$PWD/src/mspUsbCommunicator.cpp \
-	$$PWD/src/objectSensor.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
 	$$PWD/src/rangeSensor.cpp \
@@ -190,7 +186,6 @@ SOURCES += \
 	$$PWD/src/cameraDevice.cpp \
 	$$PWD/src/videoSensorManager.cpp \
 	$$PWD/src/cameraManager.cpp \
-	$$PWD/src/dspFramePipeline.cpp \
 	$$PWD/src/qtCameraImplementation.cpp \
 	$$PWD/src/imitationCameraImplementation.cpp \
 	$$PWD/src/cameraDeviceInterface.cpp \
@@ -204,7 +199,6 @@ SOURCES += \
 	$$PWD/src/lidarWorker.cpp \
 	$$PWD/src/irCamera.cpp \
 	$$PWD/src/irCameraWorker.cpp \
-	$$PWD/src/jpegEncoderSensor.cpp \
 
 CONFIGS += \
 	$$PWD/configs
@@ -223,8 +217,7 @@ DEFINES += TRIKCONTROL_LIBRARY
 
 QT += xml gui multimedia serialport quick
 
-links(trikRuntimeQsLog trikKernel trikDsp trikHal trik-mlx90640)
-interfaceIncludes(trikDsp)
+links(trikRuntimeQsLog trikKernel trikHal trik-mlx90640)
 implementationIncludes(trikKernel trikHal)
 
 INCLUDEPATH += $$GLOBAL_PWD/mlx90640-library/mlx90640-library/headers

@@ -528,8 +528,6 @@ CameraManager::PortInfo CameraManager::info(int portId) const
 	result.fourcc = e.fmt;
 	result.format = trikKernel::fromV4l2Fourcc(e.negotiatedFourcc);
 	result.lineLength = e.lineLength;
-	result.inputRegion = 0;
-	result.inputBuffersPerRegion = captureBufferCount;
 	return result;
 }
 

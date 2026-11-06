@@ -27,8 +27,10 @@ namespace trikControl {
 /// described by VideoPreviewSource, so producers do not need Qt signals, QML or
 /// the concrete store.
 ///
-/// The sink is non-owning: the composition root keeps it alive for the whole
-/// lifetime of the producers. Producers hold a raw pointer and never delete it.
+/// Semantically the sink is non-owning: the composition root creates it and
+/// keeps it alive for the whole application lifetime. The sink is passed to
+/// producers as a shared_ptr so a worker thread may safely keep a reference
+/// while it is publishing; producers use it as a service and never delete it.
 ///
 /// @section threading Threading
 ///

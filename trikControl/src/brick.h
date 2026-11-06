@@ -17,6 +17,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QSharedPointer>
+#include <memory>
 
 #include <trikKernel/configurer.h>
 #include <trikKernel/differentOwnerPointer.h>
@@ -28,7 +29,6 @@
 
 namespace trikHal {
 class HardwareAbstractionInterface;
-class PeripheryI2cInterface;
 }
 
 namespace trikControl {
@@ -48,9 +48,7 @@ class CommunicatorProvider;
 class PeripheryDriverInterface;
 class Keys;
 class Led;
-class LineSensor;
 class ModuleLoader;
-class ObjectSensor;
 class SoundSensor;
 class PowerMotor;
 class PwmCapture;
@@ -64,6 +62,7 @@ class Lidar;
 class IrCameraInterface;
 class VideoSensorManager;
 class CameraManager;
+class VideoPreviewSink;
 
 /// Class representing TRIK controller board and devices installed on it, also provides access
 /// to peripherals like motors and sensors.
@@ -77,7 +76,8 @@ public:
 	/// @param systemConfig - file name (with path) of system config, absolute or relative to current directory.
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
-	Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
+	Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+		const std::shared_ptr<VideoPreviewSink> &previewSink);
 
 	/// Secondary constructor, takes explicit hardware abstraction object.
 	/// @param hardwareAbstraction - hardware abstraction layer implementation.
@@ -85,7 +85,8 @@ public:
 	/// @param modelConfig - file name (with path) of model config, absolute or relative to current directory.
 	/// @param mediaPath - path to the directory with media files (it is expected to be ending with "/").
 	Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig,
-		const QString &modelConfig, const QString &mediaPath);
+		const QString &modelConfig, const QString &mediaPath,
+		const std::shared_ptr<VideoPreviewSink> &previewSink);
 
 	~Brick() override;
 
@@ -169,7 +170,8 @@ public Q_SLOTS:
 
 private:
 	Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction,
-		const QString &systemConfig, const QString &modelConfig, const QString &mediaPath);
+		const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+		const std::shared_ptr<VideoPreviewSink> &previewSink);
 
 	/// Stops the translation on @p port. If @p keepCamera is true the camera is
 	/// only streamed off (kept acquired) so a subsequent sensor init can switch
@@ -213,6 +215,7 @@ private:
 	QScopedPointer<TonePlayer> mTonePlayer;
 	QHash<QString, CameraDeviceInterface *> mCameras; // Has ownership, keyed by port.
 	QScopedPointer<IrCameraInterface> mIrCamera;
+	std::shared_ptr<VideoPreviewSink> mPreviewSink;
 	QScopedPointer<VideoSensorManager> mVideoSensorManager;
 	QSharedPointer<CameraManager> mCameraManager;
 	QHash<QString, ServoMotorBase *> mServoMotors; // Has ownership.

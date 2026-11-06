@@ -98,7 +98,8 @@ public Q_SLOTS:
 	///   - "jpeg-qual"   (int)  JPEG quality 1..100 (ov7670 ports only, default 40)
 	///   - "white-black" (bool) grayscale JPEG (ov7670 ports only, default false)
 	///   - "detached"    (bool) keep the stream alive after stop()/script end (default false)
-	virtual void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) = 0; // NOLINT(google-default-arguments)
+	// NOLINTNEXTLINE(google-default-arguments)
+	virtual void startVideoTranslation(const QString &port, const QVariant &params = QVariant()) = 0;
 
 	/// Stops a video translation previously started on @p port, regardless of
 	/// whether it was started with "detached". Symmetric to startVideoTranslation():
@@ -161,7 +162,7 @@ public:
 	/// Returns QVector<uint8_t> with image using camera on given port (video1 or video2).
 	// TODO: The default parameter is part of the public API. Consider backward compatibility
 	// NOLINTNEXTLINE(google-default-arguments)
-	Q_INVOKABLE virtual QVector<uint8_t> getStillImage(const QString &port = "video2") = 0;
+	Q_INVOKABLE virtual QVector<uint8_t> getStillImage(const QString &port = "usb-camera-1") = 0;
 
 	/// Returns high-level sound detector sensor using microphones.
 	Q_INVOKABLE virtual trikControl::SoundSensorInterface *soundSensor(const QString &port) = 0;
@@ -211,4 +212,4 @@ public:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::BrickInterface *)
+Q_DECLARE_METATYPE(trikControl::BrickInterface *) // NOLINT(misc-no-recursion)

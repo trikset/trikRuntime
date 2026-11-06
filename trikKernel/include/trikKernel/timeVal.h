@@ -53,7 +53,7 @@ public:
 private:
 	TimeVal() = default;
 
-	explicit TimeVal(int packedTime);
+	explicit TimeVal(uint32_t packedTime);
 
 	uint32_t mTime = 0;
 
@@ -63,7 +63,7 @@ private:
 
 inline int operator-(TimeVal left, TimeVal right)
 {
-	return (left.mTime - right.mTime) << TimeVal::mShift;
+	return static_cast<int>((left.mTime - right.mTime) << TimeVal::mShift);
 }
 
 inline uint32_t TimeVal::packedUInt32() const
@@ -82,11 +82,11 @@ inline int TimeVal::timeInterval(int packedTimeLeft, int packedTimeRight)
 	return (packedTimeLeft - packedTimeRight) << mShift;
 }
 
-inline TimeVal::TimeVal(int packedTime)
+inline TimeVal::TimeVal(uint32_t packedTime)
 	: mTime(packedTime)
 {}
 
 
 }
 
-Q_DECLARE_METATYPE(trikKernel::TimeVal)
+Q_DECLARE_METATYPE(trikKernel::TimeVal) // NOLINT(misc-no-recursion)

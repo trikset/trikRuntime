@@ -44,8 +44,6 @@
 #include "led.h"
 #include "boardImu.h"
 #include "videoSensorManager.h"
-#include "lineSensor.h"
-#include "objectSensor.h"
 #include "powerMotor.h"
 #include "pwmCapture.h"
 #include "rangeSensor.h"
@@ -94,23 +92,27 @@ Device *insertPeripheryDevice(Container &devices, const QString &port, const QSt
 } // namespace
 
 Brick::Brick(trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &systemConfig,
-	const QString &modelConfig, const QString &mediaPath)
-	: Brick(createDifferentOwnerPointer(hardwareAbstraction), systemConfig, modelConfig, mediaPath)
+	const QString &modelConfig, const QString &mediaPath, const std::shared_ptr<VideoPreviewSink> &previewSink)
+	: Brick(createDifferentOwnerPointer(hardwareAbstraction), systemConfig, modelConfig, mediaPath, previewSink)
 {
 }
 
-Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
-	: Brick(createDifferentOwnerPointer(HardwareAbstractionFactory::create()), systemConfig, modelConfig, mediaPath)
+Brick::Brick(const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+	const std::shared_ptr<VideoPreviewSink> &previewSink)
+	: Brick(createDifferentOwnerPointer(HardwareAbstractionFactory::create()), systemConfig, modelConfig, mediaPath,
+		  previewSink)
 {
 }
 
 Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractionInterface> &hardwareAbstraction,
-	const QString &systemConfig, const QString &modelConfig, const QString &mediaPath)
+	const QString &systemConfig, const QString &modelConfig, const QString &mediaPath,
+	const std::shared_ptr<VideoPreviewSink> &previewSink)
 	: mHardwareAbstraction(hardwareAbstraction)
 	, mTonePlayer(new TonePlayer())
 	, mMediaPath(mediaPath)
 	, mConfigurer(systemConfig, modelConfig)
 {
+	mPreviewSink = previewSink;
 	const bool hasGui = (qobject_cast<QGuiApplication *>(QCoreApplication::instance()) != nullptr);
 	if (hasGui) {
 		mDisplay.reset(new Display(mediaPath));
@@ -153,13 +155,10 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 
 	mCameraManager.reset(new CameraManager(mConfigurer, *mHardwareAbstraction));
 
-	if (mConfigurer.isEnabled("dspServer")) {
-		mVideoSensorManager.reset(new VideoSensorManager(mConfigurer, *mHardwareAbstraction, mCameraManager));
-
-		// Repaint the display whenever a video sensor stops (deinit or not), so
-		// its last frame is cleared before the next sensor initializes.
-		connect(mVideoSensorManager.data(), &VideoSensorManager::sensorStopped, this, &Brick::stopped);
-	}
+	// VideoSensorManager also owns the CPU-backed video sensors, so it is
+	// created for the CPU-backed video sensors.
+	mVideoSensorManager.reset(
+		new VideoSensorManager(mConfigurer, *mHardwareAbstraction, mCameraManager, mPreviewSink));
 
 	// Single-stream IMU (ICM-42670) or legacy two-device IMU.
 	if (mConfigurer.ports().contains("boardImuPort")
@@ -185,7 +184,7 @@ Brick::~Brick()
 {
 	// Stop every translation, detached ones included: the brick is going away
 	// for good, so nothing should outlive it. The streamer processes are
-	// stopped explicitly here; the DSP encoders and cameras are torn down by
+	// stopped explicitly here; the cameras are torn down by
 	// mVideoSensorManager.reset() below.
 	for (auto &&port : mTranslations.keys()) {
 		const auto &t = mTranslations.value(port);
@@ -244,25 +243,22 @@ QString Brick::configVersion() const
 void Brick::configure(const QString &portName, const QString &deviceName)
 {
 	// A translation (detached or not) streaming on @p port must be stopped
-	// before the port is reconfigured. Keep the camera acquired so the manager
-	// can just switch the DSP algorithm when the new sensor is initialized.
+	// before the port is reconfigured.
 	if (mTranslations.contains(portName)) {
 		stopVideoTranslationInternal(portName, /*keepCamera=*/true);
 	}
 
 	// This method is kept for backward compatibility with the generated
 	// (PythonQt/JS) bindings: they may call configure() with a video sensor
-	// class (lineSensor, objectSensor, colorSensor) or a still camera on a
-	// video port.
+	// class (colorSensor) or a still camera on a video port.
 	//
-	// Video ports (video1, video2, usb-camera, ...) host
+	// Video ports (usb-camera-1, usb-camera-2, ...) host
 	// camera-based devices that all share the same physical camera through
 	// VideoSensorManager/CameraManager. There is no standalone "device" to
 	// shut down on such a port - the camera itself is reused, so at most the
 	// high-level object (a sensor or a camera) has to be (re)created.
 	const auto isVideoSensor = VideoSensorManager::isVideoSensor(deviceName);
-	const auto isVideoPort =
-		portName.startsWith(QStringLiteral("video")) || portName.startsWith(QStringLiteral("usb-camera"));
+	const auto isVideoPort = portName.startsWith(QStringLiteral("usb-camera"));
 
 	if (isVideoPort
 		&& (isVideoSensor || deviceName == QStringLiteral("photo") || deviceName == QStringLiteral("camera"))) {
@@ -307,28 +303,11 @@ void Brick::startVideoTranslation(const QString &port, const QVariant &params) /
 	QLOG_INFO() << "Brick::startVideoTranslation: port" << port;
 
 	const auto &paramsMap = params.toMap();
-	const auto isUsb = port.startsWith(QStringLiteral("usb-camera"));
 
-	if (!isUsb && !port.startsWith(QStringLiteral("video"))) {
+	if (!port.startsWith(QStringLiteral("usb-camera"))) {
 		QLOG_ERROR() << "Brick::startVideoTranslation: unsupported port" << port
-			     << "(supported ports: video* or usb-camera)";
+			     << "(supported port: usb-camera*)";
 		return;
-	}
-
-	// The DSP is single-channel: only one ov7670 translation can run at a time.
-	// A new video translation supersedes any other active video translation
-	// (even a detached one) - otherwise the old encoder would be silently
-	// evicted from the DSP while its streamer keeps serving a stale FIFO.
-	if (!isUsb) {
-		QStringList superseded;
-		for (auto it = mTranslations.constBegin(); it != mTranslations.constEnd(); ++it) {
-			if (!it.value().isUsb && it.key() != port) {
-				superseded << it.key();
-			}
-		}
-		for (auto &&other : superseded) {
-			stopVideoTranslationInternal(other, /*keepCamera=*/false);
-		}
 	}
 
 	// A re-start on an already translated port replaces the old translation.
@@ -344,27 +323,10 @@ void Brick::startVideoTranslation(const QString &port, const QVariant &params) /
 
 	const auto detached = paramsMap.value(QStringLiteral("detached"), false).toBool();
 
-	if (isUsb) {
-		// USB webcam: mjpg-streamer opens the device directly over UVC, so the
-		// device must be released (no DSP encoder involved).
-		if (mCameraManager) {
-			mCameraManager->close(port);
-		}
-	} else {
-		// ov7670 camera port: schedule the DSP JPEG encoder. Its result is
-		// streamed into the FIFO that mjpg-streamer's input_fifo.so reads.
-		if (mVideoSensorManager) {
-			if (auto &&encoder = mVideoSensorManager->jpegEncoderSensor(port)) {
-				const auto jpegQuality = paramsMap.value(QStringLiteral("jpeg-qual"), 30).toInt();
-				const auto whiteBlack = paramsMap.value(QStringLiteral("white-black"), false).toBool();
-				encoder->init(static_cast<uint8_t>(jpegQuality), whiteBlack, false);
-			}
-		}
-	}
-
-	// A detached translation must survive stop()/configure() rescheduling.
-	if (mVideoSensorManager) {
-		mVideoSensorManager->setPortDetached(port, detached);
+	// mjpg-streamer opens the USB device directly over UVC, so release it from
+	// CameraManager first.
+	if (mCameraManager) {
+		mCameraManager->close(port);
 	}
 
 	// Run the mjpg-streamer launcher script ("start <port> [device]"). Its path
@@ -385,22 +347,22 @@ void Brick::startVideoTranslation(const QString &port, const QVariant &params) /
 	// Brick lives on the GUI thread.
 	auto streamer = QSharedPointer<Translation::StreamerProcess>::create();
 
-	QLOG_INFO() << "Brick::startVideoTranslation: launching mjpg-streamer port=" << port << "isUsb=" << isUsb
-		    << "detached=" << detached << "script=" << script;
+	QLOG_INFO() << "Brick::startVideoTranslation: launching mjpg-streamer port=" << port << "detached=" << detached
+		    << "script=" << script;
 
 	if (!streamer->start(script, port, device)) {
 		QLOG_ERROR() << "Failed to start mjpg-streamer for port" << port;
 		return;
 	}
 
-	mTranslations.insert(port, {script, detached, isUsb, streamer});
+	mTranslations.insert(port, {script, detached, streamer});
 }
 
 void Brick::stopVideoTranslation(const QString &port)
 {
-	if (!port.startsWith(QStringLiteral("usb-camera")) && !port.startsWith(QStringLiteral("video"))) {
+	if (!port.startsWith(QStringLiteral("usb-camera"))) {
 		QLOG_ERROR() << "Brick::stopVideoTranslation: unsupported port" << port
-			     << "(supported ports: video* or usb-camera)";
+			     << "(supported port: usb-camera*)";
 		return;
 	}
 
@@ -417,20 +379,15 @@ void Brick::stopVideoTranslationInternal(const QString &port, bool keepCamera)
 
 	const auto &translation = it.value();
 
-	QLOG_INFO() << "Brick::stopVideoTranslation: stopping mjpg-streamer port=" << port
-		    << "isUsb=" << translation.isUsb << "detached=" << translation.detached
-		    << "script=" << translation.streamerScript;
+	Q_UNUSED(keepCamera);
 
-	// Symmetric to the legacy codegen
-	// (mjpg-streamer stop && mjpg-encoder stop): stop the streamer process
-	// first, then the DSP encoder feeding it. The process is owned by Brick, so
-	// stop() blocks until it exits and releases the camera.
+	QLOG_INFO() << "Brick::stopVideoTranslation: stopping mjpg-streamer port=" << port
+		    << "detached=" << translation.detached << "script=" << translation.streamerScript;
+
+	// The process is owned by Brick, so stop() blocks until it exits and
+	// releases the camera.
 	if (translation.streamerProcess) {
 		translation.streamerProcess->stop();
-	}
-
-	if (mVideoSensorManager) {
-		mVideoSensorManager->stopTranslation(port, keepCamera);
 	}
 
 	mTranslations.erase(it);
@@ -520,8 +477,8 @@ void Brick::stop()
 		mDisplay->hide();
 	}
 
-	// Stop non-detached translations. Detached ones keep their DSP encoder,
-	// camera and streamer alive until stopVideoTranslation() or the destructor.
+	// Stop non-detached translations. Detached ones keep the camera and
+	// streamer alive until stopVideoTranslation() or the destructor.
 	QStringList detachedPorts;
 	{
 		QStringList toStop;
@@ -532,8 +489,8 @@ void Brick::stop()
 				toStop << it.key();
 			}
 		}
-		// Only the streamer process is stopped here; the DSP encoders and the
-		// cameras are torn down by VideoSensorManager::stop()/clear() below.
+		// Only the streamer process is stopped here; the video sensors are
+		// stopped by VideoSensorManager::stop()/clear() below.
 		for (auto &&port : toStop) {
 			auto &translation = mTranslations[port];
 			if (translation.streamerProcess) {
@@ -545,8 +502,8 @@ void Brick::stop()
 
 	if (mVideoSensorManager) {
 		QLOG_INFO() << "Brick::stop: stopping video sensor manager";
-		mVideoSensorManager->stop(); // skips detached ports
-		mVideoSensorManager->clear(); // skips detached sensors
+		mVideoSensorManager->stop();
+		mVideoSensorManager->clear();
 	}
 
 	// Force-release any leaked camera, unless a detached translation must keep
@@ -686,7 +643,8 @@ GyroSensorInterface *Brick::gyroscope()
 
 LineSensorInterface *Brick::lineSensor(const QString &port)
 {
-	return mVideoSensorManager ? mVideoSensorManager->lineSensor(port) : nullptr;
+	Q_UNUSED(port);
+	return nullptr;
 }
 
 ColorSensorInterface *Brick::colorSensor(const QString &port)
@@ -696,7 +654,8 @@ ColorSensorInterface *Brick::colorSensor(const QString &port)
 
 ObjectSensorInterface *Brick::objectSensor(const QString &port)
 {
-	return mVideoSensorManager ? mVideoSensorManager->objectSensor(port) : nullptr;
+	Q_UNUSED(port);
+	return nullptr;
 }
 
 I2cDeviceInterface *Brick::createI2cDevice(int bus, int address,

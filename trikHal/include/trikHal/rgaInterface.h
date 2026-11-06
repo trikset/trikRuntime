@@ -21,7 +21,7 @@
 namespace trikHal {
 
 /// Image format understood by the RGA wrapper.
-enum class RgaFormat { Unknown, Yuyv, Nv16, Rgb888 };
+enum class RgaFormat { Unknown, Yuyv, Nv16, Rgb888, Bgra8888 };
 
 /// A dma-buf image description.
 struct RgaImage {
@@ -43,6 +43,9 @@ class TRIKHAL_EXPORT RgaInterface
 {
 public:
 	virtual ~RgaInterface() = default;
+
+	/// True when the RGA backend is compiled in and usable.
+	virtual bool isAvailable() const = 0;
 
 	/// Convert @p src into @p dst (YUV->RGB today). Returns false when the RGA
 	/// is unavailable or the driver rejects the operation; @p error receives a

@@ -28,7 +28,7 @@
 #include <QtQuick/QQuickWindow>
 
 #include <trikControl/videoPreviewSource.h>
-
+#include <trikKernel/videoUtils.h>
 #include "videoDmaTexture.h"
 #include "videoOverlayTexture.h"
 
@@ -40,8 +40,8 @@ namespace {
 constexpr int tickIntervalMs = 33;
 
 /// Bootstrap preview size used until the first real frame arrives.
-constexpr int previewWidth = 320;
-constexpr int previewHeight = 240;
+constexpr int previewWidth = trikKernel::videoPreviewWidth;
+constexpr int previewHeight = trikKernel::videoPreviewHeight;
 
 constexpr int slotSpacing = 4;
 

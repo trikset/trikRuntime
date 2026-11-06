@@ -264,14 +264,14 @@ public:
 		const std::atomic<bool> *abort = nullptr);
 
 	/// Same as getFrame(QString, ...) but keyed by the stable port id, so the
-	/// DSP pipeline's hot path does no QString lookup.
+	/// video pipeline's hot path does no QString lookup.
 	Frame getFrame(int portId, uint32_t afterSeq = 0, int timeoutMs = 0, const std::atomic<bool> *abort = nullptr);
 
 	/// Abort every pending getFrame() wait and make it return empty, so the
 	/// caller re-reads its channel. @p flag is stored true under mFrameLock
 	/// before notify_all(): together with the predicate wait in getFrame() this
 	/// cannot lose a wakeup, so a channel change takes effect immediately (no
-	/// polling slice). Used by the DSP pipeline's setChannel()/stop().
+	/// polling slice). Used by the video pipeline's setChannel()/stop().
 	void abortFrameWaits(std::atomic<bool> *flag);
 
 	/// Static + negotiated per-port info needed to set up the DSP. Thread-safe:
@@ -284,8 +284,6 @@ public:
 		uint32_t fourcc = 0;
 		trikKernel::PixelFormat format = trikKernel::PixelFormat::Unknown;
 		uint32_t lineLength = 0;
-		uint32_t inputRegion = 0;
-		uint32_t inputBuffersPerRegion = 0;
 
 		/// Resolves the capture geometry for a payload of @p frameBytes.
 		///

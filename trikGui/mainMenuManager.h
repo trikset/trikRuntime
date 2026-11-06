@@ -17,8 +17,14 @@
 #include "systemSettings.h"
 #include <QObject>
 #include <QQmlApplicationEngine>
+#include <QScopedPointer>
+#include <memory>
 #include <QtQml/qqml.h>
 #include "trikGuiApplication.h"
+
+namespace trikControl {
+class VideoPreviewHub;
+}
 
 namespace trikGui {
 
@@ -30,7 +36,8 @@ class MainMenuManager : public QObject
 	QML_UNCREATABLE("Use MainMenuManager singleton")
 public:
 	/// Constructor
-	explicit MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine, TrikGuiApplication *trikGuiApp);
+	explicit MainMenuManager(const QString &configPath, QQmlApplicationEngine *engine,
+		TrikGuiApplication *trikGuiApp, std::shared_ptr<trikControl::VideoPreviewHub> previewHub);
 	~MainMenuManager() override;
 	enum class AppType {
 		Files,
@@ -47,12 +54,16 @@ public:
 	Q_ENUM(AppType)
 	Q_INVOKABLE void createApp(AppType appType);
 
-	trikControl::BrickInterface &brick() { return mController.brick(); }
+	trikControl::BrickInterface &brick()
+	{
+		return mController.brick();
+	}
 
 private Q_SLOTS:
 	void changeFileManagerRoot(SystemSettings::FileManagerRootType const &path);
 
 private:
+	std::shared_ptr<trikControl::VideoPreviewHub> mPreviewHub;
 	Controller mController;
 	QQmlApplicationEngine *mEngine;
 	SystemSettings::FileManagerRootType mFileManagerRoot; // current FilesManegerRoot
