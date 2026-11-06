@@ -14,10 +14,53 @@
 
 #include "keys.h"
 
+#include <QtCore/Qt>
+
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
 using namespace trikControl;
+
+namespace {
+
+// Linux input event codes exposed by KeysEnum in system.js. They are kept as
+// the public key values for backward compatibility with existing scripts.
+enum LinuxKeyCode : int {
+	LinuxKeyEsc = 1,
+	LinuxKeyEnter = 28,
+	LinuxKeyUp = 103,
+	LinuxKeyLeft = 105,
+	LinuxKeyRight = 106,
+	LinuxKeyDown = 108,
+	LinuxKeyPower = 116,
+};
+
+/// The QML virtual key panel sends Qt key codes, but the Keys API and
+/// KeysEnum use Linux input event codes.
+int toLinuxKeyCode(int code)
+{
+	switch (code) {
+	case Qt::Key_Left:
+		return LinuxKeyLeft;
+	case Qt::Key_Up:
+		return LinuxKeyUp;
+	case Qt::Key_Down:
+		return LinuxKeyDown;
+	case Qt::Key_Right:
+		return LinuxKeyRight;
+	case Qt::Key_Return:
+	case Qt::Key_Enter:
+		return LinuxKeyEnter;
+	case Qt::Key_Escape:
+		return LinuxKeyEsc;
+	case Qt::Key_PowerOff:
+		return LinuxKeyPower;
+	default:
+		return code;
+	}
+}
+
+} // namespace
 
 Keys::Keys(const trikKernel::Configurer &configurer, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Keys")
@@ -61,6 +104,7 @@ bool Keys::isPressed(int code)
 
 void Keys::emulateKeyPress(int code)
 {
+	code = toLinuxKeyCode(code);
 	QMutexLocker lock(&mMutex);
 	mKeysPressed[code] = 1;
 	mWasPressed.insert(code);
