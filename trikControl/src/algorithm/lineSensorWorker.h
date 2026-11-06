@@ -26,10 +26,12 @@
 
 namespace trikControl {
 
-/// CPU line sensor worker skeleton.
+/// CPU line sensor worker.
 ///
 /// The base class handles capture, RGA scaling, preview buffers and publishing.
-/// Line detection itself is not implemented yet.
+/// This class detects the line within the configured V range, computes its
+/// position, crossroads probability and mass, and draws the preview overlay
+/// directly into the frame.
 class LineSensorWorker : public CpuAlgorithmWorker
 {
 public:

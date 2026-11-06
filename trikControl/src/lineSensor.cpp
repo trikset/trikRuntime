@@ -31,8 +31,8 @@ LineSensor::LineSensor(const QString &port, const trikKernel::Configurer &config
 	: mState("Line Sensor on " + port)
 	, mPort(port)
 {
-	QString defaultTolerance = QStringLiteral("1.0");
-	bool toleranceOk = false;
+	auto defaultTolerance = QStringLiteral("1.0");
+	auto toleranceOk = false;
 	const auto tolerance = configurer.childAttributeByPort(port, "lineSensor", "toleranceFactor", &defaultTolerance)
 	                               .toDouble(&toleranceOk);
 	if (!toleranceOk) {

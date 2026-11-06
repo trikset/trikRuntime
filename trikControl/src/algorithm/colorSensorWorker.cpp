@@ -27,9 +27,9 @@ using namespace trikControl;
 namespace {
 
 /// hue axis split into 32 bins, saturation and value into 4.
-constexpr int hueBins = 32;
-constexpr int satBins = 4;
-constexpr int valBins = 4;
+constexpr auto hueBins = 32;
+constexpr auto satBins = 4;
+constexpr auto valBins = 4;
 
 /// RGB -> flat histogram bin index, built on top of rgbToHsv().
 /// Returns (h/8) << 4 | (s/64) << 2 | (v/64) in 0..511.

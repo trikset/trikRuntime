@@ -154,9 +154,9 @@ void CpuAlgorithmWorker::run()
 void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 {
 	const auto info = mCamera->info(mPortId);
-	uint32_t srcWidth = 0;
-	uint32_t srcHeight = 0;
-	uint32_t srcStride = 0;
+	auto srcWidth = uint32_t {0};
+	auto srcHeight = uint32_t {0};
+	auto srcStride = uint32_t {0};
 	if (!frame.data() || !info.captureGeometry(frame.size(), &srcWidth, &srcHeight, &srcStride)) {
 		if (!mGeometryWarned) {
 			QLOG_ERROR() << "CpuAlgorithmWorker: invalid capture frame on" << mPort << "(" << frame.size()
@@ -209,7 +209,7 @@ void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 		return;
 	}
 
-	OverlayResult overlay;
+	auto overlay = OverlayResult {};
 	if (previewBuffer && mSink) {
 		overlay = buildOverlay(view);
 	}
@@ -217,7 +217,7 @@ void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 	dst->syncEnd(writeSync);
 
 	if (previewBuffer && mSink) {
-		VideoPreviewFrame preview;
+		auto preview = VideoPreviewFrame {};
 		preview.buffer = previewBuffer;
 		preview.overlay = overlay.overlay;
 		preview.overlayGeneration = overlay.generation;

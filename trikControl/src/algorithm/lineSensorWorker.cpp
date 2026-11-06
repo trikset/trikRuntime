@@ -49,9 +49,9 @@ constexpr auto lineHighlightG = uint8_t {255}; // Cyan green component.
 constexpr auto lineHighlightR = uint8_t {0}; // Cyan red component.
 
 /// Magenta guide lines, BGRA byte order.
-constexpr uint32_t guideColor = 0xFFFF00FF;
+constexpr auto guideColor = uint32_t {0xFFFF00FF};
 /// Red cross-band and target lines, BGRA byte order.
-constexpr uint32_t targetColor = 0xFFFF0000;
+constexpr auto targetColor = uint32_t {0xFFFF0000};
 
 } // namespace
 
@@ -91,13 +91,13 @@ void LineSensorWorker::detectRange(const BgraFrameView &frame)
 	const auto negativeRight = positiveRight + guideStep;
 
 	std::array<int, detectBinCount> histogram {};
-	int modeV = 0;
-	int modeWeight = 0;
+	auto modeV = 0;
+	auto modeWeight = 0;
 
-	for (int row = 0; row < frame.height; ++row) {
+	for (auto row = 0; row < frame.height; ++row) {
 		const auto *line = frame.data + static_cast<size_t>(row) * static_cast<size_t>(frame.stride);
-		for (int col = 0; col < frame.width; ++col) {
-			int weight = 0;
+		for (auto col = 0; col < frame.width; ++col) {
+			auto weight = 0;
 			if (positiveLeft < col && positiveRight > col) {
 				weight = positiveWeight;
 			} else if (negativeLeft > col || negativeRight < col) {
@@ -118,7 +118,7 @@ void LineSensorWorker::detectRange(const BgraFrameView &frame)
 	}
 
 	std::array<int, detectBinCount + 1> prefix {};
-	for (int v = 0; v < detectBinCount; ++v) {
+	for (auto v = 0; v < detectBinCount; ++v) {
 		const auto adjusted = histogram[v] != 0 ? histogram[v] : -emptyBinPenalty;
 		prefix[v + 1] = prefix[v] + adjusted;
 	}
@@ -129,8 +129,8 @@ void LineSensorWorker::detectRange(const BgraFrameView &frame)
 	auto bestDistance = std::numeric_limits<int>::max();
 	auto bestWidth = std::numeric_limits<int>::max();
 
-	for (int v0 = 0; v0 < detectBinCount; ++v0) {
-		for (int v1 = v0; v1 < detectBinCount; ++v1) {
+	for (auto v0 = 0; v0 < detectBinCount; ++v0) {
+		for (auto v1 = v0; v1 < detectBinCount; ++v1) {
 			const auto score = prefix[v1 + 1] - prefix[v0];
 			const auto distance = modeV < v0 ? v0 - modeV : (modeV > v1 ? modeV - v1 : 0);
 			const auto width = v1 - v0;
@@ -164,7 +164,7 @@ void LineSensorWorker::detectRange(const BgraFrameView &frame)
 	mValueRange = {static_cast<uint8_t>(valueFrom), static_cast<uint8_t>(valueTo)};
 	mHueWraps = false;
 
-	DetectParameters parameters;
+	auto parameters = DetectParameters {};
 	const auto scaledFrom = bestV0 * valueScale;
 	const auto scaledTo = (bestV1 + 1) * valueScale;
 	parameters.value = static_cast<int>((scaledFrom + scaledTo) / 2);
@@ -201,9 +201,9 @@ bool LineSensorWorker::processFrame(const BgraFrameView &frame)
 	const auto bandHeight = std::min(maxCrossBandHeight, frame.height - bandStart);
 	const auto bandStop = bandStart + bandHeight;
 
-	quint64 points = 0;
-	qint64 sumX = 0;
-	quint64 crossPoints = 0;
+	auto points = quint64 {0};
+	auto sumX = qint64 {0};
+	auto crossPoints = quint64 {0};
 
 	for (auto row = 0; row < frame.height; ++row) {
 		auto *line = frame.data + static_cast<size_t>(row) * static_cast<size_t>(frame.stride);
@@ -239,7 +239,7 @@ bool LineSensorWorker::processFrame(const BgraFrameView &frame)
 	drawHorizontalLine(frame, bandStart, targetColor);
 	drawHorizontalLine(frame, std::min(frame.height - 1, bandStart + maxCrossBandHeight), targetColor);
 
-	LineReading reading;
+	auto reading = LineReading {};
 	if (points > minTargetPoints) {
 		const auto targetX = static_cast<int>(sumX / static_cast<qint64>(points));
 		reading.x = ((targetX - frame.width / 2) * 200) / frame.width;
