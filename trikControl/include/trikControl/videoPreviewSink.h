@@ -45,14 +45,16 @@ class TRIKCONTROL_EXPORT VideoPreviewSink
 public:
 	virtual ~VideoPreviewSink() = default;
 
-	/// Registers @p id as an active preview. Idempotent.
+	/// Registers a new preview and returns its unique id.
 	///
-	/// @p id is a stable preview identifier, normally CameraManager::portId()
-	/// of the sensor's port. After this call publish() stores frames for @p id
-	/// and consumers can request them through VideoPreviewSource.
+	/// The id is an opaque handle owned by the returned value: it is not
+	/// related to a camera port or a sensor type. Every call allocates a new id,
+	/// so two producers may publish concurrently even when they share a camera.
+	/// After this call publish() stores frames for the returned id and consumers
+	/// can request them through VideoPreviewSource.
 	///
 	/// Thread-safe.
-	virtual void activate(int id) = 0;
+	virtual int openPreview() = 0;
 
 	/// Unregisters @p id and drops its latest frame. Idempotent.
 	///
@@ -60,7 +62,7 @@ public:
 	/// FrameBufferPtr is released, so the producer's buffer pool may recycle it.
 	///
 	/// Thread-safe.
-	virtual void deactivate(int id) = 0;
+	virtual void closePreview(int id) = 0;
 
 	/// Stores @p frame as the newest frame for @p id.
 	///

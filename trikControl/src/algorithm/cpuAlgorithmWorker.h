@@ -118,6 +118,10 @@ private:
 	std::unique_ptr<trikHal::FrameBuffer> mScratch;
 
 	const int mPreviewBufferCount;
+
+	/// Opaque handle returned by VideoPreviewSink::openPreview(). Valid only
+	/// while mPreviewEnabled is true; -1 when the sensor has no preview.
+	int mPreviewId = -1;
 	bool mPreviewEnabled = false;
 	bool mCameraAcquired = false;
 	bool mAvailable = false;

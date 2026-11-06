@@ -58,15 +58,15 @@ public:
 	/// the GUI thread. A single instance per application is expected.
 	explicit VideoPreviewHub(QObject *parent = nullptr);
 
-	/// @copydoc VideoPreviewSink::activate
+	/// @copydoc VideoPreviewSink::openPreview
 	///
-	/// Emits activeChanged() only when @p id was not active yet.
-	void activate(int id) override;
+	/// Allocates a new id on every call and emits activeChanged().
+	int openPreview() override;
 
-	/// @copydoc VideoPreviewSink::deactivate
+	/// @copydoc VideoPreviewSink::closePreview
 	///
 	/// Emits activeChanged() only when @p id was active.
-	void deactivate(int id) override;
+	void closePreview(int id) override;
 
 	/// @copydoc VideoPreviewSink::publish
 	///
@@ -98,10 +98,15 @@ private:
 	/// Rebuilds mActiveIds from mEntries. The caller must hold mMutex.
 	void rebuildActiveIdsLocked();
 
-	/// Guards mEntries and mActiveIds. Never held while emitting a signal.
+	/// Guards mEntries, mActiveIds and mNextId. Never held while emitting a
+	/// signal.
 	mutable QMutex mMutex;
 
-	/// Active previews keyed by the stable preview id (normally portId).
+	/// Next id to hand out from openPreview(). Monotonic, so an id is never
+	/// reused while the hub is alive.
+	int mNextId = 0;
+
+	/// Active previews keyed by the opaque id returned from openPreview().
 	QHash<int, Entry> mEntries;
 
 	/// Sorted snapshot exposed to consumers and QML. Rebuilt under mMutex.

@@ -85,7 +85,7 @@ void CpuAlgorithmWorker::start(bool showOnDisplay)
 	}
 
 	if (showOnDisplay && mSink && mPortId >= 0) {
-		mSink->activate(mPortId);
+		mPreviewId = mSink->openPreview();
 		mPreviewEnabled = true;
 	}
 
@@ -110,7 +110,8 @@ void CpuAlgorithmWorker::stop(int flags)
 	}
 
 	if (mPreviewEnabled && mSink) {
-		mSink->deactivate(mPortId);
+		mSink->closePreview(mPreviewId);
+		mPreviewId = -1;
 		mPreviewEnabled = false;
 	}
 
@@ -221,7 +222,7 @@ void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 		preview.buffer = previewBuffer;
 		preview.overlay = overlay.overlay;
 		preview.overlayGeneration = overlay.generation;
-		mSink->publish(mPortId, preview);
+		mSink->publish(mPreviewId, preview);
 	}
 }
 

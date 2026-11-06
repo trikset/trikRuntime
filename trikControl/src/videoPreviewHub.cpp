@@ -27,7 +27,7 @@ VideoPreviewHub::VideoPreviewHub(QObject *parent)
 
 void VideoPreviewHub::rebuildActiveIdsLocked()
 {
-	QList<int> ids = mEntries.keys();
+	auto ids = mEntries.keys();
 	std::sort(ids.begin(), ids.end());
 
 	mActiveIds.clear();
@@ -37,26 +37,23 @@ void VideoPreviewHub::rebuildActiveIdsLocked()
 	}
 }
 
-void VideoPreviewHub::activate(int id)
+int VideoPreviewHub::openPreview()
 {
-	bool changed = false;
+	auto id = -1;
 	{
 		QMutexLocker locker(&mMutex);
-		if (!mEntries.contains(id)) {
-			mEntries.insert(id, Entry {});
-			rebuildActiveIdsLocked();
-			changed = true;
-		}
+		id = mNextId++;
+		mEntries.insert(id, Entry {});
+		rebuildActiveIdsLocked();
 	}
 
-	if (changed) {
-		Q_EMIT activeChanged();
-	}
+	Q_EMIT activeChanged();
+	return id;
 }
 
-void VideoPreviewHub::deactivate(int id)
+void VideoPreviewHub::closePreview(int id)
 {
-	bool changed = false;
+	auto changed = false;
 	{
 		QMutexLocker locker(&mMutex);
 		if (mEntries.remove(id) > 0) {
