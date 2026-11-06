@@ -70,6 +70,7 @@ HEADERS += \
 	$$PWD/src/algorithm/frameDrawingUtils.h \
 	$$PWD/src/algorithm/cpuAlgorithmWorker.h \
 	$$PWD/src/algorithm/lineSensorWorker.h \
+	$$PWD/src/algorithm/objectSensorWorker.h \
 	$$PWD/src/configurerHelper.h \
 	$$PWD/src/createDevice.h \
 	$$PWD/src/deviceFactory.h \
@@ -148,6 +149,7 @@ SOURCES += \
 	$$PWD/src/algorithm/colorSensorWorker.cpp \
 	$$PWD/src/algorithm/cpuAlgorithmWorker.cpp \
 	$$PWD/src/algorithm/lineSensorWorker.cpp \
+	$$PWD/src/algorithm/objectSensorWorker.cpp \
 	$$PWD/src/videoPreviewHub.cpp \
 	$$PWD/src/videoPreviewModel.cpp \
 	$$PWD/src/deviceFactory.cpp \
