@@ -22,6 +22,8 @@
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikControl/videoPreviewSink.h>
 
+#include "lineSensor.h"
+
 namespace trikControl {
 
 VideoSensorManager::VideoSensorManager(const trikKernel::Configurer &configurer,
@@ -40,6 +42,8 @@ VideoSensorManager::~VideoSensorManager()
 {
 	qDeleteAll(mColorSensors);
 	mColorSensors.clear();
+	qDeleteAll(mLineSensors);
+	mLineSensors.clear();
 }
 
 bool VideoSensorManager::checkManagerState(const QString &message) const
@@ -59,17 +63,29 @@ void VideoSensorManager::createSensor(const QString &port, const QString &device
 		return;
 	}
 
-	if (deviceClass != QStringLiteral("colorSensor")) {
-		QLOG_WARN() << "VideoSensorManager: unsupported video sensor class" << deviceClass << "on" << port;
+	if (deviceClass == QStringLiteral("colorSensor")) {
+		if (mColorSensors.contains(portId)) {
+			return;
+		}
+
+		auto *s =
+			new ColorSensor(port, mConfigurer, mCameraManager, mHardwareAbstractionInterface, mPreviewSink);
+		mColorSensors.insert(portId, s);
 		return;
 	}
 
-	if (mColorSensors.contains(portId)) {
+	if (deviceClass == QStringLiteral("lineSensor")) {
+		if (mLineSensors.contains(portId)) {
+			return;
+		}
+
+		auto *s =
+			new LineSensor(port, mConfigurer, mCameraManager, mHardwareAbstractionInterface, mPreviewSink);
+		mLineSensors.insert(portId, s);
 		return;
 	}
 
-	auto *s = new ColorSensor(port, mConfigurer, mCameraManager, mHardwareAbstractionInterface, mPreviewSink);
-	mColorSensors.insert(portId, s);
+	QLOG_WARN() << "VideoSensorManager: unsupported video sensor class" << deviceClass << "on" << port;
 }
 
 void VideoSensorManager::create(const QString &port, const QString &deviceClass)
@@ -89,33 +105,52 @@ void VideoSensorManager::stop()
 	for (auto *sensor : mColorSensors) {
 		sensor->stop();
 	}
+
+	for (auto *sensor : mLineSensors) {
+		sensor->stop();
+	}
 }
 
 void VideoSensorManager::clear()
 {
 	qDeleteAll(mColorSensors);
 	mColorSensors.clear();
+	qDeleteAll(mLineSensors);
+	mLineSensors.clear();
 }
 
 void VideoSensorManager::releasePort(const QString &port)
 {
 	const auto portId = mCameraManager->portId(port);
-	auto it = mColorSensors.find(portId);
-	if (it != mColorSensors.end()) {
-		(*it)->stop();
+
+	const auto colorIt = mColorSensors.find(portId);
+	if (colorIt != mColorSensors.end()) {
+		(*colorIt)->stop();
+	}
+
+	const auto lineIt = mLineSensors.find(portId);
+	if (lineIt != mLineSensors.end()) {
+		(*lineIt)->stop();
 	}
 }
 
 bool VideoSensorManager::isVideoSensor(const QString &deviceClass)
 {
-	return deviceClass == QStringLiteral("colorSensor");
+	return deviceClass == QStringLiteral("colorSensor") || deviceClass == QStringLiteral("lineSensor");
 }
 
 ColorSensorInterface *VideoSensorManager::colorSensor(const QString &port)
 {
 	const auto id = mCameraManager->portId(port);
-	auto it = mColorSensors.find(id);
+	const auto it = mColorSensors.find(id);
 	return it == mColorSensors.end() ? nullptr : *it;
+}
+
+LineSensorInterface *VideoSensorManager::lineSensor(const QString &port)
+{
+	const auto id = mCameraManager->portId(port);
+	const auto it = mLineSensors.find(id);
+	return it == mLineSensors.end() ? nullptr : *it;
 }
 
 } // namespace trikControl

@@ -23,7 +23,7 @@
 #include <trikHal/hardwareAbstractionInterface.h>
 
 #include "cameraManager.h"
-#include "colorSensorWorker.h"
+#include "algorithm/colorSensorWorker.h"
 #include "configurerHelper.h"
 
 using namespace trikControl;

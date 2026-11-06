@@ -39,6 +39,16 @@ trikHal::RgaFormat toRgaFormat(trikKernel::PixelFormat format)
 
 } // namespace
 
+trikHal::FrameFormat CpuAlgorithmWorker::scaledFormat(int srcWidth, int srcHeight) const
+{
+	auto format = trikHal::FrameFormat {};
+	format.width = static_cast<uint32_t>(std::min(srcWidth, static_cast<int>(trikKernel::videoPreviewWidth)));
+	format.height = static_cast<uint32_t>(std::min(srcHeight, static_cast<int>(trikKernel::videoPreviewHeight)));
+	format.stride = format.width * bgraBytesPerPixel;
+	format.format = trikHal::PixelFormat::Bgra8888;
+	return format;
+}
+
 CpuAlgorithmWorker::CpuAlgorithmWorker(QSharedPointer<CameraManager> camera, QString port,
 	trikHal::HardwareAbstractionInterface &hal, std::shared_ptr<VideoPreviewSink> previewSink,
 	int previewBufferCount, QObject *parent)
@@ -75,7 +85,7 @@ void CpuAlgorithmWorker::start(bool showOnDisplay)
 	}
 
 	if (showOnDisplay && mSink && mPortId >= 0) {
-		mSink->activate(mPortId);
+		mPreviewId = mSink->openPreview();
 		mPreviewEnabled = true;
 	}
 
@@ -100,7 +110,8 @@ void CpuAlgorithmWorker::stop(int flags)
 	}
 
 	if (mPreviewEnabled && mSink) {
-		mSink->deactivate(mPortId);
+		mSink->closePreview(mPreviewId);
+		mPreviewId = -1;
 		mPreviewEnabled = false;
 	}
 
@@ -144,9 +155,9 @@ void CpuAlgorithmWorker::run()
 void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 {
 	const auto info = mCamera->info(mPortId);
-	uint32_t srcWidth = 0;
-	uint32_t srcHeight = 0;
-	uint32_t srcStride = 0;
+	auto srcWidth = uint32_t {0};
+	auto srcHeight = uint32_t {0};
+	auto srcStride = uint32_t {0};
 	if (!frame.data() || !info.captureGeometry(frame.size(), &srcWidth, &srcHeight, &srcStride)) {
 		if (!mGeometryWarned) {
 			QLOG_ERROR() << "CpuAlgorithmWorker: invalid capture frame on" << mPort << "(" << frame.size()
@@ -192,22 +203,27 @@ void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 
 	frame.release();
 
+	const auto writeSync = modifiesOutputFrame();
+
 	if (!processFrame(view)) {
-		dst->syncEnd(false);
+		dst->syncEnd(writeSync);
 		return;
 	}
 
+	auto overlay = OverlayResult {};
 	if (previewBuffer && mSink) {
-		const auto overlay = buildOverlay(view);
+		overlay = buildOverlay(view);
+	}
 
-		VideoPreviewFrame preview;
+	dst->syncEnd(writeSync);
+
+	if (previewBuffer && mSink) {
+		auto preview = VideoPreviewFrame {};
 		preview.buffer = previewBuffer;
 		preview.overlay = overlay.overlay;
 		preview.overlayGeneration = overlay.generation;
-		mSink->publish(mPortId, preview);
+		mSink->publish(mPreviewId, preview);
 	}
-
-	dst->syncEnd(false);
 }
 
 bool CpuAlgorithmWorker::ensureInputBuffer(size_t bytes)
@@ -290,7 +306,7 @@ bool CpuAlgorithmWorker::scaleWithRga(const Frame &src, int srcWidth, int srcHei
 	const auto srcImage = trikHal::RgaImage {mScaleInput->fd(), srcWidth, srcHeight, rgaFormat, srcStridePixels};
 	const auto dstImage =
 		trikHal::RgaImage {dst.fd(), static_cast<int>(dstFormat.width), static_cast<int>(dstFormat.height),
-			trikHal::RgaFormat::Bgra8888, static_cast<int>(dstFormat.stride / 4)};
+			trikHal::RgaFormat::Bgra8888, static_cast<int>(dstFormat.stride / bgraBytesPerPixel)};
 
 	auto error = QString {};
 	if (!mRga->process(srcImage, dstImage, &error)) {
@@ -303,7 +319,7 @@ bool CpuAlgorithmWorker::scaleWithRga(const Frame &src, int srcWidth, int srcHei
 
 	dst.syncStart(false);
 
-	out->data = static_cast<const uint8_t *>(dst.data());
+	out->data = static_cast<uint8_t *>(dst.data());
 	out->width = static_cast<int>(dstFormat.width);
 	out->height = static_cast<int>(dstFormat.height);
 	out->stride = static_cast<int>(dstFormat.stride);

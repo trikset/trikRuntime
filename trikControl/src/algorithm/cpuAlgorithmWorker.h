@@ -33,13 +33,16 @@
 #include <trikHal/rgaInterface.h>
 #include <trikKernel/videoUtils.h>
 
-#include "cameraManager.h"
+#include "../cameraManager.h"
 
 namespace trikControl {
 
+/// Bytes per pixel in a BGRA8888 frame (B, G, R, X).
+constexpr int bgraBytesPerPixel = 4;
+
 /// A scaled BGRA frame handed to the algorithm.
 struct BgraFrameView {
-	const uint8_t *data = nullptr;
+	uint8_t *data = nullptr;
 	int width = 0;
 	int height = 0;
 	int stride = 0;
@@ -78,8 +81,14 @@ protected:
 	void run() override;
 
 	/// Output format/size requested from the RGA for a source frame of the
-	/// given geometry.
-	virtual trikHal::FrameFormat scaledFormat(int srcWidth, int srcHeight) const = 0;
+	/// given geometry. The default clamps to the preview size and BGRA.
+	virtual trikHal::FrameFormat scaledFormat(int srcWidth, int srcHeight) const;
+
+	/// Whether processFrame() may write into the frame buffer.
+	virtual bool modifiesOutputFrame() const
+	{
+		return false;
+	}
 
 	/// Runs the algorithm on the scaled BGRA frame. Returning false skips the
 	/// overlay and preview publishing for this frame.
@@ -97,8 +106,8 @@ private:
 		BgraFrameView *out);
 
 	QSharedPointer<CameraManager> mCamera;
-	int mPortId = -1;
-	QString mPort;
+	const int mPortId = -1;
+	const QString mPort;
 
 	trikHal::HardwareAbstractionInterface &mHal;
 	std::shared_ptr<VideoPreviewSink> mSink;
@@ -108,7 +117,11 @@ private:
 	std::unique_ptr<trikHal::DmaBufferInterface> mScaleInput;
 	std::unique_ptr<trikHal::FrameBuffer> mScratch;
 
-	int mPreviewBufferCount;
+	const int mPreviewBufferCount;
+
+	/// Opaque handle returned by VideoPreviewSink::openPreview(). Valid only
+	/// while mPreviewEnabled is true; -1 when the sensor has no preview.
+	int mPreviewId = -1;
 	bool mPreviewEnabled = false;
 	bool mCameraAcquired = false;
 	bool mAvailable = false;

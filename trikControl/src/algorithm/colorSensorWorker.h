@@ -41,7 +41,6 @@ public:
 	QVector<int> cell(int mIndex, int nIndex) const;
 
 protected:
-	trikHal::FrameFormat scaledFormat(int srcWidth, int srcHeight) const override;
 	bool processFrame(const BgraFrameView &frame) override;
 	OverlayResult buildOverlay(const BgraFrameView &frame) override;
 
@@ -56,8 +55,8 @@ private:
 	Grid buildGridFromBgra(const BgraFrameView &frame) const;
 	PreviewOverlay makeOverlay(const Grid &grid, int width, int height) const;
 
-	int mM;
-	int mN;
+	const int mM;
+	const int mN;
 
 	mutable QMutex mGridLock;
 	Grid mGrid {};

@@ -127,8 +127,6 @@ CameraManager::Entry CameraManager::makeEntry(const trikKernel::Configurer &conf
 	return entry;
 }
 
-
-
 bool CameraManager::openDeviceLocked(int id, Entry &entry)
 {
 	if (entry.dev) {
@@ -144,7 +142,7 @@ bool CameraManager::openDeviceLocked(int id, Entry &entry)
 		return false;
 	}
 
-	// Cache the actual negotiated format and bytes-per-line for the DSP.
+	// Cache the actual negotiated format and bytes-per-line.
 	entry.negotiatedFourcc = dev->actualFourcc();
 	entry.lineLength = dev->bytesPerLine();
 	entry.negotiatedWidth = dev->actualWidth();
@@ -311,11 +309,21 @@ void CameraManager::acquire(int portId)
 			QLOG_ERROR() << "CameraManager: failed to open" << e.devFile;
 			return;
 		}
-		if (!e.streaming && !e.dev->startStreaming()) {
-			QLOG_ERROR() << "CameraManager: failed to start streaming on" << e.devFile;
-			return;
+		if (!e.streaming) {
+			if (!e.dev->startStreaming()) {
+				QLOG_ERROR() << "CameraManager: failed to start streaming on" << e.devFile;
+				return;
+			}
+			e.streaming = true;
+
+			// Give auto-exposure time to settle, then lock it, as the old
+			// init script did with "sleep 1; fix_camera".
+			if (e.portName.startsWith(QStringLiteral("usb-camera"))) {
+				QThread::msleep(1000);
+				e.dev->fixExposure();
+				QLOG_INFO() << "CameraManager: exposure fixed on" << e.portName;
+			}
 		}
-		e.streaming = true;
 		++e.refCount;
 		QLOG_INFO() << "CameraManager: acquired" << e.portName << "refs=" << e.refCount;
 	});

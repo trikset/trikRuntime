@@ -18,16 +18,21 @@
 
 #include <QtCore/QMutexLocker>
 
+#include "videoPreviewModel.h"
+
 using namespace trikControl;
 
 VideoPreviewHub::VideoPreviewHub(QObject *parent)
 	: VideoPreviewSource(parent)
 {
+	mPreviewModel = new VideoPreviewModel(this);
+	connect(this, &VideoPreviewHub::previewOpened, mPreviewModel, &VideoPreviewModel::addId);
+	connect(this, &VideoPreviewHub::previewClosed, mPreviewModel, &VideoPreviewModel::removeId);
 }
 
 void VideoPreviewHub::rebuildActiveIdsLocked()
 {
-	QList<int> ids = mEntries.keys();
+	auto ids = mEntries.keys();
 	std::sort(ids.begin(), ids.end());
 
 	mActiveIds.clear();
@@ -37,26 +42,24 @@ void VideoPreviewHub::rebuildActiveIdsLocked()
 	}
 }
 
-void VideoPreviewHub::activate(int id)
+int VideoPreviewHub::openPreview()
 {
-	bool changed = false;
+	auto id = -1;
 	{
 		QMutexLocker locker(&mMutex);
-		if (!mEntries.contains(id)) {
-			mEntries.insert(id, Entry {});
-			rebuildActiveIdsLocked();
-			changed = true;
-		}
+		id = mNextId++;
+		mEntries.insert(id, Entry {});
+		rebuildActiveIdsLocked();
 	}
 
-	if (changed) {
-		Q_EMIT activeChanged();
-	}
+	Q_EMIT activeChanged();
+	Q_EMIT previewOpened(id);
+	return id;
 }
 
-void VideoPreviewHub::deactivate(int id)
+void VideoPreviewHub::closePreview(int id)
 {
-	bool changed = false;
+	auto changed = false;
 	{
 		QMutexLocker locker(&mMutex);
 		if (mEntries.remove(id) > 0) {
@@ -67,6 +70,7 @@ void VideoPreviewHub::deactivate(int id)
 
 	if (changed) {
 		Q_EMIT activeChanged();
+		Q_EMIT previewClosed(id);
 	}
 }
 
@@ -107,4 +111,9 @@ QVariantList VideoPreviewHub::activeIds() const
 {
 	QMutexLocker locker(&mMutex);
 	return mActiveIds;
+}
+
+QAbstractItemModel *VideoPreviewHub::previewModel() const
+{
+	return mPreviewModel;
 }

@@ -64,8 +64,12 @@ HEADERS += \
 	$$PWD/src/cameraDevice.h \
 	$$PWD/src/cameraImplementationInterface.h \
 	$$PWD/src/colorSensor.h \
-	$$PWD/src/colorSensorWorker.h \
-	$$PWD/src/cpuAlgorithmWorker.h \
+	$$PWD/src/lineSensor.h \
+	$$PWD/src/algorithm/colorUtils.h \
+	$$PWD/src/algorithm/colorSensorWorker.h \
+	$$PWD/src/algorithm/frameDrawingUtils.h \
+	$$PWD/src/algorithm/cpuAlgorithmWorker.h \
+	$$PWD/src/algorithm/lineSensorWorker.h \
 	$$PWD/src/configurerHelper.h \
 	$$PWD/src/createDevice.h \
 	$$PWD/src/deviceFactory.h \
@@ -106,6 +110,7 @@ HEADERS += \
 	$$PWD/src/servoMotor/internal.h \
 	$$PWD/src/soundSensor.h \
 	$$PWD/src/videoSensorManager.h \
+	$$PWD/src/videoPreviewModel.h \
 	$$PWD/src/cameraManager.h \
 	$$PWD/src/soundSensorWorker.h \
 	$$PWD/src/tonePlayer.h \
@@ -139,9 +144,12 @@ SOURCES += \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
 	$$PWD/src/colorSensor.cpp \
-	$$PWD/src/colorSensorWorker.cpp \
-	$$PWD/src/cpuAlgorithmWorker.cpp \
+	$$PWD/src/lineSensor.cpp \
+	$$PWD/src/algorithm/colorSensorWorker.cpp \
+	$$PWD/src/algorithm/cpuAlgorithmWorker.cpp \
+	$$PWD/src/algorithm/lineSensorWorker.cpp \
 	$$PWD/src/videoPreviewHub.cpp \
+	$$PWD/src/videoPreviewModel.cpp \
 	$$PWD/src/deviceFactory.cpp \
 	$$PWD/src/deviceState.cpp \
 	$$PWD/src/digitalSensor.cpp \

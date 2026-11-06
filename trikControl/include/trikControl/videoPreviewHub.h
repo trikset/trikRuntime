@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <QtCore/QAbstractItemModel>
 #include <QtCore/QHash>
 #include <QtCore/QMutex>
 #include <QtCore/QObject>
@@ -24,6 +25,8 @@
 #include <trikControl/videoPreviewSource.h>
 
 namespace trikControl {
+
+class VideoPreviewModel;
 
 /// Concrete latest-wins store shared by preview producers and consumers.
 ///
@@ -50,6 +53,7 @@ class TRIKCONTROL_EXPORT VideoPreviewHub : public VideoPreviewSource, public Vid
 {
 	Q_OBJECT
 	Q_PROPERTY(QVariantList activeIds READ activeIds NOTIFY activeChanged)
+	Q_PROPERTY(QAbstractItemModel *previewModel READ previewModel CONSTANT)
 
 public:
 	/// Creates an empty store. @p parent is passed to QObject.
@@ -58,15 +62,15 @@ public:
 	/// the GUI thread. A single instance per application is expected.
 	explicit VideoPreviewHub(QObject *parent = nullptr);
 
-	/// @copydoc VideoPreviewSink::activate
+	/// @copydoc VideoPreviewSink::openPreview
 	///
-	/// Emits activeChanged() only when @p id was not active yet.
-	void activate(int id) override;
+	/// Allocates a new id on every call and emits activeChanged().
+	int openPreview() override;
 
-	/// @copydoc VideoPreviewSink::deactivate
+	/// @copydoc VideoPreviewSink::closePreview
 	///
 	/// Emits activeChanged() only when @p id was active.
-	void deactivate(int id) override;
+	void closePreview(int id) override;
 
 	/// @copydoc VideoPreviewSink::publish
 	///
@@ -86,6 +90,20 @@ public:
 	/// used by QML; activeChanged() is its NOTIFY signal.
 	QVariantList activeIds() const override;
 
+	/// Incremental model of the currently open preview ids.
+	///
+	/// Unlike activeIds(), which is a snapshot rebuild on every change, this
+	/// model emits row insertions/removals, so a Repeater keeps untouched
+	/// delegates alive when one sensor is opened or stopped.
+	QAbstractItemModel *previewModel() const;
+
+Q_SIGNALS:
+	/// Emitted after a new preview id has been added to previewModel().
+	void previewOpened(int id);
+
+	/// Emitted after @p id has been removed from previewModel().
+	void previewClosed(int id);
+
 private:
 	/// Per-id latest frame and its publication counter.
 	struct Entry {
@@ -98,14 +116,22 @@ private:
 	/// Rebuilds mActiveIds from mEntries. The caller must hold mMutex.
 	void rebuildActiveIdsLocked();
 
-	/// Guards mEntries and mActiveIds. Never held while emitting a signal.
+	/// Guards mEntries, mActiveIds and mNextId. Never held while emitting a
+	/// signal.
 	mutable QMutex mMutex;
 
-	/// Active previews keyed by the stable preview id (normally portId).
+	/// Next id to hand out from openPreview(). Monotonic, so an id is never
+	/// reused while the hub is alive.
+	int mNextId = 0;
+
+	/// Active previews keyed by the opaque id returned from openPreview().
 	QHash<int, Entry> mEntries;
 
 	/// Sorted snapshot exposed to consumers and QML. Rebuilt under mMutex.
 	QVariantList mActiveIds;
+
+	/// Incremental preview-id model fed by previewOpened()/previewClosed().
+	VideoPreviewModel *mPreviewModel = nullptr;
 };
 
 } // namespace trikControl
