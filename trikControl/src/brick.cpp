@@ -643,8 +643,7 @@ GyroSensorInterface *Brick::gyroscope()
 
 LineSensorInterface *Brick::lineSensor(const QString &port)
 {
-	Q_UNUSED(port);
-	return nullptr;
+	return mVideoSensorManager ? mVideoSensorManager->lineSensor(port) : nullptr;
 }
 
 ColorSensorInterface *Brick::colorSensor(const QString &port)

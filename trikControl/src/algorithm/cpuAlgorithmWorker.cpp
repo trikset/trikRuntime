@@ -39,6 +39,16 @@ trikHal::RgaFormat toRgaFormat(trikKernel::PixelFormat format)
 
 } // namespace
 
+trikHal::FrameFormat CpuAlgorithmWorker::scaledFormat(int srcWidth, int srcHeight) const
+{
+	auto format = trikHal::FrameFormat {};
+	format.width = static_cast<uint32_t>(std::min(srcWidth, static_cast<int>(trikKernel::videoPreviewWidth)));
+	format.height = static_cast<uint32_t>(std::min(srcHeight, static_cast<int>(trikKernel::videoPreviewHeight)));
+	format.stride = format.width * bgraBytesPerPixel;
+	format.format = trikHal::PixelFormat::Bgra8888;
+	return format;
+}
+
 CpuAlgorithmWorker::CpuAlgorithmWorker(QSharedPointer<CameraManager> camera, QString port,
 	trikHal::HardwareAbstractionInterface &hal, std::shared_ptr<VideoPreviewSink> previewSink,
 	int previewBufferCount, QObject *parent)
@@ -192,22 +202,27 @@ void CpuAlgorithmWorker::processSourceFrame(Frame &frame)
 
 	frame.release();
 
+	const auto writeSync = modifiesOutputFrame();
+
 	if (!processFrame(view)) {
-		dst->syncEnd(false);
+		dst->syncEnd(writeSync);
 		return;
 	}
 
+	OverlayResult overlay;
 	if (previewBuffer && mSink) {
-		const auto overlay = buildOverlay(view);
+		overlay = buildOverlay(view);
+	}
 
+	dst->syncEnd(writeSync);
+
+	if (previewBuffer && mSink) {
 		VideoPreviewFrame preview;
 		preview.buffer = previewBuffer;
 		preview.overlay = overlay.overlay;
 		preview.overlayGeneration = overlay.generation;
 		mSink->publish(mPortId, preview);
 	}
-
-	dst->syncEnd(false);
 }
 
 bool CpuAlgorithmWorker::ensureInputBuffer(size_t bytes)
@@ -290,7 +305,7 @@ bool CpuAlgorithmWorker::scaleWithRga(const Frame &src, int srcWidth, int srcHei
 	const auto srcImage = trikHal::RgaImage {mScaleInput->fd(), srcWidth, srcHeight, rgaFormat, srcStridePixels};
 	const auto dstImage =
 		trikHal::RgaImage {dst.fd(), static_cast<int>(dstFormat.width), static_cast<int>(dstFormat.height),
-			trikHal::RgaFormat::Bgra8888, static_cast<int>(dstFormat.stride / 4)};
+			trikHal::RgaFormat::Bgra8888, static_cast<int>(dstFormat.stride / bgraBytesPerPixel)};
 
 	auto error = QString {};
 	if (!mRga->process(srcImage, dstImage, &error)) {
@@ -303,7 +318,7 @@ bool CpuAlgorithmWorker::scaleWithRga(const Frame &src, int srcWidth, int srcHei
 
 	dst.syncStart(false);
 
-	out->data = static_cast<const uint8_t *>(dst.data());
+	out->data = static_cast<uint8_t *>(dst.data());
 	out->width = static_cast<int>(dstFormat.width);
 	out->height = static_cast<int>(dstFormat.height);
 	out->stride = static_cast<int>(dstFormat.stride);

@@ -14,13 +14,13 @@
 
 #include "colorSensorWorker.h"
 
-#include <algorithm>
-#include <array>
 #include <utility>
 
 #include <QtCore/QMutexLocker>
 #include <QtCore/QRectF>
 #include <QtGui/QColor>
+
+#include "colorUtils.h"
 
 using namespace trikControl;
 
@@ -31,45 +31,12 @@ constexpr int hueBins = 32;
 constexpr int satBins = 4;
 constexpr int valBins = 4;
 
-/// Reciprocal table: table[i] = floor(Scale * 256 / i), table[0] = 0.
-/// Values fit in 16 bits, but 32-bit entries avoid halfword arithmetic.
-template<unsigned Scale, std::size_t... I>
-constexpr std::array<int, 256> makeRecipTable(std::index_sequence<I...>)
-{
-	return {{I == 0 ? 0 : static_cast<int>((Scale * 256u) / I)...}};
-}
-
-constexpr auto kMult255 = makeRecipTable<255>(std::make_index_sequence<256> {});
-
-constexpr auto kMult43 = makeRecipTable<43>(std::make_index_sequence<256> {});
-
-/// RGB -> flat histogram bin index, fusing an RGB->HSV conversion with the
-/// 32x4x4 binning. Returns (h/8) << 4 | (s/64) << 2 | (v/64) in 0..511.
-/// H, S and V are in 0..255 and the hue wraps through 16 bits.
+/// RGB -> flat histogram bin index, built on top of rgbToHsv().
+/// Returns (h/8) << 4 | (s/64) << 2 | (v/64) in 0..511.
 inline int rgbToBinIndex(int r, int g, int b)
 {
-	const auto mx = std::max(std::max(r, g), b);
-	const auto mn = std::min(std::min(r, g), b);
-	const auto delta = mx - mn;
-
-	// kMult255[0] is 0, so the max == 0 case needs no branch.
-	const auto s = (kMult255[mx] * delta) >> 8;
-
-	// The branch is picked by comparing max with G/B: max==R only when
-	// neither G nor B equals max; G==B==max is the cyan/gray case.
-	auto hue16 = 0;
-	if (mx != g && mx != b) {
-		hue16 = kMult43[delta] * (g - b);
-	} else if (mx == b && mx != g) {
-		hue16 = 43690 + kMult43[delta] * (r - g);
-	} else {
-		hue16 = 21845 + kMult43[delta] * (b - r);
-	}
-
-	const auto hb = ((hue16 & 0xFFFF) >> 8) >> 3;
-	const auto sb = s >> 6;
-	const auto vb = mx >> 6;
-	return (hb << 4) | (sb << 2) | vb;
+	const auto hsv = rgbToHsv(r, g, b);
+	return ((hsv.h >> 3) << 4) | ((hsv.s >> 6) << 2) | (hsv.v >> 6);
 }
 
 /// HSV -> RGB conversion.
@@ -163,16 +130,6 @@ QVector<int> ColorSensorWorker::cell(int mIndex, int nIndex) const
 	return {c[0], c[1], c[2]};
 }
 
-trikHal::FrameFormat ColorSensorWorker::scaledFormat(int srcWidth, int srcHeight) const
-{
-	auto format = trikHal::FrameFormat {};
-	format.width = static_cast<uint32_t>(std::min(srcWidth, static_cast<int>(trikKernel::videoPreviewWidth)));
-	format.height = static_cast<uint32_t>(std::min(srcHeight, static_cast<int>(trikKernel::videoPreviewHeight)));
-	format.stride = format.width * 4;
-	format.format = trikHal::PixelFormat::Bgra8888;
-	return format;
-}
-
 bool ColorSensorWorker::processFrame(const BgraFrameView &frame)
 {
 	if (!frame.data || frame.width <= 0 || frame.height <= 0 || frame.stride <= 0) {
@@ -231,7 +188,7 @@ ColorSensorWorker::Grid ColorSensorWorker::buildGridFromBgra(const BgraFrameView
 				const auto *line = frame.data + static_cast<size_t>(row) * frame.stride;
 				for (auto col = colBegin; col < colBegin + cellW; ++col) {
 					// DRM_FORMAT_ARGB8888 is B,G,R,A in memory on little endian.
-					const auto *pixel = line + static_cast<size_t>(col) * 4;
+					const auto *pixel = line + static_cast<size_t>(col) * bgraBytesPerPixel;
 					++bins[rgbToBinIndex(pixel[2], pixel[1], pixel[0])];
 				}
 			}

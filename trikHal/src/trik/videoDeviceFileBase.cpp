@@ -87,13 +87,11 @@ bool VideoDeviceFileBase::open()
 
 void VideoDeviceFileBase::applyWebcamDefaults()
 {
-	// Keep exposure manual from the start. The absolute exposure and gain are
-	// left at the driver defaults for now.
+	// 50 Hz anti-flicker, fixed white balance and gain.
 	setControl(V4L2_CID_POWER_LINE_FREQUENCY, V4L2_CID_POWER_LINE_FREQUENCY_50HZ);
 	setControl(V4L2_CID_AUTO_WHITE_BALANCE, 0);
 	setControl(V4L2_CID_WHITE_BALANCE_TEMPERATURE, 4000);
 	setControl(V4L2_CID_GAIN, 0);
-	setControl(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
 }
 
 void VideoDeviceFileBase::fixExposure()
@@ -101,8 +99,8 @@ void VideoDeviceFileBase::fixExposure()
 	if (!mIsWebcam || mExposureFixed)
 		return;
 
-	// Manual exposure is configured in applyWebcamDefaults(); this hook is kept
-	// for API compatibility and only re-asserts manual mode.
+	// Kept for API compatibility. The capture path no longer locks exposure by
+	// default; this helper is only for callers that explicitly want manual mode.
 	setControl(V4L2_CID_EXPOSURE_AUTO, V4L2_EXPOSURE_MANUAL);
 	mExposureFixed = true;
 }
