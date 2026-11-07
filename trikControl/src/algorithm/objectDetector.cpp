@@ -78,6 +78,198 @@ void ObjectDetector::rebuildLookup()
 	mLookupValid = true;
 }
 
+void ObjectDetector::buildDetectHistogram(const FrameView &frame, int &modeHue, int &modeSat)
+{
+	mDetectHistogram.fill(0);
+	modeHue = 0;
+	modeSat = 0;
+
+	const auto halfWidth = frame.width / 2;
+	const auto halfHeight = frame.height / 2;
+	const auto step = std::max(1, frame.height / 6);
+	const auto positiveLeft = halfWidth - step;
+	const auto positiveRight = halfWidth + step;
+	const auto positiveTop = halfHeight - step;
+	const auto positiveBottom = halfHeight + step;
+	const auto negativeLeft = positiveLeft - step;
+	const auto negativeRight = positiveRight + step;
+	const auto negativeTop = positiveTop - step;
+	const auto negativeBottom = positiveBottom + step;
+
+	auto modeWeight = 0;
+
+	for (auto row = 0; row < frame.height; ++row) {
+		const auto *line = frame.data + static_cast<size_t>(row) * static_cast<size_t>(frame.stride);
+
+		for (auto col = 0; col < frame.width; ++col) {
+			const auto positive =
+				col > positiveLeft && col < positiveRight && row > positiveTop && row < positiveBottom;
+			const auto negative =
+				col < negativeLeft || col > negativeRight || row < negativeTop || row > negativeBottom;
+			if (!positive && !negative) {
+				continue;
+			}
+
+			const auto *pixel = line + static_cast<size_t>(col) * bytesPerPixel;
+			const auto hsv = rgbToHsv(pixel[2], pixel[1], pixel[0]);
+			const auto hueBin = static_cast<int>(hsv.h) >> 3;
+			const auto saturationBin = static_cast<int>(hsv.s) >> 3;
+			auto &bin = mDetectHistogram[hueBin * detectSatBins + saturationBin];
+			bin += positive ? detectPositiveWeight : -detectNegativeWeight;
+
+			if (positive && bin > modeWeight) {
+				modeWeight = bin;
+				modeHue = hueBin;
+				modeSat = saturationBin;
+			}
+		}
+	}
+}
+
+ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, double toleranceFactor)
+{
+	auto result = DetectResult {};
+	if (!frame.data || frame.width <= 0 || frame.height <= 0 || frame.stride < frame.width * bytesPerPixel) {
+		mLastDetect = result;
+		return result;
+	}
+
+	auto modeHue = 0;
+	auto modeSat = 0;
+	buildDetectHistogram(frame, modeHue, modeSat);
+
+	const auto stride = detectSatBins + 1;
+	mDetectPrefix.fill(0);
+
+	for (auto hue = 0; hue < detectHueDuplicated; ++hue) {
+		const auto actualHue = hue % detectHueBins;
+
+		for (auto saturation = 0; saturation < detectSatBins; ++saturation) {
+			const auto value = mDetectHistogram[actualHue * detectSatBins + saturation];
+			const auto adjusted = value != 0 ? value : -detectEmptyPenalty;
+			mDetectPrefix[(hue + 1) * stride + saturation + 1] =
+				adjusted + mDetectPrefix[hue * stride + saturation + 1]
+				+ mDetectPrefix[(hue + 1) * stride + saturation]
+				- mDetectPrefix[hue * stride + saturation];
+		}
+	}
+
+	auto bestScore = std::numeric_limits<int>::min();
+	auto bestStart = 0;
+	auto bestLength = 0;
+	auto bestSatFrom = 0;
+	auto bestSatTo = 0;
+	auto bestDistance = std::numeric_limits<int>::max();
+	auto bestArea = std::numeric_limits<int>::max();
+
+	for (auto start = 0; start < detectHueDuplicated; ++start) {
+		const auto maxLength = std::min(detectHueBins, detectHueDuplicated - start);
+
+		for (auto length = 1; length <= maxLength; ++length) {
+			const auto end = start + length;
+			const auto startHue = start % detectHueBins;
+			const auto endHue = (start + length - 1) % detectHueBins;
+			const auto wraps = startHue + length > detectHueBins;
+
+			auto inside = false;
+			auto distance = 0;
+			if (wraps) {
+				inside = modeHue >= startHue || modeHue <= endHue;
+				if (!inside) {
+					const auto toStart = (startHue - modeHue + detectHueBins) % detectHueBins;
+					const auto toEnd = (modeHue - endHue + detectHueBins) % detectHueBins;
+					distance = std::min(toStart, toEnd);
+				}
+			} else {
+				inside = modeHue >= startHue && modeHue <= endHue;
+				if (!inside) {
+					distance = modeHue < startHue ? startHue - modeHue : modeHue - endHue;
+				}
+			}
+
+			for (auto satFrom = 0; satFrom < detectSatBins; ++satFrom) {
+				for (auto satTo = satFrom; satTo < detectSatBins; ++satTo) {
+					const auto score = mDetectPrefix[end * stride + satTo + 1]
+					                   - mDetectPrefix[start * stride + satTo + 1]
+					                   - mDetectPrefix[end * stride + satFrom]
+					                   + mDetectPrefix[start * stride + satFrom];
+					const auto area = length * (satTo - satFrom + 1);
+
+					const auto better =
+						score > bestScore || (score == bestScore && distance < bestDistance)
+						|| (score == bestScore && distance == bestDistance && area < bestArea)
+						|| (score == bestScore && distance == bestDistance && area == bestArea
+							&& length < bestLength);
+					if (!better) {
+						continue;
+					}
+
+					bestScore = score;
+					bestStart = start;
+					bestLength = length;
+					bestSatFrom = satFrom;
+					bestSatTo = satTo;
+					bestDistance = distance;
+					bestArea = area;
+				}
+			}
+		}
+	}
+
+	if (bestScore <= 0) {
+		auto fallback = DetectResult {};
+		fallback.ranges = Ranges {};
+		fallback.valid = false;
+		mRanges = fallback.ranges;
+		mLookupValid = false;
+		mLastDetect = fallback;
+		return fallback;
+	}
+
+	const auto rawStartHue = bestStart % detectHueBins;
+	const auto rawEndHue = (bestStart + bestLength - 1) % detectHueBins;
+	const auto rawWraps = rawStartHue + bestLength > detectHueBins;
+
+	result.ranges.hue = {static_cast<uint8_t>(rawStartHue * 8), static_cast<uint8_t>(rawEndHue * 8 + 7)};
+	result.ranges.hueWraps = rawWraps;
+	result.ranges.saturation = {static_cast<uint8_t>(bestSatFrom * 8), static_cast<uint8_t>(bestSatTo * 8 + 7)};
+	result.ranges.value = {0, 255};
+	result.valid = true;
+
+	auto active = result.ranges;
+	const auto hueCenter = rawStartHue + (bestLength - 1) / 2.0;
+	const auto hueHalf = (bestLength - 1) / 2.0 * std::max(0.0, toleranceFactor);
+	const auto hueFrom = static_cast<int>(std::floor(hueCenter - hueHalf));
+	const auto hueTo = static_cast<int>(std::ceil(hueCenter + hueHalf));
+
+	if (hueTo - hueFrom + 1 >= detectHueBins) {
+		active.hue = {0, 255};
+		active.hueWraps = false;
+	} else {
+		const auto normalize = [](int value) {
+			value %= detectHueBins;
+			return value < 0 ? value + detectHueBins : value;
+		};
+
+		const auto fromBin = normalize(hueFrom);
+		const auto toBin = normalize(hueTo);
+		active.hue = {static_cast<uint8_t>(fromBin * 8), static_cast<uint8_t>(toBin * 8 + 7)};
+		active.hueWraps = fromBin > toBin;
+	}
+
+	const auto saturationCenter = (bestSatFrom + bestSatTo) / 2.0;
+	const auto saturationHalf = (bestSatTo - bestSatFrom) / 2.0 * std::max(0.0, toleranceFactor);
+	const auto satFrom = std::max(0, static_cast<int>(std::floor(saturationCenter - saturationHalf)));
+	const auto satTo = std::min(detectSatBins - 1, static_cast<int>(std::ceil(saturationCenter + saturationHalf)));
+	active.saturation = {static_cast<uint8_t>(satFrom * 8), static_cast<uint8_t>(satTo * 8 + 7)};
+	active.value = {0, 255};
+
+	mRanges = active;
+	mLookupValid = false;
+	mLastDetect = result;
+	return result;
+}
+
 void ObjectDetector::process(const FrameView &frame)
 {
 	mResult = Result {};

@@ -63,8 +63,6 @@ private:
 	};
 
 	ObjectDetector mDetector;
-	ObjectDetector::Ranges mRanges;
-
 	ObjectDetector::Result mResult;
 	mutable QMutex mResultLock;
 

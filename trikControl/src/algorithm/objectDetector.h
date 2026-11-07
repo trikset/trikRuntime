@@ -77,8 +77,23 @@ public:
 		int targetCount = 0;
 	};
 
+	struct DetectResult {
+		Ranges ranges;
+		bool valid = false;
+	};
+
 	void setRanges(const Ranges &ranges);
 	void process(const FrameView &frame);
+
+	/// One-shot HSV range detection over the central positive ROI and the
+	/// outer negative ROI. Applies @p toleranceFactor to the active ranges and
+	/// returns the raw detected ranges (before tolerance).
+	DetectResult detect(const FrameView &frame, double toleranceFactor);
+
+	const DetectResult &lastDetect() const
+	{
+		return mLastDetect;
+	}
 
 	const Result &result() const
 	{
@@ -93,6 +108,7 @@ private:
 	};
 
 	void buildMetapixelBitmap(const FrameView &frame);
+	void buildDetectHistogram(const FrameView &frame, int &modeHue, int &modeSat);
 	void clusterize();
 	void selectTargets(int frameWidth, int frameHeight);
 	void rebuildLookup();
@@ -112,6 +128,17 @@ private:
 	uint16_t mLabelCount = 0;
 
 	Result mResult;
+
+	static constexpr int detectHueBins = 32;
+	static constexpr int detectSatBins = 32;
+	static constexpr int detectEmptyPenalty = 2;
+	static constexpr int detectPositiveWeight = 1;
+	static constexpr int detectNegativeWeight = 2;
+	static constexpr int detectHueDuplicated = detectHueBins * 2;
+
+	std::array<int, detectHueBins * detectSatBins> mDetectHistogram {};
+	std::array<int, (detectHueDuplicated + 1) * (detectSatBins + 1)> mDetectPrefix {};
+	DetectResult mLastDetect;
 };
 
 } // namespace trikControl
