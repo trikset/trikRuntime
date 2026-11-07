@@ -96,7 +96,7 @@ jobs:
             make -j $(nproc) qmake_all
 
       - name: Make all
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
             make -j $(nproc) all
 
