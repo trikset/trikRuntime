@@ -20,14 +20,14 @@
 #include <QtCore/QVector>
 
 #include "cpuAlgorithmWorker.h"
+#include "objectDetector.h"
 
 namespace trikControl {
 
 /// CPU object sensor worker.
 ///
 /// The base class handles capture, RGA scaling, preview buffers and publishing.
-/// This class is intended to detect a coloured object, track its position and
-/// size and auto-detect the HSV range on detect().
+/// This class owns the ObjectDetector and exposes its reading to the sensor.
 class ObjectSensorWorker : public CpuAlgorithmWorker
 {
 public:
@@ -53,12 +53,6 @@ protected:
 	OverlayResult buildOverlay(const BgraFrameView &frame) override;
 
 private:
-	struct Reading {
-		int x = 0;
-		int y = 0;
-		int size = 0;
-	};
-
 	struct DetectParameters {
 		int hue = 0;
 		int saturation = 0;
@@ -68,11 +62,14 @@ private:
 		int valueTolerance = 0;
 	};
 
+	ObjectDetector mDetector;
+	ObjectDetector::Ranges mRanges;
+
+	ObjectDetector::Result mResult;
+	mutable QMutex mResultLock;
+
 	std::atomic<bool> mDetectRequested {false};
 	qreal mToleranceFactor = 1.0;
-
-	Reading mReading;
-	mutable QMutex mReadingLock;
 
 	DetectParameters mDetectParameters;
 	mutable QMutex mDetectParametersLock;

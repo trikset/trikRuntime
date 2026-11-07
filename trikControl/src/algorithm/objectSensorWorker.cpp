@@ -35,8 +35,8 @@ void ObjectSensorWorker::detect()
 
 QVector<int> ObjectSensorWorker::reading() const
 {
-	QMutexLocker locker(&mReadingLock);
-	return {mReading.x, mReading.y, mReading.size};
+	QMutexLocker locker(&mResultLock);
+	return {mResult.x, mResult.y, mResult.size};
 }
 
 QVector<int> ObjectSensorWorker::detectParameters() const
@@ -54,8 +54,20 @@ void ObjectSensorWorker::setToleranceFactor(qreal factor)
 
 bool ObjectSensorWorker::processFrame(const BgraFrameView &frame)
 {
-	Q_UNUSED(frame);
+	if (!frame.data || frame.width <= 0 || frame.height <= 0 || frame.stride < frame.width * bgraBytesPerPixel) {
+		return false;
+	}
+
 	mDetectRequested.store(false, std::memory_order_release);
+
+	mDetector.setRanges(mRanges);
+	mDetector.process({frame.data, frame.width, frame.height, frame.stride});
+
+	{
+		QMutexLocker locker(&mResultLock);
+		mResult = mDetector.result();
+	}
+
 	return true;
 }
 
