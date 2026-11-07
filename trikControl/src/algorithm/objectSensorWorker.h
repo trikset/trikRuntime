@@ -38,7 +38,7 @@ public:
 	/// Requests a one-shot HSV range detection on the next processed frame.
 	void detect();
 
-	/// Returns {x, y, size} from the last processed frame.
+	/// Returns {x, y, size} of the largest target from the last processed frame.
 	QVector<int> reading() const;
 
 	/// Returns {hue, saturation, value, hueTolerance, saturationTolerance, valueTolerance}
@@ -49,28 +49,42 @@ public:
 	void setToleranceFactor(qreal factor);
 
 protected:
+	/// The algorithm draws the preview directly into the frame buffer.
+	bool modifiesOutputFrame() const override
+	{
+		return true;
+	}
+
+	/// Runs the detector and draws the preview overlay into the frame.
 	bool processFrame(const BgraFrameView &frame) override;
+
+	/// All visual changes are applied directly to the frame in processFrame();
+	/// this sensor does not build QPainterPath overlays.
 	OverlayResult buildOverlay(const BgraFrameView &frame) override;
 
 private:
+	/// Draws the magenta guide lines that mark the detection zone boundaries.
+	void drawTargetGuides(const BgraFrameView &frame) const;
+
+	/// Raw detection parameters exposed through the sensor interface.
 	struct DetectParameters {
-		int hue = 0;
-		int saturation = 0;
-		int value = 0;
-		int hueTolerance = 0;
-		int saturationTolerance = 0;
-		int valueTolerance = 0;
+		int hue = 0; ///< Dominant hue in [0, 359].
+		int saturation = 0; ///< Dominant saturation in [0, 100].
+		int value = 0; ///< Dominant value in [0, 100].
+		int hueTolerance = 0; ///< Hue tolerance in [0, 359].
+		int saturationTolerance = 0; ///< Saturation tolerance in [0, 100].
+		int valueTolerance = 0; ///< Value tolerance in [0, 100].
 	};
 
-	ObjectDetector mDetector;
-	ObjectDetector::Result mResult;
-	mutable QMutex mResultLock;
+	ObjectDetector mDetector; ///< Frame-to-target detector.
+	ObjectDetector::Result mResult; ///< Latest detection result.
+	mutable QMutex mResultLock; ///< Guards mResult.
 
-	std::atomic<bool> mDetectRequested {false};
-	qreal mToleranceFactor = 1.0;
+	std::atomic<bool> mDetectRequested {false}; ///< A one-shot detect() is pending.
+	qreal mToleranceFactor = 1.0; ///< Multiplier for the detected range.
 
-	DetectParameters mDetectParameters;
-	mutable QMutex mDetectParametersLock;
+	DetectParameters mDetectParameters; ///< Latest raw detection parameters.
+	mutable QMutex mDetectParametersLock; ///< Guards mDetectParameters.
 };
 
 } // namespace trikControl

@@ -24,6 +24,33 @@
 
 using namespace trikControl;
 
+namespace {
+
+/// Metapixel block size in pixels.
+constexpr int metapixelSize = 4;
+/// BGRA bytes per pixel.
+constexpr int bytesPerPixel = 4;
+
+/// Bits per RGB channel stored in the packed match lookup.
+constexpr int lookupBits = 6;
+/// Shift that maps an 8-bit channel to its lookup bin.
+constexpr int lookupShift = 8 - lookupBits;
+/// Number of lookup bins per channel.
+constexpr int lookupBinCount = 1 << lookupBits;
+/// Total number of RGB lookup entries.
+constexpr int lookupEntries = lookupBinCount * lookupBinCount * lookupBinCount;
+/// Size of the packed one-bit-per-entry lookup in bytes.
+constexpr int lookupBytes = (lookupEntries + 7) / 8;
+
+/// Penalty applied to an empty H/S bin during range detection.
+constexpr int detectEmptyPenalty = 2;
+/// Histogram weight of a pixel inside the positive ROI.
+constexpr int detectPositiveWeight = 1;
+/// Histogram weight of a pixel inside the negative ROI.
+constexpr int detectNegativeWeight = 2;
+
+} // namespace
+
 void ObjectDetector::setRanges(const Ranges &ranges)
 {
 	if (rangesEqual(ranges)) {
@@ -44,7 +71,8 @@ bool ObjectDetector::rangesEqual(const Ranges &other) const
 
 void ObjectDetector::rebuildLookup()
 {
-	mLookup.fill(0);
+	// One bit per 6-bit RGB triple: 64 * 64 * 64 bits = 32 KiB.
+	mLookup.assign(lookupBytes, 0);
 
 	const auto binToValue = [](int bin) {
 		constexpr auto maxBin = lookupBinCount - 1;
@@ -84,6 +112,9 @@ void ObjectDetector::buildDetectHistogram(const FrameView &frame, int &modeHue, 
 	modeHue = 0;
 	modeSat = 0;
 
+	// Positive ROI: the central square of +/-step around the frame center.
+	// Negative ROI: everything outside the larger square of +/-2*step.
+	// The ring between them is ignored.
 	const auto halfWidth = frame.width / 2;
 	const auto halfHeight = frame.height / 2;
 	const auto step = std::max(1, frame.height / 6);
@@ -130,7 +161,6 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 {
 	auto result = DetectResult {};
 	if (!frame.data || frame.width <= 0 || frame.height <= 0 || frame.stride < frame.width * bytesPerPixel) {
-		mLastDetect = result;
 		return result;
 	}
 
@@ -138,6 +168,9 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 	auto modeSat = 0;
 	buildDetectHistogram(frame, modeHue, modeSat);
 
+	// 2D prefix sums over H repeated twice, so a Hue interval that wraps through
+	// 0/255 is still a contiguous range. Empty bins get a penalty so the search
+	// does not stretch the window over unused colors for free.
 	const auto stride = detectSatBins + 1;
 	mDetectPrefix.fill(0);
 
@@ -154,6 +187,9 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 		}
 	}
 
+	// Exhaustive search over every H interval (up to a full circle) and every S
+	// interval. Ties are resolved by distance to the mode, then by smaller area,
+	// then by shorter Hue interval.
 	auto bestScore = std::numeric_limits<int>::min();
 	auto bestStart = 0;
 	auto bestLength = 0;
@@ -163,7 +199,7 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 	auto bestArea = std::numeric_limits<int>::max();
 
 	for (auto start = 0; start < detectHueDuplicated; ++start) {
-		const auto maxLength = std::min(detectHueBins, detectHueDuplicated - start);
+		const auto maxLength = std::min(static_cast<int>(detectHueBins), detectHueDuplicated - start);
 
 		for (auto length = 1; length <= maxLength; ++length) {
 			const auto end = start + length;
@@ -222,7 +258,6 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 		fallback.valid = false;
 		mRanges = fallback.ranges;
 		mLookupValid = false;
-		mLastDetect = fallback;
 		return fallback;
 	}
 
@@ -236,6 +271,8 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 	result.ranges.value = {0, 255};
 	result.valid = true;
 
+	// Expand the raw window around its center by toleranceFactor before using it
+	// for matching. The reported DetectResult keeps the raw bounds.
 	auto active = result.ranges;
 	const auto hueCenter = rawStartHue + (bestLength - 1) / 2.0;
 	const auto hueHalf = (bestLength - 1) / 2.0 * std::max(0.0, toleranceFactor);
@@ -266,11 +303,10 @@ ObjectDetector::DetectResult ObjectDetector::detect(const FrameView &frame, doub
 
 	mRanges = active;
 	mLookupValid = false;
-	mLastDetect = result;
 	return result;
 }
 
-void ObjectDetector::process(const FrameView &frame)
+void ObjectDetector::process(const FrameView &frame, uint8_t *highlight, uint32_t highlightColor)
 {
 	mResult = Result {};
 
@@ -288,12 +324,14 @@ void ObjectDetector::process(const FrameView &frame)
 		rebuildLookup();
 	}
 
-	buildMetapixelBitmap(frame);
+	// Three stages over the frame: matched-pixel counts, connected components,
+	// then target selection. Optional highlighting is folded into the first.
+	buildMetapixelBitmap(frame, highlight, highlightColor);
 	clusterize();
 	selectTargets(frame.width, frame.height);
 }
 
-void ObjectDetector::buildMetapixelBitmap(const FrameView &frame)
+void ObjectDetector::buildMetapixelBitmap(const FrameView &frame, uint8_t *highlight, uint32_t highlightColor)
 {
 	mMetapixelWidth = frame.width / metapixelSize;
 	mMetapixelHeight = frame.height / metapixelSize;
@@ -312,6 +350,8 @@ void ObjectDetector::buildMetapixelBitmap(const FrameView &frame)
 
 	const auto *lookup = mLookup.data();
 
+	// Each metapixel is a 4x4 block. Count how many of its pixels match the
+	// current lookup; the packed index is one 6-bit value per channel.
 	for (auto metapixelY = 0; metapixelY < metapixelHeight; ++metapixelY) {
 		const uint8_t *rowLines[metapixelSize];
 		for (auto dy = 0; dy < metapixelSize; ++dy) {
@@ -342,12 +382,35 @@ void ObjectDetector::buildMetapixelBitmap(const FrameView &frame)
 
 			mBitmap[static_cast<size_t>(metapixelY) * static_cast<size_t>(metapixelWidth)
 				+ static_cast<size_t>(metapixelX)] = count;
+
+			// A metapixel that survives this threshold is exactly the one that
+			// clusterize() later labels as a cluster, so it can be highlighted
+			// here without a second pass. Blocks are disjoint, so painting does
+			// not disturb the pixels read for the following metapixels.
+			if (highlight && count > metapixelSize / 2) {
+				const auto x0 = metapixelX * metapixelSize;
+				const auto y0 = metapixelY * metapixelSize;
+				const auto x1 = std::min(x0 + metapixelSize, frame.width);
+				const auto y1 = std::min(y0 + metapixelSize, frame.height);
+
+				for (auto y = y0; y < y1; ++y) {
+					auto *row =
+						highlight + static_cast<size_t>(y) * static_cast<size_t>(frame.stride);
+					for (auto x = x0; x < x1; ++x) {
+						std::memcpy(row + static_cast<size_t>(x) * bytesPerPixel,
+							&highlightColor, bytesPerPixel);
+					}
+				}
+			}
 		}
 	}
 }
 
 void ObjectDetector::clusterize()
 {
+	// Flood-fill 8-connected metapixels. A metapixel joins a cluster only when
+	// more than half of its pixels matched, which is the same threshold used for
+	// preview highlighting.
 	const auto width = mMetapixelWidth;
 	const auto height = mMetapixelHeight;
 	const auto count = static_cast<size_t>(width) * static_cast<size_t>(height);
@@ -466,6 +529,8 @@ void ObjectDetector::clusterize()
 
 void ObjectDetector::selectTargets(int frameWidth, int frameHeight)
 {
+	// Keep the largest clusters that pass the minimum-size filter, sorted by
+	// size (largest first). Ties prefer the lower label for determinism.
 	std::array<Target, maxTargets> targets {};
 	auto targetCount = 0;
 

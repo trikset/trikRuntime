@@ -653,8 +653,7 @@ ColorSensorInterface *Brick::colorSensor(const QString &port)
 
 ObjectSensorInterface *Brick::objectSensor(const QString &port)
 {
-	Q_UNUSED(port);
-	return nullptr;
+	return mVideoSensorManager ? mVideoSensorManager->objectSensor(port) : nullptr;
 }
 
 I2cDeviceInterface *Brick::createI2cDevice(int bus, int address,

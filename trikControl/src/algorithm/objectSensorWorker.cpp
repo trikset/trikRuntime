@@ -14,11 +14,32 @@
 
 #include "objectSensorWorker.h"
 
+#include <algorithm>
 #include <utility>
 
 #include <QtCore/QMutexLocker>
 
+#include "frameDrawingUtils.h"
+
 using namespace trikControl;
+
+namespace {
+
+/// Cyan highlight painted over the detected clusters (BGRA).
+constexpr auto clusterColor = uint32_t {0xFF00FFFF};
+/// Magenta guide lines that mark the detection zone boundaries (BGRA).
+constexpr auto guideColor = uint32_t {0xFFFF00FF};
+/// Red target markers (BGRA).
+constexpr auto targetColor = uint32_t {0xFFFF0000};
+
+/// Half-length of each guide line around the frame center, in pixels.
+constexpr auto guideHalfLength = 99;
+/// Zone scale used by ObjectDetector::detect(): step = frame.height / 6.
+constexpr auto detectZoneScale = 6;
+/// Number of guide line pairs drawn on each side of the center.
+constexpr auto guidePairs = 2;
+
+} // namespace
 
 ObjectSensorWorker::ObjectSensorWorker(QSharedPointer<CameraManager> camera, QString port,
 	trikHal::HardwareAbstractionInterface &hal, std::shared_ptr<VideoPreviewSink> previewSink,
@@ -65,6 +86,8 @@ bool ObjectSensorWorker::processFrame(const BgraFrameView &frame)
 
 		auto parameters = DetectParameters {};
 
+		// Convert the detector's 8-bit HSV window to the legacy 0..359 / 0..100
+		// representation. Value is kept at 50% with full tolerance.
 		if (detected.valid) {
 			const auto &ranges = detected.ranges;
 			const auto hueFrom = static_cast<int>(ranges.hue.from);
@@ -96,14 +119,48 @@ bool ObjectSensorWorker::processFrame(const BgraFrameView &frame)
 		}
 	}
 
-	mDetector.process(view);
+	// Highlights the detected metapixels while building the bitmap and fills
+	// the result that is exposed through reading().
+	mDetector.process(view, frame.data, clusterColor);
+	const auto &result = mDetector.result();
 
 	{
 		QMutexLocker locker(&mResultLock);
-		mResult = mDetector.result();
+		mResult = result;
+	}
+
+	drawTargetGuides(frame);
+
+	// Red 3x3 marker at the center of every detected target.
+	for (auto i = 0; i < result.targetCount; ++i) {
+		const auto &target = result.targets[i];
+		for (auto dy = -1; dy <= 1; ++dy) {
+			drawHorizontalLine(frame, target.y + dy, target.x - 1, target.x + 1, targetColor);
+		}
 	}
 
 	return true;
+}
+
+void ObjectSensorWorker::drawTargetGuides(const BgraFrameView &frame) const
+{
+	const auto centerX = frame.width / 2;
+	const auto centerY = frame.height / 2;
+	const auto step = std::max(1, frame.height / detectZoneScale);
+
+	const auto top = centerY - guideHalfLength;
+	const auto bottom = centerY + guideHalfLength;
+	const auto left = centerX - guideHalfLength;
+	const auto right = centerX + guideHalfLength;
+
+	// Pairs of lines at one and two steps from the center mark the positive
+	// and negative detection zones.
+	for (auto i = 1; i <= guidePairs; ++i) {
+		drawVerticalLine(frame, centerX - i * step, top, bottom, guideColor);
+		drawVerticalLine(frame, centerX + i * step, top, bottom, guideColor);
+		drawHorizontalLine(frame, centerY - i * step, left, right, guideColor);
+		drawHorizontalLine(frame, centerY + i * step, left, right, guideColor);
+	}
 }
 
 OverlayResult ObjectSensorWorker::buildOverlay(const BgraFrameView &frame)

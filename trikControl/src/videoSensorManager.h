@@ -22,6 +22,7 @@
 #include "colorSensorInterface.h"
 #include "deviceState.h"
 #include "lineSensorInterface.h"
+#include "objectSensorInterface.h"
 
 namespace trikHal {
 class HardwareAbstractionInterface;
@@ -34,6 +35,7 @@ class Configurer;
 namespace trikControl {
 
 class LineSensor;
+class ObjectSensor;
 class VideoPreviewSink;
 
 /// Owns the CPU-backed video sensors and their camera lifetime.
@@ -53,6 +55,7 @@ public:
 
 	ColorSensorInterface *colorSensor(const QString &port);
 	LineSensorInterface *lineSensor(const QString &port);
+	ObjectSensorInterface *objectSensor(const QString &port);
 
 	/// Stop every active sensor.
 	void stop();
@@ -81,6 +84,7 @@ private:
 
 	QHash<int, ColorSensor *> mColorSensors;
 	QHash<int, LineSensor *> mLineSensors;
+	QHash<int, ObjectSensor *> mObjectSensors;
 };
 
 } // namespace trikControl
