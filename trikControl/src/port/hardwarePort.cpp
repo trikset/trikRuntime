@@ -69,6 +69,9 @@ QString HardwarePort::activeDevice() const
 
 quint64 HardwarePort::start(PortMode mode, const QString &owner)
 {
+	// Will be used when pinmux/power switching is implemented.
+	Q_UNUSED(mHardwareAbstraction);
+
 	if (mode == PortMode::None || !allows(mode)) {
 		return 0;
 	}

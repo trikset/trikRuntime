@@ -68,6 +68,9 @@ QString PeripheryPort::activeDevice() const
 
 quint64 PeripheryPort::start(PortMode mode, const QString &owner)
 {
+	// Will be used when the dynamic port switching protocol is available.
+	Q_UNUSED(mDriver);
+
 	if (mode == PortMode::None || !allows(mode)) {
 		return 0;
 	}

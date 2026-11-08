@@ -63,9 +63,9 @@ public:
 private:
 	PortConfig mConfig;
 	QList<PortMode> mAllowedModes;
-	// Reserved for the future pinmux/power implementation; unused while
-	// start()/stop() are no-ops.
-	trikHal::HardwareAbstractionInterface &mHardwareAbstraction __attribute__((unused));
+	// Reserved for the future pinmux/power implementation; used in start()
+	// only to keep the dependency visible while start()/stop() are no-ops.
+	trikHal::HardwareAbstractionInterface &mHardwareAbstraction;
 	PortMode mActiveMode = PortMode::None;
 	QString mOwner;
 	QSet<quint64> mTokens;
