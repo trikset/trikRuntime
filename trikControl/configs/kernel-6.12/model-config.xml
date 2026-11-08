@@ -76,19 +76,12 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	<B1>
 		<sonarSensor />
 	</B1>
-	<!--
 	<B2>
 		<sonarSensor />
 	</B2>
 	<B3>
 		<sonarSensor />
 	</B3>
-	-->
-	<!--
-	<B3>
-		<volumeSensor />
-	</B3>
-	-->
 
 	<!-- Encoder ports. -->
 	<E1>
@@ -147,11 +140,11 @@ Note that device, even if listed here, may fail by itself, then it also will not
 	</soundSensor>
 	-->
 
-        <lidarPort>
-                <lidar file="/dev/ttyS1" />
-        </lidarPort>
+        <B4>
+                <lidar />
+        </B4>
 
-        <irCameraPort>
+        <B5>
                 <irCamera />
-        </irCameraPort>
+        </B5>
 </config>

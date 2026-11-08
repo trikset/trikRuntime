@@ -18,10 +18,10 @@
 #include <QtCore/QThread>
 #include <QtCore/QVector>
 
-
 #include "deviceState.h"
 #include "irCameraInterface.h"
 #include "irCameraWorker.h"
+#include "port/portLease.h"
 #include <trikControl/trikControlDeclSpec.h>
 
 namespace trikKernel {
@@ -34,6 +34,8 @@ class HardwareAbstractionInterface;
 
 namespace trikControl {
 
+class PortManager;
+
 /// Class for ir camera device instantiation
 class TRIKCONTROL_EXPORT IrCamera : public IrCameraInterface
 {
@@ -44,9 +46,8 @@ public:
 	/// @param mediaPath - path where program should save photos
 	/// @param configurer - configurer to get info from config
 	/// @param hardwareAbstraction - realization of HAL
-	IrCamera(const QString &port
-			 , const trikKernel::Configurer &configurer
-			 , trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	IrCamera(const QString &port, const trikKernel::Configurer &configurer,
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports);
 
 	~IrCamera() override;
 
@@ -72,6 +73,8 @@ private Q_SLOTS:
 	void onStop();
 
 private:
+	PortLease mPortLease;
+
 	/// Worker object that read data from ir camera in separate thread
 	QScopedPointer<IrCameraWorkerMLX90640> mIrCameraWorker;
 

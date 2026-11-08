@@ -24,13 +24,21 @@
 #include "configurerHelper.h"
 #include "rangeSensorWorker.h"
 #include "moduleLoader.h"
+#include "port/iioDeviceResolver.h"
+#include "port/portManager.h"
 
 using namespace trikControl;
 
 RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader,
-	const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mState("Range Sensor on " + port)
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Gpio, QStringLiteral("rangeSensor")))
+	, mState("Range Sensor on " + port)
 {
+	if (!mPortLease) {
+		mState.fail();
+		return;
+	}
+
 	if (!moduleLoader.load(configurer.attributeByPort(port, "module"))
 		|| !moduleLoader.load(configurer.attributeByDevice("rangeSensor", "commonModule"))) {
 		QLOG_ERROR() << "Module loading failed";
@@ -54,8 +62,17 @@ RangeSensor::RangeSensor(const QString &port, const trikKernel::Configurer &conf
 		samplingPeriodMs = 50;
 	}
 
-	mSensorWorker.reset(new RangeSensorWorker(hardwareAbstraction, configurer.attributeByPort(port, "sensorFile"),
-		mState, mMinValue, mMaxValue, configurer.attributeByPort(port, "filter"), samplingPeriodMs));
+	const auto iioLabel = configurer.attributeByPort(port, QStringLiteral("iioLabel"));
+	const auto iioChannel = configurer.attributeByPort(port, QStringLiteral("iioChannel"));
+	const auto sensorFile = findIioChannelFileByLabel(iioLabel, iioChannel);
+	if (sensorFile.isEmpty()) {
+		QLOG_ERROR() << "RangeSensor on" << port << "cannot resolve IIO channel" << iioLabel << iioChannel;
+		mState.fail();
+		return;
+	}
+
+	mSensorWorker.reset(new RangeSensorWorker(hardwareAbstraction, sensorFile, mState, mMinValue, mMaxValue,
+		configurer.attributeByPort(port, "filter"), samplingPeriodMs));
 
 	if (!mState.isFailed()) {
 		mSensorWorker->moveToThread(&mWorkerThread);

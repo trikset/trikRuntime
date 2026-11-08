@@ -20,6 +20,7 @@
 #include "sensorInterface.h"
 #include "deviceState.h"
 #include "datafilter.h"
+#include "port/portLease.h"
 
 namespace trikKernel {
 class Configurer;
@@ -28,6 +29,7 @@ class Configurer;
 namespace trikControl {
 
 class PeripheryDriverInterface;
+class PortManager;
 
 /// Analog TRIK sensor.
 class AnalogSensor : public SensorInterface
@@ -39,7 +41,8 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	/// @param driver - non-owning periphery driver used to query sensor; must outlive the sensor.
-	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver);
+	AnalogSensor(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver,
+		PortManager &ports);
 
 	Status status() const override;
 
@@ -66,6 +69,8 @@ private:
 
 	void calculateLNS(const QString &port, const trikKernel::Configurer &configurer);
 	void calculateKB(const QString &port, const trikKernel::Configurer &configurer);
+
+	PortLease mPortLease;
 
 	/// Non-owning; the shared driver is owned by CommunicatorProvider.
 	PeripheryDriverInterface &mDriver;

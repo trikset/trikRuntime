@@ -21,24 +21,43 @@
 #include <trikKernel/configurer.h>
 #include <trikHal/hardwareAbstractionInterface.h>
 #include "configurerHelper.h"
+#include "port/portManager.h"
 
 #include <QsLog.h>
 
 using namespace trikControl;
 
-/// The current platform has PWM blocks whose channels can work as inputs using
-/// the same sysfs files as for output. The kernel already guards switching to
-/// capture mode: if period or duty is not zero, the port simply will not be
-/// switched into this mode. It is therefore the responsibility of devices that
-/// use PWM (servoMotor, powerMotor) to reset period and duty to zero in their
-/// destructors/stop()/powerOff(); PwmCapture does not reset them itself.
+/// PWM capture is exposed as a read-only "capture" attribute of an exported
+/// channel. The channel must not be enabled: the rockchip driver returns -EBUSY
+/// for capture while the PWM output is running.
 PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &configurer,
-	const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mCaptureFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "captureFile")))
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Pwm, QStringLiteral("pwmCapture")))
 	, mState("PWM Capture on " + port)
 {
-	if (!mCaptureFile->open()) {
+	if (!mPortLease) {
 		mState.fail();
+		return;
+	}
+
+	const auto pwmDevice = mPortLease.device();
+	if (pwmDevice.isEmpty()) {
+		QLOG_ERROR() << "PWM Capture on" << port << "requires a PWM device on the port";
+		failSetup();
+		return;
+	}
+
+	mPwmChannel = PwmChannelLease(pwmDevice, hardwareAbstraction);
+	if (!mPwmChannel) {
+		QLOG_ERROR() << "PWM Capture on" << port << "cannot resolve PWM device" << pwmDevice;
+		failSetup();
+		return;
+	}
+
+	const auto channelDir = mPwmChannel.channelDir();
+	mCaptureFile.reset(hardwareAbstraction.createInputDeviceFile(channelDir + QStringLiteral("/capture")));
+	if (!mCaptureFile || !mCaptureFile->open()) {
+		failSetup();
 		return;
 	}
 
@@ -49,7 +68,7 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 
 	if (mMinValue == mMaxValue) {
 		QLOG_ERROR() << "PWM Capture configuration error: minValue = maxValue!";
-		mState.fail();
+		failSetup();
 		mK = 0;
 		mB = 0;
 	} else {
@@ -60,7 +79,18 @@ PwmCapture::PwmCapture(const QString &port, const trikKernel::Configurer &config
 	mState.ready();
 }
 
-PwmCapture::~PwmCapture() = default;
+PwmCapture::~PwmCapture()
+{
+	mCaptureFile.reset();
+}
+
+void PwmCapture::failSetup()
+{
+	mState.fail();
+	mCaptureFile.reset();
+	mPortLease.release();
+	mPwmChannel.release();
+}
 
 PwmCapture::Status PwmCapture::status() const
 {

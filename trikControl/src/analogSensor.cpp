@@ -19,15 +19,22 @@
 
 #include "peripheryDriverInterface.h"
 #include "configurerHelper.h"
+#include "port/portManager.h"
 
 using namespace trikControl;
 
 AnalogSensor::AnalogSensor(const QString &port, const trikKernel::Configurer &configurer,
-	PeripheryDriverInterface &driver)
-	: mDriver(driver)
+	PeripheryDriverInterface &driver, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Adc, QStringLiteral("analogSensor")))
+	, mDriver(driver)
 	, mState("Analog Sensor on" + port)
 	, mPort(port)
 {
+	if (!mPortLease) {
+		mState.fail();
+		return;
+	}
+
 	mIRType = configurer.attributeByPort(port, "type") == "SharpGP2" ? Type::sharpGP2 : Type::analog;
 	mMinValue = ConfigurerHelper::configureInt(configurer, mState, port, "minValue");
 	mMaxValue = ConfigurerHelper::configureInt(configurer, mState, port, "maxValue");

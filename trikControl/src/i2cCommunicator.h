@@ -42,6 +42,9 @@ public:
 	I2cCommunicator(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface &i2c, uint8_t bus,
 		uint8_t deviceId);
 
+	/// Connects to an explicit device path without consulting the config.
+	I2cCommunicator(trikHal::PeripheryI2cInterface &i2c, const QString &devicePath, uint8_t deviceId);
+
 	I2cCommunicator(const trikKernel::Configurer &configurer,
 		std::unique_ptr<trikHal::PeripheryI2cInterface> ownedI2c);
 

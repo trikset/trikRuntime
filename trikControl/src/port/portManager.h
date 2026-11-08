@@ -88,8 +88,7 @@ private:
 	Port *port(const QString &name) const;
 
 	/// Reads <ports> from @p systemConfig and fills the port cache and the
-	/// I2C bus-to-port mapping. Throws MalformedConfigException when the
-	/// section is invalid.
+	/// I2C bus-to-port mapping. Invalid sections are logged and ignored.
 	void parsePorts(const QString &systemConfig);
 
 	/// Creates the implementation for @p config: PeripheryPort for communicator

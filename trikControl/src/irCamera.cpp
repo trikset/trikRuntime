@@ -18,31 +18,42 @@
 #include <trikKernel/configurer.h>
 
 #include "configurerHelper.h"
-#include "exceptions/incorrectDeviceConfigurationException.h"
-
+#include "port/portManager.h"
 
 namespace trikControl {
 
-IrCamera::IrCamera(const QString &port, const trikKernel::Configurer &configurer
-				, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mImage(IMAGE_SIZE), mState("IR Camera")
+IrCamera::IrCamera(const QString &port, const trikKernel::Configurer &configurer,
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::I2c, QStringLiteral("irCamera")))
+	, mImage(IMAGE_SIZE)
+	, mState("IR Camera")
 {
 	Q_UNUSED(hardwareAbstraction)
 
+	if (!mPortLease) {
+		mState.fail();
+		return;
+	}
+
+	// TODO: the MLX90640 submodule hardcodes /dev/i2c-1. To use the dedicated
+	// bus from mPortLease.device(), the submodule must accept the bus path
+	// (or be replaced by a path-aware I2C driver).
 	uint8_t i2cAddr = ConfigurerHelper::configureInt(configurer, mState, port, "i2cAddress");
 	QLOG_INFO() << "Trying to init IR camera on address " << i2cAddr;
 
 	const int m = ConfigurerHelper::configureInt(configurer, mState, port, "m");
 	if (m <= 0) {
+		QLOG_ERROR() << "Ir Camera shall have 'm' parameter greater than zero";
 		mState.fail();
-		throw IncorrectDeviceConfigurationException("Ir Camera shall have 'm' parameter greater than zero");
+		return;
 	}
 	mSensorHeight = m;
 
 	const int n = ConfigurerHelper::configureInt(configurer, mState, port, "n");
 	if (n <= 0) {
+		QLOG_ERROR() << "Ir Camera shall have 'n' parameter greater than zero";
 		mState.fail();
-		throw IncorrectDeviceConfigurationException("Ir Camera shall have 'n' parameter greater than zero");
+		return;
 	}
 	mSensorWidth = n;
 
@@ -75,12 +86,20 @@ IrCamera::~IrCamera()
 
 void IrCamera::init()
 {
+	if (!mIrCameraWorker) {
+		return;
+	}
+
 	mSensorData.fill(0);
 	QMetaObject::invokeMethod(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::init);
 }
 
 void IrCamera::stop()
 {
+	if (!mIrCameraWorker) {
+		return;
+	}
+
 	QMetaObject::invokeMethod(mIrCameraWorker.data(), &IrCameraWorkerMLX90640::stop);
 }
 
@@ -95,7 +114,7 @@ QVector<int32_t> IrCamera::getImage() const
 
 int IrCamera::readSensor(int m, int n) const
 {
-	if(m > mSensorHeight || n > mSensorWidth || m <= 0 || n <= 0) {
+	if (m > mSensorHeight || n > mSensorWidth || m <= 0 || n <= 0) {
 		QLOG_WARN() << QString("Incorrect parameters for IrCamera::readSensor: m = %1, n = %2").arg(m).arg(n);
 		return -1;
 	}

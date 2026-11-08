@@ -14,7 +14,6 @@
 
 #include "battery.h"
 
-#include <QtCore/QFileInfo>
 #include <QtCore/QTextStream>
 
 #include <trikKernel/configurer.h>
@@ -24,29 +23,41 @@
 
 #include <QsLog.h>
 
+#include "port/iioDeviceResolver.h"
+
 using namespace trikControl;
 
 Battery::Battery(const trikKernel::Configurer &configurer,
 	const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
 	: mState("Battery")
 {
-	auto deviceFile = QString();
+	QString iioLabel;
+	QString iioChannel;
 	try {
-		deviceFile = configurer.attributeByDevice("battery", "deviceFile");
+		iioLabel = configurer.attributeByDevice("battery", "iioLabel");
+		iioChannel = configurer.attributeByDevice("battery", "iioChannel");
 	} catch (trikKernel::MalformedConfigException &) {
-		QLOG_ERROR() << "Battery: deviceFile is not configured";
+		QLOG_ERROR() << "Battery: iioLabel and iioChannel are not configured";
 		mState.fail();
 		return;
 	}
 
-	mVoltageFile.reset(hardwareAbstraction.createInputDeviceFile(deviceFile));
+	const auto voltageFile = findIioChannelFileByLabel(iioLabel, iioChannel);
+	if (voltageFile.isEmpty()) {
+		QLOG_ERROR() << "Battery: cannot resolve IIO channel" << iioLabel << iioChannel;
+		mState.fail();
+		return;
+	}
+
+	mVoltageFile.reset(hardwareAbstraction.createInputDeviceFile(voltageFile));
 	if (!mVoltageFile->open()) {
-		QLOG_ERROR() << "Battery: failed to open" << deviceFile;
+		QLOG_ERROR() << "Battery: failed to open" << voltageFile;
 		mState.fail();
 		return;
 	}
 
-	const auto scaleFile = QFileInfo(deviceFile).absolutePath() + QStringLiteral("/in_voltage_scale");
+	auto scaleFile = voltageFile;
+	scaleFile.replace(QStringLiteral("_raw"), QStringLiteral("_scale"));
 	QScopedPointer<trikHal::InputDeviceFileInterface> scaleFileHandle(
 		hardwareAbstraction.createInputDeviceFile(scaleFile));
 	if (scaleFileHandle->open()) {

@@ -20,242 +20,346 @@ parameters, it may be not listed in "device types" section, it is assumed that i
 equal to its class name.
 -->
 
-<config version="model-2015" >
+<config version="model-2015">
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_timestamp_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_x_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_y_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_accel_z_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_anglvel_x_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_anglvel_y_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_anglvel_z_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/scan_elements/in_temp_en
-		echo 1 > /sys/bus/iio/devices/iio\:device0/buffer/enable
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_timestamp_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_accel_x_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_accel_y_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_accel_z_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_x_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_y_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_z_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_temp_en
+		echo 1 > /sys/bus/iio/devices/iio\:device1/buffer/enable
 
-		echo 1 > /sys/class/gpio/gpio62/value
-
-                export GP="/sys/class/gpio/"
-                echo 94 > $GP/export
-                echo high > $GP/gpio94/direction
-                echo 35 > $GP/export
-                echo high > $GP/gpio35/direction
-                echo 36 > $GP/export
-                echo high > $GP/gpio36/direction
-                echo 37 > $GP/export
-                echo high > $GP/gpio37/direction
-
-                export PWM="/sys/class/pwm/pwmchip"
-                echo 0 > ${PWM}0/export
-                echo 0 > ${PWM}1/export
-                echo 0 > ${PWM}2/export
-                echo 1 > ${PWM}3/export
-                echo 1 > ${PWM}5/export
-                echo 0 > ${PWM}5/export
-
-                # gpio for detect and set the power supply voltage level (2S or 3S)
-                echo 56 > /sys/class/gpio/export
-
-		#amixer -q set PCM 127
 	</initScript>
-
 	<!-- A list of known devices. -->
 	<deviceClasses>
-                <!-- URI protocol: v4l2, file, qtmultimedia  -->
+		<!-- URI protocol: v4l2, file, qtmultimedia -->
 		<camera type="v4l2"/>
-		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90" />
-		<pwmCapture />
-		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)" />
-		<analogSensor rawValue1="0" rawValue2="1023" normalizedValue1="0" normalizedValue2="100" type="Analog" minValue="0" maxValue="100" filter="" />
-		<encoder invert="false" />
-		<!-- The mainline srf04 IIO driver is also protocol-compatible with HC-SR04.
-		     If the kernel does not know the "hc-sr04" compatible string, use
-		     "devantech,srf04" in the device tree. -->
-		<rangeSensor commonModule="srf04" minValue="0" maxValue="100" filter="median3" samplingFrequency="20" />
-		<digitalSensor />
-		<fifo />
-                <lidar />
-                <iioDevice />
-		<iioSensorGroup />
-		<videoDevice />
-		<colorSensor m="3" n="3" />
-
+		<servoMotor period="20000000" invert="false" controlMin="-90" controlMax="90"/>
+		<pwmCapture/>
+		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)"/>
+		<analogSensor
+			rawValue1="0"
+			rawValue2="1023"
+			normalizedValue1="0"
+			normalizedValue2="100"
+			type="Analog"
+			minValue="0"
+			maxValue="100"
+			filter=""
+		/>
+		<encoder invert="false"/>
+		<rangeSensor commonModule="srf04" minValue="0" maxValue="100" filter="median3" samplingFrequency="20"/>
+		<digitalSensor/>
+		<fifo/>
+		<lidar/>
+		<iioDevice/>
+		<iioSensorGroup/>
+		<videoDevice/>
+		<colorSensor m="3" n="3"/>
+		<lineSensor toleranceFactor="1.0"/>
+		<objectSensor toleranceFactor="1.0"/>
 		<!-- Device files for LED on a brick. -->
-		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
-
+		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness"/>
 		<!-- Battery channel through the SARADC analog mux (X4).
 		     12V -> 100K -> 2K -> X4, X4 -> 18K -> GND (12VS_DIV18):
 		     divider = (100K + 2K + 18K) / 18K = 6.6666667 -->
-		<battery deviceFile="/sys/bus/iio/devices/iio:device1/in_voltage4_raw" divider="6.6666667" />
-
+		<battery iioLabel="adc-mux" iioChannel="battery" divider="6.6666667"/>
 		<!-- Settings for mailbox server (which enables communication between robots) -->
-		<mailbox port="8889" optional="true" />
-
-		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
-                <irCamera />
+		<mailbox port="8889" optional="true"/>
+		<gamepad file="/run/gamepad-service.out.fifo" optional="true"/>
+		<irCamera/>
 	</deviceClasses>
-
+	<!-- Physical ports. Allowed modes are filled in as the board port map is decided. -->
+	<ports>
+		<!-- Periphery module ports.
+		     In fact the periphery module supports a wide range of functions on each
+		     port: almost every port can act as pwm, i2c, uart and so on. The
+		     transport for this exists, but the protocol for dynamic port switching
+		     is not implemented on the periphery module side yet. -->
+		<port name="A1">
+			<mode name="adc"/>
+		</port>
+		<port name="A2">
+			<mode name="adc"/>
+		</port>
+		<port name="A3">
+			<mode name="adc"/>
+		</port>
+		<port name="A4">
+			<mode name="adc"/>
+		</port>
+		<port name="A5">
+			<mode name="adc"/>
+		</port>
+		<port name="A6">
+			<mode name="adc"/>
+		</port>
+		<port name="A7">
+			<mode name="pwm"/>
+		</port>
+		<port name="A8">
+			<mode name="pwm"/>
+		</port>
+		<port name="A9">
+			<mode name="pwm"/>
+		</port>
+		<port name="A10">
+			<mode name="pwm"/>
+		</port>
+		<port name="E1">
+			<mode name="gpio"/>
+		</port>
+		<port name="E2">
+			<mode name="gpio"/>
+		</port>
+		<port name="E3">
+			<mode name="gpio"/>
+		</port>
+		<port name="E4">
+			<mode name="gpio"/>
+		</port>
+		<!-- Onboard ports. -->
+		<!-- B1: GPIO0_D0/GPIO0_D1 -> UART2_M0, serial@fe660000.
+		     serial2 alias -> /dev/ttyS2. -->
+		<port name="B1">
+			<mode name="uart" device="/dev/ttyS2"/>
+			<mode name="gpio"/>
+		</port>
+		<!-- B2: GPIO3_C4/GPIO3_C5 -> UART7_M1, serial@fe6b0000.
+		     serial7 alias -> /dev/ttyS7. -->
+		<port name="B2">
+			<mode name="uart" device="/dev/ttyS7"/>
+			<mode name="gpio"/>
+		</port>
+		<!-- B3: GPIO2_A3/GPIO2_A4 -> UART6_M0, serial@fe6a0000.
+		     serial6 alias -> /dev/ttyS6. -->
+		<port name="B3">
+			<mode name="uart" device="/dev/ttyS6"/>
+			<mode name="gpio"/>
+		</port>
+		<!-- B4: GPIO3_D6/GPIO3_D7 -> UART1_M1, serial@fe650000.
+		     RK356x base DTS defines serial1 = &uart1, so uart1 is always
+		     /dev/ttyS1. -->
+		<port name="B4">
+			<mode name="uart" device="/dev/ttyS1"/>
+			<mode name="gpio"/>
+		</port>
+		<!-- B5: GPIO1_A0/GPIO1_A1.
+		     uart3m0 -> serial@fe670000, serial3 alias -> /dev/ttyS3.
+		     i2c3m0 -> i2c@fe5c0000, i2c3 alias -> /dev/i2c-3.
+		     The modes are mutually exclusive on the same pins.
+		     No UART/I2C resolvers are needed for RK. -->
+		<port name="B5">
+			<mode name="uart" device="/dev/ttyS3"/>
+			<mode name="i2c" device="/dev/i2c-3" bus="3"/>
+			<mode name="gpio"/>
+		</port>
+		<port name="B6">
+			<mode name="i2c" device="/dev/i2c-2" bus="2"/>
+			<mode name="gpio"/>
+		</port>
+		<!-- B7: GPIO0_C1 -> PWM2_M0, pwm@fdd70020, channel 0. -->
+		<port name="B7">
+			<mode name="gpio"/>
+			<mode name="pwm" device="fdd70020.pwm"/>
+		</port>
+		<!-- B8: GPIO3_B7 -> PWM12_M0, pwm@fe700000, channel 0. -->
+		<port name="B8">
+			<mode name="gpio"/>
+			<mode name="pwm" device="fe700000.pwm"/>
+		</port>
+		<!-- B9: GPIO3_C0 -> PWM13_M0, pwm@fe700010, channel 0. -->
+		<port name="B9">
+			<mode name="gpio"/>
+			<mode name="pwm" device="fe700010.pwm"/>
+		</port>
+		<!-- B10: GPIO3_B6 -> PWM11_M0, pwm@fe6f0030, channel 0. -->
+		<port name="B10">
+			<mode name="gpio"/>
+			<mode name="pwm" device="fe6f0030.pwm"/>
+		</port>
+		<!-- M1: GPIO0_C2 -> PWM3_IR, pwm@fdd70030, channel 0. -->
+		<port name="M1">
+			<mode name="pwm" device="fdd70030.pwm"/>
+		</port>
+		<!-- M2: GPIO0_C3 -> PWM4, pwm@fe6e0000, channel 0. -->
+		<port name="M2">
+			<mode name="pwm" device="fe6e0000.pwm"/>
+		</port>
+		<!-- M3: GPIO4_C3 -> PWM15_M1, pwm@fe700030, channel 0. -->
+		<port name="M3">
+			<mode name="pwm" device="fe700030.pwm"/>
+		</port>
+		<!-- M4: GPIO4_C2 -> PWM14_M1, pwm@fe700020, channel 0. -->
+		<port name="M4">
+			<mode name="pwm" device="fe700020.pwm"/>
+		</port>
+	</ports>
+	<!-- Device file resolution for port devices:
+	     1. Configurer (model-config and other overrides),
+	     2. port manager default device from <ports>,
+	     3. fail.
+	     USB devices (u1/u2/u3) have no port manager port: a stable udev
+	     alias is expected. The device class receives the port name and
+	     resolves the file through Configurer; if the model config has no
+	     file for that port, the device fails.
+	     Example: <lidar port="u1" file="/dev/ttyUSB0" /> -->
 	<devicePorts>
+		<servoMotor port="B7"/>
+		<pwmCapture port="B7"/>
+		<servoMotor port="B8"/>
+		<pwmCapture port="B8"/>
+		<servoMotor port="B9"/>
+		<pwmCapture port="B9"/>
+		<servoMotor port="B10"/>
+		<pwmCapture port="B10"/>
+		<powerMotor port="M1" invert="true" dirGpio="GPIO4_C5" nFaultGpio="GPIO4_A3" iioLabel="adc-mux" iioChannel="m1"/>
+		<powerMotor port="M2" dirGpio="GPIO4_C6" nFaultGpio="GPIO4_B1" iioLabel="adc-mux" iioChannel="m2"/>
+		<powerMotor port="M3" dirGpio="GPIO3_D4" nFaultGpio="GPIO4_B7" iioLabel="adc-mux" iioChannel="m3"/>
+		<powerMotor port="M4" dirGpio="GPIO3_D3" nFaultGpio="GPIO4_B6" iioLabel="adc-mux" iioChannel="m4"/>
+		<!-- These pins can be reconfigured, but the dynamic port switching
+		     protocol is not designed for the periphery module yet, so other
+		     functions of these ports are not described for now. -->
 		<!-- Peripheral servos. -->
-		<servoMotor port="A7" />
-		<servoMotor port="A8" />
-		<servoMotor port="A9" />
-		<servoMotor port="A10" />
-		<!-- Onboard servos. PWM paths are placeholders until the board exposes them. -->
-		<servoMotor
-			port="B7"
-			deviceFile="/sys/class/pwm/pwmchip6/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip6/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip6/pwm0/enable"
+		<servoMotor port="A7"/>
+		<servoMotor port="A8"/>
+		<servoMotor port="A9"/>
+		<servoMotor port="A10"/>
+		<analogSensor port="A1"/>
+		<analogSensor port="A2"/>
+		<analogSensor port="A3"/>
+		<analogSensor port="A4"/>
+		<analogSensor port="A5"/>
+		<analogSensor port="A6"/>
+		<encoder port="E1"/>
+		<encoder port="E2" invert="true"/>
+		<encoder port="E3"/>
+		<encoder port="E4" invert="true"/>
+		<rangeSensor port="B1" module="srf04" iioLabel="B1" iioChannel="in_distance_raw"/>
+		<rangeSensor port="B2" module="srf04" iioLabel="B2" iioChannel="in_distance_raw"/>
+		<rangeSensor port="B3" module="srf04" iioLabel="B3" iioChannel="in_distance_raw"/>
+		<videoDevice
+			port="usb-camera-1"
+			device="/dev/usb-camera-1-dev"
+			format="yuv422"
+			width="320"
+			height="240"
+			mjpgStreamerScript="/etc/init.d/mjpg-streamer"
 		/>
-		<servoMotor
-			port="B8"
-			deviceFile="/sys/class/pwm/pwmchip7/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip7/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip7/pwm0/enable"
+		<videoDevice
+			port="usb-camera-2"
+			device="/dev/usb-camera-2-dev"
+			format="yuv422"
+			width="320"
+			height="240"
+			mjpgStreamerScript="/etc/init.d/mjpg-streamer"
 		/>
-		<servoMotor
-			port="B9"
-			deviceFile="/sys/class/pwm/pwmchip8/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip8/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip8/pwm0/enable"
+		<videoDevice
+			port="usb-camera-3"
+			device="/dev/usb-camera-3-dev"
+			format="yuv422"
+			width="320"
+			height="240"
+			mjpgStreamerScript="/etc/init.d/mjpg-streamer"
 		/>
-		<servoMotor
-			port="B10"
-			deviceFile="/sys/class/pwm/pwmchip9/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip9/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip9/pwm0/enable"
-		/>
-		<powerMotor port="M1" invert="true"
-			dutyFile="/sys/class/pwm/pwmchip3/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip3/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip3/pwm0/enable"
-			dirFile="/sys/class/gpio/gpio149/value"
-			nFault="/sys/class/gpio/gpio131/value"
-			sense="/sys/bus/iio/devices/iio:device1/in_voltage0_raw" />
-		<powerMotor port="M2"
-			dutyFile="/sys/class/pwm/pwmchip4/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip4/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip4/pwm0/enable"
-			dirFile="/sys/class/gpio/gpio150/value"
-			nFault="/sys/class/gpio/gpio137/value"
-			sense="/sys/bus/iio/devices/iio:device1/in_voltage1_raw" />
-		<powerMotor port="M3"
-			dutyFile="/sys/class/pwm/pwmchip14/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip14/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip14/pwm0/enable"
-			dirFile="/sys/class/gpio/gpio124/value"
-			nFault="/sys/class/gpio/gpio143/value"
-			sense="/sys/bus/iio/devices/iio:device1/in_voltage2_raw" />
-		<powerMotor port="M4"
-			dutyFile="/sys/class/pwm/pwmchip15/pwm0/duty_cycle"
-			periodFile="/sys/class/pwm/pwmchip15/pwm0/period"
-			runFile="/sys/class/pwm/pwmchip15/pwm0/enable"
-			dirFile="/sys/class/gpio/gpio123/value"
-			nFault="/sys/class/gpio/gpio142/value"
-			sense="/sys/bus/iio/devices/iio:device1/in_voltage3_raw" />
-		<analogSensor port="A1" i2cCommandNumber="0x25" />
-		<analogSensor port="A2" i2cCommandNumber="0x24" />
-		<analogSensor port="A3" i2cCommandNumber="0x23" />
-		<analogSensor port="A4" i2cCommandNumber="0x22" />
-		<analogSensor port="A5" i2cCommandNumber="0x21" />
-		<analogSensor port="A6" i2cCommandNumber="0x20" />
-		<encoder port="E1" i2cCommandNumber="0x30" />
-		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
-		<encoder port="E3" i2cCommandNumber="0x33" />
-		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
-		<rangeSensor port="B1" sensorFile="/sys/bus/iio/devices/iio:device1/in_distance_raw" module="srf04" />
-		<!--
-		<rangeSensor port="B2" eventFile="/dev/input/by-path/platform-trik_jd2-event" module="hcsr04" />
-		<rangeSensor port="B3" eventFile="/dev/input/by-path/platform-trik_jf1-event" module="hcsr04" />
-		-->
-		<!-- <digitalSensor port="B3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
-		<videoDevice port="usb-camera-1" device="/dev/usb-camera-1-dev" format="yuv422" width="320" height="240"
-				mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
-		<videoDevice port="usb-camera-2" device="/dev/usb-camera-2-dev" format="yuv422" width="320" height="240"
-				mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
-		<videoDevice port="usb-camera-3" device="/dev/usb-camera-3-dev" format="yuv422" width="320" height="240"
-				mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
-		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
-		<iioSensorGroup port="boardImuPort" />
-		<!-- Legacy two-device IMU, not used by the new board. -->
-		<iioDevice port="boardAccelPort" />
-		<iioDevice port="boardGyroPort" />
-		<lidar port="lidarPort" file="/dev/ttyUSB0" />
-		<irCamera port="irCameraPort" i2cAddress="0x33" m="3" n="3" />
+		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo"/>
+		<iioSensorGroup port="boardImuPort"/>
+		<lidar port="B4"/>
+		<irCamera port="B5" i2cAddress="0x33" m="3" n="3"/>
 	</devicePorts>
-
 	<deviceTypes>
-		<angularServomotor180 class="servoMotor" min="500000" max="2500000" zero="1500000" stop="0"
-		        controlMin="-90" controlMax="90" />
-
-		<angularServomotor270 class="servoMotor" min="500000" max="2500000" zero="1500000" stop="0"
-		        controlMin="-135" controlMax="135" />
-
-		<continuousRotationServomotor class="servoMotor" min="700000" max="2300000" zero="1500000" stop="0"
-				controlMin="-100" controlMax="100" />
-
-		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0"
-				controlMin="0" controlMax="100" />
-
-                <motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)" />
-
-                <motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)" />
-
-		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)" />
-
-		<manipulatorServomotor class="servoMotor" min="530000" max="2300000" zero="1415000" stop="0"
-				controlMin="0" controlMax="100" />
-
-		<quadroEsc class="servoMotor" min="1100000" max="1900000" zero="1500000" stop="0"
-				controlMin="0" controlMax="100" />
-
-		<sharpGP2Sensor class="analogSensor" type="SharpGP2"  values="(25;322)(35;235)(15;511)" />
-
-		<touchSensor class="analogSensor" rawValue1="100" rawValue2="1023" normalizedValue1="1" normalizedValue2="0"
-				minValue="0" maxValue="1" />
-
-		<sonarSensor class="rangeSensor" minValue="0" maxValue="400" />
-
-		<lightSensor class="analogSensor" rawValue1="30" rawValue2="1023" normalizedValue1="0" normalizedValue2="100"
-				minValue="0" maxValue="100" />
-
-		<volumeSensor class="digitalSensor" min="0" max="100" />
-
-		<encoder95 class="encoder" ticks="157" degrees="100" />
-
-		<encoder126 class="encoder" ticks="3296" degrees="1000" />
-
-		<colorSensor3x3 class="colorSensor" m="3" n="3" />
-
+		<angularServomotor180
+			class="servoMotor"
+			min="500000"
+			max="2500000"
+			zero="1500000"
+			stop="0"
+			controlMin="-90"
+			controlMax="90"
+		/>
+		<angularServomotor270
+			class="servoMotor"
+			min="500000"
+			max="2500000"
+			zero="1500000"
+			stop="0"
+			controlMin="-135"
+			controlMax="135"
+		/>
+		<continuousRotationServomotor
+			class="servoMotor"
+			min="700000"
+			max="2300000"
+			zero="1500000"
+			stop="0"
+			controlMin="-100"
+			controlMax="100"
+		/>
+		<quadroMotor class="servoMotor" min="1160000" max="2000000" zero="1580000" stop="0" controlMin="0" controlMax="100"/>
+		<motor95 class="powerMotor" measures="(0;0)(5;7)(20;1352)(40;1996)(100;2400)"/>
+		<motor100 class="powerMotor" measures="(0;0)(5;30)(20;1700)(40;2335)(100;2650)"/>
+		<motor350 class="powerMotor" period="10000" measures="(0;0)(9;10)(10;1331)(15;2601)(30;4127)(65;5110)(100;5443)"/>
+		<manipulatorServomotor
+			class="servoMotor"
+			min="530000"
+			max="2300000"
+			zero="1415000"
+			stop="0"
+			controlMin="0"
+			controlMax="100"
+		/>
+		<quadroEsc class="servoMotor" min="1100000" max="1900000" zero="1500000" stop="0" controlMin="0" controlMax="100"/>
+		<sharpGP2Sensor class="analogSensor" type="SharpGP2" values="(25;322)(35;235)(15;511)"/>
+		<touchSensor
+			class="analogSensor"
+			rawValue1="100"
+			rawValue2="1023"
+			normalizedValue1="1"
+			normalizedValue2="0"
+			minValue="0"
+			maxValue="1"
+		/>
+		<sonarSensor class="rangeSensor" minValue="0" maxValue="400"/>
+		<lightSensor
+			class="analogSensor"
+			rawValue1="30"
+			rawValue2="1023"
+			normalizedValue1="0"
+			normalizedValue2="100"
+			minValue="0"
+			maxValue="100"
+		/>
+		<volumeSensor class="digitalSensor" min="0" max="100"/>
+		<encoder95 class="encoder" ticks="157" degrees="100"/>
+		<encoder126 class="encoder" ticks="3296" degrees="1000"/>
+		<colorSensor3x3 class="colorSensor" m="3" n="3"/>
 		<photo class="camera" type="v4l2"/>
-
-		<!-- Legacy two-device IMU, not used by the new board. -->
-		<accelerometer class="iioDevice" deviceFile="/dev/iio:device1" scanType="be:s16/16>>0"/>
-		<gyroscope class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s16/16>>0"/>
 		<boardImu class="iioSensorGroup" deviceFile="/dev/iio:device0"/>
 	</deviceTypes>
-
 	<deviceGroups>
 		<videoDevice>
+			<lineSensor/>
+			<objectSensor/>
 			<colorSensor3x3/>
 			<photo/>
 		</videoDevice>
 	</deviceGroups>
-
 	<!-- Format for playSound command, used to play .wav files. %1 designates file name to be played. -->
-	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;" />
-
+	<playWavFile command="aplay --quiet &quot;%1&quot; &amp;"/>
 	<!-- Format for playSound command, used to play .mp3 files. %1 designates file name to be played. -->
-	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;" />
-
+	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;"/>
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
-	<i2c path="/dev/i2c-2" deviceId="0x48" />
-
-        <!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
-	<i2cBus1 path="/dev/i2c-1" />
-	<i2cBus2 path="/dev/i2c-2" />
-
+	<i2c path="/dev/i2c-5" deviceId="0x54"/>
+	<!-- I2C buses for communication with I2C devices. Parameter is path to device file.
+	     Bus 3 is physically the same port as B5; B5 can also work as UART and must
+	     keep its port semantics.
+	     Bus 2 is physically the same port as B6 (PB6). -->
+	<i2cBus3 path="/dev/i2c-3"/>
+	<i2cBus2 path="/dev/i2c-2"/>
 	<!-- nRF52833 periphery module over USB. -->
-	<nrfUsb telemetryPeriodUs="1000" isoPacketsPerUrb="4" />
+	<nrfUsb telemetryPeriodUs="1000" isoPacketsPerUrb="4"/>
 </config>

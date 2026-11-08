@@ -14,14 +14,42 @@
 
 #include "lidar.h"
 
+#include <QsLog.h>
 #include <trikKernel/configurer.h>
+
+#include "port/portManager.h"
 
 using namespace trikControl;
 
-Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer
-		, trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mLidarWorker(new LidarWorker(configurer.attributeByPort(port, "file"), hardwareAbstraction))
+Lidar::Lidar(const QString &port, const trikKernel::Configurer &configurer,
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports)
+	: mState("Lidar on " + port)
 {
+	// A port listed in <ports> is a UART port: acquire it and take the device
+	// file from the lease. A port that is not configured is treated as a USB
+	// device (u1/u2/u3), in which case the file must come from Configurer.
+	if (ports.isConfigured(port)) {
+		mPortLease = ports.acquire(port, PortMode::Uart, QStringLiteral("lidar"));
+		if (!mPortLease) {
+			QLOG_ERROR() << "Lidar on" << port << "cannot acquire UART port";
+			mState.fail();
+			return;
+		}
+	}
+
+	QString file;
+	file = configurer.attributeByPort(port, QStringLiteral("file"), &file);
+	if (file.isEmpty()) {
+		file = mPortLease.device();
+	}
+
+	if (file.isEmpty()) {
+		QLOG_ERROR() << "Lidar on" << port << "has no device file and no port-managed device";
+		mState.fail();
+		return;
+	}
+
+	mLidarWorker = new LidarWorker(file, hardwareAbstraction);
 	mLidarWorker->moveToThread(&mWorkerThread);
 
 	connect(&mWorkerThread, &QThread::started, mLidarWorker, &LidarWorker::init);
@@ -40,21 +68,29 @@ Lidar::~Lidar()
 
 Lidar::Status Lidar::status() const
 {
-	return mLidarWorker->status();
+	return mLidarWorker ? mLidarWorker->status() : mState.status();
 }
 
 QVector<int> Lidar::read() const
 {
+	if (!mLidarWorker) {
+		return {};
+	}
+
 	QVector<int> result;
-	QMetaObject::invokeMethod(mLidarWorker, [this, &result](){result = mLidarWorker->read();}
-							, Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(mLidarWorker, [this, &result]() { result = mLidarWorker->read(); },
+		Qt::BlockingQueuedConnection);
 	return result;
 }
 
 QVector<int> Lidar::readRaw() const
 {
+	if (!mLidarWorker) {
+		return {};
+	}
+
 	QVector<int> result;
-	QMetaObject::invokeMethod(mLidarWorker, [this, &result](){result = mLidarWorker->readRaw();}
-							, Qt::BlockingQueuedConnection);
+	QMetaObject::invokeMethod(mLidarWorker, [this, &result]() { result = mLidarWorker->readRaw(); },
+		Qt::BlockingQueuedConnection);
 	return result;
 }

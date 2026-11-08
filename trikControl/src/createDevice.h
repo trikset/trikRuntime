@@ -31,6 +31,7 @@ class HardwareAbstractionInterface;
 namespace trikControl {
 
 class PeripheryDriverInterface;
+class PortManager;
 
 /// Creates a device implementation selected by the port name.
 ///
@@ -42,7 +43,8 @@ class PeripheryDriverInterface;
 /// periphery driver is available.
 template<typename InternalDevice, typename CommunicatorDevice, typename Interface>
 Interface *makeDevice(const QString &port, const trikKernel::Configurer &configurer,
-	trikHal::HardwareAbstractionInterface &hardwareAbstraction, PeripheryDriverInterface *driver)
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction, PeripheryDriverInterface *driver,
+	PortManager &ports)
 {
 	if (parseTransport(port) == TransportType::Communicator) {
 		if (!driver) {
@@ -50,10 +52,10 @@ Interface *makeDevice(const QString &port, const trikKernel::Configurer &configu
 			return nullptr;
 		}
 
-		return new CommunicatorDevice(port, configurer, *driver);
+		return new CommunicatorDevice(port, configurer, *driver, ports);
 	}
 
-	return new InternalDevice(port, configurer, hardwareAbstraction);
+	return new InternalDevice(port, configurer, hardwareAbstraction, ports);
 }
 
 } // namespace trikControl

@@ -12,20 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "base.h"
+#include "servoBase.h"
 
 #include <trikKernel/configurer.h>
 
 #include <QsLog.h>
 
-#include "../configurerHelper.h"
+#include "configurerHelper.h"
+#include "port/portManager.h"
 
 using namespace trikControl;
 
-ServoMotorBase::ServoMotorBase(const QString &port, const trikKernel::Configurer &configurer)
-	: mState("Servomotor on " + port)
-	, mPort(port)
+ServoMotorBase::ServoMotorBase(const QString &port, const trikKernel::Configurer &configurer, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Pwm, QStringLiteral("servoMotor")))
+	, mState("Servomotor on " + port)
+	, mPortName(port)
 {
+	if (!mPortLease) {
+		mState.fail();
+		return;
+	}
+
 	const auto configure = [&](const QString &parameterName) {
 		return ConfigurerHelper::configureInt(configurer, mState, port, parameterName);
 	};
@@ -60,6 +67,10 @@ int ServoMotorBase::maxControl() const
 
 int ServoMotorBase::frequency() const
 {
+	if (mPeriod <= 0) {
+		return 0;
+	}
+
 	return static_cast<int>(1000000000.0 / static_cast<qreal>(mPeriod));
 }
 
@@ -123,12 +134,17 @@ void ServoMotorBase::powerOff()
 // NOLINTNEXTLINE(google-default-arguments)
 void ServoMotorBase::setPeriod(int uSec)
 {
+	if (!mState.isReady()) {
+		QLOG_ERROR() << "Trying to set period of motor which is not ready, ignoring";
+		return;
+	}
+
 	applyPeriod(static_cast<uint32_t>(uSec) * 1000);
 }
 
 const QString &ServoMotorBase::port() const
 {
-	return mPort;
+	return mPortName;
 }
 
 void ServoMotorBase::markReady()

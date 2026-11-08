@@ -18,6 +18,7 @@
 
 #include "i2cDeviceInterface.h"
 #include "i2cCommunicatorInterface.h"
+#include "port/portLease.h"
 
 namespace trikKernel {
 class Configurer;
@@ -32,6 +33,8 @@ class PeripheryI2cInterface;
 
 namespace trikControl {
 
+class PortManager;
+
 /// Abstract i2c device
 class I2cDevice : public I2cDeviceInterface
 {
@@ -44,7 +47,8 @@ public:
 	/// @param bus - bus for i2c communication
 	/// @param address - address for device on bus
 	/// Takes ownership of i2c
-	I2cDevice(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface *i2c, int bus, int address);
+	I2cDevice(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface *i2c, int bus, int address,
+		PortManager &ports);
 
 	/// For implicit forward declaration
 	~I2cDevice() override;
@@ -64,6 +68,7 @@ public Q_SLOTS:
 	QVector<uint8_t> readX(int reg, int size) override;
 
 private:
+	PortLease mPortLease;
 	DeviceState mState;
 	QScopedPointer<trikHal::PeripheryI2cInterface> mInterface;
 	QScopedPointer<I2cCommunicatorInterface> mCommunicator;

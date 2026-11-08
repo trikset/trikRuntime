@@ -20,15 +20,23 @@
 #include "communicatorCommand.h"
 #include "configurerHelper.h"
 #include "peripheryDriverInterface.h"
+#include "port/portManager.h"
 
 using namespace trikControl;
 
-Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver)
-	: mDriver(driver)
+Encoder::Encoder(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver,
+	PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Gpio, QStringLiteral("encoder")))
+	, mDriver(driver)
 	, mInvert(configurer.attributeByPort(port, "invert") == "false")
 	, mState("Encoder on" + port)
 	, mPort(port)
 {
+	if (!mPortLease) {
+		mState.fail();
+		return;
+	}
+
 	mPassedTicks = ConfigurerHelper::configureInt(configurer, mState, port, "ticks");
 	mPassedDegrees = ConfigurerHelper::configureInt(configurer, mState, port, "degrees");
 

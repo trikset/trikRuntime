@@ -18,7 +18,6 @@
 #include <QsLog.h>
 
 #include <trikHal/hardwareAbstractionInterface.h>
-#include <trikKernel/exceptions/malformedConfigException.h>
 #include <trikKernel/fileUtils.h>
 
 #include "hardwarePort.h"
@@ -156,7 +155,8 @@ void PortManager::parsePorts(const QString &systemConfig)
 	}
 
 	if (sections.size() > 1) {
-		throw trikKernel::MalformedConfigException("'ports' element shall appear at most once in config");
+		QLOG_ERROR() << "PortManager: 'ports' element shall appear at most once in config, ignoring ports";
+		return;
 	}
 
 	const auto portsElement = sections.at(0).toElement();

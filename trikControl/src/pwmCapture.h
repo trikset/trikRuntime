@@ -15,8 +15,11 @@
 #pragma once
 
 #include <QtCore/QScopedPointer>
+#include <QtCore/QString>
 
+#include "port/portLease.h"
 #include "pwmCaptureInterface.h"
+#include "port/pwmChannelLease.h"
 #include "deviceState.h"
 
 namespace trikKernel {
@@ -29,6 +32,8 @@ class InputDeviceFileInterface;
 }
 
 namespace trikControl {
+
+class PortManager;
 
 /// Implementation of PWM capture for real robot.
 ///
@@ -44,7 +49,7 @@ public:
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
 	PwmCapture(const QString &port, const trikKernel::Configurer &configurer,
-		const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports);
 
 	~PwmCapture() override;
 
@@ -65,6 +70,10 @@ public Q_SLOTS:
 	long dutyRaw() override;
 
 private:
+	void failSetup();
+
+	PortLease mPortLease;
+	PwmChannelLease mPwmChannel;
 	QScopedPointer<trikHal::InputDeviceFileInterface> mCaptureFile;
 	DeviceState mState;
 	long mMinValue = 0;

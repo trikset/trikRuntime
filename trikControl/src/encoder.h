@@ -17,6 +17,7 @@
 
 #include "encoderInterface.h"
 #include "deviceState.h"
+#include "port/portLease.h"
 
 namespace trikKernel {
 class Configurer;
@@ -25,6 +26,7 @@ class Configurer;
 namespace trikControl {
 
 class PeripheryDriverInterface;
+class PortManager;
 
 /// Implementation of encoder for real robot.
 class Encoder : public EncoderInterface
@@ -36,7 +38,8 @@ public:
 	/// @param port - port on which this encoder is configured.
 	/// @param configurer - configurer object containing preparsed XML files with encoder parameters.
 	/// @param driver - periphery driver used to query encoder.
-	Encoder(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver);
+	Encoder(const QString &port, const trikKernel::Configurer &configurer, PeripheryDriverInterface &driver,
+		PortManager &ports);
 
 	Status status() const override;
 
@@ -48,6 +51,7 @@ public Q_SLOTS:
 	void reset() override;
 
 private:
+	PortLease mPortLease;
 	PeripheryDriverInterface &mDriver;
 	int mPassedTicks;
 	int mPassedDegrees;
