@@ -24,6 +24,6 @@ TRIK_PYTHON=python${TRIK_PYTHON_VERSION}
 QT_DIR=$(ls -dv "$HOME"/Qt/${TRIK_QT_VERSION}*/*/bin | head -n 1)
 echo "$QT_DIR" >> $GITHUB_PATH
             
-sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
+sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
 xcodebuild -showsdks
 xcrun -sdk macosx --show-sdk-path
