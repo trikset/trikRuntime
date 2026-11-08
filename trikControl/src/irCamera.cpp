@@ -106,7 +106,7 @@ void IrCamera::stop()
 QVector<int32_t> IrCamera::getImage() const
 {
 	if (mState.isFailed()) {
-		return QVector<int32_t>();
+		return {};
 	}
 
 	return mImage;

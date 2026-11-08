@@ -91,6 +91,12 @@ QString findIioDeviceByLabel(const QString &label)
 		return {};
 	}
 
+	// An absolute path is used as an explicit device directory, for tests and
+	// bring-up where the sysfs tree may not exist yet.
+	if (label.startsWith(QLatin1Char('/'))) {
+		return label;
+	}
+
 	const auto iioDevices = QDir(iioDevicesPath);
 	const auto devices = iioDevices.entryList({iioDeviceFilter}, QDir::Dirs | QDir::NoDotAndDotDot);
 
@@ -113,6 +119,12 @@ QString findIioChannelFileByLabel(const QString &label, const QString &channel)
 	const auto deviceDir = findIioDeviceByLabel(label);
 	if (deviceDir.isEmpty()) {
 		return {};
+	}
+
+	// For an explicit device directory trust the caller and build the path
+	// directly; the file may not exist yet (for example, in a stub build).
+	if (label.startsWith(QLatin1Char('/'))) {
+		return deviceDir + QLatin1Char('/') + channel;
 	}
 
 	auto direct = directChannelFile(deviceDir, channel);

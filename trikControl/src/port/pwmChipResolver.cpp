@@ -45,6 +45,44 @@ bool deviceMatches(const QString &deviceName, const QString &devicePath)
 	return QFileInfo(devicePath).fileName() == deviceName;
 }
 
+/// Resolves an explicit sysfs-like path without scanning /sys/class/pwm.
+///
+/// Accepted forms:
+///   - "/path/to/pwmchipN"      - chip directory;
+///   - "/path/to/pwmchipN/pwmM" - channel directory, M updates @p line;
+///   - "/path/to/export"        - export file.
+///
+/// This form is used by tests and for bring-up, where the sysfs tree may not
+/// exist yet. Returns an empty string for anything else.
+QString explicitExportFile(const QString &path, int &line)
+{
+	if (!path.contains(QLatin1Char('/'))) {
+		return {};
+	}
+
+	const QFileInfo info(path);
+	const auto name = info.fileName();
+
+	if (name == QStringLiteral("export")) {
+		return path;
+	}
+
+	if (name.startsWith(QStringLiteral("pwmchip"))) {
+		return path + QStringLiteral("/export");
+	}
+
+	if (name.startsWith(QStringLiteral("pwm"))) {
+		auto ok = false;
+		const auto parsed = name.mid(3).toInt(&ok);
+		if (ok && parsed >= 0) {
+			line = parsed;
+			return info.absolutePath() + QStringLiteral("/export");
+		}
+	}
+
+	return {};
+}
+
 } // namespace
 
 QString findPwmExportFile(const QString &exportSpec, int &line)
@@ -67,6 +105,11 @@ QString findPwmExportFile(const QString &exportSpec, int &line)
 
 		device = spec.left(separator);
 		line = parsed;
+	}
+
+	auto explicitFile = explicitExportFile(device, line);
+	if (!explicitFile.isEmpty()) {
+		return explicitFile;
 	}
 
 	const auto chipDir = findPwmChipByDevice(device);

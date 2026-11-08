@@ -43,9 +43,7 @@ DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &
 	read();
 }
 
-DigitalSensor::~DigitalSensor()
-{
-}
+DigitalSensor::~DigitalSensor() = default;
 
 int DigitalSensor::read()
 {
@@ -68,7 +66,7 @@ int DigitalSensor::read()
 
 	const qreal scale = 100.0 / (static_cast<qreal>(mMax - mMin));
 
-	value = (value - mMin) * scale;
+	value = static_cast<int>((value - mMin) * scale);
 
 	return value;
 }

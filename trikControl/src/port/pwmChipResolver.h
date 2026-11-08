@@ -23,6 +23,11 @@ namespace trikControl {
 ///
 /// A missing ":line" means channel 0.
 ///
+/// Explicit sysfs-like paths are also accepted (used by tests and bring-up):
+///   - "/path/to/pwmchipN"      - chip directory;
+///   - "/path/to/pwmchipN/pwmM" - channel directory (M is the line);
+///   - "/path/to/export"        - export file.
+///
 /// @param exportSpec - controller device name (or full path) with an optional
 ///        channel suffix.
 /// @param line - receives the channel number; set to 0 when no suffix is given.

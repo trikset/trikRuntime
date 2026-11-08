@@ -24,7 +24,11 @@ namespace trikControl {
 /// not be hardcoded. IIO core exposes the DT "label" property of the device in
 /// the "label" sysfs file, so a stable label can be used instead of the number.
 ///
-/// @param label - DT label, for example "B1" or "adc-mux".
+/// An absolute path is accepted as an explicit device directory (used by tests
+/// and for bring-up, where the sysfs tree may not exist yet).
+///
+/// @param label - DT label, for example "B1" or "adc-mux", or an absolute path
+///        to the IIO device directory.
 /// @return path to /sys/bus/iio/devices/iio:deviceN, or an empty string when no
 ///         device with this label is found.
 QString findIioDeviceByLabel(const QString &label);
@@ -38,7 +42,11 @@ QString findIioDeviceByLabel(const QString &label);
 ///    ("battery", "m1"). The name is mapped to its index in the DT string
 ///    array and then to "in_voltage<index>_raw".
 ///
-/// @param label - DT label of the IIO device.
+/// For an absolute @p label the device directory is used as-is and the
+/// resulting file path is returned without an existence check.
+///
+/// @param label - DT label of the IIO device, or an absolute path to its
+///        directory.
 /// @param channel - sysfs channel file name or DT mux channel name.
 /// @return full path to the channel file, or an empty string when the device
 ///         or channel is not found.
