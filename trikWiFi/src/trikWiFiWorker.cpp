@@ -15,7 +15,8 @@
 #include "trikWiFiWorker.h"
 
 #include <QtCore/QStringList>
-#include <QtCore/QProcess>
+
+#include <utility>
 
 #include <QsLog.h>
 
@@ -23,10 +24,9 @@
 
 using namespace trikWiFi;
 
-TrikWiFiWorker::TrikWiFiWorker(const QString &interfaceFilePrefix
-		, const QString &daemonFile)
-	: mInterfaceFile(interfaceFilePrefix)
-	, mDaemonFile(daemonFile)
+TrikWiFiWorker::TrikWiFiWorker(QString interfaceFilePrefix, QString daemonFile)
+	: mInterfaceFile(std::move(interfaceFilePrefix))
+	, mDaemonFile(std::move(daemonFile))
 {
 	qRegisterMetaType<DisconnectReason>("DisconnectReason");
 }
@@ -264,11 +264,6 @@ void TrikWiFiWorker::processMessage(const QString &message)
 		// Refresh connection status.
 		statusRequest();
 		mPlannedDisconnect = false;
-		// hotfix: here we trying to get new ip for new connection
-		QProcess dhcpProcess;
-		dhcpProcess.start("udhcpc", {"-i", "wlan0"});
-		dhcpProcess.waitForFinished(3000);
-		statusRequest();
 		Q_EMIT connected();
 	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
 		Q_EMIT disconnected(mPlannedDisconnect ? DisconnectReason::planned : DisconnectReason::unplanned);
