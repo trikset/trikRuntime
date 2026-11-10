@@ -16,16 +16,17 @@
 
 #include <QtCore/QStringList>
 
+#include <utility>
+
 #include <QsLog.h>
 
 #include "wpaSupplicantCommunicator.h"
 
 using namespace trikWiFi;
 
-TrikWiFiWorker::TrikWiFiWorker(const QString &interfaceFilePrefix
-		, const QString &daemonFile)
-	: mInterfaceFile(interfaceFilePrefix)
-	, mDaemonFile(daemonFile)
+TrikWiFiWorker::TrikWiFiWorker(QString interfaceFilePrefix, QString daemonFile)
+	: mInterfaceFile(std::move(interfaceFilePrefix))
+	, mDaemonFile(std::move(daemonFile))
 {
 	qRegisterMetaType<DisconnectReason>("DisconnectReason");
 }

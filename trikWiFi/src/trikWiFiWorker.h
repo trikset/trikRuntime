@@ -39,7 +39,7 @@ public:
 	///        with wpa_supplicant.
 	/// @param daemonFile - file that wpa_supplicant uses to communicate with clients, something like
 	///        /run/wpa_supplicant/wlan0.
-	TrikWiFiWorker(const QString &interfaceFilePrefix, const QString &daemonFile);
+	TrikWiFiWorker(QString interfaceFilePrefix, QString daemonFile);
 
 	~TrikWiFiWorker() override;
 
