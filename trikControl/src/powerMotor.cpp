@@ -14,30 +14,57 @@
 
 #include "powerMotor.h"
 
-#include <QtCore/QFileInfo>
 #include <QtCore/QTimer>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikHal/inputDeviceFileInterface.h>
 #include <trikHal/outputDeviceFileInterface.h>
 #include <trikKernel/configurer.h>
-#include <trikKernel/exceptions/malformedConfigException.h>
 #include <QsLog.h>
 
 #include "configurerHelper.h"
+#include "port/iioDeviceResolver.h"
+#include "port/portManager.h"
 
 using namespace trikControl;
 
 PowerMotor::~PowerMotor() = default;
 
 PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &configurer,
-	trikHal::HardwareAbstractionInterface &hw)
-	: mState("Power Motor on " + port)
+	trikHal::HardwareAbstractionInterface &hw, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Pwm, QStringLiteral("powerMotor")))
+	, mState("Power Motor on " + port)
 {
-	const auto dutyPath = configurer.attributeByPort(port, "dutyFile");
-	const auto periodPath = configurer.attributeByPort(port, "periodFile");
-	const auto runPath = configurer.attributeByPort(port, "runFile");
-	const auto dirPath = configurer.attributeByPort(port, "dirFile");
+	if (!mPortLease) {
+		QLOG_ERROR() << "PowerMotor on" << port << "cannot acquire PWM port";
+		mState.fail();
+		return;
+	}
+
+	mPwmChannel = PwmChannelLease(mPortLease.device(), hw);
+	if (!mPwmChannel) {
+		QLOG_ERROR() << "PowerMotor on" << port << "cannot resolve PWM device" << mPortLease.device();
+		mState.fail();
+		return;
+	}
+
+	const auto channelDir = mPwmChannel.channelDir();
+	const auto dutyPath = channelDir + QStringLiteral("/duty_cycle");
+	const auto periodPath = channelDir + QStringLiteral("/period");
+	const auto runPath = channelDir + QStringLiteral("/enable");
+	QString dirPath;
+	dirPath = configurer.attributeByPort(port, QStringLiteral("dirGpio"), &dirPath);
+	if (dirPath.isEmpty()) {
+		dirPath = configurer.attributeByPort(port, QStringLiteral("dirFile"));
+	}
+
+	mDirLine = GpioLineLease(dirPath, GpioLineLease::Direction::Out, false, hw);
+	if (!mDirLine) {
+		QLOG_ERROR() << "PowerMotor on" << port << "cannot prepare dir GPIO" << dirPath;
+		mState.fail();
+		return;
+	}
+	dirPath = mDirLine.valueFile();
 
 	mDutyFile.reset(hw.createOutputDeviceFile(dutyPath));
 	mPeriodFile.reset(hw.createOutputDeviceFile(periodPath));
@@ -45,8 +72,9 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	mDirFile.reset(hw.createOutputDeviceFile(dirPath));
 
 	if (!mDutyFile || !mPeriodFile || !mRunFile || !mDirFile) {
-		throw trikKernel::MalformedConfigException(
-			"PowerMotor on " + port + " requires periodFile, dutyFile, runFile, dirFile");
+		QLOG_ERROR() << "PowerMotor on" << port << "requires a valid PWM channel and dirFile";
+		mState.fail();
+		return;
 	}
 
 	const int periodUs = ConfigurerHelper::configureInt(configurer, mState, port, "period");
@@ -76,37 +104,57 @@ PowerMotor::PowerMotor(const QString &port, const trikKernel::Configurer &config
 	mRunFile->write(QString::number(0));
 	mDutyFile->write(QString::number(0));
 
-	QString sensePath;
-	sensePath = configurer.attributeByPort(port, "sense", &sensePath);
-	if (!sensePath.isEmpty()) {
-		mSenseFile.reset(hw.createInputDeviceFile(sensePath));
-		if (!mSenseFile || !mSenseFile->open()) {
-			QLOG_WARN() << "PowerMotor on" << port << "cannot open sense file" << sensePath;
-			mSenseFile.reset();
+	QString senseLabel;
+	QString senseChannel;
+	senseLabel = configurer.attributeByPort(port, "iioLabel", &senseLabel);
+	senseChannel = configurer.attributeByPort(port, "iioChannel", &senseChannel);
+
+	if (!senseLabel.isEmpty() && !senseChannel.isEmpty()) {
+		const auto senseFile = findIioChannelFileByLabel(senseLabel, senseChannel);
+		if (senseFile.isEmpty()) {
+			QLOG_WARN() << "PowerMotor on" << port << "cannot resolve sense channel" << senseLabel
+				    << senseChannel;
 		} else {
-			const auto scaleFile =
-				QFileInfo(sensePath).absolutePath() + QStringLiteral("/in_voltage_scale");
-			std::unique_ptr<trikHal::InputDeviceFileInterface> scaleFileHandle(
-				hw.createInputDeviceFile(scaleFile));
-			if (scaleFileHandle && scaleFileHandle->open()) {
-				auto scale = 0.0;
-				scaleFileHandle->stream() >> scale;
-				scaleFileHandle->close();
-				if (scale > 0.0) {
-					mSenseScaleMv = scale;
-				}
+			mSenseFile.reset(hw.createInputDeviceFile(senseFile));
+			if (!mSenseFile || !mSenseFile->open()) {
+				QLOG_WARN() << "PowerMotor on" << port << "cannot open sense file" << senseFile;
+				mSenseFile.reset();
 			} else {
-				QLOG_WARN() << "PowerMotor on" << port << "cannot open" << scaleFile
-					    << ", using default sense scale";
+				auto scaleFile = senseFile;
+				scaleFile.replace(QStringLiteral("_raw"), QStringLiteral("_scale"));
+				std::unique_ptr<trikHal::InputDeviceFileInterface> scaleFileHandle(
+					hw.createInputDeviceFile(scaleFile));
+				if (scaleFileHandle && scaleFileHandle->open()) {
+					auto scale = 0.0;
+					scaleFileHandle->stream() >> scale;
+					scaleFileHandle->close();
+					if (scale > 0.0) {
+						mSenseScaleMv = scale;
+					}
+				} else {
+					QLOG_WARN() << "PowerMotor on" << port << "cannot open" << scaleFile
+						    << ", using default sense scale";
+				}
 			}
 		}
 	} else {
-		QLOG_WARN() << "PowerMotor on" << port << "has no sense file configured";
+		QLOG_WARN() << "PowerMotor on" << port << "has no sense channel configured";
 	}
 
 	QString faultPath;
-	faultPath = configurer.attributeByPort(port, "nFault", &faultPath);
+	faultPath = configurer.attributeByPort(port, QStringLiteral("nFaultGpio"), &faultPath);
+	if (faultPath.isEmpty()) {
+		faultPath = configurer.attributeByPort(port, QStringLiteral("nFault"), &faultPath);
+	}
+
 	if (!faultPath.isEmpty()) {
+		mFaultLine = GpioLineLease(faultPath, GpioLineLease::Direction::In, false, hw);
+		if (!mFaultLine) {
+			QLOG_WARN() << "PowerMotor on" << port << "cannot prepare nFault GPIO" << faultPath;
+		} else {
+			faultPath = mFaultLine.valueFile();
+		}
+
 		mFaultFile.reset(hw.createInputDeviceFile(faultPath));
 		if (!mFaultFile || !mFaultFile->open()) {
 			QLOG_WARN() << "PowerMotor on" << port << "cannot open nFault file" << faultPath;
@@ -141,6 +189,10 @@ int PowerMotor::maxControl() const
 // NOLINTNEXTLINE(google-default-arguments)
 void PowerMotor::setPower(int power, bool constrain)
 {
+	if (!mState.isReady() || !mRunFile || !mDutyFile || !mDirFile) {
+		return;
+	}
+
 	if (constrain) {
 		if (power > powerMotorMaxControl) {
 			power = powerMotorMaxControl;
@@ -175,9 +227,14 @@ int PowerMotor::power() const
 
 void PowerMotor::powerOff()
 {
+	mCurrentPower = 0;
+
+	if (!mRunFile || !mDutyFile) {
+		return;
+	}
+
 	mRunFile->write(QString::number(0));
 	mDutyFile->write(QString::number(0));
-	mCurrentPower = 0;
 }
 
 // NOLINTNEXTLINE(google-default-arguments)
@@ -195,6 +252,12 @@ void PowerMotor::setPeriod(int uSec)
 {
 	if (uSec <= 0) {
 		QLOG_ERROR() << "PowerMotor has invalid period:" << uSec;
+		mState.fail();
+		return;
+	}
+
+	if (!mPeriodFile) {
+		QLOG_ERROR() << "PowerMotor has no period file";
 		mState.fail();
 		return;
 	}
@@ -224,12 +287,16 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 
 	const int gl = powerGraph.size();
 	if (gl < 2) {
-		throw trikKernel::MalformedConfigException("PowerMotor requires at least two measure points");
+		QLOG_ERROR() << "PowerMotor on" << port << "requires at least two measure points";
+		mState.fail();
+		return;
 	}
 
 	const double maxV = powerGraph[gl - 1].second;
 	if (maxV <= 0.0) {
-		throw trikKernel::MalformedConfigException("PowerMotor measure range must be positive");
+		QLOG_ERROR() << "PowerMotor on" << port << "measure range must be positive";
+		mState.fail();
+		return;
 	}
 
 	for (int i = 0; i < gl; i++) {
@@ -245,7 +312,9 @@ void PowerMotor::lineariseMotor(const QString &port, const trikKernel::Configure
 		const double md = powerGraph[k + 1].second - powerGraph[k].second;
 		const double ad = powerGraph[k + 1].first - powerGraph[k].first;
 		if (md <= 0 || ad < 0) {
-			throw trikKernel::MalformedConfigException("Nonmonotonic function");
+			QLOG_ERROR() << "PowerMotor on" << port << "measure function is not monotonic";
+			mState.fail();
+			return;
 		}
 		mPowerMap.append(static_cast<int>(powerGraph[k].first + ad / md * (i - powerGraph[k].second)));
 	}

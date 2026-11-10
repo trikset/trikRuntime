@@ -50,6 +50,7 @@ class Keys;
 class Led;
 class ModuleLoader;
 class SoundSensor;
+class PortManager;
 class PowerMotor;
 class PwmCapture;
 class RangeSensor;
@@ -202,6 +203,7 @@ private:
 	QScopedPointer<CommunicatorProvider> mCommunicatorProvider;
 	PeripheryDriverInterface *mPeripheryDriver = nullptr;
 	QScopedPointer<ModuleLoader> mModuleLoader;
+	QScopedPointer<PortManager> mPortManager;
 	DeviceFactory mDeviceFactory;
 
 	QScopedPointer<VectorSensor> mAccelerometer;

@@ -19,6 +19,7 @@
 
 #include "deviceState.h"
 #include "sensorInterface.h"
+#include "port/portLease.h"
 
 namespace trikKernel {
 class Configurer;
@@ -31,6 +32,8 @@ class InputDeviceFileInterface;
 
 namespace trikControl {
 
+class PortManager;
+
 /// Digital TRIK sensor.
 class DigitalSensor : public SensorInterface
 {
@@ -40,8 +43,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	DigitalSensor(const QString &port, const trikKernel::Configurer &configurer,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports);
 
 	~DigitalSensor() override;
 
@@ -57,6 +60,7 @@ public Q_SLOTS:
 	Status status() const override;
 
 private:
+	PortLease mPortLease;
 	int mMin;
 	int mMax;
 	QScopedPointer<trikHal::InputDeviceFileInterface> mDeviceFile;

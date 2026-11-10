@@ -38,18 +38,6 @@ equal to its class name.
                 echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_anglvel_z_en
                 echo 1 > /sys/bus/iio/devices/iio\:device1/buffer/enable
 
-                echo 1 > /sys/class/gpio/gpio62/value
-
-                export GP="/sys/class/gpio/"
-                echo 94 > $GP/export
-                echo high > $GP/gpio94/direction
-                echo 35 > $GP/export
-                echo high > $GP/gpio35/direction
-                echo 36 > $GP/export
-                echo high > $GP/gpio36/direction
-                echo 37 > $GP/export
-                echo high > $GP/gpio37/direction
-
                 export PWM="/sys/class/pwm/pwmchip"
                 echo 0 > ${PWM}0/export
                 echo 0 > ${PWM}1/export
@@ -83,7 +71,7 @@ equal to its class name.
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness" />
 
 		<!-- Battery channel through the SARADC analog mux (X4). -->
-		<battery deviceFile="/sys/bus/iio/devices/iio:device1/in_voltage4_raw" divider="6.6666667" />
+		<battery iioLabel="/tmp/trik-test/iio/adc-mux" iioChannel="battery" divider="6.6666667" />
 
 		<!--Device file for keys on a brick -->
 		<keys deviceFile="/dev/input/by-path/platform-soc@1c00000:gpio-keys-event" />
@@ -94,74 +82,124 @@ equal to its class name.
 		<gamepad file="/run/gamepad-service.out.fifo" optional="true" />
 	</deviceClasses>
 
+	<ports>
+		<port name="A1">
+			<mode name="adc" />
+		</port>
+		<port name="A2">
+			<mode name="adc" />
+		</port>
+		<port name="A3">
+			<mode name="adc" />
+		</port>
+		<port name="A4">
+			<mode name="adc" />
+		</port>
+		<port name="A5">
+			<mode name="adc" />
+		</port>
+		<port name="A6">
+			<mode name="adc" />
+		</port>
+		<port name="A7">
+			<mode name="pwm" />
+		</port>
+		<port name="A8">
+			<mode name="pwm" />
+		</port>
+		<port name="A9">
+			<mode name="pwm" />
+		</port>
+		<port name="A10">
+			<mode name="pwm" />
+		</port>
+		<port name="B1">
+			<mode name="gpio" />
+		</port>
+		<port name="B2">
+			<mode name="gpio" />
+		</port>
+		<port name="B3">
+			<mode name="gpio" />
+		</port>
+		<port name="B7">
+			<mode name="pwm" device="/tmp/trik-test/pwm/B7/pwmchip0/pwm0" />
+		</port>
+		<port name="B8">
+			<mode name="pwm" device="/tmp/trik-test/pwm/B8/pwmchip0/pwm0" />
+		</port>
+		<port name="B9">
+			<mode name="pwm" device="/tmp/trik-test/pwm/B9/pwmchip0/pwm0" />
+		</port>
+		<port name="B10">
+			<mode name="pwm" device="/tmp/trik-test/pwm/B10/pwmchip0/pwm0" />
+		</port>
+		<port name="M1">
+			<mode name="pwm" device="/tmp/trik-test/pwm/M1/pwmchip0/pwm0" />
+		</port>
+		<port name="M2">
+			<mode name="pwm" device="/tmp/trik-test/pwm/M2/pwmchip0/pwm0" />
+		</port>
+		<port name="M3">
+			<mode name="pwm" device="/tmp/trik-test/pwm/M3/pwmchip0/pwm0" />
+		</port>
+		<port name="M4">
+			<mode name="pwm" device="/tmp/trik-test/pwm/M4/pwmchip0/pwm0" />
+		</port>
+		<port name="E1">
+			<mode name="gpio" />
+		</port>
+		<port name="E2">
+			<mode name="gpio" />
+		</port>
+		<port name="E3">
+			<mode name="gpio" />
+		</port>
+		<port name="E4">
+			<mode name="gpio" />
+		</port>
+	</ports>
+
 	<devicePorts>
 		<servoMotor port="A7" />
 		<servoMotor port="A8" />
 		<servoMotor port="A9" />
 		<servoMotor port="A10" />
-		<servoMotor
-			port="B7"
-			deviceFile="/tmp/trik-test/b7/duty"
-			periodFile="/tmp/trik-test/b7/period"
-			runFile="/tmp/trik-test/b7/enable"
-		/>
-		<servoMotor
-			port="B8"
-			deviceFile="/tmp/trik-test/b8/duty"
-			periodFile="/tmp/trik-test/b8/period"
-			runFile="/tmp/trik-test/b8/enable"
-		/>
-		<servoMotor
-			port="B9"
-			deviceFile="/tmp/trik-test/b9/duty"
-			periodFile="/tmp/trik-test/b9/period"
-			runFile="/tmp/trik-test/b9/enable"
-		/>
-		<servoMotor
-			port="B10"
-			deviceFile="/tmp/trik-test/b10/duty"
-			periodFile="/tmp/trik-test/b10/period"
-			runFile="/tmp/trik-test/b10/enable"
-		/>
+		<servoMotor port="B7" />
+		<pwmCapture port="B7" />
+		<servoMotor port="B8" />
+		<pwmCapture port="B8" />
+		<servoMotor port="B9" />
+		<pwmCapture port="B9" />
+		<servoMotor port="B10" />
+		<pwmCapture port="B10" />
 		<powerMotor port="M1" invert="true"
-			dutyFile="/tmp/trik-test/m1/duty"
-			periodFile="/tmp/trik-test/m1/period"
-			runFile="/tmp/trik-test/m1/enable"
 			dirFile="/tmp/trik-test/m1/dir"
-			sense="/tmp/trik-test/m1/sense"
+			iioLabel="/tmp/trik-test/iio/adc-mux" iioChannel="m1"
 			nFault="/tmp/trik-test/m1/fault" />
 		<powerMotor port="M2"
-			dutyFile="/tmp/trik-test/m2/duty"
-			periodFile="/tmp/trik-test/m2/period"
-			runFile="/tmp/trik-test/m2/enable"
 			dirFile="/tmp/trik-test/m2/dir"
-			sense="/tmp/trik-test/m2/sense"
+			iioLabel="/tmp/trik-test/iio/adc-mux" iioChannel="m2"
 			nFault="/tmp/trik-test/m2/fault" />
 		<powerMotor port="M3"
-			dutyFile="/tmp/trik-test/m3/duty"
-			periodFile="/tmp/trik-test/m3/period"
-			runFile="/tmp/trik-test/m3/enable"
 			dirFile="/tmp/trik-test/m3/dir"
-			sense="/tmp/trik-test/m3/sense"
+			iioLabel="/tmp/trik-test/iio/adc-mux" iioChannel="m3"
 			nFault="/tmp/trik-test/m3/fault" />
 		<powerMotor port="M4"
-			dutyFile="/tmp/trik-test/m4/duty"
-			periodFile="/tmp/trik-test/m4/period"
-			runFile="/tmp/trik-test/m4/enable"
 			dirFile="/tmp/trik-test/m4/dir"
-			sense="/tmp/trik-test/m4/sense"
+			iioLabel="/tmp/trik-test/iio/adc-mux" iioChannel="m4"
 			nFault="/tmp/trik-test/m4/fault" />
-		<analogSensor port="A1" i2cCommandNumber="0x25" />
-		<analogSensor port="A2" i2cCommandNumber="0x24" />
-		<analogSensor port="A3" i2cCommandNumber="0x23" />
-		<analogSensor port="A4" i2cCommandNumber="0x22" />
-		<analogSensor port="A5" i2cCommandNumber="0x21" />
-		<analogSensor port="A6" i2cCommandNumber="0x20" />
-		<encoder port="E1" i2cCommandNumber="0x30" />
-		<encoder port="E2" i2cCommandNumber="0x31" invert="true" />
-		<encoder port="E3" i2cCommandNumber="0x33" />
-		<encoder port="E4" i2cCommandNumber="0x32" invert="true" />
-		<rangeSensor port="B1" sensorFile="test-srf04-distance.txt" module="srf04" />
+		<analogSensor port="A1" />
+		<analogSensor port="A2" />
+		<analogSensor port="A3" />
+		<analogSensor port="A4" />
+		<analogSensor port="A5" />
+		<analogSensor port="A6" />
+		<encoder port="E1" />
+		<encoder port="E2" invert="true" />
+		<encoder port="E3" />
+		<encoder port="E4" invert="true" />
+		<rangeSensor port="B1" module="srf04" iioLabel="/tmp/trik-test/iio/B1" iioChannel="in_distance_raw" />
 		<!-- <digitalSensor port="B3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<videoDevice port="imitationCameraPort" device="/dev/device" format="yuv422" width="320" height="240" mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
@@ -234,9 +272,9 @@ equal to its class name.
 	<playMp3File command="cvlc --quiet &quot;%1&quot; &amp;" />
 
 	<!-- I2C device for communication with power motor drivers. Parameters are path to device file and device id. -->
-	<i2c path="/dev/i2c-2" deviceId="0x48" />
+	<i2c path="/dev/i2c-5" deviceId="0x54" />
 
-		<!-- I2C bus for communication i2c devises. Parameter is path to device file. -->
-	<i2cBus1 path="/dev/i2c-1" />
+	<!-- Bus 3 is the same port as B5 (may also be UART); bus 2 is the same port as B6 (PB6). -->
+	<i2cBus3 path="/dev/i2c-3" />
 	<i2cBus2 path="/dev/i2c-2" />
 </config>

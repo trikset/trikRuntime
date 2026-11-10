@@ -18,6 +18,7 @@
 
 #include "sensorInterface.h"
 #include "deviceState.h"
+#include "port/portLease.h"
 
 namespace trikKernel {
 class TimeVal;
@@ -35,6 +36,7 @@ namespace trikControl {
 
 class RangeSensorWorker;
 class ModuleLoader;
+class PortManager;
 
 /// TRIK range sensor.
 class RangeSensor : public SensorInterface
@@ -45,8 +47,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader
-			, const trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	RangeSensor(const QString &port, const trikKernel::Configurer &configurer, ModuleLoader &moduleLoader,
+		const trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports);
 
 	~RangeSensor() override;
 
@@ -74,6 +76,8 @@ public Q_SLOTS:
 	void stop();
 
 private:
+	PortLease mPortLease;
+
 	/// Device state, shared with worker.
 	DeviceState mState;
 

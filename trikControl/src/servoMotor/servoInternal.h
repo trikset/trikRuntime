@@ -14,23 +14,31 @@
 
 #pragma once
 
-#include "base.h"
+#include <QtCore/QScopedPointer>
+
+#include "port/pwmChannelLease.h"
+#include "servoBase.h"
 
 namespace trikKernel {
 class Configurer;
 }
 
+namespace trikHal {
+class HardwareAbstractionInterface;
+class OutputDeviceFileInterface;
+}
+
 namespace trikControl {
 
-class PeripheryDriverInterface;
+class PortManager;
 
-/// Servo motor driven by the periphery module through the communicator.
-class CommunicatorServoMotor final : public ServoMotorBase
+/// Servo motor driven by the onboard PWM through sysfs files.
+class InternalServoMotor final : public ServoMotorBase
 {
 public:
-	CommunicatorServoMotor(const QString &port, const trikKernel::Configurer &configurer,
-		PeripheryDriverInterface &driver);
-	~CommunicatorServoMotor() override;
+	InternalServoMotor(const QString &port, const trikKernel::Configurer &configurer,
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports);
+	~InternalServoMotor() override;
 
 protected:
 	void applyPeriod(uint32_t periodNs) override;
@@ -39,9 +47,12 @@ protected:
 	void applyPowerOff() override;
 
 private:
-	void sendCommand(uint32_t periodNs, uint32_t pulseNs);
+	void failSetup();
 
-	PeripheryDriverInterface &mDriver;
+	PwmChannelLease mPwmChannel;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mDutyFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mPeriodFile;
+	QScopedPointer<trikHal::OutputDeviceFileInterface> mRunFile;
 };
 
 } // namespace trikControl

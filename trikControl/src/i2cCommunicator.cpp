@@ -47,16 +47,27 @@ I2cCommunicator::I2cCommunicator(const trikKernel::Configurer &configurer, trikH
 	, mState("I2C Communicator")
 {
 	QString devicePath;
-	if (bus == 1) {
-		devicePath = configurer.attributeByDevice("i2cBus1", "path");
-	} else if (bus == 2) {
+	if (bus == 2) {
 		devicePath = configurer.attributeByDevice("i2cBus2", "path");
+	} else if (bus == 3) {
+		devicePath = configurer.attributeByDevice("i2cBus3", "path");
 	} else {
 		QLOG_ERROR() << "Incorrect I2C bus" << bus;
 		mState.fail();
 		return;
 	}
 
+	if (mI2c->connect(devicePath, deviceId)) {
+		mState.ready();
+	} else {
+		mState.fail();
+	}
+}
+
+I2cCommunicator::I2cCommunicator(trikHal::PeripheryI2cInterface &i2c, const QString &devicePath, uint8_t deviceId)
+	: mI2c(&i2c)
+	, mState("I2C Communicator")
+{
 	if (mI2c->connect(devicePath, deviceId)) {
 		mState.ready();
 	} else {

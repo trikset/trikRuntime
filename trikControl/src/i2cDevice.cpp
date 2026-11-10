@@ -15,16 +15,26 @@
 #include <trikHal/peripheryI2cInterface.h>
 #include "i2cDevice.h"
 #include "i2cCommunicator.h"
+#include "port/portManager.h"
 #include "QsLog.h"
 
 using namespace trikControl;
 
 I2cDevice::I2cDevice(const trikKernel::Configurer &configurer, trikHal::PeripheryI2cInterface *i2c, int bus,
-	int address)
-	: mState("I2cDevice")
+	int address, PortManager &ports)
+	: mPortLease(ports.acquireI2c(bus, QStringLiteral("i2cDevice")))
+	, mState("I2cDevice")
 	, mInterface(i2c)
-	, mCommunicator(new I2cCommunicator(configurer, *i2c, bus, address))
 {
+	Q_UNUSED(configurer)
+
+	if (!mPortLease || mPortLease.device().isEmpty()) {
+		QLOG_ERROR() << "I2cDevice: cannot acquire port for bus" << bus;
+		mState.fail();
+		return;
+	}
+
+	mCommunicator.reset(new I2cCommunicator(*i2c, mPortLease.device(), address));
 	mState.ready();
 }
 
@@ -32,6 +42,10 @@ I2cDevice::~I2cDevice() = default;
 
 I2cDevice::Status I2cDevice::status() const
 {
+	if (!mCommunicator) {
+		return mState.status();
+	}
+
 	return combine(*mCommunicator, mState.status());
 }
 

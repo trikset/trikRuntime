@@ -19,14 +19,21 @@
 #include <QsLog.h>
 
 #include "configurerHelper.h"
+#include "port/portManager.h"
 
 using namespace trikControl;
 
-DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer
-		, const trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: mDeviceFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
+DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &configurer,
+	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports)
+	: mPortLease(ports.acquire(port, PortMode::Gpio, QStringLiteral("digitalSensor")))
+	, mDeviceFile(hardwareAbstraction.createInputDeviceFile(configurer.attributeByPort(port, "deviceFile")))
 	, mState("Digital Sensor on" + port)
 {
+	if (!mPortLease) {
+		mState.fail();
+		return;
+	}
+
 	mMin = ConfigurerHelper::configureInt(configurer, mState, port, "min");
 	mMax = ConfigurerHelper::configureInt(configurer, mState, port, "max");
 
@@ -36,9 +43,7 @@ DigitalSensor::DigitalSensor(const QString &port, const trikKernel::Configurer &
 	read();
 }
 
-DigitalSensor::~DigitalSensor()
-{
-}
+DigitalSensor::~DigitalSensor() = default;
 
 int DigitalSensor::read()
 {
@@ -61,7 +66,7 @@ int DigitalSensor::read()
 
 	const qreal scale = 100.0 / (static_cast<qreal>(mMax - mMin));
 
-	value = (value - mMin) * scale;
+	value = static_cast<int>((value - mMin) * scale);
 
 	return value;
 }

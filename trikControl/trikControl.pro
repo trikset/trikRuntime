@@ -104,13 +104,21 @@ HEADERS += \
 	$$PWD/src/transports/transportType.h \
 	$$PWD/src/mspBusAutoDetector.h \
 	$$PWD/src/mspUsbCommunicator.h \
+	$$PWD/src/port/hardwarePort.h \
+	$$PWD/src/port/peripheryPort.h \
+	$$PWD/src/port/port.h \
+	$$PWD/src/port/portLease.h \
+	$$PWD/src/port/portManager.h \
+	$$PWD/src/port/portMode.h \
 	$$PWD/src/powerMotor.h \
 	$$PWD/src/pwmCapture.h \
+	$$PWD/src/port/pwmChannelLease.h \
+	$$PWD/src/port/pwmChipResolver.h \
 	$$PWD/src/rangeSensor.h \
 	$$PWD/src/rangeSensorWorker.h \
-	$$PWD/src/servoMotor/base.h \
-	$$PWD/src/servoMotor/communicator.h \
-	$$PWD/src/servoMotor/internal.h \
+	$$PWD/src/servoMotor/servoBase.h \
+	$$PWD/src/servoMotor/servoCommunicator.h \
+	$$PWD/src/servoMotor/servoInternal.h \
 	$$PWD/src/soundSensor.h \
 	$$PWD/src/videoSensorManager.h \
 	$$PWD/src/videoPreviewModel.h \
@@ -130,7 +138,9 @@ HEADERS += \
 	$$PWD/src/gyroSensor.h \
 	$$PWD/src/qtCameraImplementation.h \
 	$$PWD/src/imitationCameraImplementation.h \
+	$$PWD/src/port/gpioLineLease.h \
 	$$PWD/src/i2cDevice.h \
+	$$PWD/src/port/iioDeviceResolver.h \
 	$$PWD/src/fifoworker.h \
 	$$PWD/src/datafilter.h \
 	$$PWD/src/lidar.h \
@@ -178,13 +188,19 @@ SOURCES += \
 	$$PWD/src/communicatorProvider.cpp \
 	$$PWD/src/mspBusAutoDetector.cpp \
 	$$PWD/src/mspUsbCommunicator.cpp \
+	$$PWD/src/port/hardwarePort.cpp \
+	$$PWD/src/port/peripheryPort.cpp \
+	$$PWD/src/port/portLease.cpp \
+	$$PWD/src/port/portManager.cpp \
 	$$PWD/src/powerMotor.cpp \
 	$$PWD/src/pwmCapture.cpp \
+	$$PWD/src/port/pwmChannelLease.cpp \
+	$$PWD/src/port/pwmChipResolver.cpp \
 	$$PWD/src/rangeSensor.cpp \
 	$$PWD/src/rangeSensorWorker.cpp \
-	$$PWD/src/servoMotor/base.cpp \
-	$$PWD/src/servoMotor/communicator.cpp \
-	$$PWD/src/servoMotor/internal.cpp \
+	$$PWD/src/servoMotor/servoBase.cpp \
+	$$PWD/src/servoMotor/servoCommunicator.cpp \
+	$$PWD/src/servoMotor/servoInternal.cpp \
 	$$PWD/src/soundSensor.cpp \
 	$$PWD/src/soundSensorWorker.cpp \
 	$$PWD/src/tonePlayer.cpp \
@@ -203,7 +219,9 @@ SOURCES += \
 	$$PWD/src/qtCameraImplementation.cpp \
 	$$PWD/src/imitationCameraImplementation.cpp \
 	$$PWD/src/cameraDeviceInterface.cpp \
+	$$PWD/src/port/gpioLineLease.cpp \
 	$$PWD/src/i2cDevice.cpp \
+	$$PWD/src/port/iioDeviceResolver.cpp \
 	$$PWD/src/utilities.cpp \
 	$$PWD/src/brickInterface.cpp \
  \#	$$PWD/src/headingSensor.cpp \
@@ -234,6 +252,7 @@ QT += xml gui multimedia serialport quick
 links(trikRuntimeQsLog trikKernel trikHal trik-mlx90640)
 implementationIncludes(trikKernel trikHal)
 
+INCLUDEPATH += $$PWD/src
 INCLUDEPATH += $$GLOBAL_PWD/mlx90640-library/mlx90640-library/headers
 
 QMAKE_CXXFLAGS += \

@@ -18,7 +18,8 @@
 
 #include <QtCore/QString>
 
-#include "../deviceState.h"
+#include "deviceState.h"
+#include "port/portLease.h"
 #include "motorInterface.h"
 
 namespace trikKernel {
@@ -26,6 +27,8 @@ class Configurer;
 }
 
 namespace trikControl {
+
+class PortManager;
 
 /// Common base for servo motor implementations.
 ///
@@ -35,7 +38,7 @@ namespace trikControl {
 class ServoMotorBase : public MotorInterface
 {
 public:
-	ServoMotorBase(const QString &port, const trikKernel::Configurer &configurer);
+	ServoMotorBase(const QString &port, const trikKernel::Configurer &configurer, PortManager &ports);
 	~ServoMotorBase() override;
 
 	Status status() const override;
@@ -78,6 +81,7 @@ protected:
 	virtual void applyRun(bool on) = 0;
 	virtual void applyPowerOff() = 0;
 
+	PortLease mPortLease;
 	int mPeriod = 0;
 	int mMin = 0;
 	int mMax = 0;
@@ -90,7 +94,7 @@ protected:
 	bool mInvert = false;
 	bool mRun = false;
 	DeviceState mState;
-	const QString mPort;
+	const QString mPortName;
 };
 
 } // namespace trikControl

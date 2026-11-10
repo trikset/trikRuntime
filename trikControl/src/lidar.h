@@ -20,6 +20,7 @@
 #include "lidarInterface.h"
 #include "deviceState.h"
 #include "lidarWorker.h"
+#include "port/portLease.h"
 
 #include <trikControl/trikControlDeclSpec.h>
 
@@ -33,6 +34,8 @@ class HardwareAbstractionInterface;
 
 namespace trikControl {
 
+class PortManager;
+
 /// Implementation of lidar for real robot.
 class Lidar : public LidarInterface
 {
@@ -42,8 +45,8 @@ public:
 	/// Constructor.
 	/// @param port - port on which this sensor is configured.
 	/// @param configurer - configurer object containing preparsed XML files with lidar parameters.
-	Lidar(const QString &port, const trikKernel::Configurer &configurer
-			, trikHal::HardwareAbstractionInterface &hardwareAbstraction);
+	Lidar(const QString &port, const trikKernel::Configurer &configurer,
+		trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports);
 	~Lidar() override;
 
 	Status status() const override;
@@ -53,10 +56,14 @@ public:
 	Q_INVOKABLE QVector<int> readRaw() const override;
 
 private:
-	LidarWorker *mLidarWorker; // Has ownership
+	PortLease mPortLease;
+	LidarWorker *mLidarWorker = nullptr; // Has ownership
 
 	/// Worker thread.
 	QThread mWorkerThread;
+
+	/// State used when the worker cannot be created.
+	DeviceState mState;
 };
 
 }

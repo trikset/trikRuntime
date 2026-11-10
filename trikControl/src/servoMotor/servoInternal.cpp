@@ -12,58 +12,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "internal.h"
+#include "servoInternal.h"
+
+#include <QsLog.h>
 
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikHal/outputDeviceFileInterface.h>
 #include <trikKernel/configurer.h>
-#include <trikKernel/exceptions/malformedConfigException.h>
 
 using namespace trikControl;
 
 InternalServoMotor::InternalServoMotor(const QString &port, const trikKernel::Configurer &configurer,
-	trikHal::HardwareAbstractionInterface &hardwareAbstraction)
-	: ServoMotorBase(port, configurer)
+	trikHal::HardwareAbstractionInterface &hardwareAbstraction, PortManager &ports)
+	: ServoMotorBase(port, configurer, ports)
 {
-	mDutyFile.reset(hardwareAbstraction.createOutputDeviceFile(
-		configurer.attributeByPort(port, QStringLiteral("deviceFile"))));
-	mPeriodFile.reset(hardwareAbstraction.createOutputDeviceFile(
-		configurer.attributeByPort(port, QStringLiteral("periodFile"))));
-	mRunFile.reset(hardwareAbstraction.createOutputDeviceFile(
-		configurer.attributeByPort(port, QStringLiteral("runFile"))));
-
-	if (!mDutyFile || !mPeriodFile || !mRunFile) {
-		throw trikKernel::MalformedConfigException(
-			"Internal servo on " + port + " requires deviceFile, periodFile, runFile");
+	if (mState.isFailed()) {
+		return;
 	}
 
-	QString capturePath;
-	capturePath = configurer.attributeByPort(port, QStringLiteral("captureFile"), &capturePath);
-	if (!capturePath.isEmpty()) {
-		QScopedPointer<trikHal::OutputDeviceFileInterface> captureFile(
-			hardwareAbstraction.createOutputDeviceFile(capturePath));
-		if (!captureFile || !captureFile->open()) {
-			mState.fail();
-			return;
-		}
+	const auto pwmDevice = mPortLease.device();
+	if (pwmDevice.isEmpty()) {
+		QLOG_ERROR() << "Internal servo on" << port << "requires a PWM device on the port";
+		failSetup();
+		return;
+	}
 
-		captureFile->write(QStringLiteral("0"));
+	mPwmChannel = PwmChannelLease(pwmDevice, hardwareAbstraction);
+	if (!mPwmChannel) {
+		QLOG_ERROR() << "Internal servo on" << port << "cannot resolve PWM device" << pwmDevice;
+		failSetup();
+		return;
+	}
+
+	const auto channelDir = mPwmChannel.channelDir();
+	mDutyFile.reset(hardwareAbstraction.createOutputDeviceFile(channelDir + QStringLiteral("/duty_cycle")));
+	mPeriodFile.reset(hardwareAbstraction.createOutputDeviceFile(channelDir + QStringLiteral("/period")));
+	mRunFile.reset(hardwareAbstraction.createOutputDeviceFile(channelDir + QStringLiteral("/enable")));
+
+	if (!mDutyFile || !mPeriodFile || !mRunFile) {
+		QLOG_ERROR() << "Internal servo on" << port << "cannot create the PWM channel files";
+		failSetup();
+		return;
 	}
 
 	if (!mPeriodFile->open()) {
-		mState.fail();
+		failSetup();
 		return;
 	}
 
 	if (!mRunFile->open()) {
-		mState.fail();
+		failSetup();
 		return;
 	}
 
 	mRunFile->write(QString::number(mRun ? 1 : 0));
 
 	if (!mDutyFile->open()) {
-		mState.fail();
+		failSetup();
 		return;
 	}
 
@@ -77,6 +82,13 @@ InternalServoMotor::~InternalServoMotor()
 	if (mState.isReady()) {
 		powerOff();
 	}
+}
+
+void InternalServoMotor::failSetup()
+{
+	mState.fail();
+	mPortLease.release();
+	mPwmChannel.release();
 }
 
 void InternalServoMotor::applyPeriod(uint32_t periodNs)

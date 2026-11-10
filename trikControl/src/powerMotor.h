@@ -22,6 +22,9 @@
 
 #include "motorInterface.h"
 #include "deviceState.h"
+#include "port/gpioLineLease.h"
+#include "port/portLease.h"
+#include "port/pwmChannelLease.h"
 
 namespace trikKernel {
 class Configurer;
@@ -34,6 +37,8 @@ class OutputDeviceFileInterface;
 }
 
 namespace trikControl {
+
+class PortManager;
 
 static const int powerMotorMaxControl = 100;
 static const int powerMotorMinControl = -100;
@@ -49,7 +54,7 @@ public:
 	/// @param configurer - configurer object containing preparsed XML files with motor parameters.
 	/// @param hw - hardware abstraction layer implementation.
 	PowerMotor(const QString &port, const trikKernel::Configurer &configurer,
-		trikHal::HardwareAbstractionInterface &hw);
+		trikHal::HardwareAbstractionInterface &hw, PortManager &ports);
 
 	~PowerMotor() override;
 
@@ -83,6 +88,10 @@ public Q_SLOTS:
 private:
 	void lineariseMotor(const QString &port, const trikKernel::Configurer &configurer);
 
+	PortLease mPortLease;
+	PwmChannelLease mPwmChannel;
+	GpioLineLease mDirLine;
+	GpioLineLease mFaultLine;
 	std::unique_ptr<trikHal::OutputDeviceFileInterface> mPeriodFile;
 	std::unique_ptr<trikHal::OutputDeviceFileInterface> mDutyFile;
 	std::unique_ptr<trikHal::OutputDeviceFileInterface> mRunFile;

@@ -47,8 +47,8 @@
 #include "powerMotor.h"
 #include "pwmCapture.h"
 #include "rangeSensor.h"
-#include "servoMotor/communicator.h"
-#include "servoMotor/internal.h"
+#include "servoMotor/servoCommunicator.h"
+#include "servoMotor/servoInternal.h"
 #include "soundSensor.h"
 #include "tonePlayer.h"
 #include "vectorSensor.h"
@@ -64,6 +64,7 @@
 #include "createDevice.h"
 #include "mspBusAutoDetector.h"
 #include "moduleLoader.h"
+#include "port/portManager.h"
 
 #include <QsLog.h>
 
@@ -77,14 +78,14 @@ namespace {
 /// driver. Logs and skips the device when the driver is unavailable.
 template<typename Device, typename Container>
 Device *insertPeripheryDevice(Container &devices, const QString &port, const QString &deviceClass,
-	const trikKernel::Configurer &configurer, PeripheryDriverInterface *driver)
+	const trikKernel::Configurer &configurer, PeripheryDriverInterface *driver, PortManager &ports)
 {
 	if (!driver) {
 		QLOG_ERROR() << "No periphery driver for" << deviceClass << "on port" << port;
 		return nullptr;
 	}
 
-	auto *device = new Device(port, configurer, *driver);
+	auto *device = new Device(port, configurer, *driver, ports);
 	devices.insert(port, device);
 	return device;
 }
@@ -135,6 +136,7 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	mCommunicatorProvider.reset(new CommunicatorProvider(mConfigurer, *mHardwareAbstraction));
 	mPeripheryDriver = mCommunicatorProvider->communicator();
 	mModuleLoader.reset(new ModuleLoader(mHardwareAbstraction->systemConsole()));
+	mPortManager.reset(new PortManager(systemConfig, *mHardwareAbstraction, mPeripheryDriver));
 
 	registerDeviceFactories();
 
@@ -568,7 +570,7 @@ SensorInterface *Brick::sensor(const QString &port)
 
 LidarInterface *Brick::lidar()
 {
-	auto port = "lidarPort";
+	auto port = "B4";
 	if (mLidars.contains(port)) {
 		return mLidars[port];
 	} else {
@@ -665,7 +667,8 @@ I2cDeviceInterface *Brick::createI2cDevice(int bus, int address,
 	if (mI2cDevices.contains(mhash)) {
 		return mI2cDevices[mhash];
 	} else {
-		auto i2cDeviceUnique = std::make_unique<I2cDevice>(mConfigurer, factory(), _bus, _address);
+		auto i2cDeviceUnique =
+			std::make_unique<I2cDevice>(mConfigurer, factory(), _bus, _address, *mPortManager);
 
 		if (i2cDeviceUnique->status() == DeviceInterface::Status::permanentFailure) {
 			QLOG_ERROR() << "Could not open device on bus" << bus << "and address " << address;
@@ -817,7 +820,7 @@ void Brick::registerDeviceFactories()
 {
 	mDeviceFactory.registerDevice(QStringLiteral("servoMotor"), [this](const QString &port) {
 		auto *device = makeDevice<InternalServoMotor, CommunicatorServoMotor, ServoMotorBase>(port, mConfigurer,
-			*mHardwareAbstraction, mPeripheryDriver);
+			*mHardwareAbstraction, mPeripheryDriver, *mPortManager);
 
 		if (device) {
 			mServoMotors.insert(port, device);
@@ -827,30 +830,30 @@ void Brick::registerDeviceFactories()
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("pwmCapture"), [this](const QString &port) {
-		auto *device = new PwmCapture(port, mConfigurer, *mHardwareAbstraction);
+		auto *device = new PwmCapture(port, mConfigurer, *mHardwareAbstraction, *mPortManager);
 		mPwmCaptures.insert(port, device);
 		return device;
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("powerMotor"), [this](const QString &port) {
-		auto *device = new PowerMotor(port, mConfigurer, *mHardwareAbstraction);
+		auto *device = new PowerMotor(port, mConfigurer, *mHardwareAbstraction, *mPortManager);
 		mPowerMotors.insert(port, device);
 		return device;
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("analogSensor"), [this](const QString &port) {
 		return insertPeripheryDevice<AnalogSensor>(mAnalogSensors, port, QStringLiteral("analogSensor"),
-			mConfigurer, mPeripheryDriver);
+			mConfigurer, mPeripheryDriver, *mPortManager);
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("digitalSensor"), [this](const QString &port) {
-		auto *device = new DigitalSensor(port, mConfigurer, *mHardwareAbstraction);
+		auto *device = new DigitalSensor(port, mConfigurer, *mHardwareAbstraction, *mPortManager);
 		mDigitalSensors.insert(port, device);
 		return device;
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("rangeSensor"), [this](const QString &port) {
-		auto *device = new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction);
+		auto *device = new RangeSensor(port, mConfigurer, *mModuleLoader, *mHardwareAbstraction, *mPortManager);
 		mRangeSensors.insert(port, device);
 
 		/// @todo Range sensor shall be turned on only when needed.
@@ -860,7 +863,7 @@ void Brick::registerDeviceFactories()
 
 	mDeviceFactory.registerDevice(QStringLiteral("encoder"), [this](const QString &port) {
 		return insertPeripheryDevice<Encoder>(mEncoders, port, QStringLiteral("encoder"), mConfigurer,
-			mPeripheryDriver);
+			mPeripheryDriver, *mPortManager);
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("soundSensor"), [this](const QString &port) {
@@ -878,13 +881,14 @@ void Brick::registerDeviceFactories()
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("lidar"), [this](const QString &port) {
-		auto *device = new Lidar(port, mConfigurer, *mHardwareAbstraction);
+		auto *device = new Lidar(port, mConfigurer, *mHardwareAbstraction, *mPortManager);
 		mLidars.insert(port, device);
 		return device;
 	});
 
 	mDeviceFactory.registerDevice(QStringLiteral("irCamera"), [this](const QString &port) {
-		QScopedPointer<IrCameraInterface> tmp(new IrCamera(port, mConfigurer, *mHardwareAbstraction));
+		QScopedPointer<IrCameraInterface> tmp(
+			new IrCamera(port, mConfigurer, *mHardwareAbstraction, *mPortManager));
 		auto *device = tmp.data();
 		mIrCamera.swap(tmp);
 		return device;

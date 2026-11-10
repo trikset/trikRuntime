@@ -12,22 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License. */
 
-#include "communicator.h"
+#include "servoCommunicator.h"
 
 #include <QtCore/QByteArray>
 
 #include <trikKernel/configurer.h>
 
-#include "../communicatorCommand.h"
-#include "../peripheryDriverInterface.h"
+#include "communicatorCommand.h"
+#include "peripheryDriverInterface.h"
 
 using namespace trikControl;
 
 CommunicatorServoMotor::CommunicatorServoMotor(const QString &port, const trikKernel::Configurer &configurer,
-	PeripheryDriverInterface &driver)
-	: ServoMotorBase(port, configurer)
+	PeripheryDriverInterface &driver, PortManager &ports)
+	: ServoMotorBase(port, configurer, ports)
 	, mDriver(driver)
 {
+	if (mState.isFailed()) {
+		return;
+	}
+
 	markReady();
 }
 
