@@ -38,15 +38,16 @@ WiFiInit::~WiFiInit() {
 
 WiFiInit::Result WiFiInit::init(WiFiMode::Mode mode) {
 	const QString command = "/etc/trik/set_wifi_mode.sh";
+	const QString interface = QStringLiteral("wlan0");
 	QStringList arguments;
 
 	switch (mode) {
 	case WiFiMode::Mode::AccessPoint: {
-		arguments << "ap";
+		arguments << interface << "ap";
 		break;
 	}
 	case WiFiMode::Mode::Client: {
-		arguments << "client";
+		arguments << interface << "client";
 		break;
 	}
 	case WiFiMode::Mode::Unknown: {
