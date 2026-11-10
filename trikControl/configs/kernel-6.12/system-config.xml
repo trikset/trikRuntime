@@ -248,7 +248,7 @@ equal to its class name.
 			format="yuv422"
 			width="320"
 			height="240"
-			mjpgStreamerScript="/etc/init.d/mjpg-streamer"
+			mjpgStreamerScript="/usr/libexec/trik/mjpg-streamer"
 		/>
 		<videoDevice
 			port="usb-camera-2"
@@ -256,7 +256,7 @@ equal to its class name.
 			format="yuv422"
 			width="320"
 			height="240"
-			mjpgStreamerScript="/etc/init.d/mjpg-streamer"
+			mjpgStreamerScript="/usr/libexec/trik/mjpg-streamer"
 		/>
 		<videoDevice
 			port="usb-camera-3"
@@ -264,7 +264,7 @@ equal to its class name.
 			format="yuv422"
 			width="320"
 			height="240"
-			mjpgStreamerScript="/etc/init.d/mjpg-streamer"
+			mjpgStreamerScript="/usr/libexec/trik/mjpg-streamer"
 		/>
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo"/>
 		<iioSensorGroup port="boardImuPort"/>
