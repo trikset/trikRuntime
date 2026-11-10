@@ -15,7 +15,6 @@
 #include "trikWiFiWorker.h"
 
 #include <QtCore/QStringList>
-#include <QtCore/QProcess>
 
 #include <QsLog.h>
 
@@ -264,11 +263,6 @@ void TrikWiFiWorker::processMessage(const QString &message)
 		// Refresh connection status.
 		statusRequest();
 		mPlannedDisconnect = false;
-		// hotfix: here we trying to get new ip for new connection
-		QProcess dhcpProcess;
-		dhcpProcess.start("udhcpc", {"-i", "wlan0"});
-		dhcpProcess.waitForFinished(3000);
-		statusRequest();
 		Q_EMIT connected();
 	} else if (message.contains("CTRL-EVENT-DISCONNECTED")) {
 		Q_EMIT disconnected(mPlannedDisconnect ? DisconnectReason::planned : DisconnectReason::unplanned);
