@@ -43,7 +43,7 @@ equal to its class name.
 		<powerMotor period="4096" invert="false" measures="(0;0)(100;100)"/>
 		<analogSensor
 			rawValue1="0"
-			rawValue2="1023"
+			rawValue2="4095"
 			normalizedValue1="0"
 			normalizedValue2="100"
 			type="Analog"
@@ -244,7 +244,7 @@ equal to its class name.
 		<rangeSensor port="B3" module="srf04" iioLabel="B3" iioChannel="in_distance_raw"/>
 		<videoDevice
 			port="usb-camera-1"
-			device="/dev/usb-camera-1-dev"
+			device="/dev/camera-1"
 			format="yuv422"
 			width="320"
 			height="240"
@@ -252,7 +252,7 @@ equal to its class name.
 		/>
 		<videoDevice
 			port="usb-camera-2"
-			device="/dev/usb-camera-2-dev"
+			device="/dev/camera-2"
 			format="yuv422"
 			width="320"
 			height="240"
@@ -260,7 +260,7 @@ equal to its class name.
 		/>
 		<videoDevice
 			port="usb-camera-3"
-			device="/dev/usb-camera-3-dev"
+			device="/dev/camera-3"
 			format="yuv422"
 			width="320"
 			height="240"
@@ -313,11 +313,11 @@ equal to its class name.
 			controlMax="100"
 		/>
 		<quadroEsc class="servoMotor" min="1100000" max="1900000" zero="1500000" stop="0" controlMin="0" controlMax="100"/>
-		<sharpGP2Sensor class="analogSensor" type="SharpGP2" values="(25;322)(35;235)(15;511)"/>
+		<sharpGP2Sensor class="analogSensor" type="SharpGP2" values="(25;1090)(35;795)(15;1730)"/>
 		<touchSensor
 			class="analogSensor"
-			rawValue1="100"
-			rawValue2="1023"
+			rawValue1="200"
+			rawValue2="4095"
 			normalizedValue1="1"
 			normalizedValue2="0"
 			minValue="0"
@@ -326,8 +326,8 @@ equal to its class name.
 		<sonarSensor class="rangeSensor" minValue="0" maxValue="400"/>
 		<lightSensor
 			class="analogSensor"
-			rawValue1="30"
-			rawValue2="1023"
+			rawValue1="150"
+			rawValue2="4095"
 			normalizedValue1="0"
 			normalizedValue2="100"
 			minValue="0"
