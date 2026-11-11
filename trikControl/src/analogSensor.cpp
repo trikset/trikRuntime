@@ -14,6 +14,8 @@
 
 #include "analogSensor.h"
 
+#include <algorithm>
+
 #include <trikKernel/configurer.h>
 #include <QsLog.h>
 
@@ -75,6 +77,8 @@ int AnalogSensor::read()
 	} else {
 		result = static_cast<int>(mK * raw + mB);
 	}
+
+	result = std::min(mMaxValue, std::max(mMinValue, result));
 
 	return !mDataFilter ? result : mDataFilter->applyFilter(result);
 }
