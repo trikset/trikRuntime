@@ -37,12 +37,6 @@ class VectorSensor : public VectorSensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param port - port on which this sensor is configured.
-	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer,
-		const trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &port);
-
 	/// Constructor for externally-fed sensor (used by BoardImu). Does not open its own IIO device.
 	explicit VectorSensor(const QString &deviceName);
 
@@ -63,7 +57,6 @@ private:
 	QThread mWorkerThread;
 
 	QVector<int> mResult {};
-	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
 	mutable QReadWriteLock mResultLock;
 };
 

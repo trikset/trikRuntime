@@ -162,20 +162,10 @@ Brick::Brick(const trikKernel::DifferentOwnerPointer<trikHal::HardwareAbstractio
 	mVideoSensorManager.reset(
 		new VideoSensorManager(mConfigurer, *mHardwareAbstraction, mCameraManager, mPreviewSink));
 
-	// Single-stream IMU (ICM-42670) or legacy two-device IMU.
+	// Single-stream IMU exposed through the generic IIO layer.
 	if (mConfigurer.ports().contains("boardImuPort")
 		&& mConfigurer.deviceClass("boardImuPort") == "iioSensorGroup") {
 		mBoardImu.reset(new BoardImu("boardImuPort", mConfigurer, *mHardwareAbstraction));
-	} else if (mConfigurer.ports().contains("boardAccelPort")
-		   && mConfigurer.deviceClass("boardAccelPort") == "iioDevice") {
-		mAccelerometer.reset(
-			new VectorSensor("accelerometer", mConfigurer, *mHardwareAbstraction, "boardAccelPort"));
-
-		if (mConfigurer.ports().contains("boardGyroPort")
-			&& mConfigurer.deviceClass("boardGyroPort") == "iioDevice") {
-			mGyroscope.reset(new GyroSensor("gyroscope", mConfigurer, *mHardwareAbstraction,
-				mAccelerometer.data(), "boardGyroPort"));
-		}
 	}
 
 	mPlayWavFileCommand = mConfigurer.attributeByDevice("playWavFile", "command");

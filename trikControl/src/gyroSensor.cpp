@@ -25,42 +25,6 @@ static constexpr auto PI = 3.14159265358979323846f;
 static constexpr auto PI_2 = 1.57079632679489661923f;
 static constexpr auto RAD_TO_MDEG = 1000 * 180 / PI;
 
-GyroSensor::GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer,
-	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer,
-	const QString &port)
-	: mState(deviceName)
-	, mIsCalibrated(false)
-	, mQ(QQuaternion(1, 0, 0, 0))
-	, mGyroCounter(0)
-	, mLastUpdate(trikKernel::TimeVal(0, 0))
-	, mAccelerometer(accelerometer)
-	, mAxesSwapped(false)
-{
-	initCommon();
-
-	if (!mState.isFailed()) {
-		const auto deviceFile = configurer.attributeByPort(port, "deviceFile");
-		mIIOFile.reset(
-			hardwareAbstraction.createIIOFile(deviceFile, configurer.attributeByPort(port, "scanType")));
-		if (!mIIOFile.data()->open()) {
-			QLOG_ERROR() << "Gyroscope init failed";
-			mState.fail();
-			return;
-		}
-
-		if (!readGyroScale(deviceFile, false)) {
-			QLOG_ERROR() << "Gyroscope scale init failed";
-			mState.fail();
-			return;
-		}
-
-		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::countTilt);
-		connect(&mCalibrationTimer, &QTimer::timeout, this, &GyroSensor::countCalibrationParameters);
-		QLOG_INFO() << "Starting GyroSensor";
-		mState.ready();
-	}
-}
-
 GyroSensor::GyroSensor(const QString &deviceName, const QString &deviceFile, VectorSensorInterface *accelerometer)
 	: mState(deviceName)
 	, mIsCalibrated(false)
@@ -72,7 +36,7 @@ GyroSensor::GyroSensor(const QString &deviceName, const QString &deviceFile, Vec
 {
 	initCommon();
 
-	if (!readGyroScale(deviceFile, true)) {
+	if (!readGyroScale(deviceFile, false)) {
 		QLOG_ERROR() << "Gyroscope scale init failed";
 		mState.fail();
 		return;
@@ -156,7 +120,7 @@ QVector<int> GyroSensor::readRawData() const
 
 void GyroSensor::calibrate(int msec)
 {
-	connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::sumGyroscope);
+	mCalibrating = true;
 	connect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	mIsCalibrated = false;
@@ -260,7 +224,7 @@ void GyroSensor::countTilt(const QVector<int> &gyroData, trikKernel::TimeVal t)
 
 void GyroSensor::countCalibrationParameters()
 {
-	disconnect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &GyroSensor::sumGyroscope);
+	mCalibrating = false;
 	disconnect(mAccelerometer, &VectorSensorInterface::newData, this, &GyroSensor::sumAccelerometer);
 
 	if (mGyroCounter != 0) {
@@ -358,5 +322,9 @@ QVector3D GyroSensor::getEulerAngles(const QQuaternion &q)
 
 void GyroSensor::onNewData(const QVector<int> &data, const trikKernel::TimeVal &eventTime)
 {
+	if (mCalibrating) {
+		sumGyroscope(data, eventTime);
+	}
+
 	countTilt(data, eventTime);
 }

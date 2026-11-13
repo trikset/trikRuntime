@@ -27,12 +27,17 @@ class StubIIOFile : public IIOFileInterface
 public:
 	/// Constructor.
 	/// @param fileName - file name (with path, relative or absolute) of an IIO file.
-	StubIIOFile(const QString &fileName, const QString &scanType);
+	explicit StubIIOFile(QString fileName);
 
 	bool open() override;
 	bool close() override;
 	QString fileName() const override;
 	bool isOpened() const override;
+
+	QVector<IIOChannelInfo> channels() const override;
+	int channelValueIndex(IIOChanType type, IIOAxis axis) const override;
+	int recordBytes() const override;
+	bool hasTimestamp() const override;
 
 private:
 	QString mFileName;
