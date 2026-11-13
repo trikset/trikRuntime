@@ -36,8 +36,7 @@ public:
 
 	EventFileInterface *createEventFile(const QString &fileName) const override;
 	FifoInterface *createFifo(const QString &fileName) const override;
-	IIOFileInterface *createIIOFile(const QString &fileName, const QString &scanType) const override;
-	ImuFileInterface *createImuFile(const QString &fileName) const override;
+	IIOFileInterface *createIIOFile(const QString &fileName) const override;
 	InputDeviceFileInterface *createInputDeviceFile(const QString &fileName) const override;
 	OutputDeviceFileInterface *createOutputDeviceFile(const QString &fileName) const override;
 	// NOLINTNEXTLINE(google-default-arguments)

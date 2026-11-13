@@ -23,7 +23,6 @@
 #include "stubOutputDeviceFile.h"
 #include "stubFifo.h"
 #include "stubIIOFile.h"
-#include "stubImuFile.h"
 #include "stubVideoDeviceFile.h"
 #include "stubRga.h"
 #include "stubFbOutput.h"
@@ -81,14 +80,9 @@ FifoInterface *StubHardwareAbstraction::createFifo(const QString &fileName) cons
 	return new StubFifo(fileName);
 }
 
-IIOFileInterface *StubHardwareAbstraction::createIIOFile(const QString &fileName, const QString &scanType) const
+IIOFileInterface *StubHardwareAbstraction::createIIOFile(const QString &fileName) const
 {
-	return new StubIIOFile(fileName, scanType);
-}
-
-ImuFileInterface *StubHardwareAbstraction::createImuFile(const QString &fileName) const
-{
-	return new StubImuFile(fileName);
+	return new StubIIOFile(fileName);
 }
 
 InputDeviceFileInterface *StubHardwareAbstraction::createInputDeviceFile(const QString &fileName) const

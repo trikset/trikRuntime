@@ -14,12 +14,13 @@
 
 #include "stubIIOFile.h"
 
+#include <utility>
+
 #include <QsLog.h>
 
-trikHal::stub::StubIIOFile::StubIIOFile(const QString &fileName, const QString &scanType)
-	: mFileName(fileName)
+trikHal::stub::StubIIOFile::StubIIOFile(QString fileName)
+	: mFileName(std::move(fileName))
 {
-	Q_UNUSED(scanType)
 }
 
 bool trikHal::stub::StubIIOFile::open()
@@ -42,4 +43,26 @@ QString trikHal::stub::StubIIOFile::fileName() const
 bool trikHal::stub::StubIIOFile::isOpened() const
 {
 	return true;
+}
+
+QVector<trikHal::IIOChannelInfo> trikHal::stub::StubIIOFile::channels() const
+{
+	return {};
+}
+
+int trikHal::stub::StubIIOFile::channelValueIndex(trikHal::IIOChanType type, trikHal::IIOAxis axis) const
+{
+	Q_UNUSED(type)
+	Q_UNUSED(axis)
+	return -1;
+}
+
+int trikHal::stub::StubIIOFile::recordBytes() const
+{
+	return 0;
+}
+
+bool trikHal::stub::StubIIOFile::hasTimestamp() const
+{
+	return false;
 }

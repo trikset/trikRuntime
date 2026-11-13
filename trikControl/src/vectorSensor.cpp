@@ -20,33 +20,6 @@
 
 using namespace trikControl;
 
-VectorSensor::VectorSensor(const QString &deviceName, const trikKernel::Configurer &configurer,
-	const trikHal::HardwareAbstractionInterface &hardwareAbstraction, const QString &port)
-	: mState(deviceName)
-{
-	qRegisterMetaType<trikKernel::TimeVal>("trikKernel::TimeVal");
-
-	if (!mState.isFailed()) {
-		mIIOFile.reset(hardwareAbstraction.createIIOFile(configurer.attributeByPort(port, "deviceFile"),
-			configurer.attributeByPort(port, "scanType")));
-		if (!mIIOFile.data()->open()) {
-			QLOG_ERROR() << "Accelerometer init failed";
-			mState.fail();
-			return;
-		}
-		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this, &VectorSensor::newData);
-		connect(mIIOFile.data(), &trikHal::IIOFileInterface::newData, this,
-			[this](QVector<int> reading, const trikKernel::TimeVal &eventTime) {
-			Q_UNUSED(eventTime);
-			QWriteLocker locker(&mResultLock);
-			mResult = std::move(reading);
-		});
-
-		QLOG_INFO() << "Starting VectorSensor";
-		mState.ready();
-	}
-}
-
 VectorSensor::VectorSensor(const QString &deviceName)
 	: mState(deviceName)
 {

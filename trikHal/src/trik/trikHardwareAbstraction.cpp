@@ -23,7 +23,6 @@
 #include "trikOutputDeviceFile.h"
 #include "trikFifo.h"
 #include "trikIIOFile.h"
-#include "trikImuFile.h"
 #include "trikVideoDevice.h"
 #include "QsLog.h"
 #include "commonI2c.h"
@@ -50,8 +49,8 @@ constexpr uint32_t defaultVideoBufferCount = 3;
 TrikHardwareAbstraction::TrikHardwareAbstraction()
 	: mI2c(new TrikI2c())
 	, mSystemConsole(new TrikSystemConsole())
-	, mFramePoolAllocator(std::make_shared<FramePoolAllocator>(
-		  std::unique_ptr<DmaHeapInterface>(new TrikDmaHeap())))
+	, mFramePoolAllocator(
+		  std::make_shared<FramePoolAllocator>(std::unique_ptr<DmaHeapInterface>(new TrikDmaHeap())))
 {
 }
 
@@ -104,14 +103,9 @@ FifoInterface *TrikHardwareAbstraction::createFifo(const QString &fileName) cons
 	return new TrikFifo(fileName);
 }
 
-IIOFileInterface *TrikHardwareAbstraction::createIIOFile(const QString &fileName, const QString &scanType) const
+IIOFileInterface *TrikHardwareAbstraction::createIIOFile(const QString &fileName) const
 {
-	return new TrikIIOFile(fileName, scanType);
-}
-
-ImuFileInterface *TrikHardwareAbstraction::createImuFile(const QString &fileName) const
-{
-	return new TrikImuFile(fileName);
+	return new TrikIIOFile(fileName);
 }
 
 InputDeviceFileInterface *TrikHardwareAbstraction::createInputDeviceFile(const QString &fileName) const
