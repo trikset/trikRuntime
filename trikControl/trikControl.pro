@@ -46,6 +46,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/videoPreviewSource.h \
 	$$PWD/include/trikControl/videoPreviewHub.h \
 	$$PWD/include/trikControl/gyroSensorInterface.h \
+	$$PWD/include/trikControl/magnetometerSensorInterface.h \
 	$$PWD/include/trikControl/markerInterface.h \
 	$$PWD/include/trikControl/i2cDeviceInterface.h \
 	$$PWD/include/trikControl/utilities.h \
@@ -136,6 +137,7 @@ HEADERS += \
 	$$PWD/src/shapes/rectangle.h \
 	$$PWD/src/shapes/shape.h \
 	$$PWD/src/gyroSensor.h \
+	$$PWD/src/magnetometerSensor.h \
 	$$PWD/src/qtCameraImplementation.h \
 	$$PWD/src/imitationCameraImplementation.h \
 	$$PWD/src/port/gpioLineLease.h \
@@ -213,6 +215,7 @@ SOURCES += \
 	$$PWD/src/shapes/arc.cpp \
 	$$PWD/src/audioSynthDevice.cpp \
 	$$PWD/src/gyroSensor.cpp \
+	$$PWD/src/magnetometerSensor.cpp \
 	$$PWD/src/cameraDevice.cpp \
 	$$PWD/src/videoSensorManager.cpp \
 	$$PWD/src/cameraManager.cpp \
