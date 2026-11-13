@@ -45,24 +45,62 @@ bool trikHal::stub::StubIIOFile::isOpened() const
 	return true;
 }
 
+namespace {
+
+QVector<trikHal::IIOChannelInfo> stubChannels()
+{
+	auto format = trikHal::IIOChannelFormat {};
+	format.storageBits = 16;
+	format.bigEndian = false;
+	format.isSigned = true;
+	format.shift = 0;
+
+	QVector<trikHal::IIOChannelInfo> result;
+	const auto add = [&result, &format](trikHal::IIOChanType type, trikHal::IIOAxis axis, int index) {
+		auto info = trikHal::IIOChannelInfo {};
+		info.id.type = type;
+		info.id.axis = axis;
+		info.index = index;
+		info.format = format;
+		result.append(info);
+	};
+
+	add(trikHal::IIOChanType::Accel, trikHal::IIOAxis::X, 0);
+	add(trikHal::IIOChanType::Accel, trikHal::IIOAxis::Y, 1);
+	add(trikHal::IIOChanType::Accel, trikHal::IIOAxis::Z, 2);
+	add(trikHal::IIOChanType::AnglVel, trikHal::IIOAxis::X, 3);
+	add(trikHal::IIOChanType::AnglVel, trikHal::IIOAxis::Y, 4);
+	add(trikHal::IIOChanType::AnglVel, trikHal::IIOAxis::Z, 5);
+	add(trikHal::IIOChanType::Temp, trikHal::IIOAxis::None, 6);
+
+	return result;
+}
+
+}
+
 QVector<trikHal::IIOChannelInfo> trikHal::stub::StubIIOFile::channels() const
 {
-	return {};
+	return stubChannels();
 }
 
 int trikHal::stub::StubIIOFile::channelValueIndex(trikHal::IIOChanType type, trikHal::IIOAxis axis) const
 {
-	Q_UNUSED(type)
-	Q_UNUSED(axis)
+	const auto channels = stubChannels();
+	for (auto i = 0; i < channels.size(); ++i) {
+		if (channels.at(i).id.type == type && channels.at(i).id.axis == axis) {
+			return i;
+		}
+	}
+
 	return -1;
 }
 
 int trikHal::stub::StubIIOFile::recordBytes() const
 {
-	return 0;
+	return 16;
 }
 
 bool trikHal::stub::StubIIOFile::hasTimestamp() const
 {
-	return false;
+	return true;
 }
