@@ -66,4 +66,4 @@ public:
 
 }
 
-Q_DECLARE_METATYPE(trikControl::MagnetometerSensorInterface *)
+Q_DECLARE_METATYPE(trikControl::MagnetometerSensorInterface *) // NOLINT(misc-no-recursion)
