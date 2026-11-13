@@ -36,7 +36,7 @@ GyroSensor::GyroSensor(const QString &deviceName, const QString &deviceFile, Vec
 {
 	initCommon();
 
-	if (!readGyroScale(deviceFile, true)) {
+	if (!readGyroScale(deviceFile, false)) {
 		QLOG_ERROR() << "Gyroscope scale init failed";
 		mState.fail();
 		return;
