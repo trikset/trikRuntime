@@ -43,13 +43,6 @@ class GyroSensor : public GyroSensorInterface
 	Q_OBJECT
 
 public:
-	/// Constructor.
-	/// @param port - port on which this sensor is configured.
-	/// @param configurer - configurer object containing preparsed XML files with sensor parameters.
-	GyroSensor(const QString &deviceName, const trikKernel::Configurer &configurer,
-		const trikHal::HardwareAbstractionInterface &hardwareAbstraction, VectorSensorInterface *accelerometer,
-		const QString &port);
-
 	/// Constructor for externally-fed sensor (used by BoardImu). Does not open its own IIO device.
 	/// @param deviceName - sensor name.
 	/// @param deviceFile - path to the IIO char device (needed to read gyro scale from sysfs).
@@ -103,10 +96,9 @@ private:
 
 	QThread mWorkerThread;
 
-	QScopedPointer<trikHal::IIOFileInterface> mIIOFile;
-
 	QTimer mCalibrationTimer;
 	bool mIsCalibrated;
+	bool mCalibrating = false;
 
 	/// Quaternion that presented current rotation.
 	QQuaternion mQ;

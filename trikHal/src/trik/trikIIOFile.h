@@ -14,41 +14,72 @@
 
 #pragma once
 
+#include <QScopedPointer>
 #include <QSocketNotifier>
+#include <QString>
+#include <QVector>
 
 #include "IIOFileInterface.h"
 
 namespace trikHal {
 namespace trik {
 
-/// TRIK implementation of event file.
+/// Generic implementation of an IIO character device.
+///
+/// Reads the scan layout from sysfs (`scan_elements`), decodes any enabled
+/// channel according to its declared `_type` format and emits decoded samples.
+/// Knows nothing about particular sensor types.
 class TrikIIOFile : public IIOFileInterface
 {
 	Q_OBJECT
 
 public:
 	/// Constructor.
-	/// @param fileName - file name (with path, relative or absolute) of an IIO file.
-	TrikIIOFile(const QString &fileName, const QString &scanType);
+	/// @param fileName - file name (with path) of the IIO character device.
+	explicit TrikIIOFile(QString fileName);
 
 	/// Destructor.
-	/// Closes file descriptor.
-	~TrikIIOFile();
+	~TrikIIOFile() override;
 
 	bool open() override;
 	bool close() override;
 	QString fileName() const override;
 	bool isOpened() const override;
 
+	QVector<IIOChannelInfo> channels() const override;
+	int channelValueIndex(IIOChanType type, IIOAxis axis) const override;
+	int recordBytes() const override;
+	bool hasTimestamp() const override;
+
 private Q_SLOTS:
-	/// Called when there is a new event in a file.
+	/// Called when there is new data in the device.
 	void readFile();
 
 private:
-	int mIIOFileDescriptor {-1};
+	/// One resolved scan channel.
+	struct ScanChannel {
+		IIOChannelId id;
+		QString name;
+		int index = -1;
+		int offset = 0;
+		IIOChannelFormat format;
+		bool isTimestamp = false;
+	};
+
+	/// Reads scan_elements from sysfs and computes the record layout.
+	bool buildLayout(QString *error);
+
+	/// Parses and emits one complete record.
+	void processRecord(const quint8 *data);
+
+	int mFd = -1;
 	const QString mFileName;
-	IIOFileInterface::ScanType mScanType;
 	QScopedPointer<QSocketNotifier> mSocketNotifier;
+
+	QVector<ScanChannel> mChannels; ///< All channels, sorted by scan index.
+	QVector<int> mValueChannels; ///< Indices in mChannels of non-timestamp channels.
+	int mRecordBytes = 0; ///< Byte size of one sample record.
+	int mTimestampChannel = -1; ///< Index in mChannels of the timestamp channel, or -1.
 };
 
 }

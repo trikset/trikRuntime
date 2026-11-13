@@ -20,7 +20,6 @@
 #include "eventFileInterface.h"
 #include "fifoInterface.h"
 #include "IIOFileInterface.h"
-#include "ImuFileInterface.h"
 #include "peripheryI2cInterface.h"
 #include "usbDeviceInterface.h"
 #include "systemConsoleInterface.h"
@@ -70,13 +69,9 @@ public:
 	/// @param fileName - file name (with path, relative or absolute) of a FIFO file.
 	virtual FifoInterface *createFifo(const QString &fileName) const = 0;
 
-	/// Creates new IIO file, passes ownership to a caller.
-	/// @param fileName - file name (with path, relative or absolute) of a FIFO file.
-	virtual IIOFileInterface *createIIOFile(const QString &fileName, const QString &scanType) const = 0;
-
-	/// Creates a combined IMU IIO file, passes ownership to a caller.
+	/// Creates new generic IIO file, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of the IIO character device.
-	virtual ImuFileInterface *createImuFile(const QString &fileName) const = 0;
+	virtual IIOFileInterface *createIIOFile(const QString &fileName) const = 0;
 
 	/// Creates new input device file, passes ownership to a caller.
 	/// @param fileName - file name (with path, relative or absolute) of a device file.

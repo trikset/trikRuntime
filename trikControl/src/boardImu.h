@@ -14,10 +14,12 @@
 
 #pragma once
 
+#include <array>
+
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-#include <trikHal/ImuFileInterface.h>
+#include <trikHal/IIOFileInterface.h>
 
 #include "gyroSensor.h"
 #include "vectorSensor.h"
@@ -37,8 +39,9 @@ namespace trikControl {
 ///
 /// The new board has one combined IMU device, while the public Brick API still
 /// provides separate accelerometer() and gyroscope() objects. BoardImu hides
-/// that difference: it reads one stream, splits every sample into accelerometer
-/// and gyroscope axes, and forwards both parts with the shared timestamp.
+/// that difference: it reads one generic IIO stream, checks that the required
+/// channels are present, splits every sample into accelerometer and gyroscope
+/// axes, and forwards both parts with the shared timestamp.
 class BoardImu : public QObject
 {
 	Q_OBJECT
@@ -70,13 +73,21 @@ public:
 
 private Q_SLOTS:
 	/// Splits a combined IMU sample and feeds the accelerometer and gyroscope.
-	void onImuData(const trikHal::ImuSample &sample);
+	void onImuData(const trikHal::IIOSample &sample);
 
 private:
-	QScopedPointer<trikHal::ImuFileInterface> mImuFile {};
+	/// Checks that the opened device provides the accelerometer, gyroscope,
+	/// temperature and timestamp channels, and remembers their value indices.
+	bool validateLayout(QString *error);
+
+	QScopedPointer<trikHal::IIOFileInterface> mImuFile {};
 	QScopedPointer<VectorSensor> mAccelerometer {};
 	QScopedPointer<GyroSensor> mGyroscope {};
 	int mTemperature = 0;
+
+	std::array<int, 3> mAccelValueIndex {{-1, -1, -1}};
+	std::array<int, 3> mGyroValueIndex {{-1, -1, -1}};
+	int mTempValueIndex = -1;
 };
 
 }
