@@ -1,3 +1,4 @@
 Third-party artwork used in this program:
 - connectedToNetwork.png, notConnectedToNetwork.png --- Everaldo Coelho (http://www.everaldo.com/), LGPL.
 - connectionToNetworkImpossible.png --- Billy Barker (http://www.billybarker.net), free for commercial use.
+- flag icons (en.png, ru.png, fr.png, de.png, es.png) --- Google (https://github.com/googlefonts/noto-emoji), SIL Open Font License 1.1.

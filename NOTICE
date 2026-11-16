@@ -1,0 +1,50 @@
+TRIK Runtime
+Copyright 2024 TRIK Team
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+========================================================================
+Third-Party Notices
+========================================================================
+
+This product includes software developed by:
+
+  - Razvan Petru — QsLog (BSD 3-Clause)
+    https://github.com/razvanpetru/qslog
+    qslog/qslog/LICENSE.txt
+
+  - Google — Google Test (BSD 3-Clause)
+    https://github.com/google/googletest
+    tests/thirdparty/googletest/
+
+  - Melexis — mlx90640-library (Apache 2.0)
+    https://github.com/melexis/mlx90640-library
+    mlx90640-library/mlx90640-library/LICENSE
+
+========================================================================
+Font Licenses
+========================================================================
+
+This product includes flag icon artwork rasterized from:
+
+  - Noto Color Emoji (SIL Open Font License 1.1)
+    https://github.com/googlefonts/noto-emoji
+    Copyright 2021 Google Inc. All Rights Reserved.
+    licenses/OFL.txt
+
+========================================================================
+Artwork Licenses
+========================================================================
+
+See trikGui/resources/attribution.txt for third-party artwork used
+in this program.
