@@ -62,6 +62,7 @@ equal to its class name.
 		<digitalSensor />
 		<fifo />
         	<iioDevice />
+       	<iioSensorGroup />
         	<videoDevice />
 		<lineSensor toleranceFactor="1.0" />
 		<objectSensor toleranceFactor="1.0" />
@@ -203,8 +204,7 @@ equal to its class name.
 		<!-- <digitalSensor port="B3" deviceFile="/sys/devices/platform/da850_trik/sensor_dc" /> -->
 		<videoDevice port="imitationCameraPort" device="/dev/device" format="yuv422" width="320" height="240" mjpgStreamerScript="/etc/init.d/mjpg-streamer"/>
 		<fifo port="soundSensor" file="/home/root/trik/soundSensor.fifo" />
-                <iioDevice port="boardAccelPort" />
-                <iioDevice port="boardGyroPort" />
+		<iioSensorGroup port="boardImuPort"/>
 	</devicePorts>
 
 	<deviceTypes>
@@ -252,8 +252,7 @@ equal to its class name.
 
 		<photo class="camera" type="file" filters="*.jpg,*.png"/>
 
-                <accelerometer class="iioDevice" deviceFile="/dev/iio:device0" scanType="be:s14/16>>2"/>
-                <gyroscope class="iioDevice" deviceFile="/dev/iio:device1" scanType="le:s16/16>>0"/>
+		<boardImu class="iioSensorGroup" deviceFile="/dev/iio:device0"/>
 	</deviceTypes>
 
 	<deviceGroups>
