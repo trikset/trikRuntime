@@ -114,7 +114,7 @@
     </message>
     <message>
         <source>MAC address:</source>
-        <translation>MAC адресс:</translation>
+        <translation>MAC-адрес:</translation>
     </message>
     <message>
         <source>Not found</source>
@@ -134,15 +134,15 @@
     </message>
     <message>
         <source>Icons8,</source>
-        <translation type="unfinished"></translation>
+        <translation>Icons8,</translation>
     </message>
     <message>
         <source>Flaticon,</source>
-        <translation type="unfinished"></translation>
+        <translation>Flaticon,</translation>
     </message>
     <message>
         <source>Svgrepo</source>
-        <translation type="unfinished"></translation>
+        <translation>Svgrepo</translation>
     </message>
 </context>
 <context>
@@ -184,31 +184,31 @@
     <name>LogWindow</name>
     <message>
         <source>Log window</source>
-        <translation type="unfinished"></translation>
+        <translation>Окно журнала</translation>
     </message>
     <message>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пауза</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Сохранить</translation>
     </message>
     <message>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Копировать</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень:</translation>
     </message>
     <message>
         <source>&amp;Auto scroll</source>
-        <translation type="unfinished"></translation>
+        <translation>Авто&amp;прокрутка</translation>
     </message>
 </context>
 <context>
@@ -313,119 +313,119 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished">Внимание</translation>
+        <translation>Внимание</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished">Ошибка</translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Трассировка</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Отладка</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Информация</translation>
     </message>
     <message>
         <source>Fatal</source>
-        <translation type="unfinished"></translation>
+        <translation>Критический</translation>
     </message>
     <message>
         <source>Print this help text.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вывести этот текст справки.</translation>
     </message>
     <message>
         <source>Ignore all locale options and use English language</source>
-        <translation type="unfinished"></translation>
+        <translation>Игнорировать настройки локали и использовать английский язык</translation>
     </message>
     <message>
         <source>Path to a directory where all configs for TRIK runtime are stored. Config files are
 	system-config.xml (system-wide configuration of robot hardware for trikControl library) and
 	model-config.xml (configuration of current model).</source>
-        <translation type="unfinished"></translation>
+        <translation>Путь к каталогу, где хранятся все конфигурации TRIK runtime...</translation>
     </message>
     <message>
         <source>Path to a directory where core dump will be saved in case of creation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Путь к каталогу для сохранения дампа памяти...</translation>
     </message>
     <message>
         <source>Positional arguments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиционные аргументы:</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Опции</translation>
     </message>
     <message>
         <source>Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>Флаги</translation>
     </message>
     <message>
         <source>File with script to execute</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл со скриптом для выполнения</translation>
     </message>
     <message>
         <source>(optional of -js or -py option is specified)</source>
-        <translation type="unfinished"></translation>
+        <translation>(необязательно, если указана опция -js или -py)</translation>
     </message>
     <message>
         <source>JavaScript script to be executed directly from command line.</source>
-        <translation type="unfinished"></translation>
+        <translation>JavaScript-скрипт для выполнения из командной строки.</translation>
     </message>
     <message>
         <source>Example:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пример:</translation>
     </message>
     <message>
         <source>Python script to be executed directly from command line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Python-скрипт для выполнения из командной строки.</translation>
     </message>
     <message>
         <source>Disable display support. When this flag is active, trikRun can work without QWS or even physical display</source>
-        <translation type="unfinished"></translation>
+        <translation>Отключить поддержку дисплея...</translation>
     </message>
     <message>
         <source>Runner of JavaScript and Python files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Исполнитель JavaScript и Python файлов.</translation>
     </message>
 </context>
 <context>
     <name>QsLogging::LogWindowModel</name>
     <message>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Время</translation>
     </message>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщение</translation>
     </message>
 </context>
 <context>
     <name>QsLogging::Window</name>
     <message>
         <source>&amp;Pause</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пауза</translation>
     </message>
     <message>
         <source>&amp;Resume</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Продолжить</translation>
     </message>
     <message>
         <source>Save log</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить журнал</translation>
     </message>
     <message>
         <source>Log file (*.log)</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл журнала (*.log)</translation>
     </message>
 </context>
 <context>
@@ -1313,25 +1313,25 @@ Escape</translation>
     <name>trikScriptRunner::ScriptEngineWorker</name>
     <message>
         <source>Line %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка %1: %2</translation>
     </message>
     <message>
         <source>File %1 not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл %1 не найден</translation>
     </message>
 </context>
 <context>
     <name>trikScriptRunner::ScriptThread</name>
     <message>
         <source>Line %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Строка %1: %2</translation>
     </message>
 </context>
 <context>
     <name>trikScriptRunner::Threading</name>
     <message>
         <source>Attempt to create a thread with an already occupied id %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Попытка создать поток с уже занятым id %1</translation>
     </message>
 </context>
 </TS>
