@@ -74,6 +74,7 @@ TRANSLATIONS += \
         $$PWD/translations/trikRuntime_ru.ts \
         $$PWD/translations/trikRuntime_fr.ts \
         $$PWD/translations/trikRuntime_de.ts \
+        $$PWD/translations/trikRuntime_es.ts \
 
 OTHER_FILES += \
 	$$PWD/resources/changelog.txt \

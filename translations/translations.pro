@@ -21,6 +21,7 @@ TRANSLATIONS += \
         $$PWD/trikRuntime_ru.ts \
         $$PWD/trikRuntime_fr.ts \
         $$PWD/trikRuntime_de.ts \
+        $$PWD/trikRuntime_es.ts \
 
 CONFIG += lrelease
 
