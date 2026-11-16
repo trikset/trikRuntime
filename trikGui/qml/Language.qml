@@ -76,6 +76,8 @@ Rectangle {
                         return iconsPath + "fr.png";
                     case "de":
                         return iconsPath + "de.png";
+                    case "es":
+                        return iconsPath + "es.png";
                     }
                 }
 
@@ -89,6 +91,8 @@ Rectangle {
                         return "Française";
                     case "de":
                         return "Deutsch";
+                    case "es":
+                        return "Español";
                     }
                 }
 

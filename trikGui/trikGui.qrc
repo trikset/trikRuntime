@@ -74,7 +74,9 @@
         <file>TrikStyle/qmldir</file>
         <file>TrikStyle/Button.qml</file>
         <file>TrikStyle/Switch.qml</file>
+        <file>resources/attribution.txt</file>
         <file>resourcesQml/de.png</file>
+        <file>resourcesQml/es.png</file>
         <file>resourcesQml/telegram.png</file>
         <file>qml/DarkTheme.qml</file>
         <file>qml/LightTheme.qml</file>
