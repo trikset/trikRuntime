@@ -28,9 +28,9 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/mspUsbInterface.h \
 	$$PWD/include/trikHal/outputDeviceFileInterface.h \
 	$$PWD/include/trikHal/systemConsoleInterface.h \
-	$$PWD/include/trikHal/IIOFileInterface.h \
-	$$PWD/include/trikHal/IIOChannels.h \
-	$$PWD/include/trikHal/IIOChannelFormat.h \
+	$$PWD/include/trikHal/iioFileInterface.h \
+	$$PWD/include/trikHal/iioChannels.h \
+	$$PWD/include/trikHal/iioChannelFormat.h \
 	$$PWD/include/trikHal/VideoDeviceFileInterface.h \
 	$$PWD/include/trikHal/dmaHeapInterface.h \
 	$$PWD/include/trikHal/fbOutputInterface.h \

@@ -19,7 +19,7 @@
 #include <QString>
 #include <QVector>
 
-#include "IIOFileInterface.h"
+#include "iioFileInterface.h"
 
 namespace trikHal {
 namespace trik {

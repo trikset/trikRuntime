@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include "IIOFileInterface.h"
+#include "iioFileInterface.h"
 
 namespace trikHal {
 namespace stub {

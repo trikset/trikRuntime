@@ -19,7 +19,7 @@
 #include "outputDeviceFileInterface.h"
 #include "eventFileInterface.h"
 #include "fifoInterface.h"
-#include "IIOFileInterface.h"
+#include "iioFileInterface.h"
 #include "peripheryI2cInterface.h"
 #include "usbDeviceInterface.h"
 #include "systemConsoleInterface.h"

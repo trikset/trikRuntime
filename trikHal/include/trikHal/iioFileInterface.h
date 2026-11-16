@@ -19,8 +19,8 @@
 
 #include <trikKernel/timeVal.h>
 
-#include <trikHal/IIOChannels.h>
-#include <trikHal/IIOChannelFormat.h>
+#include <trikHal/iioChannels.h>
+#include <trikHal/iioChannelFormat.h>
 #include <trikHal/trikHalDeclSpec.h>
 
 namespace trikHal {

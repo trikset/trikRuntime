@@ -19,7 +19,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QScopedPointer>
 
-#include <trikHal/IIOFileInterface.h>
+#include <trikHal/iioFileInterface.h>
 
 #include "gyroSensor.h"
 #include "vectorSensor.h"
