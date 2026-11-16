@@ -93,4 +93,4 @@ Q_SIGNALS:
 
 }
 
-Q_DECLARE_METATYPE(trikHal::IIOSample)
+Q_DECLARE_METATYPE(trikHal::IIOSample) // NOLINT(misc-no-recursion)
