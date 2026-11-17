@@ -28,6 +28,7 @@
 #include "frameBuffer.h"
 #include "fbOutputInterface.h"
 #include "rgaInterface.h"
+#include "rknnSessionInterface.h"
 
 #include <trikHal/trikHalDeclSpec.h>
 #include <QtCore/QDir>
@@ -91,6 +92,10 @@ public:
 
 	/// Creates the DMA heap used for RGA-compatible buffers. Ownership passes to the caller.
 	virtual DmaHeapInterface *createDmaHeap() const = 0;
+
+	/// Creates an NPU inference session (RKNN). Ownership passes to the caller.
+	/// Returns nullptr when the NPU backend is not built in.
+	virtual RknnSessionInterface *createRknnSession() const = 0;
 
 	/// Acquires a writable dma-buf frame from the hidden frame pool.
 	///

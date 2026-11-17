@@ -50,6 +50,7 @@ public:
 	FbOutputInterface *createFbOutput() const override;
 	RgaInterface *createRga() const override;
 	DmaHeapInterface *createDmaHeap() const override;
+	RknnSessionInterface *createRknnSession() const override;
 	FrameBufferPtr acquireFrameBuffer(const FrameFormat &format, int count) override;
 
 private:

@@ -39,7 +39,8 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikHal/framePool.h \
 	$$PWD/include/trikHal/dmaFramePool.h \
 	$$PWD/include/trikHal/framePoolAllocator.h \
-	$$PWD/include/trikHal/rgaInterface.h
+	$$PWD/include/trikHal/rgaInterface.h \
+	$$PWD/include/trikHal/rknnSessionInterface.h
 
 !win32:!macx {
 	packagesExist(librga) {
@@ -90,6 +91,7 @@ HEADERS += \
 	$$PWD/src/stub/stubFbOutput.h \
 	$$PWD/src/stub/stubDmaHeap.h \
 	$$PWD/src/stub/stubRga.h \
+	$$PWD/src/stub/stubRknnSession.h \
 
 !win32:!macx {
 	SOURCES += \
@@ -130,11 +132,21 @@ SOURCES += \
 	$$PWD/src/stub/stubFbOutput.cpp \
 	$$PWD/src/stub/stubDmaHeap.cpp \
 	$$PWD/src/stub/stubRga.cpp \
+	$$PWD/src/stub/stubRknnSession.cpp \
 
 !trik_not_brick {
 	SOURCES += $$PWD/src/trik/hardwareAbstractionFactory.cpp
 } else {
 	SOURCES += $$PWD/src/stub/hardwareAbstractionFactory.cpp
+}
+
+# The RKNN runtime is only available on the real target build. On desktop
+# (trik_not_brick) the stub session is used instead.
+!win32:!macx:!trik_not_brick {
+	HEADERS += $$PWD/src/trik/trikRknnSession.h
+	SOURCES += $$PWD/src/trik/trikRknnSession.cpp
+	DEFINES += TRIK_HAS_RKNN
+	LIBS += -lrknnrt
 }
 
 !trik_not_brick:trik_periphery_nrf {
