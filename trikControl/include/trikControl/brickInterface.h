@@ -18,6 +18,7 @@
 #include <QtCore/QVariant>
 
 #include "batteryInterface.h"
+#include "classifierSensorInterface.h"
 #include "colorSensorInterface.h"
 #include "displayInterface.h"
 #include "encoderInterface.h"
@@ -148,6 +149,9 @@ public:
 	/// Returns high-level object detector sensor using camera on given port (video1 or video2).
 	Q_INVOKABLE virtual trikControl::ObjectSensorInterface *objectSensor(const QString &port) = 0;
 
+	/// Returns high-level classifier sensor using camera on given port (video1 or video2).
+	Q_INVOKABLE virtual trikControl::ClassifierSensorInterface *classifierSensor(const QString &port) = 0;
+
 	/// Returns lidar on given port.
 	Q_INVOKABLE virtual trikControl::LidarInterface *lidar() = 0;
 
@@ -199,8 +203,7 @@ public:
 	/// Ownership retained by brick.
 	Q_INVOKABLE virtual trikControl::EventDeviceInterface *eventDevice(const QString &deviceFile) = 0;
 
-
-	Q_SIGNALS:
+Q_SIGNALS:
 	/// Emitted when brick is fully stopped (all devices, including video sensors
 	/// and their cameras, are down and the framebuffer is closed). Connected by
 	/// the GUI to repaint the screen and clear leftover video frames.

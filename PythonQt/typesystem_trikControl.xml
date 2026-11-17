@@ -45,6 +45,7 @@
 
  <interface-type name="trikControl::LineSensorInterface" create-shell="no"/>
  <interface-type name="trikControl::ObjectSensorInterface" create-shell="no"/>
+ <interface-type name="trikControl::ClassifierSensorInterface" create-shell="no"/>
 
 <!--
 

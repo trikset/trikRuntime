@@ -20,6 +20,7 @@ PUBLIC_HEADERS += \
 	$$PWD/include/trikControl/brickFactory.h \
 	$$PWD/include/trikControl/brickInterface.h \
 	$$PWD/include/trikControl/cameraDeviceInterface.h \
+	$$PWD/include/trikControl/classifierSensorInterface.h \
 	$$PWD/include/trikControl/colorSensorInterface.h \
 	$$PWD/include/trikControl/trikControlDeclSpec.h \
 	$$PWD/include/trikControl/deviceInterface.h \
@@ -63,13 +64,17 @@ HEADERS += \
 	$$PWD/src/brick.h \
 	$$PWD/src/cameraDevice.h \
 	$$PWD/src/cameraImplementationInterface.h \
+	$$PWD/src/classifierSensor.h \
 	$$PWD/src/colorSensor.h \
 	$$PWD/src/lineSensor.h \
 	$$PWD/src/objectSensor.h \
 	$$PWD/src/algorithm/colorUtils.h \
+	$$PWD/src/algorithm/classifierSensorWorker.h \
 	$$PWD/src/algorithm/colorSensorWorker.h \
 	$$PWD/src/algorithm/frameDrawingUtils.h \
 	$$PWD/src/algorithm/cpuAlgorithmWorker.h \
+	$$PWD/src/algorithm/videoAlgorithmWorker.h \
+	$$PWD/src/algorithm/npuAlgorithmWorker.h \
 	$$PWD/src/algorithm/lineSensorWorker.h \
 	$$PWD/src/algorithm/objectDetector.h \
 	$$PWD/src/algorithm/objectSensorWorker.h \
@@ -156,11 +161,15 @@ SOURCES += \
 	$$PWD/src/boardImu.cpp \
 	$$PWD/src/brick.cpp \
 	$$PWD/src/brickFactory.cpp \
+	$$PWD/src/classifierSensor.cpp \
 	$$PWD/src/colorSensor.cpp \
 	$$PWD/src/lineSensor.cpp \
 	$$PWD/src/objectSensor.cpp \
+	$$PWD/src/algorithm/classifierSensorWorker.cpp \
 	$$PWD/src/algorithm/colorSensorWorker.cpp \
 	$$PWD/src/algorithm/cpuAlgorithmWorker.cpp \
+	$$PWD/src/algorithm/videoAlgorithmWorker.cpp \
+	$$PWD/src/algorithm/npuAlgorithmWorker.cpp \
 	$$PWD/src/algorithm/lineSensorWorker.cpp \
 	$$PWD/src/algorithm/objectDetector.cpp \
 	$$PWD/src/algorithm/objectSensorWorker.cpp \
