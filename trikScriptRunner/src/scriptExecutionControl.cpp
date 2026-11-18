@@ -16,6 +16,7 @@
 
 #include <QtCore/QDateTime>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
 #include <QtCore/QProcess>
 #include <QtCore/QFileInfo>
 #include <QtCore/QRegularExpression>
@@ -28,9 +29,60 @@
 #include <QThread>
 #include <QsLog.h>
 
+#ifdef Q_OS_LINUX
+#include <dirent.h>
+#include <csignal>
+#include <sys/types.h>
+#include <unistd.h>
+#endif
+
+#include <cstdlib>
+
 #include <trikControl/utilities.h>
 
 using namespace trikScriptRunner;
+
+#ifdef Q_OS_LINUX
+namespace {
+
+// TODO(Qt >= 6.2): remove this native killall workaround together with the
+// interception in ScriptExecutionControl::system(). See QTBUG-114863.
+void killProcessesByName(const QString &processName)
+{
+	const auto targetName = processName.toLocal8Bit();
+	auto *procDir = ::opendir("/proc");
+	if (!procDir) {
+		QLOG_ERROR() << "killall: cannot open /proc";
+		return;
+	}
+
+	const auto selfPid = ::getpid();
+	auto killedCount = 0;
+
+	while (auto *entry = ::readdir(procDir)) {
+		auto ok = false;
+		const auto pid = QString::fromLatin1(entry->d_name).toLong(&ok);
+		if (!ok || pid <= 0 || pid == selfPid) {
+			continue;
+		}
+
+		QFile commFile(QStringLiteral("/proc/%1/comm").arg(pid));
+		if (!commFile.open(QIODevice::ReadOnly)) {
+			continue;
+		}
+
+		if (commFile.readAll().trimmed() == targetName
+				&& ::kill(static_cast<pid_t>(pid), SIGTERM) == 0) {
+			++killedCount;
+		}
+	}
+
+	::closedir(procDir);
+	QLOG_INFO() << "killall" << processName << ": terminated" << killedCount << "process(es)";
+}
+
+} // namespace
+#endif
 
 ScriptExecutionControl::ScriptExecutionControl(trikControl::BrickInterface *brick): mBrick(brick) {
 	qRegisterMetaType<QVector<int32_t>>("QVector<int32_t>");
@@ -63,7 +115,7 @@ QObject* ScriptExecutionControl::timer(int milliseconds)
 
 static inline int waitWithTimerType(ScriptExecutionControl *sec, int ms, Qt::TimerType tt) {
 	QEventLoop loop;
-	QObject::connect(sec, &TrikScriptControlInterface::stopWaiting, &loop, [&loop]() { loop.exit(-1); });
+	QObject::connect(sec, &ScriptExecutionControl::stopWaiting, &loop, [&loop]() { loop.exit(-1); });
 	QTimer t;
 	t.setTimerType(tt);
 	QObject::connect(&t, &QTimer::timeout, &loop, &QEventLoop::quit);
@@ -194,8 +246,30 @@ void ScriptExecutionControl::system(const QString &command, bool synchronously)
 		return;
 	}
 
+#ifdef Q_OS_LINUX
+	// "killall aplay"/"killall vlc" are sent by the client to stop leftover
+	// media players. Forking a helper script for this from the script thread
+	// can deadlock in QtCore's post-fork code:
+	// https://bugreports.qt.io/browse/QTBUG-114863
+	// Fixed in Qt 6.2, where QProcess::startDetached resolves the executable
+	// path and prepares argv/envp before fork. Remove this native workaround
+	// when the runtime is built against Qt >= 6.2.
+	const auto killallPrefix = QStringLiteral("killall ");
+	if (command.startsWith(killallPrefix)) {
+		const auto processName = command.mid(killallPrefix.size()).trimmed();
+		if (!processName.isEmpty()
+				&& !processName.startsWith(QLatin1Char('-'))
+				&& !processName.contains(QLatin1Char(' '))
+				&& !processName.contains(QLatin1Char('\t'))) {
+			QLOG_INFO() << "Running natively:" << command;
+			killProcessesByName(processName);
+			return;
+		}
+	}
+#endif
+
 	if (!synchronously) {
-		QStringList args{"-c", command};
+		auto args = QStringList{"-c", command};
 		QLOG_INFO() << "Running: " << "sh" << args;
 		QProcess::startDetached("sh", args);
 	} else {
