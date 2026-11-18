@@ -11,6 +11,8 @@ PythonQt::self()->addParentClass("trikControl::BatteryInterface", "trikControl::
 PythonQt::priv()->registerClass(&trikControl::BrickInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__BrickInterface>, nullptr, module, 0);
 PythonQt::priv()->registerCPPClass("trikControl::CameraDeviceInterface", "", "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__CameraDeviceInterface>, nullptr, module, 0);
 PythonQt::self()->addParentClass("trikControl::CameraDeviceInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::CameraDeviceInterface,trikControl::DeviceInterface>());
+PythonQt::priv()->registerClass(&trikControl::ClassifierSensorInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__ClassifierSensorInterface>, nullptr, module, 0);
+PythonQt::self()->addParentClass("trikControl::ClassifierSensorInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::ClassifierSensorInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerClass(&trikControl::ColorSensorInterface::staticMetaObject, "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__ColorSensorInterface>, nullptr, module, 0);
 PythonQt::self()->addParentClass("trikControl::ColorSensorInterface", "trikControl::DeviceInterface",PythonQtUpcastingOffset<trikControl::ColorSensorInterface,trikControl::DeviceInterface>());
 PythonQt::priv()->registerCPPClass("trikControl::DeviceInterface", "", "PyTrikControl", PythonQtCreateObject<PythonQtWrapper_trikControl__DeviceInterface>, nullptr, module, 0);

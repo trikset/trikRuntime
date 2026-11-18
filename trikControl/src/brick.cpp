@@ -648,6 +648,11 @@ ObjectSensorInterface *Brick::objectSensor(const QString &port)
 	return mVideoSensorManager ? mVideoSensorManager->objectSensor(port) : nullptr;
 }
 
+ClassifierSensorInterface *Brick::classifierSensor(const QString &port)
+{
+	return mVideoSensorManager ? mVideoSensorManager->classifierSensor(port) : nullptr;
+}
+
 I2cDeviceInterface *Brick::createI2cDevice(int bus, int address,
 	const std::function<trikHal::PeripheryI2cInterface *()> &factory)
 {

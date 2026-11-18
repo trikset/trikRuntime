@@ -46,9 +46,9 @@ void VideoOverlayTexture::setOverlay(const trikControl::PreviewOverlay &overlay,
 	mImage.fill(Qt::transparent);
 	if (!overlay.isEmpty()) {
 		QPainter painter(&mImage);
-		// Overlays are normally axis-aligned rectangles; antialiasing is not
-		// needed and costs extra CPU time.
-		painter.setRenderHint(QPainter::Antialiasing, false);
+		// Overlays are mostly axis-aligned rectangles, but algorithm overlays may
+		// draw text glyphs, which need antialiasing to stay readable.
+		painter.setRenderHint(QPainter::Antialiasing, true);
 		for (const auto &item : overlay) {
 			painter.setPen(item.pen);
 			painter.setBrush(item.brush);
