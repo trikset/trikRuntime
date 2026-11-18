@@ -145,7 +145,12 @@ DmaHeapInterface *TrikHardwareAbstraction::createDmaHeap() const
 RknnSessionInterface *TrikHardwareAbstraction::createRknnSession() const
 {
 #ifdef TRIK_HAS_RKNN
-	return new trik::TrikRknnSession();
+	auto *session = new trik::TrikRknnSession();
+	if (!session->isAvailable()) {
+		delete session;
+		return nullptr;
+	}
+	return session;
 #else
 	return nullptr;
 #endif

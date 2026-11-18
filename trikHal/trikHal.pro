@@ -140,13 +140,14 @@ SOURCES += \
 	SOURCES += $$PWD/src/stub/hardwareAbstractionFactory.cpp
 }
 
-# The RKNN runtime is only available on the real target build. On desktop
-# (trik_not_brick) the stub session is used instead.
+# The RKNN runtime is loaded dynamically with QLibrary on the real target build.
+# The header is required at build time, but librknnrt.so itself is not linked:
+# it may be installed separately on the target. On desktop (trik_not_brick) the
+# stub session is used instead.
 !win32:!macx:!trik_not_brick {
 	HEADERS += $$PWD/src/trik/trikRknnSession.h
 	SOURCES += $$PWD/src/trik/trikRknnSession.cpp
 	DEFINES += TRIK_HAS_RKNN
-	LIBS += -lrknnrt
 }
 
 !trik_not_brick:trik_periphery_nrf {

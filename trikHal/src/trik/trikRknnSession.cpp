@@ -17,9 +17,88 @@
 #include <chrono>
 
 #include <QtCore/QByteArray>
+#include <QtCore/QLibrary>
 
 using namespace trikHal;
 using namespace trikHal::trik;
+
+namespace trikHal {
+namespace trik {
+
+namespace {
+
+template <typename T>
+bool resolve(QLibrary &library, T &function, const char *name)
+{
+	function = reinterpret_cast<T>(library.resolve(name));
+	return function != nullptr;
+}
+
+} // namespace
+
+/// Internal loader for the RKNN C API.
+///
+/// The entry points are resolved from librknnrt.so at runtime, so libtrikHal
+/// has no DT_NEEDED dependency on the runtime. QLibrary/dlopen reference-count
+/// the shared object: the first session loads it, later sessions reuse the same
+/// mapping. When the library is missing, load() fails and createRknnSession()
+/// reports the NPU as unavailable.
+struct RknnApi {
+	QLibrary library;
+
+	decltype(&rknn_init) init = nullptr;
+	decltype(&rknn_destroy) destroy = nullptr;
+	decltype(&rknn_query) query = nullptr;
+	decltype(&rknn_set_input_shapes) setInputShapes = nullptr;
+	decltype(&rknn_create_mem) createMem = nullptr;
+	decltype(&rknn_destroy_mem) destroyMem = nullptr;
+	decltype(&rknn_set_io_mem) setIoMem = nullptr;
+	decltype(&rknn_mem_sync) memSync = nullptr;
+	decltype(&rknn_run) run = nullptr;
+
+	/// Loads librknnrt.so from the standard library path and resolves the API.
+	bool load()
+	{
+		if (mLoaded) {
+			return true;
+		}
+
+		library.setFileName(QStringLiteral("librknnrt.so"));
+		if (!library.load()) {
+			mError = library.errorString();
+			return false;
+		}
+
+		if (!resolve(library, init, "rknn_init")
+			|| !resolve(library, destroy, "rknn_destroy")
+			|| !resolve(library, query, "rknn_query")
+			|| !resolve(library, setInputShapes, "rknn_set_input_shapes")
+			|| !resolve(library, createMem, "rknn_create_mem")
+			|| !resolve(library, destroyMem, "rknn_destroy_mem")
+			|| !resolve(library, setIoMem, "rknn_set_io_mem")
+			|| !resolve(library, memSync, "rknn_mem_sync")
+			|| !resolve(library, run, "rknn_run")) {
+			mError = QStringLiteral("librknnrt.so does not export the required RKNN API");
+			library.unload();
+			return false;
+		}
+
+		mLoaded = true;
+		return true;
+	}
+
+	const QString &errorString() const
+	{
+		return mError;
+	}
+
+private:
+	bool mLoaded = false;
+	QString mError;
+};
+
+} // namespace trik
+} // namespace trikHal
 
 namespace {
 
@@ -64,25 +143,49 @@ QString errorText(const char *what, int code)
 
 } // namespace
 
-TrikRknnSession::TrikRknnSession() = default;
+TrikRknnSession::TrikRknnSession()
+	: mApi(std::make_unique<RknnApi>())
+{
+}
 
 TrikRknnSession::~TrikRknnSession()
 {
 	reset();
 }
 
+bool TrikRknnSession::isAvailable() const
+{
+	return ensureApi(nullptr);
+}
+
+bool TrikRknnSession::ensureApi(QString *error) const
+{
+	if (!mApi) {
+		mApi = std::make_unique<RknnApi>();
+	}
+
+	if (mApi->load()) {
+		return true;
+	}
+
+	if (error) {
+		*error = QStringLiteral("librknnrt.so is not available: %1").arg(mApi->errorString());
+	}
+	return false;
+}
+
 void TrikRknnSession::reset()
 {
-	if (mCtx != 0) {
+	if (mCtx != 0 && mApi) {
 		for (auto *mem : mOutputMems) {
 			if (mem) {
-				rknn_destroy_mem(mCtx, mem);
+				mApi->destroyMem(mCtx, mem);
 			}
 		}
 		if (mInputMem) {
-			rknn_destroy_mem(mCtx, mInputMem);
+			mApi->destroyMem(mCtx, mInputMem);
 		}
-		rknn_destroy(mCtx);
+		mApi->destroy(mCtx);
 	}
 
 	mOutputMems.clear();
@@ -100,9 +203,13 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 {
 	reset();
 
+	if (!ensureApi(error)) {
+		return false;
+	}
+
 	auto path = modelPath.toLocal8Bit();
 	// With size == 0 the second argument is a file path to the .rknn model.
-	const auto initRet = rknn_init(&mCtx, path.data(), 0, 0, nullptr);
+	const auto initRet = mApi->init(&mCtx, path.data(), 0, 0, nullptr);
 	if (initRet != RKNN_SUCC) {
 		mCtx = 0;
 		if (error) {
@@ -112,7 +219,7 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 	}
 
 	auto ioNum = rknn_input_output_num {};
-	auto ret = rknn_query(mCtx, RKNN_QUERY_IN_OUT_NUM, &ioNum, sizeof(ioNum));
+	auto ret = mApi->query(mCtx, RKNN_QUERY_IN_OUT_NUM, &ioNum, sizeof(ioNum));
 	if (ret != RKNN_SUCC) {
 		if (error) {
 			*error = errorText("rknn_query(IN_OUT_NUM)", ret);
@@ -131,7 +238,7 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 
 	auto inputAttr = rknn_tensor_attr {};
 	inputAttr.index = 0;
-	ret = rknn_query(mCtx, RKNN_QUERY_INPUT_ATTR, &inputAttr, sizeof(inputAttr));
+	ret = mApi->query(mCtx, RKNN_QUERY_INPUT_ATTR, &inputAttr, sizeof(inputAttr));
 	if (ret != RKNN_SUCC) {
 		if (error) {
 			*error = errorText("rknn_query(INPUT_ATTR)", ret);
@@ -147,11 +254,11 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 	// ones. The queried input attr already carries the model's default shape.
 	auto dynamicRange = rknn_input_range {};
 	dynamicRange.index = 0;
-	if (rknn_query(mCtx, RKNN_QUERY_INPUT_DYNAMIC_RANGE, &dynamicRange, sizeof(dynamicRange)) == RKNN_SUCC) {
-		if (rknn_set_input_shapes(mCtx, 1, &inputAttr) == RKNN_SUCC) {
+	if (mApi->query(mCtx, RKNN_QUERY_INPUT_DYNAMIC_RANGE, &dynamicRange, sizeof(dynamicRange)) == RKNN_SUCC) {
+		if (mApi->setInputShapes(mCtx, 1, &inputAttr) == RKNN_SUCC) {
 			auto refreshed = rknn_tensor_attr {};
 			refreshed.index = 0;
-			if (rknn_query(mCtx, RKNN_QUERY_INPUT_ATTR, &refreshed, sizeof(refreshed)) == RKNN_SUCC) {
+			if (mApi->query(mCtx, RKNN_QUERY_INPUT_ATTR, &refreshed, sizeof(refreshed)) == RKNN_SUCC) {
 				inputAttr = refreshed;
 				mInput = makeTensorInfo(inputAttr);
 			}
@@ -175,7 +282,7 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 	mInputAttr.pass_through = 0;
 	mInputAttr.size = inputBytes;
 	mInputAttr.size_with_stride = inputBytes;
-	mInputMem = rknn_create_mem(mCtx, inputBytes);
+	mInputMem = mApi->createMem(mCtx, inputBytes);
 	if (!mInputMem) {
 		if (error) {
 			*error = QStringLiteral("rknn_create_mem(input) failed");
@@ -183,7 +290,7 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 		reset();
 		return false;
 	}
-	ret = rknn_set_io_mem(mCtx, mInputMem, &mInputAttr);
+	ret = mApi->setIoMem(mCtx, mInputMem, &mInputAttr);
 	if (ret != RKNN_SUCC) {
 		if (error) {
 			*error = errorText("rknn_set_io_mem(input)", ret);
@@ -201,7 +308,7 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 	for (uint32_t i = 0; i < ioNum.n_output; ++i) {
 		auto outputAttr = rknn_tensor_attr {};
 		outputAttr.index = i;
-		ret = rknn_query(mCtx, RKNN_QUERY_OUTPUT_ATTR, &outputAttr, sizeof(outputAttr));
+		ret = mApi->query(mCtx, RKNN_QUERY_OUTPUT_ATTR, &outputAttr, sizeof(outputAttr));
 		if (ret != RKNN_SUCC) {
 			if (error) {
 				*error = errorText("rknn_query(OUTPUT_ATTR)", ret);
@@ -218,7 +325,7 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 		ioAttr.type = RKNN_TENSOR_FLOAT32;
 		ioAttr.pass_through = 0;
 		const auto outputBytes = static_cast<uint32_t>(ioAttr.n_elems * sizeof(float));
-		auto *mem = rknn_create_mem(mCtx, outputBytes);
+		auto *mem = mApi->createMem(mCtx, outputBytes);
 		if (!mem) {
 			if (error) {
 				*error = QStringLiteral("rknn_create_mem(output %1) failed").arg(i);
@@ -226,9 +333,9 @@ bool TrikRknnSession::load(const QString &modelPath, QString *error)
 			reset();
 			return false;
 		}
-		ret = rknn_set_io_mem(mCtx, mem, &ioAttr);
+		ret = mApi->setIoMem(mCtx, mem, &ioAttr);
 		if (ret != RKNN_SUCC) {
-			rknn_destroy_mem(mCtx, mem);
+			mApi->destroyMem(mCtx, mem);
 			if (error) {
 				*error = errorText("rknn_set_io_mem(output)", ret);
 			}
@@ -283,10 +390,10 @@ bool TrikRknnSession::run(QVector<RknnOutputView> *out, QString *error)
 
 	// The producer wrote the input through RGA (device) or CPU; flush it for
 	// the NPU. This is a no-op for non-cacheable buffers.
-	rknn_mem_sync(mCtx, mInputMem, RKNN_MEMORY_SYNC_TO_DEVICE);
+	mApi->memSync(mCtx, mInputMem, RKNN_MEMORY_SYNC_TO_DEVICE);
 
 	const auto start = std::chrono::steady_clock::now();
-	const auto ret = rknn_run(mCtx, nullptr);
+	const auto ret = mApi->run(mCtx, nullptr);
 	if (ret != RKNN_SUCC) {
 		if (error) {
 			*error = errorText("rknn_run", ret);
@@ -300,7 +407,7 @@ bool TrikRknnSession::run(QVector<RknnOutputView> *out, QString *error)
 		out->reserve(mOutputMems.size());
 		for (int i = 0; i < mOutputMems.size(); ++i) {
 			auto *mem = mOutputMems[i];
-			rknn_mem_sync(mCtx, mem, RKNN_MEMORY_SYNC_FROM_DEVICE);
+			mApi->memSync(mCtx, mem, RKNN_MEMORY_SYNC_FROM_DEVICE);
 
 			auto view = RknnOutputView {};
 			view.index = i;

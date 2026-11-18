@@ -16,20 +16,28 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 #include <QVector>
 
 #include <trikHal/rknnSessionInterface.h>
 
-// Library header is installed into the SDK sysroot. This translation unit is
-// only compiled when TRIK_HAS_RKNN is defined (the real target build), so the
-// header is always available here.
+// The RKNN API header must be available at build time (for example from the
+// Rockchip SDK). The runtime library itself is loaded dynamically in
+// trikRknnSession.cpp and is not linked into trikHal.
 #include "rknn_api.h"
 
 namespace trikHal {
 namespace trik {
 
-/// RKNN inference session backed by librknnrt.
+struct RknnApi;
+
+/// RKNN inference session backed by librknnrt, loaded dynamically at runtime.
+///
+/// The class does not link against librknnrt: the library is resolved with
+/// QLibrary when the first session is created. A target image that does not
+/// ship librknnrt.so still starts; createRknnSession() returns nullptr and the
+/// NPU is reported as unavailable.
 ///
 /// Owns one rknn_context for a single loaded .rknn model. Typical lifetime:
 /// load() once, then run() as often as needed, then the destructor destroys the
@@ -44,6 +52,9 @@ class TrikRknnSession : public RknnSessionInterface
 public:
 	TrikRknnSession();
 	~TrikRknnSession() override;
+
+	/// True when librknnrt.so can be loaded and all required symbols resolve.
+	bool isAvailable() const;
 
 	/// Loads @p modelPath (.rknn) and queries its input/output tensors.
 	///
@@ -93,8 +104,14 @@ public:
 	qint64 lastRunTimeUs() const override;
 
 private:
+	/// Loads librknnrt.so and resolves the RKNN entry points on first use.
+	bool ensureApi(QString *error) const;
+
 	/// Destroys the RKNN context (if any) and resets all cached model data.
 	void reset();
+
+	/// Dynamically loaded RKNN runtime; null until the first lookup.
+	mutable std::unique_ptr<RknnApi> mApi;
 
 	/// librknnrt context; 0 when no model is loaded.
 	rknn_context mCtx = 0;

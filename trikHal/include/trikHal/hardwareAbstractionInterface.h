@@ -94,7 +94,8 @@ public:
 	virtual DmaHeapInterface *createDmaHeap() const = 0;
 
 	/// Creates an NPU inference session (RKNN). Ownership passes to the caller.
-	/// Returns nullptr when the NPU backend is not built in.
+	/// Returns nullptr when the NPU backend is not built in or when the RKNN
+	/// runtime library cannot be loaded at run time.
 	virtual RknnSessionInterface *createRknnSession() const = 0;
 
 	/// Acquires a writable dma-buf frame from the hidden frame pool.
