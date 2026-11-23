@@ -68,6 +68,7 @@ equal to its class name.
 		<colorSensor m="3" n="3"/>
 		<lineSensor toleranceFactor="1.0"/>
 		<objectSensor toleranceFactor="1.0"/>
+		<classifierSensor/>
 		<!-- Device files for LED on a brick. -->
 		<led green="/sys/class/leds/led_green/brightness" red="/sys/class/leds/led_red/brightness"/>
 		<!-- Battery channel through the SARADC analog mux (X4).
@@ -350,6 +351,7 @@ equal to its class name.
 		<videoDevice>
 			<lineSensor/>
 			<objectSensor/>
+			<classifierSensor/>
 			<colorSensor3x3/>
 			<photo/>
 		</videoDevice>

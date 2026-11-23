@@ -29,6 +29,9 @@
 #include "trikRga.h"
 #include "trikFbOutput.h"
 #include "trikDmaHeap.h"
+#ifdef TRIK_HAS_RKNN
+#	include "trikRknnSession.h"
+#endif
 #include <trikHal/framePoolAllocator.h>
 
 #include <memory>
@@ -137,6 +140,20 @@ RgaInterface *TrikHardwareAbstraction::createRga() const
 DmaHeapInterface *TrikHardwareAbstraction::createDmaHeap() const
 {
 	return new trik::TrikDmaHeap();
+}
+
+RknnSessionInterface *TrikHardwareAbstraction::createRknnSession() const
+{
+#ifdef TRIK_HAS_RKNN
+	auto *session = new trik::TrikRknnSession();
+	if (!session->isAvailable()) {
+		delete session;
+		return nullptr;
+	}
+	return session;
+#else
+	return nullptr;
+#endif
 }
 
 FrameBufferPtr TrikHardwareAbstraction::acquireFrameBuffer(const FrameFormat &format, int count)

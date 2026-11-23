@@ -27,6 +27,7 @@
 #include "stubRga.h"
 #include "stubFbOutput.h"
 #include "stubDmaHeap.h"
+#include "stubRknnSession.h"
 #include "QsLog.h"
 
 using namespace trikHal;
@@ -118,6 +119,11 @@ RgaInterface *StubHardwareAbstraction::createRga() const
 DmaHeapInterface *StubHardwareAbstraction::createDmaHeap() const
 {
 	return new stub::StubDmaHeap();
+}
+
+RknnSessionInterface *StubHardwareAbstraction::createRknnSession() const
+{
+	return new stub::StubRknnSession();
 }
 
 FrameBufferPtr StubHardwareAbstraction::acquireFrameBuffer(const FrameFormat &format, int count)

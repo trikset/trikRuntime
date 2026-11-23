@@ -13,6 +13,7 @@
 #include <trikControl/batteryInterface.h>
 #include <trikControl/brickInterface.h>
 #include <trikControl/cameraDeviceInterface.h>
+#include <trikControl/classifierSensorInterface.h>
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/deviceInterface.h>
 #include <trikControl/displayInterface.h>
@@ -81,6 +82,11 @@ trikControl::VectorSensorInterface*  PythonQtWrapper_trikControl__BrickInterface
 trikControl::BatteryInterface*  PythonQtWrapper_trikControl__BrickInterface::battery(trikControl::BrickInterface* theWrappedObject)
 {
   return ( theWrappedObject->battery());
+}
+
+trikControl::ClassifierSensorInterface*  PythonQtWrapper_trikControl__BrickInterface::classifierSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port)
+{
+  return ( theWrappedObject->classifierSensor(port));
 }
 
 trikControl::ColorSensorInterface*  PythonQtWrapper_trikControl__BrickInterface::colorSensor(trikControl::BrickInterface* theWrappedObject, const QString&  port)
@@ -298,6 +304,78 @@ QVector<uint8_t >  PythonQtWrapper_trikControl__CameraDeviceInterface::getPhoto(
 QVector<uint8_t >  PythonQtWrapper_trikControl__CameraDeviceInterface::static_trikControl__CameraDeviceInterface_qImageToQVector(const QImage&  imgOrig)
 {
   return (trikControl::CameraDeviceInterface::qImageToQVector(imgOrig));
+}
+
+
+
+int  PythonQtWrapper_trikControl__ClassifierSensorInterface::classIndex(trikControl::ClassifierSensorInterface* theWrappedObject) const
+{
+  return ( theWrappedObject->classIndex());
+}
+
+int  PythonQtWrapper_trikControl__ClassifierSensorInterface::confidence(trikControl::ClassifierSensorInterface* theWrappedObject) const
+{
+  return ( theWrappedObject->confidence());
+}
+
+void PythonQtWrapper_trikControl__ClassifierSensorInterface::hideLabels(trikControl::ClassifierSensorInterface* theWrappedObject)
+{
+  ( theWrappedObject->hideLabels());
+}
+
+void PythonQtWrapper_trikControl__ClassifierSensorInterface::init(trikControl::ClassifierSensorInterface* theWrappedObject, bool  showOnDisplay)
+{
+  ( theWrappedObject->init(showOnDisplay));
+}
+
+QString  PythonQtWrapper_trikControl__ClassifierSensorInterface::label(trikControl::ClassifierSensorInterface* theWrappedObject) const
+{
+  return ( theWrappedObject->label());
+}
+
+bool  PythonQtWrapper_trikControl__ClassifierSensorInterface::load(trikControl::ClassifierSensorInterface* theWrappedObject, const QString&  modelPath, const QString&  labelsPath)
+{
+  return ( theWrappedObject->load(modelPath, labelsPath));
+}
+
+const QMetaObject*  PythonQtWrapper_trikControl__ClassifierSensorInterface::metaObject(trikControl::ClassifierSensorInterface* theWrappedObject) const
+{
+  return ( theWrappedObject->metaObject());
+}
+
+void*  PythonQtWrapper_trikControl__ClassifierSensorInterface::qt_metacast(trikControl::ClassifierSensorInterface* theWrappedObject, const char*  arg__1)
+{
+  return ( theWrappedObject->qt_metacast(arg__1));
+}
+
+void PythonQtWrapper_trikControl__ClassifierSensorInterface::showLabels(trikControl::ClassifierSensorInterface* theWrappedObject, int  k)
+{
+  ( theWrappedObject->showLabels(k));
+}
+
+void PythonQtWrapper_trikControl__ClassifierSensorInterface::stop(trikControl::ClassifierSensorInterface* theWrappedObject, int  flags)
+{
+  ( theWrappedObject->stop(flags));
+}
+
+void PythonQtWrapper_trikControl__ClassifierSensorInterface::stopped(trikControl::ClassifierSensorInterface* theWrappedObject)
+{
+  ( theWrappedObject->stopped());
+}
+
+QList<QVariant >  PythonQtWrapper_trikControl__ClassifierSensorInterface::top(trikControl::ClassifierSensorInterface* theWrappedObject, int  k) const
+{
+  return ( theWrappedObject->top(k));
+}
+
+QString  PythonQtWrapper_trikControl__ClassifierSensorInterface::static_trikControl__ClassifierSensorInterface_tr(const char*  s, const char*  c, int  n)
+{
+  return (trikControl::ClassifierSensorInterface::tr(s, c, n));
+}
+
+QString  PythonQtWrapper_trikControl__ClassifierSensorInterface::static_trikControl__ClassifierSensorInterface_trUtf8(const char*  s, const char*  c, int  n)
+{
+  return (trikControl::ClassifierSensorInterface::trUtf8(s, c, n));
 }
 
 
@@ -888,6 +966,11 @@ int  PythonQtWrapper_trikControl__KeysInterface::buttonCode(trikControl::KeysInt
 void PythonQtWrapper_trikControl__KeysInterface::buttonPressed(trikControl::KeysInterface* theWrappedObject, int  code, int  value)
 {
   ( theWrappedObject->buttonPressed(code, value));
+}
+
+void PythonQtWrapper_trikControl__KeysInterface::emulateKeyPress(trikControl::KeysInterface* theWrappedObject, int  code)
+{
+  ( theWrappedObject->emulateKeyPress(code));
 }
 
 bool  PythonQtWrapper_trikControl__KeysInterface::isPressed(trikControl::KeysInterface* theWrappedObject, int  code)

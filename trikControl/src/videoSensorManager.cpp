@@ -22,6 +22,7 @@
 #include <trikHal/hardwareAbstractionInterface.h>
 #include <trikControl/videoPreviewSink.h>
 
+#include "classifierSensor.h"
 #include "lineSensor.h"
 #include "objectSensor.h"
 
@@ -47,6 +48,8 @@ VideoSensorManager::~VideoSensorManager()
 	mLineSensors.clear();
 	qDeleteAll(mObjectSensors);
 	mObjectSensors.clear();
+	qDeleteAll(mClassifierSensors);
+	mClassifierSensors.clear();
 }
 
 bool VideoSensorManager::checkManagerState(const QString &message) const
@@ -99,6 +102,16 @@ void VideoSensorManager::createSensor(const QString &port, const QString &device
 		return;
 	}
 
+	if (deviceClass == QStringLiteral("classifierSensor")) {
+		if (mClassifierSensors.contains(portId)) {
+			return;
+		}
+
+		auto *s = new ClassifierSensor(port, mCameraManager, mHardwareAbstractionInterface, mPreviewSink);
+		mClassifierSensors.insert(portId, s);
+		return;
+	}
+
 	QLOG_WARN() << "VideoSensorManager: unsupported video sensor class" << deviceClass << "on" << port;
 }
 
@@ -127,6 +140,10 @@ void VideoSensorManager::stop()
 	for (auto *sensor : mObjectSensors) {
 		sensor->stop();
 	}
+
+	for (auto *sensor : mClassifierSensors) {
+		sensor->stop(StopAll);
+	}
 }
 
 void VideoSensorManager::clear()
@@ -137,6 +154,8 @@ void VideoSensorManager::clear()
 	mLineSensors.clear();
 	qDeleteAll(mObjectSensors);
 	mObjectSensors.clear();
+	qDeleteAll(mClassifierSensors);
+	mClassifierSensors.clear();
 }
 
 void VideoSensorManager::releasePort(const QString &port)
@@ -157,12 +176,17 @@ void VideoSensorManager::releasePort(const QString &port)
 	if (objectIt != mObjectSensors.end()) {
 		(*objectIt)->stop();
 	}
+
+	const auto classifierIt = mClassifierSensors.find(portId);
+	if (classifierIt != mClassifierSensors.end()) {
+		(*classifierIt)->stop(StopAll);
+	}
 }
 
 bool VideoSensorManager::isVideoSensor(const QString &deviceClass)
 {
 	return deviceClass == QStringLiteral("colorSensor") || deviceClass == QStringLiteral("lineSensor")
-	       || deviceClass == QStringLiteral("objectSensor");
+	       || deviceClass == QStringLiteral("objectSensor") || deviceClass == QStringLiteral("classifierSensor");
 }
 
 ColorSensorInterface *VideoSensorManager::colorSensor(const QString &port)
@@ -184,6 +208,13 @@ ObjectSensorInterface *VideoSensorManager::objectSensor(const QString &port)
 	const auto id = mCameraManager->portId(port);
 	const auto it = mObjectSensors.find(id);
 	return it == mObjectSensors.end() ? nullptr : *it;
+}
+
+ClassifierSensorInterface *VideoSensorManager::classifierSensor(const QString &port)
+{
+	const auto id = mCameraManager->portId(port);
+	const auto it = mClassifierSensors.find(id);
+	return it == mClassifierSensors.end() ? nullptr : *it;
 }
 
 } // namespace trikControl

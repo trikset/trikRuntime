@@ -22,6 +22,7 @@
 #include <QtScript/QScriptEngine>
 
 #include <trikControl/batteryInterface.h>
+#include <trikControl/classifierSensorInterface.h>
 #include <trikControl/colorSensorInterface.h>
 #include <trikControl/displayInterface.h>
 #include <trikControl/encoderInterface.h>
@@ -67,6 +68,7 @@
 #define REGISTER_DEVICES_WITH_TEMPLATE(TEMPLATE) \
 	OPTIONAL_DEVICES(TEMPLATE) \
 	TEMPLATE(trikControl::BatteryInterface) \
+	TEMPLATE(trikControl::ClassifierSensorInterface) \
 	TEMPLATE(trikControl::ColorSensorInterface) \
 	TEMPLATE(trikControl::FifoInterface) \
 	TEMPLATE(trikControl::DisplayInterface) \

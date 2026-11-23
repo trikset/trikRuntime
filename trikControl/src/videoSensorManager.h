@@ -18,6 +18,7 @@
 #include <QtCore/QSharedPointer>
 
 #include "cameraManager.h"
+#include "classifierSensorInterface.h"
 #include "colorSensor.h"
 #include "colorSensorInterface.h"
 #include "deviceState.h"
@@ -34,15 +35,17 @@ class Configurer;
 
 namespace trikControl {
 
+class ClassifierSensor;
 class LineSensor;
 class ObjectSensor;
 class VideoPreviewSink;
 
-/// Owns the CPU-backed video sensors and their camera lifetime.
+/// Owns the video sensors and their camera lifetime.
 ///
-/// A sensor runs entirely on the ARM CPU and pulls frames from CameraManager.
-/// The manager only creates/destroys sensors and forwards their stopped()
-/// notifications to the GUI.
+/// A sensor pulls frames from CameraManager and runs either on the ARM CPU
+/// (color/line/object) or on the NPU (classifier). The manager only
+/// creates/destroys sensors and forwards their stopped() notifications to the
+/// GUI.
 class VideoSensorManager : public QObject
 {
 	Q_OBJECT
@@ -56,6 +59,7 @@ public:
 	ColorSensorInterface *colorSensor(const QString &port);
 	LineSensorInterface *lineSensor(const QString &port);
 	ObjectSensorInterface *objectSensor(const QString &port);
+	ClassifierSensorInterface *classifierSensor(const QString &port);
 
 	/// Stop every active sensor.
 	void stop();
@@ -85,6 +89,7 @@ private:
 	QHash<int, ColorSensor *> mColorSensors;
 	QHash<int, LineSensor *> mLineSensors;
 	QHash<int, ObjectSensor *> mObjectSensors;
+	QHash<int, ClassifierSensor *> mClassifierSensors;
 };
 
 } // namespace trikControl
