@@ -23,6 +23,12 @@ equal to its class name.
 <config version="model-2015">
 	<!-- Initialization sh script, will be executed when runtime is launched. -->
 	<initScript>
+		# The IIO buffer is already enabled when the runtime starts; disable it
+		# first so the scan element and low-pass filter writes do not hit EBUSY.
+		echo 0 > /sys/bus/iio/devices/iio\:device1/buffer/enable
+		# Enable the IMU low-pass filter to cut broadband gyro/accelerometer noise.
+		echo 180 > /sys/bus/iio/devices/iio\:device1/in_accel_lpf_bw
+		echo 180 > /sys/bus/iio/devices/iio\:device1/in_anglvel_lpf_bw
 		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_timestamp_en
 		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_accel_x_en
 		echo 1 > /sys/bus/iio/devices/iio\:device1/scan_elements/in_accel_y_en
