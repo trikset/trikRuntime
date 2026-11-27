@@ -81,7 +81,7 @@ jobs:
         working-directory: ${{ env.BUILD_DIR }}
 
       - name: Make all
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
             bear -- make -j $(nproc) all
         working-directory: ${{ env.BUILD_DIR }}
